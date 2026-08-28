@@ -38,6 +38,8 @@ final readonly class Manifest
         public array $replaces,
         public array $autoload,
         public string $extension,
+        /** what of the replaced plugin this provides, when not all of it */
+        public string $covers = '',
     ) {
     }
 
@@ -60,6 +62,7 @@ final readonly class Manifest
             array_values(array_map('strval', (array) ($data['replaces'] ?? []))),
             array_map('strval', (array) ($data['autoload'] ?? [])),
             $data['extension'],
+            (string) ($data['covers'] ?? ''),
         );
     }
 }

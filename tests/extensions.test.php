@@ -109,5 +109,30 @@ check(str_contains($signedIn, 'members-only') && !str_contains($signedIn, 'guest
 check(!str_contains($onDesktop, 'expired-schedule'), 'a schedule that has ended hides the block');
 check(str_contains($onDesktop, 'disabled-set'), 'a disabled control set is ignored');
 
+// 4. The other ports, on the dev site with their data staged.
+wp("option update minn_active_extensions '[\"minn-block-visibility\",\"minn-simple-custom-css\",\"minn-ga-google-analytics\",\"minn-wp-retina-2x\",\"minn-gallery-custom-links\"]'");
+wp("option update sccss_settings '{\"sccss-content\":\"body.zz-sccss { color: red; }\"}' --format=json");
+wp("option update gap_options '{\"gap_id\":\"G-ZZTEST1234\",\"gap_location\":\"header\",\"gap_anonymize\":1}' --format=json");
+$image = (int) wp("db query \"SELECT ID FROM wp_posts WHERE post_type='attachment' AND post_mime_type LIKE 'image/%' ORDER BY ID ASC LIMIT 1\" --skip-column-names");
+$file = wp("post meta get $image _wp_attached_file");
+$uploads = "$ROOT/public/wp-content/uploads";
+$retina = preg_replace('/\.([a-z0-9]+)$/i', '@2x.$1', $file);
+copy("$uploads/$file", "$uploads/$retina");
+wp("post meta update $image _gallery_link_url https://example.test/linked");
+wp("post meta update $image _gallery_link_target _blank");
+$slug = $make('zz ports', '<!-- wp:image {"id":' . $image . ',"sizeSlug":"full"} --><figure class="wp-block-image size-full"><img src="' . rtrim(wp('option get home'), '/') . '/wp-content/uploads/' . $file . '" alt="" class="wp-image-' . $image . '"/></figure><!-- /wp:image -->');
+$page = fetch("$ENGINE/$slug/");
+check(str_contains($page, '<style id="sccss">body.zz-sccss { color: red; }'), 'simple-custom-css: the option is the head stylesheet');
+check(str_contains($page, 'googletagmanager.com/gtag/js?id=G-ZZTEST1234') && str_contains($page, "gtag('config', 'G-ZZTEST1234', { 'anonymize_ip': true });"), 'ga-google-analytics: the gtag snippet with the anonymize flag');
+check(preg_match('/srcset="[^"]*' . preg_quote(basename($retina), '/') . ' \d+w"/', $page) === 1, 'wp-retina-2x: the @2x file joins the srcset at twice the width', substr($page, strpos($page, 'srcset='), 300));
+check(str_contains($page, '<a href="https://example.test/linked" class="custom-link no-lightbox"') && str_contains($page, 'target="_blank"') && preg_match('/<!-- Gallery Custom Links: \d+ images scanned, 1 linked \(HtmlDomParser\)\. -->/', $page) === 1, 'gallery-custom-links: the anchor from attachment meta and the count', substr($page, strpos($page, 'Gallery Custom') - 20, 120));
+check(str_contains($page, 'viewbox=') || !str_contains($page, 'viewBox='), 'gallery-custom-links: attribute names lower-cased once something was linked');
+@unlink("$uploads/$retina");
+wp("post meta delete $image _gallery_link_url");
+wp("post meta delete $image _gallery_link_target");
+wp('option delete sccss_settings');
+wp('option delete gap_options');
+wp("option update minn_active_extensions '[\"minn-block-visibility\"]'");
+
 echo "\n{$pass} passed, {$fail} failed\n";
 exit($fail === 0 ? 0 : 1);

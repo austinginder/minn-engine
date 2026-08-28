@@ -27,23 +27,9 @@ eval($m[0]);
 preg_match('/function theme_first_diff.*?\n}\n/s', $src, $m);
 eval($m[0]);
 
-/**
- * Markup that only an installed plugin produces: body-class tokens, the
- * dark-palette toggle item, the Jetpack slideshow (its stored markup is
- * rewritten by two plugins at render), and a gallery plugin's comment.
- */
+/** Nothing is normalised beyond the theme suite's own rules: every plugin this site uses is provided by an extension. */
 function dogfood_normalise(string $body): string
 {
-    $body = preg_replace('/ (metaslider-plugin|modula-best-grid-gallery)(?=[ "])/', '', $body);
-    $body = preg_replace('/^<!-- Gallery Custom Links:.*$\n?/m', '', $body);
-    $body = preg_replace('/<li class="[^"]*wp-block-mosne-dark-palette">.*?<\/li>\n?/s', '', $body);
-    $body = preg_replace('/^<div class="wp-block-jetpack-slideshow[" ].*$/m', '<div class="wp-block-jetpack-slideshow">[plugin-rendered]', $body);
-    // wp-retina-2x adds @2x candidates to every srcset; a port is on the list.
-    $body = preg_replace('/, https?:\/\/[^\s"]+@2x\.[a-z]+ \d+w/', '', $body);
-    // A gallery-links plugin wraps images in its own anchors and, through
-    // its HTML parser, lowercases attribute names on the way out.
-    $body = preg_replace('/<a href="[^"]*" class="custom-link no-lightbox"[^>]*>(.*?)<\/a>/s', '$1', $body);
-    $body = str_replace('viewBox=', 'viewbox=', $body);
     return $body;
 }
 

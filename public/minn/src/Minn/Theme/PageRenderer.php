@@ -121,7 +121,7 @@ final readonly class PageRenderer
         $globalStyles = (new GlobalStyles($this->theme, $this->templates->userStyles()))->css();
         $themeStyle = $this->theme->styleUri();
 
-        return '<!DOCTYPE html>' . "\n" . '<html lang="en">' . "\n" . '<head>' . "\n"
+        $document = '<!DOCTYPE html>' . "\n" . '<html lang="en">' . "\n" . '<head>' . "\n"
             . '<meta charset="UTF-8" />' . "\n"
             . '<meta name="viewport" content="width=device-width, initial-scale=1" />' . "\n"
             . '<title>' . Html::esc($title) . '</title>' . "\n"
@@ -135,6 +135,7 @@ final readonly class PageRenderer
             . '<div class="wp-site-blocks">' . $body . '</div>' . "\n"
             . (Extensions::seams()?->renderFooter() ?? '')
             . '</body>' . "\n" . '</html>' . "\n";
+        return Extensions::seams()?->applyDocumentFilters($document) ?? $document;
     }
 
     /** @return array{posts: list<array>, total: int} */

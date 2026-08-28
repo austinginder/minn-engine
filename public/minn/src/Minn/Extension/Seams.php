@@ -33,6 +33,8 @@ final class Seams
     private array $footer = [];
     /** @var list<string> */
     private array $bodyClasses = [];
+    /** @var list<Closure(string): string> */
+    private array $documentFilters = [];
 
     public function __construct(
         public readonly Db $db,
@@ -81,6 +83,20 @@ final class Seams
     public function bodyClass(string $class): void
     {
         $this->bodyClasses[] = $class;
+    }
+
+    /** Rewrites the whole themed document before it is sent (what an output buffer did on the reference). */
+    public function filterDocument(Closure $filter): void
+    {
+        $this->documentFilters[] = $filter;
+    }
+
+    public function applyDocumentFilters(string $html): string
+    {
+        foreach ($this->documentFilters as $filter) {
+            $html = $filter($html);
+        }
+        return $html;
     }
 
     /** The engine's side. */

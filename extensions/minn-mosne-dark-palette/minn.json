@@ -1,0 +1,1 @@
+{"name": "Mosne Dark Palette for Minn", "version": "1.0.0", "license": "MIT", "replaces": ["mosne-dark-palette/mosne-dark-palette.php"], "autoload": {"Minn\\Ext\\DarkPalette\\": "src/"}, "extension": "Minn\\Ext\\DarkPalette\\Extension"}

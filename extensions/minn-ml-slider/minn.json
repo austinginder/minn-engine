@@ -1,0 +1,13 @@
+{
+  "name": "MetaSlider for Minn",
+  "version": "1.0.0",
+  "license": "MIT",
+  "replaces": [
+    "ml-slider/ml-slider.php"
+  ],
+  "covers": "the body class only; this site's content has no sliders or galleries from it",
+  "autoload": {
+    "Minn\\Ext\\MetaSlider\\": "src/"
+  },
+  "extension": "Minn\\Ext\\MetaSlider\\Extension"
+}

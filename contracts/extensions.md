@@ -47,6 +47,11 @@ registrations, each a typed closure, called in registration order:
 | `filterContent` | `(string $html, array $post): string` | after blocks and shortcodes, for post content and feeds |
 | `head` / `footer` | `(Seams): string` | in the themed document, after the theme stylesheet and before `</body>` |
 | `bodyClass` | `string` | appended after the theme classes |
+| `filterDocument` | `(string $html): string` | the whole themed document before it is sent (what an output buffer did on the reference) |
+
+A manifest may add `"covers"`: what part of the replaced plugin the extension
+provides when it is not all of it; preflight prints it and lights AMBER instead of
+GREEN for that plugin.
 
 Not yet seams (next ports decide their shape): routes and REST controllers, cron
 jobs, CLI verbs, file assets by URL (a plugin folder is web-served, so an extension
@@ -71,6 +76,29 @@ once per plugin, by hand or by an agent, never at runtime:
 An extension written from the plugin's observed output can be MIT; one written
 from the plugin's source is a derivative of that plugin and is GPL. Both are
 allowed; the manifest's `license` says which. The engine never depends on either.
+
+## The ports so far (all MIT, from observed output; `extensions/` in the engine repo)
+
+| Extension | Replaces | What it re-provides |
+|---|---|---|
+| `minn-block-visibility` | block-visibility | the `blockVisibility` rules (below) |
+| `minn-simple-custom-css` | simple-custom-css | `<style id="sccss">` from the `sccss_settings` option |
+| `minn-ga-google-analytics` | ga-google-analytics | the gtag snippet from `gap_options`, head or footer, anonymize flag |
+| `minn-wp-retina-2x` | wp-retina-2x | a `name@2x.ext` file beside a full-size image joins the srcset at twice the width |
+| `minn-gallery-custom-links` | gallery-custom-links | anchors from `_gallery_link_*` attachment meta; the plugin's whole-document pass (attribute names lower-cased once something was linked; the count comment before `</body>`) |
+| `minn-jetpack-slideshow` | jetpack (covers: the slideshow block only) | the block's images without the lazy `auto` hint, the block's stylesheet, Swiper, and view script from the plugin's own folder |
+| `minn-mosne-dark-palette` | mosne-dark-palette | the `mosne/dark-palette` navigation item, its styles and view script from the plugin's build folder |
+| `minn-ml-slider`, `minn-modula` | ml-slider, modula (covers: body class only) | the body class each added; the site's content uses neither |
+
+With these, every one of the twelve dogfood pages on dogfood matches the
+reference with no normalisation. Still unported on that site: autodescription (SEO
+head), and plugins with nothing on the front end (duplicate-page, filebird,
+enable-media-replace, stream, white-label-cms, login-logo, foogallery, coblocks,
+gutenslider, carousel-block, carousel-slider, smart-slider-3, nextgen-gallery: none
+appear in the site's content).
+
+A navigation child block that renders its own `<li>` (the dark-palette item) is
+not wrapped again; the reference does the same.
 
 ## First port: block visibility
 

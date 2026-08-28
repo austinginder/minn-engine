@@ -1,0 +1,13 @@
+{
+  "name": "Jetpack Slideshow block for Minn",
+  "version": "1.0.0",
+  "license": "MIT",
+  "replaces": [
+    "jetpack/jetpack.php"
+  ],
+  "autoload": {
+    "Minn\\Ext\\JetpackSlideshow\\": "src/"
+  },
+  "extension": "Minn\\Ext\\JetpackSlideshow\\Extension",
+  "covers": "the slideshow block only"
+}

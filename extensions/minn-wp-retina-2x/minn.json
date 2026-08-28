@@ -1,0 +1,1 @@
+{"name": "Retina images for Minn", "version": "1.0.0", "license": "MIT", "replaces": ["wp-retina-2x/wp-retina-2x.php"], "autoload": {"Minn\\Ext\\Retina\\": "src/"}, "extension": "Minn\\Ext\\Retina\\Extension"}

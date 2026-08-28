@@ -134,7 +134,7 @@ final readonly class Navigation
         $out = '';
         foreach ($items as $item) {
             $html = $renderer->renderBlock($item);
-            $out .= in_array($item->name, ['core/navigation-link', 'core/navigation-submenu', 'core/page-list', 'core/home-link'], true) || trim($html) === ''
+            $out .= in_array($item->name, ['core/navigation-link', 'core/navigation-submenu', 'core/page-list', 'core/home-link'], true) || trim($html) === '' || str_starts_with(ltrim($html), '<li')
                 ? $html
                 : '<li class="wp-block-navigation-item">' . "\n" . $html . '</li>';
         }

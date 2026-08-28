@@ -1,0 +1,13 @@
+{
+  "name": "Modula for Minn",
+  "version": "1.0.0",
+  "license": "MIT",
+  "replaces": [
+    "modula-best-grid-gallery/Modula.php"
+  ],
+  "covers": "the body class only; this site's content has no sliders or galleries from it",
+  "autoload": {
+    "Minn\\Ext\\Modula\\": "src/"
+  },
+  "extension": "Minn\\Ext\\Modula\\Extension"
+}
