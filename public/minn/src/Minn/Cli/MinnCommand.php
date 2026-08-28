@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Cli;
 
 use WP_CLI;
+use Minn\Content\Inventory;
 use Minn\Content\Posts;
 use Minn\Content\PostWriter;
 use Minn\Cron\Cron;
@@ -20,6 +21,7 @@ use Minn\Mail\Message;
  *
  *     wp minn version
  *     wp minn info
+ *     wp minn probe
  */
 final class MinnCommand
 {
@@ -31,6 +33,45 @@ final class MinnCommand
     public function version(array $args, array $assocArgs): void
     {
         WP_CLI::log(self::engineVersion());
+    }
+
+    /**
+     * Prints the inventory CaptainCore gathers from inside WordPress:
+     * plugins, themes, must-use plugins, core version, home. One
+     * `key:value` line per field; JSON values have no newlines. Split
+     * on the first colon only.
+     *
+     * @when before_wp_load
+     */
+    public function probe(array $args, array $assocArgs): void
+    {
+        $runtime = Runtime::boot();
+        $inventory = new Inventory(ABSPATH . 'wp-content', $runtime->site);
+        $fields = ['name', 'title', 'status', 'version'];
+        $slim = static function (array $items) use ($fields): string {
+            $rows = [];
+            foreach ($items as $item) {
+                $row = [];
+                foreach ($fields as $field) {
+                    $row[$field] = $item[$field];
+                }
+                $rows[] = $row;
+            }
+            return (string) json_encode($rows, JSON_UNESCAPED_SLASHES);
+        };
+        $core = '';
+        $versionFile = ABSPATH . 'wp-includes/version.php';
+        if (is_file($versionFile) && preg_match("/\\\$wp_version\s*=\s*'([^']+)'/", (string) file_get_contents($versionFile), $m)) {
+            $core = $m[1];
+        }
+        WP_CLI::log('engine:minn');
+        WP_CLI::log('engine_version:' . self::engineVersion());
+        WP_CLI::log('core:' . $core);
+        WP_CLI::log('home_url:' . ($runtime->site->option('home') ?? ''));
+        WP_CLI::log('php_version:' . PHP_VERSION);
+        WP_CLI::log('plugins:' . $slim($inventory->plugins()));
+        WP_CLI::log('themes:' . $slim($inventory->themes()));
+        WP_CLI::log('mu_plugins:' . $slim($inventory->mustUse()));
     }
 
     /**

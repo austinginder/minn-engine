@@ -15,7 +15,10 @@ WP-CLI loads `require:` files before it registers its bundled commands. A leaf
 registered under a parent that does not exist yet (`option get` before `option`) is
 deferred, added after the bundle, and replaces the bundle's leaf of the same name.
 `@when before_wp_load` on the method (and `when` in the registration) puts the verb in
-the early phase. The command boots the engine on first use (`Minn\Cli\Runtime`):
+the early phase. WP-CLI also registers `plugin` as a command namespace before the
+class command; the namespace would otherwise keep WP-CLI's `list` (whose constructor
+requires `wp-admin/includes/plugin.php`). Each leaf is re-added on
+`after_add_command:{parent}` so the engine's list is the one that stays. The command boots the engine on first use (`Minn\Cli\Runtime`):
 it requires the site's `wp-config.php`, whose trailing `wp-settings.php` require
 reaches `minn/bootstrap.php`, which under WP-CLI only registers the autoloader.
 `$table_prefix` is copied to the global the engine reads.
@@ -32,13 +35,15 @@ reaches `minn/bootstrap.php`, which under WP-CLI only registers the autoloader.
 | `user get <id\|email\|login> [--field] [--fields] [--format]` | Record order `ID,user_login,user_email,user_registered,display_name,roles`, `ID` as the stored string, roles joined with `, `. Unknown: `Error: Invalid user ID, email or login: 'x'`. |
 | `user login <id\|email\|login>` | Prints `{siteurl}/wp-login.php?user_id=N&cove_login_token=T` (7 hex chars) after storing the token's sha256 in `cove_login_token` and the mint time in `cove_login_token_time`: the contract of the captaincore helper mu-plugin, which the engine honours natively at `wp-login.php` (valid for fifteen minutes, spent on use, 302 to `/wp-admin/` with a fourteen-day session; any failure is the same 403 so ids cannot be probed, and failures count toward the sign-in throttle). Unknown: `Error: User not found: x`. |
 | `wp minn version`, `wp minn info` | The engine's own identity. |
+| `plugin list [--status] [--field] [--fields] [--format]` | Installed plugins from disk plus must-use and drop-ins, in that order, each group sorted by name. `name` is the directory (or the drop-in filename); `title` and `version` come from the file headers; `status` is `active` / `inactive` / `must-use` / `dropin`. Drop-ins keep an empty version (the reference does too). `update` is `none` for regular plugins and `false` for must-use and drop-ins: the engine does not call the wordpress.org update API. CaptainCore's `fetch-site-data` reads `--format=json --fields=name,title,status,version`. |
+| `theme list [--status] [--field] [--fields] [--format]` | Themes from `style.css` headers, sorted by name. The stylesheet is `active`; its parent (when different) is `parent`; the rest are `inactive`. |
+| `wp minn probe` | `key:value` lines for `engine`, `engine_version`, `core`, `home_url`, `php_version`, `plugins`, `themes`, `mu_plugins`. JSON values have no newlines; split on the first colon. This is the engine-native stand-in for the inventory `fetch-site-data` currently gathers via `wp plugin list` / `wp theme list` / `wp core version` inside WordPress. |
 
 ## Not yet
 
-- `wp db …` and `wp config …` are WP-CLI's own and read `wp-config.php` directly,
-  but they run after WP-CLI's version check, which wants `wp-includes/version.php`
-  (milestone 26 ships that stub).
-- Every other verb (`post`, `plugin`, `theme`, `core`, `search-replace`, `cache`,
-  `rewrite`, `user create/update/delete`) is absent; the list grows from what the
-  fleet tooling actually invokes.
+- `wp db …` and `wp config …` are WP-CLI's own and read `wp-config.php` directly.
+- Every other verb (`post`, `search-replace`, `cache`, `rewrite`,
+  `user create/update/delete`, `core verify-checksums`, `plugin verify-checksums`)
+  is absent; the list grows from what the fleet tooling actually invokes.
+  Checksums are an honest gap: the engine does not ship WordPress core files.
 - `option get` of an option holding a serialized object prints the raw blob.

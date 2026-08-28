@@ -28,12 +28,18 @@ reports, each line GREEN, AMBER, or RED:
 
 RED stops `install` unless `--force` is passed.
 
+Preflight reads `wp-config.php` as text and looks for `define('DB_NAME', '…')`
+string literals. A Docker-style file that calls `getenv_docker('WORDPRESS_DB_NAME',
+…)` lights RED even though the database works when PHP runs the file; pass
+`--force`. The engine itself loads `wp-config.php` normally for CLI and web.
+
 ## Install
 
 1. Moves WordPress's own files (`wp-admin/`, `wp-includes/`, `index.php`, every
    `wp-*.php` except `wp-config.php`, `xmlrpc.php`, `license.txt`, `readme.html`) to
-   the park directory, `wp-parked/` beside the webroot by default. They are moved,
-   not copied, so nothing at the webroot can run WordPress.
+   the park directory, `wp-parked/` beside the webroot by default. `rename()` first;
+   if the park is on another filesystem (Docker volumes), copy then remove. They
+   leave the webroot so nothing there can run WordPress.
 2. Copies the engine's `minn/` folder in (or leaves it when the webroot's `minn` is
    already the engine, as on a development site with a symlink).
 3. Writes the four shape files from `minn/layout/`: `index.php`, `wp-settings.php`,

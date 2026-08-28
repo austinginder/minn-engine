@@ -46,7 +46,12 @@ CaptainCore Manager plugin, and Disembark:
   `--url=`) on client sites over SSH; `wp option set`, `wp user create`, `wp plugin
   install`, `wp theme install`, `wp plugin verify-checksums` in specific commands.
 - The WordPress version, plugin and theme inventories, and file hashes in quicksave come
-  from the Manager's remote scripts (`deploy-helper`), which run inside WordPress
-  (`wp eval-file`). On the engine those must come from the engine's own probe; open.
+  from the Manager's remote scripts (`fetch-site-data`), which run `wp plugin list`,
+  `wp theme list`, `wp core version`, and `wp eval-file` probes inside WordPress.
+  On the engine the inventory verbs and `wp minn probe` answer the same shapes
+  (`contracts/cli.md`). File hashes (`component-hashes`, `quicksave-fingerprint`)
+  are already bash over the filesystem and do not need WordPress. Remaining:
+  `core verify-checksums` / `plugin verify-checksums` (honest: the engine does
+  not ship those files) and the eval-file extras (error logs, session signal).
 - Disembark's phar reads none of the shape files by name; it works from the database
   credentials it is given.

@@ -181,7 +181,7 @@ final class Installer
         $moved = [];
         foreach (self::CORE_ENTRIES as $entry) {
             if (file_exists("{$root}/{$entry}") || is_link("{$root}/{$entry}")) {
-                rename("{$root}/{$entry}", "{$park}/{$entry}");
+                self::move("{$root}/{$entry}", "{$park}/{$entry}");
                 $moved[] = $entry;
             }
         }
@@ -238,7 +238,7 @@ final class Installer
         $restored = 0;
         foreach ((array) ($manifest['moved'] ?? []) as $entry) {
             if (file_exists("{$park}/{$entry}") || is_link("{$park}/{$entry}")) {
-                rename("{$park}/{$entry}", "{$root}/{$entry}");
+                self::move("{$park}/{$entry}", "{$root}/{$entry}");
                 $restored++;
             }
         }
@@ -281,6 +281,23 @@ final class Installer
             $config['prefix'] = $p[1];
         }
         return $config;
+    }
+
+    /** rename() first; copy+remove when the park is on another filesystem. */
+    private static function move(string $from, string $to): void
+    {
+        if (@rename($from, $to)) {
+            return;
+        }
+        if (is_link($from) || !is_dir($from)) {
+            if (!@copy($from, $to)) {
+                throw new \RuntimeException("Cannot move {$from} to {$to}.");
+            }
+            unlink($from);
+            return;
+        }
+        self::copyTree($from, $to);
+        self::removeTree($from);
     }
 
     private static function copyTree(string $from, string $to): void

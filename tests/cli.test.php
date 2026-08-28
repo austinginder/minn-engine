@@ -92,6 +92,12 @@ foreach ([
     'user get scribe@minn-engine.localhost --field=roles',
     'user get admin --fields=user_login,roles --format=json',
     'user get nobody',
+    'theme list --fields=name,title,status,version --format=json',
+    'theme list --format=json',
+    'theme list --field=name',
+    'theme list --format=count',
+    'theme list --status=active --field=name',
+    'theme list --status=inactive --format=count',
 ] as $command) {
     $same($command, $command);
 }
@@ -163,6 +169,28 @@ $check('a wrong token is refused', $bad['status'] === '403', json_encode($bad['s
 $check('user login for an unknown user errors', $code === 1 && $out === 'Error: User not found: nobody', $out);
 [$out, $code] = $run($ENGINE_DIR, 'minn version');
 $check('wp minn version answers', $code === 0 && preg_match('/^\d+\.\d+\.\d+$/', $out) === 1, $out);
+
+[$out, $code] = $run($ENGINE_DIR, 'plugin list --format=json --fields=name,title,status,version');
+$pluginRows = json_decode($out, true);
+$check(
+    'plugin list json is an array',
+    $code === 0 && is_array($pluginRows),
+    "[$code] " . substr($out, 0, 300),
+);
+[$out, $code] = $run($ENGINE_DIR, 'plugin list --format=count');
+$check('plugin list count is an integer', $code === 0 && preg_match('/^\d+$/', $out) === 1, $out);
+[$out, $code] = $run($ENGINE_DIR, 'minn probe');
+$check('minn probe names the engine', $code === 0 && str_starts_with($out, "engine:minn\n"), "[$code] " . substr($out, 0, 300));
+$probe = [];
+foreach (explode("\n", $out) as $line) {
+    if (str_contains($line, ':')) {
+        [$k, $v] = explode(':', $line, 2);
+        $probe[$k] = $v;
+    }
+}
+$check('minn probe plugins is json', isset($probe['plugins']) && is_array(json_decode($probe['plugins'], true)), $probe['plugins'] ?? '');
+$check('minn probe themes is json', isset($probe['themes']) && is_array(json_decode($probe['themes'], true)), $probe['themes'] ?? '');
+$check('minn probe core is the version.php release', ($probe['core'] ?? '') === '7.1', $probe['core'] ?? '');
 
 echo "\n{$pass} passed, {$fail} failed\n";
 exit($fail === 0 ? 0 : 1);
