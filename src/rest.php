@@ -706,7 +706,7 @@ function minn_rest_user_object( array $u, bool $is_self = false ): array {
 		'link'        => minn_home_url( '/?author=' . $id ),
 		'slug'        => $u['user_nicename'],
 		'avatar_urls' => minn_avatar_urls( $u['user_email'] ),
-		'meta'        => array(),
+		'meta'        => array( 'show_admin_bar_front' => minn_user_meta( $id, 'show_admin_bar_front' ) ?? 'true' ),
 		'_links'      => array(
 			'self'       => array(
 				array(
@@ -796,7 +796,10 @@ function minn_rest_user_object_edit( array $u ): array {
 		'capabilities'       => (object) $allcaps,
 		'extra_capabilities' => (object) minn_user_extra_caps( $id ),
 		'avatar_urls'        => $obj['avatar_urls'],
-		'meta'               => array( 'persisted_preferences' => array() ),
+		'meta'               => array(
+			'persisted_preferences' => array(),
+			'show_admin_bar_front'  => minn_user_meta( $id, 'show_admin_bar_front' ) ?? 'true',
+		),
 		'_links'             => array(
 			'self'       => $obj['_links']['self'],
 			'collection' => $obj['_links']['collection'],
@@ -894,8 +897,54 @@ function minn_rest_post_object_edit( array $p, int $uid ): array {
 		$reordered[ $k ] = $v;
 	}
 
+	// Minn Admin's registered list fields ride every edit-context object.
+	$reordered['minn_modified'] = minn_post_modified_unsaved( $p, $uid );
+	$reordered['minn_lock']     = minn_post_lock_holder( $id, $uid );
+
 	$reordered['_links'] = minn_rest_post_links_edit( $p, $uid );
 	return $reordered;
+}
+
+/** Whether a live post carries an autosave newer than its saved revision. */
+function minn_post_modified_unsaved( array $p, int $uid ): bool {
+	global $table_prefix;
+	$id = (int) $p['ID'];
+	if ( ! minn_user_can( $uid, 'edit_post', $id ) ) {
+		return false;
+	}
+	if ( ! in_array( $p['post_status'], array( 'publish', 'future', 'private' ), true ) ) {
+		return false;
+	}
+	$like = $id . '-autosave%';
+	$stmt = minn_db()->prepare(
+		"SELECT 1 FROM {$table_prefix}posts
+		 WHERE post_parent = ? AND post_type = 'revision' AND post_name LIKE ?
+		   AND post_modified_gmt > ? LIMIT 1"
+	);
+	$stmt->bind_param( 'iss', $id, $like, $p['post_modified_gmt'] );
+	$stmt->execute();
+	return (bool) $stmt->get_result()->fetch_row();
+}
+
+/** The OTHER user holding a live _edit_lock (150s window), or null. */
+function minn_post_lock_holder( int $id, int $uid ): ?array {
+	if ( ! minn_user_can( $uid, 'edit_post', $id ) ) {
+		return null;
+	}
+	$lock = minn_post_meta_value( $id, '_edit_lock' );
+	if ( null === $lock || ! str_contains( $lock, ':' ) ) {
+		return null;
+	}
+	[ $time, $holder ] = explode( ':', $lock, 2 );
+	$holder = (int) $holder;
+	if ( ! $holder || $holder === $uid || (int) $time <= time() - 150 ) {
+		return null;
+	}
+	$user = minn_get_user_by_id( $holder );
+	return array(
+		'user' => $holder,
+		'name' => $user ? $user['display_name'] : 'Someone',
+	);
 }
 
 /** Edit-context links: the view links plus cap-gated wp:action-* entries. */
@@ -955,6 +1004,10 @@ function minn_rest_dispatch( string $route ): void {
 	$route  = '/' . trim( $route, '/' );
 	$method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
+	if ( str_starts_with( $route, '/minn-admin/v1/' ) ) {
+		minn_v1_dispatch( $route, $method );
+		minn_rest_error( 'rest_no_route', 'No route was found matching the URL and request method.', 404 );
+	}
 	if ( preg_match( '#^/wp/v2/(posts|pages)$#', $route, $m ) ) {
 		$type = 'posts' === $m[1] ? 'post' : 'page';
 		if ( 'POST' === $method ) {

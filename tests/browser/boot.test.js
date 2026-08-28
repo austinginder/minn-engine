@@ -61,7 +61,18 @@ const ok = ( c, label, detail = '' ) => {
 		ok( boot && boot.user && boot.user.login === USER || ( boot && boot.user ), 'window.MINN carries the signed-in user' );
 		ok( boot && typeof boot.engine === 'string' && boot.engine.includes( 'Minn Engine' ), 'boot payload is engine-issued', boot ? boot.engine : 'no boot' );
 
-		// 4. Open Content the way a user does and confirm rows load from wp/v2
+		// 4. The Overview dashboard lights up from minn-admin/v1: greeting,
+		//    stats cards and the recent-activity feed all come from the engine.
+		await page.waitForTimeout( 2500 );
+		const dash = await page.evaluate( () => {
+			const el = document.querySelector( '#minn-view' ) || document.querySelector( '.minn-main' ) || document.body;
+			return el.innerText;
+		} );
+		ok( /Good (morning|afternoon|evening)/.test( dash ), 'dashboard greeting renders', dash.slice( 0, 120 ) );
+		ok( /Published posts/i.test( dash ) && /Media files/i.test( dash ), 'overview stats cards render from minn-admin/v1' );
+		ok( /published|drafted|commented/i.test( dash ), 'recent activity feed renders' );
+
+		// 5. Open Content the way a user does and confirm rows load from wp/v2
 		//    through the engine (drafts included, proving the edit-context list).
 		await page.click( 'text=Content' ).catch( () => {} );
 		await page.waitForTimeout( 3000 );
@@ -72,7 +83,7 @@ const ok = ( c, label, detail = '' ) => {
 		ok( /Hello world|Building in the open|Texturize|Scribe/i.test( view ), 'content view lists engine posts', view.slice( 0, 120 ) );
 		ok( /Draft/i.test( view ) && /Published/i.test( view ), 'content view shows draft and published statuses (edit context)' );
 
-		// 5. No fatal errors during the whole boot + navigation.
+		// 6. No fatal errors during the whole boot + navigation.
 		const fatal = errors.filter( ( e ) => ! /favicon|manifest\.json|minn-admin\/v1|admin-ajax|404|Failed to load resource/i.test( e ) );
 		ok( fatal.length === 0, 'no fatal console or page errors', fatal.slice( 0, 4 ).join( '\n      ' ) );
 		if ( errors.length ) {

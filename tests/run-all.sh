@@ -5,10 +5,16 @@ set -u
 cd "$( dirname "$0" )"
 
 failed=0
-for suite in rest-posts auth caps writes login-endpoint rest-parity; do
+for suite in rest-posts auth caps writes login-endpoint rest-parity minn-v1; do
 	printf '\n=== %s ===\n' "$suite"
 	php "$suite.test.php" || failed=1
 done
+
+# Browser test (Minn Admin boot). Needs the app symlink + system Chrome.
+if [ -d browser/node_modules ]; then
+	printf "\n=== browser: minn-admin boot ===\n"
+	MINN_ADMIN_PASS="${MINN_ADMIN_PASS:-password}" node browser/boot.test.js || failed=1
+fi
 
 printf '\n'
 if [ "$failed" -eq 0 ]; then
@@ -17,9 +23,3 @@ else
 	echo "One or more suites FAILED."
 fi
 exit "$failed"
-
-# Browser test (Minn Admin boot). Needs the app symlink + system Chrome.
-if [ -d browser/node_modules ]; then
-	printf "\n=== browser: minn-admin boot ===\n"
-	MINN_ADMIN_PASS="${MINN_ADMIN_PASS:-password}" node browser/boot.test.js || failed=1
-fi
