@@ -100,7 +100,16 @@ What the generator reproduces from theme.json, checked against the reference by
 `tests/styles.test.php`: every `--wp--preset--*` custom property (core default colours,
 gradients, shadows, and aspect ratios from `public/minn/data/presets.json` plus the theme's
 palette, font sizes, families, spacing, shadows) and every `has-*` preset class,
-byte for byte. Fluid font sizes become `clamp(min, min + ((1vw - 0.2rem) * f), max)`
+byte for byte. A preset list saved by the site editor is keyed by origin
+(`default`, `theme`, `custom`) rather than written flat; the reference prints the
+origins in that order, and the engine flattens both shapes the same way (the dogfood
+site's saved styles carry `fontFamilies: {theme: [...], custom: []}`, which printed one
+empty `--wp--preset--font-family--` property before this was learned). Families that
+declare `fontFace` entries also print `<style class="wp-fonts-local">` at the end of
+the head: one `@font-face` per face, `font-family` (quoted only when it has a space),
+`font-style`, `font-weight`, `font-display: fallback`, then `src` with `file:./` resolved
+against the theme that carries the file (child first) and the format named from the
+extension. Every declared face prints, used or not, in theme.json order. Fluid font sizes become `clamp(min, min + ((1vw - 0.2rem) * f), max)`
 where f scales between a 320px viewport and the theme's wide size. Root styles land on
 `body`, and under `useRootPaddingAwareAlignments` the root padding becomes the
 `--wp--style--root--padding-*` properties rather than body padding. Elements (`link`,

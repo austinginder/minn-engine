@@ -59,17 +59,117 @@ final readonly class GlobalStyles
     {
         $core = (array) json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/presets.json'), true);
         $merge = static fn (array $defaults, array $own, string $key) => [...$defaults, ...array_map(static fn (array $p) => ['slug' => (string) $p['slug'], 'value' => (string) $p[$key]], $own)];
-        $fontSizes = (array) ($settings['typography']['fontSizes'] ?? []);
-        $spacing = (array) ($settings['spacing']['spacingSizes'] ?? []);
+        $fontSizes = self::presetList($settings['typography']['fontSizes'] ?? []);
+        $spacing = self::presetList($settings['spacing']['spacingSizes'] ?? []);
         return [
             'aspect-ratio' => $core['aspect-ratio'] ?? [],
-            'color' => $merge($core['color'] ?? [], (array) ($settings['color']['palette'] ?? []), 'color'),
-            'gradient' => $merge($core['gradient'] ?? [], (array) ($settings['color']['gradients'] ?? []), 'gradient'),
+            'color' => $merge($core['color'] ?? [], self::presetList($settings['color']['palette'] ?? []), 'color'),
+            'gradient' => $merge($core['gradient'] ?? [], self::presetList($settings['color']['gradients'] ?? []), 'gradient'),
             'font-size' => array_map(static fn (array $p) => ['slug' => (string) $p['slug'], 'value' => self::fluidFontSize($p, $settings)], $fontSizes),
-            'font-family' => array_map(static fn (array $p) => ['slug' => (string) $p['slug'], 'value' => (string) $p['fontFamily']], (array) ($settings['typography']['fontFamilies'] ?? [])),
+            'font-family' => array_map(static fn (array $p) => ['slug' => (string) $p['slug'], 'value' => (string) $p['fontFamily']], self::fontFamilies($settings)),
             'spacing' => array_map(static fn (array $p) => ['slug' => (string) $p['slug'], 'value' => (string) $p['size']], $spacing),
-            'shadow' => $merge($core['shadow'] ?? [], (array) ($settings['shadow']['presets'] ?? []), 'shadow'),
+            'shadow' => $merge($core['shadow'] ?? [], self::presetList($settings['shadow']['presets'] ?? []), 'shadow'),
         ];
+    }
+
+    /**
+     * A preset list as theme.json writes it is a plain list; as the site
+     * editor saves it, it is keyed by origin (default, theme, custom). The
+     * reference prints the origins in that order, so the two shapes flatten
+     * to one list here.
+     *
+     * @return list<array>
+     */
+    public static function presetList(mixed $presets): array
+    {
+        if (!is_array($presets)) {
+            return [];
+        }
+        if (array_is_list($presets)) {
+            return array_values(array_filter($presets, 'is_array'));
+        }
+        $out = [];
+        foreach (['default', 'theme', 'custom'] as $origin) {
+            foreach ((array) ($presets[$origin] ?? []) as $preset) {
+                if (is_array($preset)) {
+                    $out[] = $preset;
+                }
+            }
+        }
+        return $out;
+    }
+
+    /** @return list<array> */
+    public static function fontFamilies(array $settings): array
+    {
+        return self::presetList($settings['typography']['fontFamilies'] ?? []);
+    }
+
+    /**
+     * The @font-face rules for every family that declares font files, as
+     * the reference prints them in its own style element: family (quoted
+     * when it has a space), style, weight, display, then the sources with
+     * file:./ resolved against the theme that carries the file and the
+     * format named from the extension. Families without files print
+     * nothing.
+     */
+    public function fontFaces(): string
+    {
+        $json = $this->user === null ? $this->theme->json() : Theme::merge($this->theme->json(), $this->user);
+        $out = '';
+        foreach (self::fontFamilies((array) ($json['settings'] ?? [])) as $family) {
+            foreach ((array) ($family['fontFace'] ?? []) as $face) {
+                if (!is_array($face) || !isset($face['fontFamily'])) {
+                    continue;
+                }
+                $sources = [];
+                foreach ((array) ($face['src'] ?? []) as $src) {
+                    $url = $this->fontUrl((string) $src);
+                    if ($url !== null) {
+                        $sources[] = "url('" . $url . "') format('" . self::fontFormat($url) . "')";
+                    }
+                }
+                if ($sources === []) {
+                    continue;
+                }
+                $name = (string) $face['fontFamily'];
+                $out .= '@font-face{font-family:' . (preg_match('/^[\w-]+$/', $name) ? $name : '"' . str_replace('"', '', $name) . '"')
+                    . ';font-style:' . Styles::value((string) ($face['fontStyle'] ?? 'normal'))
+                    . ';font-weight:' . Styles::value((string) ($face['fontWeight'] ?? '400'))
+                    . ';font-display:' . Styles::value((string) ($face['fontDisplay'] ?? 'fallback'))
+                    . ';src:' . implode(', ', $sources) . ";}\n";
+            }
+        }
+        return $out;
+    }
+
+    private function fontUrl(string $src): ?string
+    {
+        if (!str_starts_with($src, 'file:./')) {
+            return preg_match('#^https?://[^\s\'"()]+$#', $src) ? $src : null;
+        }
+        $relative = substr($src, 7);
+        if ($relative === '' || str_contains($relative, '..') || !preg_match('#^[\w./-]+$#', $relative)) {
+            return null;
+        }
+        for ($theme = $this->theme; $theme !== null; $theme = $theme->parent) {
+            if (is_file("{$theme->dir}/{$relative}")) {
+                return "{$theme->uri}/{$relative}";
+            }
+        }
+        return null;
+    }
+
+    private static function fontFormat(string $url): string
+    {
+        return match (strtolower(pathinfo(parse_url($url, PHP_URL_PATH) ?: '', PATHINFO_EXTENSION))) {
+            'woff' => 'woff',
+            'ttf' => 'truetype',
+            'otf' => 'opentype',
+            'eot' => 'embedded-opentype',
+            'svg' => 'svg',
+            default => 'woff2',
+        };
     }
 
     /**

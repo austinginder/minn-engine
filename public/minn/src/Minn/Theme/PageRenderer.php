@@ -118,7 +118,9 @@ final readonly class PageRenderer
         $bodyClass = implode(' ', $this->bodyClasses($resolution, $coreClasses));
         // The stylesheet comes after the body: it lists the containers and
         // variations that rendering discovered.
-        $globalStyles = (new GlobalStyles($this->theme, $this->templates->userStyles()))->css();
+        $styles = new GlobalStyles($this->theme, $this->templates->userStyles());
+        $globalStyles = $styles->css();
+        $fontFaces = $styles->fontFaces();
         $themeStyle = $this->theme->styleUri();
 
         $title = Extensions::seams()?->applyTitle($title) ?? $title;
@@ -131,6 +133,7 @@ final readonly class PageRenderer
             . '<style id="global-styles-inline-css">' . "\n" . $globalStyles . "\n" . '</style>' . "\n"
             . ($themeStyle === null ? '' : '<link rel="stylesheet" id="' . Html::attr($this->theme->slug) . '-style-css" href="' . Html::attr($themeStyle) . '" />' . "\n")
             . (Extensions::seams()?->renderHead() ?? '')
+            . ($fontFaces === '' ? '' : '<style class="wp-fonts-local">' . "\n" . $fontFaces . '</style>' . "\n")
             . '</head>' . "\n"
             . '<body class="' . Html::attr($bodyClass) . '">' . "\n"
             . '<a class="skip-link screen-reader-text" id="wp-skip-link" href="#wp--skip-link--target">Skip to content</a>'
