@@ -1008,6 +1008,26 @@ function minn_rest_dispatch( string $route ): void {
 		minn_v1_dispatch( $route, $method );
 		minn_rest_error( 'rest_no_route', 'No route was found matching the URL and request method.', 404 );
 	}
+	if ( '/wp/v2/comments' === $route ) {
+		if ( 'POST' === $method ) {
+			minn_rest_comments_create();
+		}
+		if ( 'GET' === $method ) {
+			minn_rest_comments_list();
+		}
+	}
+	if ( preg_match( '#^/wp/v2/comments/(\d+)$#', $route, $m ) ) {
+		$cid = (int) $m[1];
+		if ( 'POST' === $method || 'PUT' === $method || 'PATCH' === $method ) {
+			minn_rest_comments_update( $cid );
+		}
+		if ( 'DELETE' === $method ) {
+			minn_rest_comments_delete( $cid, filter_var( $_GET['force'] ?? false, FILTER_VALIDATE_BOOLEAN ) );
+		}
+		if ( 'GET' === $method ) {
+			minn_rest_comments_single( $cid );
+		}
+	}
 	if ( preg_match( '#^/wp/v2/(posts|pages)$#', $route, $m ) ) {
 		$type = 'posts' === $m[1] ? 'post' : 'page';
 		if ( 'POST' === $method ) {

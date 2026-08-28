@@ -83,7 +83,19 @@ const ok = ( c, label, detail = '' ) => {
 		ok( /Hello world|Building in the open|Texturize|Scribe/i.test( view ), 'content view lists engine posts', view.slice( 0, 120 ) );
 		ok( /Draft/i.test( view ) && /Published/i.test( view ), 'content view shows draft and published statuses (edit context)' );
 
-		// 6. No fatal errors during the whole boot + navigation.
+		// 6. The Comments view lists the fixture comment via wp/v2/comments
+		//    (the view lands on the Pending tab; the fixture comment is approved).
+		await page.click( 'text=Comments' ).catch( () => {} );
+		await page.waitForTimeout( 1500 );
+		await page.click( 'text=Approved' ).catch( () => {} );
+		await page.waitForTimeout( 2500 );
+		const comments = await page.evaluate( () => {
+			const el = document.querySelector( '#minn-view' ) || document.querySelector( '.minn-main' ) || document.body;
+			return el.innerText;
+		} );
+		ok( /A WordPress Commenter/i.test( comments ), 'comments view lists engine comments', comments.slice( 0, 160 ) );
+
+		// 7. No fatal errors during the whole boot + navigation.
 		const fatal = errors.filter( ( e ) => ! /favicon|manifest\.json|minn-admin\/v1|admin-ajax|404|Failed to load resource/i.test( e ) );
 		ok( fatal.length === 0, 'no fatal console or page errors', fatal.slice( 0, 4 ).join( '\n      ' ) );
 		if ( errors.length ) {
