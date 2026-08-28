@@ -175,6 +175,10 @@ check( 200 === $st && true === ( $b['acquired'] ?? null ), 'engine acquires the 
 ed_parity( 'the other user sees the lock holder', 'rest_route=' . rawurlencode( '/wp/v2/posts/1' ) . '&context=edit&_fields=id,minn_lock', $editor );
 [ , $b ] = ed_fetch( $ENGINE, 'rest_route=' . rawurlencode( '/wp/v2/posts/1' ) . '&context=edit&_fields=minn_lock', $editor );
 check( 'admin' === ( $b['minn_lock']['name'] ?? '' ), 'minn_lock names the admin' );
+[ $st, $b ] = ed_fetch( $ENGINE, 'rest_route=' . rawurlencode( '/minn-admin/v1/posts/1/unlock' ), $admin, 'POST', '{}' );
+check( 200 === $st && true === ( $b['unlocked'] ?? null ), 'engine releases the lock' );
+[ , $b ] = ed_fetch( $ENGINE, 'rest_route=' . rawurlencode( '/wp/v2/posts/1' ) . '&context=edit&_fields=minn_lock', $editor );
+check( is_array( $b ) && array_key_exists( 'minn_lock', $b ) && null === $b['minn_lock'], 'the lock is gone for the other user' );
 
 echo "\n$pass passed, $fail failed\n";
 exit( $fail > 0 ? 1 : 0 );

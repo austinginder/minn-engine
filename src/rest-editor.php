@@ -166,6 +166,15 @@ function minn_v1_editor_dispatch( string $route, string $method ): void {
 		}
 		minn_rest_error( 'rest_cannot_edit', 'Sorry, you are not allowed to edit this post.', 403 );
 	}
+	if ( preg_match( '#^/minn-admin/v1/posts/(\d+)/unlock$#', $route, $m ) && 'POST' === $method ) {
+		[ , $uid ] = minn_v1_require();
+		$id = (int) $m[1];
+		if ( minn_user_can( $uid, 'edit_post', $id ) ) {
+			minn_delete_post_meta( $id, '_edit_lock' );
+			minn_rest_send( array( 'unlocked' => true ) );
+		}
+		minn_rest_error( 'rest_cannot_edit', 'Sorry, you are not allowed to edit this post.', 403 );
+	}
 	if ( '/minn-admin/v1/templates' === $route && 'GET' === $method ) {
 		minn_v1_require();
 		// No theme, no page templates. Honest empty set.
