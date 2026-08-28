@@ -1,5 +1,117 @@
 [
   {
+    "id": 11,
+    "date": "2026-08-28T02:58:06",
+    "date_gmt": "2026-08-28T02:58:06",
+    "guid": {
+      "rendered": "https://minn-engine.localhost/?p=11"
+    },
+    "modified": "2026-08-28T02:58:06",
+    "modified_gmt": "2026-08-28T02:58:06",
+    "slug": "scribe-published",
+    "status": "publish",
+    "type": "post",
+    "link": "http://127.0.0.1:8123/?p=11",
+    "title": {
+      "rendered": "Scribe published"
+    },
+    "content": {
+      "rendered": "",
+      "protected": false
+    },
+    "excerpt": {
+      "rendered": "",
+      "protected": false
+    },
+    "author": 3,
+    "featured_media": 0,
+    "comment_status": "open",
+    "ping_status": "open",
+    "sticky": false,
+    "template": "",
+    "format": "standard",
+    "meta": {
+      "footnotes": ""
+    },
+    "categories": [
+      1
+    ],
+    "tags": [],
+    "class_list": [
+      "post-11",
+      "post",
+      "type-post",
+      "status-publish",
+      "format-standard",
+      "hentry",
+      "category-uncategorized"
+    ],
+    "_links": {
+      "self": [
+        {
+          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/posts/11",
+          "targetHints": {
+            "allow": [
+              "GET"
+            ]
+          }
+        }
+      ],
+      "collection": [
+        {
+          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/posts"
+        }
+      ],
+      "about": [
+        {
+          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/types/post"
+        }
+      ],
+      "author": [
+        {
+          "embeddable": true,
+          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/users/3"
+        }
+      ],
+      "replies": [
+        {
+          "embeddable": true,
+          "href": "http://127.0.0.1:8123/index.php?rest_route=%2Fwp%2Fv2%2Fcomments&post=11"
+        }
+      ],
+      "version-history": [
+        {
+          "count": 0,
+          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/posts/11/revisions"
+        }
+      ],
+      "wp:attachment": [
+        {
+          "href": "http://127.0.0.1:8123/index.php?rest_route=%2Fwp%2Fv2%2Fmedia&parent=11"
+        }
+      ],
+      "wp:term": [
+        {
+          "taxonomy": "category",
+          "embeddable": true,
+          "href": "http://127.0.0.1:8123/index.php?rest_route=%2Fwp%2Fv2%2Fcategories&post=11"
+        },
+        {
+          "taxonomy": "post_tag",
+          "embeddable": true,
+          "href": "http://127.0.0.1:8123/index.php?rest_route=%2Fwp%2Fv2%2Ftags&post=11"
+        }
+      ],
+      "curies": [
+        {
+          "name": "wp",
+          "href": "https://api.w.org/{rel}",
+          "templated": true
+        }
+      ]
+    }
+  },
+  {
     "id": 9,
     "date": "2026-08-28T02:53:48",
     "date_gmt": "2026-08-28T02:53:48",
