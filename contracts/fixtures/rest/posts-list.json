@@ -1,5 +1,117 @@
 [
   {
+    "id": 9,
+    "date": "2026-08-28T02:53:48",
+    "date_gmt": "2026-08-28T02:53:48",
+    "guid": {
+      "rendered": "https://minn-engine.localhost/?p=9"
+    },
+    "modified": "2026-08-28T02:53:48",
+    "modified_gmt": "2026-08-28T02:53:48",
+    "slug": "editor-authored-post",
+    "status": "publish",
+    "type": "post",
+    "link": "http://127.0.0.1:8123/?p=9",
+    "title": {
+      "rendered": "Editor authored post"
+    },
+    "content": {
+      "rendered": "\n<p class=\"wp-block-paragraph\">Second author for the users contract.</p>\n",
+      "protected": false
+    },
+    "excerpt": {
+      "rendered": "<p>Second author for the users contract.</p>\n",
+      "protected": false
+    },
+    "author": 2,
+    "featured_media": 0,
+    "comment_status": "open",
+    "ping_status": "open",
+    "sticky": false,
+    "template": "",
+    "format": "standard",
+    "meta": {
+      "footnotes": ""
+    },
+    "categories": [
+      1
+    ],
+    "tags": [],
+    "class_list": [
+      "post-9",
+      "post",
+      "type-post",
+      "status-publish",
+      "format-standard",
+      "hentry",
+      "category-uncategorized"
+    ],
+    "_links": {
+      "self": [
+        {
+          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/posts/9",
+          "targetHints": {
+            "allow": [
+              "GET"
+            ]
+          }
+        }
+      ],
+      "collection": [
+        {
+          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/posts"
+        }
+      ],
+      "about": [
+        {
+          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/types/post"
+        }
+      ],
+      "author": [
+        {
+          "embeddable": true,
+          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/users/2"
+        }
+      ],
+      "replies": [
+        {
+          "embeddable": true,
+          "href": "http://127.0.0.1:8123/index.php?rest_route=%2Fwp%2Fv2%2Fcomments&post=9"
+        }
+      ],
+      "version-history": [
+        {
+          "count": 0,
+          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/posts/9/revisions"
+        }
+      ],
+      "wp:attachment": [
+        {
+          "href": "http://127.0.0.1:8123/index.php?rest_route=%2Fwp%2Fv2%2Fmedia&parent=9"
+        }
+      ],
+      "wp:term": [
+        {
+          "taxonomy": "category",
+          "embeddable": true,
+          "href": "http://127.0.0.1:8123/index.php?rest_route=%2Fwp%2Fv2%2Fcategories&post=9"
+        },
+        {
+          "taxonomy": "post_tag",
+          "embeddable": true,
+          "href": "http://127.0.0.1:8123/index.php?rest_route=%2Fwp%2Fv2%2Ftags&post=9"
+        }
+      ],
+      "curies": [
+        {
+          "name": "wp",
+          "href": "https://api.w.org/{rel}",
+          "templated": true
+        }
+      ]
+    }
+  },
+  {
     "id": 8,
     "date": "2026-08-28T02:42:28",
     "date_gmt": "2026-08-28T02:42:28",

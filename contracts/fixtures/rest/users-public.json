@@ -1,0 +1,64 @@
+[
+  {
+    "id": 1,
+    "name": "admin",
+    "url": "https://minn-engine.localhost",
+    "description": "",
+    "link": "http://127.0.0.1:8123/?author=1",
+    "slug": "admin",
+    "avatar_urls": {
+      "24": "https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=24&d=mm&r=g",
+      "48": "https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=48&d=mm&r=g",
+      "96": "https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=96&d=mm&r=g"
+    },
+    "meta": [],
+    "_links": {
+      "self": [
+        {
+          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/users/1",
+          "targetHints": {
+            "allow": [
+              "GET"
+            ]
+          }
+        }
+      ],
+      "collection": [
+        {
+          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/users"
+        }
+      ]
+    }
+  },
+  {
+    "id": 2,
+    "name": "Erin Editor",
+    "url": "",
+    "description": "",
+    "link": "http://127.0.0.1:8123/?author=2",
+    "slug": "editor",
+    "avatar_urls": {
+      "24": "https://secure.gravatar.com/avatar/ef41879e2570db22142e8bb8dca3613f0aab3fe1eba5ff7249a9b64ed226a610?s=24&d=mm&r=g",
+      "48": "https://secure.gravatar.com/avatar/ef41879e2570db22142e8bb8dca3613f0aab3fe1eba5ff7249a9b64ed226a610?s=48&d=mm&r=g",
+      "96": "https://secure.gravatar.com/avatar/ef41879e2570db22142e8bb8dca3613f0aab3fe1eba5ff7249a9b64ed226a610?s=96&d=mm&r=g"
+    },
+    "meta": [],
+    "_links": {
+      "self": [
+        {
+          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/users/2",
+          "targetHints": {
+            "allow": [
+              "GET"
+            ]
+          }
+        }
+      ],
+      "collection": [
+        {
+          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/users"
+        }
+      ]
+    }
+  }
+]

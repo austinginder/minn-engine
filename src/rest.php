@@ -8,7 +8,8 @@
  * the Tier 1 contract; the implementation is original.
  *
  * Scope so far (view context, GET only): posts, pages, categories, tags,
- * types, and the _fields response filter. Known gaps are listed in
+ * types, users (with cookie + nonce authentication), and the _fields
+ * response filter. Known gaps are listed in
  * contracts/rest/posts.md.
  */
 
@@ -631,6 +632,109 @@ function minn_rest_types_single( string $slug ): void {
 	minn_rest_send( $types[ $slug ] );
 }
 
+
+/* ----------------------------------------------------------------- users */
+
+/** Gravatar URLs in the sizes the reference emits (sha256 of the email). */
+function minn_avatar_urls( string $email ): array {
+	$hash = hash( 'sha256', strtolower( trim( $email ) ) );
+	$out  = array();
+	foreach ( array( 24, 48, 96 ) as $size ) {
+		$out[ (string) $size ] = 'https://secure.gravatar.com/avatar/' . $hash . '?s=' . $size . '&d=mm&r=g';
+	}
+	return $out;
+}
+
+/** One wp/v2 user object in view context (the only public shape). */
+function minn_rest_user_object( array $u, bool $is_self = false ): array {
+	$id = (int) $u['ID'];
+	return array(
+		'id'          => $id,
+		'name'        => $u['display_name'],
+		'url'         => $u['user_url'],
+		'description' => minn_user_meta( $id, 'description' ) ?? '',
+		'link'        => minn_home_url( '/?author=' . $id ),
+		'slug'        => $u['user_nicename'],
+		'avatar_urls' => minn_avatar_urls( $u['user_email'] ),
+		'meta'        => array(),
+		'_links'      => array(
+			'self'       => array(
+				array(
+					'href'        => minn_rest_url( '/wp/v2/users/' . $id ),
+					// An authenticated caller viewing their own record sees the
+					// write verbs advertised in targetHints.
+					'targetHints' => array(
+						'allow' => $is_self
+							? array( 'GET', 'POST', 'PUT', 'PATCH', 'DELETE' )
+							: array( 'GET' ),
+					),
+				),
+			),
+			'collection' => array( array( 'href' => minn_rest_url( '/wp/v2/users' ) ) ),
+		),
+	);
+}
+
+/** Users who have authored published content are public. */
+function minn_rest_users_list(): void {
+	global $table_prefix;
+	$per_page = max( 1, min( 100, (int) ( $_GET['per_page'] ?? 10 ) ) );
+	$page     = max( 1, (int) ( $_GET['page'] ?? 1 ) );
+	$offset   = ( $page - 1 ) * $per_page;
+
+	$where = "u.ID IN ( SELECT post_author FROM {$table_prefix}posts
+	          WHERE post_status = 'publish' AND post_type IN ('post','page') )";
+	$total = (int) minn_db()->query( "SELECT COUNT(*) FROM {$table_prefix}users u WHERE $where" )->fetch_row()[0];
+
+	$stmt = minn_db()->prepare(
+		"SELECT u.* FROM {$table_prefix}users u WHERE $where ORDER BY u.display_name ASC LIMIT ?, ?"
+	);
+	$stmt->bind_param( 'ii', $offset, $per_page );
+	$stmt->execute();
+	$rows = $stmt->get_result()->fetch_all( MYSQLI_ASSOC );
+
+	$self = minn_current_user_id();
+	header( 'X-WP-Total: ' . $total );
+	header( 'X-WP-TotalPages: ' . (int) ceil( $total / $per_page ) );
+	minn_rest_send(
+		array_map( static fn( $u ) => minn_rest_user_object( $u, (int) $u['ID'] === $self ), $rows ),
+		200,
+		true
+	);
+}
+
+function minn_rest_users_single( int $id ): void {
+	$u = minn_get_user_by_id( $id );
+	if ( ! $u ) {
+		minn_rest_error( 'rest_user_invalid_id', 'Invalid user ID.', 404 );
+	}
+	minn_rest_send( minn_rest_user_object( $u, minn_current_user_id() === $id ) );
+}
+
+/** GET /wp/v2/users/me — requires a valid cookie AND a valid wp_rest nonce. */
+function minn_rest_users_me(): void {
+	$why  = '';
+	$auth = minn_authenticate_rest( $why );
+	if ( null === $auth ) {
+		if ( 'rest_cookie_invalid_nonce' === $why ) {
+			minn_rest_error( 'rest_cookie_invalid_nonce', 'Cookie check failed', 403 );
+		}
+		minn_rest_error( 'rest_not_logged_in', 'You are not currently logged in.', 401 );
+	}
+	minn_rest_send( minn_rest_user_object( $auth[0], true ) );
+}
+
+/** Authenticated user id for this request, or 0. Resolved once. */
+function minn_current_user_id(): int {
+	static $uid = null;
+	if ( null === $uid ) {
+		$why  = '';
+		$auth = minn_authenticate_rest( $why );
+		$uid  = $auth ? (int) $auth[0]['ID'] : 0;
+	}
+	return $uid;
+}
+
 /* -------------------------------------------------------------- dispatch */
 
 function minn_rest_dispatch( string $route ): void {
@@ -650,6 +754,15 @@ function minn_rest_dispatch( string $route ): void {
 	}
 	if ( preg_match( '#^/wp/v2/(categories|tags)/(\d+)$#', $route, $m ) ) {
 		minn_rest_terms_single( $m[1], (int) $m[2] );
+	}
+	if ( '/wp/v2/users/me' === $route ) {
+		minn_rest_users_me();
+	}
+	if ( '/wp/v2/users' === $route ) {
+		minn_rest_users_list();
+	}
+	if ( preg_match( '#^/wp/v2/users/(\\d+)$#', $route, $m ) ) {
+		minn_rest_users_single( (int) $m[1] );
 	}
 	if ( '/wp/v2/types' === $route ) {
 		minn_rest_types_list();
