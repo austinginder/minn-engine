@@ -728,26 +728,58 @@ function minn_rest_user_object( array $u, bool $is_self = false ): array {
 /** Users who have authored published content are public. */
 function minn_rest_users_list(): void {
 	global $table_prefix;
+	$self    = minn_current_user_id();
+	$context = ( $_GET['context'] ?? 'view' ) === 'edit' ? 'edit' : 'view';
+	if ( 'edit' === $context && ! minn_user_can( $self, 'list_users' ) ) {
+		minn_rest_error( 'rest_forbidden_context', 'Sorry, you are not allowed to edit users.', $self ? 403 : 401 );
+	}
 	$per_page = max( 1, min( 100, (int) ( $_GET['per_page'] ?? 10 ) ) );
 	$page     = max( 1, (int) ( $_GET['page'] ?? 1 ) );
 	$offset   = ( $page - 1 ) * $per_page;
+	$order    = strtoupper( (string) ( $_GET['order'] ?? 'asc' ) ) === 'DESC' ? 'DESC' : 'ASC';
+	$orderby  = array(
+		'id'              => 'u.ID',
+		'name'            => 'u.display_name',
+		'registered_date' => 'u.user_registered',
+		'slug'            => 'u.user_nicename',
+		'email'           => 'u.user_email',
+	)[ (string) ( $_GET['orderby'] ?? 'name' ) ] ?? 'u.display_name';
 
-	$where = "u.ID IN ( SELECT post_author FROM {$table_prefix}posts
-	          WHERE post_status = 'publish' AND post_type IN ('post','page') )";
-	$total = (int) minn_db()->query( "SELECT COUNT(*) FROM {$table_prefix}users u WHERE $where" )->fetch_row()[0];
+	// View context lists only published authors; edit context lists everyone.
+	$where = 'edit' === $context
+		? '1 = 1'
+		: "u.ID IN ( SELECT post_author FROM {$table_prefix}posts
+		  WHERE post_status = 'publish' AND post_type IN ('post','page') )";
+	$args  = array();
+	$types = '';
+	if ( ! empty( $_GET['include'] ) ) {
+		$ids = array_filter( array_map( 'intval', explode( ',', (string) $_GET['include'] ) ) );
+		if ( $ids ) {
+			$where .= ' AND u.ID IN (' . implode( ',', array_fill( 0, count( $ids ), '?' ) ) . ')';
+			$args   = $ids;
+			$types  = str_repeat( 'i', count( $ids ) );
+		}
+	}
+	$stmt = minn_db()->prepare( "SELECT COUNT(*) FROM {$table_prefix}users u WHERE $where" );
+	if ( $types ) {
+		$stmt->bind_param( $types, ...$args );
+	}
+	$stmt->execute();
+	$total = (int) $stmt->get_result()->fetch_row()[0];
 
 	$stmt = minn_db()->prepare(
-		"SELECT u.* FROM {$table_prefix}users u WHERE $where ORDER BY u.display_name ASC LIMIT ?, ?"
+		"SELECT u.* FROM {$table_prefix}users u WHERE $where ORDER BY $orderby $order LIMIT ?, ?"
 	);
-	$stmt->bind_param( 'ii', $offset, $per_page );
+	$stmt->bind_param( $types . 'ii', ...array_merge( $args, array( $offset, $per_page ) ) );
 	$stmt->execute();
 	$rows = $stmt->get_result()->fetch_all( MYSQLI_ASSOC );
 
-	$self = minn_current_user_id();
 	header( 'X-WP-Total: ' . $total );
 	header( 'X-WP-TotalPages: ' . (int) ceil( $total / $per_page ) );
 	minn_rest_send(
-		array_map( static fn( $u ) => minn_rest_user_object( $u, (int) $u['ID'] === $self ), $rows ),
+		'edit' === $context
+			? array_map( 'minn_rest_user_object_edit', $rows )
+			: array_map( static fn( $u ) => minn_rest_user_object( $u, (int) $u['ID'] === $self ), $rows ),
 		200,
 		true
 	);
@@ -758,7 +790,14 @@ function minn_rest_users_single( int $id ): void {
 	if ( ! $u ) {
 		minn_rest_error( 'rest_user_invalid_id', 'Invalid user ID.', 404 );
 	}
-	minn_rest_send( minn_rest_user_object( $u, minn_current_user_id() === $id ) );
+	$self = minn_current_user_id();
+	if ( ( $_GET['context'] ?? 'view' ) === 'edit' ) {
+		if ( $self !== $id && ! minn_user_can( $self, 'list_users' ) ) {
+			minn_rest_error( 'rest_forbidden_context', 'Sorry, you are not allowed to edit this user.', $self ? 403 : 401 );
+		}
+		minn_rest_send( minn_rest_user_object_edit( $u ) );
+	}
+	minn_rest_send( minn_rest_user_object( $u, $self === $id ) );
 }
 
 /**
@@ -776,6 +815,11 @@ function minn_rest_user_object_edit( array $u ): array {
 		$allcaps[ $role ] = true;
 	}
 	$locale = minn_user_meta( $id, 'locale' );
+	// The advertised verb set is capability-driven: everyone who reaches an
+	// edit-context object may write it, but DELETE needs delete_users.
+	if ( ! minn_user_can( minn_current_user_id(), 'delete_users' ) ) {
+		$obj['_links']['self'][0]['targetHints']['allow'] = array( 'GET', 'POST', 'PUT', 'PATCH' );
+	}
 
 	// Rebuild in the reference's edit-context key order.
 	return array(
@@ -1079,10 +1123,24 @@ function minn_rest_dispatch( string $route ): void {
 		minn_rest_users_me();
 	}
 	if ( '/wp/v2/users' === $route ) {
-		minn_rest_users_list();
+		if ( 'POST' === $method ) {
+			minn_rest_users_create();
+		}
+		if ( 'GET' === $method ) {
+			minn_rest_users_list();
+		}
 	}
 	if ( preg_match( '#^/wp/v2/users/(\\d+)$#', $route, $m ) ) {
-		minn_rest_users_single( (int) $m[1] );
+		$tid = (int) $m[1];
+		if ( 'POST' === $method || 'PUT' === $method || 'PATCH' === $method ) {
+			minn_rest_users_update( $tid );
+		}
+		if ( 'DELETE' === $method ) {
+			minn_rest_users_delete( $tid );
+		}
+		if ( 'GET' === $method ) {
+			minn_rest_users_single( $tid );
+		}
 	}
 	if ( 'GET' !== $method ) {
 		minn_rest_error( 'rest_no_route', 'No route was found matching the URL and request method.', 404 );
