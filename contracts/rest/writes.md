@@ -97,3 +97,37 @@ counts unchanged.
   reference's handling of reserved or hierarchical page slugs.
 - No `wp:action-*` link for pages' page-specific actions beyond the shared set.
 - Bulk writes, `meta` updates, and media uploads are out of scope here.
+
+## Extended write fields (milestone 15)
+
+Suite: `tests/write-fields.test.php` (18 checks, WordPress read-back on
+every write).
+
+- **Scheduling**: an explicit `date` is site-local; `status: publish` with
+  a future date stores as `future`, and on create the modified stamps
+  mirror the future date.
+- **Sticky**: rewrites the serialized `sticky_posts` option (reindexed
+  int list). Combined with a password in one request:
+  `400 rest_invalid_field` "A post can not be sticky and have a password."
+- **Password**: view-context content AND excerpt render as
+  `{ rendered: "", protected: true }`; edit context keeps the rendered
+  body with `protected: true`. `class_list` gains
+  `post-password-required` after the format class.
+- **Format**: assigns the `post_format` term (`post-format-{fmt}`,
+  created on demand with name = slug); `class_list` gains BOTH
+  `format-{fmt}` and, with the taxonomy classes at the end,
+  `post_format-post-format-{fmt}`.
+- **Author**: reassignment needs `edit_others_{type}s` →
+  `403 rest_cannot_edit_others`.
+- **Featured media**: `_thumbnail_id` meta; the object gains the
+  embeddable `wp:featuredmedia` link and the `has-post-thumbnail` class
+  (after the password class, before `hentry`); `featured_media: 0`
+  deletes the meta.
+- **Classic content**: a body without block delimiters renders through
+  the autop pipeline (`<p>…</p>\n`), not verbatim.
+- **Pages**: `parent` and `menu_order` columns; page edit-context action
+  links carry NO sticky or taxonomy actions (posts only).
+- **Edit-context self targetHints**: GET always, write verbs with
+  `edit_post`, DELETE with `delete_post` (the earlier suites stripped
+  `_links` and missed this).
+- `meta.footnotes`, `comment_status`/`ping_status` round-trip.

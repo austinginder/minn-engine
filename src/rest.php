@@ -187,6 +187,10 @@ function minn_texturize_run( string $t ): string {
  * texturized.
  */
 function minn_render_blocks( string $raw ): string {
+	// Classic content (no block delimiters) rides the autop pipeline.
+	if ( '' !== trim( $raw ) && ! str_contains( $raw, '<!-- wp:' ) && ! preg_match( '/<(p|div|ul|ol|h\d|blockquote|pre|table|figure)[\s>]/i', $raw ) ) {
+		return minn_comment_render( $raw );
+	}
 	$out = preg_replace_callback(
 		'/<!-- wp:paragraph( \{.*?\})? -->(.*?)<!-- \/wp:paragraph -->/s',
 		function ( $m ) {
@@ -325,12 +329,12 @@ function minn_rest_post_object( array $p ): array {
 		'link'         => minn_home_url( sprintf( $cfg['link'], $id ) ),
 		'title'        => array( 'rendered' => minn_texturize( $p['post_title'] ) ),
 		'content'      => array(
-			'rendered'  => minn_render_blocks( $p['post_content'] ),
-			'protected' => false,
+			'rendered'  => '' !== $p['post_password'] ? '' : minn_render_blocks( $p['post_content'] ),
+			'protected' => '' !== $p['post_password'],
 		),
 		'excerpt'      => array(
-			'rendered'  => minn_rendered_excerpt( $p ),
-			'protected' => false,
+			'rendered'  => '' !== $p['post_password'] ? '' : minn_rendered_excerpt( $p ),
+			'protected' => '' !== $p['post_password'],
 		),
 		'author'         => (int) $p['post_author'],
 		'featured_media' => (int) ( minn_post_meta_value( $id, '_thumbnail_id' ) ?? 0 ),
@@ -345,6 +349,12 @@ function minn_rest_post_object( array $p ): array {
 		$obj['ping_status']    = $p['ping_status'];
 		$obj['template']       = '';
 		$obj['meta']           = array( 'footnotes' => minn_post_meta_value( $id, 'footnotes' ) ?? '' );
+		if ( '' !== $p['post_password'] ) {
+			$class_list[] = 'post-password-required';
+		}
+		if ( $obj['featured_media'] > 0 ) {
+			$class_list[] = 'has-post-thumbnail';
+		}
 		$class_list[]          = 'hentry';
 	} else {
 		$cats       = minn_post_terms( $id, 'category' );
@@ -363,12 +373,21 @@ function minn_rest_post_object( array $p ): array {
 		$obj['tags']           = array_map( static fn( $t ) => (int) $t[0], $tags );
 
 		$class_list[] = 'format-' . $format;
+		if ( '' !== $p['post_password'] ) {
+			$class_list[] = 'post-password-required';
+		}
+		if ( $obj['featured_media'] > 0 ) {
+			$class_list[] = 'has-post-thumbnail';
+		}
 		$class_list[] = 'hentry';
 		foreach ( $cats as $c ) {
 			$class_list[] = 'category-' . $c[1];
 		}
 		foreach ( $tags as $t ) {
 			$class_list[] = 'tag-' . $t[1];
+		}
+		foreach ( $format_t as $f ) {
+			$class_list[] = 'post_format-' . $f[1];
 		}
 	}
 
@@ -416,6 +435,12 @@ function minn_rest_post_links( array $p ): array {
 			array(
 				'embeddable' => true,
 				'href'       => minn_rest_url( $base . '/' . (int) $p['post_parent'] ),
+			),
+		) : null,
+		'wp:featuredmedia' => ( (int) ( minn_post_meta_value( $id, '_thumbnail_id' ) ?? 0 ) ) > 0 ? array(
+			array(
+				'embeddable' => true,
+				'href'       => minn_rest_url( '/wp/v2/media/' . (int) minn_post_meta_value( $id, '_thumbnail_id' ) ),
 			),
 		) : null,
 		'wp:attachment'   => array(
@@ -952,13 +977,13 @@ function minn_rest_post_object_edit( array $p, int $uid ): array {
 	$view['content'] = array(
 		'raw'           => $p['post_content'],
 		'rendered'      => in_array( $p['post_status'], array( 'trash' ), true ) ? '' : minn_render_blocks( $p['post_content'] ),
-		'protected'     => false,
+		'protected'     => '' !== $p['post_password'],
 		'block_version' => str_contains( $p['post_content'], '<!-- wp:' ) ? 1 : 0,
 	);
 	$view['excerpt'] = array(
 		'raw'       => $p['post_excerpt'],
 		'rendered'  => minn_rendered_excerpt( $p ),
-		'protected' => false,
+		'protected' => '' !== $p['post_password'],
 	);
 
 	// Insert the editor-only fields in the reference's order (after status).
@@ -1040,6 +1065,15 @@ function minn_rest_post_links_edit( array $p, int $uid ): array {
 	$id    = (int) $p['ID'];
 	$type  = $p['post_type'];
 	$links = minn_rest_post_links( $p );
+	// The advertised verb set follows the caller's capabilities.
+	$allow = array( 'GET' );
+	if ( minn_user_can( $uid, 'edit_post', $id ) ) {
+		$allow = array( 'GET', 'POST', 'PUT', 'PATCH' );
+		if ( minn_user_can( $uid, 'delete_post', $id ) ) {
+			$allow[] = 'DELETE';
+		}
+	}
+	$links['self'][0]['targetHints']['allow'] = $allow;
 	// The author link is always present in edit context.
 	if ( ! isset( $links['author'] ) ) {
 		$links['author'] = array(
@@ -1059,18 +1093,23 @@ function minn_rest_post_links_edit( array $p, int $uid ): array {
 		$actions['wp:action-unfiltered-html'] = true;
 	}
 	if ( minn_user_can( $uid, $others ) ) {
-		$actions['wp:action-sticky']        = true;
+		if ( 'post' === $type ) {
+			$actions['wp:action-sticky'] = true;
+		}
 		$actions['wp:action-assign-author'] = true;
 	}
-	// Taxonomy actions: assign is broadly held; create is gated on manage.
-	if ( minn_user_can( $uid, 'manage_categories' ) ) {
-		$actions['wp:action-create-categories'] = true;
+	// Taxonomy actions belong to types with taxonomies (posts, not pages);
+	// assign is broadly held, create is gated per taxonomy.
+	if ( 'post' === $type ) {
+		if ( minn_user_can( $uid, 'manage_categories' ) ) {
+			$actions['wp:action-create-categories'] = true;
+		}
+		$actions['wp:action-assign-categories'] = true;
+		if ( minn_user_can( $uid, 'edit_posts' ) ) {
+			$actions['wp:action-create-tags'] = true;
+		}
+		$actions['wp:action-assign-tags'] = true;
 	}
-	$actions['wp:action-assign-categories'] = true;
-	if ( minn_user_can( $uid, 'edit_posts' ) ) {
-		$actions['wp:action-create-tags'] = true;
-	}
-	$actions['wp:action-assign-tags'] = true;
 
 	// Emit in the reference's alphabetical-by-suffix order.
 	$order = array(

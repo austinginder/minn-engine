@@ -52,6 +52,14 @@ function minn_rest_create_post( string $type ): void {
 
 	$body   = minn_request_body();
 	$status = $body['status'] ?? 'draft';
+	minn_check_sticky_password_conflict( $body, null );
+	$author = $uid;
+	if ( isset( $body['author'] ) && (int) $body['author'] !== $uid ) {
+		if ( ! minn_user_can( $uid, 'page' === $type ? 'edit_others_pages' : 'edit_others_posts' ) ) {
+			minn_rest_error( 'rest_cannot_edit_others', 'Sorry, you are not allowed to update posts as this user.', 403 );
+		}
+		$author = (int) $body['author'];
+	}
 
 	// Publishing requires publish_{type}s.
 	if ( in_array( $status, array( 'publish', 'future', 'private' ), true ) ) {
@@ -71,22 +79,42 @@ function minn_rest_create_post( string $type ): void {
 	$excerpt = (string) minn_extract_field( $body['excerpt'] ?? '' );
 	$slug    = isset( $body['slug'] ) ? minn_unique_slug( (string) $body['slug'], 0 ) : '';
 
-	$date     = ( 'publish' === $status || 'private' === $status ) ? $local : $local;
+	$date     = $local;
 	$date_gmt = ( 'publish' === $status || 'private' === $status ) ? $now_gmt : '0000-00-00 00:00:00';
+	$modified     = $local;
+	$modified_gmt = $now_gmt;
+	if ( isset( $body['date'] ) && '' !== (string) $body['date'] ) {
+		// An explicit date is site-local; publishing into the future schedules.
+		$date         = str_replace( 'T', ' ', (string) $body['date'] );
+		$stamp        = strtotime( $date . ' UTC' ) - minn_gmt_offset();
+		$date_gmt     = gmdate( 'Y-m-d H:i:s', $stamp );
+		$modified     = $date;
+		$modified_gmt = $date_gmt;
+		if ( 'publish' === $status && $stamp > time() ) {
+			$status = 'future';
+		}
+	}
+	$comment_status = in_array( $body['comment_status'] ?? '', array( 'open', 'closed' ), true ) ? $body['comment_status'] : 'open';
+	$ping_status    = in_array( $body['ping_status'] ?? '', array( 'open', 'closed' ), true ) ? $body['ping_status'] : 'open';
+	$password       = (string) ( $body['password'] ?? '' );
+	$parent         = 'page' === $type ? (int) ( $body['parent'] ?? 0 ) : 0;
+	$menu_order     = 'page' === $type ? (int) ( $body['menu_order'] ?? 0 ) : 0;
 
 	$stmt = minn_db()->prepare(
 		"INSERT INTO {$table_prefix}posts
 		 (post_author, post_date, post_date_gmt, post_content, post_title, post_excerpt,
-		  post_status, comment_status, ping_status, post_name, post_modified, post_modified_gmt,
+		  post_status, comment_status, ping_status, post_password, post_name, post_parent,
+		  menu_order, post_modified, post_modified_gmt,
 		  post_type, guid, to_ping, pinged, post_content_filtered)
-		 VALUES (?, ?, ?, ?, ?, ?, ?, 'open', 'open', ?, ?, ?, ?, '', '', '', '')"
+		 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '', '', '', '')"
 	);
 	$stmt->bind_param(
-		'issssssssss',
-		$uid, $local, $date_gmt, $content, $title, $excerpt, $status, $slug, $local, $now_gmt, $type
+		'issssssssssiisss',
+		$author, $date, $date_gmt, $content, $title, $excerpt, $status, $comment_status, $ping_status, $password, $slug, $parent, $menu_order, $modified, $modified_gmt, $type
 	);
 	$stmt->execute();
 	$id = (int) minn_db()->insert_id;
+	minn_apply_extended_fields( $id, $body, $uid, $type );
 
 	// GUID is set from the id after insert, as the reference does.
 	$guid = minn_home_url( '/?' . ( 'page' === $type ? 'page_id' : 'p' ) . '=' . $id );
@@ -122,9 +150,57 @@ function minn_rest_update_post( string $type, int $id ): void {
 	}
 
 	$body = minn_request_body();
+	minn_check_sticky_password_conflict( $body, $post );
 	$sets = array();
 	$vals = array();
 	$typs = '';
+
+	if ( isset( $body['author'] ) && (int) $body['author'] !== (int) $post['post_author'] ) {
+		if ( ! minn_user_can( $uid, 'page' === $type ? 'edit_others_pages' : 'edit_others_posts' ) ) {
+			minn_rest_error( 'rest_cannot_edit_others', 'Sorry, you are not allowed to update posts as this user.', 403 );
+		}
+		$sets[] = 'post_author = ?';
+		$vals[] = (int) $body['author'];
+		$typs  .= 'i';
+	}
+	foreach ( array( 'comment_status', 'ping_status' ) as $flag ) {
+		if ( isset( $body[ $flag ] ) && in_array( $body[ $flag ], array( 'open', 'closed' ), true ) ) {
+			$sets[] = $flag . ' = ?';
+			$vals[] = (string) $body[ $flag ];
+			$typs  .= 's';
+		}
+	}
+	if ( array_key_exists( 'password', $body ) ) {
+		$sets[] = 'post_password = ?';
+		$vals[] = (string) $body['password'];
+		$typs  .= 's';
+	}
+	if ( 'page' === $type && isset( $body['parent'] ) ) {
+		$sets[] = 'post_parent = ?';
+		$vals[] = (int) $body['parent'];
+		$typs  .= 'i';
+	}
+	if ( 'page' === $type && isset( $body['menu_order'] ) ) {
+		$sets[] = 'menu_order = ?';
+		$vals[] = (int) $body['menu_order'];
+		$typs  .= 'i';
+	}
+	if ( isset( $body['date'] ) && '' !== (string) $body['date'] ) {
+		$new_date = str_replace( 'T', ' ', (string) $body['date'] );
+		$stamp    = strtotime( $new_date . ' UTC' ) - minn_gmt_offset();
+		$sets[]   = 'post_date = ?';
+		$vals[]   = $new_date;
+		$typs    .= 's';
+		$sets[]   = 'post_date_gmt = ?';
+		$vals[]   = gmdate( 'Y-m-d H:i:s', $stamp );
+		$typs    .= 's';
+		$effective = (string) ( $body['status'] ?? $post['post_status'] );
+		if ( 'publish' === $effective && $stamp > time() && ! isset( $body['status'] ) ) {
+			$body['status'] = 'future';
+		} elseif ( 'publish' === ( $body['status'] ?? '' ) && $stamp > time() ) {
+			$body['status'] = 'future';
+		}
+	}
 
 	if ( array_key_exists( 'title', $body ) ) {
 		$sets[] = 'post_title = ?';
@@ -186,6 +262,7 @@ function minn_rest_update_post( string $type, int $id ): void {
 	$stmt->execute();
 
 	minn_apply_terms( $id, $body );
+	minn_apply_extended_fields( $id, $body, $uid, $type );
 	// A publish/unpublish transition changes the terms' published counts.
 	if ( array_key_exists( 'status', $body ) && $body['status'] !== $post['post_status'] ) {
 		minn_recount_post_taxonomies( $id );
@@ -397,4 +474,92 @@ function minn_recount_taxonomy( string $taxonomy ): void {
 	);
 	$stmt->bind_param( 's', $taxonomy );
 	$stmt->execute();
+}
+
+/* ------------------------------------------------- extended write fields */
+
+/** Core refuses a sticky+password combination outright. */
+function minn_check_sticky_password_conflict( array $body, ?array $post ): void {
+	$wants_sticky   = ! empty( $body['sticky'] )
+		|| ( ! isset( $body['sticky'] ) && $post && in_array( (int) $post['ID'], minn_serialized_int_list( minn_option( 'sticky_posts' ) ), true ) );
+	$wants_password = '' !== (string) ( $body['password'] ?? '' )
+		|| ( ! array_key_exists( 'password', $body ) && $post && '' !== $post['post_password'] );
+	if ( $wants_sticky && $wants_password && ( isset( $body['sticky'] ) || array_key_exists( 'password', $body ) ) ) {
+		minn_rest_error( 'rest_invalid_field', 'A post can not be sticky and have a password.', 400 );
+	}
+}
+
+/** Rewrite the sticky_posts option with/without one id. */
+function minn_write_sticky( int $id, bool $on ): void {
+	$ids = minn_serialized_int_list( minn_option( 'sticky_posts' ) );
+	if ( $on && ! in_array( $id, $ids, true ) ) {
+		$ids[] = $id;
+	} elseif ( ! $on ) {
+		$ids = array_values( array_diff( $ids, array( $id ) ) );
+	}
+	$out = 'a:' . count( $ids ) . ':{';
+	foreach ( array_values( $ids ) as $i => $v ) {
+		$out .= 'i:' . $i . ';i:' . $v . ';';
+	}
+	minn_option_set( 'sticky_posts', $out . '}' );
+}
+
+/** Assign (or clear) the post-format term. */
+function minn_set_post_format( int $id, string $format ): void {
+	global $table_prefix;
+	if ( '' === $format || 'standard' === $format ) {
+		minn_set_object_terms( $id, 'post_format', array() );
+		return;
+	}
+	$slug = 'post-format-' . $format;
+	$stmt = minn_db()->prepare(
+		"SELECT t.term_id FROM {$table_prefix}terms t
+		 JOIN {$table_prefix}term_taxonomy tt ON tt.term_id = t.term_id
+		 WHERE t.slug = ? AND tt.taxonomy = 'post_format' LIMIT 1"
+	);
+	$stmt->bind_param( 's', $slug );
+	$stmt->execute();
+	$row = $stmt->get_result()->fetch_row();
+	if ( $row ) {
+		$tid = (int) $row[0];
+	} else {
+		$stmt = minn_db()->prepare( "INSERT INTO {$table_prefix}terms (name, slug, term_group) VALUES (?, ?, 0)" );
+		$stmt->bind_param( 'ss', $slug, $slug );
+		$stmt->execute();
+		$tid  = (int) minn_db()->insert_id;
+		$stmt = minn_db()->prepare(
+			"INSERT INTO {$table_prefix}term_taxonomy (term_id, taxonomy, description, parent, count) VALUES (?, 'post_format', '', 0, 0)"
+		);
+		$stmt->bind_param( 'i', $tid );
+		$stmt->execute();
+	}
+	minn_set_object_terms( $id, 'post_format', array( $tid ) );
+}
+
+function minn_delete_post_meta( int $id, string $key ): void {
+	global $table_prefix;
+	$stmt = minn_db()->prepare( "DELETE FROM {$table_prefix}postmeta WHERE post_id = ? AND meta_key = ?" );
+	$stmt->bind_param( 'is', $id, $key );
+	$stmt->execute();
+}
+
+/** The post-row side effects shared by create and update. */
+function minn_apply_extended_fields( int $id, array $body, int $uid, string $type ): void {
+	if ( isset( $body['sticky'] ) && 'post' === $type ) {
+		minn_write_sticky( $id, (bool) $body['sticky'] );
+	}
+	if ( isset( $body['format'] ) && 'post' === $type ) {
+		minn_set_post_format( $id, (string) $body['format'] );
+	}
+	if ( isset( $body['featured_media'] ) ) {
+		$media = (int) $body['featured_media'];
+		if ( $media > 0 ) {
+			minn_set_post_meta( $id, '_thumbnail_id', (string) $media );
+		} else {
+			minn_delete_post_meta( $id, '_thumbnail_id' );
+		}
+	}
+	if ( isset( $body['meta']['footnotes'] ) ) {
+		minn_set_post_meta( $id, 'footnotes', (string) $body['meta']['footnotes'] );
+	}
 }
