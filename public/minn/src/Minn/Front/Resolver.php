@@ -9,6 +9,8 @@ use Minn\Content\Posts;
 use Minn\Content\Terms;
 use Minn\Db;
 use Minn\Http\Request;
+use Minn\Content\Reader;
+use Minn\Auth\Nonce;
 
 /**
  * Turns a public URL into a Resolution, following the reference's observed
@@ -64,6 +66,21 @@ final readonly class Resolver
     }
 
     public function resolve(Request $request): Resolution
+    {
+        $resolution = $this->resolvePath($request);
+        // A preview link names an autosave: preview_id plus the reader's own nonce for that post.
+        if ($resolution->kind === Kind::Single || $resolution->kind === Kind::Page) {
+            $reader = Reader::current();
+            $previewId = (int) $request->query('preview_id', '0');
+            if ($previewId > 0 && $previewId === $resolution->id() && $reader->loggedIn() && $reader->canEdit($previewId)
+                && Nonce::verify((string) $request->query('preview_nonce', ''), $reader->userId, $reader->sessionToken, 'post_preview_' . $previewId)) {
+                return $resolution->asPreview();
+            }
+        }
+        return $resolution;
+    }
+
+    private function resolvePath(Request $request): Resolution
     {
         $path = $request->path;
         if (str_starts_with($path, '/index.php')) {
@@ -343,6 +360,12 @@ final readonly class Resolver
         }
         if (in_array($post['post_status'], ['trash', 'auto-draft', 'inherit'], true)) {
             return false;
+        }
+        if ($post['post_status'] === 'private') {
+            $reader = Reader::current();
+            if ($post['post_type'] === 'page' ? $reader->readsPrivatePages : $reader->readsPrivatePosts) {
+                return true;
+            }
         }
         return ($this->canReadUnpublished)($post);
     }

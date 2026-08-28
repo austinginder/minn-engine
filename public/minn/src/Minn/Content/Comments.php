@@ -52,6 +52,40 @@ final readonly class Comments
         return ['comments' => $rows, 'total' => $total];
     }
 
+    /** The same words on the same post from the same person, in any status but trash or spam. */
+    public function duplicate(int $postId, string $author, string $email, string $content, int $userId): bool
+    {
+        $table = $this->db->table('comments');
+        $who = $userId > 0 ? 'user_id = ?' : '(comment_author = ? AND comment_author_email = ?)';
+        $params = $userId > 0 ? [$postId, $userId, $content] : [$postId, $author, $email, $content];
+        return $this->db->value(
+            "SELECT comment_ID FROM {$table} WHERE comment_post_ID = ? AND comment_approved IN ('0', '1') AND {$who} AND comment_content = ? LIMIT 1",
+            $params,
+        ) !== null;
+    }
+
+    /** A comment from the same address or email within the window. */
+    public function flooding(string $email, string $address, int $seconds): bool
+    {
+        $since = gmdate('Y-m-d H:i:s', time() - $seconds);
+        return $this->db->value(
+            "SELECT comment_ID FROM {$this->db->table('comments')} WHERE comment_date_gmt > ? AND (comment_author_IP = ? OR (comment_author_email <> '' AND comment_author_email = ?)) LIMIT 1",
+            [$since, $address, $email],
+        ) !== null;
+    }
+
+    /** True when this name and email already have an approved comment. */
+    public function previouslyApproved(string $author, string $email): bool
+    {
+        if ($email === '') {
+            return false;
+        }
+        return $this->db->value(
+            "SELECT comment_ID FROM {$this->db->table('comments')} WHERE comment_author = ? AND comment_author_email = ? AND comment_approved = '1' LIMIT 1",
+            [$author, $email],
+        ) !== null;
+    }
+
     /** @param array<string, mixed> $columns */
     public function insert(array $columns): int
     {

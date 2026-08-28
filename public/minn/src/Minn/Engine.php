@@ -39,6 +39,8 @@ use Minn\Auth\PasswordReset;
 use Minn\Mail\Mailer;
 use Minn\Cron\Cron;
 use Minn\Content\PostWriter;
+use Minn\Content\Reader;
+use Minn\Front\CommentPostController;
 
 /**
  * The engine's front door. An unmodified wp-config.php ends by requiring
@@ -95,10 +97,17 @@ final readonly class Engine
         $capabilities = Capabilities::fromDb($db);
         $app = new App($this->engineDir . '/admin');
 
-        $canReadUnpublished = static function (array $post) use ($authenticator, $capabilities, $request): bool {
-            $session = $authenticator->session($request->cookies);
-            return $session instanceof Authenticated && $capabilities->can($session->id(), 'edit_post', (int) $post['ID']);
-        };
+        $session = $authenticator->session($request->cookies);
+        $readerId = $session instanceof Authenticated ? $session->id() : 0;
+        Reader::set(new Reader(
+            $readerId,
+            $readerId > 0 && $capabilities->can($readerId, 'read_private_posts'),
+            $readerId > 0 && $capabilities->can($readerId, 'read_private_pages'),
+            static fn (int $postId): bool => $readerId > 0 && $capabilities->can($readerId, 'edit_post', $postId),
+            (string) ($request->cookies['wp-postpass_' . md5((string) ($site->option('siteurl') ?? ''))] ?? ''),
+            $session instanceof Authenticated ? $session->token : '',
+        ));
+        $canReadUnpublished = static fn (array $post): bool => Reader::current()->canEdit((int) $post['ID']);
         $resolver = Resolver::fromDb($db, $canReadUnpublished);
         $permalinks = $resolver->permalinks();
         $theme = Theme::active($site, $permalinks, ABSPATH . 'wp-content/themes');
@@ -117,6 +126,7 @@ final readonly class Engine
             new AppController($app, new BootPayload($site, $permalinks, $capabilities, $app, $this->version), $authenticator, $capabilities, $permalinks, $this->version),
             new LoginController($site, $permalinks, $authenticator, $sessions, new AuthCookies($db, $cookie), $users, new LoginThrottle($db), new PasswordReset($users), Mailer::forSite($site)),
             $probes,
+            new CommentPostController($site, $posts, new Comments($db), $permalinks, $authenticator, $capabilities, new AuthCookies($db, $cookie)),
             $front,
         );
         $response = (new Kernel($router))->handle($request);

@@ -25,6 +25,7 @@ use Minn\Front\Resolution;
 use Minn\Front\Resolver;
 use Minn\Support\Html;
 use Minn\Support\Serialized;
+use Minn\Content\Reader;
 
 /**
  * A whole page from the active block theme: the template the resolution
@@ -83,6 +84,10 @@ final readonly class PageRenderer
                 : ['wp-singular', 'page-template', 'page-template-' . preg_replace('/[^a-z0-9_-]+/', '-', strtolower($template))];
             $at = (int) array_search('page', $classes, true);
             array_splice($classes, $at, 0, $tokens);
+        }
+        if (Reader::current()->loggedIn()) {
+            // The reference also adds admin-bar tokens here; the engine has no admin bar.
+            $classes[] = 'logged-in';
         }
         if ((int) ($this->site->option('site_logo') ?? 0) > 0) {
             $classes[] = 'wp-custom-logo';

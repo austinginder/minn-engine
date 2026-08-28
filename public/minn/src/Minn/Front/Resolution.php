@@ -26,7 +26,14 @@ final readonly class Resolution
         public ?string $authorName = null,
         /** the static front page (show_on_front = page), rendered as a page that is also home */
         public bool $front = false,
+        /** a preview: the reader's autosave replaces the stored content */
+        public bool $preview = false,
     ) {
+    }
+
+    public function asPreview(): self
+    {
+        return new self($this->kind, $this->record, $this->paged, $this->location, $this->status, $this->search, $this->date, $this->authorName, $this->front, true);
     }
 
     public static function home(int $paged = 1): self

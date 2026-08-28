@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Content;
 
 use Minn\Db;
+use Minn\Content\Reader;
 
 /**
  * Reads over the posts table for the public front end. Every method
@@ -113,8 +114,9 @@ final readonly class Posts
     public function archive(array $filter, int $page, int $perPage): array
     {
         $posts = $this->db->table('posts');
-        $where = ["p.post_type = 'post'", "p.post_status = 'publish'"];
-        $params = [];
+        $statuses = Reader::current()->listableStatuses('post');
+        $where = ["p.post_type = 'post'", 'p.post_status IN (' . implode(',', array_fill(0, count($statuses), '?')) . ')'];
+        $params = $statuses;
         $join = '';
         if (isset($filter['term'])) {
             $join = "INNER JOIN {$this->db->table('term_relationships')} tr ON tr.object_id = p.ID";
@@ -263,6 +265,16 @@ final readonly class Posts
         }
         $rest = array_values(array_filter($result['posts'], static fn (array $p) => !isset($stickySet[(int) $p['ID']])));
         return ['posts' => array_slice([...$sticky, ...$rest], 0, $perPage), 'total' => $result['total']];
+    }
+
+    /** The newest autosave of a post by one author, or null. */
+    public function newestAutosave(int $postId, int $userId): ?array
+    {
+        return $this->db->row(
+            "SELECT * FROM {$this->db->table('posts')} WHERE post_parent = ? AND post_type = 'revision' AND post_name LIKE ? AND post_author = ?
+             ORDER BY post_modified DESC, ID DESC LIMIT 1",
+            [$postId, $postId . '-autosave%', $userId],
+        );
     }
 
     /** Reusable blocks (wp_block rows) in one status, newest first, capped at 100. */

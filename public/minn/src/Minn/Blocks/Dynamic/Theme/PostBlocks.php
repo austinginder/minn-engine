@@ -19,6 +19,7 @@ use Minn\Content\Users;
 use Minn\Front\Permalinks;
 use Minn\Support\Html;
 use Minn\Content\PasswordGate;
+use Minn\Content\Reader;
 
 /** The post-* blocks: they render the context's current post. */
 final readonly class PostBlocks
@@ -51,7 +52,7 @@ final readonly class PostBlocks
         }
         $level = (int) $block->attr('level', 2);
         $tag = $level === 0 ? 'p' : 'h' . $level;
-        $title = Texturize::text(PasswordGate::title($post));
+        $title = Texturize::text(PasswordGate::title($this->previewSource($post, $renderer->context()->resolution) ?? $post));
         if ((bool) $block->attr('isLink', false)) {
             $title = '<a href="' . Html::attr($this->permalinks->forPost($post)) . '" target="' . self::target($block) . '" >' . $title . '</a>';
         }
@@ -66,7 +67,7 @@ final readonly class PostBlocks
         if ($post === null) {
             return '';
         }
-        $raw = (string) $post['post_content'];
+        $raw = (string) ($this->previewSource($post, $context->resolution) ?? $post)['post_content'];
         if (PasswordGate::is($post)) {
             $raw = PasswordGate::form($post, $this->permalinks->url(''), $this->permalinks->forPost($post));
         }
@@ -229,6 +230,16 @@ final readonly class PostBlocks
      *
      * @param list<string> $classes
      */
+    /** On a preview, the reader's newest autosave of this post stands in for its stored fields. */
+    private function previewSource(array $post, \Minn\Front\Resolution $resolution): ?array
+    {
+        if (!$resolution->preview || $resolution->id() !== (int) $post['ID']) {
+            return null;
+        }
+        $autosave = $this->posts->newestAutosave((int) $post['ID'], Reader::current()->userId);
+        return $autosave === null ? null : ['post_content' => $autosave['post_content'], 'post_title' => $autosave['post_title'], 'post_password' => $post['post_password'], 'post_status' => $post['post_status']] + $post;
+    }
+
     private static function target(Block $block): string
     {
         return (string) $block->attr('linkTarget', '_self') === '_blank' ? '_blank' : '_self';

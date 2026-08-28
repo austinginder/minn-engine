@@ -22,6 +22,7 @@ use Minn\Auth\Password;
 use Minn\Auth\PasswordReset;
 use Minn\Mail\Mailer;
 use Minn\Mail\Message;
+use Minn\Auth\PortableHash;
 
 /**
  * The wp-login.php surface: a GET form, a POST that verifies the password,
@@ -89,6 +90,12 @@ final readonly class LoginController
         $action = (string) $request->query('action', '');
         if ($action === 'resetpass') {
             return $this->savePassword($request);
+        }
+        if ($action === 'postpass') {
+            // The reference hashes the password into a ten-day cookie and sends the reader back; a wrong password simply stays locked.
+            $back = $this->safeRedirect((string) ($request->form['redirect_to'] ?? $request->header('referer') ?? ''));
+            return Response::redirect($back === $this->permalinks->url('/minn-admin/') ? $this->permalinks->url('/') : $back, 302)
+                ->withCookie('wp-postpass_' . $this->cookies->hash(), PortableHash::hash((string) ($request->form['post_password'] ?? '')), ['expires' => time() + 10 * self::DAY, 'path' => '/', 'secure' => $request->secure, 'samesite' => 'Lax']);
         }
         if ($action !== 'lostpassword' && $action !== 'retrievepassword') {
             return null;

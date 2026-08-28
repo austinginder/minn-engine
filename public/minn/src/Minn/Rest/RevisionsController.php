@@ -14,6 +14,7 @@ use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\RestError;
 use Minn\Support\Kses;
+use Minn\Auth\Nonce;
 
 /** wp/v2 revisions and autosaves under posts and pages, plus wp/v2/blocks. */
 final readonly class RevisionsController
@@ -116,8 +117,10 @@ final readonly class RevisionsController
             'meta' => ['footnotes' => $this->posts->meta($id, 'footnotes') ?? ''],
         ];
         if ($withPreview) {
+            $session = $this->caller->session();
+            $nonce = $session === null ? substr(bin2hex(random_bytes(8)), 0, 10) : Nonce::create($session->id(), $session->token, 'post_preview_' . $parent);
             $object['preview_link'] = $this->url->home(
-                '/?p=' . $parent . '&preview_id=' . $parent . '&preview_nonce=' . substr(bin2hex(random_bytes(8)), 0, 10) . '&preview=true',
+                '/?p=' . $parent . '&preview_id=' . $parent . '&preview_nonce=' . $nonce . '&preview=true',
             );
         }
         $parentType = $this->posts->find($parent)['post_type'] ?? 'post';

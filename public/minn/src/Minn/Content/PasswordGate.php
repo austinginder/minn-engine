@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Content;
 
+use Minn\Auth\PortableHash;
 use Minn\Support\Html;
 
 /**
@@ -15,14 +16,22 @@ final class PasswordGate
 {
     public const EXCERPT = 'There is no excerpt because this is a protected post.';
 
+    /** True while the post has a password the reader's cookie does not match. */
     public static function is(array $post): bool
     {
-        return (string) ($post['post_password'] ?? '') !== '';
+        $password = (string) ($post['post_password'] ?? '');
+        if ($password === '') {
+            return false;
+        }
+        $cookie = Reader::current()->postPassword;
+        return $cookie === '' || !PortableHash::verify($password, $cookie);
     }
 
+    /** "Protected: " for a password, "Private: " for a private post, as the reference prefixes titles. */
     public static function title(array $post): string
     {
-        return (self::is($post) ? 'Protected: ' : '') . (string) $post['post_title'];
+        $prefix = (string) ($post['post_password'] ?? '') !== '' ? 'Protected: ' : (($post['post_status'] ?? '') === 'private' ? 'Private: ' : '');
+        return $prefix . (string) $post['post_title'];
     }
 
     /** The form, with the reference's stray closing p after the hidden field. */
