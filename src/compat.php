@@ -257,3 +257,47 @@ function minn_rest_user_object_edit( array $u ): array {
 function minn_current_user_id(): int {
 	return minn_api()->caller()->id();
 }
+
+/* ------------------------------------------------------------ writes.php */
+
+function minn_site(): Minn\Content\Site {
+	static $site = null;
+	return $site ??= new Minn\Content\Site( Db::shared() );
+}
+
+function minn_post_writer(): Minn\Content\PostWriter {
+	static $writer = null;
+	return $writer ??= new Minn\Content\PostWriter( Db::shared(), minn_posts(), minn_site() );
+}
+
+function minn_request_body(): array {
+	return Minn\Http\Request::fromGlobals()->json();
+}
+
+function minn_extract_field( $value ): string {
+	return Minn\Rest\PostsWriteController::field( $value );
+}
+
+function minn_get_post_row( int $id ): ?array {
+	return minn_posts()->find( $id );
+}
+
+function minn_set_post_meta( int $id, string $key, string $value ): void {
+	minn_post_writer()->setMeta( $id, $key, $value );
+}
+
+function minn_delete_post_meta( int $id, string $key ): void {
+	minn_post_writer()->deleteMeta( $id, $key );
+}
+
+function minn_sanitize_slug( string $s ): string {
+	return Minn\Content\Slug::sanitize( $s );
+}
+
+function minn_option_set( string $name, string $value ): void {
+	minn_site()->setOption( $name, $value );
+}
+
+function minn_local_now(): string {
+	return minn_site()->localNow();
+}

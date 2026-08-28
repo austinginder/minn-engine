@@ -14,6 +14,7 @@ final readonly class Request
      * @param array<string, string|array> $query
      * @param array<string, string> $headers lower-cased names
      * @param array<string, string> $cookies
+     * @param array<string, mixed> $form decoded form fields, for bodies that are not JSON
      */
     public function __construct(
         public Method $method,
@@ -24,6 +25,7 @@ final readonly class Request
         public string $body,
         public bool $secure,
         public string $host,
+        public array $form = [],
     ) {
     }
 
@@ -49,13 +51,24 @@ final readonly class Request
             body: (string) file_get_contents('php://input'),
             secure: ($_SERVER['HTTPS'] ?? '') !== '' && $_SERVER['HTTPS'] !== 'off',
             host: (string) ($_SERVER['HTTP_HOST'] ?? ''),
+            form: $_POST,
         );
+    }
+
+    /** The JSON body as an array, or the form fields when the body is empty. */
+    public function json(): array
+    {
+        if (trim($this->body) === '') {
+            return $this->form;
+        }
+        $decoded = json_decode($this->body, true);
+        return is_array($decoded) ? $decoded : [];
     }
 
     /** The same request addressed to another path (a REST route carried in ?rest_route=). */
     public function withPath(string $path): self
     {
-        return new self($this->method, $path, $this->query, $this->headers, $this->cookies, $this->body, $this->secure, $this->host);
+        return new self($this->method, $path, $this->query, $this->headers, $this->cookies, $this->body, $this->secure, $this->host, $this->form);
     }
 
     public function query(string $key, ?string $default = null): ?string

@@ -7,6 +7,9 @@ namespace Minn\Rest;
 use Minn\Auth\Authenticator;
 use Minn\Auth\Capabilities;
 use Minn\Content\Posts;
+use Minn\Content\PostWriter;
+use Minn\Content\Site;
+use Minn\Content\Terms;
 use Minn\Content\Users;
 use Minn\Db;
 use Minn\Front\Permalinks;
@@ -38,6 +41,9 @@ final readonly class Api
     {
         $users = new Users($db);
         $posts = new Posts($db);
+        $terms = new Terms($db);
+        $site = new Site($db);
+        $writer = new PostWriter($db, $posts, $site);
         $permalinks = Permalinks::fromDb($db);
         $url = new RestUrl($permalinks);
         $caller = new Caller($request, Authenticator::fromDb($db), Capabilities::fromDb($db));
@@ -49,9 +55,11 @@ final readonly class Api
         $router = (new Router())->register(
             new LegacyRoutes(),
             new PostsController($db, $posts, $postObject, $caller),
-            new TermsController($db, $termObject),
-            new UsersController($db, $users, $userObject, $caller),
+            new PostsWriteController($posts, $writer, $site, $postObject, $url, $caller),
+            new TermsController($db, $terms, $site, $termObject, $caller),
+            new UsersController($db, $users, $site, $userObject, $url, $caller),
             new TypesController($types),
+            new SettingsController(new Settings($site), $caller),
         );
         return new self($db, $request, $caller, $router, $postObject, $termObject, $userObject, $types);
     }

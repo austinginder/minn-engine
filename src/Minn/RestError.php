@@ -12,11 +12,17 @@ use RuntimeException;
  */
 final class RestError extends RuntimeException
 {
+    /**
+     * @param array<string, mixed> $extra keys added beside status inside data
+     * @param array<string, mixed> $topLevel keys added beside code/message/data
+     */
     public function __construct(
         public readonly string $errorCode,
         string $message,
         public readonly int $status,
         public readonly array $extra = [],
+        public readonly array $topLevel = [],
+        private readonly bool $bare = false,
     ) {
         parent::__construct($message);
     }
@@ -26,12 +32,24 @@ final class RestError extends RuntimeException
         return new self('rest_no_route', 'No route was found matching the URL and request method.', 404);
     }
 
+    /** @param list<string> $params */
+    public static function missingParams(array $params): self
+    {
+        return new self('rest_missing_callback_param', 'Missing parameter(s): ' . implode(', ', $params), 400, ['params' => $params]);
+    }
+
+    /** A statusless core error as REST serves it: HTTP 500 with data null. */
+    public static function bare(string $code, string $message): self
+    {
+        return new self($code, $message, 500, bare: true);
+    }
+
     public function payload(): array
     {
         return [
             'code' => $this->errorCode,
             'message' => $this->getMessage(),
-            'data' => ['status' => $this->status] + $this->extra,
-        ];
+            'data' => $this->bare ? null : ['status' => $this->status] + $this->extra,
+        ] + $this->topLevel;
     }
 }

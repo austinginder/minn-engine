@@ -23,6 +23,13 @@ final class Password
         return false;
     }
 
+    /** A stored hash in the modern scheme: "$wp" plus bcrypt over the pre-hash. */
+    public static function hash(string $password): string
+    {
+        $pre = base64_encode(hash_hmac('sha384', $password, 'wp-sha384', true));
+        return '$wp' . password_hash($pre, PASSWORD_BCRYPT, ['cost' => 10]);
+    }
+
     /**
      * The four characters of the hash the cookie key is derived from: the
      * LAST four for a "$wp$" hash, offset 8 for legacy phpass. Getting this

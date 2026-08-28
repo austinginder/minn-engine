@@ -22,6 +22,48 @@ final readonly class Users
         return $this->db->row("SELECT * FROM {$this->db->table('users')} WHERE user_login = ? LIMIT 1", [$login]);
     }
 
+    public function findByEmail(string $email): ?array
+    {
+        return $this->db->row("SELECT * FROM {$this->db->table('users')} WHERE user_email = ? LIMIT 1", [$email]);
+    }
+
+    /** The unique-nicename rule: sanitized login, -2, -3 on collision. */
+    public function uniqueNicename(string $base, int $skipId = 0): string
+    {
+        $slug = Slug::sanitize($base);
+        $try = $slug;
+        $n = 1;
+        while ($this->db->value("SELECT ID FROM {$this->db->table('users')} WHERE user_nicename = ? AND ID != ? LIMIT 1", [$try, $skipId]) !== null) {
+            $n++;
+            $try = "{$slug}-{$n}";
+        }
+        return $try;
+    }
+
+    /** @param array<string, mixed> $columns */
+    public function insert(array $columns): int
+    {
+        $names = implode(', ', array_keys($columns));
+        $placeholders = implode(', ', array_fill(0, count($columns), '?'));
+        $this->db->execute("INSERT INTO {$this->db->table('users')} ({$names}) VALUES ({$placeholders})", array_values($columns));
+        return $this->db->insertId();
+    }
+
+    /** @param array<string, mixed> $columns */
+    public function update(int $id, array $columns): void
+    {
+        foreach ($columns as $column => $value) {
+            $this->db->execute("UPDATE {$this->db->table('users')} SET {$column} = ? WHERE ID = ?", [$value, $id]);
+        }
+    }
+
+    /** Removes the user and their meta; their posts are reassigned or removed first by the caller. */
+    public function delete(int $id): void
+    {
+        $this->db->execute("DELETE FROM {$this->db->table('usermeta')} WHERE user_id = ?", [$id]);
+        $this->db->execute("DELETE FROM {$this->db->table('users')} WHERE ID = ?", [$id]);
+    }
+
     /** One usermeta value, raw. Serialized blobs come back as stored. */
     public function meta(int $userId, string $key): ?string
     {

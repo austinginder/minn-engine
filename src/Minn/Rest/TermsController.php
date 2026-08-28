@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Content\Site;
+use Minn\Content\Terms;
 use Minn\Db;
 use Minn\Http\Method;
 use Minn\Http\Request;
@@ -11,14 +13,17 @@ use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\RestError;
 
-/** wp/v2 categories and tags, read side. */
+/** wp/v2 categories and tags: list, single, and the create/update/delete the taxonomy admin drives. */
 final readonly class TermsController
 {
     private const ORDER_BY = ['name' => 't.name', 'count' => 'tt.count', 'id' => 't.term_id', 'slug' => 't.slug'];
 
     public function __construct(
         private Db $db,
+        private Terms $terms,
+        private Site $site,
         private TermObject $object,
+        private Caller $caller,
     ) {
     }
 
@@ -79,5 +84,104 @@ final readonly class TermsController
             throw new RestError('rest_term_invalid', 'Term does not exist.', 404);
         }
         return Reply::item($this->object->view($row, $base), Fields::fromQuery($request->query));
+    }
+
+    /** Tags are open to edit_posts holders; categories need manage_categories. */
+    #[Route(Method::Post, '/wp/v2/{base:categories|tags}')]
+    public function create(Request $request, string $base): Response
+    {
+        $config = TermObject::config($base);
+        $taxonomy = $config['taxonomy'];
+        $refusal = 'Sorry, you are not allowed to create terms in this taxonomy.';
+        $this->caller->require('rest_cannot_create', $refusal);
+        if (!$this->caller->can($taxonomy === 'post_tag' ? 'edit_posts' : 'manage_categories')) {
+            throw new RestError('rest_cannot_create', $refusal, 403);
+        }
+        $body = $request->json();
+        $name = trim((string) ($body['name'] ?? ''));
+        if ($name === '') {
+            throw RestError::missingParams(['name']);
+        }
+        // A same-name term is the reference's term_exists refusal, which hands
+        // the existing id back in data AND in an additional_data list.
+        $existing = $this->terms->idByName($name, $taxonomy);
+        if ($existing !== null) {
+            throw new RestError(
+                'term_exists',
+                'A term with the name provided already exists in this taxonomy.',
+                400,
+                ['term_id' => $existing],
+                ['additional_data' => [$existing, $existing]],
+            );
+        }
+        $slug = $this->terms->uniqueSlug((string) ($body['slug'] ?? '') !== '' ? (string) $body['slug'] : $name, $taxonomy);
+        $termId = $this->terms->create(
+            $name,
+            $slug,
+            $taxonomy,
+            (string) ($body['description'] ?? ''),
+            $config['has_parent'] ? (int) ($body['parent'] ?? 0) : 0,
+        );
+        return Reply::item($this->object->view($this->terms->row($termId, $taxonomy), $base), Fields::fromQuery($request->query), 201)
+            ->withHeader('Location', $this->object->url()->to("/wp/v2/{$base}/{$termId}"));
+    }
+
+    #[Route(Method::Post, '/wp/v2/{base:categories|tags}/{id:\d+}')]
+    #[Route(Method::Put, '/wp/v2/{base:categories|tags}/{id:\d+}')]
+    #[Route(Method::Patch, '/wp/v2/{base:categories|tags}/{id:\d+}')]
+    public function update(Request $request, string $base, string $id): Response
+    {
+        $config = TermObject::config($base);
+        $taxonomy = $config['taxonomy'];
+        $termId = (int) $id;
+        $term = $this->terms->row($termId, $taxonomy);
+        if ($term === null) {
+            throw new RestError('rest_term_invalid', 'Term does not exist.', 404);
+        }
+        if (!$this->caller->can('manage_categories')) {
+            throw $this->caller->refuse('rest_cannot_update', 'Sorry, you are not allowed to edit this term.');
+        }
+        $body = $request->json();
+        if (isset($body['name']) || isset($body['slug'])) {
+            $this->terms->rename(
+                $termId,
+                isset($body['name']) ? (string) $body['name'] : (string) $term['name'],
+                isset($body['slug']) ? $this->terms->uniqueSlug((string) $body['slug'], $taxonomy, $termId) : (string) $term['slug'],
+            );
+        }
+        if (isset($body['description']) || ($config['has_parent'] && isset($body['parent']))) {
+            $this->terms->describe(
+                $termId,
+                $taxonomy,
+                isset($body['description']) ? (string) $body['description'] : (string) $term['description'],
+                $config['has_parent'] && isset($body['parent']) ? (int) $body['parent'] : (int) $term['parent'],
+            );
+        }
+        return Reply::item($this->object->view($this->terms->row($termId, $taxonomy), $base), Fields::fromQuery($request->query));
+    }
+
+    /** The default category is capability-denied before the force check. */
+    #[Route(Method::Delete, '/wp/v2/{base:categories|tags}/{id:\d+}')]
+    public function delete(Request $request, string $base, string $id): Response
+    {
+        $config = TermObject::config($base);
+        $taxonomy = $config['taxonomy'];
+        $termId = (int) $id;
+        $term = $this->terms->row($termId, $taxonomy);
+        if ($term === null) {
+            throw new RestError('rest_term_invalid', 'Term does not exist.', 404);
+        }
+        if (!$this->caller->can('manage_categories')) {
+            throw $this->caller->refuse('rest_cannot_delete', 'Sorry, you are not allowed to delete this term.');
+        }
+        if ($taxonomy === 'category' && $termId === (int) ($this->site->option('default_category') ?? 0)) {
+            throw new RestError('rest_cannot_delete', 'Sorry, you are not allowed to delete this term.', 403);
+        }
+        if (!filter_var($request->query('force', ''), FILTER_VALIDATE_BOOLEAN)) {
+            throw new RestError('rest_trash_not_supported', "Terms do not support trashing. Set 'force=true' to delete.", 501);
+        }
+        $previous = $this->object->view($term, $base);
+        $this->terms->delete($term + ['taxonomy' => $taxonomy], $config['has_parent']);
+        return Reply::item(['deleted' => true, 'previous' => $previous], Fields::fromQuery($request->query));
     }
 }

@@ -21,6 +21,20 @@ final class Roles
     {
     }
 
+    private const LEVELS = ['administrator' => 10, 'editor' => 7, 'author' => 2, 'contributor' => 1, 'subscriber' => 0];
+
+    /** The wp_user_level stored beside the capabilities meta. */
+    public static function level(string $role): int
+    {
+        return self::LEVELS[$role] ?? 0;
+    }
+
+    /** The {role: true} capabilities meta in its serialized form. */
+    public static function serializeSingle(string $role): string
+    {
+        return 'a:1:{s:' . strlen($role) . ':"' . $role . '";b:1;}';
+    }
+
     /** @return RoleMap */
     public function all(): array
     {

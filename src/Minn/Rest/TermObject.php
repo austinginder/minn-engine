@@ -23,6 +23,11 @@ final readonly class TermObject
     ) {
     }
 
+    public function url(): RestUrl
+    {
+        return $this->url;
+    }
+
     /** @return array{taxonomy: string, has_parent: bool, post_arg: string} */
     public static function config(string $restBase): array
     {

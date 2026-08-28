@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Auth\Password;
+use Minn\Auth\Roles;
+use Minn\Content\Site;
 use Minn\Content\Users;
 use Minn\Db;
 use Minn\Http\Method;
@@ -12,7 +15,7 @@ use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\RestError;
 
-/** wp/v2 users, read side. */
+/** wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives. */
 final readonly class UsersController
 {
     private const ORDER_BY = [
@@ -26,7 +29,9 @@ final readonly class UsersController
     public function __construct(
         private Db $db,
         private Users $users,
+        private Site $site,
         private UserObject $object,
+        private RestUrl $url,
         private Caller $caller,
     ) {
     }
@@ -96,5 +101,158 @@ final readonly class UsersController
             return Reply::item($this->object->edit($user), $fields);
         }
         return Reply::item($this->object->view($user, $self === $userId), $fields);
+    }
+
+    /** Engine-created users carry real scheme hashes and the full default meta set. */
+    #[Route(Method::Post, '/wp/v2/users')]
+    public function create(Request $request): Response
+    {
+        $refusal = 'Sorry, you are not allowed to create new users.';
+        $this->caller->require('rest_cannot_create_user', $refusal);
+        if (!$this->caller->can('create_users')) {
+            throw new RestError('rest_cannot_create_user', $refusal, 403);
+        }
+        $body = $request->json();
+        $missing = array_values(array_filter(['username', 'email', 'password'], static fn (string $key) => (string) ($body[$key] ?? '') === ''));
+        if ($missing !== []) {
+            throw RestError::missingParams($missing);
+        }
+        // Duplicate identities surface as the reference's bare error: 500, data null.
+        $login = (string) $body['username'];
+        $email = (string) $body['email'];
+        if ($this->users->findByLogin($login) !== null) {
+            throw RestError::bare('existing_user_login', 'Sorry, that username already exists!');
+        }
+        if ($this->users->findByEmail($email) !== null) {
+            throw RestError::bare('existing_user_email', 'Sorry, that email address is already used!');
+        }
+        $role = (string) ($body['roles'][0] ?? ($this->site->option('default_role') ?? 'subscriber'));
+        $newId = $this->users->insert([
+            'user_login' => $login,
+            'user_pass' => Password::hash((string) $body['password']),
+            'user_nicename' => $this->users->uniqueNicename($login),
+            'user_email' => $email,
+            'user_url' => (string) ($body['url'] ?? ''),
+            'user_registered' => gmdate('Y-m-d H:i:s'),
+            'user_activation_key' => '',
+            'user_status' => 0,
+            'display_name' => (string) ($body['name'] ?? '') !== '' ? (string) $body['name'] : $login,
+        ]);
+        // The default meta set the reference writes on insert, in its order.
+        $prefix = $this->db->prefix();
+        $meta = [
+            'nickname' => (string) ($body['nickname'] ?? $login),
+            'first_name' => (string) ($body['first_name'] ?? ''),
+            'last_name' => (string) ($body['last_name'] ?? ''),
+            'description' => (string) ($body['description'] ?? ''),
+            'rich_editing' => 'true',
+            'syntax_highlighting' => 'true',
+            'infinite_scrolling' => 'true',
+            'comment_shortcuts' => 'false',
+            'admin_color' => 'modern',
+            'use_ssl' => '0',
+            'show_admin_bar_front' => 'true',
+            'locale' => (string) ($body['locale'] ?? ''),
+            "{$prefix}capabilities" => Roles::serializeSingle($role),
+            "{$prefix}user_level" => (string) Roles::level($role),
+        ];
+        foreach ($meta as $key => $value) {
+            $this->users->setMeta($newId, $key, $value);
+        }
+        return Reply::item($this->object->edit($this->users->find($newId)), Fields::fromQuery($request->query), 201)
+            ->withHeader('Location', $this->url->to('/wp/v2/users/' . $newId));
+    }
+
+    #[Route(Method::Post, '/wp/v2/users/{id:\d+}')]
+    #[Route(Method::Put, '/wp/v2/users/{id:\d+}')]
+    #[Route(Method::Patch, '/wp/v2/users/{id:\d+}')]
+    public function update(Request $request, string $id): Response
+    {
+        $userId = (int) $id;
+        $self = $this->caller->id();
+        $user = $this->users->find($userId);
+        if ($user === null) {
+            throw new RestError('rest_user_invalid_id', 'Invalid user ID.', 404);
+        }
+        if ($self !== $userId && !$this->caller->can('edit_users')) {
+            throw $this->caller->refuse('rest_cannot_edit', 'Sorry, you are not allowed to edit this user.');
+        }
+        $body = $request->json();
+        $columns = [];
+        if (isset($body['name'])) {
+            $columns['display_name'] = (string) $body['name'];
+        }
+        if (isset($body['email'])) {
+            $columns['user_email'] = (string) $body['email'];
+        }
+        if (isset($body['url'])) {
+            $columns['user_url'] = (string) $body['url'];
+        }
+        if (isset($body['slug'])) {
+            $columns['user_nicename'] = $this->users->uniqueNicename((string) $body['slug'], $userId);
+        }
+        if (isset($body['password']) && (string) $body['password'] !== '') {
+            $columns['user_pass'] = Password::hash((string) $body['password']);
+        }
+        $this->users->update($userId, $columns);
+        foreach (['first_name', 'last_name', 'description', 'nickname', 'locale'] as $key) {
+            if (isset($body[$key])) {
+                $this->users->setMeta($userId, $key, (string) $body[$key]);
+            }
+        }
+        if (isset($body['meta']['show_admin_bar_front'])) {
+            $this->users->setMeta($userId, 'show_admin_bar_front', $body['meta']['show_admin_bar_front'] === 'false' ? 'false' : 'true');
+        }
+        if (isset($body['roles'][0])) {
+            if (!$this->caller->can('promote_users')) {
+                throw $this->caller->refuse('rest_cannot_edit_roles', 'Sorry, you are not allowed to edit roles of this user.');
+            }
+            $role = (string) $body['roles'][0];
+            $prefix = $this->db->prefix();
+            $this->users->setMeta($userId, "{$prefix}capabilities", Roles::serializeSingle($role));
+            $this->users->setMeta($userId, "{$prefix}user_level", (string) Roles::level($role));
+        }
+        return Reply::item($this->object->edit($this->users->find($userId)), Fields::fromQuery($request->query));
+    }
+
+    /** reassign is REQUIRED (checked before the user lookup), and so is force. */
+    #[Route(Method::Delete, '/wp/v2/users/{id:\d+}')]
+    public function delete(Request $request, string $id): Response
+    {
+        $userId = (int) $id;
+        $user = $this->users->find($userId);
+        if (!$request->has('reassign')) {
+            throw RestError::missingParams(['reassign']);
+        }
+        if ($user === null) {
+            throw new RestError('rest_user_invalid_id', 'Invalid user ID.', 404);
+        }
+        if (!$this->caller->can('delete_users')) {
+            throw $this->caller->refuse('rest_user_cannot_delete', 'Sorry, you are not allowed to delete this user.');
+        }
+        if (!filter_var($request->query('force', ''), FILTER_VALIDATE_BOOLEAN)) {
+            throw new RestError('rest_trash_not_supported', "Users do not support trashing. Set 'force=true' to delete.", 501);
+        }
+        $reassign = (string) $request->query('reassign', '');
+        $target = 0;
+        if ($reassign !== '' && $reassign !== 'false') {
+            $target = (int) $reassign;
+            if ($this->users->find($target) === null) {
+                throw new RestError('rest_user_invalid_reassign', 'Invalid user ID for reassignment.', 400);
+            }
+        }
+        $previous = $this->object->edit($user);
+        $posts = $this->db->table('posts');
+        if ($target > 0) {
+            $this->db->execute("UPDATE {$posts} SET post_author = ? WHERE post_author = ?", [$target, $userId]);
+        } else {
+            // No reassignment: the user's posts are deleted, as the reference does.
+            foreach ($this->db->rows("SELECT ID FROM {$posts} WHERE post_author = ?", [$userId]) as $row) {
+                $this->db->execute("DELETE FROM {$this->db->table('postmeta')} WHERE post_id = ?", [(int) $row['ID']]);
+                $this->db->execute("DELETE FROM {$posts} WHERE ID = ?", [(int) $row['ID']]);
+            }
+        }
+        $this->users->delete($userId);
+        return Reply::item(['deleted' => true, 'previous' => $previous], Fields::fromQuery($request->query));
     }
 }
