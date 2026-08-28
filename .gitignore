@@ -11,3 +11,10 @@ tailscale_port
 
 # OS noise
 .DS_Store
+
+# Symlink to the Minn Admin dev plugin (its own git repo; developed in parallel)
+minn-admin-app
+
+# Browser test deps
+tests/browser/node_modules
+tests/browser/package-lock.json

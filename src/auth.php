@@ -181,6 +181,38 @@ function minn_verify_rest_nonce( string $nonce, int $uid, string $token ): bool 
 }
 
 /**
+ * Resolve the current request's user from the auth cookie ALONE, no nonce.
+ * This is the browser-page-load path (a full-page navigation carries the
+ * logged_in cookie but no X-WP-Nonce header). REST writes still require the
+ * nonce via minn_authenticate_rest; this is only for rendering an
+ * authenticated page or minting a fresh nonce for one. Returns [user, token]
+ * or null.
+ */
+function minn_authenticate_session( ?string &$why ): ?array {
+	$name   = minn_logged_in_cookie_name();
+	$cookie = $_COOKIE[ $name ] ?? null;
+	if ( null === $cookie ) {
+		foreach ( $_COOKIE as $k => $v ) {
+			if ( str_starts_with( $k, 'wordpress_logged_in_' ) ) {
+				$cookie = $v;
+				break;
+			}
+		}
+	}
+	if ( null === $cookie ) {
+		$why = 'rest_not_logged_in';
+		return null;
+	}
+	$valid = minn_validate_auth_cookie( $cookie );
+	if ( null === $valid ) {
+		$why = 'rest_not_logged_in';
+		return null;
+	}
+	$why = '';
+	return $valid;
+}
+
+/**
  * Resolve the current request's authenticated user for a REST call.
  * Returns [user_row, token] on success. On failure sets $why to the
  * matching WordPress error code and returns null. A request with no auth

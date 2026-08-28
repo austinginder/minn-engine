@@ -52,6 +52,7 @@ function minn_engine_serve(): void {
 	require_once __DIR__ . '/rest.php';
 	require_once __DIR__ . '/writes.php';
 	require_once __DIR__ . '/login-endpoint.php';
+	require_once __DIR__ . '/minn-admin.php';
 
 	$path = parse_url( $_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH ) ?? '/';
 	if ( isset( $_GET['rest_route'] ) ) {
@@ -62,6 +63,15 @@ function minn_engine_serve(): void {
 	}
 	if ( '/wp-login.php' === $path ) {
 		minn_handle_login();
+	}
+	if ( '/wp-admin/admin-ajax.php' === $path ) {
+		minn_admin_handle_ajax();
+	}
+	if ( str_starts_with( $path, '/minn-admin-asset/' ) ) {
+		minn_admin_serve_asset( substr( $path, strlen( '/minn-admin-asset/' ) ) );
+	}
+	if ( '/minn-admin' === $path || str_starts_with( $path, '/minn-admin/' ) ) {
+		minn_admin_handle_app();
 	}
 	if ( '/' !== $path ) {
 		http_response_code( 404 );

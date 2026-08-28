@@ -12,7 +12,8 @@ Pre-alpha. The engine boots from an unmodified `wp-config.php`, serves a databas
 
 Working today:
 
-- `wp/v2` posts, pages, categories, tags, types, users, and `users/me` (read, view and edit context)
+- **Minn Admin boots and runs on the engine.** A browser signs in through the engine's login, the admin SPA loads, and the Content view lists and filters every post and page (drafts included) read live through the engine's REST layer. This is the milestone the whole project points at: the admin interface running on the from-scratch engine instead of WordPress. See `contracts/minn-admin.md`.
+- `wp/v2` posts, pages, categories, tags, types, users, and `users/me` (read, view and edit context, with `status`/`author` list filtering)
 - Creating, updating, and deleting posts and pages, gated by a full capability engine (roles, `map_meta_cap`, cap-gated response links), with the round-trip proven: a write issued to the engine is read back through WordPress
 - The `_fields` response filter, including the quirk where filtering the associative types payload yields `[]`
 - Block rendering, texturize, and generated excerpts matching the reference byte for byte

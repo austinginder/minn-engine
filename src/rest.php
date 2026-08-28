@@ -449,30 +449,76 @@ function minn_rest_posts_list( string $type ): void {
 	$per_page = max( 1, min( 100, (int) ( $_GET['per_page'] ?? 10 ) ) );
 	$page     = max( 1, (int) ( $_GET['page'] ?? 1 ) );
 	$offset   = ( $page - 1 ) * $per_page;
+	$context  = ( $_GET['context'] ?? 'view' ) === 'edit' ? 'edit' : 'view';
 
-	$stmt = minn_db()->prepare(
-		"SELECT COUNT(*) FROM {$table_prefix}posts WHERE post_type = ? AND post_status = 'publish'"
-	);
-	$stmt->bind_param( 's', $type );
-	$stmt->execute();
-	$total       = (int) $stmt->get_result()->fetch_row()[0];
+	// Statuses. Public callers see only 'publish'; anything else (draft,
+	// pending, future, private) and the edit context require an authenticated
+	// user who can edit this type. Matches the reference's status gating.
+	$public_only = array( 'publish' );
+	$requested   = isset( $_GET['status'] )
+		? array_values( array_filter( array_map( 'trim', explode( ',', (string) $_GET['status'] ) ) ) )
+		: $public_only;
+
+	$needs_auth = 'edit' === $context || array_diff( $requested, $public_only );
+	$uid        = 0;
+	if ( $needs_auth ) {
+		$why  = '';
+		$auth = minn_authenticate_rest( $why );
+		if ( null === $auth ) {
+			if ( 'rest_cookie_invalid_nonce' === $why ) {
+				minn_rest_error( 'rest_cookie_invalid_nonce', 'Cookie check failed', 403 );
+			}
+			minn_rest_error( 'rest_forbidden_context', 'Sorry, you are not allowed to edit posts in this post type.', 401 );
+		}
+		$uid      = (int) $auth[0]['ID'];
+		$edit_cap = 'page' === $type ? 'edit_pages' : 'edit_posts';
+		if ( ! minn_user_can( $uid, $edit_cap ) ) {
+			minn_rest_error( 'rest_forbidden_context', 'Sorry, you are not allowed to edit posts in this post type.', 403 );
+		}
+	}
+	$statuses = $needs_auth ? $requested : $public_only;
+
+	// Build the status IN() clause safely with placeholders.
+	$in    = implode( ',', array_fill( 0, count( $statuses ), '?' ) );
+	$args  = array_merge( array( $type ), $statuses );
+	$types = str_repeat( 's', count( $args ) );
+
+	// Optional author scope (the client uses it for own-only types).
+	$author_sql = '';
+	if ( isset( $_GET['author'] ) && ctype_digit( (string) $_GET['author'] ) ) {
+		$author_sql = ' AND post_author = ?';
+		$args[]     = (int) $_GET['author'];
+		$types     .= 'i';
+	}
+
+	$where = "post_type = ? AND post_status IN ($in)$author_sql";
+
+	$cstmt = minn_db()->prepare( "SELECT COUNT(*) FROM {$table_prefix}posts WHERE $where" );
+	$cstmt->bind_param( $types, ...$args );
+	$cstmt->execute();
+	$total       = (int) $cstmt->get_result()->fetch_row()[0];
 	$total_pages = (int) ceil( $total / $per_page );
 
 	if ( $page > 1 && $page > $total_pages ) {
 		minn_rest_error( 'rest_post_invalid_page_number', 'The page number requested is larger than the number of pages available.', 400 );
 	}
 
-	$stmt = minn_db()->prepare(
-		"SELECT * FROM {$table_prefix}posts WHERE post_type = ? AND post_status = 'publish'
-		 ORDER BY post_date DESC LIMIT ?, ?"
+	$qargs  = array_merge( $args, array( $offset, $per_page ) );
+	$qtypes = $types . 'ii';
+	$stmt   = minn_db()->prepare(
+		"SELECT * FROM {$table_prefix}posts WHERE $where ORDER BY post_date DESC LIMIT ?, ?"
 	);
-	$stmt->bind_param( 'sii', $type, $offset, $per_page );
+	$stmt->bind_param( $qtypes, ...$qargs );
 	$stmt->execute();
 	$rows = $stmt->get_result()->fetch_all( MYSQLI_ASSOC );
 
+	$builder = 'edit' === $context
+		? static fn( $r ) => minn_rest_post_object_edit( $r, $uid )
+		: 'minn_rest_post_object';
+
 	header( 'X-WP-Total: ' . $total );
 	header( 'X-WP-TotalPages: ' . $total_pages );
-	minn_rest_send( array_map( 'minn_rest_post_object', $rows ), 200, true );
+	minn_rest_send( array_map( $builder, $rows ), 200, true );
 }
 
 function minn_rest_posts_single( string $type, int $id ): void {
