@@ -15,6 +15,7 @@ final readonly class Request
      * @param array<string, string> $headers lower-cased names
      * @param array<string, string> $cookies
      * @param array<string, mixed> $form decoded form fields, for bodies that are not JSON
+     * @param array<string, array> $files uploaded files, keyed by field
      */
     public function __construct(
         public Method $method,
@@ -26,6 +27,8 @@ final readonly class Request
         public bool $secure,
         public string $host,
         public array $form = [],
+        public array $files = [],
+        public string $remoteAddress = '',
     ) {
     }
 
@@ -52,6 +55,8 @@ final readonly class Request
             secure: ($_SERVER['HTTPS'] ?? '') !== '' && $_SERVER['HTTPS'] !== 'off',
             host: (string) ($_SERVER['HTTP_HOST'] ?? ''),
             form: $_POST,
+            files: $_FILES,
+            remoteAddress: (string) ($_SERVER['REMOTE_ADDR'] ?? ''),
         );
     }
 
@@ -68,7 +73,7 @@ final readonly class Request
     /** The same request addressed to another path (a REST route carried in ?rest_route=). */
     public function withPath(string $path): self
     {
-        return new self($this->method, $path, $this->query, $this->headers, $this->cookies, $this->body, $this->secure, $this->host, $this->form);
+        return new self($this->method, $path, $this->query, $this->headers, $this->cookies, $this->body, $this->secure, $this->host, $this->form, $this->files, $this->remoteAddress);
     }
 
     public function query(string $key, ?string $default = null): ?string

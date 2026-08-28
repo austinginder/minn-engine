@@ -895,3 +895,104 @@ function minn_v1_boot_status(): void {
 
 	minn_rest_send( $out );
 }
+
+/* -------------------------------------- the editor and settings helper routes */
+
+function minn_v1_editor_dispatch( string $route, string $method ): void {
+	if ( preg_match( '#^/minn-admin/v1/posts/(\d+)/lock$#', $route, $m ) && 'POST' === $method ) {
+		[ , $uid ] = minn_v1_require();
+		$id = (int) $m[1];
+		if ( minn_user_can( $uid, 'edit_post', $id ) ) {
+			minn_set_post_meta( $id, '_edit_lock', time() . ':' . $uid );
+			minn_rest_send( array( 'acquired' => true ) );
+		}
+		minn_rest_error( 'rest_cannot_edit', 'Sorry, you are not allowed to edit this post.', 403 );
+	}
+	if ( preg_match( '#^/minn-admin/v1/posts/(\d+)/unlock$#', $route, $m ) && 'POST' === $method ) {
+		[ , $uid ] = minn_v1_require();
+		$id = (int) $m[1];
+		if ( minn_user_can( $uid, 'edit_post', $id ) ) {
+			minn_delete_post_meta( $id, '_edit_lock' );
+			minn_rest_send( array( 'unlocked' => true ) );
+		}
+		minn_rest_error( 'rest_cannot_edit', 'Sorry, you are not allowed to edit this post.', 403 );
+	}
+	if ( '/minn-admin/v1/templates' === $route && 'GET' === $method ) {
+		minn_v1_require();
+		// No theme, no page templates. Honest empty set.
+		minn_rest_send( array( 'templates' => array() ) );
+	}
+	if ( '/minn-admin/v1/editor-styles' === $route && 'GET' === $method ) {
+		minn_v1_require();
+		// The reference serves core's block CSS from wp-includes; the engine
+		// has no wp-includes to serve (recorded divergence).
+		minn_rest_send( array( 'urls' => array() ) );
+	}
+	if ( '/minn-admin/v1/patterns' === $route && 'GET' === $method ) {
+		minn_v1_require();
+		// Theme patterns are GPL theme content the engine does not carry.
+		minn_rest_send( array( 'patterns' => array() ) );
+	}
+	if ( '/minn-admin/v1/site-logo' === $route && 'GET' === $method ) {
+		minn_v1_require();
+		minn_rest_send( array( 'supported' => false, 'id' => 0, 'url' => '' ) );
+	}
+	if ( '/minn-admin/v1/permalinks' === $route && 'GET' === $method ) {
+		[ , $uid ] = minn_v1_require();
+		if ( ! minn_user_can( $uid, 'manage_options' ) ) {
+			minn_rest_error( 'rest_forbidden', 'Sorry, you are not allowed to do that.', 403 );
+		}
+		$structure = (string) ( minn_option( 'permalink_structure' ) ?? '' );
+		minn_rest_send(
+			array(
+				'structure'     => $structure,
+				'category_base' => (string) ( minn_option( 'category_base' ) ?? '' ),
+				'tag_base'      => (string) ( minn_option( 'tag_base' ) ?? '' ),
+				'pretty'        => '' !== $structure,
+				'app_url'       => minn_home_url( '' !== $structure ? '/minn-admin/' : '/?minn_admin=1' ),
+			)
+		);
+	}
+	if ( '/minn-admin/v1/spam' === $route && 'GET' === $method ) {
+		global $table_prefix;
+		[ , $uid ] = minn_v1_require();
+		if ( ! minn_user_can( $uid, 'moderate_comments' ) ) {
+			minn_rest_error( 'rest_forbidden', 'Sorry, you are not allowed to do that.', 403 );
+		}
+		$counts = array( 'spam' => 0, 'pending' => 0 );
+		$res    = minn_db()->query(
+			"SELECT comment_approved, COUNT(*) AS c FROM {$table_prefix}comments
+			 WHERE comment_approved IN ('spam', '0') GROUP BY comment_approved"
+		);
+		foreach ( $res->fetch_all( MYSQLI_ASSOC ) as $row ) {
+			$counts[ 'spam' === $row['comment_approved'] ? 'spam' : 'pending' ] = (int) $row['c'];
+		}
+		minn_rest_send(
+			array(
+				'providers'       => array(),
+				'queue'           => $counts,
+				'disallowed_keys' => (string) ( minn_option( 'disallowed_keys' ) ?? '' ),
+			)
+		);
+	}
+	if ( '/minn-admin/v1/languages' === $route && 'GET' === $method ) {
+		[ , $uid ] = minn_v1_require();
+		if ( ! minn_user_can( $uid, 'manage_options' ) ) {
+			minn_rest_error( 'rest_forbidden', 'Sorry, you are not allowed to do that.', 403 );
+		}
+		// The available list is captured registry data (data/languages.json);
+		// installed reflects this site (no language packs on disk).
+		$data = json_decode( (string) file_get_contents( __DIR__ . '/data/languages.json' ), true );
+		$data['current'] = (string) ( minn_option( 'WPLANG' ) ?? '' );
+		minn_rest_send( $data );
+	}
+	if ( '/minn-admin/v1/media/months' === $route && 'GET' === $method ) {
+		global $table_prefix;
+		minn_v1_require();
+		$res = minn_db()->query(
+			"SELECT DISTINCT DATE_FORMAT(post_date, '%Y-%m') AS ym FROM {$table_prefix}posts
+			 WHERE post_type = 'attachment' AND post_status = 'inherit' ORDER BY ym DESC"
+		);
+		minn_rest_send( array_column( $res->fetch_all( MYSQLI_ASSOC ), 'ym' ) );
+	}
+}

@@ -6,8 +6,10 @@ namespace Minn\Rest;
 
 use Minn\Auth\Authenticator;
 use Minn\Auth\Capabilities;
+use Minn\Content\Comments;
 use Minn\Content\Posts;
 use Minn\Content\PostWriter;
+use Minn\Content\Revisions;
 use Minn\Content\Site;
 use Minn\Content\Terms;
 use Minn\Content\Users;
@@ -16,6 +18,8 @@ use Minn\Front\Permalinks;
 use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Router;
+use Minn\Media\Images;
+use Minn\Media\Uploads;
 use Minn\RestError;
 
 /**
@@ -51,6 +55,9 @@ final readonly class Api
         $termObject = new TermObject($db, $permalinks, $url, $caller);
         $userObject = new UserObject($db, $users, $permalinks, $url, $caller);
         $types = new Types($url);
+        $uploads = new Uploads($site, $permalinks, ABSPATH . 'wp-content/uploads');
+        $mediaObject = new MediaObject($posts, $uploads, $permalinks, $url, $caller);
+        $commentObject = new CommentObject(new Comments($db), $posts, $permalinks, $url, $caller);
 
         $router = (new Router())->register(
             new LegacyRoutes(),
@@ -60,6 +67,9 @@ final readonly class Api
             new UsersController($db, $users, $site, $userObject, $url, $caller),
             new TypesController($types),
             new SettingsController(new Settings($site), $caller),
+            new CommentsController(new Comments($db), $posts, $site, $commentObject, $caller),
+            new RevisionsController($posts, new Revisions($db, $writer, $site), $url, $caller),
+            new MediaController($db, $posts, $writer, $site, $uploads, new Images($site), $mediaObject, $caller),
         );
         return new self($db, $request, $caller, $router, $postObject, $termObject, $userObject, $types);
     }

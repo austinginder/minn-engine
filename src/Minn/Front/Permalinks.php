@@ -67,6 +67,24 @@ final readonly class Permalinks
         return $this->url('/' . $this->posts->pathOf($page) . '/');
     }
 
+    /**
+     * An attachment's public link: its slug under the parent's permalink
+     * when attached, at the root when not, or the query form under plain
+     * permalinks.
+     */
+    public function forAttachment(array $attachment): string
+    {
+        $id = (int) $attachment['ID'];
+        if (!$this->isPretty() || $attachment['post_name'] === '') {
+            return $this->url('/?attachment_id=' . $id);
+        }
+        $parent = (int) $attachment['post_parent'] > 0 ? $this->posts->find((int) $attachment['post_parent']) : null;
+        if ($parent !== null) {
+            return rtrim($this->forPost($parent), '/') . '/' . $attachment['post_name'] . '/';
+        }
+        return $this->url('/' . $attachment['post_name'] . '/');
+    }
+
     public function forTerm(array $term): string
     {
         $taxonomy = (string) $term['taxonomy'];
