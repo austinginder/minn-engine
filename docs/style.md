@@ -13,14 +13,15 @@ prose, is the rule.
   intersection types, `never` for functions that do not return.
 - **`declare(strict_types=1);`** is the first statement of every file.
 - **Namespaces, PSR-4, no build step.** Code lives under `src/Minn/` and maps to the
-  `Minn\` namespace by a ten-line autoloader in `bootstrap.php`. No Composer, no
+  `Minn\` namespace by `Minn\Autoloader` (a dozen lines, registered from `public/wp-settings.php`). No Composer, no
   vendor directory, no dependencies. One class per file, file named for the class.
 - **PSR-12 formatting.** Four-space indentation, no space padding inside parentheses,
   `function foo(string $bar): void`. This is the one place the engine deliberately
   does not look like WordPress code.
 - **Classes over free functions.** Behaviour is grouped into small final classes with
-  one clear responsibility. The `minn_*` procedural style is legacy; new code never
-  adds to it, and legacy files migrate to the new shape when touched.
+  one clear responsibility. There are no free functions in the engine; the only file
+  outside `src/Minn/` is `public/wp-settings.php`, which registers the autoloader and
+  hands off to `Minn\Engine`.
 - **Immutable values.** Data that crosses a boundary (a request, a response, a
   resolved route, a post record) is a `final readonly class` with promoted properties.
   Mutation is a method that returns a new instance (`$response->withHeader(...)`).
@@ -38,7 +39,7 @@ prose, is the rule.
   payload by hand.
 - **Database through `Minn\Db`.** Prepared statements only, always through the
   `Db` helpers (`row`, `rows`, `value`, `execute`, `insert`, `update`). Table names come
-  from `$db->table('posts')`; `global $table_prefix` never appears in new code.
+  from `$db->table('posts')`; `global $table_prefix` never appears.
 - **Escaping at output.** `Html::esc()` at the point of rendering, never earlier.
   Values are stored and passed raw.
 - **Serialized blobs are read, never executed.** `Minn\Support\Serialized` parses
@@ -87,8 +88,8 @@ prose, is the rule.
 - declares a namespace matching its path
 - contains no `global `, `unserialize(`, `extract(`, `eval(`, `$_GET`, `$_POST`,
   `$_COOKIE`, `$_SERVER`, `$_FILES`, `header(`, `echo `, `exit`, `die(` outside the
-  files allowed to touch the edge (`Minn\Http\Kernel`, `Minn\Http\Request`)
+  files allowed to touch the edge (`Minn\Http\Request`, `Minn\Http\Response`)
 - uses four-space indentation, no tabs
 
-and reports the number of legacy `src/*.php` files remaining, so the migration is
-visible in every run.
+and reports any procedural `src/*.php` file that appears (there are none; the count
+is expected to stay at zero).

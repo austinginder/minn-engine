@@ -48,8 +48,8 @@ admin interface.
 
 - Code style is `docs/style.md`, enforced by `tests/style.test.php`: strict
   types, PSR-4 under `src/Minn/`, PSR-12 formatting, request in and response
-  out, errors as exceptions, capabilities as route metadata. New code is
-  written in that shape; legacy `minn_*` files migrate when touched.
+  out, errors as exceptions, capabilities as route metadata. Every line of the
+  engine lives under `src/Minn/`; there are no procedural files.
 - Modern PHP, minimal dependencies, no build step.
 - Prepared statements only. Never `unserialize()` untrusted data (read
   serialized blobs with tolerant parsers, never by executing them).
