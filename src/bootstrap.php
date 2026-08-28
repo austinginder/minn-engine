@@ -50,6 +50,7 @@ function minn_engine_serve(): void {
 	require_once __DIR__ . '/login.php';
 	require_once __DIR__ . '/auth.php';
 	require_once __DIR__ . '/rest.php';
+	require_once __DIR__ . '/writes.php';
 
 	$path = parse_url( $_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH ) ?? '/';
 	if ( isset( $_GET['rest_route'] ) ) {

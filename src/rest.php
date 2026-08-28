@@ -795,19 +795,137 @@ function minn_current_user_id(): int {
 	return $uid;
 }
 
+
+/* ------------------------------------------------------ edit-context post */
+
+/**
+ * The edit-context post object: raw+rendered on title/content/guid, the
+ * editor-only fields (password, permalink_template, generated_slug,
+ * block_version), and cap-gated wp:action-* links driven by the capability
+ * engine. Matches the reference's create/update response.
+ */
+function minn_rest_post_object_edit( array $p, int $uid ): array {
+	$id   = (int) $p['ID'];
+	$type = $p['post_type'];
+	$view = minn_rest_post_object( $p );
+
+	// Rewrite the raw+rendered dual fields.
+	$view['guid']    = array( 'rendered' => $p['guid'], 'raw' => $p['guid'] );
+	$view['title']   = array( 'raw' => $p['post_title'], 'rendered' => minn_texturize( $p['post_title'] ) );
+	$view['content'] = array(
+		'raw'           => $p['post_content'],
+		'rendered'      => in_array( $p['post_status'], array( 'trash' ), true ) ? '' : minn_render_blocks( $p['post_content'] ),
+		'protected'     => false,
+		'block_version' => str_contains( $p['post_content'], '<!-- wp:' ) ? 1 : 0,
+	);
+	$view['excerpt'] = array(
+		'raw'       => $p['post_excerpt'],
+		'rendered'  => minn_rendered_excerpt( $p ),
+		'protected' => false,
+	);
+
+	// Insert the editor-only fields in the reference's order (after status).
+	$out = array();
+	foreach ( $view as $k => $v ) {
+		if ( 'guid' === $k ) {
+			$out['guid'] = $v;
+			continue;
+		}
+		if ( 'slug' === $k ) {
+			$out['password'] = $p['post_password'];
+			$out['slug']     = $v;
+			continue;
+		}
+		$out[ $k ] = $v;
+	}
+	// permalink_template and generated_slug sit just before class_list.
+	$reordered = array();
+	foreach ( $out as $k => $v ) {
+		if ( 'class_list' === $k ) {
+			$reordered['permalink_template'] = minn_home_url( '/?' . ( 'page' === $type ? 'page_id' : 'p' ) . '=' . $id );
+			$reordered['generated_slug']     = minn_sanitize_slug( $p['post_title'] );
+		}
+		$reordered[ $k ] = $v;
+	}
+
+	$reordered['_links'] = minn_rest_post_links_edit( $p, $uid );
+	return $reordered;
+}
+
+/** Edit-context links: the view links plus cap-gated wp:action-* entries. */
+function minn_rest_post_links_edit( array $p, int $uid ): array {
+	$id    = (int) $p['ID'];
+	$type  = $p['post_type'];
+	$links = minn_rest_post_links( $p );
+	// The author link is always present in edit context.
+	if ( ! isset( $links['author'] ) ) {
+		$links['author'] = array(
+			array( 'embeddable' => true, 'href' => minn_rest_url( '/wp/v2/users/' . (int) $p['post_author'] ) ),
+		);
+	}
+
+	$base    = '/wp/v2/' . minn_post_type_config( $type )['rest_base'] . '/' . $id;
+	$others  = 'page' === $type ? 'edit_others_pages' : 'edit_others_posts';
+	$publish = 'page' === $type ? 'publish_pages' : 'publish_posts';
+
+	$actions = array();
+	if ( minn_user_can( $uid, $publish ) ) {
+		$actions['wp:action-publish'] = true;
+	}
+	if ( minn_user_can( $uid, 'unfiltered_html' ) ) {
+		$actions['wp:action-unfiltered-html'] = true;
+	}
+	if ( minn_user_can( $uid, $others ) ) {
+		$actions['wp:action-sticky']        = true;
+		$actions['wp:action-assign-author'] = true;
+	}
+	// Taxonomy actions: assign is broadly held; create is gated on manage.
+	if ( minn_user_can( $uid, 'manage_categories' ) ) {
+		$actions['wp:action-create-categories'] = true;
+	}
+	$actions['wp:action-assign-categories'] = true;
+	if ( minn_user_can( $uid, 'edit_posts' ) ) {
+		$actions['wp:action-create-tags'] = true;
+	}
+	$actions['wp:action-assign-tags'] = true;
+
+	// Emit in the reference's alphabetical-by-suffix order.
+	$order = array(
+		'wp:action-assign-author', 'wp:action-assign-categories', 'wp:action-assign-tags',
+		'wp:action-create-categories', 'wp:action-create-tags', 'wp:action-publish',
+		'wp:action-sticky', 'wp:action-unfiltered-html',
+	);
+	foreach ( $order as $rel ) {
+		if ( ! empty( $actions[ $rel ] ) ) {
+			$links[ $rel ] = array( array( 'href' => minn_rest_url( $base ) ) );
+		}
+	}
+	return $links;
+}
+
 /* -------------------------------------------------------------- dispatch */
 
 function minn_rest_dispatch( string $route ): void {
-	$route = '/' . trim( $route, '/' );
+	$route  = '/' . trim( $route, '/' );
+	$method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
-	if ( 'GET' !== ( $_SERVER['REQUEST_METHOD'] ?? 'GET' ) ) {
-		minn_rest_error( 'rest_no_route', 'No route was found matching the URL and request method.', 404 );
-	}
 	if ( preg_match( '#^/wp/v2/(posts|pages)$#', $route, $m ) ) {
-		minn_rest_posts_list( 'posts' === $m[1] ? 'post' : 'page' );
+		$type = 'posts' === $m[1] ? 'post' : 'page';
+		if ( 'POST' === $method ) {
+			minn_rest_create_post( $type );
+		}
+		minn_rest_posts_list( $type );
 	}
 	if ( preg_match( '#^/wp/v2/(posts|pages)/(\d+)$#', $route, $m ) ) {
-		minn_rest_posts_single( 'posts' === $m[1] ? 'post' : 'page', (int) $m[2] );
+		$type = 'posts' === $m[1] ? 'post' : 'page';
+		$id   = (int) $m[2];
+		if ( 'POST' === $method || 'PUT' === $method || 'PATCH' === $method ) {
+			minn_rest_update_post( $type, $id );
+		}
+		if ( 'DELETE' === $method ) {
+			minn_rest_delete_post( $type, $id );
+		}
+		minn_rest_posts_single( $type, $id );
 	}
 	if ( preg_match( '#^/wp/v2/(categories|tags)$#', $route, $m ) ) {
 		minn_rest_terms_list( $m[1] );
@@ -823,6 +941,9 @@ function minn_rest_dispatch( string $route ): void {
 	}
 	if ( preg_match( '#^/wp/v2/users/(\\d+)$#', $route, $m ) ) {
 		minn_rest_users_single( (int) $m[1] );
+	}
+	if ( 'GET' !== $method ) {
+		minn_rest_error( 'rest_no_route', 'No route was found matching the URL and request method.', 404 );
 	}
 	if ( '/wp/v2/types' === $route ) {
 		minn_rest_types_list();
