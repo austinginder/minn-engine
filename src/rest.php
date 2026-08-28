@@ -295,6 +295,21 @@ function minn_revision_count( int $post_id ): int {
 	return (int) $stmt->get_result()->fetch_row()[0];
 }
 
+/** Latest plain (non-autosave) revision id for a post, or 0. */
+function minn_latest_revision_id( int $post_id ): int {
+	global $table_prefix;
+	$like = $post_id . '-autosave%';
+	$stmt = minn_db()->prepare(
+		"SELECT ID FROM {$table_prefix}posts
+		 WHERE post_type = 'revision' AND post_parent = ? AND post_name NOT LIKE ?
+		 ORDER BY ID DESC LIMIT 1"
+	);
+	$stmt->bind_param( 'is', $post_id, $like );
+	$stmt->execute();
+	$row = $stmt->get_result()->fetch_row();
+	return $row ? (int) $row[0] : 0;
+}
+
 function minn_rest_date( string $mysql ): string {
 	return str_replace( ' ', 'T', $mysql );
 }
@@ -431,6 +446,13 @@ function minn_rest_post_links( array $p ): array {
 				'href'  => minn_rest_url( $base . '/' . $id . '/revisions' ),
 			),
 		),
+		// The latest plain revision, once one exists.
+		'predecessor-version' => ( $pred = minn_latest_revision_id( $id ) ) > 0 ? array(
+			array(
+				'id'   => $pred,
+				'href' => minn_rest_url( $base . '/' . $id . '/revisions/' . $pred ),
+			),
+		) : null,
 		'up'              => ( 'page' === $type && (int) $p['post_parent'] > 0 ) ? array(
 			array(
 				'embeddable' => true,

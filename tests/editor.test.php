@@ -164,6 +164,16 @@ $rid = (int) ( $post['id'] ?? 0 );
 check( 200 === $st, 'WordPress update creates a revision' );
 ed_parity( 'revisions list parity', 'rest_route=' . rawurlencode( '/wp/v2/posts/' . $rid . '/revisions' ), $admin );
 ed_parity( "the app's revision fields", 'rest_route=' . rawurlencode( '/wp/v2/posts/' . $rid . '/revisions' ) . '&per_page=6&_fields=id,modified,author', $admin );
+// The engine's own updates snapshot revisions the way core does.
+[ $st ] = ed_fetch( $ENGINE, 'rest_route=' . rawurlencode( '/wp/v2/posts/' . $rid ), $admin, 'POST', '{"content":"v3 engine revision"}' );
+check( 200 === $st, 'engine update snapshots a revision' );
+[ , $b ] = ed_fetch( $REF, 'rest_route=' . rawurlencode( '/wp/v2/posts/' . $rid . '/revisions' ), $admin );
+check( 2 === count( $b ?? array() ) && str_contains( $b[0]['content']['rendered'] ?? '', 'v3 engine revision' ), 'WordPress lists the engine-written revision' );
+[ $st ] = ed_fetch( $ENGINE, 'rest_route=' . rawurlencode( '/wp/v2/posts/' . $rid ), $admin, 'POST', '{"content":"v3 engine revision"}' );
+[ , $b ] = ed_fetch( $ENGINE, 'rest_route=' . rawurlencode( '/wp/v2/posts/' . $rid . '/revisions' ), $admin );
+check( 2 === count( $b ?? array() ), 'a no-change update adds no revision' );
+ed_parity( 'revisions parity after engine writes', 'rest_route=' . rawurlencode( '/wp/v2/posts/' . $rid . '/revisions' ), $admin );
+
 [ $st, $b ] = ed_fetch( $ENGINE, 'rest_route=' . rawurlencode( '/wp/v2/posts/' . $rid ) . '&force=true', $admin, 'DELETE' );
 check( 200 === $st && true === ( $b['deleted'] ?? null ), 'engine force delete cascades' );
 [ , $b ] = ed_fetch( $REF, 'rest_route=' . rawurlencode( '/wp/v2/posts/' . $rid . '/revisions' ), $admin );

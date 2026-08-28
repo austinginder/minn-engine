@@ -267,8 +267,57 @@ function minn_rest_update_post( string $type, int $id ): void {
 	if ( array_key_exists( 'status', $body ) && $body['status'] !== $post['post_status'] ) {
 		minn_recount_post_taxonomies( $id );
 	}
+	minn_maybe_save_revision( $id, $uid );
 
 	minn_rest_send( minn_rest_post_object_edit( minn_get_post_row( $id ), $uid ) );
+}
+
+/**
+ * Snapshot the post's NEW state as a revision, exactly when core would:
+ * compared against the latest revision; identical content-bearing fields
+ * add nothing, and the first update always snapshots.
+ */
+function minn_maybe_save_revision( int $id, int $uid ): void {
+	global $table_prefix;
+	$post = minn_get_post_row( $id );
+	if ( ! $post || ! in_array( $post['post_type'], array( 'post', 'page' ), true ) ) {
+		return;
+	}
+	$slug = $id . '-revision-v1';
+	$like = $id . '-autosave%';
+	$stmt = minn_db()->prepare(
+		"SELECT post_title, post_content, post_excerpt FROM {$table_prefix}posts
+		 WHERE post_parent = ? AND post_type = 'revision' AND post_name NOT LIKE ?
+		 ORDER BY ID DESC LIMIT 1"
+	);
+	$stmt->bind_param( 'is', $id, $like );
+	$stmt->execute();
+	$latest = $stmt->get_result()->fetch_assoc();
+	if ( $latest
+		&& $latest['post_title'] === $post['post_title']
+		&& $latest['post_content'] === $post['post_content']
+		&& $latest['post_excerpt'] === $post['post_excerpt'] ) {
+		return;
+	}
+
+	$stamp = $post['post_modified'];
+	$gmt   = $post['post_modified_gmt'];
+	$stmt  = minn_db()->prepare(
+		"INSERT INTO {$table_prefix}posts
+		 (post_author, post_date, post_date_gmt, post_content, post_title, post_excerpt,
+		  post_status, comment_status, ping_status, post_password, post_name, to_ping, pinged,
+		  post_modified, post_modified_gmt, post_content_filtered, post_parent, guid, menu_order,
+		  post_type, post_mime_type, comment_count)
+		 VALUES (?, ?, ?, ?, ?, ?, 'inherit', 'closed', 'closed', '', ?, '', '',
+		  ?, ?, '', ?, '', 0, 'revision', '', 0)"
+	);
+	$stmt->bind_param( 'issssssssi', $uid, $stamp, $gmt, $post['post_content'], $post['post_title'], $post['post_excerpt'], $slug, $stamp, $gmt, $id );
+	$stmt->execute();
+	$rid  = (int) minn_db()->insert_id;
+	$guid = minn_home_url( '/?p=' . $rid );
+	$g    = minn_db()->prepare( "UPDATE {$table_prefix}posts SET guid = ? WHERE ID = ?" );
+	$g->bind_param( 'si', $guid, $rid );
+	$g->execute();
 }
 
 /* ---------------------------------------------------------------- delete */
