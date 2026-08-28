@@ -112,8 +112,10 @@ final class Layout
                 $rules[] = 'gap:' . Styles::value((string) $gap);
             }
         } elseif ($gap !== null) {
-            // Flow and constrained layouts with their own gap.
-            $rules[] = '--minn-block-gap:' . Styles::value((string) $gap);
+            // Flow and constrained layouts with their own gap: the reference writes the gap onto the
+            // children (every child, then every child after the first), never onto the container.
+            $value = Styles::value((string) $gap);
+            return "> *{margin-block-start:{$value};margin-block-end:0;}> * + *{margin-block-start:{$value};margin-block-end:0;}";
         }
         return implode(';', $rules) . ($rules === [] ? '' : ';');
     }

@@ -1,7 +1,9 @@
 {
   "elements": {
     "button": {
-      "border": {"width": "0"},
+      "border": {
+        "width": "0"
+      },
       "typography": {
         "fontFamily": "inherit",
         "fontSize": "inherit",
@@ -13,7 +15,27 @@
         "textTransform": "inherit"
       },
       "spacing": {
-        "padding": {"top": "calc(0.667em + 2px)", "right": "calc(1.333em + 2px)", "bottom": "calc(0.667em + 2px)", "left": "calc(1.333em + 2px)"}
+        "padding": {
+          "top": "calc(0.667em + 2px)",
+          "right": "calc(1.333em + 2px)",
+          "bottom": "calc(0.667em + 2px)",
+          "left": "calc(1.333em + 2px)"
+        }
+      }
+    }
+  },
+  "blocks": {
+    "core/button": {
+      "variations": {
+        "outline": {
+          "color": {
+            "gradient": "transparent none",
+            "text": "currentColor"
+          },
+          "border": {
+            "style": "solid"
+          }
+        }
       }
     }
   }

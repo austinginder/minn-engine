@@ -448,15 +448,29 @@ final readonly class GlobalStyles
     {
         $out = '';
         foreach (RenderState::variations() as [$name, $style, $instance]) {
-            $slug = substr($name, 5);
+            $slug = str_starts_with($name, 'core/') ? substr($name, 5) : str_replace('/', '-', $name);
             $variation = (array) ($blocks[$name]['variations'][$style] ?? []);
-            $selector = ".wp-block-{$slug}.is-style-{$style}--{$instance}";
+            // The variation class rides on the block's own class inside the block's root selector
+            // (.wp-block-button.is-style-outline--3 .wp-block-button__link); element rules inside
+            // the variation are scoped by the numbered class alone.
+            $root = self::BLOCK_SELECTORS[$name] ?? ".wp-block-{$slug}";
+            $class = ".is-style-{$style}--{$instance}";
+            $selector = str_contains($root, ".wp-block-{$slug}") ? preg_replace('/\.wp-block-' . preg_quote($slug, '/') . '(?![\w-])/', ".wp-block-{$slug}{$class}", $root, 1) : $root . $class;
             $declarations = self::declarations($variation, ['blockGap']);
             $out .= ":root :where({$selector}){" . implode(';', $declarations) . ($declarations === [] ? '' : ';') . '}';
             if (isset($variation['css'])) {
                 $out .= self::scopedCss((string) $variation['css'], $selector);
             }
-            $out .= $this->elementStyles((array) ($variation['elements'] ?? []), $selector);
+            $out .= $this->elementStyles((array) ($variation['elements'] ?? []), $class);
+            foreach ((array) ($variation['blocks'] ?? []) as $innerName => $innerStyles) {
+                $innerSlug = str_starts_with((string) $innerName, 'core/') ? substr((string) $innerName, 5) : str_replace('/', '-', (string) $innerName);
+                $innerSelector = "{$class} " . (self::BLOCK_SELECTORS[$innerName] ?? ".wp-block-{$innerSlug}");
+                $innerDeclarations = self::declarations((array) $innerStyles, ['blockGap']);
+                if ($innerDeclarations !== []) {
+                    $out .= ":root :where({$innerSelector}){" . implode(';', $innerDeclarations) . ';}';
+                }
+                $out .= $this->elementStyles((array) ($innerStyles['elements'] ?? []), $innerSelector);
+            }
         }
         return $out;
     }
@@ -465,6 +479,13 @@ final readonly class GlobalStyles
     {
         $out = implode('', RenderState::elementRules());
         foreach (RenderState::containers() as $class => $declarations) {
+            if (str_starts_with($declarations, '>')) {
+                // A flow or constrained gap is a pair of child rules, not a declaration on the container.
+                foreach (array_filter(explode('}', $declarations)) as $rule) {
+                    $out .= ".{$class} {$rule}}";
+                }
+                continue;
+            }
             $out .= ".{$class}{{$declarations}}";
         }
         foreach (RenderState::galleries() as $instance) {
@@ -553,10 +574,15 @@ final readonly class GlobalStyles
     private static function ordered(array $declarations): array
     {
         $sides = ['top' => 0, 'right' => 1, 'bottom' => 2, 'left' => 3];
-        $key = static function (string $declaration) use ($sides): string {
+        // The border shorthands run radius, color, width, style, ahead of the alphabet.
+        $border = ['border-radius' => 0, 'border-color' => 1, 'border-width' => 2, 'border-style' => 3];
+        $key = static function (string $declaration) use ($sides, $border): string {
             $property = strstr($declaration, ':', true) ?: $declaration;
             if (preg_match('/^(margin|padding)-(top|right|bottom|left)$/', $property, $m)) {
                 return $m[1] . '-' . $sides[$m[2]];
+            }
+            if (isset($border[$property])) {
+                return 'border-' . $border[$property];
             }
             return $property;
         };

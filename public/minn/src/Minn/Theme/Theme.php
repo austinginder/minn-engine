@@ -60,8 +60,57 @@ final class Theme
         if ($this->json === null) {
             $own = (array) json_decode((string) file_get_contents("{$this->dir}/theme.json"), true);
             $this->json = $this->parent === null ? $own : self::merge($this->parent->json(), $own);
+            $this->json = $this->withStylePartials($this->json);
         }
         return $this->json;
+    }
+
+    /**
+     * A theme's styles/ folder can hold block style variations: a JSON file
+     * with blockTypes and a slug (else the file name) whose styles become
+     * styles.blocks.{type}.variations.{slug} for each named block type. The
+     * parent's partials load first, the child's over them.
+     */
+    private function withStylePartials(array $json): array
+    {
+        $dirs = [];
+        for ($theme = $this; $theme !== null; $theme = $theme->parent) {
+            array_unshift($dirs, $theme->dir);
+        }
+        foreach ($dirs as $dir) {
+            foreach (self::partialFiles("{$dir}/styles") as $file) {
+                $partial = json_decode((string) file_get_contents($file), true);
+                if (!is_array($partial) || !is_array($partial['blockTypes'] ?? null)) {
+                    continue;
+                }
+                $slug = (string) ($partial['slug'] ?? pathinfo($file, PATHINFO_FILENAME));
+                if (!self::safe($slug)) {
+                    continue;
+                }
+                foreach ($partial['blockTypes'] as $type) {
+                    if (is_string($type) && preg_match('/^[a-z][a-z0-9-]*\/[a-z][a-z0-9-]*$/', $type)) {
+                        $json['styles']['blocks'][$type]['variations'][$slug] = (array) ($partial['styles'] ?? []);
+                    }
+                }
+            }
+        }
+        return $json;
+    }
+
+    /** @return list<string> */
+    private static function partialFiles(string $dir): array
+    {
+        if (!is_dir($dir)) {
+            return [];
+        }
+        $files = [];
+        foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($dir, \FilesystemIterator::SKIP_DOTS)) as $file) {
+            if ($file->getExtension() === 'json') {
+                $files[] = $file->getPathname();
+            }
+        }
+        sort($files);
+        return $files;
     }
 
     /**

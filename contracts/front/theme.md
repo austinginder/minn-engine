@@ -247,6 +247,39 @@ element).
   button-inside search rules, the two legacy font-size presets, and the
   navigation wrappers' desktop shape; the navigation container inherits its gap.
 
+## Geometry parity on the engine's own theme (Twenty Twenty-Five)
+
+`node tests/browser/geometry.test.js --dev` walks fifteen dev-site pages against the
+8123 oracle; all fifteen match. Facts learned there, beyond the dogfood list:
+
+- **Block style variations live in `styles/*.json` too.** A partial with `blockTypes`
+  (and a `slug`, else its file name) is a variation of every block it names
+  (`styles/blocks/post-terms-1.json` gives `core/post-terms` its `post-terms-1`
+  style; the section partials give groups and columns theirs, with nested `blocks`).
+  `Theme::json()` folds them in, parent first. A variation's declarations land on the
+  block's root selector with the numbered class on the block class
+  (`.wp-block-button.is-style-outline--3 .wp-block-button__link`); element rules
+  inside it are scoped by the numbered class alone (`.is-style-post-terms-1--2 a:where(…)`);
+  nested block styles by `.is-style-X--N .wp-block-y`.
+- **Core's outline button defaults** sit under the theme's: `background: transparent none`,
+  `border-style: solid`, `color: currentColor` (`data/styles.json`). Border declarations
+  print radius, color, width, style, ahead of the alphabetical order.
+- **A flow or constrained gap is written onto the children**: the container class gets
+  `> * {margin-block-start: G; margin-block-end: 0}` and `> * + *` with the same, never a
+  declaration on the container itself.
+- **Block stylesheet facts**: the submenu is a zero-sized hidden flex column that keeps its
+  1px border (2px by 2px) until hover, focus-within or an expanded toggle opens it to a
+  200px floor; the page list is a flex row driven by the navigation layout variables;
+  `.wp-block-post-content` is `flow-root`; a border width in an inline style implies a
+  solid border on that side; a `figure > a` in an image block is `inline-block`; a
+  gallery figure is a flex column with a 13px caption laid over its foot and a 16px
+  default gap; `thead`/`tfoot` carry 3px borders; the search label is only `width: 100%`
+  (the screen-reader rule prints last so it still wins); a site-title link inherits its
+  paragraph's typography; the latest-comments line-height rules wrap the whole descendant
+  selector in `:not()`, so both land on the list and 1.8 wins; only `img[class*="wp-image-"]`
+  scales to its container, so a broken avatar keeps its 50px attribute box; `1ch` arrow
+  margins; latest-posts dates are `.8125em` and latest-comments dates `.75em`.
+
 ## Known gaps
 
 - The responsive navigation overlay needs the interactivity script the reference ships;
