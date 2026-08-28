@@ -13,9 +13,7 @@ $config = str_replace( "require_once ABSPATH . 'wp-settings.php';", '', $config 
 eval( '?>' . $config );
 
 require $root . '/src/bootstrap.php';
-require $root . '/src/caps.php';
-require $root . '/src/login.php';
-require $root . '/src/auth.php';
+require $root . '/src/compat.php';
 
 $username = (string) ( $argv[1] ?? '' );
 $password = (string) ( $argv[2] ?? '' );

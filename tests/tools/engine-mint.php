@@ -14,7 +14,7 @@ $config = str_replace( "require_once ABSPATH . 'wp-settings.php';", '', $config 
 eval( '?>' . $config );
 
 require $root . '/src/bootstrap.php';
-require $root . '/src/auth.php';
+require $root . '/src/compat.php';
 
 $uid   = (int) ( $argv[1] ?? 1 );
 $token = (string) ( $argv[2] ?? '' );

@@ -25,9 +25,7 @@ $config = str_replace( "require_once ABSPATH . 'wp-settings.php';", '', $config 
 eval( '?>' . $config );
 $GLOBALS['table_prefix'] = $table_prefix;
 require "$ROOT/src/bootstrap.php";
-require "$ROOT/src/auth.php";
-require "$ROOT/src/caps.php";
-require "$ROOT/src/login.php";
+require "$ROOT/src/compat.php";
 
 [ $ph ] = minn_test_fetch( "$REF/?rest_route=/wp/v2/posts", 3 );
 if ( 200 !== $ph['status'] ) {

@@ -44,9 +44,7 @@ function minn_esc( ?string $s ): string {
 }
 
 function minn_engine_serve(): void {
-	require_once __DIR__ . '/caps.php';
-	require_once __DIR__ . '/login.php';
-	require_once __DIR__ . '/auth.php';
+	require_once __DIR__ . '/compat.php';
 	require_once __DIR__ . '/rest.php';
 	require_once __DIR__ . '/rest-minn.php';
 	require_once __DIR__ . '/rest-comments.php';
@@ -84,10 +82,10 @@ function minn_engine_serve(): void {
 /** The public site: everything the legacy routes above did not claim. */
 function minn_front_serve(): never {
 	$db       = Minn\Db::shared();
-	$can_read = static function ( array $post ): bool {
-		$why  = '';
-		$user = minn_authenticate_session( $why );
-		return null !== $user && minn_user_can( (int) $user['ID'], 'edit_post', (int) $post['ID'] );
+	$can_read = static function ( array $post ) use ( $db ): bool {
+		$session = Minn\Auth\Authenticator::fromDb( $db )->session( $_COOKIE );
+		return $session instanceof Minn\Auth\Authenticated
+			&& Minn\Auth\Capabilities::fromDb( $db )->can( $session->id(), 'edit_post', (int) $post['ID'] );
 	};
 	$resolver = Minn\Front\Resolver::fromDb( $db, $can_read );
 	$renderer = new Minn\Front\Renderer( $db, new Minn\Content\Posts( $db ), $resolver->permalinks(), $resolver->perPage() );
