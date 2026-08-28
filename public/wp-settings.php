@@ -10,6 +10,7 @@
 
 define( 'MINN_ENGINE_VERSION', '0.0.1' );
 
-require_once dirname( __DIR__ ) . '/src/bootstrap.php';
+require_once dirname( __DIR__ ) . '/src/Minn/Autoloader.php';
 
-minn_engine_serve();
+Minn\Autoloader::register();
+( new Minn\Engine( MINN_ENGINE_VERSION, dirname( __DIR__ ) ) )->serve();

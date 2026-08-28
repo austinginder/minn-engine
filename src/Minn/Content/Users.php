@@ -64,6 +64,26 @@ final readonly class Users
         $this->db->execute("DELETE FROM {$this->db->table('users')} WHERE ID = ?", [$id]);
     }
 
+    public function count(): int
+    {
+        return (int) $this->db->value("SELECT COUNT(*) FROM {$this->db->table('users')}");
+    }
+
+    /** @return list<array> the newest registrations after a site-local timestamp */
+    public function registeredAfter(string $since, int $limit): array
+    {
+        return $this->db->rows(
+            "SELECT ID, display_name, user_registered FROM {$this->db->table('users')}
+             WHERE user_registered > ? ORDER BY user_registered DESC LIMIT ?",
+            [$since, $limit],
+        );
+    }
+
+    public function deleteMeta(int $userId, string $key): void
+    {
+        $this->db->execute("DELETE FROM {$this->db->table('usermeta')} WHERE user_id = ? AND meta_key = ?", [$userId, $key]);
+    }
+
     /** One usermeta value, raw. Serialized blobs come back as stored. */
     public function meta(int $userId, string $key): ?string
     {

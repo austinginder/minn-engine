@@ -12,28 +12,32 @@ $config = file_get_contents( $root . '/public/wp-config.php' );
 $config = str_replace( "require_once ABSPATH . 'wp-settings.php';", '', $config );
 eval( '?>' . $config );
 
-require $root . '/src/bootstrap.php';
-require $root . '/src/compat.php';
+require $root . '/src/Minn/Autoloader.php';
+Minn\Autoloader::register();
 
 $username = (string) ( $argv[1] ?? '' );
 $password = (string) ( $argv[2] ?? '' );
 
-$user = minn_login( $username, $password );
+$db       = Minn\Db::shared();
+$users    = new Minn\Content\Users( $db );
+$sessions = new Minn\Auth\Sessions( $users );
+$cookie   = new Minn\Auth\Cookie( $db, $users, $sessions );
+$user     = ( new Minn\Auth\Authenticator( $cookie, $users ) )->login( $username, $password );
 if ( ! $user ) {
 	echo json_encode( array( 'ok' => false ) );
 	exit;
 }
 $uid   = (int) $user['ID'];
 $exp   = time() + 172800;
-$token = minn_create_session( $uid, $exp );
+$token = $sessions->create( $uid, $exp, '', '' );
 
 echo json_encode(
 	array(
 		'ok'          => true,
 		'uid'         => $uid,
-		'cookie'      => minn_generate_auth_cookie( $user, $exp, $token ),
-		'nonce'       => minn_create_rest_nonce( $uid, $token ),
-		'cookie_name' => minn_logged_in_cookie_name(),
+		'cookie'      => $cookie->mint( $user, $exp, $token ),
+		'nonce'       => Minn\Auth\Nonce::create( $uid, $token ),
+		'cookie_name' => $cookie->name(),
 		'token'       => $token,
 	)
 );

@@ -29,6 +29,6 @@ final readonly class FrontController
             return Response::redirect((string) $resolution->location, $resolution->status);
         }
         return Response::html($this->renderer->render($resolution), $resolution->status)
-            ->withHeader('X-Powered-By', 'Minn Engine/' . MINN_ENGINE_VERSION);
+            ->withHeader('X-Powered-By', 'Minn Engine/' . (defined('MINN_ENGINE_VERSION') ? MINN_ENGINE_VERSION : ''));
     }
 }

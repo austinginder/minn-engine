@@ -57,11 +57,11 @@ function eng_can( int $uid, string $cap, ?int $post ): string {
 		// wp-config sets $table_prefix at file scope; here it is function-local,
 		// so promote it to the global the engine reads.
 		$GLOBALS['table_prefix'] = $table_prefix;
-		require "$ROOT/src/bootstrap.php";
-		require "$ROOT/src/compat.php";
+		require "$ROOT/src/Minn/Autoloader.php";
+		Minn\Autoloader::register();
 		$loaded = true;
 	}
-	return minn_user_can( $uid, $cap, $post ) ? 'Y' : 'n';
+	return Minn\Auth\Capabilities::fromDb( Minn\Db::shared() )->can( $uid, $cap, $post ) ? 'Y' : 'n';
 }
 
 echo "caps + login suite: $ENGINE / $REF (oracle)\n";

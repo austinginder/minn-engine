@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
+use Minn\Content\Blocks;
+use Minn\Content\Excerpt;
 use Minn\Content\Posts;
 use Minn\Db;
 use Minn\Support\Html;
@@ -97,7 +99,7 @@ final readonly class Renderer
     private function article(array $post): string
     {
         return '<article class="entry"><h1 class="entry-title">' . Html::esc($post['post_title']) . '</h1>'
-            . '<div class="entry-content">' . minn_render_blocks((string) $post['post_content']) . '</div></article>';
+            . '<div class="entry-content">' . Blocks::render((string) $post['post_content']) . '</div></article>';
     }
 
     /** @return array{0: string, 1: string} title and markup */
@@ -122,7 +124,7 @@ final readonly class Renderer
         foreach ($page['posts'] as $post) {
             $items .= '<li><a href="' . Html::attr($this->permalinks->forPost($post)) . '">' . Html::esc($post['post_title']) . '</a>'
                 . '<time>' . Html::esc(substr((string) $post['post_date'], 0, 10)) . '</time>'
-                . '<p>' . minn_rendered_excerpt($post) . '</p></li>';
+                . '<p>' . Excerpt::render($post) . '</p></li>';
         }
         $markup = ($title !== '' ? '<h1 class="archive-title">' . Html::esc($title) . '</h1>' : '')
             . ($items === '' ? '<p>No posts yet.</p>' : '<ul class="post-list">' . $items . '</ul>');

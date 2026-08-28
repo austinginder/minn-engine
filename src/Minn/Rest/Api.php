@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Admin\AdminTypes;
+use Minn\Admin\CoreStatus;
+use Minn\Admin\Dashboard;
+use Minn\Admin\Notifications;
+use Minn\Admin\V1Controller;
 use Minn\Auth\Authenticator;
 use Minn\Auth\Capabilities;
 use Minn\Content\Comments;
@@ -50,7 +55,8 @@ final readonly class Api
         $writer = new PostWriter($db, $posts, $site);
         $permalinks = Permalinks::fromDb($db);
         $url = new RestUrl($permalinks);
-        $caller = new Caller($request, Authenticator::fromDb($db), Capabilities::fromDb($db));
+        $capabilities = Capabilities::fromDb($db);
+        $caller = new Caller($request, Authenticator::fromDb($db), $capabilities);
         $postObject = new PostObject($db, $posts, $users, $permalinks, $url, $caller);
         $termObject = new TermObject($db, $permalinks, $url, $caller);
         $userObject = new UserObject($db, $users, $permalinks, $url, $caller);
@@ -59,8 +65,11 @@ final readonly class Api
         $mediaObject = new MediaObject($posts, $uploads, $permalinks, $url, $caller);
         $commentObject = new CommentObject(new Comments($db), $posts, $permalinks, $url, $caller);
 
+        $dashboard = new Dashboard($db, $site, $users, $capabilities, ABSPATH . 'wp-content/uploads');
+        $notifications = new Notifications($db, $site, $users, $capabilities, $dashboard);
+
         $router = (new Router())->register(
-            new LegacyRoutes(),
+            new V1Controller($db, $site, $posts, $writer, $permalinks, $dashboard, $notifications, new CoreStatus($site), new AdminTypes($types, $capabilities), $caller),
             new PostsController($db, $posts, $postObject, $caller),
             new PostsWriteController($posts, $writer, $site, $postObject, $url, $caller),
             new TermsController($db, $terms, $site, $termObject, $caller),

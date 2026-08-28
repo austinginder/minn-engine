@@ -11,11 +11,15 @@ namespace Minn\Http;
  */
 final readonly class Response
 {
-    /** @param array<string, string> $headers */
+    /**
+     * @param array<string, string> $headers
+     * @param list<array{0: string, 1: string, 2: array}> $cookies name, value, setcookie options
+     */
     public function __construct(
         public int $status = 200,
         public array $headers = [],
         public string $body = '',
+        public array $cookies = [],
     ) {
     }
 
@@ -40,12 +44,18 @@ final readonly class Response
 
     public function withHeader(string $name, string $value): self
     {
-        return new self($this->status, [$name => $value] + $this->headers, $this->body);
+        return new self($this->status, [$name => $value] + $this->headers, $this->body, $this->cookies);
+    }
+
+    /** @param array<string, mixed> $options setcookie options: expires, path, secure, httponly, samesite */
+    public function withCookie(string $name, string $value, array $options): self
+    {
+        return new self($this->status, $this->headers, $this->body, [...$this->cookies, [$name, $value, $options]]);
     }
 
     public function withoutBody(): self
     {
-        return new self($this->status, $this->headers, '');
+        return new self($this->status, $this->headers, '', $this->cookies);
     }
 
     public function send(): never
@@ -53,6 +63,9 @@ final readonly class Response
         http_response_code($this->status);
         foreach ($this->headers as $name => $value) {
             header("{$name}: {$value}");
+        }
+        foreach ($this->cookies as [$name, $value, $options]) {
+            setcookie($name, $value, $options);
         }
         echo $this->body;
         exit;

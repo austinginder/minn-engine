@@ -24,8 +24,8 @@ $config = file_get_contents( "$ROOT/public/wp-config.php" );
 $config = str_replace( "require_once ABSPATH . 'wp-settings.php';", '', $config );
 eval( '?>' . $config );
 $GLOBALS['table_prefix'] = $table_prefix;
-require "$ROOT/src/bootstrap.php";
-require "$ROOT/src/compat.php";
+require "$ROOT/src/Minn/Autoloader.php";
+Minn\Autoloader::register();
 
 [ $ph ] = minn_test_fetch( "$REF/?rest_route=/wp/v2/posts", 3 );
 if ( 200 !== $ph['status'] ) {
@@ -117,8 +117,8 @@ check( is_string( $auth ), 'sets an auth (secure) cookie on the admin path' );
 // 4. The session the login created authenticates against the engine.
 //    Mint the matching nonce the way a boot payload would provide it.
 $parts = explode( '|', (string) $logged_in );
-$user  = minn_get_user_by_login( $parts[0] );
-$nonce = minn_create_rest_nonce( (int) $user['ID'], $parts[2] );
+$user  = ( new Minn\Content\Users( Minn\Db::shared() ) )->findByLogin( $parts[0] );
+$nonce = Minn\Auth\Nonce::create( (int) $user['ID'], $parts[2] );
 $cname = 'wordpress_logged_in_' . $hash;
 $alt   = 'wordpress_logged_in_' . md5( $REF );
 

@@ -52,7 +52,9 @@ final readonly class Request
             headers: $headers,
             cookies: array_map(strval(...), $_COOKIE),
             body: (string) file_get_contents('php://input'),
-            secure: ($_SERVER['HTTPS'] ?? '') !== '' && $_SERVER['HTTPS'] !== 'off',
+            secure: (($_SERVER['HTTPS'] ?? '') !== '' && $_SERVER['HTTPS'] !== 'off')
+                || ($_SERVER['SERVER_PORT'] ?? '') === '443'
+                || ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https',
             host: (string) ($_SERVER['HTTP_HOST'] ?? ''),
             form: $_POST,
             files: $_FILES,

@@ -13,19 +13,22 @@ $config = file_get_contents( $root . '/public/wp-config.php' );
 $config = str_replace( "require_once ABSPATH . 'wp-settings.php';", '', $config );
 eval( '?>' . $config );
 
-require $root . '/src/bootstrap.php';
-require $root . '/src/compat.php';
+require $root . '/src/Minn/Autoloader.php';
+Minn\Autoloader::register();
 
 $uid   = (int) ( $argv[1] ?? 1 );
 $token = (string) ( $argv[2] ?? '' );
 $exp   = (int) ( $argv[3] ?? ( time() + 172800 ) );
 
-$user = minn_get_user_by_id( $uid );
+$db     = Minn\Db::shared();
+$users  = new Minn\Content\Users( $db );
+$cookie = new Minn\Auth\Cookie( $db, $users, new Minn\Auth\Sessions( $users ) );
+$user   = $users->find( $uid );
 echo json_encode(
 	array(
 		'uid'         => $uid,
-		'cookie'      => minn_generate_auth_cookie( $user, $exp, $token ),
-		'nonce'       => minn_create_rest_nonce( $uid, $token ),
-		'cookie_name' => minn_logged_in_cookie_name(),
+		'cookie'      => $cookie->mint( $user, $exp, $token ),
+		'nonce'       => Minn\Auth\Nonce::create( $uid, $token ),
+		'cookie_name' => $cookie->name(),
 	)
 );
