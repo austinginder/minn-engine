@@ -20,6 +20,8 @@ use Minn\Front\Permalinks;
 use Minn\Support\Html;
 use Minn\Content\PasswordGate;
 use Minn\Content\Reader;
+use Minn\Extension\Extensions;
+use Minn\Extension\Shortcodes;
 
 /** The post-* blocks: they render the context's current post. */
 final readonly class PostBlocks
@@ -82,6 +84,11 @@ final readonly class PostBlocks
             $content = rtrim(Blocks::render($raw)) . $suffix;
         } else {
             $content = Blocks::render(str_replace('<!--more-->', '<span id="more-' . (int) $post['ID'] . '"></span>', $raw));
+        }
+        $seams = Extensions::seams();
+        if ($seams !== null) {
+            $content = Shortcodes::apply($content, $seams->shortcodes(), $seams);
+            $content = $seams->applyContentFilters($content, $post);
         }
         $align = Styles::align($block->attrs);
         return Wrapper::open(

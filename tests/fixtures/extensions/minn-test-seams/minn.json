@@ -1,0 +1,8 @@
+{
+  "name": "Seam probe (test fixture)",
+  "version": "0.1.0",
+  "license": "MIT",
+  "replaces": [],
+  "autoload": {"Minn\\Ext\\TestSeams\\": "src/"},
+  "extension": "Minn\\Ext\\TestSeams\\Extension"
+}

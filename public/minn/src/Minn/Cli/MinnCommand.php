@@ -8,6 +8,7 @@ use WP_CLI;
 use Minn\Content\Posts;
 use Minn\Content\PostWriter;
 use Minn\Cron\Cron;
+use Minn\Extension\Loader;
 use Minn\Mail\MailSettings;
 use Minn\Mail\Mailer;
 use Minn\Mail\Message;
@@ -45,6 +46,8 @@ final class MinnCommand
         WP_CLI::log('Site root: ' . ABSPATH);
         WP_CLI::log('Table prefix: ' . $runtime->db->prefix());
         WP_CLI::log('Home: ' . ($runtime->site->option('home') ?? ''));
+        $loader = new Loader(ABSPATH . 'wp-content', $runtime->site);
+        WP_CLI::log('Extensions: ' . (implode(', ', array_map(static fn ($m) => $m->slug . ' ' . $m->version, $loader->active())) ?: '(none)'));
     }
 
     /**

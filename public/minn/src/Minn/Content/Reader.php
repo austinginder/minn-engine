@@ -24,6 +24,8 @@ final class Reader
         private readonly Closure $canEditPost,
         public readonly string $postPassword,
         public readonly string $sessionToken = '',
+        /** @var list<string> */
+        public readonly array $roles = [],
     ) {
     }
 

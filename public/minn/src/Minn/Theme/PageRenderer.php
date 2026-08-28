@@ -26,6 +26,7 @@ use Minn\Front\Resolver;
 use Minn\Support\Html;
 use Minn\Support\Serialized;
 use Minn\Content\Reader;
+use Minn\Extension\Extensions;
 
 /**
  * A whole page from the active block theme: the template the resolution
@@ -99,6 +100,7 @@ final readonly class PageRenderer
         if ($parent !== null) {
             $classes[] = 'wp-child-theme-' . $this->theme->slug;
         }
+        array_push($classes, ...(Extensions::seams()?->bodyClasses() ?? []));
         return $classes;
     }
 
@@ -126,10 +128,12 @@ final readonly class PageRenderer
             . '<link rel="stylesheet" id="minn-blocks-css" href="' . Html::attr($this->permalinks->url('/minn-engine/blocks.css')) . '" />' . "\n"
             . '<style id="global-styles-inline-css">' . "\n" . $globalStyles . "\n" . '</style>' . "\n"
             . ($themeStyle === null ? '' : '<link rel="stylesheet" id="' . Html::attr($this->theme->slug) . '-style-css" href="' . Html::attr($themeStyle) . '" />' . "\n")
+            . (Extensions::seams()?->renderHead() ?? '')
             . '</head>' . "\n"
             . '<body class="' . Html::attr($bodyClass) . '">' . "\n"
             . '<a class="skip-link screen-reader-text" id="wp-skip-link" href="#wp--skip-link--target">Skip to content</a>'
             . '<div class="wp-site-blocks">' . $body . '</div>' . "\n"
+            . (Extensions::seams()?->renderFooter() ?? '')
             . '</body>' . "\n" . '</html>' . "\n";
     }
 

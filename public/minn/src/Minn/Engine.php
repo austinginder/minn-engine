@@ -41,6 +41,9 @@ use Minn\Cron\Cron;
 use Minn\Content\PostWriter;
 use Minn\Content\Reader;
 use Minn\Front\CommentPostController;
+use Minn\Extension\Extensions;
+use Minn\Extension\Loader;
+use Minn\Extension\Seams;
 
 /**
  * The engine's front door. An unmodified wp-config.php ends by requiring
@@ -106,8 +109,12 @@ final readonly class Engine
             static fn (int $postId): bool => $readerId > 0 && $capabilities->can($readerId, 'edit_post', $postId),
             (string) ($request->cookies['wp-postpass_' . md5((string) ($site->option('siteurl') ?? ''))] ?? ''),
             $session instanceof Authenticated ? $session->token : '',
+            $readerId > 0 ? $capabilities->rolesOf($readerId) : [],
         ));
         $canReadUnpublished = static fn (array $post): bool => Reader::current()->canEdit((int) $post['ID']);
+        $seams = new Seams($db, $site, $request, Reader::current());
+        (new Loader(ABSPATH . 'wp-content', $site))->register($seams);
+        Extensions::set($seams);
         $resolver = Resolver::fromDb($db, $canReadUnpublished);
         $permalinks = $resolver->permalinks();
         $theme = Theme::active($site, $permalinks, ABSPATH . 'wp-content/themes');

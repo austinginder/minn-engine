@@ -1,0 +1,8 @@
+{
+  "name": "Block Visibility for Minn",
+  "version": "1.0.0",
+  "license": "MIT",
+  "replaces": ["block-visibility/block-visibility.php"],
+  "autoload": {"Minn\\Ext\\BlockVisibility\\": "src/"},
+  "extension": "Minn\\Ext\\BlockVisibility\\Extension"
+}

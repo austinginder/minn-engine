@@ -14,6 +14,8 @@ use Minn\Content\Users;
 use Minn\Db;
 use Minn\Support\Html;
 use Minn\Content\PasswordGate;
+use Minn\Extension\Extensions;
+use Minn\Extension\Shortcodes;
 
 /**
  * The syndication feeds, byte for byte in the reference's shape: RSS 2.0
@@ -246,7 +248,9 @@ final readonly class Feeds
         if (PasswordGate::is($post)) {
             return PasswordGate::form($post, $this->permalinks->url(''), $this->permalinks->forPost($post));
         }
-        return Blocks::render(str_replace('<!--more-->', '<span id="more-' . (int) $post['ID'] . '"></span>', (string) $post['post_content']));
+        $content = Blocks::render(str_replace('<!--more-->', '<span id="more-' . (int) $post['ID'] . '"></span>', (string) $post['post_content']));
+        $seams = Extensions::seams();
+        return $seams === null ? $content : $seams->applyContentFilters(Shortcodes::apply($content, $seams->shortcodes(), $seams), $post);
     }
 
     public function perFeed(): int

@@ -19,6 +19,7 @@ use Minn\Db;
 use Minn\Front\Permalinks;
 use Minn\Media\Uploads;
 use Minn\Support\Html;
+use Minn\Extension\Extensions;
 
 /**
  * Renders a block tree the way the reference renders post_content:
@@ -126,8 +127,14 @@ final class Renderer
         if (!RenderState::descend()) {
             return '';
         }
+        $seams = Extensions::seams();
+        if ($seams !== null && !$seams->allowsBlock($block)) {
+            RenderState::ascend();
+            return '';
+        }
         try {
-            return $this->renderNamed($block);
+            $html = $this->renderNamed($block);
+            return $seams === null ? $html : $seams->applyBlockFilters($block, $html);
         } finally {
             RenderState::ascend();
         }

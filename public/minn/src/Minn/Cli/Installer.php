@@ -130,9 +130,22 @@ final class Installer
             }
         }
         $plugins = Serialized::stringList($option('active_plugins'));
-        if ($plugins !== []) {
-            $this->light('AMBER', count($plugins) . ' active plugins will not run: ' . implode(', ', array_map(static fn (string $p) => explode('/', $p)[0], $plugins)));
-        } else {
+        $provided = [];
+        foreach (glob("{$root}/wp-content/{plugins,mu-plugins}/*/minn.json", GLOB_BRACE) ?: [] as $manifestFile) {
+            $manifest = \Minn\Extension\Manifest::read(dirname($manifestFile));
+            foreach ($manifest?->replaces ?? [] as $file) {
+                $provided[$file] = $manifest->slug;
+            }
+        }
+        $missing = array_values(array_filter($plugins, static fn (string $p) => !isset($provided[$p])));
+        foreach ($plugins as $plugin) {
+            if (isset($provided[$plugin])) {
+                $this->light('GREEN', explode('/', $plugin)[0] . ' is provided by the ' . $provided[$plugin] . ' extension');
+            }
+        }
+        if ($missing !== []) {
+            $this->light('AMBER', count($missing) . ' active plugins will not run: ' . implode(', ', array_map(static fn (string $p) => explode('/', $p)[0], $missing)));
+        } elseif ($plugins === []) {
             $this->light('GREEN', 'no active plugins');
         }
         $mu = array_map('basename', glob("{$root}/wp-content/mu-plugins/*.php") ?: []);

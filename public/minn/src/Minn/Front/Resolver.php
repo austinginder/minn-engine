@@ -315,6 +315,12 @@ final readonly class Resolver
                 return $archive;
             }
         }
+        // Under a category-first structure an unmatched bare path reads as
+        // a category query on the reference, which never guesses; other
+        // structures read it as a name and guess from it.
+        if (str_starts_with($this->permalinks->structure, '/%category%')) {
+            return Resolution::notFound();
+        }
         $guess = $this->posts->guess(end($segments));
         return $guess === null ? Resolution::notFound() : Resolution::redirect($this->permalinks->forPost($guess) . $number);
     }
