@@ -199,6 +199,54 @@ anchors and its lowercased `viewbox`). Every fact below came out of that diff.
   page (gallery links, attribute lowercasing), shortcodes (`[eeb_protect_content]`
   stays literal, as it does on the reference without that plugin).
 
+## The global stylesheet, rule by rule (dogfood pass two)
+
+`tests/browser/geometry.test.js` walks every visible element of the dogfood
+pages in Chrome and compares box, font, size, weight, line height and letter
+spacing against the reference; it is the suite that caught everything below,
+none of which markup parity could see. The generated stylesheet now matches the
+reference's rule set and rule order on the dogfood pages (the container and
+`wp-elements-N` rules excepted: the reference prints those in a separate style
+element).
+
+- **Element order is fixed.** Elements print as link, heading, h1 to h6, button,
+  caption, cite, whatever order the theme or the saved styles list them in; the
+  heading group's line-height therefore loses to an h1's, which is what the theme
+  intends. States print base, `:visited`, `:hover`, `:focus`, `:active`.
+- **Core's button defaults.** The reference layers its own theme.json under the
+  theme's: the button element always carries `border-width: 0`, `inherit` for
+  font family, size, style, weight, letter spacing, line height and transform,
+  `text-decoration: none` and `calc(0.667em + 2px) calc(1.333em + 2px)` padding,
+  each key replaceable by the theme (`public/minn/data/styles.json`). A search
+  button is 66px tall with them and 42px without.
+- **Declarations print in property order**: alphabetical, except that margin and
+  padding sides run top, right, bottom, left.
+- **Empty values print nothing.** A saved style can hold `""` for a cleared
+  value; the reference drops it rather than printing `font-size: ;`.
+- **Block styles print only for rendered blocks.** A core block's theme.json
+  styles reach the page only when the block rendered with output; a generated
+  excerpt counts for the blocks it keeps; a block the reference has no
+  stylesheet for (`core/query`, `core/column`, the pagination pieces, and the
+  rest of `STYLESHEET_LESS`) never prints, which is why TT3's
+  `.wp-block-query h2` rule is invisible on every page. Blocks from outside core
+  print unconditionally. The block's own `css` text prints as written with the
+  block selector prefixed without a space (`.wp-block-jetpack-slideshow.swiper-pagination`),
+  and the root `styles.css` prints between the preset classes and the block styles.
+- **Block root selectors** come from the block's metadata: `p` for the paragraph,
+  `.wp-block-list > li`, `.wp-block-button .wp-block-button__link`,
+  `.wp-block-table > table`, `.wp-block-icon svg`.
+- **Presets keep core's slots.** The default spacing scale (20 to 80) always prints
+  whatever `defaultSpacingSizes` says, a theme size with the same slug replacing
+  the default in place; theme font sizes print in core's order for core's slugs
+  (small, medium, large, x-large) with the theme's own slugs after. A fluid size
+  with a px minimum states the additive term in rem (`clamp(20px, 1.25rem + ...`).
+- **The engine's block stylesheet** dropped its global `box-sizing: border-box`
+  reset (the reference sets it per block; a padded paragraph in a constrained
+  layout is 40px wider without the reset), gained the social-links, aligned-image
+  (`display: table`, caption as `table-caption`), post-excerpt, and
+  button-inside search rules, the two legacy font-size presets, and the
+  navigation wrappers' desktop shape; the navigation container inherits its gap.
+
 ## Known gaps
 
 - The responsive navigation overlay needs the interactivity script the reference ships;

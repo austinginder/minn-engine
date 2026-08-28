@@ -19,6 +19,8 @@ final class RenderState
     private static array $containers = [];
     /** @var list<array{0: string, 1: string, 2: int}> block name, style, instance number */
     private static array $variations = [];
+    /** @var array<string, true> */
+    private static array $blocks = [];
     /** @var list<int> */
     private static array $galleries = [];
     private static int $elements = 0;
@@ -63,6 +65,18 @@ final class RenderState
     public static function containers(): array
     {
         return self::$containers;
+    }
+
+    /** Every block name the page rendered; the stylesheet prints block styles for these only. */
+    public static function recordBlock(string $blockName): void
+    {
+        self::$blocks[$blockName] = true;
+    }
+
+    /** @return array<string, true> */
+    public static function blocks(): array
+    {
+        return self::$blocks;
     }
 
     public static function recordVariation(string $blockName, string $style, int $instance): void
@@ -163,6 +177,7 @@ final class RenderState
         self::$priorityClaimed = false;
         self::$containers = [];
         self::$variations = [];
+        self::$blocks = [];
         self::$galleries = [];
         self::$elements = 0;
         self::$active = [];

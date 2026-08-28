@@ -17,6 +17,12 @@ use Minn\Blocks\Styles;
  */
 final readonly class GlobalStyles
 {
+    /**
+     * Element selectors in the order the reference prints them, whatever
+     * order theme.json or the saved styles list them in: the heading group
+     * lands before the individual levels, so an h1 line-height beats the
+     * group's. Themes list h1..h6 before heading and would otherwise win.
+     */
     private const ELEMENT_SELECTORS = [
         'link' => 'a:where(:not(.wp-element-button))',
         'heading' => 'h1, h2, h3, h4, h5, h6',
@@ -24,6 +30,30 @@ final readonly class GlobalStyles
         'button' => '.wp-element-button, .wp-block-button__link',
         'caption' => '.wp-element-caption, .wp-block-audio figcaption, .wp-block-embed figcaption, .wp-block-gallery figcaption, .wp-block-image figcaption, .wp-block-table figcaption, .wp-block-video figcaption',
         'cite' => 'cite',
+    ];
+
+    /** Blocks whose metadata names a root selector other than .wp-block-{slug}. */
+    private const BLOCK_SELECTORS = [
+        'core/paragraph' => 'p',
+        'core/list-item' => '.wp-block-list > li',
+        'core/button' => '.wp-block-button .wp-block-button__link',
+        'core/table' => '.wp-block-table > table',
+        'core/icon' => '.wp-block-icon svg',
+    ];
+
+    /**
+     * The reference prints a core block's theme.json styles only when the
+     * page rendered the block with output (a generated excerpt counts), and
+     * attaches them to the block's own stylesheet; these core blocks have
+     * none, so their styles never reach a page. A block from outside core
+     * has no such stylesheet to wait for, so its styles always print.
+     */
+    private const STYLESHEET_LESS = [
+        'core/block', 'core/column', 'core/comments-pagination-next', 'core/comments-pagination-numbers', 'core/comments-pagination-previous',
+        'core/comments-title', 'core/freeform', 'core/home-link', 'core/html', 'core/legacy-widget', 'core/list-item', 'core/missing', 'core/more',
+        'core/navigation-submenu', 'core/nextpage', 'core/page-list-item', 'core/pattern', 'core/query-no-results', 'core/query-pagination-next',
+        'core/query-pagination-numbers', 'core/query-pagination-previous', 'core/query', 'core/shortcode', 'core/social-link', 'core/tab-panels',
+        'core/template-part', 'core/terms-query', 'core/widget-group',
     ];
 
     /** @param array|null $user the site editor's saved global styles, layered over the theme */
@@ -35,7 +65,10 @@ final readonly class GlobalStyles
     {
         $json = $this->user === null ? $this->theme->json() : Theme::merge($this->theme->json(), $this->user);
         $settings = (array) ($json['settings'] ?? []);
-        $styles = (array) ($json['styles'] ?? []);
+        // Core's own theme.json sits under the theme's: the button element's inherit-everything
+        // defaults print for every theme, each key replaceable by the theme.
+        $defaults = (array) json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/styles.json'), true);
+        $styles = Theme::merge($defaults, (array) ($json['styles'] ?? []));
         $presets = $this->presets($settings);
 
         $out = ':root{' . $this->presetProperties($presets) . '}';
@@ -46,8 +79,16 @@ final readonly class GlobalStyles
         $out .= $this->rootStyles($styles);
         $out .= $this->elementStyles((array) ($styles['elements'] ?? []), '');
         $out .= $this->presetClasses($presets);
+        if (is_string($styles['css'] ?? null) && $styles['css'] !== '') {
+            // The theme's (or the site editor's) own CSS, printed as written between the preset classes and the block styles.
+            $out .= str_ireplace('</style', '', $styles['css']);
+        }
+        $rendered = RenderState::blocks();
         foreach ((array) ($styles['blocks'] ?? []) as $name => $blockStyles) {
-            $out .= $this->blockStyles((string) $name, (array) $blockStyles);
+            $core = str_starts_with((string) $name, 'core/');
+            if (!$core || isset($rendered[$name]) && !in_array($name, self::STYLESHEET_LESS, true)) {
+                $out .= $this->blockStyles((string) $name, (array) $blockStyles);
+            }
         }
         $out .= $this->variationStyles((array) ($styles['blocks'] ?? []));
         $out .= $this->containerStyles();
@@ -65,11 +106,50 @@ final readonly class GlobalStyles
             'aspect-ratio' => $core['aspect-ratio'] ?? [],
             'color' => $merge($core['color'] ?? [], self::presetList($settings['color']['palette'] ?? []), 'color'),
             'gradient' => $merge($core['gradient'] ?? [], self::presetList($settings['color']['gradients'] ?? []), 'gradient'),
-            'font-size' => array_map(static fn (array $p) => ['slug' => (string) $p['slug'], 'value' => self::fluidFontSize($p, $settings)], $fontSizes),
+            'font-size' => array_map(static fn (array $p) => ['slug' => (string) $p['slug'], 'value' => self::fluidFontSize($p, $settings)], self::defaultSlugsFirst($fontSizes, ['small', 'medium', 'large', 'x-large'])),
             'font-family' => array_map(static fn (array $p) => ['slug' => (string) $p['slug'], 'value' => (string) $p['fontFamily']], self::fontFamilies($settings)),
-            'spacing' => array_map(static fn (array $p) => ['slug' => (string) $p['slug'], 'value' => (string) $p['size']], $spacing),
+            'spacing' => self::spacingPresets($core['spacing'] ?? [], $spacing),
             'shadow' => $merge($core['shadow'] ?? [], self::presetList($settings['shadow']['presets'] ?? []), 'shadow'),
         ];
+    }
+
+    /**
+     * A theme size that reuses one of core's slugs prints in core's position;
+     * the theme's own slugs follow.
+     *
+     * @param list<array> $presets
+     * @param list<string> $defaults
+     * @return list<array>
+     */
+    private static function defaultSlugsFirst(array $presets, array $defaults): array
+    {
+        $rank = array_flip($defaults);
+        $keyed = [];
+        foreach ($presets as $i => $preset) {
+            $slug = (string) ($preset['slug'] ?? '');
+            $keyed[] = [isset($rank[$slug]) ? $rank[$slug] : count($defaults) + $i, $preset];
+        }
+        usort($keyed, static fn (array $a, array $b) => $a[0] <=> $b[0]);
+        return array_column($keyed, 1);
+    }
+
+    /**
+     * The default spacing scale (20 to 80) is always present, whatever
+     * defaultSpacingSizes says; a theme size with the same slug replaces the
+     * default in place, and the theme's other sizes follow the scale.
+     *
+     * @return list<array{slug: string, value: string}>
+     */
+    private static function spacingPresets(array $defaults, array $own): array
+    {
+        $out = [];
+        foreach ($defaults as $preset) {
+            $out[(string) $preset['slug']] = ['slug' => (string) $preset['slug'], 'value' => (string) $preset['value']];
+        }
+        foreach ($own as $preset) {
+            $out[(string) $preset['slug']] = ['slug' => (string) $preset['slug'], 'value' => (string) $preset['size']];
+        }
+        return array_values($out);
     }
 
     /**
@@ -194,7 +274,9 @@ final readonly class GlobalStyles
         $slope = ((float) $max - (float) $min) / $perRem / ($maxViewport - $minViewport);
         $factor = rtrim(rtrim(number_format($slope * 100, 3, '.', ''), '0'), '.');
         $offset = $unit === 'rem' ? ($minViewport / 100) . 'rem' : (320 / 100) . 'px';
-        return sprintf('clamp(%s, %s + ((1vw - %s) * %s), %s)', $min, $min, $offset, $factor, $max);
+        // The additive term is always in rem: a px minimum is converted (20px becomes 1.25rem, 35px 2.188rem).
+        $base = $unit === 'rem' ? $min : rtrim(rtrim(number_format((float) $min / 16, 3, '.', ''), '0'), '.') . 'rem';
+        return sprintf('clamp(%s, %s + ((1vw - %s) * %s), %s)', $min, $base, $offset, $factor, $max);
     }
 
     private function presetProperties(array $presets): string
@@ -282,13 +364,13 @@ final readonly class GlobalStyles
     private function elementStyles(array $elements, string $scope): string
     {
         $out = '';
-        foreach ($elements as $element => $rules) {
-            $selector = self::ELEMENT_SELECTORS[$element] ?? null;
-            if ($selector === null) {
+        foreach (self::ELEMENT_SELECTORS as $element => $selector) {
+            $rules = $elements[$element] ?? null;
+            if (!is_array($rules)) {
                 continue;
             }
             $states = ['' => (array) $rules];
-            foreach ([':hover', ':focus', ':active'] as $state) {
+            foreach ([':visited', ':hover', ':focus', ':active'] as $state) {
                 if (isset($rules[$state])) {
                     $states[$state] = (array) $rules[$state];
                 }
@@ -311,7 +393,7 @@ final readonly class GlobalStyles
     private function blockStyles(string $name, array $blockStyles): string
     {
         $slug = str_starts_with($name, 'core/') ? substr($name, 5) : str_replace('/', '-', $name);
-        $selector = ".wp-block-{$slug}";
+        $selector = self::BLOCK_SELECTORS[$name] ?? ".wp-block-{$slug}";
         $out = '';
         $declarations = self::declarations($blockStyles, ['blockGap']);
         if ($declarations !== []) {
@@ -325,6 +407,18 @@ final readonly class GlobalStyles
         }
         $out .= $this->elementStyles((array) ($blockStyles['elements'] ?? []), $selector);
         return $out;
+    }
+
+    private static function withoutEmpty(array $styles): array
+    {
+        foreach ($styles as $key => $value) {
+            if (is_array($value)) {
+                $styles[$key] = self::withoutEmpty($value);
+            } elseif ($value === '' || $value === null) {
+                unset($styles[$key]);
+            }
+        }
+        return $styles;
     }
 
     /** Custom "css" blocks in theme.json use "&" for the block selector. */
@@ -341,7 +435,9 @@ final readonly class GlobalStyles
                 continue;
             }
             [$sel, $body] = explode('{', $rule, 2);
-            $sel = str_contains($sel, '&') ? str_replace('&', $selector, trim($sel)) : "{$selector} " . trim($sel);
+            // Without an ampersand the reference simply prefixes the block selector: no space, and the
+            // selector text keeps its own trailing whitespace.
+            $sel = str_contains($sel, '&') ? str_replace('&', $selector, trim($sel)) : $selector . ltrim($sel);
             $out .= ":root :where({$sel}){{$body}";
         }
         return $out;
@@ -387,6 +483,8 @@ final readonly class GlobalStyles
     {
         $out = [];
         $value = static fn ($v) => Styles::value((string) $v);
+        // An empty string is how the site editor clears a value; the reference prints nothing for it.
+        $styles = self::withoutEmpty($styles);
         if (isset($styles['color']['background'])) {
             $out[] = 'background-color: ' . $value($styles['color']['background']);
         }
@@ -441,6 +539,28 @@ final readonly class GlobalStyles
                 $out[] = "outline-{$property}: " . $value($styles['outline'][$property]);
             }
         }
-        return $out;
+        return self::ordered($out);
+    }
+
+    /**
+     * The reference prints declarations in its own fixed property order:
+     * alphabetical, except that the sides of a margin or padding run
+     * top, right, bottom, left.
+     *
+     * @param list<string> $declarations
+     * @return list<string>
+     */
+    private static function ordered(array $declarations): array
+    {
+        $sides = ['top' => 0, 'right' => 1, 'bottom' => 2, 'left' => 3];
+        $key = static function (string $declaration) use ($sides): string {
+            $property = strstr($declaration, ':', true) ?: $declaration;
+            if (preg_match('/^(margin|padding)-(top|right|bottom|left)$/', $property, $m)) {
+                return $m[1] . '-' . $sides[$m[2]];
+            }
+            return $property;
+        };
+        usort($declarations, static fn (string $a, string $b) => strcmp($key($a), $key($b)));
+        return $declarations;
     }
 }

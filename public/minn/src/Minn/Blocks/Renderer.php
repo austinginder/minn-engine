@@ -134,6 +134,9 @@ final class Renderer
         }
         try {
             $html = $this->renderNamed($block);
+            if ($html !== '') {
+                RenderState::recordBlock($block->name);
+            }
             return $seams === null ? $html : $seams->applyBlockFilters($block, $html);
         } finally {
             RenderState::ascend();

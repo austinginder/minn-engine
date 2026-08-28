@@ -16,6 +16,8 @@ done
 if [ -d browser/node_modules ]; then
 	printf "\n=== browser: minn-admin boot ===\n"
 	MINN_ADMIN_PASS="${MINN_ADMIN_PASS:-password}" node browser/boot.test.js || failed=1
+	printf "\n=== browser: dogfood geometry ===\n"
+	node browser/geometry.test.js || failed=1
 fi
 
 printf '\n'

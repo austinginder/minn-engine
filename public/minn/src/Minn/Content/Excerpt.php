@@ -6,6 +6,7 @@ namespace Minn\Content;
 
 use Minn\Blocks\Block;
 use Minn\Blocks\Parser;
+use Minn\Blocks\RenderState;
 
 /**
  * The reference's generated excerpt, as captured from probe posts:
@@ -42,7 +43,9 @@ final class Excerpt
     {
         $source = (string) $post['post_excerpt'];
         if ($source === '') {
-            $source = self::allowedMarkup(Parser::parse((string) $post['post_content']));
+            $blocks = Parser::parse((string) $post['post_content']);
+            self::recordRendered($blocks);
+            $source = self::allowedMarkup($blocks);
             $more = strpos($source, '<!--more-->');
             if ($stopAtMore && $more !== false) {
                 $source = substr($source, 0, $more);
@@ -64,6 +67,24 @@ final class Excerpt
     }
 
     /** @param list<Block> $blocks */
+    /**
+     * A generated excerpt drops the disallowed blocks first and renders the
+     * rest before trimming, so the allowed blocks count as rendered on the
+     * page: the stylesheet prints their block styles even when nothing of
+     * theirs survives the trim.
+     *
+     * @param list<Block> $blocks
+     */
+    private static function recordRendered(array $blocks): void
+    {
+        foreach ($blocks as $block) {
+            if ($block->name !== null && in_array($block->name, self::ALLOWED, true)) {
+                RenderState::recordBlock($block->name);
+            }
+            self::recordRendered($block->innerBlocks);
+        }
+    }
+
     private static function allowedMarkup(array $blocks): string
     {
         $out = '';
