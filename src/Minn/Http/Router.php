@@ -41,6 +41,16 @@ final class Router
         return $this;
     }
 
+    /** The registered routes, for an index: pattern => methods. @return array<string, list<string>> */
+    public function routes(): array
+    {
+        $index = [];
+        foreach ($this->routes as ['route' => $route]) {
+            $index[$route->pattern][] = $route->method->value;
+        }
+        return $index;
+    }
+
     /** Null when nothing matched, so the caller can fall through. */
     public function dispatch(Request $request): ?Response
     {

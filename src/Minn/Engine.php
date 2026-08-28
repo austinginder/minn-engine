@@ -16,7 +16,11 @@ use Minn\Auth\Sessions;
 use Minn\Content\Posts;
 use Minn\Content\Site;
 use Minn\Content\Users;
+use Minn\Content\Comments;
 use Minn\Front\AssetsController;
+use Minn\Front\Feeds;
+use Minn\Front\ProbeController;
+use Minn\Front\Sitemaps;
 use Minn\Front\FrontController;
 use Minn\Front\Renderer;
 use Minn\Front\Resolver;
@@ -73,11 +77,19 @@ final readonly class Engine
         $theme = Theme::active($site, $permalinks, ABSPATH . 'wp-content/themes');
         $pages = $theme === null ? null : PageRenderer::create($db, $theme, $permalinks, $resolver->perPage());
 
+        $posts = new Posts($db);
+        $generator = (string) (\Minn\Support\Serialized::field($site->option('_site_transient_update_core'), 'version_checked') ?? '');
+        $feeds = new Feeds($db, $site, $posts, new Comments($db), $users, $permalinks, $generator);
+        $front = null;
+        $probes = new ProbeController($site, $posts, $permalinks, $resolver, $feeds, new Sitemaps($db, $site, $permalinks), static function () use (&$front): Response { return $front->notFound(); });
+        $front = new FrontController($resolver, new Renderer($db, $posts, $permalinks, $resolver->perPage()), $pages, $probes);
+
         $router = (new Router())->register(
             new AssetsController(dirname(__DIR__) . '/assets'),
             new AppController($app, new BootPayload($site, $permalinks, $capabilities, $app, $this->version), $authenticator, $capabilities, $permalinks, $this->version),
             new LoginController($site, $permalinks, $authenticator, $sessions, new AuthCookies($db, $cookie)),
-            new FrontController($resolver, new Renderer($db, new Posts($db), $permalinks, $resolver->perPage()), $pages),
+            $probes,
+            $front,
         );
         $response = (new Kernel($router))->handle($request);
         ($response ?? Response::html('<!doctype html><title>Not Found</title><p>Not found.', 404))->send();

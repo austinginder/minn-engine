@@ -68,7 +68,9 @@ final readonly class Api
         $dashboard = new Dashboard($db, $site, $users, $capabilities, ABSPATH . 'wp-content/uploads');
         $notifications = new Notifications($db, $site, $users, $capabilities, $dashboard);
 
-        $router = (new Router())->register(
+        $router = new Router();
+        $router->register(
+            new IndexController($site, $permalinks, $url, $router),
             new V1Controller($db, $site, $posts, $writer, $permalinks, $dashboard, $notifications, new CoreStatus($site), new AdminTypes($types, $capabilities), $caller),
             new PostsController($db, $posts, $postObject, $caller),
             new PostsWriteController($posts, $writer, $site, $postObject, $url, $caller),

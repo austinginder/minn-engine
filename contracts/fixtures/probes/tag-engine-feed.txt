@@ -1,0 +1,53 @@
+<?xml version="X" encoding="UTF-8"?><rss version="X"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>engine &#8211; Welcome to minn-engine</title>
+	<atom:link href="https://minn-engine.localhost/tag/engine/feed/" rel="self" type="application/rss+xml" />
+	<link>https://minn-engine.localhost</link>
+	<description></description>
+	<lastBuildDate>Fri, 28 Aug 2026 02:32:13 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=X</generator>
+	<item>
+		<title>Building in the open</title>
+		<link>https://minn-engine.localhost/building-in-the-open/</link>
+					<comments>https://minn-engine.localhost/building-in-the-open/#respond</comments>
+		
+		<dc:creator><![CDATA[]]></dc:creator>
+		<pubDate>Fri, 28 Aug 2026 02:32:13 +0000</pubDate>
+				<category><![CDATA[Uncategorized]]></category>
+		<category><![CDATA[engine]]></category>
+		<category><![CDATA[parity]]></category>
+		<guid isPermaLink="false">https://minn-engine.localhost/?p=5</guid>
+
+					<description><![CDATA[A hand-written excerpt for the parity suite.]]></description>
+										<content:encoded><![CDATA[
+<h2 class="wp-block-heading">Why contracts first</h2>
+
+
+
+<p class="wp-block-paragraph">The compatibility contract is the product. Fixtures from a reference site define done.</p>
+
+
+
+<ul class="wp-block-list"><li>schema</li><li>rest</li><li>cli</li></ul>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://minn-engine.localhost/building-in-the-open/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+	</channel>
+</rss>
