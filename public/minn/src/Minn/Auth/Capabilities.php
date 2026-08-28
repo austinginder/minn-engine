@@ -38,7 +38,11 @@ final readonly class Capabilities
         if ($blob === null || $blob === '') {
             return [];
         }
-        return preg_match_all('/s:\d+:"([^"]+)";b:1;/', $blob, $m) ? $m[1] : [];
+        // A role a plugin granted but never registered does not count, as on the reference.
+        $registered = $this->roles->all();
+        return preg_match_all('/s:\d+:"([^"]+)";b:1;/', $blob, $m)
+            ? array_values(array_filter($m[1], static fn (string $role) => isset($registered[$role])))
+            : [];
     }
 
     /** @return array<string, true> the union of primitives the user's roles grant */

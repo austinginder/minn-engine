@@ -8,6 +8,7 @@ use Minn\Auth\AuthCookies;
 use Minn\Auth\Authenticator;
 use Minn\Auth\Sessions;
 use Minn\Content\Site;
+use Minn\Content\Users;
 use Minn\Front\Permalinks;
 use Minn\Http\Method;
 use Minn\Http\Request;
@@ -29,6 +30,7 @@ final readonly class LoginController
         private Authenticator $authenticator,
         private Sessions $sessions,
         private AuthCookies $cookies,
+        private Users $users,
     ) {
     }
 
@@ -38,7 +40,41 @@ final readonly class LoginController
         if ($request->query('action') === 'logout') {
             return $this->cookies->clear(Response::redirect($this->permalinks->url('/wp-login.php?loggedout=true'), 302));
         }
+        if ($request->has('user_id') && $request->has('cove_login_token')) {
+            return $this->tokenLogin($request);
+        }
         return Response::html($this->render($request, ''));
+    }
+
+    /**
+     * The one-time login link `wp user login` prints (the captaincore
+     * helper's contract): the token in user meta must match, be under
+     * fifteen minutes old, and is spent on use. Any failure reads the same
+     * so ids cannot be probed.
+     */
+    private function tokenLogin(Request $request): Response
+    {
+        $error = 'Invalid one-time login token. <a href="' . $this->permalinks->url('/wp-login.php') . '">Try signing in instead</a>?';
+        $user = $this->users->find((int) $request->query('user_id', '0'));
+        if ($user === null) {
+            return Response::html($error, 500);
+        }
+        $id = (int) $user['ID'];
+        $token = (string) ($this->users->meta($id, 'cove_login_token') ?? '');
+        $minted = (int) ($this->users->meta($id, 'cove_login_token_time') ?? 0);
+        if ($token === '' || time() - $minted > 15 * 60) {
+            $this->users->deleteMeta($id, 'cove_login_token');
+            $this->users->deleteMeta($id, 'cove_login_token_time');
+            return Response::html($error, 500);
+        }
+        if (!hash_equals($token, (string) $request->query('cove_login_token', ''))) {
+            return Response::html($error, 500);
+        }
+        $this->users->deleteMeta($id, 'cove_login_token');
+        $this->users->deleteMeta($id, 'cove_login_token_time');
+        $expiration = time() + 14 * self::DAY;
+        $session = $this->sessions->create($id, $expiration, $request->remoteAddress, (string) ($request->header('user-agent') ?? ''));
+        return $this->cookies->attach(Response::redirect($this->permalinks->url('/wp-admin/'), 302), $user, $expiration, $session, $request->secure);
     }
 
     #[Route(Method::Post, '/wp-login.php')]

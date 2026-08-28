@@ -32,12 +32,14 @@ public/
   index.php          stock front controller
   wp-config.php      the file WordPress generated, never edited
   wp-settings.php    two lines: require minn/bootstrap.php
+  wp-cli.yml         routes the WP-CLI verbs to the engine (contracts/cli.md)
   wp-content/        themes and uploads
   minn/
     bootstrap.php    version, autoloader, Minn\Engine::serve()
     src/Minn/        the engine (PSR-4)
     assets/  data/   the engine's own stylesheet and seeded registries
     admin/           the Minn Admin bundle
+    cli.php          WP-CLI entry point
 ```
 
 Everything else in this repository (`tests/`, `contracts/`, `docs/`) is development only and never ships. On a development site `public/minn` can be a symlink into this repository so several sites run the same code.

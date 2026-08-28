@@ -88,7 +88,7 @@ final readonly class Engine
         $router = (new Router())->register(
             new AssetsController($this->engineDir . '/assets'),
             new AppController($app, new BootPayload($site, $permalinks, $capabilities, $app, $this->version), $authenticator, $capabilities, $permalinks, $this->version),
-            new LoginController($site, $permalinks, $authenticator, $sessions, new AuthCookies($db, $cookie)),
+            new LoginController($site, $permalinks, $authenticator, $sessions, new AuthCookies($db, $cookie), $users),
             $probes,
             $front,
         );

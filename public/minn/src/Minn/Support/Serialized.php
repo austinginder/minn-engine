@@ -44,6 +44,94 @@ final class Serialized
         return null;
     }
 
+    /** Returned by decode() when the blob is not a serialized value the reader accepts. */
+    public const INVALID = "\0minn:invalid\0";
+
+    /**
+     * A serialized scalar or array as PHP data, parsed by this reader:
+     * strings, integers, floats, booleans, null, and arrays of those.
+     * Objects are refused (nothing here instantiates anything), as is any
+     * blob with trailing bytes or a malformed shape, with INVALID.
+     */
+    public static function decode(string $blob): mixed
+    {
+        if ($blob === '' || !preg_match('/^[sidbNa]:/', $blob)) {
+            return self::INVALID;
+        }
+        $offset = 0;
+        try {
+            $value = self::read($blob, $offset);
+        } catch (\ValueError) {
+            return self::INVALID;
+        }
+        return $offset === strlen($blob) ? $value : self::INVALID;
+    }
+
+    private static function read(string $blob, int &$offset): mixed
+    {
+        $type = $blob[$offset] ?? '';
+        $offset++;
+        switch ($type) {
+            case 'N':
+                self::expect($blob, $offset, ';');
+                return null;
+            case 'b':
+                self::expect($blob, $offset, ':');
+                $digit = self::until($blob, $offset, ';');
+                return $digit === '1';
+            case 'i':
+                self::expect($blob, $offset, ':');
+                return (int) self::until($blob, $offset, ';');
+            case 'd':
+                self::expect($blob, $offset, ':');
+                return (float) self::until($blob, $offset, ';');
+            case 's':
+                self::expect($blob, $offset, ':');
+                $length = (int) self::until($blob, $offset, ':');
+                self::expect($blob, $offset, '"');
+                $string = substr($blob, $offset, $length);
+                $offset += $length;
+                self::expect($blob, $offset, '"');
+                self::expect($blob, $offset, ';');
+                return $string;
+            case 'a':
+                self::expect($blob, $offset, ':');
+                $count = (int) self::until($blob, $offset, ':');
+                self::expect($blob, $offset, '{');
+                $array = [];
+                for ($i = 0; $i < $count; $i++) {
+                    $key = self::read($blob, $offset);
+                    if (!is_int($key) && !is_string($key)) {
+                        throw new \ValueError('key');
+                    }
+                    $array[$key] = self::read($blob, $offset);
+                }
+                self::expect($blob, $offset, '}');
+                return $array;
+            default:
+                throw new \ValueError('type');
+        }
+    }
+
+    private static function expect(string $blob, int &$offset, string $char): void
+    {
+        if (($blob[$offset] ?? '') !== $char) {
+            throw new \ValueError('shape');
+        }
+        $offset++;
+    }
+
+    private static function until(string $blob, int &$offset, string $char): string
+    {
+        $end = strpos($blob, $char, $offset);
+        if ($end === false) {
+            throw new \ValueError('shape');
+        }
+        $value = substr($blob, $offset, $end - $offset);
+        $offset = $end + 1;
+        return $value;
+    }
+
     /** The integer values of a serialized list such as sticky_posts. */
     public static function intList(?string $blob): array
     {
