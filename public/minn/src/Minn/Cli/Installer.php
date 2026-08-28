@@ -277,10 +277,39 @@ final class Installer
                 $config[$pair[1]] = stripslashes($pair[2]);
             }
         }
+        // Docker official image: define('DB_NAME', getenv('WORDPRESS_DB_NAME'))
+        if (preg_match_all('/define\s*\(\s*[\'"](DB_[A-Z_]+)[\'"]\s*,\s*getenv\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\)/', $source, $m, PREG_SET_ORDER)) {
+            foreach ($m as $pair) {
+                $value = self::env($pair[2]);
+                if ($value !== null) {
+                    $config[$pair[1]] = $value;
+                }
+            }
+        }
+        // Docker official image: define('DB_NAME', getenv_docker('WORDPRESS_DB_NAME', 'wordpress'))
+        if (preg_match_all('/define\s*\(\s*[\'"](DB_[A-Z_]+)[\'"]\s*,\s*getenv_docker\s*\(\s*[\'"]([^\'"]+)[\'"]\s*,\s*[\'"]([^\'"]*)[\'"]\s*\)/', $source, $m, PREG_SET_ORDER)) {
+            foreach ($m as $pair) {
+                $config[$pair[1]] = self::env($pair[2], stripslashes($pair[3]));
+            }
+        }
         if (preg_match('/\$table_prefix\s*=\s*[\'"]([A-Za-z0-9_]+)[\'"]/', $source, $p)) {
             $config['prefix'] = $p[1];
         }
         return $config;
+    }
+
+    /**
+     * getenv, then {NAME}_FILE (Docker secrets), then the fallback.
+     * Matches the official image's getenv_docker without running that PHP.
+     */
+    private static function env(string $name, ?string $default = null): ?string
+    {
+        $file = getenv($name . '_FILE');
+        if (is_string($file) && $file !== '' && is_readable($file)) {
+            return rtrim((string) file_get_contents($file), "\r\n");
+        }
+        $value = getenv($name);
+        return $value === false ? $default : $value;
     }
 
     /** rename() first; copy+remove when the park is on another filesystem. */

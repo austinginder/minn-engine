@@ -48,7 +48,9 @@ reaches `minn/bootstrap.php`, which under WP-CLI only registers the autoloader.
 ## Not yet
 
 - `wp db …` and `wp config …` are WP-CLI's own and read `wp-config.php` directly.
-- Every other verb (`post`, `rewrite`, `core verify-checksums`, `plugin verify-checksums`)
-  is absent; the list grows from what the fleet tooling actually invokes.
-  Checksums are an honest gap: the engine does not ship WordPress core files.
+- `wp core update` and `wp core verify-checksums` wait until Minn has a release
+  of its own. They become the engine's updater and integrity check, not a
+  rewrite of WordPress core commands. Until then the bundle's copies refuse
+  because they need WordPress.
+- `post` and `rewrite` are absent; the list grows from what the fleet actually invokes.
 - `option get` of an option holding a serialized object prints the raw blob.

@@ -120,5 +120,45 @@ $check('no engine remains', !file_exists("$WEBROOT/minn") && !file_exists("$WEBR
 [$out, $code] = $minn('status ' . escapeshellarg($WEBROOT));
 $check('status reads WordPress again', $code === 0 && str_contains($out, ': wordpress'), $out);
 
+// Docker-style wp-config: getenv_docker('ENV', 'fallback') resolved from the
+// environment, still as text, nothing in the file runs.
+$realConfig = (string) file_get_contents("$ROOT/public/wp-config.php");
+preg_match_all('/define\s*\(\s*[\'"](DB_[A-Z_]+)[\'"]\s*,\s*[\'"](.*?)[\'"]\s*\)/', $realConfig, $dm, PREG_SET_ORDER);
+$real = [];
+foreach ($dm as $pair) {
+    $real[$pair[1]] = stripslashes($pair[2]);
+}
+preg_match('/\$table_prefix\s*=\s*[\'"]([A-Za-z0-9_]+)[\'"]/', $realConfig, $pm);
+$dockerRoot = "$SCRATCH/docker";
+mkdir($dockerRoot, 0755, true);
+file_put_contents("{$dockerRoot}/wp-config.php", "<?php\n"
+    . "define('DB_NAME', getenv_docker('MINN_INSTALL_DB_NAME', 'missing'));\n"
+    . "define('DB_USER', getenv_docker('MINN_INSTALL_DB_USER', 'missing'));\n"
+    . "define('DB_PASSWORD', getenv_docker('MINN_INSTALL_DB_PASSWORD', ''));\n"
+    . "define('DB_HOST', getenv_docker('MINN_INSTALL_DB_HOST', '127.0.0.1'));\n"
+    . "\$table_prefix = '" . ($pm[1] ?? 'wp_') . "';\n");
+[$out] = $minn('preflight ' . escapeshellarg($dockerRoot));
+$check(
+    'docker wp-config without env uses the fallback and tries to connect',
+    !str_contains($out, 'no database constants') && str_contains($out, 'database unreachable'),
+    $out,
+);
+$env = 'MINN_INSTALL_DB_NAME=' . escapeshellarg($real['DB_NAME'] ?? '')
+    . ' MINN_INSTALL_DB_USER=' . escapeshellarg($real['DB_USER'] ?? '')
+    . ' MINN_INSTALL_DB_PASSWORD=' . escapeshellarg($real['DB_PASSWORD'] ?? '')
+    . ' MINN_INSTALL_DB_HOST=' . escapeshellarg($real['DB_HOST'] ?? '127.0.0.1');
+exec($env . ' php ' . escapeshellarg("$ENGINE_DIR/bin/minn") . ' preflight ' . escapeshellarg($dockerRoot) . ' 2>&1', $dockerOut, $dockerCode);
+$dockerText = implode("\n", $dockerOut);
+$check(
+    'docker getenv_docker preflight connects with env values',
+    $dockerCode === 0 || str_contains($dockerText, 'reachable'),
+    $dockerText,
+);
+$check(
+    'docker getenv_docker preflight does not claim the constants are missing',
+    !str_contains($dockerText, 'no database constants'),
+    $dockerText,
+);
+
 echo "\n{$pass} passed, {$fail} failed\n";
 exit($fail === 0 ? 0 : 1);

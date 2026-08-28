@@ -28,10 +28,10 @@ reports, each line GREEN, AMBER, or RED:
 
 RED stops `install` unless `--force` is passed.
 
-Preflight reads `wp-config.php` as text and looks for `define('DB_NAME', '…')`
-string literals. A Docker-style file that calls `getenv_docker('WORDPRESS_DB_NAME',
-…)` lights RED even though the database works when PHP runs the file; pass
-`--force`. The engine itself loads `wp-config.php` normally for CLI and web.
+Preflight still reads `wp-config.php` as text (nothing in it runs). It accepts
+string literals, `getenv('…')`, and the official image's
+`getenv_docker('WORDPRESS_DB_NAME', 'fallback')` (env, then `{NAME}_FILE`, then
+the fallback). The engine itself loads `wp-config.php` normally for CLI and web.
 
 ## Install
 
