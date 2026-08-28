@@ -86,8 +86,8 @@ allowed; the manifest's `license` says which. The engine never depends on either
 | `minn-ga-google-analytics` | ga-google-analytics | the gtag snippet from `gap_options`, head or footer, anonymize flag |
 | `minn-wp-retina-2x` | wp-retina-2x | a `name@2x.ext` file beside a full-size image joins the srcset at twice the width |
 | `minn-gallery-custom-links` | gallery-custom-links | anchors from `_gallery_link_*` attachment meta; the plugin's whole-document pass (attribute names lower-cased once something was linked; the count comment before `</body>`) |
-| `minn-jetpack-slideshow` | jetpack (covers: the slideshow block only) | the block's images without the lazy `auto` hint, the block's stylesheet, Swiper, and view script from the plugin's own folder |
-| `minn-mosne-dark-palette` | mosne-dark-palette | the `mosne/dark-palette` navigation item, its styles and view script from the plugin's build folder |
+| `minn-jetpack-slideshow` | jetpack (covers: the slideshow block only) | the block's images without the lazy `auto` hint, the block's stylesheet, Swiper, and view script from the plugin's own folder, plus the extension's own `assets/wp-globals.js` (the `wp.domReady`, `wp.i18n`, `wp.escapeHtml` browser globals the view script expects the page to provide; the reference ships them from its script library) |
+| `minn-mosne-dark-palette` | mosne-dark-palette | the `mosne/dark-palette` navigation item and its styles from the plugin's build folder; the toggle itself runs on the extension's own `assets/view.js` (the plugin's view script is a module on the block interactivity runtime, which the engine does not provide) |
 | `minn-ml-slider`, `minn-modula` | ml-slider, modula (covers: body class only) | the body class each added; the site's content uses neither |
 | `minn-autodescription` | autodescription (covers: titles, description, robots, canonical, Open Graph, Twitter, the schema.org graph; not its sitemap or query alterations) | the title (`{page} | {site}`, `{site} | {tagline}` at home), the meta block per page kind, and the ld+json graph with breadcrumbs, from the plugin's settings option and `_genesis_*` meta. Search descriptions are 160 characters, social ones 300, both cut on a word with an ellipsis unless a sentence ended; the og:image is the featured image with its size and alt, else the first content image, else the site icon |
 
@@ -95,6 +95,17 @@ The child theme's `functions.php` printed its own Open Graph block on singular
 pages; that is site code, so it lives with the site as
 `wp-content/plugins/dogfoodchild-head/` (activated through `minn_active_extensions`),
 not in the engine repo.
+
+## Scripts a port cannot borrow
+
+A plugin's front-end script often assumes the reference's own script
+library is on the page: the `wp.*` browser globals, or `@wordpress/*`
+modules resolved through an import map. The engine carries none of that,
+so a port either provides the small globals itself (the slideshow) or
+replaces the script with its own (the dark palette). The markup stays
+identical either way; the dogfood suite compares bodies with scripts
+removed, so a missing runtime shows up only in the browser, as a console
+error and a block that never initialises.
 
 ## Head parity
 

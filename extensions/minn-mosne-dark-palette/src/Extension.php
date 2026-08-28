@@ -12,8 +12,11 @@ use Minn\Support\Html;
 
 /**
  * The mosne/dark-palette navigation item, as the plugin rendered it: a
- * toggle whose state lives in the reader's browser, driven by the plugin's
- * own view script and styles from its build folder, which the site carries.
+ * toggle whose state lives in the reader's browser, with the plugin's
+ * styles from its build folder, which the site carries. The plugin's view
+ * script is a module on the block interactivity runtime, which the engine
+ * does not provide, so this extension drives the toggle with its own
+ * script instead.
  */
 final class Extension implements MinnExtension
 {
@@ -21,7 +24,7 @@ final class Extension implements MinnExtension
 
     public function register(Seams $minn): void
     {
-        $base = rtrim((string) ($minn->site->option('siteurl') ?? ''), '/') . '/wp-content/plugins/mosne-dark-palette/build/';
+        $own = rtrim((string) ($minn->site->option('siteurl') ?? ''), '/') . '/wp-content/plugins/minn-mosne-dark-palette/assets/view.js';
         $dir = ABSPATH . 'wp-content/plugins/mosne-dark-palette/build/';
         Blocks::renderer()->registerDynamic('mosne/dark-palette', function (Block $block): string {
             $this->used = true;
@@ -41,12 +44,12 @@ final class Extension implements MinnExtension
             }
             return '<style id="mosne-dark-palette-style-inline-css">' . "\n" . file_get_contents($dir . 'style-index.css') . "\n</style>\n";
         });
-        $minn->footer(function () use ($base, $dir): string {
-            if (!$this->used || !is_file($dir . 'view.js')) {
+        $minn->footer(function () use ($own): string {
+            if (!$this->used) {
                 return '';
             }
             return '<script id="mosne-dark-palette-inline-js-after">(function () { let initMode = "auto"; try { initMode = window.localStorage.getItem("mosne-dark-palette") || "auto"; } catch (error) {} if (initMode === "dark" || initMode === "auto" && window.matchMedia("(prefers-color-scheme: dark)").matches) { document.documentElement.classList.add("is-dark-theme"); } })();</script>' . "\n"
-                . '<script type="module" id="mosne-dark-palette-view-script-module-js-module" src="' . Html::attr($base . 'view.js') . '"></script>' . "\n";
+                . '<script defer id="mosne-dark-palette-view-js" src="' . Html::attr($own) . '"></script>' . "\n";
         });
     }
 }
