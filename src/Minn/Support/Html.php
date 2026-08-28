@@ -15,4 +15,31 @@ final class Html
     {
         return self::esc($value);
     }
+
+    /**
+     * Appends classes to the first element in a fragment (or to the first
+     * element already carrying $onClass), adding a class attribute when
+     * the element has none. Existing classes keep their order.
+     *
+     * @param list<string> $classes
+     */
+    public static function addClasses(string $html, array $classes, ?string $onClass = null): string
+    {
+        if ($classes === []) {
+            return $html;
+        }
+        $pattern = $onClass === null
+            ? '/<([a-zA-Z][\w-]*)((?:\s+[^\s=>\/]+(?:="[^"]*")?)*)\s*(\/?)>/'
+            : '/<([a-zA-Z][\w-]*)((?:\s+[^\s=>\/]+(?:="[^"]*")?)*\s+class="[^"]*\b' . preg_quote($onClass, '/') . '\b[^"]*"(?:\s+[^\s=>\/]+(?:="[^"]*")?)*)\s*(\/?)>/';
+        $joined = implode(' ', $classes);
+        return (string) preg_replace_callback($pattern, static function (array $m) use ($joined): string {
+            [$whole, $tag, $attributes, $selfClose] = $m;
+            if (preg_match('/\sclass="([^"]*)"/', $attributes, $c)) {
+                $attributes = str_replace($c[0], ' class="' . ($c[1] === '' ? $joined : $c[1] . ' ' . $joined) . '"', $attributes);
+            } else {
+                $attributes .= ' class="' . $joined . '"';
+            }
+            return '<' . $tag . $attributes . ($selfClose === '/' ? '/' : '') . '>';
+        }, $html, 1);
+    }
 }

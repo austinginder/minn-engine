@@ -123,10 +123,12 @@ function md_parity( string $label, string $query, ?array $mint, string $method =
 
 /** Every attachment on this fixture database is a suite artifact. */
 function md_cleanup(): void {
+$battery = (array) json_decode((string) @file_get_contents($GLOBALS['ROOT'] . "/contracts/fixtures/blocks/manifest.json"), true);
+$keep    = implode(',', array_merge(array_values((array) ($battery['posts'] ?? [])), [(int) ($battery['image'] ?? 0)]));
 	global $ROOT;
 	shell_exec(
 		'cd ' . escapeshellarg( "$ROOT/wp-reference" ) .
-		' && ids=$(wp post list --post_type=attachment --format=ids 2>/dev/null); [ -n "$ids" ] && wp post delete $ids --force 2>/dev/null; true'
+		' && ids=$(wp post list --post_type=attachment --format=ids --post__not_in=' . $keep . ' 2>/dev/null); [ -n "$ids" ] && wp post delete $ids --force 2>/dev/null; true'
 	);
 }
 register_shutdown_function( 'md_cleanup' );

@@ -12,6 +12,8 @@ Planned layout:
   local versus GMT datetime columns).
 - `rest/` — the `wp/v2` route contract: routes, params, response shapes,
   captured as fixtures from a live WordPress instance.
+- `blocks.md` + `fixtures/blocks/` — block rendering: the per-family battery,
+  render-time additions, dynamic blocks, generated excerpts.
 - `front/` — the public-site contract: permalink structures, URL resolution
   and redirects, body-class tokens, later feeds and sitemaps.
 - `cli/` — the WP-CLI ops verb contract: the verbs fleet tooling actually

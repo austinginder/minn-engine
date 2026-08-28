@@ -34,7 +34,7 @@ function check( bool $ok, string $label, string $detail = '' ): void {
 function fixture( string $name ): array {
 	global $FIXDIR, $CAPTURE, $ENGINE;
 	$raw = file_get_contents( "$FIXDIR/$name" );
-	$raw = str_replace( $CAPTURE, $ENGINE, $raw );
+	$raw = minn_test_neutralise( str_replace( $CAPTURE, $ENGINE, $raw ) );
 	return json_decode( $raw, true );
 }
 

@@ -103,11 +103,13 @@ function ed_parity( string $label, string $query, ?array $mint, string $method =
 }
 
 function ed_cleanup(): void {
+$battery = (array) json_decode((string) @file_get_contents($GLOBALS['ROOT'] . "/contracts/fixtures/blocks/manifest.json"), true);
+$keep    = implode(',', array_merge(array_values((array) ($battery['posts'] ?? [])), [(int) ($battery['image'] ?? 0)]));
 	global $ROOT;
 	shell_exec(
 		'cd ' . escapeshellarg( "$ROOT/wp-reference" ) .
 		' && wp db query "DELETE FROM wp_posts WHERE post_type = \'revision\'; DELETE FROM wp_postmeta WHERE meta_key = \'_edit_lock\'" 2>/dev/null'
-		. ' && for id in $(wp post list --post_type=post,page --post_status=any --field=ID 2>/dev/null); do [ "$id" -gt 29 ] && wp post delete "$id" --force 2>/dev/null; done; true'
+		. ' && for id in $(wp post list --post_type=post,page --post_status=any --field=ID --post__not_in=' . $keep . ' 2>/dev/null); do [ "$id" -gt 29 ] && wp post delete "$id" --force 2>/dev/null; done; true'
 	);
 }
 register_shutdown_function( 'ed_cleanup' );

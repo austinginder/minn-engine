@@ -1,0 +1,139 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Minn\Blocks;
+
+use Minn\Blocks\Dynamic\Archives;
+use Minn\Blocks\Dynamic\Categories;
+use Minn\Blocks\Dynamic\LatestComments;
+use Minn\Blocks\Dynamic\LatestPosts;
+use Minn\Blocks\Dynamic\Search;
+use Minn\Blocks\Dynamic\TagCloud;
+use Minn\Content\Posts;
+use Minn\Content\Site;
+use Minn\Content\Texturize;
+use Minn\Db;
+use Minn\Front\Permalinks;
+use Minn\Media\Uploads;
+use Minn\Support\Html;
+
+/**
+ * Renders a block tree the way the reference renders post_content:
+ * delimiters gone, each block's own HTML kept with inner blocks rendered
+ * in place, then the per-block render-time additions (layout classes, the
+ * paragraph class, image attributes, gallery ids, style-variation
+ * counters), and finally texturize over the whole.
+ *
+ * @phpstan-type DynamicRenderer callable(Block, Renderer): string
+ */
+final class Renderer
+{
+    /**
+     * Style variations that carry a numbered companion class at render.
+     * These come from the active theme's registered block styles; the set
+     * mirrors the reference's theme until the engine reads theme data.
+     */
+    private const NUMBERED_STYLES = [
+        'core/separator' => ['wide'],
+        'core/button' => ['outline'],
+    ];
+
+    /** @var array<string, callable> */
+    private array $dynamic = [];
+
+    public function __construct(private readonly ImageTags $images)
+    {
+    }
+
+    public static function forDb(Db $db): self
+    {
+        $site = new Site($db);
+        $permalinks = Permalinks::fromDb($db);
+        $uploads = new Uploads($site, $permalinks, ABSPATH . 'wp-content/uploads');
+        $posts = new Posts($db);
+        $renderer = new self(new ImageTags($posts, $uploads));
+        $renderer->registerDynamic('core/latest-posts', (new LatestPosts($db, $site, $permalinks))->render(...));
+        $renderer->registerDynamic('core/categories', (new Categories($db, $permalinks))->render(...));
+        $renderer->registerDynamic('core/archives', (new Archives($db, $permalinks))->render(...));
+        $renderer->registerDynamic('core/search', (new Search($permalinks))->render(...));
+        $renderer->registerDynamic('core/tag-cloud', (new TagCloud($db, $permalinks))->render(...));
+        $renderer->registerDynamic('core/latest-comments', (new LatestComments($db, $site, $posts, $permalinks))->render(...));
+        return $renderer;
+    }
+
+    /** @param callable(Block, Renderer): string $render */
+    public function registerDynamic(string $name, callable $render): void
+    {
+        $this->dynamic[$name] = $render;
+    }
+
+    public function render(string $markup): string
+    {
+        return Texturize::html($this->renderBlocks(Parser::parse($markup)));
+    }
+
+    /** @param list<Block> $blocks */
+    public function renderBlocks(array $blocks): string
+    {
+        $out = '';
+        foreach ($blocks as $block) {
+            $out .= $this->renderBlock($block);
+        }
+        return $out;
+    }
+
+    public function renderBlock(Block $block): string
+    {
+        if ($block->name === null) {
+            return $block->innerHtml;
+        }
+        if (isset($this->dynamic[$block->name])) {
+            return ($this->dynamic[$block->name])($block, $this);
+        }
+        $out = '';
+        $inner = 0;
+        foreach ($block->innerContent as $chunk) {
+            $out .= $chunk ?? $this->renderBlock($block->innerBlocks[$inner++]);
+        }
+        return $this->decorate($block, $out);
+    }
+
+    private function decorate(Block $block, string $html): string
+    {
+        $slug = str_starts_with($block->name, 'core/') ? substr($block->name, 5) : str_replace('/', '-', $block->name);
+        $html = match ($block->name) {
+            'core/paragraph' => Html::addClasses($html, ['wp-block-paragraph']),
+            'core/group' => Html::addClasses($html, Layout::classes('group', $block->attrs)),
+            'core/columns' => Html::addClasses($html, Layout::classes('columns', $block->attrs, 'flex', alwaysContainer: true)),
+            'core/column', 'core/quote', 'core/details' => Html::addClasses($html, ['is-layout-flow', "wp-block-{$slug}-is-layout-flow"]),
+            'core/buttons' => Html::addClasses($html, self::flexWithoutContainer('buttons', $block->attrs)),
+            'core/gallery' => $this->images->enrich(
+                Html::addClasses($html, ['wp-block-gallery-' . RenderState::nextId(), 'is-layout-flex', 'wp-block-gallery-is-layout-flex']),
+                withDataId: true,
+            ),
+            'core/cover' => Html::addClasses(
+                $this->images->enrich($html),
+                ['has-global-padding', 'is-layout-constrained', 'wp-block-cover-is-layout-constrained'],
+                'wp-block-cover__inner-container',
+            ),
+            'core/image', 'core/media-text' => $this->images->enrich($html),
+            default => $html,
+        };
+        foreach (self::NUMBERED_STYLES[$block->name] ?? [] as $style) {
+            if (preg_match('/\bis-style-' . preg_quote($style, '/') . '\b/', $block->className())) {
+                $html = Html::addClasses($html, ["is-style-{$style}--" . RenderState::nextId()]);
+            }
+        }
+        return $html;
+    }
+
+    /** Buttons are flex containers without a stylesheet of their own by default. */
+    private static function flexWithoutContainer(string $slug, array $attrs): array
+    {
+        return array_values(array_filter(
+            Layout::classes($slug, $attrs, 'flex'),
+            static fn (string $class) => !str_starts_with($class, 'wp-container-'),
+        ));
+    }
+}

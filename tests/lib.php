@@ -18,7 +18,12 @@ function minn_test_fetch( string $url, int $timeout = 10 ): array {
 			$headers[ strtolower( trim( $k ) ) ] = trim( $v );
 		}
 	}
-	return array( $headers, (string) $body );
+	return array( $headers, minn_test_neutralise( (string) $body ) );
+}
+
+/** The wp-container-core-*-is-layout suffix is engine-defined (contracts/blocks.md); neutralise it before diffing. */
+function minn_test_neutralise( string $body ): string {
+	return (string) preg_replace( '/(wp-container-core-[a-z-]+-is-layout-)[0-9a-f]{8}/', '$1HASH', $body );
 }
 
 /** Structural diff: first differing path, or null when equal. Object key

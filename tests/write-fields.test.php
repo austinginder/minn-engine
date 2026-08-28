@@ -104,10 +104,12 @@ function wf_parity( string $label, string $query, ?array $mint, string $method =
 
 /** Suite artifacts: posts beyond the fixture set, attachments, sticky state. */
 function wf_cleanup(): void {
+$battery = (array) json_decode((string) @file_get_contents($GLOBALS['ROOT'] . "/contracts/fixtures/blocks/manifest.json"), true);
+$keep    = implode(',', array_merge(array_values((array) ($battery['posts'] ?? [])), [(int) ($battery['image'] ?? 0)]));
 	global $ROOT;
 	shell_exec(
 		'cd ' . escapeshellarg( "$ROOT/wp-reference" ) .
-		' && for id in $(wp post list --post_type=post,page,attachment --post_status=any --field=ID 2>/dev/null); do [ "$id" -gt 29 ] && wp post delete "$id" --force 2>/dev/null; done'
+		' && for id in $(wp post list --post_type=post,page,attachment --post_status=any --field=ID --post__not_in=' . $keep . ' 2>/dev/null); do [ "$id" -gt 29 ] && wp post delete "$id" --force 2>/dev/null; done'
 		. ' && wp option update sticky_posts \'a:1:{i:0;i:5;}\' --format=plaintext 2>/dev/null; true'
 	);
 	shell_exec( 'cd ' . escapeshellarg( "$ROOT/wp-reference" ) . " && wp db query \"UPDATE wp_options SET option_value = 'a:1:{i:0;i:5;}' WHERE option_name = 'sticky_posts'\" 2>/dev/null" );

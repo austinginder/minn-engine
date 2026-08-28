@@ -205,10 +205,10 @@ final readonly class V1Controller
     {
         $this->requireFloor();
         $rows = $this->db->rows(
-            "SELECT DISTINCT DATE_FORMAT(post_date, '%Y-%m') AS ym FROM {$this->db->table('posts')}
-             WHERE post_type = 'attachment' AND post_status = 'inherit' ORDER BY ym DESC",
+            "SELECT DATE_FORMAT(post_date, '%Y-%m') AS ym, COUNT(*) AS c FROM {$this->db->table('posts')}
+             WHERE post_type = 'attachment' AND post_status = 'inherit' GROUP BY ym ORDER BY ym DESC",
         );
-        return $this->reply($request, array_column($rows, 'ym'));
+        return $this->reply($request, array_map(static fn (array $row) => ['value' => $row['ym'], 'count' => (int) $row['c']], $rows));
     }
 
     private function reply(Request $request, mixed $data): Response

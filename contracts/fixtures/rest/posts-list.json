@@ -1,5 +1,453 @@
 [
     {
+        "id": 611,
+        "date": "2026-08-28T10:59:38",
+        "date_gmt": "2026-08-28T10:59:38",
+        "guid": {
+            "rendered": "https://minn-engine.localhost/block-battery-dynamic/"
+        },
+        "modified": "2026-08-28T11:01:57",
+        "modified_gmt": "2026-08-28T11:01:57",
+        "slug": "zz-block-battery-dynamic",
+        "status": "publish",
+        "type": "post",
+        "link": "http://127.0.0.1:8123/zz-block-battery-dynamic/",
+        "title": {
+            "rendered": "Block battery: dynamic"
+        },
+        "content": {
+            "rendered": "<ul class=\"wp-block-latest-posts__list has-dates wp-block-latest-posts is-layout-flow wp-block-latest-posts-is-layout-flow\"><li><a class=\"wp-block-latest-posts__post-title\" href=\"http://127.0.0.1:8123/zz-block-battery-dynamic/\">Block battery: dynamic</a><time datetime=\"2026-08-28T10:59:38+00:00\" class=\"wp-block-latest-posts__post-date\">August 28, 2026</time></li>\n<li><a class=\"wp-block-latest-posts__post-title\" href=\"http://127.0.0.1:8123/zz-block-battery-layout/\">Block battery: layout</a><time datetime=\"2026-08-28T10:59:38+00:00\" class=\"wp-block-latest-posts__post-date\">August 28, 2026</time></li>\n<li><a class=\"wp-block-latest-posts__post-title\" href=\"http://127.0.0.1:8123/zz-block-battery-media/\">Block battery: media</a><time datetime=\"2026-08-28T10:59:37+00:00\" class=\"wp-block-latest-posts__post-date\">August 28, 2026</time></li>\n</ul>\n\n<ul class=\"wp-block-categories-list wp-block-categories-taxonomy-category wp-block-categories\">\t<li class=\"cat-item cat-item-1\"><a href=\"http://127.0.0.1:8123/category/uncategorized/\">Uncategorized</a>\n</li>\n</ul>\n\n<ul class=\"wp-block-archives-list wp-block-archives\">\t<li><a href='http://127.0.0.1:8123/2026/08/'>August 2026</a></li>\n</ul>\n\n<form role=\"search\" method=\"get\" action=\"http://127.0.0.1:8123/\" class=\"wp-block-search__button-outside wp-block-search__text-button wp-block-search\" ><label class=\"wp-block-search__label\" for=\"wp-block-search__input-1\" >Search</label><div class=\"wp-block-search__inside-wrapper\" ><input class=\"wp-block-search__input\" id=\"wp-block-search__input-1\" placeholder=\"\" value=\"\" type=\"search\" name=\"s\" required /><button aria-label=\"Search\" class=\"wp-block-search__button wp-element-button\" type=\"submit\" >Search</button></div></form>\n\n<p class=\"wp-block-tag-cloud\"><a href=\"http://127.0.0.1:8123/tag/engine/\" class=\"tag-cloud-link tag-link-2 tag-link-position-1\" style=\"font-size: 8pt;\" aria-label=\"engine (1 item)\">engine</a>\n<a href=\"http://127.0.0.1:8123/tag/parity/\" class=\"tag-cloud-link tag-link-3 tag-link-position-2\" style=\"font-size: 8pt;\" aria-label=\"parity (1 item)\">parity</a></p>\n\n<ol class=\"has-avatars has-dates has-excerpts wp-block-latest-comments\"><li class=\"wp-block-latest-comments__comment\"><img alt='' src='https://secure.gravatar.com/avatar/8e1606e6fba450a9362af43874c1b2dfad34c782e33d0a51e1b46c18a2a567dd?s=48&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/8e1606e6fba450a9362af43874c1b2dfad34c782e33d0a51e1b46c18a2a567dd?s=96&#038;d=mm&#038;r=g 2x' class='avatar avatar-48 photo wp-block-latest-comments__comment-avatar' height='48' width='48' /><article><footer class=\"wp-block-latest-comments__comment-meta\"><a class=\"wp-block-latest-comments__comment-author\" href=\"https://wordpress.org/\">A WordPress Commenter</a> on <a class=\"wp-block-latest-comments__comment-link\" href=\"http://127.0.0.1:8123/hello-world/#comment-1\">Hello world!</a><time datetime=\"2026-08-28T02:21:33+00:00\" class=\"wp-block-latest-comments__comment-date\">August 28, 2026</time></footer><div class=\"wp-block-latest-comments__comment-excerpt\"><p>Hi, this is a comment. To get started with moderating, editing, and deleting comments, please visit the Comments screen in&hellip;</p>\n</div></article></li></ol>\n",
+            "protected": false
+        },
+        "excerpt": {
+            "rendered": "",
+            "protected": false
+        },
+        "author": 0,
+        "featured_media": 0,
+        "comment_status": "open",
+        "ping_status": "open",
+        "sticky": false,
+        "template": "",
+        "format": "standard",
+        "meta": {
+            "footnotes": ""
+        },
+        "categories": [
+            1
+        ],
+        "tags": [],
+        "class_list": [
+            "post-611",
+            "post",
+            "type-post",
+            "status-publish",
+            "format-standard",
+            "hentry",
+            "category-uncategorized"
+        ],
+        "_links": {
+            "self": [
+                {
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/611",
+                    "targetHints": {
+                        "allow": [
+                            "GET"
+                        ]
+                    }
+                }
+            ],
+            "collection": [
+                {
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts"
+                }
+            ],
+            "about": [
+                {
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/types/post"
+                }
+            ],
+            "replies": [
+                {
+                    "embeddable": true,
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/comments?post=611"
+                }
+            ],
+            "version-history": [
+                {
+                    "count": 1,
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/611/revisions"
+                }
+            ],
+            "predecessor-version": [
+                {
+                    "id": 641,
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/611/revisions/641"
+                }
+            ],
+            "wp:attachment": [
+                {
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/media?parent=611"
+                }
+            ],
+            "wp:term": [
+                {
+                    "taxonomy": "category",
+                    "embeddable": true,
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/categories?post=611"
+                },
+                {
+                    "taxonomy": "post_tag",
+                    "embeddable": true,
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/tags?post=611"
+                }
+            ],
+            "curies": [
+                {
+                    "name": "wp",
+                    "href": "https://api.w.org/{rel}",
+                    "templated": true
+                }
+            ]
+        }
+    },
+    {
+        "id": 610,
+        "date": "2026-08-28T10:59:38",
+        "date_gmt": "2026-08-28T10:59:38",
+        "guid": {
+            "rendered": "https://minn-engine.localhost/block-battery-layout/"
+        },
+        "modified": "2026-08-28T11:01:56",
+        "modified_gmt": "2026-08-28T11:01:56",
+        "slug": "zz-block-battery-layout",
+        "status": "publish",
+        "type": "post",
+        "link": "http://127.0.0.1:8123/zz-block-battery-layout/",
+        "title": {
+            "rendered": "Block battery: layout"
+        },
+        "content": {
+            "rendered": "\n<div class=\"wp-block-group has-global-padding is-layout-constrained wp-block-group-is-layout-constrained\">\n<p class=\"wp-block-paragraph\">Inside a constrained group.</p>\n</div>\n\n\n\n<div class=\"wp-block-group is-nowrap is-layout-flex wp-container-core-group-is-layout-3a88641f wp-block-group-is-layout-flex\">\n<p class=\"wp-block-paragraph\">Row one</p>\n\n\n\n<p class=\"wp-block-paragraph\">Row two</p>\n</div>\n\n\n\n<div class=\"wp-block-group is-vertical is-layout-flex wp-container-core-group-is-layout-831b2db5 wp-block-group-is-layout-flex\">\n<p class=\"wp-block-paragraph\">Stacked</p>\n</div>\n\n\n\n<div class=\"wp-block-group is-layout-grid wp-container-core-group-is-layout-715b57f2 wp-block-group-is-layout-grid\">\n<p class=\"wp-block-paragraph\">Grid cell</p>\n</div>\n\n\n\n<div class=\"wp-block-columns is-layout-flex wp-container-core-columns-is-layout-794e3cfa wp-block-columns-is-layout-flex\">\n<div class=\"wp-block-column is-layout-flow wp-block-column-is-layout-flow\">\n<p class=\"wp-block-paragraph\">Left column</p>\n</div>\n\n\n\n<div class=\"wp-block-column is-layout-flow wp-block-column-is-layout-flow\" style=\"flex-basis:66.66%\">\n<p class=\"wp-block-paragraph\">Right column</p>\n</div>\n</div>\n\n\n\n<hr class=\"wp-block-separator has-alpha-channel-opacity\"/>\n\n\n\n<hr class=\"wp-block-separator has-alpha-channel-opacity is-style-wide is-style-wide--2\"/>\n\n\n\n<div style=\"height:60px\" aria-hidden=\"true\" class=\"wp-block-spacer\"></div>\n\n\n\n<div class=\"wp-block-buttons is-layout-flex wp-block-buttons-is-layout-flex\">\n<div class=\"wp-block-button\"><a class=\"wp-block-button__link wp-element-button\" href=\"https://minn-engine.localhost/\">Primary</a></div>\n\n\n\n<div class=\"wp-block-button is-style-outline is-style-outline--3\"><a class=\"wp-block-button__link wp-element-button\">Outline</a></div>\n</div>\n\n\n\n<figure class=\"wp-block-table\"><table class=\"has-fixed-layout\"><thead><tr><th>Name</th><th>Value</th></tr></thead><tbody><tr><td>One</td><td>1</td></tr><tr><td>Two</td><td>2</td></tr></tbody></table></figure>\n\n\n\n<p class=\"wp-block-paragraph\">Before the more tag.</p>\n\n\n\n<!--more-->\n\n\n\n<p class=\"wp-block-paragraph\">After the more tag.</p>\n\n",
+            "protected": false
+        },
+        "excerpt": {
+            "rendered": "<p>Inside a constrained group. Row one Row two Stacked Grid cell Left column Right column Name Value One 1 Two 2 Before the more tag.</p>\n",
+            "protected": false
+        },
+        "author": 0,
+        "featured_media": 0,
+        "comment_status": "open",
+        "ping_status": "open",
+        "sticky": false,
+        "template": "",
+        "format": "standard",
+        "meta": {
+            "footnotes": ""
+        },
+        "categories": [
+            1
+        ],
+        "tags": [],
+        "class_list": [
+            "post-610",
+            "post",
+            "type-post",
+            "status-publish",
+            "format-standard",
+            "hentry",
+            "category-uncategorized"
+        ],
+        "_links": {
+            "self": [
+                {
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/610",
+                    "targetHints": {
+                        "allow": [
+                            "GET"
+                        ]
+                    }
+                }
+            ],
+            "collection": [
+                {
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts"
+                }
+            ],
+            "about": [
+                {
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/types/post"
+                }
+            ],
+            "replies": [
+                {
+                    "embeddable": true,
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/comments?post=610"
+                }
+            ],
+            "version-history": [
+                {
+                    "count": 1,
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/610/revisions"
+                }
+            ],
+            "predecessor-version": [
+                {
+                    "id": 640,
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/610/revisions/640"
+                }
+            ],
+            "wp:attachment": [
+                {
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/media?parent=610"
+                }
+            ],
+            "wp:term": [
+                {
+                    "taxonomy": "category",
+                    "embeddable": true,
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/categories?post=610"
+                },
+                {
+                    "taxonomy": "post_tag",
+                    "embeddable": true,
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/tags?post=610"
+                }
+            ],
+            "curies": [
+                {
+                    "name": "wp",
+                    "href": "https://api.w.org/{rel}",
+                    "templated": true
+                }
+            ]
+        }
+    },
+    {
+        "id": 609,
+        "date": "2026-08-28T10:59:37",
+        "date_gmt": "2026-08-28T10:59:37",
+        "guid": {
+            "rendered": "https://minn-engine.localhost/block-battery-media/"
+        },
+        "modified": "2026-08-28T11:01:56",
+        "modified_gmt": "2026-08-28T11:01:56",
+        "slug": "zz-block-battery-media",
+        "status": "publish",
+        "type": "post",
+        "link": "http://127.0.0.1:8123/zz-block-battery-media/",
+        "title": {
+            "rendered": "Block battery: media"
+        },
+        "content": {
+            "rendered": "\n<figure class=\"wp-block-image size-large\"><img loading=\"lazy\" decoding=\"async\" width=\"1024\" height=\"683\" src=\"https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png\" alt=\"Battery alt\" class=\"wp-image-607\" srcset=\"https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-768x512.png 768w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery.png 1200w\" sizes=\"auto, (max-width: 1024px) 100vw, 1024px\" /></figure>\n\n\n\n<figure class=\"wp-block-image aligncenter size-medium\"><a href=\"https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery.png\"><img loading=\"lazy\" decoding=\"async\" width=\"300\" height=\"200\" src=\"https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-300x200.png\" alt=\"\" class=\"wp-image-607\" srcset=\"https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-768x512.png 768w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery.png 1200w\" sizes=\"auto, (max-width: 300px) 100vw, 300px\" /></a><figcaption class=\"wp-element-caption\">A caption</figcaption></figure>\n\n\n\n<figure class=\"wp-block-image size-full is-resized\"><img loading=\"lazy\" decoding=\"async\" width=\"1200\" height=\"800\" src=\"https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery.png\" alt=\"\" class=\"wp-image-607\" style=\"width:400px\" srcset=\"https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery.png 1200w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-768x512.png 768w\" sizes=\"auto, (max-width: 1200px) 100vw, 1200px\" /></figure>\n\n\n\n<figure class=\"wp-block-gallery has-nested-images columns-default is-cropped wp-block-gallery-4 is-layout-flex wp-block-gallery-is-layout-flex\">\n<figure class=\"wp-block-image size-large\"><img loading=\"lazy\" decoding=\"async\" width=\"1024\" height=\"683\" data-id=\"607\" src=\"https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png\" alt=\"\" class=\"wp-image-607\" srcset=\"https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-768x512.png 768w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery.png 1200w\" sizes=\"auto, (max-width: 1024px) 100vw, 1024px\" /></figure>\n\n\n\n<figure class=\"wp-block-image size-large\"><img loading=\"lazy\" decoding=\"async\" width=\"1024\" height=\"683\" data-id=\"607\" src=\"https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png\" alt=\"\" class=\"wp-image-607\" srcset=\"https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-768x512.png 768w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery.png 1200w\" sizes=\"auto, (max-width: 1024px) 100vw, 1024px\" /><figcaption class=\"wp-element-caption\">Second</figcaption></figure>\n</figure>\n\n\n\n<div class=\"wp-block-cover\"><span aria-hidden=\"true\" class=\"wp-block-cover__background has-background-dim\" style=\"background-color:#123456\"></span><img loading=\"lazy\" decoding=\"async\" width=\"1200\" height=\"800\" class=\"wp-block-cover__image-background wp-image-607\" alt=\"\" src=\"https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery.png\" data-object-fit=\"cover\" srcset=\"https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery.png 1200w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-768x512.png 768w\" sizes=\"auto, (max-width: 1200px) 100vw, 1200px\" /><div class=\"wp-block-cover__inner-container has-global-padding is-layout-constrained wp-block-cover-is-layout-constrained\">\n<p class=\"has-text-align-center has-large-font-size wp-block-paragraph\">Cover title</p>\n</div></div>\n\n\n\n<div class=\"wp-block-media-text is-stacked-on-mobile\"><figure class=\"wp-block-media-text__media\"><img loading=\"lazy\" decoding=\"async\" width=\"1024\" height=\"683\" src=\"https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png\" alt=\"\" class=\"wp-image-607 size-full\" srcset=\"https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-768x512.png 768w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery.png 1200w\" sizes=\"auto, (max-width: 1024px) 100vw, 1024px\" /></figure><div class=\"wp-block-media-text__content\">\n<p class=\"wp-block-paragraph\">Beside the media.</p>\n</div></div>\n\n",
+            "protected": false
+        },
+        "excerpt": {
+            "rendered": "<p>Beside the media.</p>\n",
+            "protected": false
+        },
+        "author": 0,
+        "featured_media": 0,
+        "comment_status": "open",
+        "ping_status": "open",
+        "sticky": false,
+        "template": "",
+        "format": "standard",
+        "meta": {
+            "footnotes": ""
+        },
+        "categories": [
+            1
+        ],
+        "tags": [],
+        "class_list": [
+            "post-609",
+            "post",
+            "type-post",
+            "status-publish",
+            "format-standard",
+            "hentry",
+            "category-uncategorized"
+        ],
+        "_links": {
+            "self": [
+                {
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/609",
+                    "targetHints": {
+                        "allow": [
+                            "GET"
+                        ]
+                    }
+                }
+            ],
+            "collection": [
+                {
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts"
+                }
+            ],
+            "about": [
+                {
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/types/post"
+                }
+            ],
+            "replies": [
+                {
+                    "embeddable": true,
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/comments?post=609"
+                }
+            ],
+            "version-history": [
+                {
+                    "count": 1,
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/609/revisions"
+                }
+            ],
+            "predecessor-version": [
+                {
+                    "id": 639,
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/609/revisions/639"
+                }
+            ],
+            "wp:attachment": [
+                {
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/media?parent=609"
+                }
+            ],
+            "wp:term": [
+                {
+                    "taxonomy": "category",
+                    "embeddable": true,
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/categories?post=609"
+                },
+                {
+                    "taxonomy": "post_tag",
+                    "embeddable": true,
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/tags?post=609"
+                }
+            ],
+            "curies": [
+                {
+                    "name": "wp",
+                    "href": "https://api.w.org/{rel}",
+                    "templated": true
+                }
+            ]
+        }
+    },
+    {
+        "id": 608,
+        "date": "2026-08-28T10:59:37",
+        "date_gmt": "2026-08-28T10:59:37",
+        "guid": {
+            "rendered": "https://minn-engine.localhost/block-battery-text/"
+        },
+        "modified": "2026-08-28T11:01:55",
+        "modified_gmt": "2026-08-28T11:01:55",
+        "slug": "zz-block-battery-text",
+        "status": "publish",
+        "type": "post",
+        "link": "http://127.0.0.1:8123/zz-block-battery-text/",
+        "title": {
+            "rendered": "Block battery: text"
+        },
+        "content": {
+            "rendered": "\n<p class=\"wp-block-paragraph\">A plain paragraph with <strong>bold</strong>, <em>italic</em>, and a <a href=\"https://minn-engine.localhost/hello-world/\">link</a>. &#8220;Quoted&#8221; and it&#8217;s texturized&#8230;</p>\n\n\n\n<p class=\"has-text-align-center has-drop-cap has-large-font-size wp-block-paragraph\">Centered, drop cap, large.</p>\n\n\n\n<h2 class=\"wp-block-heading\">Heading two</h2>\n\n\n\n<h3 class=\"wp-block-heading has-text-align-center\">Heading three, centered</h3>\n\n\n\n<ul class=\"wp-block-list\">\n<li>First item</li>\n\n\n\n<li>Second item\n<ul class=\"wp-block-list\">\n<li>Nested item</li>\n</ul>\n</li>\n</ul>\n\n\n\n<ol start=\"3\" class=\"wp-block-list\">\n<li>Third</li>\n\n\n\n<li>Fourth</li>\n</ol>\n\n\n\n<blockquote class=\"wp-block-quote is-layout-flow wp-block-quote-is-layout-flow\">\n<p class=\"wp-block-paragraph\">Quoted paragraph.</p>\n<cite>Someone</cite></blockquote>\n\n\n\n<figure class=\"wp-block-pullquote\"><blockquote><p>Pulled quote.</p><cite>A citation</cite></blockquote></figure>\n\n\n\n<pre class=\"wp-block-verse\">Roses are red,\n  violets are blue.</pre>\n\n\n\n<pre class=\"wp-block-preformatted\">Preformatted   text\nkeeps    spacing.</pre>\n\n\n\n<pre class=\"wp-block-code\"><code>function hi() {\n    return \"quotes stay straight\";\n}</code></pre>\n\n\n\n<details class=\"wp-block-details is-layout-flow wp-block-details-is-layout-flow\"><summary>Summary line</summary>\n<p class=\"wp-block-paragraph\">Hidden detail.</p>\n</details>\n\n",
+            "protected": false
+        },
+        "excerpt": {
+            "rendered": "<p>A plain paragraph with bold, italic, and a link. &#8220;Quoted&#8221; and it&#8217;s texturized&#8230; Centered, drop cap, large. Heading two Heading three, centered Quoted paragraph. Someone Pulled quote. A citation Roses are red, violets are blue. Preformatted text keeps spacing.</p>\n",
+            "protected": false
+        },
+        "author": 0,
+        "featured_media": 0,
+        "comment_status": "open",
+        "ping_status": "open",
+        "sticky": false,
+        "template": "",
+        "format": "standard",
+        "meta": {
+            "footnotes": ""
+        },
+        "categories": [
+            1
+        ],
+        "tags": [],
+        "class_list": [
+            "post-608",
+            "post",
+            "type-post",
+            "status-publish",
+            "format-standard",
+            "hentry",
+            "category-uncategorized"
+        ],
+        "_links": {
+            "self": [
+                {
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/608",
+                    "targetHints": {
+                        "allow": [
+                            "GET"
+                        ]
+                    }
+                }
+            ],
+            "collection": [
+                {
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts"
+                }
+            ],
+            "about": [
+                {
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/types/post"
+                }
+            ],
+            "replies": [
+                {
+                    "embeddable": true,
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/comments?post=608"
+                }
+            ],
+            "version-history": [
+                {
+                    "count": 1,
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/608/revisions"
+                }
+            ],
+            "predecessor-version": [
+                {
+                    "id": 638,
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/608/revisions/638"
+                }
+            ],
+            "wp:attachment": [
+                {
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/media?parent=608"
+                }
+            ],
+            "wp:term": [
+                {
+                    "taxonomy": "category",
+                    "embeddable": true,
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/categories?post=608"
+                },
+                {
+                    "taxonomy": "post_tag",
+                    "embeddable": true,
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/tags?post=608"
+                }
+            ],
+            "curies": [
+                {
+                    "name": "wp",
+                    "href": "https://api.w.org/{rel}",
+                    "templated": true
+                }
+            ]
+        }
+    },
+    {
         "id": 11,
         "date": "2026-08-28T02:58:06",
         "date_gmt": "2026-08-28T02:58:06",
