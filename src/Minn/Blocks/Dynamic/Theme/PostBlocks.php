@@ -8,6 +8,7 @@ use Minn\Blocks\Block;
 use Minn\Blocks\Dynamic\Dates;
 use Minn\Blocks\Layout;
 use Minn\Blocks\Renderer;
+use Minn\Blocks\Wrapper;
 use Minn\Blocks\Styles;
 use Minn\Content\Blocks;
 use Minn\Content\Excerpt;
@@ -53,7 +54,7 @@ final readonly class PostBlocks
         if ((bool) $block->attr('isLink', false)) {
             $title = '<a href="' . Html::attr($this->permalinks->forPost($post)) . '" target="' . Html::attr((string) $block->attr('linkTarget', '_self')) . '" >' . $title . '</a>';
         }
-        return self::open($tag, ['wp-block-post-title', ...Styles::classes($block->attrs)], $block) . $title . '</' . $tag . '>';
+        return self::open($tag, ['wp-block-post-title', ...Styles::classes($block->attrs)], $block, styleFirst: true) . $title . '</' . $tag . '>';
     }
 
     /** In a loop the content stops at the more tag with a "(more…)" link; on its own page it runs whole. */
@@ -77,14 +78,15 @@ final readonly class PostBlocks
         } else {
             $content = Blocks::render(str_replace('<!--more-->', '<span id="more-' . (int) $post['ID'] . '"></span>', $raw));
         }
-        $classes = array_values(array_filter([
-            'entry-content',
-            Styles::align($block->attrs),
+        $align = Styles::align($block->attrs);
+        return Wrapper::open(
+            'div',
             'wp-block-post-content',
-            ...Styles::classes($block->attrs),
-            ...(isset($block->attrs['layout']) ? Layout::classes('post-content', $block->attrs) : []),
-        ]));
-        return '<div class="' . implode(' ', $classes) . '">' . $content . '</div>';
+            $block,
+            styleFirst: true,
+            extraClasses: array_values(array_filter(['entry-content', $align])),
+            trailingClasses: isset($block->attrs['layout']) ? Layout::classes('post-content', $block->attrs) : [],
+        ) . $content . '</div>';
     }
 
     private function date(Block $block, Renderer $renderer): string
@@ -98,7 +100,7 @@ final readonly class PostBlocks
         if ((bool) $block->attr('isLink', false)) {
             $time = '<a href="' . Html::attr($this->permalinks->forPost($post)) . '">' . $time . '</a>';
         }
-        return self::open('div', ['wp-block-post-date', ...Styles::classes($block->attrs)], $block, styleFirst: true) . $time . '</div>';
+        return self::open('div', ['wp-block-post-date', ...Styles::classes($block->attrs)], $block, styleFirst: true, linkColorClass: true) . $time . '</div>';
     }
 
     private function authorName(Block $block, Renderer $renderer): string
@@ -122,8 +124,9 @@ final readonly class PostBlocks
             return '';
         }
         $text = trim(strip_tags(Excerpt::render($post)));
-        return self::open('div', ['wp-block-post-excerpt', ...Styles::classes($block->attrs)], $block)
-            . '<p class="wp-block-post-excerpt__excerpt">' . $text . '</p></div>';
+        // The reference leaves a space after the text where a "more" link would go.
+        return self::open('div', ['wp-block-post-excerpt', ...Styles::classes($block->attrs)], $block, linkColorClass: true)
+            . '<p class="wp-block-post-excerpt__excerpt">' . $text . ' </p></div>';
     }
 
     private function featuredImage(Block $block, Renderer $renderer): string
@@ -138,12 +141,32 @@ final readonly class PostBlocks
             return '';
         }
         $alt = (string) ($this->posts->meta($thumbnail, '_wp_attachment_image_alt') ?? '');
-        $img = '<img src="' . Html::attr($this->permalinks->url('/wp-content/uploads/' . $file)) . '" class="attachment-post-thumbnail size-post-thumbnail wp-post-image wp-image-' . $thumbnail . '" alt="' . Html::attr($alt) . '"/>';
-        $img = $renderer->images()->enrich($img, front: $renderer->context()->front);
-        if ((bool) $block->attr('isLink', false)) {
+        $isLink = (bool) $block->attr('isLink', false);
+        if ($isLink && $alt === '') {
+            // A linked image without alt text borrows the post title so the link has a name.
+            $alt = trim(strip_tags((string) $post['post_title']));
+        }
+        // Declared in the reference's fixed order: ratio, height, width, then the fit.
+        $style = '';
+        if (!empty($block->attrs['aspectRatio'])) {
+            $style .= 'aspect-ratio:' . $block->attrs['aspectRatio'] . ';';
+        }
+        if (!empty($block->attrs['height'])) {
+            $style .= 'height:' . $block->attrs['height'] . ';';
+        }
+        if (!empty($block->attrs['width'])) {
+            $style .= 'width:' . $block->attrs['width'] . ';';
+        }
+        $style .= 'object-fit:' . (string) $block->attr('scale', 'cover') . ';';
+        $img = $renderer->images()->featured($thumbnail, $alt, $style, $renderer->context()->front);
+        if ($img === '') {
+            return '';
+        }
+        if ($isLink) {
             $img = '<a href="' . Html::attr($this->permalinks->forPost($post)) . '" target="_self" >' . $img . '</a>';
         }
-        return self::open('figure', ['wp-block-post-featured-image', ...Styles::classes($block->attrs)], $block, styleFirst: true) . $img . '</figure>';
+        $align = Styles::align($block->attrs);
+        return self::open('figure', ['wp-block-post-featured-image', ...($align === null ? [] : [$align]), ...Styles::classes($block->attrs)], $block, styleFirst: true) . $img . '</figure>';
     }
 
     private function terms(Block $block, Renderer $renderer): string
@@ -199,21 +222,18 @@ final readonly class PostBlocks
      *
      * @param list<string> $classes
      */
-    private static function open(string $tag, array $classes, Block $block, bool $styleFirst = false, string $blockName = ''): string
+    private static function open(string $tag, array $classes, Block $block, bool $styleFirst = false, string $blockName = '', bool $linkColorClass = false): string
     {
-        $style = Styles::inline((array) $block->attr('style', []));
-        $className = $block->className();
-        $classes = array_values(array_filter($classes, static fn (string $c) => $c !== $className && (!str_starts_with($c, 'has-') || str_ends_with($c, '-font-size'))));
-        if (!empty($block->attrs['textAlign'])) {
-            array_unshift($classes, 'has-text-align-' . $block->attrs['textAlign']);
+        // The wp-block-* entry is the block's own class; the preset classes come from the attributes.
+        $blockClass = '';
+        $extra = [];
+        foreach ($classes as $class) {
+            if (str_starts_with($class, 'wp-block-') && $blockClass === '') {
+                $blockClass = $class;
+            } elseif (!str_starts_with($class, 'has-') && $class !== $block->className()) {
+                $extra[] = $class;
+            }
         }
-        if ($className !== '') {
-            // A custom class and its numbered style companion lead, before the block's own class.
-            $numbered = $blockName === '' ? null : Renderer::numberedStyle($blockName, $className);
-            array_splice($classes, 1, 0, array_values(array_filter([$className, $numbered])));
-        }
-        $classAttr = ' class="' . implode(' ', $classes) . '"';
-        $styleAttr = $style === '' ? '' : ' style="' . $style . '"';
-        return '<' . $tag . ($styleFirst ? $styleAttr . $classAttr : $classAttr . $styleAttr) . '>';
+        return Wrapper::open($tag, $blockClass, $block, $styleFirst, $blockName, linkColorClass: $linkColorClass, extraClasses: $extra);
     }
 }

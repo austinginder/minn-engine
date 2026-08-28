@@ -9,9 +9,11 @@ use Minn\Front\Permalinks;
 
 /**
  * The active block theme on disk, read as data: theme.json, the templates
- * and parts directories, and the patterns index. The engine reads the
- * site's installed theme the way it reads the site's database; it never
- * runs the theme's PHP.
+ * and parts directories, and the patterns index. A child theme's files
+ * win and its parent fills in what the child does not define; theme.json
+ * merges the same way, with the child's preset lists replacing the
+ * parent's whole. The engine reads the site's installed theme the way it
+ * reads the site's database; it never runs the theme's PHP.
  */
 final class Theme
 {
@@ -23,33 +25,70 @@ final class Theme
         public readonly string $slug,
         public readonly string $dir,
         public readonly string $uri,
+        public readonly ?Theme $parent = null,
     ) {
     }
 
     public static function active(Site $site, Permalinks $permalinks, string $themesDir): ?self
     {
         $slug = (string) ($site->option('stylesheet') ?? '');
-        if ($slug === '' || !is_file("{$themesDir}/{$slug}/theme.json") || !is_dir("{$themesDir}/{$slug}/templates")) {
+        $parentSlug = (string) ($site->option('template') ?? $slug);
+        $parent = $parentSlug !== '' && $parentSlug !== $slug ? self::at($parentSlug, $themesDir, $permalinks) : null;
+        $child = self::at($slug, $themesDir, $permalinks, $parent);
+        if ($child === null || !is_dir("{$child->dir}/templates") && !($parent !== null && is_dir("{$parent->dir}/templates"))) {
             return null;
         }
-        return new self($slug, "{$themesDir}/{$slug}", $permalinks->url('/wp-content/themes/' . $slug));
+        return $child;
+    }
+
+    private static function at(string $slug, string $themesDir, Permalinks $permalinks, ?Theme $parent = null): ?self
+    {
+        if ($slug === '' || !is_file("{$themesDir}/{$slug}/theme.json")) {
+            return null;
+        }
+        return new self($slug, "{$themesDir}/{$slug}", $permalinks->url('/wp-content/themes/' . $slug), $parent);
+    }
+
+    /** The theme's own name, and the parent's, for body classes. */
+    public function parentSlug(): ?string
+    {
+        return $this->parent?->slug;
     }
 
     public function json(): array
     {
-        return $this->json ??= (array) json_decode((string) file_get_contents("{$this->dir}/theme.json"), true);
+        if ($this->json === null) {
+            $own = (array) json_decode((string) file_get_contents("{$this->dir}/theme.json"), true);
+            $this->json = $this->parent === null ? $own : self::merge($this->parent->json(), $own);
+        }
+        return $this->json;
+    }
+
+    /**
+     * Layered theme.json: maps merge key by key, lists (palettes, font
+     * sizes, template parts) replace as a whole.
+     */
+    public static function merge(array $base, array $over): array
+    {
+        foreach ($over as $key => $value) {
+            $existing = $base[$key] ?? null;
+            $base[$key] = is_array($value) && is_array($existing) && !array_is_list($value) && !array_is_list($existing)
+                ? self::merge($existing, $value)
+                : $value;
+        }
+        return $base;
     }
 
     public function templateFile(string $slug): ?string
     {
         $file = "{$this->dir}/templates/{$slug}.html";
-        return is_file($file) ? (string) file_get_contents($file) : null;
+        return is_file($file) ? (string) file_get_contents($file) : $this->parent?->templateFile($slug);
     }
 
     public function partFile(string $slug): ?string
     {
         $file = "{$this->dir}/parts/{$slug}.html";
-        return is_file($file) ? (string) file_get_contents($file) : null;
+        return is_file($file) ? (string) file_get_contents($file) : $this->parent?->partFile($slug);
     }
 
     /** The template-part area declared in theme.json (header, footer, or uncategorized). */
@@ -68,9 +107,15 @@ final class Theme
     {
         $file = $this->patternIndex()[$slug] ?? null;
         if ($file === null) {
-            return null;
+            return $this->parent?->pattern($slug);
         }
         return PatternText::render((string) file_get_contents($file), $this->uri);
+    }
+
+    /** The theme's stylesheet URL when it ships one; a child's own, else nothing (the parent's is not enqueued for it). */
+    public function styleUri(): ?string
+    {
+        return is_file($this->dir . '/style.css') ? $this->uri . '/style.css' : null;
     }
 
     /** @return array<string, string> */

@@ -144,7 +144,7 @@ final readonly class Resolver
             $segments = array_values(array_filter(explode('/', (string) $request->query('pagename')), static fn (string $s) => $s !== ''));
             $page = $this->posts->pageByPath($segments);
             if ($page !== null) {
-                return Resolution::single($page);
+                return (int) $page['ID'] === $this->permalinks->frontPageId ? Resolution::redirect($this->permalinks->url('/')) : Resolution::single($page);
             }
             $bySlug = $segments === [] ? null : $this->posts->findByName(end($segments), ['page']);
             return $bySlug === null ? Resolution::notFound() : Resolution::redirect($this->permalinks->forPost($bySlug));
@@ -185,6 +185,12 @@ final readonly class Resolver
 
     private function home(int $paged): Resolution
     {
+        if ($this->permalinks->frontPageId > 0) {
+            $page = $this->posts->find($this->permalinks->frontPageId);
+            if ($page !== null && $page['post_type'] === 'page' && $this->readable($page)) {
+                return Resolution::frontPage($page, $paged);
+            }
+        }
         $total = (int) $this->db->value(
             "SELECT COUNT(*) FROM {$this->db->table('posts')} WHERE post_type = 'post' AND post_status = 'publish'",
         );
@@ -284,6 +290,14 @@ final readonly class Resolver
             // A guessed destination keeps the number the reader typed.
             $number = array_pop($segments) . '/';
         }
+        // A structure that opens with the category lets a bare category
+        // path stand as the archive.
+        if ($number === '' && str_starts_with($this->permalinks->structure, '/%category%')) {
+            $archive = $this->termArchive('category', $segments, $paged);
+            if ($archive->kind !== Kind::NotFound) {
+                return $archive;
+            }
+        }
         $guess = $this->posts->guess(end($segments));
         return $guess === null ? Resolution::notFound() : Resolution::redirect($this->permalinks->forPost($guess) . $number);
     }
@@ -296,7 +310,10 @@ final readonly class Resolver
         }
         $page = $this->posts->pageByPath($segments, publishedOnly: false);
         if ($page !== null && $this->readable($page)) {
-            return Resolution::single($page, $paged);
+            // The static front page answers only at the site root.
+            return (int) $page['ID'] === $this->permalinks->frontPageId
+                ? Resolution::redirect($this->permalinks->url('/'))
+                : Resolution::single($page, $paged);
         }
         $regex = $this->permalinks->structureRegex();
         if ($regex !== null && preg_match($regex, implode('/', $segments), $m)) {

@@ -28,6 +28,8 @@ final class Layout
         if ($type === 'flex') {
             if (($layout['orientation'] ?? '') === 'vertical') {
                 $classes[] = 'is-vertical';
+            } elseif (($layout['orientation'] ?? '') === 'horizontal') {
+                $classes[] = 'is-horizontal';
             }
             if (!empty($layout['justifyContent'])) {
                 $classes[] = 'is-content-justification-' . $layout['justifyContent'];

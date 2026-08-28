@@ -21,6 +21,13 @@ final class RenderState
     private static array $variations = [];
     /** @var list<int> */
     private static array $galleries = [];
+    private static int $elements = 0;
+    /** the element class claimed for the dynamic block being rendered, until its wrapper takes it */
+    private static ?string $pendingElements = null;
+    /** @var array<string, int> navigation labels used so far, for the reference's de-duplicated aria-labels */
+    private static array $labels = [];
+    /** @var list<string> element-style rules, in render order */
+    private static array $elementRules = [];
 
     public static function nextId(): int
     {
@@ -65,6 +72,45 @@ final class RenderState
         return self::$variations;
     }
 
+    /** The next wp-elements-N class; the reference numbers these apart from the shared counter. */
+    public static function nextElements(): int
+    {
+        return ++self::$elements;
+    }
+
+    /** A navigation's aria-label: the label itself the first time, then "label N" for repeats. */
+    public static function uniqueLabel(string $label): string
+    {
+        $count = self::$labels[$label] = (self::$labels[$label] ?? 0) + 1;
+        return $count === 1 ? $label : $label . ' ' . $count;
+    }
+
+    /** A dynamic block claims its element class before rendering, so a block that renders nothing still counts. */
+    public static function setPendingElements(?string $class): ?string
+    {
+        $previous = self::$pendingElements;
+        self::$pendingElements = $class;
+        return $previous;
+    }
+
+    public static function takePendingElements(): ?string
+    {
+        $class = self::$pendingElements;
+        self::$pendingElements = null;
+        return $class;
+    }
+
+    public static function recordElementRule(string $css): void
+    {
+        self::$elementRules[] = $css;
+    }
+
+    /** @return list<string> */
+    public static function elementRules(): array
+    {
+        return self::$elementRules;
+    }
+
     public static function recordGallery(int $instance): void
     {
         self::$galleries[] = $instance;
@@ -84,5 +130,9 @@ final class RenderState
         self::$containers = [];
         self::$variations = [];
         self::$galleries = [];
+        self::$elements = 0;
+        self::$pendingElements = null;
+        self::$elementRules = [];
+        self::$labels = [];
     }
 }

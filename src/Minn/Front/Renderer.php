@@ -31,7 +31,7 @@ final readonly class Renderer
         $classes = match ($resolution->kind) {
             Kind::Home => ['home', 'blog'],
             Kind::Single => ['single', 'single-post', 'postid-' . $resolution->id(), 'single-format-standard'],
-            Kind::Page => $this->pageClasses($resolution->record),
+            Kind::Page => [...($resolution->front ? ['home'] : []), ...$this->pageClasses($resolution->record)],
             Kind::Category => ['archive', 'category', 'category-' . $resolution->record['slug'], 'category-' . $resolution->id()],
             Kind::Tag => ['archive', 'tag', 'tag-' . $resolution->record['slug'], 'tag-' . $resolution->id()],
             Kind::Author => array_merge(
@@ -49,7 +49,7 @@ final readonly class Renderer
                 Kind::Page => 'page-paged-',
                 default => null,
             };
-            array_unshift($classes, 'paged');
+            array_splice($classes, $resolution->front ? 1 : 0, 0, ['paged']);
             $classes[] = 'paged-' . $resolution->paged;
             if ($prefix !== null) {
                 $classes[] = $prefix . $resolution->paged;

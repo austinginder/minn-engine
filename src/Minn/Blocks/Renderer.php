@@ -9,6 +9,8 @@ use Minn\Blocks\Dynamic\Categories;
 use Minn\Blocks\Dynamic\LatestComments;
 use Minn\Blocks\Dynamic\LatestPosts;
 use Minn\Blocks\Dynamic\Search;
+use Minn\Blocks\Dynamic\SocialLinks;
+use Minn\Blocks\Dynamic\SyncedPattern;
 use Minn\Blocks\Dynamic\TagCloud;
 use Minn\Content\Posts;
 use Minn\Content\Site;
@@ -90,6 +92,8 @@ final class Renderer
         $renderer->registerDynamic('core/search', (new Search($permalinks))->render(...));
         $renderer->registerDynamic('core/tag-cloud', (new TagCloud($db, $permalinks))->render(...));
         $renderer->registerDynamic('core/latest-comments', (new LatestComments($db, $site, $posts, $permalinks))->render(...));
+        $renderer->registerDynamic('core/block', (new SyncedPattern($db))->render(...));
+        (new SocialLinks(dirname(__DIR__, 2) . '/data/social-icons.json'))->register($renderer);
         return $renderer;
     }
 
@@ -120,19 +124,29 @@ final class Renderer
             return $block->innerHtml;
         }
         if (isset($this->dynamic[$block->name])) {
-            return ($this->dynamic[$block->name])($block, $this);
+            // The element class is numbered before the block renders (the
+            // reference counts it even for a block that renders nothing).
+            $outer = RenderState::setPendingElements(Elements::className($block->attrs, $block->name));
+            $out = ($this->dynamic[$block->name])($block, $this);
+            RenderState::setPendingElements($outer);
+            return $out;
         }
+        // A parent's element styles number before its children's.
+        $elements = Elements::className($block->attrs, $block->name);
         $out = '';
         $inner = 0;
         foreach ($block->innerContent as $chunk) {
             $out .= $chunk ?? $this->renderBlock($block->innerBlocks[$inner++]);
         }
-        return $this->decorate($block, $out);
+        return $this->decorate($block, $out, $elements);
     }
 
-    private function decorate(Block $block, string $html): string
+    private function decorate(Block $block, string $html, ?string $elements): string
     {
         $slug = str_starts_with($block->name, 'core/') ? substr($block->name, 5) : str_replace('/', '-', $block->name);
+        if ($elements !== null) {
+            $html = Html::addClasses($html, [$elements]);
+        }
         $html = match ($block->name) {
             'core/paragraph' => Html::addClasses($html, ['wp-block-paragraph']),
             'core/group' => Html::addClasses($html, Layout::classes('group', $block->attrs)),
@@ -150,7 +164,10 @@ final class Renderer
                 'wp-block-cover__inner-container',
             ),
             'core/image', 'core/media-text' => $this->images->enrich($html, front: $this->context->front),
-            default => $html,
+            // Third-party blocks pass through as stored; their images still
+            // count toward the page's loading rules, as the reference's
+            // content filter sees them.
+            default => str_starts_with($block->name, 'core/') ? $html : $this->images->enrich($html, front: $this->context->front),
         };
         $numbered = self::numberedStyle($block->name, $block->className());
         return $numbered === null ? $html : Html::addClasses($html, [$numbered]);

@@ -9,8 +9,10 @@ use Minn\Blocks\Layout;
 use Minn\Blocks\Parser;
 use Minn\Blocks\Renderer;
 use Minn\Blocks\RenderState;
+use Minn\Blocks\Styles;
 use Minn\Content\Posts;
 use Minn\Db;
+use Minn\Front\Kind;
 use Minn\Front\Permalinks;
 use Minn\Support\Html;
 
@@ -43,48 +45,113 @@ final readonly class Navigation
         if ($items === []) {
             $menu = $this->menuPost((int) $block->attr('ref', 0));
             $items = $menu === null ? [] : Parser::parse((string) $menu['post_content']);
-            $label = (string) ($menu['post_title'] ?? '');
+            // The menu's title labels the nav only when the block names the menu.
+            $label = (int) $block->attr('ref', 0) > 0 ? (string) ($menu['post_title'] ?? '') : '';
         }
+        // Only blocks are items; the whitespace between them is not rendered.
+        $items = array_values(array_filter($items, static fn (Block $item) => $item->name !== null));
+        $label = RenderState::uniqueLabel($label);
         $id = RenderState::nextId();
         $layout = (array) $block->attr('layout', []);
         $vertical = ($layout['orientation'] ?? '') === 'vertical';
         $justify = (string) ($layout['justifyContent'] ?? '');
         $responsive = (string) $block->attr('overlayMenu', 'mobile') !== 'never';
         $colors = self::overlayColors($block);
+        // The block's own colour, size, and family presets ride on both
+        // the nav and its list; the typography style rides inline on both.
+        $presets = self::presetClasses($block);
+        $family = empty($block->attrs['fontFamily']) ? [] : ['has-' . $block->attrs['fontFamily'] . '-font-family'];
+        $inline = Styles::inline((array) $block->attr('style', []));
+        $style = $inline === '' ? '' : 'style="' . Html::attr($inline) . '" ';
 
         $listClasses = implode(' ', array_values(array_filter([
             'wp-block-navigation__container',
+            ...$presets,
             $vertical ? 'is-vertical' : null,
             $responsive ? 'is-responsive' : null,
             $justify !== '' ? 'items-justified-' . $justify : null,
             'wp-block-navigation',
+            ...$family,
         ])));
-        $list = '<ul class="' . $listClasses . '">' . $renderer->renderBlocks($items) . '</ul>';
+        $list = '<ul ' . $style . 'class="' . $listClasses . '">' . $this->items($items, $renderer) . '</ul>';
 
         $navClasses = array_values(array_filter([
+            ...$presets,
             $vertical ? 'is-vertical' : null,
             $responsive ? 'is-responsive' : null,
             $justify !== '' ? 'items-justified-' . $justify : null,
             'wp-block-navigation',
+            ...$family,
             ...array_filter(Layout::classes('navigation', $block->attrs, 'flex'), static fn (string $c) => $c !== 'is-vertical'),
         ]));
-        $nav = '<nav class="' . implode(' ', $navClasses) . '"';
+        $nav = '<nav ' . $style . 'class="' . implode(' ', $navClasses) . '"';
         if (!$responsive) {
-            return $nav . ' aria-label="' . Html::attr($label . ' ' . $id) . '">' . $list . '</nav>';
+            return $nav . ' aria-label="' . Html::attr($label) . '">' . $list . '</nav>';
         }
         $ariaLabel = 'Menu';
-        return $nav . ' ' . "\n\t\t" . ' data-wp-interactive="core/navigation" data-wp-context=\'{"overlayOpenedBy":{"click":false,"hover":false,"focus":false},"type":"overlay","roleAttribute":"","ariaLabel":"' . $ariaLabel . '"}\'>'
-            . '<button aria-haspopup="dialog" aria-label="Open menu" class="wp-block-navigation__responsive-container-open" ' . "\n\t\t\t\t" . 'data-wp-on--click="actions.openMenuOnClick"' . "\n\t\t\t\t" . 'data-wp-on--keydown="actions.handleMenuKeydown"' . "\n\t\t\t" . '><svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 7.5h16v1.5H4z"></path><path d="M4 15h16v1.5H4z"></path></svg></button>'
+        $hasIcon = (bool) $block->attr('hasIcon', true);
+        $open = $hasIcon
+            ? 'aria-label="Open menu"'
+            : '';
+        $openInner = $hasIcon
+            ? '<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 7.5h16v1.5H4z"></path><path d="M4 15h16v1.5H4z"></path></svg>'
+            : 'Menu';
+        $close = $hasIcon ? 'aria-label="Close menu"' : '';
+        $closeInner = $hasIcon
+            ? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path d="m13.06 12 6.47-6.47-1.06-1.06L12 10.94 5.53 4.47 4.47 5.53 10.94 12l-6.47 6.47 1.06 1.06L12 13.06l6.47 6.47 1.06-1.06L13.06 12Z"></path></svg>'
+            : 'Close';
+        return $nav . ($label === '' ? '' : ' aria-label="' . Html::attr($label) . '"') . ' ' . "\n\t\t" . ' data-wp-interactive="core/navigation" data-wp-context=\'{"overlayOpenedBy":{"click":false,"hover":false,"focus":false},"type":"overlay","roleAttribute":"","ariaLabel":"' . $ariaLabel . '"}\'>'
+            . '<button aria-haspopup="dialog" ' . $open . ' class="wp-block-navigation__responsive-container-open" ' . "\n\t\t\t\t" . 'data-wp-on--click="actions.openMenuOnClick"' . "\n\t\t\t\t" . 'data-wp-on--keydown="actions.handleMenuKeydown"' . "\n\t\t\t" . '>' . $openInner . '</button>'
             . "\n\t\t\t\t" . '<div class="wp-block-navigation__responsive-container' . $colors . '"  id="modal-' . $id . '" ' . "\n\t\t\t\t" . 'data-wp-class--has-modal-open="state.isMenuOpen"' . "\n\t\t\t\t" . 'data-wp-class--is-menu-open="state.isMenuOpen"' . "\n\t\t\t\t" . 'data-wp-watch="callbacks.initMenu"' . "\n\t\t\t\t" . 'data-wp-on--keydown="actions.handleMenuKeydown"' . "\n\t\t\t\t" . 'data-wp-on--focusout="actions.handleMenuFocusout"' . "\n\t\t\t\t" . 'tabindex="-1"' . "\n\t\t\t" . '>'
             . "\n\t\t\t\t\t" . '<div class="wp-block-navigation__responsive-close" tabindex="-1">'
             . "\n\t\t\t\t\t\t" . '<div class="wp-block-navigation__responsive-dialog" ' . "\n\t\t\t\t" . 'data-wp-bind--aria-modal="state.ariaModal"' . "\n\t\t\t\t" . 'data-wp-bind--aria-label="state.ariaLabel"' . "\n\t\t\t\t" . 'data-wp-bind--role="state.roleAttribute"' . "\n\t\t\t" . '>'
-            . "\n\t\t\t\t\t\t\t" . '<button aria-label="Close menu" class="wp-block-navigation__responsive-container-close" ' . "\n\t\t\t\t" . 'data-wp-on--click="actions.closeMenuOnClick"' . "\n\t\t\t" . '><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path d="m13.06 12 6.47-6.47-1.06-1.06L12 10.94 5.53 4.47 4.47 5.53 10.94 12l-6.47 6.47 1.06 1.06L12 13.06l6.47 6.47 1.06-1.06L13.06 12Z"></path></svg></button>'
+            . "\n\t\t\t\t\t\t\t" . '<button ' . $close . ' class="wp-block-navigation__responsive-container-close" ' . "\n\t\t\t\t" . 'data-wp-on--click="actions.closeMenuOnClick"' . "\n\t\t\t" . '>' . $closeInner . '</button>'
             . "\n\t\t\t\t\t\t\t" . '<div class="wp-block-navigation__responsive-container-content" ' . "\n\t\t\t\t" . 'data-wp-watch="callbacks.focusFirstElement"' . "\n\t\t\t" . ' id="modal-' . $id . '-content">'
             . "\n\t\t\t\t\t\t\t\t" . $list
             . "\n\t\t\t\t\t\t\t" . '</div>'
             . "\n\t\t\t\t\t\t" . '</div>'
             . "\n\t\t\t\t\t" . '</div>'
             . "\n\t\t\t\t" . '</div></nav>';
+    }
+
+    /**
+     * The menu's items. Link-shaped blocks render as their own list
+     * items; any other block is wrapped in a plain item.
+     *
+     * @param list<Block> $items
+     */
+    private function items(array $items, Renderer $renderer): string
+    {
+        $out = '';
+        foreach ($items as $item) {
+            $html = $renderer->renderBlock($item);
+            $out .= in_array($item->name, ['core/navigation-link', 'core/navigation-submenu', 'core/page-list', 'core/home-link'], true) || trim($html) === ''
+                ? $html
+                : '<li class="wp-block-navigation-item">' . "\n" . $html . '</li>';
+        }
+        return $out;
+    }
+
+    /** @return list<string> the colour and font-size preset classes the block's attributes declare */
+    private static function presetClasses(Block $block): array
+    {
+        $classes = [];
+        if (!empty($block->attrs['textColor']) || isset($block->attrs['style']['color']['text'])) {
+            $classes[] = 'has-text-color';
+        }
+        if (!empty($block->attrs['textColor'])) {
+            $classes[] = 'has-' . $block->attrs['textColor'] . '-color';
+        }
+        if (!empty($block->attrs['backgroundColor']) || isset($block->attrs['style']['color']['background'])) {
+            $classes[] = 'has-background';
+        }
+        if (!empty($block->attrs['backgroundColor'])) {
+            $classes[] = 'has-' . $block->attrs['backgroundColor'] . '-background-color';
+        }
+        if (!empty($block->attrs['fontSize'])) {
+            $classes[] = 'has-' . $block->attrs['fontSize'] . '-font-size';
+        }
+        return $classes;
     }
 
     /** The overlay's colour classes, from the overlay* attributes. */
@@ -100,12 +167,17 @@ final readonly class Navigation
         return $classes;
     }
 
-    private function link(Block $block): string
+    private function link(Block $block, Renderer $renderer): string
     {
         $label = (string) $block->attr('label', '');
         $url = (string) $block->attr('url', '');
-        $classes = 'wp-block-navigation-item wp-block-navigation-link';
-        return '<li class="' . $classes . '"><a class="wp-block-navigation-item__content"  href="' . Html::attr($url) . '"><span class="wp-block-navigation-item__label">' . $label . '</span></a></li>';
+        $resolution = $renderer->context()->resolution;
+        $current = (string) $block->attr('kind', '') === 'post-type'
+            && (int) $block->attr('id', 0) === $resolution->id()
+            && $resolution->kind === ((string) $block->attr('type', '') === 'page' ? Kind::Page : Kind::Single);
+        $classes = 'wp-block-navigation-item' . ($current ? ' current-menu-item' : '') . ' wp-block-navigation-link';
+        $target = (bool) $block->attr('opensInNewTab', false) ? ' target="_blank"  ' : '';
+        return '<li class="' . $classes . '"><a class="wp-block-navigation-item__content"  href="' . Html::attr($url) . '"' . $target . ($current ? ' aria-current="page"' : '') . '><span class="wp-block-navigation-item__label">' . $label . '</span></a></li>';
     }
 
     private function pageList(Block $block, Renderer $renderer): string

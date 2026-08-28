@@ -10,6 +10,7 @@ use Minn\Blocks\Block;
 use Minn\Blocks\Layout;
 use Minn\Blocks\Renderer;
 use Minn\Blocks\Styles;
+use Minn\Blocks\Wrapper;
 use Minn\Content\Posts;
 use Minn\Content\Site;
 use Minn\Content\Texturize;
@@ -99,8 +100,16 @@ final class QueryBlocks
             $isSticky = $onFrontPage && in_array((int) $post['ID'], $sticky, true);
             $items .= '<li class="' . implode(' ', $this->postClasses($post, $isSticky)) . '">' . $inner . '</li>';
         }
-        $classes = array_values(array_filter([Styles::align($block->attrs), 'wp-block-post-template', ...Layout::classes('post-template', $block->attrs)]));
-        return '<ul class="' . implode(' ', $classes) . '">' . $items . '</ul>';
+        $columns = (int) ($block->attrs['layout']['columnCount'] ?? 0);
+        $open = Wrapper::open(
+            'ul',
+            'wp-block-post-template',
+            $block,
+            styleFirst: true,
+            extraClasses: array_values(array_filter([$columns > 0 ? 'columns-' . $columns : null, Styles::align($block->attrs)])),
+            trailingClasses: Layout::classes('post-template', $block->attrs),
+        );
+        return $open . $items . '</ul>';
     }
 
     /** @return list<string> */
@@ -138,10 +147,13 @@ final class QueryBlocks
     {
         $resolution = $renderer->context()->resolution;
         $record = $resolution->record ?? [];
+        // Without its prefix an archive title is the bare name.
+        $prefix = (bool) $block->attr('showPrefix', true);
+        $titled = static fn (string $label, string $name) => $prefix ? $label . ': <span>' . $name . '</span>' : $name;
         $text = match ($resolution->kind) {
-            Kind::Category => 'Category: <span>' . Html::esc((string) $record['name']) . '</span>',
-            Kind::Tag => 'Tag: <span>' . Html::esc((string) $record['name']) . '</span>',
-            Kind::Author => 'Author: <span>' . Html::esc((string) ($record['display_name'] ?? $resolution->authorName)) . '</span>',
+            Kind::Category => $titled('Category', Html::esc((string) $record['name'])),
+            Kind::Tag => $titled('Tag', Html::esc((string) $record['name'])),
+            Kind::Author => $titled('Author', Html::esc((string) ($record['display_name'] ?? $resolution->authorName))),
             Kind::Date => $this->dateTitle($resolution->date),
             Kind::Search => 'Search results for: ' . Texturize::text('"' . Html::esc((string) $resolution->search) . '"'),
             default => '',
@@ -150,8 +162,8 @@ final class QueryBlocks
             return '';
         }
         $level = (int) $block->attr('level', 1);
-        $classes = implode(' ', ['wp-block-query-title', ...Styles::classes($block->attrs)]);
-        return '<h' . $level . ' class="' . $classes . '">' . $text . '</h' . $level . '>';
+        $align = Styles::align($block->attrs);
+        return Wrapper::open('h' . $level, 'wp-block-query-title', $block, styleFirst: true, extraClasses: $align === null ? [] : [$align]) . $text . '</h' . $level . '>';
     }
 
     /** @param array{0: int, 1: ?int, 2: ?int}|null $date */

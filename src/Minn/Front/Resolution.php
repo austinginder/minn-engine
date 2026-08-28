@@ -24,6 +24,8 @@ final readonly class Resolution
         public ?string $search = null,
         public ?array $date = null,
         public ?string $authorName = null,
+        /** the static front page (show_on_front = page), rendered as a page that is also home */
+        public bool $front = false,
     ) {
     }
 
@@ -35,6 +37,11 @@ final readonly class Resolution
     public static function single(array $post, int $paged = 1): self
     {
         return new self($post['post_type'] === 'page' ? Kind::Page : Kind::Single, $post, $paged);
+    }
+
+    public static function frontPage(array $page, int $paged = 1): self
+    {
+        return new self(Kind::Page, $page, $paged, front: true);
     }
 
     public static function term(string $taxonomy, array $term, int $paged = 1): self

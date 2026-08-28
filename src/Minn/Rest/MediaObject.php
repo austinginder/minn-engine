@@ -117,7 +117,7 @@ final readonly class MediaObject
             // Non-image attachments carry no parsed metadata yet (recorded gap).
             return [];
         }
-        $baseUrl = $this->uploads->baseUrl() . '/' . dirname($meta['file']);
+        $baseUrl = rtrim($this->uploads->baseUrl() . '/' . dirname($meta['file']), '/.');
         $sizes = [];
         foreach ($meta['sizes'] as $name => $size) {
             $sizes[$name] = ['file' => $size['file'], 'width' => $size['width'], 'height' => $size['height']]

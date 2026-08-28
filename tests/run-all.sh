@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
 # Run every engine suite. Suites needing the reference SKIP cleanly when it
 # is not running; start it with:  (cd wp-reference && php -S 127.0.0.1:8123 router.php)
+# The dogfood suite needs the dogfood site's own reference on 127.0.0.1:8124
+# (see tests/dogfood.test.php) and skips without it.
 set -u
 cd "$( dirname "$0" )"
 
 failed=0
-for suite in style rest-posts auth caps writes login-endpoint rest-parity minn-v1 comments media settings users terms write-fields editor permalinks blocks theme styles probes; do
+for suite in style rest-posts auth caps writes login-endpoint rest-parity minn-v1 comments media settings users terms write-fields editor permalinks blocks theme styles probes dogfood; do
 	printf '\n=== %s ===\n' "$suite"
 	php "$suite.test.php" || failed=1
 done

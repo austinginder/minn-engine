@@ -61,17 +61,39 @@ final readonly class PageRenderer
         return new self($db, $site, $posts, $permalinks, $theme, $templates, $renderer, $perPage);
     }
 
-    /** @return list<string> the reference's body-class tokens, theme tokens included */
+    /**
+     * The reference's body-class tokens: the singular and template tokens
+     * sit in front of the type token ("page", "single"), the custom-logo
+     * and embed tokens follow the core set, the paging tokens come after
+     * those, and the theme (and child theme) tokens close the list.
+     *
+     * @return list<string>
+     */
     public function bodyClasses(Resolution $resolution, array $coreClasses): array
     {
-        $classes = $coreClasses;
+        $paging = array_values(array_filter($coreClasses, static fn (string $c) => preg_match('/^(?:page|single)?-?paged-\d+$/', $c) === 1));
+        $classes = array_values(array_diff($coreClasses, $paging));
         if ($resolution->kind === Kind::Single) {
-            array_unshift($classes, 'wp-singular', 'post-template-default');
+            $at = (int) array_search('single', $classes, true);
+            array_splice($classes, $at, 0, ['wp-singular', 'post-template-default']);
         } elseif ($resolution->kind === Kind::Page) {
-            array_unshift($classes, 'wp-singular', 'page-template-default');
+            $template = $this->templates->customTemplate($resolution->id());
+            $tokens = $template === null
+                ? ['wp-singular', 'page-template-default']
+                : ['wp-singular', 'page-template', 'page-template-' . preg_replace('/[^a-z0-9_-]+/', '-', strtolower($template))];
+            $at = (int) array_search('page', $classes, true);
+            array_splice($classes, $at, 0, $tokens);
+        }
+        if ((int) ($this->site->option('site_logo') ?? 0) > 0) {
+            $classes[] = 'wp-custom-logo';
         }
         $classes[] = 'wp-embed-responsive';
-        $classes[] = 'wp-theme-' . $this->theme->slug;
+        array_push($classes, ...$paging);
+        $parent = $this->theme->parentSlug();
+        $classes[] = 'wp-theme-' . ($parent ?? $this->theme->slug);
+        if ($parent !== null) {
+            $classes[] = 'wp-child-theme-' . $this->theme->slug;
+        }
         return $classes;
     }
 
@@ -89,8 +111,8 @@ final readonly class PageRenderer
         $bodyClass = implode(' ', $this->bodyClasses($resolution, $coreClasses));
         // The stylesheet comes after the body: it lists the containers and
         // variations that rendering discovered.
-        $globalStyles = (new GlobalStyles($this->theme))->css();
-        $themeStyle = is_file($this->theme->dir . '/style.css') ? $this->theme->uri . '/style.css' : null;
+        $globalStyles = (new GlobalStyles($this->theme, $this->templates->userStyles()))->css();
+        $themeStyle = $this->theme->styleUri();
 
         return '<!DOCTYPE html>' . "\n" . '<html lang="en">' . "\n" . '<head>' . "\n"
             . '<meta charset="UTF-8" />' . "\n"

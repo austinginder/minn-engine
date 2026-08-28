@@ -64,6 +64,7 @@ final readonly class Templates
                 'index',
             ],
             Kind::Page => array_values(array_filter([
+                $resolution->front ? 'front-page' : null,
                 $this->customTemplate((int) ($record['ID'] ?? 0)),
                 'page-' . ($record['post_name'] ?? ''),
                 'page-' . (int) ($record['ID'] ?? 0),
@@ -81,8 +82,16 @@ final readonly class Templates
         };
     }
 
+    /** The site editor's saved global styles for the active theme, when any. */
+    public function userStyles(): ?array
+    {
+        $json = $this->saved('wp_global_styles', null);
+        $decoded = $json === null ? null : json_decode($json, true);
+        return is_array($decoded) ? $decoded : null;
+    }
+
     /** A page's chosen custom template, from _wp_page_template meta. */
-    private function customTemplate(int $pageId): ?string
+    public function customTemplate(int $pageId): ?string
     {
         if ($pageId === 0) {
             return null;
@@ -91,16 +100,16 @@ final readonly class Templates
         return $template === null || $template === '' || $template === 'default' ? null : $template;
     }
 
-    private function saved(string $type, string $slug): ?string
+    private function saved(string $type, ?string $slug): ?string
     {
         $row = $this->db->row(
             "SELECT p.post_content FROM {$this->db->table('posts')} p
              JOIN {$this->db->table('term_relationships')} tr ON tr.object_id = p.ID
              JOIN {$this->db->table('term_taxonomy')} tt ON tt.term_taxonomy_id = tr.term_taxonomy_id
              JOIN {$this->db->table('terms')} t ON t.term_id = tt.term_id
-             WHERE p.post_type = ? AND p.post_name = ? AND p.post_status = 'publish'
-               AND tt.taxonomy = 'wp_theme' AND t.slug = ? LIMIT 1",
-            [$type, $slug, $this->theme->slug],
+             WHERE p.post_type = ? AND (? IS NULL OR p.post_name = ?) AND p.post_status = 'publish'
+               AND tt.taxonomy = 'wp_theme' AND t.slug = ? ORDER BY p.ID DESC LIMIT 1",
+            [$type, $slug, $slug, $this->theme->slug],
         );
         return $row === null ? null : (string) $row['post_content'];
     }

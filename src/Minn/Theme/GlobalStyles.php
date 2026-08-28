@@ -26,13 +26,14 @@ final readonly class GlobalStyles
         'cite' => 'cite',
     ];
 
-    public function __construct(private Theme $theme)
+    /** @param array|null $user the site editor's saved global styles, layered over the theme */
+    public function __construct(private Theme $theme, private ?array $user = null)
     {
     }
 
     public function css(): string
     {
-        $json = $this->theme->json();
+        $json = $this->user === null ? $this->theme->json() : Theme::merge($this->theme->json(), $this->user);
         $settings = (array) ($json['settings'] ?? []);
         $styles = (array) ($json['styles'] ?? []);
         $presets = $this->presets($settings);
@@ -266,7 +267,7 @@ final readonly class GlobalStyles
 
     private function containerStyles(): string
     {
-        $out = '';
+        $out = implode('', RenderState::elementRules());
         foreach (RenderState::containers() as $class => $declarations) {
             $out .= ".{$class}{{$declarations}}";
         }

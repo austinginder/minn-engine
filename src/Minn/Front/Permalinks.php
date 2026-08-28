@@ -21,6 +21,7 @@ final readonly class Permalinks
         private Terms $terms,
         public string $home,
         public string $structure,
+        public int $frontPageId = 0,
     ) {
     }
 
@@ -31,6 +32,7 @@ final readonly class Permalinks
             new Terms($db),
             rtrim($db->option('home') ?? '', '/'),
             $db->option('permalink_structure') ?? '',
+            ($db->option('show_on_front') ?? 'posts') === 'page' ? (int) ($db->option('page_on_front') ?? 0) : 0,
         );
     }
 
@@ -61,6 +63,9 @@ final readonly class Permalinks
 
     public function forPage(array $page): string
     {
+        if ($this->frontPageId > 0 && (int) $page['ID'] === $this->frontPageId) {
+            return $this->url('/');
+        }
         if (!$this->isPretty() || !$this->hasPrettyLink($page)) {
             return $this->url('/?page_id=' . (int) $page['ID']);
         }

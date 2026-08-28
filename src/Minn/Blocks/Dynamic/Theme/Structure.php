@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Blocks\Dynamic\Theme;
 
 use Minn\Blocks\Block;
+use Minn\Blocks\Wrapper;
 use Minn\Blocks\Parser;
 use Minn\Blocks\Renderer;
 use Minn\Content\Site;
@@ -45,7 +46,8 @@ final readonly class Structure
         $area = (string) $block->attr('area', $this->theme->partArea($slug));
         $tag = (string) $block->attr('tagName', match ($area) { 'header' => 'header', 'footer' => 'footer', default => 'div' });
         $inner = $renderer->renderBlocks(Parser::parse($markup));
-        return '<' . $tag . ' class="wp-block-template-part">' . $inner . '</' . $tag . '>';
+        $classes = trim($block->className() . ' wp-block-template-part');
+        return '<' . $tag . ' class="' . Html::attr($classes) . '">' . $inner . '</' . $tag . '>';
     }
 
     private function pattern(Block $block, Renderer $renderer): string
@@ -60,13 +62,12 @@ final readonly class Structure
         $level = (int) $block->attr('level', 1);
         $tag = $level === 0 ? 'p' : 'h' . $level;
         $resolution = $renderer->context()->resolution;
-        $current = $resolution->kind === Kind::Home && $resolution->paged === 1 ? ' aria-current="page"' : '';
-        $classes = implode(' ', ['wp-block-site-title', ...\Minn\Blocks\Styles::classes($block->attrs)]);
+        $current = ($resolution->kind === Kind::Home || $resolution->front) && $resolution->paged === 1 ? ' aria-current="page"' : '';
         $link = (bool) $block->attr('isLink', true);
         $inner = $link
             ? '<a href="' . Html::attr($this->permalinks->url('')) . '" target="_self" rel="home"' . $current . '>' . Html::esc($name) . '</a>'
             : Html::esc($name);
-        return '<' . $tag . ' class="' . $classes . '">' . $inner . '</' . $tag . '>';
+        return Wrapper::open($tag, 'wp-block-site-title', $block, styleFirst: true, linkColorClass: true) . $inner . '</' . $tag . '>';
     }
 
     private function siteTagline(Block $block): string
@@ -77,7 +78,7 @@ final readonly class Structure
         }
         $level = (int) $block->attr('level', 0);
         $tag = $level === 0 ? 'p' : 'h' . $level;
-        $classes = implode(' ', ['wp-block-site-tagline', ...\Minn\Blocks\Styles::classes($block->attrs)]);
-        return '<' . $tag . ' class="' . $classes . '">' . Html::esc($tagline) . '</' . $tag . '>';
+        return Wrapper::open($tag, 'wp-block-site-tagline', $block, styleFirst: true, linkColorClass: true) . Html::esc($tagline) . '</' . $tag . '>';
     }
+
 }

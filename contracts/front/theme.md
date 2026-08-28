@@ -116,15 +116,90 @@ Verified visually with Playwright at 1280px: home and a single post match the re
 to the pixel in geometry (`.wp-site-blocks`, header, alignwide, navigation boxes measured
 equal).
 
+## What the dogfood site taught (milestone 29)
+
+`tests/dogfood.test.php` diffs a real site (dogfood: a child theme on
+twentytwentythree, a static front page, `/%category%/%postname%/`, a site-editor
+header and footer, synced patterns, social links, a handful of plugins) against its
+own parked reference. It carries no fixtures; plugin-only markup is neutralised
+(body-class tokens, a dark-palette toggle, a Jetpack slideshow, a gallery plugin's
+anchors and its lowercased `viewbox`). Every fact below came out of that diff.
+
+- **Static front page.** `show_on_front=page` renders `page_on_front` at `/` with body
+  `home wp-singular page-template page-template-{slug} page page-id-N`; `/page/N/`
+  renders it again with `home paged … paged-N page-paged-N`; its own permalink and
+  `?page_id=` redirect to `/`; `get_permalink` of that page is the home URL. The
+  template hierarchy tries `front-page` before the page's own candidates.
+- **Body classes.** `page-template-default` becomes `page-template page-template-{slug}`
+  under a custom template (`.` and `/` become `-`); `wp-custom-logo` follows the core
+  set when `site_logo` is set; `wp-theme-{parent} wp-child-theme-{child}` close the
+  list; the paging tokens sit after `wp-embed-responsive`.
+- **Child themes.** Templates, parts, and patterns fall back to the parent; `theme.json`
+  merges parent then child (maps key by key, preset lists whole), and the site
+  editor's saved `wp_global_styles` post layers on top. Only the child's `style.css`
+  is linked.
+- **Category structure.** With `/%category%/%postname%/`, a bare category path
+  (`/news/`) is the archive too; `/category/news/` stays valid.
+- **Navigation.** The block's `textColor`, `fontSize`, `fontFamily`, and typography style
+  ride on both `<nav>` and `<ul>` (`has-text-color has-x-color has-x-font-size …
+  wp-block-navigation has-x-font-family`, style attribute first). `hasIcon:false` makes
+  the overlay buttons plain "Menu"/"Close" with no aria-label and no svg. The aria-label
+  is the referenced menu's title, only when the block names a `ref`; a repeated label
+  gets " N" (so two unnamed navs read `""` then `" 2"`). Whitespace between items is
+  not rendered; a non-link child is wrapped in `<li class="wp-block-navigation-item">`.
+  A link whose `id`/`type` match the queried object gets `current-menu-item` and
+  `aria-current="page"`; `opensInNewTab` adds `target="_blank"` (two trailing spaces).
+- **Element styles.** A block with `style.elements` gets `wp-elements-N` (its own
+  counter, parents before children, dynamic blocks numbered before they render so an
+  empty pagination still counts) and rules `.wp-elements-N a:where(:not(.wp-element-button)){…}`
+  per state. Blocks without element slots (search, navigation, social-links, buttons)
+  take no number. Site-title, post-date, and post-excerpt also add `has-link-color`;
+  query-title and post-content do not.
+- **Dynamic wrappers** (`Minn\Blocks\Wrapper`): classes run text-align, link-colour
+  marker, the block's extras (taxonomy, alignment, `columns-N`), custom class and its
+  numbered style, `wp-elements-N`, the block class, colour presets, font size, font
+  family, then layout classes. Style attribute first for post-title, post-date,
+  post-content, query-title, post-template, featured image, site-title.
+- **Inline style order.** Groups run border, colour, typography, spacing; typography
+  properties in a fixed order with `letter-spacing` after `text-transform`; a spacing
+  box's sides in the order the block stored them (`margin-bottom` before `margin-top`
+  when saved that way).
+- **Featured image.** `<img width height src class="attachment-post-thumbnail
+  size-post-thumbnail wp-post-image" alt style decoding fetchpriority|loading srcset sizes />`;
+  style is `aspect-ratio`, `height`, `width`, then `object-fit:{scale}` (always). A
+  linked image with empty alt borrows the post title. A srcset needs two candidates;
+  with one there is neither `srcset` nor `sizes` (content images too).
+- **Post excerpt** leaves a space before `</p>` where the more link would go.
+- **Query title** without `showPrefix` is the bare term name; `align` lands as
+  `alignwide` before the block class.
+- **Post template** carries `columns-N` for a grid `columnCount`, then the alignment.
+- **Search** with `buttonPosition:button-inside` + `buttonUseIcon` renders the icon
+  button (`has-icon`), colour presets on the button, font family on input and button.
+- **Social links**: the stored `<ul>` gains the flex layout classes; each link is
+  `<li style="color:…" class="wp-social-link wp-social-link-{service} has-x-color
+  wp-block-social-link"><a rel="noopener nofollow" target="_blank" href class="wp-block-social-link-anchor">
+  {svg}<span class="wp-block-social-link-label screen-reader-text">{Label}</span></a></li>`,
+  the icons captured from the reference's output into `src/data/social-icons.json`
+  (48 services; unknown services get the share icon).
+- **Synced patterns** (`core/block`) render the referenced `wp_block` post's content.
+- **Third-party blocks** pass through as stored; their `wp-image-N` images still count
+  toward the page's loading budget. Uploads stored at the root of `uploads/` build
+  sub-size URLs without a `./` segment.
+- **Not reproducible** (plugin runtime): plugin body classes, blocks whose markup a
+  plugin produces (dark-palette toggle, Jetpack slideshow), plugins that rewrite the
+  page (gallery links, attribute lowercasing), shortcodes (`[eeb_protect_content]`
+  stays literal, as it does on the reference without that plugin).
+
 ## Known gaps
 
 - The responsive navigation overlay needs the interactivity script the reference ships;
   the engine keeps the menu inline at every width and hides the open/close buttons.
 - Block-library CSS (GPL) is not carried; blocks outside the battery may need rules in
   `blocks.css` as they appear.
-- Blocks the site's templates do not exercise are best-effort or empty: featured
-  images with a thumbnail, `post-excerpt`, query pagination markup (no page two
-  exists to capture), `comments-pagination`, `social-links`, `avatar` outside comments.
+- Blocks the site's templates do not exercise are best-effort or empty: query
+  pagination markup (no page two exists to capture), `comments-pagination`, `avatar`
+  outside comments, search `no-button`/`button-only`, social links with visible labels.
+- `page_for_posts` (a page as the blog index) is not handled yet.
 - Pattern PHP beyond the interpreted grammar renders as nothing.
 - The queried-object id quirk in `page-list` is reproduced as observed; a fix upstream
   would be a divergence to re-capture.
