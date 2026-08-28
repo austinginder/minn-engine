@@ -1,6 +1,7 @@
-# Contract: wp/v2 posts (read surface)
+# Contract: the wp/v2 read surface
 
-Status: implemented (view context, GET only). Suites: `tests/rest-posts.test.php`
+Status: implemented (view context, GET only) for posts, pages, categories,
+tags, types, and the `_fields` filter. Suites: `tests/rest-posts.test.php`
 (fixtures) and `tests/rest-parity.test.php` (live diff against the reference).
 
 ## Fixture capture
@@ -40,6 +41,49 @@ normalize the capture origin to the engine origin before comparing.
   `X-Content-Type-Options: nosniff`, `Allow: GET`.
 - Errors: `rest_post_invalid_id` (404), `rest_no_route` (404),
   `rest_post_invalid_page_number` (400).
+
+## Facts from the milestone 2 routes (all oracle-proven)
+
+- **`_fields`** filters per item on list responses and against the whole
+  payload otherwise. Requested dot paths descend (`title.rendered`,
+  `_links.self`). Field order in the output follows the object's canonical
+  order, not the request order. An unmatched field yields an empty object.
+  Because `wp/v2/types` is one associative payload, `_fields` strips every
+  type key and the response is literally `[]` over HTTP; the engine
+  reproduces this quirk by construction.
+- **Pages**: link is `/?page_id={id}`; fields add `parent` and `menu_order`
+  and drop sticky, format, categories, and tags; `class_list` has no
+  `format-*` entry; `_links` gains an embeddable `up` entry when the page
+  has a parent and never has `wp:term`.
+- **Terms**: categories link by id (`/?cat=1`), tags link by slug
+  (`/?tag=engine`); tag objects have no `parent` field; `meta` is `[]`;
+  `_links.wp:post_type` uses the encoded `rest_route` form with
+  `categories=`/`tags=` args. Term errors: `rest_term_invalid`
+  "Term does not exist." (404), including an id that exists in another
+  taxonomy. Default order is name ascending, `hide_empty` false, counts come
+  straight from the `term_taxonomy.count` column.
+- **Types**: eleven built-ins in registration order (post, page, attachment,
+  nav_menu_item, wp_block, wp_template, wp_template_part, wp_global_styles,
+  wp_navigation, wp_font_family, wp_font_face), each with `_links.wp:items`
+  pointing at its rest_base. Error: `rest_type_invalid` "Invalid post type."
+  (404). The engine serves these from its own registry
+  (`src/data/types.json`).
+- **Texturize** (rendered content, titles, excerpts): straight quotes,
+  apostrophes, `...`, `---`, ` -- `, `--`, and `'99` become numeric entities
+  (`&#8220;` `&#8221;` `&#8216;` `&#8217;` `&#8230;` `&#8212;` `&#8211;`);
+  `6'2"` renders as `6&#8217;2&#8243;` (only the double quote after a digit
+  becomes a prime); `pre`/`code`/`kbd`/`style`/`script` contents are
+  skipped. Pinned by the texturize battery post (id 7).
+- **Quote blocks** gain layout-support classes at render:
+  `is-layout-flow wp-block-quote-is-layout-flow` appended to the
+  blockquote's class. Lists get no such classes.
+- **Generated excerpts** remove disallowed blocks whole before trimming
+  (a code block's text never appears); allowed set proven so far:
+  paragraph, heading, list, quote (nested content included), preformatted.
+  Tags are replaced by spaces (list items read as separate words), then
+  whitespace collapses. Inline `code` inside a paragraph SURVIVES the
+  excerpt and is texturized there, even though rendered content skips it.
+  Pinned by the excerpt probe post (id 8).
 
 ## Known gaps (not yet implemented)
 

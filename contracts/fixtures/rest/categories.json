@@ -1,0 +1,47 @@
+[
+  {
+    "id": 1,
+    "count": 4,
+    "description": "",
+    "link": "http://127.0.0.1:8123/?cat=1",
+    "name": "Uncategorized",
+    "slug": "uncategorized",
+    "taxonomy": "category",
+    "parent": 0,
+    "meta": [],
+    "_links": {
+      "self": [
+        {
+          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/categories/1",
+          "targetHints": {
+            "allow": [
+              "GET"
+            ]
+          }
+        }
+      ],
+      "collection": [
+        {
+          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/categories"
+        }
+      ],
+      "about": [
+        {
+          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/taxonomies/category"
+        }
+      ],
+      "wp:post_type": [
+        {
+          "href": "http://127.0.0.1:8123/index.php?rest_route=%2Fwp%2Fv2%2Fposts&categories=1"
+        }
+      ],
+      "curies": [
+        {
+          "name": "wp",
+          "href": "https://api.w.org/{rel}",
+          "templated": true
+        }
+      ]
+    }
+  }
+]

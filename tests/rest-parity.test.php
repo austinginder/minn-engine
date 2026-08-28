@@ -71,5 +71,29 @@ parity( 'posts single 5', '/wp/v2/posts/5' );
 parity( 'invalid id', '/wp/v2/posts/999' );
 parity( 'unknown route', '/wp/v2/nonexistent' );
 
+parity( 'posts _fields id,title,status', '/wp/v2/posts&_fields=id,title,status' );
+parity( 'posts _fields nested title.rendered', '/wp/v2/posts&_fields=id,title.rendered' );
+parity( 'posts _fields into _links', '/wp/v2/posts&_fields=id,_links.self' );
+parity( 'posts _fields unknown key', '/wp/v2/posts&_fields=bogus' );
+parity( 'single _fields', '/wp/v2/posts/1&_fields=id,slug,link' );
+
+parity( 'pages list', '/wp/v2/pages' );
+parity( 'pages single parent', '/wp/v2/pages/2' );
+parity( 'pages single child (up link)', '/wp/v2/pages/6' );
+parity( 'pages invalid id', '/wp/v2/pages/999' );
+
+parity( 'categories list', '/wp/v2/categories' );
+parity( 'categories single', '/wp/v2/categories/1' );
+parity( 'tags list', '/wp/v2/tags' );
+parity( 'tags single', '/wp/v2/tags/2' );
+parity( 'term invalid id', '/wp/v2/categories/99' );
+parity( 'term wrong taxonomy', '/wp/v2/categories/2' );
+
+parity( 'types list', '/wp/v2/types' );
+parity( 'types single post', '/wp/v2/types/post' );
+parity( 'types single wp_navigation', '/wp/v2/types/wp_navigation' );
+parity( 'types invalid', '/wp/v2/types/bogus' );
+parity( 'types _fields quirk strips to []', '/wp/v2/types&_fields=name,slug' );
+
 echo "\n$pass passed, $fail failed\n";
 exit( $fail > 0 ? 1 : 0 );

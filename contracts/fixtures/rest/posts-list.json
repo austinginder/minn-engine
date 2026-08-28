@@ -1,5 +1,217 @@
 [
   {
+    "id": 8,
+    "date": "2026-08-28T02:42:28",
+    "date_gmt": "2026-08-28T02:42:28",
+    "guid": {
+      "rendered": "https://minn-engine.localhost/?p=8"
+    },
+    "modified": "2026-08-28T02:42:28",
+    "modified_gmt": "2026-08-28T02:42:28",
+    "slug": "excerpt-block-filter-probe",
+    "status": "publish",
+    "type": "post",
+    "link": "http://127.0.0.1:8123/?p=8",
+    "title": {
+      "rendered": "Excerpt block filter probe"
+    },
+    "content": {
+      "rendered": "\n<h2 class=\"wp-block-heading\">Heading text</h2>\n\n\n\n<p class=\"wp-block-paragraph\">Para one.</p>\n\n\n\n<ul class=\"wp-block-list\"><li>item alpha</li><li>item beta</li></ul>\n\n\n\n<blockquote class=\"wp-block-quote is-layout-flow wp-block-quote-is-layout-flow\">\n<p class=\"wp-block-paragraph\">Quoted line.</p>\n</blockquote>\n\n\n\n<pre class=\"wp-block-code\"><code>code body text</code></pre>\n\n\n\n<pre class=\"wp-block-preformatted\">pre body text</pre>\n\n\n\n<hr class=\"wp-block-separator has-alpha-channel-opacity\"/>\n\n\n\n<p class=\"wp-block-paragraph\">Para two.</p>\n",
+      "protected": false
+    },
+    "excerpt": {
+      "rendered": "<p>Heading text Para one. item alpha item beta Quoted line. pre body text Para two.</p>\n",
+      "protected": false
+    },
+    "author": 0,
+    "featured_media": 0,
+    "comment_status": "open",
+    "ping_status": "open",
+    "sticky": false,
+    "template": "",
+    "format": "standard",
+    "meta": {
+      "footnotes": ""
+    },
+    "categories": [
+      1
+    ],
+    "tags": [],
+    "class_list": [
+      "post-8",
+      "post",
+      "type-post",
+      "status-publish",
+      "format-standard",
+      "hentry",
+      "category-uncategorized"
+    ],
+    "_links": {
+      "self": [
+        {
+          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/posts/8",
+          "targetHints": {
+            "allow": [
+              "GET"
+            ]
+          }
+        }
+      ],
+      "collection": [
+        {
+          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/posts"
+        }
+      ],
+      "about": [
+        {
+          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/types/post"
+        }
+      ],
+      "replies": [
+        {
+          "embeddable": true,
+          "href": "http://127.0.0.1:8123/index.php?rest_route=%2Fwp%2Fv2%2Fcomments&post=8"
+        }
+      ],
+      "version-history": [
+        {
+          "count": 0,
+          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/posts/8/revisions"
+        }
+      ],
+      "wp:attachment": [
+        {
+          "href": "http://127.0.0.1:8123/index.php?rest_route=%2Fwp%2Fv2%2Fmedia&parent=8"
+        }
+      ],
+      "wp:term": [
+        {
+          "taxonomy": "category",
+          "embeddable": true,
+          "href": "http://127.0.0.1:8123/index.php?rest_route=%2Fwp%2Fv2%2Fcategories&post=8"
+        },
+        {
+          "taxonomy": "post_tag",
+          "embeddable": true,
+          "href": "http://127.0.0.1:8123/index.php?rest_route=%2Fwp%2Fv2%2Ftags&post=8"
+        }
+      ],
+      "curies": [
+        {
+          "name": "wp",
+          "href": "https://api.w.org/{rel}",
+          "templated": true
+        }
+      ]
+    }
+  },
+  {
+    "id": 7,
+    "date": "2026-08-28T02:41:31",
+    "date_gmt": "2026-08-28T02:41:31",
+    "guid": {
+      "rendered": "https://minn-engine.localhost/?p=7"
+    },
+    "modified": "2026-08-28T02:41:31",
+    "modified_gmt": "2026-08-28T02:41:31",
+    "slug": "texturize-battery-its-quoted-fine",
+    "status": "publish",
+    "type": "post",
+    "link": "http://127.0.0.1:8123/?p=7",
+    "title": {
+      "rendered": "Texturize battery: it&#8217;s &#8220;quoted&#8221; &#8212; fine"
+    },
+    "content": {
+      "rendered": "\n<p class=\"wp-block-paragraph\">He said &#8220;hello there&#8221; and it&#8217;s fine. She replied &#8216;sure thing&#8217; at 6&#8217;2&#8243; tall.</p>\n\n\n\n<p class=\"wp-block-paragraph\">Back in &#8217;99 we used dashes&#8212;like this&#8211;and spaced ones &#8212; too. Waiting&#8230; done.</p>\n\n\n\n<pre class=\"wp-block-code\"><code>keep 'straight' \"quotes\" and ... dashes -- here</code></pre>\n\n\n\n<p class=\"wp-block-paragraph\">Inline <code>it's \"kept\" raw...</code> but outside it&#8217;s curly again.</p>\n",
+      "protected": false
+    },
+    "excerpt": {
+      "rendered": "<p>He said &#8220;hello there&#8221; and it&#8217;s fine. She replied &#8216;sure thing&#8217; at 6&#8217;2&#8243; tall. Back in &#8217;99 we used dashes&#8212;like this&#8211;and spaced ones &#8212; too. Waiting&#8230; done. Inline it&#8217;s &#8220;kept&#8221; raw&#8230; but outside it&#8217;s curly again.</p>\n",
+      "protected": false
+    },
+    "author": 0,
+    "featured_media": 0,
+    "comment_status": "open",
+    "ping_status": "open",
+    "sticky": false,
+    "template": "",
+    "format": "standard",
+    "meta": {
+      "footnotes": ""
+    },
+    "categories": [
+      1
+    ],
+    "tags": [],
+    "class_list": [
+      "post-7",
+      "post",
+      "type-post",
+      "status-publish",
+      "format-standard",
+      "hentry",
+      "category-uncategorized"
+    ],
+    "_links": {
+      "self": [
+        {
+          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/posts/7",
+          "targetHints": {
+            "allow": [
+              "GET"
+            ]
+          }
+        }
+      ],
+      "collection": [
+        {
+          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/posts"
+        }
+      ],
+      "about": [
+        {
+          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/types/post"
+        }
+      ],
+      "replies": [
+        {
+          "embeddable": true,
+          "href": "http://127.0.0.1:8123/index.php?rest_route=%2Fwp%2Fv2%2Fcomments&post=7"
+        }
+      ],
+      "version-history": [
+        {
+          "count": 0,
+          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/posts/7/revisions"
+        }
+      ],
+      "wp:attachment": [
+        {
+          "href": "http://127.0.0.1:8123/index.php?rest_route=%2Fwp%2Fv2%2Fmedia&parent=7"
+        }
+      ],
+      "wp:term": [
+        {
+          "taxonomy": "category",
+          "embeddable": true,
+          "href": "http://127.0.0.1:8123/index.php?rest_route=%2Fwp%2Fv2%2Fcategories&post=7"
+        },
+        {
+          "taxonomy": "post_tag",
+          "embeddable": true,
+          "href": "http://127.0.0.1:8123/index.php?rest_route=%2Fwp%2Fv2%2Ftags&post=7"
+        }
+      ],
+      "curies": [
+        {
+          "name": "wp",
+          "href": "https://api.w.org/{rel}",
+          "templated": true
+        }
+      ]
+    }
+  },
+  {
     "id": 5,
     "date": "2026-08-28T02:32:13",
     "date_gmt": "2026-08-28T02:32:13",

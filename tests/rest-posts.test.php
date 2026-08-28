@@ -74,5 +74,22 @@ check( 404 === $h5['status'], 'unknown route returns 404' );
 $d = minn_test_diff( fixture( 'no-route.json' ), json_decode( $body5, true ) );
 check( null === $d, 'no-route error shape', (string) $d );
 
+// 6. The wider read surface, pinned against captured fixtures.
+foreach ( array(
+	'pages list'      => array( 'pages-list.json', '/wp/v2/pages' ),
+	'categories list' => array( 'categories.json', '/wp/v2/categories' ),
+	'tags list'       => array( 'tags.json', '/wp/v2/tags' ),
+	'types'           => array( 'types.json', '/wp/v2/types' ),
+) as $label => $spec ) {
+	[ $fx, $route ] = $spec;
+	[ , $b ]        = minn_test_fetch( "$ENGINE/wp-json$route" );
+	$d              = minn_test_diff( fixture( $fx ), json_decode( $b, true ) );
+	check( null === $d, "$label matches fixture", (string) $d );
+}
+
+// 7. The types _fields quirk: the associative payload strips to [].
+[ , $bq ] = minn_test_fetch( "$ENGINE/wp-json/wp/v2/types?_fields=name,slug" );
+check( '[]' === trim( $bq ), 'types _fields quirk yields []', $bq );
+
 echo "\n$pass passed, $fail failed\n";
 exit( $fail > 0 ? 1 : 0 );
