@@ -28,9 +28,10 @@ const MINN_NONCE_LIFE = MINN_DAY;
 
 function minn_salt( string $scheme ): string {
 	$map = array(
-		'logged_in' => array( 'LOGGED_IN_KEY', 'LOGGED_IN_SALT' ),
-		'nonce'     => array( 'NONCE_KEY', 'NONCE_SALT' ),
-		'auth'      => array( 'AUTH_KEY', 'AUTH_SALT' ),
+		'logged_in'   => array( 'LOGGED_IN_KEY', 'LOGGED_IN_SALT' ),
+		'nonce'       => array( 'NONCE_KEY', 'NONCE_SALT' ),
+		'auth'        => array( 'AUTH_KEY', 'AUTH_SALT' ),
+		'secure_auth' => array( 'SECURE_AUTH_KEY', 'SECURE_AUTH_SALT' ),
 	);
 	[ $k, $s ] = $map[ $scheme ];
 	return ( defined( $k ) ? constant( $k ) : '' ) . ( defined( $s ) ? constant( $s ) : '' );

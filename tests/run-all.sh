@@ -5,7 +5,7 @@ set -u
 cd "$( dirname "$0" )"
 
 failed=0
-for suite in rest-posts auth caps writes rest-parity; do
+for suite in rest-posts auth caps writes login-endpoint rest-parity; do
 	printf '\n=== %s ===\n' "$suite"
 	php "$suite.test.php" || failed=1
 done

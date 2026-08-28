@@ -74,6 +74,18 @@ status, then trashes and force-deletes it through the engine and confirms
 WordPress reports it gone. The two implementations write the same database
 and neither can tell which one made the change.
 
+## Term counts stay honest across writes
+
+`term_taxonomy.count` is a stored column WordPress trusts on read (it does not
+recompute counts per request). So every write that changes a post's
+contribution to a term's published total refreshes the affected counts:
+create (default-category assignment), update when `status` changes
+(publish/unpublish), trash, and force-delete. A milestone-6 bug where
+force-delete removed the term links without recounting left the stored count
+inflated, which WordPress then reported verbatim; the fix recounts every
+taxonomy the post touched, and two back-to-back write-suite runs leave the
+counts unchanged.
+
 ## Known gaps
 
 - `author`, `featured_media`, `comment_status`, `sticky`, `template`,

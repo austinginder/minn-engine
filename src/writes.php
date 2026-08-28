@@ -186,6 +186,10 @@ function minn_rest_update_post( string $type, int $id ): void {
 	$stmt->execute();
 
 	minn_apply_terms( $id, $body );
+	// A publish/unpublish transition changes the terms' published counts.
+	if ( array_key_exists( 'status', $body ) && $body['status'] !== $post['post_status'] ) {
+		minn_recount_post_taxonomies( $id );
+	}
 
 	minn_rest_send( minn_rest_post_object_edit( minn_get_post_row( $id ), $uid ) );
 }
@@ -220,6 +224,8 @@ function minn_rest_delete_post( string $type, int $id ): void {
 		// Preserve the pre-trash status the way core stores _wp_trash_meta_status.
 		minn_set_post_meta( $id, '_wp_trash_meta_status', $post['post_status'] );
 		minn_set_post_meta( $id, '_wp_trash_meta_time', (string) time() );
+		// A trashed post no longer counts toward its terms' published totals.
+		minn_recount_post_taxonomies( $id );
 		$after = minn_rest_post_object_edit( minn_get_post_row( $id ), $uid );
 		minn_rest_send( $after );
 	}
@@ -229,12 +235,18 @@ function minn_rest_delete_post( string $type, int $id ): void {
 	$del      = minn_db()->prepare( "DELETE FROM {$table_prefix}posts WHERE ID = ?" );
 	$del->bind_param( 'i', $id );
 	$del->execute();
-	$tr = minn_db()->prepare( "DELETE FROM {$table_prefix}term_relationships WHERE object_id = ?" );
+	// Capture the taxonomies this post touched before dropping the links, so
+	// their published counts can be refreshed afterward.
+	$taxes = minn_post_taxonomies( $id );
+	$tr    = minn_db()->prepare( "DELETE FROM {$table_prefix}term_relationships WHERE object_id = ?" );
 	$tr->bind_param( 'i', $id );
 	$tr->execute();
 	$pm = minn_db()->prepare( "DELETE FROM {$table_prefix}postmeta WHERE post_id = ?" );
 	$pm->bind_param( 'i', $id );
 	$pm->execute();
+	foreach ( $taxes as $tax ) {
+		minn_recount_taxonomy( $tax );
+	}
 
 	minn_rest_send( array( 'deleted' => true, 'previous' => $previous ) );
 }
@@ -349,6 +361,26 @@ function minn_set_object_terms( int $id, string $taxonomy, array $term_ids ): vo
 		$ins->execute();
 	}
 	minn_recount_taxonomy( $taxonomy );
+}
+
+/** The distinct taxonomies a post has term relationships in. */
+function minn_post_taxonomies( int $id ): array {
+	global $table_prefix;
+	$stmt = minn_db()->prepare(
+		"SELECT DISTINCT tt.taxonomy FROM {$table_prefix}term_relationships tr
+		 JOIN {$table_prefix}term_taxonomy tt ON tt.term_taxonomy_id = tr.term_taxonomy_id
+		 WHERE tr.object_id = ?"
+	);
+	$stmt->bind_param( 'i', $id );
+	$stmt->execute();
+	return array_map( static fn( $r ) => $r[0], $stmt->get_result()->fetch_all( MYSQLI_NUM ) );
+}
+
+/** Recount every taxonomy a post participates in (used on status changes). */
+function minn_recount_post_taxonomies( int $id ): void {
+	foreach ( minn_post_taxonomies( $id ) as $tax ) {
+		minn_recount_taxonomy( $tax );
+	}
 }
 
 function minn_recount_taxonomy( string $taxonomy ): void {

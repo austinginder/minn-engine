@@ -79,14 +79,37 @@ and re-fetching a nonce.
   full write verb list when the authenticated caller views their own record.
 - Errors: `rest_user_invalid_id` "Invalid user ID." (404).
 
+## The login endpoint (`/wp-login.php`)
+
+A browser signs in here, and the engine issues a session it can use
+everywhere. Suite: `tests/login-endpoint.test.php` (12 checks).
+
+- `GET /wp-login.php` renders a login form (`log`, `pwd`, `rememberme`,
+  optional `redirect_to`).
+- `POST` verifies the password (`minn_login`), creates a session
+  (`minn_create_session`), and sets the three WordPress auth cookies, then
+  `302`-redirects. A wrong password re-renders the form with an error and no
+  redirect.
+- Cookie names use `COOKIEHASH = md5( siteurl )`. Over HTTPS the auth cookie
+  is `wordpress_sec_{hash}` (scheme `secure_auth`, salt `SECURE_AUTH_*`) on
+  `/wp-admin` and `/wp-content/plugins`; over HTTP it is `wordpress_{hash}`
+  (scheme `auth`). The `wordpress_logged_in_{hash}` cookie is set on `/` and
+  is the one the REST layer reads. Remember-me extends expiry from 2 to 14
+  days.
+- Default redirect is `/minn-admin/` (the engine's admin), not `/wp-admin/`.
+- `GET /wp-login.php?action=logout` clears every auth cookie and redirects to
+  `?loggedout=true`.
+- **Proven both ways:** the cookie the engine's login sets authenticates a
+  REST request against the engine AND against WordPress. A browser can sign
+  in at the engine and its session is accepted everywhere.
+
 ## Known gaps
 
 - Application passwords and the `Authorization` header path.
-- `context=edit` on users (email, roles, capabilities, registered_date).
-- Login itself: no `wp-login.php` equivalent, so sessions are still minted by
-  WordPress. The engine can verify and mint cookie values but does not yet
-  create session rows, log in, or log out.
+- `context=edit` on arbitrary users (only `me` renders the edit shape).
+- The `wordpress_test_cookie` probe and the `rememberme` "forever" semantics
+  beyond the expiry extension.
 - Nonce lifetime assumes the default `nonce_life`; a site filtering it would
   diverge.
-- No capability model yet, so nothing consumes the authenticated user beyond
-  `users/me` and the self-view hint.
+- No CSRF/login nonce on the form yet (WordPress adds one); the endpoint
+  authenticates on credentials alone.

@@ -16,7 +16,8 @@ Working today:
 - Creating, updating, and deleting posts and pages, gated by a full capability engine (roles, `map_meta_cap`, cap-gated response links), with the round-trip proven: a write issued to the engine is read back through WordPress
 - The `_fields` response filter, including the quirk where filtering the associative types payload yields `[]`
 - Block rendering, texturize, and generated excerpts matching the reference byte for byte
-- WordPress cookie and REST-nonce authentication, proven in both directions: a session minted by WordPress works on the engine, and a cookie minted by the engine is accepted by WordPress. The engine can also verify a password and create its own session that WordPress then accepts
+- WordPress cookie and REST-nonce authentication, proven in both directions: a session minted by WordPress works on the engine, and a cookie minted by the engine is accepted by WordPress
+- A working `/wp-login.php`: a browser signs in against the engine, receives real WordPress auth cookies, and that session is accepted by both the engine and WordPress. Logout clears it
 
 Every surface is pinned by two suites: fixtures captured from a reference WordPress, and a live parity diff that treats a running WordPress on the same database as the oracle. Run them with `tests/run-all.sh`. Contract notes and known gaps live in `contracts/rest/`.
 
