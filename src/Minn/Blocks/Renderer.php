@@ -37,13 +37,42 @@ final class Renderer
     private const NUMBERED_STYLES = [
         'core/separator' => ['wide'],
         'core/button' => ['outline'],
+        'core/post-terms' => ['post-terms-1'],
     ];
+
+    /** The numbered companion of a registered style variation, consuming a counter; null when none applies. */
+    public static function numberedStyle(string $blockName, string $className): ?string
+    {
+        foreach (self::NUMBERED_STYLES[$blockName] ?? [] as $style) {
+            if (preg_match('/\bis-style-' . preg_quote($style, '/') . '\b/', $className)) {
+                return "is-style-{$style}--" . RenderState::nextId();
+            }
+        }
+        return null;
+    }
 
     /** @var array<string, callable> */
     private array $dynamic = [];
+    private Context $context;
 
     public function __construct(private readonly ImageTags $images)
     {
+        $this->context = Context::forRest();
+    }
+
+    public function context(): Context
+    {
+        return $this->context;
+    }
+
+    public function withContext(Context $context): void
+    {
+        $this->context = $context;
+    }
+
+    public function images(): ImageTags
+    {
+        return $this->images;
     }
 
     public static function forDb(Db $db): self
@@ -111,21 +140,18 @@ final class Renderer
             'core/gallery' => $this->images->enrich(
                 Html::addClasses($html, ['wp-block-gallery-' . RenderState::nextId(), 'is-layout-flex', 'wp-block-gallery-is-layout-flex']),
                 withDataId: true,
+                front: $this->context->front,
             ),
             'core/cover' => Html::addClasses(
-                $this->images->enrich($html),
+                $this->images->enrich($html, front: $this->context->front),
                 ['has-global-padding', 'is-layout-constrained', 'wp-block-cover-is-layout-constrained'],
                 'wp-block-cover__inner-container',
             ),
-            'core/image', 'core/media-text' => $this->images->enrich($html),
+            'core/image', 'core/media-text' => $this->images->enrich($html, front: $this->context->front),
             default => $html,
         };
-        foreach (self::NUMBERED_STYLES[$block->name] ?? [] as $style) {
-            if (preg_match('/\bis-style-' . preg_quote($style, '/') . '\b/', $block->className())) {
-                $html = Html::addClasses($html, ["is-style-{$style}--" . RenderState::nextId()]);
-            }
-        }
-        return $html;
+        $numbered = self::numberedStyle($block->name, $block->className());
+        return $numbered === null ? $html : Html::addClasses($html, [$numbered]);
     }
 
     /** Buttons are flex containers without a stylesheet of their own by default. */

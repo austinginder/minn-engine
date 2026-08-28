@@ -29,11 +29,11 @@ final class Layout
             if (($layout['orientation'] ?? '') === 'vertical') {
                 $classes[] = 'is-vertical';
             }
-            if (($layout['flexWrap'] ?? '') === 'nowrap') {
-                $classes[] = 'is-nowrap';
-            }
             if (!empty($layout['justifyContent'])) {
                 $classes[] = 'is-content-justification-' . $layout['justifyContent'];
+            }
+            if (($layout['flexWrap'] ?? '') === 'nowrap') {
+                $classes[] = 'is-nowrap';
             }
         }
         if ($type === 'constrained') {
@@ -56,7 +56,8 @@ final class Layout
         return match ($type) {
             'flex' => isset($layout['flexWrap']) || isset($layout['justifyContent']) || isset($layout['orientation']) || isset($layout['verticalAlignment']),
             'grid' => isset($layout['minimumColumnWidth']) || isset($layout['columnCount']),
-            'constrained' => isset($layout['justifyContent']) || isset($layout['contentSize']) || isset($layout['wideSize']),
+            'constrained' => isset($layout['justifyContent']) || isset($layout['contentSize']) || isset($layout['wideSize'])
+                || isset($attrs['style']['spacing']['padding']['left']) || isset($attrs['style']['spacing']['padding']['right']),
             default => false,
         };
     }

@@ -58,6 +58,21 @@ final readonly class Renderer
         return $classes;
     }
 
+    /** The document title: the item's title with the site name, or the site name alone. */
+    public function title(Resolution $resolution): string
+    {
+        $site = $this->db->option('blogname') ?? '';
+        $title = match ($resolution->kind) {
+            Kind::Single, Kind::Page => (string) $resolution->record['post_title'],
+            Kind::NotFound => 'Page not found',
+            Kind::Category, Kind::Tag => (string) $resolution->record['name'],
+            Kind::Author => (string) ($resolution->record['display_name'] ?? $resolution->authorName),
+            Kind::Search => 'Search Results for &#8220;' . $resolution->search . '&#8221;',
+            default => '',
+        };
+        return $title === '' ? $site : $title . ' &#8211; ' . $site;
+    }
+
     public function render(Resolution $resolution): string
     {
         $site = $this->db->option('blogname') ?? '';

@@ -1,13 +1,13 @@
 [
     {
         "id": 611,
-        "date": "2026-08-28T10:59:38",
+        "date": "2026-08-28T10:03:00",
         "date_gmt": "2026-08-28T10:59:38",
         "guid": {
             "rendered": "https://minn-engine.localhost/block-battery-dynamic/"
         },
-        "modified": "2026-08-28T11:01:57",
-        "modified_gmt": "2026-08-28T11:01:57",
+        "modified": "2026-08-28T11:30:13",
+        "modified_gmt": "2026-08-28T11:30:13",
         "slug": "zz-block-battery-dynamic",
         "status": "publish",
         "type": "post",
@@ -16,7 +16,7 @@
             "rendered": "Block battery: dynamic"
         },
         "content": {
-            "rendered": "<ul class=\"wp-block-latest-posts__list has-dates wp-block-latest-posts is-layout-flow wp-block-latest-posts-is-layout-flow\"><li><a class=\"wp-block-latest-posts__post-title\" href=\"http://127.0.0.1:8123/zz-block-battery-dynamic/\">Block battery: dynamic</a><time datetime=\"2026-08-28T10:59:38+00:00\" class=\"wp-block-latest-posts__post-date\">August 28, 2026</time></li>\n<li><a class=\"wp-block-latest-posts__post-title\" href=\"http://127.0.0.1:8123/zz-block-battery-layout/\">Block battery: layout</a><time datetime=\"2026-08-28T10:59:38+00:00\" class=\"wp-block-latest-posts__post-date\">August 28, 2026</time></li>\n<li><a class=\"wp-block-latest-posts__post-title\" href=\"http://127.0.0.1:8123/zz-block-battery-media/\">Block battery: media</a><time datetime=\"2026-08-28T10:59:37+00:00\" class=\"wp-block-latest-posts__post-date\">August 28, 2026</time></li>\n</ul>\n\n<ul class=\"wp-block-categories-list wp-block-categories-taxonomy-category wp-block-categories\">\t<li class=\"cat-item cat-item-1\"><a href=\"http://127.0.0.1:8123/category/uncategorized/\">Uncategorized</a>\n</li>\n</ul>\n\n<ul class=\"wp-block-archives-list wp-block-archives\">\t<li><a href='http://127.0.0.1:8123/2026/08/'>August 2026</a></li>\n</ul>\n\n<form role=\"search\" method=\"get\" action=\"http://127.0.0.1:8123/\" class=\"wp-block-search__button-outside wp-block-search__text-button wp-block-search\" ><label class=\"wp-block-search__label\" for=\"wp-block-search__input-1\" >Search</label><div class=\"wp-block-search__inside-wrapper\" ><input class=\"wp-block-search__input\" id=\"wp-block-search__input-1\" placeholder=\"\" value=\"\" type=\"search\" name=\"s\" required /><button aria-label=\"Search\" class=\"wp-block-search__button wp-element-button\" type=\"submit\" >Search</button></div></form>\n\n<p class=\"wp-block-tag-cloud\"><a href=\"http://127.0.0.1:8123/tag/engine/\" class=\"tag-cloud-link tag-link-2 tag-link-position-1\" style=\"font-size: 8pt;\" aria-label=\"engine (1 item)\">engine</a>\n<a href=\"http://127.0.0.1:8123/tag/parity/\" class=\"tag-cloud-link tag-link-3 tag-link-position-2\" style=\"font-size: 8pt;\" aria-label=\"parity (1 item)\">parity</a></p>\n\n<ol class=\"has-avatars has-dates has-excerpts wp-block-latest-comments\"><li class=\"wp-block-latest-comments__comment\"><img alt='' src='https://secure.gravatar.com/avatar/8e1606e6fba450a9362af43874c1b2dfad34c782e33d0a51e1b46c18a2a567dd?s=48&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/8e1606e6fba450a9362af43874c1b2dfad34c782e33d0a51e1b46c18a2a567dd?s=96&#038;d=mm&#038;r=g 2x' class='avatar avatar-48 photo wp-block-latest-comments__comment-avatar' height='48' width='48' /><article><footer class=\"wp-block-latest-comments__comment-meta\"><a class=\"wp-block-latest-comments__comment-author\" href=\"https://wordpress.org/\">A WordPress Commenter</a> on <a class=\"wp-block-latest-comments__comment-link\" href=\"http://127.0.0.1:8123/hello-world/#comment-1\">Hello world!</a><time datetime=\"2026-08-28T02:21:33+00:00\" class=\"wp-block-latest-comments__comment-date\">August 28, 2026</time></footer><div class=\"wp-block-latest-comments__comment-excerpt\"><p>Hi, this is a comment. To get started with moderating, editing, and deleting comments, please visit the Comments screen in&hellip;</p>\n</div></article></li></ol>\n",
+            "rendered": "<ul class=\"wp-block-latest-posts__list has-dates wp-block-latest-posts is-layout-flow wp-block-latest-posts-is-layout-flow\"><li><a class=\"wp-block-latest-posts__post-title\" href=\"http://127.0.0.1:8123/zz-block-battery-dynamic/\">Block battery: dynamic</a><time datetime=\"2026-08-28T10:03:00+00:00\" class=\"wp-block-latest-posts__post-date\">August 28, 2026</time></li>\n<li><a class=\"wp-block-latest-posts__post-title\" href=\"http://127.0.0.1:8123/zz-block-battery-layout/\">Block battery: layout</a><time datetime=\"2026-08-28T10:02:00+00:00\" class=\"wp-block-latest-posts__post-date\">August 28, 2026</time></li>\n<li><a class=\"wp-block-latest-posts__post-title\" href=\"http://127.0.0.1:8123/zz-block-battery-media/\">Block battery: media</a><time datetime=\"2026-08-28T10:01:00+00:00\" class=\"wp-block-latest-posts__post-date\">August 28, 2026</time></li>\n</ul>\n\n<ul class=\"wp-block-categories-list wp-block-categories-taxonomy-category wp-block-categories\">\t<li class=\"cat-item cat-item-1\"><a href=\"http://127.0.0.1:8123/category/uncategorized/\">Uncategorized</a>\n</li>\n</ul>\n\n<ul class=\"wp-block-archives-list wp-block-archives\">\t<li><a href='http://127.0.0.1:8123/2026/08/'>August 2026</a></li>\n</ul>\n\n<form role=\"search\" method=\"get\" action=\"http://127.0.0.1:8123/\" class=\"wp-block-search__button-outside wp-block-search__text-button wp-block-search\" ><label class=\"wp-block-search__label\" for=\"wp-block-search__input-1\" >Search</label><div class=\"wp-block-search__inside-wrapper\" ><input class=\"wp-block-search__input\" id=\"wp-block-search__input-1\" placeholder=\"\" value=\"\" type=\"search\" name=\"s\" required /><button aria-label=\"Search\" class=\"wp-block-search__button wp-element-button\" type=\"submit\" >Search</button></div></form>\n\n<p class=\"wp-block-tag-cloud\"><a href=\"http://127.0.0.1:8123/tag/engine/\" class=\"tag-cloud-link tag-link-2 tag-link-position-1\" style=\"font-size: 8pt;\" aria-label=\"engine (1 item)\">engine</a>\n<a href=\"http://127.0.0.1:8123/tag/parity/\" class=\"tag-cloud-link tag-link-3 tag-link-position-2\" style=\"font-size: 8pt;\" aria-label=\"parity (1 item)\">parity</a></p>\n\n<ol class=\"has-avatars has-dates has-excerpts wp-block-latest-comments\"><li class=\"wp-block-latest-comments__comment\"><img alt='' src='https://secure.gravatar.com/avatar/8e1606e6fba450a9362af43874c1b2dfad34c782e33d0a51e1b46c18a2a567dd?s=48&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/8e1606e6fba450a9362af43874c1b2dfad34c782e33d0a51e1b46c18a2a567dd?s=96&#038;d=mm&#038;r=g 2x' class='avatar avatar-48 photo wp-block-latest-comments__comment-avatar' height='48' width='48' /><article><footer class=\"wp-block-latest-comments__comment-meta\"><a class=\"wp-block-latest-comments__comment-author\" href=\"https://wordpress.org/\">A WordPress Commenter</a> on <a class=\"wp-block-latest-comments__comment-link\" href=\"http://127.0.0.1:8123/hello-world/#comment-1\">Hello world!</a><time datetime=\"2026-08-28T02:21:33+00:00\" class=\"wp-block-latest-comments__comment-date\">August 28, 2026</time></footer><div class=\"wp-block-latest-comments__comment-excerpt\"><p>Hi, this is a comment. To get started with moderating, editing, and deleting comments, please visit the Comments screen in&hellip;</p>\n</div></article></li></ol>\n",
             "protected": false
         },
         "excerpt": {
@@ -81,8 +81,8 @@
             ],
             "predecessor-version": [
                 {
-                    "id": 641,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/611/revisions/641"
+                    "id": 666,
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/611/revisions/666"
                 }
             ],
             "wp:attachment": [
@@ -113,13 +113,13 @@
     },
     {
         "id": 610,
-        "date": "2026-08-28T10:59:38",
+        "date": "2026-08-28T10:02:00",
         "date_gmt": "2026-08-28T10:59:38",
         "guid": {
             "rendered": "https://minn-engine.localhost/block-battery-layout/"
         },
-        "modified": "2026-08-28T11:01:56",
-        "modified_gmt": "2026-08-28T11:01:56",
+        "modified": "2026-08-28T11:30:12",
+        "modified_gmt": "2026-08-28T11:30:12",
         "slug": "zz-block-battery-layout",
         "status": "publish",
         "type": "post",
@@ -193,8 +193,8 @@
             ],
             "predecessor-version": [
                 {
-                    "id": 640,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/610/revisions/640"
+                    "id": 665,
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/610/revisions/665"
                 }
             ],
             "wp:attachment": [
@@ -225,13 +225,13 @@
     },
     {
         "id": 609,
-        "date": "2026-08-28T10:59:37",
+        "date": "2026-08-28T10:01:00",
         "date_gmt": "2026-08-28T10:59:37",
         "guid": {
             "rendered": "https://minn-engine.localhost/block-battery-media/"
         },
-        "modified": "2026-08-28T11:01:56",
-        "modified_gmt": "2026-08-28T11:01:56",
+        "modified": "2026-08-28T11:30:12",
+        "modified_gmt": "2026-08-28T11:30:12",
         "slug": "zz-block-battery-media",
         "status": "publish",
         "type": "post",
@@ -305,8 +305,8 @@
             ],
             "predecessor-version": [
                 {
-                    "id": 639,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/609/revisions/639"
+                    "id": 664,
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/609/revisions/664"
                 }
             ],
             "wp:attachment": [
@@ -337,13 +337,13 @@
     },
     {
         "id": 608,
-        "date": "2026-08-28T10:59:37",
+        "date": "2026-08-28T10:00:00",
         "date_gmt": "2026-08-28T10:59:37",
         "guid": {
             "rendered": "https://minn-engine.localhost/block-battery-text/"
         },
-        "modified": "2026-08-28T11:01:55",
-        "modified_gmt": "2026-08-28T11:01:55",
+        "modified": "2026-08-28T11:30:11",
+        "modified_gmt": "2026-08-28T11:30:11",
         "slug": "zz-block-battery-text",
         "status": "publish",
         "type": "post",
@@ -417,8 +417,8 @@
             ],
             "predecessor-version": [
                 {
-                    "id": 638,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/608/revisions/638"
+                    "id": 663,
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/608/revisions/663"
                 }
             ],
             "wp:attachment": [

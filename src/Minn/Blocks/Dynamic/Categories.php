@@ -18,8 +18,10 @@ final readonly class Categories
     ) {
     }
 
-    public function render(Block $block): string
+    public function render(Block $block, \Minn\Blocks\Renderer $renderer): string
     {
+        $resolution = $renderer->context()->resolution;
+        $viewing = $resolution->kind === \Minn\Front\Kind::Category ? $resolution->id() : 0;
         $terms = $this->db->rows(
             "SELECT t.term_id, t.name, t.slug, tt.taxonomy, tt.parent, tt.count
              FROM {$this->db->table('terms')} t
@@ -28,7 +30,8 @@ final readonly class Categories
         );
         $items = '';
         foreach ($terms as $term) {
-            $items .= "\t" . '<li class="cat-item cat-item-' . (int) $term['term_id'] . '"><a href="' . Html::attr($this->permalinks->forTerm($term)) . '">' . $term['name'] . "</a>\n</li>\n";
+            $current = (int) $term['term_id'] === $viewing;
+            $items .= "\t" . '<li class="cat-item cat-item-' . (int) $term['term_id'] . ($current ? ' current-cat' : '') . '"><a' . ($current ? ' aria-current="page"' : '') . ' href="' . Html::attr($this->permalinks->forTerm($term)) . '">' . $term['name'] . "</a>\n</li>\n";
         }
         return '<ul class="wp-block-categories-list wp-block-categories-taxonomy-category wp-block-categories">' . $items . '</ul>';
     }

@@ -246,14 +246,17 @@ HTML,
 HTML,
 ];
 
+$minute = 0;
 foreach ($families as $family => $markup) {
     $file = "$dir/$family.html";
     file_put_contents($file, $markup . "\n");
+    // Distinct dates keep every listing's order deterministic.
+    $date = sprintf('2026-08-28 10:%02d:00', $minute++);
     $id = (int) ($manifest['posts'][$family] ?? 0);
     if ($id > 0 && wp("post get $id --field=ID") === (string) $id) {
-        wp("post update $id " . escapeshellarg($file) . " --post_name=" . escapeshellarg("zz-block-battery-$family"));
+        wp("post update $id " . escapeshellarg($file) . " --post_name=" . escapeshellarg("zz-block-battery-$family") . " --post_date=" . escapeshellarg($date));
     } else {
-        $id = (int) wp("post create " . escapeshellarg($file) . " --post_type=post --post_status=publish --post_title=" . escapeshellarg("Block battery: $family") . " --post_name=" . escapeshellarg("zz-block-battery-$family") . " --porcelain");
+        $id = (int) wp("post create " . escapeshellarg($file) . " --post_type=post --post_status=publish --post_date=" . escapeshellarg($date) . " --post_title=" . escapeshellarg("Block battery: $family") . " --post_name=" . escapeshellarg("zz-block-battery-$family") . " --porcelain");
         $manifest['posts'][$family] = $id;
     }
     $json = (string) file_get_contents("$ref/wp-json/wp/v2/posts/$id?_fields=content");

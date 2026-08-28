@@ -25,6 +25,8 @@ use Minn\Http\Response;
 use Minn\Http\Router;
 use Minn\Login\LoginController;
 use Minn\Rest\Api;
+use Minn\Theme\PageRenderer;
+use Minn\Theme\Theme;
 
 /**
  * The engine's front door. An unmodified wp-config.php ends by requiring
@@ -67,11 +69,13 @@ final readonly class Engine
         };
         $resolver = Resolver::fromDb($db, $canReadUnpublished);
         $permalinks = $resolver->permalinks();
+        $theme = Theme::active($site, $permalinks, ABSPATH . 'wp-content/themes');
+        $pages = $theme === null ? null : PageRenderer::create($db, $theme, $permalinks, $resolver->perPage());
 
         $router = (new Router())->register(
             new AppController($app, new BootPayload($site, $permalinks, $capabilities, $app, $this->version), $authenticator, $capabilities, $permalinks, $this->version),
             new LoginController($site, $permalinks, $authenticator, $sessions, new AuthCookies($db, $cookie)),
-            new FrontController($resolver, new Renderer($db, new Posts($db), $permalinks, $resolver->perPage())),
+            new FrontController($resolver, new Renderer($db, new Posts($db), $permalinks, $resolver->perPage()), $pages),
         );
         $response = (new Kernel($router))->handle($request);
         ($response ?? Response::html('<!doctype html><title>Not Found</title><p>Not found.', 404))->send();

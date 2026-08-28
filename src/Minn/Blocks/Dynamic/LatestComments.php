@@ -23,7 +23,7 @@ final readonly class LatestComments
     ) {
     }
 
-    public function render(Block $block): string
+    public function render(Block $block, \Minn\Blocks\Renderer $renderer): string
     {
         $count = max(1, (int) $block->attr('commentsToShow', 5));
         $avatars = (bool) $block->attr('displayAvatar', true);
@@ -43,6 +43,9 @@ final readonly class LatestComments
             $post = $this->posts->find((int) $comment['comment_post_ID']);
             $item = '<li class="wp-block-latest-comments__comment">';
             if ($avatars) {
+                if ($renderer->context()->front) {
+                    \Minn\Blocks\RenderState::nextImage();
+                }
                 $hash = hash('sha256', strtolower(trim((string) $comment['comment_author_email'])));
                 $item .= "<img alt='' src='https://secure.gravatar.com/avatar/{$hash}?s=48&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/{$hash}?s=96&#038;d=mm&#038;r=g 2x' class='avatar avatar-48 photo wp-block-latest-comments__comment-avatar' height='48' width='48' />";
             }

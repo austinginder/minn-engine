@@ -16,16 +16,17 @@ final readonly class Search
     {
     }
 
-    public function render(Block $block): string
+    public function render(Block $block, \Minn\Blocks\Renderer $renderer): string
     {
         $id = 'wp-block-search__input-' . RenderState::nextId();
         $label = (string) $block->attr('label', 'Search');
         $buttonText = (string) $block->attr('buttonText', 'Search');
         $placeholder = (string) $block->attr('placeholder', '');
+        $value = $renderer->context()->resolution->search ?? '';
         return '<form role="search" method="get" action="' . Html::attr($this->permalinks->url('/')) . '" class="wp-block-search__button-outside wp-block-search__text-button wp-block-search" >'
-            . '<label class="wp-block-search__label" for="' . $id . '" >' . $label . '</label>'
+            . '<label class="wp-block-search__label' . ((bool) $block->attr('showLabel', true) ? '' : ' screen-reader-text') . '" for="' . $id . '" >' . $label . '</label>'
             . '<div class="wp-block-search__inside-wrapper" >'
-            . '<input class="wp-block-search__input" id="' . $id . '" placeholder="' . Html::attr($placeholder) . '" value="" type="search" name="s" required />'
+            . '<input class="wp-block-search__input" id="' . $id . '" placeholder="' . Html::attr($placeholder) . '" value="' . Html::attr((string) $value) . '" type="search" name="s" required />'
             . '<button aria-label="' . Html::attr($buttonText) . '" class="wp-block-search__button wp-element-button" type="submit" >' . $buttonText . '</button>'
             . '</div></form>';
     }

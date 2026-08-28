@@ -24,16 +24,35 @@ final readonly class ImageTags
     }
 
     /** Rewrites every wp-image-* <img> in a fragment; other images pass through. */
-    public function enrich(string $html, bool $withDataId = false): string
+    public function enrich(string $html, bool $withDataId = false, bool $front = false): string
     {
         return preg_replace_callback(
             '/<img\s[^>]*?class="[^"]*\bwp-image-(\d+)\b[^"]*"[^>]*\/?>/',
-            fn (array $m) => $this->enrichTag($m[0], (int) $m[1], $withDataId),
+            fn (array $m) => $this->enrichTag($m[0], (int) $m[1], $withDataId, $front),
             $html,
         );
     }
 
-    private function enrichTag(string $tag, int $attachmentId, bool $withDataId): string
+    /**
+     * On a page the first content image is fetched eagerly with high
+     * priority, the next is eager, and the rest lazy; only lazy images
+     * carry the "auto" sizes hint. In a REST response every image is lazy.
+     */
+    private static function loadingPrefix(bool $front): array
+    {
+        if (!$front) {
+            return ['loading="lazy" decoding="async"', true];
+        }
+        // Three eager images per page, every <img> on the page counting toward
+        // the budget; the first eager content image is fetched with high priority.
+        $seen = RenderState::nextImage();
+        if ($seen > 3) {
+            return ['loading="lazy" decoding="async"', true];
+        }
+        return RenderState::claimPriority() ? ['fetchpriority="high" decoding="async"', false] : ['decoding="async"', false];
+    }
+
+    private function enrichTag(string $tag, int $attachmentId, bool $withDataId, bool $front): string
     {
         if (str_contains($tag, ' srcset=')) {
             // Already enriched by an inner image block; a gallery still adds its data-id.
@@ -82,9 +101,10 @@ final readonly class ImageTags
             $srcset[] = $url . ' ' . $width . 'w';
         }
         [$width, $height] = $shown;
-        $prefix = 'loading="lazy" decoding="async" width="' . $width . '" height="' . $height . '"' . ($withDataId ? ' data-id="' . $attachmentId . '"' : '');
+        [$loading, $auto] = self::loadingPrefix($front);
+        $prefix = $loading . ' width="' . $width . '" height="' . $height . '"' . ($withDataId ? ' data-id="' . $attachmentId . '"' : '');
         $tag = preg_replace('/^<img\s/', '<img ' . $prefix . ' ', $tag, 1);
-        $suffix = ' srcset="' . implode(', ', $srcset) . '" sizes="auto, (max-width: ' . $width . 'px) 100vw, ' . $width . 'px"';
+        $suffix = ' srcset="' . implode(', ', $srcset) . '" sizes="' . ($auto ? 'auto, ' : '') . '(max-width: ' . $width . 'px) 100vw, ' . $width . 'px"';
         return preg_replace('/\s*\/?>$/', $suffix . ' />', $tag, 1);
     }
 }

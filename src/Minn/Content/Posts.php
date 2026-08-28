@@ -137,10 +137,17 @@ final readonly class Posts
         }
         $clause = implode(' AND ', $where);
         $total = (int) $this->db->value("SELECT COUNT(DISTINCT p.ID) FROM {$posts} p {$join} WHERE {$clause}", $params);
+        // Search results rank title matches first, as the reference does.
+        $order = 'p.post_date DESC, p.ID DESC';
+        $orderParams = [];
+        if (isset($filter['search'])) {
+            $order = '(p.post_title LIKE ?) DESC, ' . $order;
+            $orderParams[] = '%' . addcslashes($filter['search'], '%_\\') . '%';
+        }
         $rows = $this->db->rows(
             "SELECT DISTINCT p.* FROM {$posts} p {$join} WHERE {$clause}
-             ORDER BY p.post_date DESC LIMIT ? OFFSET ?",
-            [...$params, $perPage, ($page - 1) * $perPage],
+             ORDER BY {$order} LIMIT ? OFFSET ?",
+            [...$params, ...$orderParams, $perPage, ($page - 1) * $perPage],
         );
         return ['posts' => $rows, 'total' => $total];
     }
@@ -195,6 +202,67 @@ final readonly class Posts
              WHERE post_parent = ? AND post_type = 'revision' AND post_name LIKE ? AND post_modified_gmt > ? LIMIT 1",
             [$postId, $postId . '-autosave%', $modifiedGmt],
         ) !== null;
+    }
+
+    /** The adjacent published post by date; previous = older, next = newer. */
+    public function adjacent(array $post, bool $next): ?array
+    {
+        $operator = $next ? '>' : '<';
+        $order = $next ? 'ASC' : 'DESC';
+        return $this->db->row(
+            "SELECT * FROM {$this->db->table('posts')}
+             WHERE post_type = ? AND post_status = 'publish'
+               AND (post_date {$operator} ? OR (post_date = ? AND ID {$operator} ?))
+             ORDER BY post_date {$order}, ID {$order} LIMIT 1",
+            [$post['post_type'], $post['post_date'], $post['post_date'], (int) $post['ID']],
+        );
+    }
+
+    /** Published pages as a parent => children map, ordered by menu_order then title. */
+    public function pageTree(): array
+    {
+        $tree = [];
+        $rows = $this->db->rows(
+            "SELECT ID, post_title, post_name, post_parent FROM {$this->db->table('posts')}
+             WHERE post_type = 'page' AND post_status = 'publish' ORDER BY menu_order ASC, post_title ASC",
+        );
+        foreach ($rows as $row) {
+            $tree[(int) $row['post_parent']][] = $row;
+        }
+        return $tree;
+    }
+
+    /**
+     * The main query for a listing: sticky posts lead the first page of the
+     * blog index, followed by the rest by date, and are excluded from later
+     * pages.
+     *
+     * @param list<int> $stickyIds
+     * @return array{posts: list<array>, total: int}
+     */
+    public function listing(array $filter, int $page, int $perPage, array $stickyIds = [], bool $stickyExtra = false): array
+    {
+        if ($stickyIds === []) {
+            return $this->archive($filter, $page, $perPage);
+        }
+        $placeholders = implode(',', array_fill(0, count($stickyIds), '?'));
+        $sticky = $this->db->rows(
+            "SELECT * FROM {$this->db->table('posts')} WHERE ID IN ({$placeholders}) AND post_status = 'publish' AND post_type = 'post' ORDER BY post_date DESC",
+            $stickyIds,
+        );
+        $result = $this->archive($filter, $page, $perPage);
+        if ($page > 1) {
+            return $result;
+        }
+        $stickySet = array_flip(array_map(static fn (array $p) => (int) $p['ID'], $sticky));
+        if ($stickyExtra) {
+            // A query block keeps its full page of posts and adds the sticky ones on top.
+            $others = $this->archive($filter, 1, $perPage + count($sticky));
+            $rest = array_slice(array_values(array_filter($others['posts'], static fn (array $p) => !isset($stickySet[(int) $p['ID']]))), 0, $perPage);
+            return ['posts' => [...$sticky, ...$rest], 'total' => $others['total']];
+        }
+        $rest = array_values(array_filter($result['posts'], static fn (array $p) => !isset($stickySet[(int) $p['ID']])));
+        return ['posts' => array_slice([...$sticky, ...$rest], 0, $perPage), 'total' => $result['total']];
     }
 
     /** Reusable blocks (wp_block rows) in one status, newest first, capped at 100. */
