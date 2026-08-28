@@ -12,6 +12,7 @@
  */
 
 function minn_v1_dispatch( string $route, string $method ): void {
+	minn_v1_editor_dispatch( $route, $method );
 	if ( '/minn-admin/v1/overview' === $route && 'GET' === $method ) {
 		minn_v1_overview();
 	}

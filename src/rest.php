@@ -549,13 +549,25 @@ function minn_rest_posts_list( string $type ): void {
 function minn_rest_posts_single( string $type, int $id ): void {
 	global $table_prefix;
 	$stmt = minn_db()->prepare(
-		"SELECT * FROM {$table_prefix}posts WHERE ID = ? AND post_type = ? AND post_status = 'publish' LIMIT 1"
+		"SELECT * FROM {$table_prefix}posts WHERE ID = ? AND post_type = ? LIMIT 1"
 	);
 	$stmt->bind_param( 'is', $id, $type );
 	$stmt->execute();
 	$row = $stmt->get_result()->fetch_assoc();
 	if ( ! $row ) {
 		minn_rest_error( 'rest_post_invalid_id', 'Invalid post ID.', 404 );
+	}
+	$uid = minn_current_user_id();
+	if ( ( $_GET['context'] ?? 'view' ) === 'edit' ) {
+		if ( ! minn_user_can( $uid, 'edit_post', $id ) ) {
+			minn_rest_error( 'rest_forbidden_context', 'Sorry, you are not allowed to edit this post.', $uid ? 403 : 401 );
+		}
+		minn_rest_send( minn_rest_post_object_edit( $row, $uid ) );
+	}
+	// View context: a non-published post is only visible to a reader who
+	// can edit it (drafts map read_post to the edit primitives).
+	if ( 'publish' !== $row['post_status'] && ! minn_user_can( $uid, 'read_post', $id ) ) {
+		minn_rest_error( 'rest_forbidden', 'Sorry, you are not allowed to do that.', $uid ? 403 : 401 );
 	}
 	minn_rest_send( minn_rest_post_object( $row ) );
 }
@@ -1145,6 +1157,19 @@ function minn_rest_dispatch( string $route ): void {
 	}
 	if ( '/wp/v2/settings' === $route && in_array( $method, array( 'GET', 'POST', 'PUT', 'PATCH' ), true ) ) {
 		minn_rest_settings( $method );
+	}
+	if ( preg_match( '#^/wp/v2/(posts|pages)/(\d+)/(revisions|autosaves)$#', $route, $m ) ) {
+		$ptype = 'posts' === $m[1] ? 'post' : 'page';
+		$pid   = (int) $m[2];
+		if ( 'autosaves' === $m[3] && 'POST' === $method ) {
+			minn_rest_autosaves_create( $ptype, $pid );
+		}
+		if ( 'GET' === $method ) {
+			'revisions' === $m[3] ? minn_rest_revisions_list( $ptype, $pid ) : minn_rest_autosaves_list( $ptype, $pid );
+		}
+	}
+	if ( '/wp/v2/blocks' === $route && 'GET' === $method ) {
+		minn_rest_blocks_list();
 	}
 	if ( '/wp/v2/media' === $route ) {
 		if ( 'POST' === $method ) {

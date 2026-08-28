@@ -307,9 +307,13 @@ function minn_rest_delete_post( string $type, int $id ): void {
 		minn_rest_send( $after );
 	}
 
-	// Force delete: capture the object, remove the row and its term links.
+	// Force delete: capture the object, remove the row, its revisions and
+	// its term links (core cascades child revisions the same way).
 	$previous = minn_rest_post_object_edit( $post, $uid );
-	$del      = minn_db()->prepare( "DELETE FROM {$table_prefix}posts WHERE ID = ?" );
+	$del      = minn_db()->prepare( "DELETE FROM {$table_prefix}posts WHERE post_parent = ? AND post_type = 'revision'" );
+	$del->bind_param( 'i', $id );
+	$del->execute();
+	$del = minn_db()->prepare( "DELETE FROM {$table_prefix}posts WHERE ID = ?" );
 	$del->bind_param( 'i', $id );
 	$del->execute();
 	// Capture the taxonomies this post touched before dropping the links, so
