@@ -89,10 +89,27 @@ allowed; the manifest's `license` says which. The engine never depends on either
 | `minn-jetpack-slideshow` | jetpack (covers: the slideshow block only) | the block's images without the lazy `auto` hint, the block's stylesheet, Swiper, and view script from the plugin's own folder |
 | `minn-mosne-dark-palette` | mosne-dark-palette | the `mosne/dark-palette` navigation item, its styles and view script from the plugin's build folder |
 | `minn-ml-slider`, `minn-modula` | ml-slider, modula (covers: body class only) | the body class each added; the site's content uses neither |
+| `minn-autodescription` | autodescription (covers: titles, description, robots, canonical, Open Graph, Twitter, the schema.org graph; not its sitemap or query alterations) | the title (`{page} | {site}`, `{site} | {tagline}` at home), the meta block per page kind, and the ld+json graph with breadcrumbs, from the plugin's settings option and `_genesis_*` meta. Search descriptions are 160 characters, social ones 300, both cut on a word with an ellipsis unless a sentence ended; the og:image is the featured image with its size and alt, else the first content image, else the site icon |
+
+The child theme's `functions.php` printed its own Open Graph block on singular
+pages; that is site code, so it lives with the site as
+`wp-content/plugins/dogfoodchild-head/` (activated through `minn_active_extensions`),
+not in the engine repo.
+
+## Head parity
+
+`tests/dogfood.test.php` now also compares the head: the title, every meta tag,
+the links that name the page (canonical, alternates, icons, the REST discovery
+link), and the ld+json graph (one generated author id masked), sorted, with
+stylesheets, scripts, and the reference's discovery and emoji plumbing left out.
+The engine itself now prints the reference's own head links: the site and comments
+feeds, an archive's own feed (a search's `…/feed/rss2/`), a single's comments feed
+when it has comments, `rel="https://api.w.org/"`, the JSON alternate for the queried
+object, and the site icon set. The `title` seam lets an extension replace the
+document title. All twelve dogfood pages match on head and body.
 
 With these, every one of the twelve dogfood pages on dogfood matches the
-reference with no normalisation. Still unported on that site: autodescription (SEO
-head), and plugins with nothing on the front end (duplicate-page, filebird,
+reference with no normalisation, head and body. Still unported on that site: plugins with nothing on the front end (duplicate-page, filebird,
 enable-media-replace, stream, white-label-cms, login-logo, foogallery, coblocks,
 gutenslider, carousel-block, carousel-slider, smart-slider-3, nextgen-gallery: none
 appear in the site's content).

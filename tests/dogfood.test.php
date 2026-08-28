@@ -59,12 +59,47 @@ $paths = [
     '/?s=design',
 ];
 
+/**
+ * The head's identity elements: the title, every meta tag, the links that
+ * name the page (canonical, alternates, icons, the API), and the structured
+ * data, with hosts normalised and one generated id masked. Stylesheets,
+ * scripts, and the reference's discovery and emoji plumbing are not part of
+ * the comparison. Sorted, because plugins print in hook order.
+ *
+ * @return list<string>
+ */
+function dogfood_head(string $html, string $host, string $engine): array
+{
+    if (!preg_match('/<head>(.*?)<\/head>/s', $html, $m)) {
+        return ['(no head)'];
+    }
+    $head = str_replace([$host, str_replace('https://', 'http://', $engine)], $engine, $m[1]);
+    preg_match_all('/<title>.*?<\/title>|<(?:meta|link)\b[^>]*>/s', $head, $tags);
+    $keep = [];
+    foreach ($tags[0] as $tag) {
+        if (preg_match('/rel=[\'"](?:stylesheet|preload|modulepreload|dns-prefetch|preconnect|EditURI|wlwmanifest|profile|pingback|shortlink)|type=[\'"](?:text\/xml\+oembed|application\/json\+oembed)|name=[\'"](?:generator|viewport)|charset=/i', $tag)) {
+            continue;
+        }
+        $keep[] = preg_replace('/\s+/', ' ', trim($tag));
+    }
+    preg_match_all('/<script type="application\/ld\+json">(.*?)<\/script>/s', $head, $scripts);
+    foreach ($scripts[1] as $json) {
+        $json = preg_replace('/#\/schema\/Person\/[0-9a-f]{32}/', '#/schema/Person/ID', $json);
+        $data = json_decode($json, true);
+        $keep[] = 'ld+json ' . json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    }
+    sort($keep);
+    return $keep;
+}
+
 echo "dogfood suite: $ENGINE (engine) vs $REF (reference)\n";
 $pass = 0;
 $fail = 0;
 foreach ($paths as $path) {
-    $engine = dogfood_normalise(theme_body($fetch($ENGINE, $path), $REF, $ENGINE));
-    $reference = dogfood_normalise(theme_body($fetch($REF, $path), $REF, $ENGINE));
+    $engineHtml = $fetch($ENGINE, $path);
+    $referenceHtml = $fetch($REF, $path);
+    $engine = dogfood_normalise(theme_body($engineHtml, $REF, $ENGINE));
+    $reference = dogfood_normalise(theme_body($referenceHtml, $REF, $ENGINE));
     $verdict = theme_first_diff($engine, $reference);
     if ($verdict === 'identical') {
         $pass++;
@@ -72,6 +107,17 @@ foreach ($paths as $path) {
     } else {
         $fail++;
         echo "  FAIL $path: $verdict\n";
+    }
+    $engineHead = dogfood_head($engineHtml, $REF, $ENGINE);
+    $referenceHead = dogfood_head($referenceHtml, $REF, $ENGINE);
+    if ($engineHead === $referenceHead) {
+        $pass++;
+        echo "  ok   $path head\n";
+    } else {
+        $fail++;
+        $missing = array_diff($referenceHead, $engineHead);
+        $extra = array_diff($engineHead, $referenceHead);
+        echo "  FAIL $path head\n" . ($missing === [] ? '' : "      missing: " . implode("\n               ", array_map(static fn (string $t) => substr($t, 0, 160), $missing)) . "\n") . ($extra === [] ? '' : "      extra:   " . implode("\n               ", array_map(static fn (string $t) => substr($t, 0, 160), $extra)) . "\n");
     }
 }
 echo "\n$pass passed, $fail failed\n";

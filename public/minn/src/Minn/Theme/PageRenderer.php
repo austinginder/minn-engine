@@ -121,10 +121,12 @@ final readonly class PageRenderer
         $globalStyles = (new GlobalStyles($this->theme, $this->templates->userStyles()))->css();
         $themeStyle = $this->theme->styleUri();
 
+        $title = Extensions::seams()?->applyTitle($title) ?? $title;
         $document = '<!DOCTYPE html>' . "\n" . '<html lang="en">' . "\n" . '<head>' . "\n"
             . '<meta charset="UTF-8" />' . "\n"
             . '<meta name="viewport" content="width=device-width, initial-scale=1" />' . "\n"
             . '<title>' . Html::esc($title) . '</title>' . "\n"
+            . $this->headLinks($resolution)
             . '<link rel="stylesheet" id="minn-blocks-css" href="' . Html::attr($this->permalinks->url('/minn-engine/blocks.css')) . '" />' . "\n"
             . '<style id="global-styles-inline-css">' . "\n" . $globalStyles . "\n" . '</style>' . "\n"
             . ($themeStyle === null ? '' : '<link rel="stylesheet" id="' . Html::attr($this->theme->slug) . '-style-css" href="' . Html::attr($themeStyle) . '" />' . "\n")
@@ -136,6 +138,53 @@ final readonly class PageRenderer
             . (Extensions::seams()?->renderFooter() ?? '')
             . '</body>' . "\n" . '</html>' . "\n";
         return Extensions::seams()?->applyDocumentFilters($document) ?? $document;
+    }
+
+    /**
+     * The links the reference puts in every head: the site and comments
+     * feeds (plus the archive's own feed), the REST discovery link, the
+     * JSON alternate for the queried object, and the site icon set.
+     */
+    private function headLinks(Resolution $resolution): string
+    {
+        $site = Html::esc((string) ($this->site->option('blogname') ?? ''));
+        $feed = fn (string $path): string => Html::attr($this->permalinks->url($path));
+        $out = '<link rel="alternate" type="application/rss+xml" title="' . $site . ' &raquo; Feed" href="' . $feed('/feed/') . '" />' . "\n"
+            . '<link rel="alternate" type="application/rss+xml" title="' . $site . ' &raquo; Comments Feed" href="' . $feed('/comments/feed/') . '" />' . "\n";
+        $record = $resolution->record ?? [];
+        $json = null;
+        switch ($resolution->kind) {
+            case Kind::Category:
+            case Kind::Tag:
+                $label = $resolution->kind === Kind::Category ? 'Category' : 'Tag';
+                $out .= '<link rel="alternate" type="application/rss+xml" title="' . $site . ' &raquo; ' . Html::esc((string) $record['name']) . ' ' . $label . ' Feed" href="' . Html::attr($this->permalinks->forTerm($record) . 'feed/') . '" />' . "\n";
+                $json = '/wp/v2/' . ($resolution->kind === Kind::Category ? 'categories' : 'tags') . '/' . (int) $record['term_id'];
+                break;
+            case Kind::Search:
+                $out .= '<link rel="alternate" type="application/rss+xml" title="' . $site . ' &raquo; Search Results for &#8220;' . Html::esc((string) $resolution->search) . '&#8221; Feed" href="' . $feed('/search/' . rawurlencode((string) $resolution->search) . '/feed/rss2/') . '" />' . "\n";
+                break;
+            case Kind::Single:
+            case Kind::Page:
+                if ((int) ($record['comment_count'] ?? 0) > 0) {
+                    $out .= '<link rel="alternate" type="application/rss+xml" title="' . $site . ' &raquo; ' . Html::esc((string) $record['post_title']) . ' Comments Feed" href="' . Html::attr($this->permalinks->forPost($record) . 'feed/') . '" />' . "\n";
+                }
+                $json = '/wp/v2/' . ($record['post_type'] === 'page' ? 'pages' : 'posts') . '/' . (int) $record['ID'];
+                break;
+        }
+        $out .= '<link rel="https://api.w.org/" href="' . $feed('/wp-json/') . '" />' . "\n";
+        if ($json !== null) {
+            $out .= '<link rel="alternate" title="JSON" type="application/json" href="' . $feed('/wp-json' . $json) . '" />' . "\n";
+        }
+        $icon = (int) ($this->site->option('site_icon') ?? 0);
+        $iconFile = $icon > 0 ? $this->posts->meta($icon, '_wp_attached_file') : null;
+        if ($iconFile !== null) {
+            $url = Html::attr($this->permalinks->url('/wp-content/uploads/' . $iconFile));
+            $out .= '<link rel="icon" href="' . $url . '" sizes="32x32" />' . "\n"
+                . '<link rel="icon" href="' . $url . '" sizes="192x192" />' . "\n"
+                . '<link rel="apple-touch-icon" href="' . $url . '" />' . "\n"
+                . '<meta name="msapplication-TileImage" content="' . $url . '" />' . "\n";
+        }
+        return $out;
     }
 
     /** @return array{posts: list<array>, total: int} */

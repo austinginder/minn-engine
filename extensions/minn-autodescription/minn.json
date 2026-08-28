@@ -1,0 +1,9 @@
+{
+  "name": "The SEO Framework for Minn",
+  "version": "1.0.0",
+  "license": "MIT",
+  "replaces": ["autodescription/autodescription.php"],
+  "covers": "titles, meta description, robots, canonical, Open Graph, Twitter cards, and the structured data graph; not its sitemap or query alterations",
+  "autoload": {"Minn\\Ext\\SeoFramework\\": "src/"},
+  "extension": "Minn\\Ext\\SeoFramework\\Extension"
+}

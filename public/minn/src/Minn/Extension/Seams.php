@@ -35,6 +35,8 @@ final class Seams
     private array $bodyClasses = [];
     /** @var list<Closure(string): string> */
     private array $documentFilters = [];
+    /** @var Closure(string): string|null */
+    private ?Closure $title = null;
 
     public function __construct(
         public readonly Db $db,
@@ -83,6 +85,17 @@ final class Seams
     public function bodyClass(string $class): void
     {
         $this->bodyClasses[] = $class;
+    }
+
+    /** Replaces the document title; receives the engine's own. */
+    public function title(Closure $filter): void
+    {
+        $this->title = $filter;
+    }
+
+    public function applyTitle(string $title): string
+    {
+        return $this->title === null ? $title : ($this->title)($title);
     }
 
     /** Rewrites the whole themed document before it is sent (what an output buffer did on the reference). */
