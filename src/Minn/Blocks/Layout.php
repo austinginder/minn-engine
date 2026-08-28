@@ -41,7 +41,9 @@ final class Layout
         }
         $classes[] = 'is-layout-' . $type;
         if ($alwaysContainer || self::hasRules($type, $layout, $attrs)) {
-            $classes[] = 'wp-container-core-' . $blockSlug . '-is-layout-' . self::suffix($layout, $attrs);
+            $container = 'wp-container-core-' . $blockSlug . '-is-layout-' . self::suffix($layout, $attrs);
+            $classes[] = $container;
+            RenderState::recordContainer($container, self::declarations($type, $layout, $attrs));
         }
         $classes[] = 'wp-block-' . $blockSlug . '-is-layout-' . $type;
         return $classes;
@@ -60,6 +62,58 @@ final class Layout
                 || isset($attrs['style']['spacing']['padding']['left']) || isset($attrs['style']['spacing']['padding']['right']),
             default => false,
         };
+    }
+
+    /** The declarations behind a container class, in the reference's order. */
+    public static function declarations(string $type, array $layout, array $attrs): string
+    {
+        $rules = [];
+        $gap = $attrs['style']['spacing']['blockGap'] ?? null;
+        if (is_array($gap)) {
+            $gap = $gap['left'] ?? $gap['top'] ?? null;
+        }
+        if ($type === 'flex') {
+            $vertical = ($layout['orientation'] ?? '') === 'vertical';
+            if ($vertical) {
+                $rules[] = 'flex-direction:column';
+            }
+            if (($layout['flexWrap'] ?? '') === 'nowrap') {
+                $rules[] = 'flex-wrap:nowrap';
+            }
+            if ($gap !== null) {
+                $rules[] = 'gap:' . Styles::value((string) $gap);
+            }
+            $justify = (string) ($layout['justifyContent'] ?? '');
+            $justifyMap = ['left' => 'flex-start', 'center' => 'center', 'right' => 'flex-end', 'space-between' => 'space-between', 'stretch' => 'stretch'];
+            $alignMap = ['top' => 'flex-start', 'center' => 'center', 'bottom' => 'flex-end', 'stretch' => 'stretch', 'space-between' => 'space-between'];
+            if ($vertical) {
+                $rules[] = 'align-items:' . ($justifyMap[$justify] ?? 'flex-start');
+                if (!empty($layout['verticalAlignment'])) {
+                    $rules[] = 'justify-content:' . ($alignMap[$layout['verticalAlignment']] ?? 'flex-start');
+                }
+            } else {
+                if ($justify !== '' && isset($justifyMap[$justify])) {
+                    $rules[] = 'justify-content:' . $justifyMap[$justify];
+                }
+                if (!empty($layout['verticalAlignment'])) {
+                    $rules[] = 'align-items:' . ($alignMap[$layout['verticalAlignment']] ?? 'center');
+                }
+            }
+        } elseif ($type === 'grid') {
+            if (!empty($layout['columnCount'])) {
+                $rules[] = 'grid-template-columns:repeat(' . (int) $layout['columnCount'] . ', minmax(0, 1fr))';
+            } else {
+                $rules[] = 'grid-template-columns:repeat(auto-fill, minmax(min(' . ($layout['minimumColumnWidth'] ?? '12rem') . ', 100%), 1fr))';
+                $rules[] = 'container-type:inline-size';
+            }
+            if ($gap !== null) {
+                $rules[] = 'gap:' . Styles::value((string) $gap);
+            }
+        } elseif ($gap !== null) {
+            // Flow and constrained layouts with their own gap.
+            $rules[] = '--minn-block-gap:' . Styles::value((string) $gap);
+        }
+        return implode(';', $rules) . ($rules === [] ? '' : ';');
     }
 
     private static function suffix(array $layout, array $attrs): string

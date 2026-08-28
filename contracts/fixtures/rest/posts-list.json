@@ -75,14 +75,8 @@
             ],
             "version-history": [
                 {
-                    "count": 1,
+                    "count": 0,
                     "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/611/revisions"
-                }
-            ],
-            "predecessor-version": [
-                {
-                    "id": 666,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/611/revisions/666"
                 }
             ],
             "wp:attachment": [
@@ -187,14 +181,8 @@
             ],
             "version-history": [
                 {
-                    "count": 1,
+                    "count": 0,
                     "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/610/revisions"
-                }
-            ],
-            "predecessor-version": [
-                {
-                    "id": 665,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/610/revisions/665"
                 }
             ],
             "wp:attachment": [
@@ -299,14 +287,8 @@
             ],
             "version-history": [
                 {
-                    "count": 1,
+                    "count": 0,
                     "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/609/revisions"
-                }
-            ],
-            "predecessor-version": [
-                {
-                    "id": 664,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/609/revisions/664"
                 }
             ],
             "wp:attachment": [
@@ -411,14 +393,8 @@
             ],
             "version-history": [
                 {
-                    "count": 1,
+                    "count": 0,
                     "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/608/revisions"
-                }
-            ],
-            "predecessor-version": [
-                {
-                    "id": 663,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/608/revisions/663"
                 }
             ],
             "wp:attachment": [

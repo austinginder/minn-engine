@@ -16,6 +16,7 @@ use Minn\Auth\Sessions;
 use Minn\Content\Posts;
 use Minn\Content\Site;
 use Minn\Content\Users;
+use Minn\Front\AssetsController;
 use Minn\Front\FrontController;
 use Minn\Front\Renderer;
 use Minn\Front\Resolver;
@@ -73,6 +74,7 @@ final readonly class Engine
         $pages = $theme === null ? null : PageRenderer::create($db, $theme, $permalinks, $resolver->perPage());
 
         $router = (new Router())->register(
+            new AssetsController(dirname(__DIR__) . '/assets'),
             new AppController($app, new BootPayload($site, $permalinks, $capabilities, $app, $this->version), $authenticator, $capabilities, $permalinks, $this->version),
             new LoginController($site, $permalinks, $authenticator, $sessions, new AuthCookies($db, $cookie)),
             new FrontController($resolver, new Renderer($db, new Posts($db), $permalinks, $resolver->perPage()), $pages),

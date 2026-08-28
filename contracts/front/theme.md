@@ -89,10 +89,39 @@ newline right after a closing tag is swallowed. Anything else renders as nothing
   `fetchpriority="high"`, the rest `decoding="async"` only, and lazy images alone carry
   the `auto,` sizes hint.
 
+## Stylesheets (20b)
+
+The head carries three stylesheets: the engine's own block stylesheet
+(`/minn-engine/blocks.css`, served from `src/assets/`; structure and behaviour for the
+core block class names, original work), the generated global styles (`Minn\Theme\GlobalStyles`,
+inline as `#global-styles-inline-css`), and the theme's own `style.css`.
+
+What the generator reproduces from theme.json, checked against the reference by
+`tests/styles.test.php`: every `--wp--preset--*` custom property (core default colours,
+gradients, shadows, and aspect ratios from `src/data/presets.json` plus the theme's
+palette, font sizes, families, spacing, shadows) and every `has-*` preset class,
+byte for byte. Fluid font sizes become `clamp(min, min + ((1vw - 0.2rem) * f), max)`
+where f scales between a 320px viewport and the theme's wide size. Root styles land on
+`body`, and under `useRootPaddingAwareAlignments` the root padding becomes the
+`--wp--style--root--padding-*` properties rather than body padding. Elements (`link`,
+headings, `button`, `caption`, with `:hover`/`:focus`/`:active`), per-block styles,
+block gaps, and `css` blocks map to the reference's selectors. Style variations get one
+rule set per numbered instance the page rendered, containers get their
+`wp-container-*` declarations (flex wrap, direction, justification, gap, grid
+columns), and galleries get their gap property. The structural layout rules (flow,
+constrained, flex, grid, alignments, global padding) are the engine's own on the same
+class hooks; the diff against the reference's is empty on this theme.
+
+Verified visually with Playwright at 1280px: home and a single post match the reference
+to the pixel in geometry (`.wp-site-blocks`, header, alignwide, navigation boxes measured
+equal).
+
 ## Known gaps
 
-- No stylesheets yet: the page links `/minn-engine/blocks.css`, which milestone 20b
-  provides along with the theme.json global styles and the container stylesheets.
+- The responsive navigation overlay needs the interactivity script the reference ships;
+  the engine keeps the menu inline at every width and hides the open/close buttons.
+- Block-library CSS (GPL) is not carried; blocks outside the battery may need rules in
+  `blocks.css` as they appear.
 - Blocks the site's templates do not exercise are best-effort or empty: featured
   images with a thumbnail, `post-excerpt`, query pagination markup (no page two
   exists to capture), `comments-pagination`, `social-links`, `avatar` outside comments.

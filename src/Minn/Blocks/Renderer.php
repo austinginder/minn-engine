@@ -45,7 +45,9 @@ final class Renderer
     {
         foreach (self::NUMBERED_STYLES[$blockName] ?? [] as $style) {
             if (preg_match('/\bis-style-' . preg_quote($style, '/') . '\b/', $className)) {
-                return "is-style-{$style}--" . RenderState::nextId();
+                $instance = RenderState::nextId();
+                RenderState::recordVariation($blockName, $style, $instance);
+                return "is-style-{$style}--" . $instance;
             }
         }
         return null;
@@ -138,7 +140,7 @@ final class Renderer
             'core/column', 'core/quote', 'core/details' => Html::addClasses($html, ['is-layout-flow', "wp-block-{$slug}-is-layout-flow"]),
             'core/buttons' => Html::addClasses($html, self::flexWithoutContainer('buttons', $block->attrs)),
             'core/gallery' => $this->images->enrich(
-                Html::addClasses($html, ['wp-block-gallery-' . RenderState::nextId(), 'is-layout-flex', 'wp-block-gallery-is-layout-flex']),
+                Html::addClasses($html, ['wp-block-gallery-' . self::gallery(), 'is-layout-flex', 'wp-block-gallery-is-layout-flex']),
                 withDataId: true,
                 front: $this->context->front,
             ),
@@ -152,6 +154,13 @@ final class Renderer
         };
         $numbered = self::numberedStyle($block->name, $block->className());
         return $numbered === null ? $html : Html::addClasses($html, [$numbered]);
+    }
+
+    private static function gallery(): int
+    {
+        $instance = RenderState::nextId();
+        RenderState::recordGallery($instance);
+        return $instance;
     }
 
     /** Buttons are flex containers without a stylesheet of their own by default. */
