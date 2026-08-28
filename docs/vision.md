@@ -1,0 +1,105 @@
+# Minn Engine — vision
+
+Indistinguishable at the seams. Radically simpler inside.
+
+A from-scratch, MIT-licensed engine that speaks WordPress's operational contracts so precisely that the hosting stack cannot tell the difference, paired with Minn Admin as its native interface, and built agent-first from day one.
+
+*Working draft, August 2026.*
+
+## 1. The thesis: WordPress is not software, it is a coordination standard
+
+WordPress remains the default pick in spite of itself. It is not winning on the merits of the platform. It wins because it is the Schelling point where customers, hosts, developers, and now AI agents all coordinate. The software is almost incidental.
+
+What "WordPress" actually consists of, ranked by how much it matters:
+
+1. **A portable unit of site** — files plus a database dump, runnable on any PHP host on earth. Backup tools, migration tools, staging workflows, and entire fleet-management stacks exist because the unit is standardized.
+2. **A stable data contract** — the posts, postmeta, options, and users schema has not meaningfully changed in twenty years. Twenty years of tooling compounds on that stability. Backward compatibility is the actual product.
+3. **An operational surface** — WP-CLI, the REST API, the file layout, the config conventions. This is what hosting companies automate against, and it is the layer that makes managed WordPress an industry.
+4. **A labor pool** — any freelancer can inherit any WordPress site cold. Turnover among designers and developers is high and rising; choosing WordPress is choosing to never be hostage to whoever built the site. This is the customer-control argument, and it is the strongest one.
+5. **The plugin ecosystem** — the weakest leg now, and weakening. AI erodes the long tail: a redirect manager or a contact form can simply be generated. What AI does not erode is what a top-tier plugin actually is: a maintenance liability transferred to a vendor who ships security releases. AI-generated bespoke code has no update channel, which makes the engine's own update story more important, not less.
+
+The AI shift sharpens rather than weakens the thesis. When anyone can generate anything on any platform, the rational customer targets the platform where generated work remains portable, inheritable, and operable after the developer leaves. Today that is WordPress, because of legs one through four. The question is whether those legs require the WordPress codebase at all.
+
+## 2. The graveyard lesson: every challenger replaced the software and abandoned the contracts
+
+Ghost, Craft, Statamic, October, ClassicPress: none of them dented WordPress, and they all failed the same way. Each replaced the code, which was never the moat, and walked away from the contracts, which were. A clean break means starting over on portability, tooling, hosting support, and the labor pool simultaneously. No product is good enough to win four moats at once.
+
+Minnow, the earlier experiment, taught the same lesson from inside. It made two choices that doomed it: a clean break (its own docs warned against porting a site from WordPress) and mechanical transmutation of WordPress's source. The first abandoned the moat. The second, it turns out, was also the one legally radioactive move for an MIT project. Both lessons are load-bearing here.
+
+The correct precedent is not "a better CMS." It is Nginx against Apache, MariaDB against MySQL, FrankenPHP against PHP-FPM: a from-scratch engine that speaks the incumbent's interface so precisely that the surrounding infrastructure cannot tell. You do not rebuild a Schelling point. You inherit it through compatibility.
+
+## 3. The play: two tiers of compatibility, with a hard line between them
+
+The strategy lives or dies on knowing exactly which WordPress surfaces to honor and which to refuse. The operational contract is sacred. The internal API is not.
+
+**Tier 1 — the operational contract:**
+
+- The database schema: read and write real `wp_*` tables, tolerating serialized-PHP blobs forever
+- File layout and `wp-config.php` shape, so backup and migration tooling just works
+- `wp/v2` REST core routes: posts, media, users, terms, settings
+- WP-CLI verb compatibility for the ops core: `core`, `option`, `post`, `user`, `db`, `plugin list`
+- Permalinks, feeds, sitemaps, and a block-rendering subset for `post_content`
+- Login and session conventions the hosting layer probes
+
+**Tier 2 — never:**
+
+- Hook-level PHP plugin compatibility. Reimplementing `add_filter` semantics bug for bug is rewriting WordPress, sediment included
+- wp-admin. Minn Admin is the admin, and it is already REST-pure
+- The theme template hierarchy as PHP soup
+- Shortcode and widget legacy layers beyond read-tolerance
+- Running GPL plugin code in-process through a compatibility shim
+
+The answer to "but plugins" is the same AI symmetry that weakened the plugin moat in the first place. If AI generation erodes WordPress's plugin advantage, it erodes the replacement's plugin deficit equally, provided the extension contract is clean enough for agents to target reliably. A site does not need sixty thousand plugins. It needs the three it actually uses, ported on demand by an agent against a contract designed for exactly that.
+
+**Definition of done, phase one: Kinsta, CaptainCore, Disembark, and UpdraftPlus cannot tell it isn't WordPress.** That sentence is the whole spec. The compatibility suite is a battery of real fleet tooling run against a Minn Engine site: backups restore, migrations round-trip, WP-CLI automation runs, monitors stay green, and Minn Admin boots unmodified.
+
+## 4. The engine
+
+**It stays PHP.** The temptation is Go or Rust, and it is wrong for this strategy: the moat being inherited is PHP hosting. Modern PHP on FrankenPHP-class runtimes is fast, and the infrastructure already speaks it. Target PHP 8.4+, minimal dependencies, no framework baggage, no build step.
+
+**It is small on purpose.** A single core in the low tens of thousands of lines against WordPress's roughly six hundred thousand: router, entities over the wp schema, REST layer, capabilities, a template engine, a block-rendering subset, cron, mail. Everything else is an extension.
+
+**Minn Admin is the interface, already built.** Minn Admin never touches wp-admin internals. It boots from `window.MINN`, speaks `wp/v2` plus its own namespace, and ships with a hundred-adapter ecosystem, a validator-enforced descriptor contract, and a deep suite culture. An engine that serves those surfaces gets a complete, mature admin on day one.
+
+**Extensions: declarative contracts, imperative handlers.** A manifest declares what an extension is: its entities, routes, capability requirements, admin surfaces, and settings. Plain PHP handlers implement behavior behind those declarations. This generalizes what Minn Admin's surface descriptors already proved.
+
+**Security by declaration.** Authorization in WordPress is imperative and scattered, and years of real-world extension audits show that most access-control failures are stories about exactly that. In Minn Engine, a route's capability requirement is metadata: mechanically auditable, diffable across releases, and verifiable by an agent. Prepared statements only. No unserialize of untrusted data. Escaping at defined boundaries.
+
+**Agent-first is a build methodology, not a feature.** The reason nobody has done the ops-compatible rewrite is that it is an enormous amount of boring, well-specified work, which is precisely what agents now do well when gated by suites. Every unit ships with a behavioral suite, the suites rather than the prose are ground truth, and contracts are machine-readable so agents can build, audit, and extend without archaeology. Agent legibility also answers the turnover argument directly: the take-over story for a customer stops being "find another WordPress freelancer" and becomes "point any coding agent at the contracts."
+
+## 5. The license question: can a WordPress-compatible engine be MIT?
+
+**Yes. A clean-room reimplementation of functional interfaces can be MIT licensed, and the license freedom is precisely the reason to reimplement rather than fork.** GPL obligations attach to distributing WordPress's code or derivative works of it. Minn Engine distributes neither. Compatibility is not derivation.
+
+**What copyright does not protect.** US copyright law (17 U.S.C. §102(b)) never protects "any idea, procedure, process, system, method of operation, concept, principle, or discovery." Interfaces, schemas, and protocols are systems and methods of operation. On top of that sits the merger doctrine: where there is only one way to express something (a compatible route must be named `/wp/v2/posts`; a compatible column must be named `post_content`), the expression merges with the idea and is not protectable.
+
+**The precedents.** Google v. Oracle (2021): reimplementing an API surface for a new platform was fair use. Lotus v. Borland (1995): a command hierarchy is an uncopyrightable method of operation. Sega v. Accolade and Sony v. Connectix: reverse engineering for compatibility is fair use. SAS v. World Programming (EU/UK): functionality, languages, and data formats are not copyrightable, and interoperability is explicitly protected under the EU Software Directive. In practice: Wine reimplements the Windows API, Samba reimplements SMB, FerretDB speaks MongoDB's protocol under Apache 2.0, and WP-CLI itself is MIT licensed at the heart of the GPL WordPress ecosystem.
+
+**Fork versus reimplementation is the whole question.** A fork of WordPress is GPL forever; ClassicPress has no choice about its license. A reimplementation written from specifications of behavior is a new work, and its author chooses the license. The decision to build from scratch and the decision to be MIT are the same decision.
+
+**The traps that would actually cause a problem:**
+
+1. **Copied code, including mechanically transformed code** — any actual WordPress source carries GPL no matter how it is reorganized. The Minnow transmuter generated its build from WordPress's own source; that output was a derivative work and could never have been MIT.
+2. **Bundled GPL assets** — no WordPress core JavaScript, block-library CSS, bundled themes, or Dashicons ship in the engine.
+3. **Loading GPL plugin code in-process** — a hook-compat shim executing real WP plugins would raise genuine derivative-work questions. Tier 2 already forbids it for engineering reasons; the legal reason points the same way.
+4. **Trademark, not copyright, is the live wire** — "WordPress" is a WordPress Foundation trademark, and the current enforcement climate is aggressive. Nominative fair use permits truthful statements ("compatible with WordPress"), but the name stays out of the project name, domain, and anything implying endorsement.
+
+**The hygiene program.** Clean-room purity is the gold standard, not a strict legal requirement; infringement requires copying protected expression, not mere exposure to it. But a documented process is cheap insurance, and agents make it enforceable: spec-first development from behavioral fixtures captured from a live WordPress instance; implementation from the spec, never from WordPress source; an automated similarity gate in CI against the WordPress source tree; tracked provenance for every file; and an hour with an open-source-savvy IP lawyer before public launch. This document is analysis, not legal advice.
+
+**One ecosystem bonus.** Because Minn Engine's extension API is a new interface, extensions target it rather than WordPress, and WordPress's long-standing claim that plugins inherit the GPL does not reach them. Extension authors choose their own licenses. For commercial developers, that alone is a reason to build here.
+
+## 6. Honest hard parts
+
+- **Serialized PHP is forever.** Reading real WordPress databases means tolerating serialized-PHP blobs in options and postmeta indefinitely. Greenfield sites keep it out of new data; migrated sites drag the long tail in. Design greenfield-first.
+- **Dynamic blocks need their plugins.** Rendering static block markup is tractable. Third-party dynamic blocks render through plugin callbacks the engine is not running. Migration scope, not greenfield scope.
+- **WooCommerce-shaped sites are out of scope for years.** A large share of real small-business sites are brochure, forms, and content, which is exactly the tractable slice.
+- **Bus factor.** The customer-control argument only transfers once someone other than the founder can maintain the engine. MIT plus machine-readable contracts plus exhaustive suites is the mitigation, and agent legibility is the honest answer, but it deserves naming.
+
+## 7. Sequencing: a strangler fig, not a big bang
+
+- **Phase 0 (shipped)** — Minn Admin replaces wp-admin: a complete, REST-pure admin with a proven extension contract, running against real sites today.
+- **Phase 1 (next)** — the engine serves greenfield sites on our own hosting. Front end plus REST for new sites where the whole stack is ours to verify. Minn Admin boots unmodified. The compatibility suite runs the fleet tooling against it until the hosting layer cannot tell.
+- **Phase 2** — the extension contract and the agent-port workflow ship publicly, turning "which plugins does this site actually need" into an afternoon rather than an ecosystem problem.
+- **Phase 3 (earned)** — migration for the tractable slice, with the serialized-PHP and dynamic-block caveats enforced honestly by the tooling itself.
+
+Minnow wanted to be a clean break. Minn Engine wants the opposite: indistinguishable at the seams, and radically simpler inside.

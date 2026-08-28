@@ -1,0 +1,13 @@
+# Local WordPress reference copy (GPL code; never enters this repo)
+wp-reference/
+
+# Local site config (credentials and salts; the FILE SHAPE is the contract,
+# the contents are per-site)
+public/wp-config.php
+
+# Cove site runtime
+logs/
+tailscale_port
+
+# OS noise
+.DS_Store
