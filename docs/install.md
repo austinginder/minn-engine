@@ -49,6 +49,10 @@ string literals. A Docker-style file that calls `getenv_docker('WORDPRESS_DB_NAM
 
 `.htaccess`, `wp-content/`, and `wp-config.php` stay where they are. The copy skips
 `.git`, `node_modules`, `tests`, and `docs` inside the engine and the admin bundle.
+Minn Admin is served from `minn/admin` (the app's `minn-admin.php` plus `assets/`).
+A development engine often has that path as a symlink; a deploy copies the
+directory in. Without it, `/minn-admin/` answers 500 "The Minn Admin app is not
+linked into this engine."
 
 **Opcode cache.** `index.php` and `wp-settings.php` keep their paths but change
 contents, so a PHP opcode cache can serve the previous version until it revalidates

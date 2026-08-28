@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Minn\Content;
 
+use Minn\Auth\Password;
+use Minn\Auth\Roles;
 use Minn\Db;
+use Minn\Support\Kses;
 
 final readonly class Users
 {
@@ -38,6 +41,62 @@ final readonly class Users
             $try = "{$slug}-{$n}";
         }
         return $try;
+    }
+
+    /**
+     * Inserts a user and the 14 default meta rows the reference writes.
+     *
+     * @param array{
+     *   login: string,
+     *   email: string,
+     *   password: string,
+     *   role: string,
+     *   display_name: string,
+     *   url?: string,
+     *   nicename?: string,
+     *   nickname?: string,
+     *   first_name?: string,
+     *   last_name?: string,
+     *   description?: string,
+     *   locale?: string,
+     * } $fields
+     */
+    public function createAccount(array $fields): int
+    {
+        $login = $fields['login'];
+        $id = $this->insert([
+            'user_login' => $login,
+            'user_pass' => Password::hash($fields['password']),
+            'user_nicename' => $fields['nicename'] ?? $this->uniqueNicename($login),
+            'user_email' => $fields['email'],
+            'user_url' => Kses::url($fields['url'] ?? ''),
+            'user_registered' => gmdate('Y-m-d H:i:s'),
+            'user_activation_key' => '',
+            'user_status' => 0,
+            'display_name' => $fields['display_name'] !== '' ? $fields['display_name'] : $login,
+        ]);
+        $prefix = $this->db->prefix();
+        $role = $fields['role'];
+        $meta = [
+            'nickname' => Kses::text($fields['nickname'] ?? $login),
+            'first_name' => Kses::text($fields['first_name'] ?? ''),
+            'last_name' => Kses::text($fields['last_name'] ?? ''),
+            'description' => Kses::filter($fields['description'] ?? '', Kses::COMMENT),
+            'rich_editing' => 'true',
+            'syntax_highlighting' => 'true',
+            'infinite_scrolling' => 'true',
+            'comment_shortcuts' => 'false',
+            'admin_color' => 'modern',
+            'use_ssl' => '0',
+            'show_admin_bar_front' => 'true',
+            'locale' => (string) ($fields['locale'] ?? ''),
+            "{$prefix}capabilities" => Roles::serializeSingle($role),
+            "{$prefix}user_level" => (string) Roles::level($role),
+        ];
+        foreach ($meta as $key => $value) {
+            $this->setMeta($id, $key, $value);
+        }
+        return $id;
     }
 
     /** @param array<string, mixed> $columns */

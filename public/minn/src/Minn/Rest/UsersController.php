@@ -181,38 +181,19 @@ final readonly class UsersController
         if (!self::validEmail($email)) {
             throw new RestError('rest_user_invalid_email', 'Invalid email address.', 400);
         }
-        $newId = $this->users->insert([
-            'user_login' => $login,
-            'user_pass' => Password::hash((string) $body['password']),
-            'user_nicename' => $this->users->uniqueNicename($login),
-            'user_email' => $email,
-            'user_url' => Kses::url((string) ($body['url'] ?? '')),
-            'user_registered' => gmdate('Y-m-d H:i:s'),
-            'user_activation_key' => '',
-            'user_status' => 0,
+        $newId = $this->users->createAccount([
+            'login' => $login,
+            'email' => $email,
+            'password' => (string) $body['password'],
+            'role' => $role,
             'display_name' => (string) ($body['name'] ?? '') !== '' ? (string) $body['name'] : $login,
-        ]);
-        // The default meta set the reference writes on insert, in its order.
-        $prefix = $this->db->prefix();
-        $meta = [
-            'nickname' => Kses::text((string) ($body['nickname'] ?? $login)),
-            'first_name' => Kses::text((string) ($body['first_name'] ?? '')),
-            'last_name' => Kses::text((string) ($body['last_name'] ?? '')),
-            'description' => Kses::filter((string) ($body['description'] ?? ''), Kses::COMMENT),
-            'rich_editing' => 'true',
-            'syntax_highlighting' => 'true',
-            'infinite_scrolling' => 'true',
-            'comment_shortcuts' => 'false',
-            'admin_color' => 'modern',
-            'use_ssl' => '0',
-            'show_admin_bar_front' => 'true',
+            'url' => (string) ($body['url'] ?? ''),
+            'nickname' => (string) ($body['nickname'] ?? $login),
+            'first_name' => (string) ($body['first_name'] ?? ''),
+            'last_name' => (string) ($body['last_name'] ?? ''),
+            'description' => (string) ($body['description'] ?? ''),
             'locale' => (string) ($body['locale'] ?? ''),
-            "{$prefix}capabilities" => Roles::serializeSingle($role),
-            "{$prefix}user_level" => (string) Roles::level($role),
-        ];
-        foreach ($meta as $key => $value) {
-            $this->users->setMeta($newId, $key, $value);
-        }
+        ]);
         $created = $this->users->find($newId);
         $this->welcome($created);
         return Reply::item($this->object->edit($created), Fields::fromQuery($request->query), 201)

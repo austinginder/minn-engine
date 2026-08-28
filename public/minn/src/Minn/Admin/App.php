@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Admin;
 
+use Minn\Support\FileHeaders;
+
 /**
  * The Minn Admin app on disk: the symlinked dev copy the engine serves the
  * shell and assets from. Minn Admin is MIT, so reading its files is fine.
@@ -33,9 +35,13 @@ final readonly class App
     {
         $main = "{$this->dir}/minn-admin.php";
         if ($this->installed() && is_readable($main)) {
-            $head = (string) file_get_contents($main, false, null, 0, 2000);
+            $head = (string) file_get_contents($main, false, null, 0, 8192);
             if (preg_match("/MINN_ADMIN_VERSION',\s*'([^']+)'/", $head, $m)) {
                 return $m[1];
+            }
+            $fromHeader = FileHeaders::values($main, ['Version'])['Version'];
+            if ($fromHeader !== '') {
+                return $fromHeader;
             }
         }
         return '0.0.0';

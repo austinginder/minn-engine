@@ -98,6 +98,11 @@ foreach ([
     'theme list --format=count',
     'theme list --status=active --field=name',
     'theme list --status=inactive --format=count',
+    'cache flush',
+    'user create uniqueloginzzz admin@minn-engine.localhost',
+    'user create badroleuser badrole@example.test --role=not-a-role',
+    'user update 99999 --display_name=x',
+    'search-replace same same --report-changed-only',
 ] as $command) {
     $same($command, $command);
 }
@@ -191,6 +196,38 @@ foreach (explode("\n", $out) as $line) {
 $check('minn probe plugins is json', isset($probe['plugins']) && is_array(json_decode($probe['plugins'], true)), $probe['plugins'] ?? '');
 $check('minn probe themes is json', isset($probe['themes']) && is_array(json_decode($probe['themes'], true)), $probe['themes'] ?? '');
 $check('minn probe core is the version.php release', ($probe['core'] ?? '') === '7.1', $probe['core'] ?? '');
+
+$login = 'minncli' . getmypid();
+[$out, $code] = $run($ENGINE_DIR, "user create {$login} {$login}@example.test --role=author --first_name=Ada --last_name=Lovelace --user_pass=TestPass123! --porcelain");
+$newId = trim($out);
+$check('user create porcelain prints an id', $code === 0 && ctype_digit($newId), "[$code] {$out}");
+[$got] = $run($ENGINE_DIR, "user get {$newId} --fields=user_login,user_email,display_name,roles --format=json");
+$gotJson = json_decode($got, true);
+$check(
+    'user create stores login email display role',
+    is_array($gotJson) && ($gotJson['user_login'] ?? '') === $login && ($gotJson['display_name'] ?? '') === 'Ada Lovelace' && ($gotJson['roles'] ?? '') === 'author',
+    $got,
+);
+[$out, $code] = $run($ENGINE_DIR, "user update {$newId} --display_name='Ada L.'");
+$check('user update succeeds', $code === 0 && str_contains($out, "Updated user {$newId}"), $out);
+[$out, $code] = $run($ENGINE_DIR, "user delete {$newId} --yes --reassign=1");
+$check('user delete succeeds', $code === 0 && str_contains($out, "Removed user {$newId} from"), $out);
+
+[$out, $code] = $run($ENGINE_DIR, 'option update minn_sr_probe alpha-token-zzz');
+$check('search-replace probe option written', $code === 0, $out);
+[$engineReplace, $engineCode] = $run($ENGINE_DIR, 'search-replace alpha-token-zzz beta-token-zzz --report-changed-only');
+$check(
+    'search-replace reports one PHP replacement',
+    $engineCode === 0 && str_contains($engineReplace, 'wp_options') && str_contains($engineReplace, 'option_value') && str_contains($engineReplace, 'Success: Made 1 replacement.'),
+    $engineReplace,
+);
+[$got] = $run($ENGINE_DIR, 'option get minn_sr_probe');
+$check('search-replace updated the option', trim($got) === 'beta-token-zzz', $got);
+$run($ENGINE_DIR, 'option delete minn_sr_probe');
+
+[$out, $code] = $run($ENGINE_DIR, 'option set minn_cli_set hello');
+$check('option set is update', $code === 0 && str_contains($out, "Updated 'minn_cli_set' option."), $out);
+$run($ENGINE_DIR, 'option delete minn_cli_set');
 
 echo "\n{$pass} passed, {$fail} failed\n";
 exit($fail === 0 ? 0 : 1);

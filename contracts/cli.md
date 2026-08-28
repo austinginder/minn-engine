@@ -34,6 +34,12 @@ reaches `minn/bootstrap.php`, which under WP-CLI only registers the autoloader.
 | `user list [--role] [--field] [--fields] [--format]` | Ordered by `user_login`; fields `ID,user_login,display_name,user_email,user_registered,roles`; `roles` joined with `,`; `ids` and `count` formats; `--role` filters. Only roles registered in `wp_user_roles` count (a plugin-granted role the registry does not know is not listed, as on the reference). |
 | `user get <id\|email\|login> [--field] [--fields] [--format]` | Record order `ID,user_login,user_email,user_registered,display_name,roles`, `ID` as the stored string, roles joined with `, `. Unknown: `Error: Invalid user ID, email or login: 'x'`. |
 | `user login <id\|email\|login>` | Prints `{siteurl}/wp-login.php?user_id=N&cove_login_token=T` (7 hex chars) after storing the token's sha256 in `cove_login_token` and the mint time in `cove_login_token_time`: the contract of the captaincore helper mu-plugin, which the engine honours natively at `wp-login.php` (valid for fifteen minutes, spent on use, 302 to `/wp-admin/` with a fourteen-day session; any failure is the same 403 so ids cannot be probed, and failures count toward the sign-in throttle). Unknown: `Error: User not found: x`. |
+| `user create <login> <email> [--role] [--user_pass] [--first_name] [--last_name] [--display_name] [--send-email] [--porcelain]` | Writes a real `$wp$2y$10$` hash and the 14 default meta rows. Duplicate login: `Error: The 'x' username is already registered.`; duplicate email: `Error: Sorry, that email address is already used!`; unknown role: `Error: Role doesn't exist: x`. No `--user_pass` prints a generated `Password:` line. `--porcelain` prints only the id. First+last names become the display name when `--display_name` is omitted. `--send-email` sends the engine's password-reset mail. |
+| `user update <user> [--display_name] [--user_email] [--user_pass] [--role] [--first_name] [--last_name]` | Unknown: `Warning: Invalid user ID, email or login: 'x'` then `Error: No valid users found.` Success: `Updated user N.` |
+| `user delete <user> [--reassign=<id>] [--yes]` | `--reassign` moves posts; without it the user's posts are deleted. Success: `Removed user N from {home}.` |
+| `cache flush` | No object cache: `Success: The cache was flushed.` so fleet scripts that call it after a write do not abort. |
+| `option set` | Alias of `option update`. |
+| `search-replace <old> <new> [<table>...] [--dry-run] [--all-tables] [--report-changed-only]` | Walks string columns (skips `guid` and numeric types), including serialized-PHP arrays of scalars without unserialize. Report columns Table/Column/Replacements/Type (PHP). Identical strings: `Warning: Replacement value 'x' is identical to search value 'x'. Skipping operation.` CaptainCore's https/launch/migrate scripts pass `--all-tables --report-changed-only`. |
 | `wp minn version`, `wp minn info` | The engine's own identity. |
 | `plugin list [--status] [--field] [--fields] [--format]` | Installed plugins from disk plus must-use and drop-ins, in that order, each group sorted by name. `name` is the directory (or the drop-in filename); `title` and `version` come from the file headers; `status` is `active` / `inactive` / `must-use` / `dropin`. Drop-ins keep an empty version (the reference does too). `update` is `none` for regular plugins and `false` for must-use and drop-ins: the engine does not call the wordpress.org update API. CaptainCore's `fetch-site-data` reads `--format=json --fields=name,title,status,version`. |
 | `theme list [--status] [--field] [--fields] [--format]` | Themes from `style.css` headers, sorted by name. The stylesheet is `active`; its parent (when different) is `parent`; the rest are `inactive`. |
@@ -42,8 +48,7 @@ reaches `minn/bootstrap.php`, which under WP-CLI only registers the autoloader.
 ## Not yet
 
 - `wp db …` and `wp config …` are WP-CLI's own and read `wp-config.php` directly.
-- Every other verb (`post`, `search-replace`, `cache`, `rewrite`,
-  `user create/update/delete`, `core verify-checksums`, `plugin verify-checksums`)
+- Every other verb (`post`, `rewrite`, `core verify-checksums`, `plugin verify-checksums`)
   is absent; the list grows from what the fleet tooling actually invokes.
   Checksums are an honest gap: the engine does not ship WordPress core files.
 - `option get` of an option holding a serialized object prints the raw blob.

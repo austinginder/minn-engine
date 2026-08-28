@@ -72,7 +72,7 @@ foreach ([
 
 @unlink('/tmp/minn-layout-probe.sql');
 // db tables/size/optimize run after WordPress loads on the reference; they refuse cleanly here.
-foreach (['cache flush', 'post list', 'core is-installed', 'db tables', 'db size'] as $command) {
+foreach (['post list', 'core is-installed', 'db tables', 'db size'] as $command) {
     [$out, $code] = $run($PUBLIC, $command);
     $check("wp $command fails with the engine's message", $code === 1 && str_contains($out, 'needs WordPress itself'), "[$code] " . substr($out, 0, 200));
 }

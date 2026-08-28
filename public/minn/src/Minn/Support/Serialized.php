@@ -132,6 +132,37 @@ final class Serialized
         return $value;
     }
 
+    /**
+     * PHP's serialize() for the values decode() accepts: null, bool, int,
+     * float, string, and arrays of those. Objects are refused.
+     */
+    public static function encode(mixed $value): string
+    {
+        if ($value === null) {
+            return 'N;';
+        }
+        if (is_bool($value)) {
+            return $value ? 'b:1;' : 'b:0;';
+        }
+        if (is_int($value)) {
+            return 'i:' . $value . ';';
+        }
+        if (is_float($value)) {
+            return 'd:' . $value . ';';
+        }
+        if (is_string($value)) {
+            return 's:' . strlen($value) . ':"' . $value . '";';
+        }
+        if (is_array($value)) {
+            $body = '';
+            foreach ($value as $key => $item) {
+                $body .= self::encode(is_int($key) ? $key : (string) $key) . self::encode($item);
+            }
+            return 'a:' . count($value) . ':{' . $body . '}';
+        }
+        throw new \ValueError('encode');
+    }
+
     /** The integer values of a serialized list such as sticky_posts. */
     public static function intList(?string $blob): array
     {
