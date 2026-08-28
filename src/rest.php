@@ -1016,6 +1016,26 @@ function minn_rest_dispatch( string $route ): void {
 			minn_rest_comments_list();
 		}
 	}
+	if ( '/wp/v2/media' === $route ) {
+		if ( 'POST' === $method ) {
+			minn_rest_media_create();
+		}
+		if ( 'GET' === $method ) {
+			minn_rest_media_list();
+		}
+	}
+	if ( preg_match( '#^/wp/v2/media/(\d+)$#', $route, $m ) ) {
+		$mid = (int) $m[1];
+		if ( 'POST' === $method || 'PUT' === $method || 'PATCH' === $method ) {
+			minn_rest_media_update( $mid );
+		}
+		if ( 'DELETE' === $method ) {
+			minn_rest_media_delete( $mid, filter_var( $_GET['force'] ?? false, FILTER_VALIDATE_BOOLEAN ) );
+		}
+		if ( 'GET' === $method ) {
+			minn_rest_media_single( $mid );
+		}
+	}
 	if ( preg_match( '#^/wp/v2/comments/(\d+)$#', $route, $m ) ) {
 		$cid = (int) $m[1];
 		if ( 'POST' === $method || 'PUT' === $method || 'PATCH' === $method ) {
