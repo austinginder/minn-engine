@@ -17,8 +17,8 @@ use Minn\Blocks\Parser;
  *   so a modern list contributes nothing while a classic one does).
  * - The text stops at the first <!--more--> (in a feed it runs on).
  * - Block-level tags read as spaces; inline tags (and <br>) read as nothing.
- * - Texturize applies before the tags go (code stays straight-quoted);
- *   whitespace collapses, 55 words, an ellipsis when cut, wrapped in <p>. A hand-written excerpt skips the block filter.
+ * - Whitespace collapses, 55 words, an ellipsis when cut, wrapped in <p>,
+ *   texturized (a feed texturizes first, so its inline code stays raw). A hand-written excerpt skips the block filter.
  */
 final class Excerpt
 {
@@ -33,8 +33,12 @@ final class Excerpt
         's', 'samp', 'small', 'span', 'strong', 'sub', 'sup', 'time', 'u', 'var', 'wbr', 'del', 'ins',
     ];
 
-    /** The more tag ends a listing's excerpt but not a feed's. */
-    public static function render(array $post, bool $stopAtMore = true): string
+    /**
+     * The more tag ends a listing's excerpt but not a feed's, and a feed
+     * texturizes before the tags go (so inline code keeps straight quotes)
+     * where a listing texturizes the finished text.
+     */
+    public static function render(array $post, bool $stopAtMore = true, bool $forFeed = false): string
     {
         $source = (string) $post['post_excerpt'];
         if ($source === '') {
@@ -44,12 +48,10 @@ final class Excerpt
                 $source = substr($source, 0, $more);
             }
         }
-        // Texturize runs while the tags are still there, so text inside
-        // code or pre stays straight-quoted after the tags go.
         $text = preg_replace_callback(
             '/<\/?([a-zA-Z][\w-]*)[^>]*>|<!--.*?-->/s',
             static fn (array $m) => isset($m[1]) && in_array(strtolower($m[1]), self::INLINE, true) ? '' : ' ',
-            Texturize::html($source),
+            $forFeed ? Texturize::html($source) : $source,
         );
         $words = preg_split('/\s+/', trim((string) $text), -1, PREG_SPLIT_NO_EMPTY);
         if ($words === []) {
@@ -58,7 +60,7 @@ final class Excerpt
         $text = count($words) > 55
             ? implode(' ', array_slice($words, 0, 55)) . ' [&hellip;]'
             : implode(' ', $words);
-        return '<p>' . $text . "</p>\n";
+        return $forFeed ? '<p>' . $text . "</p>\n" : Texturize::html('<p>' . $text . "</p>\n");
     }
 
     /** @param list<Block> $blocks */

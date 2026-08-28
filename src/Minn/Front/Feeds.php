@@ -180,8 +180,10 @@ final readonly class Feeds
                 . "\t<link>" . $link . "</link>\n\n"
                 . "\t<dc:creator><![CDATA[" . $this->authorName($post) . "]]></dc:creator>\n"
                 . "\t<dc:date>" . self::isoZ((string) $post['post_date_gmt']) . "</dc:date>\n";
+            $first = true;
             foreach ($this->termNames($post) as $name) {
-                $out .= "\t\t\t<dc:subject><![CDATA[" . $name . "]]></dc:subject>\n";
+                $out .= ($first ? "\t\t\t" : "\t\t") . '<dc:subject><![CDATA[' . $name . "]]></dc:subject>\n";
+                $first = false;
             }
             $out .= "\n\t\t\t<description><![CDATA[" . $this->plainExcerpt($post) . "]]></description>\n"
                 . "\t\t<content:encoded><![CDATA[" . self::content($post) . "]]></content:encoded>\n"
@@ -284,7 +286,7 @@ final readonly class Feeds
 
     private function plainExcerpt(array $post): string
     {
-        return trim(strip_tags(Excerpt::render($post, stopAtMore: false)));
+        return trim(strip_tags(Excerpt::render($post, stopAtMore: false, forFeed: true)));
     }
 
     private function language(): string
