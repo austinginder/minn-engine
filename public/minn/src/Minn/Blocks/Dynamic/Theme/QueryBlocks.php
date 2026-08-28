@@ -53,7 +53,7 @@ final class QueryBlocks
         if (!empty($attrs['inherit'])) {
             $this->queries[] = ['posts' => $context->posts, 'total' => $context->total, 'inherit' => true];
         } else {
-            $perPage = max(1, (int) ($attrs['perPage'] ?? 10));
+            $perPage = max(1, min(100, (int) ($attrs['perPage'] ?? 10)));
             $sticky = ($attrs['sticky'] ?? '') === 'exclude' ? [] : Serialized::intList($this->site->option('sticky_posts'));
             $filter = [];
             if (!empty($attrs['author'])) {
@@ -209,6 +209,9 @@ final class QueryBlocks
         $base = $this->paginationBase($renderer);
         $link = fn (int $page): string => $this->permalinks->forPaged($base, $page);
         $arrow = (string) $block->attr('paginationArrow', 'none');
+        if (!in_array($arrow, ['none', 'arrow', 'chevron'], true)) {
+            $arrow = 'none';
+        }
         $glyph = static fn (bool $next) => match ($arrow) {
             'arrow' => $next ? '→' : '←',
             'chevron' => $next ? '»' : '«',
@@ -277,6 +280,6 @@ final class QueryBlocks
             return '';
         }
         $classes = implode(' ', ['wp-block-term-description', ...Styles::classes($block->attrs)]);
-        return '<div class="' . $classes . '"><p>' . Html::esc($description) . '</p></div>';
+        return '<div class="' . Html::attr($classes) . '"><p>' . Html::esc($description) . '</p></div>';
     }
 }

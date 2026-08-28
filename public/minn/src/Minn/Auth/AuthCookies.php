@@ -27,13 +27,14 @@ final readonly class AuthCookies
         return md5($this->db->option('siteurl') ?? '');
     }
 
-    public function attach(Response $response, array $user, int $expiration, string $token, bool $secure): Response
+    /** A non-persistent sign-in keeps the server expiry but sends session cookies the browser drops on close. */
+    public function attach(Response $response, array $user, int $expiration, string $token, bool $secure, bool $persistent = false): Response
     {
         $hash = $this->hash();
         $authName = ($secure ? 'wordpress_sec_' : 'wordpress_') . $hash;
         $authValue = self::mint($user, $expiration, $token, $secure ? 'secure_auth' : 'auth');
         $loggedIn = $this->cookie->mint($user, $expiration, $token);
-        $common = ['expires' => $expiration, 'httponly' => true, 'secure' => $secure, 'samesite' => 'Lax'];
+        $common = ['expires' => $persistent ? $expiration : 0, 'httponly' => true, 'secure' => $secure, 'samesite' => 'Lax'];
         return $response
             ->withCookie($authName, $authValue, ['path' => '/wp-admin'] + $common)
             ->withCookie($authName, $authValue, ['path' => '/wp-content/plugins'] + $common)

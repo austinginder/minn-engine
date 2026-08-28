@@ -123,6 +123,18 @@ final class Renderer
         if ($block->name === null) {
             return $block->innerHtml;
         }
+        if (!RenderState::descend()) {
+            return '';
+        }
+        try {
+            return $this->renderNamed($block);
+        } finally {
+            RenderState::ascend();
+        }
+    }
+
+    private function renderNamed(Block $block): string
+    {
         if (isset($this->dynamic[$block->name])) {
             // The element class is numbered before the block renders (the
             // reference counts it even for a block that renders nothing).

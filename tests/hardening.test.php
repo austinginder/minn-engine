@@ -88,11 +88,13 @@ $check('the one-time link is throttled too', $token['status'] === '429');
 $clearThrottle();
 $after = $request("$ENGINE/wp-login.php", 'log=admin&pwd=password');
 $check('after the window clears, sign-in works again', $after['status'] === '302' && str_contains($after['headers']['set-cookie'] ?? '', 'wordpress_logged_in_'), $after['status']);
-// A successful sign-in clears the address's counter.
+// A successful sign-in does not reset the address's counter (one owned account must not
+// launder guesses at another); the window lapses on its own.
 $request("$ENGINE/wp-login.php", 'log=admin&pwd=wrong');
-$request("$ENGINE/wp-login.php", 'log=admin&pwd=password');
-$rows = trim((string) shell_exec('cd ' . escapeshellarg($REF_DIR) . ' && wp db query "SELECT COUNT(*) FROM wp_options WHERE option_name LIKE \'minn_login_throttle_%\'" --skip-column-names 2>/dev/null'));
-$check('a successful sign-in clears the counter', $rows === '0', $rows);
+$ok = $request("$ENGINE/wp-login.php", 'log=admin&pwd=password');
+$rows = trim((string) shell_exec('cd ' . escapeshellarg($REF_DIR) . ' && wp db query "SELECT option_value FROM wp_options WHERE option_name LIKE \'minn_login_throttle_%\'" --skip-column-names 2>/dev/null'));
+$check('a successful sign-in still works under the limit and leaves the counter to lapse', $ok['status'] === '302' && preg_match('/^\d+:1$/', $rows) === 1, $ok['status'] . ' ' . $rows);
+$clearThrottle();
 
 // Failure pages, rendered directly.
 $render = static function (string $method) use ($ROOT): string {

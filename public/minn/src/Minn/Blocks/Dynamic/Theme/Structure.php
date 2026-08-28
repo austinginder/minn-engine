@@ -14,6 +14,7 @@ use Minn\Front\Permalinks;
 use Minn\Support\Html;
 use Minn\Theme\Templates;
 use Minn\Theme\Theme;
+use Minn\Blocks\RenderState;
 
 /** template-part, pattern, site-title, site-tagline, site-logo. */
 final readonly class Structure
@@ -40,20 +41,30 @@ final readonly class Structure
     {
         $slug = (string) $block->attr('slug', '');
         $markup = $this->templates->part($slug);
-        if ($markup === null) {
+        if ($markup === null || !RenderState::enter('part:' . $slug)) {
             return '';
         }
         $area = (string) $block->attr('area', $this->theme->partArea($slug));
         $tag = (string) $block->attr('tagName', match ($area) { 'header' => 'header', 'footer' => 'footer', default => 'div' });
+        if (!in_array($tag, ['header', 'footer', 'div', 'main', 'section', 'article', 'aside', 'nav'], true)) {
+            $tag = 'div';
+        }
         $inner = $renderer->renderBlocks(Parser::parse($markup));
+        RenderState::leave('part:' . $slug);
         $classes = trim($block->className() . ' wp-block-template-part');
         return '<' . $tag . ' class="' . Html::attr($classes) . '">' . $inner . '</' . $tag . '>';
     }
 
     private function pattern(Block $block, Renderer $renderer): string
     {
-        $markup = $this->theme->pattern((string) $block->attr('slug', ''));
-        return $markup === null ? '' : $renderer->renderBlocks(Parser::parse($markup));
+        $slug = (string) $block->attr('slug', '');
+        $markup = $this->theme->pattern($slug);
+        if ($markup === null || !RenderState::enter('pattern:' . $slug)) {
+            return '';
+        }
+        $out = $renderer->renderBlocks(Parser::parse($markup));
+        RenderState::leave('pattern:' . $slug);
+        return $out;
     }
 
     private function siteTitle(Block $block, Renderer $renderer): string

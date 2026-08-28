@@ -15,6 +15,7 @@ use Minn\Db;
 use Minn\Front\Kind;
 use Minn\Front\Permalinks;
 use Minn\Support\Html;
+use Minn\Support\Kses;
 
 /**
  * navigation, navigation-link, page-list. A navigation block's items come
@@ -42,8 +43,13 @@ final readonly class Navigation
     {
         $items = $block->innerBlocks;
         $label = '';
+        $menuKey = null;
         if ($items === []) {
             $menu = $this->menuPost((int) $block->attr('ref', 0));
+            $menuKey = $menu === null ? null : 'menu:' . (int) $menu['ID'];
+            if ($menuKey !== null && !RenderState::enter($menuKey)) {
+                return '';
+            }
             $items = $menu === null ? [] : Parser::parse((string) $menu['post_content']);
             // The menu's title labels the nav only when the block names the menu.
             $label = (int) $block->attr('ref', 0) > 0 ? (string) ($menu['post_title'] ?? '') : '';
@@ -60,7 +66,7 @@ final readonly class Navigation
         // The block's own colour, size, and family presets ride on both
         // the nav and its list; the typography style rides inline on both.
         $presets = self::presetClasses($block);
-        $family = empty($block->attrs['fontFamily']) ? [] : ['has-' . $block->attrs['fontFamily'] . '-font-family'];
+        $family = empty($block->attrs['fontFamily']) ? [] : ['has-' . Styles::slug((string) $block->attrs['fontFamily']) . '-font-family'];
         $inline = Styles::inline((array) $block->attr('style', []));
         $style = $inline === '' ? '' : 'style="' . Html::attr($inline) . '" ';
 
@@ -69,22 +75,25 @@ final readonly class Navigation
             ...$presets,
             $vertical ? 'is-vertical' : null,
             $responsive ? 'is-responsive' : null,
-            $justify !== '' ? 'items-justified-' . $justify : null,
+            $justify !== '' ? 'items-justified-' . Styles::slug($justify) : null,
             'wp-block-navigation',
             ...$family,
         ])));
-        $list = '<ul ' . $style . 'class="' . $listClasses . '">' . $this->items($items, $renderer) . '</ul>';
+        $list = '<ul ' . $style . 'class="' . Html::attr($listClasses) . '">' . $this->items($items, $renderer) . '</ul>';
+        if ($menuKey !== null) {
+            RenderState::leave($menuKey);
+        }
 
         $navClasses = array_values(array_filter([
             ...$presets,
             $vertical ? 'is-vertical' : null,
             $responsive ? 'is-responsive' : null,
-            $justify !== '' ? 'items-justified-' . $justify : null,
+            $justify !== '' ? 'items-justified-' . Styles::slug($justify) : null,
             'wp-block-navigation',
             ...$family,
             ...array_filter(Layout::classes('navigation', $block->attrs, 'flex'), static fn (string $c) => $c !== 'is-vertical'),
         ]));
-        $nav = '<nav ' . $style . 'class="' . implode(' ', $navClasses) . '"';
+        $nav = '<nav ' . $style . 'class="' . Html::attr(implode(' ', $navClasses)) . '"';
         if (!$responsive) {
             return $nav . ' aria-label="' . Html::attr($label) . '">' . $list . '</nav>';
         }
@@ -140,16 +149,16 @@ final readonly class Navigation
             $classes[] = 'has-text-color';
         }
         if (!empty($block->attrs['textColor'])) {
-            $classes[] = 'has-' . $block->attrs['textColor'] . '-color';
+            $classes[] = 'has-' . Styles::slug((string) $block->attrs['textColor']) . '-color';
         }
         if (!empty($block->attrs['backgroundColor']) || isset($block->attrs['style']['color']['background'])) {
             $classes[] = 'has-background';
         }
         if (!empty($block->attrs['backgroundColor'])) {
-            $classes[] = 'has-' . $block->attrs['backgroundColor'] . '-background-color';
+            $classes[] = 'has-' . Styles::slug((string) $block->attrs['backgroundColor']) . '-background-color';
         }
         if (!empty($block->attrs['fontSize'])) {
-            $classes[] = 'has-' . $block->attrs['fontSize'] . '-font-size';
+            $classes[] = 'has-' . Styles::slug((string) $block->attrs['fontSize']) . '-font-size';
         }
         return $classes;
     }
@@ -170,7 +179,7 @@ final readonly class Navigation
     private function link(Block $block, Renderer $renderer): string
     {
         $label = (string) $block->attr('label', '');
-        $url = (string) $block->attr('url', '');
+        $url = Kses::url((string) $block->attr('url', ''));
         $resolution = $renderer->context()->resolution;
         $current = (string) $block->attr('kind', '') === 'post-type'
             && (int) $block->attr('id', 0) === $resolution->id()

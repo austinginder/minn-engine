@@ -38,13 +38,15 @@ final readonly class Comments
      * @param list<string> $approvedTokens
      * @return array{comments: list<array>, total: int}
      */
-    public function page(array $approvedTokens, int $page, int $perPage): array
+    public function page(array $approvedTokens, int $page, int $perPage, bool $publicPostsOnly = false): array
     {
         $placeholders = implode(',', array_fill(0, count($approvedTokens), '?'));
-        $from = "FROM {$this->db->table('comments')} WHERE comment_approved IN ({$placeholders}) AND comment_type IN ('', 'comment')";
+        $from = "FROM {$this->db->table('comments')} c"
+            . ($publicPostsOnly ? " INNER JOIN {$this->db->table('posts')} p ON p.ID = c.comment_post_ID AND p.post_status = 'publish' AND p.post_password = ''" : '')
+            . " WHERE c.comment_approved IN ({$placeholders}) AND c.comment_type IN ('', 'comment')";
         $total = (int) $this->db->value("SELECT COUNT(*) {$from}", $approvedTokens);
         $rows = $this->db->rows(
-            "SELECT * {$from} ORDER BY comment_date_gmt DESC LIMIT ? OFFSET ?",
+            "SELECT c.* {$from} ORDER BY c.comment_date_gmt DESC LIMIT ? OFFSET ?",
             [...$approvedTokens, $perPage, ($page - 1) * $perPage],
         );
         return ['comments' => $rows, 'total' => $total];

@@ -105,6 +105,10 @@ final readonly class Capabilities
         }
         $isAuthor = (int) $post['post_author'] === $userId;
         $status = (string) $post['post_status'];
+        if ($status === 'trash') {
+            // A trashed post keeps the rules of the status it was trashed from.
+            $status = $this->trashedFrom($postId);
+        }
         $plural = ($post['post_type'] === 'page' ? 'page' : 'post') . 's';
         $published = in_array($status, ['publish', 'future', 'private'], true);
 
@@ -131,5 +135,14 @@ final readonly class Capabilities
             $required[] = "{$verb}_private_{$plural}";
         }
         return $required;
+    }
+
+    private function trashedFrom(int $postId): string
+    {
+        $status = $this->db->value(
+            "SELECT meta_value FROM {$this->db->table('postmeta')} WHERE post_id = ? AND meta_key = '_wp_trash_meta_status' LIMIT 1",
+            [$postId],
+        );
+        return is_string($status) && $status !== '' ? $status : 'draft';
     }
 }

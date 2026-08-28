@@ -13,6 +13,7 @@ use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\RestError;
+use Minn\Support\Kses;
 
 /** wp/v2 revisions and autosaves under posts and pages, plus wp/v2/blocks. */
 final readonly class RevisionsController
@@ -56,11 +57,16 @@ final readonly class RevisionsController
         $revisionId = $this->revisions->saveAutosave(
             (int) $id,
             $userId,
-            PostsWriteController::field($body['title'] ?? ''),
-            PostsWriteController::field($body['content'] ?? ''),
-            PostsWriteController::field($body['excerpt'] ?? ''),
+            $this->clean(PostsWriteController::field($body['title'] ?? '')),
+            $this->clean(PostsWriteController::field($body['content'] ?? '')),
+            $this->clean(PostsWriteController::field($body['excerpt'] ?? '')),
         );
         return Reply::item($this->object($this->posts->find($revisionId), withPreview: true), Fields::fromQuery($request->query));
+    }
+
+    private function clean(string $markup): string
+    {
+        return $this->caller->can('unfiltered_html') ? $markup : Kses::filter($markup, Kses::POST);
     }
 
     /** Reusable blocks and synced patterns (wp_block rows). */
@@ -70,7 +76,8 @@ final readonly class RevisionsController
         if ($request->query('context') === 'edit' && !$this->caller->can('edit_posts')) {
             throw $this->caller->refuse('rest_forbidden_context', 'Sorry, you are not allowed to edit posts in this post type.');
         }
-        $rows = $this->posts->blocks((string) $request->query('status', 'publish'));
+        // Reusable blocks are not public: without edit_posts the list is empty, as on the reference.
+        $rows = $this->caller->can('edit_posts') ? $this->posts->blocks((string) $request->query('status', 'publish')) : [];
         $objects = [];
         foreach ($rows as $row) {
             $rowId = (int) $row['ID'];

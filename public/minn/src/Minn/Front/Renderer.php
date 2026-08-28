@@ -9,6 +9,7 @@ use Minn\Content\Excerpt;
 use Minn\Content\Posts;
 use Minn\Db;
 use Minn\Support\Html;
+use Minn\Content\PasswordGate;
 
 /**
  * The interim public theme: one clean template until the block-theme
@@ -113,8 +114,11 @@ final readonly class Renderer
 
     private function article(array $post): string
     {
-        return '<article class="entry"><h1 class="entry-title">' . Html::esc($post['post_title']) . '</h1>'
-            . '<div class="entry-content">' . Blocks::render((string) $post['post_content']) . '</div></article>';
+        $body = PasswordGate::is($post)
+            ? PasswordGate::form($post, $this->permalinks->url(''), $this->permalinks->forPost($post))
+            : Blocks::render((string) $post['post_content']);
+        return '<article class="entry"><h1 class="entry-title">' . Html::esc(PasswordGate::title($post)) . '</h1>'
+            . '<div class="entry-content">' . $body . '</div></article>';
     }
 
     /** @return array{0: string, 1: string} title and markup */

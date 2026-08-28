@@ -22,6 +22,10 @@ final class RenderState
     /** @var list<int> */
     private static array $galleries = [];
     private static int $elements = 0;
+    /** @var array<string, true> parts, patterns, menus, and synced blocks being rendered right now */
+    private static array $active = [];
+    private static int $depth = 0;
+    public const MAX_DEPTH = 64;
     /** the element class claimed for the dynamic block being rendered, until its wrapper takes it */
     private static ?string $pendingElements = null;
     /** @var array<string, int> navigation labels used so far, for the reference's de-duplicated aria-labels */
@@ -85,6 +89,36 @@ final class RenderState
         return $count === 1 ? $label : $label . ' ' . $count;
     }
 
+    /** Marks a nested source as being rendered; false when it is already open (a cycle). */
+    public static function enter(string $key): bool
+    {
+        if (isset(self::$active[$key])) {
+            return false;
+        }
+        self::$active[$key] = true;
+        return true;
+    }
+
+    public static function leave(string $key): void
+    {
+        unset(self::$active[$key]);
+    }
+
+    /** True while the block tree is shallower than the cap; deeper blocks render as nothing. */
+    public static function descend(): bool
+    {
+        if (self::$depth >= self::MAX_DEPTH) {
+            return false;
+        }
+        self::$depth++;
+        return true;
+    }
+
+    public static function ascend(): void
+    {
+        self::$depth--;
+    }
+
     /** A dynamic block claims its element class before rendering, so a block that renders nothing still counts. */
     public static function setPendingElements(?string $class): ?string
     {
@@ -131,6 +165,8 @@ final class RenderState
         self::$variations = [];
         self::$galleries = [];
         self::$elements = 0;
+        self::$active = [];
+        self::$depth = 0;
         self::$pendingElements = null;
         self::$elementRules = [];
         self::$labels = [];

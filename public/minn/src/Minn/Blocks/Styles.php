@@ -13,13 +13,26 @@ final class Styles
 {
     private const SIDES = ['top', 'right', 'bottom', 'left'];
 
-    /** var:preset|spacing|40 becomes var(--wp--preset--spacing--40). */
+    /**
+     * var:preset|spacing|40 becomes var(--wp--preset--spacing--40). A value
+     * that could close a declaration or a style element, or carry code,
+     * is dropped: these values come from stored block attributes.
+     */
     public static function value(string $value): string
     {
         if (str_starts_with($value, 'var:')) {
-            return 'var(--wp--' . str_replace('|', '--', substr($value, 4)) . ')';
+            $value = 'var(--wp--' . str_replace('|', '--', substr($value, 4)) . ')';
+        }
+        if (preg_match('/[{}<>;\\\\]|expression\s*\(|url\s*\(|javascript:|@import/i', $value)) {
+            return '';
         }
         return $value;
+    }
+
+    /** A class-name token from an attribute: letters, digits, dashes, underscores; nothing that ends an attribute. */
+    public static function slug(string $value): string
+    {
+        return (string) preg_replace('/[^A-Za-z0-9_-]+/', '', $value);
     }
 
     /**
@@ -44,7 +57,7 @@ final class Styles
                 'dimensions' => self::dimensionDeclarations($rules, $declarations),
             };
         }
-        return implode(';', $declarations);
+        return implode(';', array_filter($declarations, static fn (string $d) => !str_ends_with($d, ':')));
     }
 
     /** @param list<string> $declarations */
@@ -134,13 +147,13 @@ final class Styles
             $classes[] = (string) $attrs['className'];
         }
         if (!empty($attrs['textAlign'])) {
-            $classes[] = 'has-text-align-' . $attrs['textAlign'];
+            $classes[] = 'has-text-align-' . self::slug((string) $attrs['textAlign']);
         }
         if (!empty($attrs['fontSize'])) {
-            $classes[] = 'has-' . $attrs['fontSize'] . '-font-size';
+            $classes[] = 'has-' . self::slug((string) $attrs['fontSize']) . '-font-size';
         }
         if (!empty($attrs['fontFamily'])) {
-            $classes[] = 'has-' . $attrs['fontFamily'] . '-font-family';
+            $classes[] = 'has-' . self::slug((string) $attrs['fontFamily']) . '-font-family';
         }
         return $classes;
     }
@@ -148,6 +161,6 @@ final class Styles
     /** The align class an "align" attribute declares. */
     public static function align(array $attrs): ?string
     {
-        return empty($attrs['align']) ? null : 'align' . $attrs['align'];
+        return empty($attrs['align']) ? null : 'align' . self::slug((string) $attrs['align']);
     }
 }

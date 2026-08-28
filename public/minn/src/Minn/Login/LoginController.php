@@ -15,6 +15,9 @@ use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
+use Minn\Auth\Authenticated;
+use Minn\Auth\Nonce;
+use Minn\Support\Html;
 
 /**
  * The wp-login.php surface: a GET form, a POST that verifies the password,
@@ -40,7 +43,7 @@ final readonly class LoginController
     public function form(Request $request): Response
     {
         if ($request->query('action') === 'logout') {
-            return $this->cookies->clear(Response::redirect($this->permalinks->url('/wp-login.php?loggedout=true'), 302));
+            return $this->logout($request);
         }
         if ($request->has('user_id') && $request->has('cove_login_token')) {
             return $this->tokenLogin($request);
@@ -64,7 +67,7 @@ final readonly class LoginController
         $user = $this->users->find((int) $request->query('user_id', '0'));
         if ($user === null) {
             $this->throttle->recordFailure($request->remoteAddress);
-            return Response::html($error, 500);
+            return Response::html($error, 403);
         }
         $id = (int) $user['ID'];
         $token = (string) ($this->users->meta($id, 'cove_login_token') ?? '');
@@ -73,17 +76,18 @@ final readonly class LoginController
             $this->users->deleteMeta($id, 'cove_login_token');
             $this->users->deleteMeta($id, 'cove_login_token_time');
             $this->throttle->recordFailure($request->remoteAddress);
-            return Response::html($error, 500);
+            return Response::html($error, 403);
         }
-        if (!hash_equals($token, (string) $request->query('cove_login_token', ''))) {
+        // The meta holds the token's hash (a database read alone yields no link).
+        if (!hash_equals($token, hash('sha256', (string) $request->query('cove_login_token', '')))) {
             $this->throttle->recordFailure($request->remoteAddress);
-            return Response::html($error, 500);
+            return Response::html($error, 403);
         }
         $this->users->deleteMeta($id, 'cove_login_token');
         $this->users->deleteMeta($id, 'cove_login_token_time');
         $expiration = time() + 14 * self::DAY;
         $session = $this->sessions->create($id, $expiration, $request->remoteAddress, (string) ($request->header('user-agent') ?? ''));
-        return $this->cookies->attach(Response::redirect($this->permalinks->url('/wp-admin/'), 302), $user, $expiration, $session, $request->secure);
+        return $this->cookies->attach(Response::redirect($this->permalinks->url('/wp-admin/'), 302), $user, $expiration, $session, $request->secure, persistent: true);
     }
 
     #[Route(Method::Post, '/wp-login.php')]
@@ -101,15 +105,57 @@ final readonly class LoginController
             $this->throttle->recordFailure($request->remoteAddress);
             return Response::html($this->render($request, 'Error: The username or password you entered is incorrect.'));
         }
-        $this->throttle->clear($request->remoteAddress);
-        // Remember me extends the session from two days to fourteen.
-        $expiration = time() + (!empty($request->form['rememberme']) ? 14 : 2) * self::DAY;
+        // Remember me extends the session from two days to fourteen and keeps
+        // the cookie past the browser session; the failure counter is left to
+        // lapse, so a sign-in to one account cannot reset guesses at another.
+        $remember = !empty($request->form['rememberme']);
+        $expiration = time() + ($remember ? 14 : 2) * self::DAY;
         $token = $this->sessions->create((int) $user['ID'], $expiration, $request->remoteAddress, (string) ($request->header('user-agent') ?? ''));
-        $redirect = (string) ($request->form['redirect_to'] ?? '');
-        if ($redirect === '') {
-            $redirect = $this->permalinks->url('/minn-admin/');
+        $redirect = $this->safeRedirect((string) ($request->form['redirect_to'] ?? ''));
+        return $this->cookies->attach(Response::redirect($redirect, 302), $user, $expiration, $token, $request->secure, $remember);
+    }
+
+    /**
+     * Only this site's own URLs are sign-in destinations: a path, or an
+     * absolute URL on the home host. Anything else lands in the admin.
+     */
+    private function safeRedirect(string $target): string
+    {
+        $home = $this->permalinks->url('');
+        if ($target !== '' && str_starts_with($target, '/') && !str_starts_with($target, '//') && !str_starts_with($target, '/\\')) {
+            return $home . $target;
         }
-        return $this->cookies->attach(Response::redirect($redirect, 302), $user, $expiration, $token, $request->secure);
+        if ($target !== '' && parse_url($target, PHP_URL_HOST) !== null
+            && strcasecmp((string) parse_url($target, PHP_URL_HOST), (string) parse_url($home, PHP_URL_HOST)) === 0
+            && in_array(strtolower((string) parse_url($target, PHP_URL_SCHEME)), ['http', 'https'], true)) {
+            return $target;
+        }
+        return $this->permalinks->url('/minn-admin/');
+    }
+
+    /**
+     * Logging out ends the server-side session as well as the cookies, and
+     * needs the session's own nonce so a stray link cannot do it; without
+     * the nonce the reader is asked first.
+     */
+    private function logout(Request $request): Response
+    {
+        $session = $this->authenticator->session($request->cookies);
+        $signedOut = $this->cookies->clear(Response::redirect($this->permalinks->url('/wp-login.php?loggedout=true'), 302));
+        if (!$session instanceof Authenticated) {
+            return $signedOut;
+        }
+        $nonce = (string) ($request->query('_wpnonce') ?? $request->form['_wpnonce'] ?? '');
+        if (!Nonce::verify($nonce, $session->id(), $session->token, 'log-out')) {
+            $link = $this->permalinks->url('/wp-login.php?action=logout&_wpnonce=' . Nonce::create($session->id(), $session->token, 'log-out'));
+            return Response::html(
+                '<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Log Out</title></head><body>'
+                . '<p>You are attempting to log out of ' . Html::esc((string) ($this->site->option('blogname') ?? 'this site')) . '.</p>'
+                . '<p>Do you really want to <a href="' . Html::attr($link) . '">log out</a>?</p></body></html>',
+            );
+        }
+        $this->sessions->destroy($session->id(), $session->token);
+        return $signedOut;
     }
 
     /** A guessed-at address waits out the window; the page says so and the status lets tooling see it. */

@@ -12,6 +12,7 @@ use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\RestError;
+use Minn\Support\Kses;
 
 /** wp/v2 categories and tags: list, single, and the create/update/delete the taxonomy admin drives. */
 final readonly class TermsController
@@ -98,7 +99,7 @@ final readonly class TermsController
             throw new RestError('rest_cannot_create', $refusal, 403);
         }
         $body = $request->json();
-        $name = trim((string) ($body['name'] ?? ''));
+        $name = Kses::text((string) ($body['name'] ?? ''));
         if ($name === '') {
             throw RestError::missingParams(['name']);
         }
@@ -119,7 +120,7 @@ final readonly class TermsController
             $name,
             $slug,
             $taxonomy,
-            (string) ($body['description'] ?? ''),
+            Kses::filter((string) ($body['description'] ?? ''), Kses::COMMENT),
             $config['has_parent'] ? (int) ($body['parent'] ?? 0) : 0,
         );
         return Reply::item($this->object->view($this->terms->row($termId, $taxonomy), $base), Fields::fromQuery($request->query), 201)
@@ -145,7 +146,7 @@ final readonly class TermsController
         if (isset($body['name']) || isset($body['slug'])) {
             $this->terms->rename(
                 $termId,
-                isset($body['name']) ? (string) $body['name'] : (string) $term['name'],
+                isset($body['name']) ? Kses::text((string) $body['name']) : (string) $term['name'],
                 isset($body['slug']) ? $this->terms->uniqueSlug((string) $body['slug'], $taxonomy, $termId) : (string) $term['slug'],
             );
         }
@@ -153,7 +154,7 @@ final readonly class TermsController
             $this->terms->describe(
                 $termId,
                 $taxonomy,
-                isset($body['description']) ? (string) $body['description'] : (string) $term['description'],
+                isset($body['description']) ? Kses::filter((string) $body['description'], Kses::COMMENT) : (string) $term['description'],
                 $config['has_parent'] && isset($body['parent']) ? (int) $body['parent'] : (int) $term['parent'],
             );
         }

@@ -34,6 +34,7 @@ use Minn\Login\LoginController;
 use Minn\Rest\Api;
 use Minn\Theme\PageRenderer;
 use Minn\Theme\Theme;
+use Minn\Auth\Salts;
 
 /**
  * The engine's front door. An unmodified wp-config.php ends by requiring
@@ -58,6 +59,10 @@ final readonly class Engine
         } catch (\mysqli_sql_exception $e) {
             error_log('Minn Engine: database connection failed: ' . $e->getMessage());
             Failure::databaseUnavailable()->send();
+        }
+        if (!Salts::configured()) {
+            error_log('Minn Engine: wp-config.php is missing its unique keys and salts (AUTH_KEY … NONCE_SALT); refusing to sign anything.');
+            Failure::internal()->send();
         }
         try {
             $this->respond($db);

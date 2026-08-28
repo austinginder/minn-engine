@@ -43,7 +43,7 @@ final readonly class TagCloud
             $size = $max === $min ? 8 : $size;
             $links[] = '<a href="' . Html::attr($this->permalinks->forTerm($tag)) . '" class="tag-cloud-link tag-link-' . (int) $tag['term_id']
                 . ' tag-link-position-' . ($position + 1) . '" style="font-size: ' . rtrim(rtrim(number_format($size, 2, '.', ''), '0'), '.') . 'pt;"'
-                . ' aria-label="' . Html::attr($tag['name'] . ' (' . $count . ($count === 1 ? ' item' : ' items') . ')') . '">' . $tag['name'] . '</a>';
+                . ' aria-label="' . Html::attr($tag['name'] . ' (' . $count . ($count === 1 ? ' item' : ' items') . ')') . '">' . Html::esc((string) $tag['name']) . '</a>';
         }
         return '<p class="wp-block-tag-cloud">' . implode("\n", $links) . '</p>';
     }

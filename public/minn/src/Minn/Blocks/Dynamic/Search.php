@@ -9,6 +9,7 @@ use Minn\Blocks\RenderState;
 use Minn\Blocks\Renderer;
 use Minn\Front\Permalinks;
 use Minn\Support\Html;
+use Minn\Blocks\Styles;
 
 /**
  * core/search: the site search form. The button sits outside or inside
@@ -34,15 +35,18 @@ final readonly class Search
         $placeholder = (string) $block->attr('placeholder', '');
         $value = $renderer->context()->resolution->search ?? '';
         $position = (string) $block->attr('buttonPosition', 'button-outside');
+        if (!in_array($position, ['button-outside', 'button-inside', 'no-button', 'button-only'], true)) {
+            $position = 'button-outside';
+        }
         $useIcon = (bool) $block->attr('buttonUseIcon', false);
-        $family = empty($block->attrs['fontFamily']) ? '' : ' has-' . $block->attrs['fontFamily'] . '-font-family';
+        $family = empty($block->attrs['fontFamily']) ? '' : ' has-' . Styles::slug((string) $block->attrs['fontFamily']) . '-font-family';
 
         $buttonClasses = ['wp-block-search__button'];
         if (!empty($block->attrs['textColor'])) {
-            array_push($buttonClasses, 'has-text-color', 'has-' . $block->attrs['textColor'] . '-color');
+            array_push($buttonClasses, 'has-text-color', 'has-' . Styles::slug((string) $block->attrs['textColor']) . '-color');
         }
         if (!empty($block->attrs['backgroundColor'])) {
-            array_push($buttonClasses, 'has-background', 'has-' . $block->attrs['backgroundColor'] . '-background-color');
+            array_push($buttonClasses, 'has-background', 'has-' . Styles::slug((string) $block->attrs['backgroundColor']) . '-background-color');
         }
         if ($family !== '') {
             $buttonClasses[] = trim($family);
@@ -53,7 +57,7 @@ final readonly class Search
         $buttonClasses[] = 'wp-element-button';
 
         return '<form role="search" method="get" action="' . Html::attr($this->permalinks->url('/')) . '" class="wp-block-search__' . $position . ' wp-block-search__' . ($useIcon ? 'icon' : 'text') . '-button wp-block-search" >'
-            . '<label class="wp-block-search__label' . ((bool) $block->attr('showLabel', true) ? '' : ' screen-reader-text') . '" for="' . $id . '" >' . $label . '</label>'
+            . '<label class="wp-block-search__label' . ((bool) $block->attr('showLabel', true) ? '' : ' screen-reader-text') . '" for="' . $id . '" >' . Html::esc($label) . '</label>'
             . '<div class="wp-block-search__inside-wrapper" >'
             . '<input class="wp-block-search__input' . $family . '" id="' . $id . '" placeholder="' . Html::attr($placeholder) . '" value="' . Html::attr((string) $value) . '" type="search" name="s" required />'
             . '<button aria-label="' . Html::attr($buttonText) . '" class="' . implode(' ', $buttonClasses) . '" type="submit" >' . ($useIcon ? self::ICON : $buttonText) . '</button>'

@@ -9,6 +9,7 @@ use Minn\Content\Site;
 use Minn\Db;
 use Minn\Front\Permalinks;
 use Minn\Support\Html;
+use Minn\Content\PasswordGate;
 
 /** core/latest-posts: the newest published posts as a list, optionally dated. */
 final readonly class LatestPosts
@@ -22,7 +23,7 @@ final readonly class LatestPosts
 
     public function render(Block $block): string
     {
-        $count = max(1, (int) $block->attr('postsToShow', 5));
+        $count = max(1, min(100, (int) $block->attr('postsToShow', 5)));
         $withDates = (bool) $block->attr('displayPostDate', false);
         $posts = $this->db->rows(
             "SELECT * FROM {$this->db->table('posts')} WHERE post_type = 'post' AND post_status = 'publish'
@@ -32,7 +33,7 @@ final readonly class LatestPosts
         $items = [];
         foreach ($posts as $post) {
             $item = '<li><a class="wp-block-latest-posts__post-title" href="' . Html::attr($this->permalinks->forPost($post)) . '">'
-                . ($post['post_title'] === '' ? '(no title)' : $post['post_title']) . '</a>';
+                . ($post['post_title'] === '' ? '(no title)' : Html::esc(PasswordGate::title($post))) . '</a>';
             if ($withDates) {
                 $item .= '<time datetime="' . Dates::iso($this->site, (string) $post['post_date']) . '" class="wp-block-latest-posts__post-date">'
                     . Dates::format($this->site, (string) $post['post_date']) . '</time>';

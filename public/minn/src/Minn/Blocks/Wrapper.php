@@ -53,19 +53,19 @@ final class Wrapper
             $classes[] = 'has-text-color';
         }
         if (!empty($block->attrs['textColor'])) {
-            $classes[] = 'has-' . $block->attrs['textColor'] . '-color';
+            $classes[] = 'has-' . Styles::slug((string) $block->attrs['textColor']) . '-color';
         }
         if (!empty($block->attrs['backgroundColor']) || isset($block->attrs['style']['color']['background'])) {
             $classes[] = 'has-background';
         }
         if (!empty($block->attrs['backgroundColor'])) {
-            $classes[] = 'has-' . $block->attrs['backgroundColor'] . '-background-color';
+            $classes[] = 'has-' . Styles::slug((string) $block->attrs['backgroundColor']) . '-background-color';
         }
         if (!empty($block->attrs['fontSize'])) {
-            $classes[] = 'has-' . $block->attrs['fontSize'] . '-font-size';
+            $classes[] = 'has-' . Styles::slug((string) $block->attrs['fontSize']) . '-font-size';
         }
         if (!empty($block->attrs['fontFamily'])) {
-            $classes[] = 'has-' . $block->attrs['fontFamily'] . '-font-family';
+            $classes[] = 'has-' . Styles::slug((string) $block->attrs['fontFamily']) . '-font-family';
         }
         array_push($classes, ...$trailingClasses);
         $classAttr = ' class="' . Html::attr(implode(' ', $classes)) . '"';

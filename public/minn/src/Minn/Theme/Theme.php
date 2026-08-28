@@ -79,14 +79,26 @@ final class Theme
         return $base;
     }
 
+    /** A template or part name is a file name, never a path. */
+    private static function safe(string $slug): bool
+    {
+        return $slug !== '' && preg_match('/^[A-Za-z0-9._-]+$/', $slug) === 1 && !str_contains($slug, '..');
+    }
+
     public function templateFile(string $slug): ?string
     {
+        if (!self::safe($slug)) {
+            return null;
+        }
         $file = "{$this->dir}/templates/{$slug}.html";
         return is_file($file) ? (string) file_get_contents($file) : $this->parent?->templateFile($slug);
     }
 
     public function partFile(string $slug): ?string
     {
+        if (!self::safe($slug)) {
+            return null;
+        }
         $file = "{$this->dir}/parts/{$slug}.html";
         return is_file($file) ? (string) file_get_contents($file) : $this->parent?->partFile($slug);
     }

@@ -15,6 +15,8 @@ use Minn\Content\Texturize;
 use Minn\Db;
 use Minn\Front\Permalinks;
 use Minn\Support\Html;
+use Minn\Support\Kses;
+use Minn\Content\PasswordGate;
 
 /** comments, comments-title, comment-template, the comment-* blocks, and the comment form. */
 final readonly class Comments
@@ -46,7 +48,7 @@ final readonly class Comments
     private function comments(Block $block, Renderer $renderer): string
     {
         $post = $renderer->context()->post();
-        if ($post === null || ($post['comment_status'] !== 'open' && $this->approved((int) $post['ID']) === [])) {
+        if ($post === null || PasswordGate::is($post) || ($post['comment_status'] !== 'open' && $this->approved((int) $post['ID']) === [])) {
             return '';
         }
         $out = '';
@@ -71,7 +73,7 @@ final readonly class Comments
         $text = $count === 1 ? 'One response to ' . $title : $count . ' responses to ' . $title;
         $level = (int) $block->attr('level', 2);
         $classes = implode(' ', ['wp-block-comments-title', ...Styles::classes($block->attrs)]);
-        return '<h' . $level . ' id="comments" class="' . $classes . '">' . $text . '</h' . $level . '>';
+        return '<h' . $level . ' id="comments" class="' . Html::attr($classes) . '">' . $text . '</h' . $level . '>';
     }
 
     private function template(Block $block, Renderer $renderer): string
@@ -149,7 +151,7 @@ final readonly class Comments
             return '';
         }
         $name = Html::esc((string) $comment['comment_author']);
-        $url = (string) $comment['comment_author_url'];
+        $url = Kses::url((string) $comment['comment_author_url']);
         if ($url !== '') {
             $name = '<a rel="external nofollow ugc" href="' . Html::attr($url) . '" target="_self" >' . $name . '</a>';
         }
@@ -181,7 +183,7 @@ final readonly class Comments
     private function form(Block $block, Renderer $renderer): string
     {
         $post = $renderer->context()->post();
-        if ($post === null || $post['comment_status'] !== 'open') {
+        if ($post === null || $post['comment_status'] !== 'open' || PasswordGate::is($post)) {
             return '';
         }
         $path = (string) parse_url($this->permalinks->forPost($post), PHP_URL_PATH);

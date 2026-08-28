@@ -72,7 +72,11 @@ final class PatternText
     private function printf(array $arguments): string
     {
         $format = (string) array_shift($arguments);
-        return vsprintf($format, array_map(strval(...), $arguments));
+        try {
+            return vsprintf($format, array_map(strval(...), $arguments));
+        } catch (\ValueError | \ArgumentCountError) {
+            return '';
+        }
     }
 
     /** A concatenation of terms. */

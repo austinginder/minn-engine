@@ -51,6 +51,14 @@ final readonly class PostsController
         $placeholders = implode(',', array_fill(0, count($statuses), '?'));
         $params = [$type, ...$statuses];
         $where = "post_type = ? AND post_status IN ({$placeholders})";
+        // Another author's unpublished posts need edit_others_*; private ones read_private_*.
+        if ($needsAuth && !$this->caller->can($type === 'page' ? 'edit_others_pages' : 'edit_others_posts')) {
+            $where .= " AND (post_status = 'publish' OR post_author = ?)";
+            $params[] = $userId;
+        } elseif ($needsAuth && in_array('private', $statuses, true) && !$this->caller->can($type === 'page' ? 'read_private_pages' : 'read_private_posts')) {
+            $where .= " AND (post_status <> 'private' OR post_author = ?)";
+            $params[] = $userId;
+        }
         $author = $request->query('author');
         if ($author !== null && ctype_digit($author)) {
             $where .= ' AND post_author = ?';

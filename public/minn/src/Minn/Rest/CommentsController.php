@@ -12,6 +12,7 @@ use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\RestError;
+use Minn\Support\Kses;
 
 /**
  * wp/v2/comments: the status tabs with pagination headers, single,
@@ -43,7 +44,7 @@ final readonly class CommentsController
         $tokens = Comments::tokensFor($status) ?? [$status];
         $perPage = max(1, min(100, (int) $request->query('per_page', '10')));
         $page = max(1, (int) $request->query('page', '1'));
-        $result = $this->comments->page($tokens, $page, $perPage);
+        $result = $this->comments->page($tokens, $page, $perPage, publicPostsOnly: !$this->caller->can('moderate_comments'));
         return Reply::list(
             array_map(fn (array $c) => $this->object->build($c, $context === 'edit'), $result['comments']),
             $result['total'],
@@ -58,6 +59,10 @@ final readonly class CommentsController
         $comment = $this->plainComment((int) $id);
         $moderator = $this->caller->can('moderate_comments');
         if ($comment['comment_approved'] !== '1' && !$moderator) {
+            throw $this->caller->refuse('rest_cannot_read', 'Sorry, you are not allowed to read this comment.');
+        }
+        $post = $this->posts->find((int) $comment['comment_post_ID']);
+        if (!$moderator && ($post === null || $post['post_status'] !== 'publish' || $post['post_password'] !== '') && !$this->caller->can('edit_post', (int) $comment['comment_post_ID'])) {
             throw $this->caller->refuse('rest_cannot_read', 'Sorry, you are not allowed to read this comment.');
         }
         $edit = $request->query('context') === 'edit';
@@ -76,12 +81,23 @@ final readonly class CommentsController
         $body = $request->json();
         $postId = (int) ($body['post'] ?? 0);
         $content = is_array($body['content'] ?? null) ? (string) ($body['content']['raw'] ?? '') : (string) ($body['content'] ?? '');
-        if ($this->posts->find($postId) === null) {
+        $post = $this->posts->find($postId);
+        if ($post === null) {
             throw new RestError('rest_comment_invalid_post_id', 'Sorry, you are not allowed to create this comment without a post.', 403);
+        }
+        if ($post['post_status'] === 'trash') {
+            throw new RestError('rest_comment_trash_post', 'Sorry, you are not allowed to create a comment on this post.', 403);
+        }
+        if ($post['post_status'] !== 'publish' && !$this->caller->can('edit_post', $postId)) {
+            throw new RestError('rest_comment_draft_post', 'Sorry, you are not allowed to create a comment on this post.', 403);
+        }
+        if ($post['comment_status'] !== 'open') {
+            throw new RestError('rest_comment_closed', 'Sorry, comments are closed for this item.', 403);
         }
         if (trim($content) === '') {
             throw new RestError('rest_comment_content_invalid', 'Invalid comment content.', 400);
         }
+        $content = $this->cleanComment($content);
         // A moderator self-approves; everyone else lands in the queue (the
         // previously-approved shortcut is a recorded gap).
         $approved = $this->caller->can('moderate_comments') ? '1' : '0';
@@ -130,12 +146,13 @@ final readonly class CommentsController
         }
         if (isset($body['content'])) {
             $content = is_array($body['content']) ? (string) ($body['content']['raw'] ?? '') : (string) $body['content'];
-            $this->comments->update($commentId, ['comment_content' => $content]);
+            $this->comments->update($commentId, ['comment_content' => $this->cleanComment($content)]);
         }
         $columns = ['author_name' => 'comment_author', 'author_email' => 'comment_author_email', 'author_url' => 'comment_author_url'];
         foreach ($columns as $field => $column) {
             if (isset($body[$field])) {
-                $this->comments->update($commentId, [$column => (string) $body[$field]]);
+                $value = $column === 'comment_author_url' ? Kses::url((string) $body[$field]) : Kses::text((string) $body[$field]);
+                $this->comments->update($commentId, [$column => $value]);
             }
         }
         return Reply::item($this->object->build($this->comments->find($commentId), true), Fields::fromQuery($request->query));
@@ -176,5 +193,21 @@ final readonly class CommentsController
             throw new RestError('rest_comment_invalid_id', 'Invalid comment ID.', 404);
         }
         return $comment;
+    }
+
+    /**
+     * Comment markup: the comment allowlist unless the caller has
+     * unfiltered_html, and every link marked nofollow ugc, as the
+     * reference stores it.
+     */
+    private function cleanComment(string $content): string
+    {
+        if (!$this->caller->can('unfiltered_html')) {
+            $content = Kses::filter($content, Kses::COMMENT);
+        }
+        return (string) preg_replace_callback('/<a\s([^>]*)>/i', static function (array $m): string {
+            $attributes = preg_replace('/\s*\brel\s*=\s*("[^"]*"|\'[^\']*\'|[^\s>]+)/i', '', $m[1]);
+            return '<a ' . trim((string) $attributes) . ' rel="nofollow ugc">';
+        }, $content);
     }
 }

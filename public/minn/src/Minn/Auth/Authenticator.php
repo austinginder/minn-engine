@@ -57,7 +57,7 @@ final readonly class Authenticator
     /** Username and password to a user row; no session is created here. */
     public function login(string $username, string $password): ?array
     {
-        $user = $this->users->findByLogin($username);
+        $user = $this->users->findByLogin($username) ?? (str_contains($username, '@') ? $this->users->findByEmail($username) : null);
         if ($user === null || !Password::verify($password, (string) $user['user_pass'])) {
             return null;
         }

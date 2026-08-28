@@ -8,6 +8,7 @@ use Minn\Blocks\Block;
 use Minn\Blocks\Parser;
 use Minn\Blocks\Renderer;
 use Minn\Db;
+use Minn\Blocks\RenderState;
 
 /** core/block: a synced pattern, rendered from the wp_block post it references. */
 final readonly class SyncedPattern
@@ -26,6 +27,11 @@ final readonly class SyncedPattern
             "SELECT post_content FROM {$this->db->table('posts')} WHERE ID = ? AND post_type = 'wp_block' AND post_status = 'publish' LIMIT 1",
             [$ref],
         );
-        return $row === null ? '' : $renderer->renderBlocks(Parser::parse((string) $row['post_content']));
+        if ($row === null || !RenderState::enter('block:' . $ref)) {
+            return '';
+        }
+        $out = $renderer->renderBlocks(Parser::parse((string) $row['post_content']));
+        RenderState::leave('block:' . $ref);
+        return $out;
     }
 }

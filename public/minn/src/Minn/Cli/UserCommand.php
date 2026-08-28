@@ -122,7 +122,8 @@ final class UserCommand
         $runtime = Runtime::boot();
         $user = self::find($args[0]) ?? WP_CLI::error("User not found: {$args[0]}");
         $token = substr(sha1(random_bytes(24)), 0, 7);
-        $runtime->users->setMeta((int) $user['ID'], 'cove_login_token', $token);
+        // Only the hash is stored; the link carries the token.
+        $runtime->users->setMeta((int) $user['ID'], 'cove_login_token', hash('sha256', $token));
         $runtime->users->setMeta((int) $user['ID'], 'cove_login_token_time', (string) time());
         WP_CLI::log($runtime->permalinks->url('/wp-login.php') . '?user_id=' . (int) $user['ID'] . '&cove_login_token=' . $token);
     }

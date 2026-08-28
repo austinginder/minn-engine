@@ -14,6 +14,7 @@ use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\RestError;
+use Minn\Support\Kses;
 
 /** wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives. */
 final readonly class UsersController
@@ -33,6 +34,7 @@ final readonly class UsersController
         private UserObject $object,
         private RestUrl $url,
         private Caller $caller,
+        private Roles $roles,
     ) {
     }
 
@@ -61,6 +63,9 @@ final readonly class UsersController
         $page = max(1, (int) $request->query('page', '1'));
         $order = strtoupper((string) $request->query('order', 'asc')) === 'DESC' ? 'DESC' : 'ASC';
         $orderBy = self::ORDER_BY[(string) $request->query('orderby', 'name')] ?? 'u.display_name';
+        if ($request->query('orderby') === 'email' && !$this->caller->can('list_users')) {
+            throw $this->caller->refuse('rest_forbidden_orderby', 'Sorry, you are not allowed to order users by this parameter.');
+        }
 
         $where = $context === 'edit'
             ? '1 = 1'
@@ -100,7 +105,33 @@ final readonly class UsersController
             }
             return Reply::item($this->object->edit($user), $fields);
         }
+        // A user without published content is not public; only list_users (or the user) sees the profile.
+        if ($self !== $userId && !$this->caller->can('list_users') && !$this->hasPublishedContent($userId)) {
+            throw $this->caller->refuse('rest_user_cannot_view', 'Sorry, you are not allowed to list users.');
+        }
         return Reply::item($this->object->view($user, $self === $userId), $fields);
+    }
+
+    private function hasPublishedContent(int $userId): bool
+    {
+        return (int) $this->db->value(
+            "SELECT COUNT(*) FROM {$this->db->table('posts')} WHERE post_author = ? AND post_status = 'publish' AND post_type IN ('post', 'page')",
+            [$userId],
+        ) > 0;
+    }
+
+    /** A role must be registered, as the reference insists. */
+    private function validRole(string $role): string
+    {
+        if (!isset($this->roles->all()[$role])) {
+            throw new RestError('rest_user_invalid_role', "The role {$role} does not exist.", 400);
+        }
+        return $role;
+    }
+
+    private static function validEmail(string $email): bool
+    {
+        return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
     }
 
     /** Engine-created users carry real scheme hashes and the full default meta set. */
@@ -126,13 +157,16 @@ final readonly class UsersController
         if ($this->users->findByEmail($email) !== null) {
             throw RestError::bare('existing_user_email', 'Sorry, that email address is already used!');
         }
-        $role = (string) ($body['roles'][0] ?? ($this->site->option('default_role') ?? 'subscriber'));
+        $role = $this->validRole((string) ($body['roles'][0] ?? ($this->site->option('default_role') ?? 'subscriber')));
+        if (!self::validEmail($email)) {
+            throw new RestError('rest_user_invalid_email', 'Invalid email address.', 400);
+        }
         $newId = $this->users->insert([
             'user_login' => $login,
             'user_pass' => Password::hash((string) $body['password']),
             'user_nicename' => $this->users->uniqueNicename($login),
             'user_email' => $email,
-            'user_url' => (string) ($body['url'] ?? ''),
+            'user_url' => Kses::url((string) ($body['url'] ?? '')),
             'user_registered' => gmdate('Y-m-d H:i:s'),
             'user_activation_key' => '',
             'user_status' => 0,
@@ -141,10 +175,10 @@ final readonly class UsersController
         // The default meta set the reference writes on insert, in its order.
         $prefix = $this->db->prefix();
         $meta = [
-            'nickname' => (string) ($body['nickname'] ?? $login),
-            'first_name' => (string) ($body['first_name'] ?? ''),
-            'last_name' => (string) ($body['last_name'] ?? ''),
-            'description' => (string) ($body['description'] ?? ''),
+            'nickname' => Kses::text((string) ($body['nickname'] ?? $login)),
+            'first_name' => Kses::text((string) ($body['first_name'] ?? '')),
+            'last_name' => Kses::text((string) ($body['last_name'] ?? '')),
+            'description' => Kses::filter((string) ($body['description'] ?? ''), Kses::COMMENT),
             'rich_editing' => 'true',
             'syntax_highlighting' => 'true',
             'infinite_scrolling' => 'true',
@@ -180,13 +214,18 @@ final readonly class UsersController
         $body = $request->json();
         $columns = [];
         if (isset($body['name'])) {
-            $columns['display_name'] = (string) $body['name'];
+            $columns['display_name'] = Kses::text((string) $body['name']);
         }
         if (isset($body['email'])) {
-            $columns['user_email'] = (string) $body['email'];
+            $email = (string) $body['email'];
+            $other = $this->users->findByEmail($email);
+            if (!self::validEmail($email) || ($other !== null && (int) $other['ID'] !== $userId)) {
+                throw new RestError('rest_user_invalid_email', 'Invalid email address.', 400);
+            }
+            $columns['user_email'] = $email;
         }
         if (isset($body['url'])) {
-            $columns['user_url'] = (string) $body['url'];
+            $columns['user_url'] = Kses::url((string) $body['url']);
         }
         if (isset($body['slug'])) {
             $columns['user_nicename'] = $this->users->uniqueNicename((string) $body['slug'], $userId);
@@ -197,7 +236,8 @@ final readonly class UsersController
         $this->users->update($userId, $columns);
         foreach (['first_name', 'last_name', 'description', 'nickname', 'locale'] as $key) {
             if (isset($body[$key])) {
-                $this->users->setMeta($userId, $key, (string) $body[$key]);
+                $value = $key === 'description' ? Kses::filter((string) $body[$key], Kses::COMMENT) : Kses::text((string) $body[$key]);
+                $this->users->setMeta($userId, $key, $value);
             }
         }
         if (isset($body['meta']['show_admin_bar_front'])) {
@@ -207,7 +247,7 @@ final readonly class UsersController
             if (!$this->caller->can('promote_users')) {
                 throw $this->caller->refuse('rest_cannot_edit_roles', 'Sorry, you are not allowed to edit roles of this user.');
             }
-            $role = (string) $body['roles'][0];
+            $role = $this->validRole((string) $body['roles'][0]);
             $prefix = $this->db->prefix();
             $this->users->setMeta($userId, "{$prefix}capabilities", Roles::serializeSingle($role));
             $this->users->setMeta($userId, "{$prefix}user_level", (string) Roles::level($role));

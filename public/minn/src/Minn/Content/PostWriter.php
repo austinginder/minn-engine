@@ -45,9 +45,14 @@ final readonly class PostWriter
         $this->update($id, ['post_status' => $status]);
     }
 
+    /** One row per key: an existing value is replaced, not shadowed. */
     public function setMeta(int $id, string $key, string $value): void
     {
-        $this->db->execute("INSERT INTO {$this->db->table('postmeta')} (post_id, meta_key, meta_value) VALUES (?, ?, ?)", [$id, $key, $value]);
+        $table = $this->db->table('postmeta');
+        $updated = $this->db->execute("UPDATE {$table} SET meta_value = ? WHERE post_id = ? AND meta_key = ?", [$value, $id, $key]);
+        if ($updated === 0 && (int) $this->db->value("SELECT COUNT(*) FROM {$table} WHERE post_id = ? AND meta_key = ?", [$id, $key]) === 0) {
+            $this->db->execute("INSERT INTO {$table} (post_id, meta_key, meta_value) VALUES (?, ?, ?)", [$id, $key, $value]);
+        }
     }
 
     public function deleteMeta(int $id, string $key): void

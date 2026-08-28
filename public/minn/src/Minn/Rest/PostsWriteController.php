@@ -12,6 +12,7 @@ use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\RestError;
+use Minn\Support\Kses;
 
 /**
  * wp/v2 posts and pages, write side: create, update, trash, and force
@@ -42,7 +43,7 @@ final readonly class PostsWriteController
         }
 
         $body = $request->json();
-        $status = (string) ($body['status'] ?? 'draft');
+        $status = self::validStatus((string) ($body['status'] ?? 'draft'));
         $this->checkStickyPasswordConflict($body, null);
         $author = $userId;
         if (isset($body['author']) && (int) $body['author'] !== $userId) {
@@ -83,9 +84,9 @@ final readonly class PostsWriteController
             'post_author' => $author,
             'post_date' => $date,
             'post_date_gmt' => $dateGmt,
-            'post_content' => self::field($body['content'] ?? ''),
-            'post_title' => $title,
-            'post_excerpt' => self::field($body['excerpt'] ?? ''),
+            'post_content' => $this->clean(self::field($body['content'] ?? '')),
+            'post_title' => $this->clean($title),
+            'post_excerpt' => $this->clean(self::field($body['excerpt'] ?? '')),
             'post_status' => $status,
             'comment_status' => in_array($body['comment_status'] ?? '', ['open', 'closed'], true) ? $body['comment_status'] : 'open',
             'ping_status' => in_array($body['ping_status'] ?? '', ['open', 'closed'], true) ? $body['ping_status'] : 'open',
@@ -164,19 +165,19 @@ final readonly class PostsWriteController
             }
         }
         if (array_key_exists('title', $body)) {
-            $columns['post_title'] = self::field($body['title']);
+            $columns['post_title'] = $this->clean(self::field($body['title']));
         }
         if (array_key_exists('content', $body)) {
-            $columns['post_content'] = self::field($body['content']);
+            $columns['post_content'] = $this->clean(self::field($body['content']));
         }
         if (array_key_exists('excerpt', $body)) {
-            $columns['post_excerpt'] = self::field($body['excerpt']);
+            $columns['post_excerpt'] = $this->clean(self::field($body['excerpt']));
         }
         if (array_key_exists('slug', $body)) {
             $columns['post_name'] = $this->writer->uniqueSlug((string) $body['slug'], $postId);
         }
         if (array_key_exists('status', $body)) {
-            $newStatus = (string) $body['status'];
+            $newStatus = self::validStatus((string) $body['status']);
             if (in_array($newStatus, self::LIVE, true) && !$this->caller->can($type === 'page' ? 'publish_pages' : 'publish_posts')) {
                 throw new RestError('rest_cannot_publish', 'Sorry, you are not allowed to publish posts in this post type.', 403);
             }
@@ -250,6 +251,21 @@ final readonly class PostsWriteController
         if ($wantsSticky && $wantsPassword && (isset($body['sticky']) || array_key_exists('password', $body))) {
             throw new RestError('rest_invalid_field', 'A post can not be sticky and have a password.', 400);
         }
+    }
+
+    /** Only the registered statuses can be stored. */
+    private static function validStatus(string $status): string
+    {
+        if (!in_array($status, ['publish', 'future', 'draft', 'pending', 'private'], true)) {
+            throw new RestError('rest_invalid_param', 'Invalid parameter(s): status', 400, ['params' => ['status' => 'status is not one of publish, future, draft, pending, and private.']]);
+        }
+        return $status;
+    }
+
+    /** Markup from a caller without unfiltered_html goes through the allowlist filter. */
+    private function clean(string $markup): string
+    {
+        return $this->caller->can('unfiltered_html') ? $markup : Kses::filter($markup, Kses::POST);
     }
 
     /** A field that may arrive as a scalar or as {raw: ...}. */

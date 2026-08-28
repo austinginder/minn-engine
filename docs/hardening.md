@@ -11,8 +11,17 @@ What the engine does on its own, and what the server in front of it must do.
   503 with `Retry-After` when the database cannot be reached.
 - **Sign-in throttle.** `Minn\Auth\LoginThrottle`: twenty failed sign-ins from one
   address in fifteen minutes, and that address gets 429 with `Retry-After` until the
-  window ends. Password and one-time-link failures share the counter; a successful
-  sign-in clears it. Rows live in `wp_options` as `minn_login_throttle_*`, autoload off.
+  window ends. Password and one-time-link failures share the counter, and a successful
+  sign-in does not reset it (one owned account must not launder guesses at another);
+  the window lapses on its own. Rows live in `wp_options` as `minn_login_throttle_*`,
+  autoload off.
+- **Stored markup.** Callers without `unfiltered_html` have their post, media, comment,
+  term, and profile markup filtered by `Minn\Support\Kses`, an allowlist written for
+  the engine and matched against the reference's results. Password-protected posts
+  show only the password form.
+- **Sign-in and sign-out.** `redirect_to` is honoured for this site's own URLs only;
+  logging out destroys the server-side session and needs the session's `log-out`
+  nonce (a confirmation page stands in when it is missing).
 - **Headers.** Every response carries `X-Content-Type-Options: nosniff`. The sign-in page
   and the admin add `X-Frame-Options: SAMEORIGIN`, `Referrer-Policy:
   strict-origin-when-cross-origin`, and a no-store `Cache-Control`, which is what the
@@ -20,6 +29,8 @@ What the engine does on its own, and what the server in front of it must do.
 - **Cookies.** Auth cookies are `HttpOnly`, `SameSite=Lax`, `Secure` when the request
   was HTTPS, on the reference's paths (`/wp-admin`, `/wp-content/plugins`, and `/` for
   the logged-in cookie).
+- **Salts.** The engine refuses to serve until `wp-config.php` carries real keys and
+  salts; the installer placeholder counts as missing.
 - **Addresses.** The throttle keys on `REMOTE_ADDR`. Behind a proxy or CDN that is the
   proxy's address; terminate that at the server (have it rewrite the client address
   into `REMOTE_ADDR`, as Caddy's `trusted_proxies` and nginx's `real_ip` do) rather

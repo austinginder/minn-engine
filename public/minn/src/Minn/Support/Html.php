@@ -31,7 +31,7 @@ final class Html
         $pattern = $onClass === null
             ? '/<([a-zA-Z][\w-]*)((?:\s+[^\s=>\/]+(?:="[^"]*")?)*)\s*(\/?)>/'
             : '/<([a-zA-Z][\w-]*)((?:\s+[^\s=>\/]+(?:="[^"]*")?)*\s+class="[^"]*\b' . preg_quote($onClass, '/') . '\b[^"]*"(?:\s+[^\s=>\/]+(?:="[^"]*")?)*)\s*(\/?)>/';
-        $joined = implode(' ', $classes);
+        $joined = self::attr(implode(' ', $classes));
         return (string) preg_replace_callback($pattern, static function (array $m) use ($joined): string {
             [$whole, $tag, $attributes, $selfClose] = $m;
             if (preg_match('/\sclass="([^"]*)"/', $attributes, $c)) {

@@ -32,7 +32,7 @@ final class Layout
                 $classes[] = 'is-horizontal';
             }
             if (!empty($layout['justifyContent'])) {
-                $classes[] = 'is-content-justification-' . $layout['justifyContent'];
+                $classes[] = 'is-content-justification-' . Styles::slug((string) $layout['justifyContent']);
             }
             if (($layout['flexWrap'] ?? '') === 'nowrap') {
                 $classes[] = 'is-nowrap';
@@ -105,7 +105,7 @@ final class Layout
             if (!empty($layout['columnCount'])) {
                 $rules[] = 'grid-template-columns:repeat(' . (int) $layout['columnCount'] . ', minmax(0, 1fr))';
             } else {
-                $rules[] = 'grid-template-columns:repeat(auto-fill, minmax(min(' . ($layout['minimumColumnWidth'] ?? '12rem') . ', 100%), 1fr))';
+                $rules[] = 'grid-template-columns:repeat(auto-fill, minmax(min(' . (Styles::value((string) ($layout['minimumColumnWidth'] ?? '12rem')) ?: '12rem') . ', 100%), 1fr))';
                 $rules[] = 'container-type:inline-size';
             }
             if ($gap !== null) {

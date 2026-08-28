@@ -17,7 +17,6 @@ final readonly class Uploads
         'jpeg' => 'image/jpeg',
         'gif' => 'image/gif',
         'webp' => 'image/webp',
-        'svg' => 'image/svg+xml',
         'pdf' => 'application/pdf',
         'txt' => 'text/plain',
         'mp4' => 'video/mp4',
@@ -53,9 +52,25 @@ final readonly class Uploads
     }
 
     /** A safe, lower-cased file name. */
+    /**
+     * A safe file name: one extension. Every dot-separated part between the
+     * base and the last extension that is not itself an allowed extension
+     * is joined with an underscore, so "shell.php.png" lands as
+     * "shell_php.png" and no handler can be talked into running it.
+     */
     public static function sanitizeName(string $filename): string
     {
-        return strtolower(preg_replace('/[^A-Za-z0-9._-]+/', '-', basename($filename)));
+        $name = strtolower((string) preg_replace('/[^A-Za-z0-9._-]+/', '-', basename($filename)));
+        $parts = explode('.', $name);
+        if (count($parts) <= 2) {
+            return $name;
+        }
+        $extension = array_pop($parts);
+        $base = array_shift($parts);
+        foreach ($parts as $part) {
+            $base .= (isset(self::MIMES[$part]) ? '.' : '_') . $part;
+        }
+        return $base . '.' . $extension;
     }
 
     /**

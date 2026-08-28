@@ -48,6 +48,6 @@ final readonly class FrontController
             ?? $this->renderer->render($resolution);
         return Response::html($html, $resolution->status)
             ->withHeader('Link', '<' . $this->resolver->permalinks()->url('/wp-json/') . '>; rel="https://api.w.org/"')
-            ->withHeader('X-Powered-By', 'Minn Engine/' . (defined('MINN_ENGINE_VERSION') ? MINN_ENGINE_VERSION : ''));
+            ->withHeader('X-Powered-By', 'Minn Engine');
     }
 }

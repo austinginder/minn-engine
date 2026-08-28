@@ -31,7 +31,7 @@ final readonly class Categories
         $items = '';
         foreach ($terms as $term) {
             $current = (int) $term['term_id'] === $viewing;
-            $items .= "\t" . '<li class="cat-item cat-item-' . (int) $term['term_id'] . ($current ? ' current-cat' : '') . '"><a' . ($current ? ' aria-current="page"' : '') . ' href="' . Html::attr($this->permalinks->forTerm($term)) . '">' . $term['name'] . "</a>\n</li>\n";
+            $items .= "\t" . '<li class="cat-item cat-item-' . (int) $term['term_id'] . ($current ? ' current-cat' : '') . '"><a' . ($current ? ' aria-current="page"' : '') . ' href="' . Html::attr($this->permalinks->forTerm($term)) . '">' . Html::esc((string) $term['name']) . "</a>\n</li>\n";
         }
         return '<ul class="wp-block-categories-list wp-block-categories-taxonomy-category wp-block-categories">' . $items . '</ul>';
     }

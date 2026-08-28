@@ -17,6 +17,19 @@ final class Salts
         'secure_auth' => ['SECURE_AUTH_KEY', 'SECURE_AUTH_SALT'],
     ];
 
+    /** True when every key and salt is defined and none is the installer's placeholder. */
+    public static function configured(): bool
+    {
+        foreach (self::SCHEMES as [$key, $salt]) {
+            foreach ([$key, $salt] as $constant) {
+                if (!defined($constant) || (string) constant($constant) === '' || str_contains((string) constant($constant), 'put your unique phrase here')) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     public static function for(string $scheme): string
     {
         [$key, $salt] = self::SCHEMES[$scheme];

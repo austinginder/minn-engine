@@ -18,6 +18,7 @@ use Minn\Content\Texturize;
 use Minn\Content\Users;
 use Minn\Front\Permalinks;
 use Minn\Support\Html;
+use Minn\Content\PasswordGate;
 
 /** The post-* blocks: they render the context's current post. */
 final readonly class PostBlocks
@@ -50,9 +51,9 @@ final readonly class PostBlocks
         }
         $level = (int) $block->attr('level', 2);
         $tag = $level === 0 ? 'p' : 'h' . $level;
-        $title = Texturize::text((string) $post['post_title']);
+        $title = Texturize::text(PasswordGate::title($post));
         if ((bool) $block->attr('isLink', false)) {
-            $title = '<a href="' . Html::attr($this->permalinks->forPost($post)) . '" target="' . Html::attr((string) $block->attr('linkTarget', '_self')) . '" >' . $title . '</a>';
+            $title = '<a href="' . Html::attr($this->permalinks->forPost($post)) . '" target="' . self::target($block) . '" >' . $title . '</a>';
         }
         return self::open($tag, ['wp-block-post-title', ...Styles::classes($block->attrs)], $block, styleFirst: true) . $title . '</' . $tag . '>';
     }
@@ -66,6 +67,9 @@ final readonly class PostBlocks
             return '';
         }
         $raw = (string) $post['post_content'];
+        if (PasswordGate::is($post)) {
+            $raw = PasswordGate::form($post, $this->permalinks->url(''), $this->permalinks->forPost($post));
+        }
         if (trim($raw) === '') {
             return '';
         }
@@ -112,7 +116,7 @@ final readonly class PostBlocks
         }
         $name = Html::esc((string) $user['display_name']);
         if ((bool) $block->attr('isLink', false)) {
-            $name = '<a href="' . Html::attr($this->permalinks->forAuthor($user)) . '" target="' . Html::attr((string) $block->attr('linkTarget', '_self')) . '" class="wp-block-post-author-name__link">' . $name . '</a>';
+            $name = '<a href="' . Html::attr($this->permalinks->forAuthor($user)) . '" target="' . self::target($block) . '" class="wp-block-post-author-name__link">' . $name . '</a>';
         }
         return self::open('div', ['wp-block-post-author-name', ...Styles::classes($block->attrs)], $block) . $name . '</div>';
     }
@@ -123,7 +127,7 @@ final readonly class PostBlocks
         if ($post === null) {
             return '';
         }
-        $text = trim(strip_tags(Excerpt::render($post)));
+        $text = PasswordGate::is($post) ? PasswordGate::EXCERPT : trim(strip_tags(Excerpt::render($post)));
         // The reference leaves a space after the text where a "more" link would go.
         return self::open('div', ['wp-block-post-excerpt', ...Styles::classes($block->attrs)], $block, linkColorClass: true)
             . '<p class="wp-block-post-excerpt__excerpt">' . $text . ' </p></div>';
@@ -188,7 +192,7 @@ final readonly class PostBlocks
             }
             $links[] = '<a href="' . Html::attr($this->permalinks->forTerm($term)) . '" rel="tag">' . Html::esc((string) $term['name']) . '</a>';
         }
-        $separator = '<span class="wp-block-post-terms__separator">' . (string) $block->attr('separator', ', ') . '</span>';
+        $separator = '<span class="wp-block-post-terms__separator">' . Html::esc((string) $block->attr('separator', ', ')) . '</span>';
         return self::open('div', ['taxonomy-' . $taxonomy, 'wp-block-post-terms', ...Styles::classes($block->attrs)], $block, styleFirst: true, blockName: 'core/post-terms')
             . implode($separator, $links) . '</div>';
     }
@@ -201,7 +205,10 @@ final readonly class PostBlocks
         $target = $post === null ? null : $this->posts->adjacent($post, $next);
         $inner = '';
         if ($target !== null) {
-            $arrow = $block->attr('arrow', 'none');
+            $arrow = (string) $block->attr('arrow', 'none');
+            if (!in_array($arrow, ['none', 'arrow', 'chevron'], true)) {
+                $arrow = 'none';
+            }
             $glyph = $arrow === 'chevron' ? ($next ? '›' : '‹') : ($next ? '→' : '←');
             $label = (bool) $block->attr('showTitle', false) ? Texturize::text((string) $target['post_title']) : ucfirst($direction);
             $link = '<a href="' . Html::attr($this->permalinks->forPost($target)) . '" rel="' . ($next ? 'next' : 'prev') . '">' . $label . '</a>';
@@ -222,6 +229,11 @@ final readonly class PostBlocks
      *
      * @param list<string> $classes
      */
+    private static function target(Block $block): string
+    {
+        return (string) $block->attr('linkTarget', '_self') === '_blank' ? '_blank' : '_self';
+    }
+
     private static function open(string $tag, array $classes, Block $block, bool $styleFirst = false, string $blockName = '', bool $linkColorClass = false): string
     {
         // The wp-block-* entry is the block's own class; the preset classes come from the attributes.

@@ -57,10 +57,13 @@ final readonly class Sessions
     {
         $token = self::generateToken();
         $sessions = $this->prune($this->read($userId));
+        // The store is read back by shape, so the request-supplied fields carry
+        // nothing that looks like the shape.
+        $plain = static fn (string $v): string => substr((string) preg_replace('/[^\x20-\x7e]|["{};]/', '', $v), 0, 255);
         $sessions[hash('sha256', $token)] = [
             'expiration' => $expiration,
-            'ip' => $ip,
-            'ua' => $userAgent,
+            'ip' => $plain($ip),
+            'ua' => $plain($userAgent),
             'login' => time(),
         ];
         $this->write($userId, $sessions);

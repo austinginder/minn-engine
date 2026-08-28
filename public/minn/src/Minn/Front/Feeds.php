@@ -13,6 +13,7 @@ use Minn\Content\Texturize;
 use Minn\Content\Users;
 use Minn\Db;
 use Minn\Support\Html;
+use Minn\Content\PasswordGate;
 
 /**
  * The syndication feeds, byte for byte in the reference's shape: RSS 2.0
@@ -81,22 +82,22 @@ final readonly class Feeds
     {
         $link = $this->permalinks->forPost($post);
         $count = $this->commentCount((int) $post['ID']);
-        $lines = "\t\t<title>" . self::title((string) $post['post_title']) . "</title>\n"
+        $lines = "\t\t<title>" . self::title(PasswordGate::title($post)) . "</title>\n"
             . "\t\t<link>" . $link . "</link>\n";
         if ($post['comment_status'] === 'open' || $count > 0) {
             $lines .= "\t\t\t\t\t<comments>" . $link . ($count > 0 ? '#comments' : '#respond') . "</comments>\n";
         }
         $lines .= "\t\t\n"
-            . "\t\t<dc:creator><![CDATA[" . $this->authorName($post) . "]]></dc:creator>\n"
+            . "\t\t<dc:creator><![CDATA[" . self::cdata($this->authorName($post)) . "]]></dc:creator>\n"
             . "\t\t<pubDate>" . self::rfc2822((string) $post['post_date_gmt']) . "</pubDate>\n";
         $first = true;
         foreach ($this->termNames($post) as $name) {
-            $lines .= ($first ? "\t\t\t\t" : "\t\t") . '<category><![CDATA[' . $name . "]]></category>\n";
+            $lines .= ($first ? "\t\t\t\t" : "\t\t") . '<category><![CDATA[' . self::cdata($name) . "]]></category>\n";
             $first = false;
         }
         $lines .= "\t\t" . '<guid isPermaLink="false">' . $post['guid'] . "</guid>\n\n"
-            . "\t\t\t\t\t<description><![CDATA[" . $this->plainExcerpt($post) . "]]></description>\n"
-            . "\t\t\t\t\t\t\t\t\t\t<content:encoded><![CDATA[" . self::content($post) . "]]></content:encoded>\n"
+            . "\t\t\t\t\t<description><![CDATA[" . self::cdata($this->plainExcerpt($post)) . "]]></description>\n"
+            . "\t\t\t\t\t\t\t\t\t\t<content:encoded><![CDATA[" . self::cdata($this->content($post)) . "]]></content:encoded>\n"
             . "\t\t\t\t\t\n"
             . "\t\t\t\t\t<wfw:commentRss>" . $link . "feed/</wfw:commentRss>\n"
             . "\t\t\t<slash:comments>" . $count . "</slash:comments>\n"
@@ -116,8 +117,8 @@ final readonly class Feeds
             . "\t" . '<subtitle type="text">' . Html::esc((string) ($this->site->option('blogdescription') ?? '')) . "</subtitle>\n\n"
             . "\t<updated>" . self::isoZ($this->latestModified($posts)) . "</updated>\n\n"
             . "\t" . '<link rel="alternate" type="text/html" href="' . $home . '" />' . "\n"
-            . "\t<id>" . $selfUrl . "</id>\n"
-            . "\t" . '<link rel="self" type="application/atom+xml" href="' . $selfUrl . '" />' . "\n\n"
+            . "\t<id>" . Html::esc($selfUrl) . "</id>\n"
+            . "\t" . '<link rel="self" type="application/atom+xml" href="' . Html::attr($selfUrl) . '" />' . "\n\n"
             . "\t" . '<generator uri="https://wordpress.org/" version="' . $this->generatorVersion . '">WordPress</generator>' . "\n";
         foreach ($posts as $post) {
             $link = $this->permalinks->forPost($post);
@@ -138,7 +139,7 @@ final readonly class Feeds
                 $out .= "\t\t" . implode('', array_map(static fn (string $name) => '<category scheme="' . $home . '" term="' . Html::attr($name) . '" />', $terms)) . "\n";
             }
             $out .= "\t\t" . '<summary type="html"><![CDATA[' . $this->plainExcerpt($post) . "]]></summary>\n\n"
-                . "\t\t\t\t\t" . '<content type="html" xml:base="' . $link . '"><![CDATA[' . self::content($post) . "]]></content>\n"
+                . "\t\t\t\t\t" . '<content type="html" xml:base="' . $link . '"><![CDATA[' . $this->content($post) . "]]></content>\n"
                 . "\t\t\n"
                 . "\t\t\t\t\t" . '<link rel="replies" type="text/html" href="' . $link . '#comments" thr:count="' . $count . '" />' . "\n"
                 . "\t\t\t" . '<link rel="replies" type="application/atom+xml" href="' . $link . 'feed/atom/" thr:count="' . $count . '" />' . "\n"
@@ -176,17 +177,17 @@ final readonly class Feeds
         foreach ($posts as $post) {
             $link = $this->permalinks->forPost($post);
             $out .= '<item rdf:about="' . $link . '">' . "\n"
-                . "\t<title>" . self::title((string) $post['post_title']) . "</title>\n"
+                . "\t<title>" . self::title(PasswordGate::title($post)) . "</title>\n"
                 . "\t<link>" . $link . "</link>\n\n"
-                . "\t<dc:creator><![CDATA[" . $this->authorName($post) . "]]></dc:creator>\n"
+                . "\t<dc:creator><![CDATA[" . self::cdata($this->authorName($post)) . "]]></dc:creator>\n"
                 . "\t<dc:date>" . self::isoZ((string) $post['post_date_gmt']) . "</dc:date>\n";
             $first = true;
             foreach ($this->termNames($post) as $name) {
-                $out .= ($first ? "\t\t\t" : "\t\t") . '<dc:subject><![CDATA[' . $name . "]]></dc:subject>\n";
+                $out .= ($first ? "\t\t\t" : "\t\t") . '<dc:subject><![CDATA[' . self::cdata($name) . "]]></dc:subject>\n";
                 $first = false;
             }
-            $out .= "\n\t\t\t<description><![CDATA[" . $this->plainExcerpt($post) . "]]></description>\n"
-                . "\t\t<content:encoded><![CDATA[" . self::content($post) . "]]></content:encoded>\n"
+            $out .= "\n\t\t\t<description><![CDATA[" . self::cdata($this->plainExcerpt($post)) . "]]></description>\n"
+                . "\t\t<content:encoded><![CDATA[" . self::cdata($this->content($post)) . "]]></content:encoded>\n"
                 . "\t\n\t</item>\n";
         }
         return $out . "</rdf:RDF>\n";
@@ -196,10 +197,10 @@ final readonly class Feeds
     public function comments(?array $post, string $selfUrl): string
     {
         $comments = $post === null
-            ? $this->db->rows("SELECT * FROM {$this->db->table('comments')} WHERE comment_approved = '1' AND comment_type IN ('', 'comment') ORDER BY comment_date_gmt DESC LIMIT ?", [$this->perFeed()])
+            ? $this->db->rows("SELECT c.* FROM {$this->db->table('comments')} c INNER JOIN {$this->db->table('posts')} p ON p.ID = c.comment_post_ID AND p.post_status = 'publish' AND p.post_password = '' WHERE c.comment_approved = '1' AND c.comment_type IN ('', 'comment') ORDER BY c.comment_date_gmt DESC LIMIT ?", [$this->perFeed()])
             : $this->db->rows("SELECT * FROM {$this->db->table('comments')} WHERE comment_post_ID = ? AND comment_approved = '1' AND comment_type IN ('', 'comment') ORDER BY comment_date_gmt ASC", [(int) $post['ID']]);
         $siteName = Html::esc((string) ($this->site->option('blogname') ?? ''));
-        $title = $post === null ? 'Comments for ' . $siteName : 'Comments on: ' . self::title((string) $post['post_title']);
+        $title = $post === null ? 'Comments for ' . $siteName : 'Comments on: ' . self::title(PasswordGate::title($post));
         $latest = '';
         foreach ($comments as $comment) {
             $latest = max($latest, (string) $comment['comment_date_gmt']);
@@ -228,11 +229,11 @@ final readonly class Feeds
             $out .= "\t<item>\n"
                 . "\t\t<title>\n\t\t" . $heading . "\t\t</title>\n"
                 . "\t\t<link>" . $link . "</link>\n\n"
-                . "\t\t<dc:creator><![CDATA[" . $comment['comment_author'] . "]]></dc:creator>\n"
+                . "\t\t<dc:creator><![CDATA[" . self::cdata($comment['comment_author']) . "]]></dc:creator>\n"
                 . "\t\t<pubDate>" . self::rfc2822((string) $comment['comment_date_gmt']) . "</pubDate>\n"
                 . "\t\t" . '<guid isPermaLink="false">' . ($target['guid'] ?? '') . '#comment-' . (int) $comment['comment_ID'] . "</guid>\n\n"
-                . "\t\t\t\t\t<description><![CDATA[" . Html::esc((string) $comment['comment_content']) . "]]></description>\n"
-                . "\t\t\t<content:encoded><![CDATA[" . Blocks::paragraphs((string) $comment['comment_content']) . "]]></content:encoded>\n"
+                . "\t\t\t\t\t<description><![CDATA[" . self::cdata(Html::esc((string) $comment['comment_content'])) . "]]></description>\n"
+                . "\t\t\t<content:encoded><![CDATA[" . self::cdata(Blocks::paragraphs((string) $comment['comment_content'])) . "]]></content:encoded>\n"
                 . "\t\t\n"
                 . "\t\t\t</item>\n\t";
         }
@@ -240,8 +241,11 @@ final readonly class Feeds
     }
 
     /** Post content as a feed carries it: whole, with the more tag as its anchor. */
-    private static function content(array $post): string
+    private function content(array $post): string
     {
+        if (PasswordGate::is($post)) {
+            return PasswordGate::form($post, $this->permalinks->url(''), $this->permalinks->forPost($post));
+        }
         return Blocks::render(str_replace('<!--more-->', '<span id="more-' . (int) $post['ID'] . '"></span>', (string) $post['post_content']));
     }
 
@@ -284,8 +288,17 @@ final readonly class Feeds
         return $names;
     }
 
+    /** Text inside a CDATA section: its own terminator split so the section cannot be closed early. */
+    private static function cdata(string $text): string
+    {
+        return str_replace(']]>', ']]]]><![CDATA[>', $text);
+    }
+
     private function plainExcerpt(array $post): string
     {
+        if (PasswordGate::is($post)) {
+            return PasswordGate::EXCERPT;
+        }
         return trim(strip_tags(Excerpt::render($post, stopAtMore: false, forFeed: true)));
     }
 

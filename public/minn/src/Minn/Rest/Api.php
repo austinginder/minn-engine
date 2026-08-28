@@ -75,7 +75,7 @@ final readonly class Api
             new PostsController($db, $posts, $postObject, $caller),
             new PostsWriteController($posts, $writer, $site, $postObject, $url, $caller),
             new TermsController($db, $terms, $site, $termObject, $caller),
-            new UsersController($db, $users, $site, $userObject, $url, $caller),
+            new UsersController($db, $users, $site, $userObject, $url, $caller, $capabilities->roles()),
             new TypesController($types),
             new SettingsController(new Settings($site), $caller),
             new CommentsController(new Comments($db), $posts, $site, $commentObject, $caller),

@@ -11,6 +11,7 @@ use Minn\Db;
 use Minn\Front\Permalinks;
 use Minn\Rest\UserObject;
 use Minn\Support\Html;
+use Minn\Support\Kses;
 
 /** core/latest-comments: the newest approved comments with avatar, meta, and a 20-word excerpt. */
 final readonly class LatestComments
@@ -30,9 +31,11 @@ final readonly class LatestComments
         $dates = (bool) $block->attr('displayDate', true);
         $excerpts = (bool) $block->attr('displayExcerpt', true);
         $comments = $this->db->rows(
-            "SELECT * FROM {$this->db->table('comments')} WHERE comment_approved = '1' AND comment_type IN ('', 'comment')
-             ORDER BY comment_date_gmt DESC LIMIT ?",
-            [$count],
+            "SELECT c.* FROM {$this->db->table('comments')} c
+             INNER JOIN {$this->db->table('posts')} p ON p.ID = c.comment_post_ID AND p.post_status = 'publish' AND p.post_password = ''
+             WHERE c.comment_approved = '1' AND c.comment_type IN ('', 'comment')
+             ORDER BY c.comment_date_gmt DESC LIMIT ?",
+            [min(100, $count)],
         );
         $classes = ($avatars ? 'has-avatars ' : '') . ($dates ? 'has-dates ' : '') . ($excerpts ? 'has-excerpts ' : '') . 'wp-block-latest-comments';
         if ($comments === []) {
@@ -49,9 +52,9 @@ final readonly class LatestComments
                 $hash = hash('sha256', strtolower(trim((string) $comment['comment_author_email'])));
                 $item .= "<img alt='' src='https://secure.gravatar.com/avatar/{$hash}?s=48&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/{$hash}?s=96&#038;d=mm&#038;r=g 2x' class='avatar avatar-48 photo wp-block-latest-comments__comment-avatar' height='48' width='48' />";
             }
-            $author = $comment['comment_author_url'] !== ''
-                ? '<a class="wp-block-latest-comments__comment-author" href="' . Html::attr($comment['comment_author_url']) . '">' . $comment['comment_author'] . '</a>'
-                : '<span class="wp-block-latest-comments__comment-author">' . $comment['comment_author'] . '</span>';
+            $author = Kses::url((string) $comment['comment_author_url']) !== ''
+                ? '<a class="wp-block-latest-comments__comment-author" href="' . Html::attr(Kses::url((string) $comment['comment_author_url'])) . '">' . Html::esc((string) $comment['comment_author']) . '</a>'
+                : '<span class="wp-block-latest-comments__comment-author">' . Html::esc((string) $comment['comment_author']) . '</span>';
             $link = $post === null ? '' : $this->permalinks->forPost($post) . '#comment-' . (int) $comment['comment_ID'];
             $item .= '<article><footer class="wp-block-latest-comments__comment-meta">' . $author . ' on '
                 . '<a class="wp-block-latest-comments__comment-link" href="' . Html::attr($link) . '">' . ($post['post_title'] ?? '') . '</a>';

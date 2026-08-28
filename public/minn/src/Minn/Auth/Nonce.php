@@ -17,24 +17,24 @@ final class Nonce
         return ceil(time() / (self::LIFETIME / 2));
     }
 
-    public static function create(int $userId, string $token): string
+    public static function create(int $userId, string $token, string $action = 'wp_rest'): string
     {
-        return self::at(self::tick(), $userId, $token);
+        return self::at(self::tick(), $userId, $token, $action);
     }
 
-    public static function verify(string $nonce, int $userId, string $token): bool
+    public static function verify(string $nonce, int $userId, string $token, string $action = 'wp_rest'): bool
     {
         $tick = self::tick();
         foreach ([$tick, $tick - 1] as $candidate) {
-            if (hash_equals(self::at($candidate, $userId, $token), $nonce)) {
+            if (hash_equals(self::at($candidate, $userId, $token, $action), $nonce)) {
                 return true;
             }
         }
         return false;
     }
 
-    private static function at(float $tick, int $userId, string $token): string
+    private static function at(float $tick, int $userId, string $token, string $action): string
     {
-        return substr(Salts::hash("{$tick}|wp_rest|{$userId}|{$token}", 'nonce'), -12, 10);
+        return substr(Salts::hash("{$tick}|{$action}|{$userId}|{$token}", 'nonce'), -12, 10);
     }
 }

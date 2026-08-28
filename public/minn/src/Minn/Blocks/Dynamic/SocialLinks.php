@@ -8,6 +8,8 @@ use Minn\Blocks\Block;
 use Minn\Blocks\Layout;
 use Minn\Blocks\Renderer;
 use Minn\Support\Html;
+use Minn\Blocks\Styles;
+use Minn\Support\Kses;
 
 /**
  * core/social-links and core/social-link. The list keeps its stored
@@ -48,24 +50,24 @@ final class SocialLinks
 
     private function link(Block $link, Block $parent): string
     {
-        $service = (string) $link->attr('service', '');
+        $service = Styles::slug((string) $link->attr('service', ''));
         $icon = $this->icons()[$service] ?? ['label' => 'Share Icon', 'svg' => $this->icons()['chain']['svg'] ?? ''];
-        $url = (string) $link->attr('url', '');
+        $url = Kses::url((string) $link->attr('url', ''));
         $label = (string) $link->attr('label', '');
 
         $classes = ['wp-social-link', 'wp-social-link-' . $service];
         $style = [];
         if (!empty($parent->attrs['iconColor'])) {
-            $classes[] = 'has-' . $parent->attrs['iconColor'] . '-color';
+            $classes[] = 'has-' . Styles::slug((string) $parent->attrs['iconColor']) . '-color';
         }
         if (!empty($parent->attrs['iconColorValue'])) {
-            $style[] = 'color:' . $parent->attrs['iconColorValue'];
+            $style[] = 'color:' . Styles::value((string) $parent->attrs['iconColorValue']);
         }
         if (!empty($parent->attrs['iconBackgroundColor'])) {
-            $classes[] = 'has-' . $parent->attrs['iconBackgroundColor'] . '-background-color';
+            $classes[] = 'has-' . Styles::slug((string) $parent->attrs['iconBackgroundColor']) . '-background-color';
         }
         if (!empty($parent->attrs['iconBackgroundColorValue'])) {
-            $style[] = 'background-color:' . $parent->attrs['iconBackgroundColorValue'];
+            $style[] = 'background-color:' . Styles::value((string) $parent->attrs['iconBackgroundColorValue']);
         }
         if ($link->className() !== '') {
             $classes[] = $link->className();
@@ -80,7 +82,7 @@ final class SocialLinks
             ? '<span class="wp-block-social-link-label">' . $text . '</span>'
             : '<span class="wp-block-social-link-label screen-reader-text">' . $text . '</span>';
 
-        return '<li' . ($style === [] ? '' : ' style="' . implode(';', $style) . '"') . ' class="' . implode(' ', $classes) . '">'
+        return '<li' . ($style === [] ? '' : ' style="' . Html::attr(implode(';', $style)) . '"') . ' class="' . Html::attr(implode(' ', $classes)) . '">'
             . $anchor . $icon['svg'] . $labelSpan . '</a></li>';
     }
 

@@ -17,6 +17,7 @@ use Minn\Media\Images;
 use Minn\Media\Metadata;
 use Minn\Media\Uploads;
 use Minn\RestError;
+use Minn\Support\Kses;
 
 /**
  * wp/v2/media: list, single, upload on both transports (multipart field
@@ -87,6 +88,10 @@ final readonly class MediaController
             throw new RestError('rest_cannot_create', 'Sorry, you are not allowed to upload media on this site.', 403);
         }
 
+        $parent = (int) ($request->form['post'] ?? $request->query('post') ?? (trim($request->body) !== '' && str_starts_with(trim($request->body), '{') ? ($request->json()['post'] ?? 0) : 0));
+        if ($parent > 0 && !$this->caller->can('edit_post', $parent)) {
+            throw new RestError('rest_cannot_edit', 'Sorry, you are not allowed to upload media to this post.', 403);
+        }
         $filename = '';
         $movedFrom = null;
         $raw = null;
@@ -134,7 +139,7 @@ final readonly class MediaController
             'post_modified' => $now,
             'post_modified_gmt' => $nowGmt,
             'post_content_filtered' => '',
-            'post_parent' => (int) ($request->form['post'] ?? $request->query('post') ?? 0),
+            'post_parent' => $parent,
             'guid' => $this->uploads->urlFor($relative),
             'menu_order' => 0,
             'post_type' => 'attachment',
@@ -172,11 +177,16 @@ final readonly class MediaController
         $columns = [];
         foreach (['title' => 'post_title', 'caption' => 'post_excerpt', 'description' => 'post_content'] as $field => $column) {
             if (isset($body[$field])) {
-                $columns[$column] = PostsWriteController::field($body[$field]);
+                $markup = PostsWriteController::field($body[$field]);
+                $columns[$column] = $this->caller->can('unfiltered_html') ? $markup : Kses::filter($markup, Kses::POST);
             }
         }
         if (array_key_exists('post', $body)) {
-            $columns['post_parent'] = (int) $body['post'];
+            $parent = (int) $body['post'];
+            if ($parent > 0 && !$this->caller->can('edit_post', $parent)) {
+                throw new RestError('rest_cannot_edit', 'Sorry, you are not allowed to edit this post.', 403);
+            }
+            $columns['post_parent'] = $parent;
         }
         if (isset($body['alt_text'])) {
             $this->setMetaValue($attachmentId, '_wp_attachment_image_alt', (string) $body['alt_text']);
