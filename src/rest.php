@@ -556,6 +556,18 @@ function minn_taxonomy_config( string $rest_base ): array {
 	return $taxes[ $rest_base ];
 }
 
+/** Advertised verbs: managers may write; nobody may delete the default category. */
+function minn_term_allow_verbs( array $t, array $cfg ): array {
+	if ( ! minn_user_can( minn_current_user_id(), 'manage_categories' ) ) {
+		return array( 'GET' );
+	}
+	$is_default = 'category' === $cfg['taxonomy']
+		&& (int) $t['term_id'] === (int) ( minn_option( 'default_category' ) ?? 0 );
+	return $is_default
+		? array( 'GET', 'POST', 'PUT', 'PATCH' )
+		: array( 'GET', 'POST', 'PUT', 'PATCH', 'DELETE' );
+}
+
 function minn_rest_term_object( array $t, string $rest_base ): array {
 	$cfg = minn_taxonomy_config( $rest_base );
 	$obj = array(
@@ -570,27 +582,33 @@ function minn_rest_term_object( array $t, string $rest_base ): array {
 	if ( $cfg['has_parent'] ) {
 		$obj['parent'] = (int) $t['parent'];
 	}
-	$obj['meta']   = array();
-	$obj['_links'] = array(
-		'self'         => array(
+	$obj['meta'] = array();
+	$links = array(
+		'self'       => array(
 			array(
 				'href'        => minn_rest_url( '/wp/v2/' . $rest_base . '/' . $t['term_id'] ),
-				'targetHints' => array( 'allow' => array( 'GET' ) ),
+				'targetHints' => array( 'allow' => minn_term_allow_verbs( $t, $cfg ) ),
 			),
 		),
-		'collection'   => array( array( 'href' => minn_rest_url( '/wp/v2/' . $rest_base ) ) ),
-		'about'        => array( array( 'href' => minn_rest_url( '/wp/v2/taxonomies/' . $cfg['taxonomy'] ) ) ),
-		'wp:post_type' => array(
-			array( 'href' => minn_rest_url( '/wp/v2/posts', array( $cfg['post_arg'] => $t['term_id'] ) ) ),
-		),
-		'curies'       => array(
-			array(
-				'name'      => 'wp',
-				'href'      => 'https://api.w.org/{rel}',
-				'templated' => true,
-			),
+		'collection' => array( array( 'href' => minn_rest_url( '/wp/v2/' . $rest_base ) ) ),
+		'about'      => array( array( 'href' => minn_rest_url( '/wp/v2/taxonomies/' . $cfg['taxonomy'] ) ) ),
+	);
+	if ( $cfg['has_parent'] && (int) $t['parent'] > 0 ) {
+		$links['up'] = array(
+			array( 'embeddable' => true, 'href' => minn_rest_url( '/wp/v2/' . $rest_base . '/' . (int) $t['parent'] ) ),
+		);
+	}
+	$links['wp:post_type'] = array(
+		array( 'href' => minn_rest_url( '/wp/v2/posts', array( $cfg['post_arg'] => $t['term_id'] ) ) ),
+	);
+	$links['curies'] = array(
+		array(
+			'name'      => 'wp',
+			'href'      => 'https://api.w.org/{rel}',
+			'templated' => true,
 		),
 	);
+	$obj['_links'] = $links;
 	return $obj;
 }
 
@@ -601,10 +619,36 @@ function minn_rest_terms_list( string $rest_base ): void {
 	$page     = max( 1, (int) ( $_GET['page'] ?? 1 ) );
 	$offset   = ( $page - 1 ) * $per_page;
 
+	$order   = strtoupper( (string) ( $_GET['order'] ?? 'asc' ) ) === 'DESC' ? 'DESC' : 'ASC';
+	$orderby = array(
+		'name'  => 't.name',
+		'count' => 'tt.count',
+		'id'    => 't.term_id',
+		'slug'  => 't.slug',
+	)[ (string) ( $_GET['orderby'] ?? 'name' ) ] ?? 't.name';
+	$where = 'tt.taxonomy = ?';
+	$args  = array( $cfg['taxonomy'] );
+	$types = 's';
+	if ( '' !== (string) ( $_GET['search'] ?? '' ) ) {
+		$where .= ' AND t.name LIKE ?';
+		$args[] = '%' . addcslashes( (string) $_GET['search'], '%_\\' ) . '%';
+		$types .= 's';
+	}
+	if ( ! empty( $_GET['include'] ) ) {
+		$ids = array_filter( array_map( 'intval', explode( ',', (string) $_GET['include'] ) ) );
+		if ( $ids ) {
+			$where .= ' AND t.term_id IN (' . implode( ',', array_fill( 0, count( $ids ), '?' ) ) . ')';
+			foreach ( $ids as $tid ) {
+				$args[] = $tid;
+				$types .= 'i';
+			}
+		}
+	}
 	$stmt = minn_db()->prepare(
-		"SELECT COUNT(*) FROM {$table_prefix}term_taxonomy WHERE taxonomy = ?"
+		"SELECT COUNT(*) FROM {$table_prefix}terms t
+		 JOIN {$table_prefix}term_taxonomy tt ON tt.term_id = t.term_id WHERE $where"
 	);
-	$stmt->bind_param( 's', $cfg['taxonomy'] );
+	$stmt->bind_param( $types, ...$args );
 	$stmt->execute();
 	$total = (int) $stmt->get_result()->fetch_row()[0];
 
@@ -612,9 +656,9 @@ function minn_rest_terms_list( string $rest_base ): void {
 		"SELECT t.term_id, t.name, t.slug, tt.description, tt.count, tt.parent
 		 FROM {$table_prefix}terms t
 		 JOIN {$table_prefix}term_taxonomy tt ON tt.term_id = t.term_id
-		 WHERE tt.taxonomy = ? ORDER BY t.name ASC LIMIT ?, ?"
+		 WHERE $where ORDER BY $orderby $order LIMIT ?, ?"
 	);
-	$stmt->bind_param( 'sii', $cfg['taxonomy'], $offset, $per_page );
+	$stmt->bind_param( $types . 'ii', ...array_merge( $args, array( $offset, $per_page ) ) );
 	$stmt->execute();
 	$rows = $stmt->get_result()->fetch_all( MYSQLI_ASSOC );
 
@@ -1114,10 +1158,23 @@ function minn_rest_dispatch( string $route ): void {
 		minn_rest_posts_single( $type, $id );
 	}
 	if ( preg_match( '#^/wp/v2/(categories|tags)$#', $route, $m ) ) {
-		minn_rest_terms_list( $m[1] );
+		if ( 'POST' === $method ) {
+			minn_rest_terms_create( $m[1] );
+		}
+		if ( 'GET' === $method ) {
+			minn_rest_terms_list( $m[1] );
+		}
 	}
 	if ( preg_match( '#^/wp/v2/(categories|tags)/(\d+)$#', $route, $m ) ) {
-		minn_rest_terms_single( $m[1], (int) $m[2] );
+		if ( 'POST' === $method || 'PUT' === $method || 'PATCH' === $method ) {
+			minn_rest_terms_update( $m[1], (int) $m[2] );
+		}
+		if ( 'DELETE' === $method ) {
+			minn_rest_terms_delete( $m[1], (int) $m[2], filter_var( $_GET['force'] ?? false, FILTER_VALIDATE_BOOLEAN ) );
+		}
+		if ( 'GET' === $method ) {
+			minn_rest_terms_single( $m[1], (int) $m[2] );
+		}
 	}
 	if ( '/wp/v2/users/me' === $route ) {
 		minn_rest_users_me();
