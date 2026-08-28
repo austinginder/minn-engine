@@ -7,7 +7,7 @@ set -u
 cd "$( dirname "$0" )"
 
 failed=0
-for suite in style rest-posts auth caps writes login-endpoint rest-parity minn-v1 comments media settings users terms write-fields editor permalinks blocks theme styles probes dogfood cli layout hardening security install; do
+for suite in style rest-posts auth caps writes login-endpoint rest-parity minn-v1 comments media settings users terms write-fields editor permalinks blocks theme styles probes dogfood cli layout hardening security install cron-mail; do
 	printf '\n=== %s ===\n' "$suite"
 	php "$suite.test.php" || failed=1
 done

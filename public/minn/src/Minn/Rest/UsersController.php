@@ -15,6 +15,9 @@ use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\RestError;
 use Minn\Support\Kses;
+use Minn\Auth\PasswordReset;
+use Minn\Mail\Mailer;
+use Minn\Mail\Message;
 
 /** wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives. */
 final readonly class UsersController
@@ -112,6 +115,23 @@ final readonly class UsersController
         return Reply::item($this->object->view($user, $self === $userId), $fields);
     }
 
+    /** A new account hears about itself with a link to choose a password. */
+    private function welcome(?array $user): void
+    {
+        if ($user === null) {
+            return;
+        }
+        $siteName = (string) ($this->site->option('blogname') ?? 'Site');
+        $key = (new PasswordReset($this->users))->issue($user);
+        $home = rtrim((string) ($this->site->option('home') ?? ''), '/');
+        $link = $home . '/wp-login.php?action=rp&key=' . rawurlencode($key) . '&login=' . rawurlencode((string) $user['user_login']);
+        Mailer::forSite($this->site)->send(new Message(
+            [(string) $user['user_email']],
+            '[' . $siteName . '] Login Details',
+            "Username: {$user['user_login']}\n\nTo set your password, visit the following address:\n\n{$link}\n\n{$home}/wp-login.php\n",
+        ));
+    }
+
     private function hasPublishedContent(int $userId): bool
     {
         return (int) $this->db->value(
@@ -193,7 +213,9 @@ final readonly class UsersController
         foreach ($meta as $key => $value) {
             $this->users->setMeta($newId, $key, $value);
         }
-        return Reply::item($this->object->edit($this->users->find($newId)), Fields::fromQuery($request->query), 201)
+        $created = $this->users->find($newId);
+        $this->welcome($created);
+        return Reply::item($this->object->edit($created), Fields::fromQuery($request->query), 201)
             ->withHeader('Location', $this->url->to('/wp/v2/users/' . $newId));
     }
 

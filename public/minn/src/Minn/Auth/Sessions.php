@@ -70,6 +70,12 @@ final readonly class Sessions
         return $token;
     }
 
+    /** Ends every session of the user (a password change). */
+    public function destroyAll(int $userId): void
+    {
+        $this->write($userId, []);
+    }
+
     /** Removes one session; true when it existed. */
     public function destroy(int $userId, string $token): bool
     {

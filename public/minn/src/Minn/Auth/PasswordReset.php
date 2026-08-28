@@ -1,0 +1,54 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Minn\Auth;
+
+use Minn\Content\Users;
+
+/**
+ * Password reset keys in the reference's storage shape: user_activation_key
+ * holds "time:hash", the key itself travels in the email link and is good
+ * for a day. The hash is the engine's own ($minn$ over the nonce salt); a
+ * key the reference issued ($generic$) is not readable here, so it is
+ * refused and the reader asks for a fresh link.
+ */
+final readonly class PasswordReset
+{
+    public const LIFETIME = 86400;
+
+    public function __construct(private Users $users)
+    {
+    }
+
+    /** Mints a key, stores its hash, returns the key for the link. */
+    public function issue(array $user): string
+    {
+        $key = substr(str_replace(['+', '/', '='], '', base64_encode(random_bytes(24))), 0, 20);
+        $this->users->update((int) $user['ID'], ['user_activation_key' => time() . ':' . self::hash($key)]);
+        return $key;
+    }
+
+    /** True when the key matches the stored hash and has not expired. */
+    public function verify(array $user, string $key): bool
+    {
+        $stored = (string) ($user['user_activation_key'] ?? '');
+        if ($key === '' || !preg_match('/^(\d+):(.+)$/', $stored, $m)) {
+            return false;
+        }
+        if ((int) $m[1] + self::LIFETIME < time()) {
+            return false;
+        }
+        return str_starts_with($m[2], '$minn$') && hash_equals($m[2], self::hash($key));
+    }
+
+    public function clear(array $user): void
+    {
+        $this->users->update((int) $user['ID'], ['user_activation_key' => '']);
+    }
+
+    private static function hash(string $key): string
+    {
+        return '$minn$' . hash_hmac('sha256', $key, Salts::for('nonce'));
+    }
+}

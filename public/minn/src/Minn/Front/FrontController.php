@@ -9,6 +9,7 @@ use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\Theme\PageRenderer;
+use Minn\Cron\Cron;
 
 /**
  * The public site. One catch-all route: resolve the URL, then either
@@ -22,6 +23,7 @@ final readonly class FrontController
         private Renderer $renderer,
         private ?PageRenderer $theme = null,
         private ?ProbeController $probes = null,
+        private ?Cron $cron = null,
     ) {
     }
 
@@ -37,6 +39,10 @@ final readonly class FrontController
     #[Route(Method::Get, '/{path*}')]
     public function show(Request $request): Response
     {
+        // A scheduled post whose time has come goes live before the page is built.
+        if ($this->cron !== null && !(defined('DISABLE_WP_CRON') && DISABLE_WP_CRON) && $this->cron->due()) {
+            $this->cron->run();
+        }
         $resolution = $this->resolver->resolve($request);
         if ($resolution->kind === Kind::Redirect) {
             return Response::redirect((string) $resolution->location, $resolution->status);

@@ -35,6 +35,10 @@ use Minn\Rest\Api;
 use Minn\Theme\PageRenderer;
 use Minn\Theme\Theme;
 use Minn\Auth\Salts;
+use Minn\Auth\PasswordReset;
+use Minn\Mail\Mailer;
+use Minn\Cron\Cron;
+use Minn\Content\PostWriter;
 
 /**
  * The engine's front door. An unmodified wp-config.php ends by requiring
@@ -104,13 +108,14 @@ final readonly class Engine
         $generator = (string) (\Minn\Support\Serialized::field($site->option('_site_transient_update_core'), 'version_checked') ?? '');
         $feeds = new Feeds($db, $site, $posts, new Comments($db), $users, $permalinks, $generator);
         $front = null;
-        $probes = new ProbeController($site, $posts, $permalinks, $resolver, $feeds, new Sitemaps($db, $site, $permalinks), static function () use (&$front): Response { return $front->notFound(); });
-        $front = new FrontController($resolver, new Renderer($db, $posts, $permalinks, $resolver->perPage()), $pages, $probes);
+        $cron = new Cron($db, $site, new PostWriter($db, $posts, $site));
+        $probes = new ProbeController($site, $posts, $permalinks, $resolver, $feeds, new Sitemaps($db, $site, $permalinks), static function () use (&$front): Response { return $front->notFound(); }, $cron);
+        $front = new FrontController($resolver, new Renderer($db, $posts, $permalinks, $resolver->perPage()), $pages, $probes, $cron);
 
         $router = (new Router())->register(
             new AssetsController($this->engineDir . '/assets'),
             new AppController($app, new BootPayload($site, $permalinks, $capabilities, $app, $this->version), $authenticator, $capabilities, $permalinks, $this->version),
-            new LoginController($site, $permalinks, $authenticator, $sessions, new AuthCookies($db, $cookie), $users, new LoginThrottle($db)),
+            new LoginController($site, $permalinks, $authenticator, $sessions, new AuthCookies($db, $cookie), $users, new LoginThrottle($db), new PasswordReset($users), Mailer::forSite($site)),
             $probes,
             $front,
         );

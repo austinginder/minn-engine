@@ -14,6 +14,7 @@ use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
+use Minn\Cron\Cron;
 
 /**
  * The surface monitors, crawlers, and hosting checks hit that is not a
@@ -31,6 +32,7 @@ final readonly class ProbeController
         private Sitemaps $sitemaps,
         /** @var Closure(): Response renders the themed 404 page */
         private Closure $notFound,
+        private ?Cron $cron = null,
     ) {
     }
 
@@ -57,6 +59,9 @@ final readonly class ProbeController
     #[Route(Method::Any, '/wp-cron.php')]
     public function cron(Request $request): Response
     {
+        if ($this->cron !== null && !(defined('DISABLE_WP_CRON') && DISABLE_WP_CRON)) {
+            $this->cron->run();
+        }
         return Response::html('');
     }
 

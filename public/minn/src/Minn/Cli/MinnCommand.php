@@ -5,6 +5,12 @@ declare(strict_types=1);
 namespace Minn\Cli;
 
 use WP_CLI;
+use Minn\Content\Posts;
+use Minn\Content\PostWriter;
+use Minn\Cron\Cron;
+use Minn\Mail\MailSettings;
+use Minn\Mail\Mailer;
+use Minn\Mail\Message;
 
 /**
  * Identifies the engine.
@@ -39,6 +45,42 @@ final class MinnCommand
         WP_CLI::log('Site root: ' . ABSPATH);
         WP_CLI::log('Table prefix: ' . $runtime->db->prefix());
         WP_CLI::log('Home: ' . ($runtime->site->option('home') ?? ''));
+    }
+
+    /**
+     * Runs the engine's scheduled work: due posts go live, expired rows are swept.
+     *
+     * @when before_wp_load
+     */
+    public function cron(array $args, array $assocArgs): void
+    {
+        $runtime = Runtime::boot();
+        $cron = new Cron($runtime->db, $runtime->site, new PostWriter($runtime->db, new Posts($runtime->db), $runtime->site));
+        foreach ($cron->run() as $line) {
+            WP_CLI::log($line);
+        }
+        WP_CLI::success('Cron run complete.');
+    }
+
+    /**
+     * Sends a test email through the site's mail settings.
+     *
+     * ## OPTIONS
+     *
+     * <to>
+     * : The address to send to.
+     *
+     * @when before_wp_load
+     */
+    public function mail(array $args, array $assocArgs): void
+    {
+        $runtime = Runtime::boot();
+        $settings = MailSettings::fromSite($runtime->site);
+        $sent = Mailer::forSite($runtime->site)->send(new Message([$args[0]], '[' . ($runtime->site->option('blogname') ?? 'Site') . '] Test email', "This is a test email from Minn Engine, sent through the {$settings->transport} transport.\n"));
+        if (!$sent) {
+            WP_CLI::error("Mail failed through the {$settings->transport} transport; see the error log.");
+        }
+        WP_CLI::success("Sent through the {$settings->transport} transport" . ($settings->transport === 'smtp' ? " ({$settings->host}:{$settings->port})" : '') . '.');
     }
 
     /**
