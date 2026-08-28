@@ -1016,6 +1016,9 @@ function minn_rest_dispatch( string $route ): void {
 			minn_rest_comments_list();
 		}
 	}
+	if ( '/wp/v2/settings' === $route && in_array( $method, array( 'GET', 'POST', 'PUT', 'PATCH' ), true ) ) {
+		minn_rest_settings( $method );
+	}
 	if ( '/wp/v2/media' === $route ) {
 		if ( 'POST' === $method ) {
 			minn_rest_media_create();

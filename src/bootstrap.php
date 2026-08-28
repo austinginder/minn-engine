@@ -53,6 +53,7 @@ function minn_engine_serve(): void {
 	require_once __DIR__ . '/rest-minn.php';
 	require_once __DIR__ . '/rest-comments.php';
 	require_once __DIR__ . '/rest-media.php';
+	require_once __DIR__ . '/rest-settings.php';
 	require_once __DIR__ . '/writes.php';
 	require_once __DIR__ . '/login-endpoint.php';
 	require_once __DIR__ . '/minn-admin.php';
