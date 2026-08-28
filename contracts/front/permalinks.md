@@ -85,3 +85,31 @@ or `page-paged-N`.
   `read_private_posts` distinction is milestone 23.
 - The rendered page is an interim template (title, content through the
   block renderer, archive lists with excerpts). Milestones 19 and 20 replace it.
+
+## Front-page settings (`tests/front-page.test.php`, live against the oracle)
+
+The suite switches the shared database to `show_on_front=page` with the Sample
+Page in front and Docs as the posts page, then restores it. What the reference does:
+
+- **The static front page** answers at `/` only (its own path redirects to `/`), is
+  titled by the site name alone (the tagline follows when there is one), and its
+  later pages (`/page/2/`) keep its body classes with `paged paged-2 page-paged-2`
+  and are titled `Site – Page 2`. Its page-list item carries `menu-item-home` as
+  its last class. Its comments feed link prints while comments or pings are open
+  on it, comments or not (every other single needs a comment first).
+- **The posts page** (`page_for_posts`) renders the `home` template (never
+  `front-page`) with the blog listing, body class `blog` alone (no `home`, no
+  `page-id-N`), title `Docs – Site`, no JSON alternate link, and the site-title
+  link without `aria-current`. `?page_id=N` and `?p=N` redirect to its path. A
+  page number under it (`/sample-page/docs/page/2/`) is one of the page's own
+  sub-pages, which it has none of: 404. Its `feed/` is the site's posts feed with
+  channel title `Docs – Site`.
+- **Doubled slashes** anywhere in a path (`//`, `/hello-world//`, `//hello-world/`)
+  redirect 301 to the collapsed path. The engine reads the path from the request
+  URI itself; `parse_url` would take a leading `//` for an authority.
+- **Titles** are texturized text escaped without touching the entities that
+  made (`Hello world! &#8211; Site`, never `&amp;#8211;`).
+- Known gap: the reference also prints oEmbed discovery links on singles and the
+  front page; the engine has no oEmbed endpoint and prints none (the suite skips
+  them).
+

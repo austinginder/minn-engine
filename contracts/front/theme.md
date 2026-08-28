@@ -289,7 +289,6 @@ element).
 - Blocks the site's templates do not exercise are best-effort or empty: query
   pagination markup (no page two exists to capture), `comments-pagination`, `avatar`
   outside comments, search `no-button`/`button-only`, social links with visible labels.
-- `page_for_posts` (a page as the blog index) is not handled yet.
 - Pattern PHP beyond the interpreted grammar renders as nothing.
 - The queried-object id quirk in `page-list` is reproduced as observed; a fix upstream
   would be a divergence to re-capture.

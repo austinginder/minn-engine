@@ -25,7 +25,6 @@ reports, each line GREEN, AMBER, or RED:
   is GREEN, a classic theme is RED (the engine renders block themes only), PHP
   templates inside a block theme are AMBER;
 - active plugins and mu-plugins: AMBER, each named, because none of them will run;
-- `page_for_posts`: AMBER until the engine serves a page as the blog index.
 
 RED stops `install` unless `--force` is passed.
 

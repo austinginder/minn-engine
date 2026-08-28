@@ -89,6 +89,10 @@ final readonly class Resolver
                 return Resolution::redirect($this->permalinks->url(rtrim($path, '/') . '/') . $request->queryStringWithout());
             }
         }
+        if (str_contains($path, '//')) {
+            // Doubled slashes collapse to the canonical path.
+            return Resolution::redirect($this->permalinks->url((string) preg_replace('#/{2,}#', '/', $path)) . $request->queryStringWithout());
+        }
         if ($path === '/') {
             return $this->resolveQueryVars($request);
         }
@@ -334,9 +338,15 @@ final readonly class Resolver
         $page = $this->posts->pageByPath($segments, publishedOnly: false);
         if ($page !== null && $this->readable($page)) {
             // The static front page answers only at the site root.
-            return (int) $page['ID'] === $this->permalinks->frontPageId
-                ? Resolution::redirect($this->permalinks->url('/'))
-                : Resolution::single($page, $paged);
+            if ((int) $page['ID'] === $this->permalinks->frontPageId) {
+                return Resolution::redirect($this->permalinks->url('/'));
+            }
+            // The posts page lists the blog; a page number under it would be one of the page's
+            // own sub-pages, which it has none of, so that is a 404 rather than page two.
+            if ((int) $page['ID'] === $this->permalinks->postsPageId) {
+                return $paged > 1 ? Resolution::notFound() : Resolution::postsPage($page);
+            }
+            return Resolution::single($page, $paged);
         }
         $regex = $this->permalinks->structureRegex();
         if ($regex !== null && preg_match($regex, implode('/', $segments), $m)) {

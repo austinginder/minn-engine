@@ -152,9 +152,6 @@ final class Installer
         if ($mu !== []) {
             $this->light('AMBER', 'mu-plugins will not run: ' . implode(', ', $mu));
         }
-        if (($option('show_on_front') ?? 'posts') === 'page' && (int) ($option('page_for_posts') ?? 0) > 0) {
-            $this->light('AMBER', 'page_for_posts is set; the engine does not serve a page as the blog index yet');
-        }
         $db->close();
         $this->say("Result: {$this->worst}");
         return $this->worst;

@@ -35,7 +35,9 @@ final readonly class Request
     public static function fromGlobals(): self
     {
         $uri = $_SERVER['REQUEST_URI'] ?? '/';
-        $path = parse_url($uri, PHP_URL_PATH);
+        // The path is everything before the query; parse_url would read a leading "//" as an authority.
+        $path = strstr($uri, '?', true);
+        $path = $path === false ? $uri : $path;
         $headers = [];
         foreach ($_SERVER as $key => $value) {
             if (str_starts_with($key, 'HTTP_')) {

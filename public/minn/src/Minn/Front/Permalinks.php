@@ -22,6 +22,7 @@ final readonly class Permalinks
         public string $home,
         public string $structure,
         public int $frontPageId = 0,
+        public int $postsPageId = 0,
     ) {
     }
 
@@ -33,6 +34,7 @@ final readonly class Permalinks
             rtrim($db->option('home') ?? '', '/'),
             $db->option('permalink_structure') ?? '',
             ($db->option('show_on_front') ?? 'posts') === 'page' ? (int) ($db->option('page_on_front') ?? 0) : 0,
+            ($db->option('show_on_front') ?? 'posts') === 'page' ? (int) ($db->option('page_for_posts') ?? 0) : 0,
         );
     }
 
@@ -66,6 +68,12 @@ final readonly class Permalinks
         if ($this->frontPageId > 0 && (int) $page['ID'] === $this->frontPageId) {
             return $this->url('/');
         }
+        return $this->pagePath($page);
+    }
+
+    /** A page's own pretty path, even for the static front page (its comments feed lives there). */
+    public function pagePath(array $page): string
+    {
         if (!$this->isPretty() || !$this->hasPrettyLink($page)) {
             return $this->url('/?page_id=' . (int) $page['ID']);
         }

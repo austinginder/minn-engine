@@ -30,7 +30,7 @@ final readonly class Renderer
     public function bodyClasses(Resolution $resolution): array
     {
         $classes = match ($resolution->kind) {
-            Kind::Home => ['home', 'blog'],
+            Kind::Home => $resolution->postsPage ? ['blog'] : ['home', 'blog'],
             Kind::Single => ['single', 'single-post', 'postid-' . $resolution->id(), 'single-format-standard'],
             Kind::Page => [...($resolution->front ? ['home'] : []), ...$this->pageClasses($resolution->record)],
             Kind::Category => ['archive', 'category', 'category-' . $resolution->record['slug'], 'category-' . $resolution->id()],
@@ -63,7 +63,15 @@ final readonly class Renderer
     public function title(Resolution $resolution): string
     {
         $site = $this->db->option('blogname') ?? '';
+        // The front page is titled by the site alone (the tagline follows when there is one);
+        // its later pages, like the blog's, carry "Page N"; the posts page carries its own title.
+        if ($resolution->front || ($resolution->kind === Kind::Home && !$resolution->postsPage)) {
+            $tagline = (string) ($this->db->option('blogdescription') ?? '');
+            $title = $site . ($resolution->front && $tagline !== '' ? ' &#8211; ' . $tagline : '');
+            return $resolution->paged > 1 ? $title . ' &#8211; Page ' . $resolution->paged : $title;
+        }
         $title = match ($resolution->kind) {
+            Kind::Home => (string) $resolution->record['post_title'],
             Kind::Single, Kind::Page => (string) $resolution->record['post_title'],
             Kind::NotFound => 'Page not found',
             Kind::Category, Kind::Tag => (string) $resolution->record['name'],

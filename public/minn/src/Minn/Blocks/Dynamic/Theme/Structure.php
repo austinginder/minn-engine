@@ -73,7 +73,8 @@ final readonly class Structure
         $level = (int) $block->attr('level', 1);
         $tag = $level === 0 ? 'p' : 'h' . $level;
         $resolution = $renderer->context()->resolution;
-        $current = ($resolution->kind === Kind::Home || $resolution->front) && $resolution->paged === 1 ? ' aria-current="page"' : '';
+        // The posts page is a listing but not the home the site-title link points at.
+        $current = (($resolution->kind === Kind::Home && !$resolution->postsPage) || $resolution->front) && $resolution->paged === 1 ? ' aria-current="page"' : '';
         $link = (bool) $block->attr('isLink', true);
         $inner = $link
             ? '<a href="' . Html::attr($this->permalinks->url('')) . '" target="_self" rel="home"' . $current . '>' . Html::esc($name) . '</a>'

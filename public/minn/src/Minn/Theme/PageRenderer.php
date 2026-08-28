@@ -127,7 +127,7 @@ final readonly class PageRenderer
         $document = '<!DOCTYPE html>' . "\n" . '<html lang="en">' . "\n" . '<head>' . "\n"
             . '<meta charset="UTF-8" />' . "\n"
             . '<meta name="viewport" content="width=device-width, initial-scale=1" />' . "\n"
-            . '<title>' . Html::esc($title) . '</title>' . "\n"
+            . '<title>' . htmlspecialchars($title, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false) . '</title>' . "\n"
             . $this->headLinks($resolution)
             . '<link rel="stylesheet" id="minn-blocks-css" href="' . Html::attr($this->permalinks->url('/minn-engine/blocks.css')) . '" />' . "\n"
             . '<style id="global-styles-inline-css">' . "\n" . $globalStyles . "\n" . '</style>' . "\n"
@@ -168,8 +168,12 @@ final readonly class PageRenderer
                 break;
             case Kind::Single:
             case Kind::Page:
-                if ((int) ($record['comment_count'] ?? 0) > 0) {
-                    $out .= '<link rel="alternate" type="application/rss+xml" title="' . $site . ' &raquo; ' . Html::esc((string) $record['post_title']) . ' Comments Feed" href="' . Html::attr($this->permalinks->forPost($record) . 'feed/') . '" />' . "\n";
+                // The static front page announces its own comments feed while comments or pings are
+                // open on it, even with none yet; every other single needs a comment first.
+                $open = ($record['comment_status'] ?? '') === 'open' || ($record['ping_status'] ?? '') === 'open';
+                if ((int) ($record['comment_count'] ?? 0) > 0 || ($resolution->front && $open)) {
+                    $own = $record['post_type'] === 'page' ? $this->permalinks->pagePath($record) : $this->permalinks->forPost($record);
+                    $out .= '<link rel="alternate" type="application/rss+xml" title="' . $site . ' &raquo; ' . Html::esc((string) $record['post_title']) . ' Comments Feed" href="' . Html::attr($own . 'feed/') . '" />' . "\n";
                 }
                 $json = '/wp/v2/' . ($record['post_type'] === 'page' ? 'pages' : 'posts') . '/' . (int) $record['ID'];
                 break;

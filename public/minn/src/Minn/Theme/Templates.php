@@ -55,7 +55,7 @@ final readonly class Templates
     {
         $record = $resolution->record ?? [];
         return match ($resolution->kind) {
-            Kind::Home => ['front-page', 'home', 'index'],
+            Kind::Home => $resolution->postsPage ? ['home', 'index'] : ['front-page', 'home', 'index'],
             Kind::Single => [
                 'single-post-' . ($record['post_name'] ?? ''),
                 'single-post',

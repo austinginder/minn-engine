@@ -28,12 +28,14 @@ final readonly class Resolution
         public bool $front = false,
         /** a preview: the reader's autosave replaces the stored content */
         public bool $preview = false,
+        /** the posts page (page_for_posts): the record is the page, the listing is the blog */
+        public bool $postsPage = false,
     ) {
     }
 
     public function asPreview(): self
     {
-        return new self($this->kind, $this->record, $this->paged, $this->location, $this->status, $this->search, $this->date, $this->authorName, $this->front, true);
+        return new self($this->kind, $this->record, $this->paged, $this->location, $this->status, $this->search, $this->date, $this->authorName, $this->front, true, $this->postsPage);
     }
 
     public static function home(int $paged = 1): self
@@ -49,6 +51,12 @@ final readonly class Resolution
     public static function frontPage(array $page, int $paged = 1): self
     {
         return new self(Kind::Page, $page, $paged, front: true);
+    }
+
+    /** The page that stands for the blog: a home listing whose record is the page. */
+    public static function postsPage(array $page): self
+    {
+        return new self(Kind::Home, $page, 1, postsPage: true);
     }
 
     public static function term(string $taxonomy, array $term, int $paged = 1): self
