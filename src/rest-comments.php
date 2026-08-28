@@ -80,6 +80,7 @@ function minn_rest_comment_object( array $c, bool $edit, int $viewer_uid ): arra
 	global $table_prefix;
 	$id      = (int) $c['comment_ID'];
 	$post_id = (int) $c['comment_post_ID'];
+	$post    = ( new Minn\Content\Posts( Minn\Db::shared() ) )->find( $post_id );
 
 	$obj = array(
 		'id'          => $id,
@@ -101,7 +102,7 @@ function minn_rest_comment_object( array $c, bool $edit, int $viewer_uid ): arra
 	$obj['content']  = $edit
 		? array( 'rendered' => minn_comment_render( $c['comment_content'] ), 'raw' => $c['comment_content'] )
 		: array( 'rendered' => minn_comment_render( $c['comment_content'] ) );
-	$obj['link']     = minn_home_url( '/?p=' . $post_id . '#comment-' . $id );
+	$obj['link']     = ( $post ? minn_permalinks()->forPost( $post ) : minn_home_url( '/?p=' . $post_id ) ) . '#comment-' . $id;
 	$obj['status']   = minn_comment_status_str( $c['comment_approved'] );
 	$obj['type']     = '' === $c['comment_type'] ? 'comment' : $c['comment_type'];
 	$obj['author_avatar_urls'] = minn_avatar_urls( $c['comment_author_email'] );

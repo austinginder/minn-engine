@@ -1,90 +1,90 @@
 [
-  {
-    "id": 2,
-    "count": 1,
-    "description": "",
-    "link": "http://127.0.0.1:8123/?tag=engine",
-    "name": "engine",
-    "slug": "engine",
-    "taxonomy": "post_tag",
-    "meta": [],
-    "_links": {
-      "self": [
-        {
-          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/tags/2",
-          "targetHints": {
-            "allow": [
-              "GET"
+    {
+        "id": 2,
+        "count": 1,
+        "description": "",
+        "link": "http://127.0.0.1:8123/tag/engine/",
+        "name": "engine",
+        "slug": "engine",
+        "taxonomy": "post_tag",
+        "meta": [],
+        "_links": {
+            "self": [
+                {
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/tags/2",
+                    "targetHints": {
+                        "allow": [
+                            "GET"
+                        ]
+                    }
+                }
+            ],
+            "collection": [
+                {
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/tags"
+                }
+            ],
+            "about": [
+                {
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/taxonomies/post_tag"
+                }
+            ],
+            "wp:post_type": [
+                {
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts?tags=2"
+                }
+            ],
+            "curies": [
+                {
+                    "name": "wp",
+                    "href": "https://api.w.org/{rel}",
+                    "templated": true
+                }
             ]
-          }
         }
-      ],
-      "collection": [
-        {
-          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/tags"
-        }
-      ],
-      "about": [
-        {
-          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/taxonomies/post_tag"
-        }
-      ],
-      "wp:post_type": [
-        {
-          "href": "http://127.0.0.1:8123/index.php?rest_route=%2Fwp%2Fv2%2Fposts&tags=2"
-        }
-      ],
-      "curies": [
-        {
-          "name": "wp",
-          "href": "https://api.w.org/{rel}",
-          "templated": true
-        }
-      ]
-    }
-  },
-  {
-    "id": 3,
-    "count": 1,
-    "description": "",
-    "link": "http://127.0.0.1:8123/?tag=parity",
-    "name": "parity",
-    "slug": "parity",
-    "taxonomy": "post_tag",
-    "meta": [],
-    "_links": {
-      "self": [
-        {
-          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/tags/3",
-          "targetHints": {
-            "allow": [
-              "GET"
+    },
+    {
+        "id": 3,
+        "count": 1,
+        "description": "",
+        "link": "http://127.0.0.1:8123/tag/parity/",
+        "name": "parity",
+        "slug": "parity",
+        "taxonomy": "post_tag",
+        "meta": [],
+        "_links": {
+            "self": [
+                {
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/tags/3",
+                    "targetHints": {
+                        "allow": [
+                            "GET"
+                        ]
+                    }
+                }
+            ],
+            "collection": [
+                {
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/tags"
+                }
+            ],
+            "about": [
+                {
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/taxonomies/post_tag"
+                }
+            ],
+            "wp:post_type": [
+                {
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts?tags=3"
+                }
+            ],
+            "curies": [
+                {
+                    "name": "wp",
+                    "href": "https://api.w.org/{rel}",
+                    "templated": true
+                }
             ]
-          }
         }
-      ],
-      "collection": [
-        {
-          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/tags"
-        }
-      ],
-      "about": [
-        {
-          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/taxonomies/post_tag"
-        }
-      ],
-      "wp:post_type": [
-        {
-          "href": "http://127.0.0.1:8123/index.php?rest_route=%2Fwp%2Fv2%2Fposts&tags=3"
-        }
-      ],
-      "curies": [
-        {
-          "name": "wp",
-          "href": "https://api.w.org/{rel}",
-          "templated": true
-        }
-      ]
     }
-  }
 ]

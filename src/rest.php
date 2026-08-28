@@ -23,17 +23,21 @@ function minn_home_url( string $path = '' ): string {
 }
 
 /**
- * REST URL in the plain-permalink form the reference emits:
- * {home}/index.php?rest_route=/wp/v2/... — and, when query args ride along,
- * the rest_route value itself is URL-encoded.
+ * REST URL in the form the reference emits for the site's permalink mode:
+ * {home}/wp-json/wp/v2/... with pretty permalinks, otherwise
+ * {home}/index.php?rest_route=/wp/v2/... with the route value URL-encoded
+ * when query args ride along.
  */
 function minn_rest_url( string $route, array $args = array() ): string {
+	$pretty = minn_permalinks()->isPretty();
 	if ( empty( $args ) ) {
-		return minn_home_url( '/index.php?rest_route=' . $route );
+		return minn_home_url( $pretty ? '/wp-json' . $route : '/index.php?rest_route=' . $route );
 	}
-	$url = minn_home_url( '/index.php?rest_route=' . rawurlencode( $route ) );
+	$url = minn_home_url( $pretty ? '/wp-json' . $route : '/index.php?rest_route=' . rawurlencode( $route ) );
+	$sep = $pretty ? '?' : '&';
 	foreach ( $args as $k => $v ) {
-		$url .= '&' . $k . '=' . rawurlencode( (string) $v );
+		$url .= $sep . $k . '=' . rawurlencode( (string) $v );
+		$sep  = '&';
 	}
 	return $url;
 }
@@ -316,6 +320,25 @@ function minn_rest_date( string $mysql ): string {
 
 /* ----------------------------------------------------------- posts/pages */
 
+/**
+ * The editor's sample permalink: the structure with the name token left in
+ * place (pages: the parent path plus %pagename%), or the query form when
+ * permalinks are plain.
+ */
+function minn_permalink_template( array $p ): string {
+	$permalinks = minn_permalinks();
+	$id         = (int) $p['ID'];
+	if ( ! $permalinks->isPretty() ) {
+		return minn_home_url( '/?' . ( 'page' === $p['post_type'] ? 'page_id' : 'p' ) . '=' . $id );
+	}
+	if ( 'page' === $p['post_type'] ) {
+		$parent = (int) $p['post_parent'] > 0 ? ( new Minn\Content\Posts( Minn\Db::shared() ) )->find( (int) $p['post_parent'] ) : null;
+		$prefix = $parent ? '/' . ( new Minn\Content\Posts( Minn\Db::shared() ) )->pathOf( $parent ) : '';
+		return minn_home_url( $prefix . '/%pagename%/' );
+	}
+	return minn_home_url( '/' . trim( $permalinks->structure, '/' ) . '/' );
+}
+
 /** Post-type table for the content controllers. */
 function minn_post_type_config( string $type ): array {
 	$types = array(
@@ -341,7 +364,7 @@ function minn_rest_post_object( array $p ): array {
 		'slug'         => $p['post_name'],
 		'status'       => $p['post_status'],
 		'type'         => $type,
-		'link'         => minn_home_url( sprintf( $cfg['link'], $id ) ),
+		'link'         => minn_permalinks()->forPost( $p ),
 		'title'        => array( 'rendered' => minn_texturize( $p['post_title'] ) ),
 		'content'      => array(
 			'rendered'  => '' !== $p['post_password'] ? '' : minn_render_blocks( $p['post_content'] ),
@@ -633,7 +656,7 @@ function minn_rest_term_object( array $t, string $rest_base ): array {
 		'id'          => (int) $t['term_id'],
 		'count'       => (int) $t['count'],
 		'description' => $t['description'],
-		'link'        => minn_home_url( ( $cfg['link'] )( $t ) ),
+		'link'        => minn_permalinks()->forTerm( $t + array( 'taxonomy' => $cfg['taxonomy'] ) ),
 		'name'        => $t['name'],
 		'slug'        => $t['slug'],
 		'taxonomy'    => $cfg['taxonomy'],
@@ -806,7 +829,7 @@ function minn_rest_user_object( array $u, bool $is_self = false ): array {
 		'name'        => $u['display_name'],
 		'url'         => $u['user_url'],
 		'description' => minn_user_meta( $id, 'description' ) ?? '',
-		'link'        => minn_home_url( '/?author=' . $id ),
+		'link'        => minn_permalinks()->forAuthor( $u ),
 		'slug'        => $u['user_nicename'],
 		'avatar_urls' => minn_avatar_urls( $u['user_email'] ),
 		'meta'        => array( 'show_admin_bar_front' => minn_user_meta( $id, 'show_admin_bar_front' ) ?? 'true' ),
@@ -1038,7 +1061,7 @@ function minn_rest_post_object_edit( array $p, int $uid ): array {
 	$reordered = array();
 	foreach ( $out as $k => $v ) {
 		if ( 'class_list' === $k ) {
-			$reordered['permalink_template'] = minn_home_url( '/?' . ( 'page' === $type ? 'page_id' : 'p' ) . '=' . $id );
+			$reordered['permalink_template'] = minn_permalink_template( $p );
 			$reordered['generated_slug']     = minn_sanitize_slug( $p['post_title'] );
 		}
 		$reordered[ $k ] = $v;

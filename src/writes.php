@@ -99,6 +99,11 @@ function minn_rest_create_post( string $type ): void {
 	$password       = (string) ( $body['password'] ?? '' );
 	$parent         = 'page' === $type ? (int) ( $body['parent'] ?? 0 ) : 0;
 	$menu_order     = 'page' === $type ? (int) ( $body['menu_order'] ?? 0 ) : 0;
+	// A post that goes live without a slug gets one from its title; drafts
+	// and pending posts keep an empty post_name until they are published.
+	if ( '' === $slug && in_array( $status, array( 'publish', 'future', 'private' ), true ) && '' !== $title ) {
+		$slug = minn_unique_slug( $title, 0 );
+	}
 
 	$stmt = minn_db()->prepare(
 		"INSERT INTO {$table_prefix}posts
@@ -231,6 +236,15 @@ function minn_rest_update_post( string $type, int $id ): void {
 		$sets[] = 'post_status = ?';
 		$vals[] = $new_status;
 		$typs  .= 's';
+		if ( in_array( $new_status, array( 'publish', 'future', 'private' ), true )
+			&& '' === $post['post_name'] && ! array_key_exists( 'slug', $body ) ) {
+			$title_for_slug = array_key_exists( 'title', $body ) ? (string) minn_extract_field( $body['title'] ) : $post['post_title'];
+			if ( '' !== $title_for_slug ) {
+				$sets[] = 'post_name = ?';
+				$vals[] = minn_unique_slug( $title_for_slug, $id );
+				$typs  .= 's';
+			}
+		}
 		// Moving to publish for the first time stamps the publish date.
 		if ( 'publish' === $new_status && ! in_array( $post['post_status'], array( 'publish', 'private', 'future' ), true ) ) {
 			$now      = minn_local_now();

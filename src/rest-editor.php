@@ -207,7 +207,7 @@ function minn_v1_editor_dispatch( string $route, string $method ): void {
 				'category_base' => (string) ( minn_option( 'category_base' ) ?? '' ),
 				'tag_base'      => (string) ( minn_option( 'tag_base' ) ?? '' ),
 				'pretty'        => '' !== $structure,
-				'app_url'       => minn_home_url( '' !== $structure ? '/minn-admin' : '/?minn_admin=1' ),
+				'app_url'       => minn_home_url( '' !== $structure ? '/minn-admin/' : '/?minn_admin=1' ),
 			)
 		);
 	}

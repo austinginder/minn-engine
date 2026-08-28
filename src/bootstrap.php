@@ -8,14 +8,24 @@
  * process; the schema is the contract.
  */
 
-function minn_db(): mysqli {
-	static $db = null;
-	if ( $db instanceof mysqli ) {
-		return $db;
+// PSR-4 autoloader for the Minn\ namespace: src/Minn/Http/Request.php is Minn\Http\Request.
+spl_autoload_register( static function ( string $class ): void {
+	if ( str_starts_with( $class, 'Minn\\' ) ) {
+		$file = __DIR__ . '/' . str_replace( '\\', '/', $class ) . '.php';
+		if ( is_file( $file ) ) {
+			require $file;
+		}
 	}
-	$db = new mysqli( DB_HOST, DB_USER, DB_PASSWORD, DB_NAME );
-	$db->set_charset( 'utf8mb4' );
-	return $db;
+} );
+
+/** The legacy handle: the same connection Minn\Db holds. */
+function minn_db(): mysqli {
+	return Minn\Db::shared()->connection();
+}
+
+function minn_permalinks(): Minn\Front\Permalinks {
+	static $permalinks = null;
+	return $permalinks ??= Minn\Front\Permalinks::fromDb( Minn\Db::shared() );
 }
 
 function minn_option( string $name ): ?string {
@@ -27,18 +37,6 @@ function minn_option( string $name ): ?string {
 	$stmt->execute();
 	$row = $stmt->get_result()->fetch_row();
 	return $row ? $row[0] : null;
-}
-
-function minn_latest_posts( int $limit = 5 ): array {
-	global $table_prefix;
-	$stmt = minn_db()->prepare(
-		"SELECT ID, post_title, post_date FROM {$table_prefix}posts
-		 WHERE post_type = 'post' AND post_status = 'publish'
-		 ORDER BY post_date DESC LIMIT ?"
-	);
-	$stmt->bind_param( 'i', $limit );
-	$stmt->execute();
-	return $stmt->get_result()->fetch_all( MYSQLI_ASSOC );
 }
 
 function minn_esc( ?string $s ): string {
@@ -80,49 +78,20 @@ function minn_engine_serve(): void {
 	if ( '/minn-admin' === $path || str_starts_with( $path, '/minn-admin/' ) ) {
 		minn_admin_handle_app();
 	}
-	if ( '/' !== $path ) {
-		http_response_code( 404 );
-		header( 'Content-Type: text/html; charset=utf-8' );
-		echo '<!doctype html><title>Not Found</title><p>Not found.';
-		exit;
-	}
-
-	minn_homepage();
+	minn_front_serve();
 }
 
-function minn_homepage(): void {
-	$title   = minn_option( 'blogname' ) ?? 'Untitled';
-	$tagline = minn_option( 'blogdescription' ) ?? '';
-	$posts   = minn_latest_posts();
-
-	header( 'Content-Type: text/html; charset=utf-8' );
-	header( 'X-Powered-By: Minn Engine/' . MINN_ENGINE_VERSION );
-
-	echo '<!doctype html><html lang="en"><head><meta charset="utf-8">';
-	echo '<meta name="viewport" content="width=device-width, initial-scale=1">';
-	echo '<title>' . minn_esc( $title ) . '</title>';
-	echo '<style>
-		body { margin:0; background:#0b0b0d; color:#ececed; font:17px/1.6 "Hanken Grotesk", "Helvetica Neue", sans-serif;
-		       display:flex; min-height:100vh; align-items:center; justify-content:center; }
-		main { max-width:560px; padding:40px 28px; }
-		h1 { font-size:38px; font-weight:800; letter-spacing:-0.02em; margin:0 0 6px; }
-		.tag { color:#9d9da7; margin:0 0 28px; }
-		ul { list-style:none; margin:0; padding:0; }
-		li { padding:10px 0; border-top:1px solid #242429; color:#9d9da7; }
-		li b { color:#ececed; font-weight:600; display:block; }
-		footer { margin-top:34px; padding-top:14px; border-top:1px solid #242429;
-		         font:12px/1.6 "JetBrains Mono", monospace; color:#8a8a94; }
-		footer em { color:#8a80f8; font-style:normal; }
-	</style></head><body><main>';
-	echo '<h1>' . minn_esc( $title ) . '</h1>';
-	if ( '' !== $tagline ) {
-		echo '<p class="tag">' . minn_esc( $tagline ) . '</p>';
-	}
-	echo '<ul>';
-	foreach ( $posts as $p ) {
-		echo '<li><b>' . minn_esc( $p['post_title'] ) . '</b>' . minn_esc( substr( $p['post_date'], 0, 10 ) ) . '</li>';
-	}
-	echo '</ul>';
-	echo '<footer>Served by <em>Minn Engine ' . MINN_ENGINE_VERSION . '</em> from a database WordPress made · PHP ' . PHP_VERSION . '</footer>';
-	echo '</main></body></html>';
+/** The public site: everything the legacy routes above did not claim. */
+function minn_front_serve(): never {
+	$db       = Minn\Db::shared();
+	$can_read = static function ( array $post ): bool {
+		$why  = '';
+		$user = minn_authenticate_session( $why );
+		return null !== $user && minn_user_can( (int) $user['ID'], 'edit_post', (int) $post['ID'] );
+	};
+	$resolver = Minn\Front\Resolver::fromDb( $db, $can_read );
+	$renderer = new Minn\Front\Renderer( $db, new Minn\Content\Posts( $db ), $resolver->permalinks(), $resolver->perPage() );
+	$router   = ( new Minn\Http\Router() )->register( new Minn\Front\FrontController( $resolver, $renderer ) );
+	$response = ( new Minn\Http\Kernel( $router ) )->handle( Minn\Http\Request::fromGlobals() );
+	( $response ?? Minn\Http\Response::html( '<!doctype html><title>Not Found</title><p>Not found.', 404 ) )->send();
 }

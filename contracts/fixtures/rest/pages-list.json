@@ -1,190 +1,190 @@
 [
-  {
-    "id": 6,
-    "date": "2026-08-28T02:36:16",
-    "date_gmt": "2026-08-28T02:36:16",
-    "guid": {
-      "rendered": "https://minn-engine.localhost/?page_id=6"
-    },
-    "modified": "2026-08-28T02:36:16",
-    "modified_gmt": "2026-08-28T02:36:16",
-    "slug": "docs",
-    "status": "publish",
-    "type": "page",
-    "link": "http://127.0.0.1:8123/?page_id=6",
-    "title": {
-      "rendered": "Docs"
-    },
-    "content": {
-      "rendered": "\n<p class=\"wp-block-paragraph\">Child page for hierarchy contract.</p>\n",
-      "protected": false
-    },
-    "excerpt": {
-      "rendered": "<p>Child page for hierarchy contract.</p>\n",
-      "protected": false
-    },
-    "author": 0,
-    "featured_media": 0,
-    "parent": 2,
-    "menu_order": 3,
-    "comment_status": "closed",
-    "ping_status": "closed",
-    "template": "",
-    "meta": {
-      "footnotes": ""
-    },
-    "class_list": [
-      "post-6",
-      "page",
-      "type-page",
-      "status-publish",
-      "hentry"
-    ],
-    "_links": {
-      "self": [
-        {
-          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/pages/6",
-          "targetHints": {
-            "allow": [
-              "GET"
+    {
+        "id": 6,
+        "date": "2026-08-28T02:36:16",
+        "date_gmt": "2026-08-28T02:36:16",
+        "guid": {
+            "rendered": "https://minn-engine.localhost/?page_id=6"
+        },
+        "modified": "2026-08-28T02:36:16",
+        "modified_gmt": "2026-08-28T02:36:16",
+        "slug": "docs",
+        "status": "publish",
+        "type": "page",
+        "link": "http://127.0.0.1:8123/sample-page/docs/",
+        "title": {
+            "rendered": "Docs"
+        },
+        "content": {
+            "rendered": "\n<p class=\"wp-block-paragraph\">Child page for hierarchy contract.</p>\n",
+            "protected": false
+        },
+        "excerpt": {
+            "rendered": "<p>Child page for hierarchy contract.</p>\n",
+            "protected": false
+        },
+        "author": 0,
+        "featured_media": 0,
+        "parent": 2,
+        "menu_order": 3,
+        "comment_status": "closed",
+        "ping_status": "closed",
+        "template": "",
+        "meta": {
+            "footnotes": ""
+        },
+        "class_list": [
+            "post-6",
+            "page",
+            "type-page",
+            "status-publish",
+            "hentry"
+        ],
+        "_links": {
+            "self": [
+                {
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/pages/6",
+                    "targetHints": {
+                        "allow": [
+                            "GET"
+                        ]
+                    }
+                }
+            ],
+            "collection": [
+                {
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/pages"
+                }
+            ],
+            "about": [
+                {
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/types/page"
+                }
+            ],
+            "replies": [
+                {
+                    "embeddable": true,
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/comments?post=6"
+                }
+            ],
+            "version-history": [
+                {
+                    "count": 0,
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/pages/6/revisions"
+                }
+            ],
+            "up": [
+                {
+                    "embeddable": true,
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/pages/2"
+                }
+            ],
+            "wp:attachment": [
+                {
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/media?parent=6"
+                }
+            ],
+            "curies": [
+                {
+                    "name": "wp",
+                    "href": "https://api.w.org/{rel}",
+                    "templated": true
+                }
             ]
-          }
         }
-      ],
-      "collection": [
-        {
-          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/pages"
-        }
-      ],
-      "about": [
-        {
-          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/types/page"
-        }
-      ],
-      "replies": [
-        {
-          "embeddable": true,
-          "href": "http://127.0.0.1:8123/index.php?rest_route=%2Fwp%2Fv2%2Fcomments&post=6"
-        }
-      ],
-      "version-history": [
-        {
-          "count": 0,
-          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/pages/6/revisions"
-        }
-      ],
-      "up": [
-        {
-          "embeddable": true,
-          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/pages/2"
-        }
-      ],
-      "wp:attachment": [
-        {
-          "href": "http://127.0.0.1:8123/index.php?rest_route=%2Fwp%2Fv2%2Fmedia&parent=6"
-        }
-      ],
-      "curies": [
-        {
-          "name": "wp",
-          "href": "https://api.w.org/{rel}",
-          "templated": true
-        }
-      ]
-    }
-  },
-  {
-    "id": 2,
-    "date": "2026-08-28T02:21:33",
-    "date_gmt": "2026-08-28T02:21:33",
-    "guid": {
-      "rendered": "https://minn-engine.localhost/?page_id=2"
     },
-    "modified": "2026-08-28T02:21:33",
-    "modified_gmt": "2026-08-28T02:21:33",
-    "slug": "sample-page",
-    "status": "publish",
-    "type": "page",
-    "link": "http://127.0.0.1:8123/?page_id=2",
-    "title": {
-      "rendered": "Sample Page"
-    },
-    "content": {
-      "rendered": "\n<p class=\"wp-block-paragraph\">This is an example page. It&#8217;s different from a blog post because it will stay in one place and will show up in your site navigation (in most themes). Most people start with an About page that introduces them to potential site visitors. It might say something like this:</p>\n\n\n\n<blockquote class=\"wp-block-quote is-layout-flow wp-block-quote-is-layout-flow\">\n\n<p class=\"wp-block-paragraph\">Hi there! I&#8217;m a bike messenger by day, aspiring actor by night, and this is my website. I live in Los Angeles, have a great dog named Jack, and I like pi&#241;a coladas. (And gettin&#8217; caught in the rain.)</p>\n\n</blockquote>\n\n\n\n<p class=\"wp-block-paragraph\">&#8230;or something like this:</p>\n\n\n\n<blockquote class=\"wp-block-quote is-layout-flow wp-block-quote-is-layout-flow\">\n\n<p class=\"wp-block-paragraph\">The XYZ Doohickey Company was founded in 1971, and has been providing quality doohickeys to the public ever since. Located in Gotham City, XYZ employs over 2,000 people and does all kinds of awesome things for the Gotham community.</p>\n\n</blockquote>\n\n\n\n<p class=\"wp-block-paragraph\">As a new WordPress user, you should go to <a href=\"https://minn-engine.localhost/wp-admin/\">your dashboard</a> to delete this page and create new pages for your content. Have fun!</p>\n",
-      "protected": false
-    },
-    "excerpt": {
-      "rendered": "<p>This is an example page. It&#8217;s different from a blog post because it will stay in one place and will show up in your site navigation (in most themes). Most people start with an About page that introduces them to potential site visitors. It might say something like this: Hi there! I&#8217;m a bike messenger [&hellip;]</p>\n",
-      "protected": false
-    },
-    "author": 1,
-    "featured_media": 0,
-    "parent": 0,
-    "menu_order": 0,
-    "comment_status": "closed",
-    "ping_status": "open",
-    "template": "",
-    "meta": {
-      "footnotes": ""
-    },
-    "class_list": [
-      "post-2",
-      "page",
-      "type-page",
-      "status-publish",
-      "hentry"
-    ],
-    "_links": {
-      "self": [
-        {
-          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/pages/2",
-          "targetHints": {
-            "allow": [
-              "GET"
+    {
+        "id": 2,
+        "date": "2026-08-28T02:21:33",
+        "date_gmt": "2026-08-28T02:21:33",
+        "guid": {
+            "rendered": "https://minn-engine.localhost/?page_id=2"
+        },
+        "modified": "2026-08-28T02:21:33",
+        "modified_gmt": "2026-08-28T02:21:33",
+        "slug": "sample-page",
+        "status": "publish",
+        "type": "page",
+        "link": "http://127.0.0.1:8123/sample-page/",
+        "title": {
+            "rendered": "Sample Page"
+        },
+        "content": {
+            "rendered": "\n<p class=\"wp-block-paragraph\">This is an example page. It&#8217;s different from a blog post because it will stay in one place and will show up in your site navigation (in most themes). Most people start with an About page that introduces them to potential site visitors. It might say something like this:</p>\n\n\n\n<blockquote class=\"wp-block-quote is-layout-flow wp-block-quote-is-layout-flow\">\n\n<p class=\"wp-block-paragraph\">Hi there! I&#8217;m a bike messenger by day, aspiring actor by night, and this is my website. I live in Los Angeles, have a great dog named Jack, and I like pi&#241;a coladas. (And gettin&#8217; caught in the rain.)</p>\n\n</blockquote>\n\n\n\n<p class=\"wp-block-paragraph\">&#8230;or something like this:</p>\n\n\n\n<blockquote class=\"wp-block-quote is-layout-flow wp-block-quote-is-layout-flow\">\n\n<p class=\"wp-block-paragraph\">The XYZ Doohickey Company was founded in 1971, and has been providing quality doohickeys to the public ever since. Located in Gotham City, XYZ employs over 2,000 people and does all kinds of awesome things for the Gotham community.</p>\n\n</blockquote>\n\n\n\n<p class=\"wp-block-paragraph\">As a new WordPress user, you should go to <a href=\"https://minn-engine.localhost/wp-admin/\">your dashboard</a> to delete this page and create new pages for your content. Have fun!</p>\n",
+            "protected": false
+        },
+        "excerpt": {
+            "rendered": "<p>This is an example page. It&#8217;s different from a blog post because it will stay in one place and will show up in your site navigation (in most themes). Most people start with an About page that introduces them to potential site visitors. It might say something like this: Hi there! I&#8217;m a bike messenger [&hellip;]</p>\n",
+            "protected": false
+        },
+        "author": 1,
+        "featured_media": 0,
+        "parent": 0,
+        "menu_order": 0,
+        "comment_status": "closed",
+        "ping_status": "open",
+        "template": "",
+        "meta": {
+            "footnotes": ""
+        },
+        "class_list": [
+            "post-2",
+            "page",
+            "type-page",
+            "status-publish",
+            "hentry"
+        ],
+        "_links": {
+            "self": [
+                {
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/pages/2",
+                    "targetHints": {
+                        "allow": [
+                            "GET"
+                        ]
+                    }
+                }
+            ],
+            "collection": [
+                {
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/pages"
+                }
+            ],
+            "about": [
+                {
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/types/page"
+                }
+            ],
+            "author": [
+                {
+                    "embeddable": true,
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/users/1"
+                }
+            ],
+            "replies": [
+                {
+                    "embeddable": true,
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/comments?post=2"
+                }
+            ],
+            "version-history": [
+                {
+                    "count": 0,
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/pages/2/revisions"
+                }
+            ],
+            "wp:attachment": [
+                {
+                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/media?parent=2"
+                }
+            ],
+            "curies": [
+                {
+                    "name": "wp",
+                    "href": "https://api.w.org/{rel}",
+                    "templated": true
+                }
             ]
-          }
         }
-      ],
-      "collection": [
-        {
-          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/pages"
-        }
-      ],
-      "about": [
-        {
-          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/types/page"
-        }
-      ],
-      "author": [
-        {
-          "embeddable": true,
-          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/users/1"
-        }
-      ],
-      "replies": [
-        {
-          "embeddable": true,
-          "href": "http://127.0.0.1:8123/index.php?rest_route=%2Fwp%2Fv2%2Fcomments&post=2"
-        }
-      ],
-      "version-history": [
-        {
-          "count": 0,
-          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/pages/2/revisions"
-        }
-      ],
-      "wp:attachment": [
-        {
-          "href": "http://127.0.0.1:8123/index.php?rest_route=%2Fwp%2Fv2%2Fmedia&parent=2"
-        }
-      ],
-      "curies": [
-        {
-          "name": "wp",
-          "href": "https://api.w.org/{rel}",
-          "templated": true
-        }
-      ]
     }
-  }
 ]

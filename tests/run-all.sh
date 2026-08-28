@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # Run every engine suite. Suites needing the reference SKIP cleanly when it
-# is not running; start it with:  (cd wp-reference && php -S 127.0.0.1:8123)
+# is not running; start it with:  (cd wp-reference && php -S 127.0.0.1:8123 router.php)
 set -u
 cd "$( dirname "$0" )"
 
 failed=0
-for suite in rest-posts auth caps writes login-endpoint rest-parity minn-v1 comments media settings users terms write-fields editor; do
+for suite in style rest-posts auth caps writes login-endpoint rest-parity minn-v1 comments media settings users terms write-fields editor permalinks; do
 	printf '\n=== %s ===\n' "$suite"
 	php "$suite.test.php" || failed=1
 done

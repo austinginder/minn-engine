@@ -1,5 +1,21 @@
 <?php
 /**
+ * An attachment's public link: its slug under the parent's permalink when
+ * attached, at the root when not, or the query form under plain permalinks.
+ */
+function minn_attachment_link( array $p ): string {
+	$permalinks = minn_permalinks();
+	$id         = (int) $p['ID'];
+	if ( ! $permalinks->isPretty() || '' === $p['post_name'] ) {
+		return minn_home_url( '/?attachment_id=' . $id );
+	}
+	$parent = (int) $p['post_parent'] > 0 ? ( new Minn\Content\Posts( Minn\Db::shared() ) )->find( (int) $p['post_parent'] ) : null;
+	if ( $parent ) {
+		return rtrim( $permalinks->forPost( $parent ), '/' ) . '/' . $p['post_name'] . '/';
+	}
+	return minn_home_url( '/' . $p['post_name'] . '/' );
+}
+/**
  * The wp/v2/media surface: list, single, upload (multipart or raw binary),
  * field edits, force delete — including GD sub-size generation and the
  * serialized attachment metadata WordPress reads back.
@@ -309,7 +325,7 @@ function minn_rest_media_object( array $p, bool $edit, int $viewer_uid ): array 
 		'slug'         => $p['post_name'],
 		'status'       => $p['post_status'],
 		'type'         => 'attachment',
-		'link'         => minn_home_url( '/?attachment_id=' . $id ),
+		'link'         => minn_attachment_link( $p ),
 		'title'        => $edit
 			? array( 'raw' => $p['post_title'], 'rendered' => minn_texturize( $p['post_title'] ) )
 			: array( 'rendered' => minn_texturize( $p['post_title'] ) ),

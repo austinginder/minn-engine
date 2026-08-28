@@ -1,0 +1,631 @@
+{
+    "/": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "blog",
+            "home"
+        ]
+    },
+    "/page/1/": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "blog",
+            "home"
+        ]
+    },
+    "/page/2/": {
+        "status": 404,
+        "location": null,
+        "classes": [
+            "error404"
+        ]
+    },
+    "/?paged=2": {
+        "status": 404,
+        "location": null,
+        "classes": [
+            "error404"
+        ]
+    },
+    "/hello-world/": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "postid-1",
+            "single",
+            "single-format-standard",
+            "single-post"
+        ]
+    },
+    "/hello-world": {
+        "status": 301,
+        "location": "/hello-world/",
+        "classes": []
+    },
+    "/HELLO-WORLD/": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "postid-1",
+            "single",
+            "single-format-standard",
+            "single-post"
+        ]
+    },
+    "/HELLO-WORLD": {
+        "status": 301,
+        "location": "/HELLO-WORLD/",
+        "classes": []
+    },
+    "/hello-world/?x=1": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "postid-1",
+            "single",
+            "single-format-standard",
+            "single-post"
+        ]
+    },
+    "/hello-world?x=1": {
+        "status": 301,
+        "location": "/hello-world/?x=1",
+        "classes": []
+    },
+    "/hello-world/page/2/": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "paged",
+            "paged-2",
+            "postid-1",
+            "single",
+            "single-format-standard",
+            "single-paged-2",
+            "single-post"
+        ]
+    },
+    "/hello-world/page/2": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "paged",
+            "paged-2",
+            "postid-1",
+            "single",
+            "single-format-standard",
+            "single-paged-2",
+            "single-post"
+        ]
+    },
+    "/hello-world/2/": {
+        "status": 301,
+        "location": "/hello-world/",
+        "classes": []
+    },
+    "/hello-world/embed/": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "postid-1",
+            "single",
+            "single-format-standard",
+            "single-post"
+        ]
+    },
+    "/hello-world/embed": {
+        "status": 301,
+        "location": "/hello-world/embed/",
+        "classes": []
+    },
+    "/hello-world/trackback/": {
+        "status": 302,
+        "location": "/hello-world/",
+        "classes": []
+    },
+    "/sample-page/": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "page",
+            "page-id-2",
+            "page-parent"
+        ]
+    },
+    "/sample-page/docs/": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "page",
+            "page-child",
+            "page-id-6",
+            "parent-pageid-2"
+        ]
+    },
+    "/sample-page/docs": {
+        "status": 301,
+        "location": "/sample-page/docs/",
+        "classes": []
+    },
+    "/Sample-Page/Docs/": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "page",
+            "page-child",
+            "page-id-6",
+            "parent-pageid-2"
+        ]
+    },
+    "/sample-page/docs/page/2/": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "page",
+            "page-child",
+            "page-id-6",
+            "page-paged-2",
+            "paged",
+            "paged-2",
+            "parent-pageid-2"
+        ]
+    },
+    "/sample-page/docs/2/": {
+        "status": 301,
+        "location": "/sample-page/docs/",
+        "classes": []
+    },
+    "/docs/": {
+        "status": 301,
+        "location": "/sample-page/docs/",
+        "classes": []
+    },
+    "/docs": {
+        "status": 301,
+        "location": "/sample-page/docs/",
+        "classes": []
+    },
+    "/docs/2/": {
+        "status": 301,
+        "location": "/sample-page/docs/2/",
+        "classes": []
+    },
+    "/hello-world/docs/": {
+        "status": 301,
+        "location": "/sample-page/docs/",
+        "classes": []
+    },
+    "/sample-page/nope/": {
+        "status": 404,
+        "location": null,
+        "classes": [
+            "error404"
+        ]
+    },
+    "/privacy-policy/": {
+        "status": 404,
+        "location": null,
+        "classes": [
+            "error404"
+        ]
+    },
+    "/nonexistent/": {
+        "status": 404,
+        "location": null,
+        "classes": [
+            "error404"
+        ]
+    },
+    "/nonexistent": {
+        "status": 404,
+        "location": null,
+        "classes": [
+            "error404"
+        ]
+    },
+    "/uncategorized/": {
+        "status": 404,
+        "location": null,
+        "classes": [
+            "error404"
+        ]
+    },
+    "/?p=1": {
+        "status": 301,
+        "location": "/hello-world/",
+        "classes": []
+    },
+    "/?p=5": {
+        "status": 301,
+        "location": "/building-in-the-open/",
+        "classes": []
+    },
+    "/?p=2": {
+        "status": 301,
+        "location": "/sample-page/",
+        "classes": []
+    },
+    "/?page_id=2": {
+        "status": 301,
+        "location": "/sample-page/",
+        "classes": []
+    },
+    "/?page_id=6": {
+        "status": 301,
+        "location": "/sample-page/docs/",
+        "classes": []
+    },
+    "/?page_id=1": {
+        "status": 301,
+        "location": "/hello-world/",
+        "classes": []
+    },
+    "/?p=10": {
+        "status": 404,
+        "location": null,
+        "classes": [
+            "error404"
+        ]
+    },
+    "/?p=3": {
+        "status": 404,
+        "location": null,
+        "classes": [
+            "error404"
+        ]
+    },
+    "/?p=999": {
+        "status": 404,
+        "location": null,
+        "classes": [
+            "error404"
+        ]
+    },
+    "/?name=hello-world": {
+        "status": 301,
+        "location": "/hello-world/",
+        "classes": []
+    },
+    "/?pagename=docs": {
+        "status": 301,
+        "location": "/sample-page/docs/",
+        "classes": []
+    },
+    "/?pagename=sample-page/docs": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "page",
+            "page-child",
+            "page-id-6",
+            "parent-pageid-2"
+        ]
+    },
+    "/?cat=1": {
+        "status": 301,
+        "location": "/category/uncategorized/",
+        "classes": []
+    },
+    "/?tag=engine": {
+        "status": 301,
+        "location": "/tag/engine/",
+        "classes": []
+    },
+    "/?author=1": {
+        "status": 301,
+        "location": "/author/admin/",
+        "classes": []
+    },
+    "/?m=202608": {
+        "status": 301,
+        "location": "/2026/08/",
+        "classes": []
+    },
+    "/?year=2026": {
+        "status": 301,
+        "location": "/2026/",
+        "classes": []
+    },
+    "/category/uncategorized/": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "archive",
+            "category",
+            "category-1",
+            "category-uncategorized"
+        ]
+    },
+    "/category/uncategorized": {
+        "status": 301,
+        "location": "/category/uncategorized/",
+        "classes": []
+    },
+    "/category/Uncategorized/": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "archive",
+            "category",
+            "category-1",
+            "category-uncategorized"
+        ]
+    },
+    "/category/uncategorized/page/2/": {
+        "status": 404,
+        "location": null,
+        "classes": [
+            "error404"
+        ]
+    },
+    "/category/uncategorized/hello-world/": {
+        "status": 404,
+        "location": null,
+        "classes": [
+            "error404"
+        ]
+    },
+    "/category/e": {
+        "status": 404,
+        "location": null,
+        "classes": [
+            "error404"
+        ]
+    },
+    "/tag/engine/": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "archive",
+            "tag",
+            "tag-2",
+            "tag-engine"
+        ]
+    },
+    "/tag/nope/": {
+        "status": 404,
+        "location": null,
+        "classes": [
+            "error404"
+        ]
+    },
+    "/tag/nope": {
+        "status": 404,
+        "location": null,
+        "classes": [
+            "error404"
+        ]
+    },
+    "/tag/e": {
+        "status": 404,
+        "location": null,
+        "classes": [
+            "error404"
+        ]
+    },
+    "/author/admin/": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "archive",
+            "author",
+            "author-1",
+            "author-admin"
+        ]
+    },
+    "/author/admin": {
+        "status": 301,
+        "location": "/author/admin/",
+        "classes": []
+    },
+    "/author/scribe/": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "archive",
+            "author",
+            "author-3",
+            "author-scribe"
+        ]
+    },
+    "/author/nobody/": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "archive",
+            "author"
+        ]
+    },
+    "/author/nobody": {
+        "status": 301,
+        "location": "/author/nobody/",
+        "classes": []
+    },
+    "/author/Admin/": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "archive",
+            "author",
+            "author-1",
+            "author-admin"
+        ]
+    },
+    "/author/admin/page/2/": {
+        "status": 404,
+        "location": null,
+        "classes": [
+            "error404"
+        ]
+    },
+    "/2026/": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "archive",
+            "date"
+        ]
+    },
+    "/2026": {
+        "status": 301,
+        "location": "/2026/",
+        "classes": []
+    },
+    "/2026/08/": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "archive",
+            "date"
+        ]
+    },
+    "/2026/08/28/": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "archive",
+            "date"
+        ]
+    },
+    "/2025/": {
+        "status": 404,
+        "location": null,
+        "classes": [
+            "error404"
+        ]
+    },
+    "/2025": {
+        "status": 404,
+        "location": null,
+        "classes": [
+            "error404"
+        ]
+    },
+    "/2026/08/28/hello-world/": {
+        "status": 404,
+        "location": null,
+        "classes": [
+            "error404"
+        ]
+    },
+    "/?s=hello": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "search",
+            "search-results"
+        ]
+    },
+    "/search/hello/": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "search",
+            "search-results"
+        ]
+    },
+    "/search/hello": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "search",
+            "search-results"
+        ]
+    },
+    "/hello": {
+        "status": 301,
+        "location": "/hello-world/",
+        "classes": []
+    },
+    "/hello-wor": {
+        "status": 301,
+        "location": "/hello-world/",
+        "classes": []
+    },
+    "/hello-wor/page/2/": {
+        "status": 301,
+        "location": "/hello-world/",
+        "classes": []
+    },
+    "/s": {
+        "status": 301,
+        "location": "/sample-page/",
+        "classes": []
+    },
+    "/sc": {
+        "status": 301,
+        "location": "/scribe-published/",
+        "classes": []
+    },
+    "/sa": {
+        "status": 301,
+        "location": "/sample-page/",
+        "classes": []
+    },
+    "/e": {
+        "status": 301,
+        "location": "/editor-authored-post/",
+        "classes": []
+    },
+    "/ex": {
+        "status": 301,
+        "location": "/excerpt-block-filter-probe/",
+        "classes": []
+    },
+    "/ed": {
+        "status": 301,
+        "location": "/editor-authored-post/",
+        "classes": []
+    },
+    "/p": {
+        "status": 404,
+        "location": null,
+        "classes": [
+            "error404"
+        ]
+    },
+    "/t": {
+        "status": 301,
+        "location": "/texturize-battery-its-quoted-fine/",
+        "classes": []
+    },
+    "/b": {
+        "status": 301,
+        "location": "/building-in-the-open/",
+        "classes": []
+    },
+    "/h": {
+        "status": 301,
+        "location": "/hello-world/",
+        "classes": []
+    },
+    "/d": {
+        "status": 301,
+        "location": "/sample-page/docs/",
+        "classes": []
+    },
+    "/x": {
+        "status": 404,
+        "location": null,
+        "classes": [
+            "error404"
+        ]
+    },
+    "/sample-page/s": {
+        "status": 301,
+        "location": "/sample-page/",
+        "classes": []
+    },
+    "/sample-page/e": {
+        "status": 301,
+        "location": "/editor-authored-post/",
+        "classes": []
+    },
+    "/index.php/hello-world/": {
+        "status": 301,
+        "location": "/hello-world/",
+        "classes": []
+    }
+}
