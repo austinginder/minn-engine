@@ -13,6 +13,8 @@ enum Method: string
     case Patch = 'PATCH';
     case Delete = 'DELETE';
     case Options = 'OPTIONS';
+    /** For a route that accepts every method and sorts them out itself. */
+    case Any = '*';
 
     public static function fromName(string $name): self
     {
@@ -22,6 +24,6 @@ enum Method: string
     /** HEAD is served by GET handlers; the kernel drops the body. */
     public function matches(self $declared): bool
     {
-        return $this === $declared || ($this === self::Head && $declared === self::Get);
+        return $declared === self::Any || $this === $declared || ($this === self::Head && $declared === self::Get);
     }
 }

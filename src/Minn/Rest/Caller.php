@@ -1,0 +1,76 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Minn\Rest;
+
+use Minn\Auth\Authenticated;
+use Minn\Auth\AuthFailure;
+use Minn\Auth\Authenticator;
+use Minn\Auth\Capabilities;
+use Minn\Http\Request;
+use Minn\RestError;
+
+/**
+ * Who is making this REST call. Resolved once from the cookie and nonce;
+ * an anonymous or failed caller has id 0 and every capability check fails.
+ */
+final class Caller
+{
+    private Authenticated|AuthFailure|null $resolved = null;
+
+    public function __construct(
+        private readonly Request $request,
+        private readonly Authenticator $authenticator,
+        private readonly Capabilities $capabilities,
+    ) {
+    }
+
+    public function session(): ?Authenticated
+    {
+        $resolved = $this->resolve();
+        return $resolved instanceof Authenticated ? $resolved : null;
+    }
+
+    public function id(): int
+    {
+        return $this->session()?->id() ?? 0;
+    }
+
+    public function can(string $capability, ?int $postId = null): bool
+    {
+        return $this->capabilities->can($this->id(), $capability, $postId);
+    }
+
+    public function capabilities(): Capabilities
+    {
+        return $this->capabilities;
+    }
+
+    /**
+     * The session, or the reference's refusal: a bad nonce is always 403
+     * rest_cookie_invalid_nonce; no identity is the caller-supplied error.
+     */
+    public function require(string $code = 'rest_not_logged_in', string $message = 'You are not currently logged in.', int $status = 401): Authenticated
+    {
+        $resolved = $this->resolve();
+        if ($resolved instanceof Authenticated) {
+            return $resolved;
+        }
+        if ($resolved->code === 'rest_cookie_invalid_nonce') {
+            throw new RestError('rest_cookie_invalid_nonce', 'Cookie check failed', 403);
+        }
+        throw new RestError($code, $message, $status);
+    }
+
+    /** 401 for an anonymous caller, 403 for one who is signed in but refused. */
+    public function refuse(string $code, string $message): RestError
+    {
+        return new RestError($code, $message, $this->id() > 0 ? 403 : 401);
+    }
+
+    private function resolve(): Authenticated|AuthFailure
+    {
+        return $this->resolved ??= $this->authenticator->restFromRequest($this->request);
+    }
+}

@@ -152,3 +152,108 @@ function minn_map_meta_cap( string $cap, int $uid, ?int $post_id = null ): array
 function minn_user_can( int $uid, string $cap, ?int $post_id = null ): bool {
 	return minn_capabilities()->can( $uid, $cap, $post_id );
 }
+
+/* -------------------------------------------------------------- rest.php */
+
+function minn_api(): Minn\Rest\Api {
+	static $api = null;
+	return $api ??= Minn\Rest\Api::forRequest( Db::shared(), Minn\Http\Request::fromGlobals() );
+}
+
+function minn_posts(): Minn\Content\Posts {
+	static $posts = null;
+	return $posts ??= new Minn\Content\Posts( Db::shared() );
+}
+
+function minn_home_url( string $path = '' ): string {
+	return minn_permalinks()->url( $path );
+}
+
+function minn_rest_url( string $route, array $args = array() ): string {
+	return ( new Minn\Rest\RestUrl( minn_permalinks() ) )->to( $route, $args );
+}
+
+function minn_rest_headers(): void {
+	foreach ( Minn\Rest\Reply::HEADERS as $name => $value ) {
+		header( "$name: $value" );
+	}
+}
+
+/** @param bool $per_item true for list payloads (filtering applies per row). */
+function minn_rest_send( $data, int $status = 200, bool $per_item = false ): void {
+	$fields = Minn\Rest\Fields::fromQuery( $_GET );
+	if ( null !== $fields && is_array( $data ) && $status < 400 && $per_item ) {
+		$data   = array_map( static fn( $row ) => $fields->apply( $row ), $data );
+		$fields = null;
+	}
+	Minn\Rest\Reply::item( $data, $fields, $status )->send();
+}
+
+function minn_rest_error( string $code, string $message, int $status ): void {
+	Minn\Rest\Reply::error( new Minn\RestError( $code, $message, $status ) )->send();
+}
+
+function minn_serialized_int_list( ?string $blob ): array {
+	return Minn\Support\Serialized::intList( $blob );
+}
+
+function minn_texturize( string $html ): string {
+	return Minn\Content\Texturize::html( $html );
+}
+
+function minn_render_blocks( string $raw ): string {
+	return Minn\Content\Blocks::render( $raw );
+}
+
+function minn_rendered_excerpt( array $post ): string {
+	return Minn\Content\Excerpt::render( $post );
+}
+
+function minn_post_meta_value( int $post_id, string $key ): ?string {
+	return minn_posts()->meta( $post_id, $key );
+}
+
+function minn_rest_date( string $mysql ): string {
+	return Minn\Rest\PostObject::date( $mysql );
+}
+
+function minn_post_type_config( string $type ): array {
+	return array( 'rest_base' => Minn\Rest\PostObject::restBase( $type ) );
+}
+
+function minn_rest_post_object( array $p ): array {
+	return minn_api()->postObject()->view( $p );
+}
+
+function minn_rest_post_object_edit( array $p, int $uid ): array {
+	return minn_api()->postObject()->edit( $p, $uid );
+}
+
+function minn_taxonomy_config( string $rest_base ): array {
+	return Minn\Rest\TermObject::config( $rest_base );
+}
+
+function minn_rest_term_object( array $t, string $rest_base ): array {
+	return minn_api()->termObject()->view( $t, $rest_base );
+}
+
+function minn_types_registry(): array {
+	return minn_api()->types()->all();
+}
+
+function minn_avatar_urls( string $email ): array {
+	return Minn\Rest\UserObject::avatarUrls( $email );
+}
+
+function minn_rest_user_object( array $u, bool $is_self = false ): array {
+	return minn_api()->userObject()->view( $u, $is_self );
+}
+
+function minn_rest_user_object_edit( array $u ): array {
+	return minn_api()->userObject()->edit( $u );
+}
+
+/** Authenticated user id for this request (cookie plus nonce), or 0. */
+function minn_current_user_id(): int {
+	return minn_api()->caller()->id();
+}

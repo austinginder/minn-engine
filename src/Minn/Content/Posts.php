@@ -145,6 +145,58 @@ final readonly class Posts
         return ['posts' => $rows, 'total' => $total];
     }
 
+    public function meta(int $postId, string $key): ?string
+    {
+        $value = $this->db->value(
+            "SELECT meta_value FROM {$this->db->table('postmeta')} WHERE post_id = ? AND meta_key = ? LIMIT 1",
+            [$postId, $key],
+        );
+        return $value === null ? null : (string) $value;
+    }
+
+    /** @return list<array{0: int, 1: string}> term id and slug pairs, by name */
+    public function terms(int $postId, string $taxonomy): array
+    {
+        $rows = $this->db->rows(
+            "SELECT t.term_id, t.slug FROM {$this->db->table('term_relationships')} tr
+             JOIN {$this->db->table('term_taxonomy')} tt ON tt.term_taxonomy_id = tr.term_taxonomy_id
+             JOIN {$this->db->table('terms')} t ON t.term_id = tt.term_id
+             WHERE tr.object_id = ? AND tt.taxonomy = ?
+             ORDER BY t.name ASC",
+            [$postId, $taxonomy],
+        );
+        return array_map(static fn (array $row) => [(int) $row['term_id'], (string) $row['slug']], $rows);
+    }
+
+    public function revisionCount(int $postId): int
+    {
+        return (int) $this->db->value(
+            "SELECT COUNT(*) FROM {$this->db->table('posts')} WHERE post_type = 'revision' AND post_parent = ?",
+            [$postId],
+        );
+    }
+
+    /** The latest plain (non-autosave) revision id, or 0. */
+    public function latestRevisionId(int $postId): int
+    {
+        return (int) ($this->db->value(
+            "SELECT ID FROM {$this->db->table('posts')}
+             WHERE post_type = 'revision' AND post_parent = ? AND post_name NOT LIKE ?
+             ORDER BY ID DESC LIMIT 1",
+            [$postId, $postId . '-autosave%'],
+        ) ?? 0);
+    }
+
+    /** Whether a live post carries an autosave newer than its saved state. */
+    public function hasNewerAutosave(int $postId, string $modifiedGmt): bool
+    {
+        return $this->db->value(
+            "SELECT 1 FROM {$this->db->table('posts')}
+             WHERE post_parent = ? AND post_type = 'revision' AND post_name LIKE ? AND post_modified_gmt > ? LIMIT 1",
+            [$postId, $postId . '-autosave%', $modifiedGmt],
+        ) !== null;
+    }
+
     public function firstCategorySlug(int $postId): ?string
     {
         $slug = $this->db->value(

@@ -52,6 +52,12 @@ final readonly class Request
         );
     }
 
+    /** The same request addressed to another path (a REST route carried in ?rest_route=). */
+    public function withPath(string $path): self
+    {
+        return new self($this->method, $path, $this->query, $this->headers, $this->cookies, $this->body, $this->secure, $this->host);
+    }
+
     public function query(string $key, ?string $default = null): ?string
     {
         $value = $this->query[$key] ?? null;
