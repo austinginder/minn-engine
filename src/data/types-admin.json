@@ -1,0 +1,164 @@
+{
+	"post": {
+		"viewable": true,
+		"labels": {
+			"singular_name": "Post"
+		},
+		"supports": {
+			"title": true,
+			"editor": [
+				{
+					"notes": true
+				}
+			],
+			"author": true,
+			"thumbnail": true,
+			"excerpt": true,
+			"trackbacks": true,
+			"custom-fields": true,
+			"comments": true,
+			"revisions": true,
+			"post-formats": true,
+			"autosave": true
+		},
+		"edit_cap": "edit_posts"
+	},
+	"page": {
+		"viewable": true,
+		"labels": {
+			"singular_name": "Page"
+		},
+		"supports": {
+			"title": true,
+			"editor": [
+				{
+					"notes": true
+				}
+			],
+			"author": true,
+			"thumbnail": true,
+			"page-attributes": true,
+			"custom-fields": true,
+			"comments": true,
+			"revisions": true,
+			"autosave": true
+		},
+		"edit_cap": "edit_pages"
+	},
+	"attachment": {
+		"viewable": true,
+		"labels": {
+			"singular_name": "Media"
+		},
+		"supports": {
+			"title": true,
+			"author": true,
+			"comments": true
+		},
+		"edit_cap": "edit_posts"
+	},
+	"nav_menu_item": {
+		"viewable": false,
+		"labels": {
+			"singular_name": "Navigation Menu Item"
+		},
+		"supports": {
+			"title": true,
+			"editor": true,
+			"autosave": true
+		},
+		"edit_cap": "edit_theme_options"
+	},
+	"wp_block": {
+		"viewable": false,
+		"labels": {
+			"singular_name": "Pattern"
+		},
+		"supports": {
+			"title": true,
+			"excerpt": true,
+			"editor": true,
+			"revisions": true,
+			"custom-fields": true,
+			"autosave": true
+		},
+		"edit_cap": "edit_posts"
+	},
+	"wp_template": {
+		"viewable": false,
+		"labels": {
+			"singular_name": "Template"
+		},
+		"supports": {
+			"title": true,
+			"slug": true,
+			"excerpt": true,
+			"editor": true,
+			"revisions": true,
+			"author": true,
+			"autosave": true
+		},
+		"edit_cap": "edit_theme_options"
+	},
+	"wp_template_part": {
+		"viewable": false,
+		"labels": {
+			"singular_name": "Template Part"
+		},
+		"supports": {
+			"title": true,
+			"slug": true,
+			"excerpt": true,
+			"editor": true,
+			"revisions": true,
+			"author": true,
+			"autosave": true
+		},
+		"edit_cap": "edit_theme_options"
+	},
+	"wp_global_styles": {
+		"viewable": false,
+		"labels": {
+			"singular_name": "Global Styles"
+		},
+		"supports": {
+			"title": true,
+			"editor": true,
+			"revisions": true
+		},
+		"edit_cap": "edit_theme_options"
+	},
+	"wp_navigation": {
+		"viewable": false,
+		"labels": {
+			"singular_name": "Navigation Menu"
+		},
+		"supports": {
+			"title": true,
+			"editor": true,
+			"revisions": true,
+			"autosave": true
+		},
+		"edit_cap": "edit_theme_options"
+	},
+	"wp_font_family": {
+		"viewable": false,
+		"labels": {
+			"singular_name": "Font Family"
+		},
+		"supports": {
+			"title": true
+		},
+		"edit_cap": "edit_theme_options"
+	},
+	"wp_font_face": {
+		"viewable": false,
+		"labels": {
+			"singular_name": "Font Face"
+		},
+		"supports": {
+			"title": true
+		},
+		"edit_cap": "edit_theme_options"
+	}
+}

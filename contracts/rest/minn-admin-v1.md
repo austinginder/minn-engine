@@ -1,8 +1,9 @@
-# Contract: minn-admin/v1 dashboard slice (overview, notifications)
+# Contract: minn-admin/v1 dashboard slice (overview, notifications, boot)
 
 Status: implemented for `GET /minn-admin/v1/overview`, `GET
-/minn-admin/v1/notifications` and `POST /minn-admin/v1/notifications/read`.
-Suite: `tests/minn-v1.test.php` (22 checks, live parity against the reference
+.../overview/activity`, `GET .../notifications`, `POST
+.../notifications/read`, `GET .../core` and `GET .../boot-status`.
+Suite: `tests/minn-v1.test.php` (31 checks, live parity against the reference
 running the real Minn Admin plugin on the same database, three capability
 views, plus a two-directional read-marker round trip).
 
@@ -140,6 +141,52 @@ Pinned pairs: 89s → "1 minute", 90s → "2 minutes", 3599s → "60 minutes",
 86399s → "24 hours", 604799s → "7 days", 2591999s → "4 weeks", 31535999s →
 "12 months". `size_format(0,1)` → "0.0 B"; 1023 → "1,023.0 B"; units step
 at 1024.
+
+## GET /overview/activity
+
+The events behind one chart bar. `from`/`to` are REQUIRED strings matching
+`^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$` — missing params come back as one
+aggregated `400 rest_missing_callback_param` ("Missing parameter(s): from,
+to", `data.params` a LIST); malformed ones as one aggregated
+`rest_invalid_param` whose `details.*.code` is `rest_invalid_pattern` with
+`data: null`. Response `{ items }`, each `{ kind, id, [type,] text, time,
+color, ago }` sorted newest first, capped at 100: published posts/pages in
+the `(from, to]` GMT window (kind `post`, decodes the RAW stored title —
+not texturized; author falls back to "Someone") and comments of type
+''/'comment' (kind `comment`, decodes the TEXTURIZED title — the oracle's
+asymmetry, kept; approved-only below `moderate_comments`; every row passes
+the comment-row visibility gate).
+
+## GET /core
+
+Gate `update_core` (403 rest_forbidden below it). `{ version, dbUpgrade,
+update }`. The oracle reads its version from core's version.php and phones
+home via `wp_version_check()`; the engine reads `version_checked` from the
+`update_core` transient blob and never phones home. `update` is
+`{ version, locale }` when the first offer says `upgrade`, else null.
+`dbUpgrade` is false on the engine by definition (no newer core code on
+disk for the database to lag behind).
+
+## GET /boot-status
+
+The app's one-round-trip boot burst. Absent sections are the contract's
+own fallback mechanism (the client loads them standalone), which is what
+makes an honest partial implementation possible. The engine serves
+`notifications` (everyone), `core` (only with `update_core`), `types`, and
+`pendingComments` (count of hold comments of type ''/'comment', present
+while a UI type still supports comments); it omits `plugins`,
+`pluginUpdates` and `pluginMeta` (no plugin installation to describe) and
+`store` (no WooCommerce).
+
+`types` is the edit-context type list slimmed to `{ slug, rest_base, name,
+viewable, labels: { singular_name }, supports, hierarchical }`. Which types
+a user sees follows the per-type edit gate, pinned empirically: `post`,
+`attachment` and `wp_block` ride `edit_posts`; `page` rides `edit_pages`;
+the theme-object types (nav_menu_item, wp_template, wp_template_part,
+wp_global_styles, wp_navigation, wp_font_family, wp_font_face) ride
+`edit_theme_options` (admin sees 11, editor 4, author 3). The enrichment
+data lives in `src/data/types-admin.json`, deliberately OUTSIDE
+`data/types.json` so the wp/v2 types payload stays byte-faithful.
 
 ## Plugin-active oracle: wp/v2 side effects
 

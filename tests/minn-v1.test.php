@@ -214,5 +214,67 @@ foreach ( $engine_view['items'] ?? array() as $item ) {
 check( $all_read, 'engine reads the WordPress-written read_at' );
 v1_parity( 'notifications parity after mark-all (admin)', '/minn-admin/v1/notifications', $admin );
 
+// 7. /core: payload parity for the admin, the capability refusal for the editor.
+v1_parity( 'core status (admin)', '/minn-admin/v1/core', $admin );
+v1_parity( 'core status refused below update_core (editor)', '/minn-admin/v1/core', $editor );
+
+// 8. /overview/activity: a live day window per role, plus the validation shapes.
+$win = '&from=' . rawurlencode( gmdate( 'Y-m-d H:i:s', time() - 86400 ) ) . '&to=' . rawurlencode( gmdate( 'Y-m-d H:i:s' ) );
+function v1_pair( string $q, array $mint ): array {
+	global $ENGINE, $REF;
+	$alt = 'wordpress_logged_in_' . md5( $REF );
+	$out = array();
+	foreach ( array( 'oracle' => $REF, 'engine' => $ENGINE ) as $which => $base ) {
+		$ctx = stream_context_create(
+			array(
+				'ssl'  => array( 'verify_peer' => false, 'verify_peer_name' => false ),
+				'http' => array(
+					'ignore_errors' => true,
+					'timeout'       => 10,
+					'header'        => 'Cookie: ' . $mint['cookie_name'] . '=' . $mint['cookie'] . '; ' . $alt . '=' . $mint['cookie'] . "\r\nX-WP-Nonce: " . $mint['nonce'],
+				),
+			)
+		);
+		$out[ $which ] = json_decode( (string) @file_get_contents( "$base/?$q", false, $ctx ), true );
+	}
+	return $out;
+}
+foreach ( array( 'admin' => $admin, 'author' => $author ) as $who => $mint ) {
+	$r = v1_pair( 'rest_route=' . rawurlencode( '/minn-admin/v1/overview/activity' ) . $win, $mint );
+	$d = minn_test_diff( v1_norm( $r['oracle'] ), v1_norm( $r['engine'] ) );
+	check( null === $d, "overview activity drill-down ($who)", (string) $d );
+}
+$r = v1_pair( 'rest_route=' . rawurlencode( '/minn-admin/v1/overview/activity' ), $admin );
+$d = minn_test_diff( $r['oracle'], $r['engine'] );
+check( null === $d, 'activity missing both bounds rejected identically', (string) $d );
+$r = v1_pair( 'rest_route=' . rawurlencode( '/minn-admin/v1/overview/activity' ) . '&from=nope&to=also-nope', $admin );
+$d = minn_test_diff( $r['oracle'], $r['engine'] );
+check( null === $d, 'activity malformed bounds rejected identically', (string) $d );
+
+// 9. /boot-status: section-level parity. The plugin-inventory sections
+// (plugins, pluginUpdates, pluginMeta) are the contract's own fallback
+// mechanism — the engine omits them and the client loads those standalone.
+foreach ( array( 'admin' => $admin, 'editor' => $editor, 'author' => $author ) as $who => $mint ) {
+	[ , $ob ] = v1_fetch( $REF, '/minn-admin/v1/boot-status', $mint );
+	[ , $eb ] = v1_fetch( $ENGINE, '/minn-admin/v1/boot-status', $mint );
+	$skip     = array( 'plugins', 'pluginUpdates', 'pluginMeta' );
+	$problems = array();
+	foreach ( array_diff( array_keys( $eb ?? array() ), array_keys( $ob ?? array() ) ) as $k ) {
+		$problems[] = "engine-only section $k";
+	}
+	foreach ( array_diff( array_keys( $ob ?? array() ), array_keys( $eb ?? array() ), $skip ) as $k ) {
+		$problems[] = "missing section $k";
+	}
+	foreach ( array_diff( array_keys( $ob ?? array() ), $skip ) as $k ) {
+		if ( isset( $eb[ $k ] ) ) {
+			$d = minn_test_diff( v1_norm( $ob[ $k ] ), v1_norm( $eb[ $k ] ) );
+			if ( null !== $d ) {
+				$problems[] = "$k: $d";
+			}
+		}
+	}
+	check( ! $problems, "boot-status sections match ($who)", implode( '; ', $problems ) );
+}
+
 echo "\n$pass passed, $fail failed\n";
 exit( $fail > 0 ? 1 : 0 );

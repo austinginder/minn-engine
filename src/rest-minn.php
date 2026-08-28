@@ -15,11 +15,20 @@ function minn_v1_dispatch( string $route, string $method ): void {
 	if ( '/minn-admin/v1/overview' === $route && 'GET' === $method ) {
 		minn_v1_overview();
 	}
+	if ( '/minn-admin/v1/overview/activity' === $route && 'GET' === $method ) {
+		minn_v1_overview_activity();
+	}
 	if ( '/minn-admin/v1/notifications' === $route && 'GET' === $method ) {
 		minn_v1_notifications();
 	}
 	if ( '/minn-admin/v1/notifications/read' === $route && 'POST' === $method ) {
 		minn_v1_notifications_read();
+	}
+	if ( '/minn-admin/v1/core' === $route && 'GET' === $method ) {
+		minn_v1_core();
+	}
+	if ( '/minn-admin/v1/boot-status' === $route && 'GET' === $method ) {
+		minn_v1_boot_status();
 	}
 }
 
@@ -508,8 +517,13 @@ function minn_v1_translation_count(): int {
  * parity holds by construction.
  */
 function minn_v1_notifications(): void {
-	global $table_prefix;
 	[ , $uid ] = minn_v1_require();
+	minn_rest_send( minn_v1_notifications_data( $uid ) );
+}
+
+/** The notifications payload for one user (shared with boot-status). */
+function minn_v1_notifications_data( int $uid ): array {
+	global $table_prefix;
 	$now     = time();
 	$offset  = minn_gmt_offset();
 	$read_at = (int) ( minn_user_meta( $uid, 'minn_admin_notif_read_at' ) ?? 0 );
@@ -638,7 +652,7 @@ function minn_v1_notifications(): void {
 	}
 	unset( $item );
 
-	minn_rest_send( array( 'items' => $items ) );
+	return array( 'items' => $items );
 }
 
 /** POST /minn-admin/v1/notifications/read — body {id} marks one, {} marks all. */
@@ -656,4 +670,227 @@ function minn_v1_notifications_read(): void {
 		minn_usermeta_delete( $uid, 'minn_admin_notif_read_ids' );
 	}
 	minn_rest_send( array( 'ok' => true ) );
+}
+
+/**
+ * GET /minn-admin/v1/core — gate update_core.
+ *
+ * The installed version comes from the update_core transient's
+ * version_checked (the database's own record of what last phoned home);
+ * the engine never reads WordPress code files and never phones home
+ * itself. dbUpgrade is false by definition: there is no newer core code
+ * on disk for the database to lag behind.
+ */
+function minn_v1_core(): void {
+	[ , $uid ] = minn_v1_require();
+	if ( ! minn_user_can( $uid, 'update_core' ) ) {
+		minn_rest_error( 'rest_forbidden', 'Sorry, you are not allowed to do that.', 403 );
+	}
+	minn_rest_send( minn_v1_core_data() );
+}
+
+function minn_v1_core_data(): array {
+	$blob  = minn_option( '_site_transient_update_core' );
+	$offer = null;
+	if ( null !== $blob && 'upgrade' === minn_serialized_field( $blob, 'response' ) ) {
+		$offer = array(
+			'version' => (string) minn_serialized_field( $blob, 'current' ),
+			'locale'  => (string) minn_serialized_field( $blob, 'locale' ),
+		);
+	}
+	return array(
+		'version'   => (string) ( minn_serialized_field( $blob, 'version_checked' ) ?? '' ),
+		'dbUpgrade' => false,
+		'update'    => $offer,
+	);
+}
+
+/** Validate the overview-activity window: both bounds required, "Y-m-d H:i:s". */
+function minn_v1_require_window(): array {
+	$missing = array();
+	foreach ( array( 'from', 'to' ) as $name ) {
+		if ( ! isset( $_GET[ $name ] ) ) {
+			$missing[] = $name;
+		}
+	}
+	if ( $missing ) {
+		minn_rest_headers();
+		http_response_code( 400 );
+		echo json_encode(
+			array(
+				'code'    => 'rest_missing_callback_param',
+				'message' => 'Missing parameter(s): ' . implode( ', ', $missing ),
+				'data'    => array( 'status' => 400, 'params' => $missing ),
+			)
+		);
+		exit;
+	}
+	$pattern = '^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$';
+	$out     = array();
+	$bad     = array();
+	foreach ( array( 'from', 'to' ) as $name ) {
+		$value = (string) $_GET[ $name ];
+		if ( ! preg_match( '/' . $pattern . '/', $value ) ) {
+			$bad[ $name ] = $name . ' does not match pattern ' . $pattern . '.';
+		}
+		$out[] = $value;
+	}
+	if ( $bad ) {
+		$details = array();
+		foreach ( $bad as $name => $message ) {
+			$details[ $name ] = array( 'code' => 'rest_invalid_pattern', 'message' => $message, 'data' => null );
+		}
+		minn_rest_headers();
+		http_response_code( 400 );
+		echo json_encode(
+			array(
+				'code'    => 'rest_invalid_param',
+				'message' => 'Invalid parameter(s): ' . implode( ', ', array_keys( $bad ) ),
+				'data'    => array( 'status' => 400, 'params' => $bad, 'details' => $details ),
+			)
+		);
+		exit;
+	}
+	return $out;
+}
+
+/**
+ * GET /minn-admin/v1/overview/activity — the events behind one chart bar,
+ * (from, to] GMT. Post rows decode the RAW stored title; comment rows
+ * decode the texturized one (the oracle's asymmetry, kept).
+ */
+function minn_v1_overview_activity(): void {
+	global $table_prefix;
+	[ , $uid ] = minn_v1_require();
+	[ $from, $to ] = minn_v1_require_window();
+	$now   = time();
+	$items = array();
+
+	$stmt = minn_db()->prepare(
+		"SELECT ID, post_title, post_type, post_author, post_date_gmt FROM {$table_prefix}posts
+		 WHERE post_status = 'publish' AND post_type IN ('post','page')
+		 AND post_date_gmt > ? AND post_date_gmt <= ?
+		 ORDER BY post_date_gmt DESC LIMIT 100"
+	);
+	$stmt->bind_param( 'ss', $from, $to );
+	$stmt->execute();
+	foreach ( $stmt->get_result()->fetch_all( MYSQLI_ASSOC ) as $p ) {
+		$author  = minn_v1_display_name( (int) $p['post_author'] );
+		$title   = html_entity_decode( '' !== $p['post_title'] ? $p['post_title'] : '(no title)', ENT_QUOTES );
+		$items[] = array(
+			'kind'  => 'post',
+			'id'    => (int) $p['ID'],
+			'type'  => 'page' === $p['post_type'] ? 'pages' : 'posts',
+			'text'  => sprintf( '%1$s published “%2$s”', '' !== $author ? $author : 'Someone', $title ),
+			'time'  => (int) strtotime( $p['post_date_gmt'] . ' UTC' ),
+			'color' => 'green',
+		);
+	}
+
+	$approved_only = ! minn_user_can( $uid, 'moderate_comments' );
+	$comment_where = $approved_only ? " AND comment_approved = '1'" : '';
+	$stmt          = minn_db()->prepare(
+		"SELECT comment_ID, comment_author, comment_post_ID, comment_date_gmt, comment_approved
+		 FROM {$table_prefix}comments
+		 WHERE comment_date_gmt > ? AND comment_date_gmt <= ?{$comment_where}
+		 AND comment_type IN ( '', 'comment' )
+		 ORDER BY comment_date_gmt DESC LIMIT 300"
+	);
+	$stmt->bind_param( 'ss', $from, $to );
+	$stmt->execute();
+	foreach ( $stmt->get_result()->fetch_all( MYSQLI_ASSOC ) as $c ) {
+		if ( ! minn_v1_comment_row_visible( $uid, (int) $c['comment_post_ID'] ) ) {
+			continue;
+		}
+		$pending = '0' === $c['comment_approved'];
+		$title   = minn_texturize( minn_v1_post_title( (int) $c['comment_post_ID'] ) );
+		$items[] = array(
+			'kind'  => 'comment',
+			'id'    => (int) $c['comment_ID'],
+			'text'  => sprintf(
+				$pending ? 'Comment from %1$s awaiting moderation on “%2$s”' : '%1$s commented on “%2$s”',
+				'' !== $c['comment_author'] ? $c['comment_author'] : 'Anonymous',
+				html_entity_decode( '' !== $title ? $title : '(no title)', ENT_QUOTES )
+			),
+			'time'  => (int) strtotime( $c['comment_date_gmt'] . ' UTC' ),
+			'color' => $pending ? 'amber' : 'blue',
+		);
+	}
+
+	usort( $items, static fn( $a, $b ) => $b['time'] - $a['time'] );
+	$items = array_slice( $items, 0, 100 );
+	foreach ( $items as &$item ) {
+		$item['ago'] = minn_human_time_diff( $item['time'], $now ) . ' ago';
+	}
+	unset( $item );
+
+	minn_rest_send( array( 'items' => $items ) );
+}
+
+/**
+ * Admin-facing type facts (viewable, labels, supports, the edit gate) live
+ * beside — not inside — the wp/v2 registry, so the types route's payload
+ * stays byte-faithful.
+ */
+function minn_v1_types_admin(): array {
+	static $extra = null;
+	if ( null === $extra ) {
+		$extra = json_decode( (string) file_get_contents( __DIR__ . '/data/types-admin.json' ), true );
+	}
+	return $extra;
+}
+
+/** The boot-status types section: edit-visible types for this user, slimmed. */
+function minn_v1_types_section( int $uid ): array {
+	$extra = minn_v1_types_admin();
+	$out   = array();
+	foreach ( minn_types_registry() as $slug => $t ) {
+		$a = $extra[ $slug ] ?? array();
+		if ( ! minn_user_can( $uid, $a['edit_cap'] ?? 'edit_theme_options' ) ) {
+			continue;
+		}
+		$out[] = array(
+			'slug'         => $slug,
+			'rest_base'    => $t['rest_base'],
+			'name'         => $t['name'],
+			'viewable'     => (bool) ( $a['viewable'] ?? false ),
+			'labels'       => array( 'singular_name' => $a['labels']['singular_name'] ?? '' ),
+			'supports'     => $a['supports'] ?? array(),
+			'hierarchical' => (bool) ( $t['hierarchical'] ?? false ),
+		);
+	}
+	return $out;
+}
+
+/**
+ * GET /minn-admin/v1/boot-status — the app's one-round-trip boot burst.
+ *
+ * Absent sections are the CONTRACT'S OWN fallback mechanism: the client
+ * treats a missing section as "load it standalone". The engine serves the
+ * sections it can honestly answer (notifications, core, types,
+ * pendingComments) and omits the plugin-inventory ones (plugins,
+ * pluginUpdates, pluginMeta) it has no installation for.
+ */
+function minn_v1_boot_status(): void {
+	global $table_prefix;
+	[ , $uid ] = minn_v1_require();
+	$out = array( 'notifications' => minn_v1_notifications_data( $uid ) );
+
+	if ( minn_user_can( $uid, 'update_core' ) ) {
+		$out['core'] = minn_v1_core_data();
+	}
+
+	$out['types'] = minn_v1_types_section( $uid );
+
+	// comments_enabled: a UI post type still supports comments.
+	$extra   = minn_v1_types_admin();
+	$enabled = ! empty( $extra['post']['supports']['comments'] ) || ! empty( $extra['page']['supports']['comments'] );
+	if ( $enabled ) {
+		$out['pendingComments'] = (int) minn_db()->query(
+			"SELECT COUNT(*) FROM {$table_prefix}comments
+			 WHERE comment_approved = '0' AND comment_type IN ( '', 'comment' )"
+		)->fetch_row()[0];
+	}
+
+	minn_rest_send( $out );
 }
