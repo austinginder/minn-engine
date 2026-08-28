@@ -1,0 +1,4 @@
+# WP-CLI on Minn Engine. The engine registers its ops verbs before WP-CLI
+# would load WordPress; see minn/cli.php.
+require:
+  - minn/cli.php

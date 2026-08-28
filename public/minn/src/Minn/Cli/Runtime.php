@@ -46,6 +46,7 @@ final class Runtime
     /** wp-config.php sets $table_prefix as a variable; the engine reads it as a global. */
     private static function loadConfig(string $file): void
     {
+        define('MINN_CLI_RUNTIME', true);
         require_once $file;
         if (isset($table_prefix)) {
             $GLOBALS['table_prefix'] = $table_prefix;
