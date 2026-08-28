@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Login;
 
 use Minn\Auth\AuthCookies;
+use Minn\Auth\LoginThrottle;
 use Minn\Auth\Authenticator;
 use Minn\Auth\Sessions;
 use Minn\Content\Site;
@@ -31,6 +32,7 @@ final readonly class LoginController
         private Sessions $sessions,
         private AuthCookies $cookies,
         private Users $users,
+        private LoginThrottle $throttle,
     ) {
     }
 
@@ -55,8 +57,13 @@ final readonly class LoginController
     private function tokenLogin(Request $request): Response
     {
         $error = 'Invalid one-time login token. <a href="' . $this->permalinks->url('/wp-login.php') . '">Try signing in instead</a>?';
+        $wait = $this->throttle->retryAfter($request->remoteAddress);
+        if ($wait !== null) {
+            return $this->tooManyAttempts($request, $wait);
+        }
         $user = $this->users->find((int) $request->query('user_id', '0'));
         if ($user === null) {
+            $this->throttle->recordFailure($request->remoteAddress);
             return Response::html($error, 500);
         }
         $id = (int) $user['ID'];
@@ -65,9 +72,11 @@ final readonly class LoginController
         if ($token === '' || time() - $minted > 15 * 60) {
             $this->users->deleteMeta($id, 'cove_login_token');
             $this->users->deleteMeta($id, 'cove_login_token_time');
+            $this->throttle->recordFailure($request->remoteAddress);
             return Response::html($error, 500);
         }
         if (!hash_equals($token, (string) $request->query('cove_login_token', ''))) {
+            $this->throttle->recordFailure($request->remoteAddress);
             return Response::html($error, 500);
         }
         $this->users->deleteMeta($id, 'cove_login_token');
@@ -83,10 +92,16 @@ final readonly class LoginController
         if ($request->query('action') === 'logout') {
             return $this->form($request);
         }
+        $wait = $this->throttle->retryAfter($request->remoteAddress);
+        if ($wait !== null) {
+            return $this->tooManyAttempts($request, $wait);
+        }
         $user = $this->authenticator->login((string) ($request->form['log'] ?? ''), (string) ($request->form['pwd'] ?? ''));
         if ($user === null) {
+            $this->throttle->recordFailure($request->remoteAddress);
             return Response::html($this->render($request, 'Error: The username or password you entered is incorrect.'));
         }
+        $this->throttle->clear($request->remoteAddress);
         // Remember me extends the session from two days to fourteen.
         $expiration = time() + (!empty($request->form['rememberme']) ? 14 : 2) * self::DAY;
         $token = $this->sessions->create((int) $user['ID'], $expiration, $request->remoteAddress, (string) ($request->header('user-agent') ?? ''));
@@ -95,6 +110,14 @@ final readonly class LoginController
             $redirect = $this->permalinks->url('/minn-admin/');
         }
         return $this->cookies->attach(Response::redirect($redirect, 302), $user, $expiration, $token, $request->secure);
+    }
+
+    /** A guessed-at address waits out the window; the page says so and the status lets tooling see it. */
+    private function tooManyAttempts(Request $request, int $wait): Response
+    {
+        $minutes = max(1, (int) ceil($wait / 60));
+        return Response::html($this->render($request, "Error: Too many failed sign-in attempts. Try again in {$minutes} minute" . ($minutes === 1 ? '' : 's') . '.'), 429)
+            ->withHeader('Retry-After', (string) $wait);
     }
 
     private function render(Request $request, string $error): string

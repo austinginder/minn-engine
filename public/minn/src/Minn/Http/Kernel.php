@@ -19,9 +19,29 @@ final readonly class Kernel
     public function handle(Request $request): ?Response
     {
         try {
-            return $this->router->dispatch($request);
+            $response = $this->router->dispatch($request);
         } catch (RestError $error) {
-            return Response::json($error->payload(), $error->status);
+            $response = Response::json($error->payload(), $error->status);
         }
+        return $response === null ? null : self::harden($request, $response);
+    }
+
+    /**
+     * Headers every response carries: no content sniffing anywhere; the
+     * sign-in and admin pages refuse framing and keep their referrer to
+     * themselves, as the reference's do.
+     */
+    private static function harden(Request $request, Response $response): Response
+    {
+        if (!isset($response->headers['X-Content-Type-Options'])) {
+            $response = $response->withHeader('X-Content-Type-Options', 'nosniff');
+        }
+        if (str_starts_with($request->path, '/wp-login.php') || str_starts_with($request->path, '/minn-admin')) {
+            $response = $response
+                ->withHeader('X-Frame-Options', 'SAMEORIGIN')
+                ->withHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
+                ->withHeader('Cache-Control', 'no-cache, must-revalidate, max-age=0, no-store, private');
+        }
+        return $response;
     }
 }

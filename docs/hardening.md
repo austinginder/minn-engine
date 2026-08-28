@@ -1,0 +1,60 @@
+# Hardening
+
+What the engine does on its own, and what the server in front of it must do.
+
+## In the engine
+
+- **No stack traces.** `Minn\Http\Failure` turns `display_errors` off unless the site's
+  `wp-config.php` sets `WP_DEBUG_DISPLAY` (or `WP_DEBUG`) on, sends a plain 500 page for
+  any uncaught error or fatal, logs the cause with `error_log` (to
+  `wp-content/debug.log` when `WP_DEBUG_LOG` is true, or the path it names), and a plain
+  503 with `Retry-After` when the database cannot be reached.
+- **Sign-in throttle.** `Minn\Auth\LoginThrottle`: twenty failed sign-ins from one
+  address in fifteen minutes, and that address gets 429 with `Retry-After` until the
+  window ends. Password and one-time-link failures share the counter; a successful
+  sign-in clears it. Rows live in `wp_options` as `minn_login_throttle_*`, autoload off.
+- **Headers.** Every response carries `X-Content-Type-Options: nosniff`. The sign-in page
+  and the admin add `X-Frame-Options: SAMEORIGIN`, `Referrer-Policy:
+  strict-origin-when-cross-origin`, and a no-store `Cache-Control`, which is what the
+  reference sends there.
+- **Cookies.** Auth cookies are `HttpOnly`, `SameSite=Lax`, `Secure` when the request
+  was HTTPS, on the reference's paths (`/wp-admin`, `/wp-content/plugins`, and `/` for
+  the logged-in cookie).
+- **Addresses.** The throttle keys on `REMOTE_ADDR`. Behind a proxy or CDN that is the
+  proxy's address; terminate that at the server (have it rewrite the client address
+  into `REMOTE_ADDR`, as Caddy's `trusted_proxies` and nginx's `real_ip` do) rather
+  than trusting `X-Forwarded-For` in the engine.
+- **Database.** Every query is a prepared statement through `Minn\Db`. Serialized blobs
+  are read by tolerant scanners and the engine's own decoder; nothing calls
+  `unserialize()` on data from the database or a request.
+
+## At the server
+
+The one rule the engine cannot enforce for itself: **PHP must not execute under
+`wp-content/uploads/`** (or anywhere under `wp-content/` except the engine's own
+`minn/` folder, which is outside it). Uploads are user-supplied files.
+
+Caddy (Cove, FrankenPHP):
+
+```
+@uploads_php path_regexp ^/wp-content/uploads/.*\.(php|phtml|phar)(\.|$)
+respond @uploads_php 403
+```
+
+nginx:
+
+```
+location ~* ^/wp-content/uploads/.*\.(php|phtml|phar)(\.|$) { return 403; }
+```
+
+Apache (`wp-content/uploads/.htaccess`):
+
+```
+<FilesMatch "\.(php|phtml|phar)$">
+  Require all denied
+</FilesMatch>
+```
+
+Also at the server: TLS with HSTS, `client_max_body_size` in line with the upload
+limit, and `X-Powered-By` stripped if the PHP version should not be advertised (the
+engine's own header names the engine).

@@ -12,6 +12,7 @@ use Minn\Auth\AuthCookies;
 use Minn\Auth\Authenticator;
 use Minn\Auth\Capabilities;
 use Minn\Auth\Cookie;
+use Minn\Auth\LoginThrottle;
 use Minn\Auth\Sessions;
 use Minn\Content\Posts;
 use Minn\Content\Site;
@@ -24,6 +25,7 @@ use Minn\Front\Sitemaps;
 use Minn\Front\FrontController;
 use Minn\Front\Renderer;
 use Minn\Front\Resolver;
+use Minn\Http\Failure;
 use Minn\Http\Kernel;
 use Minn\Http\Request;
 use Minn\Http\Response;
@@ -50,7 +52,22 @@ final readonly class Engine
 
     public function serve(): never
     {
-        $db = Db::shared();
+        Failure::install();
+        try {
+            $db = Db::shared();
+        } catch (\mysqli_sql_exception $e) {
+            error_log('Minn Engine: database connection failed: ' . $e->getMessage());
+            Failure::databaseUnavailable()->send();
+        }
+        try {
+            $this->respond($db);
+        } catch (\Throwable $e) {
+            Failure::report($e)->send();
+        }
+    }
+
+    private function respond(Db $db): never
+    {
         $request = Request::fromGlobals();
 
         $route = $request->query('rest_route');
@@ -88,7 +105,7 @@ final readonly class Engine
         $router = (new Router())->register(
             new AssetsController($this->engineDir . '/assets'),
             new AppController($app, new BootPayload($site, $permalinks, $capabilities, $app, $this->version), $authenticator, $capabilities, $permalinks, $this->version),
-            new LoginController($site, $permalinks, $authenticator, $sessions, new AuthCookies($db, $cookie), $users),
+            new LoginController($site, $permalinks, $authenticator, $sessions, new AuthCookies($db, $cookie), $users, new LoginThrottle($db)),
             $probes,
             $front,
         );
