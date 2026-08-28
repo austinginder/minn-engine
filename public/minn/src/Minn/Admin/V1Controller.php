@@ -195,7 +195,7 @@ final readonly class V1Controller
     {
         $this->requireFloor();
         $this->requireCap('manage_options');
-        $data = (array) json_decode((string) file_get_contents(dirname(__DIR__, 2) . '/data/languages.json'), true);
+        $data = (array) json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/languages.json'), true);
         $data['current'] = (string) ($this->site->option('WPLANG') ?? '');
         return $this->reply($request, $data);
     }

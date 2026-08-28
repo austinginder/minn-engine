@@ -39,7 +39,7 @@ final class Roles
     public function all(): array
     {
         return $this->roles ??= self::parse($this->db->option($this->db->prefix() . 'user_roles'))
-            ?? (array) json_decode((string) file_get_contents(dirname(__DIR__, 2) . '/data/roles.json'), true);
+            ?? (array) json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/roles.json'), true);
     }
 
     /**

@@ -57,7 +57,7 @@ function eng_can( int $uid, string $cap, ?int $post ): string {
 		// wp-config sets $table_prefix at file scope; here it is function-local,
 		// so promote it to the global the engine reads.
 		$GLOBALS['table_prefix'] = $table_prefix;
-		require "$ROOT/src/Minn/Autoloader.php";
+		require "$ROOT/public/minn/src/Minn/Autoloader.php";
 		Minn\Autoloader::register();
 		$loaded = true;
 	}

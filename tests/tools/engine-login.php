@@ -12,7 +12,7 @@ $config = file_get_contents( $root . '/public/wp-config.php' );
 $config = str_replace( "require_once ABSPATH . 'wp-settings.php';", '', $config );
 eval( '?>' . $config );
 
-require $root . '/src/Minn/Autoloader.php';
+require $root . '/public/minn/src/Minn/Autoloader.php';
 Minn\Autoloader::register();
 
 $username = (string) ( $argv[1] ?? '' );

@@ -20,7 +20,7 @@ final class Types
     public function all(): array
     {
         if ($this->types === null) {
-            $types = (array) json_decode((string) file_get_contents(dirname(__DIR__, 2) . '/data/types.json'), true);
+            $types = (array) json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/types.json'), true);
             foreach ($types as &$type) {
                 $type['_links'] = [
                     'collection' => [['href' => $this->url->to('/wp/v2/types')]],

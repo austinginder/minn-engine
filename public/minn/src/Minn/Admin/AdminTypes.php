@@ -24,7 +24,7 @@ final class AdminTypes
 
     public function extra(): array
     {
-        return $this->extra ??= (array) json_decode((string) file_get_contents(dirname(__DIR__, 2) . '/data/types-admin.json'), true);
+        return $this->extra ??= (array) json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/types-admin.json'), true);
     }
 
     /** The boot-status types section: edit-visible types for this user, slimmed. */

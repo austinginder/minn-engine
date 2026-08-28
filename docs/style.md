@@ -12,15 +12,15 @@ prose, is the rule.
   enums, `match`, named arguments, first-class callables, typed properties, union and
   intersection types, `never` for functions that do not return.
 - **`declare(strict_types=1);`** is the first statement of every file.
-- **Namespaces, PSR-4, no build step.** Code lives under `src/Minn/` and maps to the
-  `Minn\` namespace by `Minn\Autoloader` (a dozen lines, registered from `public/wp-settings.php`). No Composer, no
+- **Namespaces, PSR-4, no build step.** Code lives under `public/minn/src/Minn/` and maps to the
+  `Minn\` namespace by `Minn\Autoloader` (a dozen lines, registered from `public/minn/bootstrap.php`). No Composer, no
   vendor directory, no dependencies. One class per file, file named for the class.
 - **PSR-12 formatting.** Four-space indentation, no space padding inside parentheses,
   `function foo(string $bar): void`. This is the one place the engine deliberately
   does not look like WordPress code.
 - **Classes over free functions.** Behaviour is grouped into small final classes with
   one clear responsibility. There are no free functions in the engine; the only file
-  outside `src/Minn/` is `public/wp-settings.php`, which registers the autoloader and
+  outside `public/minn/src/Minn/` is `public/minn/bootstrap.php` (required by `public/wp-settings.php`), which registers the autoloader and
   hands off to `Minn\Engine`.
 - **Immutable values.** Data that crosses a boundary (a request, a response, a
   resolved route, a post record) is a `final readonly class` with promoted properties.
@@ -82,7 +82,7 @@ prose, is the rule.
 
 ## The lint
 
-`tests/style.test.php` asserts, for every file under `src/Minn/`:
+`tests/style.test.php` asserts, for every file under `public/minn/src/Minn/`:
 
 - starts with `<?php` then `declare(strict_types=1);`
 - declares a namespace matching its path
@@ -91,5 +91,5 @@ prose, is the rule.
   files allowed to touch the edge (`Minn\Http\Request`, `Minn\Http\Response`)
 - uses four-space indentation, no tabs
 
-and reports any procedural `src/*.php` file that appears (there are none; the count
+and reports any procedural `public/minn/src/*.php` file that appears (there are none; the count
 is expected to stay at zero).

@@ -8,9 +8,4 @@
  * with regexes) boots Minn Engine instead of WordPress, with zero edits.
  */
 
-define( 'MINN_ENGINE_VERSION', '0.0.1' );
-
-require_once dirname( __DIR__ ) . '/src/Minn/Autoloader.php';
-
-Minn\Autoloader::register();
-( new Minn\Engine( MINN_ENGINE_VERSION, dirname( __DIR__ ) ) )->serve();
+require_once __DIR__ . '/minn/bootstrap.php';

@@ -5,7 +5,7 @@ reference does: same status, same redirect target, same body-class tokens.
 Fixture: `contracts/fixtures/front/permalinks.json` (93 URL cases captured
 from the oracle; re-capture with `php tests/permalinks.test.php --capture`).
 Suite: `tests/permalinks.test.php` (fixture mode plus a live diff when the
-oracle is up). Code: `src/Minn/Front/`.
+oracle is up). Code: `public/minn/src/Minn/Front/`.
 
 The shared database now runs `permalink_structure = /%postname%/`. The
 oracle needs `router.php` under `wp-reference/` so the built-in server routes

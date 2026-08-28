@@ -14,7 +14,7 @@ into being in the first place.
 - Role definitions live in the `{prefix}user_roles` option (a serialized
   `{role: {name, capabilities:{cap:bool}}}` map), parsed without
   `unserialize()`. A fresh install with no such option falls back to the
-  seeded contract copy in `src/data/roles.json`.
+  seeded contract copy in `public/minn/data/roles.json`.
 - A user's roles come from the `{prefix}capabilities` usermeta (`{role:
   true}`). The user's effective capabilities are the union of the granted
   primitives across those roles.

@@ -24,7 +24,7 @@ $config = file_get_contents( "$ROOT/public/wp-config.php" );
 $config = str_replace( "require_once ABSPATH . 'wp-settings.php';", '', $config );
 eval( '?>' . $config );
 $GLOBALS['table_prefix'] = $table_prefix;
-require "$ROOT/src/Minn/Autoloader.php";
+require "$ROOT/public/minn/src/Minn/Autoloader.php";
 Minn\Autoloader::register();
 
 [ $ph ] = minn_test_fetch( "$REF/?rest_route=/wp/v2/posts", 3 );

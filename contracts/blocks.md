@@ -9,7 +9,7 @@ block family in the shared database: `contracts/fixtures/blocks/{family}.html`
 engine against the pinned rendering and the live reference. The suites'
 cleanups read the manifest and leave the battery alone.
 
-Code: `src/Minn/Blocks/` (`Parser`, `Block`, `Renderer`, `Layout`, `ImageTags`,
+Code: `public/minn/src/Minn/Blocks/` (`Parser`, `Block`, `Renderer`, `Layout`, `ImageTags`,
 `RenderState`, `Dynamic/*`). `Minn\Content\Blocks::render()` is the front door.
 
 ## What the oracle taught

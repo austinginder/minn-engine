@@ -57,7 +57,7 @@ final readonly class GlobalStyles
     /** @return array<string, list<array{slug: string, value: string}>> */
     private function presets(array $settings): array
     {
-        $core = (array) json_decode((string) file_get_contents(dirname(__DIR__, 2) . '/data/presets.json'), true);
+        $core = (array) json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/presets.json'), true);
         $merge = static fn (array $defaults, array $own, string $key) => [...$defaults, ...array_map(static fn (array $p) => ['slug' => (string) $p['slug'], 'value' => (string) $p[$key]], $own)];
         $fontSizes = (array) ($settings['typography']['fontSizes'] ?? []);
         $spacing = (array) ($settings['spacing']['spacingSizes'] ?? []);

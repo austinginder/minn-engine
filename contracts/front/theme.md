@@ -3,8 +3,8 @@
 The engine renders the site's installed block theme, read as data: `theme.json`,
 `templates/*.html`, `parts/*.html`, `patterns/*.php`, and the site editor's saved
 `wp_template` / `wp_template_part` / `wp_navigation` posts. No theme PHP runs.
-Code: `src/Minn/Theme/` (`Theme`, `Templates`, `PatternText`, `PageRenderer`) and
-the template blocks in `src/Minn/Blocks/Dynamic/Theme/`.
+Code: `public/minn/src/Minn/Theme/` (`Theme`, `Templates`, `PatternText`, `PageRenderer`) and
+the template blocks in `public/minn/src/Minn/Blocks/Dynamic/Theme/`.
 
 Suite: `tests/theme.test.php` diffs the `<body>` of fourteen pages against the
 reference (styles, scripts, and link tags stripped; hosts, container suffixes,
@@ -92,13 +92,13 @@ newline right after a closing tag is swallowed. Anything else renders as nothing
 ## Stylesheets (20b)
 
 The head carries three stylesheets: the engine's own block stylesheet
-(`/minn-engine/blocks.css`, served from `src/assets/`; structure and behaviour for the
+(`/minn-engine/blocks.css`, served from `public/minn/assets/`; structure and behaviour for the
 core block class names, original work), the generated global styles (`Minn\Theme\GlobalStyles`,
 inline as `#global-styles-inline-css`), and the theme's own `style.css`.
 
 What the generator reproduces from theme.json, checked against the reference by
 `tests/styles.test.php`: every `--wp--preset--*` custom property (core default colours,
-gradients, shadows, and aspect ratios from `src/data/presets.json` plus the theme's
+gradients, shadows, and aspect ratios from `public/minn/data/presets.json` plus the theme's
 palette, font sizes, families, spacing, shadows) and every `has-*` preset class,
 byte for byte. Fluid font sizes become `clamp(min, min + ((1vw - 0.2rem) * f), max)`
 where f scales between a 320px viewport and the theme's wide size. Root styles land on
@@ -179,7 +179,7 @@ anchors and its lowercased `viewbox`). Every fact below came out of that diff.
   `<li style="color:…" class="wp-social-link wp-social-link-{service} has-x-color
   wp-block-social-link"><a rel="noopener nofollow" target="_blank" href class="wp-block-social-link-anchor">
   {svg}<span class="wp-block-social-link-label screen-reader-text">{Label}</span></a></li>`,
-  the icons captured from the reference's output into `src/data/social-icons.json`
+  the icons captured from the reference's output into `public/minn/data/social-icons.json`
   (48 services; unknown services get the share icon).
 - **Synced patterns** (`core/block`) render the referenced `wp_block` post's content.
 - **Third-party blocks** pass through as stored; their `wp-image-N` images still count

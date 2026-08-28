@@ -12,7 +12,7 @@ directly (no WordPress source is involved either way).
 
 ## How it is wired
 
-- The Minn Admin dev plugin is symlinked into the engine at `minn-admin-app`
+- The Minn Admin dev plugin is symlinked into the engine at `public/minn/admin`
   (gitignored; it is its own repo, developed in parallel exactly like the
   shop.localhost symlink). Editing the app updates both sites live.
 - `GET /minn-admin` and `/minn-admin/*` render the shell. The route requires a

@@ -185,7 +185,7 @@ a user sees follows the per-type edit gate, pinned empirically: `post`,
 the theme-object types (nav_menu_item, wp_template, wp_template_part,
 wp_global_styles, wp_navigation, wp_font_family, wp_font_face) ride
 `edit_theme_options` (admin sees 11, editor 4, author 3). The enrichment
-data lives in `src/data/types-admin.json`, deliberately OUTSIDE
+data lives in `public/minn/data/types-admin.json`, deliberately OUTSIDE
 `data/types.json` so the wp/v2 types payload stays byte-faithful.
 
 ## Plugin-active oracle: wp/v2 side effects

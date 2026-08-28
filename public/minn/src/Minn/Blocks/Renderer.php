@@ -93,7 +93,7 @@ final class Renderer
         $renderer->registerDynamic('core/tag-cloud', (new TagCloud($db, $permalinks))->render(...));
         $renderer->registerDynamic('core/latest-comments', (new LatestComments($db, $site, $posts, $permalinks))->render(...));
         $renderer->registerDynamic('core/block', (new SyncedPattern($db))->render(...));
-        (new SocialLinks(dirname(__DIR__, 2) . '/data/social-icons.json'))->register($renderer);
+        (new SocialLinks(MINN_ENGINE_DIR . '/data/social-icons.json'))->register($renderer);
         return $renderer;
     }
 

@@ -5,7 +5,7 @@
  * migration is visible in every run.
  */
 
-$root = dirname(__DIR__) . '/src';
+$root = dirname(__DIR__) . '/public/minn/src';
 $pass = 0;
 $fail = 0;
 

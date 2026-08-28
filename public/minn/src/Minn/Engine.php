@@ -43,7 +43,8 @@ final readonly class Engine
 {
     public function __construct(
         private string $version,
-        private string $rootDir,
+        /** the minn/ folder: the engine's own files (assets, data, the admin bundle) */
+        private string $engineDir,
     ) {
     }
 
@@ -66,7 +67,7 @@ final readonly class Engine
         $cookie = new Cookie($db, $users, $sessions);
         $authenticator = new Authenticator($cookie, $users);
         $capabilities = Capabilities::fromDb($db);
-        $app = new App($this->rootDir . '/minn-admin-app');
+        $app = new App($this->engineDir . '/admin');
 
         $canReadUnpublished = static function (array $post) use ($authenticator, $capabilities, $request): bool {
             $session = $authenticator->session($request->cookies);
@@ -85,7 +86,7 @@ final readonly class Engine
         $front = new FrontController($resolver, new Renderer($db, $posts, $permalinks, $resolver->perPage()), $pages, $probes);
 
         $router = (new Router())->register(
-            new AssetsController(dirname(__DIR__) . '/assets'),
+            new AssetsController($this->engineDir . '/assets'),
             new AppController($app, new BootPayload($site, $permalinks, $capabilities, $app, $this->version), $authenticator, $capabilities, $permalinks, $this->version),
             new LoginController($site, $permalinks, $authenticator, $sessions, new AuthCookies($db, $cookie)),
             $probes,

@@ -52,7 +52,7 @@ user's edit-context post object then carries `minn_lock =
   queue: { spam, pending }, disallowed_keys }` from live counts.
 - `/minn-admin/v1/languages` (manage_options) → `installed` +
   `available` served from captured registry data
-  (`src/data/languages.json`, 133 locales), `current` from WPLANG.
+  (`public/minn/data/languages.json`, 133 locales), `current` from WPLANG.
 - `/minn-admin/v1/media/months` → distinct `Y-m` of attachments, newest
   first.
 - `GET /wp/v2/blocks` → `wp_block` rows (empty on this database),

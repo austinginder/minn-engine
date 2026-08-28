@@ -47,9 +47,9 @@ admin interface.
 ## Engineering conventions
 
 - Code style is `docs/style.md`, enforced by `tests/style.test.php`: strict
-  types, PSR-4 under `src/Minn/`, PSR-12 formatting, request in and response
+  types, PSR-4 under `public/minn/src/Minn/`, PSR-12 formatting, request in and response
   out, errors as exceptions, capabilities as route metadata. Every line of the
-  engine lives under `src/Minn/`; there are no procedural files.
+  engine lives under `public/minn/src/Minn/`; there are no procedural files.
 - Modern PHP, minimal dependencies, no build step.
 - Prepared statements only. Never `unserialize()` untrusted data (read
   serialized blobs with tolerant parsers, never by executing them).

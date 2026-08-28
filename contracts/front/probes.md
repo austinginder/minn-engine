@@ -5,7 +5,7 @@ not a page. Suite: `tests/probes.test.php` (status, content type, and for
 feeds, sitemaps, robots, xmlrpc, and cron the body, after host, generator
 version, container suffix, and per-request ids are neutralised). Pinned copies
 in `contracts/fixtures/probes/`; re-capture with `--capture`. Code:
-`src/Minn/Front/{ProbeController,Feeds,Sitemaps}.php`, `src/Minn/Rest/IndexController.php`.
+`public/minn/src/Minn/Front/{ProbeController,Feeds,Sitemaps}.php`, `public/minn/src/Minn/Rest/IndexController.php`.
 
 ## Feeds (`Feeds`)
 

@@ -23,7 +23,26 @@ Working today:
 - WordPress cookie and REST-nonce authentication, proven in both directions: a session minted by WordPress works on the engine, and a cookie minted by the engine is accepted by WordPress
 - A working `/wp-login.php`: a browser signs in against the engine, receives real WordPress auth cookies, and that session is accepted by both the engine and WordPress. Logout clears it
 
-Every surface is pinned by two suites: fixtures captured from a reference WordPress, and a live parity diff that treats a running WordPress on the same database as the oracle. Run them with `tests/run-all.sh`. Contract notes and known gaps live in `contracts/`. The whole engine follows `docs/style.md` (modern namespaced PHP under `src/Minn/`, enforced by `tests/style.test.php`).
+## Layout
+
+The engine is one folder, `public/minn/`, dropped into a WordPress webroot beside an untouched `wp-config.php`:
+
+```
+public/
+  index.php          stock front controller
+  wp-config.php      the file WordPress generated, never edited
+  wp-settings.php    two lines: require minn/bootstrap.php
+  wp-content/        themes and uploads
+  minn/
+    bootstrap.php    version, autoloader, Minn\Engine::serve()
+    src/Minn/        the engine (PSR-4)
+    assets/  data/   the engine's own stylesheet and seeded registries
+    admin/           the Minn Admin bundle
+```
+
+Everything else in this repository (`tests/`, `contracts/`, `docs/`) is development only and never ships. On a development site `public/minn` can be a symlink into this repository so several sites run the same code.
+
+Every surface is pinned by two suites: fixtures captured from a reference WordPress, and a live parity diff that treats a running WordPress on the same database as the oracle. Run them with `tests/run-all.sh`. Contract notes and known gaps live in `contracts/`. The whole engine follows `docs/style.md` (modern namespaced PHP under `public/minn/src/Minn/`, enforced by `tests/style.test.php`).
 
 ## License
 
