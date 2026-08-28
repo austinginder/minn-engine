@@ -6,8 +6,9 @@ Suite: `tests/layout.test.php`.
 ## Shape files
 
 Four files at the webroot are the engine's side of the file-layout contract. Their
-templates live in `public/minn/layout/` (the suite asserts the copies match), so an
-install is: park WordPress, drop `minn/` in, copy the templates over.
+templates live in `public/minn/layout/` (the suite asserts the copies match), and
+`minn/bin/minn install` is the command that parks WordPress, drops `minn/` in, and
+copies them over; `minn eject` reverses it (`docs/install.md`, `tests/install.test.php`).
 
 | File | Who reads it | What the engine ships |
 |---|---|---|

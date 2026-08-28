@@ -1,0 +1,18 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+/**
+ * The engine's own command: preflight, install, eject, status.
+ *
+ *   php minn/bin/minn preflight /path/to/webroot
+ *   php minn/bin/minn install   /path/to/webroot [--park=/path/to/wp-parked] [--force]
+ *   php minn/bin/minn eject     /path/to/webroot
+ *   php minn/bin/minn status    /path/to/webroot
+ */
+
+require_once dirname(__DIR__) . '/src/Minn/Autoloader.php';
+Minn\Autoloader::register();
+
+exit(Minn\Cli\Installer::main(array_slice($argv, 1), dirname(__DIR__)));

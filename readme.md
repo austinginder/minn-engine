@@ -43,6 +43,7 @@ public/
     admin/           the Minn Admin bundle
     cli.php          WP-CLI entry point
     layout/          templates of the four shape files above, for install
+    bin/minn         preflight, install, eject, status (docs/install.md)
 ```
 
 Everything else in this repository (`tests/`, `contracts/`, `docs/`) is development only and never ships. On a development site `public/minn` can be a symlink into this repository so several sites run the same code.

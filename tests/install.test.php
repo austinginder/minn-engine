@@ -1,0 +1,124 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * The swap, both ways, on a scratch webroot shaped like a WordPress install
+ * (stub core files, the dev site's real wp-config.php and themes): install
+ * parks core and lays the engine down, wp-cli answers through the engine,
+ * eject restores the tree byte for byte and leaves nothing behind.
+ */
+
+$ROOT = dirname(__DIR__);
+$ENGINE_DIR = "$ROOT/public/minn";
+$SCRATCH = sys_get_temp_dir() . '/minn-install-' . getmypid();
+$WEBROOT = "$SCRATCH/public";
+$PARK = "$SCRATCH/wp-parked";
+
+$pass = 0;
+$fail = 0;
+$check = static function (string $label, bool $ok, string $detail = '') use (&$pass, &$fail): void {
+    if ($ok) {
+        $pass++;
+        echo "  ok   {$label}\n";
+    } else {
+        $fail++;
+        echo "  FAIL {$label}" . ($detail !== '' ? "\n      " . substr($detail, 0, 500) : '') . "\n";
+    }
+};
+$minn = static function (string $args) use ($ENGINE_DIR): array {
+    exec('php ' . escapeshellarg("$ENGINE_DIR/bin/minn") . " $args 2>&1", $out, $code);
+    return [implode("\n", $out), $code];
+};
+$tree = static function (string $dir) use (&$tree): array {
+    $entries = [];
+    foreach (scandir($dir) ?: [] as $entry) {
+        if ($entry === '.' || $entry === '..') {
+            continue;
+        }
+        $path = "$dir/$entry";
+        if (is_link($path)) {
+            $entries[$entry] = 'link:' . readlink($path);
+        } elseif (is_dir($path)) {
+            $entries[$entry] = $tree($path);
+        } else {
+            $entries[$entry] = md5_file($path);
+        }
+    }
+    ksort($entries);
+    return $entries;
+};
+register_shutdown_function(static function () use ($SCRATCH): void {
+    exec('rm -rf ' . escapeshellarg($SCRATCH));
+});
+
+echo "install suite: $WEBROOT\n";
+
+// A WordPress-shaped webroot: stub core files, the real config and themes.
+mkdir("$WEBROOT/wp-admin", 0755, true);
+mkdir("$WEBROOT/wp-includes/js", 0755, true);
+mkdir("$WEBROOT/wp-content/uploads", 0755, true);
+symlink(realpath("$ROOT/public/wp-content/themes"), "$WEBROOT/wp-content/themes");
+mkdir("$WEBROOT/wp-content/plugins");
+copy("$ROOT/public/wp-config.php", "$WEBROOT/wp-config.php");
+$stubs = [
+    'index.php' => "<?php\nrequire __DIR__ . '/wp-blog-header.php';\n",
+    'wp-blog-header.php' => "<?php\n// stub\n",
+    'wp-load.php' => "<?php\n// stub\n",
+    'wp-settings.php' => "<?php\n// stub settings\n",
+    'wp-login.php' => "<?php\n// stub\n",
+    'wp-cron.php' => "<?php\n// stub\n",
+    'xmlrpc.php' => "<?php\n// stub\n",
+    'license.txt' => "GPL\n",
+    'readme.html' => "<html></html>\n",
+    'wp-admin/index.php' => "<?php\n// stub admin\n",
+    'wp-includes/version.php' => "<?php\n\$wp_version = '7.1';\n\$wp_db_version = 61833;\n",
+    'wp-includes/js/wp.js' => "// stub\n",
+    '.htaccess' => "# keep\n",
+];
+foreach ($stubs as $file => $content) {
+    file_put_contents("$WEBROOT/$file", $content);
+}
+$before = $tree($WEBROOT);
+$configBefore = md5_file("$WEBROOT/wp-config.php");
+
+[$out, $code] = $minn('status ' . escapeshellarg($WEBROOT));
+$check('status reads a WordPress webroot', $code === 0 && str_contains($out, ': wordpress'), $out);
+[$out, $code] = $minn('preflight ' . escapeshellarg($WEBROOT));
+$check('preflight passes a block-theme site (GREEN or AMBER)', $code === 0 && preg_match('/Result: (GREEN|AMBER)/', $out) === 1 && str_contains($out, 'is a block theme'), $out);
+[$out, $code] = $minn('eject ' . escapeshellarg($WEBROOT));
+$check('eject refuses a WordPress webroot', $code === 1 && str_contains($out, 'not installed'), $out);
+
+[$out, $code] = $minn('install ' . escapeshellarg($WEBROOT) . ' --park=' . escapeshellarg($PARK));
+$check('install succeeds', $code === 0 && str_contains($out, 'Installed.'), $out);
+$check('core files are parked', is_file("$PARK/wp-load.php") && is_dir("$PARK/wp-admin") && is_file("$PARK/wp-includes/js/wp.js") && is_file("$PARK/index.php"));
+$check('the webroot has no WordPress entry points', !file_exists("$WEBROOT/wp-load.php") && !file_exists("$WEBROOT/wp-admin") && !file_exists("$WEBROOT/xmlrpc.php"));
+$check('the shape files match the layout templates', md5_file("$WEBROOT/index.php") === md5_file("$ENGINE_DIR/layout/index.php") && md5_file("$WEBROOT/wp-settings.php") === md5_file("$ENGINE_DIR/layout/wp-settings.php") && md5_file("$WEBROOT/wp-cli.yml") === md5_file("$ENGINE_DIR/layout/wp-cli.yml") && md5_file("$WEBROOT/wp-includes/version.php") === md5_file("$ENGINE_DIR/layout/wp-includes/version.php"));
+$check('the engine is a real copy with its sources', is_file("$WEBROOT/minn/bootstrap.php") && is_file("$WEBROOT/minn/src/Minn/Engine.php") && !is_link("$WEBROOT/minn") && is_file("$WEBROOT/minn/data/social-icons.json"));
+$check('wp-config.php is untouched', md5_file("$WEBROOT/wp-config.php") === $configBefore);
+$check('wp-content is untouched', file_exists("$WEBROOT/wp-content/uploads") && is_link("$WEBROOT/wp-content/themes") && is_file("$WEBROOT/.htaccess"));
+$manifest = json_decode((string) @file_get_contents("$WEBROOT/minn/.install.json"), true);
+$check('the manifest records the park and the moved entries', is_array($manifest) && ($manifest['park'] ?? '') === $PARK && in_array('wp-load.php', $manifest['moved'] ?? [], true) && in_array('wp-admin', $manifest['moved'] ?? [], true), json_encode($manifest));
+[$out, $code] = $minn('status ' . escapeshellarg($WEBROOT));
+$check('status reads the engine', $code === 0 && str_contains($out, ': minn') && str_contains($out, 'parked at'), $out);
+[$out, $code] = $minn('install ' . escapeshellarg($WEBROOT) . ' --park=' . escapeshellarg($PARK));
+$check('a second install is refused', $code === 1, $out);
+
+// The installed webroot answers wp-cli through the engine.
+exec('cd ' . escapeshellarg($WEBROOT) . ' && wp option get home 2>&1', $home, $c1);
+$check('wp option get home works in the installed webroot', $c1 === 0 && implode('', $home) === 'https://minn-engine.localhost', implode("\n", $home));
+exec('cd ' . escapeshellarg($WEBROOT) . ' && wp core version 2>&1', $version, $c2);
+$check('wp core version reads the shape file', $c2 === 0 && implode('', $version) === '7.1', implode("\n", $version));
+exec('cd ' . escapeshellarg($WEBROOT) . ' && wp minn info 2>&1', $info, $c3);
+$check('wp minn info reports the installed engine dir', $c3 === 0 && str_contains(implode("\n", $info), 'Engine dir: ' . realpath("$WEBROOT/minn")), implode("\n", $info));
+
+[$out, $code] = $minn('eject ' . escapeshellarg($WEBROOT));
+$check('eject succeeds', $code === 0 && str_contains($out, 'Ejected.'), $out);
+$check('the tree is back byte for byte', $tree($WEBROOT) === $before, json_encode(array_keys($tree($WEBROOT))) . ' vs ' . json_encode(array_keys($before)));
+$check('the park is gone', !file_exists($PARK));
+$check('no engine remains', !file_exists("$WEBROOT/minn") && !file_exists("$WEBROOT/wp-cli.yml"));
+[$out, $code] = $minn('status ' . escapeshellarg($WEBROOT));
+$check('status reads WordPress again', $code === 0 && str_contains($out, ': wordpress'), $out);
+
+echo "\n{$pass} passed, {$fail} failed\n";
+exit($fail === 0 ? 0 : 1);

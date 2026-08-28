@@ -41,6 +41,84 @@ final class MinnCommand
         WP_CLI::log('Home: ' . ($runtime->site->option('home') ?? ''));
     }
 
+    /**
+     * Says what a WordPress webroot will and will not get from the engine.
+     *
+     * ## OPTIONS
+     *
+     * [<webroot>]
+     * : The webroot to inspect. Defaults to the current directory.
+     *
+     * @when before_wp_load
+     */
+    public function preflight(array $args, array $assocArgs): void
+    {
+        self::installer('preflight', $args, $assocArgs);
+    }
+
+    /**
+     * Parks WordPress and installs the engine into a webroot.
+     *
+     * ## OPTIONS
+     *
+     * [<webroot>]
+     * : The webroot. Defaults to the current directory.
+     *
+     * [--park=<dir>]
+     * : Where WordPress's own files go. Defaults to wp-parked beside the webroot.
+     *
+     * [--force]
+     * : Install even when preflight is RED.
+     *
+     * @when before_wp_load
+     */
+    public function install(array $args, array $assocArgs): void
+    {
+        self::installer('install', $args, $assocArgs);
+    }
+
+    /**
+     * Removes the engine and puts WordPress's files back.
+     *
+     * ## OPTIONS
+     *
+     * [<webroot>]
+     * : The webroot. Defaults to the current directory.
+     *
+     * @when before_wp_load
+     */
+    public function eject(array $args, array $assocArgs): void
+    {
+        self::installer('eject', $args, $assocArgs);
+    }
+
+    /**
+     * Says whether a webroot runs WordPress or the engine.
+     *
+     * ## OPTIONS
+     *
+     * [<webroot>]
+     * : The webroot. Defaults to the current directory.
+     *
+     * @when before_wp_load
+     */
+    public function status(array $args, array $assocArgs): void
+    {
+        self::installer('status', $args, $assocArgs);
+    }
+
+    private static function installer(string $command, array $args, array $assocArgs): void
+    {
+        $argv = [$command, $args[0] ?? (string) getcwd()];
+        foreach ($assocArgs as $key => $value) {
+            $argv[] = '--' . $key . ($value === true ? '' : '=' . $value);
+        }
+        $code = Installer::main($argv, defined('MINN_ENGINE_DIR') ? MINN_ENGINE_DIR : dirname(__DIR__, 3));
+        if ($code !== 0) {
+            WP_CLI::halt($code);
+        }
+    }
+
     private static function engineVersion(): string
     {
         return defined('MINN_ENGINE_VERSION') ? MINN_ENGINE_VERSION : '0.0.1';
