@@ -8,7 +8,16 @@ It is not a fork. No WordPress code appears in this repository, which is what ma
 
 ## Status
 
-Pre-alpha, vision stage. Milestone 0 is complete: the engine boots from an unmodified `wp-config.php` and serves a page from a database WordPress created, with no WordPress code in the process.
+Pre-alpha. The engine boots from an unmodified `wp-config.php`, serves a database WordPress created, and runs no WordPress code in the process.
+
+Working today (read paths, view context):
+
+- `wp/v2` posts, pages, categories, tags, types, users, and `users/me`
+- The `_fields` response filter, including the quirk where filtering the associative types payload yields `[]`
+- Block rendering, texturize, and generated excerpts matching the reference byte for byte
+- WordPress cookie and REST-nonce authentication, proven in both directions: a session minted by WordPress works on the engine, and a cookie minted by the engine is accepted by WordPress
+
+Every surface is pinned by two suites: fixtures captured from a reference WordPress, and a live parity diff that treats a running WordPress on the same database as the oracle. Run them with `tests/run-all.sh`. Contract notes and known gaps live in `contracts/rest/`.
 
 ## License
 
