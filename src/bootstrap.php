@@ -46,6 +46,26 @@ function minn_esc( ?string $s ): string {
 }
 
 function minn_engine_serve(): void {
+	require_once __DIR__ . '/rest.php';
+
+	$path = parse_url( $_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH ) ?? '/';
+	if ( isset( $_GET['rest_route'] ) ) {
+		minn_rest_dispatch( (string) $_GET['rest_route'] );
+	}
+	if ( str_starts_with( $path, '/wp-json' ) ) {
+		minn_rest_dispatch( substr( $path, strlen( '/wp-json' ) ) ?: '/' );
+	}
+	if ( '/' !== $path ) {
+		http_response_code( 404 );
+		header( 'Content-Type: text/html; charset=utf-8' );
+		echo '<!doctype html><title>Not Found</title><p>Not found.';
+		exit;
+	}
+
+	minn_homepage();
+}
+
+function minn_homepage(): void {
 	$title   = minn_option( 'blogname' ) ?? 'Untitled';
 	$tagline = minn_option( 'blogdescription' ) ?? '';
 	$posts   = minn_latest_posts();

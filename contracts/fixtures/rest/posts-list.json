@@ -1,0 +1,225 @@
+[
+  {
+    "id": 5,
+    "date": "2026-08-28T02:32:13",
+    "date_gmt": "2026-08-28T02:32:13",
+    "guid": {
+      "rendered": "https://minn-engine.localhost/?p=5"
+    },
+    "modified": "2026-08-28T02:32:13",
+    "modified_gmt": "2026-08-28T02:32:13",
+    "slug": "building-in-the-open",
+    "status": "publish",
+    "type": "post",
+    "link": "http://127.0.0.1:8123/?p=5",
+    "title": {
+      "rendered": "Building in the open"
+    },
+    "content": {
+      "rendered": "\n<h2 class=\"wp-block-heading\">Why contracts first</h2>\n\n\n\n<p class=\"wp-block-paragraph\">The compatibility contract is the product. Fixtures from a reference site define done.</p>\n\n\n\n<ul class=\"wp-block-list\"><li>schema</li><li>rest</li><li>cli</li></ul>\n",
+      "protected": false
+    },
+    "excerpt": {
+      "rendered": "<p>A hand-written excerpt for the parity suite.</p>\n",
+      "protected": false
+    },
+    "author": 0,
+    "featured_media": 0,
+    "comment_status": "open",
+    "ping_status": "open",
+    "sticky": true,
+    "template": "",
+    "format": "standard",
+    "meta": {
+      "footnotes": ""
+    },
+    "categories": [
+      1
+    ],
+    "tags": [
+      2,
+      3
+    ],
+    "class_list": [
+      "post-5",
+      "post",
+      "type-post",
+      "status-publish",
+      "format-standard",
+      "hentry",
+      "category-uncategorized",
+      "tag-engine",
+      "tag-parity"
+    ],
+    "_links": {
+      "self": [
+        {
+          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/posts/5",
+          "targetHints": {
+            "allow": [
+              "GET"
+            ]
+          }
+        }
+      ],
+      "collection": [
+        {
+          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/posts"
+        }
+      ],
+      "about": [
+        {
+          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/types/post"
+        }
+      ],
+      "replies": [
+        {
+          "embeddable": true,
+          "href": "http://127.0.0.1:8123/index.php?rest_route=%2Fwp%2Fv2%2Fcomments&post=5"
+        }
+      ],
+      "version-history": [
+        {
+          "count": 0,
+          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/posts/5/revisions"
+        }
+      ],
+      "wp:attachment": [
+        {
+          "href": "http://127.0.0.1:8123/index.php?rest_route=%2Fwp%2Fv2%2Fmedia&parent=5"
+        }
+      ],
+      "wp:term": [
+        {
+          "taxonomy": "category",
+          "embeddable": true,
+          "href": "http://127.0.0.1:8123/index.php?rest_route=%2Fwp%2Fv2%2Fcategories&post=5"
+        },
+        {
+          "taxonomy": "post_tag",
+          "embeddable": true,
+          "href": "http://127.0.0.1:8123/index.php?rest_route=%2Fwp%2Fv2%2Ftags&post=5"
+        }
+      ],
+      "curies": [
+        {
+          "name": "wp",
+          "href": "https://api.w.org/{rel}",
+          "templated": true
+        }
+      ]
+    }
+  },
+  {
+    "id": 1,
+    "date": "2026-08-28T02:21:33",
+    "date_gmt": "2026-08-28T02:21:33",
+    "guid": {
+      "rendered": "https://minn-engine.localhost/?p=1"
+    },
+    "modified": "2026-08-28T02:21:33",
+    "modified_gmt": "2026-08-28T02:21:33",
+    "slug": "hello-world",
+    "status": "publish",
+    "type": "post",
+    "link": "http://127.0.0.1:8123/?p=1",
+    "title": {
+      "rendered": "Hello world!"
+    },
+    "content": {
+      "rendered": "\n<p class=\"wp-block-paragraph\">Welcome to WordPress. This is your first post. Edit or delete it, then start writing!</p>\n",
+      "protected": false
+    },
+    "excerpt": {
+      "rendered": "<p>Welcome to WordPress. This is your first post. Edit or delete it, then start writing!</p>\n",
+      "protected": false
+    },
+    "author": 1,
+    "featured_media": 0,
+    "comment_status": "open",
+    "ping_status": "open",
+    "sticky": false,
+    "template": "",
+    "format": "standard",
+    "meta": {
+      "footnotes": ""
+    },
+    "categories": [
+      1
+    ],
+    "tags": [],
+    "class_list": [
+      "post-1",
+      "post",
+      "type-post",
+      "status-publish",
+      "format-standard",
+      "hentry",
+      "category-uncategorized"
+    ],
+    "_links": {
+      "self": [
+        {
+          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/posts/1",
+          "targetHints": {
+            "allow": [
+              "GET"
+            ]
+          }
+        }
+      ],
+      "collection": [
+        {
+          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/posts"
+        }
+      ],
+      "about": [
+        {
+          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/types/post"
+        }
+      ],
+      "author": [
+        {
+          "embeddable": true,
+          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/users/1"
+        }
+      ],
+      "replies": [
+        {
+          "embeddable": true,
+          "href": "http://127.0.0.1:8123/index.php?rest_route=%2Fwp%2Fv2%2Fcomments&post=1"
+        }
+      ],
+      "version-history": [
+        {
+          "count": 0,
+          "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/posts/1/revisions"
+        }
+      ],
+      "wp:attachment": [
+        {
+          "href": "http://127.0.0.1:8123/index.php?rest_route=%2Fwp%2Fv2%2Fmedia&parent=1"
+        }
+      ],
+      "wp:term": [
+        {
+          "taxonomy": "category",
+          "embeddable": true,
+          "href": "http://127.0.0.1:8123/index.php?rest_route=%2Fwp%2Fv2%2Fcategories&post=1"
+        },
+        {
+          "taxonomy": "post_tag",
+          "embeddable": true,
+          "href": "http://127.0.0.1:8123/index.php?rest_route=%2Fwp%2Fv2%2Ftags&post=1"
+        }
+      ],
+      "curies": [
+        {
+          "name": "wp",
+          "href": "https://api.w.org/{rel}",
+          "templated": true
+        }
+      ]
+    }
+  }
+]

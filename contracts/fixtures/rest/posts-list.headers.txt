@@ -1,0 +1,7 @@
+Content-Type: application/json; charset=UTF-8
+X-Content-Type-Options: nosniff
+Access-Control-Expose-Headers: X-WP-Total, X-WP-TotalPages, Link
+Access-Control-Allow-Headers: Authorization, X-WP-Nonce, Content-Disposition, Content-MD5, Content-Type
+X-WP-Total: 1
+X-WP-TotalPages: 1
+Allow: GET
