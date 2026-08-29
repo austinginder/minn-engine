@@ -29,6 +29,8 @@ final readonly class AppController
         private Capabilities $capabilities,
         private Permalinks $permalinks,
         private string $engineVersion,
+        /** the site has deactivated the Minn Admin plugin: the engine runs without an admin */
+        private bool $off = false,
     ) {
     }
 
@@ -48,8 +50,29 @@ final readonly class AppController
         if (!$this->app->installed()) {
             return Response::html('<!doctype html><title>Minn Admin not installed</title><p>The Minn Admin app is not linked into this engine.', 500);
         }
+        if ($this->off) {
+            return Response::html($this->offPage());
+        }
         return Response::html($this->render($this->payload->build($session)))
             ->withHeader('X-Powered-By', 'Minn Engine/' . $this->engineVersion);
+    }
+
+    /** The engine without an admin: the site keeps serving; the command that brings the admin back is named. */
+    private function offPage(): string
+    {
+        $site = Html::esc((string) ($this->payload->siteName()));
+        return <<<HTML
+        <!DOCTYPE html>
+        <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noindex, nofollow"><title>Minn Admin is off — {$site}</title>
+        <style>body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0b0b0d;color:#ececed;font:15px/1.6 "Hanken Grotesk","Helvetica Neue",sans-serif}
+        main{width:420px;background:#151518;border:1px solid #242429;border-radius:14px;padding:28px}h1{font-size:19px;margin:0 0 10px}p{margin:0 0 12px;color:#9d9da7}
+        code{display:block;background:#0b0b0d;border:1px solid #31313a;border-radius:8px;padding:10px 12px;color:#ececed;font:13px ui-monospace,Menlo,monospace}a{color:#8a80f8}</style></head>
+        <body><main><h1>Minn Admin is off</h1>
+        <p>{$site} is running Minn Engine without an admin interface. The site, its REST API, cron and command line keep working.</p>
+        <p>Turn the admin back on from the command line:</p><code>wp plugin activate minn-admin</code>
+        <p style="margin-top:14px"><a href="/">Back to the site</a></p></main></body></html>
+        HTML;
     }
 
     #[Route(Method::Get, '/minn-admin-asset/{path*}')]

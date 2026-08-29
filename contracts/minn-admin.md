@@ -69,6 +69,18 @@ engine's post types "Managed by Minn Engine". The engine reports
 `pluginAjax: null` so plugin toggles ride `PUT wp/v2/plugins/{plugin}`, and
 `site.blockTheme` from the active theme.
 
+## Minn Admin is a plugin, and the engine honours it
+
+The app is served while `active_plugins` names `minn-admin/minn-admin.php`,
+the same record `wp plugin list` and the reference read. Deactivating it
+(the Extensions toggle, `PUT wp/v2/plugins/minn-admin/minn-admin`, or
+`wp plugin deactivate`) leaves the site, its REST API, cron and CLI running
+and turns `/minn-admin/` into a page that says so and names
+`wp plugin activate minn-admin`; the front bar goes with it. A site that
+carries only the engine's bundle (no plugin folder in wp-content/plugins)
+has no such record and keeps its admin. On the engine the app's deactivate
+dialog says exactly this instead of promising wp-admin.
+
 ## The Minn bar on the public site
 
 `Minn\Front\AdminBar` renders the app's own front-end bar on every themed

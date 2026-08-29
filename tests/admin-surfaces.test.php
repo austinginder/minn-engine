@@ -228,6 +228,19 @@ check( 'inactive' === ( $b['status'] ?? '' ) && 'active' === ( $b2['status'] ?? 
 [ $s ] = as_fetch( $ENGINE, '/wp/v2/plugins', $author );
 check( 403 === $s, 'plugins need activate_plugins', "status $s" );
 
+// 6b. Minn Admin is a plugin: deactivated, the engine runs without an admin and says so.
+[ $s, $b ] = as_fetch( $ENGINE, '/wp/v2/plugins/minn-admin/minn-admin', $admin, 'PUT', '{"status":"inactive"}' );
+$adminCtx = stream_context_create( array( 'ssl' => array( 'verify_peer' => false, 'verify_peer_name' => false ), 'http' => array( 'ignore_errors' => true, 'header' => 'Cookie: ' . $admin['cookie_name'] . '=' . $admin['cookie'] ) ) );
+$off = (string) @file_get_contents( "$ENGINE/minn-admin/", false, $adminCtx );
+$front = (string) @file_get_contents( "$ENGINE/hello-world/", false, $adminCtx );
+[ , $refOff ] = as_fetch( $REF, '/wp/v2/plugins/minn-admin/minn-admin', $admin );
+as_fetch( $ENGINE, '/wp/v2/plugins/minn-admin/minn-admin', $admin, 'PUT', '{"status":"active"}' );
+check( 'inactive' === ( $b['status'] ?? '' ) && str_contains( $off, 'Minn Admin is off' ) && str_contains( $off, 'wp plugin activate minn-admin' ), 'deactivated, /minn-admin/ explains and names the command back', substr( $off, 0, 120 ) );
+check( ! str_contains( $front, 'minn-bar-root' ), 'the front bar stays off with the admin' );
+check( 'inactive' === ( $refOff['status'] ?? '' ), 'WordPress saw the plugin deactivated too (the same active_plugins record)' );
+$on = (string) @file_get_contents( "$ENGINE/minn-admin/", false, $adminCtx );
+check( str_contains( $on, 'window.MINN' ), 'reactivated, the admin is back' );
+
 // 7. System: the engine's own diagnostics in the plugin's shape.
 [ $s, $b ] = as_fetch( $ENGINE, '/minn-admin/v1/system', $admin );
 check( 200 === $s && array( 'generated', 'checks', 'config', 'logs', 'licenses', 'extensions', 'integrations', 'groups' ) === array_keys( $b ), 'system carries the plugin\'s top-level keys', json_encode( array_keys( $b ) ) );

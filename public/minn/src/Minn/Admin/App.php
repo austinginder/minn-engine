@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Minn\Admin;
 
+use Minn\Content\Site;
 use Minn\Support\FileHeaders;
+use Minn\Support\Serialized;
 
 /**
  * The Minn Admin app on disk: the symlinked dev copy the engine serves the
@@ -24,6 +26,20 @@ final readonly class App
 
     public function __construct(private string $dir)
     {
+    }
+
+    /**
+     * Whether the site has switched Minn Admin off: its plugin folder is in
+     * wp-content/plugins (the record the reference keeps) and active_plugins
+     * does not name it. A site that carries only the engine's bundle has no
+     * such record and keeps its admin.
+     */
+    public static function switchedOff(string $contentDir, Site $site): bool
+    {
+        if (!is_dir("{$contentDir}/plugins/minn-admin")) {
+            return false;
+        }
+        return !in_array('minn-admin/minn-admin.php', Serialized::stringList($site->option('active_plugins')), true);
     }
 
     public function dir(): string

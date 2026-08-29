@@ -30,6 +30,11 @@ final readonly class BootPayload
     ) {
     }
 
+    public function siteName(): string
+    {
+        return (string) ($this->site->option('blogname') ?? 'Site');
+    }
+
     public function build(Authenticated $session): array
     {
         $user = $session->user;
