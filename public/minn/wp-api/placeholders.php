@@ -3,700 +3,822 @@
 
 function _count_posts_cache_key($type = 'post', $perm = '')
 {
+    \Minn\Runtime\PlaceholderTrace::hit('_count_posts_cache_key');
     return null;
 }
 
 function _deep_replace($search, $subject)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('_deep_replace');
     return null;
 }
 
 function _draft_or_post_title($post = 0)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('_draft_or_post_title');
     return null;
 }
 
 function _get_list_table($class_name, $args = [])
 {
+    \Minn\Runtime\PlaceholderTrace::hit('_get_list_table');
     return null;
 }
 
 function _get_meta_table($type)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('_get_meta_table');
     return null;
 }
 
 function _prime_post_caches($ids, $update_term_cache = true, $update_meta_cache = true)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('_prime_post_caches');
     return null;
 }
 
 function _wp_admin_bar_init()
 {
+    \Minn\Runtime\PlaceholderTrace::hit('_wp_admin_bar_init');
     return null;
 }
 
 function add_magic_quotes($input_array)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('add_magic_quotes');
     return null;
 }
 
 function addslashes_gpc($gpc)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('addslashes_gpc');
     return null;
 }
 
 function block_template_part($part)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('block_template_part');
     return null;
 }
 
 function cancel_comment_reply_link($link_text = '')
 {
+    \Minn\Runtime\PlaceholderTrace::hit('cancel_comment_reply_link');
     return null;
 }
 
 function clean_attachment_cache($id, $clean_terms = false)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('clean_attachment_cache');
     return null;
 }
 
 function clean_comment_cache($ids)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('clean_comment_cache');
     return null;
 }
 
 function clean_user_cache($user)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('clean_user_cache');
     return null;
 }
 
 function comment_form_title($no_reply_text = false, $reply_text = false, $link_to_parent = true, $post = NULL)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('comment_form_title');
     return null;
 }
 
 function comment_text($comment_id = 0, $args = [])
 {
+    \Minn\Runtime\PlaceholderTrace::hit('comment_text');
     return null;
 }
 
 function create_initial_taxonomies()
 {
+    \Minn\Runtime\PlaceholderTrace::hit('create_initial_taxonomies');
     return null;
 }
 
 function delete_metadata_by_mid($meta_type, $meta_id)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('delete_metadata_by_mid');
     return null;
 }
 
 function delete_plugins($plugins, $deprecated = '')
 {
+    \Minn\Runtime\PlaceholderTrace::hit('delete_plugins');
     return null;
 }
 
 function edit_post($post_data = NULL)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('edit_post');
     return null;
 }
 
 function edit_term_link($link = '', $before = '', $after = '', $term = NULL, $display = true)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('edit_term_link');
     return null;
 }
 
 function find_core_auto_update()
 {
+    \Minn\Runtime\PlaceholderTrace::hit('find_core_auto_update');
     return null;
 }
 
 function find_core_update($version, $locale)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('find_core_update');
     return null;
 }
 
 function generate_postdata($post)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('generate_postdata');
     return null;
 }
 
 function get_all_page_ids()
 {
+    \Minn\Runtime\PlaceholderTrace::hit('get_all_page_ids');
     return null;
 }
 
 function get_attached_media($type, $post = 0)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('get_attached_media');
     return null;
 }
 
 function get_bookmarks($args = '')
 {
+    \Minn\Runtime\PlaceholderTrace::hit('get_bookmarks');
     return null;
 }
 
 function get_column_headers($screen)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('get_column_headers');
     return null;
 }
 
 function get_comment_ID()
 {
+    \Minn\Runtime\PlaceholderTrace::hit('get_comment_ID');
     return null;
 }
 
 function get_comment_author_link($comment_id = 0)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('get_comment_author_link');
     return null;
 }
 
 function get_comment_to_edit($id)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('get_comment_to_edit');
     return null;
 }
 
 function get_comments_link($post = 0)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('get_comments_link');
     return null;
 }
 
 function get_default_block_template_types()
 {
+    \Minn\Runtime\PlaceholderTrace::hit('get_default_block_template_types');
     return null;
 }
 
 function get_dirsize($directory, $max_execution_time = NULL)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('get_dirsize');
     return null;
 }
 
 function get_hidden_meta_boxes($screen)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('get_hidden_meta_boxes');
     return null;
 }
 
 function get_importers()
 {
+    \Minn\Runtime\PlaceholderTrace::hit('get_importers');
     return null;
 }
 
 function get_index_template()
 {
+    \Minn\Runtime\PlaceholderTrace::hit('get_index_template');
     return null;
 }
 
 function get_metadata_by_mid($meta_type, $meta_id)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('get_metadata_by_mid');
     return null;
 }
 
 function get_next_posts_page_link($max_page = 0)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('get_next_posts_page_link');
     return null;
 }
 
 function get_page_templates($post = NULL, $post_type = 'page')
 {
+    \Minn\Runtime\PlaceholderTrace::hit('get_page_templates');
     return null;
 }
 
 function get_plugin_files($plugin)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('get_plugin_files');
     return null;
 }
 
 function get_post_galleries($post, $html = true)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('get_post_galleries');
     return null;
 }
 
 function get_post_parent($post = NULL)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('get_post_parent');
     return null;
 }
 
 function get_post_timestamp($post = NULL, $field = 'date')
 {
+    \Minn\Runtime\PlaceholderTrace::hit('get_post_timestamp');
     return null;
 }
 
 function get_preferred_from_update_core()
 {
+    \Minn\Runtime\PlaceholderTrace::hit('get_preferred_from_update_core');
     return null;
 }
 
 function get_privacy_policy_url()
 {
+    \Minn\Runtime\PlaceholderTrace::hit('get_privacy_policy_url');
     return null;
 }
 
 function get_sample_permalink($post, $title = NULL, $name = NULL)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('get_sample_permalink');
     return null;
 }
 
 function get_singular_template()
 {
+    \Minn\Runtime\PlaceholderTrace::hit('get_singular_template');
     return null;
 }
 
 function get_term_feed_link($term, $taxonomy = '', $feed = '')
 {
+    \Minn\Runtime\PlaceholderTrace::hit('get_term_feed_link');
     return null;
 }
 
 function get_the_block_template_html()
 {
+    \Minn\Runtime\PlaceholderTrace::hit('get_the_block_template_html');
     return null;
 }
 
 function get_the_privacy_policy_link($before = '', $after = '')
 {
+    \Minn\Runtime\PlaceholderTrace::hit('get_the_privacy_policy_link');
     return null;
 }
 
 function get_the_term_list($post_id, $taxonomy, $before = '', $sep = '', $after = '')
 {
+    \Minn\Runtime\PlaceholderTrace::hit('get_the_term_list');
     return null;
 }
 
 function get_theme_update_available($theme)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('get_theme_update_available');
     return null;
 }
 
 function get_user_setting($name, $default_value = false)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('get_user_setting');
     return null;
 }
 
 function got_url_rewrite()
 {
+    \Minn\Runtime\PlaceholderTrace::hit('got_url_rewrite');
     return null;
 }
 
 function has_meta($post_id)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('has_meta');
     return null;
 }
 
 function is_login()
 {
+    \Minn\Runtime\PlaceholderTrace::hit('is_login');
     return null;
 }
 
 function is_protected_meta($meta_key, $meta_type = '')
 {
+    \Minn\Runtime\PlaceholderTrace::hit('is_protected_meta');
     return null;
 }
 
 function is_uninstallable_plugin($plugin)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('is_uninstallable_plugin');
     return null;
 }
 
 function media_send_to_editor($html)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('media_send_to_editor');
     return null;
 }
 
 function media_upload_header()
 {
+    \Minn\Runtime\PlaceholderTrace::hit('media_upload_header');
     return null;
 }
 
 function paginate_links($args = '')
 {
+    \Minn\Runtime\PlaceholderTrace::hit('paginate_links');
     return null;
 }
 
 function post_type_archive_title($prefix = '', $display = true)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('post_type_archive_title');
     return null;
 }
 
 function postbox_classes($box_id, $screen_id)
 {
-    return null;
-}
-
-function redirect_canonical($requested_url = NULL, $do_redirect = true)
-{
+    \Minn\Runtime\PlaceholderTrace::hit('postbox_classes');
     return null;
 }
 
 function rel_canonical()
 {
+    \Minn\Runtime\PlaceholderTrace::hit('rel_canonical');
     return null;
 }
 
 function resolve_block_template($template_type, $template_hierarchy, $fallback_template)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('resolve_block_template');
     return null;
 }
 
 function retrieve_password($user_login = '')
 {
+    \Minn\Runtime\PlaceholderTrace::hit('retrieve_password');
     return null;
 }
 
 function sanitize_post($post, $context = 'display')
 {
+    \Minn\Runtime\PlaceholderTrace::hit('sanitize_post');
     return null;
 }
 
 function sanitize_sql_orderby($orderby)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('sanitize_sql_orderby');
     return null;
 }
 
 function send_nosniff_header()
 {
+    \Minn\Runtime\PlaceholderTrace::hit('send_nosniff_header');
     return null;
 }
 
 function set_user_setting($name, $value)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('set_user_setting');
     return null;
 }
 
 function single_month_title($prefix = '', $display = true)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('single_month_title');
     return null;
 }
 
 function single_tag_title($prefix = '', $display = true)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('single_tag_title');
     return null;
 }
 
 function single_term_title($prefix = '', $display = true)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('single_term_title');
     return null;
 }
 
 function switch_to_user_locale($user_id)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('switch_to_user_locale');
     return null;
 }
 
 function themes_api($action, $args = [])
 {
+    \Minn\Runtime\PlaceholderTrace::hit('themes_api');
     return null;
 }
 
 function translate_settings_using_i18n_schema($i18n_schema, $settings, $textdomain)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('translate_settings_using_i18n_schema');
     return null;
 }
 
 function update_metadata_by_mid($meta_type, $meta_id, $meta_value, $meta_key = false)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('update_metadata_by_mid');
     return null;
 }
 
 function walk_page_dropdown_tree(...$args)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('walk_page_dropdown_tree');
     return null;
 }
 
 function wp_add_post_tags($post_id = 0, $tags = '')
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_add_post_tags');
     return null;
 }
 
 function wp_admin_css_color($key, $name, $url, $colors = [], $icons = [])
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_admin_css_color');
     return null;
 }
 
 function wp_apply_border_support($block_type, $block_attributes)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_apply_border_support');
     return null;
 }
 
 function wp_apply_colors_support($block_type, $block_attributes)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_apply_colors_support');
     return null;
 }
 
 function wp_apply_custom_classname_support($block_type, $block_attributes)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_apply_custom_classname_support');
     return null;
 }
 
 function wp_apply_spacing_support($block_type, $block_attributes)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_apply_spacing_support');
     return null;
 }
 
 function wp_apply_typography_support($block_type, $block_attributes)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_apply_typography_support');
     return null;
 }
 
 function wp_check_comment_disallowed_list($author, $email, $url, $comment, $user_ip, $user_agent)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_check_comment_disallowed_list');
     return null;
 }
 
 function wp_clean_update_cache()
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_clean_update_cache');
     return null;
 }
 
 function wp_create_nav_menu($menu_name)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_create_nav_menu');
     return null;
 }
 
 function wp_create_post_autosave($post_data)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_create_post_autosave');
     return null;
 }
 
 function wp_create_tag($tag_name)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_create_tag');
     return null;
 }
 
 function wp_crop_image($src, $src_x, $src_y, $src_w, $src_h, $dst_w, $dst_h, $src_abs = false, $dst_file = false)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_crop_image');
     return null;
 }
 
 function wp_debug_backtrace_summary($ignore_class = NULL, $skip_frames = 0, $pretty = true)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_debug_backtrace_summary');
     return null;
 }
 
 function wp_delete_nav_menu($menu)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_delete_nav_menu');
     return null;
 }
 
 function wp_download_language_pack($download)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_download_language_pack');
     return null;
 }
 
 function wp_dropdown_categories($args = '')
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_dropdown_categories');
     return null;
 }
 
 function wp_dropdown_pages($args = '')
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_dropdown_pages');
     return null;
 }
 
 function wp_dropdown_roles($selected = '', $editable_roles = NULL)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_dropdown_roles');
     return null;
 }
 
 function wp_dropdown_users($args = '')
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_dropdown_users');
     return null;
 }
 
 function wp_generate_tag_cloud($tags, $args = '')
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_generate_tag_cloud');
     return null;
 }
 
 function wp_get_additional_image_sizes()
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_get_additional_image_sizes');
     return null;
 }
 
 function wp_get_archives($args = '')
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_get_archives');
     return null;
 }
 
 function wp_get_available_translations()
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_get_available_translations');
     return null;
 }
 
 function wp_get_comment_status($comment_id)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_get_comment_status');
     return null;
 }
 
 function wp_get_current_commenter()
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_get_current_commenter');
     return null;
 }
 
 function wp_get_post_autosave($post_id, $user_id = 0)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_get_post_autosave');
     return null;
 }
 
 function wp_get_split_term($old_term_id, $taxonomy)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_get_split_term');
     return null;
 }
 
 function wp_get_theme_file_editable_extensions($theme)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_get_theme_file_editable_extensions');
     return null;
 }
 
 function wp_get_update_data()
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_get_update_data');
     return null;
 }
 
 function wp_get_update_php_url()
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_get_update_php_url');
     return null;
 }
 
 function wp_is_file_mod_allowed($context)
 {
-    return null;
-}
-
-function wp_is_jsonp_request()
-{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_is_file_mod_allowed');
     return null;
 }
 
 function wp_list_pages($args = '')
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_list_pages');
     return null;
 }
 
 function wp_maybe_auto_update()
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_maybe_auto_update');
     return null;
 }
 
 function wp_nav_menu($args = [])
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_nav_menu');
     return null;
 }
 
 function wp_new_comment($commentdata, $wp_error = false)
 {
-    return null;
-}
-
-function wp_old_slug_redirect()
-{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_new_comment');
     return null;
 }
 
 function wp_parse_widget_id($id)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_parse_widget_id');
     return null;
 }
 
 function wp_paused_plugins()
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_paused_plugins');
     return null;
 }
 
 function wp_paused_themes()
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_paused_themes');
     return null;
 }
 
 function wp_print_font_faces($fonts = [])
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_print_font_faces');
     return null;
 }
 
 function wp_read_video_metadata($file)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_read_video_metadata');
     return null;
 }
 
 function wp_removable_query_args()
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_removable_query_args');
     return null;
 }
 
 function wp_scripts_get_suffix($type = '')
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_scripts_get_suffix');
     return null;
 }
 
 function wp_set_auth_cookie($user_id, $remember = false, $secure = '', $token = '')
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_set_auth_cookie');
     return null;
 }
 
 function wp_should_load_block_editor_scripts_and_styles()
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_should_load_block_editor_scripts_and_styles');
     return null;
 }
 
 function wp_site_icon()
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_site_icon');
     return null;
 }
 
 function wp_style_engine_get_styles($block_styles, $options = [])
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_style_engine_get_styles');
     return null;
 }
 
 function wp_templating_constants()
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_templating_constants');
     return null;
 }
 
 function wp_trash_post_comments($post = NULL)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_trash_post_comments');
     return null;
 }
 
 function wp_unspam_comment($comment_id)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_unspam_comment');
     return null;
 }
 
 function wp_untrash_post_comments($post = NULL)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_untrash_post_comments');
     return null;
 }
 
 function wp_update_image_subsizes($attachment_id)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_update_image_subsizes');
     return null;
 }
 
 function wp_update_nav_menu_item($menu_id = 0, $menu_item_db_id = 0, $menu_item_data = [], $fire_after_hooks = true)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_update_nav_menu_item');
     return null;
 }
 
 function wp_update_nav_menu_object($menu_id = 0, $menu_data = [])
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_update_nav_menu_object');
     return null;
 }
 
 function wp_update_php_annotation($before = '<p class="description">', $after = '</p>', $display = true)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_update_php_annotation');
     return null;
 }
 
 function wp_update_plugins($extra_stats = [])
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_update_plugins');
     return null;
 }
 
 function wp_update_themes($extra_stats = [])
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_update_themes');
     return null;
 }
 
 function wp_version_check($extra_stats = [], $force_check = false)
 {
+    \Minn\Runtime\PlaceholderTrace::hit('wp_version_check');
     return null;
 }

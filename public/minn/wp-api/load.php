@@ -189,3 +189,9 @@ function wp_raise_memory_limit($context = 'admin')
 {
     return false;
 }
+
+/** A JSONP request names its callback in `_jsonp`; the value is not checked here. */
+function wp_is_jsonp_request()
+{
+    return isset($_GET['_jsonp']);
+}

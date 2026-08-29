@@ -232,6 +232,57 @@
             "error404"
         ]
     },
+    "/old-hello/": {
+        "status": 301,
+        "location": "/hello-world/",
+        "classes": []
+    },
+    "/old-hello": {
+        "status": 301,
+        "location": "/hello-world/",
+        "classes": []
+    },
+    "/old-hello-two/": {
+        "status": 301,
+        "location": "/hello-world/",
+        "classes": []
+    },
+    "/old-hello/page/2/": {
+        "status": 301,
+        "location": "/hello-world/page/2/",
+        "classes": []
+    },
+    "/old-hello/?x=1": {
+        "status": 301,
+        "location": "/hello-world/",
+        "classes": []
+    },
+    "/old-sample/": {
+        "status": 404,
+        "location": null,
+        "classes": [
+            "error404"
+        ]
+    },
+    "/2024/old-hello/": {
+        "status": 404,
+        "location": null,
+        "classes": [
+            "error404"
+        ]
+    },
+    "/?name=old-hello": {
+        "status": 301,
+        "location": "/hello-world/",
+        "classes": []
+    },
+    "/?pagename=old-sample": {
+        "status": 404,
+        "location": null,
+        "classes": [
+            "error404"
+        ]
+    },
     "/?p=1": {
         "status": 301,
         "location": "/hello-world/",

@@ -538,6 +538,32 @@ and stay quiet. Three generated layers do that:
   (arrays `[]`, bools false, strings `''`, otherwise null); classes keep
   their parents and constants, and inherit rather than redeclare a method a
   hand-written parent has. Regenerate after adding names; never edit.
+- **The placeholder trace**: every generated body opens with
+  `PlaceholderTrace::hit('name')`, which does nothing unless the site has a
+  `wp-content/minn-placeholder-trace.log` file; then it appends
+  `symbol, caller file:line, request path` per call. Create the file, drive
+  traffic (the suites and a few curls), read it, delete it. The first run
+  over all 25 dogfood plugins and every suite found 410 calls to only four
+  symbols: `wp_is_jsonp_request` (Jetpack, on every REST call),
+  `IXR_Client::__construct` (Jetpack's connection client, on admin REST
+  calls), and nextgen-gallery's router calling `wp_old_slug_redirect()` and
+  `redirect_canonical()` from `template_redirect`. The three functions are
+  now real (below); `IXR_Client` stays inert because an XML-RPC client for
+  the wordpress.com connection is admin-side plumbing Minn does not host.
+- **Former slugs redirect** (`_wp_old_slug`): the reference keeps every
+  slug a post ever had as meta rows and redirects a request for one to the
+  post's current link (301), keeping `/page/N/` and dropping the query
+  string, for `post` only (a page's old slug 404s, since pages resolve by
+  `pagename`), and regardless of status: a draft's or trashed post's old
+  slug lands on its `?p=` form, which then answers 404. The engine's
+  resolver does this itself (`Posts::byOldSlug`, `Resolver::formerSlug`) on
+  both the pretty path and `?name=`, before any plugin runs, so the facade's
+  `wp_old_slug_redirect()` finds nothing to do on a 404 it did not cause.
+  `redirect_canonical($url, $do_redirect)` re-runs the engine's resolution
+  (`Front\Canonical`) for the current or the named URL, redirects 301 to
+  the location when there is one, or returns it when told not to redirect;
+  `wp_is_jsonp_request()` is `isset($_GET['_jsonp'])`, an empty or invalid
+  callback included. Cases are in the permalink fixture (102 cases).
 - **The file skeleton**: `tests/tools/site-skeleton.php <site root>` writes
   every `wp-includes/*.php` and `wp-admin/includes/*.php` the reference has
   (`data/reference-files.json`, 1,139 files) as one-line placeholders under

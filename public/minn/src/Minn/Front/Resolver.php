@@ -159,7 +159,10 @@ final readonly class Resolver
         }
         if ($request->has('name')) {
             $post = $this->posts->findByName((string) $request->query('name'), ['post']);
-            return $post === null ? Resolution::notFound() : $this->singleOrRedirect($post, 1, forceRedirect: $pretty);
+            if ($post === null) {
+                return $this->formerSlug((string) $request->query('name')) ?? Resolution::notFound();
+            }
+            return $this->singleOrRedirect($post, 1, forceRedirect: $pretty);
         }
         if ($request->has('pagename')) {
             $segments = array_values(array_filter(explode('/', (string) $request->query('pagename')), static fn (string $s) => $s !== ''));
@@ -356,8 +359,30 @@ final readonly class Resolver
             if ($post !== null && $post['post_type'] === 'post' && $this->readable($post)) {
                 return Resolution::single($post, $paged);
             }
+            if ($post === null && isset($m['postname'])) {
+                return $this->formerSlug($m['postname'], $paged);
+            }
         }
         return null;
+    }
+
+    /**
+     * A slug a post used to have redirects to where the post lives now,
+     * keeping the page number and dropping the query string; the lookup
+     * ignores status because the reference does (unreadable posts land on
+     * their `?p=` form and answer 404 there).
+     */
+    private function formerSlug(string $slug, int $paged = 1): ?Resolution
+    {
+        $former = $this->posts->byOldSlug($slug, ['post']);
+        if ($former === null) {
+            return null;
+        }
+        $link = $this->permalinks->forPost($former);
+        if ($paged > 1 && !str_contains($link, '?')) {
+            $link = rtrim($link, '/') . "/page/{$paged}/";
+        }
+        return Resolution::redirect($link);
     }
 
     private function singleOrRedirect(array $post, int $paged, bool $forceRedirect): Resolution

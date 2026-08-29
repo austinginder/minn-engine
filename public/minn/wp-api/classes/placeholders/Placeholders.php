@@ -8,61 +8,73 @@ class Translations
 
     public function add_entry($entry)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('Translations::add_entry');
         return null;
     }
 
     public function add_entry_or_merge($entry)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('Translations::add_entry_or_merge');
         return null;
     }
 
     public function set_header($header, $value)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('Translations::set_header');
         return null;
     }
 
     public function set_headers($headers)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('Translations::set_headers');
         return null;
     }
 
     public function get_header($header)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('Translations::get_header');
         return null;
     }
 
     public function translate_entry(&$entry)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('Translations::translate_entry');
         return null;
     }
 
     public function translate($singular, $context = NULL)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('Translations::translate');
         return null;
     }
 
     public function select_plural_form($count)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('Translations::select_plural_form');
         return null;
     }
 
     public function get_plural_forms_count()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('Translations::get_plural_forms_count');
         return null;
     }
 
     public function translate_plural($singular, $plural, $count, $context = NULL)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('Translations::translate_plural');
         return null;
     }
 
     public function merge_with(&$other)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('Translations::merge_with');
         return null;
     }
 
     public function merge_originals_with(&$other)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('Translations::merge_originals_with');
         return null;
     }
 }
@@ -74,31 +86,37 @@ class Gettext_Translations extends Translations
 
     public function gettext_select_plural_form($count)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('Gettext_Translations::gettext_select_plural_form');
         return null;
     }
 
     public function nplurals_and_expression_from_header($header)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('Gettext_Translations::nplurals_and_expression_from_header');
         return null;
     }
 
     public function make_plural_form_function($nplurals, $expression)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('Gettext_Translations::make_plural_form_function');
         return null;
     }
 
     public function parenthesize_plural_exression($expression)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('Gettext_Translations::parenthesize_plural_exression');
         return null;
     }
 
     public function make_headers($translation)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('Gettext_Translations::make_headers');
         return null;
     }
 
     public function set_header($header, $value)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('Gettext_Translations::set_header');
         return null;
     }
 }
@@ -118,36 +136,43 @@ class IXR_Client
 
     public function __construct($server, $path = false, $port = 80, $timeout = 15)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('IXR_Client::__construct');
         return null;
     }
 
     public function IXR_Client($server, $path = false, $port = 80, $timeout = 15)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('IXR_Client::IXR_Client');
         return null;
     }
 
     public function query(...$args)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('IXR_Client::query');
         return null;
     }
 
     public function getResponse()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('IXR_Client::getResponse');
         return null;
     }
 
     public function isError()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('IXR_Client::isError');
         return null;
     }
 
     public function getErrorCode()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('IXR_Client::getErrorCode');
         return null;
     }
 
     public function getErrorMessage()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('IXR_Client::getErrorMessage');
         return null;
     }
 }
@@ -159,16 +184,19 @@ class IXR_Error
 
     public function __construct($code, $message)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('IXR_Error::__construct');
         return null;
     }
 
     public function IXR_Error($code, $message)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('IXR_Error::IXR_Error');
         return null;
     }
 
     public function getXml()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('IXR_Error::getXml');
         return null;
     }
 }
@@ -192,31 +220,37 @@ class IXR_Message
 
     public function __construct($message)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('IXR_Message::__construct');
         return null;
     }
 
     public function IXR_Message($message)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('IXR_Message::IXR_Message');
         return null;
     }
 
     public function parse()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('IXR_Message::parse');
         return null;
     }
 
     public function tag_open($parser, $tag, $attr)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('IXR_Message::tag_open');
         return null;
     }
 
     public function cdata($parser, $cdata)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('IXR_Message::cdata');
         return null;
     }
 
     public function tag_close($parser, $tag)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('IXR_Message::tag_close');
         return null;
     }
 }
@@ -229,21 +263,25 @@ class IXR_Request
 
     public function __construct($method, $args)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('IXR_Request::__construct');
         return null;
     }
 
     public function IXR_Request($method, $args)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('IXR_Request::IXR_Request');
         return null;
     }
 
     public function getLength()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('IXR_Request::getLength');
         return null;
     }
 
     public function getXml()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('IXR_Request::getXml');
         return null;
     }
 }
@@ -258,256 +296,307 @@ class PclZip
 
     public function __construct($p_zipname)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::__construct');
         return null;
     }
 
     public function PclZip($p_zipname)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::PclZip');
         return null;
     }
 
     public function create($p_filelist)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::create');
         return null;
     }
 
     public function add($p_filelist)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::add');
         return null;
     }
 
     public function listContent()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::listContent');
         return null;
     }
 
     public function extract()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::extract');
         return null;
     }
 
     public function extractByIndex($p_index)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::extractByIndex');
         return null;
     }
 
     public function delete()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::delete');
         return null;
     }
 
     public function deleteByIndex($p_index)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::deleteByIndex');
         return null;
     }
 
     public function properties()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::properties');
         return null;
     }
 
     public function duplicate($p_archive)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::duplicate');
         return null;
     }
 
     public function merge($p_archive_to_add)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::merge');
         return null;
     }
 
     public function errorCode()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::errorCode');
         return null;
     }
 
     public function errorName($p_with_code = false)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::errorName');
         return null;
     }
 
     public function errorInfo($p_full = false)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::errorInfo');
         return null;
     }
 
     public function privCheckFormat($p_level = 0)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::privCheckFormat');
         return null;
     }
 
     public function privParseOptions(&$p_options_list, $p_size, &$v_result_list, $v_requested_options = false)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::privParseOptions');
         return null;
     }
 
     public function privOptionDefaultThreshold(&$p_options)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::privOptionDefaultThreshold');
         return null;
     }
 
     public function privFileDescrParseAtt(&$p_file_list, &$p_filedescr, $v_options, $v_requested_options = false)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::privFileDescrParseAtt');
         return null;
     }
 
     public function privFileDescrExpand(&$p_filedescr_list, &$p_options)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::privFileDescrExpand');
         return null;
     }
 
     public function privCreate($p_filedescr_list, &$p_result_list, &$p_options)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::privCreate');
         return null;
     }
 
     public function privAdd($p_filedescr_list, &$p_result_list, &$p_options)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::privAdd');
         return null;
     }
 
     public function privOpenFd($p_mode)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::privOpenFd');
         return null;
     }
 
     public function privCloseFd()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::privCloseFd');
         return null;
     }
 
     public function privAddList($p_filedescr_list, &$p_result_list, &$p_options)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::privAddList');
         return null;
     }
 
     public function privAddFileList($p_filedescr_list, &$p_result_list, &$p_options)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::privAddFileList');
         return null;
     }
 
     public function privAddFile($p_filedescr, &$p_header, &$p_options)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::privAddFile');
         return null;
     }
 
     public function privAddFileUsingTempFile($p_filedescr, &$p_header, &$p_options)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::privAddFileUsingTempFile');
         return null;
     }
 
     public function privCalculateStoredFilename(&$p_filedescr, &$p_options)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::privCalculateStoredFilename');
         return null;
     }
 
     public function privWriteFileHeader(&$p_header)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::privWriteFileHeader');
         return null;
     }
 
     public function privWriteCentralFileHeader(&$p_header)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::privWriteCentralFileHeader');
         return null;
     }
 
     public function privWriteCentralHeader($p_nb_entries, $p_size, $p_offset, $p_comment)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::privWriteCentralHeader');
         return null;
     }
 
     public function privList(&$p_list)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::privList');
         return null;
     }
 
     public function privConvertHeader2FileInfo($p_header, &$p_info)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::privConvertHeader2FileInfo');
         return null;
     }
 
     public function privExtractByRule(&$p_file_list, $p_path, $p_remove_path, $p_remove_all_path, &$p_options)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::privExtractByRule');
         return null;
     }
 
     public function privExtractFile(&$p_entry, $p_path, $p_remove_path, $p_remove_all_path, &$p_options)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::privExtractFile');
         return null;
     }
 
     public function privExtractFileUsingTempFile(&$p_entry, &$p_options)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::privExtractFileUsingTempFile');
         return null;
     }
 
     public function privExtractFileInOutput(&$p_entry, &$p_options)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::privExtractFileInOutput');
         return null;
     }
 
     public function privExtractFileAsString(&$p_entry, &$p_string, &$p_options)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::privExtractFileAsString');
         return null;
     }
 
     public function privReadFileHeader(&$p_header)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::privReadFileHeader');
         return null;
     }
 
     public function privReadCentralFileHeader(&$p_header)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::privReadCentralFileHeader');
         return null;
     }
 
     public function privCheckFileHeaders(&$p_local_header, &$p_central_header)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::privCheckFileHeaders');
         return null;
     }
 
     public function privReadEndCentralDir(&$p_central_dir)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::privReadEndCentralDir');
         return null;
     }
 
     public function privDeleteByRule(&$p_result_list, &$p_options)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::privDeleteByRule');
         return null;
     }
 
     public function privDirCheck($p_dir, $p_is_dir = false)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::privDirCheck');
         return null;
     }
 
     public function privMerge(&$p_archive_to_add)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::privMerge');
         return null;
     }
 
     public function privDuplicate($p_archive_filename)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::privDuplicate');
         return null;
     }
 
     public function privErrorLog($p_error_code = 0, $p_error_string = '')
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::privErrorLog');
         return null;
     }
 
     public function privErrorReset()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::privErrorReset');
         return null;
     }
 
     public function privDisableMagicQuotes()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::privDisableMagicQuotes');
         return null;
     }
 
     public function privSwapBackMagicQuotes()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('PclZip::privSwapBackMagicQuotes');
         return null;
     }
 }
@@ -542,41 +631,49 @@ class WP_Block_Templates_Registry
 
     public function register($template_name, $args = [])
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Block_Templates_Registry::register');
         return null;
     }
 
     public function get_all_registered()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Block_Templates_Registry::get_all_registered');
         return null;
     }
 
     public function get_registered($template_name)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Block_Templates_Registry::get_registered');
         return null;
     }
 
     public function get_by_slug($template_slug)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Block_Templates_Registry::get_by_slug');
         return null;
     }
 
     public function get_by_query($query = [])
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Block_Templates_Registry::get_by_query');
         return null;
     }
 
     public function is_registered($template_name)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Block_Templates_Registry::is_registered');
         return null;
     }
 
     public function unregister($template_name)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Block_Templates_Registry::unregister');
         return null;
     }
 
     public static function get_instance()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Block_Templates_Registry::get_instance');
         return null;
     }
 }
@@ -586,36 +683,43 @@ class WP_Font_Face_Resolver
 
     public static function get_fonts_from_theme_json()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Font_Face_Resolver::get_fonts_from_theme_json');
         return null;
     }
 
     public static function get_fonts_from_style_variations()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Font_Face_Resolver::get_fonts_from_style_variations');
         return null;
     }
 
     private static function parse_settings($settings)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Font_Face_Resolver::parse_settings');
         return null;
     }
 
     private static function maybe_parse_name_from_comma_separated_list($font_family)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Font_Face_Resolver::maybe_parse_name_from_comma_separated_list');
         return null;
     }
 
     private static function convert_font_face_properties($font_face_definition, $font_family_property)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Font_Face_Resolver::convert_font_face_properties');
         return null;
     }
 
     private static function to_theme_file_uri($src)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Font_Face_Resolver::to_theme_file_uri');
         return null;
     }
 
     private static function to_kebab_case($data)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Font_Face_Resolver::to_kebab_case');
         return null;
     }
 }
@@ -641,273 +745,329 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor implements Stringable
 
     public static function create_fragment($html, $context = '<body>', $encoding = 'UTF-8')
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::create_fragment');
         return null;
     }
 
     public static function create_full_parser($html, $known_definite_encoding = 'UTF-8')
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::create_full_parser');
         return null;
     }
 
     private function create_fragment_at_current_node($html)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::create_fragment_at_current_node');
         return null;
     }
 
     private function bail($message)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::bail');
         return null;
     }
 
     public function get_last_error()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::get_last_error');
         return null;
     }
 
     public function get_unsupported_exception()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::get_unsupported_exception');
         return null;
     }
 
     private function next_visitable_token()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::next_visitable_token');
         return false;
     }
 
     private function is_virtual()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::is_virtual');
         return false;
     }
 
     public function matches_breadcrumbs($breadcrumbs)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::matches_breadcrumbs');
         return false;
     }
 
     public function expects_closer($node = NULL)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::expects_closer');
         return null;
     }
 
     public function step($node_to_process = self::PROCESS_NEXT_NODE)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::step');
         return false;
     }
 
     public function get_breadcrumbs()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::get_breadcrumbs');
         return [];
     }
 
     public function get_current_depth()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::get_current_depth');
         return 0;
     }
 
     public static function normalize($html)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::normalize');
         return null;
     }
 
     public function serialize()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::serialize');
         return null;
     }
 
     public function serialize_token()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::serialize_token');
         return '';
     }
 
     private static function escape_text_for_serialization($text)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::escape_text_for_serialization');
         return '';
     }
 
     private function step_initial()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::step_initial');
         return false;
     }
 
     private function step_before_html()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::step_before_html');
         return false;
     }
 
     private function step_before_head()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::step_before_head');
         return false;
     }
 
     private function step_in_head()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::step_in_head');
         return false;
     }
 
     private function step_in_head_noscript()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::step_in_head_noscript');
         return false;
     }
 
     private function step_after_head()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::step_after_head');
         return false;
     }
 
     private function step_in_body()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::step_in_body');
         return false;
     }
 
     private function in_body_any_other_end_tag()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::in_body_any_other_end_tag');
         return false;
     }
 
     private function step_in_table()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::step_in_table');
         return false;
     }
 
     private function step_in_table_text()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::step_in_table_text');
         return false;
     }
 
     private function step_in_caption()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::step_in_caption');
         return false;
     }
 
     private function step_in_column_group()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::step_in_column_group');
         return false;
     }
 
     private function step_in_table_body()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::step_in_table_body');
         return false;
     }
 
     private function step_in_row()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::step_in_row');
         return false;
     }
 
     private function step_in_cell()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::step_in_cell');
         return false;
     }
 
     private function step_in_template()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::step_in_template');
         return false;
     }
 
     private function step_after_body()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::step_after_body');
         return false;
     }
 
     private function step_in_frameset()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::step_in_frameset');
         return false;
     }
 
     private function step_after_frameset()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::step_after_frameset');
         return false;
     }
 
     private function step_after_after_body()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::step_after_after_body');
         return false;
     }
 
     private function step_after_after_frameset()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::step_after_after_frameset');
         return false;
     }
 
     private function step_in_foreign_content()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::step_in_foreign_content');
         return false;
     }
 
     private function bookmark_token()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::bookmark_token');
         return null;
     }
 
     private function close_a_p_element()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::close_a_p_element');
     }
 
     private function generate_implied_end_tags($except_for_this_element = NULL)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::generate_implied_end_tags');
     }
 
     private function generate_implied_end_tags_thoroughly()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::generate_implied_end_tags_thoroughly');
     }
 
     private function get_adjusted_current_node()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::get_adjusted_current_node');
         return null;
     }
 
     private function reconstruct_active_formatting_elements()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::reconstruct_active_formatting_elements');
         return false;
     }
 
     private function reset_insertion_mode_appropriately()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::reset_insertion_mode_appropriately');
     }
 
     private function run_adoption_agency_algorithm()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::run_adoption_agency_algorithm');
     }
 
     private function close_cell()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::close_cell');
     }
 
     private function insert_html_element($token)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::insert_html_element');
     }
 
     private function insert_foreign_element($token, $only_add_to_element_stack)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::insert_foreign_element');
     }
 
     private function insert_virtual_node($token_name, $bookmark_name = NULL)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::insert_virtual_node');
         return null;
     }
 
     private function is_mathml_integration_point()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::is_mathml_integration_point');
         return false;
     }
 
     private function is_html_integration_point()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::is_html_integration_point');
         return false;
     }
 
     public static function is_special($tag_name)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::is_special');
         return false;
     }
 
     public static function is_void($tag_name)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::is_void');
         return false;
     }
 
     protected static function get_encoding($label)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_HTML_Processor::get_encoding');
         return null;
     }
 }
@@ -927,240 +1087,289 @@ class WP_List_Table
 
     public function __construct($args = [])
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::__construct');
         return null;
     }
 
     public function __get($name)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::__get');
         return null;
     }
 
     public function __set($name, $value)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::__set');
         return null;
     }
 
     public function __isset($name)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::__isset');
         return null;
     }
 
     public function __unset($name)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::__unset');
         return null;
     }
 
     public function __call($name, $arguments)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::__call');
         return null;
     }
 
     public function ajax_user_can()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::ajax_user_can');
         return null;
     }
 
     public function prepare_items()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::prepare_items');
         return null;
     }
 
     protected function set_pagination_args($args)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::set_pagination_args');
         return null;
     }
 
     public function get_pagination_arg($key)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::get_pagination_arg');
         return null;
     }
 
     public function has_items()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::has_items');
         return null;
     }
 
     public function no_items()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::no_items');
         return null;
     }
 
     public function search_box($text, $input_id)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::search_box');
         return null;
     }
 
     protected function get_views_links($link_data = [])
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::get_views_links');
         return null;
     }
 
     protected function get_views()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::get_views');
         return null;
     }
 
     public function views()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::views');
         return null;
     }
 
     protected function get_bulk_actions()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::get_bulk_actions');
         return null;
     }
 
     protected function bulk_actions($which = '')
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::bulk_actions');
         return null;
     }
 
     public function current_action()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::current_action');
         return null;
     }
 
     protected function row_actions($actions, $always_visible = false)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::row_actions');
         return null;
     }
 
     protected function months_dropdown($post_type)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::months_dropdown');
         return null;
     }
 
     protected function view_switcher($current_mode)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::view_switcher');
         return null;
     }
 
     protected function comments_bubble($post_id, $pending_comments)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::comments_bubble');
         return null;
     }
 
     public function get_pagenum()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::get_pagenum');
         return null;
     }
 
     protected function get_items_per_page($option, $default_value = 20)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::get_items_per_page');
         return null;
     }
 
     protected function pagination($which)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::pagination');
         return null;
     }
 
     public function get_columns()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::get_columns');
         return null;
     }
 
     protected function get_sortable_columns()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::get_sortable_columns');
         return null;
     }
 
     protected function get_default_primary_column_name()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::get_default_primary_column_name');
         return null;
     }
 
     public function get_primary_column()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::get_primary_column');
         return null;
     }
 
     protected function get_primary_column_name()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::get_primary_column_name');
         return null;
     }
 
     protected function get_column_info()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::get_column_info');
         return null;
     }
 
     public function get_column_count()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::get_column_count');
         return null;
     }
 
     public function print_column_headers($with_id = true)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::print_column_headers');
     }
 
     public function print_table_description()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::print_table_description');
     }
 
     public function display()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::display');
     }
 
     protected function get_table_classes()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::get_table_classes');
         return null;
     }
 
     protected function display_tablenav($which)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::display_tablenav');
     }
 
     protected function extra_tablenav($which)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::extra_tablenav');
         return null;
     }
 
     public function display_rows_or_placeholder()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::display_rows_or_placeholder');
     }
 
     public function display_rows()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::display_rows');
     }
 
     public function single_row($item)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::single_row');
         return null;
     }
 
     protected function column_default($item, $column_name)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::column_default');
         return null;
     }
 
     protected function column_cb($item)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::column_cb');
         return null;
     }
 
     protected function get_primary_column_aria_label($item)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::get_primary_column_aria_label');
         return null;
     }
 
     protected function single_row_columns($item)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::single_row_columns');
         return null;
     }
 
     protected function handle_row_actions($item, $column_name, $primary)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::handle_row_actions');
         return null;
     }
 
     public function ajax_response()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::ajax_response');
         return null;
     }
 
     public function _js_vars()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::_js_vars');
         return null;
     }
 }
@@ -1174,126 +1383,151 @@ class WP_REST_Posts_Controller extends WP_REST_Controller
 
     public function __construct($post_type)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::__construct');
         return null;
     }
 
     public function check_password_required($required, $post)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::check_password_required');
         return null;
     }
 
     protected function get_post($id)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::get_post');
         return null;
     }
 
     public function can_access_password_content($post, $request)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::can_access_password_content');
         return null;
     }
 
     protected function prepare_items_query($prepared_args = [], $request = NULL)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::prepare_items_query');
         return null;
     }
 
     protected function prepare_date_response($date_gmt, $date = NULL)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::prepare_date_response');
         return null;
     }
 
     public function check_status($status, $request, $param)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::check_status');
         return null;
     }
 
     protected function handle_status_param($post_status, $post_type)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::handle_status_param');
         return null;
     }
 
     protected function handle_featured_media($featured_media, $post_id)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::handle_featured_media');
         return null;
     }
 
     public function check_template($template, $request)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::check_template');
         return null;
     }
 
     public function handle_template($template, $post_id, $validate = false)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::handle_template');
         return null;
     }
 
     protected function handle_terms($post_id, $request)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::handle_terms');
         return null;
     }
 
     protected function check_assign_terms_permission($request)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::check_assign_terms_permission');
         return null;
     }
 
     protected function check_is_post_type_allowed($post_type)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::check_is_post_type_allowed');
         return null;
     }
 
     public function check_read_permission($post)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::check_read_permission');
         return null;
     }
 
     protected function check_update_permission($post)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::check_update_permission');
         return null;
     }
 
     protected function check_create_permission($post)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::check_create_permission');
         return null;
     }
 
     protected function check_delete_permission($post)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::check_delete_permission');
         return null;
     }
 
     public function protected_title_format()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::protected_title_format');
         return null;
     }
 
     protected function prepare_links($post)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::prepare_links');
         return null;
     }
 
     protected function get_available_actions($post, $request)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::get_available_actions');
         return null;
     }
 
     protected function get_schema_links()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::get_schema_links');
         return null;
     }
 
     public function sanitize_post_statuses($statuses, $request, $parameter)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::sanitize_post_statuses');
         return null;
     }
 
     private function prepare_tax_query($args, $request)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::prepare_tax_query');
         return null;
     }
 
     private function prepare_taxonomy_limit_schema($query_params)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::prepare_taxonomy_limit_schema');
         return null;
     }
 }
@@ -1307,145 +1541,174 @@ class WP_REST_Attachments_Controller extends WP_REST_Posts_Controller
 
     protected function prepare_items_query($prepared_args = [], $request = NULL)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Attachments_Controller::prepare_items_query');
         return null;
     }
 
     protected function create_item_from_url($request)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Attachments_Controller::create_item_from_url');
         return null;
     }
 
     private function remove_client_side_media_processing_filters()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Attachments_Controller::remove_client_side_media_processing_filters');
     }
 
     protected function insert_attachment($request)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Attachments_Controller::insert_attachment');
         return null;
     }
 
     protected function handle_featured_media($featured_media, $post_id)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Attachments_Controller::handle_featured_media');
         return null;
     }
 
     public function post_process_item($request)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Attachments_Controller::post_process_item');
         return null;
     }
 
     public function post_process_item_permissions_check($request)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Attachments_Controller::post_process_item_permissions_check');
         return null;
     }
 
     public function edit_media_item_permissions_check($request)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Attachments_Controller::edit_media_item_permissions_check');
         return null;
     }
 
     public function edit_media_item($request)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Attachments_Controller::edit_media_item');
         return null;
     }
 
     protected function prepare_links($post)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Attachments_Controller::prepare_links');
         return null;
     }
 
     protected function upload_from_data($data, $headers, $time = NULL)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Attachments_Controller::upload_from_data');
         return null;
     }
 
     public static function get_filename_from_disposition($disposition_header)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Attachments_Controller::get_filename_from_disposition');
         return null;
     }
 
     protected function upload_from_file($files, $headers, $time = NULL)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Attachments_Controller::upload_from_file');
         return null;
     }
 
     protected function get_media_types()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Attachments_Controller::get_media_types');
         return null;
     }
 
     protected function check_upload_size($file)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Attachments_Controller::check_upload_size');
         return null;
     }
 
     protected function get_edit_media_item_args()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Attachments_Controller::get_edit_media_item_args');
         return null;
     }
 
     protected function get_attachment_filename($attachment_id)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Attachments_Controller::get_attachment_filename');
         return null;
     }
 
     protected function get_attachment_filesize($attachment_id)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Attachments_Controller::get_attachment_filesize');
         return null;
     }
 
     public function sideload_item_permissions_check($request)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Attachments_Controller::sideload_item_permissions_check');
         return null;
     }
 
     private static function validate_image_size_names($value, $param)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Attachments_Controller::validate_image_size_names');
         return null;
     }
 
     private static function get_special_image_sizes()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Attachments_Controller::get_special_image_sizes');
         return [];
     }
 
     private function validate_image_dimensions($width, $height, $image_size, $attachment_id)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Attachments_Controller::validate_image_dimensions');
         return null;
     }
 
     private function dimension_exceeds_max($value, $max, $tolerance)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Attachments_Controller::dimension_exceeds_max');
         return false;
     }
 
     public function sideload_item($request)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Attachments_Controller::sideload_item');
         return null;
     }
 
     private static function filter_wp_unique_filename($filename, $dir, $number, $attachment_filename)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Attachments_Controller::filter_wp_unique_filename');
         return null;
     }
 
     protected function validate_sub_size_provenance($attachment_id, $sub_sizes)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Attachments_Controller::validate_sub_size_provenance');
         return null;
     }
 
     protected function get_sideloaded_file_names($attachment_id, $include_provenance = true)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Attachments_Controller::get_sideloaded_file_names');
         return [];
     }
 
     protected function get_attachment_upload_subdir($attached_file)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Attachments_Controller::get_attachment_upload_subdir');
         return null;
     }
 
     public function finalize_item($request)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Attachments_Controller::finalize_item');
         return null;
     }
 }
@@ -1455,6 +1718,7 @@ class WP_REST_Blocks_Controller extends WP_REST_Posts_Controller
 
     public function check_read_permission($post)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Blocks_Controller::check_read_permission');
         return null;
     }
 }
@@ -1465,61 +1729,73 @@ class WP_REST_Comments_Controller extends WP_REST_Controller
 
     public function __construct()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Comments_Controller::__construct');
         return null;
     }
 
     protected function get_comment($id)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Comments_Controller::get_comment');
         return null;
     }
 
     protected function prepare_links($comment)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Comments_Controller::prepare_links');
         return null;
     }
 
     protected function normalize_query_param($query_param)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Comments_Controller::normalize_query_param');
         return null;
     }
 
     protected function prepare_status_response($comment_approved)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Comments_Controller::prepare_status_response');
         return null;
     }
 
     protected function handle_status_param($new_status, $comment_id)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Comments_Controller::handle_status_param');
         return null;
     }
 
     protected function check_read_post_permission($post, $request)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Comments_Controller::check_read_post_permission');
         return null;
     }
 
     protected function check_read_permission($comment, $request)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Comments_Controller::check_read_permission');
         return null;
     }
 
     protected function check_edit_permission($comment)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Comments_Controller::check_edit_permission');
         return null;
     }
 
     public function check_comment_author_email($value, $request, $param)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Comments_Controller::check_comment_author_email');
         return null;
     }
 
     protected function check_is_comment_content_allowed($prepared_comment)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Comments_Controller::check_is_comment_content_allowed');
         return null;
     }
 
     private function check_post_type_supports_notes($post_type)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Comments_Controller::check_post_type_supports_notes');
         return null;
     }
 }
@@ -1529,31 +1805,37 @@ class WP_REST_Menu_Items_Controller extends WP_REST_Posts_Controller
 
     protected function get_nav_menu_item($id)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Menu_Items_Controller::get_nav_menu_item');
         return null;
     }
 
     protected function check_has_read_only_access($request)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Menu_Items_Controller::check_has_read_only_access');
         return null;
     }
 
     protected function prepare_links($post)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Menu_Items_Controller::prepare_links');
         return null;
     }
 
     protected function get_schema_links()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Menu_Items_Controller::get_schema_links');
         return null;
     }
 
     protected function prepare_items_query($prepared_args = [], $request = NULL)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Menu_Items_Controller::prepare_items_query');
         return null;
     }
 
     protected function get_menu_id($menu_item_id)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Menu_Items_Controller::get_menu_id');
         return null;
     }
 }
@@ -1568,26 +1850,31 @@ class WP_REST_Terms_Controller extends WP_REST_Controller
 
     public function __construct($taxonomy)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Terms_Controller::__construct');
         return null;
     }
 
     public function check_read_terms_permission_for_post($post, $request)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Terms_Controller::check_read_terms_permission_for_post');
         return null;
     }
 
     protected function get_term($id)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Terms_Controller::get_term');
         return null;
     }
 
     protected function prepare_links($term)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Terms_Controller::prepare_links');
         return null;
     }
 
     protected function check_is_taxonomy_allowed($taxonomy)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Terms_Controller::check_is_taxonomy_allowed');
         return null;
     }
 }
@@ -1597,36 +1884,43 @@ class WP_REST_Menus_Controller extends WP_REST_Terms_Controller
 
     protected function get_term($id)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Menus_Controller::get_term');
         return null;
     }
 
     protected function check_has_read_only_access($request)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Menus_Controller::check_has_read_only_access');
         return null;
     }
 
     protected function prepare_links($term)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Menus_Controller::prepare_links');
         return null;
     }
 
     protected function get_menu_auto_add($menu_id)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Menus_Controller::get_menu_auto_add');
         return null;
     }
 
     protected function handle_auto_add($menu_id, $request)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Menus_Controller::handle_auto_add');
         return null;
     }
 
     protected function get_menu_locations($menu_id)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Menus_Controller::get_menu_locations');
         return null;
     }
 
     protected function handle_locations($menu_id, $request)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Menus_Controller::handle_locations');
         return null;
     }
 }
@@ -1637,96 +1931,115 @@ abstract class WP_Session_Tokens
 
     protected function __construct($user_id)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Session_Tokens::__construct');
         return null;
     }
 
     public static function get_instance($user_id)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Session_Tokens::get_instance');
         return null;
     }
 
     private function hash_token($token)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Session_Tokens::hash_token');
         return null;
     }
 
     public function get($token)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Session_Tokens::get');
         return null;
     }
 
     public function verify($token)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Session_Tokens::verify');
         return null;
     }
 
     public function create($expiration)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Session_Tokens::create');
         return null;
     }
 
     public function update($token, $session)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Session_Tokens::update');
         return null;
     }
 
     public function destroy($token)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Session_Tokens::destroy');
         return null;
     }
 
     public function destroy_others($token_to_keep)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Session_Tokens::destroy_others');
         return null;
     }
 
     protected function is_still_valid($session)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Session_Tokens::is_still_valid');
         return null;
     }
 
     public function destroy_all()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Session_Tokens::destroy_all');
         return null;
     }
 
     public static function destroy_all_for_all_users()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Session_Tokens::destroy_all_for_all_users');
         return null;
     }
 
     public function get_all()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Session_Tokens::get_all');
         return null;
     }
 
     protected function get_sessions()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Session_Tokens::get_sessions');
         return null;
     }
 
     protected function get_session($verifier)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Session_Tokens::get_session');
         return null;
     }
 
     protected function update_session($verifier, $session = NULL)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Session_Tokens::update_session');
         return null;
     }
 
     protected function destroy_other_sessions($verifier)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Session_Tokens::destroy_other_sessions');
         return null;
     }
 
     protected function destroy_all_sessions()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Session_Tokens::destroy_all_sessions');
         return null;
     }
 
     public static function drop_sessions()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Session_Tokens::drop_sessions');
         return null;
     }
 }
@@ -1737,61 +2050,73 @@ class WP_Style_Engine
 
     protected static function get_slug_from_preset_value($style_value, $property_key)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Style_Engine::get_slug_from_preset_value');
         return null;
     }
 
     protected static function get_css_var_value($style_value, $css_vars)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Style_Engine::get_css_var_value');
         return null;
     }
 
     protected static function is_valid_style_value($style_value)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Style_Engine::is_valid_style_value');
         return null;
     }
 
     public static function store_css_rule($store_name, $css_selector, $css_declarations, $rules_group = '')
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Style_Engine::store_css_rule');
         return null;
     }
 
     public static function get_store($store_name)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Style_Engine::get_store');
         return null;
     }
 
     public static function parse_block_styles($block_styles, $options)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Style_Engine::parse_block_styles');
         return null;
     }
 
     protected static function get_classnames($style_value, $style_definition)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Style_Engine::get_classnames');
         return null;
     }
 
     protected static function get_css_declarations($style_value, $style_definition, $options = [])
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Style_Engine::get_css_declarations');
         return null;
     }
 
     protected static function get_individual_property_css_declarations($style_value, $individual_property_definition, $options = [])
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Style_Engine::get_individual_property_css_declarations');
         return null;
     }
 
     protected static function get_url_or_value_css_declaration($style_value, $style_definition)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Style_Engine::get_url_or_value_css_declaration');
         return null;
     }
 
     public static function compile_css($css_declarations, $css_selector)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Style_Engine::compile_css');
         return null;
     }
 
     public static function compile_stylesheet_from_css_rules($css_rules, $options = [])
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Style_Engine::compile_stylesheet_from_css_rules');
         return null;
     }
 }
@@ -1808,86 +2133,103 @@ class WP_Upgrader
 
     public function __construct($skin = NULL)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Upgrader::__construct');
         return null;
     }
 
     public function init()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Upgrader::init');
         return null;
     }
 
     protected function schedule_temp_backup_cleanup()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Upgrader::schedule_temp_backup_cleanup');
         return null;
     }
 
     public function generic_strings()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Upgrader::generic_strings');
         return null;
     }
 
     public function fs_connect($directories = [], $allow_relaxed_file_ownership = false)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Upgrader::fs_connect');
         return null;
     }
 
     public function download_package($package, $check_signatures = false, $hook_extra = [])
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Upgrader::download_package');
         return null;
     }
 
     public function unpack_package($package, $delete_package = true)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Upgrader::unpack_package');
         return null;
     }
 
     protected function flatten_dirlist($nested_files, $path = '')
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Upgrader::flatten_dirlist');
         return null;
     }
 
     public function clear_destination($remote_destination)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Upgrader::clear_destination');
         return null;
     }
 
     public function install_package($args = [])
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Upgrader::install_package');
         return null;
     }
 
     public function run($options)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Upgrader::run');
         return null;
     }
 
     public function maintenance_mode($enable = false)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Upgrader::maintenance_mode');
         return null;
     }
 
     public static function create_lock($lock_name, $release_timeout = NULL)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Upgrader::create_lock');
         return null;
     }
 
     public static function release_lock($lock_name)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Upgrader::release_lock');
         return null;
     }
 
     public function move_to_temp_backup_dir($args)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Upgrader::move_to_temp_backup_dir');
         return null;
     }
 
     public function restore_temp_backup($temp_backups = [])
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Upgrader::restore_temp_backup');
         return null;
     }
 
     public function delete_temp_backup($temp_backups = [])
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Upgrader::delete_temp_backup');
         return null;
     }
 }
@@ -1902,76 +2244,91 @@ class WP_Upgrader_Skin
 
     public function __construct($args = [])
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Upgrader_Skin::__construct');
         return null;
     }
 
     public function set_upgrader(&$upgrader)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Upgrader_Skin::set_upgrader');
         return null;
     }
 
     public function add_strings()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Upgrader_Skin::add_strings');
         return null;
     }
 
     public function set_result($result)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Upgrader_Skin::set_result');
         return null;
     }
 
     public function request_filesystem_credentials($error = false, $context = '', $allow_relaxed_file_ownership = false)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Upgrader_Skin::request_filesystem_credentials');
         return null;
     }
 
     public function header()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Upgrader_Skin::header');
         return null;
     }
 
     public function footer()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Upgrader_Skin::footer');
         return null;
     }
 
     public function error($errors)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Upgrader_Skin::error');
         return null;
     }
 
     public function feedback($feedback, ...$args)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Upgrader_Skin::feedback');
         return null;
     }
 
     public function before()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Upgrader_Skin::before');
         return null;
     }
 
     public function after()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Upgrader_Skin::after');
         return null;
     }
 
     protected function decrement_update_count($type)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Upgrader_Skin::decrement_update_count');
         return null;
     }
 
     public function bulk_header()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Upgrader_Skin::bulk_header');
         return null;
     }
 
     public function bulk_footer()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Upgrader_Skin::bulk_footer');
         return null;
     }
 
     public function hide_process_failed($wp_error)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Upgrader_Skin::hide_process_failed');
         return null;
     }
 }
@@ -1992,91 +2349,109 @@ class WP_User_Query
 
     public function __construct($query = NULL)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_User_Query::__construct');
         return null;
     }
 
     public static function fill_query_vars($args)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_User_Query::fill_query_vars');
         return null;
     }
 
     public function prepare_query($query = [])
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_User_Query::prepare_query');
         return null;
     }
 
     public function query()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_User_Query::query');
         return null;
     }
 
     public function get($query_var)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_User_Query::get');
         return null;
     }
 
     public function set($query_var, $value)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_User_Query::set');
         return null;
     }
 
     protected function get_search_sql($search, $columns, $wild = false)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_User_Query::get_search_sql');
         return null;
     }
 
     public function get_results()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_User_Query::get_results');
         return null;
     }
 
     public function get_total()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_User_Query::get_total');
         return null;
     }
 
     protected function parse_orderby($orderby)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_User_Query::parse_orderby');
         return null;
     }
 
     protected function generate_cache_key($deprecated, $sql)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_User_Query::generate_cache_key');
         return null;
     }
 
     protected function get_cache_last_changed($args)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_User_Query::get_cache_last_changed');
         return null;
     }
 
     protected function parse_order($order)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_User_Query::parse_order');
         return null;
     }
 
     public function __get($name)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_User_Query::__get');
         return null;
     }
 
     public function __set($name, $value)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_User_Query::__set');
         return null;
     }
 
     public function __isset($name)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_User_Query::__isset');
         return null;
     }
 
     public function __unset($name)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_User_Query::__unset');
         return null;
     }
 
     public function __call($name, $arguments)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_User_Query::__call');
         return null;
     }
 }
@@ -2090,45 +2465,54 @@ class Walker
 
     public function start_lvl(&$output, $depth = 0, $args = [])
     {
+        \Minn\Runtime\PlaceholderTrace::hit('Walker::start_lvl');
         return null;
     }
 
     public function end_lvl(&$output, $depth = 0, $args = [])
     {
+        \Minn\Runtime\PlaceholderTrace::hit('Walker::end_lvl');
         return null;
     }
 
     public function start_el(&$output, $data_object, $depth = 0, $args = [], $current_object_id = 0)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('Walker::start_el');
         return null;
     }
 
     public function end_el(&$output, $data_object, $depth = 0, $args = [])
     {
+        \Minn\Runtime\PlaceholderTrace::hit('Walker::end_el');
         return null;
     }
 
     public function display_element($element, &$children_elements, $max_depth, $depth, $args, &$output)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('Walker::display_element');
     }
 
     public function walk($elements, $max_depth, ...$args)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('Walker::walk');
         return null;
     }
 
     public function paged_walk($elements, $max_depth, $page_num, $per_page, ...$args)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('Walker::paged_walk');
         return null;
     }
 
     public function get_number_of_root_elements($elements)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('Walker::get_number_of_root_elements');
         return null;
     }
 
     public function unset_children($element, &$children_elements)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('Walker::unset_children');
         return null;
     }
 }
@@ -2140,71 +2524,85 @@ class MO extends Gettext_Translations
 
     public function get_filename()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('MO::get_filename');
         return null;
     }
 
     public function import_from_file($filename)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('MO::import_from_file');
         return null;
     }
 
     public function export_to_file($filename)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('MO::export_to_file');
         return null;
     }
 
     public function export()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('MO::export');
         return null;
     }
 
     public function is_entry_good_for_export($entry)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('MO::is_entry_good_for_export');
         return null;
     }
 
     public function export_to_file_handle($fh)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('MO::export_to_file_handle');
         return null;
     }
 
     public function export_original($entry)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('MO::export_original');
         return null;
     }
 
     public function export_translations($entry)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('MO::export_translations');
         return null;
     }
 
     public function export_headers()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('MO::export_headers');
         return null;
     }
 
     public function get_byteorder($magic)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('MO::get_byteorder');
         return null;
     }
 
     public function import_from_reader($reader)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('MO::import_from_reader');
         return null;
     }
 
     public function make_entry($original, $translation)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('MO::make_entry');
         return null;
     }
 
     public function select_plural_form($count)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('MO::select_plural_form');
         return null;
     }
 
     public function get_plural_forms_count()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('MO::get_plural_forms_count');
         return null;
     }
 }
@@ -2223,21 +2621,25 @@ class Translation_Entry
 
     public function __construct($args = [])
     {
+        \Minn\Runtime\PlaceholderTrace::hit('Translation_Entry::__construct');
         return null;
     }
 
     public function Translation_Entry($args = [])
     {
+        \Minn\Runtime\PlaceholderTrace::hit('Translation_Entry::Translation_Entry');
         return null;
     }
 
     public function key()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('Translation_Entry::key');
         return null;
     }
 
     public function merge_with(&$other)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('Translation_Entry::merge_with');
         return null;
     }
 }
@@ -2252,21 +2654,25 @@ class Plural_Forms
 
     public function __construct($str)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('Plural_Forms::__construct');
         return null;
     }
 
     protected function parse($str)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('Plural_Forms::parse');
         return null;
     }
 
     public function get($num)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('Plural_Forms::get');
         return null;
     }
 
     public function execute($n)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('Plural_Forms::execute');
         return null;
     }
 }
@@ -2279,56 +2685,67 @@ class POMO_Reader
 
     public function __construct()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('POMO_Reader::__construct');
         return null;
     }
 
     public function POMO_Reader()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('POMO_Reader::POMO_Reader');
         return null;
     }
 
     public function setEndian($endian)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('POMO_Reader::setEndian');
         return null;
     }
 
     public function readint32()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('POMO_Reader::readint32');
         return null;
     }
 
     public function readint32array($count)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('POMO_Reader::readint32array');
         return null;
     }
 
     public function substr($input_string, $start, $length)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('POMO_Reader::substr');
         return null;
     }
 
     public function strlen($input_string)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('POMO_Reader::strlen');
         return null;
     }
 
     public function str_split($input_string, $chunk_size)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('POMO_Reader::str_split');
         return null;
     }
 
     public function pos()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('POMO_Reader::pos');
         return null;
     }
 
     public function is_resource()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('POMO_Reader::is_resource');
         return null;
     }
 
     public function close()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('POMO_Reader::close');
         return null;
     }
 }
@@ -2339,41 +2756,49 @@ class POMO_FileReader extends POMO_Reader
 
     public function __construct($filename)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('POMO_FileReader::__construct');
         return null;
     }
 
     public function POMO_FileReader($filename)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('POMO_FileReader::POMO_FileReader');
         return null;
     }
 
     public function read($bytes)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('POMO_FileReader::read');
         return null;
     }
 
     public function seekto($pos)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('POMO_FileReader::seekto');
         return null;
     }
 
     public function is_resource()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('POMO_FileReader::is_resource');
         return null;
     }
 
     public function feof()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('POMO_FileReader::feof');
         return null;
     }
 
     public function close()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('POMO_FileReader::close');
         return null;
     }
 
     public function read_all()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('POMO_FileReader::read_all');
         return null;
     }
 }
@@ -2384,31 +2809,37 @@ class POMO_StringReader extends POMO_Reader
 
     public function __construct($str = '')
     {
+        \Minn\Runtime\PlaceholderTrace::hit('POMO_StringReader::__construct');
         return null;
     }
 
     public function POMO_StringReader($str = '')
     {
+        \Minn\Runtime\PlaceholderTrace::hit('POMO_StringReader::POMO_StringReader');
         return null;
     }
 
     public function read($bytes)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('POMO_StringReader::read');
         return null;
     }
 
     public function seekto($pos)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('POMO_StringReader::seekto');
         return null;
     }
 
     public function length()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('POMO_StringReader::length');
         return null;
     }
 
     public function read_all()
     {
+        \Minn\Runtime\PlaceholderTrace::hit('POMO_StringReader::read_all');
         return null;
     }
 }
@@ -2418,11 +2849,13 @@ class POMO_CachedFileReader extends POMO_StringReader
 
     public function __construct($filename)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('POMO_CachedFileReader::__construct');
         return null;
     }
 
     public function POMO_CachedFileReader($filename)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('POMO_CachedFileReader::POMO_CachedFileReader');
         return null;
     }
 }
@@ -2432,11 +2865,13 @@ class POMO_CachedIntFileReader extends POMO_CachedFileReader
 
     public function __construct($filename)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('POMO_CachedIntFileReader::__construct');
         return null;
     }
 
     public function POMO_CachedIntFileReader($filename)
     {
+        \Minn\Runtime\PlaceholderTrace::hit('POMO_CachedIntFileReader::POMO_CachedIntFileReader');
         return null;
     }
 }

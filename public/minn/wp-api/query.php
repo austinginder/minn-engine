@@ -1,6 +1,7 @@
 <?php
 /** The main query, query vars, conditional tags, and the loop. */
 
+use Minn\Front\Canonical;
 use Minn\Runtime\Runtime;
 
 /** @internal the main query the page runs on; a CLI boot gets an empty one */
@@ -346,4 +347,42 @@ function wp_get_document_title()
 {
     $parts = Runtime::current()->get('document_title_parts');
     return _minn_document_title(is_array($parts) ? $parts : ['title' => get_bloginfo('name')]);
+}
+
+/** A slug the post no longer has sends a 404 to the post's current link (the engine's resolver already did this before plugins ran). */
+function wp_old_slug_redirect()
+{
+    $slug = (string) get_query_var('name');
+    if (!is_404() || $slug === '') {
+        return;
+    }
+    $post = _minn_posts()->byOldSlug($slug, ['post']);
+    if ($post === null) {
+        return;
+    }
+    $link = apply_filters('old_slug_redirect_url', get_permalink((int) $post['ID']));
+    if ($link && wp_redirect($link, 301)) {
+        exit;
+    }
+}
+
+/** The canonical form of a URL by the engine's resolution: redirects to it, or hands it back when told not to. */
+function redirect_canonical($requested_url = null, $do_redirect = true)
+{
+    $runtime = Runtime::current();
+    if ($runtime->request === null) {
+        return null;
+    }
+    $location = Canonical::location($runtime->db, $runtime->request, $requested_url === null ? null : (string) $requested_url);
+    $location = apply_filters('redirect_canonical', $location, $requested_url ?? $runtime->request->path);
+    if (!$location) {
+        return null;
+    }
+    if (!$do_redirect) {
+        return $location;
+    }
+    if (wp_redirect($location, 301)) {
+        exit;
+    }
+    return null;
 }

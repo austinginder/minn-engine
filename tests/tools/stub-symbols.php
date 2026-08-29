@@ -98,7 +98,7 @@ foreach ($names['functions'] ?? [] as $name) {
     }
     $spec = $functions[$name];
     $b = $body($spec['returns'] ?? null, $name);
-    $fnOut .= "\nfunction {$name}(" . $params($spec['params'] ?? []) . ")\n{\n" . ($b === '' ? '' : "    {$b}\n") . "}\n";
+    $fnOut .= "\nfunction {$name}(" . $params($spec['params'] ?? []) . ")\n{\n    \\Minn\\Runtime\\PlaceholderTrace::hit('{$name}');\n" . ($b === '' ? '' : "    {$b}\n") . "}\n";
     $written['functions']++;
 }
 file_put_contents($root . '/public/minn/wp-api/placeholders.php', $fnOut);
@@ -157,7 +157,7 @@ foreach (array_keys($ordered) as $name) {
             continue;
         }
         $b = $kind === 'interface' ? null : $body($m['returns'] ?? null, $method);
-        $out .= "\n    " . ($m['visibility'] ?? 'public') . (!empty($m['static']) ? ' static' : '') . " function {$method}(" . $params($m['params'] ?? []) . ')' . ($b === null ? ";\n" : "\n    {\n" . ($b === '' ? '' : "        {$b}\n") . "    }\n");
+        $out .= "\n    " . ($m['visibility'] ?? 'public') . (!empty($m['static']) ? ' static' : '') . " function {$method}(" . $params($m['params'] ?? []) . ')' . ($b === null ? ";\n" : "\n    {\n        \\Minn\\Runtime\\PlaceholderTrace::hit('{$name}::{$method}');\n" . ($b === '' ? '' : "        {$b}\n") . "    }\n");
     }
     $classOut .= $out . "}\n";
     $written['classes']++;

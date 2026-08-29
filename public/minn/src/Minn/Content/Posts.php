@@ -36,6 +36,26 @@ final readonly class Posts
     }
 
     /**
+     * The post that once answered to the slug: every former slug stays in
+     * `_wp_old_slug` meta, and the reference redirects it to the current
+     * link whatever the post's status (a draft or trashed post goes to
+     * its `?p=` form).
+     *
+     * @param list<string> $types
+     */
+    public function byOldSlug(string $slug, array $types): ?array
+    {
+        $placeholders = implode(',', array_fill(0, count($types), '?'));
+        return $this->db->row(
+            "SELECT p.* FROM {$this->db->table('posts')} p
+             INNER JOIN {$this->db->table('postmeta')} m ON m.post_id = p.ID
+             WHERE m.meta_key = '_wp_old_slug' AND m.meta_value = ? AND p.post_type IN ({$placeholders})
+             ORDER BY p.ID LIMIT 1",
+            [$slug, ...$types],
+        );
+    }
+
+    /**
      * Walks a page hierarchy: ["sample-page", "docs"] finds the page named
      * docs whose parent is named sample-page at the root.
      *
