@@ -3,17 +3,22 @@
 declare(strict_types=1);
 
 /**
- * The Minn site theme (site/minn-site): the engine's own front page, a
- * block theme rendered by the engine and by the reference alike. The suite
- * pins the site theme (the other suites pin twentytwentyfive), diffs every
- * template the theme ships against the reference on the same database, and
- * checks the marketing page's own invariants.
+ * The Minn site theme (own git repo at site/minn-site): the engine's own
+ * front page, a block theme rendered by the engine and by the reference
+ * alike. The suite pins the site theme (the other suites pin
+ * twentytwentyfive), diffs every template the theme ships against the
+ * reference on the same database, and checks the marketing page's own
+ * invariants. Copy edits belong in the theme repo, not here.
  *
  *   php tests/site.test.php
  */
 
 putenv('MINN_TEST_KEEP_THEME=1');
 require __DIR__ . '/lib.php';
+if (!is_file(dirname(__DIR__) . '/site/minn-site/style.css')) {
+    echo "skip: marketing theme not checked out at site/minn-site (own git repo)\n";
+    exit(0);
+}
 minn_test_pin_theme('minn-site');
 
 $ENGINE = rtrim(getenv('MINN_TEST_URL') ?: 'https://minn-engine.localhost', '/');

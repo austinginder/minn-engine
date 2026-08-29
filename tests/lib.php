@@ -59,9 +59,9 @@ function minn_test_diff( $a, $b, string $path = '$' ): ?string {
 }
 
 /**
- * The dev site's own theme is the Minn site theme (site/minn-site, the
- * engine's front page); the parity fixtures were captured under
- * twentytwentyfive. Every suite pins the reference theme while it runs and
+ * The dev site's own theme is the Minn site theme (own git repo at
+ * site/minn-site, the engine's front page); the parity fixtures were
+ * captured under twentytwentyfive. Every suite pins the reference theme while it runs and
  * restores the site's own theme on shutdown. run-all.sh pins once for the
  * whole run and sets MINN_TEST_KEEP_THEME so the suites skip their own pin;
  * a suite that needs a different theme calls this with its slug.

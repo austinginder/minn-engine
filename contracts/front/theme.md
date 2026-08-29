@@ -295,7 +295,7 @@ element).
 - The queried-object id quirk in `page-list` is reproduced as observed; a fix upstream
   would be a divergence to re-capture.
 
-## What the Minn site theme taught (`site/minn-site`, `docs/site.md`)
+## What the Minn site theme taught (`site/minn-site` own repo, `docs/site.md`)
 
 A second block theme rendered at parity, this one without twentytwentyfive's
 settings, surfaced four facts (`tests/site.test.php` pins them):

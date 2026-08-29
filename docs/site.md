@@ -2,7 +2,8 @@
 
 `https://minn-engine.localhost` is two things at once: the engine's development
 site, and the public face of the project. The front page you see there is a
-block theme, `site/minn-site/`, rendered by Minn Engine with no WordPress code in
+block theme, `site/minn-site/` (its own git repository, gitignored from this
+one), rendered by Minn Engine with no WordPress code in
 the process. The same theme renders on the parked reference WordPress, and the
 `site` suite diffs the two. The marketing site is the engine's own dogfood.
 
@@ -10,7 +11,7 @@ the process. The same theme renders on the parked reference WordPress, and the
 
 | Piece | Path |
 |---|---|
-| The theme | `site/minn-site/` in this repository (development only; never ships inside `minn/`) |
+| The theme | own git repo at `site/minn-site/` (nested, gitignored from the engine; development only, never ships inside `minn/`) |
 | On disk for both stacks | `wp-reference/wp-content/themes/minn-site` is a symlink to `../../../site/minn-site`; `public/wp-content/themes` already points into the reference's themes directory, so the engine and the reference read the same files |
 | Active theme | the shared database's `template` and `stylesheet` options are `minn-site`; the site name is `Minn Engine` and the tagline is the vision's first line |
 | Suite | `tests/site.test.php` (in `run-all.sh`): the theme's assets, the page's own invariants, and every template diffed against the reference |
@@ -80,6 +81,7 @@ pages never exercised, all recorded in `contracts/front/theme.md`:
 ## Publishing
 
 The theme is a normal block theme and installs on any WordPress or Minn Engine
-site. When the marketing site goes to a real host, ship `site/minn-site/` as the
-theme, set the site name and tagline, and keep the page's numbers in step with
-the release it describes.
+site. When the marketing site goes to a real host, ship the `minn-site` theme
+from its own repository, set the site name and tagline, and keep the page's
+numbers in step with the release it describes. Copy and design edits belong in
+that repository, not here.

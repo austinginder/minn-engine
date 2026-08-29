@@ -32,3 +32,6 @@ public/wp-includes/*
 
 # The Cove hosting helper drops itself into every site.
 public/wp-content/mu-plugins/captaincore-helper.php
+
+# Marketing theme: its own git repo, checked out at site/minn-site (see site/README.md)
+site/minn-site/
