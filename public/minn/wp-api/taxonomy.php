@@ -287,17 +287,17 @@ function get_terms($args = [], $deprecated = '')
         $where[] = 't.term_id NOT IN (' . implode(',', array_fill(0, count($ids), '?')) . ')';
         array_push($params, ...$ids);
     }
-    if ($args['name'] !== '') {
+    if ($args['name'] !== '' && $args['name'] !== []) {
         $names = array_map('strval', (array) $args['name']);
         $where[] = 't.name IN (' . implode(',', array_fill(0, count($names), '?')) . ')';
         array_push($params, ...$names);
     }
-    if ($args['slug'] !== '') {
+    if ($args['slug'] !== '' && $args['slug'] !== []) {
         $slugs = array_map(static fn ($s) => sanitize_title((string) $s), (array) $args['slug']);
         $where[] = 't.slug IN (' . implode(',', array_fill(0, count($slugs), '?')) . ')';
         array_push($params, ...$slugs);
     }
-    if ($args['term_taxonomy_id'] !== '') {
+    if ($args['term_taxonomy_id'] !== '' && $args['term_taxonomy_id'] !== []) {
         $ids = array_map('intval', (array) $args['term_taxonomy_id']);
         $where[] = 'tt.term_taxonomy_id IN (' . implode(',', array_fill(0, count($ids), '?')) . ')';
         array_push($params, ...$ids);

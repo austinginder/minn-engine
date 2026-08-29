@@ -1194,3 +1194,60 @@ function wp_get_media_creation_timestamp($metadata)
 {
     return false;
 }
+
+function _wp_get_attachment_relative_path($file)
+{
+    $dirname = dirname((string) $file);
+    if ($dirname === '.') {
+        return '';
+    }
+    if (str_contains($dirname, 'wp-content/uploads')) {
+        $dirname = ltrim(substr($dirname, strpos($dirname, 'wp-content/uploads') + 18), '/');
+    }
+    return $dirname;
+}
+
+/** The width and height a source URL has in the attachment metadata, matched by file name. */
+function wp_image_src_get_dimensions($image_src, $image_meta, $attachment_id = 0)
+{
+    $dimensions = false;
+    if (!is_array($image_meta) || !isset($image_meta['file']) || strlen((string) $image_meta['file']) < 4) {
+        return apply_filters('wp_image_src_get_dimensions', $dimensions, $image_src, $image_meta, $attachment_id);
+    }
+    $image_src = str_replace('https://', 'http://', (string) $image_src);
+    $image_basename = wp_basename($image_src);
+    if (wp_basename($image_meta['file']) === $image_basename) {
+        $dimensions = [(int) $image_meta['width'], (int) $image_meta['height']];
+    } elseif (!empty($image_meta['sizes'])) {
+        foreach ($image_meta['sizes'] as $image_size_data) {
+            if ($image_basename === ($image_size_data['file'] ?? null)) {
+                $dimensions = [(int) $image_size_data['width'], (int) $image_size_data['height']];
+                break;
+            }
+        }
+    }
+    return apply_filters('wp_image_src_get_dimensions', $dimensions, $image_src, $image_meta, $attachment_id);
+}
+
+function _wp_image_editor_choose($args = [])
+{
+    $implementations = apply_filters('wp_image_editors', ['WP_Image_Editor_Imagick', 'WP_Image_Editor_GD']);
+    $editors = wp_cache_get('wp_image_editor_choose', 'image_editor');
+    if (!is_array($editors)) {
+        $editors = [];
+    }
+    $cache_key = md5(serialize($implementations));
+    foreach ($implementations as $implementation) {
+        if (!class_exists($implementation) || !call_user_func([$implementation, 'test'], $args)) {
+            continue;
+        }
+        if (isset($args['mime_type']) && !call_user_func([$implementation, 'supports_mime_type'], $args['mime_type'])) {
+            continue;
+        }
+        if (isset($args['methods']) && array_diff($args['methods'], get_class_methods($implementation))) {
+            continue;
+        }
+        return $implementation;
+    }
+    return false;
+}

@@ -1,0 +1,246 @@
+{
+    "#https?://((m|www)\\.)?youtube\\.com/watch.*#i": [
+        "https://www.youtube.com/oembed",
+        true
+    ],
+    "#https?://((m|www)\\.)?youtube\\.com/playlist.*#i": [
+        "https://www.youtube.com/oembed",
+        true
+    ],
+    "#https?://((m|www)\\.)?youtube\\.com/shorts/*#i": [
+        "https://www.youtube.com/oembed",
+        true
+    ],
+    "#https?://((m|www)\\.)?youtube\\.com/live/*#i": [
+        "https://www.youtube.com/oembed",
+        true
+    ],
+    "#https?://youtu\\.be/.*#i": [
+        "https://www.youtube.com/oembed",
+        true
+    ],
+    "#https?://(.+\\.)?vimeo\\.com/.*#i": [
+        "https://vimeo.com/api/oembed.{format}",
+        true
+    ],
+    "#https?://(www\\.)?dailymotion\\.com/.*#i": [
+        "https://www.dailymotion.com/services/oembed",
+        true
+    ],
+    "#https?://dai\\.ly/.*#i": [
+        "https://www.dailymotion.com/services/oembed",
+        true
+    ],
+    "#https?://(www\\.)?flickr\\.com/.*#i": [
+        "https://www.flickr.com/services/oembed/",
+        true
+    ],
+    "#https?://flic\\.kr/.*#i": [
+        "https://www.flickr.com/services/oembed/",
+        true
+    ],
+    "#https?://(.+\\.)?smugmug\\.com/.*#i": [
+        "https://api.smugmug.com/services/oembed/",
+        true
+    ],
+    "#https?://(www\\.)?scribd\\.com/(doc|document)/.*#i": [
+        "https://www.scribd.com/services/oembed",
+        true
+    ],
+    "#https?://wordpress\\.tv/.*#i": [
+        "https://wordpress.tv/oembed/",
+        true
+    ],
+    "#https?://(.+\\.)?crowdsignal\\.net/.*#i": [
+        "https://api.crowdsignal.com/oembed",
+        true
+    ],
+    "#https?://(.+\\.)?polldaddy\\.com/.*#i": [
+        "https://api.crowdsignal.com/oembed",
+        true
+    ],
+    "#https?://poll\\.fm/.*#i": [
+        "https://api.crowdsignal.com/oembed",
+        true
+    ],
+    "#https?://(.+\\.)?survey\\.fm/.*#i": [
+        "https://api.crowdsignal.com/oembed",
+        true
+    ],
+    "#https?://(www\\.)?twitter\\.com/\\w{1,15}/status(es)?/.*#i": [
+        "https://publish.twitter.com/oembed",
+        true
+    ],
+    "#https?://(www\\.)?twitter\\.com/\\w{1,15}$#i": [
+        "https://publish.twitter.com/oembed",
+        true
+    ],
+    "#https?://(www\\.)?twitter\\.com/\\w{1,15}/likes$#i": [
+        "https://publish.twitter.com/oembed",
+        true
+    ],
+    "#https?://(www\\.)?twitter\\.com/\\w{1,15}/lists/.*#i": [
+        "https://publish.twitter.com/oembed",
+        true
+    ],
+    "#https?://(www\\.)?twitter\\.com/\\w{1,15}/timelines/.*#i": [
+        "https://publish.twitter.com/oembed",
+        true
+    ],
+    "#https?://(www\\.)?twitter\\.com/i/moments/.*#i": [
+        "https://publish.twitter.com/oembed",
+        true
+    ],
+    "#https?://(www\\.)?soundcloud\\.com/.*#i": [
+        "https://soundcloud.com/oembed",
+        true
+    ],
+    "#https?://(open|play)\\.spotify\\.com/.*#i": [
+        "https://embed.spotify.com/oembed/",
+        true
+    ],
+    "#https?://(.+\\.)?imgur\\.com/.*#i": [
+        "https://api.imgur.com/oembed",
+        true
+    ],
+    "#https?://(www\\.)?issuu\\.com/.+/docs/.+#i": [
+        "https://issuu.com/oembed_wp",
+        true
+    ],
+    "#https?://(www\\.)?mixcloud\\.com/.*#i": [
+        "https://app.mixcloud.com/oembed/",
+        true
+    ],
+    "#https?://(www\\.|embed\\.)?ted\\.com/talks/.*#i": [
+        "https://www.ted.com/services/v1/oembed.{format}",
+        true
+    ],
+    "#https?://(www\\.)?(animoto|video214)\\.com/play/.*#i": [
+        "https://animoto.com/oembeds/create",
+        true
+    ],
+    "#https?://(.+)\\.tumblr\\.com/.*#i": [
+        "https://www.tumblr.com/oembed/1.0",
+        true
+    ],
+    "#https?://(www\\.)?kickstarter\\.com/projects/.*#i": [
+        "https://www.kickstarter.com/services/oembed",
+        true
+    ],
+    "#https?://kck\\.st/.*#i": [
+        "https://www.kickstarter.com/services/oembed",
+        true
+    ],
+    "#https?://cloudup\\.com/.*#i": [
+        "https://cloudup.com/oembed",
+        true
+    ],
+    "#https?://(www\\.)?reverbnation\\.com/.*#i": [
+        "https://www.reverbnation.com/oembed",
+        true
+    ],
+    "#https?://videopress\\.com/v/.*#": [
+        "https://public-api.wordpress.com/oembed/?for=https%3A%2F%2Fminn-engine.localhost",
+        true
+    ],
+    "#https?://(www\\.)?reddit\\.com/r/[^/]+/comments/.*#i": [
+        "https://www.reddit.com/oembed",
+        true
+    ],
+    "#https?://(www\\.)?speakerdeck\\.com/.*#i": [
+        "https://speakerdeck.com/oembed.{format}",
+        true
+    ],
+    "#https?://([a-z0-9-]+\\.)?amazon\\.(com|com\\.mx|com\\.br|ca)/.*#i": [
+        "https://read.amazon.com/kp/api/oembed",
+        true
+    ],
+    "#https?://([a-z0-9-]+\\.)?amazon\\.(co\\.uk|de|fr|it|es|in|nl|ru)/.*#i": [
+        "https://read.amazon.co.uk/kp/api/oembed",
+        true
+    ],
+    "#https?://([a-z0-9-]+\\.)?amazon\\.(co\\.jp|com\\.au)/.*#i": [
+        "https://read.amazon.com.au/kp/api/oembed",
+        true
+    ],
+    "#https?://([a-z0-9-]+\\.)?amazon\\.cn/.*#i": [
+        "https://read.amazon.cn/kp/api/oembed",
+        true
+    ],
+    "#https?://(www\\.)?a\\.co/.*#i": [
+        "https://read.amazon.com/kp/api/oembed",
+        true
+    ],
+    "#https?://(www\\.)?amzn\\.to/.*#i": [
+        "https://read.amazon.com/kp/api/oembed",
+        true
+    ],
+    "#https?://(www\\.)?amzn\\.eu/.*#i": [
+        "https://read.amazon.co.uk/kp/api/oembed",
+        true
+    ],
+    "#https?://(www\\.)?amzn\\.in/.*#i": [
+        "https://read.amazon.in/kp/api/oembed",
+        true
+    ],
+    "#https?://(www\\.)?amzn\\.asia/.*#i": [
+        "https://read.amazon.com.au/kp/api/oembed",
+        true
+    ],
+    "#https?://(www\\.)?z\\.cn/.*#i": [
+        "https://read.amazon.cn/kp/api/oembed",
+        true
+    ],
+    "#https?://www\\.someecards\\.com/.+-cards/.+#i": [
+        "https://www.someecards.com/v2/oembed/",
+        true
+    ],
+    "#https?://www\\.someecards\\.com/usercards/viewcard/.+#i": [
+        "https://www.someecards.com/v2/oembed/",
+        true
+    ],
+    "#https?://some\\.ly\\/.+#i": [
+        "https://www.someecards.com/v2/oembed/",
+        true
+    ],
+    "#https?://(www\\.)?tiktok\\.com/.*/video/.*#i": [
+        "https://www.tiktok.com/oembed",
+        true
+    ],
+    "#https?://(www\\.)?tiktok\\.com/@.*#i": [
+        "https://www.tiktok.com/oembed",
+        true
+    ],
+    "#https?://([a-z]{2}|www)\\.pinterest\\.com(\\.(au|mx))?/.*#i": [
+        "https://www.pinterest.com/oembed.json",
+        true
+    ],
+    "#https?://(www\\.)?wolframcloud\\.com/obj/.+#i": [
+        "https://www.wolframcloud.com/oembed",
+        true
+    ],
+    "#https?://pca\\.st/.+#i": [
+        "https://pca.st/oembed.json",
+        true
+    ],
+    "#https?://((play|www)\\.)?anghami\\.com/.*#i": [
+        "https://api.anghami.com/rest/v1/oembed.view",
+        true
+    ],
+    "#https?://bsky.app/profile/.*/post/.*#i": [
+        "https://embed.bsky.app/oembed",
+        true
+    ],
+    "#https?://(www\\.)?canva\\.com/design/.*/view.*#i": [
+        "https://canva.com/_oembed",
+        true
+    ],
+    "#https?://(www\\.)?x\\.com/\\w{1,15}/status(es)?/.*#i": [
+        "https://publish.x.com/oembed",
+        true
+    ],
+    "#https?://(www\\.)?x\\.com/\\w{1,15}$#i": [
+        "https://publish.x.com/oembed",
+        true
+    ]
+}

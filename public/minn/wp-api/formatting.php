@@ -1134,3 +1134,17 @@ function wp_parse_str($input_string, &$result)
     parse_str((string) $input_string, $result);
     $result = apply_filters('wp_parse_str', $result);
 }
+
+/** htmlentities that keeps named references and decimal numeric ones the reader already knows. */
+function htmlentities2($text)
+{
+    $translation = get_html_translation_table(HTML_ENTITIES, ENT_QUOTES);
+    $encoded = strtr((string) $text, $translation);
+    return (string) preg_replace_callback('/&amp;(#[0-9]+|[a-zA-Z][a-zA-Z0-9]*);/', static function (array $m) use ($translation): string {
+        $entity = '&' . $m[1] . ';';
+        if ($m[1][0] === '#' || in_array($entity, $translation, true)) {
+            return $entity;
+        }
+        return $m[0];
+    }, $encoded);
+}

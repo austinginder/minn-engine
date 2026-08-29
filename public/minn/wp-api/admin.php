@@ -571,3 +571,262 @@ function wp_get_code_editor_settings($args)
     }
     return apply_filters('wp_code_editor_settings', $settings, $args);
 }
+
+// Screen options, the dashboard hook, the iframe shell, filesystem, and update helpers.
+
+function add_screen_option($option, $args = [])
+{
+    $screen = get_current_screen();
+    if ($screen) {
+        $screen->add_option($option, $args);
+    }
+}
+
+function get_hidden_columns($screen)
+{
+    if (is_string($screen)) {
+        $screen = convert_to_screen($screen);
+    }
+    $hidden = get_user_option('manage' . $screen->id . 'columnshidden');
+    $use_defaults = !is_array($hidden);
+    if ($use_defaults) {
+        $hidden = [];
+        $hidden = apply_filters('default_hidden_columns', $hidden, $screen);
+    }
+    return apply_filters('hidden_columns', $hidden, $screen, $use_defaults);
+}
+
+function set_screen_options()
+{
+    if (!isset($_POST['wp_screen_options']) || !is_array($_POST['wp_screen_options'])) {
+        return;
+    }
+    check_admin_referer('screen-options-nonce', 'screenoptionnonce');
+    $user = wp_get_current_user();
+    if (!$user) {
+        return;
+    }
+    $option = $_POST['wp_screen_options']['option'];
+    $value = $_POST['wp_screen_options']['value'];
+    if (sanitize_key($option) !== $option) {
+        return;
+    }
+    $value = apply_filters('set_screen_option', false, $option, $value);
+    $value = apply_filters("set_screen_option_{$option}", $value, $option, $value);
+    if ($value === false) {
+        return;
+    }
+    update_user_meta($user->ID, $option, $value);
+    $url = remove_query_arg(['pagenum', 'apage', 'paged'], wp_get_referer());
+    if (isset($_POST['mode'])) {
+        $url = add_query_arg(['mode' => $_POST['mode']], $url);
+    }
+    wp_safe_redirect($url);
+    exit;
+}
+
+function wp_dashboard_setup()
+{
+    do_action('wp_dashboard_setup');
+}
+
+/** The bare admin document an iframe callback prints into. */
+function wp_iframe($content_func, ...$args)
+{
+    _wp_admin_html_begin();
+    echo '<title>' . esc_html(get_bloginfo('name')) . ' &rsaquo; ' . esc_html(__('Uploads')) . ' &#8212; ' . esc_html(__('WordPress')) . '</title>' . "\n";
+    echo '<style type="text/css">.hidden{display:none}</style>' . "\n";
+    do_action('admin_enqueue_scripts', 'media-upload-popup');
+    do_action('admin_print_styles-media-upload-popup');
+    do_action('admin_print_styles');
+    do_action('admin_print_scripts-media-upload-popup');
+    do_action('admin_print_scripts');
+    do_action('admin_head-media-upload-popup');
+    do_action('admin_head');
+    if (is_string($content_func)) {
+        do_action("admin_head_{$content_func}");
+    }
+    $body_id_attr = isset($GLOBALS['body_id']) ? ' id="' . esc_attr($GLOBALS['body_id']) . '"' : '';
+    echo '</head>' . "\n" . '<body' . $body_id_attr . ' class="wp-core-ui no-js">' . "\n";
+    echo "<script type=\"text/javascript\">document.body.className = document.body.className.replace('no-js', 'js');</script>\n";
+    call_user_func_array($content_func, $args);
+    do_action('admin_print_footer_scripts');
+    echo "<script type=\"text/javascript\">if(typeof wpOnload==='function')wpOnload();</script>\n</body>\n</html>\n";
+}
+
+function _wp_admin_html_begin()
+{
+    $admin_html_class = is_admin_bar_showing() ? 'wp-toolbar' : '';
+    echo '<!DOCTYPE html>' . "\n" . '<html class="' . esc_attr($admin_html_class) . '"' . get_language_attributes() . '>' . "\n" . '<head>' . "\n" . '<meta http-equiv="Content-Type" content="' . esc_attr(get_bloginfo('html_type')) . '; charset=' . esc_attr(get_option('blog_charset')) . '" />' . "\n";
+}
+
+function iframe_header($title = '', $deprecated = false)
+{
+    show_admin_bar(false);
+    $current_screen = get_current_screen();
+    _wp_admin_html_begin();
+    echo '<title>' . esc_html(get_bloginfo('name')) . ' &rsaquo; ' . esc_html($title) . ' &#8212; ' . esc_html(__('WordPress')) . '</title>' . "\n";
+    echo '<meta name="viewport" content="width=device-width,initial-scale=1.0">' . "\n";
+    if ($current_screen) {
+        do_action("admin_enqueue_scripts", $current_screen->id);
+        do_action("admin_print_styles-{$current_screen->id}");
+        do_action('admin_print_styles');
+        do_action("admin_print_scripts-{$current_screen->id}");
+        do_action('admin_print_scripts');
+        do_action("admin_head-{$current_screen->id}");
+    }
+    do_action('admin_head');
+    $admin_body_class = $current_screen ? preg_replace('/[^a-z0-9_-]+/i', '-', $current_screen->id) : '';
+    $admin_body_class .= ' iframe';
+    echo '</head>' . "\n" . '<body class="wp-admin wp-core-ui no-js ' . esc_attr($admin_body_class) . '">' . "\n";
+    echo "<script type=\"text/javascript\">document.body.className = document.body.className.replace('no-js', 'js');</script>\n";
+}
+
+function iframe_footer()
+{
+    echo "\t" . '<div class="hidden">' . "\n";
+    wp_auth_check_html();
+    do_action('admin_footer', '');
+    $current_screen = get_current_screen();
+    if ($current_screen) {
+        do_action("admin_print_footer_scripts-{$current_screen->id}");
+    }
+    do_action('admin_print_footer_scripts');
+    echo "\t</div>\n<script type=\"text/javascript\">if(typeof wpOnload==='function')wpOnload();</script>\n</body>\n</html>\n";
+}
+
+
+function get_home_path()
+{
+    $home = set_url_scheme(get_option('home'), 'http');
+    $siteurl = set_url_scheme(get_option('siteurl'), 'http');
+    if (!empty($home) && strcasecmp($home, $siteurl) !== 0) {
+        $wp_path_rel_to_home = str_ireplace($home, '', $siteurl);
+        $pos = strripos(str_replace('\\', '/', $_SERVER['SCRIPT_FILENAME'] ?? ''), trailingslashit($wp_path_rel_to_home));
+        $home_path = $pos === false ? ABSPATH : substr($_SERVER['SCRIPT_FILENAME'], 0, $pos);
+        $home_path = trailingslashit($home_path);
+    } else {
+        $home_path = ABSPATH;
+    }
+    return str_replace('\\', '/', $home_path);
+}
+
+function get_filesystem_method($args = [], $context = '', $allow_relaxed_file_ownership = false)
+{
+    return apply_filters('filesystem_method', 'direct', $args, $context, $allow_relaxed_file_ownership);
+}
+
+function request_filesystem_credentials($form_post, $type = '', $error = false, $context = '', $extra_fields = null, $allow_relaxed_file_ownership = false)
+{
+    $req_cred = apply_filters('request_filesystem_credentials', '', $form_post, $type, $error, $context, $extra_fields, $allow_relaxed_file_ownership);
+    if ($req_cred !== '') {
+        return $req_cred;
+    }
+    return true;
+}
+
+function WP_Filesystem($args = false, $context = false, $allow_relaxed_file_ownership = false)
+{
+    global $wp_filesystem;
+    $method = get_filesystem_method($args, $context, $allow_relaxed_file_ownership);
+    if (!$method) {
+        return false;
+    }
+    $method = "WP_Filesystem_$method";
+    if (!class_exists($method)) {
+        return false;
+    }
+    $wp_filesystem = new $method($args);
+    if (!defined('FS_CHMOD_DIR')) {
+        define('FS_CHMOD_DIR', (fileperms(ABSPATH) & 0777 | 0755));
+    }
+    if (!defined('FS_CHMOD_FILE')) {
+        define('FS_CHMOD_FILE', (fileperms(ABSPATH . 'index.php') & 0777 | 0644));
+    }
+    if (!defined('FS_CONNECT_TIMEOUT')) {
+        define('FS_CONNECT_TIMEOUT', 30);
+    }
+    if (!defined('FS_TIMEOUT')) {
+        define('FS_TIMEOUT', 30);
+    }
+    if (is_wp_error($wp_filesystem->errors) && $wp_filesystem->errors->has_errors()) {
+        return false;
+    }
+    return $wp_filesystem->connect();
+}
+
+function wp_get_translation_updates()
+{
+    return [];
+}
+
+function get_core_updates($options = [])
+{
+    $options = array_merge(['available' => true, 'dismissed' => false], $options);
+    $from_api = get_site_transient('update_core');
+    if (!isset($from_api->updates) || !is_array($from_api->updates)) {
+        return false;
+    }
+    $updates = $from_api->updates;
+    $result = [];
+    foreach ($updates as $update) {
+        if ($options['available']) {
+            $update->dismissed = false;
+            $result[] = $update;
+        }
+    }
+    return $result;
+}
+
+function wp_clean_plugins_cache($clear_update_cache = true)
+{
+    if ($clear_update_cache) {
+        delete_site_transient('update_plugins');
+    }
+    wp_cache_delete('plugins', 'plugins');
+}
+
+function wp_clean_themes_cache($clear_update_cache = true)
+{
+    if ($clear_update_cache) {
+        delete_site_transient('update_themes');
+    }
+}
+
+function print_admin_styles()
+{
+    return [];
+}
+
+function upload_is_user_over_quota($display_message = true)
+{
+    return false;
+}
+
+function delete_theme($stylesheet, $redirect = '')
+{
+    if (empty($stylesheet)) {
+        return false;
+    }
+    $theme_dir = trailingslashit(get_theme_root($stylesheet)) . $stylesheet;
+    if (!is_dir($theme_dir)) {
+        return true;
+    }
+    if (get_stylesheet() === $stylesheet || get_template() === $stylesheet) {
+        return new WP_Error('could_not_remove_theme', 'Could not fully remove the theme.');
+    }
+    do_action('delete_theme', $stylesheet);
+    WP_Filesystem();
+    $deleted = $GLOBALS['wp_filesystem']->delete($theme_dir, true);
+    do_action('deleted_theme', $stylesheet, (bool) $deleted);
+    return $deleted ? true : new WP_Error('could_not_remove_theme', 'Could not fully remove the theme.');
+}
+
+function _wp_oembed_get_object()
+{
+    static $wp_oembed = null;
+    if ($wp_oembed === null) {
+        $wp_oembed = new WP_oEmbed();
+    }
+    return $wp_oembed;
+}

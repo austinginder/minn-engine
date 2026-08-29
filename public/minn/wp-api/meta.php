@@ -186,31 +186,53 @@ function sanitize_meta($meta_key, $meta_value, $object_type, $object_subtype = '
 
 function register_meta($object_type, $meta_key, $args, $deprecated = null)
 {
-    $registered = Runtime::current()->get('registered_meta', []);
-    $registered[$object_type][$meta_key] = wp_parse_args($args, ['type' => 'string', 'description' => '', 'single' => false, 'show_in_rest' => false]);
-    Runtime::current()->set('registered_meta', $registered);
-    if (isset($args['sanitize_callback']) && is_callable($args['sanitize_callback'])) {
-        add_filter("sanitize_{$object_type}_meta_{$meta_key}", $args['sanitize_callback'], 10, 4);
+    $defaults = ['object_subtype' => '', 'type' => 'string', 'label' => '', 'description' => '', 'single' => false, 'sanitize_callback' => null, 'auth_callback' => null, 'show_in_rest' => false, 'revisions_enabled' => false];
+    $args = wp_parse_args((array) $args, $defaults);
+    $subtype = (string) $args['object_subtype'];
+    unset($args['object_subtype']);
+    if (!in_array($args['type'], ['string', 'boolean', 'integer', 'number', 'array', 'object'], true)) {
+        return false;
     }
+    if ($args['show_in_rest'] && !$subtype && ($object_type === 'post' || $object_type === 'term' || $object_type === 'comment' || $object_type === 'user')) {
+        // A REST-visible key with no subtype is still fine on the reference.
+    }
+    $args['object_subtype'] = $subtype;
+    $registered = Runtime::current()->get('registered_meta', []);
+    $registered[$object_type][$subtype][$meta_key] = $args;
+    Runtime::current()->set('registered_meta', $registered);
     return true;
 }
 
 function registered_meta_key_exists($object_type, $meta_key, $object_subtype = '')
 {
-    return isset(Runtime::current()->get('registered_meta', [])[$object_type][$meta_key]);
+    return isset(Runtime::current()->get('registered_meta', [])[$object_type][(string) $object_subtype][$meta_key]);
 }
 
 function unregister_meta_key($object_type, $meta_key, $object_subtype = '')
 {
     $registered = Runtime::current()->get('registered_meta', []);
-    unset($registered[$object_type][$meta_key]);
+    if (!isset($registered[$object_type][(string) $object_subtype][$meta_key])) {
+        return false;
+    }
+    unset($registered[$object_type][(string) $object_subtype][$meta_key]);
     Runtime::current()->set('registered_meta', $registered);
     return true;
 }
 
 function get_registered_meta_keys($object_type, $object_subtype = '')
 {
-    return Runtime::current()->get('registered_meta', [])[$object_type] ?? [];
+    $keys = Runtime::current()->get('registered_meta', [])[$object_type][(string) $object_subtype] ?? [];
+    foreach ($keys as $key => $args) {
+        unset($keys[$key]['object_subtype']);
+    }
+    return $keys;
+}
+
+/** The registered entry for a key, subtype first then the plain one. */
+function _minn_registered_meta($object_type, $meta_key, $object_subtype = '')
+{
+    $all = Runtime::current()->get('registered_meta', []);
+    return $all[$object_type][(string) $object_subtype][$meta_key] ?? $all[$object_type][''][$meta_key] ?? null;
 }
 
 function update_meta_cache($meta_type, $object_ids)

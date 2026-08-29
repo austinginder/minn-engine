@@ -228,3 +228,34 @@ function wp_kses_array_lc($inarray)
     }
     return $out;
 }
+
+/** The content filters a user without unfiltered_html gets; comments take the post rules for those who have it. */
+function kses_init_filters()
+{
+    foreach (['content_save_pre', 'excerpt_save_pre', 'content_filtered_save_pre'] as $hook) {
+        add_filter($hook, 'wp_filter_post_kses');
+    }
+    add_filter('pre_comment_content', current_user_can('unfiltered_html') ? 'wp_filter_post_kses' : 'wp_filter_kses');
+    add_filter('title_save_pre', 'wp_filter_kses');
+    add_filter('pre_comment_author_name', 'wp_filter_kses');
+    add_filter('pre_term_description', 'wp_filter_kses');
+    add_filter('pre_link_description', 'wp_filter_kses');
+}
+
+function kses_remove_filters()
+{
+    foreach (['content_save_pre', 'excerpt_save_pre', 'content_filtered_save_pre'] as $hook) {
+        remove_filter($hook, 'wp_filter_post_kses');
+    }
+    remove_filter('pre_comment_content', 'wp_filter_post_kses');
+    remove_filter('pre_comment_content', 'wp_filter_kses');
+    remove_filter('title_save_pre', 'wp_filter_kses');
+}
+
+function kses_init()
+{
+    kses_remove_filters();
+    if (!current_user_can('unfiltered_html')) {
+        kses_init_filters();
+    }
+}

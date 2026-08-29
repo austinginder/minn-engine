@@ -449,9 +449,82 @@ Fixture: `contracts/fixtures/api/html-tag-processor.json` (62 rows,
 - **Bookmarks**: at most ten; `seek` applies pending edits, moves back,
   and re-reads the token; releasing or seeking an unknown name is false.
 
+## The small symbols the dogfood plugins were short of
+
+Fixture: `contracts/fixtures/api/symbols.json` (67 rows, `symbols-probe.php`).
+Facts worth keeping:
+
+- `use_block_editor_for_post_type`: the type must exist and be
+  `show_in_rest`; attachments and revisions never qualify; then the filter.
+- `htmlentities2` keeps named references and decimal numeric ones
+  (`&#39;`) but not hex ones (`&#x41;` becomes `&amp;#x41;`); unknown names
+  are encoded.
+- Registered meta is keyed by object subtype: `register_post_meta`
+  registers under the post type, a later registration of the same key
+  replaces the first, `get_registered_meta_keys('post')` lists only the
+  subtype-less keys, `default` is present only when given. The reference
+  registers `footnotes` for every editor-supporting post type; the engine
+  does the same for the built-in types at load.
+- Sitemaps: `get_sitemap_url('index')` is `/wp-sitemap.xml`,
+  `posts`/`taxonomies`/`users` build `/wp-sitemap-{name}-{subtype}-{page}.xml`
+  (page 0 reads as 1; an unknown provider or subtype is false); the
+  server object exposes `registry`, `renderer`, `index`, three providers,
+  `sitemaps_enabled()` from `blog_public`, and `wp_sitemaps_get_max_urls`
+  is 2000 through `wp_sitemaps_max_urls`.
+- `get_edit_term_link` is `term.php?taxonomy=..&tag_ID=..&post_type=..`
+  (the taxonomy's first object type unless one is given), null for an
+  unknown term or taxonomy or when the user cannot `edit_term`.
+- `feed_content_type`: rss and rss2 `application/rss+xml`, rss-http
+  `text/xml`, atom `application/atom+xml`, rdf `application/rdf+xml`,
+  anything else `application/octet-stream`. `get_bloginfo_rss` escapes the
+  whole value as HTML, tags included, typographic quotes untouched.
+- `delete_post_meta_by_key` deletes across every post and answers false
+  when nothing matched or the key is empty.
+- kses: `pre_comment_author_name`, `pre_term_description`, and
+  `pre_link_description` always carry `wp_filter_kses`; `kses_init_filters`
+  adds the three content save filters, `title_save_pre`, and comment
+  content (post rules for users with `unfiltered_html`, plain kses
+  otherwise); `kses_remove_filters` takes those five away and nothing else.
+- Screen options: `add_screen_option` stores the args on the current
+  screen (`get_option($name)` gives them back, `($name, 'default')` a key);
+  `get_hidden_columns` reads `manage{screen}columnshidden` from the user's
+  options and, without one, `default_hidden_columns`. `wp_dashboard_setup`
+  fires its action. `wp_iframe` prints a `<!DOCTYPE html>` document with
+  `wp-toolbar` on `<html>`, `wp-core-ui` on `<body>`, the callback's
+  output, no admin bar; `iframe_header` titles the page `{site} &rsaquo;
+  {title} &#8212; WordPress`; `iframe_footer` prints the auth-check
+  markup, then closes the document.
+- `WP_Term_Query` normalises its vars (taxonomy, include, exclude, name,
+  slug to arrays; number and offset to integers), keeps `terms` null until
+  `query()` or `get_terms()` runs, answers `[]` for an unknown taxonomy,
+  and agrees with `get_terms()` for the same arguments by construction.
+- A single-site reference never loads `WP_Site`, `WP_Site_Query`,
+  `WP_Network`, or `WP_Network_Query`, so the symbol gate no longer counts
+  them; `get_main_site_id`, `get_current_blog_id`, `is_main_site`,
+  `get_current_network_id` answer 1, true, 1.
+- Filesystem: `get_filesystem_method` is `direct`,
+  `request_filesystem_credentials` true, `WP_Filesystem()` installs a
+  `WP_Filesystem_Direct` (`WP_Filesystem_Base` parent) with the base
+  directories under ABSPATH; `mkdir` of an existing directory is false,
+  `copy` refuses to overwrite unless told, `delete` of a missing file is
+  true and of a non-empty directory needs `recursive`, `getchmod` is three
+  digits, `gethchmod` ten characters starting with `u` for a file, and
+  `dirlist` entries carry `name, perms, permsn, number, owner, group, size,
+  lastmodunix, lastmod, time, type` (plus `files` on directories).
+- `wp_validate_boolean`: the string `false` in any case is false, everything
+  else is a bool cast (`no`, `off`, `null` are true).
+- `wp_image_src_get_dimensions` matches the URL's file name against the
+  metadata's file and sizes regardless of host.
+- `get_edit_user_link` is `profile.php` for the current user, `` for an
+  unknown user or when the user cannot `edit_user`; `wp_get_post_revision`
+  answers null for a missing post and for one that is not a revision.
+- `delete_theme` of a theme that is not on disk is true; an empty slug is
+  false. `_wp_oembed_get_object` is a singleton `WP_oEmbed` whose provider
+  table is `data/oembed-providers.json` (captured from the reference).
+
 ## What a plugin cannot do yet
 
-Twelve of the dogfood site's twenty-five plugins load as code now
+Twenty of the dogfood site's twenty-five plugins load as code now
 (`runtime-report.php`), and the nine dogfood pages render at parity with
 them running. What the rest ask for, in order: the admin host
 (`WP_List_Table`, screens and screen options, `iframe_header`, the

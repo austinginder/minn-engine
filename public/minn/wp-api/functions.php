@@ -533,6 +533,8 @@ function wp_auth_check_load()
 
 function wp_auth_check_html()
 {
+    $login_url = wp_login_url();
+    echo "\t\t<div id=\"wp-auth-check-wrap\" class=\"hidden fallback\">\n\t<div id=\"wp-auth-check-bg\"></div>\n\t<div id=\"wp-auth-check\">\n\t<button type=\"button\" class=\"wp-auth-check-close button-link\"><span class=\"screen-reader-text\">\n\t\t" . esc_html__('Close dialog') . "\t</span></button>\n\t\t<div class=\"wp-auth-fallback\">\n\t\t<p><b class=\"wp-auth-fallback-expired\" tabindex=\"0\">" . esc_html__('Session expired') . "</b></p>\n\t\t<p><a href=\"" . esc_url($login_url) . "\" target=\"_blank\">" . esc_html__('Please log in again.') . "</a>\n\t\t" . esc_html__('The login page will open in a new tab. After logging in you can close it and return to this page.') . "</p>\n\t</div>\n\t</div>\n\t</div>\n";
 }
 
 function wp_auth_check($response)
@@ -615,4 +617,44 @@ function wp_admin_notice($message, $args = [])
 {
     do_action('wp_admin_notice', $message, $args);
     echo wp_kses_post(wp_get_admin_notice($message, $args));
+}
+
+function get_main_site_id($network_id = null)
+{
+    return 1;
+}
+
+function mbstring_binary_safe_encoding($reset = false)
+{
+    static $encodings = [];
+    static $overloaded = null;
+    if ($overloaded === null) {
+        $overloaded = function_exists('mb_internal_encoding') && (int) ini_get('mbstring.func_overload') & 2;
+    }
+    if (!$overloaded) {
+        return;
+    }
+    if (!$reset) {
+        $encodings[] = mb_internal_encoding();
+        mb_internal_encoding('ISO-8859-1');
+    } elseif ($encodings !== []) {
+        mb_internal_encoding(array_pop($encodings));
+    }
+}
+
+function reset_mbstring_encoding()
+{
+    mbstring_binary_safe_encoding(true);
+}
+
+/** Everything is cast to bool except the string "false" in any case, which is false. */
+function wp_validate_boolean($value)
+{
+    if (is_bool($value)) {
+        return $value;
+    }
+    if (is_string($value) && strtolower($value) === 'false') {
+        return false;
+    }
+    return (bool) $value;
 }

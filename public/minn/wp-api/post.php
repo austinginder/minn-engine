@@ -1499,3 +1499,64 @@ function is_multi_author()
 {
     return false;
 }
+
+/** Whether the block editor edits a post type: it must exist and be visible in REST; attachments and revisions never are. */
+function use_block_editor_for_post_type($post_type)
+{
+    $type = get_post_type_object($post_type);
+    $use = $type !== null && !empty($type->show_in_rest) && $post_type !== 'attachment' && $post_type !== 'revision';
+    return (bool) apply_filters('use_block_editor_for_post_type', $use, $post_type);
+}
+
+function register_post_meta($post_type, $meta_key, array $args)
+{
+    $args['object_subtype'] = $post_type;
+    return register_meta('post', $meta_key, $args);
+}
+
+function unregister_post_meta($post_type, $meta_key)
+{
+    return unregister_meta_key('post', $meta_key, $post_type);
+}
+
+function delete_post_meta_by_key($post_meta_key)
+{
+    return delete_metadata('post', null, $post_meta_key, '', true);
+}
+
+function get_the_guid($post = 0)
+{
+    $post = get_post($post);
+    $post_guid = isset($post->guid) ? $post->guid : '';
+    $post_id = isset($post->ID) ? $post->ID : 0;
+    return apply_filters('get_the_guid', $post_guid, $post_id);
+}
+
+function the_guid($post = 0)
+{
+    $post = get_post($post);
+    $post_guid = isset($post->guid) ? get_the_guid($post) : '';
+    $post_id = isset($post->ID) ? $post->ID : 0;
+    echo apply_filters('the_guid', $post_guid, $post_id);
+}
+
+function wp_get_post_revision(&$post, $output = OBJECT, $filter = 'raw')
+{
+    $post = get_post($post, OBJECT, $filter);
+    if (!$post) {
+        return $post;
+    }
+    if ($post->post_type !== 'revision') {
+        return null;
+    }
+    if ($output === OBJECT) {
+        return $post;
+    }
+    if ($output === ARRAY_A) {
+        return get_object_vars($post);
+    }
+    if ($output === ARRAY_N) {
+        return array_values(get_object_vars($post));
+    }
+    return $post;
+}

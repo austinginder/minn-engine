@@ -1,0 +1,797 @@
+[
+    [
+        "use_block_editor_for_post_type",
+        [
+            true,
+            true,
+            false,
+            false,
+            false,
+            true,
+            true,
+            false
+        ]
+    ],
+    [
+        "use_block_editor_for_post_type filtered",
+        [
+            false,
+            true
+        ]
+    ],
+    [
+        "htmlentities2",
+        [
+            "a &amp; b &lt; c &gt; &quot;d&quot; &#039;e&#039; &amp; &lt; &#39; &amp;#x41; &nbsp; &eacute;",
+            "",
+            "&amp;notanentity; &copy;"
+        ]
+    ],
+    [
+        "register_post_meta",
+        [
+            true,
+            true,
+            true
+        ]
+    ],
+    [
+        "registered post meta",
+        {
+            "type": "string",
+            "description": "",
+            "single": false,
+            "show_in_rest": false
+        }
+    ],
+    [
+        "registered meta all",
+        []
+    ],
+    [
+        "registered meta subtype",
+        [
+            "minn_probe_meta2"
+        ]
+    ],
+    [
+        "get_post_meta default",
+        ""
+    ],
+    [
+        "registered after unregister",
+        [
+            [
+                "footnotes"
+            ],
+            ""
+        ]
+    ],
+    [
+        "get_sitemap_url",
+        [
+            "{home}/wp-sitemap-posts-post-1.xml",
+            "{home}/wp-sitemap-posts-post-2.xml",
+            "{home}/wp-sitemap-posts-page-1.xml",
+            "{home}/wp-sitemap-taxonomies-category-3.xml",
+            "{home}/wp-sitemap-users-1.xml",
+            "{home}/wp-sitemap-users-2.xml",
+            "{home}/wp-sitemap.xml",
+            false,
+            false,
+            "{home}/wp-sitemap-posts-post-1.xml"
+        ]
+    ],
+    [
+        "wp_sitemaps_get_max_urls",
+        [
+            2000,
+            2000,
+            2000,
+            2000
+        ]
+    ],
+    [
+        "wp_sitemaps_get_max_urls filtered",
+        [
+            7,
+            2000
+        ]
+    ],
+    [
+        "wp_sitemaps_get_server",
+        [
+            "WP_Sitemaps",
+            "WP_Sitemaps_Registry",
+            "WP_Sitemaps_Renderer",
+            "WP_Sitemaps_Index",
+            [
+                "posts",
+                "taxonomies",
+                "users"
+            ],
+            true,
+            "{home}/wp-sitemap.xml",
+            "{home}/wp-sitemap-posts-post-1.xml"
+        ]
+    ],
+    [
+        "get_edit_term_link",
+        [
+            "{home}/wp-admin/term.php?taxonomy=category&tag_ID=1&post_type=post",
+            "{home}/wp-admin/term.php?taxonomy=category&tag_ID=1&post_type=post",
+            "{home}/wp-admin/term.php?taxonomy=category&tag_ID=1&post_type=post",
+            null,
+            null,
+            "{home}/wp-admin/term.php?taxonomy=category&tag_ID=1&post_type=post",
+            "{home}/wp-admin/term.php?taxonomy=category&tag_ID=1&post_type=page"
+        ]
+    ],
+    [
+        "get_edit_term_link anonymous",
+        null
+    ],
+    [
+        "feed_content_type",
+        [
+            "application/rss+xml",
+            "application/rss+xml",
+            "application/rss+xml",
+            "text/xml",
+            "application/atom+xml",
+            "application/rdf+xml",
+            "application/octet-stream"
+        ]
+    ],
+    [
+        "get_bloginfo_rss",
+        [
+            "Minn Engine",
+            "Indistinguishable at the seams. Radically simpler inside.",
+            "{home}",
+            "en-US",
+            "UTF-8",
+            "Minn Engine",
+            "Minn Engine"
+        ]
+    ],
+    [
+        "bloginfo_rss",
+        "Minn Engine"
+    ],
+    [
+        "get_bloginfo_rss escaped",
+        "Probe &amp; &lt;b&gt;Site&lt;/b&gt; “q”"
+    ],
+    [
+        "delete_post_meta_by_key",
+        [
+            true,
+            [],
+            [],
+            false,
+            false
+        ]
+    ],
+    [
+        "_wp_get_attachment_relative_path",
+        [
+            "2024/01",
+            "",
+            "/abs/2024/01",
+            "",
+            "a/b/c"
+        ]
+    ],
+    [
+        "get_home_path",
+        "{abspath}/"
+    ],
+    [
+        "kses filters initial",
+        [
+            false,
+            false,
+            false,
+            false,
+            false,
+            10,
+            10,
+            10
+        ]
+    ],
+    [
+        "kses filters removed",
+        [
+            false,
+            false,
+            false,
+            false,
+            false,
+            10,
+            10,
+            10
+        ]
+    ],
+    [
+        "kses filters init",
+        [
+            10,
+            10,
+            10,
+            false,
+            10,
+            10,
+            10,
+            10
+        ]
+    ],
+    [
+        "kses filters init twice",
+        [
+            10,
+            10,
+            10,
+            false,
+            10,
+            10,
+            10,
+            10
+        ]
+    ],
+    [
+        "add_screen_option",
+        [
+            {
+                "label": "Items",
+                "default": 20,
+                "option": "minn_probe_per_page"
+            },
+            20,
+            "minn_probe_per_page",
+            null,
+            {
+                "max": 4,
+                "default": 2
+            },
+            null,
+            [
+                "per_page",
+                "layout_columns"
+            ]
+        ]
+    ],
+    [
+        "get_hidden_columns",
+        [
+            [],
+            [],
+            []
+        ]
+    ],
+    [
+        "get_hidden_columns set",
+        [
+            [
+                "tags",
+                "comments"
+            ],
+            [
+                "tags",
+                "comments"
+            ]
+        ]
+    ],
+    [
+        "get_hidden_columns default filter",
+        [
+            "probe"
+        ]
+    ],
+    [
+        "set_screen_options no post",
+        ""
+    ],
+    [
+        "wp_dashboard_setup",
+        [
+            true,
+            []
+        ]
+    ],
+    [
+        "wp_iframe",
+        [
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            false
+        ]
+    ],
+    [
+        "iframe_header",
+        [
+            true,
+            false,
+            true,
+            true,
+            true
+        ]
+    ],
+    [
+        "iframe_footer",
+        [
+            true,
+            true,
+            true,
+            true
+        ]
+    ],
+    [
+        "WP_Term_Query terms",
+        [
+            [
+                "WP_Term",
+                1,
+                "Uncategorized",
+                "uncategorized",
+                "category"
+            ]
+        ]
+    ],
+    [
+        "WP_Term_Query query_vars",
+        {
+            "taxonomy": [
+                "category"
+            ],
+            "orderby": "name",
+            "order": "ASC",
+            "hide_empty": false,
+            "include": [],
+            "exclude": [],
+            "number": 0,
+            "offset": 0,
+            "fields": "all",
+            "name": [],
+            "slug": [],
+            "hierarchical": true,
+            "search": "",
+            "pad_counts": false,
+            "get": "",
+            "child_of": 0,
+            "parent": "",
+            "childless": false,
+            "cache_results": true,
+            "update_term_meta_cache": true,
+            "meta_query": ""
+        }
+    ],
+    [
+        "WP_Term_Query defaults",
+        [
+            "taxonomy",
+            "object_ids",
+            "orderby",
+            "order",
+            "hide_empty",
+            "include",
+            "exclude",
+            "exclude_tree",
+            "number",
+            "offset",
+            "fields",
+            "name",
+            "slug",
+            "term_taxonomy_id",
+            "hierarchical",
+            "search",
+            "name__like",
+            "description__like",
+            "pad_counts",
+            "get",
+            "child_of",
+            "parent",
+            "childless",
+            "cache_domain",
+            "cache_results",
+            "update_term_meta_cache",
+            "meta_query",
+            "meta_key",
+            "meta_value",
+            "meta_type",
+            "meta_compare"
+        ]
+    ],
+    [
+        "WP_Term_Query request",
+        true
+    ],
+    [
+        "WP_Term_Query lazy",
+        [
+            null,
+            null,
+            [
+                "Uncategorized"
+            ],
+            [
+                1
+            ],
+            [
+                "Uncategorized"
+            ],
+            "1",
+            {
+                "1": "Uncategorized"
+            },
+            [
+                1
+            ],
+            [],
+            [
+                "engine",
+                "parity",
+                "Uncategorized"
+            ]
+        ]
+    ],
+    [
+        "WP_Term_Query get_terms",
+        [
+            [
+                1
+            ],
+            [
+                1
+            ]
+        ]
+    ],
+    [
+        "WP_Term_Query slug and search",
+        [
+            [
+                "Uncategorized"
+            ],
+            [
+                "Uncategorized"
+            ],
+            [
+                1
+            ],
+            []
+        ]
+    ],
+    [
+        "WP_Term_Query vs get_terms",
+        true
+    ],
+    [
+        "WP_Site",
+        [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            true
+        ]
+    ],
+    [
+        "site helpers",
+        [
+            1,
+            true,
+            1,
+            false,
+            1,
+            1,
+            1,
+            "no-fn"
+        ]
+    ],
+    [
+        "get_filesystem_method",
+        [
+            "direct",
+            "direct"
+        ]
+    ],
+    [
+        "request_filesystem_credentials",
+        [
+            true,
+            true
+        ]
+    ],
+    [
+        "WP_Filesystem",
+        [
+            true,
+            "WP_Filesystem_Direct",
+            "WP_Filesystem_Base",
+            "direct",
+            "{abspath}/",
+            "{abspath}/wp-content/",
+            "{abspath}/wp-content/plugins/",
+            "{abspath}/wp-content/themes/",
+            "{abspath}/wp-content/languages/",
+            true,
+            false
+        ]
+    ],
+    [
+        "WP_Filesystem ops",
+        [
+            false,
+            true,
+            false,
+            true,
+            false,
+            true,
+            "hello\nworld\n",
+            [
+                "hello\n",
+                "world\n"
+            ],
+            false,
+            true,
+            true,
+            true,
+            true,
+            12,
+            true,
+            false,
+            true,
+            true,
+            false,
+            true,
+            "644",
+            true,
+            "600",
+            "urw-------",
+            true,
+            true,
+            {
+                "a.txt": [
+                    "a.txt",
+                    "f",
+                    true,
+                    true,
+                    false
+                ],
+                "c.txt": [
+                    "c.txt",
+                    "f",
+                    true,
+                    true,
+                    false
+                ],
+                "sub": [
+                    "sub",
+                    "d",
+                    true,
+                    true,
+                    true
+                ],
+                "t.txt": [
+                    "t.txt",
+                    "f",
+                    true,
+                    true,
+                    false
+                ]
+            },
+            [
+                "n.txt"
+            ],
+            false,
+            {
+                "a.txt": [
+                    "a.txt",
+                    "f",
+                    12,
+                    "0600",
+                    "urw-------",
+                    [
+                        "name",
+                        "perms",
+                        "permsn",
+                        "number",
+                        "owner",
+                        "group",
+                        "size",
+                        "lastmodunix",
+                        "lastmod",
+                        "time",
+                        "type"
+                    ]
+                ]
+            },
+            true,
+            true,
+            false,
+            true,
+            false,
+            true,
+            false,
+            true,
+            false,
+            true,
+            true,
+            false,
+            "0644",
+            true
+        ]
+    ],
+    [
+        "wp_get_translation_updates",
+        []
+    ],
+    [
+        "get_core_updates",
+        [
+            true,
+            true
+        ]
+    ],
+    [
+        "wp_clean_plugins_cache",
+        [
+            null,
+            null,
+            null,
+            null
+        ]
+    ],
+    [
+        "print_admin_styles",
+        [
+            true,
+            true
+        ]
+    ],
+    [
+        "upload_is_user_over_quota",
+        [
+            true,
+            false
+        ]
+    ],
+    [
+        "delete_theme",
+        true
+    ],
+    [
+        "delete_theme empty",
+        false
+    ],
+    [
+        "_wp_oembed_get_object",
+        [
+            "WP_oEmbed",
+            true,
+            true,
+            true
+        ]
+    ],
+    [
+        "the_guid",
+        [
+            "{home}/?p=1",
+            true,
+            "{home}/?p=1",
+            "",
+            ""
+        ]
+    ],
+    [
+        "the_permalink_rss",
+        "{home}/hello-world/"
+    ],
+    [
+        "the_permalink_rss filtered",
+        "{home}/hello-world/?rss=1"
+    ],
+    [
+        "wp_validate_boolean",
+        [
+            true,
+            false,
+            true,
+            false,
+            false,
+            false,
+            true,
+            false,
+            true,
+            false,
+            false,
+            false,
+            true,
+            true,
+            true,
+            false,
+            true,
+            true
+        ]
+    ],
+    [
+        "_wp_image_editor_choose",
+        [
+            "WP_Image_Editor_GD",
+            "WP_Image_Editor_GD",
+            false,
+            false
+        ]
+    ],
+    [
+        "wp_image_src_get_dimensions",
+        [
+            [
+                1200,
+                800
+            ],
+            {
+                "medium": [
+                    300,
+                    200
+                ],
+                "large": [
+                    1024,
+                    683
+                ],
+                "thumbnail": [
+                    150,
+                    150
+                ],
+                "medium_large": [
+                    768,
+                    512
+                ]
+            },
+            false,
+            false,
+            [
+                5,
+                6
+            ],
+            [
+                1200,
+                800
+            ]
+        ]
+    ],
+    [
+        "get_edit_user_link",
+        [
+            "{home}/wp-admin/profile.php",
+            "{home}/wp-admin/profile.php",
+            "",
+            "{home}/wp-admin/profile.php"
+        ]
+    ],
+    [
+        "get_edit_user_link anonymous",
+        [
+            "",
+            ""
+        ]
+    ],
+    [
+        "self_link",
+        true
+    ],
+    [
+        "wp_get_post_revision",
+        [
+            null,
+            null
+        ]
+    ]
+]

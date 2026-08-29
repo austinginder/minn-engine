@@ -368,3 +368,61 @@ function get_pagenum_link($pagenum = 1, $escape = true)
     }
     return $escape ? esc_url($url) : esc_url_raw($url);
 }
+
+function get_edit_term_link($term, $taxonomy = '', $object_type = '')
+{
+    $term = get_term($term, $taxonomy);
+    if (!$term || is_wp_error($term)) {
+        return null;
+    }
+    $tax = get_taxonomy($term->taxonomy);
+    if (!$tax || !current_user_can('edit_term', $term->term_id)) {
+        return null;
+    }
+    $args = ['taxonomy' => $tax->name, 'tag_ID' => $term->term_id];
+    if ($object_type) {
+        $args['post_type'] = $object_type;
+    } elseif (!empty($tax->object_type)) {
+        $args['post_type'] = reset($tax->object_type);
+    }
+    $location = add_query_arg($args, admin_url('term.php'));
+    return apply_filters('get_edit_term_link', $location, $term->term_id, $tax->name, $object_type);
+}
+
+function get_edit_user_link($user_id = null)
+{
+    if (!$user_id) {
+        $user_id = get_current_user_id();
+    }
+    if (empty($user_id) || !current_user_can('edit_user', $user_id)) {
+        return '';
+    }
+    $user = get_userdata($user_id);
+    if (!$user) {
+        return '';
+    }
+    if (get_current_user_id() === $user->ID) {
+        $link = get_edit_profile_url($user->ID);
+    } else {
+        $link = add_query_arg('user_id', $user->ID, self_admin_url('user-edit.php'));
+    }
+    return apply_filters('get_edit_user_link', $link, $user->ID);
+}
+
+function get_edit_profile_url($user_id = 0, $scheme = 'admin')
+{
+    $user_id = $user_id ? (int) $user_id : get_current_user_id();
+    if (get_current_user_id() === $user_id) {
+        $url = get_dashboard_url($user_id, 'profile.php', $scheme);
+    } else {
+        $url = add_query_arg('user_id', $user_id, get_dashboard_url($user_id, 'user-edit.php', $scheme));
+    }
+    return apply_filters('edit_profile_url', $url, $user_id, $scheme);
+}
+
+function get_dashboard_url($user_id = 0, $path = '', $scheme = 'admin')
+{
+    $user_id = $user_id ? (int) $user_id : get_current_user_id();
+    $url = admin_url($path ? $path : '', $scheme);
+    return apply_filters('user_dashboard_url', $url, $user_id, $path, $scheme);
+}

@@ -25,3 +25,17 @@ add_action('wp_head', '_minn_print_engine_styles', 8);
 add_action('wp_head', 'wp_print_head_scripts', 9);
 add_action('wp_footer', '_wp_footer_scripts', 20);
 add_filter('option_blog_charset', '_wp_specialchars');
+
+// The author name, term description, and link description are always filtered.
+add_filter('pre_comment_author_name', 'wp_filter_kses');
+add_filter('pre_term_description', 'wp_filter_kses');
+add_filter('pre_link_description', 'wp_filter_kses');
+// The footnotes meta the editor writes is registered for every post type that supports the editor.
+// (The built-in types are known at load; a plugin's type registered at init does not get it, unlike the reference.)
+if (Minn\Runtime\Runtime::booted()) {
+    foreach (get_post_types(['show_in_rest' => true]) as $type) {
+        if (post_type_supports($type, 'editor')) {
+            register_post_meta($type, 'footnotes', ['type' => 'string', 'single' => true, 'show_in_rest' => true, 'revisions_enabled' => true]);
+        }
+    }
+}
