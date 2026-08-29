@@ -164,7 +164,7 @@ $head = static function (string $url): array {
 [$url, $code] = $run($ENGINE_DIR, 'user login admin');
 $check('user login prints a wp-login.php link', $code === 0 && preg_match('#^https://minn-engine\.localhost/wp-login\.php\?user_id=1&cove_login_token=[0-9a-f]{7}$#', $url) === 1, $url);
 $headers = $head($url);
-$check('the link signs in: 302 to /wp-admin/', $headers['status'] === '302' && str_contains($headers['location'] ?? '', '/wp-admin/'), json_encode($headers));
+$check('the link signs in: 302 into the admin', $headers['status'] === '302' && str_contains($headers['location'] ?? '', '/minn-admin/'), json_encode($headers));
 $check('the link sets the logged_in cookie', str_contains($headers['set-cookie'] ?? '', 'wordpress_logged_in_'), json_encode($headers['set-cookie'] ?? null));
 $again = $head($url);
 $check('the link is spent after one use', $again['status'] === '403', json_encode($again['status']));
@@ -184,6 +184,18 @@ $check(
 );
 [$out, $code] = $run($ENGINE_DIR, 'plugin list --format=count');
 $check('plugin list count is an integer', $code === 0 && preg_match('/^\d+$/', $out) === 1, $out);
+// plugin activate/deactivate write the same active_plugins record the reference does. Both stacks share the
+// database, so each runs the whole sequence from the resting (inactive) state and the transcripts are compared.
+$sequence = ['plugin activate minn-test-types', 'plugin activate minn-test-types', 'plugin deactivate minn-test-types', 'plugin deactivate minn-test-types', 'plugin activate nope-nope'];
+$transcript = static fn (string $dir): array => array_map(static fn (string $c) => $run($dir, $c), $sequence);
+$engineT = $transcript($ENGINE_DIR);
+$refT = $transcript($REF_DIR);
+foreach ($sequence as $i => $command) {
+    $check("$command (step " . ($i + 1) . ') matches the reference', $engineT[$i] === $refT[$i], "engine[{$engineT[$i][1]}]: {$engineT[$i][0]}\n      ref[{$refT[$i][1]}]:    {$refT[$i][0]}");
+}
+[$out, $code] = $run($ENGINE_DIR, 'plugin list --format=json --fields=name,status');
+$fixtureRow = array_values(array_filter((array) json_decode($out, true), static fn ($r) => ($r['name'] ?? '') === 'minn-test-types'));
+$check('the fixture plugin rests inactive', $code === 0 && ($fixtureRow[0]['status'] ?? '') === 'inactive', $out);
 [$out, $code] = $run($ENGINE_DIR, 'minn probe');
 $check('minn probe names the engine', $code === 0 && str_starts_with($out, "engine:minn\n"), "[$code] " . substr($out, 0, 300));
 $probe = [];

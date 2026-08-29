@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Rest;
 
 use Minn\Content\Inventory;
+use Minn\Content\PluginState;
 use Minn\Content\Site;
 use Minn\Extension\Loader;
 use Minn\Extension\Manifest;
@@ -64,12 +65,8 @@ final readonly class PluginsController
             throw new RestError('rest_invalid_param', 'Invalid parameter(s): status', 400, ['params' => ['status' => 'status is not one of inactive, active.']]);
         }
         if ($status !== $item['status']) {
-            $manifest = $this->manifestFor($plugin);
-            if ($manifest !== null) {
-                $this->setExtensionActive($manifest, $status === 'active');
-            } else {
-                $this->setPluginActive($plugin . '.php', $status === 'active');
-            }
+            $state = new PluginState($this->site, $this->inventory, $this->extensions);
+            $state->setActive($this->manifestFor($plugin) ?? $plugin . '.php', $status === 'active');
         }
         return Reply::item($this->find($plugin), Fields::fromQuery($request->query));
     }
@@ -176,33 +173,6 @@ final readonly class PluginsController
     private static function extensionKey(Manifest $manifest): string
     {
         return $manifest->slug . '/' . $manifest->slug;
-    }
-
-    private function setPluginActive(string $file, bool $active): void
-    {
-        $list = Serialized::stringList($this->site->option('active_plugins'));
-        $list = array_values(array_diff($list, [$file]));
-        if ($active) {
-            $list[] = $file;
-            sort($list, SORT_STRING);
-        }
-        $this->site->setOption('active_plugins', Serialized::serializeStringList($list));
-    }
-
-    /** Own-list activation; deactivating also releases the WordPress plugin files the extension stood in for. */
-    private function setExtensionActive(Manifest $manifest, bool $active): void
-    {
-        $own = json_decode((string) ($this->site->option('minn_active_extensions') ?? '[]'), true);
-        $own = array_values(array_diff(is_array($own) ? array_map('strval', $own) : [], [$manifest->slug]));
-        if ($active) {
-            $own[] = $manifest->slug;
-        } else {
-            foreach ($manifest->replaces as $file) {
-                $this->setPluginActive($file, false);
-            }
-        }
-        $this->site->setOption('minn_active_extensions', (string) json_encode($own));
-        $this->extensions->refresh();
     }
 
     private function requireManager(): void

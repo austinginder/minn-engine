@@ -1,0 +1,81 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Minn\Content;
+
+use Minn\Extension\Loader;
+use Minn\Extension\Manifest;
+use Minn\Support\Serialized;
+
+/**
+ * Switching plugins on and off, the way the reference records it: a
+ * WordPress plugin file joins or leaves the sorted active_plugins list; a
+ * Minn extension joins or leaves minn_active_extensions, and deactivating
+ * one also releases the plugin files it stood in for. The REST toggle and
+ * the CLI verbs share this so they cannot drift.
+ */
+final readonly class PluginState
+{
+    public function __construct(private Site $site, private Inventory $inventory, private Loader $extensions)
+    {
+    }
+
+    /**
+     * The relative "dir/file.php" of a WordPress plugin, else the extension
+     * for a slug, else null. A folder carrying both records in
+     * active_plugins like the reference does (the loader counts its own
+     * folder there as active); only a pure extension uses the engine's list.
+     */
+    public function find(string $slug): Manifest|string|null
+    {
+        foreach (array_keys($this->inventory->pluginFiles()) as $relative) {
+            if ($relative === $slug . '.php' || str_starts_with($relative, $slug . '/')) {
+                return $relative;
+            }
+        }
+        foreach ($this->extensions->found() as $manifest) {
+            if ($manifest->slug === $slug) {
+                return $manifest;
+            }
+        }
+        return null;
+    }
+
+    public function isActive(Manifest|string $plugin): bool
+    {
+        if ($plugin instanceof Manifest) {
+            return in_array($plugin, $this->extensions->active(), true);
+        }
+        return in_array($plugin, Serialized::stringList($this->site->option('active_plugins')), true);
+    }
+
+    public function setActive(Manifest|string $plugin, bool $active): void
+    {
+        if ($plugin instanceof Manifest) {
+            $own = json_decode((string) ($this->site->option('minn_active_extensions') ?? '[]'), true);
+            $own = array_values(array_diff(is_array($own) ? array_map('strval', $own) : [], [$plugin->slug]));
+            if ($active) {
+                $own[] = $plugin->slug;
+            } else {
+                foreach ($plugin->replaces as $file) {
+                    $this->setFileActive($file, false);
+                }
+            }
+            $this->site->setOption('minn_active_extensions', (string) json_encode($own));
+        } else {
+            $this->setFileActive($plugin, $active);
+        }
+        $this->extensions->refresh();
+    }
+
+    private function setFileActive(string $file, bool $active): void
+    {
+        $list = array_values(array_diff(Serialized::stringList($this->site->option('active_plugins')), [$file]));
+        if ($active) {
+            $list[] = $file;
+            sort($list, SORT_STRING);
+        }
+        $this->site->setOption('active_plugins', Serialized::serializeStringList($list));
+    }
+}

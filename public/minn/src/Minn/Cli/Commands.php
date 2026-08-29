@@ -29,6 +29,8 @@ final class Commands
         self::leaf('user update', [UserCommand::class, 'update'], $early);
         self::leaf('user delete', [UserCommand::class, 'delete'], $early);
         self::leaf('plugin list', [PluginCommand::class, 'list'], $early);
+        self::leaf('plugin activate', [PluginCommand::class, 'activate'], $early);
+        self::leaf('plugin deactivate', [PluginCommand::class, 'deactivate'], $early);
         self::leaf('theme list', [ThemeCommand::class, 'list'], $early);
         self::leaf('cache flush', [CacheCommand::class, 'flush'], $early);
         self::replace('search-replace', SearchReplaceCommand::class, $early);
