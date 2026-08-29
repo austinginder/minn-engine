@@ -42,6 +42,7 @@ use Minn\Http\Router;
 use Minn\Media\Images;
 use Minn\Media\Uploads;
 use Minn\RestError;
+use Minn\Runtime\Runtime;
 
 /**
  * The REST API: wires the controllers for one request and dispatches a
@@ -151,7 +152,14 @@ final readonly class Api
     {
         $request = $this->request->withPath('/' . trim($route, '/'));
         try {
-            return $this->router->dispatch($request) ?? Reply::error(RestError::noRoute());
+            $response = $this->router->dispatch($request);
+            if ($response === null && Runtime::booted()) {
+                $response = RuntimeRoutes::dispatch($request);
+            }
+            if ($response !== null && Runtime::booted() && $request->path === '/') {
+                $response = RuntimeRoutes::mergeIndex($response);
+            }
+            return $response ?? Reply::error(RestError::noRoute());
         } catch (RestError $error) {
             return Reply::error($error);
         }

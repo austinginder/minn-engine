@@ -51,3 +51,25 @@ add_shortcode('minn_test', static function ($atts) {
 add_action('wp_footer', static function () {
     echo '<!-- minn-test-plugin footer: ' . esc_html(wp_get_theme()->get('Name')) . ' -->' . "\n";
 });
+
+// A REST route of its own, answered on both stacks from the same code.
+add_action('rest_api_init', static function () {
+    register_rest_route('minn-test/v1', '/echo', [
+        [
+            'methods' => 'GET',
+            'callback' => static fn (WP_REST_Request $request) => ['echo' => $request->get_param('word'), 'n' => $request->get_param('n'), 'user' => get_current_user_id(), 'title' => get_the_title(1)],
+            'permission_callback' => '__return_true',
+            'args' => ['word' => ['required' => true, 'type' => 'string'], 'n' => ['type' => 'integer', 'default' => 1, 'minimum' => 1, 'maximum' => 5]],
+        ],
+        [
+            'methods' => 'POST',
+            'callback' => static fn (WP_REST_Request $request) => new WP_REST_Response(['made' => $request->get_param('word')], 201),
+            'permission_callback' => static fn () => current_user_can('edit_posts'),
+        ],
+    ]);
+    register_rest_route('minn-test/v1', '/items/(?P<id>\d+)', [
+        'methods' => 'GET',
+        'callback' => static fn (WP_REST_Request $request) => rest_ensure_response(['id' => (int) $request['id'], 'exists' => get_post((int) $request['id']) !== null]),
+        'permission_callback' => '__return_true',
+    ]);
+});

@@ -28,7 +28,8 @@ $cleanup = static function (): void {
     }
     wp_clear_scheduled_hook('minn_probe_hook', ['a']);
     wp_clear_scheduled_hook('minn_probe_hook');
-    wp_clear_scheduled_hook('minn_probe_single');
+    wp_unschedule_hook('minn_probe_single');
+    wp_unschedule_hook('minn_probe_hook');
     wp_unschedule_hook('minn_probe_multi');
     delete_option('minn_probe_widget');
     $GLOBALS['wpdb']->query('DROP TABLE IF EXISTS ' . $GLOBALS['wpdb']->prefix . 'minn_probe');
@@ -117,7 +118,7 @@ $say('wp_schedule_event duplicate', [wp_schedule_event($ts + 60, 'hourly', 'minn
 $say('wp_schedule_event bad schedule', [wp_schedule_event($ts, 'nope', 'minn_probe_hook'), $kind(wp_schedule_event($ts, 'nope', 'minn_probe_hook', [], true))]);
 $say('wp_get_scheduled_event', (static function () use ($ts) { $e = wp_get_scheduled_event('minn_probe_hook', ['a']); return [get_class($e), get_object_vars($e) == ['hook' => 'minn_probe_hook', 'timestamp' => $ts, 'schedule' => 'hourly', 'args' => ['a'], 'interval' => 3600], array_keys(get_object_vars($e)), wp_get_scheduled_event('minn_probe_hook')]; })());
 $say('cron option entry', (static function () use ($ts) { $c = get_option('cron'); return [$c[$ts]['minn_probe_hook'][md5(serialize(['a']))] ?? null, array_keys($c[$ts]['minn_probe_hook'])]; })());
-$say('wp_schedule_single_event', [wp_schedule_single_event($ts + 120, 'minn_probe_single', ['b']), wp_next_scheduled('minn_probe_single', ['b']) === $ts + 120, wp_get_schedule('minn_probe_single', ['b']), wp_schedule_single_event($ts + 130, 'minn_probe_single', ['b']), wp_schedule_single_event($ts + 20000, 'minn_probe_single', ['b']), get_object_vars(wp_get_scheduled_event('minn_probe_single', ['b']))]);
+$say('wp_schedule_single_event', [wp_schedule_single_event($ts + 120, 'minn_probe_single', ['b']), wp_next_scheduled('minn_probe_single', ['b']) === $ts + 120, wp_get_schedule('minn_probe_single', ['b']), wp_schedule_single_event($ts + 130, 'minn_probe_single', ['b']), wp_schedule_single_event($ts + 20000, 'minn_probe_single', ['b']), (static function () use ($ts) { $e = get_object_vars(wp_get_scheduled_event('minn_probe_single', ['b'])); $e['timestamp'] = $e['timestamp'] === $ts + 120; return $e; })()]);
 $say('wp_reschedule_event', [wp_reschedule_event($ts, 'hourly', 'minn_probe_hook', ['a']), wp_next_scheduled('minn_probe_hook', ['a']) > $ts]);
 $say('wp_unschedule_event', [wp_unschedule_event(wp_next_scheduled('minn_probe_hook', ['a']), 'minn_probe_hook', ['a']), wp_next_scheduled('minn_probe_hook', ['a']) === $ts + 60, wp_unschedule_event($ts, 'minn_probe_hook', ['a']), $kind(wp_unschedule_event($ts, 'minn_probe_hook', ['a'], true))]);
 wp_schedule_event($ts, 'daily', 'minn_probe_multi', [1]);

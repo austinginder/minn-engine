@@ -482,18 +482,4 @@ function _wp_to_kebab_case($input_string)
     return strtolower($string);
 }
 
-function rest_sanitize_boolean($value)
-{
-    if (is_string($value)) {
-        $value = strtolower($value);
-        if (in_array($value, ['false', '0'], true)) {
-            $value = false;
-        }
-    }
-    return (bool) $value;
-}
 
-function rest_authorization_required_code()
-{
-    return is_user_logged_in() ? 403 : 401;
-}

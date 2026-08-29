@@ -1125,3 +1125,9 @@ function wp_replace_in_html_tags($haystack, $replace_pairs)
     }
     return implode('', $parts);
 }
+
+function wp_parse_str($input_string, &$result)
+{
+    parse_str((string) $input_string, $result);
+    $result = apply_filters('wp_parse_str', $result);
+}

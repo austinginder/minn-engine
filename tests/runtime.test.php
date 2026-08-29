@@ -51,6 +51,40 @@ $check('home page carries the marks too', str_contains($home, 'minn-test-plugin-
 [, $feed] = minn_test_fetch($base . '/feed/');
 $check('feed content runs the_content', str_contains($feed, 'minn-test-plugin-content'));
 
+// The plugin's REST routes: engine and reference answer from the same code on the same database.
+$reference = 'http://127.0.0.1:8123';
+$referenceUp = @file_get_contents($reference . '/?rest_route=/', false, stream_context_create(['http' => ['timeout' => 3, 'ignore_errors' => true]])) !== false;
+[$h, $engineEcho] = minn_test_fetch($base . '/wp-json/minn-test/v1/echo?word=hi&n=2');
+$check('plugin route answers on the engine', ($h['status'] ?? 0) === 200 && json_decode($engineEcho, true) === ['echo' => 'hi', 'n' => 2, 'user' => 0, 'title' => 'Hello world!'], substr($engineEcho, 0, 200));
+[$h, $missing] = minn_test_fetch($base . '/wp-json/minn-test/v1/echo');
+$check('missing required parameter is refused as the reference refuses it', ($h['status'] ?? 0) === 400 && (json_decode($missing, true)['code'] ?? '') === 'rest_missing_callback_param', substr($missing, 0, 200));
+[$h, $item] = minn_test_fetch($base . '/wp-json/minn-test/v1/items/1');
+$check('url parameter route', ($h['status'] ?? 0) === 200 && json_decode($item, true) === ['id' => 1, 'exists' => true], substr($item, 0, 200));
+[$h, $denied] = minn_test_fetch($base . '/?rest_route=/minn-test/v1/echo&_method=POST');
+[, $index] = minn_test_fetch($base . '/wp-json/');
+$indexData = json_decode($index, true);
+$check('index lists the plugin namespace and route', in_array('minn-test/v1', $indexData['namespaces'] ?? [], true) && isset($indexData['routes']['/minn-test/v1/echo']), substr($index, 0, 120));
+if ($referenceUp) {
+    foreach (['/minn-test/v1/echo?word=hi&n=2', '/minn-test/v1/echo', '/minn-test/v1/echo?word=hi&n=9', '/minn-test/v1/items/1', '/minn-test/v1/items/999999', '/minn-test/v1/nope', '/minn-test/v1'] as $path) {
+        [$eh, $eb] = minn_test_fetch($base . '/wp-json' . $path);
+        [$rh, $rb] = minn_test_fetch($reference . '/?rest_route=' . rawurlencode(strtok($path, '?')) . (str_contains($path, '?') ? '&' . substr($path, strpos($path, '?') + 1) : ''));
+        // Hosts are masked after decoding: escaped slashes in the raw JSON would hide them from a string replace.
+        $normalise = static function (string $body) use ($reference, $base) {
+            $data = json_decode($body, true);
+            array_walk_recursive($data, static function (&$v) use ($reference, $base): void {
+                if (is_string($v)) {
+                    $v = str_replace([$reference, $base], '{home}', $v);
+                }
+            });
+            return $data;
+        };
+        $diff = minn_test_diff($normalise($eb), $normalise($rb));
+        $check("reference agrees on {$path}", ($eh['status'] ?? 0) === ($rh['status'] ?? 1) && $diff === null, ($eh['status'] ?? 0) . ' vs ' . ($rh['status'] ?? 1) . ' ' . ($diff ?? ''));
+    }
+} else {
+    echo "  --  reference not running on :8123; REST parity rows skipped\n";
+}
+
 update_option('active_plugins', $before);
 [, $off] = minn_test_fetch($base . '/hello-world/');
 $check('deactivated: no marks', !str_contains($off, 'minn-test-plugin'));

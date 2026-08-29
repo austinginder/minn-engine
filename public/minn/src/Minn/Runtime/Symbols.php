@@ -38,22 +38,41 @@ final class Symbols
             $cache[$key] = ['mtime' => $newest, 'count' => count($files), 'scan' => $scan];
             $options->update('minn_runtime_symbols', $cache, 'off');
         }
+        // Only the reference's own interface counts: a function or class the
+        // plugin needs from WordPress. Its own integrations with other plugins
+        // and PHP extensions are its business.
+        $interface = self::interfaceNames();
         $missingFunctions = [];
         foreach ($scan['calls'] as $name) {
-            if (!function_exists($name) && !isset($scan['declared'][strtolower($name)]) && !isset($scan['guarded'][strtolower($name)])) {
+            $lower = strtolower($name);
+            if (isset($interface['functions'][$lower]) && !function_exists($name) && !isset($scan['declared'][$lower]) && !isset($scan['guarded'][$lower])) {
                 $missingFunctions[] = $name;
             }
         }
         $missingClasses = [];
         foreach ($scan['classes'] as $name) {
             $lower = strtolower($name);
-            if (!class_exists($name) && !interface_exists($name) && !trait_exists($name) && !enum_exists($name) && !isset($scan['declaredClasses'][$lower]) && !isset($scan['guarded'][$lower])) {
+            if (isset($interface['classes'][$lower]) && !class_exists($name) && !interface_exists($name) && !trait_exists($name) && !enum_exists($name) && !isset($scan['declaredClasses'][$lower]) && !isset($scan['guarded'][$lower])) {
                 $missingClasses[] = $name;
             }
         }
         sort($missingFunctions);
         sort($missingClasses);
         return ['functions' => $missingFunctions, 'classes' => $missingClasses, 'files' => count($files), 'truncated' => $scan['truncated']];
+    }
+
+    /** @return array{functions: array<string, true>, classes: array<string, true>} lower-cased names of the reference's interface */
+    private static function interfaceNames(): array
+    {
+        static $names = null;
+        if ($names === null) {
+            $data = json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/api-names.json'), true) ?: [];
+            $names = [
+                'functions' => array_fill_keys(array_map('strtolower', $data['functions'] ?? []), true),
+                'classes' => array_fill_keys(array_map('strtolower', $data['classes'] ?? []), true),
+            ];
+        }
+        return $names;
     }
 
     /** @return list<string> */

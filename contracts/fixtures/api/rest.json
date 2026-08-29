@@ -1,0 +1,1299 @@
+[
+    [
+        "register before init",
+        true
+    ],
+    [
+        "rest_get_server",
+        [
+            "WP_REST_Server",
+            1
+        ]
+    ],
+    [
+        "register after init",
+        true
+    ],
+    [
+        "register override",
+        [
+            true,
+            "first",
+            true,
+            "third"
+        ]
+    ],
+    [
+        "register bad",
+        [
+            false,
+            false,
+            true
+        ]
+    ],
+    [
+        "routes registered",
+        [
+            "/minn-probe/v1",
+            "/minn-probe/v1/echo",
+            "/minn-probe/v1/items/(?P<id>\\d+)",
+            "/minn-probe/v1/error",
+            "/minn-probe/v1/error-bare",
+            "/minn-probe/v1/plain",
+            "/minn-probe/v1/null",
+            "/minn-probe/v1/denied",
+            "/minn-probe/v1/denied-error",
+            "/minn-probe/v1/sanitize",
+            "/minn-probe/v1/override",
+            "/minn-probe/v1/early",
+            "/minn-probe/v1/late",
+            "/minn-probe/v1/no-slash"
+        ]
+    ],
+    [
+        "routes shape",
+        [
+            [
+                [
+                    "methods",
+                    "accept_json",
+                    "accept_raw",
+                    "show_in_index",
+                    "args",
+                    "callback",
+                    "permission_callback"
+                ],
+                {
+                    "GET": true
+                },
+                [
+                    "x",
+                    "n",
+                    "e",
+                    "b",
+                    "arr"
+                ]
+            ],
+            [
+                [
+                    "methods",
+                    "accept_json",
+                    "accept_raw",
+                    "show_in_index",
+                    "args",
+                    "callback",
+                    "permission_callback"
+                ],
+                {
+                    "POST": true
+                },
+                []
+            ]
+        ]
+    ],
+    [
+        "get_namespaces has",
+        true
+    ],
+    [
+        "route_options",
+        {
+            "namespace": "minn-probe/v1"
+        }
+    ],
+    [
+        "echo get",
+        {
+            "class": "WP_REST_Response",
+            "status": 200,
+            "data": {
+                "got": "hello",
+                "n": 3,
+                "method": "GET",
+                "route": "/minn-probe/v1/echo",
+                "params": {
+                    "n": 3,
+                    "x": "hello",
+                    "extra": "kept"
+                },
+                "url": [],
+                "query": {
+                    "x": "hello",
+                    "n": 3,
+                    "extra": "kept"
+                },
+                "has": false,
+                "json": null,
+                "header": "h",
+                "attrs": [
+                    "methods",
+                    "accept_json",
+                    "accept_raw",
+                    "show_in_index",
+                    "args",
+                    "callback",
+                    "permission_callback"
+                ]
+            },
+            "headers": [],
+            "links": []
+        }
+    ],
+    [
+        "echo get matched",
+        [
+            "/minn-probe/v1/echo",
+            [
+                "methods",
+                "accept_json",
+                "accept_raw",
+                "show_in_index",
+                "args",
+                "callback",
+                "permission_callback"
+            ]
+        ]
+    ],
+    [
+        "echo missing required",
+        {
+            "class": "WP_REST_Response",
+            "status": 400,
+            "data": {
+                "code": "rest_missing_callback_param",
+                "message": "Missing parameter(s): x",
+                "data": {
+                    "status": 400,
+                    "params": [
+                        "x"
+                    ]
+                }
+            },
+            "headers": [],
+            "links": []
+        }
+    ],
+    [
+        "echo out of range",
+        {
+            "class": "WP_REST_Response",
+            "status": 400,
+            "data": {
+                "code": "rest_invalid_param",
+                "message": "Invalid parameter(s): n",
+                "data": {
+                    "status": 400,
+                    "params": {
+                        "n": "n must be between 1 (inclusive) and 10 (inclusive)"
+                    },
+                    "details": {
+                        "n": {
+                            "code": "rest_out_of_bounds",
+                            "message": "n must be between 1 (inclusive) and 10 (inclusive)",
+                            "data": null
+                        }
+                    }
+                }
+            },
+            "headers": [],
+            "links": []
+        }
+    ],
+    [
+        "echo bad enum",
+        {
+            "class": "WP_REST_Response",
+            "status": 200,
+            "data": {
+                "got": "a",
+                "n": 7,
+                "method": "GET",
+                "route": "/minn-probe/v1/echo",
+                "params": {
+                    "n": 7,
+                    "x": "a",
+                    "e": "z"
+                },
+                "url": [],
+                "query": {
+                    "x": "a",
+                    "e": "z"
+                },
+                "has": false,
+                "json": null,
+                "header": null,
+                "attrs": [
+                    "methods",
+                    "accept_json",
+                    "accept_raw",
+                    "show_in_index",
+                    "args",
+                    "callback",
+                    "permission_callback"
+                ]
+            },
+            "headers": [],
+            "links": []
+        }
+    ],
+    [
+        "echo coerced",
+        {
+            "n": 2,
+            "x": "a",
+            "b": false,
+            "arr": [
+                1,
+                2
+            ]
+        }
+    ],
+    [
+        "echo bad boolean",
+        {
+            "class": "WP_REST_Response",
+            "status": 400,
+            "data": {
+                "code": "rest_invalid_param",
+                "message": "Invalid parameter(s): b",
+                "data": {
+                    "status": 400,
+                    "params": {
+                        "b": "b is not of type boolean."
+                    },
+                    "details": {
+                        "b": {
+                            "code": "rest_invalid_type",
+                            "message": "b is not of type boolean.",
+                            "data": {
+                                "param": "b"
+                            }
+                        }
+                    }
+                }
+            },
+            "headers": [],
+            "links": []
+        }
+    ],
+    [
+        "echo no perm callback default",
+        {
+            "class": "WP_REST_Response",
+            "status": 200,
+            "data": true,
+            "headers": [],
+            "links": []
+        }
+    ],
+    [
+        "post denied anon",
+        {
+            "class": "WP_REST_Response",
+            "status": 401,
+            "data": {
+                "code": "rest_forbidden",
+                "message": "Sorry, you are not allowed to do that.",
+                "data": {
+                    "status": 401
+                }
+            },
+            "headers": [],
+            "links": []
+        }
+    ],
+    [
+        "post as admin",
+        {
+            "class": "WP_REST_Response",
+            "status": 201,
+            "data": {
+                "created": "T",
+                "body": {
+                    "title": "T"
+                },
+                "json": null
+            },
+            "headers": {
+                "X-Probe": "yes"
+            },
+            "links": []
+        }
+    ],
+    [
+        "post json",
+        {
+            "class": "WP_REST_Response",
+            "status": 201,
+            "data": {
+                "created": "J",
+                "body": [],
+                "json": {
+                    "title": "J",
+                    "deep": {
+                        "a": 1
+                    }
+                }
+            },
+            "headers": {
+                "X-Probe": "yes"
+            },
+            "links": []
+        }
+    ],
+    [
+        "post bad json",
+        {
+            "class": "WP_REST_Response",
+            "status": 400,
+            "data": {
+                "code": "rest_invalid_json",
+                "message": "Invalid JSON body passed.",
+                "data": {
+                    "status": 400,
+                    "json_error_code": 4,
+                    "json_error_message": "Syntax error"
+                }
+            },
+            "headers": [],
+            "links": []
+        }
+    ],
+    [
+        "items url param",
+        {
+            "class": "WP_REST_Response",
+            "status": 200,
+            "data": {
+                "id": 42,
+                "url": {
+                    "id": "42"
+                }
+            },
+            "headers": [],
+            "links": []
+        }
+    ],
+    [
+        "items post",
+        {
+            "class": "WP_REST_Response",
+            "status": 200,
+            "data": {
+                "id": 42,
+                "url": {
+                    "id": "42"
+                }
+            },
+            "headers": [],
+            "links": []
+        }
+    ],
+    [
+        "items delete",
+        {
+            "class": "WP_REST_Response",
+            "status": 404,
+            "data": {
+                "code": "rest_no_route",
+                "message": "No route was found matching the URL and request method.",
+                "data": {
+                    "status": 404
+                }
+            },
+            "headers": [],
+            "links": []
+        }
+    ],
+    [
+        "items no match",
+        {
+            "class": "WP_REST_Response",
+            "status": 404,
+            "data": {
+                "code": "rest_no_route",
+                "message": "No route was found matching the URL and request method.",
+                "data": {
+                    "status": 404
+                }
+            },
+            "headers": [],
+            "links": []
+        }
+    ],
+    [
+        "no route",
+        {
+            "class": "WP_REST_Response",
+            "status": 404,
+            "data": {
+                "code": "rest_no_route",
+                "message": "No route was found matching the URL and request method.",
+                "data": {
+                    "status": 404
+                }
+            },
+            "headers": [],
+            "links": []
+        }
+    ],
+    [
+        "error with status",
+        {
+            "class": "WP_REST_Response",
+            "status": 418,
+            "data": {
+                "code": "probe_error",
+                "message": "It broke.",
+                "data": {
+                    "status": 418,
+                    "extra": 1
+                }
+            },
+            "headers": [],
+            "links": []
+        }
+    ],
+    [
+        "error bare",
+        {
+            "class": "WP_REST_Response",
+            "status": 500,
+            "data": {
+                "code": "bare_error",
+                "message": "No status.",
+                "data": null
+            },
+            "headers": [],
+            "links": []
+        }
+    ],
+    [
+        "plain",
+        {
+            "class": "WP_REST_Response",
+            "status": 200,
+            "data": "plain string",
+            "headers": [],
+            "links": []
+        }
+    ],
+    [
+        "null",
+        {
+            "class": "WP_REST_Response",
+            "status": 200,
+            "data": null,
+            "headers": [],
+            "links": []
+        }
+    ],
+    [
+        "denied",
+        {
+            "class": "WP_REST_Response",
+            "status": 401,
+            "data": {
+                "code": "rest_forbidden",
+                "message": "Sorry, you are not allowed to do that.",
+                "data": {
+                    "status": 401
+                }
+            },
+            "headers": [],
+            "links": []
+        }
+    ],
+    [
+        "denied logged in",
+        {
+            "class": "WP_REST_Response",
+            "status": 403,
+            "data": {
+                "code": "rest_forbidden",
+                "message": "Sorry, you are not allowed to do that.",
+                "data": {
+                    "status": 403
+                }
+            },
+            "headers": [],
+            "links": []
+        }
+    ],
+    [
+        "denied error",
+        {
+            "class": "WP_REST_Response",
+            "status": 403,
+            "data": {
+                "code": "custom_denied",
+                "message": "Custom denied.",
+                "data": {
+                    "status": 403
+                }
+            },
+            "headers": [],
+            "links": []
+        }
+    ],
+    [
+        "sanitize",
+        {
+            "class": "WP_REST_Response",
+            "status": 200,
+            "data": {
+                "s": "LOW",
+                "v": "ok"
+            },
+            "headers": [],
+            "links": []
+        }
+    ],
+    [
+        "validate",
+        {
+            "class": "WP_REST_Response",
+            "status": 400,
+            "data": {
+                "code": "rest_invalid_param",
+                "message": "Invalid parameter(s): v",
+                "data": {
+                    "status": 400,
+                    "params": {
+                        "v": "v must be ok."
+                    },
+                    "details": {
+                        "v": {
+                            "code": "bad_v",
+                            "message": "v must be ok.",
+                            "data": null
+                        }
+                    }
+                }
+            },
+            "headers": [],
+            "links": []
+        }
+    ],
+    [
+        "late route",
+        {
+            "class": "WP_REST_Response",
+            "status": 200,
+            "data": "late",
+            "headers": [],
+            "links": []
+        }
+    ],
+    [
+        "namespace index",
+        {
+            "class": "WP_REST_Response",
+            "status": 200,
+            "data": {
+                "namespace": "minn-probe/v1",
+                "routes": {
+                    "/minn-probe/v1": [
+                        "minn-probe/v1",
+                        [
+                            "GET"
+                        ],
+                        [
+                            [
+                                [
+                                    "GET"
+                                ],
+                                [
+                                    "namespace",
+                                    "context"
+                                ]
+                            ]
+                        ]
+                    ],
+                    "/minn-probe/v1/echo": [
+                        "minn-probe/v1",
+                        [
+                            "GET",
+                            "POST"
+                        ],
+                        [
+                            [
+                                [
+                                    "GET"
+                                ],
+                                [
+                                    "x",
+                                    "n",
+                                    "e",
+                                    "b",
+                                    "arr"
+                                ]
+                            ],
+                            [
+                                [
+                                    "POST"
+                                ],
+                                []
+                            ]
+                        ]
+                    ],
+                    "/minn-probe/v1/items/(?P<id>\\d+)": [
+                        "minn-probe/v1",
+                        [
+                            "GET",
+                            "POST"
+                        ],
+                        [
+                            [
+                                [
+                                    "GET",
+                                    "POST"
+                                ],
+                                []
+                            ]
+                        ]
+                    ],
+                    "/minn-probe/v1/error": [
+                        "minn-probe/v1",
+                        [
+                            "GET"
+                        ],
+                        [
+                            [
+                                [
+                                    "GET"
+                                ],
+                                []
+                            ]
+                        ]
+                    ],
+                    "/minn-probe/v1/error-bare": [
+                        "minn-probe/v1",
+                        [
+                            "GET"
+                        ],
+                        [
+                            [
+                                [
+                                    "GET"
+                                ],
+                                []
+                            ]
+                        ]
+                    ],
+                    "/minn-probe/v1/plain": [
+                        "minn-probe/v1",
+                        [
+                            "GET"
+                        ],
+                        [
+                            [
+                                [
+                                    "GET"
+                                ],
+                                []
+                            ]
+                        ]
+                    ],
+                    "/minn-probe/v1/null": [
+                        "minn-probe/v1",
+                        [
+                            "GET"
+                        ],
+                        [
+                            [
+                                [
+                                    "GET"
+                                ],
+                                []
+                            ]
+                        ]
+                    ],
+                    "/minn-probe/v1/denied": [
+                        "minn-probe/v1",
+                        [
+                            "GET"
+                        ],
+                        [
+                            [
+                                [
+                                    "GET"
+                                ],
+                                []
+                            ]
+                        ]
+                    ],
+                    "/minn-probe/v1/denied-error": [
+                        "minn-probe/v1",
+                        [
+                            "GET"
+                        ],
+                        [
+                            [
+                                [
+                                    "GET"
+                                ],
+                                []
+                            ]
+                        ]
+                    ],
+                    "/minn-probe/v1/sanitize": [
+                        "minn-probe/v1",
+                        [
+                            "GET"
+                        ],
+                        [
+                            [
+                                [
+                                    "GET"
+                                ],
+                                [
+                                    "s",
+                                    "v"
+                                ]
+                            ]
+                        ]
+                    ],
+                    "/minn-probe/v1/override": [
+                        "minn-probe/v1",
+                        [
+                            "GET"
+                        ],
+                        [
+                            [
+                                [
+                                    "GET"
+                                ],
+                                []
+                            ]
+                        ]
+                    ],
+                    "/minn-probe/v1/early": [
+                        "minn-probe/v1",
+                        [
+                            "GET"
+                        ],
+                        [
+                            [
+                                [
+                                    "GET"
+                                ],
+                                []
+                            ]
+                        ]
+                    ],
+                    "/minn-probe/v1/late": [
+                        "minn-probe/v1",
+                        [
+                            "GET"
+                        ],
+                        [
+                            [
+                                [
+                                    "GET"
+                                ],
+                                []
+                            ]
+                        ]
+                    ],
+                    "/minn-probe/v1/no-slash": [
+                        "minn-probe/v1",
+                        [
+                            "GET"
+                        ],
+                        [
+                            [
+                                [
+                                    "GET"
+                                ],
+                                []
+                            ]
+                        ]
+                    ]
+                },
+                "_links": []
+            },
+            "headers": [],
+            "links": {
+                "up": [
+                    {
+                        "href": "https://minn-engine.localhost/wp-json/",
+                        "attributes": []
+                    }
+                ]
+            }
+        }
+    ],
+    [
+        "root index namespaces",
+        true
+    ],
+    [
+        "root index route entry",
+        [
+            "minn-probe/v1",
+            [
+                "GET",
+                "POST"
+            ],
+            [
+                [
+                    [
+                        "GET"
+                    ],
+                    [
+                        "x",
+                        "n",
+                        "e",
+                        "b",
+                        "arr"
+                    ],
+                    {
+                        "type": "integer",
+                        "default": 7,
+                        "minimum": 1,
+                        "maximum": 10,
+                        "required": false
+                    }
+                ],
+                [
+                    [
+                        "POST"
+                    ],
+                    [],
+                    null
+                ]
+            ],
+            [
+                "self"
+            ]
+        ]
+    ],
+    [
+        "rest_ensure_response",
+        [
+            "WP_REST_Response",
+            "x",
+            200,
+            "error:e",
+            "WP_REST_Response"
+        ]
+    ],
+    [
+        "WP_REST_Request shapes",
+        [
+            "GET",
+            "/x/y",
+            {
+                "a": {
+                    "default": 1
+                }
+            },
+            {
+                "p": "v",
+                "q": "w"
+            },
+            true,
+            null,
+            null,
+            true,
+            null,
+            false,
+            [],
+            null,
+            [],
+            [],
+            []
+        ]
+    ],
+    [
+        "WP_REST_Request from_url",
+        [
+            "WP_REST_Request",
+            "/minn-probe/v1/echo",
+            {
+                "x": "1"
+            },
+            false
+        ]
+    ],
+    [
+        "WP_REST_Request headers",
+        [
+            "text/plain",
+            "a,b,c",
+            [
+                "a",
+                "b",
+                "c"
+            ],
+            {
+                "content_type": [
+                    "text/plain"
+                ],
+                "x_multi": [
+                    "a",
+                    "b",
+                    "c"
+                ]
+            },
+            "content_type"
+        ]
+    ],
+    [
+        "WP_REST_Request param order",
+        [
+            "body",
+            "def"
+        ]
+    ],
+    [
+        "WP_REST_Request json",
+        [
+            {
+                "a": 1
+            },
+            1,
+            {
+                "value": "application/json",
+                "type": "application",
+                "subtype": "json",
+                "parameters": "charset=utf-8"
+            },
+            true
+        ]
+    ],
+    [
+        "WP_REST_Response",
+        [
+            201,
+            {
+                "a": 1
+            },
+            {
+                "X-A": "1",
+                "X-B": "2"
+            },
+            {
+                "self": [
+                    {
+                        "href": "https://x.test/s",
+                        "attributes": {
+                            "embeddable": true
+                        }
+                    }
+                ],
+                "collection": [
+                    {
+                        "href": "https://x.test/c",
+                        "attributes": []
+                    }
+                ],
+                "up": [
+                    {
+                        "href": "https://x.test/u",
+                        "attributes": []
+                    }
+                ]
+            },
+            false,
+            null,
+            null,
+            "<https://x.test/alt>; rel=\"alternate\"; type=text/html",
+            [
+                {
+                    "name": "wp",
+                    "href": "https://api.w.org/{rel}",
+                    "templated": true
+                }
+            ]
+        ]
+    ],
+    [
+        "WP_REST_Response error",
+        [
+            true,
+            "WP_Error",
+            "x",
+            {
+                "status": 400
+            }
+        ]
+    ],
+    [
+        "response_to_data",
+        [
+            {
+                "a": 1,
+                "_links": {
+                    "self": [
+                        {
+                            "href": "https://x.test/s"
+                        }
+                    ],
+                    "wp:term": [
+                        {
+                            "taxonomy": "category",
+                            "href": "https://x.test/t"
+                        }
+                    ],
+                    "curies": [
+                        {
+                            "name": "wp",
+                            "href": "https://api.w.org/{rel}",
+                            "templated": true
+                        }
+                    ]
+                }
+            },
+            {
+                "a": 1,
+                "_links": {
+                    "self": [
+                        {
+                            "href": "https://x.test/s"
+                        }
+                    ],
+                    "wp:term": [
+                        {
+                            "taxonomy": "category",
+                            "href": "https://x.test/t"
+                        }
+                    ],
+                    "curies": [
+                        {
+                            "name": "wp",
+                            "href": "https://api.w.org/{rel}",
+                            "templated": true
+                        }
+                    ]
+                }
+            }
+        ]
+    ],
+    [
+        "error_to_response",
+        [
+            402,
+            {
+                "code": "c1",
+                "message": "m1",
+                "data": {
+                    "status": 402,
+                    "x": 1
+                },
+                "additional_errors": [
+                    {
+                        "code": "c2",
+                        "message": "m2",
+                        "data": null
+                    }
+                ]
+            }
+        ]
+    ],
+    [
+        "rest_convert_error_to_response",
+        [
+            500,
+            {
+                "code": "c",
+                "message": "m",
+                "data": "string-data"
+            }
+        ]
+    ],
+    [
+        "rest_validate_value_from_schema",
+        [
+            true,
+            "error:rest_invalid_type",
+            "p is not of type integer.",
+            true,
+            "error:rest_invalid_type",
+            true,
+            "p is not one of a and b.",
+            true,
+            true,
+            "p must be at least 2 characters long.",
+            true,
+            "Invalid email address.",
+            "p must be less than or equal to 10",
+            true,
+            true
+        ]
+    ],
+    [
+        "rest_sanitize_value_from_schema",
+        [
+            5,
+            5.5,
+            false,
+            [
+                1,
+                2
+            ],
+            {
+                "b": 1,
+                "z": "x"
+            },
+            {
+                "b": 1
+            },
+            " <b>x</b> ",
+            "http://x",
+            "A@B.co",
+            "5",
+            "x"
+        ]
+    ],
+    [
+        "rest helpers",
+        [
+            true,
+            false,
+            true,
+            false,
+            true,
+            true,
+            true,
+            false,
+            {
+                "a": 2,
+                "b": 1
+            },
+            1577934245,
+            1577934245,
+            false,
+            [
+                "2020-01-02 03:04:05",
+                "2020-01-02 03:04:05"
+            ],
+            [
+                "2020-01-02 03:04:05",
+                "2020-01-02 03:04:05"
+            ]
+        ]
+    ],
+    [
+        "rest_get_route_for",
+        [
+            "/wp/v2/posts/1",
+            "/wp/v2/pages/2",
+            "",
+            "/wp/v2/categories/1",
+            "/wp/v2/tags/2",
+            "/wp/v2/posts",
+            "/wp/v2/categories"
+        ]
+    ],
+    [
+        "register_rest_field",
+        [
+            "pf:1",
+            true,
+            [
+                "get_callback",
+                "update_callback",
+                "schema"
+            ]
+        ]
+    ],
+    [
+        "rest_url",
+        [
+            "{home}/wp-json/minn-probe/v1/echo",
+            "{home}/wp-json/minn-probe/v1/echo"
+        ]
+    ],
+    [
+        "WP_REST_Controller",
+        [
+            {
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "sanitize_callback": "sanitize_key",
+                    "validate_callback": "rest_validate_request_arg",
+                    "enum": [
+                        "view",
+                        "edit"
+                    ]
+                },
+                "page": {
+                    "description": "Current page of the collection.",
+                    "type": "integer",
+                    "default": 1,
+                    "sanitize_callback": "absint",
+                    "validate_callback": "rest_validate_request_arg",
+                    "minimum": 1
+                },
+                "per_page": {
+                    "description": "Maximum number of items to be returned in result set.",
+                    "type": "integer",
+                    "default": 10,
+                    "minimum": 1,
+                    "maximum": 100,
+                    "sanitize_callback": "absint",
+                    "validate_callback": "rest_validate_request_arg"
+                },
+                "search": {
+                    "description": "Limit results to those matching a string.",
+                    "type": "string",
+                    "sanitize_callback": "sanitize_text_field",
+                    "validate_callback": "rest_validate_request_arg"
+                }
+            },
+            {
+                "description": "Scope under which the request is made; determines fields present in response.",
+                "type": "string",
+                "sanitize_callback": "sanitize_key",
+                "validate_callback": "rest_validate_request_arg",
+                "enum": [
+                    "view",
+                    "edit"
+                ],
+                "default": "view"
+            },
+            [
+                "$schema",
+                "title",
+                "type",
+                "properties"
+            ],
+            {
+                "id": 1
+            },
+            [
+                "id",
+                "secret",
+                "_links"
+            ],
+            {
+                "id": {
+                    "validate_callback": "rest_validate_request_arg",
+                    "sanitize_callback": "rest_sanitize_request_arg",
+                    "type": "integer"
+                },
+                "secret": {
+                    "validate_callback": "rest_validate_request_arg",
+                    "sanitize_callback": "rest_sanitize_request_arg",
+                    "type": "string"
+                }
+            },
+            {
+                "a": 1
+            }
+        ]
+    ],
+    [
+        "server constants",
+        [
+            "GET",
+            "POST",
+            "POST, PUT, PATCH",
+            "DELETE",
+            "GET, POST, PUT, PATCH, DELETE"
+        ]
+    ]
+]

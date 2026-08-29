@@ -88,16 +88,44 @@ final readonly class Engine
         }
     }
 
+    /**
+     * The WordPress runtime for a REST request: the caller the REST layer
+     * resolved is the reader, plugins load, and rest_api_init fires so
+     * their routes answer after the engine's own.
+     */
+    private function bootRuntimeForRest(Db $db, Request $request, Api $api): void
+    {
+        $site = new Site($db);
+        $capabilities = $api->caller()->capabilities();
+        $readerId = $api->caller()->id();
+        Reader::set(new Reader(
+            $readerId,
+            $readerId > 0 && $capabilities->can($readerId, 'read_private_posts'),
+            $readerId > 0 && $capabilities->can($readerId, 'read_private_pages'),
+            static fn (int $postId): bool => $readerId > 0 && $capabilities->can($readerId, 'edit_post', $postId),
+            '',
+            $api->caller()->session()?->token ?? '',
+            $readerId > 0 ? $capabilities->rolesOf($readerId) : [],
+        ));
+        $runtime = Runtime::boot(new Runtime($db, $site, $request, Reader::current(), $capabilities, $this->engineDir, ABSPATH, $this->version));
+        $runtime->set('permalinks', \Minn\Front\Permalinks::fromDb($db));
+        $runtime->set('block_theme', Theme::active($site, \Minn\Front\Permalinks::fromDb($db), ABSPATH . 'wp-content/themes') !== null);
+        Plugins::load($runtime);
+        Runtime::hooks()->action('rest_api_init', [\rest_get_server()]);
+    }
+
     private function respond(Db $db): never
     {
         $request = Request::fromGlobals();
 
         $route = $request->query('rest_route');
-        if ($route !== null) {
-            Api::forRequest($db, $request)->handle($route)->send();
+        if ($route === null && str_starts_with($request->path, '/wp-json')) {
+            $route = substr($request->path, strlen('/wp-json')) ?: '/';
         }
-        if (str_starts_with($request->path, '/wp-json')) {
-            Api::forRequest($db, $request)->handle(substr($request->path, strlen('/wp-json')) ?: '/')->send();
+        if ($route !== null) {
+            $api = Api::forRequest($db, $request);
+            $this->bootRuntimeForRest($db, $request, $api);
+            $api->handle($route)->send();
         }
 
         $users = new Users($db);
