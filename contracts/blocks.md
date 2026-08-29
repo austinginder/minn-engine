@@ -76,6 +76,6 @@ texturize.
 - Blocks not in the battery render as stored markup with no additions:
   audio, video, file, embeds (oEmbed needs a network fetch), social links,
   navigation, the post/site template blocks, footnotes, calendar, RSS.
-- Style-variation numbering is a fixed registry, not theme data.
+- Style-variation numbering is a fixed registry, not theme data. Observed on the Minn site theme (`site/minn-site`): a theme that registers no `wide` separator variation gets no `is-style-wide--N` from the reference, so the registry over-numbers there; deriving it from theme data is the fix.
 - Front-end rendering (milestone 20) also needs the container stylesheets these
   classes point at and the loading-attribute rules for above-the-fold images.

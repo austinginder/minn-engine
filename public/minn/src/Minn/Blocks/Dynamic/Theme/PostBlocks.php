@@ -102,7 +102,8 @@ final readonly class PostBlocks
             $block,
             styleFirst: true,
             extraClasses: array_values(array_filter(['entry-content', $align])),
-            trailingClasses: isset($block->attrs['layout']) ? Layout::classes('post-content', $block->attrs) : [],
+            // Without a layout attribute the block still carries its default flow layout classes.
+            trailingClasses: Layout::classes('post-content', $block->attrs),
         ) . $content . '</div>';
     }
 

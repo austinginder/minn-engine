@@ -16,11 +16,12 @@ use Minn\Content\Posts;
 use Minn\Content\Site;
 use Minn\Content\Texturize;
 use Minn\Db;
+use Minn\Extension\Extensions;
 use Minn\Front\Permalinks;
 use Minn\Media\Uploads;
-use Minn\Support\Html;
-use Minn\Extension\Extensions;
 use Minn\Runtime\BlockFilters;
+use Minn\Support\Html;
+use Minn\Theme\Theme;
 
 /**
  * Renders a block tree the way the reference renders post_content:
@@ -88,6 +89,8 @@ final class Renderer
         $uploads = new Uploads($site, $permalinks, ABSPATH . 'wp-content/uploads');
         $posts = new Posts($db);
         $renderer = new self(new ImageTags($posts, $uploads));
+        $theme = Theme::active($site, $permalinks, ABSPATH . 'wp-content/themes');
+        Layout::rootPaddingAware((bool) ($theme?->json()['settings']['useRootPaddingAwareAlignments'] ?? false));
         $renderer->registerDynamic('core/latest-posts', (new LatestPosts($db, $site, $permalinks))->render(...));
         $renderer->registerDynamic('core/categories', (new Categories($db, $permalinks))->render(...));
         $renderer->registerDynamic('core/archives', (new Archives($db, $permalinks))->render(...));

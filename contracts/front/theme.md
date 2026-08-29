@@ -294,3 +294,26 @@ element).
 - Pattern PHP beyond the interpreted grammar renders as nothing.
 - The queried-object id quirk in `page-list` is reproduced as observed; a fix upstream
   would be a divergence to re-capture.
+
+## What the Minn site theme taught (`site/minn-site`, `docs/site.md`)
+
+A second block theme rendered at parity, this one without twentytwentyfive's
+settings, surfaced four facts (`tests/site.test.php` pins them):
+
+- **Skip link target.** When the first `<main>` in the template already carries an
+  `id`, the skip link points at that id and nothing is injected; `wp--skip-link--target`
+  is only added to a `<main>` without one.
+- **`has-global-padding`** is added to constrained containers only under a theme whose
+  theme.json sets `settings.useRootPaddingAwareAlignments`; without it the class is absent
+  everywhere, in templates and in REST-rendered content alike (`Layout::rootPaddingAware`,
+  set from the active theme when the renderer is built).
+- **`post-content` without a layout attribute** still carries `is-layout-flow
+  wp-block-post-content-is-layout-flow` (the block's default layout), and no container.
+- **The rendered template is texturized as a whole** after the blocks (straight quotes in
+  the theme's own `core/html` markup curl, `--` becomes an em dash, `6'2"` gets its prime);
+  content that arrived already texturized is unchanged by the second pass.
+
+Open under this theme: a `core/separator` with `is-style-wide` gets no numbered
+companion on the reference because the theme registers no such variation, while the
+engine's fixed registry still numbers it (see `contracts/blocks.md`, style-variation
+numbering). The site suite does not visit the block battery for that reason.

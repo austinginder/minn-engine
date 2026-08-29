@@ -17,6 +17,14 @@ namespace Minn\Blocks;
  */
 final class Layout
 {
+    /** Whether the active theme opts into root-padding-aware alignments (theme.json settings.useRootPaddingAwareAlignments). */
+    private static bool $rootPaddingAware = true;
+
+    public static function rootPaddingAware(bool $aware): void
+    {
+        self::$rootPaddingAware = $aware;
+    }
+
     /** @return list<string> */
     public static function classes(string $blockSlug, array $attrs, string $defaultType = 'flow', bool $alwaysContainer = false): array
     {
@@ -38,7 +46,10 @@ final class Layout
                 $classes[] = 'is-nowrap';
             }
         }
-        if ($type === 'constrained') {
+        // Constrained containers carry has-global-padding only under a theme
+        // that opts into root-padding-aware alignments; observed on the reference
+        // with and without the setting.
+        if ($type === 'constrained' && self::$rootPaddingAware) {
             $classes[] = 'has-global-padding';
         }
         $classes[] = 'is-layout-' . $type;

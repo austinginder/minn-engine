@@ -16,19 +16,20 @@ use Minn\Blocks\RenderState;
 use Minn\Content\Blocks;
 use Minn\Content\Comments as CommentStore;
 use Minn\Content\Posts;
+use Minn\Content\Reader;
 use Minn\Content\Site;
+use Minn\Content\Texturize;
 use Minn\Content\Users;
 use Minn\Db;
+use Minn\Extension\Extensions;
+use Minn\Front\AdminBar;
 use Minn\Front\Kind;
 use Minn\Front\Permalinks;
-use Minn\Front\AdminBar;
 use Minn\Front\Resolution;
 use Minn\Front\Resolver;
+use Minn\Runtime\Runtime;
 use Minn\Support\Html;
 use Minn\Support\Serialized;
-use Minn\Content\Reader;
-use Minn\Extension\Extensions;
-use Minn\Runtime\Runtime;
 
 /**
  * A whole page from the active block theme: the template the resolution
@@ -126,8 +127,18 @@ final readonly class PageRenderer
         RenderState::reset();
         $query = $this->mainQuery($resolution);
         $this->renderer->withContext(new Context($resolution, $query['posts'], $query['total'], $this->perPage, true));
-        $body = $this->renderer->renderBlocks(Parser::parse($template['markup']));
-        $body = preg_replace('/<main(\s|>)/', '<main id="wp--skip-link--target"$1', $body, 1);
+        // The reference texturizes the rendered template as a whole, after the
+        // blocks: straight quotes in a theme's own markup curl, content that was
+        // texturized on its way in is left alone.
+        $body = Texturize::html($this->renderer->renderBlocks(Parser::parse($template['markup'])));
+        // The skip link points at the first <main>: at its own id when the
+        // template gave it one, otherwise at the id the reference injects.
+        $skipTarget = 'wp--skip-link--target';
+        if (preg_match('/<main\b[^>]*\sid="([^"]+)"/', $body, $m)) {
+            $skipTarget = $m[1];
+        } else {
+            $body = preg_replace('/<main(\s|>)/', '<main id="wp--skip-link--target"$1', $body, 1);
+        }
         $bodyClass = implode(' ', $this->bodyClasses($resolution, $coreClasses));
         // The stylesheet comes after the body: it lists the containers and
         // variations that rendering discovered.
@@ -161,7 +172,7 @@ final readonly class PageRenderer
             . ($bar === null ? '' : $bar->head())
             . '</head>' . "\n"
             . '<body class="' . Html::attr($bodyClass) . '">' . "\n"
-            . '<a class="skip-link screen-reader-text" id="wp-skip-link" href="#wp--skip-link--target">Skip to content</a>'
+            . '<a class="skip-link screen-reader-text" id="wp-skip-link" href="#' . Html::attr($skipTarget) . '">Skip to content</a>'
             . '<div class="wp-site-blocks">' . $body . '</div>' . "\n"
             . (Extensions::seams()?->renderFooter() ?? '')
             . (Runtime::booted() ? Runtime::capture('wp_footer') : '')
