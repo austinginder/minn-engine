@@ -2,6 +2,7 @@
 /** Attachments, image sizes, and the media helpers. Behaviour from contracts/fixtures/api/media.json. */
 
 use Minn\Media\Metadata;
+use Minn\Blocks\RenderState;
 use Minn\Runtime\Runtime;
 
 /** @internal the registered sizes: the four from the options plus the two big ones, plus add_image_size */
@@ -470,6 +471,12 @@ function wp_get_loading_optimization_attributes($tag_name, $attr, $context)
     if ($explicitLoading || $explicitPriority) {
         if (!$runtime->get('high_priority_used', false)) {
             $optimization['fetchpriority'] = 'high';
+            $runtime->set('high_priority_used', true);
+        }
+    } elseif ($tag_name === 'img' && RenderState::depth() > 0 && !(defined('REST_REQUEST') && REST_REQUEST) && RenderState::nextImage() <= 3) {
+        // Inside a page render the plugin's image shares the engine's budget: three eager images, the first with high priority.
+        if (RenderState::claimPriority()) {
+            $optimization = ['fetchpriority' => 'high'] + $optimization;
             $runtime->set('high_priority_used', true);
         }
     } elseif (wp_lazy_loading_enabled($tag_name, $context)) {

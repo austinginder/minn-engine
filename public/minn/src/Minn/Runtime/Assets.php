@@ -106,14 +106,21 @@ final class Assets
     public function toPrint(?bool $footer = null): array
     {
         $order = [];
-        $visit = function (string $handle) use (&$order, &$visit): void {
-            if (!isset($this->items[$handle]) || in_array($handle, $order, true) || in_array($handle, $this->done, true)) {
-                return;
+        // A handle whose dependency is unregistered never prints, nor does anything that depends on it.
+        $visit = function (string $handle) use (&$order, &$visit): bool {
+            if (in_array($handle, $order, true) || in_array($handle, $this->done, true)) {
+                return true;
+            }
+            if (!isset($this->items[$handle])) {
+                return false;
             }
             foreach ($this->items[$handle]['deps'] as $dep) {
-                $visit($dep);
+                if (!$visit($dep)) {
+                    return false;
+                }
             }
             $order[] = $handle;
+            return true;
         };
         foreach ($this->queue as $handle) {
             $visit($handle);

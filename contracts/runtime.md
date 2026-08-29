@@ -275,10 +275,72 @@ facts that shaped the implementation.
   looks in the child then parent theme; `get_template_part` returns false
   when nothing matched.
 
+## Block filters, interactive blocks, and script libraries
+
+Landed after the dogfood site's plugins started loading as code and its
+pages diverged (block-visibility, mosne-dark-palette, a jQuery-dependent
+admin script). Fixture: `contracts/fixtures/api/interactivity.json`
+(72 rows, `interactivity-probe.php`).
+
+- **Every block the engine renders passes through the plugin-facing
+  filters**: `pre_render_block` (a non-null return replaces the block),
+  `render_block_data` (the parsed array a plugin returns is what the
+  engine renders, and keys it added ride along to `render_block`),
+  `render_block`, then `render_block_{name}`, each with a `WP_Block`
+  instance. The engine's own dynamic blocks are no exception, so a
+  visibility plugin can hide a core group. `Runtime\BlockFilters` is the
+  bridge; `WP_Block::render` of a static core block returns the engine's
+  rendering without applying the filters a second time.
+- **Images a filter removes give their loading budget back.** The
+  reference charges its eager-image budget on the final content, after
+  filters ran; the engine charges at block render, so a block whose
+  filtered output lost `<img>` tags refunds them (and the high-priority
+  slot if it went with them). A plugin's `wp_get_attachment_image` inside
+  a page render draws on the same budget as the engine's own images.
+- **Directive processing** (`wp_interactivity_process_directives`, and
+  automatically on the outermost interactive block once its inner blocks
+  rendered): `data-wp-interactive` sets the namespace (a string or
+  `{"namespace":..}`; empty sets none), `data-wp-context` merges a JSON
+  layer scoped to the element and its subtree (an `ns::` prefix targets
+  another namespace; invalid JSON is ignored), a path is `state.a.b` or
+  `context.a.b`, optionally `ns::`-prefixed or `!`-negated; a Closure
+  in state is called during evaluation, with `wp_interactivity_get_context`
+  and `wp_interactivity_get_element` (`['attributes' => [...]]`) answering
+  for that element. `data-wp-bind--attr`: null removes the attribute,
+  false removes it unless the attribute starts with `aria-` or `data-`
+  (those get `"false"`; true gives `"true"`), true on any other attribute
+  is the bare name, scalars are set escaped; an array logs
+  `doing_it_wrong` and changes nothing. A replaced attribute keeps its
+  position; a new one is inserted right after the tag name, after earlier
+  insertions; a removal takes only the attribute's text (the space before
+  it stays). `data-wp-class--x` appends or removes one class (an empty
+  list removes the attribute); `data-wp-style--prop` rewrites `style` as
+  `prop:value;` declarations, the bound one moved to the end, a falsy
+  value dropping it; `data-wp-text` replaces the inner HTML with the
+  escaped scalar (booleans, null, arrays give an empty element);
+  `<template data-wp-each="path">` (or `data-wp-each--key`) clones its
+  contents per item with `data-wp-each-child="ns::path"` inserted first on
+  each top-level tag and `context.item` (or the key) set, unless the next
+  sibling already carries `data-wp-each-child`; template contents are never
+  processed in place. Uppercase tags and attributes match; unquoted values
+  work; markup that does not close what it opens comes back untouched. A
+  path without a namespace or without a reference logs `doing_it_wrong`.
+  Outside processing `wp_interactivity_state()` with no namespace,
+  `get_context`, and `get_element` log and return `[]`/`null`.
+- **Script handles the reference registers itself**: `jquery-core`
+  (`/wp-includes/js/jquery/jquery.min.js?ver=3.7.1`), `jquery-migrate`
+  (`?ver=3.4.1`), and the `jquery` alias that depends on both. The engine
+  ships the MIT-licensed files under `assets/vendor/jquery/` (jQuery from
+  the jQuery CDN plus the `jQuery.noConflict();` line the reference appends,
+  byte-identical to the reference's copy; Migrate unmodified) and serves
+  them at the reference's paths. A handle whose dependency is unregistered
+  never prints, nor does anything that depends on it.
+
 ## What a plugin cannot do yet
 
 Twelve of the dogfood site's twenty-five plugins load as code now
-(`runtime-report.php`). What the rest ask for, in order: the admin host
+(`runtime-report.php`), and the nine dogfood pages render at parity with
+them running. What the rest ask for, in order: the admin host
 (`WP_List_Table`, screens and screen options, `iframe_header`, the
 `WP_Filesystem` family and the upgraders); `WP_Site`/multisite shims;
 `WP_Term_Query`/`WP_User_Query` objects; `.mo` translations; `fetch_feed`;

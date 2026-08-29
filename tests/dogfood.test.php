@@ -28,9 +28,15 @@ preg_match('/function theme_first_diff.*?\n}\n/s', $src, $m);
 eval($m[0]);
 
 /** Nothing is normalised beyond the theme suite's own rules: every plugin this site uses is provided by an extension. */
+/**
+ * A plugin that appends an HTML comment before </body> lands after whatever
+ * printed last in the footer; the two stacks print different footer scripts
+ * (the reference's are masked), so only the comment's indentation would
+ * differ. Comment-only lines lose their leading whitespace.
+ */
 function dogfood_normalise(string $body): string
 {
-    return $body;
+    return (string) preg_replace('/^[ \t]+(<!--.*?-->)$/m', '$1', $body);
 }
 
 $fetch = static function (string $base, string $path): string {

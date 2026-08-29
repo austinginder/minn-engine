@@ -1,0 +1,316 @@
+[
+    [
+        "state returns",
+        {
+            "on": true,
+            "off": false,
+            "nil": null,
+            "word": "hello",
+            "num": 0,
+            "list": [
+                "a",
+                "b"
+            ],
+            "nested": {
+                "deep": "value"
+            },
+            "cls": "from-state"
+        }
+    ],
+    [
+        "state merge",
+        1
+    ],
+    [
+        "state unknown",
+        []
+    ],
+    [
+        "state null ns",
+        []
+    ],
+    [
+        "config",
+        {
+            "a": 1
+        }
+    ],
+    [
+        "config again",
+        {
+            "a": 1,
+            "b": 2
+        }
+    ],
+    [
+        "config read",
+        {
+            "a": 1,
+            "b": 2
+        }
+    ],
+    [
+        "data_wp_context",
+        [
+            "data-wp-context='{\"a\":1,\"q\":\"x\\u0022y\",\"l\":\"it\\u0027s\"}'",
+            "data-wp-context='{}'",
+            "data-wp-context='ns::{\"a\":1}'"
+        ]
+    ],
+    [
+        "bind true",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><button disabled data-wp-bind--disabled=\"state.on\" type=\"button\">x</button></div>"
+    ],
+    [
+        "bind false",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><button data-wp-bind--disabled=\"state.off\" type=\"button\">x</button></div>"
+    ],
+    [
+        "bind null",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><button data-wp-bind--disabled=\"state.nil\" type=\"button\">x</button></div>"
+    ],
+    [
+        "bind string",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><button title=\"hello\" data-wp-bind--title=\"state.word\" type=\"button\">x</button></div>"
+    ],
+    [
+        "bind zero",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><button title=\"0\" data-wp-bind--title=\"state.num\" type=\"button\">x</button></div>"
+    ],
+    [
+        "bind empty string",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><button title=\"\" data-wp-bind--title=\"context.empty\" type=\"button\">x</button></div>"
+    ],
+    [
+        "bind aria true",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><button aria-expanded=\"true\" data-wp-bind--aria-expanded=\"state.on\" type=\"button\">x</button></div>"
+    ],
+    [
+        "bind aria false",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><button aria-expanded=\"false\" data-wp-bind--aria-expanded=\"context.flag\" type=\"button\">x</button></div>"
+    ],
+    [
+        "bind aria null",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><button data-wp-bind--aria-expanded=\"state.nil\" type=\"button\">x</button></div>"
+    ],
+    [
+        "bind data false",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><button data-open=\"false\" data-wp-bind--data-open=\"state.off\" type=\"button\">x</button></div>"
+    ],
+    [
+        "bind data true",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><button data-open=\"true\" data-wp-bind--data-open=\"state.on\" type=\"button\">x</button></div>"
+    ],
+    [
+        "bind context string",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><span aria-label=\"OS auto\" data-wp-bind--aria-label=\"context.label\">x</span></div>"
+    ],
+    [
+        "bind replaces existing",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><button type=\"button\" data-wp-bind--class=\"context.cls\" class=\"from-context\">x</button></div>"
+    ],
+    [
+        "bind existing false removes",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><button type=\"button\" data-wp-bind--disabled=\"state.off\" >x</button></div>"
+    ],
+    [
+        "bind negation",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><button data-wp-bind--hidden=\"!state.on\" type=\"button\">x</button><i hidden data-wp-bind--hidden=\"!state.off\"></i></div>"
+    ],
+    [
+        "bind other ns",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><span title=\"other\" data-wp-bind--title=\"minn-other::state.word\">x</span></div>"
+    ],
+    [
+        "bind unknown path",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><span data-wp-bind--title=\"state.nope.deeper\">x</span></div>"
+    ],
+    [
+        "bind nested",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><span title=\"value\" data-wp-bind--title=\"state.nested.deep\">x</span></div>"
+    ],
+    [
+        "bind array",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><span data-wp-bind--title=\"state.list\">x</span></div>"
+    ],
+    [
+        "bind unknown ns",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><span data-wp-bind--title=\"minn-nope::state.word\">x</span></div>"
+    ],
+    [
+        "class add",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><span data-wp-class--is-on=\"state.on\" class=\"a is-on\">x</span></div>"
+    ],
+    [
+        "class add no class attr",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><span class=\"is-on\" data-wp-class--is-on=\"state.on\">x</span></div>"
+    ],
+    [
+        "class remove",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><span data-wp-class--gone=\"state.off\" class=\"a b\">x</span></div>"
+    ],
+    [
+        "class remove only",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><span data-wp-class--gone=\"state.off\" >x</span></div>"
+    ],
+    [
+        "class existing",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><span data-wp-class--a=\"state.on\" class=\"a b\">x</span></div>"
+    ],
+    [
+        "style add",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><span data-wp-style--color=\"state.word\" style=\"margin:0;color:hello;\">x</span></div>"
+    ],
+    [
+        "style add no attr",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><span style=\"color:hello;\" data-wp-style--color=\"state.word\">x</span></div>"
+    ],
+    [
+        "style replace",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><span data-wp-style--color=\"state.word\" style=\"margin:0;color:hello;\">x</span></div>"
+    ],
+    [
+        "style remove",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><span data-wp-style--color=\"state.off\" style=\"margin:0;\">x</span></div>"
+    ],
+    [
+        "style remove last",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><span data-wp-style--color=\"state.nil\" >x</span></div>"
+    ],
+    [
+        "text",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><span data-wp-text=\"state.word\">hello</span></div>"
+    ],
+    [
+        "text escaped",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><span data-wp-text=\"context.label\">OS auto</span><i data-wp-text=\"state.num\">0</i></div>"
+    ],
+    [
+        "text html",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"h\":\"<b>&amp;</b>\"}'><span data-wp-text=\"context.h\">&lt;b&gt;&amp;&lt;/b&gt;</span></div>"
+    ],
+    [
+        "text bool",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><span data-wp-text=\"state.on\"></span><i data-wp-text=\"state.off\"></i><u data-wp-text=\"state.nil\"></u></div>"
+    ],
+    [
+        "text array",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><span data-wp-text=\"state.list\"></span></div>"
+    ],
+    [
+        "context nested",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><div data-wp-context='{\"mode\":\"dark\"}'><span title=\"dark\" data-wp-bind--title=\"context.mode\">x</span><i title=\"OS auto\" data-wp-bind--title=\"context.label\"></i></div><span title=\"auto\" data-wp-bind--title=\"context.mode\">y</span></div>"
+    ],
+    [
+        "context inherits ns",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><div data-wp-context='{\"x\":1}'><span title=\"1\" data-wp-bind--title=\"context.x\">x</span></div></div>"
+    ],
+    [
+        "context explicit ns",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><div data-wp-context='minn-other::{\"x\":2}'><span data-wp-bind--title=\"context.x\">x</span><i title=\"2\" data-wp-bind--title=\"minn-other::context.x\"></i></div></div>"
+    ],
+    [
+        "context invalid json",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><div data-wp-context='{oops'><span title=\"auto\" data-wp-bind--title=\"context.mode\">x</span></div></div>"
+    ],
+    [
+        "interactive nested ns",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><div data-wp-interactive=\"minn-other\"><span title=\"other\" data-wp-bind--title=\"state.word\">x</span></div><span title=\"hello\" data-wp-bind--title=\"state.word\">y</span></div>"
+    ],
+    [
+        "interactive json form",
+        "<div data-wp-interactive='{\"namespace\":\"minn-probe\"}'><span title=\"hello\" data-wp-bind--title=\"state.word\">x</span></div>"
+    ],
+    [
+        "interactive empty",
+        "<div data-wp-interactive=\"\"><span data-wp-bind--title=\"state.word\">x</span></div>"
+    ],
+    [
+        "no interactive root",
+        "<div><span title=\"hello\" data-wp-bind--title=\"minn-probe::state.word\">x</span><i data-wp-bind--title=\"state.word\"></i></div>"
+    ],
+    [
+        "directive outside interactive",
+        "<span data-wp-bind--title=\"state.word\">x</span>"
+    ],
+    [
+        "bind self closing",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><input value=\"hello\" data-wp-bind--value=\"state.word\" type=\"text\"><img alt=\"OS auto\" data-wp-bind--alt=\"context.label\" src=\"x.png\" /></div>"
+    ],
+    [
+        "bind void nested",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><p>t<br><span title=\"hello\" data-wp-bind--title=\"state.word\">x</span></p></div>"
+    ],
+    [
+        "directive on root",
+        "<div title=\"hello\" data-wp-interactive=\"minn-probe\" data-wp-bind--title=\"state.word\" data-wp-class--is-on=\"state.on\" class=\"root is-on\">x</div>"
+    ],
+    [
+        "directives kept",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><span title=\"hello\" data-wp-on--click=\"actions.go\" data-wp-init=\"callbacks.init\" data-wp-watch=\"callbacks.w\" data-wp-bind--title=\"state.word\">x</span></div>"
+    ],
+    [
+        "each",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><ul><template data-wp-each=\"state.list\"><li data-wp-text=\"context.item\"></li></template><li data-wp-each-child=\"minn-probe::state.list\" data-wp-text=\"context.item\">a</li><li data-wp-each-child=\"minn-probe::state.list\" data-wp-text=\"context.item\">b</li></ul></div>"
+    ],
+    [
+        "each key",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><ul><template data-wp-each--thing=\"state.list\"><li data-wp-bind--title=\"context.thing\" data-wp-text=\"context.thing\"></li></template><li data-wp-each-child>server</li></ul></div>"
+    ],
+    [
+        "each with existing children",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><ul><template data-wp-each=\"state.list\"><li data-wp-text=\"context.item\"></li></template><li data-wp-each-child>a</li><li data-wp-each-child>b</li></ul></div>"
+    ],
+    [
+        "router region",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><div data-wp-router-region=\"main\">x</div></div>"
+    ],
+    [
+        "unbalanced",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><span data-wp-bind--title=\"state.word\">x</span>"
+    ],
+    [
+        "malformed",
+        "<div data-wp-interactive=\"minn-probe\"><span data-wp-bind--title=\"state.word\">x</div>"
+    ],
+    [
+        "case",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><SPAN title=\"hello\" DATA-WP-BIND--TITLE=\"state.word\">x</SPAN></div>"
+    ],
+    [
+        "quote styles",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><span title=\"hello\" data-wp-bind--title=state.word>x</span><i title=\"hello\" data-wp-bind--title='state.word'></i></div>"
+    ],
+    [
+        "attr order insert",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><button aria-expanded=\"false\" type=\"button\" class=\"c\" data-wp-bind--aria-expanded=\"state.off\" id=\"i\">x</button></div>"
+    ],
+    [
+        "multiple binds",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><button aria-expanded=\"false\" aria-label=\"hello\" disabled data-wp-bind--aria-expanded=\"state.off\" data-wp-bind--aria-label=\"state.word\" data-wp-bind--disabled=\"state.on\" type=\"button\">x</button></div>"
+    ],
+    [
+        "get_context outside",
+        []
+    ],
+    [
+        "get_element outside",
+        null
+    ],
+    [
+        "wp_interactivity class",
+        "WP_Interactivity_API"
+    ],
+    [
+        "state derived callable",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><span title=\"computed:auto\" data-wp-bind--title=\"state.derived\" data-wp-text=\"state.derived\">computed:auto</span></div>"
+    ],
+    [
+        "state derived element",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"mode\":\"auto\",\"flag\":false,\"empty\":\"\",\"label\":\"OS auto\",\"n\":0,\"cls\":\"from-context\"}'><span title=\"el:me\" id=\"me\" data-wp-bind--title=\"state.fromEl\">x</span></div>"
+    ],
+    [
+        "unicode",
+        "<div data-wp-interactive=\"minn-probe\" data-wp-context='{\"w\":\"héllo <ç> & \\\"q\\\"\"}'><span title=\"héllo &lt;ç&gt; &amp; &quot;q&quot;\" data-wp-bind--title=\"context.w\" data-wp-text=\"context.w\">héllo &lt;ç&gt; &amp; &quot;q&quot;</span></div>"
+    ]
+]

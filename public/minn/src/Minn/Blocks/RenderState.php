@@ -46,6 +46,18 @@ final class RenderState
         return ++self::$images;
     }
 
+    /**
+     * Images a plugin's block filter removed from the page give their budget
+     * back, so the next image still counts as if the hidden ones never rendered.
+     */
+    public static function refundImages(int $count, bool $priority): void
+    {
+        self::$images = max(0, self::$images - $count);
+        if ($priority) {
+            self::$priorityClaimed = false;
+        }
+    }
+
     /** True once, for the image that gets fetchpriority="high". */
     public static function claimPriority(): bool
     {
@@ -131,6 +143,12 @@ final class RenderState
     public static function ascend(): void
     {
         self::$depth--;
+    }
+
+    /** How deep the block tree is right now; zero outside a page render. */
+    public static function depth(): int
+    {
+        return self::$depth;
     }
 
     /** A dynamic block claims its element class before rendering, so a block that renders nothing still counts. */

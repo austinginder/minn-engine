@@ -28,4 +28,15 @@ final readonly class AssetsController
         }
         return new Response(200, ['Content-Type' => self::TYPES[$ext], 'Cache-Control' => 'public, max-age=300'], (string) file_get_contents($path));
     }
+
+    /** The MIT libraries the engine ships, served at the paths the reference registers them under. */
+    #[Route(Method::Get, '/wp-includes/js/jquery/{file:[a-z0-9.-]+\.js}')]
+    public function jquery(Request $request, string $file): Response
+    {
+        $path = realpath($this->assetsDir . '/vendor/jquery/' . $file);
+        if ($path === false || !str_starts_with($path, realpath($this->assetsDir . '/vendor/jquery') . '/')) {
+            return new Response(404);
+        }
+        return new Response(200, ['Content-Type' => self::TYPES['js'], 'Cache-Control' => 'public, max-age=86400'], (string) file_get_contents($path));
+    }
 }

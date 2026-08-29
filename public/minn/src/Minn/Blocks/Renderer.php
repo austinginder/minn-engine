@@ -20,6 +20,7 @@ use Minn\Front\Permalinks;
 use Minn\Media\Uploads;
 use Minn\Support\Html;
 use Minn\Extension\Extensions;
+use Minn\Runtime\BlockFilters;
 
 /**
  * Renders a block tree the way the reference renders post_content:
@@ -133,11 +134,28 @@ final class Renderer
             return '';
         }
         try {
+            $filtered = BlockFilters::active();
+            if ($filtered) {
+                $before = BlockFilters::before($block);
+                if (is_string($before)) {
+                    return $before;
+                }
+                $block = $before;
+            }
             $html = $this->renderNamed($block);
             if ($html !== '') {
                 RenderState::recordBlock($block->name);
             }
-            return $seams === null ? $html : $seams->applyBlockFilters($block, $html);
+            $html = $seams === null ? $html : $seams->applyBlockFilters($block, $html);
+            if (!$filtered) {
+                return $html;
+            }
+            $after = BlockFilters::after($block, $html);
+            $lost = substr_count($html, '<img') - substr_count($after, '<img');
+            if ($lost > 0) {
+                RenderState::refundImages($lost, str_contains($html, 'fetchpriority="high"') && !str_contains($after, 'fetchpriority="high"'));
+            }
+            return $after;
         } finally {
             RenderState::ascend();
         }

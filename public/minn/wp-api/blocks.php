@@ -240,6 +240,9 @@ function get_block_wrapper_attributes($extra_attributes = [])
     $attributes = array_merge($new_attributes, $extra_attributes);
     $normalized = [];
     foreach ($attributes as $key => $value) {
+        if ($key === 'class') {
+            $value = trim((string) preg_replace('/\s+/', ' ', (string) $value));
+        }
         $normalized[] = $key . '="' . esc_attr((string) $value) . '"';
     }
     return implode(' ', $normalized);
@@ -417,41 +420,32 @@ function wp_interactivity_data_wp_context($context, $store_namespace = '')
 
 function wp_interactivity_state($store_namespace = null, $state = [])
 {
-    $stores = Runtime::current()->get('interactivity_state', []);
-    if ($store_namespace === null) {
-        return [];
-    }
-    $stores[$store_namespace] = array_replace_recursive($stores[$store_namespace] ?? [], (array) $state);
-    Runtime::current()->set('interactivity_state', $stores);
-    return $stores[$store_namespace];
+    return wp_interactivity()->state($store_namespace, $state);
 }
 
 function wp_interactivity_config($store_namespace, $config = [])
 {
-    $stores = Runtime::current()->get('interactivity_config', []);
-    $stores[$store_namespace] = array_replace_recursive($stores[$store_namespace] ?? [], (array) $config);
-    Runtime::current()->set('interactivity_config', $stores);
-    return $stores[$store_namespace];
+    return wp_interactivity()->config($store_namespace, $config);
 }
 
 function wp_interactivity_process_directives($html)
 {
-    return $html;
+    return wp_interactivity()->process_directives($html);
 }
 
 function wp_interactivity_get_context($store_namespace = null)
 {
-    return [];
+    return wp_interactivity()->get_context($store_namespace);
 }
 
 function wp_interactivity_get_element()
 {
-    return null;
+    return wp_interactivity()->get_element();
 }
 
 function wp_interactivity()
 {
-    return Runtime::current()->get('interactivity_api');
+    return WP_Interactivity_API::instance();
 }
 
 function get_block_metadata_i18n_schema()

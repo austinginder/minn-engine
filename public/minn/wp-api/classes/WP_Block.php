@@ -107,8 +107,8 @@ class WP_Block
             WP_Block_Supports::$block_to_render = $parent;
             $GLOBALS['post'] = $global_post;
         } elseif ($this->name !== null && str_starts_with($this->name, 'core/') && $this->block_type !== null) {
-            // A static core block takes its classes from the engine's own renderer.
-            $block_content = _minn_render_core_block($this, $block_content);
+            // A static core block takes its classes from the engine's own renderer, which applies the block filters itself.
+            return _minn_render_core_block($this, $block_content);
         }
         if (!empty($this->block_type->script_handles)) {
             foreach ($this->block_type->script_handles as $script_handle) {

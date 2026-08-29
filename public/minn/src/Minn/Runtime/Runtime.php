@@ -22,6 +22,7 @@ final class Runtime
     private static ?ObjectCache $cache = null;
     private static ?Shortcodes $shortcodes = null;
     private static ?Registry $registry = null;
+    private static ?Interactivity $interactivity = null;
     private static ?self $current = null;
     private static bool $facadeLoaded = false;
     /** @var array<string, mixed> plugin-visible state the facade keeps between calls */
@@ -101,6 +102,11 @@ final class Runtime
         return self::$shortcodes ??= new Shortcodes();
     }
 
+    public static function interactivity(): Interactivity
+    {
+        return self::$interactivity ??= new Interactivity();
+    }
+
     public static function registry(): Registry
     {
         return self::$registry ??= new Registry(self::current()->engineDir);
@@ -157,6 +163,7 @@ final class Runtime
         self::$cache = new ObjectCache();
         self::$shortcodes = new Shortcodes();
         self::$registry = null;
+        self::$interactivity = new Interactivity();
         self::$options = self::$current === null ? null : new Options(self::$current->db);
     }
 }
