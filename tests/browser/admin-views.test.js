@@ -9,6 +9,7 @@
 //      MINN_DOGFOOD_USER   (default austin)
 const { execSync } = require( 'child_process' );
 const { chromium } = require( 'playwright-core' );
+require( './pin-theme' ).pinTheme();
 
 const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const BASE = ( process.env.MINN_DOGFOOD_ENGINE || 'https://dogfood.localhost' ).replace( /\/$/, '' );

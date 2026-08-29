@@ -1245,11 +1245,11 @@
     ],
     [
         "get_bloginfo name",
-        "Welcome to minn-engine"
+        "Minn Engine"
     ],
     [
         "get_bloginfo description",
-        ""
+        "Indistinguishable at the seams. Radically simpler inside."
     ],
     [
         "get_bloginfo url",
@@ -1333,19 +1333,19 @@
     ],
     [
         "get_bloginfo bogus",
-        "Welcome to minn-engine"
+        "Minn Engine"
     ],
     [
         "get_bloginfo ",
-        "Welcome to minn-engine"
+        "Minn Engine"
     ],
     [
         "get_bloginfo display",
-        "Welcome to minn-engine"
+        "Minn Engine"
     ],
     [
         "bloginfo",
-        "Welcome to minn-engine"
+        "Minn Engine"
     ],
     [
         "wp_customize_url",

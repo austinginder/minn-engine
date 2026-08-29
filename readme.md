@@ -46,7 +46,7 @@ public/
     bin/minn         preflight, install, eject, status (docs/install.md)
 ```
 
-Everything else in this repository (`tests/`, `contracts/`, `docs/`) is development only and never ships. On a development site `public/minn` can be a symlink into this repository so several sites run the same code.
+Everything else in this repository (`tests/`, `contracts/`, `docs/`, and `site/`, the block theme behind the project's own site) is development only and never ships. On a development site `public/minn` can be a symlink into this repository so several sites run the same code.
 
 Every surface is pinned by two suites: fixtures captured from a reference WordPress, and a live parity diff that treats a running WordPress on the same database as the oracle. Run them with `tests/run-all.sh`. Contract notes and known gaps live in `contracts/`. The whole engine follows `docs/style.md` (modern namespaced PHP under `public/minn/src/Minn/`, enforced by `tests/style.test.php`).
 

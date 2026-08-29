@@ -8,10 +8,10 @@
 	>
 
 <channel>
-	<title>Welcome to minn-engine</title>
+	<title>Minn Engine</title>
 	<atom:link href="https://minn-engine.localhost/?feed=rss2" rel="self" type="application/rss+xml" />
 	<link>https://minn-engine.localhost</link>
-	<description></description>
+	<description>Indistinguishable at the seams. Radically simpler inside.</description>
 	<lastBuildDate>Fri, 28 Aug 2026 11:30:13 +0000</lastBuildDate>
 	<language>en-US</language>
 	<sy:updatePeriod>

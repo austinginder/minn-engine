@@ -12,6 +12,7 @@
 // Skips cleanly when the reference is not running.
 
 const { chromium } = require( 'playwright-core' );
+require( './pin-theme' ).pinTheme();
 
 // `--dev` measures the engine's own site against its 8123 oracle (the theme suite's pages plus
 // the block battery); the default is the dogfood site against 8124.

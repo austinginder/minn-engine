@@ -7,9 +7,9 @@
 	xmlns:content="http://purl.org/rss/1.0/modules/content/"
 	>
 <channel rdf:about="https://minn-engine.localhost">
-	<title>Welcome to minn-engine</title>
+	<title>Minn Engine</title>
 	<link>https://minn-engine.localhost</link>
-	<description></description>
+	<description>Indistinguishable at the seams. Radically simpler inside.</description>
 	<dc:date>2026-08-28T11:30:13Z	</dc:date>
 	<sy:updatePeriod>
 	hourly	</sy:updatePeriod>

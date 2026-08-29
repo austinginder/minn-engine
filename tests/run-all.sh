@@ -25,12 +25,27 @@ start_reference() {
 stop_references() {
 	for pid in "${started[@]:-}"; do [ -n "$pid" ] && pkill -P "$pid" 2>/dev/null; kill "$pid" 2>/dev/null; done
 }
-trap stop_references EXIT
+# The dev site runs the Minn site theme; the fixtures were captured under
+# twentytwentyfive. Pin it once for the whole run (the suites' own pin in
+# tests/lib.php is skipped through MINN_TEST_KEEP_THEME) and restore on exit.
+WP=/opt/homebrew/bin/wp
+saved_template="$( cd ../public && $WP option get template 2>/dev/null )"
+saved_stylesheet="$( cd ../public && $WP option get stylesheet 2>/dev/null )"
+pin_theme() {
+	( cd ../public && $WP option update template twentytwentyfive >/dev/null 2>&1 && $WP option update stylesheet twentytwentyfive >/dev/null 2>&1 )
+	export MINN_TEST_KEEP_THEME=1
+}
+restore_theme() {
+	[ -n "$saved_template" ] && ( cd ../public && $WP option update template "$saved_template" >/dev/null 2>&1 && $WP option update stylesheet "$saved_stylesheet" >/dev/null 2>&1 )
+}
+cleanup() { stop_references; restore_theme; }
+trap cleanup EXIT
+pin_theme
 start_reference "$PWD/../wp-reference" 8123
 start_reference "$DOGFOOD_REF" 8124
 
 failed=0
-for suite in style hooks api runtime rest-posts auth caps writes login-endpoint rest-parity minn-v1 comments media settings users terms write-fields editor permalinks blocks theme styles probes dogfood cli layout hardening security install cron-mail reader extensions front-page menus declared-types admin-surfaces; do
+for suite in style hooks api runtime rest-posts auth caps writes login-endpoint rest-parity minn-v1 comments media settings users terms write-fields editor permalinks blocks theme styles probes dogfood cli layout hardening security install cron-mail reader extensions front-page menus declared-types admin-surfaces site; do
 	printf '\n=== %s ===\n' "$suite"
 	php "$suite.test.php" || failed=1
 done

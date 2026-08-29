@@ -11,6 +11,7 @@
 //       MINN_ADMIN_USER / MINN_ADMIN_PASS (default admin / the dev password).
 
 const { chromium } = require( 'playwright-core' );
+require( './pin-theme' ).pinTheme();
 
 const BASE = ( process.env.MINN_ENGINE_URL || 'https://minn-engine.localhost' ).replace( /\/$/, '' );
 const USER = process.env.MINN_ADMIN_USER || 'admin';

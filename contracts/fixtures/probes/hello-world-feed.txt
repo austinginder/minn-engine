@@ -10,7 +10,7 @@
 	Comments on: Hello world!	</title>
 	<atom:link href="https://minn-engine.localhost/hello-world/feed/" rel="self" type="application/rss+xml" />
 	<link>https://minn-engine.localhost/hello-world/</link>
-	<description></description>
+	<description>Indistinguishable at the seams. Radically simpler inside.</description>
 	<lastBuildDate>Fri, 28 Aug 2026 02:21:33 +0000</lastBuildDate>
 	<sy:updatePeriod>
 	hourly	</sy:updatePeriod>

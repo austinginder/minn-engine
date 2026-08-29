@@ -7,10 +7,10 @@
 	>
 <channel>
 	<title>
-	Comments for Welcome to minn-engine	</title>
+	Comments for Minn Engine	</title>
 	<atom:link href="https://minn-engine.localhost/comments/feed/" rel="self" type="application/rss+xml" />
 	<link>https://minn-engine.localhost</link>
-	<description></description>
+	<description>Indistinguishable at the seams. Radically simpler inside.</description>
 	<lastBuildDate>Fri, 28 Aug 2026 02:21:33 +0000</lastBuildDate>
 	<sy:updatePeriod>
 	hourly	</sy:updatePeriod>

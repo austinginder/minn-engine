@@ -57,3 +57,37 @@ function minn_test_diff( $a, $b, string $path = '$' ): ?string {
 	}
 	return null;
 }
+
+/**
+ * The dev site's own theme is the Minn site theme (site/minn-site, the
+ * engine's front page); the parity fixtures were captured under
+ * twentytwentyfive. Every suite pins the reference theme while it runs and
+ * restores the site's own theme on shutdown. run-all.sh pins once for the
+ * whole run and sets MINN_TEST_KEEP_THEME so the suites skip their own pin;
+ * a suite that needs a different theme calls this with its slug.
+ */
+function minn_test_pin_theme( string $slug = 'twentytwentyfive' ): void {
+	$public = dirname( __DIR__ ) . '/public';
+	$wp     = static function ( string $args ) use ( $public ): string {
+		return trim( (string) shell_exec( 'cd ' . escapeshellarg( $public ) . ' && /opt/homebrew/bin/wp ' . $args . ' 2>/dev/null' ) );
+	};
+	$saved = array( 'template' => $wp( 'option get template' ), 'stylesheet' => $wp( 'option get stylesheet' ) );
+	if ( $saved['stylesheet'] === $slug && $saved['template'] === $slug ) {
+		return;
+	}
+	foreach ( array_keys( $saved ) as $name ) {
+		$wp( 'option update ' . $name . ' ' . escapeshellarg( $slug ) . ' >/dev/null' );
+	}
+	register_shutdown_function(
+		static function () use ( $wp, $saved ): void {
+			foreach ( $saved as $name => $value ) {
+				if ( $value !== '' ) {
+					$wp( 'option update ' . $name . ' ' . escapeshellarg( $value ) . ' >/dev/null' );
+				}
+			}
+		}
+	);
+}
+if ( getenv( 'MINN_TEST_KEEP_THEME' ) === false ) {
+	minn_test_pin_theme();
+}

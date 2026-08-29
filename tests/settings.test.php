@@ -91,10 +91,10 @@ function st_cleanup(): void {
 	global $ROOT;
 	shell_exec(
 		'cd ' . escapeshellarg( "$ROOT/wp-reference" ) .
-		' && wp option update blogname "Welcome to minn-engine" 2>/dev/null'
+		' && wp option update blogname "Minn Engine" 2>/dev/null'
 		. ' && wp option update posts_per_page 10 2>/dev/null'
 		. ' && wp option update use_smilies 1 2>/dev/null'
-		. ' && wp option update blogdescription "" 2>/dev/null; true'
+		. ' && wp option update blogdescription "Indistinguishable at the seams. Radically simpler inside." 2>/dev/null; true'
 	);
 }
 register_shutdown_function( 'st_cleanup' );
@@ -156,7 +156,7 @@ check( $rs === $es && null === $d, 'editor write refused identically', (string) 
 // 6. Restore and confirm the fixture state.
 st_cleanup();
 [ , $b ] = st_fetch( $ENGINE, $admin );
-check( 'Welcome to minn-engine' === ( $b['title'] ?? '' ) && 10 === ( $b['posts_per_page'] ?? 0 ), 'fixture options restored' );
+check( 'Minn Engine' === ( $b['title'] ?? '' ) && 10 === ( $b['posts_per_page'] ?? 0 ), 'fixture options restored' );
 
 echo "\n$pass passed, $fail failed\n";
 exit( $fail > 0 ? 1 : 0 );
