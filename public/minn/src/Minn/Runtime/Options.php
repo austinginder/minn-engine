@@ -9,7 +9,7 @@ use Minn\Support\Serialized;
 
 /**
  * Options as plugin code sees them: PHP values, decoded from the stored
- * blob without unserialize(), cached for the request so a value written
+ * blob by the engine's own reader, cached for the request so a value written
  * and read again in one request keeps its PHP type (an int stays an int,
  * false stays false) exactly as the reference shows.
  */

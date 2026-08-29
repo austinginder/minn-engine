@@ -207,6 +207,12 @@ function _minn_print_scripts(bool $footer): array
     return $list;
 }
 
+/** @internal the engine's own stylesheets, printed where a theme's would be */
+function _minn_print_engine_styles()
+{
+    echo (string) Runtime::current()->get('engine_head_styles', '');
+}
+
 function wp_print_head_scripts()
 {
     do_action('wp_print_scripts');

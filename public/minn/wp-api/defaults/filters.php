@@ -14,6 +14,7 @@ add_filter('sanitize_user', 'wp_strip_all_tags');
 add_filter('pre_kses', 'wp_pre_kses_less_than');
 add_action('wp_head', 'wp_enqueue_scripts', 1);
 add_action('wp_head', 'wp_print_styles', 8);
+add_action('wp_head', '_minn_print_engine_styles', 8);
 add_action('wp_head', 'wp_print_head_scripts', 9);
 add_action('wp_footer', '_wp_footer_scripts', 20);
 add_filter('option_blog_charset', '_wp_specialchars');

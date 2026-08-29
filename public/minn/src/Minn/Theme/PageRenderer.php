@@ -145,9 +145,7 @@ final readonly class PageRenderer
         // reference prints a theme's: inside wp_head, after plugin styles.
         $runtimeHead = '';
         if (Runtime::booted()) {
-            Runtime::hooks()->add('wp_head', static function () use ($stylesheets): void {
-                echo $stylesheets;
-            }, 8);
+            Runtime::current()->set('engine_head_styles', $stylesheets);
             $runtimeHead = Runtime::capture('wp_head');
             $stylesheets = '';
         }
