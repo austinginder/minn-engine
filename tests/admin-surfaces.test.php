@@ -185,6 +185,14 @@ check( 'minn' === ( $b['scheme'] ?? '' ), 'engine reads the WordPress-written ap
 [ $s, $b ] = as_fetch( $ENGINE, '/minn-admin/v1/languages', $admin );
 check( 200 === $s && array( 'installed', 'available', 'canInstall', 'current', 'site' ) === array_keys( $b ) && array( '', 'Site default' ) === $b['installed'][0], 'languages carries the plugin\'s shape', json_encode( array_keys( $b ) ) );
 $hasPack = array() !== glob( "$ROOT/public/wp-content/languages/plugins/minn-admin-es_ES-*.json" );
+if ( ! $hasPack ) {
+	// A pack this suite installs is removed again, so the editor suite's languages parity keeps its ground truth.
+	register_shutdown_function( static function () use ( $ROOT ) {
+		foreach ( glob( "$ROOT/public/wp-content/languages/plugins/minn-admin-es_ES*" ) ?: array() as $file ) {
+			@unlink( $file );
+		}
+	} );
+}
 [ $s, $b ] = as_fetch( $ENGINE, '/minn-admin/v1/me/language', $admin, 'POST', '{"locale":"es_ES"}' );
 if ( 200 !== $s && ! $hasPack ) {
 	echo "  --  es_ES pack not installable here (offline?); skipping the catalog checks\n";

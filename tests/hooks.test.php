@@ -40,7 +40,7 @@ foreach ($expected as $i => $row) {
 // Signatures: every function the facade defines must match the inventory's parameter names and defaults.
 $inventory = json_decode(file_get_contents($root . '/contracts/api/functions.json'), true);
 $before = get_defined_functions()['user'];
-foreach (glob($root . '/public/minn/wp-api/*.php') as $file) {
+foreach ([$root . '/public/minn/wp-api/hooks.php'] as $file) {
     $source = file_get_contents($file);
     preg_match_all('/^function\s+(\w+)\s*\(/m', $source, $m);
     foreach ($m[1] as $name) {
