@@ -115,8 +115,10 @@ every write).
   `post-password-required` after the format class.
 - **Format**: assigns the `post_format` term (`post-format-{fmt}`,
   created on demand with name = slug); `class_list` gains BOTH
-  `format-{fmt}` and, with the taxonomy classes at the end,
-  `post_format-post-format-{fmt}`.
+  `format-{fmt}` (in the format slot, before `hentry`) and
+  `post_format-post-format-{fmt}` as the LAST taxonomy class, after every
+  `category-{slug}` and `tag-{slug}` (taxonomy classes follow registration
+  order: category, post_tag, post_format).
 - **Author**: reassignment needs `edit_others_{type}s` →
   `403 rest_cannot_edit_others`.
 - **Featured media**: `_thumbnail_id` meta; the object gains the

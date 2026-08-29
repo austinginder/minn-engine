@@ -1,10 +1,33 @@
 #!/usr/bin/env bash
-# Run every engine suite. Suites needing the reference SKIP cleanly when it
-# is not running; start it with:  (cd wp-reference && php -S 127.0.0.1:8123 router.php)
-# The dogfood suite needs the dogfood site's own reference on 127.0.0.1:8124
-# (see tests/dogfood.test.php) and skips without it.
+# Run every engine suite. The parity suites need the reference WordPress on
+# 127.0.0.1:8123 (wp-reference/) and the dogfood suites need the dogfood
+# site's own reference on 127.0.0.1:8124; both are started below when they
+# are not already running. A suite whose reference is unreachable skips
+# and says so, which is why the servers are started here.
 set -u
 cd "$( dirname "$0" )"
+
+# Start a reference server when its port is quiet, so no suite skips on the
+# dev box. Servers started here are stopped on exit; ones already running are
+# left alone. Set MINN_NO_AUTOSTART=1 to run against whatever is up.
+DOGFOOD_REF="${MINN_DOGFOOD_REF_DIR:-$HOME/Cove/Sites/dogfood.localhost/wp-reference}"
+started=()
+start_reference() {
+	local dir="$1" port="$2"
+	[ -n "${MINN_NO_AUTOSTART:-}" ] && return
+	curl -s -o /dev/null "http://127.0.0.1:$port/" && return
+	[ -f "$dir/router.php" ] || { echo "reference for :$port not found at $dir; its suites will skip"; return; }
+	( cd "$dir" && php -S "127.0.0.1:$port" router.php >"/tmp/minn-ref-$port.log" 2>&1 ) &
+	started+=("$!")
+	until curl -s -o /dev/null "http://127.0.0.1:$port/"; do sleep 0.5; done
+	echo "started reference on :$port from $dir"
+}
+stop_references() {
+	for pid in "${started[@]:-}"; do [ -n "$pid" ] && pkill -P "$pid" 2>/dev/null; kill "$pid" 2>/dev/null; done
+}
+trap stop_references EXIT
+start_reference "$PWD/../wp-reference" 8123
+start_reference "$DOGFOOD_REF" 8124
 
 failed=0
 for suite in style rest-posts auth caps writes login-endpoint rest-parity minn-v1 comments media settings users terms write-fields editor permalinks blocks theme styles probes dogfood cli layout hardening security install cron-mail reader extensions front-page menus declared-types; do

@@ -95,6 +95,7 @@ final readonly class PostObject
             $object['meta'] = ['footnotes' => $this->posts->meta($id, 'footnotes') ?? ''];
             $object['categories'] = array_map(static fn (array $t) => $t[0], $categories);
             $object['tags'] = array_map(static fn (array $t) => $t[0], $tags);
+            $formats = [];
             if ($type === 'post') {
                 $formats = $this->posts->terms($id, 'post_format');
                 $format = $formats === [] ? 'standard' : str_replace('post-format-', '', $formats[0][1]);
@@ -102,9 +103,6 @@ final readonly class PostObject
                 $object['sticky'] = in_array($id, $sticky, true);
                 $object['format'] = $format;
                 $classes[] = 'format-' . $format;
-                foreach ($formats as $term) {
-                    $classes[] = 'post_format-' . $term[1];
-                }
             }
             if ($protected) {
                 $classes[] = 'post-password-required';
@@ -118,6 +116,9 @@ final readonly class PostObject
             }
             foreach ($tags as $term) {
                 $classes[] = 'tag-' . $term[1];
+            }
+            foreach ($formats as $term) {
+                $classes[] = 'post_format-' . $term[1];
             }
         }
 

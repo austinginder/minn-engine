@@ -35,7 +35,8 @@ normalize the capture origin to the engine origin before comparing.
 - `sticky` reads the serialized `sticky_posts` option; sticky posts do NOT
   reorder the REST list (date-desc order holds).
 - `class_list` order: `post-{id}`, `{type}`, `type-{type}`, `status-{status}`,
-  `format-{format}`, `hentry`, then `category-{slug}` and `tag-{slug}`.
+  `format-{format}`, `hentry`, then `category-{slug}`, `tag-{slug}`, and last
+  `post_format-post-format-{format}` when a format term is assigned.
 - List headers: `X-WP-Total`, `X-WP-TotalPages`,
   `Access-Control-Expose-Headers`, `Access-Control-Allow-Headers`,
   `X-Content-Type-Options: nosniff`, `Allow: GET`.
