@@ -401,13 +401,62 @@ on both stacks because the engine serves its own files.
   `tests/browser/interactivity.test.js`: the dogfood site's mobile overlay
   and a third-party plugin's toggle (mosne-dark-palette) run on it.
 
+## The HTML API: the tag processor
+
+Fixture: `contracts/fixtures/api/html-tag-processor.json` (62 rows,
+`html-tag-processor-probe.php`). `WP_HTML_Tag_Processor` maps onto
+`Minn\Html\Tags` (a streaming tokenizer with in-place edits) and
+`Minn\Html\Decoder` (character references).
+
+- **Tokens** (`next_token`): `#tag` (name uppercase; closers and the
+  `/>` flag reported; a slash inside an unquoted value is not a flag),
+  `#text`, `#comment` (`<!-- -->` and `--!>`, abruptly closed `<!-->` and
+  `<!--->`, bogus `<!...>` as `COMMENT_AS_INVALID_HTML`, `<![CDATA[..]]>` as a
+  CDATA lookalike, `<?xml ..?>` as a PI lookalike with the text after the
+  target), `#doctype` (token name `html`, modifiable text everything after
+  `<!DOCTYPE`), `#processing-instruction` for `<?php ... ?>` only (tag
+  `php`), `#funky-comment` for `</3>` and `</ p>`. `</>` is skipped. Raw
+  text elements (script, style, textarea, title, and the other four) hold
+  their content as modifiable text and their closer is never visited; an
+  unterminated token pauses the processor (`paused_at_incomplete_token`)
+  and leaves the source unchanged. `next_tag` skips text and, unless
+  `tag_closers => 'visit'`, closers; `tag_name` compares uppercase,
+  `class_name` exactly, `match_offset` counts from 1 and 0 matches nothing;
+  after a false the processor stays at the end.
+- **Reads**: `get_attribute` decodes references (named, numeric, the legacy
+  names without a semicolon, but not in an attribute when `=` or an
+  alphanumeric follows: `&ampy` stays), answers true for a bare attribute,
+  the first of duplicates, and null off an opener; names are lowercase;
+  `get_modifiable_text` decodes text, textarea, and title but not script or
+  comments. `has_class` and `class_list` are case-sensitive and see pending
+  edits; `class_list` is distinct in source order.
+- **Edits** are pending until the processor moves, seeks, or prints, and
+  reads reflect them: a new attribute is inserted right after the tag name
+  (each newer one before the earlier ones), an existing one is replaced in
+  place with the caller's spelling and double quotes, values escape `"`,
+  `<`, `>`, `&`, `'` (as `&apos;`) and double-encode existing references;
+  true prints the bare name, false and `remove_attribute` delete the text of
+  every duplicate leaving the whitespace, null is refused, invalid names
+  (`bad name`, `x=y`, `a"b`, empty) are refused; removing an attribute that
+  only exists as a pending set cancels the set and returns false.
+  `add_class` appends with one space (an empty class appends nothing but its
+  space), `remove_class` drops the class and the whitespace before it,
+  inner whitespace otherwise survives, an emptied class attribute is
+  removed, `set_attribute('class')` discards pending class edits and later
+  class edits build on the new value. `set_modifiable_text` works on text
+  (`&` and `<` encoded), comments, and raw text elements (script and style
+  turn `</s` into `</\u0073`), never on other tags.
+- **Bookmarks**: at most ten; `seek` applies pending edits, moves back,
+  and re-reads the token; releasing or seeking an unknown name is false.
+
 ## What a plugin cannot do yet
 
 Twelve of the dogfood site's twenty-five plugins load as code now
 (`runtime-report.php`), and the nine dogfood pages render at parity with
 them running. What the rest ask for, in order: the admin host
 (`WP_List_Table`, screens and screen options, `iframe_header`, the
-`WP_Filesystem` family and the upgraders); `WP_Site`/multisite shims;
+`WP_Filesystem` family and the upgraders); `WP_HTML_Processor` (the tag
+processor exists; the tree-aware one does not); `WP_Site`/multisite shims;
 `WP_Term_Query`/`WP_User_Query` objects; `.mo` translations; `fetch_feed`;
 the customizer and widget screens (the classes exist so plugins load;
 nothing is served); a front-end main query fed from the engine's own

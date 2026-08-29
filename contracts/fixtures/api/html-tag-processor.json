@@ -1,0 +1,1533 @@
+[
+    [
+        "empty",
+        []
+    ],
+    [
+        "text only",
+        [
+            [],
+            [
+                [
+                    "#text",
+                    "#text",
+                    null,
+                    false,
+                    false,
+                    "just text"
+                ]
+            ]
+        ]
+    ],
+    [
+        "simple",
+        [
+            [
+                "#tag",
+                "DIV",
+                "DIV",
+                false,
+                false,
+                ""
+            ],
+            [
+                "#tag",
+                "P",
+                "P",
+                false,
+                false,
+                ""
+            ],
+            [
+                "#tag",
+                "B",
+                "B",
+                false,
+                false,
+                ""
+            ],
+            [
+                "#tag",
+                "BR",
+                "BR",
+                false,
+                true,
+                ""
+            ],
+            [
+                "#tag",
+                "IMG",
+                "IMG",
+                false,
+                false,
+                ""
+            ]
+        ]
+    ],
+    [
+        "simple tokens",
+        [
+            [
+                "#tag",
+                "DIV",
+                "DIV",
+                false,
+                false,
+                ""
+            ],
+            [
+                "#text",
+                "#text",
+                null,
+                false,
+                false,
+                "\n"
+            ],
+            [
+                "#tag",
+                "P",
+                "P",
+                false,
+                false,
+                ""
+            ],
+            [
+                "#text",
+                "#text",
+                null,
+                false,
+                false,
+                "Hi "
+            ],
+            [
+                "#tag",
+                "B",
+                "B",
+                false,
+                false,
+                ""
+            ],
+            [
+                "#text",
+                "#text",
+                null,
+                false,
+                false,
+                "there"
+            ],
+            [
+                "#tag",
+                "B",
+                "B",
+                true,
+                false,
+                ""
+            ],
+            [
+                "#tag",
+                "P",
+                "P",
+                true,
+                false,
+                ""
+            ],
+            [
+                "#tag",
+                "BR",
+                "BR",
+                false,
+                true,
+                ""
+            ],
+            [
+                "#tag",
+                "IMG",
+                "IMG",
+                false,
+                false,
+                ""
+            ],
+            [
+                "#comment",
+                "#comment",
+                null,
+                false,
+                false,
+                " c "
+            ],
+            [
+                "#tag",
+                "DIV",
+                "DIV",
+                true,
+                false,
+                ""
+            ]
+        ]
+    ],
+    [
+        "closers",
+        [
+            [
+                "#tag",
+                "DIV",
+                "DIV",
+                false,
+                false,
+                ""
+            ],
+            [
+                "#tag",
+                "P",
+                "P",
+                false,
+                false,
+                ""
+            ],
+            [
+                "#tag",
+                "P",
+                "P",
+                true,
+                false,
+                ""
+            ],
+            [
+                "#tag",
+                "DIV",
+                "DIV",
+                true,
+                false,
+                ""
+            ]
+        ]
+    ],
+    [
+        "case",
+        [
+            [
+                "#tag",
+                "DIV",
+                "DIV",
+                false,
+                false,
+                ""
+            ],
+            [
+                "#tag",
+                "SPAN",
+                "SPAN",
+                false,
+                false,
+                ""
+            ]
+        ]
+    ],
+    [
+        "void and self closing",
+        [
+            [
+                "#tag",
+                "BR",
+                "BR",
+                false,
+                false,
+                ""
+            ],
+            [
+                "#tag",
+                "BR",
+                "BR",
+                false,
+                true,
+                ""
+            ],
+            [
+                "#tag",
+                "BR",
+                "BR",
+                false,
+                true,
+                ""
+            ],
+            [
+                "#tag",
+                "IMG",
+                "IMG",
+                false,
+                true,
+                ""
+            ],
+            [
+                "#tag",
+                "DIV",
+                "DIV",
+                false,
+                true,
+                ""
+            ],
+            [
+                "#tag",
+                "SVG",
+                "SVG",
+                false,
+                false,
+                ""
+            ],
+            [
+                "#tag",
+                "PATH",
+                "PATH",
+                false,
+                true,
+                ""
+            ]
+        ]
+    ],
+    [
+        "raw text",
+        [
+            [
+                "#tag",
+                "SCRIPT",
+                "SCRIPT",
+                false,
+                false,
+                "var a = \"<b>\";"
+            ],
+            [
+                "#tag",
+                "STYLE",
+                "STYLE",
+                false,
+                false,
+                "p{}"
+            ],
+            [
+                "#tag",
+                "TEXTAREA",
+                "TEXTAREA",
+                false,
+                false,
+                "<p>x</p>"
+            ],
+            [
+                "#tag",
+                "TITLE",
+                "TITLE",
+                false,
+                false,
+                "<b>t</b>"
+            ],
+            [
+                "#tag",
+                "P",
+                "P",
+                false,
+                false,
+                ""
+            ]
+        ]
+    ],
+    [
+        "raw text tokens",
+        [
+            [
+                "#tag",
+                "SCRIPT",
+                "SCRIPT",
+                false,
+                false,
+                "var a = \"<b>\";"
+            ],
+            [
+                "#tag",
+                "TEXTAREA",
+                "TEXTAREA",
+                false,
+                false,
+                "<p>x</p>"
+            ],
+            [
+                "#tag",
+                "P",
+                "P",
+                false,
+                false,
+                ""
+            ],
+            [
+                "#text",
+                "#text",
+                null,
+                false,
+                false,
+                "after"
+            ],
+            [
+                "#tag",
+                "P",
+                "P",
+                true,
+                false,
+                ""
+            ]
+        ]
+    ],
+    [
+        "comments",
+        [
+            [
+                "#comment",
+                "#comment",
+                null,
+                false,
+                false,
+                " a "
+            ],
+            [
+                "#comment",
+                "#comment",
+                null,
+                false,
+                false,
+                ""
+            ],
+            [
+                "#comment",
+                "#comment",
+                null,
+                false,
+                false,
+                ""
+            ],
+            [
+                "#text",
+                "#text",
+                null,
+                false,
+                false,
+                "x"
+            ],
+            [
+                "#comment",
+                "#comment",
+                null,
+                false,
+                false,
+                ""
+            ],
+            [
+                "#text",
+                "#text",
+                null,
+                false,
+                false,
+                "y"
+            ],
+            [
+                "#doctype",
+                "html",
+                null,
+                false,
+                false,
+                " html"
+            ],
+            [
+                "#comment",
+                "#comment",
+                null,
+                false,
+                false,
+                "c"
+            ],
+            [
+                "#processing-instruction",
+                "#processing-instruction",
+                "php",
+                false,
+                false,
+                "echo 1; "
+            ],
+            [
+                "#tag",
+                "P",
+                "P",
+                false,
+                false,
+                ""
+            ],
+            [
+                "#text",
+                "#text",
+                null,
+                false,
+                false,
+                "z"
+            ],
+            [
+                "#tag",
+                "P",
+                "P",
+                true,
+                false,
+                ""
+            ]
+        ]
+    ],
+    [
+        "funky",
+        [
+            [
+                "#funky-comment",
+                "#funky-comment",
+                null,
+                false,
+                false,
+                "3"
+            ],
+            [
+                "#comment",
+                "#comment",
+                null,
+                false,
+                false,
+                "3"
+            ],
+            [
+                "#comment",
+                "#comment",
+                null,
+                false,
+                false,
+                " x ?"
+            ],
+            [
+                "#tag",
+                "P",
+                "P",
+                false,
+                false,
+                ""
+            ],
+            [
+                "#funky-comment",
+                "#funky-comment",
+                null,
+                false,
+                false,
+                " p"
+            ],
+            [
+                "#tag",
+                "A",
+                "A",
+                false,
+                true,
+                ""
+            ],
+            [
+                "#tag",
+                "DIV",
+                "DIV",
+                true,
+                false,
+                ""
+            ]
+        ]
+    ],
+    [
+        "incomplete",
+        [
+            true,
+            "DIV",
+            false,
+            true,
+            null,
+            "<div><p class=\"a"
+        ]
+    ],
+    [
+        "get_attribute",
+        [
+            "one",
+            "one",
+            "a b",
+            "1",
+            "two",
+            "q \"u\" o",
+            true,
+            "",
+            "& < \" ' A &notanentity;  ",
+            "first",
+            true,
+            null,
+            [
+                "data-x",
+                "data-y"
+            ],
+            [
+                "data-x",
+                "data-y"
+            ],
+            [
+                "id",
+                "class",
+                "data-x",
+                "data-y",
+                "z",
+                "bool",
+                "disabled",
+                "ent",
+                "dup",
+                "empty"
+            ],
+            []
+        ]
+    ],
+    [
+        "get_attribute before next",
+        [
+            null,
+            null,
+            null,
+            null,
+            false,
+            false,
+            "<div id=\"x\">"
+        ]
+    ],
+    [
+        "get_attribute on closer",
+        [
+            "DIV",
+            true,
+            null,
+            false,
+            false,
+            "<div id=\"x\"></div>"
+        ]
+    ],
+    [
+        "set new attribute",
+        [
+            [
+                true,
+                true,
+                true
+            ],
+            "<div data-f=\"1.5\" data-n=\"5\" id=\"one\" class=\"a\">x</div>",
+            "<div data-f=\"1.5\" data-n=\"5\" id=\"one\" class=\"a\">x</div>"
+        ]
+    ],
+    [
+        "set existing attribute",
+        [
+            [
+                true,
+                true
+            ],
+            "<div id=\"new\" CLASS=\"b c\">x</div>",
+            "<div id=\"new\" CLASS=\"b c\">x</div>"
+        ]
+    ],
+    [
+        "set escaping",
+        [
+            [
+                true,
+                true
+            ],
+            "<div data-json=\"{&quot;a&quot;:1}\" title=\"a &quot;b&quot; &lt;c&gt; &amp; &apos;d&apos; &amp;amp; é\">",
+            "<div data-json=\"{&quot;a&quot;:1}\" title=\"a &quot;b&quot; &lt;c&gt; &amp; &apos;d&apos; &amp;amp; é\">"
+        ]
+    ],
+    [
+        "set boolean",
+        [
+            [
+                true,
+                true,
+                false,
+                true
+            ],
+            "<input required  disabled>",
+            "<input required  disabled>"
+        ]
+    ],
+    [
+        "set null",
+        [
+            [
+                false,
+                false
+            ],
+            "<div id=\"x\" class=\"a\">",
+            "<div id=\"x\" class=\"a\">"
+        ]
+    ],
+    [
+        "set invalid names",
+        [
+            [
+                false,
+                false,
+                false,
+                true,
+                true,
+                false
+            ],
+            "<div UPPER=\"x\" ok-name_1:x=\"x\">",
+            "<div UPPER=\"x\" ok-name_1:x=\"x\">"
+        ]
+    ],
+    [
+        "set duplicate attribute",
+        [
+            [
+                true,
+                "third"
+            ],
+            "<div dup=\"third\" dup=\"second\" data-z=\"1\">",
+            "<div dup=\"third\" dup=\"second\" data-z=\"1\">"
+        ]
+    ],
+    [
+        "set twice",
+        [
+            [
+                true,
+                true,
+                true,
+                true,
+                false,
+                true
+            ],
+            "<div b=\"4\" a=\"3\">",
+            "<div b=\"4\" a=\"3\">"
+        ]
+    ],
+    [
+        "remove attribute",
+        [
+            [
+                true,
+                true,
+                false,
+                true
+            ],
+            "<div  class=\"a\"   >",
+            "<div  class=\"a\"   >"
+        ]
+    ],
+    [
+        "remove duplicate",
+        [
+            [
+                true
+            ],
+            "<div  x=\"1\" >",
+            "<div  x=\"1\" >"
+        ]
+    ],
+    [
+        "set then remove same call",
+        [
+            [
+                true,
+                true
+            ],
+            "<div >",
+            "<div >"
+        ]
+    ],
+    [
+        "remove then set",
+        [
+            [
+                true,
+                true
+            ],
+            "<div id=\"y\">",
+            "<div id=\"y\">"
+        ]
+    ],
+    [
+        "self closing set",
+        [
+            [
+                true,
+                true
+            ],
+            "<img alt=\"b\" />",
+            "<img alt=\"b\" />"
+        ]
+    ],
+    [
+        "whitespace tag",
+        [
+            [
+                true,
+                true,
+                true
+            ],
+            "<div data-n=\"1\"\n  id=\"y\"\n  \n>",
+            "<div data-n=\"1\"\n  id=\"y\"\n  \n>"
+        ]
+    ],
+    [
+        "unquoted set",
+        [
+            [
+                true,
+                true
+            ],
+            "<div id=\"y\" >",
+            "<div id=\"y\" >"
+        ]
+    ],
+    [
+        "add_class",
+        [
+            [
+                true,
+                true,
+                true,
+                true,
+                true
+            ],
+            "<div class=\"a b c d e  C\">",
+            "<div class=\"a b c d e  C\">"
+        ]
+    ],
+    [
+        "add_class no attr",
+        [
+            [
+                true,
+                true
+            ],
+            "<div class=\"c d\" id=\"x\">",
+            "<div class=\"c d\" id=\"x\">"
+        ]
+    ],
+    [
+        "add_class messy",
+        [
+            [
+                true
+            ],
+            "<div class=\"a   b\n c z\">",
+            "<div class=\"a   b\n c z\">"
+        ]
+    ],
+    [
+        "add_class messy remove",
+        [
+            [
+                true
+            ],
+            "<div class=\"a\n c\">",
+            "<div class=\"a\n c\">"
+        ]
+    ],
+    [
+        "remove_class",
+        [
+            [
+                true,
+                true,
+                true
+            ],
+            "<div class=\"a c\">",
+            "<div class=\"a c\">"
+        ]
+    ],
+    [
+        "remove_class last",
+        [
+            [
+                true
+            ],
+            "<div  id=\"x\">",
+            "<div  id=\"x\">"
+        ]
+    ],
+    [
+        "remove_class empty attr",
+        [
+            [
+                true,
+                true
+            ],
+            "<div class=\"q\" id=\"x\">",
+            "<div class=\"q\" id=\"x\">"
+        ]
+    ],
+    [
+        "add then set class",
+        [
+            [
+                true,
+                true
+            ],
+            "<div class=\"z\">",
+            "<div class=\"z\">"
+        ]
+    ],
+    [
+        "set then add class",
+        [
+            [
+                true,
+                true
+            ],
+            "<div class=\"z b\">",
+            "<div class=\"z b\">"
+        ]
+    ],
+    [
+        "remove then add class",
+        [
+            [
+                true,
+                true,
+                true
+            ],
+            "<div class=\"b\">",
+            "<div class=\"b\">"
+        ]
+    ],
+    [
+        "remove class attr then add",
+        [
+            [
+                true,
+                true
+            ],
+            "<div class=\"b\">",
+            "<div class=\"b\">"
+        ]
+    ],
+    [
+        "has_class",
+        [
+            true,
+            false,
+            true,
+            false,
+            [
+                "a",
+                "b",
+                "B"
+            ],
+            true,
+            [
+                "a",
+                "b",
+                "B",
+                "c"
+            ],
+            false,
+            [
+                "b",
+                "B",
+                "c"
+            ],
+            [
+                true,
+                false
+            ],
+            [
+                "q",
+                "r"
+            ],
+            [
+                false,
+                []
+            ]
+        ]
+    ],
+    [
+        "class entity",
+        [
+            "a&b <c",
+            true,
+            false,
+            [
+                "a&b",
+                "<c"
+            ]
+        ]
+    ],
+    [
+        "next_tag string query",
+        [
+            true,
+            "SPAN",
+            true,
+            false,
+            null,
+            false,
+            null,
+            false,
+            null
+        ]
+    ],
+    [
+        "next_tag array query",
+        [
+            true,
+            "y z",
+            true,
+            [
+                "P",
+                "y"
+            ],
+            true,
+            "SPAN",
+            false,
+            true,
+            "",
+            true,
+            "",
+            false,
+            true,
+            true,
+            [
+                "P",
+                true
+            ],
+            true,
+            [
+                "DIV",
+                true
+            ],
+            true,
+            false,
+            null,
+            false
+        ]
+    ],
+    [
+        "next_tag after end",
+        [
+            true,
+            false,
+            false,
+            null,
+            null,
+            false,
+            "<p>1</p>"
+        ]
+    ],
+    [
+        "bookmarks",
+        [
+            true,
+            true,
+            true,
+            false,
+            true,
+            "b",
+            true,
+            "a",
+            true,
+            "b",
+            false,
+            true,
+            false,
+            false,
+            false,
+            "<div class=\"seen\" id=\"a\"><p data-first=\"1\" id=\"b\">1</p><p data-seen=\"1\" id=\"c\">2</p></div>"
+        ]
+    ],
+    [
+        "bookmark then modify earlier",
+        [
+            "c",
+            "y",
+            "<div id=\"a\"><p id=\"b\">1</p><p data-x=\"z\" id=\"c\">2</p></div>"
+        ]
+    ],
+    [
+        "bookmark limit",
+        [
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            false,
+            false
+        ]
+    ],
+    [
+        "seek limit",
+        [
+            0
+        ]
+    ],
+    [
+        "modifiable text",
+        [
+            [
+                "#tag",
+                "P",
+                ""
+            ],
+            [
+                "#text",
+                "#text",
+                "a & b < c   ’ © "
+            ],
+            [
+                "#tag",
+                "P",
+                ""
+            ],
+            [
+                "#tag",
+                "SCRIPT",
+                "x &amp; y"
+            ],
+            [
+                "#tag",
+                "TEXTAREA",
+                "t & u"
+            ],
+            [
+                "#tag",
+                "TITLE",
+                "ti &"
+            ],
+            [
+                "#comment",
+                "#comment",
+                " co &amp; "
+            ],
+            [
+                "#text",
+                "#text",
+                "plain & text"
+            ]
+        ]
+    ],
+    [
+        "set modifiable text",
+        [
+            [
+                "P",
+                false
+            ],
+            [
+                "#text",
+                true
+            ],
+            [
+                "SCRIPT",
+                true
+            ],
+            [
+                "TEXTAREA",
+                true
+            ],
+            [
+                "TITLE",
+                true
+            ],
+            [
+                "#comment",
+                true
+            ],
+            [
+                "IMG",
+                false
+            ],
+            "<p>replaced text</p><script>var b = \"</\\u0073cript>\";</script><textarea>u < v & w</textarea><title>new title</title><!-- new comment --><img alt=\"i\">"
+        ]
+    ],
+    [
+        "set modifiable text empty",
+        [
+            true,
+            "<p></p>",
+            false,
+            "<p>x</p>"
+        ]
+    ],
+    [
+        "text then set attribute",
+        "<p id=\"a\">ONE</p><p id=\"b\">two</p>"
+    ],
+    [
+        "comment details",
+        [
+            [
+                "#comment",
+                "#comment",
+                "COMMENT_AS_HTML_COMMENT",
+                " normal ",
+                " normal "
+            ],
+            [
+                "#comment",
+                "#comment",
+                "COMMENT_AS_HTML_COMMENT",
+                "- dash ",
+                "- dash "
+            ],
+            [
+                "#comment",
+                "#comment",
+                "COMMENT_AS_ABRUPTLY_CLOSED_COMMENT",
+                "",
+                ""
+            ],
+            [
+                "#comment",
+                "#comment",
+                "COMMENT_AS_ABRUPTLY_CLOSED_COMMENT",
+                "",
+                ""
+            ],
+            [
+                "#text",
+                "#text",
+                null,
+                "y",
+                null
+            ],
+            [
+                "#doctype",
+                "html",
+                null,
+                " html",
+                null
+            ],
+            [
+                "#comment",
+                "#comment",
+                "COMMENT_AS_CDATA_LOOKALIKE",
+                "x",
+                "[CDATA[x]]"
+            ],
+            [
+                "#processing-instruction",
+                "#processing-instruction",
+                null,
+                "",
+                null
+            ],
+            [
+                "#comment",
+                "#comment",
+                "COMMENT_AS_INVALID_HTML",
+                "3 abc",
+                "3 abc"
+            ],
+            [
+                "#comment",
+                "#comment",
+                "COMMENT_AS_PI_NODE_LOOKALIKE",
+                " v",
+                "?xml v?"
+            ],
+            [
+                "#comment",
+                "#comment",
+                "COMMENT_AS_HTML_COMMENT",
+                "a",
+                "a"
+            ],
+            [
+                "#comment",
+                "#comment",
+                "COMMENT_AS_HTML_COMMENT",
+                "b",
+                "b"
+            ],
+            [
+                "#comment",
+                "#comment",
+                "COMMENT_AS_HTML_COMMENT",
+                " c -- d ",
+                " c -- d "
+            ]
+        ]
+    ],
+    [
+        "doctype",
+        [
+            [
+                "#doctype",
+                "html",
+                [
+                    "html",
+                    null,
+                    null,
+                    null
+                ]
+            ],
+            [
+                "#doctype",
+                "html",
+                [
+                    "html",
+                    null,
+                    null,
+                    null
+                ]
+            ],
+            [
+                "#doctype",
+                "html",
+                [
+                    "html",
+                    "-//W3C//DTD HTML 4.01//EN",
+                    "http://www.w3.org/TR/html4/strict.dtd",
+                    null
+                ]
+            ],
+            [
+                "#doctype",
+                "html",
+                [
+                    null,
+                    null,
+                    null,
+                    null
+                ]
+            ],
+            [
+                "#doctype",
+                "html",
+                [
+                    "html",
+                    null,
+                    "about:legacy-compat",
+                    null
+                ]
+            ]
+        ]
+    ],
+    [
+        "namespaces",
+        [
+            [
+                "SVG",
+                "html",
+                "SVG",
+                [
+                    "viewbox"
+                ],
+                "viewbox"
+            ],
+            [
+                "FOREIGNOBJECT",
+                "html",
+                "FOREIGNOBJECT",
+                [],
+                "viewbox"
+            ],
+            [
+                "DIV",
+                "html",
+                "DIV",
+                [],
+                "viewbox"
+            ],
+            [
+                "LINEARGRADIENT",
+                "html",
+                "LINEARGRADIENT",
+                [],
+                "viewbox"
+            ],
+            [
+                "MATH",
+                "html",
+                "MATH",
+                [],
+                "viewbox"
+            ],
+            [
+                "MI",
+                "html",
+                "MI",
+                [],
+                "viewbox"
+            ]
+        ]
+    ],
+    [
+        "attribute edge cases",
+        [
+            [
+                "<a href=x>",
+                "A",
+                false,
+                {
+                    "href": "x"
+                }
+            ],
+            [
+                "<a href = \"x\" >",
+                "A",
+                false,
+                {
+                    "href": "x"
+                }
+            ],
+            [
+                "<a href=\"x\"y=\"z\">",
+                "A",
+                false,
+                {
+                    "href": "x",
+                    "y": "z"
+                }
+            ],
+            [
+                "<a b c d>",
+                "A",
+                false,
+                {
+                    "b": true,
+                    "c": true,
+                    "d": true
+                }
+            ],
+            [
+                "<a =x>",
+                "A",
+                false,
+                {
+                    "=x": true
+                }
+            ],
+            [
+                "<a \"b\"=\"c\">",
+                "A",
+                false,
+                {
+                    "\"b\"": "c"
+                }
+            ],
+            [
+                "<a b='it\"s' c=\"it's\">",
+                "A",
+                false,
+                {
+                    "b": "it\"s",
+                    "c": "it's"
+                }
+            ],
+            [
+                "<a b=x/y>",
+                "A",
+                false,
+                {
+                    "b": "x/y"
+                }
+            ],
+            [
+                "<a b=x/>",
+                "A",
+                false,
+                {
+                    "b": "x/"
+                }
+            ],
+            [
+                "<a b=\"x\"/>",
+                "A",
+                true,
+                {
+                    "b": "x"
+                }
+            ],
+            [
+                "<a/b>",
+                "A",
+                false,
+                {
+                    "b": true
+                }
+            ],
+            [
+                "<a /b>",
+                "A",
+                false,
+                {
+                    "b": true
+                }
+            ],
+            [
+                "<a b=>",
+                "A",
+                false,
+                {
+                    "b": ""
+                }
+            ],
+            [
+                "<a b= c>",
+                "A",
+                false,
+                {
+                    "b": "c"
+                }
+            ],
+            [
+                "<a b=&amp;>",
+                "A",
+                false,
+                {
+                    "b": "&"
+                }
+            ],
+            [
+                "<a b=\"&amp;x&ampy&#38;&#x26;&#xg;&#;\">",
+                "A",
+                false,
+                {
+                    "b": "&x&ampy&&&#xg;&#;"
+                }
+            ]
+        ]
+    ],
+    [
+        "unicode",
+        [
+            null,
+            "ünïcode",
+            "<p class=\"ñ\" data-x=\"ç\" title=\"héllo 日本\">ünïcode</p>"
+        ]
+    ],
+    [
+        "big",
+        [
+            300,
+            14892,
+            "e158d642fd812a0232caca39f42a11ad"
+        ]
+    ],
+    [
+        "toString before parsing",
+        "<p>x</p>"
+    ],
+    [
+        "get_updated_html partial",
+        [
+            "<p a=\"1\">x</p><p>y</p>",
+            "<p a=\"1\">x</p><p b=\"2\">y</p>",
+            "2"
+        ]
+    ]
+]
