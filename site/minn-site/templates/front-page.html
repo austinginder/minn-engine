@@ -67,7 +67,7 @@
 			<div>
 				<span class="minn-kicker">Already on WordPress?</span>
 				<h3>Start with Minn Admin today. The engine comes later.</h3>
-				<p class="minn-p">Minn Admin is a WordPress plugin: a reimagined admin served at <code>/minn-admin/</code> on the site you have right now, with classic wp-admin left fully intact. It is the interface Minn Engine boots, so everything you learn there carries over unchanged.</p>
+				<p class="minn-p">Minn Admin is a WordPress plugin: a reimagined admin served at <code>/minn-admin/</code> on the site you have right now. On WordPress, classic wp-admin stays as a fallback. On the engine there is no wp-admin: Minn Admin is the admin. Everything you learn there carries over unchanged.</p>
 				<ul class="minn-list">
 					<li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg><span><b>Install it like any plugin.</b> Free, MIT licensed, no build step, no Pro tier.</span></li>
 					<li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg><span><b>Live in it.</b> Content, media, comments, users, settings, and more than a hundred plugin adapters that appear on their own.</span></li>
@@ -81,8 +81,8 @@
 			<div>
 				<span class="minn-kicker">The sequence</span>
 				<div class="minn-layers">
-					<div class="minn-layer"><span class="k">Phase 0</span><span><b>Minn Admin replaces wp-admin.</b> A complete, REST-pure admin running against real sites.</span><span class="s done">shipped</span></div>
-					<div class="minn-layer"><span class="k">Phase 1</span><span><b>The engine serves greenfield sites.</b> Front end plus REST, Minn Admin booting unmodified, fleet tooling that cannot tell.</span><span class="s now">in progress</span></div>
+					<div class="minn-layer"><span class="k">Phase 0</span><span><b>Minn Admin is the daily admin on WordPress.</b> Classic wp-admin stays as a fallback. A complete, REST-pure admin running against real sites.</span><span class="s done">shipped</span></div>
+					<div class="minn-layer"><span class="k">Phase 1</span><span><b>The engine serves greenfield sites.</b> Front end plus REST, Minn Admin as the only admin, fleet tooling that cannot tell.</span><span class="s now">in progress</span></div>
 					<div class="minn-layer"><span class="k">Phase 2</span><span><b>The WordPress runtime.</b> Plugins load unmodified, layer by layer, measured against the reference.</span><span class="s now">started</span></div>
 					<div class="minn-layer"><span class="k">Phase 3</span><span><b>Migration for the tractable slice.</b> Brochure, forms, and content sites, with the caveats enforced by the tooling itself.</span><span class="s">earned later</span></div>
 				</div>
@@ -97,7 +97,7 @@
 		<div data-reveal>
 			<span class="minn-kicker">The thesis</span>
 			<h2 class="minn-h2">WordPress is not software.<br>It is a coordination standard.</h2>
-			<p class="minn-lead">WordPress remains the default pick in spite of itself. It does not win on the merits of the platform. It wins because it is the point where customers, hosts, developers, and now AI agents all coordinate. The software is almost incidental. Here is what “WordPress” actually consists of, ranked by how much it matters.</p>
+			<p class="minn-lead">WordPress remains the default because customers, hosts, developers, and now AI agents all coordinate there. The portable unit of site, the frozen schema, the REST API, and the labor pool are the product. The PHP is one implementation of those contracts. Here is what “WordPress” actually consists of, ranked by how much it matters.</p>
 		</div>
 		<div class="minn-legs" data-reveal>
 			<div class="minn-leg"><div class="rank">1</div><div class="bar"><i style="width:100%"></i></div><h3>A portable unit of site</h3><p>Files plus a database dump, runnable on any PHP host on earth. Backup, migration, staging, and whole fleet-management stacks exist because the unit is standard.</p></div>
@@ -116,7 +116,7 @@
 			<div class="minn-card soft" style="padding:32px 34px;">
 				<span class="minn-kicker">The graveyard lesson</span>
 				<h3 class="minn-h3">Every challenger replaced the software and abandoned the contracts.</h3>
-				<p style="font-size:16px;">Ghost, Craft, Statamic, October, ClassicPress: none of them dented WordPress, and they all failed the same way. Each replaced the code, which was never the moat, and walked away from the contracts, which were. A clean break means starting over on portability, tooling, hosting support, and the labor pool at once. No product is good enough to win four moats simultaneously.</p>
+				<p style="font-size:16px;">Ghost, Craft, Statamic, October: none of them dented WordPress, and they all failed the same way. Each replaced the code, which was never the moat, and walked away from the contracts, which were. A clean break means starting over on portability, tooling, hosting support, and the labor pool at once. No product is good enough to win four moats simultaneously.</p>
 			</div>
 			<div class="minn-card accent" style="padding:32px 34px;">
 				<span class="minn-kicker">The correct precedent</span>
@@ -160,7 +160,7 @@
 					<div class="minn-layer"><span class="k">E0</span><span>Inventory: 3,903 functions, 394 classes, 2,940 hooks, reflected from the reference</span><span class="s done">done</span></div>
 					<div class="minn-layer"><span class="k">E1</span><span>Hook engine and plugin lifecycle</span><span class="s done">done</span></div>
 					<div class="minn-layer"><span class="k">E2</span><span>Content, options, media, cron, HTTP, comments, REST, blocks, <code>$wpdb</code></span><span class="s done">most of it</span></div>
-					<div class="minn-layer"><span class="k">E3</span><span>Admin host: <code>/wp-admin/</code> screens for plugins, Settings API, admin-ajax</span><span class="s">next</span></div>
+					<div class="minn-layer"><span class="k">E3</span><span>Admin host: plugin settings screens inside Minn Admin, Settings API, admin-ajax</span><span class="s">next</span></div>
 					<div class="minn-layer"><span class="k">E4</span><span>Editor: block.json registration and the editor globals</span><span class="s">later</span></div>
 					<div class="minn-layer"><span class="k">E5</span><span>The long tail by fatal count: widgets, customizer, XML-RPC, upgrader, multisite</span><span class="s">later</span></div>
 				</div>
@@ -233,7 +233,7 @@ $ <b>php tests/rest-parity.test.php</b>
 					<li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg><span><b>Google v. Oracle (2021):</b> reimplementing an API surface for a new platform was fair use.</span></li>
 					<li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg><span><b>Lotus v. Borland, Sega v. Accolade, Sony v. Connectix:</b> command hierarchies are methods of operation; reverse engineering for compatibility is fair use.</span></li>
 					<li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg><span><b>In practice:</b> Wine reimplements Win32, Samba reimplements SMB, FerretDB speaks MongoDB under Apache 2.0, and WP-CLI itself is MIT at the heart of the GPL ecosystem.</span></li>
-					<li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg><span><b>Fork versus reimplementation is the whole question.</b> A fork is GPL forever. A reimplementation written from specifications of behavior is a new work, and its author chooses the license.</span></li>
+					<li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg><span><b>Fork versus reimplementation is the whole question.</b> ClassicPress kept the contracts and stayed a fork: the license came with the tree, so it is GPL forever. A reimplementation written from specifications of behavior is a new work, and its author chooses the license.</span></li>
 				</ul>
 			</div>
 			<div>
@@ -301,10 +301,10 @@ $ <b>php tests/rest-parity.test.php</b>
 		<div class="minn-faq" data-reveal style="margin-top:36px;">
 			<details><summary>Is this a fork of WordPress?</summary><p>No. Not one line of WordPress code is in the repository, and none runs in the process. The engine is written from behavioral specifications captured on a running WordPress and diffed against it. That is what makes the MIT license possible; a fork would be GPL forever.</p></details>
 			<details><summary>Will my plugins work?</summary><p>Increasingly. The engine reimplements the runtime plugins call into, clean-room, and loads them unmodified behind a symbol gate: a plugin that calls a function the runtime lacks is skipped with the reason rather than fataled. Front-end plugins were first; plugins with their own settings screens need the admin host, which is the next layer.</p></details>
-			<details><summary>Will my host notice?</summary><p>That is the definition of done, and the point. The webroot keeps <code>index.php</code>, <code>wp-config.php</code>, <code>wp-settings.php</code>, <code>wp-includes/version.php</code>, and <code>wp-content/</code> exactly where tooling expects them, and <code>wp/v2</code>, feeds, sitemaps, <code>wp-cron.php</code>, and <code>/wp-admin/</code> all answer the way monitors and backup tools probe them. Real fleet tooling is run against a real site until nothing can tell.</p></details>
+			<details><summary>Will my host notice?</summary><p>That is the definition of done, and the point. The webroot keeps <code>index.php</code>, <code>wp-config.php</code>, <code>wp-settings.php</code>, <code>wp-includes/version.php</code>, and <code>wp-content/</code> exactly where tooling expects them, and <code>wp/v2</code>, feeds, sitemaps, and <code>wp-cron.php</code> answer the way monitors and backup tools probe them. <code>/wp-admin/</code> redirects to Minn Admin: there is no wp-admin UI. Real fleet tooling is run against a real site until nothing can tell.</p></details>
 			<details><summary>Can I go back?</summary><p>Yes, in one command. <code>minn eject</code> restores the parked WordPress files byte for byte. Nothing is written to your database that WordPress would not have written itself.</p></details>
 			<details><summary>Why PHP?</summary><p>Because the moat being inherited is PHP hosting. Modern PHP on FrankenPHP-class runtimes is fast, and the infrastructure already speaks it. Target PHP 8.4, no framework, no build step, no dependencies.</p></details>
-			<details><summary>Where is the admin?</summary><p>Minn Admin, the WordPress plugin, is the interface: it boots on the engine unmodified because it never touched wp-admin internals in the first place. It speaks <code>wp/v2</code> plus its own namespace, and it works on the WordPress site you have today. Start there.</p></details>
+			<details><summary>Where is the admin?</summary><p>Minn Admin, the WordPress plugin, is the interface. It boots on the engine unmodified because it never touched wp-admin internals in the first place. On WordPress, classic wp-admin stays as a fallback. On the engine there is no wp-admin: Minn Admin is the admin. It speaks <code>wp/v2</code> plus its own namespace, and it works on the WordPress site you have today. Start there.</p></details>
 			<details><summary>Where is the source?</summary><p>The engine is developed in the open on a local repository and opens on GitHub with its first tagged cut. Minn Admin’s source is public now, and its contracts are the same ones the engine serves.</p></details>
 		</div>
 	</div>

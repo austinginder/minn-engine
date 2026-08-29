@@ -8,7 +8,7 @@ A from-scratch, MIT-licensed engine that speaks WordPress's operational contract
 
 ## 1. The thesis: WordPress is not software, it is a coordination standard
 
-WordPress remains the default pick in spite of itself. It is not winning on the merits of the platform. It wins because it is the Schelling point where customers, hosts, developers, and now AI agents all coordinate. The software is almost incidental.
+WordPress remains the default because customers, hosts, developers, and now AI agents all coordinate there. The portable unit of site, the frozen schema, the REST API, and the labor pool are the product. The PHP is one implementation of those contracts.
 
 What "WordPress" actually consists of, ranked by how much it matters:
 
@@ -22,7 +22,7 @@ The AI shift sharpens rather than weakens the thesis. When anyone can generate a
 
 ## 2. The graveyard lesson: every challenger replaced the software and abandoned the contracts
 
-Ghost, Craft, Statamic, October, ClassicPress: none of them dented WordPress, and they all failed the same way. Each replaced the code, which was never the moat, and walked away from the contracts, which were. A clean break means starting over on portability, tooling, hosting support, and the labor pool simultaneously. No product is good enough to win four moats at once.
+Ghost, Craft, Statamic, October: none of them dented WordPress, and they all failed the same way. Each replaced the code, which was never the moat, and walked away from the contracts, which were. ClassicPress is the other lesson: it kept the contracts and stayed a fork, so the license came with the tree. A clean break means starting over on portability, tooling, hosting support, and the labor pool simultaneously. No product is good enough to win four moats at once.
 
 Minnow, the earlier experiment, taught the same lesson from inside. It made two choices that doomed it: a clean break (its own docs warned against porting a site from WordPress) and mechanical transmutation of WordPress's source. The first abandoned the moat. The second, it turns out, was also the one legally radioactive move for an MIT project. Both lessons are load-bearing here.
 
@@ -103,7 +103,7 @@ What this costs, named honestly: the engine is no longer "low tens of thousands 
 
 ## 7. Sequencing: a strangler fig, not a big bang
 
-- **Phase 0 (shipped)** — Minn Admin replaces wp-admin: a complete, REST-pure admin with a proven extension contract, running against real sites today.
+- **Phase 0 (shipped)** — Minn Admin is the daily admin on WordPress: a complete, REST-pure admin with a proven extension contract, running against real sites today. Classic wp-admin stays as a fallback. On the engine there is no wp-admin; Minn Admin is the admin.
 - **Phase 1 (next)** — the engine serves greenfield sites on our own hosting. Front end plus REST for new sites where the whole stack is ours to verify. Minn Admin boots unmodified. The compatibility suite runs the fleet tooling against it until the hosting layer cannot tell.
 - **Phase 2** — the WordPress runtime: plugins load unmodified, layer by layer (front end, admin host, editor, long tail), measured against the reference test suite.
 - **Phase 3 (earned)** — migration for the tractable slice, with the serialized-PHP and dynamic-block caveats enforced honestly by the tooling itself.

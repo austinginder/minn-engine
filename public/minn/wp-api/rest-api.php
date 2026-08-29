@@ -4,6 +4,7 @@
 use Minn\Rest\Schema;
 use Minn\Runtime\Refusal;
 use Minn\Runtime\Runtime;
+use Minn\Rest\RouteArgs;
 
 function rest_get_server()
 {
@@ -45,44 +46,11 @@ function register_rest_route($route_namespace, $route, $args = [], $override = f
     if ($clean_namespace !== $route_namespace) {
         _doing_it_wrong('register_rest_route', 'Namespace must not start or end with a slash.', '5.4.2');
     }
-    if (!did_action('rest_api_init')) {
-        // Registering before rest_api_init is fine: the server records it and fires the action once created.
+    [$args, $missingPermission] = RouteArgs::normalise((array) $args);
+    if ($missingPermission) {
+        _doing_it_wrong('register_rest_route', 'The REST API route definition is missing the required permission_callback argument.', '5.5.0');
     }
-    if (isset($args['args'])) {
-        $common_args = $args['args'];
-        unset($args['args']);
-    } else {
-        $common_args = [];
-    }
-    if (isset($args['callback'])) {
-        $args = [$args];
-    }
-    $defaults = ['methods' => 'GET', 'callback' => null, 'args' => []];
-    foreach ($args as $key => &$arg_group) {
-        if (!is_numeric($key)) {
-            continue;
-        }
-        $arg_group = array_merge($defaults, $arg_group);
-        $arg_group['args'] = array_merge($common_args, $arg_group['args']);
-        if (!isset($arg_group['permission_callback'])) {
-            _doing_it_wrong('register_rest_route', 'The REST API route definition is missing the required permission_callback argument.', '5.5.0');
-        }
-        foreach ($arg_group['args'] as $arg => &$options) {
-            if (!is_array($options)) {
-                $options = [];
-            }
-            if (!isset($options['validate_callback'])) {
-                $options['validate_callback'] = 'rest_validate_request_arg';
-            }
-            if (!isset($options['sanitize_callback'])) {
-                $options['sanitize_callback'] = 'rest_sanitize_request_arg';
-            }
-        }
-        unset($options);
-    }
-    unset($arg_group);
-    $full_route = '/' . $clean_namespace . '/' . trim((string) $route, '/');
-    rest_get_server()->register_route($clean_namespace, $full_route, $args, $override);
+    rest_get_server()->register_route($clean_namespace, '/' . $clean_namespace . '/' . trim((string) $route, '/'), $args, $override);
     return true;
 }
 

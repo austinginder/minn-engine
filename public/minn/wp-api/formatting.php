@@ -4,6 +4,7 @@
 use Minn\Content\Blocks;
 use Minn\Content\Texturize;
 use Minn\Runtime\Runtime;
+use Minn\Support\Url;
 
 function wp_check_invalid_utf8($text, $strip = false)
 {
@@ -99,58 +100,16 @@ function esc_js($text)
 function esc_url($url, $protocols = null, $_context = 'display')
 {
     $original = $url;
-    $url = (string) $url;
+    $url = Url::clean((string) $url);
     if ($url === '') {
         return $url;
-    }
-    $url = str_replace(' ', '%20', ltrim($url));
-    $url = preg_replace('|[^a-z0-9-~+_.?#=!&;,/:%@$\|*\'()\[\]\\x80-\\xff]|i', '', $url);
-    if ($url === '') {
-        return $url;
-    }
-    if ($_context !== 'display') {
-        // Nothing else to strip in the raw context.
-    }
-    $url = str_replace(';//', '://', $url);
-    if (!str_contains($url, ':') && !in_array($url[0], ['/', '#', '?'], true) && !preg_match('/^[a-z0-9-]+?\.php/i', $url)) {
-        $url = 'http://' . $url;
     }
     if ($_context === 'display') {
-        $url = wp_kses_normalize_entities($url);
-        $url = str_replace('&amp;', '&#038;', $url);
-        $url = str_replace("'", '&#039;', $url);
+        $url = str_replace(['&amp;', "'"], ['&#038;', '&#039;'], wp_kses_normalize_entities($url));
     }
-    if (str_contains($url, '[') || str_contains($url, ']')) {
-        $parsed = wp_parse_url($url);
-        $front = '';
-        if (isset($parsed['scheme'])) {
-            $front .= $parsed['scheme'] . '://';
-        } elseif ($url[0] === '/') {
-            $front .= '//';
-        }
-        if (isset($parsed['user'])) {
-            $front .= $parsed['user'];
-        }
-        if (isset($parsed['pass'])) {
-            $front .= ':' . $parsed['pass'];
-        }
-        if (isset($parsed['user']) || isset($parsed['pass'])) {
-            $front .= '@';
-        }
-        if (isset($parsed['host'])) {
-            $front .= $parsed['host'];
-        }
-        if (isset($parsed['port'])) {
-            $front .= ':' . $parsed['port'];
-        }
-        $rest = substr($url, strlen($front));
-        $url = $front . str_replace(['[', ']'], ['%5B', '%5D'], $rest);
-    }
-    if (str_contains($url, ':')) {
-        $allowed = is_array($protocols) ? $protocols : wp_allowed_protocols();
-        if (wp_kses_bad_protocol($url, $allowed) !== $url) {
-            return '';
-        }
+    $url = Url::encodeBrackets($url, (array) wp_parse_url($url));
+    if (str_contains($url, ':') && wp_kses_bad_protocol($url, is_array($protocols) ? $protocols : wp_allowed_protocols()) !== $url) {
+        return '';
     }
     return apply_filters('clean_url', $url, $original, $_context);
 }
@@ -733,47 +692,15 @@ function force_ssl_admin($force = null)
 
 function add_query_arg(...$args)
 {
+    $current = $GLOBALS['minn_request_uri'] ?? (Runtime::current()->request?->path ?? '');
     if (is_array($args[0])) {
-        $uri = count($args) < 2 || $args[1] === false ? ($GLOBALS['minn_request_uri'] ?? (Runtime::current()->request?->path ?? '')) : (string) $args[1];
+        $uri = count($args) < 2 || $args[1] === false ? $current : (string) $args[1];
         $new = $args[0];
     } else {
-        $uri = count($args) < 3 || $args[2] === false ? ($GLOBALS['minn_request_uri'] ?? (Runtime::current()->request?->path ?? '')) : (string) $args[2];
+        $uri = count($args) < 3 || $args[2] === false ? $current : (string) $args[2];
         $new = [$args[0] => $args[1] ?? null];
     }
-    $frag = '';
-    if (($pos = strpos($uri, '#')) !== false) {
-        $frag = substr($uri, $pos);
-        $uri = substr($uri, 0, $pos);
-    }
-    if (preg_match('|^https?://|i', $uri, $m)) {
-        $protocol = $m[0];
-        $uri = substr($uri, strlen($protocol));
-    } else {
-        $protocol = '';
-    }
-    if (str_contains($uri, '?')) {
-        [$base, $query] = explode('?', $uri, 2);
-        $base .= '?';
-    } elseif ($protocol || !str_contains($uri, '=')) {
-        $base = $uri . '?';
-        $query = '';
-    } else {
-        $base = '';
-        $query = $uri;
-    }
-    parse_str($query, $current);
-    $current = urlencode_deep($current);
-    foreach ($new as $k => $v) {
-        $current[$k] = $v;
-    }
-    foreach ($current as $k => $v) {
-        if ($v === false) {
-            unset($current[$k]);
-        }
-    }
-    $built = _minn_build_query($current);
-    $ret = trim($base . $built, '?');
-    return $protocol . $ret . $frag;
+    return Url::withQuery($uri, $new, static fn (array $q): array => urlencode_deep($q), static fn (array $q): string => _minn_build_query($q));
 }
 
 /** @internal keys are encoded, values are left as given (the reference shows raw values) */

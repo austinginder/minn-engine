@@ -614,3 +614,31 @@ the reference's `sanitize_title` filters still apply. The facade file went
 from 1,011 lines to 717 and makes no queries. `tests/style.test.php` now
 carries a ratchet for the whole facade: per-file query-call counts and the
 list of functions over forty lines may only shrink.
+
+The pass finished the same day. The facade makes no queries at all (every
+read and write goes through a repository or a `Runtime\` class), and no
+facade function runs past forty lines: 856 are five lines or fewer, 307
+under fifteen, 140 under forty, none longer. What moved, and where:
+
+| Facade | Minn class | What it holds |
+|---|---|---|
+| `taxonomy.php` | `Runtime\TermQuery`, `Runtime\TermWriter` | term reads, tree filters, fields shapes; insert/update/delete rules and relationships |
+| `rest-api.php` | `Rest\Schema`, `Rest\RouteArgs` | schema validate/sanitize/context filter and the type vocabulary; route argument defaults |
+| `post.php` | `Runtime\PostInsert`, `Runtime\PostLookup`, `Runtime\Pages` | column fill, empty check, status/date/slug resolution, categories; lookups and counts; page tree order |
+| `upgrade.php` | `Runtime\DbDelta` | create-or-add-columns-and-keys |
+| `comment.php` | `Runtime\CommentQuery` | comment reads and the approval breakdown |
+| `meta.php` | `Runtime\Meta` | the four meta tables' reads and row-level writes |
+| `blocks.php` | `Runtime\BlockMetadata` | block.json to type settings |
+| `misc.php` | `Runtime\UserInsert` | login/email/role rules, account fields, update columns |
+| `media.php` | `Media\Sizing` | resize box, size selection, srcset candidates, editor sizes |
+| `template.php` | `Runtime\Avatar` | avatar arguments, hash, Gravatar query, classes, attributes |
+| `formatting.php`, `http.php` | `Support\Url` | esc_url cleanup, bracket encoding, query merging, HTTP URL validation |
+
+Two conventions came out of it. A Minn class never constructs a WordPress
+object: it returns arrays, rows, or a `Runtime\Refusal` (code, message,
+data), and the facade turns those into `WP_Term`, `WP_Post`, or `WP_Error`.
+And anything the reference filters (`sanitize_title`, `is_email`,
+`number_format_i18n`, option reads, capability checks) is handed into the
+class as a closure rather than reimplemented, so plugin filters keep
+applying. The ratchet's two lists are empty; a new query or a new forty-line
+function in `wp-api/` fails the style suite.

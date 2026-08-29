@@ -2,6 +2,7 @@
 /** The HTTP API over WP_Http. */
 
 use Minn\Runtime\Runtime;
+use Minn\Support\Url;
 
 function _wp_http_get_object()
 {
@@ -141,53 +142,12 @@ function wp_http_validate_url($url)
     if (!is_string($url) || $url === '') {
         return false;
     }
-    $original = $url;
-    $url = wp_kses_bad_protocol($url, ['http', 'https']);
-    if ($url === '' || strtolower($url) !== strtolower($original)) {
+    $checked = wp_kses_bad_protocol($url, ['http', 'https']);
+    if ($checked === '' || strtolower($checked) !== strtolower($url)) {
         return false;
     }
-    $parsed = parse_url($url);
-    if ($parsed === false || !isset($parsed['host'], $parsed['scheme'])) {
-        return false;
-    }
-    if (!in_array(strtolower($parsed['scheme']), ['http', 'https'], true)) {
-        return false;
-    }
-    if (isset($parsed['user']) || isset($parsed['pass'])) {
-        return false;
-    }
-    if (str_contains($parsed['host'], ':')) {
-        return false;
-    }
-    $host = trim($parsed['host'], '.');
-    if (preg_match('#^(([1-9]?\d|1\d\d|25[0-5]|2[0-4]\d)\.){3}([1-9]?\d|1\d\d|25[0-5]|2[0-4]\d)$#', $host)) {
-        $ip = $host;
-    } else {
-        $ip = gethostbyname($host);
-        if ($ip === $host) {
-            $ip = false;
-        }
-    }
-    if ($ip) {
-        $parts = array_map('intval', explode('.', $ip));
-        if ($parts[0] === 127 || $parts[0] === 10 || $parts[0] === 0 || ($parts[0] === 172 && $parts[1] >= 16 && $parts[1] <= 31) || ($parts[0] === 192 && $parts[1] === 168) || ($parts[0] === 169 && $parts[1] === 254)) {
-            $same_host = strtolower($host) === strtolower((string) parse_url(home_url(), PHP_URL_HOST));
-            if (!$same_host && !apply_filters('http_request_host_is_external', false, $host, $url)) {
-                return false;
-            }
-        }
-    }
-    if (empty($parsed['port'])) {
-        return $url;
-    }
-    $port = (int) $parsed['port'];
-    if (in_array($port, [80, 443, 8080], true)) {
-        return $url;
-    }
-    if ($parsed['host'] === parse_url(home_url(), PHP_URL_HOST) && $port === (int) (parse_url(home_url(), PHP_URL_PORT) ?: 0)) {
-        return $url;
-    }
-    return false;
+    $home = parse_url(home_url());
+    return Url::validateForHttp($checked, (string) ($home['host'] ?? ''), (int) ($home['port'] ?? 0), static fn (string $host, string $url): bool => (bool) apply_filters('http_request_host_is_external', false, $host, $url)) ?? false;
 }
 
 function get_http_origin()

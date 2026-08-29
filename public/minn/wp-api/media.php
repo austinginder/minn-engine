@@ -335,44 +335,42 @@ function wp_get_attachment_image($attachment_id, $size = 'thumbnail', $icon = fa
         return '';
     }
     [$src, $width, $height] = $image;
-    $attachment = get_post($attachment_id);
-    $hwstring = image_hwstring($width, $height);
     $size_class = is_array($size) ? implode('x', $size) : $size;
-    $default_attr = ['src' => $src, 'class' => "attachment-{$size_class} size-{$size_class}", 'alt' => trim(strip_tags((string) get_post_meta($attachment_id, '_wp_attachment_image_alt', true)))];
-    $attr = wp_parse_args($attr, $default_attr);
-    $loading_attr = $attr;
-    $loading_attr['width'] = $width;
-    $loading_attr['height'] = $height;
-    $loading_optimization = wp_get_loading_optimization_attributes('img', $loading_attr, 'wp_get_attachment_image');
-    if (array_key_exists('loading', $attr) && !$attr['loading']) {
-        unset($loading_optimization['loading']);
-    }
-    if (array_key_exists('fetchpriority', $attr) && !$attr['fetchpriority']) {
-        unset($loading_optimization['fetchpriority']);
-    }
-    $attr = array_merge($attr, $loading_optimization);
-    if (empty($attr['srcset'])) {
-        $image_meta = wp_get_attachment_metadata($attachment_id);
-        if (is_array($image_meta)) {
-            $size_array = [absint($width), absint($height)];
-            $srcset = wp_calculate_image_srcset($size_array, $src, $image_meta, $attachment_id);
-            $sizes = wp_calculate_image_sizes($size_array, $src, $image_meta, $attachment_id);
-            if ($srcset && ($sizes || !empty($attr['sizes']))) {
-                $attr['srcset'] = $srcset;
-                if (empty($attr['sizes'])) {
-                    $attr['sizes'] = $sizes;
-                }
-            }
-        }
-    }
-    $attr = apply_filters('wp_get_attachment_image_attributes', $attr, $attachment, $size);
+    $attr = wp_parse_args($attr, ['src' => $src, 'class' => "attachment-{$size_class} size-{$size_class}", 'alt' => trim(strip_tags((string) get_post_meta($attachment_id, '_wp_attachment_image_alt', true)))]);
+    $attr = _minn_attachment_image_attributes($attachment_id, $attr, $src, (int) $width, (int) $height);
+    $attr = apply_filters('wp_get_attachment_image_attributes', $attr, get_post($attachment_id), $size);
     $attr = array_map('esc_attr', array_filter($attr, static fn ($v) => $v !== false && $v !== null));
-    $html = rtrim("<img {$hwstring}");
+    $html = rtrim('<img ' . image_hwstring($width, $height));
     foreach ($attr as $name => $value) {
         $html .= " {$name}=\"{$value}\"";
     }
-    $html .= ' />';
-    return apply_filters('wp_get_attachment_image', $html, $attachment_id, $size, $icon, $attr);
+    return apply_filters('wp_get_attachment_image', $html . ' />', $attachment_id, $size, $icon, $attr);
+}
+
+/** @internal the loading attributes and the srcset/sizes pair an attachment image carries unless the caller set them */
+function _minn_attachment_image_attributes(int $attachment_id, array $attr, string $src, int $width, int $height): array
+{
+    $loading = wp_get_loading_optimization_attributes('img', $attr + ['width' => $width, 'height' => $height], 'wp_get_attachment_image');
+    foreach (['loading', 'fetchpriority'] as $key) {
+        if (array_key_exists($key, $attr) && !$attr[$key]) {
+            unset($loading[$key]);
+        }
+    }
+    $attr = array_merge($attr, $loading);
+    if (!empty($attr['srcset'])) {
+        return $attr;
+    }
+    $meta = wp_get_attachment_metadata($attachment_id);
+    if (!is_array($meta)) {
+        return $attr;
+    }
+    $srcset = wp_calculate_image_srcset([$width, $height], $src, $meta, $attachment_id);
+    $sizes = wp_calculate_image_sizes([$width, $height], $src, $meta, $attachment_id);
+    if ($srcset && ($sizes || !empty($attr['sizes']))) {
+        $attr['srcset'] = $srcset;
+        $attr['sizes'] = empty($attr['sizes']) ? $sizes : $attr['sizes'];
+    }
+    return $attr;
 }
 
 function image_hwstring($width, $height)
