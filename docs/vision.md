@@ -41,15 +41,19 @@ The strategy lives or dies on knowing exactly which WordPress surfaces to honor 
 - Permalinks, feeds, sitemaps, and a block-rendering subset for `post_content`
 - Login and session conventions the hosting layer probes
 
-**Tier 2 — never:**
+**Tier 2 — the WordPress runtime, reimplemented (decided 2026-08-29):**
 
-- Hook-level PHP plugin compatibility. Reimplementing `add_filter` semantics bug for bug is rewriting WordPress, sediment included
-- wp-admin. Minn Admin is the admin, and it is already REST-pure
-- The theme template hierarchy as PHP soup
-- Shortcode and widget legacy layers beyond read-tolerance
-- Running GPL plugin code in-process through a compatibility shim
+The first draft of this document refused hook-level plugin compatibility and answered "but plugins" with agent-made ports. That answer was retired on 2026-08-29: a site owner does not want ported plugins, they want their plugins. So the engine also speaks WordPress to plugin code, the way Wine speaks Win32 to Windows programs and Mono spoke .NET: a clean-room reimplementation of the runtime plugins call into.
 
-The answer to "but plugins" is the same AI symmetry that weakened the plugin moat in the first place. If AI generation erodes WordPress's plugin advantage, it erodes the replacement's plugin deficit equally, provided the extension contract is clean enough for agents to target reliably. A site does not need sixty thousand plugins. It needs the three it actually uses, ported on demand by an agent against a contract designed for exactly that.
+- The hook engine (`add_action`, `add_filter`, priorities, `remove_filter`, `current_filter`) and the request lifecycle in the observed order (`muplugins_loaded`, `plugins_loaded`, `init`, `wp`, `template_redirect`, `wp_head`, `the_content`, `wp_footer`, REST, cron, activation and uninstall)
+- The procedural API plugins reach for, as a thin facade over the engine's own classes: options and transients, meta, posts, terms, users, `WP_Query` and the Loop globals, `$wpdb` with `prepare` and `dbDelta`, capabilities and nonces, i18n and `.mo` files, shortcodes, script and style enqueueing, HTTP, mail, cron, rewrite rules, `register_rest_route`, kses, filesystem and image APIs
+- An admin host: `/wp-admin/` served for real with an original shell that carries WordPress's class names (`.wrap`, `.form-table`, `.notice`, list tables, meta boxes), the Settings API, `admin-ajax.php` and `admin-post.php`. Minn Admin lists plugin menus and hosts those screens; it stays the admin, it stops being the only one
+- Block registration from `block.json` and the editor globals plugin scripts expect
+- The long tail in the order real plugins fatal without it: widgets, the customizer, XML-RPC, the upgrader, multisite
+
+Plugins are loaded in-process from `active_plugins`, unmodified. No hook shim over WordPress code: there is no WordPress code here to shim. The runtime is the engine.
+
+What this costs, named honestly: the engine is no longer "low tens of thousands of lines", the MIT-extension ecosystem bonus below is gone (anything targeting the WordPress API is a WordPress plugin), and the clean-room discipline in section 5 has to hold across a surface of roughly three thousand functions and twenty-five hundred hooks instead of a REST namespace. The machinery that makes that tractable is in section 5.
 
 **Definition of done, phase one: Kinsta, CaptainCore, Disembark, and UpdraftPlus cannot tell it isn't WordPress.** That sentence is the whole spec. The compatibility suite is a battery of real fleet tooling run against a Minn Engine site: backups restore, migrations round-trip, WP-CLI automation runs, monitors stay green, and Minn Admin boots unmodified.
 
@@ -57,7 +61,7 @@ The answer to "but plugins" is the same AI symmetry that weakened the plugin moa
 
 **It stays PHP.** The temptation is Go or Rust, and it is wrong for this strategy: the moat being inherited is PHP hosting. Modern PHP on FrankenPHP-class runtimes is fast, and the infrastructure already speaks it. Target PHP 8.4+, minimal dependencies, no framework baggage, no build step.
 
-**It is small on purpose.** A single core in the low tens of thousands of lines against WordPress's roughly six hundred thousand: router, entities over the wp schema, REST layer, capabilities, a template engine, a block-rendering subset, cron, mail. Everything else is an extension.
+**It is layered on purpose.** A small core (router, entities over the wp schema, REST layer, capabilities, a template engine, block rendering, cron, mail) written as modern namespaced PHP, and above it the WordPress runtime facade: the procedural functions, classes, globals and hooks plugin code calls, each a thin delegation into the core. The core stays legible and suite-gated; the facade is wide by necessity and generated from the interface inventory where it can be.
 
 **Minn Admin is the interface, already built.** Minn Admin never touches wp-admin internals. It boots from `window.MINN`, speaks `wp/v2` plus its own namespace, and ships with a hundred-adapter ecosystem, a validator-enforced descriptor contract, and a deep suite culture. An engine that serves those surfaces gets a complete, mature admin on day one.
 
@@ -81,17 +85,19 @@ The answer to "but plugins" is the same AI symmetry that weakened the plugin moa
 
 1. **Copied code, including mechanically transformed code** — any actual WordPress source carries GPL no matter how it is reorganized. The Minnow transmuter generated its build from WordPress's own source; that output was a derivative work and could never have been MIT.
 2. **Bundled GPL assets** — no WordPress core JavaScript, block-library CSS, bundled themes, or Dashicons ship in the engine.
-3. **Loading GPL plugin code in-process** — a hook-compat shim executing real WP plugins would raise genuine derivative-work questions. Tier 2 already forbids it for engineering reasons; the legal reason points the same way.
+3. **Loading GPL plugin code in-process** — the engine ships no plugin and derives nothing from one; a host that loads GPL programs is not their derivative (Wine and Mono are the precedent). The live question is the other direction: reimplementing three thousand functions without ever reading their source. That is a process question, answered by the machinery below, and it is the reason the lawyer hour moves from "before launch" to "before the runtime milestone".
 4. **Trademark, not copyright, is the live wire** — "WordPress" is a WordPress Foundation trademark, and the current enforcement climate is aggressive. Nominative fair use permits truthful statements ("compatible with WordPress"), but the name stays out of the project name, domain, and anything implying endorsement.
 
-**The hygiene program.** Clean-room purity is the gold standard, not a strict legal requirement; infringement requires copying protected expression, not mere exposure to it. But a documented process is cheap insurance, and agents make it enforceable: spec-first development from behavioral fixtures captured from a live WordPress instance; implementation from the spec, never from WordPress source; an automated similarity gate in CI against the WordPress source tree; tracked provenance for every file; and an hour with an open-source-savvy IP lawyer before public launch. This document is analysis, not legal advice.
+**The hygiene program.** Clean-room purity is the gold standard, not a strict legal requirement; infringement requires copying protected expression, not mere exposure to it. But a documented process is cheap insurance, and agents make it enforceable: spec-first development from behavioral fixtures captured from a live WordPress instance; implementation from the spec, never from WordPress source; an automated similarity gate in CI against the WordPress source tree; tracked provenance for every file; and an hour with an open-source-savvy IP lawyer before the runtime milestone. This document is analysis, not legal advice.
 
-**One ecosystem bonus.** Because Minn Engine's extension API is a new interface, extensions target it rather than WordPress, and WordPress's long-standing claim that plugins inherit the GPL does not reach them. Extension authors choose their own licenses. For commercial developers, that alone is a reason to build here.
+**Where the runtime's spec comes from.** Function names, signatures, defaults, class and method names, hook names and arities, globals: all interface, and all extracted mechanically from the running reference by reflection into `contracts/api/` (the header file). Behaviour comes from probe batteries run through `wp eval` on the reference and recorded as fixtures, then from whole-plugin parity (same plugin, same database, both stacks, diff everything). WordPress's own PHPUnit suite, kept outside the repo like the reference itself, is the conformance harness: running GPL tests against MIT code creates no derivative, and its pass rate is the honest measure of "any plugin works". developer.wordpress.org prints source inline and is therefore not a spec source. Agents implementing the facade are handed the inventory and the fixtures, never the tree.
+
+**The ecosystem bonus that was, and is not.** An earlier draft counted on Minn-native extensions choosing their own licences. With the WordPress runtime as the extension API, plugins are WordPress plugins and inherit whatever WordPress's licence claim reaches. The engine itself stays MIT; that is the promise that matters to the host and the site owner.
 
 ## 6. Honest hard parts
 
 - **Serialized PHP is forever.** Reading real WordPress databases means tolerating serialized-PHP blobs in options and postmeta indefinitely. Greenfield sites keep it out of new data; migrated sites drag the long tail in. Design greenfield-first.
-- **Dynamic blocks need their plugins.** Rendering static block markup is tractable. Third-party dynamic blocks render through plugin callbacks the engine is not running. Migration scope, not greenfield scope.
+- **The runtime is the long road.** Front-end plugins work once the hook engine and the content API exist; settings-page plugins need the admin host; editor plugins need the block editor globals. Each layer is measured by the reference test suite and by real plugins, and "any plugin" is reached layer by layer, not declared.
 - **WooCommerce-shaped sites are out of scope for years.** A large share of real small-business sites are brochure, forms, and content, which is exactly the tractable slice.
 - **Bus factor.** The customer-control argument only transfers once someone other than the founder can maintain the engine. MIT plus machine-readable contracts plus exhaustive suites is the mitigation, and agent legibility is the honest answer, but it deserves naming.
 
@@ -99,7 +105,7 @@ The answer to "but plugins" is the same AI symmetry that weakened the plugin moa
 
 - **Phase 0 (shipped)** — Minn Admin replaces wp-admin: a complete, REST-pure admin with a proven extension contract, running against real sites today.
 - **Phase 1 (next)** — the engine serves greenfield sites on our own hosting. Front end plus REST for new sites where the whole stack is ours to verify. Minn Admin boots unmodified. The compatibility suite runs the fleet tooling against it until the hosting layer cannot tell.
-- **Phase 2** — the extension contract and the agent-port workflow ship publicly, turning "which plugins does this site actually need" into an afternoon rather than an ecosystem problem.
+- **Phase 2** — the WordPress runtime: plugins load unmodified, layer by layer (front end, admin host, editor, long tail), measured against the reference test suite.
 - **Phase 3 (earned)** — migration for the tractable slice, with the serialized-PHP and dynamic-block caveats enforced honestly by the tooling itself.
 
 Minnow wanted to be a clean break. Minn Engine wants the opposite: indistinguishable at the seams, and radically simpler inside.
