@@ -80,8 +80,8 @@ foreach ($files as $path) {
 // calls made from the facade (the work belongs in src/Minn/), and functions
 // whose body runs past forty lines (a decision hiding in a signature).
 // Lower a number here when a file loses its last offender; never raise one.
-$facadeQueries = ['comment.php' => 5, 'formatting.php' => 1, 'meta.php' => 6, 'misc.php' => 3, 'option.php' => 2, 'media.php' => 1, 'pluggable.php' => 1, 'post.php' => 8, 'upgrade.php' => 12, 'user.php' => 5];
-$facadeLong = ['add_query_arg', 'register_rest_route', 'dbDelta', 'esc_url', 'get_avatar', 'get_avatar_data', 'get_comments', 'get_pages', 'image_get_intermediate_size', 'image_resize_dimensions', 'register_block_type_from_metadata', 'wp_calculate_image_srcset', 'wp_get_attachment_image', 'wp_http_validate_url', 'wp_insert_post', 'wp_insert_user', 'wp_prepare_attachment_for_js'];
+$facadeQueries = ['comment.php' => 5, 'formatting.php' => 1, 'meta.php' => 6, 'misc.php' => 3, 'option.php' => 2, 'media.php' => 1, 'pluggable.php' => 1, 'post.php' => 0, 'upgrade.php' => 12, 'user.php' => 5];
+$facadeLong = ['add_query_arg', 'register_rest_route', 'dbDelta', 'esc_url', 'get_avatar', 'get_avatar_data', 'get_comments', 'image_get_intermediate_size', 'image_resize_dimensions', 'register_block_type_from_metadata', 'wp_calculate_image_srcset', 'wp_get_attachment_image', 'wp_http_validate_url', 'wp_insert_user', 'wp_prepare_attachment_for_js'];
 $facadeDir = dirname($root) . '/wp-api';
 foreach (glob("{$facadeDir}/*.php") as $file) {
     $name = basename($file);

@@ -6,6 +6,9 @@ use Minn\Content\Posts;
 use Minn\Content\PostWriter;
 use Minn\Content\Slug;
 use Minn\Runtime\Runtime;
+use Minn\Runtime\Pages;
+use Minn\Runtime\PostInsert;
+use Minn\Runtime\PostLookup;
 
 /** @internal */
 function _minn_posts(): Posts
@@ -14,6 +17,26 @@ function _minn_posts(): Posts
 }
 
 /** @internal */
+/** @internal */
+function _minn_post_lookup(): PostLookup
+{
+    return new PostLookup(Runtime::current()->db);
+}
+
+/** @internal the insert decisions, with the reference's option, capability, and date helpers handed in */
+function _minn_post_insert(): PostInsert
+{
+    return new PostInsert(
+        _minn_post_writer(),
+        get_current_user_id(),
+        static fn (string $option): mixed => get_option($option),
+        static fn (string $type, string $feature): bool => post_type_supports($type, $feature),
+        static fn (string $type): bool => current_user_can(get_post_type_object($type)->cap->publish_posts ?? 'publish_posts'),
+        static fn (string $date): string => (string) get_gmt_from_date($date),
+        static fn (bool $gmt): string => (string) current_time('mysql', $gmt),
+    );
+}
+
 function _minn_post_writer(): PostWriter
 {
     return new PostWriter(Runtime::current()->db, _minn_posts(), Runtime::current()->site);
@@ -378,10 +401,8 @@ function get_page_by_path($page_path, $output = OBJECT, $post_type = 'page')
 
 function get_page_by_title($page_title, $output = OBJECT, $post_type = 'page')
 {
-    $db = Runtime::current()->db;
-    $types = (array) $post_type;
-    $id = $db->value("SELECT ID FROM {$db->table('posts')} WHERE post_title = ? AND post_type IN (" . implode(',', array_fill(0, count($types), '?')) . ') ORDER BY ID ASC LIMIT 1', [(string) $page_title, ...$types]);
-    return $id === null ? null : get_post((int) $id, $output);
+    $id = _minn_post_lookup()->idByTitle((string) $page_title, array_map('strval', (array) $post_type));
+    return $id === null ? null : get_post($id, $output);
 }
 
 function get_page_uri($page = 0)
@@ -591,10 +612,8 @@ function wp_get_post_revisions($post = 0, $args = null)
     if ($post === null) {
         return [];
     }
-    $db = Runtime::current()->db;
-    $rows = $db->rows("SELECT * FROM {$db->table('posts')} WHERE post_parent = ? AND post_type = 'revision' AND post_status = 'inherit' ORDER BY post_date DESC, ID DESC", [$post->ID]);
     $out = [];
-    foreach ($rows as $row) {
+    foreach (_minn_post_lookup()->revisionsOf($post->ID) as $row) {
         $out[(int) $row['ID']] = new WP_Post((object) $row);
     }
     return $out;
@@ -718,97 +737,16 @@ function get_posts($args = null)
 
 function get_pages($args = [])
 {
-    $defaults = ['child_of' => 0, 'sort_order' => 'ASC', 'sort_column' => 'post_title', 'hierarchical' => 1, 'exclude' => [], 'include' => [], 'meta_key' => '', 'meta_value' => '', 'authors' => '', 'parent' => -1, 'exclude_tree' => [], 'number' => '', 'offset' => 0, 'post_type' => 'page', 'post_status' => 'publish'];
-    $parsed = wp_parse_args($args, $defaults);
-    $query = ['post_type' => $parsed['post_type'], 'post_status' => $parsed['post_status'], 'posts_per_page' => -1, 'orderby' => 'title', 'order' => 'ASC'];
-    $columns = ['post_title' => 'title', 'menu_order' => 'menu_order', 'post_date' => 'date', 'post_modified' => 'modified', 'ID' => 'ID', 'post_author' => 'author', 'post_name' => 'name', 'post_parent' => 'parent'];
-    $orderby = [];
-    foreach (preg_split('/[\s,]+/', trim((string) $parsed['sort_column']), -1, PREG_SPLIT_NO_EMPTY) as $column) {
-        $key = $columns[$column] ?? $columns['post_' . $column] ?? null;
-        if ($key !== null) {
-            $orderby[$key] = strtoupper((string) $parsed['sort_order']) === 'DESC' ? 'DESC' : 'ASC';
-        }
-    }
-    if ($orderby !== []) {
-        $query['orderby'] = $orderby;
-    }
-    if ((int) $parsed['parent'] >= 0) {
-        $query['post_parent'] = (int) $parsed['parent'];
-    }
-    if (!empty($parsed['include'])) {
-        $query['post__in'] = wp_parse_id_list($parsed['include']);
-    }
-    if (!empty($parsed['exclude'])) {
-        $query['post__not_in'] = wp_parse_id_list($parsed['exclude']);
-    }
-    if ($parsed['meta_key'] !== '') {
-        $query['meta_key'] = $parsed['meta_key'];
-        $query['meta_value'] = $parsed['meta_value'];
-    }
-    if ($parsed['authors'] !== '') {
-        $query['author'] = $parsed['authors'];
-    }
-    $query['ignore_sticky_posts'] = true;
-    $query['no_found_rows'] = true;
-    $pages = (new WP_Query())->query($query);
-    if ($parsed['hierarchical'] && (int) $parsed['parent'] < 0) {
-        // Parents first, each followed by its own subtree, as the reference orders a page tree.
-        $byParent = [];
-        foreach ($pages as $page) {
-            $byParent[(int) $page->post_parent][] = $page;
-        }
-        $known = array_map(static fn (WP_Post $p) => $p->ID, $pages);
-        $walk = static function (int $parent) use (&$walk, &$byParent): array {
-            $out = [];
-            foreach ($byParent[$parent] ?? [] as $page) {
-                $out[] = $page;
-                array_push($out, ...$walk($page->ID));
-            }
-            return $out;
-        };
-        $roots = [];
-        foreach ($pages as $page) {
-            if (!in_array((int) $page->post_parent, $known, true)) {
-                $roots[] = (int) $page->post_parent;
-            }
-        }
-        $ordered = [];
-        foreach (array_unique($roots) as $root) {
-            array_push($ordered, ...$walk($root));
-        }
-        $pages = $ordered;
-    }
-    if ((int) $parsed['child_of'] > 0) {
-        $pages = _minn_page_descendants($pages, (int) $parsed['child_of']);
-    }
-    foreach ((array) $parsed['exclude_tree'] as $tree) {
-        $excluded = array_map(static fn (WP_Post $p) => $p->ID, _minn_page_descendants($pages, (int) $tree));
-        $excluded[] = (int) $tree;
-        $pages = array_values(array_filter($pages, static fn (WP_Post $p) => !in_array($p->ID, $excluded, true)));
-    }
-    if ((int) $parsed['offset'] > 0 || $parsed['number'] !== '') {
-        $pages = array_slice($pages, (int) $parsed['offset'], $parsed['number'] === '' ? null : (int) $parsed['number']);
-    }
-    return apply_filters('get_pages', array_values($pages), $parsed);
+    $parsed = wp_parse_args($args, Pages::DEFAULTS);
+    $query = Pages::queryArgs($parsed, empty($parsed['include']) ? [] : wp_parse_id_list($parsed['include']), empty($parsed['exclude']) ? [] : wp_parse_id_list($parsed['exclude']));
+    $pages = Pages::arrange((new WP_Query())->query($query), $parsed);
+    return apply_filters('get_pages', $pages, $parsed);
 }
 
 /** @internal every page under one ancestor, in list order */
 function _minn_page_descendants(array $pages, int $parent): array
 {
-    $out = [];
-    $wanted = [$parent];
-    $changed = true;
-    while ($changed) {
-        $changed = false;
-        foreach ($pages as $page) {
-            if (in_array((int) $page->post_parent, $wanted, true) && !in_array($page, $out, true)) {
-                $out[] = $page;
-                $wanted[] = (int) $page->ID;
-                $changed = true;
-            }
-        }
-    }
-    return $out;
+    return Pages::descendants($pages, $parent);
 }
 
 function get_children($args = '', $output = OBJECT)
@@ -850,153 +788,73 @@ function wp_count_posts($type = 'post', $perm = '')
     if (!post_type_exists($type)) {
         return new stdClass();
     }
-    $db = Runtime::current()->db;
-    $rows = $db->rows("SELECT post_status, COUNT(*) AS num_posts FROM {$db->table('posts')} WHERE post_type = ? GROUP BY post_status", [$type]);
     $counts = array_fill_keys(array_keys(get_post_stati()), 0);
-    foreach ($rows as $row) {
-        $counts[$row['post_status']] = (string) $row['num_posts'];
+    foreach (_minn_post_lookup()->countByStatus((string) $type) as $status => $count) {
+        $counts[$status] = (string) $count;
     }
     return apply_filters('wp_count_posts', (object) $counts, $type, $perm);
 }
 
 function wp_count_attachments($mime_type = '')
 {
-    $db = Runtime::current()->db;
-    $rows = $db->rows("SELECT post_mime_type, COUNT(*) AS num_posts FROM {$db->table('posts')} WHERE post_type = 'attachment' AND post_status != 'trash' GROUP BY post_mime_type");
-    $counts = [];
-    foreach ($rows as $row) {
-        $counts[$row['post_mime_type']] = (string) $row['num_posts'];
-    }
-    $counts['trash'] = (string) $db->value("SELECT COUNT(*) FROM {$db->table('posts')} WHERE post_type = 'attachment' AND post_status = 'trash'");
-    return (object) $counts;
+    return (object) array_map('strval', _minn_post_lookup()->countAttachments());
 }
 
 /** @internal the columns the posts table takes, filled from a postarr */
 function _minn_post_columns(array $postarr, ?WP_Post $existing): array
 {
-    $now = current_time('mysql');
-    $nowGmt = current_time('mysql', true);
-    $columns = [];
-    foreach (['post_author', 'post_date', 'post_date_gmt', 'post_content', 'post_title', 'post_excerpt', 'post_status', 'comment_status', 'ping_status', 'post_password', 'post_name', 'to_ping', 'pinged', 'post_modified', 'post_modified_gmt', 'post_content_filtered', 'post_parent', 'guid', 'menu_order', 'post_type', 'post_mime_type'] as $column) {
-        if (array_key_exists($column, $postarr)) {
-            $columns[$column] = is_array($postarr[$column]) ? implode("\n", $postarr[$column]) : (string) $postarr[$column];
-        }
-    }
-    if ($existing === null) {
-        $columns += [
-            'post_author' => (string) get_current_user_id(),
-            'post_content' => '',
-            'post_title' => '',
-            'post_excerpt' => '',
-            'post_status' => 'draft',
-            'comment_status' => (string) (get_option('default_comment_status') ?: 'open'),
-            'ping_status' => (string) (get_option('default_ping_status') ?: 'open'),
-            'post_password' => '',
-            'post_name' => '',
-            'to_ping' => '',
-            'pinged' => '',
-            'post_content_filtered' => '',
-            'post_parent' => '0',
-            'guid' => '',
-            'menu_order' => '0',
-            'post_type' => 'post',
-            'post_mime_type' => '',
-        ];
-    }
-    return $columns;
+    return _minn_post_insert()->columns($postarr, $existing?->to_array());
 }
 
 function wp_insert_post($postarr, $wp_error = false, $fire_after_hooks = true)
 {
     $postarr = wp_unslash((array) $postarr);
-    $writer = _minn_post_writer();
+    $insert = _minn_post_insert();
     $update = !empty($postarr['ID']);
     $existing = $update ? get_post((int) $postarr['ID']) : null;
     if ($update && $existing === null) {
         return $wp_error ? new WP_Error('invalid_post', 'Invalid post ID.') : 0;
     }
+    $before = $existing?->to_array();
     $postarr = apply_filters('wp_insert_post_data', $postarr, $postarr, $postarr, $update);
-    $columns = _minn_post_columns($postarr, $existing);
-    $type = (string) ($columns['post_type'] ?? $existing->post_type);
-    $title = (string) ($columns['post_title'] ?? $existing?->post_title ?? '');
-    $content = (string) ($columns['post_content'] ?? $existing?->post_content ?? '');
-    $excerpt = (string) ($columns['post_excerpt'] ?? $existing?->post_excerpt ?? '');
-    $maybeEmpty = $title === '' && $content === '' && $excerpt === '' && post_type_supports($type, 'editor') && post_type_supports($type, 'title') && post_type_supports($type, 'excerpt');
-    if (apply_filters('wp_insert_post_empty_content', $maybeEmpty, $postarr)) {
+    $columns = $insert->columns($postarr, $before);
+    if (apply_filters('wp_insert_post_empty_content', $insert->isEmpty($columns, $before), $postarr)) {
         return $wp_error ? new WP_Error('empty_content', 'Content, title, and excerpt are empty.') : 0;
     }
-    $status = (string) ($columns['post_status'] ?? $existing->post_status);
-    if ($type === 'attachment' && !in_array($status, ['inherit', 'private', 'trash', 'auto-draft'], true)) {
-        $status = 'inherit';
-    }
-    if ($status === 'publish' && !post_type_exists($type) === false && !current_user_can(get_post_type_object($type)->cap->publish_posts ?? 'publish_posts') && get_current_user_id() > 0) {
-        $status = 'pending';
-    }
-    $now = current_time('mysql');
-    $nowGmt = current_time('mysql', true);
-    $date = (string) ($columns['post_date'] ?? '');
-    if ($date === '' || str_starts_with($date, '0000-00-00')) {
-        $date = $existing !== null && !str_starts_with($existing->post_date, '0000') ? $existing->post_date : $now;
-    }
-    $dateGmt = (string) ($columns['post_date_gmt'] ?? '');
-    if ($dateGmt === '' || str_starts_with($dateGmt, '0000-00-00')) {
-        $dateGmt = in_array($status, ['draft', 'pending', 'auto-draft'], true) ? '0000-00-00 00:00:00' : ($existing !== null && !str_starts_with($existing->post_date_gmt, '0000') && !array_key_exists('post_date', $columns) ? $existing->post_date_gmt : get_gmt_from_date($date));
-    }
-    if ($status === 'publish' && strtotime($dateGmt . ' UTC') > time() + MINUTE_IN_SECONDS) {
-        $status = 'future';
-    }
-    $columns['post_status'] = $status;
-    $columns['post_date'] = $date;
-    $columns['post_date_gmt'] = $dateGmt;
-    $columns['post_modified'] = $now;
-    $columns['post_modified_gmt'] = $nowGmt;
-    $slug = (string) ($columns['post_name'] ?? $existing?->post_name ?? '');
-    if ($slug === '' && !in_array($status, ['draft', 'pending', 'auto-draft'], true)) {
-        $slug = Slug::sanitize($title);
-    } elseif ($slug !== '' && (!$update || $slug !== $existing->post_name)) {
-        $slug = Slug::sanitize($slug);
-    }
-    if ($slug !== '') {
-        $slug = $writer->uniqueSlug($slug, $update ? $existing->ID : 0);
-    }
-    $columns['post_name'] = $slug;
-    $columns['post_parent'] = (string) (int) ($columns['post_parent'] ?? $existing?->post_parent ?? 0);
-    $columns['menu_order'] = (string) (int) ($columns['menu_order'] ?? $existing?->menu_order ?? 0);
-    $columns['post_author'] = (string) (int) ($columns['post_author'] ?? $existing?->post_author ?? get_current_user_id());
-    $previousStatus = $existing?->post_status ?? 'new';
+    $columns = $insert->resolve($columns, $before);
     if ($update) {
         do_action('pre_post_update', $existing->ID, $columns);
-        $writer->update($existing->ID, $columns);
-        $id = $existing->ID;
-    } else {
-        $id = $writer->insert($columns);
-        if ($columns['guid'] === '') {
-            $writer->update($id, ['guid' => home_url('/?p=' . $id)]);
-        }
     }
+    $id = $insert->persist($columns, $existing?->ID, static fn (int $id): string => home_url('/?p=' . $id));
     wp_cache_delete($id, 'posts');
     $post = get_post($id);
-    if (!empty($postarr['post_category']) || (!$update && $type === 'post' && $status !== 'auto-draft')) {
-        $categories = array_values(array_filter(array_map('intval', (array) ($postarr['post_category'] ?? []))));
-        if ($categories === [] && $type === 'post' && in_array('category', get_object_taxonomies($type), true) && (!$update || empty($postarr['post_category']))) {
-            $categories = [(int) get_option('default_category')];
-        }
-        if ($categories !== [] && in_array('category', get_object_taxonomies($type), true)) {
-            wp_set_post_categories($id, $categories);
-        }
+    $type = $columns['post_type'] ?? $existing->post_type;
+    _minn_post_inputs($id, $postarr, $type, $columns['post_status'], $update);
+    _minn_post_writer()->recountTaxonomiesOf($id);
+    if ($fire_after_hooks) {
+        wp_after_insert_post($post, $update, $existing);
+    }
+    if ($update && in_array($type, ['post', 'page'], true) && post_type_supports($type, 'revisions')) {
+        wp_save_post_revision($id);
+    }
+    return $id;
+}
+
+/** @internal the terms, meta, and template a postarr carries beside the columns */
+function _minn_post_inputs(int $id, array $postarr, string $type, string $status, bool $update): void
+{
+    $categories = PostInsert::categories($postarr, $type, $status, $update, get_object_taxonomies($type), (int) get_option('default_category'));
+    if ($categories !== null) {
+        wp_set_post_categories($id, $categories);
     }
     if (isset($postarr['tags_input']) && in_array('post_tag', get_object_taxonomies($type), true)) {
         wp_set_post_tags($id, $postarr['tags_input']);
     }
-    if (!empty($postarr['tax_input']) && is_array($postarr['tax_input'])) {
-        foreach ($postarr['tax_input'] as $taxonomy => $terms) {
-            wp_set_post_terms($id, $terms, (string) $taxonomy);
-        }
+    foreach (is_array($postarr['tax_input'] ?? null) ? $postarr['tax_input'] : [] as $taxonomy => $terms) {
+        wp_set_post_terms($id, $terms, (string) $taxonomy);
     }
-    if (isset($postarr['meta_input']) && is_array($postarr['meta_input'])) {
-        foreach ($postarr['meta_input'] as $key => $value) {
-            update_post_meta($id, (string) $key, $value);
-        }
+    foreach (is_array($postarr['meta_input'] ?? null) ? $postarr['meta_input'] : [] as $key => $value) {
+        update_post_meta($id, (string) $key, $value);
     }
     if (isset($postarr['page_template'])) {
         if ($postarr['page_template'] === '' || $postarr['page_template'] === 'default') {
@@ -1005,14 +863,6 @@ function wp_insert_post($postarr, $wp_error = false, $fire_after_hooks = true)
             update_post_meta($id, '_wp_page_template', $postarr['page_template']);
         }
     }
-    $writer->recountTaxonomiesOf($id);
-    if ($fire_after_hooks) {
-        wp_after_insert_post($post, $update, $existing);
-    }
-    if (in_array($type, ['post', 'page'], true) && post_type_supports($type, 'revisions') && $update) {
-        wp_save_post_revision($id);
-    }
-    return $id;
 }
 
 function wp_after_insert_post($post, $update, $post_before)
@@ -1170,16 +1020,13 @@ function wp_delete_post($post_id = 0, $force_delete = false)
     foreach (wp_get_post_revisions($post->ID) as $revision) {
         wp_delete_post_revision($revision);
     }
-    $db = Runtime::current()->db;
-    if ($post->post_type === 'page') {
-        $db->execute("UPDATE {$db->table('posts')} SET post_parent = ? WHERE post_parent = ? AND post_type = 'page'", [(int) $post->post_parent, $post->ID]);
-    }
-    $db->execute("UPDATE {$db->table('posts')} SET post_parent = ? WHERE post_parent = ? AND post_type = 'attachment'", [(int) $post->post_parent, $post->ID]);
+    $writer = _minn_post_writer();
+    $writer->reparentChildren($post->ID, (int) $post->post_parent, $post->post_type === 'page');
     do_action('delete_post', $post->ID, $post);
-    $taxonomies = _minn_post_writer()->taxonomiesOf($post->ID);
-    _minn_post_writer()->destroy($post->ID);
+    $taxonomies = $writer->taxonomiesOf($post->ID);
+    $writer->destroy($post->ID);
     foreach ($taxonomies as $taxonomy) {
-        _minn_post_writer()->recount($taxonomy);
+        $writer->recount($taxonomy);
     }
     wp_cache_delete($post->ID, 'posts');
     wp_cache_delete($post->ID, 'post_meta');
@@ -1483,11 +1330,8 @@ function get_the_author_posts_link()
 
 function count_user_posts($userid, $post_type = 'post', $public_only = false)
 {
-    $db = Runtime::current()->db;
-    $types = (array) $post_type;
-    $statuses = $public_only ? ['publish'] : ['publish', 'private'];
-    $count = $db->value("SELECT COUNT(*) FROM {$db->table('posts')} WHERE post_author = ? AND post_type IN (" . implode(',', array_fill(0, count($types), '?')) . ') AND post_status IN (' . implode(',', array_fill(0, count($statuses), '?')) . ')', [(int) $userid, ...$types, ...$statuses]);
-    return apply_filters('get_usernumposts', (string) (int) $count, $userid, $post_type, $public_only);
+    $count = _minn_post_lookup()->countByAuthor((int) $userid, array_map('strval', (array) $post_type), $public_only ? ['publish'] : ['publish', 'private']);
+    return apply_filters('get_usernumposts', (string) $count, $userid, $post_type, $public_only);
 }
 
 function get_the_author_link($use_title_attr = true)
