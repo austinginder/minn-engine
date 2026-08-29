@@ -81,7 +81,7 @@ foreach ($files as $path) {
 // whose body runs past forty lines (a decision hiding in a signature).
 // Lower a number here when a file loses its last offender; never raise one.
 $facadeQueries = ['comment.php' => 5, 'formatting.php' => 1, 'meta.php' => 6, 'misc.php' => 3, 'option.php' => 2, 'media.php' => 1, 'pluggable.php' => 1, 'post.php' => 8, 'upgrade.php' => 12, 'user.php' => 5];
-$facadeLong = ['add_query_arg', 'dbDelta', 'esc_url', 'get_avatar', 'get_avatar_data', 'get_comments', 'get_pages', 'image_get_intermediate_size', 'image_resize_dimensions', 'register_block_type_from_metadata', 'register_rest_route', 'rest_filter_response_by_context', 'rest_sanitize_value_from_schema', 'rest_validate_value_from_schema', 'wp_calculate_image_srcset', 'wp_get_attachment_image', 'wp_http_validate_url', 'wp_insert_post', 'wp_insert_user', 'wp_prepare_attachment_for_js'];
+$facadeLong = ['add_query_arg', 'register_rest_route', 'dbDelta', 'esc_url', 'get_avatar', 'get_avatar_data', 'get_comments', 'get_pages', 'image_get_intermediate_size', 'image_resize_dimensions', 'register_block_type_from_metadata', 'wp_calculate_image_srcset', 'wp_get_attachment_image', 'wp_http_validate_url', 'wp_insert_post', 'wp_insert_user', 'wp_prepare_attachment_for_js'];
 $facadeDir = dirname($root) . '/wp-api';
 foreach (glob("{$facadeDir}/*.php") as $file) {
     $name = basename($file);

@@ -29,3 +29,6 @@ public/wp-content/debug.log
 public/wp-admin/
 public/wp-includes/*
 !public/wp-includes/version.php
+
+# The Cove hosting helper drops itself into every site.
+public/wp-content/mu-plugins/captaincore-helper.php
