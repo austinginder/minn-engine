@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Admin\Packages;
 use Minn\Content\Inventory;
 use Minn\Content\PluginState;
 use Minn\Content\Site;
@@ -34,6 +35,8 @@ final readonly class PluginsController
         private Loader $extensions,
         private RestUrl $url,
         private Caller $caller,
+        private Packages $packages,
+        private string $contentDir,
     ) {
     }
 
@@ -75,8 +78,20 @@ final readonly class PluginsController
     public function delete(Request $request, string $plugin): Response
     {
         $this->requireManager();
-        $this->find($plugin);
-        throw new RestError('rest_cannot_delete_plugin', 'Minn Engine does not delete files from the plugins folder. Remove the folder over SSH or SFTP.', 403);
+        if (!$this->caller->can('delete_plugins')) {
+            throw new RestError('rest_cannot_delete_plugin', 'Sorry, you are not allowed to delete plugins for this site.', 403);
+        }
+        $item = $this->find($plugin);
+        if ($item['status'] === 'active') {
+            throw new RestError('rest_cannot_delete_active_plugin', 'Cannot delete an active plugin. Please deactivate it first.', 400);
+        }
+        $folder = explode('/', $plugin, 2)[0];
+        if (str_contains($plugin, '/')) {
+            $this->packages->remove('extension', $folder);
+        } else {
+            @unlink("{$this->contentDir}/plugins/{$plugin}.php");
+        }
+        return Reply::item(['deleted' => true, 'previous' => $item], Fields::fromQuery($request->query));
     }
 
     /** @return list<array> */

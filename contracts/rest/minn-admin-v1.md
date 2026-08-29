@@ -230,6 +230,32 @@ parent). `GET plugin-updates` is the empty shape with `autoAllowed: false`;
 `GET plugin-meta` is `{}`; `GET translations` is `{count: 0, groups: []}`.
 The plugin list itself is `wp/v2/plugins` (contracts/rest/plugins.md).
 
+**Adding themes and extensions** (suite section 6a; `Minn\Admin\Packages`).
+`GET themes/search?q=` asks wordpress.org (the popular list for an empty
+query) and answers in the plugin's item shape with `installed`/`active`
+from disk; `POST themes/install {slug}` downloads that theme's release zip
+from downloads.wordpress.org; `POST themes/upload` (multipart `file`,
+optional `overwrite`) unpacks a zip; `POST themes/delete {stylesheet}`
+removes a folder that is not the active theme or its parent. Extensions:
+`POST plugins/upload` and `POST plugins/install-url {url | github, asset}`
+accept a folder carrying `minn.json`; a WordPress plugin zip is refused
+400 `not_extension` with its name in the message (it would install but
+never run), and `GET plugins/search` is honestly empty. `DELETE
+wp/v2/plugins/{plugin}` removes an inactive folder. Every archive goes
+through one unpacker: https only, exactly one top-level folder, no
+absolute or dotted paths, identity checked (style.css Theme Name;
+minn.json) before the folder is moved in; a folder that already exists
+answers 409 `folder_exists` with both versions, and `overwrite` replaces
+it. Caps: `install_themes`, `delete_themes`, `install_plugins`,
+`delete_plugins`; the boot payload reports them.
+
+**Editor previews.** `POST render-blocks {blocks: [markup], post}` renders
+each string through the public site's block renderer and answers
+`{rendered: [...], styles: {urls, inline}}`; `GET editor-styles` is the
+same `styles`: the engine's `blocks.css`, the active theme's `style.css`,
+and the theme.json rules plus font faces inline, so a preview is styled
+like the page.
+
 **System** (manage_options). `GET system` carries the plugin's keys
 (`generated, checks, config, logs, licenses, extensions, integrations,
 groups`) with the engine's own facts: checks `engine, php, https, memory,

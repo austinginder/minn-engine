@@ -131,14 +131,6 @@ final readonly class V1Controller
         return $this->reply($request, ['templates' => []]);
     }
 
-    /** The reference serves core's block CSS from wp-includes; the engine has none to serve. */
-    #[Route(Method::Get, '/minn-admin/v1/editor-styles')]
-    public function editorStyles(Request $request): Response
-    {
-        $this->requireFloor();
-        return $this->reply($request, ['urls' => []]);
-    }
-
     /** Theme patterns are GPL theme content the engine does not carry. */
     #[Route(Method::Get, '/minn-admin/v1/patterns')]
     public function patterns(Request $request): Response

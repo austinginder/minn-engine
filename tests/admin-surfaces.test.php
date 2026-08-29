@@ -228,6 +228,82 @@ check( 'inactive' === ( $b['status'] ?? '' ) && 'active' === ( $b2['status'] ?? 
 [ $s ] = as_fetch( $ENGINE, '/wp/v2/plugins', $author );
 check( 403 === $s, 'plugins need activate_plugins', "status $s" );
 
+// 6a. Adding themes and extensions: zips through the engine's own unpacker; wordpress.org for themes only.
+$pk = sys_get_temp_dir() . '/minn-pk-' . getmypid();
+@mkdir( "$pk/minn-zip-theme/templates", 0755, true );
+file_put_contents( "$pk/minn-zip-theme/style.css", "Theme Name: Minn Zip Theme\nVersion: 0.1\n" );
+file_put_contents( "$pk/minn-zip-theme/templates/index.html", '<!-- wp:paragraph --><p>hi</p><!-- /wp:paragraph -->' );
+@mkdir( "$pk/wp-plugin-x", 0755, true );
+file_put_contents( "$pk/wp-plugin-x/wp-plugin-x.php", "<?php\n/*\nPlugin Name: WP Plugin X\nVersion: 1.0\n*/\n" );
+$zipOf = static function ( string $dir, string $folder ) use ( $pk ): string {
+	$file = "$pk/$folder.zip";
+	$z = new ZipArchive();
+	$z->open( $file, ZipArchive::CREATE | ZipArchive::OVERWRITE );
+	foreach ( new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $dir, FilesystemIterator::SKIP_DOTS ) ) as $f ) {
+		$z->addFile( $f->getPathname(), $folder . '/' . substr( $f->getPathname(), strlen( $dir ) + 1 ) );
+	}
+	$z->close();
+	return $file;
+};
+$upload = static function ( string $route, string $zip, array $extra = array() ) use ( $ENGINE, $admin, $REF ): array {
+	$boundary = 'minn' . bin2hex( random_bytes( 8 ) );
+	$body = '';
+	foreach ( $extra as $k => $v ) {
+		$body .= "--$boundary\r\nContent-Disposition: form-data; name=\"$k\"\r\n\r\n$v\r\n";
+	}
+	$body .= "--$boundary\r\nContent-Disposition: form-data; name=\"file\"; filename=\"" . basename( $zip ) . "\"\r\nContent-Type: application/zip\r\n\r\n" . file_get_contents( $zip ) . "\r\n--$boundary--\r\n";
+	$ctx = stream_context_create( array( 'ssl' => array( 'verify_peer' => false, 'verify_peer_name' => false ), 'http' => array( 'ignore_errors' => true, 'method' => 'POST', 'header' => 'Cookie: ' . $admin['cookie_name'] . '=' . $admin['cookie'] . "\r\nX-WP-Nonce: " . $admin['nonce'] . "\r\nContent-Type: multipart/form-data; boundary=$boundary", 'content' => $body ) ) );
+	$raw = @file_get_contents( "$ENGINE/wp-json$route", false, $ctx );
+	$status = 0;
+	foreach ( $http_response_header ?? array() as $h ) {
+		if ( preg_match( '#^HTTP/\S+\s+(\d+)#', $h, $m ) ) {
+			$status = (int) $m[1];
+		}
+	}
+	return array( $status, json_decode( (string) $raw, true ) );
+};
+[ $s, $b ] = $upload( '/minn-admin/v1/themes/upload', $zipOf( "$pk/minn-zip-theme", 'minn-zip-theme' ) );
+check( 200 === $s && 'minn-zip-theme' === ( $b['stylesheet'] ?? '' ) && is_file( "$ROOT/public/wp-content/themes/minn-zip-theme/style.css" ), 'a theme zip unpacks into wp-content/themes', json_encode( $b ) );
+[ $s, $b ] = $upload( '/minn-admin/v1/themes/upload', "$pk/minn-zip-theme.zip" );
+check( 409 === $s && 'folder_exists' === ( $b['code'] ?? '' ) && 'Minn Zip Theme' === ( $b['data']['current_name'] ?? '' ), 'uploading it again offers the replace flow', json_encode( $b ) );
+[ $s ] = $upload( '/minn-admin/v1/themes/upload', "$pk/minn-zip-theme.zip", array( 'overwrite' => '1' ) );
+check( 200 === $s, 'overwrite replaces it', "status $s" );
+[ , $b ] = as_fetch( $ENGINE, '/minn-admin/v1/themes', $admin );
+check( in_array( 'minn-zip-theme', array_column( $b['themes'] ?? array(), 'stylesheet' ), true ), 'the themes list sees the upload' );
+[ $s, $b ] = as_fetch( $ENGINE, '/minn-admin/v1/themes/delete', $admin, 'POST', '{"stylesheet":"minn-zip-theme"}' );
+check( 200 === $s && ! is_dir( "$ROOT/public/wp-content/themes/minn-zip-theme" ), 'themes/delete removes the folder', json_encode( $b ) );
+[ $s, $b ] = as_fetch( $ENGINE, '/minn-admin/v1/themes/delete', $admin, 'POST', '{"stylesheet":"twentytwentyfive"}' );
+check( 400 === $s, 'the active theme cannot be deleted', "status $s" );
+[ $s, $b ] = $upload( '/minn-admin/v1/plugins/upload', $zipOf( "$pk/wp-plugin-x", 'wp-plugin-x' ) );
+check( 400 === $s && 'not_extension' === ( $b['code'] ?? '' ) && ! is_dir( "$ROOT/public/wp-content/plugins/wp-plugin-x" ), 'a WordPress plugin zip is refused with the reason', json_encode( $b ) );
+[ $s, $b ] = as_fetch( $ENGINE, '/minn-admin/v1/plugins/search?q=seo', $admin );
+check( 200 === $s && array() === ( $b['plugins'] ?? null ), 'the plugin directory search is honestly empty', json_encode( $b ) );
+[ $s ] = as_fetch( $ENGINE, '/minn-admin/v1/themes/search?q=twenty', $author );
+check( 403 === $s, 'theme search needs install_themes', "status $s" );
+[ $s, $b ] = as_fetch( $ENGINE, '/minn-admin/v1/themes/search?q=twentytwentyfive', $admin );
+if ( 200 === $s ) {
+	check( is_array( $b['themes'] ?? null ) && array( 'slug', 'name', 'version', 'screenshot', 'installs', 'installed', 'active' ) === array_keys( $b['themes'][0] ), 'wordpress.org theme search carries the plugin\'s item shape', json_encode( $b['themes'][0] ?? null ) );
+	$tt5 = array_values( array_filter( $b['themes'], static fn( $t ) => 'twentytwentyfive' === $t['slug'] ) );
+	check( 1 === count( $tt5 ) && $tt5[0]['installed'] && $tt5[0]['active'], 'the active theme is flagged installed and active in results' );
+} else {
+	echo "  --  wordpress.org unreachable ($s); skipping the directory checks\n";
+}
+foreach ( array( "$pk/minn-zip-theme/templates/index.html", "$pk/minn-zip-theme/style.css", "$pk/wp-plugin-x/wp-plugin-x.php", "$pk/minn-zip-theme.zip", "$pk/wp-plugin-x.zip" ) as $f ) {
+	@unlink( $f );
+}
+foreach ( array( "$pk/minn-zip-theme/templates", "$pk/minn-zip-theme", "$pk/wp-plugin-x", $pk ) as $d ) {
+	@rmdir( $d );
+}
+
+// 6a2. Editor previews render through the site's own renderer with the site's own stylesheets.
+[ $s, $b ] = as_fetch( $ENGINE, '/minn-admin/v1/render-blocks', $admin, 'POST', '{"blocks":["<!-- wp:paragraph --><p>Hi</p><!-- /wp:paragraph -->","<!-- wp:latest-posts /-->"],"post":1}' );
+check( 200 === $s && '<p class="wp-block-paragraph">Hi</p>' === ( $b['rendered'][0] ?? '' ) && str_contains( (string) ( $b['rendered'][1] ?? '' ), 'wp-block-latest-posts__list' ), 'render-blocks renders static and dynamic blocks', json_encode( $b['rendered'] ?? $b ) );
+check( in_array( "$ENGINE/minn-engine/blocks.css", $b['styles']['urls'] ?? array(), true ) && str_contains( (string) ( $b['styles']['inline'] ?? '' ), '--wp--preset--color' ), 'render-blocks carries the engine stylesheet and theme.json rules', json_encode( array_keys( $b['styles'] ?? array() ) ) );
+[ $s, $b ] = as_fetch( $ENGINE, '/minn-admin/v1/editor-styles', $admin );
+check( 200 === $s && count( $b['urls'] ?? array() ) >= 1 && isset( $b['inline'] ), 'editor-styles carries the same set' );
+[ $s ] = as_fetch( $ENGINE, '/minn-admin/v1/render-blocks', $admin, 'POST', '{"blocks":"nope"}' );
+check( 400 === $s, 'render-blocks refuses a non-list', "status $s" );
+
 // 6b. Minn Admin is a plugin: deactivated, the engine runs without an admin and says so.
 [ $s, $b ] = as_fetch( $ENGINE, '/wp/v2/plugins/minn-admin/minn-admin', $admin, 'PUT', '{"status":"inactive"}' );
 $adminCtx = stream_context_create( array( 'ssl' => array( 'verify_peer' => false, 'verify_peer_name' => false ), 'http' => array( 'ignore_errors' => true, 'header' => 'Cookie: ' . $admin['cookie_name'] . '=' . $admin['cookie'] ) ) );

@@ -13,6 +13,9 @@ use Minn\Admin\Translations;
 use Minn\Admin\Logs;
 use Minn\Admin\SystemController;
 use Minn\Admin\ManageController;
+use Minn\Admin\Packages;
+use Minn\Admin\PackagesController;
+use Minn\Admin\RenderController;
 use Minn\Admin\SessionsController;
 use Minn\Admin\CoreStatus;
 use Minn\Admin\Dashboard;
@@ -94,10 +97,12 @@ final readonly class Api
             new TypesController($types),
             new TaxonomiesController($taxonomies, $caller),
             new SearchController($db, $types, $permalinks, $url, $caller),
-            new PluginsController($site, new Inventory($contentDir, $site), $loader, $url, $caller),
+            new PluginsController($site, new Inventory($contentDir, $site), $loader, $url, $caller, new Packages($site, $contentDir), $contentDir),
             new SessionsController($users, new Sessions($users), $caller),
             new ManageController($db, $site, $types, $taxonomies, $loader, new Inventory($contentDir, $site), $permalinks, new App(MINN_ENGINE_DIR . '/admin'), new Appearance($users), $caller, $contentDir),
             new LanguageController(new Translations($users, $site, new App(MINN_ENGINE_DIR . '/admin'), $contentDir), $users, $site, $capabilities, $caller),
+            new PackagesController(new Packages($site, $contentDir), $site, $caller),
+            new RenderController($db, $site, $posts, $permalinks, $caller, $contentDir . '/themes'),
             new SystemController(
                 new Diagnostics($db, $site, $permalinks, new Inventory($contentDir, $site), $loader, new Logs(rtrim(ABSPATH, '/')), MINN_ENGINE_VERSION, rtrim(ABSPATH, '/')),
                 new Logs(rtrim(ABSPATH, '/')),

@@ -1,0 +1,94 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Minn\Admin;
+
+use Minn\Content\Blocks;
+use Minn\Content\Posts;
+use Minn\Content\Site;
+use Minn\Db;
+use Minn\Front\Permalinks;
+use Minn\Http\Method;
+use Minn\Http\Request;
+use Minn\Http\Response;
+use Minn\Http\Route;
+use Minn\Rest\Caller;
+use Minn\Rest\Fields;
+use Minn\Rest\Reply;
+use Minn\RestError;
+use Minn\Theme\GlobalStyles;
+use Minn\Theme\Templates;
+use Minn\Theme\Theme;
+
+/**
+ * The editor's island previews: block markup rendered by the same
+ * renderer the public site uses, with the stylesheets that site loads
+ * (the engine's block stylesheet, the theme's, and the theme.json rules)
+ * so a preview looks like the page will.
+ */
+final readonly class RenderController
+{
+    public function __construct(
+        private Db $db,
+        private Site $site,
+        private Posts $posts,
+        private Permalinks $permalinks,
+        private Caller $caller,
+        private string $themesDir,
+    ) {
+    }
+
+    #[Route(Method::Post, '/minn-admin/v1/render-blocks')]
+    public function render(Request $request): Response
+    {
+        $this->requireFloor();
+        $blocks = $request->json()['blocks'] ?? null;
+        if (!is_array($blocks)) {
+            throw new RestError('invalid_blocks', 'Expected an array of block markup strings.', 400);
+        }
+        $rendered = [];
+        foreach (array_slice($blocks, 0, 100) as $raw) {
+            $rendered[] = Blocks::render((string) $raw);
+        }
+        return $this->reply($request, ['rendered' => $rendered, 'styles' => $this->styles()]);
+    }
+
+    /** The stylesheets previews are scoped under: the engine's own, the theme's, and theme.json inline. */
+    #[Route(Method::Get, '/minn-admin/v1/editor-styles')]
+    public function editorStyles(Request $request): Response
+    {
+        $this->requireFloor();
+        return $this->reply($request, $this->styles());
+    }
+
+    /** @return array{urls: list<string>, inline: string} */
+    private function styles(): array
+    {
+        $urls = [$this->permalinks->url('/minn-engine/blocks.css')];
+        $inline = '';
+        $theme = Theme::active($this->site, $this->permalinks, $this->themesDir);
+        if ($theme !== null) {
+            $styles = new GlobalStyles($theme, (new Templates($this->db, $this->posts, $theme))->userStyles());
+            $inline = trim($styles->fontFaces() . "\n" . $styles->css());
+            $themeStyle = $theme->styleUri();
+            if ($themeStyle !== null) {
+                $urls[] = $themeStyle;
+            }
+        }
+        return ['urls' => $urls, 'inline' => $inline];
+    }
+
+    private function requireFloor(): void
+    {
+        $this->caller->require('rest_forbidden', 'Sorry, you are not allowed to do that.');
+        if (!$this->caller->can('edit_posts')) {
+            throw new RestError('rest_forbidden', 'Sorry, you are not allowed to do that.', 403);
+        }
+    }
+
+    private function reply(Request $request, mixed $data): Response
+    {
+        return Reply::item($data, Fields::fromQuery($request->query));
+    }
+}
