@@ -250,6 +250,26 @@ facts that shaped the implementation.
   bare, `additional_errors` for the rest); the engine's own `wp/v2`
   routes serve `rest_do_request` in-process and `register_rest_field`
   additions are attached to their items.
+- **Blocks** (`contracts/fixtures/api/blocks.json`): `parse_blocks` is the
+  engine's own parser as arrays; `serialize_block_attributes` writes
+  lower-case hex escapes for `<>&"` and `--`; `register_block_type` refuses
+  upper-case or unnamespaced names and a second registration of the same
+  name (`false`), adds `lock` and `metadata` attribute schemas, and turns
+  `editor_script`/`style`/... strings into the `*_handles` lists; a
+  registered dynamic block renders through its callback on the engine's
+  front end too (`_minn_bridge_dynamic_block` registers it with the
+  engine's renderer) and a static core block inside a plugin's block takes
+  its classes from the engine's renderer; `get_block_wrapper_attributes`
+  puts the caller's class first, then align, className, the default
+  class, the color classes, then `id` from `anchor`, then the caller's
+  other attributes, and prints no `style` when a preset slug is given;
+  `block.json` registration names handles `{name-with-dashes}-editor-script`
+  etc., reads `*.asset.php` for dependencies and version, and does not
+  carry the file's `textdomain` onto the type; `prepare_attributes_for_render`
+  drops attributes that fail their schema and fills defaults;
+  `excerpt_remove_blocks` keeps freeform text and renders only the
+  allowlisted blocks; `WP_Rewrite` is recorded, never used to resolve
+  (`flush_rewrite_rules` writes nothing).
 - **Templates**: `load_template` gives the file the query vars and the
   globals (`$post` stays unset with no post set up); `locate_template`
   looks in the child then parent theme; `get_template_part` returns false
@@ -257,13 +277,23 @@ facts that shaped the implementation.
 
 ## What a plugin cannot do yet
 
-Listed in the order real plugins ask for it (from `runtime-report.php` on the
-dogfood site): `register_block_type` and dynamic block rendering through a
-plugin callback (`parse_blocks`, `serialize_blocks`, `has_block`,
-`get_block_wrapper_attributes`, block patterns); the admin host that renders
-the recorded menus, settings pages, and meta boxes; `WP_Filesystem` and the
-upgraders; multisite shims (`switch_to_blog`, `get_blog_details`);
-`.mo` translations; `fetch_feed`; the customizer and widget screens (the
-classes exist so plugins load; nothing is served); a front-end main query
-fed from the engine's own resolution (the conditional tags answer on the
-command line only).
+Twelve of the dogfood site's twenty-five plugins load as code now
+(`runtime-report.php`). What the rest ask for, in order: the admin host
+(`WP_List_Table`, screens and screen options, `iframe_header`, the
+`WP_Filesystem` family and the upgraders); `WP_Site`/multisite shims;
+`WP_Term_Query`/`WP_User_Query` objects; `.mo` translations; `fetch_feed`;
+the customizer and widget screens (the classes exist so plugins load;
+nothing is served); a front-end main query fed from the engine's own
+resolution (the conditional tags answer on the command line only).
+
+## The facade stays a mapping layer
+
+`wp-api/` reads like WordPress because its names, signatures, loose types,
+and globals are the interface; that cannot change. Its thickness can. The
+rule going forward: a facade function normalises loose input, calls one
+`Minn\` method, and shapes the return; queries, decisions, and loops live in
+`src/Minn/` under the style guide. `Hooks`, `Options`, `PostQuery`,
+`Registry`, `Symbols` already work that way; `post.php`, `taxonomy.php`,
+`media.php`, `comment.php`, `rest-api.php`, `blocks.php` carry logic that
+belongs in `src/Minn/Runtime/`. The extraction is the next cleanup pass,
+lint-enforced like the style migration was.
