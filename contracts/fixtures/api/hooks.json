@@ -1,0 +1,473 @@
+[
+    [
+        "cb",
+        "pneg",
+        [
+            "v"
+        ]
+    ],
+    [
+        "cb",
+        "p5",
+        [
+            "v+pneg"
+        ]
+    ],
+    [
+        "cb",
+        "p10a",
+        [
+            "v+pneg+p5"
+        ]
+    ],
+    [
+        "cb",
+        "p10b",
+        [
+            "v+pneg+p5+p10a"
+        ]
+    ],
+    [
+        "cb",
+        "p20",
+        [
+            "v+pneg+p5+p10a+p10b"
+        ]
+    ],
+    [
+        "order result",
+        "v+pneg+p5+p10a+p10b+p20"
+    ],
+    [
+        "cb",
+        "default",
+        [
+            "a"
+        ]
+    ],
+    [
+        "cb",
+        "three",
+        [
+            "a+default",
+            "b",
+            "c"
+        ]
+    ],
+    [
+        "cb",
+        "zero",
+        []
+    ],
+    [
+        "cb",
+        "more-than-passed",
+        [
+            null,
+            "b",
+            "c"
+        ]
+    ],
+    [
+        "args result",
+        null
+    ],
+    [
+        "no callbacks",
+        "same"
+    ],
+    [
+        "no callbacks null",
+        null
+    ],
+    [
+        "has_filter none",
+        false
+    ],
+    [
+        "has_filter any",
+        true
+    ],
+    [
+        "has_filter cb",
+        33
+    ],
+    [
+        "has_filter other cb",
+        false
+    ],
+    [
+        "has_filter twice",
+        7
+    ],
+    [
+        "has_action alias",
+        33
+    ],
+    [
+        "add_filter return",
+        true
+    ],
+    [
+        "add_action return",
+        true
+    ],
+    [
+        "remove ok",
+        true
+    ],
+    [
+        "remove wrong prio",
+        false
+    ],
+    [
+        "remove default prio missing",
+        false
+    ],
+    [
+        "has after remove",
+        9
+    ],
+    [
+        "remove_action alias",
+        true
+    ],
+    [
+        "has after all removed",
+        false
+    ],
+    [
+        "has_filter still any",
+        true
+    ],
+    [
+        "cb",
+        "later-same",
+        [
+            "v+self"
+        ]
+    ],
+    [
+        "cb",
+        "added-higher",
+        [
+            "v+self+later-same+mutator"
+        ]
+    ],
+    [
+        "mutation result",
+        "v+self+later-same+mutator+added-higher"
+    ],
+    [
+        "cb",
+        "added-lower",
+        [
+            "w"
+        ]
+    ],
+    [
+        "cb",
+        "added-same-prio",
+        [
+            "w+added-lower+mutator"
+        ]
+    ],
+    [
+        "cb",
+        "added-higher",
+        [
+            "w+added-lower+mutator+added-same-prio"
+        ]
+    ],
+    [
+        "cb",
+        "added-higher",
+        [
+            "w+added-lower+mutator+added-same-prio+added-higher"
+        ]
+    ],
+    [
+        "mutation second run",
+        "w+added-lower+mutator+added-same-prio+added-higher+added-higher"
+    ],
+    [
+        "current_filter outside",
+        false
+    ],
+    [
+        "doing outside",
+        false
+    ],
+    [
+        "doing_action outside",
+        false
+    ],
+    [
+        "outer current_filter",
+        "probe_outer"
+    ],
+    [
+        "outer current_action",
+        "probe_outer"
+    ],
+    [
+        "doing outer",
+        true
+    ],
+    [
+        "doing inner before",
+        false
+    ],
+    [
+        "inner current_filter",
+        "probe_inner"
+    ],
+    [
+        "inner doing outer",
+        true
+    ],
+    [
+        "doing inner after",
+        false
+    ],
+    [
+        "doing anything",
+        true
+    ],
+    [
+        "current_filter after",
+        false
+    ],
+    [
+        "did before",
+        0
+    ],
+    [
+        "did after",
+        2
+    ],
+    [
+        "did_filter before",
+        0
+    ],
+    [
+        "did_filter after",
+        1
+    ],
+    [
+        "did_filter of action",
+        0
+    ],
+    [
+        "did_action of filter",
+        0
+    ],
+    [
+        "remove_all prio",
+        true
+    ],
+    [
+        "after remove_all prio",
+        " AB "
+    ],
+    [
+        "remove_all",
+        true
+    ],
+    [
+        "after remove_all",
+        " Ab "
+    ],
+    [
+        "has after remove_all",
+        false
+    ],
+    [
+        "remove_all unknown",
+        true
+    ],
+    [
+        "all hook saw",
+        [
+            [
+                "probe_every_action",
+                "a1",
+                "a2"
+            ],
+            [
+                "probe_every_filter",
+                "f1",
+                "f2"
+            ]
+        ]
+    ],
+    [
+        "shapes result",
+        "V+m1+m2+s+invoke"
+    ],
+    [
+        "has obj method",
+        10
+    ],
+    [
+        "has other obj same method",
+        false
+    ],
+    [
+        "has static string",
+        10
+    ],
+    [
+        "has static array",
+        10
+    ],
+    [
+        "remove static via array",
+        true
+    ],
+    [
+        "has static string after",
+        false
+    ],
+    [
+        "remove invokable",
+        true
+    ],
+    [
+        "shapes after removes",
+        "V+m1+m2"
+    ],
+    [
+        "cb",
+        "ref",
+        [
+            "r",
+            1,
+            2
+        ]
+    ],
+    [
+        "ref filter",
+        "r+ref"
+    ],
+    [
+        "cb",
+        "refa",
+        [
+            "x",
+            "y"
+        ]
+    ],
+    [
+        "cb",
+        "refa",
+        [
+            "x",
+            "y"
+        ]
+    ],
+    [
+        "ref action return",
+        null
+    ],
+    [
+        "cb",
+        "refa",
+        [
+            "z"
+        ]
+    ],
+    [
+        "do_action return",
+        null
+    ],
+    [
+        "null propagates",
+        null
+    ],
+    [
+        "array filter",
+        [
+            "a",
+            "b"
+        ]
+    ],
+    [
+        "rec inner",
+        "inner+r"
+    ],
+    [
+        "rec current",
+        "probe_rec"
+    ],
+    [
+        "rec result",
+        "top+r"
+    ],
+    [
+        "cb",
+        "min",
+        [
+            "v"
+        ]
+    ],
+    [
+        "cb",
+        "str10",
+        [
+            "v+min"
+        ]
+    ],
+    [
+        "cb",
+        "int10",
+        [
+            "v+min+str10"
+        ]
+    ],
+    [
+        "cb",
+        "max",
+        [
+            "v+min+str10+int10"
+        ]
+    ],
+    [
+        "ext result",
+        "v+min+str10+int10+max"
+    ],
+    [
+        "has str prio",
+        false
+    ],
+    [
+        "cb",
+        "act",
+        [
+            "only"
+        ]
+    ],
+    [
+        "cb",
+        "act-arr",
+        [
+            [
+                "an",
+                "array"
+            ],
+            "second"
+        ]
+    ],
+    [
+        "has x inside y",
+        true
+    ],
+    [
+        "has x inside y after",
+        false
+    ],
+    [
+        "x after y",
+        "v"
+    ]
+]

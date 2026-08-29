@@ -928,7 +928,8 @@
         "params": [
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -1171,11 +1172,13 @@
             },
             {
                 "name": "prefix",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "sep",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "key",
@@ -1314,7 +1317,8 @@
         "params": [
             {
                 "name": "deprecated",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -1420,7 +1424,8 @@
             },
             {
                 "name": "encoding",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -1432,7 +1437,8 @@
             },
             {
                 "name": "encoding",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -1444,7 +1450,8 @@
             },
             {
                 "name": "encoding",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -1459,11 +1466,13 @@
             },
             {
                 "name": "length",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "encoding",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -1536,7 +1545,8 @@
             },
             {
                 "name": "domain",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -1630,7 +1640,8 @@
             },
             {
                 "name": "domain",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -1642,7 +1653,8 @@
             },
             {
                 "name": "node",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -1777,7 +1789,8 @@
         "params": [
             {
                 "name": "capabilities",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -2404,11 +2417,13 @@
             {
                 "name": "seen_ids",
                 "byRef": true,
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "id",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -2423,7 +2438,8 @@
             },
             {
                 "name": "default_value",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -2439,7 +2455,8 @@
             },
             {
                 "name": "value",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -2527,7 +2544,8 @@
         "params": [
             {
                 "name": "set",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -2918,7 +2936,8 @@
         "params": [
             {
                 "name": "post_data",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -3006,7 +3025,8 @@
         "params": [
             {
                 "name": "user",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -3356,11 +3376,13 @@
         "params": [
             {
                 "name": "thumbnail_id",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -3504,7 +3526,8 @@
         "params": [
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "autosave",
@@ -3614,18 +3637,21 @@
             {
                 "name": "max_bytes",
                 "type": "?int",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "max_code_points",
                 "type": "?int",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "has_noncharacters",
                 "type": "?bool",
                 "byRef": true,
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ],
         "returns": "int"
@@ -3751,7 +3777,8 @@
             },
             {
                 "name": "post_data",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -3771,7 +3798,8 @@
         "params": [
             {
                 "name": "time",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -4036,7 +4064,8 @@
             },
             {
                 "name": "position",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -4112,7 +4141,8 @@
             },
             {
                 "name": "position",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -4207,7 +4237,8 @@
             },
             {
                 "name": "position",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -4241,7 +4272,8 @@
             },
             {
                 "name": "position",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -4267,7 +4299,8 @@
             },
             {
                 "name": "position",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -4298,7 +4331,8 @@
             },
             {
                 "name": "position",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -4324,7 +4358,8 @@
             },
             {
                 "name": "screen",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "context",
@@ -4338,7 +4373,8 @@
             },
             {
                 "name": "callback_args",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -4424,7 +4460,8 @@
             },
             {
                 "name": "autoload",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -4481,7 +4518,8 @@
             },
             {
                 "name": "position",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -4507,7 +4545,8 @@
             },
             {
                 "name": "position",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -4560,7 +4599,8 @@
             },
             {
                 "name": "position",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -4621,7 +4661,8 @@
             },
             {
                 "name": "position",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -4827,7 +4868,8 @@
             },
             {
                 "name": "position",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -4872,7 +4914,8 @@
             },
             {
                 "name": "position",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -4938,7 +4981,8 @@
             },
             {
                 "name": "position",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -5197,7 +5241,8 @@
             },
             {
                 "name": "context",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "callback",
@@ -5214,7 +5259,8 @@
             },
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "callback",
@@ -5224,7 +5270,8 @@
             {
                 "name": "ignored_hooked_blocks_at_root",
                 "byRef": true,
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -6443,7 +6490,8 @@
         "params": [
             {
                 "name": "post_data",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -6514,7 +6562,8 @@
             },
             {
                 "name": "category_parent",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -6762,7 +6811,8 @@
             },
             {
                 "name": "protocols",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "context",
@@ -6848,7 +6898,8 @@
             },
             {
                 "name": "comment",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -6911,11 +6962,13 @@
             },
             {
                 "name": "comment",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "display",
@@ -6983,7 +7036,8 @@
             },
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -7007,7 +7061,8 @@
             },
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -7016,7 +7071,8 @@
         "params": [
             {
                 "name": "comment_id",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -7025,7 +7081,8 @@
         "params": [
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -7034,7 +7091,8 @@
         "params": [
             {
                 "name": "comment",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -7048,11 +7106,13 @@
             },
             {
                 "name": "comment",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -7167,7 +7227,8 @@
         "params": [
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -7360,7 +7421,8 @@
             },
             {
                 "name": "site_id",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -7519,7 +7581,8 @@
             },
             {
                 "name": "network_wide",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -8159,7 +8222,8 @@
         "params": [
             {
                 "name": "hook_name",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -8168,7 +8232,8 @@
         "params": [
             {
                 "name": "hook_name",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -8308,7 +8373,8 @@
             },
             {
                 "name": "bookmark",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -8321,7 +8387,8 @@
         "params": [
             {
                 "name": "text",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "before",
@@ -8358,7 +8425,8 @@
         "params": [
             {
                 "name": "post_data",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -8367,7 +8435,8 @@
         "params": [
             {
                 "name": "text",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "before",
@@ -8411,7 +8480,8 @@
             },
             {
                 "name": "tag",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -8435,7 +8505,8 @@
             },
             {
                 "name": "term",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "display",
@@ -8626,7 +8697,8 @@
             },
             {
                 "name": "protocols",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "_context",
@@ -8643,7 +8715,8 @@
             },
             {
                 "name": "protocols",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -8813,7 +8886,8 @@
             },
             {
                 "name": "block_context",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -8907,7 +8981,8 @@
         "params": [
             {
                 "name": "force",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -8916,7 +8991,8 @@
         "params": [
             {
                 "name": "force",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ],
         "deprecated": true
@@ -8937,7 +9013,8 @@
             },
             {
                 "name": "default_editor",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -9161,7 +9238,8 @@
         "params": [
             {
                 "name": "blog_id",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "path",
@@ -9226,7 +9304,8 @@
         "params": [
             {
                 "name": "user",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -9373,7 +9452,8 @@
             },
             {
                 "name": "errors",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -9440,7 +9520,8 @@
         "params": [
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "leavename",
@@ -9561,7 +9642,8 @@
         "params": [
             {
                 "name": "dir",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -9608,7 +9690,8 @@
             },
             {
                 "name": "args",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -9620,7 +9703,8 @@
             },
             {
                 "name": "args",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -9632,7 +9716,8 @@
             },
             {
                 "name": "args",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -9771,7 +9856,8 @@
         "params": [
             {
                 "name": "theme_stylesheet",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -9963,7 +10049,8 @@
             },
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -10206,7 +10293,8 @@
         "params": [
             {
                 "name": "comment",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "output",
@@ -10271,7 +10359,8 @@
             },
             {
                 "name": "comment",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -10334,11 +10423,13 @@
             },
             {
                 "name": "comment_id",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -10396,7 +10487,8 @@
         "params": [
             {
                 "name": "comment_id",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -10405,7 +10497,8 @@
         "params": [
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -10414,7 +10507,8 @@
         "params": [
             {
                 "name": "comment",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "args",
@@ -10446,15 +10540,18 @@
         "params": [
             {
                 "name": "comments",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "per_page",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "threaded",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -10468,11 +10565,13 @@
             },
             {
                 "name": "comment",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -10653,7 +10752,8 @@
             },
             {
                 "name": "args",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -10856,7 +10956,8 @@
             },
             {
                 "name": "max_execution_time",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -10959,7 +11060,8 @@
         "params": [
             {
                 "name": "user_id",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -11086,7 +11188,8 @@
         "params": [
             {
                 "name": "name",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "args",
@@ -11117,7 +11220,8 @@
         "params": [
             {
                 "name": "name",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "args",
@@ -11181,7 +11285,8 @@
         "params": [
             {
                 "name": "blog_id",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "path",
@@ -11190,7 +11295,8 @@
             },
             {
                 "name": "scheme",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -11682,7 +11788,8 @@
         "params": [
             {
                 "name": "network_id",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -11694,7 +11801,8 @@
             },
             {
                 "name": "types",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -11706,7 +11814,8 @@
             },
             {
                 "name": "args",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -11750,7 +11859,8 @@
             },
             {
                 "name": "context",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -11876,7 +11986,8 @@
             },
             {
                 "name": "page",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -11950,7 +12061,8 @@
         "params": [
             {
                 "name": "label",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "max_page",
@@ -12268,7 +12380,8 @@
         "params": [
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -12277,7 +12390,8 @@
         "params": [
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "post_type",
@@ -12455,7 +12569,8 @@
         "params": [
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "output",
@@ -12489,7 +12604,8 @@
             },
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -12548,7 +12664,8 @@
         "params": [
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "field",
@@ -12573,7 +12690,8 @@
             },
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -12582,7 +12700,8 @@
         "params": [
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -12594,7 +12713,8 @@
             },
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "context",
@@ -12608,7 +12728,8 @@
         "params": [
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -12715,7 +12836,8 @@
         "params": [
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -12738,7 +12860,8 @@
             },
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "translate",
@@ -12752,7 +12875,8 @@
         "params": [
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -12786,7 +12910,8 @@
             },
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -12823,7 +12948,8 @@
         "params": [
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -12854,7 +12980,8 @@
         "params": [
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -12873,7 +13000,8 @@
             },
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "translate",
@@ -12887,7 +13015,8 @@
         "params": [
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "field",
@@ -12910,7 +13039,8 @@
         "params": [
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -13010,7 +13140,8 @@
         "params": [
             {
                 "name": "args",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -13027,7 +13158,8 @@
             },
             {
                 "name": "post_author",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "public_only",
@@ -13055,7 +13187,8 @@
         "params": [
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "query_args",
@@ -13079,7 +13212,8 @@
             },
             {
                 "name": "page",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -13153,7 +13287,8 @@
         "params": [
             {
                 "name": "label",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -13324,7 +13459,8 @@
         "params": [
             {
                 "name": "blog_id",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "path",
@@ -13354,11 +13490,13 @@
             },
             {
                 "name": "title",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "name",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -13370,11 +13508,13 @@
             },
             {
                 "name": "new_title",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "new_slug",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -13484,7 +13624,8 @@
         "params": [
             {
                 "name": "tagnames",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -13506,7 +13647,8 @@
         "params": [
             {
                 "name": "name",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "args",
@@ -13574,7 +13716,8 @@
         "params": [
             {
                 "name": "blog_id",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "path",
@@ -13583,7 +13726,8 @@
             },
             {
                 "name": "scheme",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -13845,7 +13989,8 @@
             },
             {
                 "name": "name",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "args",
@@ -14231,7 +14376,8 @@
         "params": [
             {
                 "name": "type",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -14260,7 +14406,8 @@
         "params": [
             {
                 "name": "more_link_text",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "strip_teaser",
@@ -14269,7 +14416,8 @@
             },
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -14278,7 +14426,8 @@
         "params": [
             {
                 "name": "feed_type",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -14292,7 +14441,8 @@
             },
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -14301,7 +14451,8 @@
         "params": [
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -14330,7 +14481,8 @@
         "params": [
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -14344,7 +14496,8 @@
             },
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -14358,7 +14511,8 @@
             },
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -14402,7 +14556,8 @@
         "params": [
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "size",
@@ -14421,7 +14576,8 @@
         "params": [
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -14430,7 +14586,8 @@
         "params": [
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "size",
@@ -14575,7 +14732,8 @@
             },
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -14788,15 +14946,18 @@
         "params": [
             {
                 "name": "type",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "post_id",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "tab",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -14845,7 +15006,8 @@
         "params": [
             {
                 "name": "network_id",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -15081,7 +15243,8 @@
             },
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -15090,7 +15253,8 @@
         "params": [
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -15104,7 +15268,8 @@
             },
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -15192,7 +15357,8 @@
             },
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -15201,7 +15367,8 @@
         "params": [
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -15210,7 +15377,8 @@
         "params": [
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -15245,7 +15413,8 @@
             },
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -15264,7 +15433,8 @@
             },
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -15292,7 +15462,8 @@
             {
                 "name": "locale",
                 "type": "?string",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ],
         "returns": "bool"
@@ -15334,7 +15505,8 @@
             },
             {
                 "name": "scheme",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -15510,7 +15682,8 @@
             },
             {
                 "name": "context",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -15616,11 +15789,13 @@
             },
             {
                 "name": "suffix",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "dest_path",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "jpeg_quality",
@@ -15686,7 +15861,8 @@
             },
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -15704,7 +15880,8 @@
             },
             {
                 "name": "scheme",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -15721,7 +15898,8 @@
             },
             {
                 "name": "deprecated",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -15836,7 +16014,8 @@
         "params": [
             {
                 "name": "origin",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -16006,7 +16185,8 @@
         "params": [
             {
                 "name": "network_id",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -16019,11 +16199,13 @@
         "params": [
             {
                 "name": "site_id",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "network_id",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -16095,7 +16277,8 @@
             },
             {
                 "name": "terms",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -16173,7 +16356,8 @@
         "params": [
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -16182,7 +16366,8 @@
         "params": [
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -16490,7 +16675,8 @@
         "params": [
             {
                 "name": "blog_charset",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -16869,7 +17055,8 @@
         "params": [
             {
                 "name": "locale",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -17002,7 +17189,8 @@
             },
             {
                 "name": "locale",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -17198,7 +17386,8 @@
             },
             {
                 "name": "desc",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "post_data",
@@ -17262,7 +17451,8 @@
             },
             {
                 "name": "desc",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "return_type",
@@ -17301,7 +17491,8 @@
         "params": [
             {
                 "name": "errors",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -17368,11 +17559,13 @@
             },
             {
                 "name": "errors",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "id",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -17381,15 +17574,18 @@
         "params": [
             {
                 "name": "type",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "errors",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "id",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -17424,7 +17620,8 @@
         "params": [
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -17522,7 +17719,8 @@
             },
             {
                 "name": "scheme",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -17536,7 +17734,8 @@
             },
             {
                 "name": "scheme",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -17685,7 +17884,8 @@
         "params": [
             {
                 "name": "label",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "max_page",
@@ -17816,7 +18016,8 @@
             },
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -17916,7 +18117,8 @@
         "params": [
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -17986,7 +18188,8 @@
             },
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -18066,7 +18269,8 @@
         "params": [
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -18095,7 +18299,8 @@
             },
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -18334,7 +18539,8 @@
         "params": [
             {
                 "name": "label",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -18430,16 +18636,19 @@
             },
             {
                 "name": "exclude",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "max_execution_time",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "directory_cache",
                 "byRef": true,
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -18448,7 +18657,8 @@
         "params": [
             {
                 "name": "requested_url",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "do_redirect",
@@ -19061,7 +19271,8 @@
             },
             {
                 "name": "deprecated",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -20108,7 +20319,8 @@
             },
             {
                 "name": "block",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -20630,7 +20842,8 @@
             },
             {
                 "name": "extra_fields",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "allow_relaxed_file_ownership",
@@ -21858,7 +22071,8 @@
             },
             {
                 "name": "protocols",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -22232,7 +22446,8 @@
             },
             {
                 "name": "scheme",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -22458,7 +22673,8 @@
             },
             {
                 "name": "scheme",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -22541,7 +22757,8 @@
         "params": [
             {
                 "name": "post_id",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ],
         "deprecated": true
@@ -22551,7 +22768,8 @@
         "params": [
             {
                 "name": "block_name",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -22723,7 +22941,8 @@
             },
             {
                 "name": "deprecated",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -22740,7 +22959,8 @@
             },
             {
                 "name": "parent_term",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -23011,7 +23231,8 @@
         "params": [
             {
                 "name": "type",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -23044,7 +23265,8 @@
         "params": [
             {
                 "name": "more_link_text",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "strip_teaser",
@@ -23058,7 +23280,8 @@
         "params": [
             {
                 "name": "feed_type",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -23331,7 +23554,8 @@
         "params": [
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -23414,7 +23638,8 @@
         "params": [
             {
                 "name": "before",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "sep",
@@ -23777,11 +24002,13 @@
             },
             {
                 "name": "pre_callback",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "post_callback",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -23793,11 +24020,13 @@
             },
             {
                 "name": "pre_callback",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "post_callback",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -24260,7 +24489,8 @@
             },
             {
                 "name": "autoload",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -24358,7 +24588,8 @@
         "params": [
             {
                 "name": "wp_query",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -25050,7 +25281,8 @@
             },
             {
                 "name": "rules_group",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -25476,7 +25708,8 @@
         "params": [
             {
                 "name": "prompt",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ],
         "returns": "WP_AI_Client_Prompt_Builder"
@@ -25663,7 +25896,8 @@
             },
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -25672,7 +25906,8 @@
         "params": [
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -25999,7 +26234,8 @@
             {
                 "name": "found",
                 "byRef": true,
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -26233,11 +26469,13 @@
             },
             {
                 "name": "image_src",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "image_meta",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "attachment_id",
@@ -26298,7 +26536,8 @@
             },
             {
                 "name": "walker",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "checked_ontop",
@@ -26376,7 +26615,8 @@
             },
             {
                 "name": "mimes",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -26391,7 +26631,8 @@
             },
             {
                 "name": "mimes",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -27160,11 +27401,13 @@
             },
             {
                 "name": "timestamp",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "timezone",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -27173,7 +27416,8 @@
         "params": [
             {
                 "name": "ignore_class",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "skip_frames",
@@ -27252,7 +27496,8 @@
         "params": [
             {
                 "name": "defer",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -27261,7 +27506,8 @@
         "params": [
             {
                 "name": "defer",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -27417,7 +27663,8 @@
             },
             {
                 "name": "reassign",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -27615,7 +27862,8 @@
             },
             {
                 "name": "editable_roles",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -28142,7 +28390,8 @@
             },
             {
                 "name": "context",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -28414,11 +28663,13 @@
         "params": [
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "sample",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -28682,7 +28933,8 @@
             },
             {
                 "name": "image_meta",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -28717,7 +28969,8 @@
             },
             {
                 "name": "image_meta",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -28889,7 +29142,8 @@
             },
             {
                 "name": "rules_group",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -28933,7 +29187,8 @@
         "params": [
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -28953,7 +29208,8 @@
             },
             {
                 "name": "viewport_overrides",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -29334,7 +29590,8 @@
             {
                 "name": "default_quality",
                 "type": "?int",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ],
         "returns": "int"
@@ -29434,7 +29691,8 @@
             },
             {
                 "name": "gap_value",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "should_skip_gap_serialization",
@@ -29448,7 +29706,8 @@
             },
             {
                 "name": "block_spacing",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "options",
@@ -29738,7 +29997,8 @@
         "params": [
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -29773,7 +30033,8 @@
             },
             {
                 "name": "args",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -29893,7 +30154,8 @@
             },
             {
                 "name": "timestamp",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -30126,7 +30388,8 @@
         "params": [
             {
                 "name": "current_stylesheet",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -30239,7 +30502,8 @@
         "params": [
             {
                 "name": "user",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -30265,7 +30529,8 @@
         "params": [
             {
                 "name": "site_id",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -30308,7 +30573,8 @@
                 "name": "image_info",
                 "type": "?array",
                 "byRef": true,
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -30343,7 +30609,8 @@
             },
             {
                 "name": "time",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -30361,7 +30628,8 @@
             },
             {
                 "name": "time",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -30462,7 +30730,8 @@
         "params": [
             {
                 "name": "value",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ],
         "returns": "bool"
@@ -30493,7 +30762,8 @@
             },
             {
                 "name": "more",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -30524,7 +30794,8 @@
             },
             {
                 "name": "url",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -30872,7 +31143,8 @@
         "params": [
             {
                 "name": "is_installing",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -30919,7 +31191,8 @@
             {
                 "name": "store_namespace",
                 "type": "?string",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ],
         "returns": "array"
@@ -30956,7 +31229,8 @@
             {
                 "name": "store_namespace",
                 "type": "?string",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "state",
@@ -31128,7 +31402,8 @@
         "params": [
             {
                 "name": "network_id",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -31235,7 +31510,8 @@
             },
             {
                 "name": "version",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -31536,7 +31812,8 @@
             },
             {
                 "name": "options",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -31762,7 +32039,8 @@
             },
             {
                 "name": "comments",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -31805,7 +32083,8 @@
             },
             {
                 "name": "index_key",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -31877,7 +32156,8 @@
         "params": [
             {
                 "name": "network_id",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -32224,7 +32504,8 @@
         "params": [
             {
                 "name": "network_id",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -32396,7 +32677,8 @@
             },
             {
                 "name": "deprecated",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "notify",
@@ -32538,7 +32820,8 @@
             },
             {
                 "name": "request",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "creating",
@@ -32557,7 +32840,8 @@
             },
             {
                 "name": "deprecated",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -33016,7 +33300,8 @@
         "params": [
             {
                 "name": "themes",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -33386,11 +33671,13 @@
         "params": [
             {
                 "name": "min",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "max",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -33785,11 +34072,13 @@
             },
             {
                 "name": "content_module",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "route_module",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -33824,11 +34113,13 @@
             },
             {
                 "name": "content_module",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "route_module",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -33906,11 +34197,13 @@
             },
             {
                 "name": "content_module",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "route_module",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -33945,11 +34238,13 @@
             },
             {
                 "name": "content_module",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "route_module",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -34705,7 +35000,8 @@
             },
             {
                 "name": "fields",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -35081,7 +35377,8 @@
             },
             {
                 "name": "status_code",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "flags",
@@ -35095,11 +35392,13 @@
         "params": [
             {
                 "name": "value",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "status_code",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "flags",
@@ -35113,11 +35412,13 @@
         "params": [
             {
                 "name": "value",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "status_code",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "flags",
@@ -35600,7 +35901,8 @@
             },
             {
                 "name": "feature",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -36024,7 +36326,8 @@
         "params": [
             {
                 "name": "suspend",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -36117,7 +36420,8 @@
             },
             {
                 "name": "args",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -36174,7 +36478,8 @@
             },
             {
                 "name": "locale",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -36346,7 +36651,8 @@
         "params": [
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -36378,7 +36684,8 @@
             },
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -36395,7 +36702,8 @@
             },
             {
                 "name": "more",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -36444,7 +36752,8 @@
             },
             {
                 "name": "unique_filename_callback",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -36654,7 +36963,8 @@
         "params": [
             {
                 "name": "post",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -36972,7 +37282,8 @@
         "params": [
             {
                 "name": "network_id",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -36990,7 +37301,8 @@
             },
             {
                 "name": "time",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -36999,7 +37311,8 @@
         "params": [
             {
                 "name": "time",
-                "optional": true
+                "optional": true,
+                "default": null
             },
             {
                 "name": "create_dir",
@@ -37042,7 +37355,8 @@
         "params": [
             {
                 "name": "using",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -37184,7 +37498,8 @@
             },
             {
                 "name": "inputs",
-                "optional": true
+                "optional": true,
+                "default": null
             }
         ]
     },

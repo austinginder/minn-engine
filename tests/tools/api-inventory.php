@@ -58,7 +58,7 @@ $params = static function (ReflectionFunctionAbstract $f) use ($typeOf, $default
             'byRef' => $p->isPassedByReference() ?: null,
             'variadic' => $p->isVariadic() ?: null,
             'optional' => $p->isOptional() ?: null,
-        ] + $default($p), static fn ($v) => $v !== null);
+        ], static fn ($v) => $v !== null) + $default($p);
     }
     return $rows;
 };
