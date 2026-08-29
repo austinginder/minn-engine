@@ -245,7 +245,7 @@ final class Installer
             $this->light('GREEN', $nav . ' wp_navigation menu' . ($nav === 1 ? '' : 's'));
         }
         if ($classic > 0) {
-            $this->light('AMBER', $classic . ' classic nav_menu' . ($classic === 1 ? '' : 's') . ' with ' . $items . ' item' . ($items === 1 ? '' : 's') . ' (the engine reads wp_navigation posts only)');
+            $this->light('GREEN', $classic . ' classic nav_menu' . ($classic === 1 ? '' : 's') . ' with ' . $items . ' item' . ($items === 1 ? '' : 's') . ' (read when a navigation block has no wp_navigation post)');
         } elseif ($nav === 0) {
             $this->light('GREEN', 'no menus');
         }

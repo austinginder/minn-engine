@@ -31,8 +31,9 @@ reports, each line GREEN, AMBER, or RED:
 - third-party block namespaces (`<!-- wp:vendor/name`): GREEN when a
   `minn.json` lists the name under `blocks`, AMBER otherwise. Core blocks
   (`<!-- wp:paragraph`, `<!-- wp:core/…`) are the engine's and stay quiet;
-- menus: published `wp_navigation` posts are GREEN (the engine reads them);
-  classic `nav_menu` terms with items are AMBER (the engine does not);
+- menus: published `wp_navigation` posts are GREEN; classic `nav_menu`
+  terms with items are GREEN (the engine reads them when a navigation block
+  has no `wp_navigation` post);
 - extra tables and extra post types: AMBER, grouped by family, because they
   are plugin data the engine does not read.
 

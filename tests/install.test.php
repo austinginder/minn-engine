@@ -90,6 +90,7 @@ $check('status reads a WordPress webroot', $code === 0 && str_contains($out, ': 
 [$out, $code] = $minn('preflight ' . escapeshellarg($WEBROOT));
 $check('preflight passes a block-theme site (GREEN or AMBER)', $code === 0 && preg_match('/Result: (GREEN|AMBER)/', $out) === 1 && str_contains($out, 'is a block theme'), $out);
 $check('preflight reports wp_navigation menus', str_contains($out, 'wp_navigation menu'), $out);
+$check('preflight treats classic nav_menu as readable', !str_contains($out, 'the engine reads wp_navigation posts only'), $out);
 $check('preflight reports no shortcodes on the engine site', str_contains($out, 'no shortcodes in content'), $out);
 $check('preflight reports no third-party blocks on the engine site', str_contains($out, 'no third-party blocks in content'), $out);
 $check('preflight reports no extra tables on the engine site', str_contains($out, 'no extra tables'), $out);

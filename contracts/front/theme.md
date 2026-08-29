@@ -67,7 +67,9 @@ newline right after a closing tag is swallowed. Anything else renders as nothing
   rel="home"[ aria-current="page"]>` (home without a trailing slash; `aria-current` on
   the front page only). Empty tagline and no logo render nothing.
 - `navigation`: inner links, or the referenced / newest `wp_navigation` post (this
-  site's holds `<!-- wp:page-list /-->`). Non-responsive: `<nav class="[is-vertical]
+  site's holds `<!-- wp:page-list /-->`), or the first classic `nav_menu` when
+  no `wp_navigation` post is published. Classic items become navigation-link
+  blocks with `menu-item menu-item-type-* menu-item-object-*` classes. Non-responsive: `<nav class="[is-vertical]
   wp-block-navigation [layout]" aria-label=" {n}">` where n is the shared request
   counter. Responsive: the overlay markup (`modal-{n}`, interactivity attributes,
   overlay colour classes from `overlayTextColor`/`overlayBackgroundColor`; the dialog

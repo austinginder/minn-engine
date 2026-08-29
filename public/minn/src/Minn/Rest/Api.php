@@ -12,6 +12,7 @@ use Minn\Admin\V1Controller;
 use Minn\Auth\Authenticator;
 use Minn\Auth\Capabilities;
 use Minn\Content\Comments;
+use Minn\Content\Menus;
 use Minn\Content\Posts;
 use Minn\Content\PostWriter;
 use Minn\Content\Revisions;
@@ -67,6 +68,7 @@ final readonly class Api
 
         $dashboard = new Dashboard($db, $site, $users, $capabilities, ABSPATH . 'wp-content/uploads');
         $notifications = new Notifications($db, $site, $users, $capabilities, $dashboard);
+        $menus = new Menus($db, $posts, $terms, $permalinks);
 
         $router = new Router();
         $router->register(
@@ -81,6 +83,7 @@ final readonly class Api
             new CommentsController(new Comments($db), $posts, $site, $commentObject, $caller),
             new RevisionsController($posts, new Revisions($db, $writer, $site), $url, $caller),
             new MediaController($db, $posts, $writer, $site, $uploads, new Images($site), $mediaObject, $caller),
+            new MenusController($menus, new MenuObject($menus, $url, $caller), new MenuItemObject($url, $caller), $caller),
         );
         return new self($db, $request, $caller, $router, $postObject, $termObject, $userObject, $types);
     }

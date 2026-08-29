@@ -10,7 +10,9 @@ use Minn\Blocks\Parser;
 use Minn\Blocks\Renderer;
 use Minn\Blocks\RenderState;
 use Minn\Blocks\Styles;
+use Minn\Content\Menus;
 use Minn\Content\Posts;
+use Minn\Content\Terms;
 use Minn\Db;
 use Minn\Front\Kind;
 use Minn\Front\Permalinks;
@@ -19,9 +21,10 @@ use Minn\Support\Kses;
 
 /**
  * navigation, navigation-link, page-list. A navigation block's items come
- * from its inner blocks, the wp_navigation post it references, or the
- * newest published wp_navigation post; a responsive menu wraps them in the
- * overlay markup the reference emits.
+ * from its inner blocks, the wp_navigation post it references, the newest
+ * published wp_navigation post, or (when none of those exist) the first
+ * classic nav_menu; a responsive menu wraps them in the overlay markup
+ * the reference emits.
  */
 final readonly class Navigation
 {
@@ -29,6 +32,7 @@ final readonly class Navigation
         private Db $db,
         private Posts $posts,
         private Permalinks $permalinks,
+        private ?Menus $menus = null,
     ) {
     }
 
@@ -50,7 +54,7 @@ final readonly class Navigation
             if ($menuKey !== null && !RenderState::enter($menuKey)) {
                 return '';
             }
-            $items = $menu === null ? [] : Parser::parse((string) $menu['post_content']);
+            $items = $menu === null ? $this->classicItems() : Parser::parse((string) $menu['post_content']);
             // The menu's title labels the nav only when the block names the menu.
             $label = (int) $block->attr('ref', 0) > 0 ? (string) ($menu['post_title'] ?? '') : '';
         }
@@ -181,12 +185,28 @@ final readonly class Navigation
         $label = (string) $block->attr('label', '');
         $url = Kses::url((string) $block->attr('url', ''));
         $resolution = $renderer->context()->resolution;
-        $current = (string) $block->attr('kind', '') === 'post-type'
-            && (int) $block->attr('id', 0) === $resolution->id()
-            && $resolution->kind === ((string) $block->attr('type', '') === 'page' ? Kind::Page : Kind::Single);
-        $classes = 'wp-block-navigation-item' . ($current ? ' current-menu-item' : '') . ' wp-block-navigation-link';
+        $kind = (string) $block->attr('kind', '');
+        $type = (string) $block->attr('type', '');
+        $id = (int) $block->attr('id', 0);
+        $current = ($kind === 'post-type'
+            && $id === $resolution->id()
+            && $resolution->kind === ($type === 'page' ? Kind::Page : Kind::Single))
+            || ($kind === 'taxonomy' && $type === 'category' && $resolution->kind === Kind::Category && $id === $resolution->id());
+        $classic = (bool) $block->attr('fromMenu', false);
+        $className = (string) $block->attr('className', '');
+        $classes = 'wp-block-navigation-item' . $className . ($current ? ' current-menu-item' : '') . ' wp-block-navigation-link';
         $target = (bool) $block->attr('opensInNewTab', false) ? ' target="_blank"  ' : '';
-        return '<li class="' . $classes . '"><a class="wp-block-navigation-item__content"  href="' . Html::attr($url) . '"' . $target . ($current ? ' aria-current="page"' : '') . '><span class="wp-block-navigation-item__label">' . $label . '</span></a></li>';
+        $title = ( $classic || str_contains($className, 'menu-item') )
+            ? ' title="' . Html::attr((string) $block->attr('attrTitle', '')) . '"'
+            : '';
+        return '<li class="' . $classes . '"><a class="wp-block-navigation-item__content"  href="' . Html::attr($url) . '"' . $target . $title . ($current ? ' aria-current="page"' : '') . '><span class="wp-block-navigation-item__label">' . $label . '</span></a></li>';
+    }
+
+    /** @return list<Block> */
+    private function classicItems(): array
+    {
+        $menus = $this->menus ?? new Menus($this->db, $this->posts, new Terms($this->db), $this->permalinks);
+        return $menus->fallbackBlocks();
     }
 
     private function pageList(Block $block, Renderer $renderer): string
