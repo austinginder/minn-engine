@@ -395,10 +395,6 @@ function wp_mail($to, $subject, $message, $headers = '', $attachments = [], $emb
     return $ok;
 }
 
-function wp_notify_postauthor($comment_id, $deprecated = null)
-{
-    return false;
-}
 
 function wp_notify_moderator($comment_id)
 {

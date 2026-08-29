@@ -1,0 +1,1130 @@
+[
+    [
+        "parse_blocks count",
+        5
+    ],
+    [
+        "parse_blocks shapes",
+        [
+            [
+                "core/paragraph",
+                {
+                    "align": "center",
+                    "style": {
+                        "color": {
+                            "text": "#123456"
+                        }
+                    }
+                },
+                0,
+                "\n<p class=\"has-text-align-center\">Hi <strong>there</strong></p>\n",
+                [
+                    "\n<p class=\"has-text-align-center\">Hi <strong>there</strong></p>\n"
+                ]
+            ],
+            [
+                null,
+                [],
+                0,
+                "\n\n",
+                [
+                    "\n\n"
+                ]
+            ],
+            [
+                "core/group",
+                {
+                    "layout": {
+                        "type": "constrained"
+                    }
+                },
+                2,
+                "\n<div class=\"wp-block-group\">\n\n</div>\n",
+                [
+                    "\n<div class=\"wp-block-group\">",
+                    null,
+                    "\n\n",
+                    null,
+                    "</div>\n"
+                ]
+            ],
+            [
+                null,
+                [],
+                0,
+                "\n\nfree text\n",
+                [
+                    "\n\nfree text\n"
+                ]
+            ],
+            [
+                "core/separator",
+                [],
+                0,
+                "",
+                []
+            ]
+        ]
+    ],
+    [
+        "parse_blocks nested",
+        [
+            [
+                "core/heading",
+                {
+                    "level": 3
+                },
+                "\n<h3 class=\"wp-block-heading\">Title</h3>\n"
+            ],
+            [
+                "minn-probe/marker",
+                {
+                    "word": "x"
+                },
+                ""
+            ]
+        ]
+    ],
+    [
+        "parse_blocks empty",
+        []
+    ],
+    [
+        "parse_blocks plain",
+        [
+            {
+                "blockName": null,
+                "attrs": [],
+                "innerBlocks": [],
+                "innerHTML": "just text",
+                "innerContent": [
+                    "just text"
+                ]
+            }
+        ]
+    ],
+    [
+        "serialize round trip",
+        false
+    ],
+    [
+        "serialize_block",
+        "<!-- wp:paragraph {\"align\":\"left\",\"q\":\"a\\u0022b\",\"u\":\"é/x\"} --><p>x</p><!-- /wp:paragraph -->"
+    ],
+    [
+        "serialize_block no attrs",
+        "<!-- wp:separator /-->"
+    ],
+    [
+        "serialize_block freeform",
+        "free"
+    ],
+    [
+        "serialize_block_attributes",
+        [
+            "{\"a\":\"x\\u002d\\u002dy\",\"b\":\"\\u003c\\u003e\\u0026\\u0022'\",\"c\":{\"d\":1}}",
+            "[]"
+        ]
+    ],
+    [
+        "get_comment_delimited_block_content",
+        [
+            "<!-- wp:paragraph {\"a\":1} --><p>x</p><!-- /wp:paragraph -->",
+            "<!-- wp:minn-probe/thing /-->",
+            "raw"
+        ]
+    ],
+    [
+        "strip_core_block_namespace",
+        [
+            "paragraph",
+            "minn-probe/x",
+            null
+        ]
+    ],
+    [
+        "has_blocks",
+        [
+            true,
+            false,
+            true,
+            true,
+            false
+        ]
+    ],
+    [
+        "has_block",
+        [
+            true,
+            true,
+            true,
+            true,
+            false,
+            true,
+            false
+        ]
+    ],
+    [
+        "block_version",
+        [
+            1,
+            0
+        ]
+    ],
+    [
+        "excerpt_remove_blocks",
+        "\n<p class=\"wp-block-paragraph\">keep</p>\n\n\n\n\n"
+    ],
+    [
+        "registry class",
+        [
+            "WP_Block_Type_Registry",
+            true
+        ]
+    ],
+    [
+        "core registered",
+        [
+            true,
+            true,
+            false,
+            true
+        ]
+    ],
+    [
+        "core paragraph type",
+        [
+            "WP_Block_Type",
+            "core/paragraph",
+            "Paragraph",
+            "text",
+            3,
+            false,
+            [
+                "content",
+                "dropCap",
+                "placeholder",
+                "direction",
+                "lock",
+                "metadata",
+                "align",
+                "className",
+                "style",
+                "backgroundColor",
+                "textColor",
+                "gradient",
+                "fontSize",
+                "fontFamily",
+                "borderColor",
+                "anchor"
+            ],
+            [
+                "wide",
+                "full"
+            ],
+            true,
+            true,
+            null,
+            null,
+            [
+                "wp-block-paragraph"
+            ],
+            [],
+            [],
+            null
+        ]
+    ],
+    [
+        "core latest-posts dynamic",
+        [
+            true,
+            true,
+            {
+                "type": "number",
+                "default": 5
+            },
+            []
+        ]
+    ],
+    [
+        "core paragraph attributes",
+        {
+            "content": {
+                "type": "rich-text",
+                "source": "rich-text",
+                "selector": "p",
+                "role": "content"
+            },
+            "dropCap": {
+                "type": "boolean",
+                "default": false
+            },
+            "placeholder": {
+                "type": "string"
+            },
+            "direction": {
+                "type": "string",
+                "enum": [
+                    "ltr",
+                    "rtl"
+                ]
+            },
+            "lock": {
+                "type": "object"
+            },
+            "metadata": {
+                "type": "object"
+            },
+            "align": {
+                "type": "string",
+                "enum": [
+                    "left",
+                    "center",
+                    "right",
+                    "wide",
+                    "full",
+                    ""
+                ]
+            },
+            "className": {
+                "type": "string"
+            },
+            "style": {
+                "type": "object"
+            },
+            "backgroundColor": {
+                "type": "string"
+            },
+            "textColor": {
+                "type": "string"
+            },
+            "gradient": {
+                "type": "string"
+            },
+            "fontSize": {
+                "type": "string"
+            },
+            "fontFamily": {
+                "type": "string"
+            },
+            "borderColor": {
+                "type": "string"
+            },
+            "anchor": {
+                "type": "string"
+            }
+        }
+    ],
+    [
+        "core paragraph supports",
+        {
+            "align": [
+                "wide",
+                "full"
+            ],
+            "splitting": true,
+            "anchor": true,
+            "className": false,
+            "__experimentalBorder": {
+                "color": true,
+                "radius": true,
+                "style": true,
+                "width": true
+            },
+            "color": {
+                "gradients": true,
+                "link": true,
+                "__experimentalDefaultControls": {
+                    "background": true,
+                    "text": true
+                }
+            },
+            "spacing": {
+                "margin": true,
+                "padding": true,
+                "__experimentalDefaultControls": {
+                    "margin": false,
+                    "padding": false
+                }
+            },
+            "typography": {
+                "fontSize": true,
+                "lineHeight": true,
+                "textAlign": true,
+                "textColumns": true,
+                "textIndent": true,
+                "__experimentalFontFamily": true,
+                "__experimentalTextDecoration": true,
+                "__experimentalFontStyle": true,
+                "__experimentalFontWeight": true,
+                "__experimentalLetterSpacing": true,
+                "__experimentalTextTransform": true,
+                "__experimentalWritingMode": true,
+                "fitText": true,
+                "__experimentalDefaultControls": {
+                    "fontSize": true
+                }
+            },
+            "__experimentalSelector": "p",
+            "__unstablePasteTextInline": true,
+            "interactivity": {
+                "clientNavigation": true
+            }
+        }
+    ],
+    [
+        "core group supports keys",
+        [
+            "__experimentalOnEnter",
+            "__experimentalOnMerge",
+            "__experimentalSettings",
+            "align",
+            "anchor",
+            "ariaLabel",
+            "html",
+            "background",
+            "color",
+            "shadow",
+            "spacing",
+            "dimensions",
+            "__experimentalBorder",
+            "position",
+            "typography",
+            "layout",
+            "interactivity",
+            "allowedBlocks"
+        ]
+    ],
+    [
+        "register_block_type",
+        [
+            "WP_Block_Type",
+            "minn-probe/marker",
+            "Marker",
+            3,
+            "widgets",
+            true,
+            {
+                "word": {
+                    "type": "string",
+                    "default": "dflt"
+                },
+                "count": {
+                    "type": "number",
+                    "default": 2
+                },
+                "list": {
+                    "type": "array",
+                    "default": [
+                        "a"
+                    ]
+                },
+                "flag": {
+                    "type": "boolean"
+                },
+                "lock": {
+                    "type": "object"
+                },
+                "metadata": {
+                    "type": "object"
+                }
+            },
+            {
+                "align": true,
+                "color": {
+                    "text": true,
+                    "background": true
+                },
+                "anchor": true,
+                "html": false,
+                "className": true,
+                "customClassName": true
+            },
+            [
+                "postId",
+                "postType"
+            ],
+            {
+                "minn-probe/word": "word"
+            },
+            [
+                "minn-probe-editor"
+            ],
+            [],
+            [],
+            [],
+            [
+                "minn-probe-style"
+            ],
+            [],
+            [
+                "a",
+                "b"
+            ],
+            "A probe.",
+            "minn-probe",
+            null,
+            null,
+            null,
+            [],
+            [],
+            null,
+            [],
+            "minn-probe-editor",
+            "minn-probe-style",
+            null,
+            null,
+            null,
+            null
+        ]
+    ],
+    [
+        "registry after",
+        [
+            true,
+            true,
+            true,
+            true,
+            false
+        ]
+    ],
+    [
+        "register twice",
+        [
+            "false",
+            "Marker"
+        ]
+    ],
+    [
+        "register bad names",
+        [
+            "false",
+            "false",
+            "WP_Block_Type",
+            "false"
+        ]
+    ],
+    [
+        "register type object",
+        [
+            "WP_Block_Type",
+            true,
+            true
+        ]
+    ],
+    [
+        "unregister",
+        [
+            "WP_Block_Type",
+            false,
+            "false"
+        ]
+    ],
+    [
+        "block_has_support",
+        [
+            true,
+            true,
+            false,
+            false,
+            false,
+            false,
+            true
+        ]
+    ],
+    [
+        "prepare_attributes_for_render",
+        [
+            {
+                "word": "w",
+                "extra": 1,
+                "count": "5",
+                "list": [
+                    "a"
+                ]
+            },
+            {
+                "word": "dflt",
+                "count": 2,
+                "list": [
+                    "a"
+                ]
+            }
+        ]
+    ],
+    [
+        "wp_get_block_default_classname",
+        [
+            "wp-block-paragraph",
+            "wp-block-minn-probe-marker",
+            "wp-block-nope"
+        ]
+    ],
+    [
+        "wp_get_block_css_selector",
+        [
+            ".wp-block-minn-probe-marker",
+            "p",
+            null,
+            ".wp-block-minn-probe-marker"
+        ]
+    ],
+    [
+        "render_block dynamic",
+        "<div class=\"extra alignwide custom wp-block-minn-probe-marker has-text-color has-vivid-red-color has-background has-pale-cyan-background-color\" id=\"anch\" data-word=\"hi\">hi|2|a||WP_Block|minn-probe/marker|[]|0</div>"
+    ],
+    [
+        "render_block defaults",
+        "<div class=\"extra wp-block-minn-probe-marker\" data-word=\"dflt\">dflt|2|a||WP_Block|minn-probe/marker|[]|0</div>"
+    ],
+    [
+        "render_block with inner",
+        "<div class=\"extra wp-block-minn-probe-marker\" data-word=\"p\">p|2|a|<div><p class=\"wp-block-paragraph\">inner</p></div>|WP_Block|minn-probe/marker|[]|1</div>"
+    ],
+    [
+        "render_block context",
+        "<div class=\"extra wp-block-minn-probe-marker\" data-word=\"ctx\">ctx|2|a||WP_Block|minn-probe/marker|{\"postId\":1,\"postType\":\"post\"}|0</div>"
+    ],
+    [
+        "render_block unknown",
+        "<p>static kept</p>"
+    ],
+    [
+        "render_block freeform",
+        "raw text"
+    ],
+    [
+        "render_block core static",
+        "\n<p class=\"has-text-align-center wp-block-paragraph\">Hi</p>\n"
+    ],
+    [
+        "do_blocks",
+        "\n<p class=\"wp-block-paragraph\">A</p>\n\n\n<div class=\"extra wp-block-minn-probe-marker\" data-word=\"d\">d|2|a||WP_Block|minn-probe/marker|{\"postId\":1,\"postType\":\"post\"}|0</div>\n\n\n<div class=\"wp-block-group is-layout-flow wp-block-group-is-layout-flow\"><div class=\"extra wp-block-minn-probe-marker\" data-word=\"in\">in|2|a||WP_Block|minn-probe/marker|{\"postId\":1,\"postType\":\"post\"}|0</div></div>\n"
+    ],
+    [
+        "do_blocks filters",
+        "M[<div class=\"extra wp-block-minn-probe-marker\" data-word=\"filtered\">filtered|2|a||WP_Block|minn-probe/marker|{\"postId\":1,\"postType\":\"post\"}|0</div>]PRE"
+    ],
+    [
+        "WP_Block object",
+        [
+            "minn-probe/marker",
+            {
+                "word": "o",
+                "count": 2,
+                "list": [
+                    "a"
+                ]
+            },
+            {
+                "postId": 5,
+                "postType": "post"
+            },
+            null,
+            "WP_Block_Type",
+            "WP_Block_List",
+            1,
+            "core/paragraph",
+            [],
+            "",
+            [
+                null
+            ],
+            true,
+            false,
+            "<div class=\"extra wp-block-minn-probe-marker\" data-word=\"o\">o|2|a|<p class=\"wp-block-paragraph\">i</p>|WP_Block|minn-probe/marker|{\"postId\":5,\"postType\":\"post\"}|1</div>",
+            "<p class=\"wp-block-paragraph\">i</p>"
+        ]
+    ],
+    [
+        "wrapper attributes outside render",
+        "class=\"x\""
+    ],
+    [
+        "wrapper attributes extra",
+        "<div class=\"extra wp-block-minn-probe-marker\" data-word=\"w\">w|2|a||WP_Block|minn-probe/marker|{\"postId\":1,\"postType\":\"post\"}|0</div>"
+    ],
+    [
+        "block.json",
+        [
+            "WP_Block_Type",
+            [
+                "minn-probe/json",
+                "From JSON",
+                3,
+                "text",
+                "smiley",
+                "Json block.",
+                [
+                    "k"
+                ],
+                null,
+                {
+                    "n": {
+                        "type": "number",
+                        "default": 4
+                    },
+                    "lock": {
+                        "type": "object"
+                    },
+                    "metadata": {
+                        "type": "object"
+                    }
+                },
+                {
+                    "html": false,
+                    "align": [
+                        "wide"
+                    ]
+                },
+                [
+                    "postId"
+                ],
+                {
+                    "minn-probe/n": "n"
+                },
+                [
+                    "minn-probe-json-editor-script"
+                ],
+                [
+                    "minn-probe-json-editor-style"
+                ],
+                [
+                    "minn-probe-json-style"
+                ],
+                [
+                    "minn-probe-json-view-script",
+                    "minn-probe-shared"
+                ],
+                [
+                    "minn-probe-script"
+                ],
+                [],
+                false,
+                false,
+                {
+                    "attributes": {
+                        "n": 1
+                    }
+                },
+                [
+                    {
+                        "name": "default",
+                        "label": "Default",
+                        "isDefault": true
+                    },
+                    {
+                        "name": "alt",
+                        "label": "Alt"
+                    }
+                ],
+                [
+                    {
+                        "name": "v1",
+                        "title": "V1"
+                    }
+                ],
+                {
+                    "core/paragraph": "after"
+                },
+                [
+                    "core/group"
+                ],
+                [
+                    "core/columns"
+                ],
+                [
+                    "core/paragraph"
+                ],
+                null
+            ],
+            "",
+            [
+                "http://minn-engine.localhost/wp-content/plugins/private/var/folders/1m/sgtjt_5s2y5dgmlhptlh1tf40000gn/T/minn-probe-block/build/index.js",
+                [
+                    "wp-blocks"
+                ],
+                "abc",
+                "http://minn-engine.localhost/wp-content/plugins/private/var/folders/1m/sgtjt_5s2y5dgmlhptlh1tf40000gn/T/minn-probe-block/build/view.js",
+                "http://minn-engine.localhost/wp-content/plugins/private/var/folders/1m/sgtjt_5s2y5dgmlhptlh1tf40000gn/T/minn-probe-block/build/style-index.css",
+                "http://minn-engine.localhost/wp-content/plugins/private/var/folders/1m/sgtjt_5s2y5dgmlhptlh1tf40000gn/T/minn-probe-block/build/index.css",
+                "1.2.3"
+            ],
+            [
+                false,
+                "false",
+                "false"
+            ]
+        ]
+    ],
+    [
+        "register_block_style",
+        [
+            true,
+            true,
+            {
+                "name": "minn-probe-style",
+                "label": "Probe",
+                "inline_style": ".is-style-minn-probe-style{color:red}"
+            },
+            "false",
+            "false",
+            true,
+            false
+        ]
+    ],
+    [
+        "register_block_pattern",
+        [
+            true,
+            true,
+            {
+                "title": "Probe pattern",
+                "content": "<!-- wp:paragraph --><p>P</p><!-- /wp:paragraph -->",
+                "categories": [
+                    "text"
+                ],
+                "keywords": [
+                    "k"
+                ],
+                "description": "d",
+                "viewportWidth": 800,
+                "blockTypes": [
+                    "core/paragraph"
+                ],
+                "inserter": false,
+                "name": "minn-probe/pattern"
+            },
+            "true",
+            "false",
+            "false",
+            true,
+            false,
+            true,
+            {
+                "name": "minn-probe",
+                "label": "Probe cat",
+                "description": "d"
+            },
+            true
+        ]
+    ],
+    [
+        "wp_interactivity_data_wp_context",
+        [
+            "data-wp-context='{\"a\":1,\"b\":\"x\\u0022y\"}'",
+            "data-wp-context='ns::{\"a\":1}'",
+            "data-wp-context='{}'"
+        ]
+    ],
+    [
+        "wp_interactivity_state",
+        [
+            {
+                "k": "v"
+            },
+            {
+                "k": "v"
+            },
+            {
+                "k": "v",
+                "k2": 2
+            },
+            {
+                "c": 1
+            },
+            {
+                "c": 1
+            }
+        ]
+    ],
+    [
+        "wp_get_global_styles_svg_filters",
+        "string"
+    ],
+    [
+        "filter_block_kses",
+        {
+            "blockName": "core/paragraph",
+            "attrs": {
+                "a": "x",
+                "b": {
+                    "c": "ok"
+                }
+            },
+            "innerBlocks": [],
+            "innerHTML": "<p>x</p>",
+            "innerContent": [
+                "<p>x</p>"
+            ]
+        }
+    ],
+    [
+        "get_hooked_blocks",
+        []
+    ],
+    [
+        "registry cleaned",
+        false
+    ],
+    [
+        "rewrite",
+        [
+            {
+                "^wp-json/?$": "index.php?rest_route=/",
+                "^wp-json/(.*)?": "index.php?rest_route=/$matches[1]",
+                "^index.php/wp-json/?$": "index.php?rest_route=/",
+                "^index.php/wp-json/(.*)?": "index.php?rest_route=/$matches[1]",
+                "^wp-sitemap\\.xml$": "index.php?sitemap=index",
+                "^wp-sitemap\\.xsl$": "index.php?sitemap-stylesheet=sitemap",
+                "^wp-sitemap-index\\.xsl$": "index.php?sitemap-stylesheet=index",
+                "^wp-sitemap-([a-z]+?)-([a-z\\d_-]+?)-(\\d+?)\\.xml$": "index.php?sitemap=$matches[1]&sitemap-subtype=$matches[2]&paged=$matches[3]",
+                "^wp-sitemap-([a-z]+?)-(\\d+?)\\.xml$": "index.php?sitemap=$matches[1]&paged=$matches[2]",
+                "^minn-admin(/.*)?$": "index.php?minn_admin=1",
+                "^probe/([^/]*)/?": "index.php?probe=$matches[1]"
+            },
+            true,
+            [
+                1,
+                "probe-ep",
+                "probe-ep"
+            ],
+            "WP_Rewrite",
+            "/%postname%/",
+            true,
+            0,
+            "%pagename%",
+            "/category/%category%",
+            "/tag/%post_tag%",
+            "/author/%author%",
+            "/%year%/%monthnum%/%day%",
+            "search/%search%",
+            "/",
+            "",
+            "index.php",
+            "page",
+            "feed",
+            "search",
+            "author",
+            "/category/%category%",
+            "WP"
+        ]
+    ],
+    [
+        "flush_rewrite_rules",
+        null
+    ],
+    [
+        "wp_filesize",
+        [
+            true,
+            0
+        ]
+    ],
+    [
+        "edit_post_link anon",
+        ""
+    ],
+    [
+        "get_num_queries",
+        true
+    ],
+    [
+        "wp_json_file_decode",
+        [
+            {
+                "a": {
+                    "b": 1
+                }
+            },
+            {
+                "a": {
+                    "b": 1
+                }
+            },
+            null,
+            null
+        ]
+    ],
+    [
+        "links_add_base_url",
+        [
+            "<a href=\"http://base.test/dir/x\">y</a><img src=\"http://base.test/i.png\"><a href=\"http://z/\">z</a>",
+            "<a data-href=\"http://base.test/x\">y</a>"
+        ]
+    ],
+    [
+        "get_comment_type",
+        [
+            "comment",
+            null
+        ]
+    ],
+    [
+        "post formats",
+        [
+            false,
+            false,
+            {
+                "standard": "Standard",
+                "aside": "Aside",
+                "chat": "Chat",
+                "gallery": "Gallery",
+                "link": "Link",
+                "image": "Image",
+                "quote": "Quote",
+                "status": "Status",
+                "video": "Video",
+                "audio": "Audio"
+            },
+            {
+                "standard": "standard",
+                "aside": "aside",
+                "chat": "chat",
+                "gallery": "gallery",
+                "link": "link",
+                "image": "image",
+                "quote": "quote",
+                "status": "status",
+                "video": "video",
+                "audio": "audio"
+            }
+        ]
+    ],
+    [
+        "set_post_format",
+        [
+            [
+                "12"
+            ],
+            "aside",
+            [],
+            [],
+            false,
+            {
+                "errors": {
+                    "invalid_post": [
+                        "Invalid post."
+                    ]
+                },
+                "error_data": []
+            }
+        ]
+    ],
+    [
+        "users",
+        [
+            true,
+            "probeuser",
+            "probeuser",
+            "Probe User",
+            [
+                "subscriber"
+            ],
+            "Pro",
+            "probeuser",
+            "error:existing_user_login",
+            "error:existing_user_email",
+            "error:empty_user_login",
+            true,
+            [
+                true,
+                "Renamed",
+                [
+                    "editor"
+                ],
+                "probeuser-new@example.test",
+                "error:invalid_user_id"
+            ],
+            [
+                true,
+                false,
+                false
+            ]
+        ]
+    ],
+    [
+        "get_preview_post_link",
+        [
+            "http://minn-engine.localhost/hello-world/?preview=true",
+            "http://minn-engine.localhost/?page_id=3&preview=true",
+            null
+        ]
+    ],
+    [
+        "wp_delete_object_term_relationships",
+        [
+            [
+                2
+            ],
+            []
+        ]
+    ],
+    [
+        "custom css",
+        [
+            "",
+            "",
+            [
+                "WP_Post",
+                "custom_css",
+                "publish",
+                "body{color:red}",
+                "body{color:red}"
+            ]
+        ]
+    ],
+    [
+        "post lock",
+        [
+            false,
+            [
+                false,
+                false
+            ],
+            false
+        ]
+    ],
+    [
+        "wp_get_pomo_file_data",
+        {
+            "POT-Creation-Date": "",
+            "PO-Revision-Date": "2020-01-02 03:04+0000",
+            "Project-Id-Version": "Probe 1.0",
+            "X-Generator": "probe"
+        }
+    ],
+    [
+        "wp_post_revision_title",
+        [
+            "no revisions",
+            "August 28, 2026 @ 02:21:33 [Current Revision]"
+        ]
+    ],
+    [
+        "wp_sprintf_l",
+        [
+            "a, b, and c",
+            "a",
+            "a and b",
+            "x and y"
+        ]
+    ],
+    [
+        "oembed",
+        [
+            null,
+            null,
+            false,
+            true,
+            null
+        ]
+    ],
+    [
+        "fetch_feed",
+        [
+            "error:simplepie-error",
+            "simplepie-error"
+        ]
+    ]
+]

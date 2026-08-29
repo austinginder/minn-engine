@@ -381,8 +381,13 @@ namespace {
                 return $maybe_relative_path;
             }
             $parts = parse_url((string) $url);
-            $base = ($parts['scheme'] ?? 'http') . '://' . ($parts['host'] ?? '');
-            return str_starts_with((string) $maybe_relative_path, '/') ? $base . $maybe_relative_path : rtrim($base . dirname($parts['path'] ?? '/'), '/') . '/' . $maybe_relative_path;
+            $base = ($parts['scheme'] ?? 'http') . '://' . ($parts['host'] ?? '') . (isset($parts['port']) ? ':' . $parts['port'] : '');
+            if (str_starts_with((string) $maybe_relative_path, '/')) {
+                return $base . $maybe_relative_path;
+            }
+            $path = (string) ($parts['path'] ?? '/');
+            $directory = str_ends_with($path, '/') ? $path : (dirname($path) === '/' ? '/' : dirname($path) . '/');
+            return $base . $directory . $maybe_relative_path;
         }
 
         public function block_request($uri)

@@ -111,7 +111,7 @@ $tmp = wp_upload_bits('probe-delete.txt', null, 'x')['file'];
 $say('wp_delete_file', [file_exists($tmp), wp_delete_file($tmp), file_exists($tmp), wp_delete_file('/nope/nope.txt')]);
 
 // Cron.
-$say('cron array shape', (static function () { $c = _get_cron_array(); $first = reset($c); $hook = array_key_first($first); $entry = reset($first[$hook]); return [is_array($c), is_int(array_key_first($c)), isset($c['version']), array_keys($entry), strlen(array_key_first($first[$hook]))]; })());
+$say('cron array shape', (static function () { $c = _get_cron_array(); foreach ($c as $hooks) { foreach ($hooks as $hook => $entries) { foreach ($entries as $key => $entry) { if (!empty($entry['schedule'])) { return [is_array($c), is_int(array_key_first($c)), isset($c['version']), array_keys($entry), strlen((string) $key)]; } } } } return 'no recurring event'; })());
 $ts = time() + 3600;
 $say('wp_schedule_event', [wp_schedule_event($ts, 'hourly', 'minn_probe_hook', ['a']), wp_next_scheduled('minn_probe_hook', ['a']) === $ts, wp_next_scheduled('minn_probe_hook'), wp_get_schedule('minn_probe_hook', ['a']), wp_get_schedule('minn_probe_hook')]);
 $say('wp_schedule_event duplicate', [wp_schedule_event($ts + 60, 'hourly', 'minn_probe_hook', ['a']), $kind(wp_schedule_event($ts + 60, 'hourly', 'minn_probe_hook', ['a'], true))]);

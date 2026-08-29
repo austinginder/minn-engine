@@ -27,6 +27,9 @@ $cleanup = static function () use (&$created): void {
     foreach (get_posts(['post_status' => 'any', 'numberposts' => -1, 'fields' => 'ids', 'title' => 'hooks2']) as $id) {
         wp_delete_post($id, true);
     }
+    foreach (get_posts(['post_type' => 'nope', 'post_status' => 'any', 'numberposts' => -1, 'fields' => 'ids']) as $id) {
+        wp_delete_post($id, true);
+    }
     foreach ([['post_tag', 'probetag'], ['post_tag', 'custom-slug'], ['post_tag', 'brand-new'], ['post_tag', 'probe-slug'], ['category', 'probe-cat'], ['category', 'probe-cat-2'], ['category', 'probe-renamed']] as [$tax, $slug]) {
         $t = get_term_by('slug', $slug, $tax);
         if ($t) {

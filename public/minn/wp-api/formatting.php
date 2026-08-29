@@ -1064,6 +1064,9 @@ function format_to_edit($content, $rich_text = false)
 
 function wp_sprintf($pattern, ...$args)
 {
+    if (str_starts_with((string) $pattern, '%l') && isset($args[0]) && is_array($args[0])) {
+        return wp_sprintf_l($pattern, $args[0]);
+    }
     return sprintf($pattern, ...$args);
 }
 

@@ -2,8 +2,11 @@
 
 How plugin code written for WordPress runs on the engine, unmodified. Code:
 `public/minn/src/Minn/Runtime/` (the services) and `public/minn/wp-api/` (the
-procedural facade plugins call). Suites: `tests/hooks.test.php` (112),
-`tests/api.test.php` (1,044), `tests/runtime.test.php` (13).
+procedural facade plugins call). Suites: `tests/hooks.test.php` (114),
+`tests/api.test.php` (1,888: five probe transcripts at parity plus every
+facade signature against the inventory), `tests/runtime.test.php` (24: an
+unmodified fixture plugin on real pages and its REST routes diffed against
+the reference).
 
 ## The shape
 
@@ -23,9 +26,11 @@ the reference). Section 5 of `docs/vision.md` has the legal reasoning.
 | `Runtime\ObjectCache`, `Runtime\Shortcodes`, `Runtime\Assets` | | the per-request object cache; the shortcode registry and expansion; the script/style registry |
 | `Runtime\Constants` | | the fixed constants from `data/constants.json` (captured) plus the per-site ones computed here; never overrides wp-config.php |
 | `Runtime\Symbols` | | the static symbol read that gates loading (below) |
+| `Runtime\Registry`, `Runtime\PostQuery` | | post types, taxonomies, statuses (data/registry.json + registrations); the SELECT behind WP_Query |
+| `Rest\RuntimeRoutes` | `src/Minn/Rest/` | plugin routes answered after the engine's own; the runtime's namespaces folded into the index |
 | `Runtime\Plugins` | | loads mu-plugins then `active_plugins`, fires the lifecycle |
-| `wp-api/*.php` | | the facade: `hooks`, `load`, `option`, `plugin`, `l10n`, `formatting`, `kses`, `link-template`, `user`, `meta`, `shortcodes`, `pluggable`, `theme`, `functions`, `post`, `script-loader`, `admin`, `customize`; `classes/` holds `WP_Error`, `WP_User`, `WP_Role`/`WP_Roles`, `WP_Post`, `WP_Theme`, `WP_Screen`, `WP_Scripts`/`WP_Styles`, `NOOP_Translations`; `defaults/filters.php` holds the reference's own registrations |
-| `data/constants.json`, `data/kses.json`, `data/mime.json` | | captured tables: constants, the kses allowlists and entity names, the mime map |
+| `wp-api/*.php` | | the facade: `hooks`, `load`, `option`, `plugin`, `l10n`, `formatting`, `kses`, `link-template`, `user`, `meta`, `shortcodes`, `pluggable`, `theme`, `functions`, `post`, `taxonomy`, `query`, `media`, `comment`, `cron`, `http`, `widgets`, `template`, `upgrade`, `rest-api`, `script-loader`, `admin`, `customize`; `classes/` holds `WP_Error`, `WP_User`, `WP_Role`/`WP_Roles`, `WP_Post`, `WP_Term`, `WP_Post_Type`, `WP_Taxonomy`, `WP_Query`, `WP_Comment`, `WP_Theme`, `WP_Screen`, `WP_Widget`/`WP_Widget_Factory`, `WP_Image_Editor`(+`_GD`), `WP_Http`/`WP_HTTP_Response`/`WP_Http_Cookie`, `WP_REST_Request`/`Response`/`Server`/`Controller`, `wpdb`, `WP_Scripts`/`WP_Styles`, `NOOP_Translations`; `defaults/filters.php` holds the reference's own registrations |
+| `data/constants.json`, `data/kses.json`, `data/mime.json`, `data/registry.json`, `data/api-names.json` | | captured tables: constants, the kses allowlists and entity names, the mime map, the post type / taxonomy / status registries with the query-var template, and the interface's function and class names (what the symbol gate counts) |
 
 The facade is deliberately procedural (global functions, loose types, no
 `declare(strict_types)`): it is the interface plugins were written against.
@@ -52,7 +57,10 @@ throws while loading is logged and skipped.
 tokenises every PHP file in it and lists the global functions it calls and
 the classes it instantiates, extends, or reads statically, minus what the
 plugin itself declares and what it guards with `function_exists()` /
-`class_exists()`. If anything in that list is not provided by the runtime,
+`class_exists()`. Only names in the reference's own interface
+(`data/api-names.json`) count: a plugin's integrations with other plugins
+and PHP extensions are its business. If anything in that list is not
+provided by the runtime,
 the plugin is not loaded and the list is recorded (`Plugins::skipped()`).
 The read is cached in the `minn_runtime_symbols` option, keyed by the
 folder's newest modification time. This is what keeps a site rendering when
@@ -159,13 +167,103 @@ instead. Known gap.
   markup (`settings_fields`, `do_settings_sections`, `settings_errors`,
   `get_submit_button`) is pinned row by row.
 
+## The content, media, and REST layers (E2)
+
+Probes: `tests/tools/{content,media,rest}-probe.php`, fixtures
+`contracts/fixtures/api/{content,media,rest}.json`. The rows below are the
+facts that shaped the implementation.
+
+- **Posts**: `WP_Post` casts `ID`, `post_parent`, `menu_order` to int and
+  keeps `post_author` and `comment_count` as strings; `ancestors`,
+  `page_template`, `post_category`, `tags_input` are dynamic reads.
+  `wp_insert_post` leaves `post_name` empty and `post_date_gmt` zero for
+  drafts, assigns the default category to a published post, refuses only
+  when title, content, and excerpt are all empty (`empty_content`), and
+  creates a post of an unregistered type without complaint; it expects
+  slashed input. `wp_update_post` saves a revision through
+  `wp_insert_post`, so the last `save_post` a listener sees on an update is
+  the revision's (`$update` false). `wp_trash_post` returns the object as it
+  was before trashing and stores the previous status in
+  `_wp_trash_meta_status`; `wp_untrash_post` restores to draft.
+  `wp_delete_post` fires `before_delete_post` for the post and each revision.
+- **WP_Query**: sticky posts ride on top of page one of a home query
+  (never counted in `found_posts`, never on `fields => ids`, only when they
+  match the queried post type); a negative `cat` does not make the query a
+  category archive; `nopaging`/`-1` disable paging; `no_found_rows` gives
+  zero `found_posts`; an unrun main query has empty `query_vars`, so
+  `get_query_var('paged')` is `''` and every conditional tag is false on
+  the command line. `get_posts` ignores stickies and counts nothing;
+  `get_pages` orders parents before their subtrees.
+- **Terms**: `term_exists` answers strings (`term_id`, `term_taxonomy_id`)
+  and a bare string id when no taxonomy is given; `wp_set_object_terms`
+  returns existing terms' ids as strings and newly created ones as ints;
+  `get_term(0)` is `WP_Error invalid_term "Empty Term."`; a duplicate name
+  under a different parent is allowed in a hierarchical taxonomy and gets a
+  `-2` slug; deleting the default category returns `0`;
+  `get_the_category` adds the legacy `cat_ID`/`category_*` names.
+- **Types**: `register_post_type` derives `rest_base` false,
+  `query_var` = name, `rewrite {slug, with_front, pages, feeds, ep_mask 1}`,
+  the `post` capability map, `_builtin` false, `map_meta_cap` true; a name
+  with spaces is registered under its sanitized key, a name over 20
+  characters is refused (`post_type_length_invalid`); built-in types cannot
+  be unregistered; the labels template is the `post` type's with name,
+  singular, menu_name replaced.
+- **Media**: `wp_create_image_subsizes` makes `medium` and `large` first,
+  then the rest in registration order, saving metadata after each so the
+  final `wp_update_attachment_metadata` returns false; sizes equal to the
+  original are skipped; `image_resize_dimensions` returns false for a
+  same-size or upscaling request; `wp_get_attachment_image_src` with an
+  array size picks the smallest registered size that covers it and
+  constrains it; an image is lazy by default outside a template and an
+  explicit `loading => false` takes the one `fetchpriority="high"`;
+  `srcset` lists the meta sizes in order then the full file; the guid of an
+  inserted attachment is its attachment page; `wp_prepare_attachment_for_js`
+  lists `thumbnail, medium, large, full` only.
+- **Cron**: the `cron` option holds `{ts: {hook: {md5(serialize(args)):
+  {schedule, args, interval?}}}, version: 2}`; identical recurring events
+  at different timestamps are allowed; a single event within ten minutes
+  of an identical one is refused; `wp_unschedule_hook` returns the count
+  removed; the engine's `wp_cron()` runs due hooks (single events removed,
+  recurring rescheduled, then the action fires).
+- **HTTP**: `wp_remote_*` returns `{headers (CaseInsensitiveDictionary),
+  body, response {code, message}, cookies, filename, http_response}` or
+  `WP_Error http_request_failed`; a relative `src` given to the script
+  loader is prefixed verbatim; `wp_safe_*` refuses loopback and private
+  hosts; the client sets `CURLOPT_NOSIGNAL` so a resolver timeout honours
+  the request timeout (30 s otherwise on macOS).
+- **Comments**: `get_comments_number` returns the post row's string count
+  (int 0 for a missing post); `wp_update_comment` returns 1, false, or
+  `invalid_comment_id`; a first delete trashes.
+- **REST**: `register_rest_route` before `rest_api_init` is fine (the server
+  is created lazily and fires the action once); a second registration
+  without `override` appends endpoints and the first keeps answering; the
+  namespace root is registered with the first route; `get_routes` shapes
+  every endpoint as `{methods: {GET: true}, accept_json, accept_raw,
+  show_in_index, args, callback, permission_callback}`; a missing
+  permission callback allows the request; `false` from it is
+  `rest_forbidden` 401 (403 signed in); required checks run before
+  validation; an argument without a schema `type` is accepted as given on
+  a route while `rest_validate_value_from_schema` still checks a bare
+  `enum`; parameters merge defaults first then URL, query, body, JSON;
+  `get_params` puts defaulted keys first; errors from callbacks become
+  responses with the status from their data (500 and `data: null` when
+  bare, `additional_errors` for the rest); the engine's own `wp/v2`
+  routes serve `rest_do_request` in-process and `register_rest_field`
+  additions are attached to their items.
+- **Templates**: `load_template` gives the file the query vars and the
+  globals (`$post` stays unset with no post set up); `locate_template`
+  looks in the child then parent theme; `get_template_part` returns false
+  when nothing matched.
+
 ## What a plugin cannot do yet
 
 Listed in the order real plugins ask for it (from `runtime-report.php` on the
 dogfood site): `register_block_type` and dynamic block rendering through a
-plugin callback; the conditional tags and `WP_Query`; `register_post_type`
-and taxonomies; `register_rest_route`; the media functions
-(`wp_get_attachment_image`, sizes, the image editor); `wp_remote_*`; the
-admin host that renders the recorded menus, settings pages, and meta boxes;
-cron hooks; `.mo` translations; widgets and the customizer (the classes
-exist so plugins load; nothing is served).
+plugin callback (`parse_blocks`, `serialize_blocks`, `has_block`,
+`get_block_wrapper_attributes`, block patterns); the admin host that renders
+the recorded menus, settings pages, and meta boxes; `WP_Filesystem` and the
+upgraders; multisite shims (`switch_to_blog`, `get_blog_details`);
+`.mo` translations; `fetch_feed`; the customizer and widget screens (the
+classes exist so plugins load; nothing is served); a front-end main query
+fed from the engine's own resolution (the conditional tags answer on the
+command line only).
