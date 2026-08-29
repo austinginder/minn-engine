@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Auth\Authenticator;
 use Minn\Content\Site;
 use Minn\Front\Permalinks;
 use Minn\Http\Method;
@@ -60,7 +61,7 @@ final readonly class IndexController
             'page_on_front' => (int) ($this->site->option('page_on_front') ?? 0),
             'show_on_front' => (string) ($this->site->option('show_on_front') ?? 'posts'),
             'namespaces' => $namespaces,
-            'authentication' => [],
+            'authentication' => Authenticator::applicationPasswordsAvailable($request) ? ['application-passwords' => ['endpoints' => ['authorization' => $this->permalinks->url('/wp-admin/authorize-application.php')]]] : [],
             'routes' => $routes,
             'site_logo' => (int) ($this->site->option('site_logo') ?? 0),
             'site_icon' => (int) ($this->site->option('site_icon') ?? 0),

@@ -45,6 +45,9 @@ final readonly class Schema
                     $matches++;
                 }
             }
+            if ($matches === 0) {
+                return new Refusal('rest_no_matching_schema', sprintf('%s does not match any of the expected formats.', $param));
+            }
             return $matches === 1 ? true : new Refusal('rest_one_of_multiple_matches', sprintf('%s matches more than one of the expected formats.', $param));
         }
         if (!isset($args['type'])) {
@@ -94,10 +97,10 @@ final readonly class Schema
                 return $this->wrongType($param, 'string');
             }
             if (isset($args['minLength']) && mb_strlen($value) < $args['minLength']) {
-                return new Refusal('rest_too_short', sprintf('%1$s must be at least %2$s characters long.', $param, ($this->number)($args['minLength'])));
+                return new Refusal('rest_too_short', sprintf('%1$s must be at least %2$s %3$s long.', $param, ($this->number)($args['minLength']), (int) $args['minLength'] === 1 ? 'character' : 'characters'));
             }
             if (isset($args['maxLength']) && mb_strlen($value) > $args['maxLength']) {
-                return new Refusal('rest_too_long', sprintf('%1$s must be at most %2$s characters long.', $param, ($this->number)($args['maxLength'])));
+                return new Refusal('rest_too_long', sprintf('%1$s must be at most %2$s %3$s long.', $param, ($this->number)($args['maxLength']), (int) $args['maxLength'] === 1 ? 'character' : 'characters'));
             }
             if (isset($args['pattern']) && !preg_match('#' . str_replace('#', '\\#', $args['pattern']) . '#u', $value)) {
                 return new Refusal('rest_invalid_pattern', sprintf('%1$s does not match pattern %2$s.', $param, $args['pattern']));
@@ -136,10 +139,10 @@ final readonly class Schema
             }
         }
         if (isset($args['minItems']) && count($value) < $args['minItems']) {
-            return new Refusal('rest_too_few_items', sprintf('%1$s must contain at least %2$s items.', $param, ($this->number)($args['minItems'])));
+            return new Refusal('rest_too_few_items', sprintf('%1$s must contain at least %2$s %3$s.', $param, ($this->number)($args['minItems']), (int) $args['minItems'] === 1 ? 'item' : 'items'));
         }
         if (isset($args['maxItems']) && count($value) > $args['maxItems']) {
-            return new Refusal('rest_too_many_items', sprintf('%1$s must contain at most %2$s items.', $param, ($this->number)($args['maxItems'])));
+            return new Refusal('rest_too_many_items', sprintf('%1$s must contain at most %2$s %3$s.', $param, ($this->number)($args['maxItems']), (int) $args['maxItems'] === 1 ? 'item' : 'items'));
         }
         if (!empty($args['uniqueItems']) && count(array_unique(array_map('serialize', $value))) !== count($value)) {
             return new Refusal('rest_duplicate_items', sprintf('%s has duplicate items.', $param));

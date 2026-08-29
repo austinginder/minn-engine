@@ -41,15 +41,6 @@ final readonly class UsersController
     ) {
     }
 
-    /** Requires a valid cookie AND a valid wp_rest nonce. */
-    /** No application passwords exist on the engine, so the list is honestly empty; creating one has no route. */
-    #[Route(Method::Get, '/wp/v2/users/{id:\d+|me}/application-passwords')]
-    public function applicationPasswords(Request $request, string $id): Response
-    {
-        $this->caller->require();
-        return Reply::item([], null);
-    }
-
     #[Route(Method::Get, '/wp/v2/users/me')]
     public function me(Request $request): Response
     {

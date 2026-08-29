@@ -7,6 +7,7 @@ namespace Minn\Auth;
 use Minn\Content\Users;
 use Minn\Db;
 use Minn\Http\Request;
+use Minn\Runtime\Runtime;
 
 /**
  * Resolves the current user two ways. A page load carries the cookie alone;
@@ -49,9 +50,65 @@ final readonly class Authenticator
         return $session;
     }
 
+    /**
+     * A REST caller: the cookie session with its nonce first; failing that,
+     * HTTP Basic credentials carrying an application password, which need no
+     * nonce. A wrong Basic pair is reported as not logged in.
+     */
     public function restFromRequest(Request $request): Authenticated|AuthFailure
     {
-        return $this->rest($request->cookies, $request->header('x-wp-nonce') ?? $request->query('_wpnonce'));
+        $session = $this->rest($request->cookies, $request->header('x-wp-nonce') ?? $request->query('_wpnonce'));
+        if ($session instanceof Authenticated || $session->code === 'rest_cookie_invalid_nonce') {
+            return $session;
+        }
+        return $this->applicationPassword($request) ?? $session;
+    }
+
+    /** The user an Authorization: Basic header's application password unlocks, with the use recorded. */
+    public function applicationPassword(Request $request): ?Authenticated
+    {
+        if (!self::applicationPasswordsAvailable($request)) {
+            return null;
+        }
+        $header = $request->header('authorization') ?? '';
+        if (!preg_match('/^Basic\s+(\S+)$/i', $header, $m)) {
+            return null;
+        }
+        $decoded = base64_decode($m[1], true);
+        if ($decoded === false || !str_contains($decoded, ':')) {
+            return null;
+        }
+        [$login, $password] = explode(':', $decoded, 2);
+        $user = $this->users->findByLogin($login) ?? (str_contains($login, '@') ? $this->users->findByEmail($login) : null);
+        if ($user === null || !self::applicationPasswordsAvailableFor($user)) {
+            return null;
+        }
+        $passwords = new ApplicationPasswords($this->users);
+        $record = $passwords->verify((int) $user['ID'], $password);
+        if ($record === null) {
+            return null;
+        }
+        $record = $passwords->touch((int) $user['ID'], (string) $record['uuid'], $request->remoteAddress) ?? $record;
+        return new Authenticated($user, '', $record);
+    }
+
+    /** Application passwords need HTTPS, unless plugin code says otherwise through the reference's filter. */
+    public static function applicationPasswordsAvailable(Request $request): bool
+    {
+        $available = $request->secure;
+        if (Runtime::booted()) {
+            $available = (bool) Runtime::hooks()->filter('wp_is_application_passwords_available', [$available]);
+        }
+        return $available;
+    }
+
+    /** @param array<string, mixed> $user */
+    public static function applicationPasswordsAvailableFor(array $user): bool
+    {
+        if (!Runtime::booted()) {
+            return true;
+        }
+        return (bool) Runtime::hooks()->filter('wp_is_application_passwords_available_for_user', [true, (object) $user]);
     }
 
     /** Username and password to a user row; no session is created here. */

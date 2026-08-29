@@ -21,6 +21,7 @@ use Minn\Admin\CoreStatus;
 use Minn\Admin\Dashboard;
 use Minn\Admin\Notifications;
 use Minn\Admin\V1Controller;
+use Minn\Auth\ApplicationPasswords;
 use Minn\Auth\Authenticator;
 use Minn\Auth\Capabilities;
 use Minn\Auth\Sessions;
@@ -95,6 +96,7 @@ final readonly class Api
             new V1Controller($db, $site, $posts, $writer, $permalinks, $dashboard, $notifications, new CoreStatus($site), new AdminTypes($types, $capabilities), $caller),
             new TermsController($db, $terms, $site, $termObject, $caller),
             new UsersController($db, $users, $site, $userObject, $url, $caller, $capabilities->roles()),
+            new ApplicationPasswordsController($users, $site, new ApplicationPasswords($users), $url, $caller, new Schema(static fn (string $e): bool => (bool) filter_var($e, FILTER_VALIDATE_EMAIL), static fn (int|float $n): string => number_format((float) $n), static fn (string $f, mixed $v): mixed => $v)),
             new TypesController($types),
             new TaxonomiesController($taxonomies, $caller),
             new SearchController($db, $types, $permalinks, $url, $caller),

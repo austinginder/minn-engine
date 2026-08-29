@@ -579,6 +579,50 @@ What loading all 25 dogfood plugins then taught the front end:
   The editor packages (`wp-element`, `wp-components`, `wp-data`, ...) are not
   provided; scripts depending on them still do not print.
 
+## Application passwords
+
+Live parity suite: `tests/application-passwords.test.php` (30 checks, the
+same sequence on both stacks). The oracle needs
+`wp-reference/wp-content/mu-plugins/zz-application-passwords.php` (the suite
+and run-all write it) because the reference refuses application passwords
+on plain HTTP.
+
+- **Availability**: HTTPS, or the `wp_is_application_passwords_available`
+  filter; `wp_is_application_passwords_available_for_user` per user. When
+  unavailable every route answers 501 `application_passwords_disabled`
+  after argument validation (a missing `name` is still 400
+  `rest_missing_callback_param`), the `/wp-json/` index's `authentication`
+  is `[]`; when available it names
+  `{"application-passwords":{"endpoints":{"authorization":".../wp-admin/authorize-application.php"}}}`.
+- **Routes** under `wp/v2/users/{id|me}/application-passwords`: GET list,
+  POST create (201, the plaintext once as `password`), DELETE all
+  (`{deleted, count}`), `/introspect` (the password that authenticated the
+  call; 404 `rest_no_authenticated_app_password` under a cookie),
+  `/{uuid}` GET, POST/PUT/PATCH rename, DELETE (`{deleted, previous}`
+  without links). Unknown user 404 `rest_user_invalid_id`, unknown password
+  404 `rest_application_password_not_found`, anonymous 401. `name` needs
+  one non-space character (`rest_too_short`, "1 character" singular);
+  `app_id` is a UUID or empty (`rest_no_matching_schema`); a duplicate name
+  is allowed. Items: `uuid, app_id, name, created, last_used, last_ip`
+  (site-local ISO stamps without offset), `_links.self` with the full
+  method list.
+- **Basic auth**: an `Authorization: Basic login:password` header
+  authenticates a REST call as the user (spaces in the password ignored,
+  no nonce needed) after the cookie session fails; it records `last_used`
+  and `last_ip`. A wrong pair is reported as plain 401 `rest_not_logged_in`,
+  and public routes still answer.
+- **Storage**: the user's `_application_passwords` meta, a serialized list
+  of `uuid, app_id, name, password, created, last_used, last_ip`, the same
+  shape the reference reads. The plaintext is 24 letters and digits shown
+  in groups of four.
+- **Hashes, honestly**: the reference stores its own `$generic$` fast hash
+  (BLAKE2b, unsalted, 30 bytes, base64url), whose exact construction did
+  not fall out of black-box probing; the engine cannot verify a password
+  the reference created. The engine stores phpass `$P$` hashes (a public
+  algorithm, `Auth\Phpass`), which the reference verifies too, so a
+  password created on Minn keeps working after a switch back to WordPress.
+  A site moving to Minn recreates its application passwords.
+
 ## What a plugin cannot do yet
 
 All twenty-five of the dogfood site's plugins load as code now
