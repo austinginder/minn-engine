@@ -2,6 +2,7 @@
 /** Template loading and the small template tags. */
 
 use Minn\Runtime\Runtime;
+use Minn\Runtime\Avatar;
 
 function wp_head()
 {
@@ -283,64 +284,48 @@ function wp_star_rating($args = [])
 
 function get_avatar_data($id_or_email, $args = null)
 {
-    $args = wp_parse_args($args, ['size' => 96, 'height' => null, 'width' => null, 'default' => get_option('avatar_default', 'mystery'), 'force_default' => false, 'rating' => get_option('avatar_rating', 'G'), 'scheme' => null, 'processed_args' => null, 'extra_attr' => '']);
-    $args['size'] = (int) $args['size'] ?: 96;
-    $args['height'] = (int) ($args['height'] ?? 0) ?: $args['size'];
-    $args['width'] = (int) ($args['width'] ?? 0) ?: $args['size'];
-    $args['default'] = match ((string) $args['default']) {
-        'mystery', 'mysteryman', 'mm' => 'mm',
-        'gravatar_default' => false,
-        default => (string) $args['default'],
-    };
-    $args['force_default'] = (bool) $args['force_default'];
-    $args['rating'] = strtolower((string) $args['rating']);
-    $args['found_avatar'] = false;
+    $args = Avatar::dataArgs(wp_parse_args($args, ['size' => 96, 'height' => null, 'width' => null, 'default' => get_option('avatar_default', 'mystery'), 'force_default' => false, 'rating' => get_option('avatar_rating', 'G'), 'scheme' => null, 'processed_args' => null, 'extra_attr' => '']));
     $args = apply_filters('pre_get_avatar_data', $args, $id_or_email);
     if (isset($args['url'])) {
         return apply_filters('get_avatar_data', $args, $id_or_email);
     }
-    $email = '';
-    $user = false;
     if (is_object($id_or_email) && isset($id_or_email->comment_ID)) {
         $id_or_email = get_comment($id_or_email);
     }
-    if (is_numeric($id_or_email)) {
-        $user = get_user_by('id', absint($id_or_email));
-    } elseif (is_string($id_or_email)) {
-        if (str_contains($id_or_email, '@md5.gravatar.com')) {
-            $email_hash = strtolower(str_replace('@md5.gravatar.com', '', $id_or_email));
-        } else {
-            $email = $id_or_email;
-        }
-    } elseif ($id_or_email instanceof WP_User) {
-        $user = $id_or_email;
-    } elseif ($id_or_email instanceof WP_Post) {
-        $user = get_user_by('id', (int) $id_or_email->post_author);
-    } elseif ($id_or_email instanceof WP_Comment) {
-        $user = (int) $id_or_email->user_id > 0 ? get_user_by('id', (int) $id_or_email->user_id) : false;
-        $email = $id_or_email->comment_author_email;
-    }
+    [$user, $email, $hash] = _minn_avatar_subject($id_or_email);
     if ($user) {
         $email = $user->user_email;
     }
-    if (!isset($email_hash)) {
-        if ($email === '' && !$user) {
-            $email_hash = '';
-        } else {
-            $email_hash = hash('sha256', strtolower(trim((string) $email)));
-        }
-    }
-    if ($email_hash !== '') {
-        $args['found_avatar'] = true;
-    }
-    $url_args = ['s' => $args['size'], 'd' => $args['default'], 'f' => $args['force_default'] ? 'y' : false, 'r' => $args['rating']];
-    $url = sprintf('https://secure.gravatar.com/avatar/%s', $email_hash);
+    $hash ??= ($email === '' && !$user) ? '' : Avatar::hash((string) $email);
+    $args['found_avatar'] = $hash !== '';
+    $url = sprintf('https://secure.gravatar.com/avatar/%s', $hash);
     if ($args['scheme'] !== null) {
         $url = set_url_scheme($url, $args['scheme']);
     }
-    $url = add_query_arg(rawurlencode_deep(array_filter($url_args)), $url);
-    $args['url'] = apply_filters('get_avatar_url', $url, $id_or_email, $args);
+    $args['url'] = apply_filters('get_avatar_url', add_query_arg(rawurlencode_deep(Avatar::urlArgs($args)), $url), $id_or_email, $args);
     return apply_filters('get_avatar_data', $args, $id_or_email);
+}
+
+/** @internal who an avatar is for: the user, the email, or a hash given outright */
+function _minn_avatar_subject($id_or_email): array
+{
+    if (is_numeric($id_or_email)) {
+        return [get_user_by('id', absint($id_or_email)), '', null];
+    }
+    if (is_string($id_or_email)) {
+        $hash = Avatar::hashFromAddress($id_or_email);
+        return [false, $hash === null ? $id_or_email : '', $hash];
+    }
+    if ($id_or_email instanceof WP_User) {
+        return [$id_or_email, '', null];
+    }
+    if ($id_or_email instanceof WP_Post) {
+        return [get_user_by('id', (int) $id_or_email->post_author), '', null];
+    }
+    if ($id_or_email instanceof WP_Comment) {
+        return [(int) $id_or_email->user_id > 0 ? get_user_by('id', (int) $id_or_email->user_id) : false, (string) $id_or_email->comment_author_email, null];
+    }
+    return [false, '', null];
 }
 
 function get_avatar_url($id_or_email, $args = null)
@@ -350,27 +335,14 @@ function get_avatar_url($id_or_email, $args = null)
 
 function get_avatar($id_or_email, $size = 96, $default_value = '', $alt = '', $args = null)
 {
-    $defaults = ['size' => 96, 'height' => null, 'width' => null, 'default' => get_option('avatar_default', 'mystery'), 'force_default' => false, 'rating' => get_option('avatar_rating', 'G'), 'scheme' => null, 'alt' => '', 'class' => null, 'force_display' => false, 'loading' => null, 'fetchpriority' => null, 'decoding' => null, 'extra_attr' => ''];
     $args = wp_parse_args($args, []);
-    if (empty($args['size'])) {
-        $args['size'] = $size;
-    }
-    if (empty($args['default'])) {
-        $args['default'] = $default_value;
-    }
-    if (empty($args['alt'])) {
-        $args['alt'] = $alt;
-    }
-    $args = wp_parse_args($args, $defaults);
+    $args += array_filter(['size' => $size, 'default' => $default_value, 'alt' => $alt], static fn ($v) => !empty($v));
+    $args = wp_parse_args($args, ['size' => 96, 'height' => null, 'width' => null, 'default' => get_option('avatar_default', 'mystery'), 'force_default' => false, 'rating' => get_option('avatar_rating', 'G'), 'scheme' => null, 'alt' => '', 'class' => null, 'force_display' => false, 'loading' => null, 'fetchpriority' => null, 'decoding' => null, 'extra_attr' => '']);
     if (empty($args['default'])) {
         $args['default'] = get_option('avatar_default', 'mystery');
     }
-    if ($args['loading'] === null && wp_lazy_loading_enabled('img', 'get_avatar')) {
-        $args['loading'] = 'lazy';
-    }
-    if ($args['decoding'] === null) {
-        $args['decoding'] = 'async';
-    }
+    $args['loading'] ??= wp_lazy_loading_enabled('img', 'get_avatar') ? 'lazy' : null;
+    $args['decoding'] ??= 'async';
     $args['height'] = $args['height'] ?: $args['size'];
     $args['width'] = $args['width'] ?: $args['size'];
     $avatar = apply_filters('pre_get_avatar', null, $id_or_email, $args);
@@ -382,25 +354,12 @@ function get_avatar($id_or_email, $size = 96, $default_value = '', $alt = '', $a
     }
     $data = get_avatar_data($id_or_email, $args + ['size' => $args['size']]);
     $url2x = get_avatar_url($id_or_email, array_merge($args, ['size' => $args['size'] * 2]));
-    $url = $data['url'];
-    if (!$url || is_wp_error($url)) {
+    if (empty($data['url']) || is_wp_error($data['url'])) {
         return false;
     }
-    $class = ['avatar', 'avatar-' . (int) $args['size'], 'photo'];
-    if (!$data['found_avatar'] || $args['force_default']) {
-        $class[] = 'avatar-default';
-    }
-    if ($args['class']) {
-        $class = is_array($args['class']) ? array_merge($class, $args['class']) : array_merge($class, [$args['class']]);
-    }
-    $extra_attr = $args['extra_attr'];
-    if (in_array($args['loading'], ['lazy', 'eager'], true) && !preg_match('/\bloading\s*=/', (string) $extra_attr)) {
-        $extra_attr .= ($extra_attr !== '' ? ' ' : '') . "loading='{$args['loading']}'";
-    }
-    if (in_array($args['decoding'], ['async', 'sync', 'auto'], true) && !preg_match('/\bdecoding\s*=/', (string) $extra_attr)) {
-        $extra_attr .= ($extra_attr !== '' ? ' ' : '') . "decoding='{$args['decoding']}'";
-    }
-    $avatar = sprintf("<img alt='%s' src='%s' srcset='%s' class='%s' height='%d' width='%d' %s/>", esc_attr($args['alt']), esc_url($url), esc_url($url2x) . ' 2x', esc_attr(implode(' ', $class)), (int) $args['height'], (int) $args['width'], $extra_attr);
+    $class = Avatar::classes((int) $args['size'], !$data['found_avatar'] || $args['force_default'], $args['class']);
+    $extra = Avatar::extraAttributes((string) $args['extra_attr'], $args['loading'], $args['decoding']);
+    $avatar = sprintf("<img alt='%s' src='%s' srcset='%s' class='%s' height='%d' width='%d' %s/>", esc_attr($args['alt']), esc_url($data['url']), esc_url($url2x) . ' 2x', esc_attr(implode(' ', $class)), (int) $args['height'], (int) $args['width'], $extra);
     return apply_filters('get_avatar', $avatar, $id_or_email, $args['size'], $args['default'], $args['alt'], $args);
 }
 
