@@ -103,6 +103,12 @@ final readonly class Comments
         }
     }
 
+    /** A deleted comment's replies move up to its parent. */
+    public function orphanReplies(int $id, int $parent): void
+    {
+        $this->db->execute("UPDATE {$this->db->table('comments')} SET comment_parent = ? WHERE comment_parent = ?", [$parent, $id]);
+    }
+
     public function delete(int $id): void
     {
         $this->db->execute("DELETE FROM {$this->db->table('comments')} WHERE comment_ID = ?", [$id]);

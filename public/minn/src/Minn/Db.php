@@ -37,6 +37,12 @@ final class Db
         return $this->connection;
     }
 
+    /** A value escaped for direct interpolation into SQL, for callers that build their own statements. */
+    public function escape(string $value): string
+    {
+        return $this->connection()->real_escape_string($value);
+    }
+
     public function prefix(): string
     {
         return $this->prefix;

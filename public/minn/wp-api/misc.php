@@ -3,6 +3,7 @@
 
 use Minn\Content\Users;
 use Minn\Runtime\Runtime;
+use Minn\Runtime\PostLookup;
 
 function _minn_rewrite(): WP_Rewrite
 {
@@ -330,17 +331,16 @@ function wp_delete_user($id, $reassign = null)
         return false;
     }
     do_action('delete_user', $id, $reassign, $user);
-    $db = Runtime::current()->db;
     if ($reassign === null) {
-        $rows = $db->rows("SELECT ID FROM {$db->table('posts')} WHERE post_author = ?", [$id]);
-        foreach ($rows as $row) {
-            wp_delete_post((int) $row['ID'], true);
+        foreach ((new PostLookup(Runtime::current()->db))->idsByAuthor($id) as $postId) {
+            wp_delete_post($postId, true);
         }
     } else {
-        $db->execute("UPDATE {$db->table('posts')} SET post_author = ? WHERE post_author = ?", [(int) $reassign, $id]);
+        _minn_post_writer()->reassignAuthor($id, (int) $reassign);
     }
-    (new Users($db))->delete($id);
-    $db->execute("DELETE FROM {$db->table('usermeta')} WHERE user_id = ?", [$id]);
+    $users = new Users(Runtime::current()->db);
+    $users->delete($id);
+    $users->deleteAllMeta($id);
     wp_cache_delete($id, 'user_meta');
     do_action('deleted_user', $id, $reassign, $user);
     return true;

@@ -5,6 +5,7 @@ use Minn\Auth\Nonce;
 use Minn\Auth\Password;
 use Minn\Auth\Salts;
 use Minn\Runtime\Runtime;
+use Minn\Content\Users;
 
 function wp_get_session_token()
 {
@@ -239,8 +240,7 @@ function wp_password_needs_rehash($hash, $user_id = '')
 
 function wp_set_password($password, $user_id)
 {
-    $db = Runtime::current()->db;
-    $db->execute("UPDATE {$db->table('users')} SET user_pass = ?, user_activation_key = '' WHERE ID = ?", [wp_hash_password($password), (int) $user_id]);
+    (new Users(Runtime::current()->db))->setPassword((int) $user_id, wp_hash_password($password));
     do_action('wp_set_password', $password, $user_id);
 }
 

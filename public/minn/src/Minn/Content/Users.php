@@ -123,6 +123,23 @@ final readonly class Users
         $this->db->execute("DELETE FROM {$this->db->table('users')} WHERE ID = ?", [$id]);
     }
 
+    /** User ids in login order, optionally the first N. @return list<int> */
+    public function ids(int $limit): array
+    {
+        return array_map(static fn (array $r) => (int) $r['ID'], $this->db->rows('SELECT ID FROM ' . $this->db->table('users') . ' ORDER BY user_login ASC' . ($limit > 0 ? ' LIMIT ' . $limit : '')));
+    }
+
+    public function deleteAllMeta(int $userId): void
+    {
+        $this->db->execute("DELETE FROM {$this->db->table('usermeta')} WHERE user_id = ?", [$userId]);
+    }
+
+    /** Stores a new password hash and clears any pending reset key. */
+    public function setPassword(int $userId, string $hash): void
+    {
+        $this->db->execute("UPDATE {$this->db->table('users')} SET user_pass = ?, user_activation_key = '' WHERE ID = ?", [$hash, $userId]);
+    }
+
     public function count(): int
     {
         return (int) $this->db->value("SELECT COUNT(*) FROM {$this->db->table('users')}");

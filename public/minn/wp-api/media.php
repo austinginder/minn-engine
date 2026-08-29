@@ -4,6 +4,7 @@
 use Minn\Media\Metadata;
 use Minn\Blocks\RenderState;
 use Minn\Runtime\Runtime;
+use Minn\Runtime\PostLookup;
 
 /** @internal the registered sizes: the four from the options plus the two big ones, plus add_image_size */
 function _minn_image_sizes(): array
@@ -664,9 +665,8 @@ function attachment_url_to_postid($url)
     if (str_starts_with($path, $dir['baseurl'] . '/')) {
         $path = substr($path, strlen($dir['baseurl'] . '/'));
     }
-    $db = Runtime::current()->db;
-    $id = $db->value("SELECT post_id FROM {$db->table('postmeta')} WHERE meta_key = '_wp_attached_file' AND meta_value = ? ORDER BY post_id ASC LIMIT 1", [$path]);
-    return (int) apply_filters('attachment_url_to_postid', $id === null ? 0 : (int) $id, $url);
+    $id = (new PostLookup(Runtime::current()->db))->attachmentIdByFile($path);
+    return (int) apply_filters('attachment_url_to_postid', $id ?? 0, $url);
 }
 
 function update_attached_file($attachment_id, $file)

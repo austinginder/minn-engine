@@ -2,6 +2,7 @@
 /** Users, the current user, capabilities, and user meta. */
 
 use Minn\Runtime\Runtime;
+use Minn\Content\Users;
 
 function wp_get_current_user()
 {
@@ -187,20 +188,15 @@ function delete_user_option($user_id, $option_name, $is_global = false)
 
 function count_users($strategy = 'time', $site_id = null)
 {
-    $db = Runtime::current()->db;
-    $total = (int) $db->value('SELECT COUNT(*) FROM ' . $db->table('users'));
-    return ['total_users' => $total, 'avail_roles' => []];
+    return ['total_users' => (new Users(Runtime::current()->db))->count(), 'avail_roles' => []];
 }
 
 function get_users($args = [])
 {
     $args = wp_parse_args($args);
-    $db = Runtime::current()->db;
-    $limit = isset($args['number']) ? (int) $args['number'] : 0;
-    $rows = $db->rows('SELECT ID FROM ' . $db->table('users') . ' ORDER BY user_login ASC' . ($limit > 0 ? ' LIMIT ' . $limit : ''));
     $out = [];
-    foreach ($rows as $row) {
-        $user = get_userdata((int) $row['ID']);
+    foreach ((new Users(Runtime::current()->db))->ids(isset($args['number']) ? (int) $args['number'] : 0) as $id) {
+        $user = get_userdata($id);
         if (!$user) {
             continue;
         }

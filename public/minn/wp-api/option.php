@@ -109,12 +109,7 @@ function delete_site_option($option)
 
 function wp_load_alloptions($force_cache = false)
 {
-    $rows = Runtime::current()->db->rows("SELECT option_name, option_value FROM " . Runtime::current()->db->table('options') . " WHERE autoload IN ('yes', 'on', 'auto', 'auto-on')");
-    $out = [];
-    foreach ($rows as $row) {
-        $out[$row['option_name']] = $row['option_value'];
-    }
-    return $out;
+    return Runtime::options()->autoloaded();
 }
 
 function wp_cache_get($key, $group = '', $force = false, &$found = null)

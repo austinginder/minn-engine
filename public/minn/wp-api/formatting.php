@@ -167,14 +167,14 @@ function sanitize_url($url, $protocols = null)
 
 function esc_sql($data)
 {
-    $db = Runtime::current()->db->connection();
     if (is_array($data)) {
         foreach ($data as $k => $v) {
             $data[$k] = esc_sql($v);
         }
         return $data;
     }
-    return $db->real_escape_string((string) $data);
+    $db = Runtime::current()->db;
+    return $db->escape((string) $data);
 }
 
 function wp_pre_kses_less_than($content)

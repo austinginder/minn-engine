@@ -25,6 +25,16 @@ final class Options
     }
 
     /** The stored value, or null when the option does not exist. */
+    /** Every autoloaded option as stored. @return array<string, string> */
+    public function autoloaded(): array
+    {
+        $out = [];
+        foreach ($this->db->rows("SELECT option_name, option_value FROM {$this->db->table('options')} WHERE autoload IN ('yes', 'on', 'auto', 'auto-on')") as $row) {
+            $out[(string) $row['option_name']] = (string) $row['option_value'];
+        }
+        return $out;
+    }
+
     public function get(string $name): mixed
     {
         if (array_key_exists($name, $this->cache)) {

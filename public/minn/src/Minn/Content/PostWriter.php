@@ -271,6 +271,11 @@ final readonly class PostWriter
         $this->db->execute("UPDATE {$this->db->table('posts')} SET post_parent = ? WHERE post_parent = ? AND post_type = 'attachment'", [$parent, $id]);
     }
 
+    public function reassignAuthor(int $from, int $to): void
+    {
+        $this->db->execute("UPDATE {$this->db->table('posts')} SET post_author = ? WHERE post_author = ?", [$to, $from]);
+    }
+
     public function destroy(int $id): void
     {
         $posts = $this->db->table('posts');

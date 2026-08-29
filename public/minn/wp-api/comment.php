@@ -3,6 +3,7 @@
 
 use Minn\Content\Comments;
 use Minn\Runtime\Runtime;
+use Minn\Runtime\CommentQuery;
 
 /** @internal */
 function _minn_comments(): Comments
@@ -38,93 +39,16 @@ function get_comment($comment = null, $output = OBJECT)
 
 function get_comments($args = '')
 {
-    $args = wp_parse_args($args, ['post_id' => 0, 'post__in' => [], 'status' => 'all', 'number' => '', 'offset' => 0, 'orderby' => 'comment_date_gmt', 'order' => 'DESC', 'fields' => '', 'count' => false, 'parent' => '', 'type' => '', 'author_email' => '', 'user_id' => '', 'search' => '', 'include_unapproved' => [], 'comment__in' => [], 'comment__not_in' => [], 'post_status' => '', 'post_type' => '', 'author__in' => [], 'date_query' => null, 'hierarchical' => false]);
-    $db = Runtime::current()->db;
-    $where = [];
-    $params = [];
-    if (!empty($args['post_id'])) {
-        $where[] = 'c.comment_post_ID = ?';
-        $params[] = (int) $args['post_id'];
-    }
-    if (!empty($args['post__in'])) {
-        $ids = array_map('intval', (array) $args['post__in']);
-        $where[] = 'c.comment_post_ID IN (' . implode(',', array_fill(0, count($ids), '?')) . ')';
-        array_push($params, ...$ids);
-    }
-    $status = $args['status'];
-    $statuses = [];
-    foreach ((array) $status as $one) {
-        $statuses[] = match ((string) $one) {
-            'hold', '0' => '0',
-            'approve', '1' => '1',
-            'all', '' => 'all',
-            default => (string) $one,
-        };
-    }
-    if (!in_array('all', $statuses, true) && !in_array('any', $statuses, true)) {
-        $where[] = 'c.comment_approved IN (' . implode(',', array_fill(0, count($statuses), '?')) . ')';
-        array_push($params, ...$statuses);
-    } elseif (in_array('all', $statuses, true)) {
-        $where[] = "c.comment_approved IN ('0', '1')";
-    }
-    if ($args['parent'] !== '' && $args['parent'] !== null) {
-        $where[] = 'c.comment_parent = ?';
-        $params[] = (int) $args['parent'];
-    }
-    if ($args['type'] !== '') {
-        $types = array_map(static fn ($t) => $t === 'comment' ? 'comment' : (string) $t, (array) $args['type']);
-        $where[] = 'c.comment_type IN (' . implode(',', array_fill(0, count($types), '?')) . ')';
-        array_push($params, ...$types);
-    }
-    if ($args['author_email'] !== '') {
-        $where[] = 'c.comment_author_email = ?';
-        $params[] = (string) $args['author_email'];
-    }
-    if ($args['user_id'] !== '' && $args['user_id'] !== null) {
-        $where[] = 'c.user_id = ?';
-        $params[] = (int) $args['user_id'];
-    }
-    if (!empty($args['comment__in'])) {
-        $ids = array_map('intval', (array) $args['comment__in']);
-        $where[] = 'c.comment_ID IN (' . implode(',', array_fill(0, count($ids), '?')) . ')';
-        array_push($params, ...$ids);
-    }
-    if (!empty($args['comment__not_in'])) {
-        $ids = array_map('intval', (array) $args['comment__not_in']);
-        $where[] = 'c.comment_ID NOT IN (' . implode(',', array_fill(0, count($ids), '?')) . ')';
-        array_push($params, ...$ids);
-    }
-    if ($args['search'] !== '') {
-        $needle = '%' . addcslashes((string) $args['search'], '%_\\') . '%';
-        $where[] = '(c.comment_author LIKE ? OR c.comment_author_email LIKE ? OR c.comment_author_url LIKE ? OR c.comment_author_IP LIKE ? OR c.comment_content LIKE ?)';
-        array_push($params, $needle, $needle, $needle, $needle, $needle);
-    }
-    $clause = $where === [] ? '1=1' : implode(' AND ', $where);
+    $args = wp_parse_args($args, CommentQuery::DEFAULTS);
+    $query = new CommentQuery(Runtime::current()->db);
     if ($args['count']) {
-        return (int) $db->value("SELECT COUNT(*) FROM {$db->table('comments')} c WHERE {$clause}", $params);
+        return $query->count($args);
     }
-    $column = match ((string) $args['orderby']) {
-        'comment_date' => 'c.comment_date',
-        'comment_ID', 'ID' => 'c.comment_ID',
-        'comment_post_ID' => 'c.comment_post_ID',
-        'comment_author' => 'c.comment_author',
-        'none' => '',
-        default => 'c.comment_date_gmt',
-    };
-    $order = strtoupper((string) $args['order']) === 'ASC' ? 'ASC' : 'DESC';
-    $orderClause = $column === '' ? '' : " ORDER BY {$column} {$order}, c.comment_ID {$order}";
-    $limit = '';
-    $limitParams = [];
-    if ($args['number'] !== '' && (int) $args['number'] > 0) {
-        $limit = ' LIMIT ? OFFSET ?';
-        $limitParams = [(int) $args['number'], (int) $args['offset']];
-    }
-    $rows = $db->rows("SELECT c.* FROM {$db->table('comments')} c WHERE {$clause}{$orderClause}{$limit}", [...$params, ...$limitParams]);
+    $rows = $query->rows($args);
     if ($args['fields'] === 'ids') {
         return array_map(static fn (array $r) => (int) $r['comment_ID'], $rows);
     }
-    $comments = array_map(static fn (array $r) => new WP_Comment((object) $r), $rows);
-    return apply_filters('the_comments', $comments, null);
+    return apply_filters('the_comments', array_map(static fn (array $r) => new WP_Comment((object) $r), $rows), null);
 }
 
 function get_comments_number($post = 0)
@@ -165,38 +89,7 @@ function wp_count_comments($post_id = 0)
     if (!empty($filtered)) {
         return (object) $filtered;
     }
-    $db = Runtime::current()->db;
-    $sql = "SELECT comment_approved, COUNT(*) AS total FROM {$db->table('comments')}";
-    $params = [];
-    if ($post_id > 0) {
-        $sql .= ' WHERE comment_post_ID = ?';
-        $params[] = $post_id;
-    }
-    $rows = $db->rows($sql . ' GROUP BY comment_approved', $params);
-    $counts = ['approved' => 0, 'spam' => 0, 'trash' => 0, 'post-trashed' => 0, 'all' => 0, 'total_comments' => 0, 'moderated' => 0];
-    foreach ($rows as $row) {
-        $n = (int) $row['total'];
-        switch ((string) $row['comment_approved']) {
-            case '1':
-                $counts['approved'] += $n;
-                break;
-            case '0':
-                $counts['moderated'] += $n;
-                break;
-            case 'spam':
-                $counts['spam'] += $n;
-                break;
-            case 'trash':
-                $counts['trash'] += $n;
-                break;
-            case 'post-trashed':
-                $counts['post-trashed'] += $n;
-                break;
-        }
-    }
-    $counts['all'] = $counts['approved'] + $counts['moderated'];
-    $counts['total_comments'] = $counts['all'] + $counts['spam'];
-    return (object) $counts;
+    return (object) (new CommentQuery(Runtime::current()->db))->breakdown($post_id);
 }
 
 function wp_insert_comment($commentdata)
@@ -314,9 +207,7 @@ function wp_delete_comment($comment_id, $force_delete = false)
         return wp_trash_comment($comment->comment_ID);
     }
     do_action('delete_comment', $comment->comment_ID, $comment);
-    $db = Runtime::current()->db;
-    $db->execute("UPDATE {$db->table('comments')} SET comment_parent = ? WHERE comment_parent = ?", [(int) $comment->comment_parent, $comment->comment_ID]);
-    $db->execute("DELETE FROM {$db->table('commentmeta')} WHERE comment_id = ?", [$comment->comment_ID]);
+    _minn_comments()->orphanReplies((int) $comment->comment_ID, (int) $comment->comment_parent);
     _minn_comments()->delete((int) $comment->comment_ID);
     do_action('deleted_comment', $comment->comment_ID, $comment);
     wp_update_comment_count((int) $comment->comment_post_ID);

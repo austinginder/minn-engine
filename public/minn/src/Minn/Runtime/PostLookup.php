@@ -59,6 +59,19 @@ final readonly class PostLookup
         return (int) $this->db->value("SELECT COUNT(*) FROM {$this->db->table('posts')} WHERE post_author = ? AND post_type IN (" . self::marks(count($types)) . ') AND post_status IN (' . self::marks(count($statuses)) . ')', [$userId, ...$types, ...$statuses]);
     }
 
+    /** @return list<int> */
+    public function idsByAuthor(int $userId): array
+    {
+        return array_map(static fn (array $r) => (int) $r['ID'], $this->db->rows("SELECT ID FROM {$this->db->table('posts')} WHERE post_author = ?", [$userId]));
+    }
+
+    /** The attachment whose stored file path is the given one. */
+    public function attachmentIdByFile(string $path): ?int
+    {
+        $id = $this->db->value("SELECT post_id FROM {$this->db->table('postmeta')} WHERE meta_key = '_wp_attached_file' AND meta_value = ? ORDER BY post_id ASC LIMIT 1", [$path]);
+        return $id === null ? null : (int) $id;
+    }
+
     private static function marks(int $count): string
     {
         return implode(',', array_fill(0, $count, '?'));

@@ -3,17 +3,18 @@
 
 use Minn\Runtime\Options;
 use Minn\Runtime\Runtime;
+use Minn\Runtime\Meta;
 
 /** @internal table, id column */
 function _minn_meta_table(string $type): ?array
 {
-    return match ($type) {
-        'post' => ['postmeta', 'post_id', 'meta_id'],
-        'user' => ['usermeta', 'user_id', 'umeta_id'],
-        'term' => ['termmeta', 'term_id', 'meta_id'],
-        'comment' => ['commentmeta', 'comment_id', 'meta_id'],
-        default => null,
-    };
+    return Meta::knows($type) ? [$type] : null;
+}
+
+/** @internal */
+function _minn_meta(): Meta
+{
+    return new Meta(Runtime::current()->db);
 }
 
 function get_metadata($meta_type, $object_id, $meta_key = '', $single = false)
@@ -38,12 +39,7 @@ function get_metadata_raw($meta_type, $object_id, $meta_key = '', $single = fals
     }
     $cache = wp_cache_get($object_id, $meta_type . '_meta', false, $found);
     if (!$found) {
-        $db = Runtime::current()->db;
-        $rows = $db->rows("SELECT meta_key, meta_value FROM {$db->table($spec[0])} WHERE {$spec[1]} = ? ORDER BY {$spec[2]} ASC", [$object_id]);
-        $cache = [];
-        foreach ($rows as $row) {
-            $cache[$row['meta_key']][] = (string) $row['meta_value'];
-        }
+        $cache = _minn_meta()->all((string) $meta_type, $object_id);
         wp_cache_set($object_id, $cache, $meta_type . '_meta');
     }
     if ($meta_key === '' || $meta_key === null) {
@@ -90,9 +86,7 @@ function add_metadata($meta_type, $object_id, $meta_key, $meta_value, $unique = 
         return false;
     }
     do_action("add_{$meta_type}_meta", $object_id, $meta_key, $meta_value);
-    $db = Runtime::current()->db;
-    $db->execute("INSERT INTO {$db->table($spec[0])} ({$spec[1]}, meta_key, meta_value) VALUES (?, ?, ?)", [$object_id, $meta_key, Options::toStorage($meta_value)]);
-    $id = $db->insertId();
+    $id = _minn_meta()->add((string) $meta_type, $object_id, (string) $meta_key, Options::toStorage($meta_value));
     wp_cache_delete($object_id, $meta_type . '_meta');
     do_action("added_{$meta_type}_meta", $id, $object_id, $meta_key, $meta_value);
     return $id;
@@ -112,8 +106,7 @@ function update_metadata($meta_type, $object_id, $meta_key, $meta_value, $prev_v
     if ($check !== null) {
         return (bool) $check;
     }
-    $db = Runtime::current()->db;
-    $rows = $db->rows("SELECT {$spec[2]} AS meta_id, meta_value FROM {$db->table($spec[0])} WHERE {$spec[1]} = ? AND meta_key = ? ORDER BY {$spec[2]} ASC", [$object_id, $meta_key]);
+    $rows = _minn_meta()->matching((string) $meta_type, $object_id, (string) $meta_key);
     if ($rows === []) {
         return add_metadata($meta_type, $object_id, $meta_key, $meta_value);
     }
@@ -133,7 +126,7 @@ function update_metadata($meta_type, $object_id, $meta_key, $meta_value, $prev_v
     foreach ($ids as $id) {
         do_action("update_{$meta_type}_meta", $id, $object_id, $meta_key, $meta_value);
     }
-    $db->execute("UPDATE {$db->table($spec[0])} SET meta_value = ? WHERE {$spec[2]} IN (" . implode(',', $ids) . ')', [$stored]);
+    _minn_meta()->updateRows((string) $meta_type, $ids, $stored);
     wp_cache_delete($object_id, $meta_type . '_meta');
     foreach ($ids as $id) {
         do_action("updated_{$meta_type}_meta", $id, $object_id, $meta_key, $meta_value);
@@ -154,24 +147,13 @@ function delete_metadata($meta_type, $object_id, $meta_key, $meta_value = '', $d
     if ($check !== null) {
         return (bool) $check;
     }
-    $db = Runtime::current()->db;
-    $sql = "SELECT {$spec[2]} AS meta_id, {$spec[1]} AS object_id FROM {$db->table($spec[0])} WHERE meta_key = ?";
-    $params = [$meta_key];
-    if (!$delete_all) {
-        $sql .= " AND {$spec[1]} = ?";
-        $params[] = $object_id;
-    }
-    if ($meta_value !== '' && $meta_value !== null && $meta_value !== false) {
-        $sql .= ' AND meta_value = ?';
-        $params[] = Options::toStorage($meta_value);
-    }
-    $rows = $db->rows($sql, $params);
+    $rows = _minn_meta()->find((string) $meta_type, $delete_all ? null : $object_id, (string) $meta_key, $meta_value !== '' && $meta_value !== null && $meta_value !== false ? Options::toStorage($meta_value) : null);
     if ($rows === []) {
         return false;
     }
     $ids = array_map(static fn (array $r) => (int) $r['meta_id'], $rows);
     do_action("delete_{$meta_type}_meta", $ids, $object_id, $meta_key, $meta_value);
-    $db->execute("DELETE FROM {$db->table($spec[0])} WHERE {$spec[2]} IN (" . implode(',', $ids) . ')');
+    _minn_meta()->deleteRows((string) $meta_type, $ids);
     foreach ($rows as $row) {
         wp_cache_delete((int) $row['object_id'], $meta_type . '_meta');
     }
