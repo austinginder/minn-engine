@@ -7,6 +7,10 @@
 set -u
 cd "$( dirname "$0" )"
 
+# The reference's file layout as placeholders, so plugins that require wp-admin/includes files load.
+php tools/site-skeleton.php .. >/dev/null
+[ -d ~/Cove/Sites/dogfood.localhost/public ] && php tools/site-skeleton.php ~/Cove/Sites/dogfood.localhost >/dev/null
+
 # Start a reference server when its port is quiet, so no suite skips on the
 # dev box. Servers started here are stopped on exit; ones already running are
 # left alone. Set MINN_NO_AUTOSTART=1 to run against whatever is up.

@@ -172,7 +172,8 @@ final class Renderer
             $outer = RenderState::setPendingElements(Elements::className($block->attrs, $block->name));
             $out = ($this->dynamic[$block->name])($block, $this);
             RenderState::setPendingElements($outer);
-            return $out;
+            // A plugin's block gets the content image treatment the reference applies to the_content.
+            return str_starts_with($block->name, 'core/') ? $out : $this->images->enrich($out, front: $this->context->front, autoSizes: false);
         }
         // A parent's element styles number before its children's.
         $elements = Elements::className($block->attrs, $block->name);

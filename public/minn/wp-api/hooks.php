@@ -10,7 +10,8 @@ use Minn\Runtime\Runtime;
 
 function add_filter($hook_name, $callback, $priority = 10, $accepted_args = 1)
 {
-    return Runtime::hooks()->add((string) $hook_name, $callback, $priority, (int) $accepted_args);
+    // A null priority (plugins pass one through) reads as the default.
+    return Runtime::hooks()->add((string) $hook_name, $callback, $priority === null || $priority === '' ? 10 : $priority, (int) $accepted_args);
 }
 
 function add_action($hook_name, $callback, $priority = 10, $accepted_args = 1)
@@ -20,7 +21,7 @@ function add_action($hook_name, $callback, $priority = 10, $accepted_args = 1)
 
 function remove_filter($hook_name, $callback, $priority = 10)
 {
-    return Runtime::hooks()->remove((string) $hook_name, $callback, $priority);
+    return Runtime::hooks()->remove((string) $hook_name, $callback, $priority === null || $priority === '' ? 10 : $priority);
 }
 
 function remove_action($hook_name, $callback, $priority = 10)

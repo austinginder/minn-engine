@@ -62,24 +62,7 @@ final readonly class Renderer
     /** The document title: the item's title with the site name, or the site name alone. */
     public function title(Resolution $resolution): string
     {
-        $site = $this->db->option('blogname') ?? '';
-        // The front page is titled by the site alone (the tagline follows when there is one);
-        // its later pages, like the blog's, carry "Page N"; the posts page carries its own title.
-        if ($resolution->front || ($resolution->kind === Kind::Home && !$resolution->postsPage)) {
-            $tagline = (string) ($this->db->option('blogdescription') ?? '');
-            $title = $site . ($resolution->front && $tagline !== '' ? ' &#8211; ' . $tagline : '');
-            return $resolution->paged > 1 ? $title . ' &#8211; Page ' . $resolution->paged : $title;
-        }
-        $title = match ($resolution->kind) {
-            Kind::Home => (string) $resolution->record['post_title'],
-            Kind::Single, Kind::Page => (string) $resolution->record['post_title'],
-            Kind::NotFound => 'Page not found',
-            Kind::Category, Kind::Tag => (string) $resolution->record['name'],
-            Kind::Author => (string) ($resolution->record['display_name'] ?? $resolution->authorName),
-            Kind::Search => 'Search Results for &#8220;' . $resolution->search . '&#8221;',
-            default => '',
-        };
-        return $title === '' ? $site : $title . ' &#8211; ' . $site;
+        return DocumentTitle::compose(DocumentTitle::parts($resolution, (string) ($this->db->option('blogname') ?? ''), (string) ($this->db->option('blogdescription') ?? '')));
     }
 
     public function render(Resolution $resolution): string

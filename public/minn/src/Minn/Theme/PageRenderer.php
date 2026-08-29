@@ -27,6 +27,8 @@ use Minn\Front\Kind;
 use Minn\Front\Permalinks;
 use Minn\Front\Resolution;
 use Minn\Front\Resolver;
+use Minn\Front\DocumentTitle;
+use Minn\Runtime\MainQuery;
 use Minn\Runtime\Runtime;
 use Minn\Support\Html;
 use Minn\Support\Serialized;
@@ -121,11 +123,12 @@ final readonly class PageRenderer
         if ($template === null) {
             return null;
         }
+        $query = $this->mainQuery($resolution);
         if (Runtime::booted()) {
+            \_minn_seed_main_query(MainQuery::vars($resolution), array_map(static fn (array $p) => (int) $p['ID'], $query['posts']), $query['total'], $this->perPage, $resolution->postsPage);
             Runtime::hooks()->action('template_redirect', []);
         }
         RenderState::reset();
-        $query = $this->mainQuery($resolution);
         $this->renderer->withContext(new Context($resolution, $query['posts'], $query['total'], $this->perPage, true));
         // The reference texturizes the rendered template as a whole, after the
         // blocks: straight quotes in a theme's own markup curl, content that was
@@ -148,6 +151,11 @@ final readonly class PageRenderer
         $themeStyle = $this->theme->styleUri();
 
         $title = Extensions::seams()?->applyTitle($title) ?? $title;
+        if (Runtime::booted()) {
+            // Plugin code rewrites the title through the reference's filters; the engine's parts feed them.
+            Runtime::current()->set('document_title_parts', DocumentTitle::parts($resolution, (string) ($this->site->option('blogname') ?? ''), (string) ($this->site->option('blogdescription') ?? '')));
+            $title = \_minn_document_title(DocumentTitle::parts($resolution, (string) ($this->site->option('blogname') ?? ''), (string) ($this->site->option('blogdescription') ?? '')));
+        }
         $bar = $resolution->preview ? null : $this->bar;
         $stylesheets = '<link rel="stylesheet" id="minn-blocks-css" href="' . Html::attr($this->permalinks->url('/minn-engine/blocks.css')) . '" />' . "\n"
             . '<style id="global-styles-inline-css">' . "\n" . $globalStyles . "\n" . '</style>' . "\n"

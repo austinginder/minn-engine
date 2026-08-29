@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Blocks;
 
+use Minn\Runtime\Runtime;
+
 use Minn\Content\Posts;
 use Minn\Media\Metadata;
 use Minn\Media\Uploads;
@@ -25,11 +27,11 @@ final readonly class ImageTags
     }
 
     /** Rewrites every wp-image-* <img> in a fragment; other images pass through. */
-    public function enrich(string $html, bool $withDataId = false, bool $front = false): string
+    public function enrich(string $html, bool $withDataId = false, bool $front = false, bool $autoSizes = true): string
     {
         return preg_replace_callback(
             '/<img\s[^>]*?class="[^"]*\bwp-image-(\d+)\b[^"]*"[^>]*\/?>/',
-            fn (array $m) => $this->enrichTag($m[0], (int) $m[1], $withDataId, $front),
+            fn (array $m) => $this->enrichTag($m[0], (int) $m[1], $withDataId, $front, $autoSizes),
             $html,
         );
     }
@@ -53,7 +55,7 @@ final readonly class ImageTags
         return RenderState::claimPriority() ? ['fetchpriority="high" decoding="async"', false] : ['decoding="async"', false];
     }
 
-    private function enrichTag(string $tag, int $attachmentId, bool $withDataId, bool $front): string
+    private function enrichTag(string $tag, int $attachmentId, bool $withDataId, bool $front, bool $autoSizes = true): string
     {
         if (str_contains($tag, ' srcset=')) {
             // Already enriched by an inner image block; a gallery still adds its data-id.
@@ -101,13 +103,31 @@ final readonly class ImageTags
         [$loading, $auto] = self::loadingPrefix($front);
         $prefix = $loading . ' width="' . $width . '" height="' . $height . '"' . ($withDataId ? ' data-id="' . $attachmentId . '"' : '');
         $tag = preg_replace('/^<img\s/', '<img ' . $prefix . ' ', $tag, 1);
-        $srcset = self::srcsetAttributes($candidates, $width, $auto);
+        $srcset = self::srcsetAttributes($candidates, $width, $auto && $autoSizes, $attachmentId, $meta, $src, $height);
         return $srcset === '' ? $tag : preg_replace('/\s*\/?>$/', $srcset . ' />', $tag, 1);
     }
 
-    /** A srcset needs a choice: one candidate yields no srcset and no sizes. */
-    private static function srcsetAttributes(array $candidates, int $width, bool $auto): string
+    /**
+     * A srcset needs a choice: one candidate yields no srcset and no sizes.
+     * With the runtime up, plugin code filters the candidates and the sizes
+     * hint the way the reference lets it (wp_calculate_image_srcset,
+     * wp_calculate_image_sizes).
+     */
+    private static function srcsetAttributes(array $candidates, int $width, bool $auto, int $attachmentId = 0, array $meta = [], string $src = '', int $height = 0): string
     {
+        if (Runtime::booted() && $attachmentId > 0) {
+            $sources = [];
+            foreach ($candidates as $w => $url) {
+                $sources[$w] = ['url' => $url, 'descriptor' => 'w', 'value' => $w];
+            }
+            $filtered = Runtime::hooks()->filter('wp_calculate_image_srcset', [$sources, [$width, $height], $src, $meta, $attachmentId]);
+            $candidates = [];
+            foreach (is_array($filtered) ? $filtered : [] as $source) {
+                if (is_array($source) && isset($source['url'], $source['value'])) {
+                    $candidates[(int) $source['value']] = (string) $source['url'];
+                }
+            }
+        }
         if (count($candidates) < 2) {
             return '';
         }
@@ -115,7 +135,11 @@ final readonly class ImageTags
         foreach ($candidates as $w => $url) {
             $srcset[] = $url . ' ' . $w . 'w';
         }
-        return ' srcset="' . implode(', ', $srcset) . '" sizes="' . ($auto ? 'auto, ' : '') . '(max-width: ' . $width . 'px) 100vw, ' . $width . 'px"';
+        $sizes = '(max-width: ' . $width . 'px) 100vw, ' . $width . 'px';
+        if (Runtime::booted() && $attachmentId > 0) {
+            $sizes = (string) Runtime::hooks()->filter('wp_calculate_image_sizes', [$sizes, [$width, $height], $src, $meta, $attachmentId]);
+        }
+        return ' srcset="' . implode(', ', $srcset) . '" sizes="' . ($auto ? 'auto, ' : '') . $sizes . '"';
     }
 
     /**
@@ -147,6 +171,6 @@ final readonly class ImageTags
         };
         $dimensions = $meta['width'] > 0 ? 'width="' . $meta['width'] . '" height="' . $meta['height'] . '" ' : '';
         return '<img ' . $dimensions . 'src="' . Html::attr($fullUrl) . '" class="attachment-post-thumbnail size-post-thumbnail wp-post-image" alt="' . Html::attr($alt) . '" style="' . Html::attr($style) . '" ' . $loading
-            . self::srcsetAttributes($candidates, $meta['width'], $auto) . ' />';
+            . self::srcsetAttributes($candidates, $meta['width'], $auto, $attachmentId, $meta, $fullUrl, (int) $meta['height']) . ' />';
     }
 }

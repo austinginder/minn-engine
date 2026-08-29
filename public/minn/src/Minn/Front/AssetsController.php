@@ -21,7 +21,8 @@ final readonly class AssetsController
     #[Route(Method::Get, '/minn-engine/{file:[a-z0-9.-]+}')]
     public function asset(Request $request, string $file): Response
     {
-        $path = realpath($this->assetsDir . '/' . $file);
+        // The wp.* packages live in assets/wp and serve as wp-{name}.js.
+        $path = realpath($this->assetsDir . '/' . (str_starts_with($file, 'wp-') ? 'wp/' . substr($file, 3) : $file));
         $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
         if ($path === false || !str_starts_with($path, realpath($this->assetsDir) . '/') || !isset(self::TYPES[$ext])) {
             return new Response(404);

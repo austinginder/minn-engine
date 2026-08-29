@@ -357,7 +357,14 @@ function _wp_upload_dir($time = null)
 
 function get_search_link($query = '')
 {
-    return apply_filters('search_link', home_url('/?s=' . urlencode((string) $query)), $query);
+    $search = $query === '' ? get_search_query(false) : stripslashes((string) $query);
+    if (get_option('permalink_structure') === '') {
+        $link = home_url('?s=' . urlencode($search));
+    } else {
+        $search = str_replace('/', '%2F', urlencode($search));
+        $link = home_url(user_trailingslashit('/search/' . $search, 'search'));
+    }
+    return apply_filters('search_link', $link, $search);
 }
 
 function get_pagenum_link($pagenum = 1, $escape = true)

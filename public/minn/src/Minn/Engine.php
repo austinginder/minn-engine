@@ -61,6 +61,9 @@ use Minn\Extension\Seams;
  */
 final readonly class Engine
 {
+    /** The WordPress release whose contracts the runtime speaks; wp-includes/version.php says the same. */
+    public const WP_VERSION = '7.1';
+
     public function __construct(
         private string $version,
         /** the minn/ folder: the engine's own files (assets, data, the admin bundle) */
@@ -107,7 +110,7 @@ final readonly class Engine
             $api->caller()->session()?->token ?? '',
             $readerId > 0 ? $capabilities->rolesOf($readerId) : [],
         ));
-        $runtime = Runtime::boot(new Runtime($db, $site, $request, Reader::current(), $capabilities, $this->engineDir, ABSPATH, $this->version));
+        $runtime = Runtime::boot(new Runtime($db, $site, $request, Reader::current(), $capabilities, $this->engineDir, ABSPATH, self::WP_VERSION));
         $runtime->set('permalinks', \Minn\Front\Permalinks::fromDb($db));
         $runtime->set('block_theme', Theme::active($site, \Minn\Front\Permalinks::fromDb($db), ABSPATH . 'wp-content/themes') !== null);
         Plugins::load($runtime);
@@ -154,7 +157,7 @@ final readonly class Engine
         $theme = Theme::active($site, $permalinks, ABSPATH . 'wp-content/themes');
         // The WordPress runtime: the site's plugins load as code, then the
         // lifecycle actions fire, before the engine's own extensions register.
-        $runtime = Runtime::boot(new Runtime($db, $site, $request, Reader::current(), $capabilities, $this->engineDir, ABSPATH, $this->version));
+        $runtime = Runtime::boot(new Runtime($db, $site, $request, Reader::current(), $capabilities, $this->engineDir, ABSPATH, self::WP_VERSION));
         $runtime->set('block_theme', $theme !== null);
         $runtime->set('permalinks', $permalinks);
         Plugins::load($runtime);

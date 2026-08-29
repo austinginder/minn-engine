@@ -157,6 +157,7 @@ function wp_print_styles($handles = false)
 {
     do_action('wp_print_styles');
     $assets = _minn_assets('style');
+    wp_styles()->push();
     $list = $handles === false ? $assets->toPrint() : (array) $handles;
     foreach ($list as $handle) {
         $item = $assets->item($handle);
@@ -180,6 +181,7 @@ function wp_print_styles($handles = false)
 function _minn_print_scripts(bool $footer): array
 {
     $assets = _minn_assets('script');
+    wp_scripts()->push();
     $list = $assets->toPrint($footer);
     foreach ($list as $handle) {
         $item = $assets->item($handle);
@@ -287,12 +289,18 @@ function wp_default_styles($styles)
 
 function wp_scripts()
 {
-    return new WP_Scripts(_minn_assets('script'));
+    if (!isset($GLOBALS['wp_scripts']) || !$GLOBALS['wp_scripts'] instanceof WP_Scripts) {
+        $GLOBALS['wp_scripts'] = new WP_Scripts(_minn_assets('script'));
+    }
+    return $GLOBALS['wp_scripts'];
 }
 
 function wp_styles()
 {
-    return new WP_Styles(_minn_assets('style'));
+    if (!isset($GLOBALS['wp_styles']) || !$GLOBALS['wp_styles'] instanceof WP_Styles) {
+        $GLOBALS['wp_styles'] = new WP_Styles(_minn_assets('style'));
+    }
+    return $GLOBALS['wp_styles'];
 }
 
 function wp_common_block_scripts_and_styles()

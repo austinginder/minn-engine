@@ -19,23 +19,49 @@ final class Assets
     /** @var list<string> */
     private array $done = [];
 
+    private ?\Closure $onChange = null;
+
     public function __construct(private readonly string $kind)
     {
+    }
+
+    /** A listener called after every change, so a plugin-facing view can stay current. */
+    public function watch(\Closure $listener): void
+    {
+        $this->onChange = $listener;
+        $listener();
+    }
+
+    /** The queue as a plugin left it after editing the view directly. */
+    public function setQueue(array $queue): void
+    {
+        $this->queue = array_values(array_map('strval', $queue));
+    }
+
+    private function changed(): void
+    {
+        if ($this->onChange !== null) {
+            ($this->onChange)();
+        }
     }
 
     public function register(string $handle, string|false $src, array $deps, string|bool|null $ver, mixed $extra): bool
     {
         if (isset($this->items[$handle])) {
+            $this->changed();
             return false;
         }
         $this->items[$handle] = ['src' => $src, 'deps' => array_values(array_map('strval', $deps)), 'ver' => $ver, 'extra' => $extra, 'inline' => ['before' => [], 'after' => []], 'localized' => [], 'data' => [], 'args' => []];
+        $this->changed();
         return true;
+        $this->changed();
     }
 
     public function deregister(string $handle): void
     {
         unset($this->items[$handle]);
         $this->queue = array_values(array_diff($this->queue, [$handle]));
+        $this->changed();
     }
 
     public function enqueue(string $handle): void
@@ -43,11 +69,13 @@ final class Assets
         if (!in_array($handle, $this->queue, true)) {
             $this->queue[] = $handle;
         }
+        $this->changed();
     }
 
     public function dequeue(string $handle): void
     {
         $this->queue = array_values(array_diff($this->queue, [$handle]));
+        $this->changed();
     }
 
     public function registered(string $handle): bool
@@ -68,19 +96,25 @@ final class Assets
     public function addInline(string $handle, string $code, string $position): bool
     {
         if (!isset($this->items[$handle])) {
+            $this->changed();
             return false;
         }
         $this->items[$handle]['inline'][$position === 'before' ? 'before' : 'after'][] = $code;
+        $this->changed();
         return true;
+        $this->changed();
     }
 
     public function addData(string $handle, string $key, mixed $value): bool
     {
         if (!isset($this->items[$handle])) {
+            $this->changed();
             return false;
         }
         $this->items[$handle]['data'][$key] = $value;
+        $this->changed();
         return true;
+        $this->changed();
     }
 
     public function data(string $handle, string $key): mixed
@@ -91,6 +125,7 @@ final class Assets
     public function localize(string $handle, string $name, array $data): bool
     {
         if (!isset($this->items[$handle])) {
+            $this->changed();
             return false;
         }
         foreach ($data as $k => $v) {
@@ -99,7 +134,9 @@ final class Assets
             }
         }
         $this->items[$handle]['localized'][] = 'var ' . $name . ' = ' . json_encode($data) . ';';
+        $this->changed();
         return true;
+        $this->changed();
     }
 
     /** Every queued handle not yet printed, dependencies first, filtered to the group (footer or not). */
@@ -134,6 +171,7 @@ final class Assets
     public function markDone(string $handle): void
     {
         $this->done[] = $handle;
+        $this->changed();
     }
 
     public function item(string $handle): ?array

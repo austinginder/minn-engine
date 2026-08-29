@@ -20,12 +20,32 @@ class WP_Dependencies
         if ($assets === null) {
             return;
         }
-        foreach ($assets->items() as $handle => $item) {
+        $assets->watch(function (): void {
+            $this->sync();
+        });
+    }
+
+    /** Refreshes the public arrays from the registry; the registry calls this after every change. */
+    public function sync(): void
+    {
+        if ($this->assets === null) {
+            return;
+        }
+        $this->registered = [];
+        foreach ($this->assets->items() as $handle => $item) {
             $dep = new _WP_Dependency($handle, $item['src'], $item['deps'], $item['ver'], $item['extra']);
             $dep->extra = ['data' => implode("\n", $item['localized']), 'before' => $item['inline']['before'], 'after' => $item['inline']['after']] + $item['data'];
             $this->registered[$handle] = $dep;
         }
-        $this->queue = $assets->queue();
+        $this->queue = $this->assets->queue();
+    }
+
+    /** Hands a queue a plugin edited in place back to the registry before printing. */
+    public function push(): void
+    {
+        if ($this->assets !== null && $this->queue !== $this->assets->queue()) {
+            $this->assets->setQueue((array) $this->queue);
+        }
     }
 
     public function add($handle, $src, $deps = [], $ver = false, $args = null)

@@ -522,11 +522,68 @@ Facts worth keeping:
   false. `_wp_oembed_get_object` is a singleton `WP_oEmbed` whose provider
   table is `data/oembed-providers.json` (captured from the reference).
 
+## E3 as placeholders: the admin host that is not there
+
+Minn has no `/wp-admin/` and will not grow one; Minn Admin is the admin. What
+plugins need from the admin host is for its symbols to exist so they load
+and stay quiet. Three generated layers do that:
+
+- **Placeholder symbols**: `tests/tools/stub-symbols.php` writes
+  `wp-api/placeholders.php` and `wp-api/classes/placeholders/Placeholders.php`
+  from the inventory for the names in `data/placeholder-symbols.json` (what
+  the dogfood plugins asked for: `WP_List_Table`, `Walker`, the `IXR_*`
+  family, `PclZip`, the upgraders, `WP_User_Query`, `WP_Session_Tokens`,
+  the REST controller classes, the POMO classes, 141 functions). Each has the
+  inventory's signature and returns the neutral value of its documented type
+  (arrays `[]`, bools false, strings `''`, otherwise null); classes keep
+  their parents and constants, and inherit rather than redeclare a method a
+  hand-written parent has. Regenerate after adding names; never edit.
+- **The file skeleton**: `tests/tools/site-skeleton.php <site root>` writes
+  every `wp-includes/*.php` and `wp-admin/includes/*.php` the reference has
+  (`data/reference-files.json`, 1,139 files) as one-line placeholders under
+  the site's `public/`, so `require ABSPATH . 'wp-admin/includes/image.php'`
+  gets a file that does nothing. Nothing outside those two trees is written,
+  so no engine route is shadowed. The files are gitignored; run the tool
+  for each site (run-all does for the two local ones).
+- **Globals plugins read directly**: `$wp_scripts` and `$wp_styles` are
+  live views of the registries (a plugin may reorder `$wp_styles->queue`;
+  the printer takes it back), `$allowedposttags`, `$allowedtags`,
+  `$allowedentitynames`, and `$wp_version` is the release the engine speaks
+  (`Engine::WP_VERSION`, 7.1; Jetpack refuses anything older than 6.9).
+
+What loading all 25 dogfood plugins then taught the front end:
+
+- **Output buffers plugins open** (WP Retina 2x starts one in `wp_head`
+  and closes it in `wp_footer`; Smart Slider and Gallery Custom Links wrap
+  the page from `template_redirect`): `Runtime::capture` keeps a sentinel
+  under its buffer, flushes buffers a callback opened through their
+  handlers, and takes from the sentinel what a callback closed early.
+- **The main query is seeded from the engine's resolution** before
+  `template_redirect` (`Runtime\MainQuery::vars` to `_minn_seed_main_query`):
+  `is_front_page`, `is_singular`, `get_queried_object_id`, `get_search_query`
+  answer for the page being rendered, which is what an SEO plugin reads.
+- **The document title runs through the reference's filters**
+  (`pre_get_document_title`, `document_title_separator`,
+  `document_title_parts`, `document_title`) over the engine's own parts
+  (`Front\DocumentTitle`); `wp_get_document_title()` answers the same.
+- **srcset and sizes run through** `wp_calculate_image_srcset` and
+  `wp_calculate_image_sizes` (Retina 2x adds its `@2x` candidates there);
+  a plugin block's images get the content-image treatment (dimensions,
+  loading, srcset) but not the `auto` sizes hint, as observed.
+- **`get_search_link`** is `/search/{term}/` under pretty permalinks.
+- **The wp.* utility packages** (`wp-polyfill`, `wp-hooks`, `wp-i18n`,
+  `wp-dom-ready`, `wp-escape-html`, `wp-url`, `wp-html-entities`,
+  `wp-a11y`, `wp-api-fetch`) are the engine's own MIT scripts under
+  `assets/wp/`, registered with the reference's dependency graph, so a
+  plugin script that depends on them prints (Jetpack's slideshow view).
+  The editor packages (`wp-element`, `wp-components`, `wp-data`, ...) are not
+  provided; scripts depending on them still do not print.
+
 ## What a plugin cannot do yet
 
-Twenty of the dogfood site's twenty-five plugins load as code now
+All twenty-five of the dogfood site's plugins load as code now
 (`runtime-report.php`), and the nine dogfood pages render at parity with
-them running. What the rest ask for, in order: the admin host
+them running, Jetpack included. What the rest ask for, in order: the admin host
 (`WP_List_Table`, screens and screen options, `iframe_header`, the
 `WP_Filesystem` family and the upgraders); `WP_HTML_Processor` (the tag
 processor exists; the tree-aware one does not); `WP_Site`/multisite shims;

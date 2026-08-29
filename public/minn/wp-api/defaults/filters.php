@@ -39,3 +39,11 @@ if (Minn\Runtime\Runtime::booted()) {
         }
     }
 }
+
+// The kses tables as the globals plugin code reads directly.
+if (Minn\Runtime\Runtime::booted()) {
+    $GLOBALS['allowedposttags'] = _minn_kses_table()['post'];
+    $GLOBALS['allowedtags'] = _minn_kses_table()['data'];
+    $GLOBALS['allowedentitynames'] = _minn_kses_table()['entities'];
+    $GLOBALS['allowedxmlentitynames'] = ['amp', 'lt', 'gt', 'apos', 'quot'];
+}

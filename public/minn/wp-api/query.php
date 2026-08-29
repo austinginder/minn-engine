@@ -278,3 +278,72 @@ function get_the_archive_description()
 {
     return apply_filters('get_the_archive_description', is_category() || is_tag() || is_tax() ? term_description() : '');
 }
+
+/**
+ * Seeds the main query from the engine's own resolution of the page: the
+ * query variables, the flags they imply, the posts the listing found, and
+ * the queried object, before template_redirect fires.
+ *
+ * @param array<string, mixed> $vars
+ * @param list<int> $postIds
+ */
+function _minn_seed_main_query(array $vars, array $postIds, int $total, int $perPage, bool $postsPage = false): void
+{
+    $query = new WP_Query();
+    $query->init();
+    $query->query = $vars;
+    $query->query_vars = $vars;
+    $query->parse_query();
+    if ($postsPage) {
+        $query->is_home = true;
+        $query->is_posts_page = true;
+        $query->is_page = false;
+        $query->is_singular = false;
+    }
+    $posts = [];
+    foreach ($postIds as $id) {
+        $post = get_post($id);
+        if ($post instanceof WP_Post) {
+            $posts[] = $post;
+        }
+    }
+    if ($posts === [] && ($query->is_singular || $query->is_attachment)) {
+        $single = get_post((int) ($vars['p'] ?? $vars['page_id'] ?? 0));
+        if ($single instanceof WP_Post) {
+            $posts[] = $single;
+        }
+    }
+    $query->posts = $posts;
+    $query->post_count = count($posts);
+    $query->found_posts = $total;
+    $query->max_num_pages = $perPage > 0 ? (int) ceil($total / $perPage) : 0;
+    $query->post = $posts[0] ?? null;
+    $GLOBALS['wp_the_query'] = $query;
+    $GLOBALS['wp_query'] = $query;
+    if ($query->post !== null && $query->is_singular) {
+        $GLOBALS['post'] = $query->post;
+    }
+}
+
+/** The reference's title pipeline over the engine's parts; the result is ready to print inside <title>. */
+function _minn_document_title(array $parts): string
+{
+    $title = apply_filters('pre_get_document_title', '');
+    if (!empty($title)) {
+        return (string) $title;
+    }
+    $sep = apply_filters('document_title_separator', '-');
+    $parts = apply_filters('document_title_parts', $parts);
+    $title = implode(" $sep ", array_filter((array) $parts));
+    $title = wptexturize($title);
+    $title = convert_chars($title);
+    $title = esc_html($title);
+    $title = capital_P_dangit($title);
+    return (string) apply_filters('document_title', $title);
+}
+
+function wp_get_document_title()
+{
+    $parts = Runtime::current()->get('document_title_parts');
+    return _minn_document_title(is_array($parts) ? $parts : ['title' => get_bloginfo('name')]);
+}

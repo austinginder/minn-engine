@@ -82,13 +82,27 @@ final class Runtime
     }
 
     /** Output an action's callbacks print, as a string. */
+    /**
+     * Runs an action and returns what it printed. Plugin callbacks may open
+     * output buffers of their own during the action (a page post-processor
+     * started in wp_head) or close one they think is theirs (the same plugin
+     * in wp_footer); a sentinel buffer under the capture keeps the output
+     * either way: extra buffers are flushed through their handlers into the
+     * capture, and a capture closed early lands in the sentinel.
+     */
     public static function capture(string $action, array $args = []): string
     {
+        $base = ob_get_level();
+        ob_start();
         ob_start();
         try {
             self::hooks()->action($action, $args);
         } finally {
-            $out = (string) ob_get_clean();
+            while (ob_get_level() > $base + 2) {
+                ob_end_flush();
+            }
+            $out = ob_get_level() === $base + 2 ? (string) ob_get_clean() : '';
+            $out = (ob_get_level() === $base + 1 ? (string) ob_get_clean() : '') . $out;
         }
         return $out;
     }
@@ -154,6 +168,10 @@ final class Runtime
         }
         self::$facadeLoaded = true;
         foreach (glob($engineDir . '/wp-api/classes/*.php') ?: [] as $file) {
+            require_once $file;
+        }
+        // Generated placeholders extend real classes, so they load after them.
+        foreach (glob($engineDir . '/wp-api/classes/placeholders/*.php') ?: [] as $file) {
             require_once $file;
         }
         foreach (glob($engineDir . '/wp-api/*.php') ?: [] as $file) {
