@@ -1,0 +1,382 @@
+{
+    "ABSPATH": {
+        "perSite": true
+    },
+    "ADMIN_COOKIE_PATH": "/wp-admin",
+    "ARRAY_A": "ARRAY_A",
+    "ARRAY_N": "ARRAY_N",
+    "AUTH_COOKIE": {
+        "perSite": true
+    },
+    "AUTH_KEY": {
+        "perSite": true
+    },
+    "AUTH_SALT": {
+        "perSite": true
+    },
+    "AUTOSAVE_INTERVAL": 60,
+    "Avifinfo\\ABORTED": 3,
+    "Avifinfo\\FOUND": 0,
+    "Avifinfo\\INVALID": 4,
+    "Avifinfo\\MAX_FEATURES": 8,
+    "Avifinfo\\MAX_NUM_BOXES": 4096,
+    "Avifinfo\\MAX_PROPS": 32,
+    "Avifinfo\\MAX_SIZE": 4294967295,
+    "Avifinfo\\MAX_TILES": 16,
+    "Avifinfo\\MAX_VALUE": 255,
+    "Avifinfo\\NOT_FOUND": 1,
+    "Avifinfo\\TRUNCATED": 2,
+    "Avifinfo\\UNDEFINED": 0,
+    "BLOCKS_PATH": "~/Cove/Sites/minn-engine.localhost/wp-reference/wp-includes/blocks/",
+    "COOKIEHASH": {
+        "perSite": true
+    },
+    "COOKIEPATH": {
+        "perSite": true
+    },
+    "COOKIE_DOMAIN": {
+        "perSite": true
+    },
+    "CRLF": "\r\n",
+    "CUSTOM_TAGS": false,
+    "DAY_IN_SECONDS": 86400,
+    "DB_CHARSET": {
+        "perSite": true
+    },
+    "DB_COLLATE": {
+        "perSite": true
+    },
+    "DB_HOST": {
+        "perSite": true
+    },
+    "DB_NAME": {
+        "perSite": true
+    },
+    "DB_PASSWORD": {
+        "perSite": true
+    },
+    "DB_USER": {
+        "perSite": true
+    },
+    "EB_IN_BYTES": 1152921504606846976,
+    "EMPTY_TRASH_DAYS": 30,
+    "EP_ALL": 8191,
+    "EP_ALL_ARCHIVES": 3644,
+    "EP_ATTACHMENT": 2,
+    "EP_AUTHORS": 2048,
+    "EP_CATEGORIES": 512,
+    "EP_COMMENTS": 128,
+    "EP_DATE": 4,
+    "EP_DAY": 32,
+    "EP_MONTH": 16,
+    "EP_NONE": 0,
+    "EP_PAGES": 4096,
+    "EP_PERMALINK": 1,
+    "EP_ROOT": 64,
+    "EP_SEARCH": 256,
+    "EP_TAGS": 1024,
+    "EP_YEAR": 8,
+    "EZSQL_VERSION": "WP1.25",
+    "FORCE_SSL_ADMIN": true,
+    "FTP_AUTOASCII": -1,
+    "FTP_FORCE": true,
+    "FTP_OS_Mac": "m",
+    "FTP_OS_Unix": "u",
+    "FTP_OS_Windows": "w",
+    "GB_IN_BYTES": 1073741824,
+    "HOUR_IN_SECONDS": 3600,
+    "IMAGETYPE_HEIF": 20,
+    "KB_IN_BYTES": 1024,
+    "LANGDIR": "wp-content/languages",
+    "LOGGED_IN_COOKIE": {
+        "perSite": true
+    },
+    "LOGGED_IN_KEY": {
+        "perSite": true
+    },
+    "LOGGED_IN_SALT": {
+        "perSite": true
+    },
+    "MB_IN_BYTES": 1048576,
+    "MEDIA_TRASH": false,
+    "MINN_ADMIN_ACF_OPTIONS_ALL": {
+        "perSite": true
+    },
+    "MINN_ADMIN_DIR": {
+        "perSite": true
+    },
+    "MINN_ADMIN_FIELD_GROUPS_SURFACE": {
+        "perSite": true
+    },
+    "MINN_ADMIN_FILE": {
+        "perSite": true
+    },
+    "MINN_ADMIN_OPTIONS_SURFACE": {
+        "perSite": true
+    },
+    "MINN_ADMIN_URL": {
+        "perSite": true
+    },
+    "MINN_ADMIN_VERSION": {
+        "perSite": true
+    },
+    "MINUTE_IN_SECONDS": 60,
+    "MONTH_IN_SECONDS": 2592000,
+    "MULTISITE": false,
+    "MUPLUGINDIR": "wp-content/mu-plugins",
+    "NONCE_KEY": {
+        "perSite": true
+    },
+    "NONCE_SALT": {
+        "perSite": true
+    },
+    "OBJECT": "OBJECT",
+    "OBJECT_K": "OBJECT_K",
+    "PASS_COOKIE": {
+        "perSite": true
+    },
+    "PB_IN_BYTES": 1125899906842624,
+    "PCLZIP_ATT_FILE_COMMENT": 79006,
+    "PCLZIP_ATT_FILE_CONTENT": 79005,
+    "PCLZIP_ATT_FILE_MTIME": 79004,
+    "PCLZIP_ATT_FILE_NAME": 79001,
+    "PCLZIP_ATT_FILE_NEW_FULL_NAME": 79003,
+    "PCLZIP_ATT_FILE_NEW_SHORT_NAME": 79002,
+    "PCLZIP_CB_POST_ADD": 78004,
+    "PCLZIP_CB_POST_EXTRACT": 78002,
+    "PCLZIP_CB_PRE_ADD": 78003,
+    "PCLZIP_CB_PRE_EXTRACT": 78001,
+    "PCLZIP_ERROR_EXTERNAL": 0,
+    "PCLZIP_ERR_ALREADY_A_DIRECTORY": -17,
+    "PCLZIP_ERR_BAD_CHECKSUM": -13,
+    "PCLZIP_ERR_BAD_EXTENSION": -9,
+    "PCLZIP_ERR_BAD_EXTRACTED_FILE": -7,
+    "PCLZIP_ERR_BAD_FORMAT": -10,
+    "PCLZIP_ERR_DELETE_FILE_FAIL": -11,
+    "PCLZIP_ERR_DIRECTORY_RESTRICTION": -21,
+    "PCLZIP_ERR_DIR_CREATE_FAIL": -8,
+    "PCLZIP_ERR_FILENAME_TOO_LONG": -5,
+    "PCLZIP_ERR_INVALID_ARCHIVE_ZIP": -14,
+    "PCLZIP_ERR_INVALID_ATTRIBUTE_VALUE": -20,
+    "PCLZIP_ERR_INVALID_OPTION_VALUE": -16,
+    "PCLZIP_ERR_INVALID_PARAMETER": -3,
+    "PCLZIP_ERR_INVALID_ZIP": -6,
+    "PCLZIP_ERR_MISSING_FILE": -4,
+    "PCLZIP_ERR_MISSING_OPTION_VALUE": -15,
+    "PCLZIP_ERR_NO_ERROR": 0,
+    "PCLZIP_ERR_READ_OPEN_FAIL": -2,
+    "PCLZIP_ERR_RENAME_FILE_FAIL": -12,
+    "PCLZIP_ERR_UNSUPPORTED_COMPRESSION": -18,
+    "PCLZIP_ERR_UNSUPPORTED_ENCRYPTION": -19,
+    "PCLZIP_ERR_USER_ABORTED": 2,
+    "PCLZIP_ERR_WRITE_OPEN_FAIL": -1,
+    "PCLZIP_OPT_ADD_COMMENT": 77013,
+    "PCLZIP_OPT_ADD_PATH": 77002,
+    "PCLZIP_OPT_ADD_TEMP_FILE_OFF": 77022,
+    "PCLZIP_OPT_ADD_TEMP_FILE_ON": 77021,
+    "PCLZIP_OPT_ADD_TEMP_FILE_THRESHOLD": 77020,
+    "PCLZIP_OPT_BY_EREG": 77010,
+    "PCLZIP_OPT_BY_INDEX": 77009,
+    "PCLZIP_OPT_BY_NAME": 77008,
+    "PCLZIP_OPT_BY_PREG": 77011,
+    "PCLZIP_OPT_COMMENT": 77012,
+    "PCLZIP_OPT_EXTRACT_AS_STRING": 77006,
+    "PCLZIP_OPT_EXTRACT_DIR_RESTRICTION": 77019,
+    "PCLZIP_OPT_EXTRACT_IN_OUTPUT": 77015,
+    "PCLZIP_OPT_NO_COMPRESSION": 77007,
+    "PCLZIP_OPT_PATH": 77001,
+    "PCLZIP_OPT_PREPEND_COMMENT": 77014,
+    "PCLZIP_OPT_REMOVE_ALL_PATH": 77004,
+    "PCLZIP_OPT_REMOVE_PATH": 77003,
+    "PCLZIP_OPT_REPLACE_NEWER": 77016,
+    "PCLZIP_OPT_SET_CHMOD": 77005,
+    "PCLZIP_OPT_STOP_ON_ERROR": 77017,
+    "PCLZIP_OPT_TEMP_FILE_OFF": 77022,
+    "PCLZIP_OPT_TEMP_FILE_ON": 77021,
+    "PCLZIP_OPT_TEMP_FILE_THRESHOLD": 77020,
+    "PCLZIP_READ_BLOCK_SIZE": 2048,
+    "PCLZIP_SEPARATOR": ",",
+    "PCLZIP_TEMPORARY_DIR": "",
+    "PCLZIP_TEMPORARY_FILE_RATIO": 0.47,
+    "PLUGINDIR": "wp-content/plugins",
+    "PLUGINS_COOKIE_PATH": "/wp-content/plugins",
+    "RECOVERY_MODE_COOKIE": {
+        "perSite": true
+    },
+    "REQUESTS_AUTOLOAD_REGISTERED": true,
+    "REQUESTS_SILENCE_PSR0_DEPRECATIONS": true,
+    "REST_API_VERSION": "2.0",
+    "SCRIPT_DEBUG": false,
+    "SECURE_AUTH_COOKIE": {
+        "perSite": true
+    },
+    "SECURE_AUTH_KEY": {
+        "perSite": true
+    },
+    "SECURE_AUTH_SALT": {
+        "perSite": true
+    },
+    "SERVICES_JSON_IN_ARR": 3,
+    "SERVICES_JSON_IN_CMT": 5,
+    "SERVICES_JSON_IN_OBJ": 4,
+    "SERVICES_JSON_IN_STR": 2,
+    "SERVICES_JSON_LOOSE_TYPE": 16,
+    "SERVICES_JSON_SLICE": 1,
+    "SERVICES_JSON_SUPPRESS_ERRORS": 32,
+    "SERVICES_JSON_USE_TO_JSON": 64,
+    "SHORTINIT": false,
+    "SIMPLEPIE_BUILD": "20260828022131",
+    "SIMPLEPIE_CONSTRUCT_ALL": 63,
+    "SIMPLEPIE_CONSTRUCT_BASE64": 8,
+    "SIMPLEPIE_CONSTRUCT_HTML": 2,
+    "SIMPLEPIE_CONSTRUCT_IRI": 16,
+    "SIMPLEPIE_CONSTRUCT_MAYBE_HTML": 32,
+    "SIMPLEPIE_CONSTRUCT_NONE": 0,
+    "SIMPLEPIE_CONSTRUCT_TEXT": 1,
+    "SIMPLEPIE_CONSTRUCT_XHTML": 4,
+    "SIMPLEPIE_FILE_SOURCE_CURL": 8,
+    "SIMPLEPIE_FILE_SOURCE_FILE_GET_CONTENTS": 16,
+    "SIMPLEPIE_FILE_SOURCE_FSOCKOPEN": 4,
+    "SIMPLEPIE_FILE_SOURCE_LOCAL": 2,
+    "SIMPLEPIE_FILE_SOURCE_NONE": 0,
+    "SIMPLEPIE_FILE_SOURCE_REMOTE": 1,
+    "SIMPLEPIE_IANA_LINK_RELATIONS_REGISTRY": "http://www.iana.org/assignments/relation/",
+    "SIMPLEPIE_LINKBACK": "<a href=\"http://simplepie.org\" title=\"SimplePie 1.9.0\">SimplePie</a>",
+    "SIMPLEPIE_LOCATOR_ALL": 31,
+    "SIMPLEPIE_LOCATOR_AUTODISCOVERY": 1,
+    "SIMPLEPIE_LOCATOR_LOCAL_BODY": 4,
+    "SIMPLEPIE_LOCATOR_LOCAL_EXTENSION": 2,
+    "SIMPLEPIE_LOCATOR_NONE": 0,
+    "SIMPLEPIE_LOCATOR_REMOTE_BODY": 16,
+    "SIMPLEPIE_LOCATOR_REMOTE_EXTENSION": 8,
+    "SIMPLEPIE_LOWERCASE": 2,
+    "SIMPLEPIE_NAME": "SimplePie",
+    "SIMPLEPIE_NAMESPACE_ATOM_03": "http://purl.org/atom/ns#",
+    "SIMPLEPIE_NAMESPACE_ATOM_10": "http://www.w3.org/2005/Atom",
+    "SIMPLEPIE_NAMESPACE_DC_10": "http://purl.org/dc/elements/1.0/",
+    "SIMPLEPIE_NAMESPACE_DC_11": "http://purl.org/dc/elements/1.1/",
+    "SIMPLEPIE_NAMESPACE_GEORSS": "http://www.georss.org/georss",
+    "SIMPLEPIE_NAMESPACE_ITUNES": "http://www.itunes.com/dtds/podcast-1.0.dtd",
+    "SIMPLEPIE_NAMESPACE_MEDIARSS": "http://search.yahoo.com/mrss/",
+    "SIMPLEPIE_NAMESPACE_MEDIARSS_WRONG": "http://search.yahoo.com/mrss",
+    "SIMPLEPIE_NAMESPACE_MEDIARSS_WRONG2": "http://video.search.yahoo.com/mrss",
+    "SIMPLEPIE_NAMESPACE_MEDIARSS_WRONG3": "http://video.search.yahoo.com/mrss/",
+    "SIMPLEPIE_NAMESPACE_MEDIARSS_WRONG4": "http://www.rssboard.org/media-rss",
+    "SIMPLEPIE_NAMESPACE_MEDIARSS_WRONG5": "http://www.rssboard.org/media-rss/",
+    "SIMPLEPIE_NAMESPACE_RDF": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "SIMPLEPIE_NAMESPACE_RSS_090": "http://my.netscape.com/rdf/simple/0.9/",
+    "SIMPLEPIE_NAMESPACE_RSS_10": "http://purl.org/rss/1.0/",
+    "SIMPLEPIE_NAMESPACE_RSS_10_MODULES_CONTENT": "http://purl.org/rss/1.0/modules/content/",
+    "SIMPLEPIE_NAMESPACE_RSS_20": "",
+    "SIMPLEPIE_NAMESPACE_W3C_BASIC_GEO": "http://www.w3.org/2003/01/geo/wgs84_pos#",
+    "SIMPLEPIE_NAMESPACE_XHTML": "http://www.w3.org/1999/xhtml",
+    "SIMPLEPIE_NAMESPACE_XML": "http://www.w3.org/XML/1998/namespace",
+    "SIMPLEPIE_PCRE_HTML_ATTRIBUTE": "((?:[\\x09\\x0A\\x0B\\x0C\\x0D\\x20]+[^\\x09\\x0A\\x0B\\x0C\\x0D\\x20\\x2F\\x3E][^\\x09\\x0A\\x0B\\x0C\\x0D\\x20\\x2F\\x3D\\x3E]*(?:[\\x09\\x0A\\x0B\\x0C\\x0D\\x20]*=[\\x09\\x0A\\x0B\\x0C\\x0D\\x20]*(?:\"(?:[^\"]*)\"|'(?:[^']*)'|(?:[^\\x09\\x0A\\x0B\\x0C\\x0D\\x20\\x22\\x27\\x3E][^\\x09\\x0A\\x0B\\x0C\\x0D\\x20\\x3E]*)?))?)*)[\\x09\\x0A\\x0B\\x0C\\x0D\\x20]*",
+    "SIMPLEPIE_PCRE_XML_ATTRIBUTE": "((?:\\s+(?:(?:[^\\s:]+:)?[^\\s:]+)\\s*=\\s*(?:\"(?:[^\"]*)\"|'(?:[^']*)'))*)\\s*",
+    "SIMPLEPIE_SAME_CASE": 1,
+    "SIMPLEPIE_TYPE_ALL": 1023,
+    "SIMPLEPIE_TYPE_ATOM_03": 256,
+    "SIMPLEPIE_TYPE_ATOM_10": 512,
+    "SIMPLEPIE_TYPE_ATOM_ALL": 768,
+    "SIMPLEPIE_TYPE_NONE": 0,
+    "SIMPLEPIE_TYPE_RSS_090": 1,
+    "SIMPLEPIE_TYPE_RSS_091": 6,
+    "SIMPLEPIE_TYPE_RSS_091_NETSCAPE": 2,
+    "SIMPLEPIE_TYPE_RSS_091_USERLAND": 4,
+    "SIMPLEPIE_TYPE_RSS_092": 8,
+    "SIMPLEPIE_TYPE_RSS_093": 16,
+    "SIMPLEPIE_TYPE_RSS_094": 32,
+    "SIMPLEPIE_TYPE_RSS_10": 64,
+    "SIMPLEPIE_TYPE_RSS_20": 128,
+    "SIMPLEPIE_TYPE_RSS_ALL": 255,
+    "SIMPLEPIE_TYPE_RSS_RDF": 65,
+    "SIMPLEPIE_TYPE_RSS_SYNDICATION": 190,
+    "SIMPLEPIE_UPPERCASE": 4,
+    "SIMPLEPIE_URL": "http://simplepie.org",
+    "SIMPLEPIE_USERAGENT": "SimplePie/1.9.0 (Feed Parser; http://simplepie.org; Allow like Gecko) Build/1787883691",
+    "SIMPLEPIE_VERSION": "1.9.0",
+    "SITECOOKIEPATH": {
+        "perSite": true
+    },
+    "STYLESHEETPATH": "~/Cove/Sites/minn-engine.localhost/wp-reference/wp-content/themes/twentytwentyfive",
+    "TB_IN_BYTES": 1099511627776,
+    "TEMPLATEPATH": "~/Cove/Sites/minn-engine.localhost/wp-reference/wp-content/themes/twentytwentyfive",
+    "TEST_COOKIE": {
+        "perSite": true
+    },
+    "USER_COOKIE": {
+        "perSite": true
+    },
+    "WEEK_IN_SECONDS": 604800,
+    "WPINC": "wp-includes",
+    "WPMU_PLUGIN_DIR": {
+        "perSite": true
+    },
+    "WPMU_PLUGIN_URL": "https://minn-engine.localhost/wp-content/mu-plugins",
+    "WP_CACHE": false,
+    "WP_CACHE_KEY_SALT": "(2.LGK,}QN{j4bSg?Ug,DLe._5-GEBz3M3F;Fw)0};* uu*k(|D1q^H9Z# AOq/[",
+    "WP_CLI": {
+        "perSite": true
+    },
+    "WP_CLI\\Utils\\FILE_DIR_PATTERN": {
+        "perSite": true
+    },
+    "WP_CLI\\Utils\\PHAR_STREAM_PREFIX": {
+        "perSite": true
+    },
+    "WP_CLI_EXPORT_COMMAND_NO_SPLIT": {
+        "perSite": true
+    },
+    "WP_CLI_PHAR_PATH": {
+        "perSite": true
+    },
+    "WP_CLI_ROOT": {
+        "perSite": true
+    },
+    "WP_CLI_START_MICROTIME": {
+        "perSite": true
+    },
+    "WP_CLI_VENDOR_DIR": {
+        "perSite": true
+    },
+    "WP_CLI_VERSION": {
+        "perSite": true
+    },
+    "WP_CONTENT_DIR": {
+        "perSite": true
+    },
+    "WP_CONTENT_URL": "https://minn-engine.localhost/wp-content",
+    "WP_CRON_LOCK_TIMEOUT": 60,
+    "WP_DEBUG": {
+        "perSite": true
+    },
+    "WP_DEBUG_DISPLAY": {
+        "perSite": true
+    },
+    "WP_DEBUG_LOG": {
+        "perSite": true
+    },
+    "WP_DEFAULT_THEME": "twentytwentyfive",
+    "WP_DEVELOPMENT_MODE": "",
+    "WP_FEATURE_BETTER_PASSWORDS": true,
+    "WP_LANG_DIR": {
+        "perSite": true
+    },
+    "WP_MAX_MEMORY_LIMIT": "8G",
+    "WP_MEMORY_LIMIT": "40M",
+    "WP_PLUGIN_DIR": {
+        "perSite": true
+    },
+    "WP_PLUGIN_URL": "https://minn-engine.localhost/wp-content/plugins",
+    "WP_POST_REVISIONS": true,
+    "WP_START_TIMESTAMP": 1788002003.990305,
+    "WP_TEMPLATE_PART_AREA_FOOTER": "footer",
+    "WP_TEMPLATE_PART_AREA_HEADER": "header",
+    "WP_TEMPLATE_PART_AREA_NAVIGATION_OVERLAY": "navigation-overlay",
+    "WP_TEMPLATE_PART_AREA_SIDEBAR": "sidebar",
+    "WP_TEMPLATE_PART_AREA_UNCATEGORIZED": "uncategorized",
+    "YB_IN_BYTES": 1.2089258196146292e+24,
+    "YEAR_IN_SECONDS": 31536000,
+    "ZB_IN_BYTES": 1.1805916207174113e+21,
+    "object": "OBJECT"
+}
