@@ -1,0 +1,2007 @@
+[
+    [
+        "get missing",
+        false
+    ],
+    [
+        "get missing default",
+        "dflt"
+    ],
+    [
+        "add array",
+        true
+    ],
+    [
+        "add existing",
+        false
+    ],
+    [
+        "get array",
+        {
+            "a": 1,
+            "b": {
+                "0": true,
+                "1": null,
+                "2": 1.5,
+                "3": "s",
+                "k": "v"
+            }
+        }
+    ],
+    [
+        "update same",
+        false
+    ],
+    [
+        "update new",
+        true
+    ],
+    [
+        "get updated",
+        {
+            "a": 2
+        }
+    ],
+    [
+        "update creates",
+        true
+    ],
+    [
+        "get int stored",
+        5
+    ],
+    [
+        "get false stored",
+        false
+    ],
+    [
+        "get true stored",
+        true
+    ],
+    [
+        "get null stored",
+        ""
+    ],
+    [
+        "get yes",
+        "yes"
+    ],
+    [
+        "get padded",
+        " padded "
+    ],
+    [
+        "delete",
+        true
+    ],
+    [
+        "delete again",
+        false
+    ],
+    [
+        "delete arr",
+        true
+    ],
+    [
+        "pre_option",
+        "short"
+    ],
+    [
+        "option_ filter",
+        true
+    ],
+    [
+        "default_option filter",
+        "fromfilter"
+    ],
+    [
+        "default_option filter with default",
+        "fromfilter"
+    ],
+    [
+        "siteurl trailing",
+        "https://minn-engine.localhost"
+    ],
+    [
+        "home",
+        "https://minn-engine.localhost"
+    ],
+    [
+        "transient missing",
+        false
+    ],
+    [
+        "set transient",
+        true
+    ],
+    [
+        "get transient",
+        {
+            "x": 1
+        }
+    ],
+    [
+        "set transient same",
+        false
+    ],
+    [
+        "transient rows",
+        [
+            {
+                "x": 1
+            },
+            true
+        ]
+    ],
+    [
+        "delete transient",
+        true
+    ],
+    [
+        "delete transient again",
+        false
+    ],
+    [
+        "set transient no expiry",
+        true
+    ],
+    [
+        "no-expiry timeout row",
+        false
+    ],
+    [
+        "expired transient",
+        false
+    ],
+    [
+        "expired transient row gone",
+        false
+    ],
+    [
+        "is_admin",
+        false
+    ],
+    [
+        "wp_doing_ajax",
+        false
+    ],
+    [
+        "wp_doing_cron",
+        false
+    ],
+    [
+        "is_multisite",
+        false
+    ],
+    [
+        "wp_installing",
+        false
+    ],
+    [
+        "is_customize_preview",
+        false
+    ],
+    [
+        "wp_is_block_theme",
+        true
+    ],
+    [
+        "is_rtl",
+        false
+    ],
+    [
+        "is_ssl",
+        false
+    ],
+    [
+        "wp_version",
+        "7.1"
+    ],
+    [
+        "constants",
+        [
+            "wp-includes",
+            "wp-content",
+            "plugins",
+            "mu-plugins",
+            "https://minn-engine.localhost/wp-content",
+            "https://minn-engine.localhost/wp-content/plugins",
+            "languages",
+            true,
+            60,
+            3600,
+            86400,
+            604800,
+            2592000,
+            31536000,
+            "OBJECT",
+            "ARRAY_A",
+            "ARRAY_N",
+            "OBJECT_K",
+            1,
+            8191
+        ]
+    ],
+    [
+        "plugin_basename",
+        "foo/foo.php"
+    ],
+    [
+        "plugin_basename mu",
+        "bar.php"
+    ],
+    [
+        "plugin_basename backslash",
+        "baz/baz.php"
+    ],
+    [
+        "plugin_basename elsewhere",
+        "tmp/else/x.php"
+    ],
+    [
+        "plugin_dir_path",
+        "{PLUGINS}/foo/"
+    ],
+    [
+        "plugin_dir_url",
+        "http://minn-engine.localhost/wp-content/plugins/foo/"
+    ],
+    [
+        "plugins_url empty",
+        "http://minn-engine.localhost/wp-content/plugins"
+    ],
+    [
+        "plugins_url rel",
+        "http://minn-engine.localhost/wp-content/plugins/foo/x.css"
+    ],
+    [
+        "plugins_url slash",
+        "http://minn-engine.localhost/wp-content/plugins/foo/x.css"
+    ],
+    [
+        "plugins_url with plugin",
+        "http://minn-engine.localhost/wp-content/plugins/foo/x.css"
+    ],
+    [
+        "plugins_url with plugin slash",
+        "http://minn-engine.localhost/wp-content/plugins/foo/css/x.css"
+    ],
+    [
+        "plugins_url absolute",
+        "http://minn-engine.localhost/wp-content/plugins/https://cdn.example/x.js"
+    ],
+    [
+        "plugins_url mu",
+        "http://minn-engine.localhost/wp-content/mu-plugins/y.js"
+    ],
+    [
+        "plugins_url mu dir",
+        "http://minn-engine.localhost/wp-content/mu-plugins"
+    ],
+    [
+        "__",
+        "Hello"
+    ],
+    [
+        "__ domain",
+        "Hello"
+    ],
+    [
+        "_e",
+        "Hi <b>"
+    ],
+    [
+        "_x",
+        "Post"
+    ],
+    [
+        "_n 1",
+        "%s item"
+    ],
+    [
+        "_n 2",
+        "%s items"
+    ],
+    [
+        "_nx",
+        "%s b"
+    ],
+    [
+        "esc_html__",
+        "&lt;b&gt;&amp; &amp; &quot;q&quot;"
+    ],
+    [
+        "esc_attr__",
+        "&lt;b&gt;&amp; &amp; &quot;q&quot; &#039;s"
+    ],
+    [
+        "esc_html_e",
+        "&lt;i&gt;"
+    ],
+    [
+        "esc_attr_e",
+        "&quot;"
+    ],
+    [
+        "esc_html_x",
+        "&lt;i&gt;"
+    ],
+    [
+        "load_plugin_textdomain",
+        true
+    ],
+    [
+        "is_textdomain_loaded",
+        false
+    ],
+    [
+        "get_locale",
+        "en_US"
+    ],
+    [
+        "determine_locale",
+        "en_US"
+    ],
+    [
+        "translate string type",
+        "string"
+    ],
+    [
+        "esc_html",
+        "&lt;a href=&quot;x&quot;&gt;T&amp;C &amp; &#039; &quot;q&quot; &#039;s &copy; &#8217; &amp;bogus; \u00e9&lt;/a&gt;"
+    ],
+    [
+        "esc_attr",
+        "&lt;a href=&quot;x&quot;&gt;T&amp;C &amp; &#039; &quot;q&quot; &#039;s &copy; &#8217; &amp;bogus; \u00e9&lt;/a&gt;"
+    ],
+    [
+        "esc_textarea",
+        "&lt;a href=&quot;x&quot;&gt;T&amp;amp;C &amp; &amp;#039; &quot;q&quot; &#039;s &amp;copy; &amp;#8217; &amp;bogus; \u00e9&lt;/a&gt;"
+    ],
+    [
+        "esc_js",
+        "a\\'b&quot;c\\nde&lt;/script&gt;"
+    ],
+    [
+        "esc_html empty",
+        ""
+    ],
+    [
+        "esc_html number",
+        "5"
+    ],
+    [
+        "esc_html null",
+        ""
+    ],
+    [
+        "esc_url http://x.com/?a=1&b=2",
+        "http://x.com/?a=1&#038;b=2"
+    ],
+    [
+        "esc_url_raw http://x.com/?a=1&b=2",
+        "http://x.com/?a=1&b=2"
+    ],
+    [
+        "esc_url http://x.com/?a=1&amp;b=2",
+        "http://x.com/?a=1&#038;b=2"
+    ],
+    [
+        "esc_url_raw http://x.com/?a=1&amp;b=2",
+        "http://x.com/?a=1&amp;b=2"
+    ],
+    [
+        "esc_url  javascript:alert(1)",
+        ""
+    ],
+    [
+        "esc_url_raw  javascript:alert(1)",
+        ""
+    ],
+    [
+        "esc_url JaVaScRiPt:x",
+        ""
+    ],
+    [
+        "esc_url_raw JaVaScRiPt:x",
+        ""
+    ],
+    [
+        "esc_url x.com",
+        "http://x.com"
+    ],
+    [
+        "esc_url_raw x.com",
+        "http://x.com"
+    ],
+    [
+        "esc_url x.com/path",
+        "http://x.com/path"
+    ],
+    [
+        "esc_url_raw x.com/path",
+        "http://x.com/path"
+    ],
+    [
+        "esc_url /path?x=1&y=2",
+        "/path?x=1&#038;y=2"
+    ],
+    [
+        "esc_url_raw /path?x=1&y=2",
+        "/path?x=1&y=2"
+    ],
+    [
+        "esc_url mailto:a@b.c",
+        "mailto:a@b.c"
+    ],
+    [
+        "esc_url_raw mailto:a@b.c",
+        "mailto:a@b.c"
+    ],
+    [
+        "esc_url http://x.com/a b",
+        "http://x.com/a%20b"
+    ],
+    [
+        "esc_url_raw http://x.com/a b",
+        "http://x.com/a%20b"
+    ],
+    [
+        "esc_url ",
+        ""
+    ],
+    [
+        "esc_url_raw ",
+        ""
+    ],
+    [
+        "esc_url data:text/html,x",
+        ""
+    ],
+    [
+        "esc_url_raw data:text/html,x",
+        ""
+    ],
+    [
+        "esc_url http://x.com/\"onclick=\"x",
+        "http://x.com/onclick=x"
+    ],
+    [
+        "esc_url_raw http://x.com/\"onclick=\"x",
+        "http://x.com/onclick=x"
+    ],
+    [
+        "esc_url http://x.com/\u0000nul",
+        "http://x.com/nul"
+    ],
+    [
+        "esc_url_raw http://x.com/\u0000nul",
+        "http://x.com/nul"
+    ],
+    [
+        "esc_url #anchor",
+        "#anchor"
+    ],
+    [
+        "esc_url_raw #anchor",
+        "#anchor"
+    ],
+    [
+        "esc_url ?q=1",
+        "?q=1"
+    ],
+    [
+        "esc_url_raw ?q=1",
+        "?q=1"
+    ],
+    [
+        "esc_url ftp://x/y",
+        "ftp://x/y"
+    ],
+    [
+        "esc_url_raw ftp://x/y",
+        "ftp://x/y"
+    ],
+    [
+        "esc_url tel:123",
+        "tel:123"
+    ],
+    [
+        "esc_url_raw tel:123",
+        "tel:123"
+    ],
+    [
+        "esc_url http://[::1]/x",
+        "http://[::1]/x"
+    ],
+    [
+        "esc_url_raw http://[::1]/x",
+        "http://[::1]/x"
+    ],
+    [
+        "esc_url //cdn.example/x.js",
+        "//cdn.example/x.js"
+    ],
+    [
+        "esc_url_raw //cdn.example/x.js",
+        "//cdn.example/x.js"
+    ],
+    [
+        "esc_url http://x.com/%20a%2Fb",
+        "http://x.com/%20a%2Fb"
+    ],
+    [
+        "esc_url_raw http://x.com/%20a%2Fb",
+        "http://x.com/%20a%2Fb"
+    ],
+    [
+        "esc_url http://x.com/\u00e9",
+        "http://x.com/\u00e9"
+    ],
+    [
+        "esc_url_raw http://x.com/\u00e9",
+        "http://x.com/\u00e9"
+    ],
+    [
+        "esc_url https://x.com/a?b=c&d=e#f",
+        "https://x.com/a?b=c&#038;d=e#f"
+    ],
+    [
+        "esc_url_raw https://x.com/a?b=c&d=e#f",
+        "https://x.com/a?b=c&d=e#f"
+    ],
+    [
+        "esc_url http://x.com/a'b",
+        "http://x.com/a&#039;b"
+    ],
+    [
+        "esc_url_raw http://x.com/a'b",
+        "http://x.com/a'b"
+    ],
+    [
+        "esc_url http://x.com/a<b>",
+        "http://x.com/ab"
+    ],
+    [
+        "esc_url_raw http://x.com/a<b>",
+        "http://x.com/ab"
+    ],
+    [
+        "esc_url foo:bar",
+        ""
+    ],
+    [
+        "esc_url_raw foo:bar",
+        ""
+    ],
+    [
+        "esc_url http://x.com:8080/y",
+        "http://x.com:8080/y"
+    ],
+    [
+        "esc_url_raw http://x.com:8080/y",
+        "http://x.com:8080/y"
+    ],
+    [
+        "esc_url http:/x",
+        "http:/x"
+    ],
+    [
+        "esc_url_raw http:/x",
+        "http:/x"
+    ],
+    [
+        "esc_url protocols",
+        ""
+    ],
+    [
+        "esc_url_raw protocols",
+        ""
+    ],
+    [
+        "sanitize_text_field",
+        "x y %zz z &amp; < >"
+    ],
+    [
+        "sanitize_text_field lt",
+        "a < b and c > d &lt;x"
+    ],
+    [
+        "sanitize_textarea_field",
+        "x\n y \r\n z"
+    ],
+    [
+        "wp_strip_all_tags",
+        "a\n b c"
+    ],
+    [
+        "wp_strip_all_tags breaks",
+        "a b c"
+    ],
+    [
+        "trailingslashit",
+        [
+            "a/",
+            "a/",
+            "a/",
+            "a/",
+            "/"
+        ]
+    ],
+    [
+        "untrailingslashit",
+        [
+            "a",
+            "a",
+            "a",
+            ""
+        ]
+    ],
+    [
+        "wp_parse_args string",
+        {
+            "c": "",
+            "d": 4,
+            "a": "1",
+            "b": [
+                "2",
+                "3"
+            ]
+        }
+    ],
+    [
+        "wp_parse_args array",
+        {
+            "a": 1,
+            "b": 2
+        }
+    ],
+    [
+        "wp_parse_args object",
+        {
+            "b": 2,
+            "a": 1
+        }
+    ],
+    [
+        "wp_parse_args empty",
+        {
+            "b": 2
+        }
+    ],
+    [
+        "wp_json_encode",
+        "{\"a\":\"\\u00e9\",\"b\":\"\\/\",\"c\":\"bad?\"}"
+    ],
+    [
+        "wp_json_encode flags",
+        "{\"a\":\"/\"}"
+    ],
+    [
+        "absint",
+        [
+            5,
+            3,
+            0,
+            2,
+            0
+        ]
+    ],
+    [
+        "sanitize_key",
+        "helloworld_1-x"
+    ],
+    [
+        "sanitize_html_class",
+        [
+            "HelloWorld_1-x",
+            "fallback",
+            ""
+        ]
+    ],
+    [
+        "sanitize_title",
+        [
+            "hello-world-e-n-x",
+            "",
+            "fallback",
+            "unicode-tags-100"
+        ]
+    ],
+    [
+        "sanitize_title_with_dashes",
+        "a-b_c-defg"
+    ],
+    [
+        "sanitize_file_name",
+        "my-file-1.tar.gz"
+    ],
+    [
+        "sanitize_email",
+        [
+            "A.b+c@Ex-ample.com",
+            "",
+            "a@b.co"
+        ]
+    ],
+    [
+        "is_email",
+        [
+            "a@b.co",
+            false,
+            false
+        ]
+    ],
+    [
+        "wp_unslash",
+        [
+            "a'b",
+            [
+                "c\"d"
+            ]
+        ]
+    ],
+    [
+        "wp_slash",
+        [
+            "a\\'b",
+            [
+                "c\\\"d"
+            ]
+        ]
+    ],
+    [
+        "stripslashes_deep",
+        [
+            "a'b"
+        ]
+    ],
+    [
+        "wp_kses odd allowed",
+        "x a &gt; b y"
+    ],
+    [
+        "wp_kses allowed",
+        "<b class=\"c\">x</b><a href=\"x\" title=\"t\">l</a>u<p>p</p>"
+    ],
+    [
+        "wp_kses allowed strings",
+        "<b>x</b>y"
+    ],
+    [
+        "wp_kses_post",
+        "<p class=\"c\" style=\"color:red\">t</p>s<a href=\"x\">l</a><img src=\"x.png\" alt=\"a\" />"
+    ],
+    [
+        "wp_kses_data",
+        "t<b>b</b><a href=\"http://x\">l</a>"
+    ],
+    [
+        "wp_kses_allowed_html post keys",
+        124
+    ],
+    [
+        "wp_kses_allowed_html post a",
+        {
+            "href": true,
+            "rel": true,
+            "rev": true,
+            "name": true,
+            "target": true,
+            "download": {
+                "valueless": "y"
+            },
+            "aria-controls": true,
+            "aria-current": true,
+            "aria-describedby": true,
+            "aria-details": true,
+            "aria-expanded": true,
+            "aria-hidden": true,
+            "aria-label": true,
+            "aria-labelledby": true,
+            "aria-live": true,
+            "class": true,
+            "data-*": true,
+            "dir": true,
+            "hidden": true,
+            "id": true,
+            "lang": true,
+            "style": true,
+            "tabindex": true,
+            "title": true,
+            "role": true,
+            "xml:lang": true
+        }
+    ],
+    [
+        "wp_kses_allowed_html data keys",
+        [
+            "a",
+            "abbr",
+            "acronym",
+            "b",
+            "blockquote",
+            "cite",
+            "code",
+            "del",
+            "em",
+            "i",
+            "q",
+            "s",
+            "strike",
+            "strong"
+        ]
+    ],
+    [
+        "wp_kses_allowed_html strip",
+        []
+    ],
+    [
+        "wp_kses_allowed_html entities",
+        [
+            "nbsp",
+            "iexcl",
+            "cent",
+            "pound",
+            "curren",
+            "yen",
+            "brvbar",
+            "sect",
+            "uml",
+            "copy",
+            "ordf",
+            "laquo",
+            "not",
+            "shy",
+            "reg",
+            "macr",
+            "deg",
+            "plusmn",
+            "acute",
+            "micro",
+            "para",
+            "middot",
+            "cedil",
+            "ordm",
+            "raquo",
+            "iquest",
+            "Agrave",
+            "Aacute",
+            "Acirc",
+            "Atilde",
+            "Auml",
+            "Aring",
+            "AElig",
+            "Ccedil",
+            "Egrave",
+            "Eacute",
+            "Ecirc",
+            "Euml",
+            "Igrave",
+            "Iacute",
+            "Icirc",
+            "Iuml",
+            "ETH",
+            "Ntilde",
+            "Ograve",
+            "Oacute",
+            "Ocirc",
+            "Otilde",
+            "Ouml",
+            "times",
+            "Oslash",
+            "Ugrave",
+            "Uacute",
+            "Ucirc",
+            "Uuml",
+            "Yacute",
+            "THORN",
+            "szlig",
+            "agrave",
+            "aacute",
+            "acirc",
+            "atilde",
+            "auml",
+            "aring",
+            "aelig",
+            "ccedil",
+            "egrave",
+            "eacute",
+            "ecirc",
+            "euml",
+            "igrave",
+            "iacute",
+            "icirc",
+            "iuml",
+            "eth",
+            "ntilde",
+            "ograve",
+            "oacute",
+            "ocirc",
+            "otilde",
+            "ouml",
+            "divide",
+            "oslash",
+            "ugrave",
+            "uacute",
+            "ucirc",
+            "uuml",
+            "yacute",
+            "thorn",
+            "yuml",
+            "quot",
+            "amp",
+            "lt",
+            "gt",
+            "apos",
+            "OElig",
+            "oelig",
+            "Scaron",
+            "scaron",
+            "Yuml",
+            "circ",
+            "tilde",
+            "ensp",
+            "emsp",
+            "thinsp",
+            "zwnj",
+            "zwj",
+            "lrm",
+            "rlm",
+            "ndash",
+            "mdash",
+            "lsquo",
+            "rsquo",
+            "sbquo",
+            "ldquo",
+            "rdquo",
+            "bdquo",
+            "dagger",
+            "Dagger",
+            "permil",
+            "lsaquo",
+            "rsaquo",
+            "euro",
+            "fnof",
+            "Alpha",
+            "Beta",
+            "Gamma",
+            "Delta",
+            "Epsilon",
+            "Zeta",
+            "Eta",
+            "Theta",
+            "Iota",
+            "Kappa",
+            "Lambda",
+            "Mu",
+            "Nu",
+            "Xi",
+            "Omicron",
+            "Pi",
+            "Rho",
+            "Sigma",
+            "Tau",
+            "Upsilon",
+            "Phi",
+            "Chi",
+            "Psi",
+            "Omega",
+            "alpha",
+            "beta",
+            "gamma",
+            "delta",
+            "epsilon",
+            "zeta",
+            "eta",
+            "theta",
+            "iota",
+            "kappa",
+            "lambda",
+            "mu",
+            "nu",
+            "xi",
+            "omicron",
+            "pi",
+            "rho",
+            "sigmaf",
+            "sigma",
+            "tau",
+            "upsilon",
+            "phi",
+            "chi",
+            "psi",
+            "omega",
+            "thetasym",
+            "upsih",
+            "piv",
+            "bull",
+            "hellip",
+            "prime",
+            "Prime",
+            "oline",
+            "frasl",
+            "weierp",
+            "image",
+            "real",
+            "trade",
+            "alefsym",
+            "larr",
+            "uarr",
+            "rarr",
+            "darr",
+            "harr",
+            "crarr",
+            "lArr",
+            "uArr",
+            "rArr",
+            "dArr",
+            "hArr",
+            "forall",
+            "part",
+            "exist",
+            "empty",
+            "nabla",
+            "isin",
+            "notin",
+            "ni",
+            "prod",
+            "sum",
+            "minus",
+            "lowast",
+            "radic",
+            "prop",
+            "infin",
+            "ang",
+            "and",
+            "or",
+            "cap",
+            "cup",
+            "int",
+            "sim",
+            "cong",
+            "asymp",
+            "ne",
+            "equiv",
+            "le",
+            "ge",
+            "sub",
+            "sup",
+            "nsub",
+            "sube",
+            "supe",
+            "oplus",
+            "otimes",
+            "perp",
+            "sdot",
+            "lceil",
+            "rceil",
+            "lfloor",
+            "rfloor",
+            "lang",
+            "rang",
+            "loz",
+            "spades",
+            "clubs",
+            "hearts",
+            "diams",
+            "sup1",
+            "sup2",
+            "sup3",
+            "frac14",
+            "frac12",
+            "frac34",
+            "there4"
+        ]
+    ],
+    [
+        "wp_kses_allowed_html custom",
+        {
+            "x": []
+        }
+    ],
+    [
+        "wp_filter_nohtml_kses",
+        "x &amp; y"
+    ],
+    [
+        "wp_kses_no_null",
+        "abc"
+    ],
+    [
+        "wp_kses_normalize_entities",
+        "&amp; &amp; &amp;bogus; &#065; &#x41; &amp;#999999999;"
+    ],
+    [
+        "wp_kses_bad_protocol",
+        [
+            "alert(1)",
+            "http://x",
+            "x"
+        ]
+    ],
+    [
+        "wp_kses_allowed_protocols",
+        [
+            "http",
+            "https",
+            "ftp",
+            "ftps",
+            "mailto",
+            "news",
+            "irc",
+            "irc6",
+            "ircs",
+            "gopher",
+            "nntp",
+            "feed",
+            "telnet",
+            "mms",
+            "rtsp",
+            "sms",
+            "svn",
+            "tel",
+            "fax",
+            "xmpp",
+            "webcal",
+            "urn"
+        ]
+    ],
+    [
+        "wp_kses_split",
+        "<b>x</b>y"
+    ],
+    [
+        "wp_kses hair",
+        "<b>x</b>hair"
+    ],
+    [
+        "home_url",
+        [
+            "https://minn-engine.localhost",
+            "https://minn-engine.localhost/x",
+            "https://minn-engine.localhost/x",
+            "https://minn-engine.localhost/x/?a=1",
+            "https://minn-engine.localhost/x",
+            "http://minn-engine.localhost/x",
+            "/x",
+            "https://minn-engine.localhost"
+        ]
+    ],
+    [
+        "site_url",
+        [
+            "http://minn-engine.localhost",
+            "http://minn-engine.localhost/x",
+            "/x"
+        ]
+    ],
+    [
+        "admin_url",
+        [
+            "https://minn-engine.localhost/wp-admin/",
+            "https://minn-engine.localhost/wp-admin/options.php",
+            "https://minn-engine.localhost/wp-admin/edit.php?post_type=page",
+            "/wp-admin/"
+        ]
+    ],
+    [
+        "content_url",
+        [
+            "http://minn-engine.localhost/wp-content",
+            "http://minn-engine.localhost/wp-content/x",
+            "http://minn-engine.localhost/wp-content/x"
+        ]
+    ],
+    [
+        "includes_url",
+        [
+            "http://minn-engine.localhost/wp-includes/",
+            "http://minn-engine.localhost/wp-includes/js/x.js"
+        ]
+    ],
+    [
+        "wp_login_url",
+        [
+            "https://minn-engine.localhost/wp-login.php",
+            "https://minn-engine.localhost/wp-login.php?redirect_to=https%3A%2F%2Fx%2Fback"
+        ]
+    ],
+    [
+        "wp_logout_url shape",
+        "https://minn-engine.localhost/wp-login.php?action=logout&amp;_wpnonce=N"
+    ],
+    [
+        "get_rest_url",
+        [
+            "https://minn-engine.localhost/wp-json/",
+            "https://minn-engine.localhost/wp-json/wp/v2/posts",
+            "https://minn-engine.localhost/wp-json/wp/v2/posts"
+        ]
+    ],
+    [
+        "get_stylesheet_directory_uri",
+        "http://minn-engine.localhost/wp-content/themes/twentytwentyfive"
+    ],
+    [
+        "get_template_directory_uri",
+        "http://minn-engine.localhost/wp-content/themes/twentytwentyfive"
+    ],
+    [
+        "get_stylesheet_directory",
+        "twentytwentyfive"
+    ],
+    [
+        "get_theme_root_uri",
+        "http://minn-engine.localhost/wp-content/themes"
+    ],
+    [
+        "get_stylesheet",
+        "twentytwentyfive"
+    ],
+    [
+        "get_template",
+        "twentytwentyfive"
+    ],
+    [
+        "get_bloginfo name",
+        "Welcome to minn-engine"
+    ],
+    [
+        "get_bloginfo description",
+        ""
+    ],
+    [
+        "get_bloginfo url",
+        "https://minn-engine.localhost"
+    ],
+    [
+        "get_bloginfo wpurl",
+        "http://minn-engine.localhost"
+    ],
+    [
+        "get_bloginfo version",
+        "7.1"
+    ],
+    [
+        "get_bloginfo charset",
+        "UTF-8"
+    ],
+    [
+        "get_bloginfo language",
+        "en-US"
+    ],
+    [
+        "get_bloginfo stylesheet_url",
+        "http://minn-engine.localhost/wp-content/themes/twentytwentyfive/style.css"
+    ],
+    [
+        "get_bloginfo stylesheet_directory",
+        "http://minn-engine.localhost/wp-content/themes/twentytwentyfive"
+    ],
+    [
+        "get_bloginfo template_url",
+        "http://minn-engine.localhost/wp-content/themes/twentytwentyfive"
+    ],
+    [
+        "get_bloginfo template_directory",
+        "http://minn-engine.localhost/wp-content/themes/twentytwentyfive"
+    ],
+    [
+        "get_bloginfo admin_email",
+        "admin@minn-engine.localhost"
+    ],
+    [
+        "get_bloginfo html_type",
+        "text/html"
+    ],
+    [
+        "get_bloginfo pingback_url",
+        "http://minn-engine.localhost/xmlrpc.php"
+    ],
+    [
+        "get_bloginfo rss2_url",
+        "https://minn-engine.localhost/feed/"
+    ],
+    [
+        "get_bloginfo rss_url",
+        "https://minn-engine.localhost/feed/rss/"
+    ],
+    [
+        "get_bloginfo atom_url",
+        "https://minn-engine.localhost/feed/atom/"
+    ],
+    [
+        "get_bloginfo comments_rss2_url",
+        "https://minn-engine.localhost/comments/feed/"
+    ],
+    [
+        "get_bloginfo comments_atom_url",
+        "https://minn-engine.localhost/comments/feed/atom/"
+    ],
+    [
+        "get_bloginfo text_direction",
+        "ltr"
+    ],
+    [
+        "get_bloginfo siteurl",
+        "https://minn-engine.localhost"
+    ],
+    [
+        "get_bloginfo home",
+        "https://minn-engine.localhost"
+    ],
+    [
+        "get_bloginfo bogus",
+        "Welcome to minn-engine"
+    ],
+    [
+        "get_bloginfo ",
+        "Welcome to minn-engine"
+    ],
+    [
+        "get_bloginfo display",
+        "Welcome to minn-engine"
+    ],
+    [
+        "bloginfo",
+        "Welcome to minn-engine"
+    ],
+    [
+        "wp_customize_url",
+        "https://minn-engine.localhost/wp-admin/customize.php"
+    ],
+    [
+        "wp_upload_dir keys",
+        [
+            "path",
+            "url",
+            "subdir",
+            "basedir",
+            "baseurl",
+            "error"
+        ]
+    ],
+    [
+        "wp_upload_dir",
+        [
+            "uploads",
+            "https://minn-engine.localhost/wp-content/uploads",
+            true,
+            false
+        ]
+    ],
+    [
+        "wp_get_upload_dir",
+        "https://minn-engine.localhost/wp-content/uploads"
+    ],
+    [
+        "get_admin_url",
+        "https://minn-engine.localhost/wp-admin/x.php"
+    ],
+    [
+        "network_home_url",
+        "https://minn-engine.localhost"
+    ],
+    [
+        "self_admin_url",
+        "https://minn-engine.localhost/wp-admin/a.php"
+    ],
+    [
+        "set_url_scheme",
+        [
+            "https://x.com/a",
+            "http://x.com/a",
+            "/a",
+            "/a?b"
+        ]
+    ],
+    [
+        "wp_normalize_path",
+        "C:/a/b/../c/d"
+    ],
+    [
+        "add_query_arg",
+        [
+            "http://x/?b=2&a=1",
+            "http://x/?c=3&a=1#h",
+            "/p?a=x y&z",
+            "/p?a%5Bk%5D=v",
+            "http://x/p?a=1"
+        ]
+    ],
+    [
+        "remove_query_arg",
+        [
+            "http://x/?a=1",
+            "http://x/?c=3"
+        ]
+    ],
+    [
+        "is_user_logged_in",
+        false
+    ],
+    [
+        "get_current_user_id",
+        0
+    ],
+    [
+        "current_user_can",
+        [
+            false,
+            false,
+            true
+        ]
+    ],
+    [
+        "wp_get_current_user",
+        [
+            0,
+            false,
+            false,
+            "WP_User"
+        ]
+    ],
+    [
+        "user_can",
+        [
+            true,
+            false,
+            false,
+            true
+        ]
+    ],
+    [
+        "get_userdata",
+        [
+            "admin",
+            1,
+            false,
+            [
+                "administrator"
+            ],
+            "Erin Editor",
+            true,
+            false
+        ]
+    ],
+    [
+        "get_user_by",
+        [
+            1,
+            "editor",
+            1,
+            1,
+            false
+        ]
+    ],
+    [
+        "WP_User props",
+        [
+            "data",
+            "ID",
+            "caps",
+            "cap_key",
+            "roles",
+            "allcaps",
+            "filter"
+        ]
+    ],
+    [
+        "WP_User data keys",
+        [
+            "ID",
+            "user_login",
+            "user_pass",
+            "user_nicename",
+            "user_email",
+            "user_url",
+            "user_registered",
+            "user_activation_key",
+            "user_status",
+            "display_name"
+        ]
+    ],
+    [
+        "shortcode_exists",
+        [
+            true,
+            false
+        ]
+    ],
+    [
+        "do_shortcode",
+        "a {{\"a\":\"1\",\"b\":\"2\",\"c\":\"3\",\"0\":\"flag\"}|x|minn_probe} [minn_probe] {[]||minn_probe} [nope] b"
+    ],
+    [
+        "do_shortcode nested same",
+        "{[]|[minn_probe]in|minn_probe}[/minn_probe]"
+    ],
+    [
+        "has_shortcode",
+        [
+            true,
+            false
+        ]
+    ],
+    [
+        "shortcode_atts",
+        {
+            "a": "1",
+            "b": "e"
+        }
+    ],
+    [
+        "shortcode_atts filter",
+        {
+            "a": "d",
+            "filtered": "minn_probe"
+        }
+    ],
+    [
+        "strip_shortcodes",
+        "a  [nope] b"
+    ],
+    [
+        "remove_shortcode",
+        false
+    ],
+    [
+        "shortcode_parse_atts",
+        {
+            "a": "1",
+            "b": "2",
+            "c": "3",
+            "0": "flag",
+            "1": "quoted",
+            "d": "x y"
+        }
+    ],
+    [
+        "wp_parse_url",
+        {
+            "scheme": "https",
+            "host": "x.com",
+            "port": 8080,
+            "user": "u",
+            "pass": "p",
+            "path": "/p/a",
+            "query": "q=1",
+            "fragment": "f"
+        }
+    ],
+    [
+        "wp_parse_url component",
+        "x.com"
+    ],
+    [
+        "wp_list_pluck",
+        {
+            "1": "a",
+            "2": "b"
+        }
+    ],
+    [
+        "wp_list_filter",
+        {
+            "1": {
+                "a": 2,
+                "b": 2
+            }
+        }
+    ],
+    [
+        "wp_array_slice_assoc",
+        {
+            "a": 1,
+            "c": 3
+        }
+    ],
+    [
+        "wp_is_numeric_array",
+        [
+            true,
+            false,
+            true,
+            false
+        ]
+    ],
+    [
+        "wp_rand shape",
+        5
+    ],
+    [
+        "wp_generate_password shape",
+        [
+            8,
+            12
+        ]
+    ],
+    [
+        "size_format",
+        [
+            "1 KB",
+            "1.5 KB",
+            "0 B",
+            "1 GB"
+        ]
+    ],
+    [
+        "wp_hash shape",
+        32
+    ],
+    [
+        "wp_hash_password verify",
+        true
+    ],
+    [
+        "wp_html_excerpt",
+        [
+            "Hello w",
+            "Hello\u2026"
+        ]
+    ],
+    [
+        "wp_trim_words",
+        [
+            "one two three&hellip;",
+            "one two",
+            "one two&hellip;"
+        ]
+    ],
+    [
+        "wptexturize",
+        "&#8220;Hi&#8221; &#8212; it&#8217;s 6&#8217;2&#8243; &#038; <code>\"x\"</code>&#8230;"
+    ],
+    [
+        "wpautop",
+        "<p>a</p>\n<p>b<br />\nc</p>\n<div>d</div>\n"
+    ],
+    [
+        "make_clickable",
+        "go to <a href=\"http://x.com/a?b=1\" rel=\"nofollow\">http://x.com/a?b=1</a> and <a href=\"mailto:a@b.co\">a@b.co</a> now"
+    ],
+    [
+        "wp_specialchars_decode",
+        "<b> &amp; &quot;q&quot; &#039;s"
+    ],
+    [
+        "_wp_specialchars",
+        [
+            "&lt;a&gt; &amp; &amp; \"q\" 's",
+            "&lt;a&gt; &amp; &amp; &quot;q&quot; &#039;s",
+            "&lt;a&gt; &amp; &amp;amp;"
+        ]
+    ],
+    [
+        "zeroise",
+        [
+            "005",
+            "1234"
+        ]
+    ],
+    [
+        "wp_basename",
+        "c%20d.txt"
+    ],
+    [
+        "is_serialized",
+        [
+            true,
+            true,
+            false,
+            true,
+            true,
+            true,
+            true
+        ]
+    ],
+    [
+        "maybe_serialize",
+        [
+            "a:1:{s:1:\"a\";i:1;}",
+            "s",
+            5,
+            null,
+            "s:18:\"a:1:{i:0;s:1:\"x\";}\";"
+        ]
+    ],
+    [
+        "maybe_unserialize",
+        [
+            [
+                "x"
+            ],
+            "s",
+            5,
+            false,
+            null,
+            "object"
+        ]
+    ],
+    [
+        "wp_cache",
+        [
+            true,
+            "v",
+            false,
+            true,
+            false,
+            true,
+            false,
+            "v1",
+            true
+        ]
+    ],
+    [
+        "wp_cache found",
+        false
+    ],
+    [
+        "current_time",
+        [
+            19,
+            true,
+            true,
+            19
+        ]
+    ],
+    [
+        "wp_timezone_string",
+        "+00:00"
+    ],
+    [
+        "get_gmt_from_date",
+        "2026-01-02 03:04:05"
+    ],
+    [
+        "get_date_from_gmt",
+        "2026-01-02 03:04:05"
+    ],
+    [
+        "mysql2date",
+        [
+            "2026-01-02",
+            1767323045,
+            false
+        ]
+    ],
+    [
+        "date_i18n",
+        [
+            "1970-01-02",
+            "January 1, 1970"
+        ]
+    ],
+    [
+        "wp_date",
+        "1970-01-01 00:00"
+    ],
+    [
+        "human_time_diff",
+        [
+            "2 minutes",
+            "5 hours",
+            "1 month",
+            "20 seconds"
+        ]
+    ],
+    [
+        "number_format_i18n",
+        [
+            "1,234,567.89",
+            "1,000"
+        ]
+    ],
+    [
+        "checked/selected/disabled",
+        [
+            " checked='checked'",
+            "",
+            " selected='selected'",
+            " disabled='disabled'",
+            " checked='checked'"
+        ]
+    ],
+    [
+        "wp_nonce shape",
+        [
+            10,
+            1,
+            false,
+            false
+        ]
+    ],
+    [
+        "wp_nonce_field shape",
+        "<input type=\"hidden\" id=\"f\" name=\"f\" value=\"N\" /><input type=\"hidden\" name=\"_wp_http_referer\" value=\"\" />"
+    ],
+    [
+        "wp_nonce_url shape",
+        "http://x/?a=1&amp;_wpnonce=N"
+    ],
+    [
+        "wp_referer_field",
+        "<input type=\"hidden\" name=\"_wp_http_referer\" value=\"\" />"
+    ],
+    [
+        "wp_get_referer",
+        false
+    ],
+    [
+        "wp_die shape",
+        "boom"
+    ],
+    [
+        "is_wp_error",
+        [
+            true,
+            false
+        ]
+    ],
+    [
+        "WP_Error",
+        [
+            "code1",
+            [
+                "code1",
+                "code2"
+            ],
+            "msg1",
+            "msg2",
+            [
+                "msg1",
+                "msg1b",
+                "msg2"
+            ],
+            [
+                "msg1",
+                "msg1b"
+            ],
+            {
+                "d": 1
+            },
+            null,
+            true,
+            false,
+            "",
+            {
+                "code1": [
+                    "msg1",
+                    "msg1b"
+                ],
+                "code2": [
+                    "msg2"
+                ]
+            },
+            {
+                "code1": {
+                    "d": 1
+                }
+            }
+        ]
+    ],
+    [
+        "WP_Error merge/remove",
+        [
+            [
+                "code1",
+                "code2"
+            ],
+            null,
+            [
+                {
+                    "d": 1
+                }
+            ],
+            [
+                "code1",
+                "code2"
+            ]
+        ]
+    ],
+    [
+        "wp_get_theme",
+        [
+            "Twenty Twenty-Five",
+            "twentytwentyfive",
+            "twentytwentyfive",
+            false,
+            true,
+            false,
+            true,
+            "Twenty Twenty-Five",
+            true,
+            "twentytwentyfive",
+            true,
+            "twentytwentyfive"
+        ]
+    ],
+    [
+        "get_theme_mod",
+        [
+            false,
+            "d"
+        ]
+    ],
+    [
+        "wp_get_environment_type",
+        "production"
+    ],
+    [
+        "wp_get_development_mode",
+        ""
+    ],
+    [
+        "is_wp_version_compatible",
+        [
+            true,
+            false
+        ]
+    ],
+    [
+        "is_php_version_compatible",
+        true
+    ],
+    [
+        "get_bloginfo url as home",
+        true
+    ],
+    [
+        "wp_get_mime_types count",
+        true
+    ],
+    [
+        "wp_check_filetype",
+        [
+            {
+                "ext": "jpg",
+                "type": "image/jpeg"
+            },
+            {
+                "ext": "JPEG",
+                "type": "image/jpeg"
+            },
+            {
+                "ext": false,
+                "type": false
+            },
+            {
+                "ext": "gz",
+                "type": "application/x-gzip"
+            }
+        ]
+    ],
+    [
+        "wp_ext2type",
+        [
+            "image",
+            "audio",
+            null
+        ]
+    ],
+    [
+        "get_allowed_mime_types count",
+        true
+    ],
+    [
+        "wp_get_attachment_url none",
+        false
+    ],
+    [
+        "wp_mkdir_p",
+        true
+    ],
+    [
+        "wp_is_writable",
+        true
+    ],
+    [
+        "wp_using_ext_object_cache",
+        null
+    ],
+    [
+        "apply_filters plugins_url filter",
+        "http://minn-engine.localhost/wp-content/plugins/x/a#f"
+    ]
+]

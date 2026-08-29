@@ -55,7 +55,7 @@ final class Serialized
      */
     public static function decode(string $blob): mixed
     {
-        if ($blob === '' || !preg_match('/^[sidbNa]:/', $blob)) {
+        if ($blob === '' || !preg_match('/^[sidbNaO]:|^N;/', $blob)) {
             return self::INVALID;
         }
         $offset = 0;
@@ -94,6 +94,30 @@ final class Serialized
                 self::expect($blob, $offset, '"');
                 self::expect($blob, $offset, ';');
                 return $string;
+            case 'O':
+                // An object becomes a plain stdClass carrying its properties; no
+                // class is ever instantiated, which is what keeps this safe.
+                self::expect($blob, $offset, ':');
+                $nameLength = (int) self::until($blob, $offset, ':');
+                self::expect($blob, $offset, '"');
+                $offset += $nameLength;
+                self::expect($blob, $offset, '"');
+                self::expect($blob, $offset, ':');
+                $count = (int) self::until($blob, $offset, ':');
+                self::expect($blob, $offset, '{');
+                $object = new \stdClass();
+                for ($i = 0; $i < $count; $i++) {
+                    $key = self::read($blob, $offset);
+                    if (!is_string($key)) {
+                        throw new \ValueError('key');
+                    }
+                    if (str_starts_with($key, "\0")) {
+                        $key = (string) substr($key, (int) strrpos($key, "\0") + 1);
+                    }
+                    $object->{$key} = self::read($blob, $offset);
+                }
+                self::expect($blob, $offset, '}');
+                return $object;
             case 'a':
                 self::expect($blob, $offset, ':');
                 $count = (int) self::until($blob, $offset, ':');

@@ -183,6 +183,12 @@ final class Kses
         return $value;
     }
 
+    /** A style attribute's value with only the listed properties kept. */
+    public static function style(string $style): string
+    {
+        return self::css($style);
+    }
+
     /** Listed properties only; no url() outside images, and no expression, behavior, or script anywhere. */
     private static function css(string $style): string
     {

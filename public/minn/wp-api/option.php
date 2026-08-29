@@ -1,0 +1,408 @@
+<?php
+/**
+ * Options, transients, and the object cache as plugin code reads them.
+ * Storage shapes and return values follow contracts/fixtures/api/functions.json.
+ */
+
+use Minn\Runtime\Runtime;
+use Minn\Support\Serialized;
+
+function get_option($option, $default_value = false)
+{
+    $option = trim((string) $option);
+    if ($option === '') {
+        return false;
+    }
+    $pre = apply_filters("pre_option_{$option}", false, $option, $default_value);
+    $pre = apply_filters('pre_option', $pre, $option, $default_value);
+    if ($pre !== false) {
+        return $pre;
+    }
+    $value = Runtime::options()->get($option);
+    if ($value === null) {
+        return apply_filters("default_option_{$option}", $default_value, $option, func_num_args() > 1);
+    }
+    return apply_filters("option_{$option}", $value, $option);
+}
+
+function get_site_option($option, $default_value = false, $deprecated = true)
+{
+    return get_option($option, $default_value);
+}
+
+function get_network_option($network_id, $option, $default_value = false)
+{
+    return get_option($option, $default_value);
+}
+
+function add_option($option, $value = '', $deprecated = '', $autoload = null)
+{
+    $option = trim((string) $option);
+    if ($option === '') {
+        return false;
+    }
+    $value = apply_filters("pre_add_option_{$option}", $value, $option);
+    $flag = match (true) {
+        $autoload === null, $autoload === 'auto' => 'auto',
+        $autoload === 'yes', $autoload === 'on', $autoload === true => 'on',
+        default => 'off',
+    };
+    do_action('add_option', $option, $value);
+    if (!Runtime::options()->add($option, $value, $flag)) {
+        return false;
+    }
+    do_action("add_option_{$option}", $option, $value);
+    do_action('added_option', $option, $value);
+    return true;
+}
+
+function add_site_option($option, $value)
+{
+    return add_option($option, $value);
+}
+
+function update_option($option, $value, $autoload = null)
+{
+    $option = trim((string) $option);
+    if ($option === '') {
+        return false;
+    }
+    $old = get_option($option);
+    $value = apply_filters("pre_update_option_{$option}", $value, $old, $option);
+    $value = apply_filters('pre_update_option', $value, $option, $old);
+    if (Runtime::options()->get($option) === null) {
+        return add_option($option, $value, '', $autoload);
+    }
+    do_action('update_option', $option, $old, $value);
+    if (!Runtime::options()->update($option, $value)) {
+        return false;
+    }
+    do_action("update_option_{$option}", $old, $value, $option);
+    do_action('updated_option', $option, $old, $value);
+    return true;
+}
+
+function update_site_option($option, $value)
+{
+    return update_option($option, $value);
+}
+
+function delete_option($option)
+{
+    $option = trim((string) $option);
+    if ($option === '') {
+        return false;
+    }
+    do_action('delete_option', $option);
+    if (!Runtime::options()->delete($option)) {
+        return false;
+    }
+    do_action("delete_option_{$option}", $option);
+    do_action('deleted_option', $option);
+    return true;
+}
+
+function delete_site_option($option)
+{
+    return delete_option($option);
+}
+
+function wp_load_alloptions($force_cache = false)
+{
+    $rows = Runtime::current()->db->rows("SELECT option_name, option_value FROM " . Runtime::current()->db->table('options') . " WHERE autoload IN ('yes', 'on', 'auto', 'auto-on')");
+    $out = [];
+    foreach ($rows as $row) {
+        $out[$row['option_name']] = $row['option_value'];
+    }
+    return $out;
+}
+
+function wp_cache_get($key, $group = '', $force = false, &$found = null)
+{
+    return Runtime::cache()->get((string) $key, $group === '' ? 'default' : (string) $group, $found);
+}
+
+function wp_cache_set($key, $data, $group = '', $expire = 0)
+{
+    return Runtime::cache()->set((string) $key, $data, $group === '' ? 'default' : (string) $group);
+}
+
+function wp_cache_add($key, $data, $group = '', $expire = 0)
+{
+    return Runtime::cache()->add((string) $key, $data, $group === '' ? 'default' : (string) $group);
+}
+
+function wp_cache_replace($key, $data, $group = '', $expire = 0)
+{
+    $cache = Runtime::cache();
+    $cache->get((string) $key, $group === '' ? 'default' : (string) $group, $found);
+    return $found ? $cache->set((string) $key, $data, $group === '' ? 'default' : (string) $group) : false;
+}
+
+function wp_cache_delete($key, $group = '')
+{
+    return Runtime::cache()->delete((string) $key, $group === '' ? 'default' : (string) $group);
+}
+
+function wp_cache_flush()
+{
+    return Runtime::cache()->flush();
+}
+
+function wp_cache_flush_runtime()
+{
+    return Runtime::cache()->flush();
+}
+
+function wp_cache_flush_group($group)
+{
+    return Runtime::cache()->flushGroup((string) $group);
+}
+
+function wp_cache_supports($feature)
+{
+    return in_array($feature, ['flush_runtime', 'flush_group'], true);
+}
+
+function wp_cache_get_multiple($keys, $group = '', $force = false)
+{
+    $out = [];
+    foreach ((array) $keys as $key) {
+        $out[$key] = wp_cache_get($key, $group);
+    }
+    return $out;
+}
+
+function wp_cache_set_multiple(array $data, $group = '', $expire = 0)
+{
+    $out = [];
+    foreach ($data as $key => $value) {
+        $out[$key] = wp_cache_set($key, $value, $group);
+    }
+    return $out;
+}
+
+function wp_cache_delete_multiple(array $keys, $group = '')
+{
+    $out = [];
+    foreach ($keys as $key) {
+        $out[$key] = wp_cache_delete($key, $group);
+    }
+    return $out;
+}
+
+function wp_cache_incr($key, $offset = 1, $group = '')
+{
+    $value = wp_cache_get($key, $group);
+    if (!is_numeric($value)) {
+        return false;
+    }
+    $value = max(0, (int) $value + (int) $offset);
+    wp_cache_set($key, $value, $group);
+    return $value;
+}
+
+function wp_cache_decr($key, $offset = 1, $group = '')
+{
+    return wp_cache_incr($key, -(int) $offset, $group);
+}
+
+function wp_cache_add_global_groups($groups)
+{
+}
+
+function wp_cache_add_non_persistent_groups($groups)
+{
+}
+
+function wp_cache_switch_to_blog($blog_id)
+{
+}
+
+function wp_cache_init()
+{
+}
+
+function wp_cache_close()
+{
+    return true;
+}
+
+function get_transient($transient)
+{
+    $transient = (string) $transient;
+    $pre = apply_filters("pre_transient_{$transient}", false, $transient);
+    if ($pre !== false) {
+        return $pre;
+    }
+    $timeout = get_option("_transient_timeout_{$transient}");
+    if ($timeout !== false && (int) $timeout < time()) {
+        delete_option("_transient_{$transient}");
+        delete_option("_transient_timeout_{$transient}");
+        return false;
+    }
+    $value = get_option("_transient_{$transient}");
+    return apply_filters("transient_{$transient}", $value, $transient);
+}
+
+function set_transient($transient, $value, $expiration = 0)
+{
+    $transient = (string) $transient;
+    $expiration = (int) $expiration;
+    $value = apply_filters("pre_set_transient_{$transient}", $value, $expiration, $transient);
+    $expiration = (int) apply_filters("expiration_of_transient_{$transient}", $expiration, $value, $transient);
+    $name = "_transient_{$transient}";
+    $timeoutName = "_transient_timeout_{$transient}";
+    if (get_option($name) === false) {
+        $autoload = 'on';
+        if ($expiration !== 0) {
+            $autoload = 'off';
+            add_option($timeoutName, time() + $expiration, '', 'off');
+        }
+        $result = add_option($name, $value, '', $autoload);
+    } else {
+        $update = true;
+        if ($expiration !== 0) {
+            if (get_option($timeoutName) === false) {
+                delete_option($name);
+                add_option($timeoutName, time() + $expiration, '', 'off');
+                $result = add_option($name, $value, '', 'off');
+                $update = false;
+            } else {
+                update_option($timeoutName, time() + $expiration);
+            }
+        }
+        if ($update) {
+            $result = update_option($name, $value);
+        }
+    }
+    if ($result) {
+        do_action("set_transient_{$transient}", $value, $expiration, $transient);
+        do_action('setted_transient', $transient, $value, $expiration);
+    }
+    return $result;
+}
+
+function delete_transient($transient)
+{
+    $transient = (string) $transient;
+    do_action("delete_transient_{$transient}", $transient);
+    $result = delete_option("_transient_{$transient}");
+    if ($result) {
+        delete_option("_transient_timeout_{$transient}");
+        do_action('deleted_transient', $transient);
+    }
+    return $result;
+}
+
+function get_site_transient($transient)
+{
+    $transient = (string) $transient;
+    $pre = apply_filters("pre_site_transient_{$transient}", false, $transient);
+    if ($pre !== false) {
+        return $pre;
+    }
+    $timeout = get_option("_site_transient_timeout_{$transient}");
+    if ($timeout !== false && (int) $timeout < time()) {
+        delete_option("_site_transient_{$transient}");
+        delete_option("_site_transient_timeout_{$transient}");
+        return false;
+    }
+    return apply_filters("site_transient_{$transient}", get_option("_site_transient_{$transient}"), $transient);
+}
+
+function set_site_transient($transient, $value, $expiration = 0)
+{
+    $transient = (string) $transient;
+    $expiration = (int) $expiration;
+    $value = apply_filters("pre_set_site_transient_{$transient}", $value, $transient);
+    $name = "_site_transient_{$transient}";
+    if (get_option($name) === false) {
+        if ($expiration !== 0) {
+            add_option("_site_transient_timeout_{$transient}", time() + $expiration, '', 'off');
+        }
+        $result = add_option($name, $value, '', 'off');
+    } else {
+        if ($expiration !== 0) {
+            update_option("_site_transient_timeout_{$transient}", time() + $expiration);
+        }
+        $result = update_option($name, $value);
+    }
+    return $result;
+}
+
+function delete_site_transient($transient)
+{
+    $transient = (string) $transient;
+    $result = delete_option("_site_transient_{$transient}");
+    if ($result) {
+        delete_option("_site_transient_timeout_{$transient}");
+    }
+    return $result;
+}
+
+function is_serialized($data, $strict = true)
+{
+    if (!is_string($data)) {
+        return false;
+    }
+    $data = trim($data);
+    if ($data === 'N;') {
+        return true;
+    }
+    return preg_match('/^(?:[bid]:.+;|s:\d+:".*";|[aO]:\d+:.+)$/s', $data) === 1;
+}
+
+function is_serialized_string($data)
+{
+    return is_string($data) && preg_match('/^s:\d+:".*";$/s', trim($data)) === 1;
+}
+
+function maybe_serialize($data)
+{
+    if (is_array($data) || is_object($data)) {
+        return Serialized::encode(is_object($data) ? (array) $data : $data);
+    }
+    if (is_serialized($data, false)) {
+        return Serialized::encode($data);
+    }
+    return $data;
+}
+
+function maybe_unserialize($data)
+{
+    if (!is_serialized($data)) {
+        return $data;
+    }
+    $decoded = Serialized::decode(trim((string) $data));
+    return $decoded === Serialized::INVALID ? $data : $decoded;
+}
+
+function register_setting($option_group, $option_name, $args = [])
+{
+    $registered = Runtime::current()->get('registered_settings', []);
+    $args = is_array($args) ? $args : [];
+    $args['group'] = $option_group;
+    $registered[$option_name] = $args;
+    Runtime::current()->set('registered_settings', $registered);
+    if (isset($args['sanitize_callback']) && is_callable($args['sanitize_callback'])) {
+        add_filter("sanitize_option_{$option_name}", $args['sanitize_callback'], 10, 2);
+    }
+}
+
+function unregister_setting($option_group, $option_name, $deprecated = '')
+{
+    $registered = Runtime::current()->get('registered_settings', []);
+    unset($registered[$option_name]);
+    Runtime::current()->set('registered_settings', $registered);
+}
+
+function get_registered_settings()
+{
+    return Runtime::current()->get('registered_settings', []);
+}
+
+function sanitize_option($option, $value)
+{
+    return apply_filters("sanitize_option_{$option}", $value, $option, $value);
+}

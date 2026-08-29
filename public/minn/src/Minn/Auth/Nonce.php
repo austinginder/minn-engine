@@ -33,7 +33,7 @@ final class Nonce
         return false;
     }
 
-    private static function at(float $tick, int $userId, string $token, string $action): string
+    public static function at(float $tick, int $userId, string $token, string $action): string
     {
         return substr(Salts::hash("{$tick}|{$action}|{$userId}|{$token}", 'nonce'), -12, 10);
     }

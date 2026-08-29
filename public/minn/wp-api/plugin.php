@@ -1,0 +1,163 @@
+<?php
+/** Plugin file paths and the activation hooks. */
+
+use Minn\Runtime\Runtime;
+
+function plugin_basename($file)
+{
+    $file = wp_normalize_path((string) $file);
+    foreach ([WP_PLUGIN_DIR, WPMU_PLUGIN_DIR] as $dir) {
+        $dir = wp_normalize_path($dir);
+        foreach (array_unique([$dir, wp_normalize_path((string) (realpath($dir) ?: $dir))]) as $root) {
+            if (str_starts_with($file, $root . '/')) {
+                return trim(substr($file, strlen($root)), '/');
+            }
+        }
+    }
+    return ltrim($file, '/');
+}
+
+function wp_register_plugin_realpath($file)
+{
+    return true;
+}
+
+function plugin_dir_path($file)
+{
+    return trailingslashit(dirname((string) $file));
+}
+
+function plugin_dir_url($file)
+{
+    return trailingslashit(plugins_url('', $file));
+}
+
+function plugins_url($path = '', $plugin = '')
+{
+    $path = wp_normalize_path((string) $path);
+    $plugin = wp_normalize_path((string) $plugin);
+    $mu = wp_normalize_path(WPMU_PLUGIN_DIR);
+    $isMu = $plugin !== '' && str_starts_with($plugin, $mu);
+    $url = set_url_scheme($isMu ? WPMU_PLUGIN_URL : WP_PLUGIN_URL);
+    if ($plugin !== '') {
+        $folder = dirname(plugin_basename($plugin));
+        if ($folder !== '.') {
+            $url .= '/' . ltrim($folder, '/');
+        }
+    }
+    if ($path !== '') {
+        $url .= '/' . ltrim($path, '/');
+    }
+    return apply_filters('plugins_url', $url, $path, $plugin);
+}
+
+function register_activation_hook($file, $callback)
+{
+    add_action('activate_' . plugin_basename($file), $callback);
+}
+
+function register_deactivation_hook($file, $callback)
+{
+    add_action('deactivate_' . plugin_basename($file), $callback);
+}
+
+function register_uninstall_hook($file, $callback)
+{
+    if (is_array($callback) && is_object($callback[0])) {
+        return;
+    }
+    $basename = plugin_basename($file);
+    $uninstallable = get_option('uninstall_plugins');
+    $uninstallable = is_array($uninstallable) ? $uninstallable : [];
+    if (($uninstallable[$basename] ?? null) !== $callback) {
+        $uninstallable[$basename] = $callback;
+        update_option('uninstall_plugins', $uninstallable);
+    }
+}
+
+function is_plugin_active($plugin)
+{
+    return in_array($plugin, (array) get_option('active_plugins', []), true);
+}
+
+function is_plugin_inactive($plugin)
+{
+    return !is_plugin_active($plugin);
+}
+
+function is_plugin_active_for_network($plugin)
+{
+    return false;
+}
+
+function is_network_only_plugin($plugin)
+{
+    return false;
+}
+
+function get_plugin_data($plugin_file, $markup = true, $translate = true)
+{
+    $headers = ['Name' => 'Plugin Name', 'PluginURI' => 'Plugin URI', 'Version' => 'Version', 'Description' => 'Description', 'Author' => 'Author', 'AuthorURI' => 'Author URI', 'TextDomain' => 'Text Domain', 'DomainPath' => 'Domain Path', 'Network' => 'Network', 'RequiresWP' => 'Requires at least', 'RequiresPHP' => 'Requires PHP', 'UpdateURI' => 'Update URI', 'RequiresPlugins' => 'Requires Plugins'];
+    $data = get_file_data($plugin_file, $headers, 'plugin');
+    $data['Title'] = $data['Name'];
+    $data['AuthorName'] = $data['Author'];
+    $data['Network'] = strtolower($data['Network']) === 'true';
+    return $data;
+}
+
+function get_file_data($file, $default_headers, $context = '')
+{
+    $handle = @fopen((string) $file, 'r');
+    $head = $handle ? (string) fread($handle, 8 * KB_IN_BYTES) : '';
+    if ($handle) {
+        fclose($handle);
+    }
+    $head = str_replace("\r", "\n", $head);
+    $headers = $context !== '' ? apply_filters("extra_{$context}_headers", []) : [];
+    $headers = array_merge(array_fill_keys($headers, ''), $default_headers);
+    $out = [];
+    foreach ($headers as $field => $regex) {
+        $label = is_string($regex) && $regex !== '' ? $regex : $field;
+        if (preg_match('/^(?:[ \t]*<\?php)?[ \t\/*#@]*' . preg_quote($label, '/') . ':(.*)$/mi', $head, $m) && $m[1]) {
+            $out[$field] = trim(preg_replace('/\s*(?:\*\/|\?>).*/', '', $m[1]));
+        } else {
+            $out[$field] = '';
+        }
+    }
+    return $out;
+}
+
+function get_mu_plugins()
+{
+    $out = [];
+    foreach (glob(WPMU_PLUGIN_DIR . '/*.php') ?: [] as $file) {
+        $out[basename($file)] = get_plugin_data($file, false, false);
+    }
+    return $out;
+}
+
+function get_plugins($plugin_folder = '')
+{
+    $out = [];
+    $root = WP_PLUGIN_DIR . ($plugin_folder !== '' ? '/' . trim((string) $plugin_folder, '/') : '');
+    foreach (array_merge(glob($root . '/*.php') ?: [], glob($root . '/*/*.php') ?: []) as $file) {
+        $data = get_plugin_data($file, false, false);
+        if ($data['Name'] !== '') {
+            $out[plugin_basename($file)] = $data;
+        }
+    }
+    ksort($out);
+    return $out;
+}
+
+function wp_get_active_and_valid_plugins()
+{
+    $out = [];
+    foreach ((array) get_option('active_plugins', []) as $plugin) {
+        $file = WP_PLUGIN_DIR . '/' . $plugin;
+        if (is_file($file)) {
+            $out[] = $file;
+        }
+    }
+    return $out;
+}
