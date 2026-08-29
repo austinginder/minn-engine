@@ -188,11 +188,12 @@ file_put_contents("$manifestDir/minn.json", json_encode([
     'extension' => 'Minn\\Ext\\Scan\\Extension',
     'shortcodes' => ['eeb_protect_content'],
     'blocks' => ['jetpack/slideshow', 'mosne/dark-palette'],
+    'types' => [['slug' => 'zz_note', 'name' => 'Notes', 'rest_base' => 'zz-note']],
 ], JSON_UNESCAPED_SLASHES));
 $manifest = Minn\Extension\Manifest::read($manifestDir);
 $check(
-    'manifest reads shortcodes and blocks',
-    $manifest !== null && $manifest->shortcodes === ['eeb_protect_content'] && $manifest->blocks === ['jetpack/slideshow', 'mosne/dark-palette'],
+    'manifest reads shortcodes, blocks, and types',
+    $manifest !== null && $manifest->shortcodes === ['eeb_protect_content'] && $manifest->blocks === ['jetpack/slideshow', 'mosne/dark-palette'] && ($manifest->types[0]['slug'] ?? '') === 'zz_note',
     json_encode($manifest),
 );
 

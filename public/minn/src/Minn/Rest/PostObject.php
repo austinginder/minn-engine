@@ -33,7 +33,11 @@ final readonly class PostObject
 
     public static function restBase(string $type): string
     {
-        return $type === 'page' ? 'pages' : 'posts';
+        return match ($type) {
+            'page' => 'pages',
+            'post' => 'posts',
+            default => str_replace('_', '-', $type),
+        };
     }
 
     public function view(array $p): array
@@ -85,20 +89,23 @@ final readonly class PostObject
         } else {
             $categories = $this->posts->terms($id, 'category');
             $tags = $this->posts->terms($id, 'post_tag');
-            $formats = $this->posts->terms($id, 'post_format');
-            $format = $formats === [] ? 'standard' : str_replace('post-format-', '', $formats[0][1]);
-            $sticky = Serialized::intList($this->db->option('sticky_posts'));
-
             $object['comment_status'] = $p['comment_status'];
             $object['ping_status'] = $p['ping_status'];
-            $object['sticky'] = in_array($id, $sticky, true);
             $object['template'] = '';
-            $object['format'] = $format;
             $object['meta'] = ['footnotes' => $this->posts->meta($id, 'footnotes') ?? ''];
             $object['categories'] = array_map(static fn (array $t) => $t[0], $categories);
             $object['tags'] = array_map(static fn (array $t) => $t[0], $tags);
-
-            $classes[] = 'format-' . $format;
+            if ($type === 'post') {
+                $formats = $this->posts->terms($id, 'post_format');
+                $format = $formats === [] ? 'standard' : str_replace('post-format-', '', $formats[0][1]);
+                $sticky = Serialized::intList($this->db->option('sticky_posts'));
+                $object['sticky'] = in_array($id, $sticky, true);
+                $object['format'] = $format;
+                $classes[] = 'format-' . $format;
+                foreach ($formats as $term) {
+                    $classes[] = 'post_format-' . $term[1];
+                }
+            }
             if ($protected) {
                 $classes[] = 'post-password-required';
             }
@@ -111,9 +118,6 @@ final readonly class PostObject
             }
             foreach ($tags as $term) {
                 $classes[] = 'tag-' . $term[1];
-            }
-            foreach ($formats as $term) {
-                $classes[] = 'post_format-' . $term[1];
             }
         }
 
@@ -149,7 +153,7 @@ final readonly class PostObject
                 ? [['embeddable' => true, 'href' => $this->url->to('/wp/v2/media/' . $featured)]]
                 : null,
             'wp:attachment' => [['href' => $this->url->to('/wp/v2/media', ['parent' => $id])]],
-            'wp:term' => $type === 'post' ? [
+            'wp:term' => $type !== 'page' ? [
                 ['taxonomy' => 'category', 'embeddable' => true, 'href' => $this->url->to('/wp/v2/categories', ['post' => $id])],
                 ['taxonomy' => 'post_tag', 'embeddable' => true, 'href' => $this->url->to('/wp/v2/tags', ['post' => $id])],
             ] : null,
@@ -217,6 +221,9 @@ final readonly class PostObject
             $parent = (int) $p['post_parent'] > 0 ? $this->posts->find((int) $p['post_parent']) : null;
             $prefix = $parent === null ? '' : '/' . $this->posts->pathOf($parent);
             return $this->url->home($prefix . '/%pagename%/');
+        }
+        if ($p['post_type'] !== 'post') {
+            return $this->url->home('/' . $p['post_type'] . '/%pagename%/');
         }
         return $this->url->home('/' . trim($this->permalinks->structure, '/') . '/');
     }
@@ -291,7 +298,7 @@ final readonly class PostObject
         }
         // Taxonomy actions belong to types with taxonomies (posts, not pages);
         // assign is broadly held, create is gated per taxonomy.
-        if ($type === 'post') {
+        if ($type !== 'page') {
             if ($can('manage_categories')) {
                 $actions['wp:action-create-categories'] = true;
             }

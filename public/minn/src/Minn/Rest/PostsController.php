@@ -26,7 +26,11 @@ final readonly class PostsController
     #[Route(Method::Get, '/wp/v2/{base:posts|pages}')]
     public function list(Request $request, string $base): Response
     {
-        $type = $base === 'pages' ? 'page' : 'post';
+        return $this->serveList($request, $base === 'pages' ? 'page' : 'post');
+    }
+
+    public function serveList(Request $request, string $type): Response
+    {
         $perPage = max(1, min(100, (int) $request->query('per_page', '10')));
         $page = max(1, (int) $request->query('page', '1'));
         $context = $request->query('context') === 'edit' ? 'edit' : 'view';
@@ -84,7 +88,11 @@ final readonly class PostsController
     #[Route(Method::Get, '/wp/v2/{base:posts|pages}/{id:\d+}')]
     public function single(Request $request, string $base, string $id): Response
     {
-        $type = $base === 'pages' ? 'page' : 'post';
+        return $this->serveSingle($request, $base === 'pages' ? 'page' : 'post', $id);
+    }
+
+    public function serveSingle(Request $request, string $type, string $id): Response
+    {
         $postId = (int) $id;
         $row = $this->db->row(
             "SELECT * FROM {$this->db->table('posts')} WHERE ID = ? AND post_type = ? LIMIT 1",

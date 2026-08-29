@@ -20,6 +20,7 @@ use Minn\Content\Site;
 use Minn\Content\Terms;
 use Minn\Content\Users;
 use Minn\Db;
+use Minn\Extension\Loader;
 use Minn\Front\Permalinks;
 use Minn\Http\Request;
 use Minn\Http\Response;
@@ -61,7 +62,8 @@ final readonly class Api
         $postObject = new PostObject($db, $posts, $users, $permalinks, $url, $caller);
         $termObject = new TermObject($db, $permalinks, $url, $caller);
         $userObject = new UserObject($db, $users, $permalinks, $url, $caller);
-        $types = new Types($url);
+        $declared = (new Loader(rtrim(ABSPATH, '/') . '/wp-content', $site))->declaredTypes();
+        $types = new Types($url, $declared);
         $uploads = new Uploads($site, $permalinks, ABSPATH . 'wp-content/uploads');
         $mediaObject = new MediaObject($posts, $uploads, $permalinks, $url, $caller);
         $commentObject = new CommentObject(new Comments($db), $posts, $permalinks, $url, $caller);
@@ -74,8 +76,6 @@ final readonly class Api
         $router->register(
             new IndexController($site, $permalinks, $url, $router),
             new V1Controller($db, $site, $posts, $writer, $permalinks, $dashboard, $notifications, new CoreStatus($site), new AdminTypes($types, $capabilities), $caller),
-            new PostsController($db, $posts, $postObject, $caller),
-            new PostsWriteController($posts, $writer, $site, $postObject, $url, $caller),
             new TermsController($db, $terms, $site, $termObject, $caller),
             new UsersController($db, $users, $site, $userObject, $url, $caller, $capabilities->roles()),
             new TypesController($types),
@@ -85,6 +85,10 @@ final readonly class Api
             new MediaController($db, $posts, $writer, $site, $uploads, new Images($site), $mediaObject, $caller),
             new MenusController($menus, new MenuObject($menus, $url, $caller), new MenuItemObject($url, $caller), $caller, $url),
         );
+        $postsController = new PostsController($db, $posts, $postObject, $caller);
+        $postsWrite = new PostsWriteController($posts, $writer, $site, $postObject, $url, $caller);
+        $router->register($postsController, $postsWrite);
+        $router->register(new DeclaredPostsController($types, $postsController, $postsWrite));
         return new self($db, $request, $caller, $router, $postObject, $termObject, $userObject, $types);
     }
 

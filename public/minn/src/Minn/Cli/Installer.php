@@ -137,6 +137,7 @@ final class Installer
         $provided = [];
         $coveredShortcodes = [];
         $coveredBlocks = [];
+        $coveredTypes = [];
         foreach (glob("{$root}/wp-content/{plugins,mu-plugins}/*/minn.json", GLOB_BRACE) ?: [] as $manifestFile) {
             $manifest = Manifest::read(dirname($manifestFile));
             if ($manifest === null) {
@@ -156,6 +157,12 @@ final class Installer
                 foreach ($manifest->blocks as $name) {
                     $coveredBlocks[$name] = $manifest->slug;
                 }
+                foreach ($manifest->types as $row) {
+                    $slug = (string) ($row['slug'] ?? '');
+                    if ($slug !== '') {
+                        $coveredTypes[$slug] = $manifest->slug;
+                    }
+                }
             }
         }
         $missing = array_values(array_filter($plugins, static fn (string $p) => !isset($provided[$p])));
@@ -173,7 +180,7 @@ final class Installer
         if ($mu !== []) {
             $this->light('AMBER', 'mu-plugins will not run: ' . implode(', ', $mu));
         }
-        $this->surveyContent($db, $config['prefix'], $coveredShortcodes, $coveredBlocks);
+        $this->surveyContent($db, $config['prefix'], $coveredShortcodes, $coveredBlocks, $coveredTypes);
         $db->close();
         $this->say("Result: {$this->worst}");
         return $this->worst;
@@ -185,8 +192,9 @@ final class Installer
      *
      * @param array<string, string> $coveredShortcodes tag => extension slug
      * @param array<string, string> $coveredBlocks block name => extension slug
+     * @param array<string, string> $coveredTypes post type slug => extension slug
      */
-    private function surveyContent(mysqli $db, string $prefix, array $coveredShortcodes, array $coveredBlocks): void
+    private function surveyContent(mysqli $db, string $prefix, array $coveredShortcodes, array $coveredBlocks, array $coveredTypes): void
     {
         $typesIn = "'" . implode("','", ContentScan::CONTENT_TYPES) . "'";
         $shortcodes = [];
@@ -273,10 +281,15 @@ final class Installer
             }
         }
         $extraTypes = ContentScan::extraTypes($types);
-        if ($extraTypes === []) {
+        $providedTypes = array_values(array_filter($extraTypes, static fn (string $slug) => isset($coveredTypes[$slug])));
+        $unknownTypes = array_values(array_filter($extraTypes, static fn (string $slug) => !isset($coveredTypes[$slug])));
+        if ($providedTypes !== []) {
+            $this->light('GREEN', count($providedTypes) . ' extra post type' . (count($providedTypes) === 1 ? '' : 's') . ' declared by extensions: ' . ContentScan::listed($providedTypes));
+        }
+        if ($unknownTypes !== []) {
+            $this->light('AMBER', count($unknownTypes) . ' extra post types the engine does not serve: ' . ContentScan::listed($unknownTypes));
+        } elseif ($extraTypes === []) {
             $this->light('GREEN', 'no extra post types');
-        } else {
-            $this->light('AMBER', count($extraTypes) . ' extra post types the engine does not serve: ' . ContentScan::listed($extraTypes));
         }
     }
 

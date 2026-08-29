@@ -1,0 +1,17 @@
+{
+  "name": "Declared types probe",
+  "version": "0.1.0",
+  "license": "MIT",
+  "replaces": [],
+  "autoload": {"Minn\\Ext\\TestTypes\\": "src/"},
+  "extension": "Minn\\Ext\\TestTypes\\Extension",
+  "types": [
+    {
+      "slug": "zz_note",
+      "name": "Notes",
+      "rest_base": "zz-note",
+      "hierarchical": false,
+      "taxonomies": ["category", "post_tag"]
+    }
+  ]
+}

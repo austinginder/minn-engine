@@ -24,7 +24,22 @@ final class AdminTypes
 
     public function extra(): array
     {
-        return $this->extra ??= (array) json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/types-admin.json'), true);
+        if ($this->extra !== null) {
+            return $this->extra;
+        }
+        $extra = (array) json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/types-admin.json'), true);
+        foreach ($this->types->all() as $slug => $type) {
+            if (isset($extra[$slug])) {
+                continue;
+            }
+            $extra[$slug] = [
+                'viewable' => true,
+                'labels' => ['singular_name' => (string) ($type['name'] ?? $slug)],
+                'supports' => ['title' => true, 'editor' => true],
+                'edit_cap' => 'edit_posts',
+            ];
+        }
+        return $this->extra = $extra;
     }
 
     /** The boot-status types section: edit-visible types for this user, slimmed. */

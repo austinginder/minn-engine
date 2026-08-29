@@ -34,8 +34,10 @@ reports, each line GREEN, AMBER, or RED:
 - menus: published `wp_navigation` posts are GREEN; classic `nav_menu`
   terms with items are GREEN (the engine reads them when a navigation block
   has no `wp_navigation` post);
-- extra tables and extra post types: AMBER, grouped by family, because they
-  are plugin data the engine does not read.
+- extra tables: AMBER, grouped by family, because they are plugin data the
+  engine does not read;
+- extra post types: GREEN when an active `minn.json` lists the slug under
+  `types`, AMBER otherwise.
 
 RED stops `install` unless `--force` is passed.
 

@@ -36,7 +36,11 @@ final readonly class PostsWriteController
     #[Route(Method::Post, '/wp/v2/{base:posts|pages}')]
     public function create(Request $request, string $base): Response
     {
-        $type = $base === 'pages' ? 'page' : 'post';
+        return $this->serveCreate($request, $base === 'pages' ? 'page' : 'post', $base);
+    }
+
+    public function serveCreate(Request $request, string $type, string $base): Response
+    {
         $userId = $this->caller->require('rest_cannot_create', 'Sorry, you are not allowed to create posts as this user.')->id();
         if (!$this->caller->can($type === 'page' ? 'edit_pages' : 'edit_posts')) {
             throw new RestError('rest_cannot_create', 'Sorry, you are not allowed to create posts as this user.', 403);
@@ -120,7 +124,11 @@ final readonly class PostsWriteController
     #[Route(Method::Patch, '/wp/v2/{base:posts|pages}/{id:\d+}')]
     public function update(Request $request, string $base, string $id): Response
     {
-        $type = $base === 'pages' ? 'page' : 'post';
+        return $this->serveUpdate($request, $base === 'pages' ? 'page' : 'post', $id);
+    }
+
+    public function serveUpdate(Request $request, string $type, string $id): Response
+    {
         $postId = (int) $id;
         $userId = $this->caller->require('rest_cannot_edit', 'Sorry, you are not allowed to edit this post.')->id();
         $post = $this->posts->find($postId);
@@ -212,7 +220,11 @@ final readonly class PostsWriteController
     #[Route(Method::Delete, '/wp/v2/{base:posts|pages}/{id:\d+}')]
     public function delete(Request $request, string $base, string $id): Response
     {
-        $type = $base === 'pages' ? 'page' : 'post';
+        return $this->serveDelete($request, $base === 'pages' ? 'page' : 'post', $id);
+    }
+
+    public function serveDelete(Request $request, string $type, string $id): Response
+    {
         $postId = (int) $id;
         $userId = $this->caller->require('rest_cannot_edit', 'Sorry, you are not allowed to edit this post.')->id();
         $post = $this->posts->find($postId);

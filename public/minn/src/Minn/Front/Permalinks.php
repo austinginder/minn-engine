@@ -55,6 +55,9 @@ final readonly class Permalinks
             return $this->forPage($post);
         }
         if ($post['post_type'] !== 'post') {
+            if ($this->isPretty() && $this->hasPrettyLink($post)) {
+                return $this->url('/' . $post['post_type'] . '/' . $post['post_name'] . '/');
+            }
             return $this->url('/?p=' . $id);
         }
         if (!$this->isPretty() || !$this->hasPrettyLink($post)) {

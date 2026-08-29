@@ -67,7 +67,9 @@ normalize the capture origin to the engine origin before comparing.
   wp_navigation, wp_font_family, wp_font_face), each with `_links.wp:items`
   pointing at its rest_base. Error: `rest_type_invalid` "Invalid post type."
   (404). The engine serves these from its own registry
-  (`public/minn/data/types.json`).
+  (`public/minn/data/types.json`). Active extensions may append extra types
+  via `minn.json` `"types"`; those get a collection at their `rest_base`
+  (`tests/declared-types.test.php`).
 - **Texturize** (rendered content, titles, excerpts): straight quotes,
   apostrophes, `...`, `---`, ` -- `, `--`, and `'99` become numeric entities
   (`&#8220;` `&#8221;` `&#8216;` `&#8217;` `&#8230;` `&#8212;` `&#8211;`);

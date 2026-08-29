@@ -54,6 +54,12 @@ provides when it is not all of it; preflight prints it and lights AMBER instead 
 GREEN for that plugin. `"shortcodes"` and `"blocks"` name the content tokens
 the extension actually renders; preflight treats those as provided and still
 AMBERs any other shortcode or third-party block in the site's content.
+`"types"` lists extra post types (`slug`, `name`, `rest_base`, optional
+`hierarchical` and `taxonomies`). The engine merges them into `wp/v2/types`
+and serves `wp/v2/{rest_base}` like posts (no sticky/format). Pretty
+permalinks are `/{slug}/{post_name}/`. Front URL resolution for those
+types is not wired yet. Preflight GREENS extra post types a manifest
+declares.
 
 Not yet seams (next ports decide their shape): routes and REST controllers, cron
 jobs, CLI verbs, file assets by URL (a plugin folder is web-served, so an extension
