@@ -111,7 +111,8 @@ final readonly class Engine
         $runtime->set('permalinks', \Minn\Front\Permalinks::fromDb($db));
         $runtime->set('block_theme', Theme::active($site, \Minn\Front\Permalinks::fromDb($db), ABSPATH . 'wp-content/themes') !== null);
         Plugins::load($runtime);
-        Runtime::hooks()->action('rest_api_init', [\rest_get_server()]);
+        // Creating the server fires rest_api_init once; the plugins' routes register there.
+        \rest_get_server();
     }
 
     private function respond(Db $db): never
