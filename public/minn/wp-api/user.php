@@ -1,6 +1,7 @@
 <?php
 /** Users, the current user, capabilities, and user meta. */
 
+use Minn\Auth\PasswordReset;
 use Minn\Runtime\Runtime;
 use Minn\Content\Users;
 
@@ -206,4 +207,152 @@ function get_users($args = [])
         $out[] = ($args['fields'] ?? 'all') === 'ID' ? $user->ID : $user;
     }
     return $out;
+}
+
+/** A username survives strict sanitising unchanged and is not empty. */
+function validate_username($username)
+{
+    $username = (string) $username;
+    $valid = $username !== '' && sanitize_user($username, true) === $username;
+    return (bool) apply_filters('validate_username', $valid, $username);
+}
+
+function wp_get_password_hint()
+{
+    $hint = 'Hint: The password should be at least twelve characters long. To make it stronger, use upper and lower case letters, numbers, and symbols like ! " ? $ % ^ &amp; ).';
+    return apply_filters('password_hint', $hint);
+}
+
+/** A fresh 20-character reset key, its hash stored under the time it was issued. */
+function get_password_reset_key($user)
+{
+    $user = _minn_user_row($user);
+    if ($user === null) {
+        return new WP_Error('invalid_user', 'Invalid user.');
+    }
+    do_action('retrieve_password', $user['user_login']);
+    $allow = apply_filters('allow_password_reset', true, (int) $user['ID']);
+    if (!$allow) {
+        return new WP_Error('no_password_reset', 'Password reset is not allowed for this user');
+    }
+    if (is_wp_error($allow)) {
+        return $allow;
+    }
+    $key = (new PasswordReset(new Users(Runtime::current()->db)))->issue($user);
+    do_action('retrieve_password_key', $user['user_login'], $key);
+    return $key;
+}
+
+/** @internal a user row from an id, a login, a WP_User, or an object with an ID */
+function _minn_user_row($user): ?array
+{
+    $users = new Users(Runtime::current()->db);
+    if (is_object($user) && isset($user->ID)) {
+        return $users->find((int) $user->ID);
+    }
+    if (is_numeric($user)) {
+        return $users->find((int) $user);
+    }
+    return is_string($user) && $user !== '' ? $users->findByLogin($user) : null;
+}
+
+/** The user the key belongs to, or expired_key / invalid_key. A reference-issued key is not readable here. */
+function check_password_reset_key($key, $login)
+{
+    $key = (string) preg_replace('/[^a-z0-9]/i', '', (string) $key);
+    $user = $login !== '' ? (new Users(Runtime::current()->db))->findByLogin((string) $login) : null;
+    if ($key === '' || $user === null) {
+        return new WP_Error('invalid_key', 'Invalid key.');
+    }
+    $status = (new PasswordReset(new Users(Runtime::current()->db)))->status($user, $key);
+    if ($status === 'valid') {
+        return new WP_User((int) $user['ID']);
+    }
+    return $status === 'expired' ? new WP_Error('expired_key', 'Invalid key.') : new WP_Error('invalid_key', 'Invalid key.');
+}
+
+/** Sign-in from credentials (or the login form's fields): the user, cookies set, or the refusal. */
+function wp_signon($credentials = [], $secure_cookie = '')
+{
+    if (empty($credentials)) {
+        $credentials = ['user_login' => wp_unslash($_POST['log'] ?? ''), 'user_password' => $_POST['pwd'] ?? '', 'remember' => !empty($_POST['rememberme'])];
+    }
+    $credentials += ['user_login' => '', 'user_password' => '', 'remember' => false];
+    $credentials['user_login'] = trim((string) $credentials['user_login']);
+    do_action_ref_array('wp_authenticate', [&$credentials['user_login'], &$credentials['user_password']]);
+    if ($secure_cookie === '') {
+        $secure_cookie = is_ssl();
+    }
+    $secure_cookie = apply_filters('secure_signon_cookie', $secure_cookie, $credentials);
+    $user = wp_authenticate($credentials['user_login'], $credentials['user_password']);
+    if (is_wp_error($user)) {
+        return $user;
+    }
+    wp_set_auth_cookie($user->ID, (bool) $credentials['remember'], $secure_cookie);
+    do_action('wp_login', $user->user_login, $user);
+    return $user;
+}
+
+/** The username and password step of the authenticate chain, with the reference's refusal codes. */
+function wp_authenticate_username_password($user, $username, $password)
+{
+    if ($user instanceof WP_User) {
+        return $user;
+    }
+    if ($username === '' || $password === '') {
+        $error = is_wp_error($user) ? $user : new WP_Error();
+        if ($username === '') {
+            $error->add('empty_username', '<strong>Error:</strong> The username field is empty.');
+        }
+        if ($password === '') {
+            $error->add('empty_password', '<strong>Error:</strong> The password field is empty.');
+        }
+        return $error;
+    }
+    $found = get_user_by('login', $username);
+    if (!$found) {
+        return new WP_Error('invalid_username', '<strong>Error:</strong> The username <strong>' . esc_html($username) . '</strong> is not registered on this site. If you are unsure of your username, try your email address instead.');
+    }
+    $found = apply_filters('wp_authenticate_user', $found, $password);
+    if (is_wp_error($found)) {
+        return $found;
+    }
+    if (!wp_check_password($password, $found->user_pass, $found->ID)) {
+        return new WP_Error('incorrect_password', '<strong>Error:</strong> The password you entered for the username <strong>' . esc_html($username) . '</strong> is incorrect.');
+    }
+    return $found;
+}
+
+/** The email-address step of the chain; only an address-shaped username reaches it. */
+function wp_authenticate_email_password($user, $email, $password)
+{
+    if ($user instanceof WP_User || !is_email($email)) {
+        return $user;
+    }
+    if ($password === '') {
+        return new WP_Error('empty_password', '<strong>Error:</strong> The password field is empty.');
+    }
+    $found = get_user_by('email', $email);
+    if (!$found) {
+        return new WP_Error('invalid_email', '<strong>Error:</strong> Unknown email address. Check again or try your username.');
+    }
+    $found = apply_filters('wp_authenticate_user', $found, $password);
+    if (is_wp_error($found)) {
+        return $found;
+    }
+    if (!wp_check_password($password, $found->user_pass, $found->ID)) {
+        return new WP_Error('incorrect_password', '<strong>Error:</strong> The password you entered for the email address <strong>' . esc_html($email) . '</strong> is incorrect.');
+    }
+    return $found;
+}
+
+function add_role($role, $display_name, $capabilities = [])
+{
+    return wp_roles()->add_role($role, $display_name, $capabilities);
+}
+
+function remove_role($role)
+{
+    wp_roles()->remove_role($role);
+    return null;
 }

@@ -17,7 +17,7 @@ use Closure;
  */
 final class Hooks
 {
-    /** @var array<string, array<int, array<string, array{callable, int}>>> hook => priority => id => [callback, accepted] */
+    /** @var array<string, array<int, array<string, array{function: callable, accepted_args: int}>>> the reference's $wp_filter shape */
     private array $hooks = [];
     /** @var array<string, int> */
     private array $actionsDone = [];
@@ -25,10 +25,55 @@ final class Hooks
     private array $filtersDone = [];
     /** @var list<string> */
     private array $stack = [];
+    /** @var array<string, list<int>> the priority each running hook is at, innermost last */
+    private array $running = [];
+    private ?Closure $onNew = null;
+
+    /** Called with each hook name the first time a callback registers under it. */
+    public function onNew(Closure $observer): void
+    {
+        $this->onNew = $observer;
+        foreach (array_keys($this->hooks) as $name) {
+            $observer((string) $name);
+        }
+    }
+
+    /** The live registry, for a hook object to share by reference. */
+    public function &storage(): array
+    {
+        return $this->hooks;
+    }
+
+    /** @return array<string, int> */
+    public function &counters(bool $actions): array
+    {
+        if ($actions) {
+            return $this->actionsDone;
+        }
+        return $this->filtersDone;
+    }
+
+    /** @return list<string> */
+    public function &stackRef(): array
+    {
+        return $this->stack;
+    }
+
+    /** The priority a running hook is at, or false when it is idle. */
+    public function currentPriority(string $hook): int|false
+    {
+        $levels = $this->running[$hook] ?? [];
+        return $levels === [] ? false : $levels[count($levels) - 1];
+    }
 
     public function add(string $hook, callable|array|string $callback, int|string $priority = 10, int $accepted = 1): bool
     {
-        $this->hooks[$hook][(int) $priority][self::id($callback)] = [$callback, $accepted];
+        $new = !isset($this->hooks[$hook]);
+        $this->hooks[$hook][(int) $priority][self::id($callback)] = ['function' => $callback, 'accepted_args' => $accepted];
+        ksort($this->hooks[$hook], SORT_NUMERIC);
+        if ($new && $this->onNew !== null) {
+            ($this->onNew)($hook);
+        }
         return true;
     }
 
@@ -50,7 +95,9 @@ final class Hooks
     public function removeAll(string $hook, int|string|false $priority = false): bool
     {
         if ($priority === false) {
-            unset($this->hooks[$hook]);
+            if (isset($this->hooks[$hook])) {
+                $this->hooks[$hook] = [];
+            }
         } else {
             unset($this->hooks[$hook][(int) $priority]);
         }
@@ -115,7 +162,7 @@ final class Hooks
         foreach ($this->hooks as $hook => $byPriority) {
             ksort($byPriority);
             foreach ($byPriority as $priority => $entries) {
-                $out[$hook][$priority] = array_map(static fn (array $e) => $e[0], array_values($entries));
+                $out[$hook][$priority] = array_map(static fn (array $e) => $e['function'], array_values($entries));
             }
         }
         return $out;
@@ -135,12 +182,14 @@ final class Hooks
         $current = null;
         while (($priority = $this->nextPriority($hook, $current)) !== null) {
             $current = $priority;
+            $this->running[$hook][] = $priority;
             foreach (array_keys($this->hooks[$hook][$priority] ?? []) as $id) {
                 $entry = $this->hooks[$hook][$priority][$id] ?? null;
-                if ($entry === null) {
+                if (!is_array($entry) || !isset($entry['function'])) {
                     continue;
                 }
-                [$callback, $accepted] = $entry;
+                $callback = $entry['function'];
+                $accepted = (int) ($entry['accepted_args'] ?? 1);
                 if ($isFilter) {
                     $args[0] = $value;
                 }
@@ -150,6 +199,7 @@ final class Hooks
                     $value = $result;
                 }
             }
+            array_pop($this->running[$hook]);
         }
         array_pop($this->stack);
         return $value;
@@ -173,8 +223,8 @@ final class Hooks
         $byPriority = $this->hooks['all'];
         ksort($byPriority);
         foreach ($byPriority as $entries) {
-            foreach ($entries as [$callback]) {
-                $callback($hook, ...$args);
+            foreach ($entries as $entry) {
+                ($entry['function'])($hook, ...$args);
             }
         }
         array_pop($this->stack);

@@ -32,14 +32,20 @@ final readonly class PasswordReset
     /** True when the key matches the stored hash and has not expired. */
     public function verify(array $user, string $key): bool
     {
+        return $this->status($user, $key) === 'valid';
+    }
+
+    /** "valid", "expired" (a matching key past its day), or "invalid". */
+    public function status(array $user, string $key): string
+    {
         $stored = (string) ($user['user_activation_key'] ?? '');
         if ($key === '' || !preg_match('/^(\d+):(.+)$/', $stored, $m)) {
-            return false;
+            return 'invalid';
         }
-        if ((int) $m[1] + self::LIFETIME < time()) {
-            return false;
+        if (!hash_equals($m[2], self::hash($key))) {
+            return 'invalid';
         }
-        return str_starts_with($m[2], '$minn$') && hash_equals($m[2], self::hash($key));
+        return (int) $m[1] + self::LIFETIME < time() ? 'expired' : 'valid';
     }
 
     public function clear(array $user): void

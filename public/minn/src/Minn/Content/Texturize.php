@@ -44,6 +44,8 @@ final class Texturize
         $text = str_replace('---', '&#8212;', $text);
         $text = str_replace(' -- ', ' &#8212; ', $text);
         $text = str_replace('--', '&#8211;', $text);
+        // A hyphen standing alone between spaces (or at an end) is an en dash; a-b stays.
+        $text = (string) preg_replace('/(?<=\s|^)-(?=\s|$)/', '&#8211;', $text);
         // Abbreviated years: '99
         $text = preg_replace('/(^|[\s(\[{<])\'(?=\d\d)/', '$1&#8217;', $text);
         // A double quote after a digit is a prime (6'2" → 2&#8243;); a single

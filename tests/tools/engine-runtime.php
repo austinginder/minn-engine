@@ -24,4 +24,10 @@ $capabilities = Minn\Auth\Capabilities::fromDb($db);
 $runtime = new Minn\Runtime\Runtime($db, $site, null, Minn\Content\Reader::anonymous(), $capabilities, MINN_ENGINE_DIR, ABSPATH, '7.1');
 Minn\Runtime\Runtime::boot($runtime);
 $runtime->set('permalinks', Minn\Front\Permalinks::fromDb($db));
-$runtime->set('block_theme', Minn\Theme\Theme::active($site, Minn\Front\Permalinks::fromDb($db), ABSPATH . 'wp-content/themes') !== null);
+$theme = Minn\Theme\Theme::active($site, Minn\Front\Permalinks::fromDb($db), ABSPATH . 'wp-content/themes');
+$runtime->set('block_theme', $theme !== null);
+$runtime->set('theme', $theme);
+if ($theme !== null) {
+    // The theme's blocks (template parts, post blocks, comments) register the way a page render does.
+    Minn\Theme\PageRenderer::create($db, $theme, Minn\Front\Permalinks::fromDb($db), 10);
+}

@@ -712,3 +712,140 @@ And anything the reference filters (`sanitize_title`, `is_email`,
 class as a closure rather than reimplemented, so plugin filters keep
 applying. The ratchet's two lists are empty; a new query or a new forty-line
 function in `wp-api/` fails the style suite.
+
+## The second plugin surface: WooCommerce loads
+
+WooCommerce 11 on a fresh lab site (`minnwoo.localhost`, oracle on
+127.0.0.1:8126, 18 sample products, Twenty Twenty-Five) referenced 99
+symbols the runtime lacked. Admin-only, email-editor, tracker and importer
+names became placeholders; the rest are real and probe-backed
+(`tests/tools/plugin-surface-probe.php`, 77 rows, and
+`plugin-surface2-probe.php`, 109 rows, in `contracts/fixtures/api/`). What
+the oracle taught, by area:
+
+- **The hook object** (`WP_Hook`, `$wp_filter`): the reference's registry
+  is an array of hook objects whose `callbacks[priority][id]` holds
+  `function` and `accepted_args`; the engine's `Runtime\Hooks` now stores
+  that shape and each `$wp_filter[name]` shares its storage by reference, so
+  a plugin editing callbacks in place edits what the engine runs.
+  Priorities stay sorted on insertion; `remove_all_filters` empties the
+  hook but keeps it; `current_priority()` reads the running level, false
+  when idle; `do_action` passes the first argument as the value.
+  `$wp_actions`, `$wp_filters`, `$wp_current_filter`, `$wp_roles` are bound
+  the same way.
+- **Meta, tax and date queries** (`Minn\Query\{MetaSql,TaxSql,DateSql}`):
+  plugins embed `get_sql()` output verbatim, so the fragments match byte
+  for byte. Meta: one join per clause (the table's own name, then mt1,
+  mt2...), INNER unless an OR group holds a NOT EXISTS clause (then every
+  join is LEFT, and NOT EXISTS carries its key in the ON and reads
+  `alias.post_id IS NULL`); under an OR group an equality-shaped clause
+  (=, IN, BETWEEN, LIKE, REGEXP, RLIKE, >, >=, <, <=) shares the first such
+  sibling's alias, under AND never; a key-only clause is
+  `alias.meta_key = 'k'` alone, value-only `alias.meta_value = 'v'` alone,
+  both wrap in parentheses; NUMERIC casts as SIGNED, DECIMAL(n,m) as
+  written; LIKE wraps in % after escaping. Tax: IN joins
+  term_relationships (own name, then tt1...; shared between IN siblings
+  under OR), NOT IN and AND are subqueries, EXISTS joins term_taxonomy, a
+  term nobody has is `0 = 1`, NOT IN of a missing term drops out. Date:
+  after/before as full datetimes (inclusive bounds close the unit:
+  `2025-06-30 23:59:59`), parts as YEAR()/MONTH()/DAYOFMONTH()/DAYOFWEEK()
+  /HOUR() in that order, IN lists, BETWEEN pairs; unknown columns fall
+  back to posts.post_date, `comment_date` maps to the comments table.
+- **Block templates** (`Runtime\BlockTemplates`, `WP_Block_Templates_Registry`,
+  `register_block_template`): names must be `plugin//slug`, lowercase, and
+  unique (`template_no_prefix`, `template_name_no_uppercase`,
+  `template_already_registered`); the template answers as
+  `{active theme}//slug` with source and origin `plugin`, `is_custom`
+  true, `has_theme_file` null, `status` publish, `post_types` as given.
+  `get_block_templates()` lists theme files (source theme,
+  `has_theme_file` true, `is_custom` false) then registered templates
+  keyed by their registered name, unless the query names a `post_type`
+  without `slug__in`; `get_block_template()` resolves both the theme id
+  and the plugin's own name. `Theme\Templates::template()` falls back to a
+  registered template's content, so a plugin's `single-product` renders.
+  `render_block_core_template_part()` called directly prints `<header >`
+  with no block-support class (the reference adds that class only inside
+  a block render).
+- **Hooked blocks**: `traverse_and_serialize_blocks` calls the visitors
+  before and after every block with (block, parent, previous/next);
+  `make_before_block_visitor` emits the parent's `first_child` hooks before
+  the first child then the block's `before`, `make_after_block_visitor`
+  the block's `after` then the parent's `last_child` after the last;
+  `insert_hooked_blocks` serialises each hooked type (`<!-- wp:name /-->`)
+  through `hooked_block_types`, `hooked_block`, `hooked_block_{name}`,
+  skipping types the anchor's `metadata.ignoredHookedBlocks` lists;
+  `apply_block_hooks_to_content` returns the content untouched when
+  nothing is hooked and no `hooked_block_types` filter is registered.
+- **Query loop vars** (`build_query_vars_from_query_block`): the block's
+  `context['query']` (a post-template child sees it; the query block
+  itself provides rather than uses it) becomes post_type, order, orderby,
+  post__not_in (sticky "exclude" adds the sticky ids before `exclude`),
+  tax_query (`['relation' => 'AND', [taxQuery clauses with
+  include_children false], ['relation' => 'OR', post_format slug clause]]`),
+  offset `perPage * (page - 1) + offset` (never capped by `pages`),
+  posts_per_page, author__in (present when `author` is set, empty for
+  ""), s, post_parent__in; sticky "only" gives post__in plus
+  ignore_sticky_posts. `build_comment_query_vars_from_block`: orderby
+  comment_date_gmt, ASC, status approve, no_found_rows false, post_id,
+  hierarchical threaded when thread_comments is on, number/paged only
+  when page_comments is on.
+- **Classic comment templating**: `wp_list_comments` resets the odd/even
+  and thread counters, prints the html5 item (`\t\t<li id="comment-N"
+  class="...">` ... `</li><!-- #comment-## -->`) with the avatar, author
+  link (`class="url" rel="ugc external nofollow"`), `<time datetime>`
+  link, awaiting-moderation note, wpautop'd text and the reply link (`<div
+  class="reply">`, `data-belowelement="div-comment-N"`); replies nest in
+  `<ol class="children">`; `comment_order` desc reverses the top level; a
+  `callback` replaces the item, `end-callback` the close. `comment_form`
+  prints the reference's form: comment field first, then author/email/url,
+  then the cookies consent (appended even to custom `fields` when
+  `show_comments_cookies_opt_in` is on), the block-theme submit wrapper
+  `<p class="form-submit wp-block-button">` (kept with a custom
+  `submit_button`, whose class then drops the button classes); closed
+  comments print nothing and fire `comment_form_comments_closed`.
+  `comments_template` fills `$wp_query->comments` and loads the theme's
+  comments.php or the engine's own `wp-api/theme-compat/comments.php`
+  (`<!-- You can start editing here. -->`, the "One response to
+  &#8220;title&#8221;" heading, navigation, `<ol class="commentlist">`, the
+  form). Avatars inside the main loop count against the three eager
+  images (no `loading="lazy"`); outside it they lazy-load.
+  `get_comment_reply_link` returns null at or past max_depth and false
+  when comments are closed; `get_comments_link` ends in `#comments` with
+  comments and `#respond` without; `get_comments_pagenum_link` is
+  `comment-page-N/#comments`; `paginate_links` prints prev/next, end and
+  mid runs with one ellipsis per gap, page 1 without the format,
+  `add_args` through `&#038;`, null with fewer than two pages.
+- **Sign-in and roles**: `wp_signon` runs the `authenticate` chain
+  (`wp_authenticate_username_password`, `wp_authenticate_email_password`
+  at 20: `empty_username`, `empty_password`, `invalid_username`,
+  `invalid_email`, `incorrect_password`), then `wp_set_auth_cookie` mints
+  a session and sends the three cookies; `add_role` returns the WP_Role
+  (null for an existing or empty name) and `get_role` sees it at once;
+  `get_password_reset_key` stores `time:$minn$...` (the reference's
+  `$generic$` fast hash is not derivable, see application passwords) and
+  `check_password_reset_key` answers `invalid_key` / `expired_key` / the
+  user; `wp_get_password_hint` carries a literal `&amp;`.
+- **Small facts**: `wp_is_jsonp_request`, `wp_set_option_autoload_values`
+  (false for unchanged or missing, column `on`/`off`), `_wp_filter_build_unique_id`
+  (`Class::method` for static arrays), `wp_unique_term_slug` (`-2` suffix
+  within the taxonomy only), `update_termmeta_cache` (meta per id, false
+  for an empty list), `sanitize_post_field` (edit escapes, attribute and
+  js escape, ID/post_parent/menu_order cast to int in every context,
+  post_author not), `validate_username` (strict sanitising must leave it
+  unchanged), `wp_list_categories` / `wp_tag_cloud` / `wp_dropdown_categories`
+  markup (`Minn\Front\TermLists`), `get_post_class` order
+  (`Minn\Content\PostClasses`), `get_query_template` names the engine's
+  `wp-api/template-canvas.php` under a block theme when the theme ships a
+  block template for one of the names, `shortcode_unautop` unwraps a
+  paragraph holding only a registered shortcode, an `exclude_tree` of ""
+  excludes nothing (it emptied every term list before), and wptexturize
+  turns a standalone hyphen into an en dash (`a - b`, `end -`, `- start`;
+  `a-b` stays), which the document title depends on.
+
+Known gaps after this pass: the engine registers no core shortcodes
+(`[gallery]`, `[caption]`, `[audio]`, `[video]`, `[playlist]`, `[embed]`)
+where the reference registers seven; `wp_list_comments` prints only the
+html5 format; `logged_in_as` markup is unverified; pretty URLs for a
+plugin's post types and taxonomies (`/product/hoodie/`,
+`/product-category/clothing/`) do not resolve yet, which is the next step
+on the WooCommerce lab.

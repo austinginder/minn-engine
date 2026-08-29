@@ -24,6 +24,7 @@ final class Runtime
     private static ?Registry $registry = null;
     private static ?Interactivity $interactivity = null;
     private static ?ScriptModules $scriptModules = null;
+    private static ?BlockTemplates $blockTemplates = null;
     private static ?self $current = null;
     private static bool $facadeLoaded = false;
     /** @var array<string, mixed> plugin-visible state the facade keeps between calls */
@@ -48,6 +49,7 @@ final class Runtime
         self::$current = $runtime;
         self::$options = new Options($runtime->db);
         self::loadFacade($runtime->engineDir);
+        _minn_bind_hook_globals();
         Constants::define($runtime);
         _minn_main_query();
         _minn_rewrite();
@@ -130,6 +132,11 @@ final class Runtime
         return self::$interactivity ??= new Interactivity();
     }
 
+    public static function blockTemplates(): BlockTemplates
+    {
+        return self::$blockTemplates ??= new BlockTemplates();
+    }
+
     public static function registry(): Registry
     {
         return self::$registry ??= new Registry(self::current()->engineDir);
@@ -187,6 +194,9 @@ final class Runtime
     public static function reset(): void
     {
         self::$hooks = new Hooks();
+        if (self::$facadeLoaded) {
+            _minn_bind_hook_globals();
+        }
         self::$cache = new ObjectCache();
         self::$shortcodes = new Shortcodes();
         self::$registry = null;

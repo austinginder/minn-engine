@@ -456,3 +456,52 @@ function rest_authorization_required_code()
 {
     return is_user_logged_in() ? 403 : 401;
 }
+
+function rest_is_ip_address($ip)
+{
+    return filter_var((string) $ip, FILTER_VALIDATE_IP) === false ? false : (string) $ip;
+}
+
+/** The first (anyOf) or only (oneOf) schema the value satisfies, else the reference's refusal. */
+function rest_find_one_matching_schema($value, $args, $param, $stop_after_first_match = false)
+{
+    $candidates = $args['anyOf'] ?? $args['oneOf'] ?? [];
+    $matches = [];
+    $errors = [];
+    foreach ($candidates as $index => $schema) {
+        $result = rest_validate_value_from_schema($value, $schema, $param);
+        if (!is_wp_error($result)) {
+            $matches[$index] = $schema;
+            if ($stop_after_first_match || isset($args['anyOf'])) {
+                return $schema;
+            }
+            continue;
+        }
+        $errors[] = ['error_object' => $result, 'schema' => $schema, 'index' => $index];
+    }
+    if (count($matches) === 1) {
+        return reset($matches);
+    }
+    if ($matches === []) {
+        return rest_get_combining_operation_error($value, $param, $errors);
+    }
+    $titles = array_filter(array_map(static fn ($s) => $s['title'] ?? '', $matches));
+    $message = $titles !== []
+        ? sprintf('%s matches %s, but more than one of these is allowed.', $param, implode(', ', $titles))
+        : sprintf('%s matches more than one of the expected formats.', $param);
+    return new WP_Error('rest_one_of_multiple_matches', $message, ['positions' => array_keys($matches)]);
+}
+
+/** One refusal for a value that matched none of the combined schemas. */
+function rest_get_combining_operation_error($value, $param, $errors)
+{
+    if (count($errors) === 1) {
+        return $errors[0]['error_object'];
+    }
+    $message = sprintf('%s does not match any of the expected formats.', $param);
+    $details = [];
+    foreach ($errors as $error) {
+        $details[] = ['index' => $error['index'], 'message' => $error['error_object']->get_error_message()];
+    }
+    return new WP_Error('rest_no_matching_schema', $message, ['details' => $details]);
+}

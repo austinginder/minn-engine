@@ -18,12 +18,13 @@ final class DocumentTitle
     public static function parts(Resolution $resolution, string $site, string $tagline): array
     {
         if ($resolution->front || ($resolution->kind === Kind::Home && !$resolution->postsPage)) {
+            // The front page (static or the listing) carries the tagline, after the page number.
             $parts = ['title' => $site];
-            if ($resolution->front && $tagline !== '') {
-                $parts['tagline'] = $tagline;
-            }
             if ($resolution->paged > 1) {
                 $parts['page'] = 'Page ' . $resolution->paged;
+            }
+            if ($tagline !== '') {
+                $parts['tagline'] = $tagline;
             }
             return $parts;
         }

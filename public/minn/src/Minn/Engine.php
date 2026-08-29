@@ -159,6 +159,7 @@ final readonly class Engine
         // lifecycle actions fire, before the engine's own extensions register.
         $runtime = Runtime::boot(new Runtime($db, $site, $request, Reader::current(), $capabilities, $this->engineDir, ABSPATH, self::WP_VERSION));
         $runtime->set('block_theme', $theme !== null);
+        $runtime->set('theme', $theme);
         $runtime->set('permalinks', $permalinks);
         Plugins::load($runtime);
         $seams = new Seams($db, $site, $request, Reader::current());

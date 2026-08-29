@@ -1,6 +1,7 @@
 <?php
 /** URLs of the site and its pieces. */
 
+use Minn\Front\Pagination;
 use Minn\Runtime\Runtime;
 
 function get_home_url($blog_id = null, $path = '', $scheme = null)
@@ -432,4 +433,39 @@ function get_dashboard_url($user_id = 0, $path = '', $scheme = 'admin')
     $user_id = $user_id ? (int) $user_id : get_current_user_id();
     $url = admin_url($path ? $path : '', $scheme);
     return apply_filters('user_dashboard_url', $url, $user_id, $path, $scheme);
+}
+
+/** Numbered page links; base and format come from the main query's page link unless given. */
+function paginate_links($args = '')
+{
+    $pagenum_link = html_entity_decode(get_pagenum_link());
+    $url_parts = explode('?', $pagenum_link, 2);
+    $pretty = $GLOBALS['wp_rewrite']->using_permalinks();
+    $defaults = ['base' => trailingslashit($url_parts[0]) . '%_%', 'format' => $pretty ? user_trailingslashit('page/%#%', 'paged') : '?paged=%#%', 'total' => (int) ($GLOBALS['wp_query']->max_num_pages ?? 1), 'current' => max(1, (int) get_query_var('paged')), 'aria_current' => 'page', 'show_all' => false, 'prev_next' => true, 'prev_text' => '&laquo; Previous', 'next_text' => 'Next &raquo;', 'end_size' => 1, 'mid_size' => 2, 'type' => 'plain', 'add_args' => [], 'add_fragment' => '', 'before_page_number' => '', 'after_page_number' => ''];
+    $args = wp_parse_args($args, $defaults);
+    if (!is_array($args['add_args'])) {
+        $args['add_args'] = [];
+    }
+    if (isset($url_parts[1]) && !isset($GLOBALS['minn_paginate_base_given'])) {
+        $format_query = parse_url(str_replace('%_%', $args['format'], $args['base']), PHP_URL_QUERY);
+        wp_parse_str((string) $format_query, $format_args);
+        wp_parse_str($url_parts[1], $url_query_args);
+        foreach (array_keys($format_args) as $key) {
+            unset($url_query_args[$key]);
+        }
+        $args['add_args'] = array_merge($args['add_args'], urlencode_deep($url_query_args));
+    }
+    $link = static function (int $n) use ($args): string {
+        $url = str_replace('%_%', $n === 1 ? '' : $args['format'], $args['base']);
+        $url = str_replace('%#%', (string) $n, $url);
+        if ($args['add_args'] !== []) {
+            $url = add_query_arg($args['add_args'], $url);
+        }
+        return esc_url(apply_filters('paginate_links', $url . $args['add_fragment']));
+    };
+    $links = Pagination::links($args, $link);
+    if ($links === null) {
+        return null;
+    }
+    return Pagination::format($links, (string) $args['type']);
 }

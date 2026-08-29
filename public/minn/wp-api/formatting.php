@@ -1075,3 +1075,54 @@ function htmlentities2($text)
         return $m[0];
     }, $encoded);
 }
+
+/** Hides an address from harvesters as numeric entities; hex_encoding 1 mixes hex in, 0 mixes plain characters in. */
+function antispambot($email_address, $hex_encoding = 0)
+{
+    $out = '';
+    foreach (mb_str_split((string) $email_address) as $char) {
+        $pick = random_int(0, 1 + (int) (bool) $hex_encoding);
+        $code = mb_ord($char);
+        if ($pick === 0 && $hex_encoding == 0) {
+            $out .= $char;
+        } elseif ($pick === 2) {
+            $out .= '&#x' . dechex($code) . ';';
+        } else {
+            $out .= '&#' . $code . ';';
+        }
+    }
+    return str_replace('@', '&#64;', $out);
+}
+
+/** Seconds east of UTC for an ISO 8601 zone designator; Z and anything unreadable are 0. */
+function iso8601_timezone_to_offset($timezone)
+{
+    if (!preg_match('/^([+-])(\d{2}):?(\d{2})$/', (string) $timezone, $m)) {
+        return 0;
+    }
+    $seconds = ((int) $m[2] * 3600) + ((int) $m[3] * 60);
+    return $m[1] === '-' ? -$seconds : $seconds;
+}
+
+/** Unwraps a paragraph that holds nothing but one registered shortcode (with its closing tag). */
+function shortcode_unautop($text)
+{
+    $pattern = Runtime::shortcodes()->pattern();
+    if ($pattern === null) {
+        return $text;
+    }
+    $tags = implode('|', array_map('preg_quote', Runtime::shortcodes()->names()));
+    $open = '\[(' . $tags . ')(?![\w-])[^\]\/]*(?:\/(?!\])[^\]\/]*)*?(?:\/\]|\](?:[^\[]*+(?:\[(?!\/\2\])[^\[]*+)*+\[\/\2\])?)';
+    return (string) preg_replace('/<p>\s*+(' . $open . ')\s*+<\/p>/s', '$1', (string) $text);
+}
+
+function sanitize_title_for_query($title)
+{
+    return sanitize_title($title, '', 'query');
+}
+
+/** The value of a file header line, cut at the end of its comment. */
+function _cleanup_header_comment($str)
+{
+    return trim((string) preg_replace('/\s*(?:\*\/|\?>).*/', '', (string) $str));
+}

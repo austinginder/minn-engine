@@ -1,0 +1,538 @@
+[
+    [
+        "iso8601_timezone_to_offset",
+        [
+            7200,
+            0,
+            -19800,
+            3600,
+            0
+        ]
+    ],
+    [
+        "rest_is_ip_address",
+        [
+            "1.2.3.4",
+            "::1",
+            false,
+            false,
+            false
+        ]
+    ],
+    [
+        "shortcode_unautop",
+        [
+            "[minnprobe]",
+            "<p>[a]\n[/a]</p>",
+            "<p>text [minnprobe] text</p>",
+            "<p>[minnprobe]<br />\\n[x]</p>",
+            "[minnprobe]\ntext[/minnprobe]",
+            "[minnprobe id=\"1\" /]"
+        ]
+    ],
+    [
+        "is_object_in_taxonomy",
+        [
+            true,
+            false,
+            true,
+            false,
+            false
+        ]
+    ],
+    [
+        "sanitize_post_field",
+        [
+            "x <b>\"y\"</b> & z",
+            "x &lt;b&gt;&quot;y&quot;&lt;/b&gt; &amp; z",
+            "x <b>\"y\"</b> & z",
+            "x <b>\"y\"</b> & z",
+            "x &lt;b&gt;&quot;y&quot;&lt;/b&gt; &amp; z",
+            "x &lt;b&gt;&quot;y&quot;&lt;/b&gt; &amp; z"
+        ]
+    ],
+    [
+        "sanitize_post_field content",
+        [
+            "<p>a</p>\n<script>x</script>",
+            "&lt;p&gt;a&lt;/p&gt;\n&lt;script&gt;x&lt;/script&gt;",
+            "<p>a</p>\n<script>x</script>"
+        ]
+    ],
+    [
+        "sanitize_post_field int",
+        [
+            "3",
+            3,
+            0
+        ]
+    ],
+    [
+        "sanitize_title_for_query",
+        [
+            "hello-world",
+            "%c3%bcn%c3%afcode-ok",
+            "a%20b"
+        ]
+    ],
+    [
+        "_cleanup_header_comment",
+        [
+            "Foo",
+            "Bar",
+            "Plain"
+        ]
+    ],
+    [
+        "_wp_filter_build_unique_id",
+        [
+            "strlen",
+            "Foo::bar",
+            "Foo::bar",
+            "Foo::bar"
+        ]
+    ],
+    [
+        "wp_omit_loading_attr_threshold",
+        3
+    ],
+    [
+        "wp_should_load_separate_core_block_assets",
+        true
+    ],
+    [
+        "wp_get_password_hint",
+        "Hint: The password should be at least twelve characters long. To make it stronger, use upper and lower case letters, numbers, and symbols like ! \" ? $ % ^ &amp; )."
+    ],
+    [
+        "validate_username",
+        [
+            true,
+            false,
+            true,
+            false,
+            false,
+            true,
+            false
+        ]
+    ],
+    [
+        "get_the_category_by_ID",
+        [
+            "Uncategorized",
+            ""
+        ]
+    ],
+    [
+        "get_dropins",
+        []
+    ],
+    [
+        "wp_get_installed_translations core",
+        []
+    ],
+    [
+        "wp_get_installed_translations plugins",
+        true
+    ],
+    [
+        "wp_set_option_autoload_values",
+        {
+            "minn_probe_al": true,
+            "minn_probe_missing_al": false,
+            "minn_probe_al2": false
+        }
+    ],
+    [
+        "wp_set_option_autoload_values again",
+        {
+            "minn_probe_al": false
+        }
+    ],
+    [
+        "autoload after",
+        "on"
+    ],
+    [
+        "wp_prime_option_caches",
+        null
+    ],
+    [
+        "primed get",
+        "primed"
+    ],
+    [
+        "add_role",
+        [
+            "WP_Role",
+            "minn_probe_role",
+            {
+                "read": true,
+                "minn_cap": false
+            }
+        ]
+    ],
+    [
+        "add_role existing",
+        null
+    ],
+    [
+        "add_role empty name",
+        null
+    ],
+    [
+        "get_role added",
+        {
+            "read": true,
+            "minn_cap": false
+        }
+    ],
+    [
+        "roles option has it",
+        true
+    ],
+    [
+        "remove_role",
+        null
+    ],
+    [
+        "get_role removed",
+        null
+    ],
+    [
+        "remove_role missing",
+        null
+    ],
+    [
+        "wp_unique_term_slug",
+        [
+            "uncategorized",
+            "brand-new-slug",
+            "uncategorized-2",
+            "uncategorized"
+        ]
+    ],
+    [
+        "_update_post_term_count",
+        [
+            null,
+            true
+        ]
+    ],
+    [
+        "update_termmeta_cache",
+        [
+            {
+                "1": []
+            },
+            false,
+            {
+                "999999": []
+            }
+        ]
+    ],
+    [
+        "update_post_caches",
+        null
+    ],
+    [
+        "update_post_thumbnail_cache",
+        null
+    ],
+    [
+        "wp_list_categories",
+        "<li class=\"categories\">Categories<ul>\t<li class=\"cat-item cat-item-1\"><a href=\"https://minn-engine.localhost/category/uncategorized/\">Uncategorized</a>\n</li>\n</ul></li>"
+    ],
+    [
+        "wp_list_categories args",
+        "\t<li class=\"cat-item cat-item-1 current-cat\"><a aria-current=\"page\" href=\"https://minn-engine.localhost/category/uncategorized/\">Uncategorized</a> (10)\n</li>\n"
+    ],
+    [
+        "wp_list_categories none",
+        "<li class=\"cat-item-none\">No categories</li>"
+    ],
+    [
+        "wp_list_categories flat",
+        "\t<a href=\"https://minn-engine.localhost/category/uncategorized/\">Uncategorized</a><br />\n"
+    ],
+    [
+        "wp_dropdown_categories",
+        [
+            "<select  name='cat' id='cat' class='postform'>\n\t<option class=\"level-0\" value=\"1\">Uncategorized</option>\n</select>\n",
+            "<select  name='product_cat' id='pc' class='x'>\n\t<option value=''>Pick</option>\n\t<option class=\"level-0\" value=\"uncategorized\">Uncategorized&nbsp;&nbsp;(10)</option>\n</select>\n",
+            "",
+            "<select required name='cat' id='cat' class='postform' tabindex=\"3\" aria-describedby=\"help\">\n</select>\n",
+            "<select  name='cat' id='cat' class='postform'>\n\t<option value='0' selected='selected'>All</option>\n\t<option class=\"level-0\" value=\"2\">engine</option>\n\t<option class=\"level-0\" value=\"3\">parity</option>\n</select>\n"
+        ]
+    ],
+    [
+        "wp_tag_cloud",
+        "<a href=\"https://minn-engine.localhost/tag/engine/\" class=\"tag-cloud-link tag-link-2 tag-link-position-1\" style=\"font-size: 8pt;\" aria-label=\"engine (1 item)\">engine</a>\n<a href=\"https://minn-engine.localhost/tag/parity/\" class=\"tag-cloud-link tag-link-3 tag-link-position-2\" style=\"font-size: 8pt;\" aria-label=\"parity (1 item)\">parity</a>"
+    ],
+    [
+        "wp_tag_cloud args",
+        "<ul class='wp-tag-cloud' role='list'>\n\t<li><a href=\"https://minn-engine.localhost/category/uncategorized/\" class=\"tag-cloud-link tag-link-1 tag-link-position-1\" style=\"font-size: 8pt;\" aria-label=\"Uncategorized (10 items)\">Uncategorized</a></li>\n</ul>\n"
+    ],
+    [
+        "wp_tag_cloud none",
+        null
+    ],
+    [
+        "get_post_class post",
+        [
+            "post-1",
+            "post",
+            "type-post",
+            "status-publish",
+            "format-standard",
+            "hentry",
+            "category-uncategorized"
+        ]
+    ],
+    [
+        "get_post_class page",
+        [
+            "extra",
+            "two",
+            "post-2",
+            "page",
+            "type-page",
+            "status-publish",
+            "hentry"
+        ]
+    ],
+    [
+        "get_post_class string",
+        [
+            "a",
+            "b",
+            "post-1",
+            "post",
+            "type-post",
+            "status-publish",
+            "format-standard",
+            "hentry",
+            "category-uncategorized"
+        ]
+    ],
+    [
+        "get_post_class missing",
+        []
+    ],
+    [
+        "the_ID",
+        "1"
+    ],
+    [
+        "get_post_class global",
+        [
+            "post-1",
+            "post",
+            "type-post",
+            "status-publish",
+            "format-standard",
+            "hentry",
+            "category-uncategorized"
+        ]
+    ],
+    [
+        "get_page_template_slug",
+        [
+            "",
+            "",
+            false
+        ]
+    ],
+    [
+        "is_page_template",
+        [
+            false,
+            false
+        ]
+    ],
+    [
+        "get_query_template",
+        [
+            "template-canvas.php",
+            "template-canvas.php",
+            "",
+            "template-canvas.php"
+        ]
+    ],
+    [
+        "get_query_template filter",
+        "filtered:single:single-post.php"
+    ],
+    [
+        "comment_ID",
+        "1"
+    ],
+    [
+        "comment_author",
+        "A WordPress Commenter"
+    ],
+    [
+        "comment_author id",
+        "A WordPress Commenter"
+    ],
+    [
+        "get_comment_author_url",
+        [
+            "https://wordpress.org/",
+            ""
+        ]
+    ],
+    [
+        "get_comment_author_IP",
+        ""
+    ],
+    [
+        "comment_author_IP",
+        ""
+    ],
+    [
+        "get_comment_class",
+        [
+            [
+                "comment",
+                "even",
+                "thread-even",
+                "depth-1"
+            ],
+            [
+                "comment",
+                "odd",
+                "alt",
+                "thread-odd",
+                "thread-alt",
+                "depth-1",
+                "x"
+            ]
+        ]
+    ],
+    [
+        "comment_class",
+        "class=\"comment even thread-even depth-1 extra\""
+    ],
+    [
+        "comment_class no echo",
+        "class=\"comment odd alt thread-odd thread-alt depth-1\""
+    ],
+    [
+        "get_pending_comments_num",
+        [
+            0,
+            {
+                "1": 0,
+                "2": 0
+            },
+            0
+        ]
+    ],
+    [
+        "get_approved_comments",
+        [
+            [
+                1,
+                "WP_Comment"
+            ]
+        ]
+    ],
+    [
+        "get_approved_comments args",
+        [
+            1
+        ]
+    ],
+    [
+        "get_approved_comments none",
+        []
+    ],
+    [
+        "wp_check_comment_data_max_lengths",
+        [
+            {
+                "error": "comment_author_column_length"
+            },
+            true,
+            {
+                "error": "comment_author_email_column_length"
+            },
+            {
+                "error": "comment_author_url_column_length"
+            },
+            {
+                "error": "comment_content_column_length"
+            }
+        ]
+    ],
+    [
+        "wp_filter_comment",
+        {
+            "comment_post_ID": 1,
+            "comment_author": "Probe Name",
+            "comment_author_email": "PROBE@Example.com",
+            "comment_author_url": "http://example.com",
+            "comment_content": "Hello <script>x</script> there",
+            "comment_type": "",
+            "user_ID": 0,
+            "user_id": 0,
+            "comment_author_IP": "127.0.0.1",
+            "comment_agent": "probe",
+            "filtered": true
+        }
+    ],
+    [
+        "wp_allow_comment fresh",
+        0
+    ],
+    [
+        "wp_allow_comment duplicate",
+        {
+            "error": "comment_duplicate"
+        }
+    ],
+    [
+        "wp_allow_comment admin user",
+        0
+    ],
+    [
+        "wp_signon empty",
+        {
+            "error": "empty_username"
+        }
+    ],
+    [
+        "wp_signon wrong",
+        {
+            "error": "incorrect_password"
+        }
+    ],
+    [
+        "wp_signon unknown",
+        {
+            "error": "invalid_username"
+        }
+    ],
+    [
+        "get_password_reset_key",
+        [
+            20,
+            true,
+            false,
+            true
+        ]
+    ],
+    [
+        "check_password_reset_key",
+        [
+            "WP_User",
+            {
+                "error": "invalid_key"
+            },
+            {
+                "error": "invalid_key"
+            }
+        ]
+    ]
+]

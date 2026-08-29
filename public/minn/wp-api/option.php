@@ -401,3 +401,23 @@ function sanitize_option($option, $value)
 {
     return apply_filters("sanitize_option_{$option}", $value, $option, $value);
 }
+
+/** Reads the options once so later gets are cache hits; the engine caches per name already. */
+function wp_prime_option_caches($options)
+{
+    foreach ((array) $options as $name) {
+        Runtime::options()->get((string) $name);
+    }
+    return null;
+}
+
+/** Per option, whether its autoload flag changed; a missing option reports false. */
+function wp_set_option_autoload_values($options)
+{
+    $results = [];
+    foreach ((array) $options as $name => $autoload) {
+        $on = in_array($autoload, [true, 'yes', 'on', 'auto-on'], true) || $autoload === 1;
+        $results[$name] = Runtime::options()->setAutoload((string) $name, $on);
+    }
+    return $results;
+}

@@ -14,7 +14,7 @@ namespace Minn\Runtime;
  */
 final class Symbols
 {
-    private const MAX_FILES = 4000;
+    private const MAX_FILES = 6000;
     private const SKIP_DIRS = ['node_modules', 'tests', 'test', '.git'];
 
     /**

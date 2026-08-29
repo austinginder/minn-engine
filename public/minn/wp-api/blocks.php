@@ -345,9 +345,16 @@ function _filter_block_content_callback($matches)
     return '<!--' . rtrim($matches[1], '-') . '-->';
 }
 
+/** Anchor block name => relative position => the block types registered to hook there. */
 function get_hooked_blocks()
 {
-    return [];
+    $hooked = [];
+    foreach (WP_Block_Type_Registry::get_instance()->get_all_registered() as $type) {
+        foreach ((array) ($type->block_hooks ?? []) as $anchor => $position) {
+            $hooked[$anchor][$position][] = $type->name;
+        }
+    }
+    return $hooked;
 }
 
 function wp_get_global_styles_svg_filters()
@@ -627,4 +634,401 @@ function wp_render_layout_support_flag($block_content, $block)
 function wp_migrate_old_typography_shape($metadata)
 {
     return $metadata;
+}
+
+/** The hooked block types for an anchor and position, as the filter leaves them. */
+function _minn_hooked_block_types(array $anchor, string $position, array $hooked_blocks, $context): array
+{
+    $name = (string) ($anchor['blockName'] ?? '');
+    $types = $hooked_blocks[$name][$position] ?? [];
+    return (array) apply_filters('hooked_block_types', $types, $position, $name, $context);
+}
+
+/** Serialized markup for the blocks hooked to an anchor at a position, skipping any the anchor lists as ignored. */
+function insert_hooked_blocks(&$parsed_anchor_block, $relative_position, $hooked_blocks, $context)
+{
+    $markup = '';
+    $ignored = (array) ($parsed_anchor_block['attrs']['metadata']['ignoredHookedBlocks'] ?? []);
+    foreach (_minn_hooked_block_types($parsed_anchor_block, (string) $relative_position, $hooked_blocks, $context) as $type) {
+        if (in_array($type, $ignored, true)) {
+            continue;
+        }
+        $parsed = ['blockName' => $type, 'attrs' => [], 'innerBlocks' => [], 'innerHTML' => '', 'innerContent' => []];
+        $parsed = apply_filters('hooked_block', $parsed, $type, $relative_position, $parsed_anchor_block, $context);
+        $parsed = apply_filters("hooked_block_{$type}", $parsed, $type, $relative_position, $parsed_anchor_block, $context);
+        if ($parsed === null) {
+            continue;
+        }
+        $markup .= serialize_block($parsed);
+    }
+    return $markup;
+}
+
+/** Records the hooked types on the anchor's ignoredHookedBlocks metadata; nothing is inserted. */
+function set_ignored_hooked_blocks_metadata(&$parsed_anchor_block, $relative_position, $hooked_blocks, $context)
+{
+    $types = _minn_hooked_block_types($parsed_anchor_block, (string) $relative_position, $hooked_blocks, $context);
+    if ($types === []) {
+        return '';
+    }
+    $ignored = (array) ($parsed_anchor_block['attrs']['metadata']['ignoredHookedBlocks'] ?? []);
+    $parsed_anchor_block['attrs']['metadata']['ignoredHookedBlocks'] = array_values(array_unique(array_merge($ignored, $types)));
+    return '';
+}
+
+function make_before_block_visitor($hooked_blocks, $context, $callback = 'insert_hooked_blocks')
+{
+    return static function (&$block, &$parent_block = null, $prev = null) use ($hooked_blocks, $context, $callback) {
+        $markup = '';
+        if ($parent_block && !$prev) {
+            $markup .= $callback($parent_block, 'first_child', $hooked_blocks, $context);
+        }
+        $markup .= $callback($block, 'before', $hooked_blocks, $context);
+        return $markup;
+    };
+}
+
+function make_after_block_visitor($hooked_blocks, $context, $callback = 'insert_hooked_blocks')
+{
+    return static function (&$block, &$parent_block = null, $next = null) use ($hooked_blocks, $context, $callback) {
+        $markup = $callback($block, 'after', $hooked_blocks, $context);
+        if ($parent_block && !$next) {
+            $markup .= $callback($parent_block, 'last_child', $hooked_blocks, $context);
+        }
+        return $markup;
+    };
+}
+
+/** Serializes one block, calling the visitors around each inner block. */
+function traverse_and_serialize_block($block, $pre_callback = null, $post_callback = null)
+{
+    $parent = null;
+    return _minn_traverse_block($block, $pre_callback, $post_callback, $parent);
+}
+
+/** @internal */
+function _minn_traverse_block(array &$block, $pre, $post, ?array &$parent): string
+{
+    $content = '';
+    $index = 0;
+    $count = count($block['innerBlocks'] ?? []);
+    foreach ((array) ($block['innerContent'] ?? []) as $chunk) {
+        if (is_string($chunk)) {
+            $content .= $chunk;
+            continue;
+        }
+        $inner = &$block['innerBlocks'][$index];
+        $prev = $index > 0 ? $block['innerBlocks'][$index - 1] : null;
+        $next = $index + 1 < $count ? $block['innerBlocks'][$index + 1] : null;
+        if ($pre !== null) {
+            $content .= (string) $pre($inner, $block, $prev);
+        }
+        $content .= _minn_traverse_block($inner, $pre, $post, $block);
+        if ($post !== null) {
+            $content .= (string) $post($inner, $block, $next);
+        }
+        unset($inner);
+        $index++;
+    }
+    return get_comment_delimited_block_content($block['blockName'] ?? null, $block['attrs'] ?? [], $content);
+}
+
+/** Serializes a list of blocks, calling the visitors before and after each. */
+function traverse_and_serialize_blocks($blocks, $pre_callback = null, $post_callback = null)
+{
+    $result = '';
+    $parent = null;
+    $count = count($blocks);
+    foreach (array_keys($blocks) as $i) {
+        $block = &$blocks[$i];
+        $prev = $i > 0 ? $blocks[$i - 1] : null;
+        $next = $i + 1 < $count ? $blocks[$i + 1] : null;
+        if ($pre_callback !== null) {
+            $result .= (string) $pre_callback($block, $parent, $prev);
+        }
+        $result .= _minn_traverse_block($block, $pre_callback, $post_callback, $parent);
+        if ($post_callback !== null) {
+            $result .= (string) $post_callback($block, $parent, $next);
+        }
+        unset($block);
+    }
+    return $result;
+}
+
+/** Content with its hooked blocks inserted; untouched when nothing hooks anywhere. */
+function apply_block_hooks_to_content($content, $context = null, $callback = 'insert_hooked_blocks')
+{
+    $hooked_blocks = get_hooked_blocks();
+    if ($hooked_blocks === [] && !has_filter('hooked_block_types')) {
+        return $content;
+    }
+    $blocks = parse_blocks((string) $content);
+    return traverse_and_serialize_blocks($blocks, make_before_block_visitor($hooked_blocks, $context, $callback), make_after_block_visitor($hooked_blocks, $context, $callback));
+}
+
+/** A template part by its attributes, through the engine's template-part block. */
+function render_block_core_template_part($attributes)
+{
+    $html = render_block(['blockName' => 'core/template-part', 'attrs' => (array) $attributes, 'innerBlocks' => [], 'innerHTML' => '', 'innerContent' => []]);
+    // Outside a block render the reference adds no block-support class to the wrapper (it prints "<header >").
+    return preg_replace_callback('/^(<\w+)([^>]*?)\sclass="([^"]*)"/', static function (array $m): string {
+        $classes = array_values(array_diff(preg_split('/\s+/', trim($m[3]), -1, PREG_SPLIT_NO_EMPTY) ?: [], ['wp-block-template-part']));
+        return $m[1] . $m[2] . ' ' . ($classes === [] ? '' : 'class="' . implode(' ', $classes) . '"');
+    }, $html, 1);
+}
+
+/** The WP_Query vars a query loop's context asks for on a page of it. */
+function build_query_vars_from_query_block($block, $page)
+{
+    $query = ['post_type' => 'post', 'order' => 'DESC', 'orderby' => 'date', 'post__not_in' => [], 'tax_query' => []];
+    $q = $block->context['query'] ?? null;
+    if (!is_array($q)) {
+        return $query;
+    }
+    if (!empty($q['postType']) && post_type_exists((string) $q['postType'])) {
+        $query['post_type'] = (string) $q['postType'];
+    }
+    $query = _minn_query_block_sticky($query, $q);
+    if (!empty($q['exclude'])) {
+        $query['post__not_in'] = array_merge($query['post__not_in'], array_map('intval', (array) $q['exclude']));
+    }
+    if (!empty($q['perPage'])) {
+        $query['offset'] = ((int) ($q['perPage']) * ((int) $page - 1)) + (int) ($q['offset'] ?? 0);
+        $query['posts_per_page'] = (int) $q['perPage'];
+    }
+    $query['tax_query'] = _minn_query_block_tax_query($q);
+    if (isset($q['order'])) {
+        $query['order'] = strtoupper((string) $q['order']);
+    }
+    if (isset($q['orderBy'])) {
+        $query['orderby'] = (string) $q['orderBy'];
+    }
+    if (isset($q['author'])) {
+        $query['author__in'] = array_map('intval', preg_split('/[\s,]+/', (string) $q['author'], -1, PREG_SPLIT_NO_EMPTY) ?: []);
+    }
+    if (!empty($q['search'])) {
+        $query['s'] = (string) $q['search'];
+    }
+    if (!empty($q['parents'])) {
+        $query['post_parent__in'] = array_map('intval', (array) $q['parents']);
+    }
+    return apply_filters('query_loop_block_query_vars', $query, $block, $page);
+}
+
+/** @internal the sticky setting: "only" lists the sticky posts, "exclude" keeps them out */
+function _minn_query_block_sticky(array $query, array $q): array
+{
+    if (!isset($q['sticky']) || $q['sticky'] === '') {
+        return $query;
+    }
+    $sticky = array_map('intval', (array) get_option('sticky_posts', []));
+    if ($q['sticky'] === 'only') {
+        $query['post__in'] = $sticky === [] ? [0] : $sticky;
+        $query['ignore_sticky_posts'] = 1;
+    } else {
+        $query['post__not_in'] = array_merge($query['post__not_in'], $sticky);
+    }
+    return $query;
+}
+
+/** @internal the tax_query a query loop's taxonomy and format settings become */
+function _minn_query_block_tax_query(array $q): array
+{
+    $tax = [];
+    if (!empty($q['taxQuery']) && is_array($q['taxQuery'])) {
+        $clauses = [];
+        foreach ($q['taxQuery'] as $taxonomy => $terms) {
+            if (is_taxonomy_viewable((string) $taxonomy) && !empty($terms)) {
+                $clauses[] = ['taxonomy' => (string) $taxonomy, 'terms' => array_map('intval', array_filter((array) $terms)), 'include_children' => false];
+            }
+        }
+        $tax[] = $clauses;
+    }
+    if (!empty($q['format']) && is_array($q['format'])) {
+        $formats = array_values(array_filter($q['format'], static fn ($f) => $f !== 'standard'));
+        $clause = ['relation' => 'OR'];
+        if ($formats !== []) {
+            $clause[] = ['taxonomy' => 'post_format', 'field' => 'slug', 'terms' => array_map(static fn ($f) => 'post-format-' . $f, $formats), 'operator' => 'IN'];
+        }
+        if (in_array('standard', $q['format'], true)) {
+            $clause[] = ['taxonomy' => 'post_format', 'operator' => 'NOT EXISTS'];
+        }
+        $tax[] = $clause;
+    }
+    return $tax === [] ? [] : ['relation' => 'AND'] + $tax;
+}
+
+/** The comment query vars a comment template's context asks for. */
+function build_comment_query_vars_from_block($block)
+{
+    $vars = ['orderby' => 'comment_date_gmt', 'order' => 'ASC', 'status' => 'approve', 'no_found_rows' => false];
+    if (is_user_logged_in()) {
+        $vars['include_unapproved'] = [get_current_user_id()];
+    } else {
+        $commenter = wp_get_current_commenter();
+        if (!empty($commenter['comment_author_email'])) {
+            $vars['include_unapproved'] = [$commenter['comment_author_email']];
+        }
+    }
+    if (!empty($block->context['postId'])) {
+        $vars['post_id'] = (int) $block->context['postId'];
+    }
+    $vars['hierarchical'] = get_option('thread_comments') ? 'threaded' : false;
+    if (get_option('page_comments') && (int) get_option('comments_per_page') > 0) {
+        $per_page = (int) get_option('comments_per_page');
+        $vars['number'] = $per_page;
+        $page = (int) get_query_var('cpage');
+        if ($page > 0) {
+            $vars['paged'] = $page;
+        } elseif (get_option('default_comments_page') === 'oldest') {
+            $vars['paged'] = 1;
+        } elseif (!empty($vars['post_id'])) {
+            $count = (int) get_comments(['post_id' => $vars['post_id'], 'status' => 'approve', 'count' => true]);
+            $vars['paged'] = max(1, (int) ceil($count / $per_page));
+        }
+    }
+    return $vars;
+}
+
+/** @internal a WP_Block_Template for a template a plugin registered */
+function _minn_registered_block_template(array $row): WP_Block_Template
+{
+    $template = new WP_Block_Template();
+    $template->type = 'wp_template';
+    $template->theme = get_stylesheet();
+    $template->slug = $row['slug'];
+    $template->id = get_stylesheet() . '//' . $row['slug'];
+    $template->title = $row['title'];
+    $template->content = $row['content'];
+    $template->description = $row['description'];
+    $template->source = 'plugin';
+    $template->origin = 'plugin';
+    $template->status = 'publish';
+    $template->is_custom = true;
+    $template->plugin = $row['plugin'];
+    $template->post_types = $row['post_types'];
+    return $template;
+}
+
+/** @internal a WP_Block_Template for a theme's file, or null when the theme has none for the slug */
+function _minn_theme_block_template(string $slug, string $type): ?WP_Block_Template
+{
+    $theme = Runtime::current()->get('theme');
+    if ($theme === null) {
+        return null;
+    }
+    $content = $type === 'wp_template_part' ? $theme->partFile($slug) : $theme->templateFile($slug);
+    if ($content === null) {
+        return null;
+    }
+    $template = new WP_Block_Template();
+    $template->type = $type;
+    $template->theme = get_stylesheet();
+    $template->slug = $slug;
+    $template->id = get_stylesheet() . '//' . $slug;
+    $template->content = $content;
+    $template->source = 'theme';
+    $template->status = 'publish';
+    $template->has_theme_file = true;
+    $template->is_custom = false;
+    $template->title = _minn_block_template_title($slug, $type, $theme);
+    $template->area = $type === 'wp_template_part' ? $theme->partArea($slug) : null;
+    return $template;
+}
+
+/** @internal the theme.json title for a part or custom template, else the reference's name for the slug */
+function _minn_block_template_title(string $slug, string $type, $theme): string
+{
+    $json = $theme->json();
+    foreach ((array) ($json[$type === 'wp_template_part' ? 'templateParts' : 'customTemplates'] ?? []) as $entry) {
+        if (($entry['name'] ?? '') === $slug && !empty($entry['title'])) {
+            return (string) $entry['title'];
+        }
+    }
+    $titles = ['index' => 'Index', 'home' => 'Blog Home', 'front-page' => 'Front Page', 'singular' => 'Single Entries', 'single' => 'Single Posts', 'page' => 'Pages', 'archive' => 'All Archives', 'author' => 'Author Archives', 'category' => 'Category Archives', 'taxonomy' => 'Taxonomy', 'date' => 'Date Archives', 'tag' => 'Tag Archives', 'attachment' => 'Attachment Pages', 'search' => 'Search Results', 'privacy-policy' => 'Privacy Policy', '404' => 'Page: 404', 'header' => 'Header', 'footer' => 'Footer', 'sidebar' => 'Sidebar', 'comments' => 'Comments'];
+    return $titles[$slug] ?? ucwords(str_replace(['-', '_'], ' ', $slug));
+}
+
+/** @internal the slugs the theme (and its parent) ship files for */
+function _minn_theme_block_template_slugs(string $type): array
+{
+    $folder = $type === 'wp_template_part' ? 'parts' : 'templates';
+    $slugs = [];
+    foreach (array_unique([get_stylesheet_directory(), get_template_directory()]) as $dir) {
+        foreach (glob("{$dir}/{$folder}/*.html") ?: [] as $file) {
+            $slugs[] = basename($file, '.html');
+        }
+    }
+    return array_values(array_unique($slugs));
+}
+
+/** Registers a plugin's template; a WP_Error names the reference's refusal. */
+function register_block_template($template_name, $args = [])
+{
+    return WP_Block_Templates_Registry::get_instance()->register($template_name, $args);
+}
+
+function unregister_block_template($template_name)
+{
+    return WP_Block_Templates_Registry::get_instance()->unregister($template_name);
+}
+
+/** Theme files (and registered plugin templates, unless a post_type query without slugs) matching the query. */
+function get_block_templates($query = [], $template_type = 'wp_template')
+{
+    $templates = [];
+    foreach (_minn_theme_block_template_slugs($template_type) as $slug) {
+        $template = _minn_theme_block_template($slug, $template_type);
+        if ($template !== null && _minn_block_template_matches($template, $query)) {
+            $templates[] = $template;
+        }
+    }
+    $themeSlugs = array_map(static fn ($t) => $t->slug, $templates);
+    if ($template_type === 'wp_template' && (empty($query['post_type']) || !empty($query['slug__in']))) {
+        foreach (WP_Block_Templates_Registry::get_instance()->get_by_query($query) as $name => $template) {
+            if (!in_array($template->slug, $themeSlugs, true) && _minn_block_template_matches($template, $query)) {
+                $templates[$name] = $template;
+            }
+        }
+    }
+    return apply_filters('get_block_templates', $templates, $query, $template_type);
+}
+
+/** @internal */
+function _minn_block_template_matches(WP_Block_Template $template, array $query): bool
+{
+    if (!empty($query['slug__in']) && !in_array($template->slug, (array) $query['slug__in'], true)) {
+        return false;
+    }
+    if (!empty($query['slug__not_in']) && in_array($template->slug, (array) $query['slug__not_in'], true)) {
+        return false;
+    }
+    if (!empty($query['area']) && $template->area !== $query['area']) {
+        return false;
+    }
+    if (isset($query['wp_id']) && (int) $template->wp_id !== (int) $query['wp_id']) {
+        return false;
+    }
+    return true;
+}
+
+/** A template by "theme//slug": the theme's file, else a plugin's registration under the active theme. */
+function get_block_template($id, $template_type = 'wp_template')
+{
+    $parts = explode('//', (string) $id, 2);
+    if (count($parts) < 2) {
+        return null;
+    }
+    [$theme, $slug] = $parts;
+    $template = null;
+    if ($theme === get_stylesheet()) {
+        $template = _minn_theme_block_template($slug, $template_type);
+        if ($template === null && $template_type === 'wp_template') {
+            $template = WP_Block_Templates_Registry::get_instance()->get_by_slug($slug);
+        }
+    } elseif ($template_type === 'wp_template') {
+        // A plugin's own "plugin//slug" name resolves to its registration.
+        $template = WP_Block_Templates_Registry::get_instance()->get_registered((string) $id);
+    }
+    return apply_filters('get_block_template', $template, $id, $template_type);
 }

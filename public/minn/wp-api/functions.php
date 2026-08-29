@@ -658,3 +658,8 @@ function wp_validate_boolean($value)
     }
     return (bool) $value;
 }
+
+function send_frame_options_header()
+{
+    header('X-Frame-Options: SAMEORIGIN');
+}

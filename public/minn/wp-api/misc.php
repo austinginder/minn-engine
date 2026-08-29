@@ -534,3 +534,8 @@ function fetch_feed($url)
 {
     return new WP_Error('simplepie-error', 'A feed could not be found at the requested URL: the engine has no feed parser.');
 }
+
+function wp_no_robots()
+{
+    header('X-Robots-Tag: noindex, noarchive', true);
+}

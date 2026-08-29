@@ -47,3 +47,23 @@ if (Minn\Runtime\Runtime::booted()) {
     $GLOBALS['allowedentitynames'] = _minn_kses_table()['entities'];
     $GLOBALS['allowedxmlentitynames'] = ['amp', 'lt', 'gt', 'apos', 'quot'];
 }
+
+// The authenticate chain and the comment field filters.
+add_filter('authenticate', 'wp_authenticate_username_password', 20, 3);
+add_filter('authenticate', 'wp_authenticate_email_password', 20, 3);
+add_filter('pre_comment_author_name', 'sanitize_text_field');
+add_filter('pre_comment_author_name', '_wp_specialchars', 30);
+add_filter('pre_comment_author_email', 'trim');
+add_filter('pre_comment_author_email', 'sanitize_email');
+add_filter('pre_comment_author_url', 'strip_tags');
+add_filter('pre_comment_author_url', 'trim');
+add_filter('pre_comment_author_url', 'wp_filter_kses');
+add_filter('pre_comment_author_url', 'esc_url_raw');
+
+// Comment text on display.
+add_filter('comment_text', 'wptexturize');
+add_filter('comment_text', 'convert_chars');
+add_filter('comment_text', 'make_clickable', 9);
+add_filter('comment_text', 'force_balance_tags', 25);
+add_filter('comment_text', 'convert_smilies', 20);
+add_filter('comment_text', 'wpautop', 30);

@@ -8,6 +8,7 @@ use Minn\Content\Posts;
 use Minn\Db;
 use Minn\Front\Kind;
 use Minn\Front\Resolution;
+use Minn\Runtime\BlockTemplates;
 
 /**
  * Which template renders a resolution, and where its markup comes from:
@@ -21,6 +22,7 @@ final readonly class Templates
         private Db $db,
         private Posts $posts,
         private Theme $theme,
+        private ?BlockTemplates $registered = null,
     ) {
     }
 
@@ -38,7 +40,7 @@ final readonly class Templates
 
     public function template(string $slug): ?string
     {
-        return $this->saved('wp_template', $slug) ?? $this->theme->templateFile($slug);
+        return $this->saved('wp_template', $slug) ?? $this->theme->templateFile($slug) ?? $this->registered?->bySlug($slug)['content'] ?? null;
     }
 
     public function part(string $slug): ?string

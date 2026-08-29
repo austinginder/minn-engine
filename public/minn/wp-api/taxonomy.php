@@ -2,7 +2,10 @@
 /** Terms and taxonomies. Behaviour from contracts/fixtures/api/content.json. */
 
 use Minn\Content\Terms;
+use Minn\Runtime\Meta;
 use Minn\Runtime\Refusal;
+use Minn\Front\TermLists;
+use Minn\Content\PostWriter;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\TermQuery;
 use Minn\Runtime\TermWriter;
@@ -714,4 +717,191 @@ function wp_get_nav_menu_items($menu, $args = [])
         $item->xfn = (string) get_post_meta($item->ID, '_menu_item_xfn', true);
     }
     return apply_filters('wp_get_nav_menu_items', $items, $menu, $args);
+}
+
+function is_object_in_taxonomy($object_type, $taxonomy)
+{
+    $row = Runtime::registry()->taxonomy((string) $taxonomy);
+    return $row !== null && in_array((string) $object_type, (array) $row['object_type'], true);
+}
+
+/** The slug, or the first "-N" form of it, that no other term of the taxonomy holds. */
+function wp_unique_term_slug($slug, $term)
+{
+    $term = (object) $term;
+    $unique = (new Terms(Runtime::current()->db))->uniqueSlug((string) $slug, (string) $term->taxonomy, (int) ($term->term_id ?? 0));
+    return apply_filters('wp_unique_term_slug', $unique, $term, $slug);
+}
+
+/** Recounts the published objects behind each term_taxonomy id. */
+function _update_post_term_count($terms, $taxonomy)
+{
+    $name = is_object($taxonomy) ? (string) $taxonomy->name : (string) $taxonomy;
+    if ($name === '') {
+        return null;
+    }
+    (new PostWriter(Runtime::current()->db, _minn_posts(), Runtime::current()->site))->recount($name);
+    return null;
+}
+
+/** Term meta per id, as the cache primer hands it back; false for an empty list. */
+function update_termmeta_cache($term_ids)
+{
+    $ids = array_values(array_unique(array_map('intval', (array) $term_ids)));
+    if ($ids === []) {
+        return false;
+    }
+    $out = [];
+    foreach ($ids as $id) {
+        $out[$id] = (new Meta(Runtime::current()->db))->all('term', $id);
+    }
+    return $out;
+}
+
+/** The category's name, or "" for an id no category has. */
+function get_the_category_by_ID($cat_id)
+{
+    $term = get_term((int) $cat_id, 'category');
+    return $term instanceof WP_Term ? (string) $term->name : '';
+}
+
+/** The queried category's name, with a prefix, printed or returned; nothing off a category archive. */
+function single_cat_title($prefix = '', $display = true)
+{
+    return single_term_title($prefix, $display);
+}
+
+function single_term_title($prefix = '', $display = true)
+{
+    $term = get_queried_object();
+    if (!$term instanceof WP_Term || !(is_category() || is_tag() || is_tax())) {
+        return '';
+    }
+    $filter = match ($term->taxonomy) { 'category' => 'single_cat_title', 'post_tag' => 'single_tag_title', default => 'single_term_title' };
+    $name = apply_filters($filter, $term->name);
+    if ($display) {
+        echo $prefix . $name;
+        return null;
+    }
+    return $name;
+}
+
+/** The nested category list; markup from Minn\Front\TermLists. */
+function wp_list_categories($args = '')
+{
+    $args = wp_parse_args($args, ['show_option_all' => '', 'show_option_none' => 'No categories', 'orderby' => 'name', 'order' => 'ASC', 'style' => 'list', 'show_count' => 0, 'hide_empty' => 1, 'use_desc_for_title' => 0, 'child_of' => 0, 'feed' => '', 'feed_type' => '', 'feed_image' => '', 'exclude' => '', 'exclude_tree' => '', 'include' => '', 'hierarchical' => true, 'title_li' => 'Categories', 'show_option_none' => 'No categories', 'number' => null, 'echo' => 1, 'depth' => 0, 'current_category' => 0, 'pad_counts' => 0, 'taxonomy' => 'category', 'walker' => null, 'hide_title_if_empty' => false, 'separator' => '<br />']);
+    $query = array_intersect_key($args, array_flip(['orderby', 'order', 'hide_empty', 'child_of', 'exclude', 'exclude_tree', 'include', 'number', 'pad_counts', 'taxonomy', 'hierarchical']));
+    if ($args['depth'] === -1 || !$args['hierarchical']) {
+        $query['hierarchical'] = false;
+    }
+    $terms = get_terms($query);
+    $terms = is_array($terms) ? $terms : [];
+    if (is_object($args['walker']) && method_exists($args['walker'], 'walk')) {
+        $items = $args['walker']->walk($terms, (int) $args['depth'], $args);
+    } else {
+        $rows = array_map(static fn ($t) => (array) $t, $terms);
+        $items = TermLists::categoryList($rows, $args, static fn (array $row) => (string) get_term_link((int) $row['term_id'], (string) $row['taxonomy']));
+    }
+    [$before, $after] = $terms === [] && $args['hide_title_if_empty'] ? ['', ''] : TermLists::categoryWrapper($args);
+    $output = apply_filters('wp_list_categories', $before . $items . $after, $args);
+    if ($args['echo']) {
+        echo $output;
+        return null;
+    }
+    return $output;
+}
+
+/** The tag cloud for a taxonomy's terms; nothing at all when there are none. */
+function wp_tag_cloud($args = '')
+{
+    $args = wp_parse_args($args, ['smallest' => 8, 'largest' => 22, 'unit' => 'pt', 'number' => 45, 'format' => 'flat', 'separator' => "\n", 'orderby' => 'name', 'order' => 'ASC', 'exclude' => '', 'include' => '', 'link' => 'view', 'taxonomy' => 'post_tag', 'post_type' => '', 'echo' => true, 'show_count' => 0]);
+    $tags = get_terms(array_merge(['taxonomy' => $args['taxonomy'], 'orderby' => 'count', 'order' => 'DESC'], array_intersect_key($args, array_flip(['number', 'exclude', 'include', 'hide_empty']))));
+    if (!is_array($tags) || $tags === []) {
+        return null;
+    }
+    foreach ($tags as $tag) {
+        $tag->link = (string) get_term_link($tag);
+        $tag->id = (int) $tag->term_id;
+    }
+    $return = wp_generate_tag_cloud($tags, $args);
+    $return = apply_filters('wp_tag_cloud', $return, $args);
+    if ($args['echo']) {
+        echo $return;
+        return null;
+    }
+    return $return;
+}
+
+function wp_generate_tag_cloud($tags, $args = '')
+{
+    $args = wp_parse_args($args, ['smallest' => 8, 'largest' => 22, 'unit' => 'pt', 'number' => 0, 'format' => 'flat', 'separator' => "\n", 'orderby' => 'name', 'order' => 'ASC', 'topic_count_text' => null, 'topic_count_text_callback' => null, 'topic_count_scale_callback' => 'default_topic_count_scale', 'filter' => 1, 'show_count' => 0]);
+    $rows = array_map(static fn ($t) => (array) $t, (array) $tags);
+    $out = TermLists::tagCloud($rows, $args);
+    if ($out === null) {
+        return '';
+    }
+    if ($args['format'] === 'array') {
+        $out = explode("\n", $out);
+    }
+    return $args['filter'] ? apply_filters('wp_generate_tag_cloud', $out, $tags, $args) : $out;
+}
+
+/** @internal the term_taxonomy ids a tax clause names, children of hierarchical terms included when asked */
+function _minn_term_taxonomy_ids(string $taxonomy, string $field, array $terms, bool $children): array
+{
+    if ($terms === []) {
+        return [];
+    }
+    $ids = [];
+    $parents = [];
+    foreach ($terms as $value) {
+        $term = match ($field) {
+            'slug', 'name' => get_term_by($field, (string) $value, $taxonomy),
+            'term_taxonomy_id' => get_term_by('term_taxonomy_id', (int) $value, $taxonomy),
+            default => get_term((int) $value, $taxonomy),
+        };
+        if ($term instanceof WP_Term) {
+            $ids[] = (int) $term->term_taxonomy_id;
+            $parents[] = (int) $term->term_id;
+        }
+    }
+    if ($children && $parents !== [] && is_taxonomy_hierarchical($taxonomy)) {
+        foreach ($parents as $parent) {
+            foreach (get_terms(['taxonomy' => $taxonomy, 'child_of' => $parent, 'hide_empty' => false]) ?: [] as $child) {
+                $ids[] = (int) $child->term_taxonomy_id;
+            }
+        }
+    }
+    return array_values(array_unique($ids));
+}
+
+/** The category select: one option per term, nested by depth when hierarchical, in the reference's markup. */
+function wp_dropdown_categories($args = '')
+{
+    $args = wp_parse_args($args, ['show_option_all' => '', 'show_option_none' => '', 'orderby' => 'id', 'order' => 'ASC', 'show_count' => 0, 'hide_empty' => 1, 'child_of' => 0, 'exclude' => '', 'include' => '', 'echo' => 1, 'selected' => 0, 'hierarchical' => 0, 'name' => 'cat', 'id' => '', 'class' => 'postform', 'depth' => 0, 'tab_index' => 0, 'taxonomy' => 'category', 'hide_if_empty' => false, 'option_none_value' => -1, 'value_field' => 'term_id', 'required' => false, 'aria_describedby' => '']);
+    $query = array_intersect_key($args, array_flip(['orderby', 'order', 'hide_empty', 'child_of', 'exclude', 'include', 'taxonomy']));
+    $query['hierarchical'] = (bool) $args['hierarchical'];
+    $terms = get_terms($query);
+    $terms = is_array($terms) ? array_map(static fn ($t) => (array) $t, $terms) : [];
+    if ($terms === [] && $args['hide_if_empty']) {
+        return apply_filters('wp_dropdown_cats', '', $args);
+    }
+    $id = $args['id'] !== '' ? $args['id'] : $args['name'];
+    $output = '<select ' . ($args['required'] ? 'required' : '') . " name='" . esc_attr($args['name']) . "' id='" . esc_attr($id) . "' class='" . esc_attr($args['class']) . "'"
+        . ((int) $args['tab_index'] > 0 ? ' tabindex="' . (int) $args['tab_index'] . '"' : '') . ($args['aria_describedby'] !== '' ? ' aria-describedby="' . esc_attr($args['aria_describedby']) . '"' : '') . ">\n";
+    if ($terms !== []) {
+        if ($args['show_option_all'] !== '') {
+            $output .= "\t<option value='0'" . ((string) $args['selected'] === '0' ? " selected='selected'" : '') . '>' . esc_html($args['show_option_all']) . "</option>\n";
+        }
+        if ($args['show_option_none'] !== '') {
+            $output .= "\t<option value='" . esc_attr((string) $args['option_none_value']) . "'" . ((string) $args['selected'] === (string) $args['option_none_value'] ? " selected='selected'" : '') . '>' . esc_html($args['show_option_none']) . "</option>\n";
+        }
+        $output .= TermLists::dropdownOptions($terms, $args);
+    }
+    $output .= "</select>\n";
+    $output = apply_filters('wp_dropdown_cats', $output, $args);
+    if ($args['echo']) {
+        echo $output;
+    }
+    return $output;
 }

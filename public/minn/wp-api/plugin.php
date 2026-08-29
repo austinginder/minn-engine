@@ -176,3 +176,44 @@ function wp_get_active_and_valid_plugins()
     }
     return $out;
 }
+
+/** The id a callback registers under: its name, Class::method, or an object's hash plus method. */
+function _wp_filter_build_unique_id($hook_name, $callback, $priority)
+{
+    if (is_string($callback)) {
+        return $callback;
+    }
+    if (is_object($callback)) {
+        return spl_object_hash($callback);
+    }
+    $callback = (array) $callback;
+    return (is_object($callback[0]) ? spl_object_hash($callback[0]) : (string) $callback[0]) . '::' . (string) $callback[1];
+}
+
+/** The drop-in files present under wp-content, keyed by filename, with their headers. */
+function get_dropins()
+{
+    $names = ['advanced-cache.php', 'db.php', 'db-error.php', 'install.php', 'maintenance.php', 'object-cache.php', 'php-error.php', 'fatal-error-handler.php', 'sunrise.php', 'blog-deleted.php', 'blog-inactive.php', 'blog-suspended.php'];
+    $out = [];
+    foreach ($names as $name) {
+        $file = WP_CONTENT_DIR . '/' . $name;
+        if (is_file($file)) {
+            $out[$name] = get_plugin_data($file, false, false);
+        }
+    }
+    return $out;
+}
+
+/** @internal $wp_filter, $wp_actions, $wp_filters and $wp_current_filter over the engine's registry */
+function _minn_bind_hook_globals(): void
+{
+    $hooks = Runtime::hooks();
+    $GLOBALS['wp_filter'] = [];
+    $hooks->onNew(static function (string $name): void {
+        $GLOBALS['wp_filter'][$name] = WP_Hook::bound($name);
+    });
+    $GLOBALS['wp_actions'] = &$hooks->counters(true);
+    $GLOBALS['wp_filters'] = &$hooks->counters(false);
+    $GLOBALS['wp_current_filter'] = &$hooks->stackRef();
+    $GLOBALS['wp_roles'] = wp_roles();
+}

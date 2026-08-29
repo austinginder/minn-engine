@@ -214,3 +214,19 @@ function wp_get_list_item_separator()
 {
     return ', ';
 }
+
+/** Installed .po files by text domain and locale with their headers; "core", "plugins", or "themes". */
+function wp_get_installed_translations($type)
+{
+    $dir = WP_LANG_DIR . ($type === 'core' ? '' : '/' . $type);
+    $out = [];
+    foreach (glob($dir . '/*.po') ?: [] as $file) {
+        $base = basename($file, '.po');
+        if (!preg_match('/^(?:(.+)-)?([a-z]{2,3}(?:_[A-Z]{2})?(?:_[a-z]+)?)$/', $base, $m)) {
+            continue;
+        }
+        $domain = $m[1] !== '' ? $m[1] : 'default';
+        $out[$domain][$m[2]] = get_file_data($file, ['POT-Creation-Date' => '"POT-Creation-Date', 'PO-Revision-Date' => '"PO-Revision-Date', 'Project-Id-Version' => '"Project-Id-Version', 'X-Generator' => '"X-Generator']);
+    }
+    return $out;
+}

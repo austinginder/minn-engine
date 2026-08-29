@@ -83,7 +83,8 @@ function locate_template($template_names, $load = false, $load_once = true, $arg
         if (!$template_name) {
             continue;
         }
-        foreach ([get_stylesheet_directory(), get_template_directory(), ABSPATH . WPINC . '/theme-compat'] as $dir) {
+        // The engine's own theme-compat stands where the reference's wp-includes/theme-compat would.
+        foreach ([get_stylesheet_directory(), get_template_directory(), MINN_ENGINE_DIR . '/wp-api/theme-compat'] as $dir) {
             if (file_exists($dir . '/' . $template_name)) {
                 $located = $dir . '/' . $template_name;
                 break 2;
@@ -341,7 +342,7 @@ function get_avatar($id_or_email, $size = 96, $default_value = '', $alt = '', $a
     if (empty($args['default'])) {
         $args['default'] = get_option('avatar_default', 'mystery');
     }
-    $args['loading'] ??= wp_lazy_loading_enabled('img', 'get_avatar') ? 'lazy' : null;
+    $args['loading'] ??= wp_get_loading_optimization_attributes('img', ['width' => (int) $args['size'], 'height' => (int) $args['size']], 'get_avatar')['loading'] ?? null;
     $args['decoding'] ??= 'async';
     $args['height'] = $args['height'] ?: $args['size'];
     $args['width'] = $args['width'] ?: $args['size'];
@@ -441,4 +442,31 @@ function _wp_to_kebab_case($input_string)
     return strtolower($string);
 }
 
+/** The theme file for a template type (through the hierarchy and type filters); under a block theme the canvas stands in. */
+function get_query_template($type, $templates = [])
+{
+    $type = (string) preg_replace('|[^a-z0-9-]+|', '', (string) $type);
+    if ($templates === []) {
+        $templates = ["{$type}.php"];
+    }
+    $templates = apply_filters("{$type}_template_hierarchy", $templates);
+    $template = locate_template($templates);
+    if ($template === '' && Runtime::current()->get('block_theme', false) && _minn_block_template_exists($templates)) {
+        $template = MINN_ENGINE_DIR . '/wp-api/template-canvas.php';
+    }
+    return apply_filters("{$type}_template", $template, $type, $templates);
+}
 
+/** @internal whether the theme (or its parent) ships a block template for any of the PHP names given */
+function _minn_block_template_exists(array $templates): bool
+{
+    foreach ($templates as $name) {
+        $slug = basename((string) $name, '.php');
+        foreach (array_unique([get_stylesheet_directory(), get_template_directory()]) as $dir) {
+            if (is_file("{$dir}/templates/{$slug}.html")) {
+                return true;
+            }
+        }
+    }
+    return false;
+}

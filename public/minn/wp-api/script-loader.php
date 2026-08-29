@@ -386,3 +386,9 @@ function wp_default_script_modules()
     wp_register_script_module('@wordpress/block-library/query/view', $base . 'query-view.js', ['@wordpress/interactivity', ['id' => '@wordpress/interactivity-router', 'import' => 'dynamic']], MINN_ENGINE_VERSION, $view);
     wp_register_script_module('@wordpress/block-library/form/view', $base . 'form-view.js', [], MINN_ENGINE_VERSION, $view);
 }
+
+/** Block themes load each core block's stylesheet on its own; a filter may say otherwise. */
+function wp_should_load_separate_core_block_assets()
+{
+    return (bool) apply_filters('should_load_separate_core_block_assets', (bool) Runtime::current()->get('block_theme', false));
+}

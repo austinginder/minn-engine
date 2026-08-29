@@ -74,6 +74,21 @@ final readonly class Comments
         ) !== null;
     }
 
+    /** Held comments per post, for the ids given (a post without any reads 0). */
+    public function pendingCounts(array $postIds): array
+    {
+        $ids = array_values(array_unique(array_map('intval', $postIds)));
+        $counts = array_fill_keys($ids, 0);
+        if ($ids === []) {
+            return $counts;
+        }
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+        foreach ($this->db->rows("SELECT comment_post_ID, COUNT(*) AS n FROM {$this->db->table('comments')} WHERE comment_approved = '0' AND comment_post_ID IN ({$placeholders}) GROUP BY comment_post_ID", $ids) as $row) {
+            $counts[(int) $row['comment_post_ID']] = (int) $row['n'];
+        }
+        return $counts;
+    }
+
     /** True when this name and email already have an approved comment. */
     public function previouslyApproved(string $author, string $email): bool
     {

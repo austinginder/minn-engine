@@ -59,7 +59,7 @@ final readonly class PageRenderer
         $site = new Site($db);
         $posts = new Posts($db);
         $users = new Users($db);
-        $templates = new Templates($db, $posts, $theme);
+        $templates = new Templates($db, $posts, $theme, Runtime::booted() ? Runtime::blockTemplates() : null);
         $renderer = Blocks::renderer();
         (new Structure($theme, $templates, $site, $permalinks))->register($renderer);
         (new PostBlocks($posts, $users, $site, $permalinks))->register($renderer);

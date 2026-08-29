@@ -74,7 +74,8 @@ final readonly class Structure
         $tag = $level === 0 ? 'p' : 'h' . $level;
         $resolution = $renderer->context()->resolution;
         // The posts page is a listing but not the home the site-title link points at.
-        $current = (($resolution->kind === Kind::Home && !$resolution->postsPage) || $resolution->front) && $resolution->paged === 1 ? ' aria-current="page"' : '';
+        // Only a page render is on a page; a render with no request behind it (REST, CLI) marks nothing current.
+        $current = $renderer->context()->front && (($resolution->kind === Kind::Home && !$resolution->postsPage) || $resolution->front) && $resolution->paged === 1 ? ' aria-current="page"' : '';
         $link = (bool) $block->attr('isLink', true);
         $inner = $link
             ? '<a href="' . Html::attr($this->permalinks->url('')) . '" target="_self" rel="home"' . $current . '>' . Html::esc($name) . '</a>'

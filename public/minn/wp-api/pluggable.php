@@ -4,6 +4,9 @@
 use Minn\Auth\Nonce;
 use Minn\Auth\Password;
 use Minn\Auth\Salts;
+use Minn\Auth\AuthCookies;
+use Minn\Auth\Cookie;
+use Minn\Auth\Sessions;
 use Minn\Runtime\Runtime;
 use Minn\Content\Users;
 
@@ -465,4 +468,54 @@ function is_user_member_of_blog($user_id = 0, $blog_id = 0)
 {
     $user_id = $user_id ?: get_current_user_id();
     return $user_id > 0 && get_userdata($user_id) !== false;
+}
+
+/** Tells the site admin a user changed their password; nothing when the user is that admin. */
+function wp_password_change_notification($user)
+{
+    $user = is_object($user) ? $user : get_userdata((int) $user);
+    if (!$user || (string) $user->user_email === (string) get_option('admin_email')) {
+        return null;
+    }
+    $blogname = wp_specialchars_decode(get_option('blogname'), ENT_QUOTES);
+    $email = apply_filters('wp_password_change_notification_email', [
+        'to' => get_option('admin_email'),
+        'subject' => sprintf('[%s] Password Changed', $blogname),
+        'message' => sprintf('Password changed for user: %s', $user->user_login) . "\r\n",
+        'headers' => '',
+    ], $user, $blogname);
+    wp_mail($email['to'], wp_specialchars_decode(sprintf($email['subject'], $blogname)), $email['message'], $email['headers']);
+    return null;
+}
+
+/** Mints a session and sends the three sign-in cookies, the way the login endpoint does. */
+function wp_set_auth_cookie($user_id, $remember = false, $secure = '', $token = '')
+{
+    $runtime = Runtime::current();
+    $user = (new Users($runtime->db))->find((int) $user_id);
+    if ($user === null) {
+        return null;
+    }
+    $expiration = time() + (int) apply_filters('auth_cookie_expiration', ($remember ? 14 : 2) * DAY_IN_SECONDS, (int) $user_id, (bool) $remember);
+    $expire = $remember ? $expiration + (12 * HOUR_IN_SECONDS) : 0;
+    $secure = (bool) apply_filters('secure_auth_cookie', $secure === '' ? is_ssl() : (bool) $secure, (int) $user_id);
+    $secureLoggedIn = (bool) apply_filters('secure_logged_in_cookie', $secure && is_ssl(), (int) $user_id, $secure);
+    $sessions = new Sessions(new Users($runtime->db));
+    if ($token === '') {
+        $token = $sessions->create((int) $user_id, $expiration, $runtime->request?->remoteAddress ?? '', (string) ($runtime->request?->header('user-agent') ?? ''));
+    }
+    $hash = (new AuthCookies($runtime->db, new Cookie($runtime->db, new Users($runtime->db), $sessions)))->hash();
+    $scheme = $secure ? 'secure_auth' : 'auth';
+    $auth = AuthCookies::mint($user, $expiration, $token, $scheme);
+    $loggedIn = AuthCookies::mint($user, $expiration, $token, 'logged_in');
+    do_action('set_auth_cookie', $auth, $expire, $expiration, (int) $user_id, $scheme, $token);
+    do_action('set_logged_in_cookie', $loggedIn, $expire, $expiration, (int) $user_id, 'logged_in', $token);
+    if (!apply_filters('send_auth_cookies', true, $expire, $expiration, (int) $user_id, $scheme, $token) || headers_sent()) {
+        return null;
+    }
+    $name = ($secure ? 'wordpress_sec_' : 'wordpress_') . $hash;
+    setcookie($name, $auth, ['expires' => $expire, 'path' => '/wp-admin', 'secure' => $secure, 'httponly' => true]);
+    setcookie($name, $auth, ['expires' => $expire, 'path' => '/wp-content/plugins', 'secure' => $secure, 'httponly' => true]);
+    setcookie('wordpress_logged_in_' . $hash, $loggedIn, ['expires' => $expire, 'path' => '/', 'secure' => $secureLoggedIn, 'httponly' => true]);
+    return null;
 }

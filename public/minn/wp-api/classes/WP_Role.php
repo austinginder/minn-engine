@@ -127,5 +127,6 @@ class WP_Roles
     private function persist()
     {
         update_option($this->role_key, $this->roles);
+        Runtime::current()->capabilities->roles()->forget();
     }
 }

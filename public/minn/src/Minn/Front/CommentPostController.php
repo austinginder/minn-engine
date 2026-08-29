@@ -8,6 +8,7 @@ use Minn\Auth\AuthCookies;
 use Minn\Auth\Authenticated;
 use Minn\Auth\Authenticator;
 use Minn\Auth\Capabilities;
+use Minn\Content\CommentModeration;
 use Minn\Content\Comments;
 use Minn\Content\Posts;
 use Minn\Content\Reader;
@@ -129,16 +130,8 @@ final readonly class CommentPostController
     /** A moderator's own comment is approved; otherwise the moderation settings decide. */
     private function approval(?array $user, string $author, string $email): string
     {
-        if ($user !== null && $this->capabilities->can((int) $user['ID'], 'moderate_comments')) {
-            return '1';
-        }
-        if (($this->site->option('comment_moderation') ?? '0') === '1') {
-            return '0';
-        }
-        if (($this->site->option('comment_previously_approved') ?? '1') === '1') {
-            return $this->comments->previouslyApproved($author, $email) ? '1' : '0';
-        }
-        return '1';
+        $moderator = $user !== null && $this->capabilities->can((int) $user['ID'], 'moderate_comments');
+        return (new CommentModeration($this->comments))->approval($moderator, $author, $email, fn (string $name): ?string => $this->site->option($name));
     }
 
     /** The reference remembers the commenter for a year, in three cookies keyed by the site hash. */

@@ -402,7 +402,7 @@ function wp_get_loading_optimization_attributes($tag_name, $attr, $context)
             $optimization['fetchpriority'] = 'high';
             $runtime->set('high_priority_used', true);
         }
-    } elseif ($tag_name === 'img' && RenderState::depth() > 0 && !(defined('REST_REQUEST') && REST_REQUEST) && RenderState::nextImage() <= 3) {
+    } elseif ($tag_name === 'img' && (RenderState::depth() > 0 || (in_the_loop() && is_main_query())) && !(defined('REST_REQUEST') && REST_REQUEST) && RenderState::nextImage() <= 3) {
         // Inside a page render the plugin's image shares the engine's budget: three eager images, the first with high priority.
         if (RenderState::claimPriority()) {
             $optimization = ['fetchpriority' => 'high'] + $optimization;
@@ -1135,4 +1135,14 @@ function _wp_image_editor_choose($args = [])
         return $implementation;
     }
     return false;
+}
+
+/** How many images print eagerly before lazy loading starts: the reference's three, or a filter's number. */
+function wp_omit_loading_attr_threshold($force = false)
+{
+    static $threshold = null;
+    if ($threshold === null || $force) {
+        $threshold = (int) apply_filters('wp_omit_loading_attr_threshold', 3);
+    }
+    return $threshold;
 }

@@ -84,6 +84,18 @@ final class Options
         return true;
     }
 
+    /** Flips the autoload column; false when the option is missing or already so. */
+    public function setAutoload(string $name, bool $on): bool
+    {
+        $current = $this->db->value("SELECT autoload FROM {$this->db->table('options')} WHERE option_name = ? LIMIT 1", [$name]);
+        $wanted = $on ? 'on' : 'off';
+        if ($current === null || in_array((string) $current, $on ? ['on', 'yes'] : ['off', 'no'], true)) {
+            return false;
+        }
+        $this->db->execute("UPDATE {$this->db->table('options')} SET autoload = ? WHERE option_name = ?", [$wanted, $name]);
+        return true;
+    }
+
     public function delete(string $name): bool
     {
         $existed = $this->get($name) !== null;

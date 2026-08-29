@@ -35,6 +35,12 @@ final class Roles
         return 'a:1:{s:' . strlen($role) . ':"' . $role . '";b:1;}';
     }
 
+    /** Drops the parsed map so the next read sees a rewritten option. */
+    public function forget(): void
+    {
+        $this->roles = null;
+    }
+
     /** @return RoleMap */
     public function all(): array
     {

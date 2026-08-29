@@ -161,12 +161,19 @@ final readonly class TermQuery
         if ((int) $args['child_of'] > 0) {
             $rows = self::descendants($rows, (int) $args['child_of']);
         }
-        foreach ((array) $args['exclude_tree'] as $tree) {
+        foreach (self::idList($args['exclude_tree']) as $tree) {
             $excluded = array_map(static fn (array $r) => $r['term_id'], self::descendants($rows, (int) $tree));
             $excluded[] = (int) $tree;
             $rows = array_values(array_filter($rows, static fn (array $r) => !in_array($r['term_id'], $excluded, true)));
         }
         return $rows;
+    }
+
+    /** A comma list, array, or blank as positive ids. @return list<int> */
+    private static function idList(mixed $value): array
+    {
+        $items = is_array($value) ? $value : preg_split('/[\s,]+/', (string) $value, -1, PREG_SPLIT_NO_EMPTY);
+        return array_values(array_filter(array_map('intval', $items), static fn (int $id) => $id > 0));
     }
 
     /** The rows under a term, however deep, in source order. @param list<array<string, mixed>> $rows @return list<array<string, mixed>> */

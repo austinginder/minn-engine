@@ -5,6 +5,7 @@ use Minn\Content\Excerpt;
 use Minn\Content\Posts;
 use Minn\Content\PostWriter;
 use Minn\Content\Slug;
+use Minn\Content\PostClasses;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\Pages;
 use Minn\Runtime\PostInsert;
@@ -1403,4 +1404,103 @@ function wp_get_post_revision(&$post, $output = OBJECT, $filter = 'raw')
         return array_values(get_object_vars($post));
     }
     return $post;
+}
+
+function the_ID()
+{
+    echo (int) get_the_ID();
+}
+
+/** A post column as the reference hands it out: raw, escaped for edit forms, cast for the integer columns. */
+function sanitize_post_field($field, $value, $post_id, $context = 'display')
+{
+    $field = (string) $field;
+    if (in_array($field, ['ID', 'post_parent', 'menu_order'], true)) {
+        $value = (int) $value;
+    }
+    if ($context === 'raw' || $context === 'db') {
+        return $context === 'db' ? apply_filters("pre_{$field}", apply_filters("pre_post_{$field}", $value)) : $value;
+    }
+    if ($context === 'edit') {
+        $value = apply_filters("edit_{$field}", apply_filters("edit_post_{$field}", $value, $post_id), $post_id);
+        return is_string($value) ? esc_html(format_to_edit($value)) : $value;
+    }
+    $value = apply_filters("{$field}", apply_filters("post_{$field}", $value, $post_id, $context), $post_id, $context);
+    if ($context === 'attribute') {
+        return esc_attr((string) $value);
+    }
+    if ($context === 'js') {
+        return esc_js((string) $value);
+    }
+    return $value;
+}
+
+/** The article's class list; see Minn\Content\PostClasses for the order. */
+function get_post_class($css_class = '', $post = null)
+{
+    $post = get_post($post);
+    if ($post === null) {
+        return [];
+    }
+    $extra = is_array($css_class) ? $css_class : preg_split('/\s+/', trim((string) $css_class), -1, PREG_SPLIT_NO_EMPTY);
+    $terms = [];
+    foreach (get_object_taxonomies($post->post_type, 'objects') as $taxonomy) {
+        if (empty($taxonomy->public)) {
+            continue;
+        }
+        foreach ((array) (get_the_terms($post->ID, $taxonomy->name) ?: []) as $term) {
+            $terms[] = ['taxonomy' => $term->taxonomy, 'slug' => (string) $term->slug, 'term_id' => (int) $term->term_id];
+        }
+    }
+    $classes = PostClasses::build(
+        (array) $post,
+        array_map(static fn ($c) => PostClasses::htmlClass((string) $c), $extra),
+        post_type_supports($post->post_type, 'post-formats') ? (string) (get_post_format($post) ?: '') : null,
+        $post->post_type !== 'attachment' && has_post_thumbnail($post),
+        is_sticky($post->ID) && is_home() && !is_paged(),
+        post_password_required($post),
+        $post->post_password !== '',
+        $terms,
+    );
+    return array_unique(apply_filters('post_class', $classes, $extra, $post->ID));
+}
+
+/** The page template file a page chose, "" for the default, false when there is no post. */
+function get_page_template_slug($post = null)
+{
+    $post = get_post($post);
+    if ($post === null) {
+        return false;
+    }
+    $template = (string) get_post_meta($post->ID, '_wp_page_template', true);
+    return $template === 'default' ? '' : $template;
+}
+
+/** True on a singular view whose page template is (one of) the names given; "default" means none. */
+function is_page_template($template = '')
+{
+    if (!is_singular()) {
+        return false;
+    }
+    $slug = (string) get_page_template_slug(get_queried_object_id());
+    if ($template === '') {
+        return $slug !== '';
+    }
+    foreach ((array) $template as $name) {
+        if ($name === $slug || ($name === 'default' && $slug === '') || (str_contains((string) $name, '.') && basename((string) $name) === basename($slug))) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/** The engine reads rows on demand; the reference's cache primers have nothing to fill here. */
+function update_post_caches(&$posts, $post_type = 'post', $update_term_cache = true, $update_meta_cache = true)
+{
+    return null;
+}
+
+function update_post_thumbnail_cache($wp_query = null)
+{
+    return null;
 }
