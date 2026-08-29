@@ -6,9 +6,10 @@
  */
 
 $root = dirname(__DIR__, 2);
-$config = file_get_contents($root . '/public/wp-config.php');
+$siteRoot = getenv('MINN_SITE_ROOT') ?: $root;
+$config = file_get_contents($siteRoot . '/public/wp-config.php');
 $config = str_replace("require_once ABSPATH . 'wp-settings.php';", '', $config);
-define('ABSPATH', $root . '/public/');
+define('ABSPATH', $siteRoot . '/public/');
 eval('?>' . $config);
 if (!defined('MINN_ENGINE_VERSION')) {
     define('MINN_ENGINE_VERSION', '0.0.1');

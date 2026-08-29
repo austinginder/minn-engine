@@ -46,6 +46,9 @@ final class Runtime
         self::$options = new Options($runtime->db);
         self::loadFacade($runtime->engineDir);
         Constants::define($runtime);
+        register_shutdown_function(static function (): void {
+            self::hooks()->action('shutdown', []);
+        });
         return $runtime;
     }
 
@@ -70,6 +73,18 @@ final class Runtime
     public static function options(): Options
     {
         return self::$options ??= new Options(self::current()->db);
+    }
+
+    /** Output an action's callbacks print, as a string. */
+    public static function capture(string $action, array $args = []): string
+    {
+        ob_start();
+        try {
+            self::hooks()->action($action, $args);
+        } finally {
+            $out = (string) ob_get_clean();
+        }
+        return $out;
     }
 
     public static function cache(): ObjectCache

@@ -28,6 +28,7 @@ use Minn\Support\Html;
 use Minn\Support\Serialized;
 use Minn\Content\Reader;
 use Minn\Extension\Extensions;
+use Minn\Runtime\Runtime;
 
 /**
  * A whole page from the active block theme: the template the resolution
@@ -106,6 +107,10 @@ final readonly class PageRenderer
         if ($this->bar !== null && !$resolution->preview) {
             $classes[] = 'minn-front-bar';
         }
+        if (Runtime::booted()) {
+            $filtered = Runtime::hooks()->filter('body_class', [$classes, []]);
+            $classes = is_array($filtered) ? array_values(array_map('strval', $filtered)) : $classes;
+        }
         return $classes;
     }
 
@@ -114,6 +119,9 @@ final readonly class PageRenderer
         $template = $this->templates->forResolution($resolution);
         if ($template === null) {
             return null;
+        }
+        if (Runtime::booted()) {
+            Runtime::hooks()->action('template_redirect', []);
         }
         RenderState::reset();
         $query = $this->mainQuery($resolution);
@@ -130,15 +138,27 @@ final readonly class PageRenderer
 
         $title = Extensions::seams()?->applyTitle($title) ?? $title;
         $bar = $resolution->preview ? null : $this->bar;
+        $stylesheets = '<link rel="stylesheet" id="minn-blocks-css" href="' . Html::attr($this->permalinks->url('/minn-engine/blocks.css')) . '" />' . "\n"
+            . '<style id="global-styles-inline-css">' . "\n" . $globalStyles . "\n" . '</style>' . "\n"
+            . ($themeStyle === null ? '' : '<link rel="stylesheet" id="' . Html::attr($this->theme->slug) . '-style-css" href="' . Html::attr($themeStyle) . '" />' . "\n");
+        // With the runtime up, the engine's stylesheets print where the
+        // reference prints a theme's: inside wp_head, after plugin styles.
+        $runtimeHead = '';
+        if (Runtime::booted()) {
+            Runtime::hooks()->add('wp_head', static function () use ($stylesheets): void {
+                echo $stylesheets;
+            }, 8);
+            $runtimeHead = Runtime::capture('wp_head');
+            $stylesheets = '';
+        }
         $document = '<!DOCTYPE html>' . "\n" . '<html lang="en">' . "\n" . '<head>' . "\n"
             . '<meta charset="UTF-8" />' . "\n"
             . '<meta name="viewport" content="width=device-width, initial-scale=1" />' . "\n"
             . '<title>' . htmlspecialchars($title, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false) . '</title>' . "\n"
             . $this->headLinks($resolution)
-            . '<link rel="stylesheet" id="minn-blocks-css" href="' . Html::attr($this->permalinks->url('/minn-engine/blocks.css')) . '" />' . "\n"
-            . '<style id="global-styles-inline-css">' . "\n" . $globalStyles . "\n" . '</style>' . "\n"
-            . ($themeStyle === null ? '' : '<link rel="stylesheet" id="' . Html::attr($this->theme->slug) . '-style-css" href="' . Html::attr($themeStyle) . '" />' . "\n")
+            . $stylesheets
             . (Extensions::seams()?->renderHead() ?? '')
+            . $runtimeHead
             . ($fontFaces === '' ? '' : '<style class="wp-fonts-local">' . "\n" . $fontFaces . '</style>' . "\n")
             . ($bar === null ? '' : $bar->head())
             . '</head>' . "\n"
@@ -146,6 +166,7 @@ final readonly class PageRenderer
             . '<a class="skip-link screen-reader-text" id="wp-skip-link" href="#wp--skip-link--target">Skip to content</a>'
             . '<div class="wp-site-blocks">' . $body . '</div>' . "\n"
             . (Extensions::seams()?->renderFooter() ?? '')
+            . (Runtime::booted() ? Runtime::capture('wp_footer') : '')
             . ($bar === null ? '' : $bar->render($resolution))
             . '</body>' . "\n" . '</html>' . "\n";
         return Extensions::seams()?->applyDocumentFilters($document) ?? $document;

@@ -5,6 +5,15 @@
     "__composer_autoload_files": {
         "type": "array"
     },
+    "_new_bundled_files": {
+        "type": "array"
+    },
+    "_old_files": {
+        "type": "array"
+    },
+    "_old_requests_files": {
+        "type": "array"
+    },
     "_wp_additional_image_sizes": {
         "type": "array"
     },
@@ -43,6 +52,9 @@
     },
     "blog_id": {
         "type": "integer"
+    },
+    "charset_collate": {
+        "type": "string"
     },
     "current_blog": {
         "type": "NULL"
@@ -295,6 +307,9 @@
     },
     "wp_post_types": {
         "type": "array"
+    },
+    "wp_queries": {
+        "type": "string"
     },
     "wp_query": {
         "class": "WP_Query"

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Extension;
 
 use Minn\Content\Site;
+use Minn\Runtime\Plugins;
 use Minn\Support\Serialized;
 use Throwable;
 
@@ -56,6 +57,10 @@ final class Loader
         $own = json_decode((string) ($this->site->option('minn_active_extensions') ?? '[]'), true);
         $own = is_array($own) ? array_map('strval', $own) : [];
         foreach ($this->found() as $manifest) {
+            // A plugin running as code needs no stand-in.
+            if (array_intersect($manifest->replaces, Plugins::loaded()) !== []) {
+                continue;
+            }
             $byReplacement = array_intersect($manifest->replaces, $plugins) !== [];
             $byOwnFolder = array_filter($plugins, static fn (string $p) => str_starts_with($p, $manifest->slug . '/')) !== [];
             if ($byReplacement || $byOwnFolder || in_array($manifest->slug, $own, true) || str_contains($manifest->dir, '/mu-plugins/')) {

@@ -15,6 +15,7 @@ use Minn\Db;
 use Minn\Support\Html;
 use Minn\Content\PasswordGate;
 use Minn\Extension\Extensions;
+use Minn\Runtime\Runtime;
 use Minn\Extension\Shortcodes;
 
 /**
@@ -250,7 +251,14 @@ final readonly class Feeds
         }
         $content = Blocks::render(str_replace('<!--more-->', '<span id="more-' . (int) $post['ID'] . '"></span>', (string) $post['post_content']));
         $seams = Extensions::seams();
-        return $seams === null ? $content : $seams->applyContentFilters(Shortcodes::apply($content, $seams->shortcodes(), $seams), $post);
+        if ($seams !== null) {
+            $content = $seams->applyContentFilters(Shortcodes::apply($content, $seams->shortcodes(), $seams), $post);
+        }
+        if (Runtime::booted()) {
+            $content = Runtime::shortcodes()->apply($content);
+            $content = (string) Runtime::hooks()->filter('the_content', [$content]);
+        }
+        return $content;
     }
 
     public function perFeed(): int

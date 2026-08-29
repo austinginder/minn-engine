@@ -21,22 +21,24 @@ $check = static function (string $label, bool $ok, string $detail = '') use (&$p
     }
 };
 
-$expected = json_decode(file_get_contents($root . '/contracts/fixtures/api/functions.json'), true);
-$out = shell_exec('php ' . escapeshellarg($root . '/tests/tools/run-api-probe.php') . ' 2>&1');
-$actual = json_decode((string) $out, true);
-if (!is_array($actual)) {
-    echo "  FAIL probe did not produce JSON:\n" . substr((string) $out, 0, 2000) . "\n";
-    exit(1);
-}
-$check('probe row count', count($actual) === count($expected), count($actual) . ' vs ' . count($expected));
-$byLabel = [];
-foreach ($actual as $row) {
-    $byLabel[$row[0]] = $row[1];
-}
-foreach ($expected as $row) {
-    [$label, $value] = $row;
-    $have = array_key_exists($label, $byLabel);
-    $check($label, $have && json_encode($byLabel[$label]) === json_encode($value), ($have ? json_encode($byLabel[$label], JSON_UNESCAPED_SLASHES) : 'missing') . ' vs ' . json_encode($value, JSON_UNESCAPED_SLASHES));
+foreach (['functions' => 'api-probe.php', 'admin' => 'admin-probe.php'] as $fixture => $probe) {
+    $expected = json_decode(file_get_contents($root . "/contracts/fixtures/api/{$fixture}.json"), true);
+    $out = shell_exec('php ' . escapeshellarg($root . '/tests/tools/run-api-probe.php') . ' ' . escapeshellarg($probe) . ' 2>&1');
+    $actual = json_decode((string) $out, true);
+    if (!is_array($actual)) {
+        echo "  FAIL {$probe} did not produce JSON:\n" . substr((string) $out, 0, 2000) . "\n";
+        exit(1);
+    }
+    $check("{$probe}: row count", count($actual) === count($expected), count($actual) . ' vs ' . count($expected));
+    $byLabel = [];
+    foreach ($actual as $row) {
+        $byLabel[$row[0]] = $row[1];
+    }
+    foreach ($expected as $row) {
+        [$label, $value] = $row;
+        $have = array_key_exists($label, $byLabel);
+        $check("{$fixture}: {$label}", $have && json_encode($byLabel[$label]) === json_encode($value), ($have ? json_encode($byLabel[$label], JSON_UNESCAPED_SLASHES) : 'missing') . ' vs ' . json_encode($value, JSON_UNESCAPED_SLASHES));
+    }
 }
 
 require $root . '/tests/tools/engine-runtime.php';

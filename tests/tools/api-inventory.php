@@ -13,8 +13,9 @@ $root = ABSPATH;
 // demand; pull them all in so their interface is inventoried. Files whose
 // parent class is not loaded yet are retried until nothing new loads.
 require_once ABSPATH . 'wp-admin/includes/admin.php';
-$pending = array_merge(glob(ABSPATH . 'wp-admin/includes/class-*.php'), glob(ABSPATH . 'wp-includes/class-*.php'), glob(ABSPATH . 'wp-includes/*/class-*.php'));
-$pending = array_filter($pending, static fn (string $f) => !str_contains($f, 'ms-') && !str_contains($f, 'deprecated'));
+require_once ABSPATH . 'wp-admin/includes/dashboard.php';
+$pending = array_merge(glob(ABSPATH . 'wp-admin/includes/*.php'), glob(ABSPATH . 'wp-includes/class-*.php'), glob(ABSPATH . 'wp-includes/*/class-*.php'));
+$pending = array_filter($pending, static fn (string $f) => !str_contains($f, 'ms-') && !str_contains($f, 'deprecated') && !in_array(basename($f), ['noop.php', 'menu.php', 'menu-header.php', 'admin.php', 'admin-filters.php', 'edit-tag-messages.php', 'plugin-install.php'], true));
 do {
     $before = count($pending);
     foreach ($pending as $i => $f) {

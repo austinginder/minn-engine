@@ -156,6 +156,14 @@
         "file": "wp-includes/author-template.php",
         "params": []
     },
+    "__get_option": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": [
+            {
+                "name": "setting"
+            }
+        ]
+    },
     "__ngettext": {
         "file": "wp-includes/deprecated.php",
         "params": [
@@ -200,6 +208,10 @@
     },
     "__return_zero": {
         "file": "wp-includes/functions.php",
+        "params": []
+    },
+    "_access_denied_splash": {
+        "file": "wp-admin/includes/ms.php",
         "params": []
     },
     "_add_block_template_info": {
@@ -495,6 +507,26 @@
                 "name": "perm",
                 "optional": true,
                 "default": ""
+            }
+        ]
+    },
+    "_crop_image_resource": {
+        "file": "wp-admin/includes/image-edit.php",
+        "params": [
+            {
+                "name": "img"
+            },
+            {
+                "name": "x"
+            },
+            {
+                "name": "y"
+            },
+            {
+                "name": "w"
+            },
+            {
+                "name": "h"
             }
         ]
     },
@@ -857,6 +889,20 @@
             }
         ]
     },
+    "_flip_image_resource": {
+        "file": "wp-admin/includes/image-edit.php",
+        "params": [
+            {
+                "name": "img"
+            },
+            {
+                "name": "horz"
+            },
+            {
+                "name": "vert"
+            }
+        ]
+    },
     "_future_post_hook": {
         "file": "wp-includes/post.php",
         "params": [
@@ -1189,6 +1235,17 @@
                 "name": "urlencode",
                 "optional": true,
                 "default": true
+            }
+        ]
+    },
+    "_image_get_preview_ratio": {
+        "file": "wp-admin/includes/image-edit.php",
+        "params": [
+            {
+                "name": "w"
+            },
+            {
+                "name": "h"
             }
         ]
     },
@@ -1794,6 +1851,14 @@
             }
         ]
     },
+    "_preload_old_requests_classes_and_interfaces": {
+        "file": "wp-admin/includes/update-core.php",
+        "params": [
+            {
+                "name": "to"
+            }
+        ]
+    },
     "_preview_theme_stylesheet_filter": {
         "file": "wp-includes/deprecated.php",
         "params": [],
@@ -1874,6 +1939,14 @@
         "params": [
             {
                 "name": "post_id"
+            }
+        ]
+    },
+    "_redirect_to_about_wordpress": {
+        "file": "wp-admin/includes/update-core.php",
+        "params": [
+            {
+                "name": "new_version"
             }
         ]
     },
@@ -2053,6 +2126,17 @@
             }
         ]
     },
+    "_rotate_image_resource": {
+        "file": "wp-admin/includes/image-edit.php",
+        "params": [
+            {
+                "name": "img"
+            },
+            {
+                "name": "angle"
+            }
+        ]
+    },
     "_sanitize_text_fields": {
         "file": "wp-includes/formatting.php",
         "params": [
@@ -2125,6 +2209,17 @@
         "file": "wp-includes/revision.php",
         "params": []
     },
+    "_sort_name_callback": {
+        "file": "wp-admin/includes/widgets.php",
+        "params": [
+            {
+                "name": "a"
+            },
+            {
+                "name": "b"
+            }
+        ]
+    },
     "_sort_nav_menu_items": {
         "file": "wp-includes/deprecated.php",
         "params": [
@@ -2190,6 +2285,10 @@
                 "name": "value"
             }
         ]
+    },
+    "_thickbox_path_admin_subfolder": {
+        "file": "wp-admin/includes/ms.php",
+        "params": []
     },
     "_transition_post_status": {
         "file": "wp-includes/post.php",
@@ -2285,6 +2384,26 @@
                 "name": "post"
             }
         ]
+    },
+    "_upgrade_422_find_genericons_files_in_folder": {
+        "file": "wp-admin/includes/update-core.php",
+        "params": [
+            {
+                "name": "directory"
+            }
+        ]
+    },
+    "_upgrade_422_remove_genericons": {
+        "file": "wp-admin/includes/update-core.php",
+        "params": []
+    },
+    "_upgrade_440_force_deactivate_incompatible_plugins": {
+        "file": "wp-admin/includes/update-core.php",
+        "params": []
+    },
+    "_upgrade_core_deactivate_incompatible_plugins": {
+        "file": "wp-admin/includes/update-core.php",
+        "params": []
     },
     "_upgrade_cron_array": {
         "file": "wp-includes/cron.php",
@@ -2400,6 +2519,33 @@
             },
             {
                 "name": "post"
+            }
+        ]
+    },
+    "_wp_ajax_add_hierarchical_term": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "_wp_ajax_delete_comment_response": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": [
+            {
+                "name": "comment_id"
+            },
+            {
+                "name": "delta",
+                "optional": true,
+                "default": -1
+            }
+        ]
+    },
+    "_wp_ajax_menu_quick_search": {
+        "file": "wp-admin/includes/nav-menu.php",
+        "params": [
+            {
+                "name": "request",
+                "optional": true,
+                "default": []
             }
         ]
     },
@@ -2751,6 +2897,30 @@
             }
         ]
     },
+    "_wp_credits_add_profile_link": {
+        "file": "wp-admin/includes/credits.php",
+        "params": [
+            {
+                "name": "display_name",
+                "byRef": true
+            },
+            {
+                "name": "username"
+            },
+            {
+                "name": "profiles"
+            }
+        ]
+    },
+    "_wp_credits_build_object_link": {
+        "file": "wp-admin/includes/credits.php",
+        "params": [
+            {
+                "name": "data",
+                "byRef": true
+            }
+        ]
+    },
     "_wp_cron": {
         "file": "wp-includes/cron.php",
         "params": []
@@ -2788,6 +2958,31 @@
             }
         ]
     },
+    "_wp_dashboard_control_callback": {
+        "file": "wp-admin/includes/dashboard.php",
+        "params": [
+            {
+                "name": "dashboard"
+            },
+            {
+                "name": "meta_box"
+            }
+        ]
+    },
+    "_wp_dashboard_recent_comments_row": {
+        "file": "wp-admin/includes/dashboard.php",
+        "params": [
+            {
+                "name": "comment",
+                "byRef": true
+            },
+            {
+                "name": "show_date",
+                "optional": true,
+                "default": true
+            }
+        ]
+    },
     "_wp_delete_all_temp_backups": {
         "file": "wp-includes/update.php",
         "params": []
@@ -2799,6 +2994,10 @@
                 "name": "post_id"
             }
         ]
+    },
+    "_wp_delete_orphaned_draft_menu_items": {
+        "file": "wp-admin/includes/nav-menu.php",
+        "params": []
     },
     "_wp_delete_post_menu_item": {
         "file": "wp-includes/nav-menu.php",
@@ -2852,6 +3051,10 @@
     },
     "_wp_enqueue_auto_register_blocks": {
         "file": "wp-includes/blocks.php",
+        "params": []
+    },
+    "_wp_expand_nav_menu_post_data": {
+        "file": "wp-admin/includes/nav-menu.php",
         "params": []
     },
     "_wp_filter_build_unique_id": {
@@ -3253,6 +3456,16 @@
         "params": [
             {
                 "name": "column"
+            }
+        ]
+    },
+    "_wp_nav_menu_meta_box_object": {
+        "file": "wp-admin/includes/nav-menu.php",
+        "params": [
+            {
+                "name": "data_object",
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -4020,6 +4233,17 @@
                 "name": "options",
                 "optional": true,
                 "default": ""
+            }
+        ]
+    },
+    "add_clean_index": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": [
+            {
+                "name": "table"
+            },
+            {
+                "name": "index"
             }
         ]
     },
@@ -5143,6 +5367,14 @@
             }
         ]
     },
+    "allow_subdirectory_install": {
+        "file": "wp-admin/includes/network.php",
+        "params": []
+    },
+    "allow_subdomain_install": {
+        "file": "wp-admin/includes/network.php",
+        "params": []
+    },
     "allowed_http_request_hosts": {
         "file": "wp-includes/http.php",
         "params": [
@@ -5419,6 +5651,22 @@
         "file": "wp-includes/feed.php",
         "params": []
     },
+    "attachment_id3_data_meta_box": {
+        "file": "wp-admin/includes/meta-boxes.php",
+        "params": [
+            {
+                "name": "post"
+            }
+        ]
+    },
+    "attachment_submit_meta_box": {
+        "file": "wp-admin/includes/meta-boxes.php",
+        "params": [
+            {
+                "name": "post"
+            }
+        ]
+    },
     "attachment_submitbox_metadata": {
         "file": "wp-admin/includes/media.php",
         "params": []
@@ -5470,6 +5718,17 @@
             }
         ],
         "deprecated": true
+    },
+    "avoid_blog_page_permalink_collision": {
+        "file": "wp-admin/includes/ms.php",
+        "params": [
+            {
+                "name": "data"
+            },
+            {
+                "name": "postarr"
+            }
+        ]
     },
     "background_color": {
         "file": "wp-includes/theme.php",
@@ -6515,6 +6774,14 @@
             }
         ]
     },
+    "can_edit_network": {
+        "file": "wp-admin/includes/ms.php",
+        "params": [
+            {
+                "name": "network_id"
+            }
+        ]
+    },
     "cancel_comment_reply_link": {
         "file": "wp-includes/comment-template.php",
         "params": [
@@ -6640,6 +6907,14 @@
         "file": "wp-includes/comment.php",
         "params": []
     },
+    "check_import_new_users": {
+        "file": "wp-admin/includes/ms.php",
+        "params": [
+            {
+                "name": "permission"
+            }
+        ]
+    },
     "check_password_reset_key": {
         "file": "wp-includes/user.php",
         "params": [
@@ -6654,6 +6929,14 @@
     "check_theme_switched": {
         "file": "wp-includes/theme.php",
         "params": []
+    },
+    "check_upload_size": {
+        "file": "wp-admin/includes/ms.php",
+        "params": [
+            {
+                "name": "file"
+            }
+        ]
     },
     "checked": {
         "file": "wp-includes/general-template.php",
@@ -6672,6 +6955,10 @@
                 "default": true
             }
         ]
+    },
+    "choose_primary_blog": {
+        "file": "wp-admin/includes/ms.php",
+        "params": []
     },
     "clamp": {
         "file": "wp-includes/compat.php",
@@ -7302,6 +7589,14 @@
         "file": "wp-admin/includes/template.php",
         "params": []
     },
+    "confirm_delete_users": {
+        "file": "wp-admin/includes/ms.php",
+        "params": [
+            {
+                "name": "users"
+            }
+        ]
+    },
     "content_url": {
         "file": "wp-includes/link-template.php",
         "params": [
@@ -7550,6 +7845,22 @@
         "file": "wp-admin/includes/theme.php",
         "params": []
     },
+    "dashboard_browser_nag_class": {
+        "file": "wp-admin/includes/dashboard.php",
+        "params": [
+            {
+                "name": "classes"
+            }
+        ]
+    },
+    "dashboard_php_nag_class": {
+        "file": "wp-admin/includes/dashboard.php",
+        "params": [
+            {
+                "name": "classes"
+            }
+        ]
+    },
     "date_i18n": {
         "file": "wp-includes/functions.php",
         "params": [
@@ -7565,6 +7876,21 @@
                 "name": "gmt",
                 "optional": true,
                 "default": false
+            }
+        ]
+    },
+    "dbDelta": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": [
+            {
+                "name": "queries",
+                "optional": true,
+                "default": ""
+            },
+            {
+                "name": "execute",
+                "optional": true,
+                "default": true
             }
         ]
     },
@@ -7925,6 +8251,14 @@
         "params": [],
         "deprecated": true
     },
+    "deslash": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": [
+            {
+                "name": "content"
+            }
+        ]
+    },
     "determine_locale": {
         "file": "wp-includes/l10n.php",
         "params": []
@@ -7990,6 +8324,22 @@
     },
     "display_header_text": {
         "file": "wp-includes/theme.php",
+        "params": []
+    },
+    "display_space_usage": {
+        "file": "wp-admin/includes/ms.php",
+        "params": []
+    },
+    "display_theme": {
+        "file": "wp-admin/includes/theme-install.php",
+        "params": [
+            {
+                "name": "theme"
+            }
+        ]
+    },
+    "display_themes": {
+        "file": "wp-admin/includes/theme-install.php",
         "params": []
     },
     "do_accordion_sections": {
@@ -8252,6 +8602,17 @@
                 "name": "signature_verification",
                 "optional": true,
                 "default": false
+            }
+        ]
+    },
+    "drop_index": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": [
+            {
+                "name": "table"
+            },
+            {
+                "name": "index"
             }
         ]
     },
@@ -8744,6 +9105,16 @@
             }
         ]
     },
+    "export_wp": {
+        "file": "wp-admin/includes/export.php",
+        "params": [
+            {
+                "name": "args",
+                "optional": true,
+                "default": []
+            }
+        ]
+    },
     "extract_from_markers": {
         "file": "wp-admin/includes/misc.php",
         "params": [
@@ -8950,6 +9321,14 @@
             }
         ]
     },
+    "fix_import_form_size": {
+        "file": "wp-admin/includes/ms.php",
+        "params": [
+            {
+                "name": "size"
+            }
+        ]
+    },
     "floated_admin_avatar": {
         "file": "wp-admin/includes/comment.php",
         "params": [
@@ -9002,6 +9381,16 @@
         "params": [
             {
                 "name": "option"
+            }
+        ]
+    },
+    "format_code_lang": {
+        "file": "wp-admin/includes/ms.php",
+        "params": [
+            {
+                "name": "code",
+                "optional": true,
+                "default": ""
             }
         ]
     },
@@ -9282,6 +9671,10 @@
         "file": "wp-includes/deprecated.php",
         "params": [],
         "deprecated": true
+    },
+    "get_alloptions_110": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
     },
     "get_allowed_block_template_part_areas": {
         "file": "wp-includes/block-template-utils.php",
@@ -10257,6 +10650,10 @@
     },
     "get_classic_theme_supports_block_editor_settings": {
         "file": "wp-includes/block-editor.php",
+        "params": []
+    },
+    "get_clean_basedomain": {
+        "file": "wp-admin/includes/network.php",
         "params": []
     },
     "get_cli_args": {
@@ -13703,6 +14100,14 @@
             }
         ]
     },
+    "get_site_screen_help_sidebar_content": {
+        "file": "wp-admin/includes/ms.php",
+        "params": []
+    },
+    "get_site_screen_help_tab_args": {
+        "file": "wp-admin/includes/ms.php",
+        "params": []
+    },
     "get_site_transient": {
         "file": "wp-includes/option.php",
         "params": [
@@ -15700,6 +16105,17 @@
             }
         ]
     },
+    "image_edit_apply_changes": {
+        "file": "wp-admin/includes/image-edit.php",
+        "params": [
+            {
+                "name": "image"
+            },
+            {
+                "name": "changes"
+            }
+        ]
+    },
     "image_get_intermediate_size": {
         "file": "wp-includes/media.php",
         "params": [
@@ -15963,6 +16379,36 @@
                 "name": "insertion"
             }
         ]
+    },
+    "install_network": {
+        "file": "wp-admin/includes/schema.php",
+        "params": []
+    },
+    "install_theme_information": {
+        "file": "wp-admin/includes/theme-install.php",
+        "params": []
+    },
+    "install_theme_search_form": {
+        "file": "wp-admin/includes/theme-install.php",
+        "params": [
+            {
+                "name": "type_selector",
+                "optional": true,
+                "default": true
+            }
+        ]
+    },
+    "install_themes_dashboard": {
+        "file": "wp-admin/includes/theme-install.php",
+        "params": []
+    },
+    "install_themes_feature_list": {
+        "file": "wp-admin/includes/theme-install.php",
+        "params": []
+    },
+    "install_themes_upload": {
+        "file": "wp-admin/includes/theme-install.php",
+        "params": []
     },
     "is_404": {
         "file": "wp-includes/query.php",
@@ -16761,6 +17207,22 @@
         ],
         "deprecated": true
     },
+    "link_advanced_meta_box": {
+        "file": "wp-admin/includes/meta-boxes.php",
+        "params": [
+            {
+                "name": "link"
+            }
+        ]
+    },
+    "link_categories_meta_box": {
+        "file": "wp-admin/includes/meta-boxes.php",
+        "params": [
+            {
+                "name": "link"
+            }
+        ]
+    },
     "link_pages": {
         "file": "wp-includes/deprecated.php",
         "params": [
@@ -16801,6 +17263,30 @@
             }
         ],
         "deprecated": true
+    },
+    "link_submit_meta_box": {
+        "file": "wp-admin/includes/meta-boxes.php",
+        "params": [
+            {
+                "name": "link"
+            }
+        ]
+    },
+    "link_target_meta_box": {
+        "file": "wp-admin/includes/meta-boxes.php",
+        "params": [
+            {
+                "name": "link"
+            }
+        ]
+    },
+    "link_xfn_meta_box": {
+        "file": "wp-admin/includes/meta-boxes.php",
+        "params": [
+            {
+                "name": "link"
+            }
+        ]
     },
     "links_add_base_url": {
         "file": "wp-includes/formatting.php",
@@ -17293,6 +17779,52 @@
             }
         ]
     },
+    "make_db_current": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": [
+            {
+                "name": "tables",
+                "optional": true,
+                "default": "all"
+            }
+        ]
+    },
+    "make_db_current_silent": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": [
+            {
+                "name": "tables",
+                "optional": true,
+                "default": "all"
+            }
+        ]
+    },
+    "make_site_theme": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "make_site_theme_from_default": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": [
+            {
+                "name": "theme_name"
+            },
+            {
+                "name": "template"
+            }
+        ]
+    },
+    "make_site_theme_from_oldschool": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": [
+            {
+                "name": "theme_name"
+            },
+            {
+                "name": "template"
+            }
+        ]
+    },
     "make_url_footnote": {
         "file": "wp-includes/deprecated.php",
         "params": [
@@ -17328,6 +17860,47 @@
                 "optional": true
             }
         ]
+    },
+    "maybe_add_column": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": [
+            {
+                "name": "table_name"
+            },
+            {
+                "name": "column_name"
+            },
+            {
+                "name": "create_ddl"
+            }
+        ]
+    },
+    "maybe_convert_table_to_utf8mb4": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": [
+            {
+                "name": "table"
+            }
+        ]
+    },
+    "maybe_create_table": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": [
+            {
+                "name": "table_name"
+            },
+            {
+                "name": "create_ddl"
+            }
+        ]
+    },
+    "maybe_disable_automattic_widgets": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "maybe_disable_link_manager": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
     },
     "maybe_hash_hex_color": {
         "file": "wp-includes/formatting.php",
@@ -17666,6 +18239,21 @@
             }
         ]
     },
+    "mu_dropdown_languages": {
+        "file": "wp-admin/includes/ms.php",
+        "params": [
+            {
+                "name": "lang_files",
+                "optional": true,
+                "default": []
+            },
+            {
+                "name": "current",
+                "optional": true,
+                "default": ""
+            }
+        ]
+    },
     "multisite_over_quota_message": {
         "file": "wp-admin/includes/media.php",
         "params": []
@@ -17709,6 +18297,20 @@
             }
         ]
     },
+    "network_domain_check": {
+        "file": "wp-admin/includes/network.php",
+        "params": []
+    },
+    "network_edit_site_nav": {
+        "file": "wp-admin/includes/ms.php",
+        "params": [
+            {
+                "name": "args",
+                "optional": true,
+                "default": []
+            }
+        ]
+    },
     "network_home_url": {
         "file": "wp-includes/link-template.php",
         "params": [
@@ -17724,6 +18326,10 @@
             }
         ]
     },
+    "network_settings_add_js": {
+        "file": "wp-admin/includes/ms.php",
+        "params": []
+    },
     "network_site_url": {
         "file": "wp-includes/link-template.php",
         "params": [
@@ -17736,6 +18342,26 @@
                 "name": "scheme",
                 "optional": true,
                 "default": null
+            }
+        ]
+    },
+    "network_step1": {
+        "file": "wp-admin/includes/network.php",
+        "params": [
+            {
+                "name": "errors",
+                "optional": true,
+                "default": false
+            }
+        ]
+    },
+    "network_step2": {
+        "file": "wp-admin/includes/network.php",
+        "params": [
+            {
+                "name": "errors",
+                "optional": true,
+                "default": false
             }
         ]
     },
@@ -17894,6 +18520,14 @@
             }
         ]
     },
+    "next_widget_id_number": {
+        "file": "wp-admin/includes/widgets.php",
+        "params": [
+            {
+                "name": "id_base"
+            }
+        ]
+    },
     "nocache_headers": {
         "file": "wp-includes/functions.php",
         "params": []
@@ -17960,6 +18594,14 @@
     "options_reading_blog_charset": {
         "file": "wp-admin/includes/options.php",
         "params": []
+    },
+    "page_attributes_meta_box": {
+        "file": "wp-admin/includes/meta-boxes.php",
+        "params": [
+            {
+                "name": "post"
+            }
+        ]
     },
     "page_template_dropdown": {
         "file": "wp-admin/includes/template.php",
@@ -18169,6 +18811,116 @@
             }
         ]
     },
+    "populate_network": {
+        "file": "wp-admin/includes/schema.php",
+        "params": [
+            {
+                "name": "network_id",
+                "optional": true,
+                "default": 1
+            },
+            {
+                "name": "domain",
+                "optional": true,
+                "default": ""
+            },
+            {
+                "name": "email",
+                "optional": true,
+                "default": ""
+            },
+            {
+                "name": "site_name",
+                "optional": true,
+                "default": ""
+            },
+            {
+                "name": "path",
+                "optional": true,
+                "default": "/"
+            },
+            {
+                "name": "subdomain_install",
+                "optional": true,
+                "default": false
+            }
+        ]
+    },
+    "populate_network_meta": {
+        "file": "wp-admin/includes/schema.php",
+        "params": [
+            {
+                "name": "network_id"
+            },
+            {
+                "name": "meta",
+                "type": "array",
+                "optional": true,
+                "default": []
+            }
+        ]
+    },
+    "populate_options": {
+        "file": "wp-admin/includes/schema.php",
+        "params": [
+            {
+                "name": "options",
+                "type": "array",
+                "optional": true,
+                "default": []
+            }
+        ]
+    },
+    "populate_roles": {
+        "file": "wp-admin/includes/schema.php",
+        "params": []
+    },
+    "populate_roles_160": {
+        "file": "wp-admin/includes/schema.php",
+        "params": []
+    },
+    "populate_roles_210": {
+        "file": "wp-admin/includes/schema.php",
+        "params": []
+    },
+    "populate_roles_230": {
+        "file": "wp-admin/includes/schema.php",
+        "params": []
+    },
+    "populate_roles_250": {
+        "file": "wp-admin/includes/schema.php",
+        "params": []
+    },
+    "populate_roles_260": {
+        "file": "wp-admin/includes/schema.php",
+        "params": []
+    },
+    "populate_roles_270": {
+        "file": "wp-admin/includes/schema.php",
+        "params": []
+    },
+    "populate_roles_280": {
+        "file": "wp-admin/includes/schema.php",
+        "params": []
+    },
+    "populate_roles_300": {
+        "file": "wp-admin/includes/schema.php",
+        "params": []
+    },
+    "populate_site_meta": {
+        "file": "wp-admin/includes/schema.php",
+        "params": [
+            {
+                "name": "site_id"
+            },
+            {
+                "name": "meta",
+                "type": "array",
+                "optional": true,
+                "default": []
+            }
+        ]
+    },
     "popuplinks": {
         "file": "wp-includes/deprecated.php",
         "params": [
@@ -18177,6 +18929,25 @@
             }
         ],
         "deprecated": true
+    },
+    "post_author_meta_box": {
+        "file": "wp-admin/includes/meta-boxes.php",
+        "params": [
+            {
+                "name": "post"
+            }
+        ]
+    },
+    "post_categories_meta_box": {
+        "file": "wp-admin/includes/meta-boxes.php",
+        "params": [
+            {
+                "name": "post"
+            },
+            {
+                "name": "box"
+            }
+        ]
     },
     "post_class": {
         "file": "wp-includes/post-template.php",
@@ -18190,6 +18961,30 @@
                 "name": "post",
                 "optional": true,
                 "default": null
+            }
+        ]
+    },
+    "post_comment_meta_box": {
+        "file": "wp-admin/includes/meta-boxes.php",
+        "params": [
+            {
+                "name": "post"
+            }
+        ]
+    },
+    "post_comment_meta_box_thead": {
+        "file": "wp-admin/includes/meta-boxes.php",
+        "params": [
+            {
+                "name": "result"
+            }
+        ]
+    },
+    "post_comment_status_meta_box": {
+        "file": "wp-admin/includes/meta-boxes.php",
+        "params": [
+            {
+                "name": "post"
             }
         ]
     },
@@ -18231,6 +19026,22 @@
             }
         ]
     },
+    "post_custom_meta_box": {
+        "file": "wp-admin/includes/meta-boxes.php",
+        "params": [
+            {
+                "name": "post"
+            }
+        ]
+    },
+    "post_excerpt_meta_box": {
+        "file": "wp-admin/includes/meta-boxes.php",
+        "params": [
+            {
+                "name": "post"
+            }
+        ]
+    },
     "post_exists": {
         "file": "wp-admin/includes/post.php",
         "params": [
@@ -18263,6 +19074,17 @@
         "file": "wp-admin/includes/deprecated.php",
         "params": [],
         "deprecated": true
+    },
+    "post_format_meta_box": {
+        "file": "wp-admin/includes/meta-boxes.php",
+        "params": [
+            {
+                "name": "post"
+            },
+            {
+                "name": "box"
+            }
+        ]
     },
     "post_password_required": {
         "file": "wp-includes/post-template.php",
@@ -18301,6 +19123,62 @@
                 "name": "post",
                 "optional": true,
                 "default": null
+            }
+        ]
+    },
+    "post_revisions_meta_box": {
+        "file": "wp-admin/includes/meta-boxes.php",
+        "params": [
+            {
+                "name": "post"
+            }
+        ]
+    },
+    "post_slug_meta_box": {
+        "file": "wp-admin/includes/meta-boxes.php",
+        "params": [
+            {
+                "name": "post"
+            }
+        ]
+    },
+    "post_submit_meta_box": {
+        "file": "wp-admin/includes/meta-boxes.php",
+        "params": [
+            {
+                "name": "post"
+            },
+            {
+                "name": "args",
+                "optional": true,
+                "default": []
+            }
+        ]
+    },
+    "post_tags_meta_box": {
+        "file": "wp-admin/includes/meta-boxes.php",
+        "params": [
+            {
+                "name": "post"
+            },
+            {
+                "name": "box"
+            }
+        ]
+    },
+    "post_thumbnail_meta_box": {
+        "file": "wp-admin/includes/meta-boxes.php",
+        "params": [
+            {
+                "name": "post"
+            }
+        ]
+    },
+    "post_trackback_meta_box": {
+        "file": "wp-admin/includes/meta-boxes.php",
+        "params": [
+            {
+                "name": "post"
             }
         ]
     },
@@ -18368,6 +19246,10 @@
                 "default": ""
             }
         ]
+    },
+    "pre_schema_upgrade": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
     },
     "prep_atom_text_construct": {
         "file": "wp-includes/feed.php",
@@ -18681,6 +19563,14 @@
             }
         ]
     },
+    "refresh_user_details": {
+        "file": "wp-admin/includes/ms.php",
+        "params": [
+            {
+                "name": "id"
+            }
+        ]
+    },
     "register_activation_hook": {
         "file": "wp-includes/plugin.php",
         "params": [
@@ -18695,6 +19585,14 @@
     "register_admin_color_schemes": {
         "file": "wp-includes/general-template.php",
         "params": []
+    },
+    "register_and_do_post_meta_boxes": {
+        "file": "wp-admin/includes/meta-boxes.php",
+        "params": [
+            {
+                "name": "post"
+            }
+        ]
     },
     "register_block_bindings_source": {
         "file": "wp-includes/block-bindings.php",
@@ -22643,6 +23541,10 @@
             }
         ]
     },
+    "site_admin_notice": {
+        "file": "wp-admin/includes/ms.php",
+        "params": []
+    },
     "site_icon_url": {
         "file": "wp-includes/general-template.php",
         "params": [
@@ -22762,6 +23664,14 @@
             }
         ],
         "deprecated": true
+    },
+    "stream_preview_image": {
+        "file": "wp-admin/includes/image-edit.php",
+        "params": [
+            {
+                "name": "post_id"
+            }
+        ]
     },
     "strip_core_block_namespace": {
         "file": "wp-includes/blocks.php",
@@ -23913,6 +24823,14 @@
             }
         ]
     },
+    "translate_level_to_role": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": [
+            {
+                "name": "level"
+            }
+        ]
+    },
     "translate_nooped_plural": {
         "file": "wp-includes/l10n.php",
         "params": [
@@ -23991,6 +24909,19 @@
                 "name": "domain",
                 "optional": true,
                 "default": "default"
+            }
+        ]
+    },
+    "translations_api": {
+        "file": "wp-admin/includes/translation-install.php",
+        "params": [
+            {
+                "name": "type"
+            },
+            {
+                "name": "args",
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -24345,6 +25276,17 @@
                 "name": "prev_value",
                 "optional": true,
                 "default": ""
+            }
+        ]
+    },
+    "update_core": {
+        "file": "wp-admin/includes/update-core.php",
+        "params": [
+            {
+                "name": "from"
+            },
+            {
+                "name": "to"
             }
         ]
     },
@@ -24724,6 +25666,208 @@
             }
         ],
         "deprecated": true
+    },
+    "upgrade_100": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_101": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_110": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_130": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_160": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_210": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_230": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_230_old_tables": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_230_options_table": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_250": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_252": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_260": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_270": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_280": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_290": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_300": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_330": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_340": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_350": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_370": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_372": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_380": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_400": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_420": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_430": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_430_fix_comments": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_431": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_440": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_450": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_460": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_500": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_510": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_530": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_550": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_560": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_590": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_600": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_630": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_640": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_650": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_670": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_682": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_700": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_all": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_network": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upgrade_old_slugs": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
+    "upload_is_user_over_quota": {
+        "file": "wp-admin/includes/ms.php",
+        "params": [
+            {
+                "name": "display_message",
+                "optional": true,
+                "default": true
+            }
+        ]
+    },
+    "upload_space_setting": {
+        "file": "wp-admin/includes/ms.php",
+        "params": [
+            {
+                "name": "id"
+            }
+        ]
     },
     "url_is_accessable_via_ssl": {
         "file": "wp-includes/deprecated.php",
@@ -25296,6 +26440,40 @@
         ],
         "returns": "string"
     },
+    "wp_add_dashboard_widget": {
+        "file": "wp-admin/includes/dashboard.php",
+        "params": [
+            {
+                "name": "widget_id"
+            },
+            {
+                "name": "widget_name"
+            },
+            {
+                "name": "callback"
+            },
+            {
+                "name": "control_callback",
+                "optional": true,
+                "default": null
+            },
+            {
+                "name": "callback_args",
+                "optional": true,
+                "default": null
+            },
+            {
+                "name": "context",
+                "optional": true,
+                "default": "normal"
+            },
+            {
+                "name": "priority",
+                "optional": true,
+                "default": "core"
+            }
+        ]
+    },
     "wp_add_editor_classic_theme_styles": {
         "file": "wp-includes/deprecated.php",
         "params": [
@@ -25714,6 +26892,266 @@
         ],
         "returns": "WP_AI_Client_Prompt_Builder"
     },
+    "wp_ajax_activate_plugin": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_add_link_category": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": [
+            {
+                "name": "action"
+            }
+        ]
+    },
+    "wp_ajax_add_menu_item": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_add_meta": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_add_tag": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_add_user": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": [
+            {
+                "name": "action"
+            }
+        ]
+    },
+    "wp_ajax_ajax_tag_search": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_autocomplete_user": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_closed_postboxes": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_crop_image": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_dashboard_widgets": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_date_format": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_delete_comment": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_delete_inactive_widgets": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_delete_link": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_delete_meta": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_delete_page": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": [
+            {
+                "name": "action"
+            }
+        ]
+    },
+    "wp_ajax_delete_plugin": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_delete_post": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": [
+            {
+                "name": "action"
+            }
+        ]
+    },
+    "wp_ajax_delete_tag": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_delete_theme": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_destroy_sessions": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_dim_comment": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_dismiss_wp_pointer": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_edit_comment": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_edit_theme_plugin_file": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_fetch_list": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_find_posts": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_generate_password": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_get_attachment": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_get_comments": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": [
+            {
+                "name": "action"
+            }
+        ]
+    },
+    "wp_ajax_get_community_events": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_get_permalink": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_get_post_thumbnail_html": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_get_revision_diffs": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_get_tagcloud": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_health_check_background_updates": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_health_check_dotorg_communication": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_health_check_get_sizes": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_health_check_loopback_requests": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_health_check_site_status_result": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_heartbeat": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_hidden_columns": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_image_editor": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_imgedit_preview": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_inline_save": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_inline_save_tax": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_install_plugin": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_install_theme": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_logged_in": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_media_create_image_subsizes": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_menu_get_metabox": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_menu_locations_save": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_menu_quick_search": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_meta_box_order": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_nopriv_generate_password": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_nopriv_heartbeat": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_oembed_cache": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_parse_embed": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_parse_media_shortcode": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
     "wp_ajax_press_this_add_category": {
         "file": "wp-includes/deprecated.php",
         "params": [],
@@ -25723,6 +27161,154 @@
         "file": "wp-includes/deprecated.php",
         "params": [],
         "deprecated": true
+    },
+    "wp_ajax_query_attachments": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_query_themes": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_replyto_comment": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": [
+            {
+                "name": "action"
+            }
+        ]
+    },
+    "wp_ajax_rest_nonce": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_sample_permalink": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_save_attachment": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_save_attachment_compat": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_save_attachment_order": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_save_user_color_scheme": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_save_widget": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_save_wporg_username": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_search_install_plugins": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_search_plugins": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_send_attachment_to_editor": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_send_link_to_editor": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_send_password_reset": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_set_attachment_thumbnail": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_set_post_thumbnail": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_time_format": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_toggle_auto_updates": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_trash_post": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": [
+            {
+                "name": "action"
+            }
+        ]
+    },
+    "wp_ajax_untrash_post": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": [
+            {
+                "name": "action"
+            }
+        ]
+    },
+    "wp_ajax_update_plugin": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_update_theme": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_update_welcome_panel": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_update_widget": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_upload_attachment": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_widgets_order": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_wp_compression_test": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_wp_fullscreen_save_post": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_wp_link_ajax": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_wp_privacy_erase_personal_data": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_wp_privacy_export_personal_data": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
+    },
+    "wp_ajax_wp_remove_post_lock": {
+        "file": "wp-admin/includes/ajax-actions.php",
+        "params": []
     },
     "wp_allow_comment": {
         "file": "wp-includes/comment.php",
@@ -26503,6 +28089,10 @@
             }
         ]
     },
+    "wp_can_install_language_pack": {
+        "file": "wp-admin/includes/translation-install.php",
+        "params": []
+    },
     "wp_caption_input_textarea": {
         "file": "wp-admin/includes/media.php",
         "params": [
@@ -26545,6 +28135,10 @@
                 "default": true
             }
         ]
+    },
+    "wp_check_browser_version": {
+        "file": "wp-admin/includes/dashboard.php",
+        "params": []
     },
     "wp_check_comment_data": {
         "file": "wp-includes/comment.php",
@@ -26698,6 +28292,10 @@
                 "name": "screen_id"
             }
         ]
+    },
+    "wp_check_mysql_version": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
     },
     "wp_check_password": {
         "file": "wp-includes/pluggable.php",
@@ -27250,6 +28848,46 @@
             }
         ]
     },
+    "wp_credits": {
+        "file": "wp-admin/includes/credits.php",
+        "params": [
+            {
+                "name": "version",
+                "optional": true,
+                "default": ""
+            },
+            {
+                "name": "locale",
+                "optional": true,
+                "default": ""
+            }
+        ]
+    },
+    "wp_credits_section_list": {
+        "file": "wp-admin/includes/credits.php",
+        "params": [
+            {
+                "name": "credits",
+                "optional": true,
+                "default": []
+            },
+            {
+                "name": "slug",
+                "optional": true,
+                "default": ""
+            }
+        ]
+    },
+    "wp_credits_section_title": {
+        "file": "wp-admin/includes/credits.php",
+        "params": [
+            {
+                "name": "group_data",
+                "optional": true,
+                "default": []
+            }
+        ]
+    },
     "wp_cron": {
         "file": "wp-includes/cron.php",
         "params": [],
@@ -27329,6 +28967,43 @@
             }
         ]
     },
+    "wp_dashboard": {
+        "file": "wp-admin/includes/dashboard.php",
+        "params": []
+    },
+    "wp_dashboard_browser_nag": {
+        "file": "wp-admin/includes/dashboard.php",
+        "params": []
+    },
+    "wp_dashboard_cached_rss_widget": {
+        "file": "wp-admin/includes/dashboard.php",
+        "params": [
+            {
+                "name": "widget_id"
+            },
+            {
+                "name": "callback"
+            },
+            {
+                "name": "check_urls",
+                "optional": true,
+                "default": []
+            },
+            {
+                "name": "args",
+                "variadic": true,
+                "optional": true
+            }
+        ]
+    },
+    "wp_dashboard_empty": {
+        "file": "wp-admin/includes/dashboard.php",
+        "params": []
+    },
+    "wp_dashboard_events_news": {
+        "file": "wp-admin/includes/dashboard.php",
+        "params": []
+    },
     "wp_dashboard_incoming_links": {
         "file": "wp-admin/includes/deprecated.php",
         "params": [],
@@ -27343,6 +29018,10 @@
         "file": "wp-admin/includes/deprecated.php",
         "params": [],
         "deprecated": true
+    },
+    "wp_dashboard_php_nag": {
+        "file": "wp-admin/includes/dashboard.php",
+        "params": []
     },
     "wp_dashboard_plugins": {
         "file": "wp-admin/includes/deprecated.php",
@@ -27363,20 +29042,107 @@
         ],
         "deprecated": true
     },
+    "wp_dashboard_primary": {
+        "file": "wp-admin/includes/dashboard.php",
+        "params": []
+    },
     "wp_dashboard_primary_control": {
         "file": "wp-admin/includes/deprecated.php",
         "params": [],
         "deprecated": true
+    },
+    "wp_dashboard_primary_output": {
+        "file": "wp-admin/includes/dashboard.php",
+        "params": [
+            {
+                "name": "widget_id"
+            },
+            {
+                "name": "feeds"
+            }
+        ]
+    },
+    "wp_dashboard_quick_press": {
+        "file": "wp-admin/includes/dashboard.php",
+        "params": [
+            {
+                "name": "message",
+                "optional": true,
+                "default": false
+            },
+            {
+                "name": "notice_type",
+                "optional": true,
+                "default": "error"
+            }
+        ]
     },
     "wp_dashboard_quick_press_output": {
         "file": "wp-admin/includes/deprecated.php",
         "params": [],
         "deprecated": true
     },
+    "wp_dashboard_quota": {
+        "file": "wp-admin/includes/dashboard.php",
+        "params": []
+    },
+    "wp_dashboard_recent_comments": {
+        "file": "wp-admin/includes/dashboard.php",
+        "params": [
+            {
+                "name": "total_items",
+                "optional": true,
+                "default": 5
+            }
+        ]
+    },
     "wp_dashboard_recent_comments_control": {
         "file": "wp-admin/includes/deprecated.php",
         "params": [],
         "deprecated": true
+    },
+    "wp_dashboard_recent_drafts": {
+        "file": "wp-admin/includes/dashboard.php",
+        "params": [
+            {
+                "name": "drafts",
+                "optional": true,
+                "default": false
+            }
+        ]
+    },
+    "wp_dashboard_recent_posts": {
+        "file": "wp-admin/includes/dashboard.php",
+        "params": [
+            {
+                "name": "args"
+            }
+        ]
+    },
+    "wp_dashboard_right_now": {
+        "file": "wp-admin/includes/dashboard.php",
+        "params": []
+    },
+    "wp_dashboard_rss_control": {
+        "file": "wp-admin/includes/dashboard.php",
+        "params": [
+            {
+                "name": "widget_id"
+            },
+            {
+                "name": "form_inputs",
+                "optional": true,
+                "default": []
+            }
+        ]
+    },
+    "wp_dashboard_rss_output": {
+        "file": "wp-admin/includes/dashboard.php",
+        "params": [
+            {
+                "name": "widget_id"
+            }
+        ]
     },
     "wp_dashboard_secondary": {
         "file": "wp-admin/includes/deprecated.php",
@@ -27392,6 +29158,28 @@
         "file": "wp-admin/includes/deprecated.php",
         "params": [],
         "deprecated": true
+    },
+    "wp_dashboard_setup": {
+        "file": "wp-admin/includes/dashboard.php",
+        "params": []
+    },
+    "wp_dashboard_site_activity": {
+        "file": "wp-admin/includes/dashboard.php",
+        "params": []
+    },
+    "wp_dashboard_site_health": {
+        "file": "wp-admin/includes/dashboard.php",
+        "params": []
+    },
+    "wp_dashboard_trigger_widget_control": {
+        "file": "wp-admin/includes/dashboard.php",
+        "params": [
+            {
+                "name": "widget_control_id",
+                "optional": true,
+                "default": false
+            }
+        ]
     },
     "wp_date": {
         "file": "wp-includes/functions.php",
@@ -27790,6 +29578,14 @@
     "wp_doing_cron": {
         "file": "wp-includes/load.php",
         "params": []
+    },
+    "wp_download_language_pack": {
+        "file": "wp-admin/includes/translation-install.php",
+        "params": [
+            {
+                "name": "download"
+            }
+        ]
     },
     "wp_dropdown_categories": {
         "file": "wp-includes/category-template.php",
@@ -28292,6 +30088,14 @@
         "file": "wp-includes/view-transitions.php",
         "params": [],
         "returns": "void"
+    },
+    "wp_ensure_editable_role": {
+        "file": "wp-admin/includes/ms.php",
+        "params": [
+            {
+                "name": "role"
+            }
+        ]
     },
     "wp_exif_date2ts": {
         "file": "wp-admin/includes/image.php",
@@ -29081,6 +30885,10 @@
         "file": "wp-admin/includes/update.php",
         "params": []
     },
+    "wp_get_available_translations": {
+        "file": "wp-admin/includes/translation-install.php",
+        "params": []
+    },
     "wp_get_avif_info": {
         "file": "wp-includes/media.php",
         "params": [
@@ -29293,6 +31101,21 @@
                 "name": "stylesheet",
                 "optional": true,
                 "default": ""
+            }
+        ]
+    },
+    "wp_get_db_schema": {
+        "file": "wp-admin/includes/schema.php",
+        "params": [
+            {
+                "name": "scope",
+                "optional": true,
+                "default": "all"
+            },
+            {
+                "name": "blog_id",
+                "optional": true,
+                "default": null
             }
         ]
     },
@@ -29831,6 +31654,16 @@
             }
         ]
     },
+    "wp_get_nav_menu_to_edit": {
+        "file": "wp-admin/includes/nav-menu.php",
+        "params": [
+            {
+                "name": "menu_id",
+                "optional": true,
+                "default": 0
+            }
+        ]
+    },
     "wp_get_nav_menus": {
         "file": "wp-includes/nav-menu.php",
         "params": [
@@ -30116,6 +31949,20 @@
         "file": "wp-includes/media.php",
         "params": [],
         "returns": "array"
+    },
+    "wp_get_revision_ui_diff": {
+        "file": "wp-admin/includes/revision.php",
+        "params": [
+            {
+                "name": "post"
+            },
+            {
+                "name": "compare_from"
+            },
+            {
+                "name": "compare_to"
+            }
+        ]
     },
     "wp_get_root_state_style": {
         "file": "wp-includes/block-supports/states.php",
@@ -30845,6 +32692,19 @@
             }
         ]
     },
+    "wp_image_editor": {
+        "file": "wp-admin/includes/image-edit.php",
+        "params": [
+            {
+                "name": "post_id"
+            },
+            {
+                "name": "msg",
+                "optional": true,
+                "default": false
+            }
+        ]
+    },
     "wp_image_editor_supports": {
         "file": "wp-includes/media.php",
         "params": [
@@ -31026,6 +32886,10 @@
         "file": "wp-includes/default-constants.php",
         "params": []
     },
+    "wp_initial_nav_menu_meta_boxes": {
+        "file": "wp-admin/includes/nav-menu.php",
+        "params": []
+    },
     "wp_initialize_site_preview_hooks": {
         "file": "wp-includes/block-editor.php",
         "params": []
@@ -31137,6 +33001,58 @@
                 "name": "userdata"
             }
         ]
+    },
+    "wp_install": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": [
+            {
+                "name": "blog_title"
+            },
+            {
+                "name": "user_name"
+            },
+            {
+                "name": "user_email"
+            },
+            {
+                "name": "is_public"
+            },
+            {
+                "name": "deprecated",
+                "optional": true,
+                "default": ""
+            },
+            {
+                "name": "user_password",
+                "optional": true,
+                "default": ""
+            },
+            {
+                "name": "language",
+                "optional": true,
+                "default": ""
+            }
+        ]
+    },
+    "wp_install_defaults": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": [
+            {
+                "name": "user_id"
+            }
+        ]
+    },
+    "wp_install_language_form": {
+        "file": "wp-admin/includes/translation-install.php",
+        "params": [
+            {
+                "name": "languages"
+            }
+        ]
+    },
+    "wp_install_maybe_enable_pretty_permalinks": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
     },
     "wp_installing": {
         "file": "wp-includes/load.php",
@@ -32136,6 +34052,31 @@
             }
         ]
     },
+    "wp_list_widget_controls": {
+        "file": "wp-admin/includes/widgets.php",
+        "params": [
+            {
+                "name": "sidebar"
+            },
+            {
+                "name": "sidebar_name",
+                "optional": true,
+                "default": ""
+            }
+        ]
+    },
+    "wp_list_widget_controls_dynamic_sidebar": {
+        "file": "wp-admin/includes/widgets.php",
+        "params": [
+            {
+                "name": "params"
+            }
+        ]
+    },
+    "wp_list_widgets": {
+        "file": "wp-admin/includes/widgets.php",
+        "params": []
+    },
     "wp_load_alloptions": {
         "file": "wp-includes/option.php",
         "params": [
@@ -32606,10 +34547,57 @@
             }
         ]
     },
+    "wp_nav_menu_disabled_check": {
+        "file": "wp-admin/includes/nav-menu.php",
+        "params": [
+            {
+                "name": "nav_menu_selected_id"
+            },
+            {
+                "name": "display",
+                "optional": true,
+                "default": true
+            }
+        ]
+    },
+    "wp_nav_menu_item_link_meta_box": {
+        "file": "wp-admin/includes/nav-menu.php",
+        "params": []
+    },
+    "wp_nav_menu_item_post_type_meta_box": {
+        "file": "wp-admin/includes/nav-menu.php",
+        "params": [
+            {
+                "name": "data_object"
+            },
+            {
+                "name": "box"
+            }
+        ]
+    },
+    "wp_nav_menu_item_taxonomy_meta_box": {
+        "file": "wp-admin/includes/nav-menu.php",
+        "params": [
+            {
+                "name": "data_object"
+            },
+            {
+                "name": "box"
+            }
+        ]
+    },
     "wp_nav_menu_locations_meta_box": {
         "file": "wp-admin/includes/deprecated.php",
         "params": [],
         "deprecated": true
+    },
+    "wp_nav_menu_manage_columns": {
+        "file": "wp-admin/includes/nav-menu.php",
+        "params": []
+    },
+    "wp_nav_menu_post_type_meta_boxes": {
+        "file": "wp-admin/includes/nav-menu.php",
+        "params": []
     },
     "wp_nav_menu_remove_menu_item_has_children_class": {
         "file": "wp-includes/nav-menu-template.php",
@@ -32629,6 +34617,46 @@
                 "name": "depth",
                 "optional": true,
                 "default": false
+            }
+        ]
+    },
+    "wp_nav_menu_setup": {
+        "file": "wp-admin/includes/nav-menu.php",
+        "params": []
+    },
+    "wp_nav_menu_taxonomy_meta_boxes": {
+        "file": "wp-admin/includes/nav-menu.php",
+        "params": []
+    },
+    "wp_nav_menu_update_menu_items": {
+        "file": "wp-admin/includes/nav-menu.php",
+        "params": [
+            {
+                "name": "nav_menu_selected_id"
+            },
+            {
+                "name": "nav_menu_selected_title"
+            }
+        ]
+    },
+    "wp_network_dashboard_right_now": {
+        "file": "wp-admin/includes/dashboard.php",
+        "params": []
+    },
+    "wp_new_blog_notification": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": [
+            {
+                "name": "blog_title"
+            },
+            {
+                "name": "blog_url"
+            },
+            {
+                "name": "user_id"
+            },
+            {
+                "name": "password"
             }
         ]
     },
@@ -33295,6 +35323,22 @@
         ],
         "returns": "array"
     },
+    "wp_prepare_revisions_for_js": {
+        "file": "wp-admin/includes/revision.php",
+        "params": [
+            {
+                "name": "post"
+            },
+            {
+                "name": "selected_revision_id"
+            },
+            {
+                "name": "from",
+                "optional": true,
+                "default": null
+            }
+        ]
+    },
     "wp_prepare_themes_for_js": {
         "file": "wp-admin/includes/theme.php",
         "params": [
@@ -33350,6 +35394,14 @@
         "file": "wp-includes/deprecated.php",
         "params": [],
         "deprecated": true
+    },
+    "wp_print_community_events_markup": {
+        "file": "wp-admin/includes/dashboard.php",
+        "params": []
+    },
+    "wp_print_community_events_templates": {
+        "file": "wp-admin/includes/dashboard.php",
+        "params": []
     },
     "wp_print_editor_js": {
         "file": "wp-admin/includes/deprecated.php",
@@ -33425,6 +35477,10 @@
     },
     "wp_print_request_filesystem_credentials_modal": {
         "file": "wp-admin/includes/file.php",
+        "params": []
+    },
+    "wp_print_revision_templates": {
+        "file": "wp-admin/includes/revision.php",
         "params": []
     },
     "wp_print_script_tag": {
@@ -34981,6 +37037,14 @@
             }
         ]
     },
+    "wp_restore_image": {
+        "file": "wp-admin/includes/image-edit.php",
+        "params": [
+            {
+                "name": "post_id"
+            }
+        ]
+    },
     "wp_restore_image_outer_container": {
         "file": "wp-includes/block-supports/layout.php",
         "params": [
@@ -35215,6 +37279,46 @@
             }
         ],
         "deprecated": true
+    },
+    "wp_save_image": {
+        "file": "wp-admin/includes/image-edit.php",
+        "params": [
+            {
+                "name": "post_id"
+            }
+        ]
+    },
+    "wp_save_image_file": {
+        "file": "wp-admin/includes/image-edit.php",
+        "params": [
+            {
+                "name": "filename"
+            },
+            {
+                "name": "image"
+            },
+            {
+                "name": "mime_type"
+            },
+            {
+                "name": "post_id"
+            }
+        ]
+    },
+    "wp_save_nav_menu_items": {
+        "file": "wp-admin/includes/nav-menu.php",
+        "params": [
+            {
+                "name": "menu_id",
+                "optional": true,
+                "default": 0
+            },
+            {
+                "name": "menu_data",
+                "optional": true,
+                "default": []
+            }
+        ]
     },
     "wp_save_post_revision": {
         "file": "wp-includes/revision.php",
@@ -35906,6 +38010,10 @@
             }
         ]
     },
+    "wp_should_upgrade_global_tables": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
     "wp_show_heic_upload_error": {
         "file": "wp-includes/media.php",
         "params": [
@@ -36199,6 +38307,20 @@
         "params": [
             {
                 "name": "mail"
+            }
+        ]
+    },
+    "wp_stream_image": {
+        "file": "wp-admin/includes/image-edit.php",
+        "params": [
+            {
+                "name": "image"
+            },
+            {
+                "name": "mime_type"
+            },
+            {
+                "name": "attachment_id"
             }
         ]
     },
@@ -37287,6 +39409,10 @@
             }
         ]
     },
+    "wp_upgrade": {
+        "file": "wp-admin/includes/upgrade.php",
+        "params": []
+    },
     "wp_upload_bits": {
         "file": "wp-includes/functions.php",
         "params": [
@@ -37482,6 +39608,18 @@
             }
         ]
     },
+    "wp_welcome_panel": {
+        "file": "wp-admin/includes/dashboard.php",
+        "params": []
+    },
+    "wp_widget_control": {
+        "file": "wp-admin/includes/widgets.php",
+        "params": [
+            {
+                "name": "sidebar_args"
+            }
+        ]
+    },
     "wp_widget_description": {
         "file": "wp-includes/widgets.php",
         "params": [
@@ -37529,6 +39667,14 @@
             }
         ]
     },
+    "wp_widgets_access_body_class": {
+        "file": "wp-admin/includes/widgets.php",
+        "params": [
+            {
+                "name": "classes"
+            }
+        ]
+    },
     "wp_widgets_add_menu": {
         "file": "wp-includes/functions.php",
         "params": []
@@ -37559,6 +39705,27 @@
                 "name": "br",
                 "optional": true,
                 "default": true
+            }
+        ]
+    },
+    "wpmu_delete_blog": {
+        "file": "wp-admin/includes/ms.php",
+        "params": [
+            {
+                "name": "blog_id"
+            },
+            {
+                "name": "drop",
+                "optional": true,
+                "default": false
+            }
+        ]
+    },
+    "wpmu_delete_user": {
+        "file": "wp-admin/includes/ms.php",
+        "params": [
+            {
+                "name": "id"
             }
         ]
     },
@@ -37602,6 +39769,24 @@
     "write_post": {
         "file": "wp-admin/includes/post.php",
         "params": []
+    },
+    "xfn_check": {
+        "file": "wp-admin/includes/meta-boxes.php",
+        "params": [
+            {
+                "name": "xfn_relationship"
+            },
+            {
+                "name": "xfn_value",
+                "optional": true,
+                "default": ""
+            },
+            {
+                "name": "deprecated",
+                "optional": true,
+                "default": ""
+            }
+        ]
     },
     "xmlrpc_getpostcategory": {
         "file": "wp-includes/functions.php",

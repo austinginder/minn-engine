@@ -6,6 +6,13 @@ use Minn\Runtime\Runtime;
 function plugin_basename($file)
 {
     $file = wp_normalize_path((string) $file);
+    foreach ((array) Runtime::current()->get('plugin_realpaths', []) as $real => $expected) {
+        $real = wp_normalize_path((string) $real);
+        if (str_starts_with($file, $real . '/')) {
+            $file = wp_normalize_path((string) $expected) . substr($file, strlen($real));
+            break;
+        }
+    }
     foreach ([WP_PLUGIN_DIR, WPMU_PLUGIN_DIR] as $dir) {
         $dir = wp_normalize_path($dir);
         foreach (array_unique([$dir, wp_normalize_path((string) (realpath($dir) ?: $dir))]) as $root) {
@@ -19,6 +26,14 @@ function plugin_basename($file)
 
 function wp_register_plugin_realpath($file)
 {
+    $dir = dirname(wp_normalize_path((string) $file));
+    $real = realpath($dir);
+    if ($real === false || wp_normalize_path($real) === $dir) {
+        return false;
+    }
+    $map = Runtime::current()->get('plugin_realpaths', []);
+    $map[wp_normalize_path($real)] = $dir;
+    Runtime::current()->set('plugin_realpaths', $map);
     return true;
 }
 

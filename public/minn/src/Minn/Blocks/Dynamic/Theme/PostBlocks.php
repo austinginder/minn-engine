@@ -21,6 +21,7 @@ use Minn\Support\Html;
 use Minn\Content\PasswordGate;
 use Minn\Content\Reader;
 use Minn\Extension\Extensions;
+use Minn\Runtime\Runtime;
 use Minn\Extension\Shortcodes;
 
 /** The post-* blocks: they render the context's current post. */
@@ -89,6 +90,10 @@ final readonly class PostBlocks
         if ($seams !== null) {
             $content = Shortcodes::apply($content, $seams->shortcodes(), $seams);
             $content = $seams->applyContentFilters($content, $post);
+        }
+        if (Runtime::booted()) {
+            $content = Runtime::shortcodes()->apply($content);
+            $content = (string) Runtime::hooks()->filter('the_content', [$content]);
         }
         $align = Styles::align($block->attrs);
         return Wrapper::open(

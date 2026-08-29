@@ -1,0 +1,2 @@
+Deprecated: preg_replace(): Passing null to parameter #3 ($subject) of type array|string is deprecated in ~/Cove/Sites/minn-engine.localhost/wp-reference/wp-admin/includes/plugin.php on line 2156
+Deprecated: Function print_emoji_styles is <strong>deprecated</strong> since version 6.4.0! Use wp_enqueue_emoji_styles instead. in ~/Cove/Sites/minn-engine.localhost/wp-reference/wp-includes/functions.php on line 6260

@@ -48,6 +48,8 @@ use Minn\Content\PostWriter;
 use Minn\Content\Reader;
 use Minn\Front\CommentPostController;
 use Minn\Extension\Extensions;
+use Minn\Runtime\Plugins;
+use Minn\Runtime\Runtime;
 use Minn\Extension\Loader;
 use Minn\Extension\Seams;
 
@@ -118,12 +120,18 @@ final readonly class Engine
             $readerId > 0 ? $capabilities->rolesOf($readerId) : [],
         ));
         $canReadUnpublished = static fn (array $post): bool => Reader::current()->canEdit((int) $post['ID']);
-        $seams = new Seams($db, $site, $request, Reader::current());
-        (new Loader(ABSPATH . 'wp-content', $site))->register($seams);
-        Extensions::set($seams);
         $resolver = Resolver::fromDb($db, $canReadUnpublished);
         $permalinks = $resolver->permalinks();
         $theme = Theme::active($site, $permalinks, ABSPATH . 'wp-content/themes');
+        // The WordPress runtime: the site's plugins load as code, then the
+        // lifecycle actions fire, before the engine's own extensions register.
+        $runtime = Runtime::boot(new Runtime($db, $site, $request, Reader::current(), $capabilities, $this->engineDir, ABSPATH, $this->version));
+        $runtime->set('block_theme', $theme !== null);
+        $runtime->set('permalinks', $permalinks);
+        Plugins::load($runtime);
+        $seams = new Seams($db, $site, $request, Reader::current());
+        (new Loader(ABSPATH . 'wp-content', $site))->register($seams);
+        Extensions::set($seams);
         $appearance = new Appearance($users);
         $adminTypes = new AdminTypes(new Types(new RestUrl($permalinks), (new Loader(ABSPATH . 'wp-content', $site))->declaredTypes()), $capabilities);
         $adminOff = App::switchedOff(ABSPATH . 'wp-content', $site);

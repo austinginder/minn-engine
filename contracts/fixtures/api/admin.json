@@ -1,0 +1,406 @@
+[
+    [
+        "settings_fields",
+        "<input type='hidden' name='option_page' value='minn_group' /><input type=\"hidden\" name=\"action\" value=\"update\" /><input type=\"hidden\" id=\"_wpnonce\" name=\"_wpnonce\" value=\"N\" /><input type=\"hidden\" name=\"_wp_http_referer\" value=\"\" />"
+    ],
+    [
+        "wp_nonce_field named",
+        "<input type=\"hidden\" id=\"nm\" name=\"nm\" value=\"N\" /><input type=\"hidden\" name=\"_wp_http_referer\" value=\"\" />"
+    ],
+    [
+        "get_submit_button default",
+        "<p class=\"submit\"><input type=\"submit\" name=\"submit\" id=\"submit\" class=\"button button-primary button-large\" value=\"Save Changes\"  /></p>"
+    ],
+    [
+        "get_submit_button text type",
+        "<input type=\"submit\" name=\"my_name\" id=\"x\" class=\"button button-large\" value=\"Save it\" data-a=\"b\"  />"
+    ],
+    [
+        "get_submit_button delete",
+        "<p class=\"submit\"><input type=\"submit\" name=\"submit\" id=\"submit\" class=\"button delete\" value=\"Go\" onclick=\"x\" /></p>"
+    ],
+    [
+        "submit_button echo",
+        "<p class=\"submit\"><input type=\"submit\" name=\"submit\" id=\"submit\" class=\"button button-primary\" value=\"Hi\"  /></p>"
+    ],
+    [
+        "get_submit_button array type",
+        "<p class=\"submit\"><input type=\"submit\" name=\"submit\" id=\"submit\" class=\"button button-primary button-large\" value=\"T\"  /></p>"
+    ],
+    [
+        "do_settings_sections",
+        "<div class=\"wrap-sec-class\"><h2 id=\"wp-settings-section-minn_sec-1\">Section title</h2>\n<p>intro minn_sec</p><table class=\"form-table\" role=\"presentation\"><tr class=\"row-class\"><th scope=\"row\"><label for=\"f_id\">Field label</label></th><td><input name=\"f\" value=\"f_id\"></td></tr><tr><th scope=\"row\">Second</th><td>x</td></tr></table></div><table class=\"form-table\" role=\"presentation\"><tr><th scope=\"row\">Third</th><td>y</td></tr></table>"
+    ],
+    [
+        "do_settings_fields",
+        "<tr class=\"row-class\"><th scope=\"row\"><label for=\"f_id\">Field label</label></th><td><input name=\"f\" value=\"f_id\"></td></tr><tr><th scope=\"row\">Second</th><td>x</td></tr>"
+    ],
+    [
+        "do_settings_sections unknown",
+        ""
+    ],
+    [
+        "wp_settings_sections global",
+        [
+            "minn_sec",
+            "minn_sec2"
+        ]
+    ],
+    [
+        "wp_settings_fields global",
+        [
+            "minn_field",
+            "minn_field2"
+        ]
+    ],
+    [
+        "get_settings_errors",
+        [
+            {
+                "setting": "minn_opt",
+                "code": "code1",
+                "message": "Message one",
+                "type": "error"
+            },
+            {
+                "setting": "minn_opt",
+                "code": "code2",
+                "message": "Saved!",
+                "type": "success"
+            },
+            {
+                "setting": "minn_opt",
+                "code": "code3",
+                "message": "Careful",
+                "type": "warning"
+            },
+            {
+                "setting": "minn_opt",
+                "code": "code4",
+                "message": "Note",
+                "type": "info"
+            },
+            {
+                "setting": "minn_opt",
+                "code": "code5",
+                "message": "Legacy",
+                "type": "updated"
+            }
+        ]
+    ],
+    [
+        "get_settings_errors setting",
+        5
+    ],
+    [
+        "get_settings_errors other",
+        []
+    ],
+    [
+        "settings_errors",
+        "<div id='setting-error-code1' class='notice notice-error settings-error is-dismissible'> \n<p><strong>Message one</strong></p></div> \n<div id='setting-error-code2' class='notice notice-success settings-error is-dismissible'> \n<p><strong>Saved!</strong></p></div> \n<div id='setting-error-code3' class='notice notice-warning settings-error is-dismissible'> \n<p><strong>Careful</strong></p></div> \n<div id='setting-error-code4' class='notice notice-info settings-error is-dismissible'> \n<p><strong>Note</strong></p></div> \n<div id='setting-error-code5' class='notice notice-success settings-error is-dismissible'> \n<p><strong>Legacy</strong></p></div> \n"
+    ],
+    [
+        "settings_errors hide",
+        "<div id='setting-error-code1' class='notice notice-error settings-error is-dismissible'> \n<p><strong>Message one</strong></p></div> \n<div id='setting-error-code2' class='notice notice-success settings-error is-dismissible'> \n<p><strong>Saved!</strong></p></div> \n<div id='setting-error-code3' class='notice notice-warning settings-error is-dismissible'> \n<p><strong>Careful</strong></p></div> \n<div id='setting-error-code4' class='notice notice-info settings-error is-dismissible'> \n<p><strong>Note</strong></p></div> \n<div id='setting-error-code5' class='notice notice-success settings-error is-dismissible'> \n<p><strong>Legacy</strong></p></div> \n"
+    ],
+    [
+        "settings_errors again",
+        "<div id='setting-error-code1' class='notice notice-error settings-error is-dismissible'> \n<p><strong>Message one</strong></p></div> \n<div id='setting-error-code2' class='notice notice-success settings-error is-dismissible'> \n<p><strong>Saved!</strong></p></div> \n<div id='setting-error-code3' class='notice notice-warning settings-error is-dismissible'> \n<p><strong>Careful</strong></p></div> \n<div id='setting-error-code4' class='notice notice-info settings-error is-dismissible'> \n<p><strong>Note</strong></p></div> \n<div id='setting-error-code5' class='notice notice-success settings-error is-dismissible'> \n<p><strong>Legacy</strong></p></div> \n"
+    ],
+    [
+        "add_menu_page",
+        "toplevel_page_minn-top"
+    ],
+    [
+        "add_submenu_page",
+        false
+    ],
+    [
+        "add_submenu_page cap denied",
+        false
+    ],
+    [
+        "add_options_page",
+        false
+    ],
+    [
+        "add_theme_page",
+        false
+    ],
+    [
+        "add_management_page",
+        false
+    ],
+    [
+        "add_plugins_page",
+        false
+    ],
+    [
+        "add_users_page",
+        false
+    ],
+    [
+        "add_dashboard_page",
+        false
+    ],
+    [
+        "add_posts_page",
+        false
+    ],
+    [
+        "add_media_page",
+        false
+    ],
+    [
+        "add_pages_page",
+        false
+    ],
+    [
+        "add_comments_page",
+        false
+    ],
+    [
+        "menu global row",
+        [
+            "Menu T",
+            "manage_options",
+            "minn-top",
+            "Page T",
+            "menu-top toplevel_page_minn-top",
+            "toplevel_page_minn-top",
+            "dashicons-admin-generic"
+        ]
+    ],
+    [
+        "submenu global rows",
+        null
+    ],
+    [
+        "submenu options",
+        []
+    ],
+    [
+        "submenu themes",
+        []
+    ],
+    [
+        "admin_page_hooks",
+        {
+            "minn-top": "menu-t"
+        }
+    ],
+    [
+        "get_plugin_page_hookname",
+        "menu-t_page_minn-sub"
+    ],
+    [
+        "get_plugin_page_hookname top",
+        "toplevel_page_minn-top"
+    ],
+    [
+        "get_plugin_page_hookname options",
+        "admin_page_minn-opt"
+    ],
+    [
+        "get_plugin_page_hook",
+        null
+    ],
+    [
+        "remove_menu_page",
+        [
+            "Menu T",
+            "manage_options",
+            "minn-top",
+            "Page T",
+            "menu-top toplevel_page_minn-top",
+            "toplevel_page_minn-top",
+            "dashicons-admin-generic"
+        ]
+    ],
+    [
+        "remove_menu_page again",
+        false
+    ],
+    [
+        "remove_submenu_page",
+        false
+    ],
+    [
+        "remove_submenu_page again",
+        false
+    ],
+    [
+        "menu_page_url",
+        ""
+    ],
+    [
+        "menu_page_url unknown",
+        ""
+    ],
+    [
+        "get_current_screen",
+        null
+    ],
+    [
+        "add_meta_box",
+        null
+    ],
+    [
+        "wp_meta_boxes global",
+        {
+            "id": "minn_box",
+            "title": "Box",
+            "callback": "__return_null",
+            "args": {
+                "a": 1
+            }
+        }
+    ],
+    [
+        "remove_meta_box",
+        null
+    ],
+    [
+        "wp_meta_boxes after remove",
+        false
+    ],
+    [
+        "wp_add_dashboard_widget",
+        null
+    ],
+    [
+        "dashboard widget stored",
+        null
+    ],
+    [
+        "deactivate_plugins unknown",
+        null
+    ],
+    [
+        "is_plugin_active",
+        false
+    ],
+    [
+        "current_screen filter",
+        false
+    ],
+    [
+        "wp_dashboard_setup",
+        0
+    ],
+    [
+        "add_filter plugin_action_links",
+        true
+    ],
+    [
+        "remove_all_actions admin_menu",
+        true
+    ],
+    [
+        "__return",
+        [
+            true,
+            false,
+            null,
+            0,
+            [],
+            ""
+        ]
+    ],
+    [
+        "wp_get_code_editor_settings keys",
+        [
+            "codemirror",
+            "csslint",
+            "jshint",
+            "htmlhint"
+        ]
+    ],
+    [
+        "is_super_admin",
+        [
+            true,
+            false,
+            false
+        ]
+    ],
+    [
+        "get_admin_page_title",
+        null
+    ],
+    [
+        "get_admin_page_parent",
+        ""
+    ],
+    [
+        "wp_admin_css_color count",
+        0
+    ],
+    [
+        "get_screen_option",
+        null
+    ],
+    [
+        "wp_add_inline_script unknown",
+        false
+    ],
+    [
+        "wp_register_script twice",
+        [
+            true,
+            false
+        ]
+    ],
+    [
+        "wp_scripts registered src",
+        "https://x/a.js"
+    ],
+    [
+        "wp_script_is",
+        [
+            true,
+            false,
+            false
+        ]
+    ],
+    [
+        "wp_script_is enqueued",
+        true
+    ],
+    [
+        "wp_print_styles",
+        "<link rel='stylesheet' id='minn-c-css' href='https://x/a.css?ver=2.0' media='screen' />\n<style id=\"minn-c-inline-css\">\nbody{color:red}\n/*# sourceURL=minn-c-inline-css */\n</style>\n"
+    ],
+    [
+        "wp_print_head_scripts",
+        "<script id=\"minn-s-js-extra\">\nvar minnObj = {\"a\":\"1\",\"b\":{\"c\":\"d&e\"},\"n\":\"5\"};\n//# sourceURL=minn-s-js-extra\n</script>\n<script id=\"minn-s-js\" src=\"https://x/a.js?ver=7.1\"></script>\n<script id=\"minn-s-js-after\">\nconsole.log(1);\n//# sourceURL=minn-s-js-after\n</script>\n<script data-wp-strategy=\"defer\" defer id=\"minn-d-js\" src=\"https://minn-engine.localhost/rel/d.js?ver=3\"></script>\n"
+    ],
+    [
+        "wp_print_footer_scripts",
+        "<script id=\"minn-f-js\" src=\"https://x/f.js\"></script>\n<script async data-wp-strategy=\"async\" id=\"minn-a-js\" src=\"https://minn-engine.localhostrel/a.js?ver=7.1\"></script>\n"
+    ],
+    [
+        "_wp_footer_scripts",
+        ""
+    ],
+    [
+        "wp_script_is done",
+        [
+            true,
+            true
+        ]
+    ],
+    [
+        "wp_enqueue_code_editor",
+        "settings"
+    ],
+    [
+        "code editor enqueued",
+        [
+            true,
+            true,
+            true
+        ]
+    ]
+]

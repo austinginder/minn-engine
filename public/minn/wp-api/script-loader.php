@@ -1,0 +1,323 @@
+<?php
+/** Script and style registration and printing. */
+
+use Minn\Runtime\Assets;
+use Minn\Runtime\Runtime;
+
+/** @internal */
+function _minn_assets(string $kind): Assets
+{
+    $runtime = Runtime::current();
+    $assets = $runtime->get('assets_' . $kind);
+    if (!$assets instanceof Assets) {
+        $assets = new Assets($kind);
+        $runtime->set('assets_' . $kind, $assets);
+    }
+    return $assets;
+}
+
+/** @internal a registered src as the URL the tag prints */
+function _minn_asset_url(string $src, string|bool|null $ver): string
+{
+    if ($src === '') {
+        return '';
+    }
+    // A relative source is prefixed with the stored site URL as given, slash or not: the reference does the same.
+    if (!preg_match('#^(https?:)?//#', $src)) {
+        $src = rtrim((string) get_option('siteurl'), '/') . $src;
+    }
+    if ($ver === false) {
+        $ver = $GLOBALS['wp_version'];
+    }
+    if ($ver !== null && $ver !== '' && $ver !== true) {
+        $src = add_query_arg('ver', (string) $ver, $src);
+    }
+    return $src;
+}
+
+function wp_register_script($handle, $src, $deps = [], $ver = false, $args = [])
+{
+    $args = is_array($args) ? $args : ['in_footer' => (bool) $args];
+    $assets = _minn_assets('script');
+    $ok = $assets->register((string) $handle, $src === false ? false : (string) $src, (array) $deps, $ver, $args);
+    if (!empty($args['in_footer'])) {
+        $assets->addData((string) $handle, 'group', 1);
+    }
+    if (!empty($args['strategy'])) {
+        $assets->addData((string) $handle, 'strategy', $args['strategy']);
+    }
+    return $ok;
+}
+
+function wp_enqueue_script($handle, $src = '', $deps = [], $ver = false, $args = [])
+{
+    $assets = _minn_assets('script');
+    if ($src !== '' || !$assets->registered((string) $handle)) {
+        if ($src !== '') {
+            wp_register_script($handle, $src, $deps, $ver, $args);
+        }
+    }
+    $assets->enqueue((string) $handle);
+}
+
+function wp_deregister_script($handle)
+{
+    _minn_assets('script')->deregister((string) $handle);
+}
+
+function wp_dequeue_script($handle)
+{
+    _minn_assets('script')->dequeue((string) $handle);
+}
+
+function wp_script_is($handle, $status = 'enqueued')
+{
+    $assets = _minn_assets('script');
+    return match ($status) {
+        'registered' => $assets->registered((string) $handle),
+        'enqueued', 'queue' => $assets->enqueued((string) $handle),
+        'done' => $assets->done((string) $handle),
+        'to_do' => $assets->enqueued((string) $handle) && !$assets->done((string) $handle),
+        default => false,
+    };
+}
+
+function wp_add_inline_script($handle, $data, $position = 'after')
+{
+    return _minn_assets('script')->addInline((string) $handle, (string) $data, (string) $position);
+}
+
+function wp_localize_script($handle, $object_name, $l10n)
+{
+    return _minn_assets('script')->localize((string) $handle, (string) $object_name, (array) $l10n);
+}
+
+function wp_script_add_data($handle, $key, $value)
+{
+    return _minn_assets('script')->addData((string) $handle, (string) $key, $value);
+}
+
+function wp_register_style($handle, $src, $deps = [], $ver = false, $media = 'all')
+{
+    return _minn_assets('style')->register((string) $handle, $src === false ? false : (string) $src, (array) $deps, $ver, (string) $media);
+}
+
+function wp_enqueue_style($handle, $src = '', $deps = [], $ver = false, $media = 'all')
+{
+    if ($src !== '') {
+        wp_register_style($handle, $src, $deps, $ver, $media);
+    }
+    _minn_assets('style')->enqueue((string) $handle);
+}
+
+function wp_deregister_style($handle)
+{
+    _minn_assets('style')->deregister((string) $handle);
+}
+
+function wp_dequeue_style($handle)
+{
+    _minn_assets('style')->dequeue((string) $handle);
+}
+
+function wp_style_is($handle, $status = 'enqueued')
+{
+    $assets = _minn_assets('style');
+    return match ($status) {
+        'registered' => $assets->registered((string) $handle),
+        'enqueued', 'queue' => $assets->enqueued((string) $handle),
+        'done' => $assets->done((string) $handle),
+        'to_do' => $assets->enqueued((string) $handle) && !$assets->done((string) $handle),
+        default => false,
+    };
+}
+
+function wp_add_inline_style($handle, $data)
+{
+    return _minn_assets('style')->addInline((string) $handle, (string) $data, 'after');
+}
+
+function wp_style_add_data($handle, $key, $value)
+{
+    return _minn_assets('style')->addData((string) $handle, (string) $key, $value);
+}
+
+function wp_enqueue_scripts()
+{
+    do_action('wp_enqueue_scripts');
+}
+
+/** @internal the "sourceURL" trailer the reference adds to inline code under WP_DEBUG */
+function _minn_source_url(string $id): string
+{
+    return defined('WP_DEBUG') && WP_DEBUG ? "\n//# sourceURL={$id}" : '';
+}
+
+function wp_print_styles($handles = false)
+{
+    do_action('wp_print_styles');
+    $assets = _minn_assets('style');
+    $list = $handles === false ? $assets->toPrint() : (array) $handles;
+    foreach ($list as $handle) {
+        $item = $assets->item($handle);
+        if ($item === null) {
+            continue;
+        }
+        if ($item['src'] !== false && $item['src'] !== '') {
+            $href = apply_filters('style_loader_src', _minn_asset_url($item['src'], $item['ver']), $handle);
+            $tag = "<link rel='stylesheet' id='" . esc_attr($handle) . "-css' href='" . esc_url($href) . "' media='" . esc_attr((string) $item['extra']) . "' />\n";
+            echo apply_filters('style_loader_tag', $tag, $handle, $href, (string) $item['extra']);
+        }
+        foreach ($item['inline']['after'] as $css) {
+            echo '<style id="' . esc_attr($handle) . '-inline-css">' . "\n" . $css . (defined('WP_DEBUG') && WP_DEBUG ? "\n/*# sourceURL=" . esc_attr($handle) . '-inline-css */' : '') . "\n</style>\n";
+        }
+        $assets->markDone($handle);
+    }
+    return $list;
+}
+
+/** @internal prints the scripts of one group */
+function _minn_print_scripts(bool $footer): array
+{
+    $assets = _minn_assets('script');
+    $list = $assets->toPrint($footer);
+    foreach ($list as $handle) {
+        $item = $assets->item($handle);
+        if ($item === null) {
+            continue;
+        }
+        if ($item['localized'] !== []) {
+            echo '<script id="' . esc_attr($handle) . '-js-extra">' . "\n" . implode("\n", $item['localized']) . _minn_source_url($handle . '-js-extra') . "\n</script>\n";
+        }
+        foreach ($item['inline']['before'] as $js) {
+            echo '<script id="' . esc_attr($handle) . '-js-before">' . "\n" . $js . _minn_source_url($handle . '-js-before') . "\n</script>\n";
+        }
+        if ($item['src'] !== false && $item['src'] !== '') {
+            $src = apply_filters('script_loader_src', _minn_asset_url($item['src'], $item['ver']), $handle);
+            $strategy = $item['data']['strategy'] ?? '';
+            $attr = $strategy === 'defer' ? 'data-wp-strategy="defer" defer ' : ($strategy === 'async' ? 'async data-wp-strategy="async" ' : '');
+            $tag = '<script ' . $attr . 'id="' . esc_attr($handle) . '-js" src="' . esc_url($src) . '"></script>' . "\n";
+            echo apply_filters('script_loader_tag', $tag, $handle, $src);
+        }
+        foreach ($item['inline']['after'] as $js) {
+            echo '<script id="' . esc_attr($handle) . '-js-after">' . "\n" . $js . _minn_source_url($handle . '-js-after') . "\n</script>\n";
+        }
+        $assets->markDone($handle);
+    }
+    return $list;
+}
+
+function wp_print_head_scripts()
+{
+    do_action('wp_print_scripts');
+    return _minn_print_scripts(false);
+}
+
+function wp_print_scripts($handles = false)
+{
+    do_action('wp_print_scripts');
+    return _minn_print_scripts(false);
+}
+
+function wp_print_footer_scripts()
+{
+    do_action('wp_print_footer_scripts');
+    return _minn_print_scripts(true);
+}
+
+function _wp_footer_scripts()
+{
+    print_late_styles();
+    print_footer_scripts();
+}
+
+function print_footer_scripts()
+{
+    return _minn_print_scripts(true);
+}
+
+function print_late_styles()
+{
+    return wp_print_styles();
+}
+
+function print_head_scripts()
+{
+    return wp_print_head_scripts();
+}
+
+function wp_enqueue_code_editor($args)
+{
+    $settings = wp_get_code_editor_settings($args);
+    if ($settings === false || $settings === []) {
+        return false;
+    }
+    wp_enqueue_script('code-editor');
+    wp_enqueue_style('code-editor');
+    if (isset($settings['codemirror']['mode'])) {
+        wp_enqueue_script('wp-codemirror');
+        wp_enqueue_style('wp-codemirror');
+    }
+    wp_add_inline_script('code-editor', sprintf('jQuery.extend( wp.codeEditor.defaultSettings, %s );', wp_json_encode($settings)));
+    do_action('wp_enqueue_code_editor', $settings);
+    return $settings;
+}
+
+function wp_enqueue_media($args = [])
+{
+}
+
+function wp_enqueue_editor()
+{
+}
+
+function wp_register_script_module($id, $src, $deps = [], $version = false, $args = [])
+{
+}
+
+function wp_enqueue_script_module($id, $src = '', $deps = [], $version = false, $args = [])
+{
+}
+
+function wp_dequeue_script_module($id)
+{
+}
+
+function wp_deregister_script_module($id)
+{
+}
+
+function wp_default_scripts($scripts)
+{
+}
+
+function wp_default_styles($styles)
+{
+}
+
+function wp_scripts()
+{
+    return new WP_Scripts(_minn_assets('script'));
+}
+
+function wp_styles()
+{
+    return new WP_Styles(_minn_assets('style'));
+}
+
+function wp_common_block_scripts_and_styles()
+{
+}
+
+function wp_enqueue_block_style($block_name, $args)
+{
+}
+
+function wp_enqueue_global_styles()
+{
+}
+
+function wp_enqueue_classic_theme_styles()
+{
+}
+
