@@ -21,6 +21,8 @@ final readonly class Menus
         private Posts $posts,
         private Terms $terms,
         private Permalinks $permalinks,
+        private ?PostWriter $writer = null,
+        private ?Site $site = null,
     ) {
     }
 
@@ -39,6 +41,11 @@ final readonly class Menus
     public function find(int $id): ?array
     {
         return $this->terms->row($id, 'nav_menu');
+    }
+
+    public function idByName(string $name): ?int
+    {
+        return $this->terms->idByName($name, 'nav_menu');
     }
 
     /**
@@ -161,7 +168,7 @@ final readonly class Menus
     }
 
     /** @param array<string, mixed> $row */
-    private function hydrate(array $row, ?int $knownMenuId): ?MenuItem
+    private function hydrate(array $row, ?int $knownMenuId): MenuItem
     {
         $id = (int) $row['ID'];
         $meta = $this->meta($id);
@@ -197,9 +204,6 @@ final readonly class Menus
             }
         }
         $menuId = $knownMenuId ?? $this->menuIdOf($id);
-        if ($menuId === 0) {
-            return null;
-        }
         return new MenuItem(
             $id,
             $title,
@@ -266,5 +270,190 @@ final readonly class Menus
             return $list === [] ? [''] : $list;
         }
         return explode(' ', $blob);
+    }
+
+    public function findItem(int $id): ?MenuItem
+    {
+        $row = $this->db->row(
+            "SELECT ID, post_title, post_content, post_excerpt, post_status, menu_order, post_parent
+             FROM {$this->db->table('posts')} WHERE ID = ? AND post_type = 'nav_menu_item' AND post_status <> 'trash' LIMIT 1",
+            [$id],
+        );
+        return $row === null ? null : $this->hydrate($row, null);
+    }
+
+    public function createMenu(string $name, string $description = ''): int
+    {
+        $slug = $this->terms->uniqueSlug($name, 'nav_menu');
+        return $this->terms->create($name, $slug, 'nav_menu', $description, 0);
+    }
+
+    public function updateMenu(int $id, ?string $name, ?string $description): void
+    {
+        $row = $this->find($id);
+        if ($row === null) {
+            return;
+        }
+        if ($name !== null) {
+            $slug = $this->terms->uniqueSlug($name, 'nav_menu', $id);
+            $this->terms->rename($id, $name, $slug);
+        }
+        if ($description !== null) {
+            $this->terms->describe($id, 'nav_menu', $description, 0);
+        }
+    }
+
+    public function deleteMenu(int $id): void
+    {
+        foreach ($this->items($id) as $item) {
+            $this->deleteItem($item->id);
+        }
+        $row = $this->find($id);
+        if ($row !== null) {
+            $this->terms->delete($row + ['taxonomy' => 'nav_menu'], false);
+        }
+    }
+
+    /**
+     * @param array{
+     *   title: string,
+     *   url: string,
+     *   type: string,
+     *   object: string,
+     *   objectId: int,
+     *   parent: int,
+     *   menuOrder: int,
+     *   target: string,
+     *   status: string,
+     *   menuId: int,
+     *   attrTitle: string,
+     *   description: string,
+     *   authorId: int
+     * } $fields
+     */
+    public function createItem(array $fields): int
+    {
+        $writer = $this->writer();
+        $site = $this->site();
+        $now = $site->localNow();
+        $gmt = gmdate('Y-m-d H:i:s');
+        $slug = $writer->uniqueSlug($fields['title'] !== '' ? $fields['title'] : 'menu-item', 0);
+        $id = $writer->insert([
+            'post_author' => $fields['authorId'],
+            'post_date' => $now,
+            'post_date_gmt' => $gmt,
+            'post_content' => $fields['description'],
+            'post_title' => $fields['title'],
+            'post_excerpt' => '',
+            'post_status' => $fields['status'],
+            'comment_status' => 'closed',
+            'ping_status' => 'closed',
+            'post_password' => '',
+            'post_name' => $slug,
+            'to_ping' => '',
+            'pinged' => '',
+            'post_modified' => $now,
+            'post_modified_gmt' => $gmt,
+            'post_content_filtered' => '',
+            'post_parent' => 0,
+            'guid' => '',
+            'menu_order' => $fields['menuOrder'],
+            'post_type' => 'nav_menu_item',
+            'post_mime_type' => '',
+            'comment_count' => 0,
+        ]);
+        $home = rtrim((string) ($site->option('home') ?? ''), '/');
+        $writer->update($id, ['guid' => $home . '/' . $slug . '/']);
+        $objectId = $fields['type'] === 'custom' ? $id : $fields['objectId'];
+        $this->writeMeta($id, $fields['type'], $fields['object'], $objectId, $fields['parent'], $fields['url'], $fields['target'], $fields['attrTitle']);
+        if ($fields['menuId'] > 0) {
+            $writer->setTerms($id, 'nav_menu', [$fields['menuId']]);
+        } else {
+            $writer->setMeta($id, '_menu_item_orphaned', (string) time());
+        }
+        return $id;
+    }
+
+    /** @param array<string, mixed> $fields */
+    public function updateItem(int $id, array $fields): void
+    {
+        $writer = $this->writer();
+        $site = $this->site();
+        $item = $this->findItem($id);
+        if ($item === null) {
+            return;
+        }
+        $columns = [
+            'post_modified' => $site->localNow(),
+            'post_modified_gmt' => gmdate('Y-m-d H:i:s'),
+        ];
+        if (isset($fields['title'])) {
+            $columns['post_title'] = (string) $fields['title'];
+        }
+        if (isset($fields['description'])) {
+            $columns['post_content'] = (string) $fields['description'];
+        }
+        if (isset($fields['status'])) {
+            $columns['post_status'] = (string) $fields['status'];
+        }
+        if (isset($fields['menuOrder'])) {
+            $columns['menu_order'] = (int) $fields['menuOrder'];
+        }
+        $writer->update($id, $columns);
+        $type = (string) ($fields['type'] ?? $item->type);
+        $object = (string) ($fields['object'] ?? $item->object);
+        $objectId = (int) ($fields['objectId'] ?? $item->objectId);
+        if ($type === 'custom') {
+            $objectId = $id;
+        }
+        $parent = (int) ($fields['parent'] ?? $item->parent);
+        $url = (string) ($fields['url'] ?? ($type === 'custom' ? $item->url : ''));
+        if ($type !== 'custom') {
+            $url = (string) ($fields['url'] ?? '');
+        }
+        $target = (string) ($fields['target'] ?? $item->target);
+        $attrTitle = (string) ($fields['attrTitle'] ?? $item->attrTitle);
+        $this->writeMeta($id, $type, $object, $objectId, $parent, $url, $target, $attrTitle);
+        if (isset($fields['menuId'])) {
+            $menuId = (int) $fields['menuId'];
+            if ($menuId > 0) {
+                $writer->setTerms($id, 'nav_menu', [$menuId]);
+            }
+        }
+    }
+
+    public function deleteItem(int $id): void
+    {
+        $this->writer()->destroy($id);
+    }
+
+    private function writeMeta(int $id, string $type, string $object, int $objectId, int $parent, string $url, string $target, string $attrTitle): void
+    {
+        $writer = $this->writer();
+        $writer->setMeta($id, '_menu_item_type', $type);
+        $writer->setMeta($id, '_menu_item_object', $object);
+        $writer->setMeta($id, '_menu_item_object_id', (string) $objectId);
+        $writer->setMeta($id, '_menu_item_menu_item_parent', (string) $parent);
+        $writer->setMeta($id, '_menu_item_url', $url);
+        $writer->setMeta($id, '_menu_item_target', $target);
+        $writer->setMeta($id, '_menu_item_attr_title', $attrTitle);
+        $writer->setMeta($id, '_menu_item_classes', Serialized::serializeStringList(['']));
+        $writer->setMeta($id, '_menu_item_xfn', '');
+    }
+
+    private function writer(): PostWriter
+    {
+        if ($this->writer === null) {
+            throw new \RuntimeException('Menu writes need a PostWriter.');
+        }
+        return $this->writer;
+    }
+
+    private function site(): Site
+    {
+        if ($this->site === null) {
+            throw new \RuntimeException('Menu writes need a Site.');
+        }
+        return $this->site;
     }
 }

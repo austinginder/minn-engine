@@ -45,7 +45,7 @@ function mn_mint( int $uid ): array {
 	return $mint;
 }
 
-function mn_fetch( string $base, string $query, ?array $mint ): array {
+function mn_fetch( string $base, string $query, ?array $mint, string $method = 'GET', ?string $body = null ): array {
 	$headers = array();
 	if ( $mint ) {
 		global $REF;
@@ -53,13 +53,18 @@ function mn_fetch( string $base, string $query, ?array $mint ): array {
 		$headers[] = 'Cookie: ' . $mint['cookie_name'] . '=' . $mint['cookie'] . '; ' . $alt . '=' . $mint['cookie'];
 		$headers[] = 'X-WP-Nonce: ' . $mint['nonce'];
 	}
+	if ( null !== $body ) {
+		$headers[] = 'Content-Type: application/json';
+	}
 	$ctx = stream_context_create(
 		array(
 			'ssl'  => array( 'verify_peer' => false, 'verify_peer_name' => false ),
 			'http' => array(
 				'ignore_errors' => true,
 				'timeout'       => 10,
+				'method'        => $method,
 				'header'        => implode( "\r\n", $headers ),
+				'content'       => $body ?? '',
 			),
 		)
 	);
@@ -144,6 +149,101 @@ $first = is_array( $items ) && isset( $items[0]['id'] ) ? (int) $items[0]['id'] 
 if ( $first > 0 ) {
 	mn_parity( 'admin menu-item single', 'rest_route=' . rawurlencode( "/wp/v2/menu-items/{$first}" ), $admin );
 }
+
+$MQ = 'rest_route=' . rawurlencode( '/wp/v2/menus' );
+$IQ = 'rest_route=' . rawurlencode( '/wp/v2/menu-items' );
+
+[ $st, $refused ] = mn_fetch( $ENGINE, $MQ, $author, 'POST', json_encode( array( 'name' => 'zz-nope' ) ) );
+check( 403 === $st && 'rest_cannot_create' === ( $refused['code'] ?? '' ), 'author POST menus is rest_cannot_create' );
+[ $st, $missing ] = mn_fetch( $ENGINE, $MQ, $admin, 'POST', '{}' );
+check( 400 === $st && 'rest_missing_callback_param' === ( $missing['code'] ?? '' ), 'POST menus without name is missing param' );
+[ $st, $empty ] = mn_fetch( $ENGINE, $MQ, $admin, 'POST', '{"name":""}' );
+check( 400 === $st && 'empty_term_name' === ( $empty['code'] ?? '' ), 'POST menus empty name is empty_term_name' );
+
+[ $st, $created ] = mn_fetch( $ENGINE, $MQ, $admin, 'POST', json_encode( array( 'name' => 'zz-write-menu' ) ) );
+check( 201 === $st && ! empty( $created['id'] ), 'engine creates a menu (201)', json_encode( $created ) );
+$wid = (int) ( $created['id'] ?? 0 );
+[ $st, $oracle_read ] = mn_fetch( $REF, $MQ . '%2F' . $wid, $admin );
+check( 200 === $st, 'WordPress can read the engine-written menu' );
+$d = minn_test_diff( mn_norm( $oracle_read ), mn_norm( $created ) );
+check( null === $d, 'create menu response equals the WordPress read-back', (string) $d );
+
+[ $st, $dup ] = mn_fetch( $ENGINE, $MQ, $admin, 'POST', json_encode( array( 'name' => 'zz-write-menu' ) ) );
+check( 400 === $st && 'menu_exists' === ( $dup['code'] ?? '' ) && ( $dup['data']['term_id'] ?? 0 ) === $wid, 'duplicate menu name is menu_exists' );
+
+[ $st, $renamed ] = mn_fetch( $ENGINE, $MQ . '%2F' . $wid, $admin, 'POST', json_encode( array( 'name' => 'zz-write-menu-renamed', 'description' => 'A description' ) ) );
+check( 200 === $st && 'zz-write-menu-renamed' === ( $renamed['name'] ?? '' ) && 'A description' === ( $renamed['description'] ?? '' ), 'engine renames a menu' );
+[ , $oracle_read ] = mn_fetch( $REF, $MQ . '%2F' . $wid, $admin );
+check( 'zz-write-menu-renamed' === ( $oracle_read['name'] ?? '' ), 'WordPress sees the rename' );
+
+[ $st, $item ] = mn_fetch( $ENGINE, $IQ, $admin, 'POST', json_encode( array(
+	'title'  => 'Custom One',
+	'url'    => 'https://example.com/one',
+	'menus'  => $wid,
+	'status' => 'publish',
+) ) );
+check( 201 === $st && ! empty( $item['id'] ) && 'Custom One' === ( $item['title']['raw'] ?? '' ), 'engine creates a custom menu item', json_encode( $item ) );
+$iid = (int) ( $item['id'] ?? 0 );
+[ $st, $oracle_item ] = mn_fetch( $REF, $IQ . '%2F' . $iid . '&context=edit', $admin );
+check( 200 === $st, 'WordPress can read the engine-written item' );
+$d = minn_test_diff( mn_norm( $oracle_item ), mn_norm( $item ) );
+check( null === $d, 'create item response equals the WordPress edit read-back', (string) $d );
+
+[ $st, $pageItem ] = mn_fetch( $ENGINE, $IQ, $admin, 'POST', json_encode( array(
+	'title'     => 'Sample',
+	'object'    => 'page',
+	'object_id' => 2,
+	'type'      => 'post_type',
+	'menus'     => $wid,
+	'status'    => 'publish',
+) ) );
+check( 201 === $st && 'page' === ( $pageItem['object'] ?? '' ) && 2 === (int) ( $pageItem['object_id'] ?? 0 ), 'engine creates a page menu item' );
+$pid = (int) ( $pageItem['id'] ?? 0 );
+
+[ $st, $moved ] = mn_fetch( $ENGINE, $IQ . '%2F' . $iid, $admin, 'POST', json_encode( array( 'menu_order' => 5, 'parent' => $pid ) ) );
+check( 200 === $st && 5 === (int) ( $moved['menu_order'] ?? 0 ) && $pid === (int) ( $moved['parent'] ?? 0 ), 'engine reorders and parents an item' );
+[ , $oracle_item ] = mn_fetch( $REF, $IQ . '%2F' . $iid . '&context=edit', $admin );
+check( 5 === (int) ( $oracle_item['menu_order'] ?? 0 ) && $pid === (int) ( $oracle_item['parent'] ?? 0 ), 'WordPress sees the reorder' );
+
+[ $st, $retitled ] = mn_fetch( $ENGINE, $IQ . '%2F' . $iid, $admin, 'POST', json_encode( array( 'title' => 'Custom One edited', 'url' => 'https://example.com/one-edited' ) ) );
+check( 200 === $st && 'Custom One edited' === ( $retitled['title']['raw'] ?? '' ), 'engine retitles a custom item' );
+
+[ $st, $noTitle ] = mn_fetch( $ENGINE, $IQ, $admin, 'POST', json_encode( array( 'url' => 'https://example.com/bare', 'menus' => $wid ) ) );
+check( 400 === $st && 'rest_title_required' === ( $noTitle['code'] ?? '' ), 'custom item without title is rest_title_required' );
+
+[ $st, $authorItem ] = mn_fetch( $ENGINE, $IQ, $author, 'POST', json_encode( array( 'title' => 'Author item', 'url' => 'https://example.com/a', 'menus' => $wid, 'status' => 'publish' ) ) );
+check( 403 === $st && 'rest_cannot_create' === ( $authorItem['code'] ?? '' ), 'author cannot create menu items' );
+
+[ $st, $noForce ] = mn_fetch( $ENGINE, $IQ . '%2F' . $iid, $admin, 'DELETE' );
+check( 501 === $st && 'rest_trash_not_supported' === ( $noForce['code'] ?? '' ), 'DELETE item without force is 501' );
+[ $st, $deletedItem ] = mn_fetch( $ENGINE, $IQ . '%2F' . $iid . '&force=true', $admin, 'DELETE' );
+check( 200 === $st && true === ( $deletedItem['deleted'] ?? null ) && 'Custom One edited' === ( $deletedItem['previous']['title']['rendered'] ?? '' ), 'force-delete item returns previous' );
+[ $st ] = mn_fetch( $REF, $IQ . '%2F' . $iid, $admin );
+check( 404 === $st, 'WordPress confirms the item is gone' );
+
+[ $st, $noForceMenu ] = mn_fetch( $ENGINE, $MQ . '%2F' . $wid, $admin, 'DELETE' );
+check( 501 === $st && 'rest_trash_not_supported' === ( $noForceMenu['code'] ?? '' ), 'DELETE menu without force is 501' );
+[ $st, $deletedMenu ] = mn_fetch( $ENGINE, $MQ . '%2F' . $wid . '&force=true', $admin, 'DELETE' );
+check( 200 === $st && true === ( $deletedMenu['deleted'] ?? null ) && 'zz-write-menu-renamed' === ( $deletedMenu['previous']['name'] ?? '' ), 'force-delete menu returns previous' );
+[ $st ] = mn_fetch( $REF, $MQ . '%2F' . $wid, $admin );
+check( 404 === $st, 'WordPress confirms the menu is gone' );
+
+// Reverse: WordPress creates, the engine reads and deletes.
+[ $st, $wp_menu ] = mn_fetch( $REF, $MQ, $admin, 'POST', json_encode( array( 'name' => 'zz-oracle-menu' ) ) );
+check( 201 === $st && ! empty( $wp_menu['id'] ), 'WordPress creates a menu' );
+$oid = (int) ( $wp_menu['id'] ?? 0 );
+[ $st, $engine_read ] = mn_fetch( $ENGINE, $MQ . '%2F' . $oid, $admin );
+check( 200 === $st, 'engine reads the WordPress-written menu' );
+$d = minn_test_diff( mn_norm( $wp_menu ), mn_norm( $engine_read ) );
+check( null === $d, 'WordPress create menu equals the engine read-back', (string) $d );
+[ $st, $wp_item ] = mn_fetch( $REF, $IQ, $admin, 'POST', json_encode( array( 'title' => array( 'raw' => 'From raw' ), 'url' => 'https://example.com/raw', 'menus' => $oid, 'status' => 'publish' ) ) );
+check( 201 === $st && 'From raw' === ( $wp_item['title']['raw'] ?? '' ), 'WordPress creates an item from title.raw' );
+$wiid = (int) ( $wp_item['id'] ?? 0 );
+[ $st, $engine_item ] = mn_fetch( $ENGINE, $IQ . '%2F' . $wiid . '&context=edit', $admin );
+check( 200 === $st, 'engine reads the WordPress-written item' );
+$d = minn_test_diff( mn_norm( $wp_item ), mn_norm( $engine_item ) );
+check( null === $d, 'WordPress create item equals the engine edit read-back', (string) $d );
+mn_fetch( $ENGINE, $MQ . '%2F' . $oid . '&force=true', $admin, 'DELETE' );
 
 // Front: with no published wp_navigation, the header nav reads the classic menu.
 // The reference may convert a classic menu into a wp_navigation post on view;

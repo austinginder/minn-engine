@@ -1,8 +1,8 @@
 # Contract: wp/v2/menus, menu-items, menu-locations
 
-Status: reads implemented. Suite: `tests/menus.test.php` (17 checks, live
-parity with the reference). Writes (create, reorder, delete) wait for the
-Minn Admin menus surface.
+Status: reads and writes implemented. Suite: `tests/menus.test.php` (47
+checks: live read parity plus create/rename/reorder/delete round trips
+both directions).
 
 Classic `nav_menu` terms and `nav_menu_item` posts. Block themes keep
 `wp_navigation` posts as the primary front-end store; these routes are
@@ -27,6 +27,17 @@ exist."
 
 `?post={itemId}` lists the menus that contain that item.
 
+Writes need `edit_theme_options`. POST `/wp/v2/menus` with `{name}` is 201
+and a Location header; missing name is `rest_missing_callback_param`, an
+empty name is `empty_term_name`, a duplicate is `menu_exists` 400 with
+`data.term_id` and `additional_data: [id]` (the message wraps the name in
+`<strong>`). POST/PUT/PATCH `/wp/v2/menus/{id}` renames (and reslugs) and
+can set `description`. DELETE without `force=true` is 501
+`rest_trash_not_supported` "Menus do not support trashing..."; with force
+it returns `{deleted: true, previous}` (view object, no `_links`) and
+deletes the menu's items too. Authors get 403 `rest_cannot_create`
+"Sorry, you are not allowed to create terms in this taxonomy."
+
 ## menu-items
 
 A `nav_menu_item` post with `_menu_item_*` meta resolved: `{ id, title:
@@ -43,6 +54,17 @@ invalid, meta: [], menus, _links }`. Edit context also carries
 - `invalid` is true when the pointed-at post or term is missing or in trash.
 - `?menus={termId}` lists one menu's items.
 - Missing id is 404 `rest_post_invalid_id` "Invalid post ID."
+
+Writes need `edit_theme_options`. POST `/wp/v2/menu-items` is 201 in edit
+context (title.raw, minn_modified/minn_lock, action links). A custom item
+needs a title (`rest_title_required` otherwise). `title` may be a string
+or `{raw}`. Default `type` is `custom`, default `menu_order` is 1, default
+`status` is `publish`. `menus` attaches the item to a `nav_menu` term;
+omitting it leaves an orphan. POST/PUT/PATCH `{id}` updates title, url,
+parent, menu_order, and the other stored fields. Authors get 403
+`rest_cannot_create` "Sorry, you are not allowed to create posts as this
+user." DELETE without force is 501 "Menu items do not support trashing...";
+with force `{deleted: true, previous}` in view context without `_links`.
 
 ## menu-locations
 

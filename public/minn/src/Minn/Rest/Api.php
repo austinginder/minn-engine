@@ -68,7 +68,7 @@ final readonly class Api
 
         $dashboard = new Dashboard($db, $site, $users, $capabilities, ABSPATH . 'wp-content/uploads');
         $notifications = new Notifications($db, $site, $users, $capabilities, $dashboard);
-        $menus = new Menus($db, $posts, $terms, $permalinks);
+        $menus = new Menus($db, $posts, $terms, $permalinks, $writer, $site);
 
         $router = new Router();
         $router->register(
@@ -83,7 +83,7 @@ final readonly class Api
             new CommentsController(new Comments($db), $posts, $site, $commentObject, $caller),
             new RevisionsController($posts, new Revisions($db, $writer, $site), $url, $caller),
             new MediaController($db, $posts, $writer, $site, $uploads, new Images($site), $mediaObject, $caller),
-            new MenusController($menus, new MenuObject($menus, $url, $caller), new MenuItemObject($url, $caller), $caller),
+            new MenusController($menus, new MenuObject($menus, $url, $caller), new MenuItemObject($url, $caller), $caller, $url),
         );
         return new self($db, $request, $caller, $router, $postObject, $termObject, $userObject, $types);
     }

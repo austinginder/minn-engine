@@ -10,11 +10,12 @@ use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\RestError;
+use Minn\Support\Html;
+use Minn\Support\Kses;
 
 /**
- * wp/v2/menus, menu-items, and menu-locations. Reads only; writes wait
- * for the Minn Admin menus surface. Viewing needs edit_posts (authors
- * can GET, subscribers cannot); anonymous callers get 401.
+ * wp/v2/menus, menu-items, and menu-locations. Viewing needs edit_posts;
+ * writes need edit_theme_options. Anonymous callers get 401.
  */
 final readonly class MenusController
 {
@@ -23,6 +24,7 @@ final readonly class MenusController
         private MenuObject $menuObject,
         private MenuItemObject $itemObject,
         private Caller $caller,
+        private RestUrl $url,
     ) {
     }
 
@@ -64,6 +66,86 @@ final readonly class MenusController
         return Reply::item($this->menuObject->view($row), Fields::fromQuery($request->query));
     }
 
+    #[Route(Method::Post, '/wp/v2/menus')]
+    public function createMenu(Request $request): Response
+    {
+        $this->writeGate('rest_cannot_create', 'Sorry, you are not allowed to create terms in this taxonomy.');
+        $body = $request->json();
+        if (!array_key_exists('name', $body)) {
+            throw RestError::missingParams(['name']);
+        }
+        $name = $this->plain((string) $body['name']);
+        if ($name === '') {
+            throw new RestError('empty_term_name', 'A name is required for this term.', 400);
+        }
+        $existing = $this->menus->idByName($name);
+        if ($existing !== null) {
+            throw new RestError(
+                'menu_exists',
+                'The menu name <strong>' . Html::esc($name) . '</strong> conflicts with another menu name. Please try another.',
+                400,
+                ['term_id' => $existing],
+                ['additional_data' => [$existing]],
+            );
+        }
+        $id = $this->menus->createMenu($name, $this->plain((string) ($body['description'] ?? '')));
+        $row = $this->menus->find($id);
+        return Reply::item($this->menuObject->view($row ?? []), Fields::fromQuery($request->query), 201)
+            ->withHeader('Location', $this->url->to("/wp/v2/menus/{$id}"));
+    }
+
+    #[Route(Method::Post, '/wp/v2/menus/{id:\d+}')]
+    #[Route(Method::Put, '/wp/v2/menus/{id:\d+}')]
+    #[Route(Method::Patch, '/wp/v2/menus/{id:\d+}')]
+    public function updateMenu(Request $request, string $id): Response
+    {
+        $this->writeGate('rest_cannot_update', 'Sorry, you are not allowed to edit this term.');
+        $row = $this->menus->find((int) $id);
+        if ($row === null) {
+            throw new RestError('rest_term_invalid', 'Term does not exist.', 404);
+        }
+        $body = $request->json();
+        $name = array_key_exists('name', $body) ? $this->plain((string) $body['name']) : null;
+        if ($name === '') {
+            throw new RestError('empty_term_name', 'A name is required for this term.', 400);
+        }
+        if ($name !== null) {
+            $existing = $this->menus->idByName($name);
+            if ($existing !== null && $existing !== (int) $id) {
+                throw new RestError(
+                    'menu_exists',
+                    'The menu name <strong>' . Html::esc($name) . '</strong> conflicts with another menu name. Please try another.',
+                    400,
+                    ['term_id' => $existing],
+                    ['additional_data' => [$existing]],
+                );
+            }
+        }
+        $this->menus->updateMenu(
+            (int) $id,
+            $name,
+            array_key_exists('description', $body) ? $this->plain((string) $body['description']) : null,
+        );
+        return Reply::item($this->menuObject->view($this->menus->find((int) $id) ?? $row), Fields::fromQuery($request->query));
+    }
+
+    #[Route(Method::Delete, '/wp/v2/menus/{id:\d+}')]
+    public function deleteMenu(Request $request, string $id): Response
+    {
+        $this->writeGate('rest_cannot_delete', 'Sorry, you are not allowed to delete this term.');
+        $row = $this->menus->find((int) $id);
+        if ($row === null) {
+            throw new RestError('rest_term_invalid', 'Term does not exist.', 404);
+        }
+        if (!filter_var($request->query('force', ''), FILTER_VALIDATE_BOOLEAN)) {
+            throw new RestError('rest_trash_not_supported', "Menus do not support trashing. Set 'force=true' to delete.", 501);
+        }
+        $previous = $this->menuObject->view($row);
+        unset($previous['_links']);
+        $this->menus->deleteMenu((int) $id);
+        return Reply::item(['deleted' => true, 'previous' => $previous], Fields::fromQuery($request->query));
+    }
+
     #[Route(Method::Get, '/wp/v2/menu-items')]
     public function listItems(Request $request): Response
     {
@@ -87,13 +169,111 @@ final readonly class MenusController
     public function singleItem(Request $request, string $id): Response
     {
         $this->gate('menu items');
-        foreach ($this->menus->items() as $item) {
-            if ($item->id === (int) $id) {
-                $edit = $request->query('context') === 'edit';
-                return Reply::item($this->itemObject->view($item, $edit), Fields::fromQuery($request->query));
-            }
+        $item = $this->menus->findItem((int) $id);
+        if ($item === null) {
+            throw new RestError('rest_post_invalid_id', 'Invalid post ID.', 404);
         }
-        throw new RestError('rest_post_invalid_id', 'Invalid post ID.', 404);
+        $edit = $request->query('context') === 'edit';
+        return Reply::item($this->itemObject->view($item, $edit), Fields::fromQuery($request->query));
+    }
+
+    #[Route(Method::Post, '/wp/v2/menu-items')]
+    public function createItem(Request $request): Response
+    {
+        $this->writeGate('rest_cannot_create', 'Sorry, you are not allowed to create posts as this user.');
+        $body = $request->json();
+        $type = (string) ($body['type'] ?? 'custom');
+        $title = $this->titleFrom($body);
+        if ($type === 'custom' && $title === '') {
+            throw new RestError('rest_title_required', 'The title is required when using a custom menu item type.', 400);
+        }
+        $id = $this->menus->createItem([
+            'title' => $title,
+            'url' => $this->urlFrom($body),
+            'type' => $type,
+            'object' => (string) ($body['object'] ?? ($type === 'custom' ? 'custom' : '')),
+            'objectId' => (int) ($body['object_id'] ?? 0),
+            'parent' => (int) ($body['parent'] ?? 0),
+            'menuOrder' => (int) ($body['menu_order'] ?? 1),
+            'target' => (string) ($body['target'] ?? ''),
+            'status' => (string) ($body['status'] ?? 'publish'),
+            'menuId' => (int) ($body['menus'] ?? 0),
+            'attrTitle' => (string) ($body['attr_title'] ?? ''),
+            'description' => (string) ($body['description'] ?? ''),
+            'authorId' => $this->caller->id(),
+        ]);
+        $item = $this->menus->findItem($id);
+        return Reply::item($this->itemObject->view($item, true), Fields::fromQuery($request->query), 201)
+            ->withHeader('Location', $this->url->to("/wp/v2/menu-items/{$id}"));
+    }
+
+    #[Route(Method::Post, '/wp/v2/menu-items/{id:\d+}')]
+    #[Route(Method::Put, '/wp/v2/menu-items/{id:\d+}')]
+    #[Route(Method::Patch, '/wp/v2/menu-items/{id:\d+}')]
+    public function updateItem(Request $request, string $id): Response
+    {
+        $this->writeGate('rest_cannot_update', 'Sorry, you are not allowed to edit this post.');
+        $item = $this->menus->findItem((int) $id);
+        if ($item === null) {
+            throw new RestError('rest_post_invalid_id', 'Invalid post ID.', 404);
+        }
+        $body = $request->json();
+        $fields = [];
+        if (array_key_exists('title', $body)) {
+            $fields['title'] = $this->titleFrom($body);
+        }
+        if (array_key_exists('url', $body)) {
+            $fields['url'] = $this->urlFrom($body);
+        }
+        if (array_key_exists('type', $body)) {
+            $fields['type'] = (string) $body['type'];
+        }
+        if (array_key_exists('object', $body)) {
+            $fields['object'] = (string) $body['object'];
+        }
+        if (array_key_exists('object_id', $body)) {
+            $fields['objectId'] = (int) $body['object_id'];
+        }
+        if (array_key_exists('parent', $body)) {
+            $fields['parent'] = (int) $body['parent'];
+        }
+        if (array_key_exists('menu_order', $body)) {
+            $fields['menuOrder'] = (int) $body['menu_order'];
+        }
+        if (array_key_exists('target', $body)) {
+            $fields['target'] = (string) $body['target'];
+        }
+        if (array_key_exists('status', $body)) {
+            $fields['status'] = (string) $body['status'];
+        }
+        if (array_key_exists('menus', $body)) {
+            $fields['menuId'] = (int) $body['menus'];
+        }
+        if (array_key_exists('attr_title', $body)) {
+            $fields['attrTitle'] = (string) $body['attr_title'];
+        }
+        if (array_key_exists('description', $body)) {
+            $fields['description'] = (string) $body['description'];
+        }
+        $this->menus->updateItem((int) $id, $fields);
+        return Reply::item($this->itemObject->view($this->menus->findItem((int) $id), true), Fields::fromQuery($request->query));
+    }
+
+    #[Route(Method::Delete, '/wp/v2/menu-items/{id:\d+}')]
+    public function deleteItem(Request $request, string $id): Response
+    {
+        $this->writeGate('rest_cannot_delete', 'Sorry, you are not allowed to delete this post.');
+        $item = $this->menus->findItem((int) $id);
+        if ($item === null) {
+            throw new RestError('rest_post_invalid_id', 'Invalid post ID.', 404);
+        }
+        if (!filter_var($request->query('force', ''), FILTER_VALIDATE_BOOLEAN)) {
+            throw new RestError('rest_trash_not_supported', "Menu items do not support trashing. Set 'force=true' to delete.", 501);
+        }
+        $previous = $this->itemObject->view($item, false);
+        unset($previous['_links']);
+        $this->menus->deleteItem((int) $id);
+        return Reply::item(['deleted' => true, 'previous' => $previous], Fields::fromQuery($request->query));
     }
 
     #[Route(Method::Get, '/wp/v2/menu-locations')]
@@ -111,5 +291,38 @@ final readonly class MenusController
         if (!$this->caller->can('edit_posts')) {
             throw $this->caller->refuse('rest_cannot_view', "Sorry, you are not allowed to view {$what}.");
         }
+    }
+
+    private function writeGate(string $code, string $message): void
+    {
+        $this->caller->require($code, $message, 401);
+        if (!$this->caller->can('edit_theme_options')) {
+            throw $this->caller->refuse($code, $message);
+        }
+    }
+
+    /** @param array<string, mixed> $body */
+    private function titleFrom(array $body): string
+    {
+        $title = $body['title'] ?? '';
+        if (is_array($title)) {
+            $title = $title['raw'] ?? $title['rendered'] ?? '';
+        }
+        return $this->plain((string) $title);
+    }
+
+    /** @param array<string, mixed> $body */
+    private function urlFrom(array $body): string
+    {
+        $url = (string) ($body['url'] ?? '');
+        if ($url === '') {
+            return '';
+        }
+        return $this->caller->can('unfiltered_html') ? $url : Kses::url($url);
+    }
+
+    private function plain(string $value): string
+    {
+        return $this->caller->can('unfiltered_html') ? $value : Kses::text($value);
     }
 }
