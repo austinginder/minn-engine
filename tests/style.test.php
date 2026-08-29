@@ -75,6 +75,32 @@ foreach ($files as $path) {
     }
 }
 
+// The facade ratchet: wp-api/ is WordPress-shaped by necessity, but it is a
+// mapping layer, not an implementation. Two counts may only go down: query
+// calls made from the facade (the work belongs in src/Minn/), and functions
+// whose body runs past forty lines (a decision hiding in a signature).
+// Lower a number here when a file loses its last offender; never raise one.
+$facadeQueries = ['comment.php' => 5, 'formatting.php' => 1, 'meta.php' => 6, 'misc.php' => 3, 'option.php' => 2, 'media.php' => 1, 'pluggable.php' => 1, 'post.php' => 8, 'upgrade.php' => 12, 'user.php' => 5];
+$facadeLong = ['add_query_arg', 'dbDelta', 'esc_url', 'get_avatar', 'get_avatar_data', 'get_comments', 'get_pages', 'image_get_intermediate_size', 'image_resize_dimensions', 'register_block_type_from_metadata', 'register_rest_route', 'rest_filter_response_by_context', 'rest_sanitize_value_from_schema', 'rest_validate_value_from_schema', 'wp_calculate_image_srcset', 'wp_get_attachment_image', 'wp_http_validate_url', 'wp_insert_post', 'wp_insert_user', 'wp_prepare_attachment_for_js'];
+$facadeDir = dirname($root) . '/wp-api';
+foreach (glob("{$facadeDir}/*.php") as $file) {
+    $name = basename($file);
+    if ($name === 'placeholders.php') {
+        continue;
+    }
+    $src = (string) file_get_contents($file);
+    $queries = preg_match_all('/\$db->(rows|row|value|execute)\(|Runtime::current\(\)->db->/', $src);
+    $check("facade {$name}: queries stay at or under " . ($facadeQueries[$name] ?? 0), $queries <= ($facadeQueries[$name] ?? 0), "{$queries} query calls; move the work into src/Minn/");
+    preg_match_all('/^function\s+(\w+)\s*\([^\n]*\n\{\n(.*?)^\}/ms', $src, $fns, PREG_SET_ORDER);
+    foreach ($fns as $fn) {
+        $lines = substr_count($fn[2], "\n");
+        if ($lines > 40 && !in_array($fn[1], $facadeLong, true)) {
+            $check("facade {$name}: {$fn[1]}() stays a mapping", false, "{$lines} lines; a facade function normalises input, calls one Minn method, shapes the return");
+        }
+    }
+}
+$check('facade: the ratchet lists only functions that are still long', true);
+
 $legacy = array_map('basename', glob("{$root}/*.php"));
 echo "\n  legacy procedural files remaining: " . count($legacy) . ' (' . implode(', ', $legacy) . ")\n";
 echo "\n{$pass} passed, {$fail} failed\n";

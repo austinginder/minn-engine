@@ -603,3 +603,14 @@ rule going forward: a facade function normalises loose input, calls one
 `media.php`, `comment.php`, `rest-api.php`, `blocks.php` carry logic that
 belongs in `src/Minn/Runtime/`. The extraction is the next cleanup pass,
 lint-enforced like the style migration was.
+
+The pass started with `taxonomy.php` (2026-08-30): `Runtime\TermQuery`
+holds the reads (arguments to SQL, the tree filters, the fields shapes, the
+single-term lookups), `Runtime\TermWriter` the write decisions (duplicate
+rules, slug uniqueness, parent checks, relationships and their actions), and
+`Runtime\Refusal` is what a refused operation returns before the facade
+turns it into `WP_Error`. The slug sanitiser is handed in as a closure so
+the reference's `sanitize_title` filters still apply. The facade file went
+from 1,011 lines to 717 and makes no queries. `tests/style.test.php` now
+carries a ratchet for the whole facade: per-file query-call counts and the
+list of functions over forty lines may only shrink.
