@@ -348,40 +348,10 @@ function _wp_upload_dir($time = null)
     ]);
 }
 
-function get_permalink($post = 0, $leavename = false)
-{
-    $post = get_post($post);
-    if ($post === null) {
-        return false;
-    }
-    return apply_filters('post_link', Runtime::current()->get('permalinks')?->forPost($post->to_array()) ?? home_url('/?p=' . $post->ID), $post, $leavename);
-}
 
-function get_the_permalink($post = 0, $leavename = false)
-{
-    return get_permalink($post, $leavename);
-}
 
-function the_permalink($post = 0)
-{
-    echo esc_url(apply_filters('the_permalink', get_permalink($post), $post));
-}
 
-function get_edit_post_link($post = 0, $context = 'display')
-{
-    $post = get_post($post);
-    if ($post === null || !current_user_can('edit_post', $post->ID)) {
-        return null;
-    }
-    $sep = $context === 'display' ? '&amp;' : '&';
-    return apply_filters('get_edit_post_link', admin_url("post.php?post={$post->ID}{$sep}action=edit"), $post->ID, $context);
-}
 
-function wp_get_shortlink($id = 0, $context = 'post', $allow_slugs = true)
-{
-    $post = get_post($id);
-    return $post === null ? '' : home_url('?p=' . $post->ID);
-}
 
 function get_avatar_url($id_or_email, $args = null)
 {

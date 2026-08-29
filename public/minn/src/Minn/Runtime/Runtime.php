@@ -21,6 +21,7 @@ final class Runtime
     private static ?Options $options = null;
     private static ?ObjectCache $cache = null;
     private static ?Shortcodes $shortcodes = null;
+    private static ?Registry $registry = null;
     private static ?self $current = null;
     private static bool $facadeLoaded = false;
     /** @var array<string, mixed> plugin-visible state the facade keeps between calls */
@@ -97,6 +98,16 @@ final class Runtime
         return self::$shortcodes ??= new Shortcodes();
     }
 
+    public static function registry(): Registry
+    {
+        return self::$registry ??= new Registry(self::current()->engineDir);
+    }
+
+    public static function postQuery(): PostQuery
+    {
+        return new PostQuery(self::current()->db, self::registry());
+    }
+
     public function get(string $key, mixed $default = null): mixed
     {
         return $this->state[$key] ?? $default;
@@ -142,6 +153,7 @@ final class Runtime
         self::$hooks = new Hooks();
         self::$cache = new ObjectCache();
         self::$shortcodes = new Shortcodes();
+        self::$registry = null;
         self::$options = self::$current === null ? null : new Options(self::$current->db);
     }
 }

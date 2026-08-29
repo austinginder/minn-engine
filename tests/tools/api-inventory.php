@@ -163,7 +163,11 @@ foreach (array_keys($GLOBALS) as $g) {
 ksort($globals);
 
 $write = static function (string $name, array $data) use ($out): void {
-    file_put_contents("{$out}/{$name}.json", json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
+    $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_INVALID_UTF8_SUBSTITUTE | JSON_PARTIAL_OUTPUT_ON_ERROR);
+    if ($json === false || json_last_error() !== JSON_ERROR_NONE) {
+        fwrite(STDERR, "{$name}: " . json_last_error_msg() . "\n");
+    }
+    file_put_contents("{$out}/{$name}.json", $json . "\n");
     fwrite(STDERR, sprintf("%-14s %6d\n", $name, count($data)));
 };
 $write('functions', $functions);

@@ -21,9 +21,9 @@ $check = static function (string $label, bool $ok, string $detail = '') use (&$p
     }
 };
 
-foreach (['functions' => 'api-probe.php', 'admin' => 'admin-probe.php'] as $fixture => $probe) {
+foreach (['functions' => 'api-probe.php', 'admin' => 'admin-probe.php', 'content' => 'content-probe.php'] as $fixture => $probe) {
     $expected = json_decode(file_get_contents($root . "/contracts/fixtures/api/{$fixture}.json"), true);
-    $out = shell_exec('php ' . escapeshellarg($root . '/tests/tools/run-api-probe.php') . ' ' . escapeshellarg($probe) . ' 2>&1');
+    $out = shell_exec('php ' . escapeshellarg($root . '/tests/tools/run-api-probe.php') . ' ' . escapeshellarg($probe) . ' 2>/dev/null');
     $actual = json_decode((string) $out, true);
     if (!is_array($actual)) {
         echo "  FAIL {$probe} did not produce JSON:\n" . substr((string) $out, 0, 2000) . "\n";

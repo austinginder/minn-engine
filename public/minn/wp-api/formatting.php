@@ -1025,7 +1025,11 @@ function ent2ncr($text)
 
 function convert_chars($content, $deprecated = '')
 {
-    return str_replace(['&', '&amp;amp;'], ['&amp;', '&amp;'], str_replace('&amp;', '&', (string) $content));
+    $content = (string) $content;
+    if (!str_contains($content, '&')) {
+        return $content;
+    }
+    return preg_replace('/&(?!(?:#\d+|#[xX][0-9a-fA-F]+|[A-Za-z][A-Za-z0-9]*);)/', '&#038;', $content);
 }
 
 function convert_smilies($text)

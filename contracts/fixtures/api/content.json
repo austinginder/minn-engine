@@ -1,0 +1,2147 @@
+[
+    [
+        "get_post class",
+        "WP_Post"
+    ],
+    [
+        "get_post props",
+        [
+            "ID",
+            "post_author",
+            "post_date",
+            "post_date_gmt",
+            "post_content",
+            "post_title",
+            "post_excerpt",
+            "post_status",
+            "comment_status",
+            "ping_status",
+            "post_password",
+            "post_name",
+            "to_ping",
+            "pinged",
+            "post_modified",
+            "post_modified_gmt",
+            "post_content_filtered",
+            "post_parent",
+            "guid",
+            "menu_order",
+            "post_type",
+            "post_mime_type",
+            "comment_count",
+            "filter"
+        ]
+    ],
+    [
+        "get_post ARRAY_A keys",
+        [
+            "ID",
+            "post_author",
+            "post_date",
+            "post_date_gmt",
+            "post_content",
+            "post_title",
+            "post_excerpt",
+            "post_status",
+            "comment_status",
+            "ping_status",
+            "post_password",
+            "post_name",
+            "to_ping",
+            "pinged",
+            "post_modified",
+            "post_modified_gmt",
+            "post_content_filtered",
+            "post_parent",
+            "guid",
+            "menu_order",
+            "post_type",
+            "post_mime_type",
+            "comment_count",
+            "filter",
+            "ancestors",
+            "page_template",
+            "post_category",
+            "tags_input"
+        ]
+    ],
+    [
+        "get_post missing",
+        null
+    ],
+    [
+        "get_post types",
+        [
+            "integer",
+            "string",
+            "integer",
+            "integer",
+            "string"
+        ]
+    ],
+    [
+        "get_post_field",
+        [
+            "docs",
+            2,
+            "",
+            ""
+        ]
+    ],
+    [
+        "get_the_title",
+        [
+            "Texturize battery: it&#8217;s &#8220;quoted&#8221; &#8212; fine",
+            "",
+            "Privacy Policy"
+        ]
+    ],
+    [
+        "get_post_status",
+        [
+            "publish",
+            "draft",
+            false
+        ]
+    ],
+    [
+        "get_post_type",
+        [
+            "post",
+            "page",
+            false
+        ]
+    ],
+    [
+        "get_post_mime_type",
+        ""
+    ],
+    [
+        "get_post_ancestors",
+        [
+            [
+                2
+            ],
+            []
+        ]
+    ],
+    [
+        "get_page_by_path",
+        [
+            6,
+            null,
+            2,
+            1,
+            null
+        ]
+    ],
+    [
+        "get_page_uri",
+        [
+            "sample-page/docs",
+            "sample-page",
+            "hello-world"
+        ]
+    ],
+    [
+        "url_to_postid",
+        [
+            6,
+            1,
+            5,
+            0,
+            0
+        ]
+    ],
+    [
+        "get_post_custom_keys",
+        null
+    ],
+    [
+        "wp_is_post_revision",
+        [
+            false,
+            false
+        ]
+    ],
+    [
+        "get_the_date",
+        [
+            "2026-08-28",
+            true,
+            "02:21",
+            "2026",
+            true,
+            "2026-08-28"
+        ]
+    ],
+    [
+        "get_the_excerpt handwritten",
+        "A hand-written excerpt for the parity suite."
+    ],
+    [
+        "get_the_excerpt generated",
+        "Welcome to WordPress. This is your first post. Edit or delete it, then start writing!"
+    ],
+    [
+        "get_the_content",
+        "<!-- wp:paragraph -->\n<p>Welcome to WordPress. This is your first post. Edit or delete it, then start writing!</p>\n<!-- /wp:paragraph -->"
+    ],
+    [
+        "post_password_required",
+        false
+    ],
+    [
+        "get_edit_post_link anon",
+        null
+    ],
+    [
+        "get_permalink",
+        [
+            "{home}/hello-world/",
+            "{home}/sample-page/docs/",
+            "{home}/?page_id=3",
+            false
+        ]
+    ],
+    [
+        "get_the_permalink",
+        "{home}/building-in-the-open/"
+    ],
+    [
+        "get_adjacent_post",
+        [
+            7,
+            9
+        ]
+    ],
+    [
+        "get_posts default",
+        [
+            611,
+            610,
+            609,
+            608,
+            11
+        ]
+    ],
+    [
+        "get_posts args",
+        [
+            611,
+            610,
+            609
+        ]
+    ],
+    [
+        "get_posts pages",
+        [
+            6,
+            2
+        ]
+    ],
+    [
+        "get_posts any status",
+        [
+            2,
+            3,
+            6
+        ]
+    ],
+    [
+        "get_posts draft",
+        [
+            10
+        ]
+    ],
+    [
+        "get_posts include",
+        [
+            7,
+            5,
+            1
+        ]
+    ],
+    [
+        "get_posts exclude",
+        [
+            11,
+            9,
+            8,
+            7,
+            5,
+            1
+        ]
+    ],
+    [
+        "get_posts fields ids",
+        [
+            611,
+            610
+        ]
+    ],
+    [
+        "get_posts category",
+        [
+            611,
+            610,
+            609,
+            608,
+            11,
+            9,
+            8,
+            7,
+            5,
+            1
+        ]
+    ],
+    [
+        "get_posts tag",
+        [
+            5
+        ]
+    ],
+    [
+        "get_posts search",
+        [
+            5
+        ]
+    ],
+    [
+        "get_posts author",
+        [
+            9
+        ]
+    ],
+    [
+        "get_posts post__in order",
+        [
+            7,
+            1,
+            5
+        ]
+    ],
+    [
+        "get_posts meta",
+        []
+    ],
+    [
+        "get_posts multi type",
+        [
+            1,
+            2,
+            5,
+            6,
+            7,
+            8,
+            9,
+            11,
+            608,
+            609,
+            610,
+            611
+        ]
+    ],
+    [
+        "get_posts name",
+        [
+            1
+        ]
+    ],
+    [
+        "get_posts offset",
+        [
+            609,
+            608
+        ]
+    ],
+    [
+        "get_posts rand count",
+        3
+    ],
+    [
+        "get_pages default",
+        [
+            2,
+            6
+        ]
+    ],
+    [
+        "get_pages child_of",
+        [
+            6
+        ]
+    ],
+    [
+        "get_pages parent",
+        [
+            6
+        ]
+    ],
+    [
+        "get_pages sort",
+        [
+            2,
+            6
+        ]
+    ],
+    [
+        "get_children",
+        [
+            6
+        ]
+    ],
+    [
+        "get_children by id",
+        [
+            6
+        ]
+    ],
+    [
+        "wp_count_posts",
+        {
+            "publish": "10",
+            "future": 0,
+            "draft": "1",
+            "pending": 0,
+            "private": 0,
+            "trash": "4",
+            "auto-draft": 0,
+            "inherit": 0,
+            "request-pending": 0,
+            "request-confirmed": 0,
+            "request-failed": 0,
+            "request-completed": 0
+        }
+    ],
+    [
+        "wp_count_posts page",
+        {
+            "publish": "2",
+            "future": 0,
+            "draft": "1",
+            "pending": 0,
+            "private": 0,
+            "trash": 0,
+            "auto-draft": 0,
+            "inherit": 0,
+            "request-pending": 0,
+            "request-confirmed": 0,
+            "request-failed": 0,
+            "request-completed": 0
+        }
+    ],
+    [
+        "wp_get_recent_posts",
+        [
+            611,
+            610
+        ]
+    ],
+    [
+        "WP_Query counts",
+        [
+            10,
+            10,
+            1,
+            [
+                5,
+                611,
+                610,
+                609,
+                608,
+                11,
+                9,
+                8,
+                7,
+                1
+            ]
+        ]
+    ],
+    [
+        "WP_Query flags",
+        {
+            "is_single": false,
+            "is_page": false,
+            "is_archive": false,
+            "is_search": false,
+            "is_home": true,
+            "is_404": false,
+            "is_paged": false,
+            "is_singular": false,
+            "is_post_type_archive": false
+        }
+    ],
+    [
+        "WP_Query loop",
+        [
+            [
+                5,
+                false,
+                0
+            ],
+            [
+                611,
+                false,
+                1
+            ],
+            [
+                610,
+                false,
+                2
+            ],
+            [
+                609,
+                false,
+                3
+            ],
+            [
+                608,
+                false,
+                4
+            ],
+            [
+                11,
+                false,
+                5
+            ],
+            [
+                9,
+                false,
+                6
+            ],
+            [
+                8,
+                false,
+                7
+            ],
+            [
+                7,
+                false,
+                8
+            ],
+            [
+                1,
+                false,
+                9
+            ]
+        ]
+    ],
+    [
+        "WP_Query after loop",
+        [
+            true,
+            false,
+            1
+        ]
+    ],
+    [
+        "WP_Query paged",
+        [
+            10,
+            3,
+            4,
+            [
+                608,
+                11,
+                9
+            ],
+            2,
+            3
+        ]
+    ],
+    [
+        "WP_Query query_vars keys",
+        []
+    ],
+    [
+        "WP_Query default posts_per_page",
+        null
+    ],
+    [
+        "WP_Query get",
+        [
+            2,
+            "",
+            "d"
+        ]
+    ],
+    [
+        "WP_Query tax_query",
+        [
+            5
+        ]
+    ],
+    [
+        "WP_Query meta_query",
+        [
+            5
+        ]
+    ],
+    [
+        "WP_Query search",
+        [
+            [
+                5
+            ],
+            0
+        ]
+    ],
+    [
+        "WP_Query p",
+        [
+            5
+        ]
+    ],
+    [
+        "WP_Query page_id",
+        [
+            [
+                2
+            ],
+            true
+        ]
+    ],
+    [
+        "WP_Query pagename",
+        [
+            6
+        ]
+    ],
+    [
+        "WP_Query name",
+        [
+            1
+        ]
+    ],
+    [
+        "WP_Query nopaging",
+        10
+    ],
+    [
+        "WP_Query no_found_rows",
+        0
+    ],
+    [
+        "WP_Query fields ids",
+        [
+            611,
+            610
+        ]
+    ],
+    [
+        "WP_Query orderby array",
+        [
+            5,
+            611,
+            610,
+            609
+        ]
+    ],
+    [
+        "WP_Query orderby modified",
+        [
+            5,
+            1
+        ]
+    ],
+    [
+        "WP_Query post_status array",
+        [
+            2,
+            3,
+            6
+        ]
+    ],
+    [
+        "WP_Query author_name",
+        [
+            9
+        ]
+    ],
+    [
+        "WP_Query category_name",
+        10
+    ],
+    [
+        "WP_Query cat exclude",
+        1
+    ],
+    [
+        "WP_Query date_query",
+        [
+            5,
+            1,
+            7,
+            8,
+            9,
+            11,
+            608,
+            609,
+            610,
+            611
+        ]
+    ],
+    [
+        "WP_Query post_parent",
+        [
+            6
+        ]
+    ],
+    [
+        "WP_Query post__not_in",
+        [
+            5,
+            8,
+            7,
+            1
+        ]
+    ],
+    [
+        "WP_Query queried object",
+        [
+            "WP_Post",
+            "WP_Term",
+            "NULL"
+        ]
+    ],
+    [
+        "WP_Query is flags single",
+        {
+            "is_single": true,
+            "is_archive": false,
+            "is_home": false,
+            "is_singular": true
+        }
+    ],
+    [
+        "WP_Query is flags tag",
+        {
+            "is_archive": true,
+            "is_tag": true,
+            "is_home": false,
+            "is_singular": false
+        }
+    ],
+    [
+        "WP_Query query prop",
+        {
+            "p": 1
+        }
+    ],
+    [
+        "query_posts / wp_reset_query",
+        [
+            [
+                5
+            ],
+            1,
+            1
+        ]
+    ],
+    [
+        "wp_insert_post draft",
+        [
+            true,
+            "",
+            "draft",
+            "post",
+            true,
+            "0000-00-00 00:00:00",
+            true,
+            "0",
+            "open",
+            "open"
+        ]
+    ],
+    [
+        "insert tags",
+        [
+            "engine",
+            "probetag"
+        ]
+    ],
+    [
+        "insert categories",
+        [
+            1
+        ]
+    ],
+    [
+        "wp_insert_post default status",
+        [
+            "draft",
+            [
+                1
+            ],
+            ""
+        ]
+    ],
+    [
+        "wp_insert_post publish",
+        [
+            "publish",
+            "probe-published",
+            [
+                1
+            ],
+            true
+        ]
+    ],
+    [
+        "wp_insert_post empty",
+        [
+            0,
+            "empty_content",
+            null
+        ]
+    ],
+    [
+        "wp_insert_post bad type",
+        "id"
+    ],
+    [
+        "wp_update_post",
+        [
+            true,
+            "Probe: updated",
+            "",
+            "draft"
+        ]
+    ],
+    [
+        "wp_update_post missing",
+        [
+            0,
+            "error:invalid_post"
+        ]
+    ],
+    [
+        "wp_update_post slash",
+        "It's \"q\""
+    ],
+    [
+        "wp_publish_post",
+        [
+            "publish",
+            ""
+        ]
+    ],
+    [
+        "wp_insert_post revisions",
+        2
+    ],
+    [
+        "wp_trash_post",
+        [
+            "WP_Post",
+            "publish",
+            "publish",
+            true
+        ]
+    ],
+    [
+        "wp_trash_post again",
+        false
+    ],
+    [
+        "wp_untrash_post",
+        [
+            "WP_Post",
+            "draft",
+            ""
+        ]
+    ],
+    [
+        "wp_untrash_post not trashed",
+        false
+    ],
+    [
+        "wp_delete_post",
+        [
+            "WP_Post",
+            true,
+            null
+        ]
+    ],
+    [
+        "wp_delete_post missing",
+        [
+            null,
+            null
+        ]
+    ],
+    [
+        "wp_delete_post trash first",
+        [
+            "WP_Post",
+            "trash"
+        ]
+    ],
+    [
+        "delete hooks",
+        [
+            "transition_post_status",
+            "save_post",
+            "wp_insert_post",
+            "transition_post_status",
+            "save_post",
+            "wp_insert_post",
+            "before_delete_post",
+            "before_delete_post",
+            "delete_post",
+            "deleted_post",
+            "delete_post",
+            "deleted_post"
+        ]
+    ],
+    [
+        "save_post args",
+        [
+            [
+                true,
+                "WP_Post",
+                false
+            ],
+            [
+                true,
+                "WP_Post",
+                false
+            ]
+        ]
+    ],
+    [
+        "get_terms category",
+        [
+            [
+                1,
+                "Uncategorized",
+                "uncategorized",
+                10,
+                0,
+                "category"
+            ]
+        ]
+    ],
+    [
+        "get_terms tags",
+        [
+            [
+                2,
+                "engine",
+                1
+            ],
+            [
+                3,
+                "parity",
+                1
+            ]
+        ]
+    ],
+    [
+        "get_terms fields ids",
+        [
+            2,
+            3
+        ]
+    ],
+    [
+        "get_terms names",
+        [
+            "engine",
+            "parity"
+        ]
+    ],
+    [
+        "get_terms id=>name",
+        {
+            "2": "engine",
+            "3": "parity"
+        }
+    ],
+    [
+        "get_terms legacy",
+        [
+            2,
+            3
+        ]
+    ],
+    [
+        "get_terms order",
+        [
+            3,
+            2
+        ]
+    ],
+    [
+        "get_terms number",
+        [
+            2
+        ]
+    ],
+    [
+        "get_terms include",
+        [
+            3
+        ]
+    ],
+    [
+        "get_terms slug",
+        [
+            2
+        ]
+    ],
+    [
+        "get_terms search",
+        [
+            "parity"
+        ]
+    ],
+    [
+        "get_terms bad taxonomy",
+        "error:invalid_taxonomy"
+    ],
+    [
+        "get_terms hide_empty",
+        true
+    ],
+    [
+        "get_term",
+        [
+            "WP_Term",
+            {
+                "term_id": 1,
+                "name": "Uncategorized",
+                "slug": "uncategorized",
+                "term_group": 0,
+                "term_taxonomy_id": 1,
+                "taxonomy": "category",
+                "description": "",
+                "parent": 0,
+                "count": 10,
+                "filter": "raw"
+            }
+        ]
+    ],
+    [
+        "get_term types",
+        [
+            "integer",
+            "integer",
+            "integer",
+            "integer"
+        ]
+    ],
+    [
+        "get_term missing",
+        [
+            null,
+            null,
+            "error:invalid_taxonomy",
+            {
+                "errors": {
+                    "invalid_term": [
+                        "Empty Term."
+                    ]
+                },
+                "error_data": []
+            }
+        ]
+    ],
+    [
+        "get_term no taxonomy",
+        "post_tag"
+    ],
+    [
+        "get_term_by",
+        [
+            2,
+            1,
+            "parity",
+            "Uncategorized",
+            false
+        ]
+    ],
+    [
+        "term_exists",
+        [
+            {
+                "term_id": "2",
+                "term_taxonomy_id": "2"
+            },
+            {
+                "term_id": "2",
+                "term_taxonomy_id": "2"
+            },
+            {
+                "term_id": "2",
+                "term_taxonomy_id": "2"
+            },
+            "2",
+            null,
+            {
+                "term_id": "1",
+                "term_taxonomy_id": "1"
+            },
+            null
+        ]
+    ],
+    [
+        "get_term_link",
+        [
+            "{home}/category/uncategorized/",
+            "{home}/tag/engine/",
+            "{home}/tag/engine/",
+            "error:invalid_term",
+            "{home}/category/uncategorized/",
+            "{home}/tag/engine/"
+        ]
+    ],
+    [
+        "wp_get_object_terms",
+        [
+            [
+                2,
+                "engine",
+                "post_tag"
+            ],
+            [
+                3,
+                "parity",
+                "post_tag"
+            ]
+        ]
+    ],
+    [
+        "wp_get_object_terms multi",
+        [
+            "post_tag:engine",
+            "post_tag:parity",
+            "category:uncategorized"
+        ]
+    ],
+    [
+        "wp_get_object_terms fields",
+        [
+            [
+                2,
+                3
+            ],
+            [
+                "engine",
+                "parity"
+            ],
+            [
+                "engine",
+                "parity"
+            ],
+            [
+                2,
+                3
+            ]
+        ]
+    ],
+    [
+        "wp_get_object_terms none",
+        []
+    ],
+    [
+        "wp_get_post_terms",
+        [
+            "engine",
+            "parity"
+        ]
+    ],
+    [
+        "get_the_terms",
+        [
+            [
+                "engine",
+                "parity"
+            ],
+            false,
+            "error:invalid_taxonomy"
+        ]
+    ],
+    [
+        "get_the_category",
+        [
+            [
+                1,
+                1,
+                "Uncategorized",
+                "uncategorized",
+                10,
+                0
+            ]
+        ]
+    ],
+    [
+        "get_the_tags",
+        [
+            [
+                "engine",
+                "parity"
+            ],
+            false
+        ]
+    ],
+    [
+        "has_term",
+        [
+            true,
+            false,
+            true,
+            false,
+            true,
+            true
+        ]
+    ],
+    [
+        "has_category / has_tag",
+        [
+            true,
+            true,
+            true,
+            false,
+            true
+        ]
+    ],
+    [
+        "wp_insert_term",
+        [
+            {
+                "term_id": "integer",
+                "term_taxonomy_id": "integer"
+            },
+            [
+                "term_id",
+                "term_taxonomy_id"
+            ],
+            "probe-cat",
+            1,
+            "desc",
+            0
+        ]
+    ],
+    [
+        "wp_insert_term dup",
+        [
+            "error:term_exists",
+            true
+        ]
+    ],
+    [
+        "wp_insert_term dup other parent",
+        "created"
+    ],
+    [
+        "wp_insert_term slug",
+        [
+            true,
+            "custom-slug"
+        ]
+    ],
+    [
+        "wp_insert_term empty",
+        "error:empty_term_name"
+    ],
+    [
+        "wp_insert_term bad tax",
+        "error:invalid_taxonomy"
+    ],
+    [
+        "wp_update_term",
+        [
+            [
+                "term_id",
+                "term_taxonomy_id"
+            ],
+            "Probe Cat Renamed",
+            "probe-renamed"
+        ]
+    ],
+    [
+        "wp_update_term missing",
+        "error:invalid_term"
+    ],
+    [
+        "wp_set_object_terms",
+        [
+            [
+                "string",
+                "integer"
+            ],
+            [
+                "brand-new",
+                "engine"
+            ],
+            2
+        ]
+    ],
+    [
+        "wp_set_object_terms append",
+        [
+            "brand-new",
+            "engine",
+            "parity"
+        ]
+    ],
+    [
+        "wp_set_object_terms replace ids",
+        [
+            [
+                "2"
+            ],
+            [
+                2
+            ],
+            1
+        ]
+    ],
+    [
+        "wp_set_object_terms clear",
+        [
+            [],
+            [],
+            1
+        ]
+    ],
+    [
+        "wp_set_object_terms bad tax",
+        "error:invalid_taxonomy"
+    ],
+    [
+        "wp_set_post_terms",
+        [
+            [
+                "2",
+                "3"
+            ],
+            [
+                "engine",
+                "parity"
+            ]
+        ]
+    ],
+    [
+        "wp_set_post_terms categories by id",
+        [
+            1,
+            [
+                1
+            ]
+        ]
+    ],
+    [
+        "wp_delete_term",
+        [
+            true,
+            false,
+            0,
+            false
+        ]
+    ],
+    [
+        "wp_delete_term default category",
+        "1"
+    ],
+    [
+        "get_term_children",
+        [
+            [],
+            []
+        ]
+    ],
+    [
+        "get_ancestors",
+        [
+            [],
+            [
+                2
+            ],
+            []
+        ]
+    ],
+    [
+        "get_categories",
+        [
+            "probe-cat-2",
+            "uncategorized"
+        ]
+    ],
+    [
+        "get_tags",
+        [
+            "engine",
+            "parity"
+        ]
+    ],
+    [
+        "get_objects_in_term",
+        [
+            "1",
+            "5",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "13",
+            "608",
+            "609",
+            "610",
+            "611"
+        ]
+    ],
+    [
+        "get_post_taxonomies",
+        [
+            [
+                "category",
+                "post_tag",
+                "post_format"
+            ],
+            []
+        ]
+    ],
+    [
+        "clean_term_cache",
+        null
+    ],
+    [
+        "get_post_type_object class",
+        "WP_Post_Type"
+    ],
+    [
+        "post type props",
+        [
+            "name",
+            "label",
+            "labels",
+            "description",
+            "public",
+            "hierarchical",
+            "exclude_from_search",
+            "publicly_queryable",
+            "embeddable",
+            "show_ui",
+            "show_in_menu",
+            "show_in_nav_menus",
+            "show_in_admin_bar",
+            "menu_position",
+            "menu_icon",
+            "capability_type",
+            "map_meta_cap",
+            "register_meta_box_cb",
+            "taxonomies",
+            "has_archive",
+            "query_var",
+            "can_export",
+            "delete_with_user",
+            "template",
+            "template_lock",
+            "_builtin",
+            "_edit_link",
+            "cap",
+            "rewrite",
+            "show_in_rest",
+            "rest_base",
+            "rest_namespace",
+            "rest_controller_class",
+            "rest_controller",
+            "revisions_rest_controller_class",
+            "revisions_rest_controller",
+            "autosave_rest_controller_class",
+            "autosave_rest_controller",
+            "late_route_registration"
+        ]
+    ],
+    [
+        "post type values",
+        [
+            "post",
+            "Posts",
+            "Posts",
+            "Post",
+            true,
+            false,
+            false,
+            false,
+            false,
+            "post",
+            "edit_posts",
+            "publish_posts",
+            "edit_others_posts",
+            true,
+            "posts",
+            "dashicons-admin-post",
+            [],
+            true,
+            "",
+            true
+        ]
+    ],
+    [
+        "page type values",
+        [
+            true,
+            "page",
+            "edit_pages",
+            "pages",
+            false,
+            false,
+            "dashicons-admin-page"
+        ]
+    ],
+    [
+        "attachment type values",
+        [
+            true,
+            true,
+            "media",
+            "upload_files",
+            "post"
+        ]
+    ],
+    [
+        "get_post_type_object missing",
+        null
+    ],
+    [
+        "post type labels keys",
+        [
+            "name",
+            "singular_name",
+            "add_new",
+            "add_new_item",
+            "edit_item",
+            "new_item",
+            "view_item",
+            "view_items",
+            "search_items",
+            "not_found",
+            "not_found_in_trash",
+            "parent_item_colon",
+            "all_items",
+            "archives",
+            "attributes",
+            "insert_into_item",
+            "uploaded_to_this_item",
+            "featured_image",
+            "set_featured_image",
+            "remove_featured_image",
+            "use_featured_image",
+            "filter_items_list",
+            "filter_by_date",
+            "items_list_navigation",
+            "items_list",
+            "item_published",
+            "item_published_privately",
+            "item_reverted_to_draft",
+            "item_trashed",
+            "item_scheduled",
+            "item_updated",
+            "item_link",
+            "item_link_description",
+            "menu_name",
+            "name_admin_bar"
+        ]
+    ],
+    [
+        "register_post_type",
+        [
+            "WP_Post_Type",
+            "minn_probe",
+            "Probes",
+            "Probes",
+            "Probes",
+            "Add",
+            "Add Post",
+            "Probes",
+            false,
+            "wp/v2",
+            true,
+            {
+                "slug": "probes",
+                "with_front": true,
+                "pages": true,
+                "feeds": true,
+                "ep_mask": 1
+            },
+            "edit_posts",
+            "post",
+            false,
+            true,
+            true,
+            true,
+            false,
+            "minn_probe",
+            null,
+            [
+                "post_tag"
+            ],
+            false,
+            true
+        ]
+    ],
+    [
+        "register_post_type supports",
+        [
+            true,
+            false,
+            true
+        ]
+    ],
+    [
+        "register_post_type bad",
+        [
+            "error:post_type_length_invalid",
+            "error:post_type_length_invalid",
+            "WP_Post_Type",
+            false,
+            false
+        ]
+    ],
+    [
+        "register_post_type twice",
+        [
+            "WP_Post_Type",
+            "Again"
+        ]
+    ],
+    [
+        "get_post_types",
+        [
+            "post",
+            "page",
+            "attachment",
+            "revision",
+            "nav_menu_item",
+            "custom_css",
+            "customize_changeset",
+            "oembed_cache",
+            "user_request",
+            "wp_block",
+            "wp_template",
+            "wp_template_part",
+            "wp_global_styles",
+            "wp_navigation",
+            "wp_font_family",
+            "wp_font_face",
+            "minn_probe",
+            "hasspace"
+        ]
+    ],
+    [
+        "get_post_types public",
+        [
+            "post",
+            "page",
+            "attachment"
+        ]
+    ],
+    [
+        "get_post_types custom",
+        [
+            "minn_probe",
+            "hasspace"
+        ]
+    ],
+    [
+        "get_post_types objects",
+        "WP_Post_Type"
+    ],
+    [
+        "get_post_types not",
+        [
+            "revision",
+            "nav_menu_item",
+            "custom_css",
+            "customize_changeset",
+            "oembed_cache",
+            "user_request",
+            "wp_block",
+            "wp_template",
+            "wp_template_part",
+            "wp_global_styles",
+            "wp_navigation",
+            "wp_font_family",
+            "wp_font_face",
+            "minn_probe",
+            "hasspace"
+        ]
+    ],
+    [
+        "post_type_supports",
+        [
+            true,
+            false,
+            true,
+            false
+        ]
+    ],
+    [
+        "post type supports list",
+        [
+            "title",
+            "editor",
+            "author",
+            "thumbnail",
+            "excerpt",
+            "trackbacks",
+            "custom-fields",
+            "comments",
+            "revisions",
+            "post-formats",
+            "autosave"
+        ]
+    ],
+    [
+        "add/remove support",
+        [
+            [
+                {
+                    "a": 1
+                }
+            ],
+            false
+        ]
+    ],
+    [
+        "get_post_types_by_support",
+        [
+            [
+                "post",
+                "wp_block",
+                "wp_template",
+                "wp_template_part"
+            ],
+            [
+                "post",
+                "page"
+            ]
+        ]
+    ],
+    [
+        "is_post_type_viewable",
+        [
+            true,
+            false,
+            true,
+            false,
+            true
+        ]
+    ],
+    [
+        "is_post_type_hierarchical",
+        [
+            true,
+            false,
+            false
+        ]
+    ],
+    [
+        "post_type_exists",
+        [
+            true,
+            true,
+            false
+        ]
+    ],
+    [
+        "unregister_post_type",
+        [
+            true,
+            false,
+            "error:invalid_post_type",
+            "error:invalid_post_type"
+        ]
+    ],
+    [
+        "get_post_status_object",
+        [
+            {
+                "label": "Published",
+                "label_count": {
+                    "0": "Published <span class=\"count\">(%s)</span>",
+                    "1": "Published <span class=\"count\">(%s)</span>",
+                    "singular": "Published <span class=\"count\">(%s)</span>",
+                    "plural": "Published <span class=\"count\">(%s)</span>",
+                    "context": null,
+                    "domain": null
+                },
+                "exclude_from_search": false,
+                "_builtin": true,
+                "public": true,
+                "internal": false,
+                "protected": false,
+                "private": false,
+                "publicly_queryable": true,
+                "show_in_admin_status_list": true,
+                "show_in_admin_all_list": true,
+                "date_floating": false,
+                "name": "publish"
+            },
+            null
+        ]
+    ],
+    [
+        "get_post_stati",
+        [
+            "publish",
+            "future",
+            "draft",
+            "pending",
+            "private",
+            "trash",
+            "auto-draft",
+            "inherit",
+            "request-pending",
+            "request-confirmed",
+            "request-failed",
+            "request-completed"
+        ]
+    ],
+    [
+        "get_post_stati public",
+        [
+            "publish"
+        ]
+    ],
+    [
+        "register_post_status",
+        [
+            "stdClass",
+            "minn_status",
+            "Probe",
+            true,
+            true,
+            false,
+            true
+        ]
+    ],
+    [
+        "get_post_statuses",
+        {
+            "draft": "Draft",
+            "pending": "Pending Review",
+            "private": "Private",
+            "publish": "Published"
+        }
+    ],
+    [
+        "get_taxonomy class",
+        "WP_Taxonomy"
+    ],
+    [
+        "taxonomy props",
+        [
+            "name",
+            "label",
+            "labels",
+            "description",
+            "public",
+            "publicly_queryable",
+            "hierarchical",
+            "show_ui",
+            "show_in_menu",
+            "show_in_nav_menus",
+            "show_tagcloud",
+            "show_in_quick_edit",
+            "show_admin_column",
+            "meta_box_cb",
+            "meta_box_sanitize_cb",
+            "object_type",
+            "cap",
+            "rewrite",
+            "query_var",
+            "update_count_callback",
+            "show_in_rest",
+            "rest_base",
+            "rest_namespace",
+            "rest_controller_class",
+            "rest_controller",
+            "default_term",
+            "sort",
+            "args",
+            "_builtin"
+        ]
+    ],
+    [
+        "taxonomy values",
+        [
+            "category",
+            "Categories",
+            "Categories",
+            true,
+            [
+                "post"
+            ],
+            true,
+            {
+                "with_front": true,
+                "hierarchical": true,
+                "ep_mask": 512,
+                "slug": "category"
+            },
+            "category_name",
+            "manage_categories",
+            "assign_categories",
+            true,
+            "categories",
+            true,
+            null,
+            true
+        ]
+    ],
+    [
+        "tag taxonomy values",
+        [
+            false,
+            {
+                "with_front": true,
+                "hierarchical": false,
+                "ep_mask": 1024,
+                "slug": "tag"
+            },
+            "tag",
+            "tags",
+            "assign_post_tags"
+        ]
+    ],
+    [
+        "get_taxonomy missing",
+        false
+    ],
+    [
+        "register_taxonomy",
+        [
+            "WP_Taxonomy",
+            "minn_tax",
+            "Probe Tax",
+            "Probe Tax",
+            "Probe Tax",
+            "Add Category",
+            true,
+            [
+                "post",
+                "minn_probe"
+            ],
+            {
+                "with_front": true,
+                "hierarchical": false,
+                "ep_mask": 0,
+                "slug": "ptax"
+            },
+            "minn_tax",
+            false,
+            "manage_categories",
+            true,
+            true,
+            false,
+            null
+        ]
+    ],
+    [
+        "register_taxonomy bad",
+        [
+            "error:taxonomy_length_invalid",
+            "error:taxonomy_length_invalid",
+            false
+        ]
+    ],
+    [
+        "taxonomy_exists",
+        [
+            true,
+            true,
+            false
+        ]
+    ],
+    [
+        "is_taxonomy_hierarchical",
+        [
+            true,
+            false,
+            false
+        ]
+    ],
+    [
+        "get_object_taxonomies",
+        [
+            [
+                "category",
+                "post_tag",
+                "post_format",
+                "minn_tax"
+            ],
+            [],
+            [],
+            [
+                "category",
+                "post_tag",
+                "post_format",
+                "minn_tax"
+            ],
+            [],
+            [
+                "category",
+                "post_tag",
+                "post_format",
+                "minn_tax"
+            ]
+        ]
+    ],
+    [
+        "get_taxonomies",
+        [
+            [
+                "category",
+                "post_tag",
+                "nav_menu",
+                "link_category",
+                "post_format",
+                "wp_theme",
+                "wp_template_part_area",
+                "wp_pattern_category",
+                "minn_tax"
+            ],
+            [
+                "category",
+                "post_tag",
+                "post_format",
+                "minn_tax"
+            ],
+            [
+                "minn_tax"
+            ]
+        ]
+    ],
+    [
+        "register_taxonomy_for_object_type",
+        [
+            true,
+            [
+                "minn_tax"
+            ],
+            false,
+            true,
+            []
+        ]
+    ],
+    [
+        "unregister_taxonomy",
+        [
+            true,
+            false,
+            "error:invalid_taxonomy",
+            "error:invalid_taxonomy"
+        ]
+    ],
+    [
+        "get_the_author_meta",
+        [
+            "admin",
+            "admin@minn-engine.localhost",
+            "",
+            2,
+            "editor",
+            "",
+            ""
+        ]
+    ],
+    [
+        "get_the_author no post",
+        "admin"
+    ],
+    [
+        "get_the_author with post",
+        [
+            "Erin Editor",
+            2,
+            "Erin Editor"
+        ]
+    ],
+    [
+        "get_author_posts_url",
+        [
+            "{home}/author/admin/",
+            "{home}/author/editor/",
+            "{home}/author/"
+        ]
+    ],
+    [
+        "count_user_posts",
+        [
+            "1",
+            "1",
+            "1"
+        ]
+    ],
+    [
+        "get_query_var",
+        [
+            "",
+            1,
+            "d"
+        ]
+    ],
+    [
+        "set_query_var",
+        "v"
+    ],
+    [
+        "get_search_query",
+        ""
+    ],
+    [
+        "queried object",
+        [
+            null,
+            0
+        ]
+    ],
+    [
+        "conditionals",
+        [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            true
+        ]
+    ],
+    [
+        "wp_get_nav_menus",
+        [
+            [
+                148,
+                "zz-minn-menu",
+                "zz-minn-menu",
+                "nav_menu"
+            ]
+        ]
+    ],
+    [
+        "wp_get_nav_menu_items missing",
+        false
+    ]
+]

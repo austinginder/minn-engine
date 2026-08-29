@@ -23,4 +23,5 @@ $site = new Minn\Content\Site($db);
 $capabilities = Minn\Auth\Capabilities::fromDb($db);
 $runtime = new Minn\Runtime\Runtime($db, $site, null, Minn\Content\Reader::anonymous(), $capabilities, MINN_ENGINE_DIR, ABSPATH, '7.1');
 Minn\Runtime\Runtime::boot($runtime);
+$runtime->set('permalinks', Minn\Front\Permalinks::fromDb($db));
 $runtime->set('block_theme', Minn\Theme\Theme::active($site, Minn\Front\Permalinks::fromDb($db), ABSPATH . 'wp-content/themes') !== null);

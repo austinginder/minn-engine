@@ -238,11 +238,6 @@ function delete_post_meta($post_id, $meta_key, $meta_value = '')
     return delete_metadata('post', $post_id, $meta_key, $meta_value);
 }
 
-function get_post_custom($post_id = 0)
-{
-    return get_post_meta($post_id ?: get_the_ID());
-}
-
 function get_term_meta($term_id, $key = '', $single = false)
 {
     return get_metadata('term', $term_id, $key, $single);
