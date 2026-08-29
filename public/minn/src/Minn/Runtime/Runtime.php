@@ -47,6 +47,8 @@ final class Runtime
         self::$options = new Options($runtime->db);
         self::loadFacade($runtime->engineDir);
         Constants::define($runtime);
+        _minn_main_query();
+        $GLOBALS['wpdb'] = new \wpdb(defined('DB_USER') ? DB_USER : '', defined('DB_PASSWORD') ? DB_PASSWORD : '', defined('DB_NAME') ? DB_NAME : '', defined('DB_HOST') ? DB_HOST : '');
         register_shutdown_function(static function (): void {
             self::hooks()->action('shutdown', []);
         });

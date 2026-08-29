@@ -97,3 +97,21 @@ function remove_all_actions($hook_name, $priority = false)
 {
     return remove_all_filters($hook_name, $priority);
 }
+
+function apply_filters_deprecated($hook_name, $args, $version, $replacement = '', $message = '')
+{
+    if (!has_filter($hook_name)) {
+        return $args[0];
+    }
+    _deprecated_hook($hook_name, $version, $replacement, $message);
+    return apply_filters_ref_array($hook_name, $args);
+}
+
+function do_action_deprecated($hook_name, $args, $version, $replacement = '', $message = '')
+{
+    if (!has_action($hook_name)) {
+        return;
+    }
+    _deprecated_hook($hook_name, $version, $replacement, $message);
+    do_action_ref_array($hook_name, $args);
+}

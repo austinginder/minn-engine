@@ -188,6 +188,40 @@ function wp_get_image_mime($file)
     return $info['mime'] ?? false;
 }
 
+function get_attached_file($attachment_id, $unfiltered = false)
+{
+    $file = (string) get_post_meta((int) $attachment_id, '_wp_attached_file', true);
+    if ($file !== '' && !str_starts_with($file, '/') && !preg_match('|^.:\\\\|', $file)) {
+        $file = wp_get_upload_dir()['basedir'] . '/' . $file;
+    }
+    return $unfiltered ? $file : apply_filters('get_attached_file', $file, (int) $attachment_id);
+}
+
+function wp_upload_bits($name, $deprecated, $bits, $time = null)
+{
+    $name = (string) $name;
+    if ($name === '') {
+        return ['error' => 'Empty filename'];
+    }
+    $wp_filetype = wp_check_filetype($name);
+    if (!$wp_filetype['ext'] && !current_user_can('unfiltered_upload')) {
+        return ['error' => 'Sorry, you are not allowed to upload this file type.'];
+    }
+    $upload = wp_upload_dir($time);
+    if ($upload['error'] !== false) {
+        return ['error' => $upload['error']];
+    }
+    $filename = wp_unique_filename($upload['path'], $name);
+    $new_file = $upload['path'] . '/' . $filename;
+    wp_mkdir_p(dirname($new_file));
+    if (file_put_contents($new_file, $bits) === false) {
+        return ['error' => sprintf('Could not write file %s', $new_file)];
+    }
+    @chmod($new_file, 0644);
+    $url = $upload['url'] . '/' . $filename;
+    return apply_filters('wp_handle_upload', ['file' => $new_file, 'url' => $url, 'type' => $wp_filetype['type'], 'error' => false], 'sideload');
+}
+
 function wp_mkdir_p($target)
 {
     $target = rtrim(str_replace('//', '/', (string) $target), '/');
@@ -250,38 +284,8 @@ function wp_unique_filename($dir, $filename, $unique_filename_callback = null)
     return $candidate;
 }
 
-function wp_upload_bits($name, $deprecated, $bits, $time = null)
-{
-    $upload = wp_upload_dir($time);
-    if ($upload['error'] !== false) {
-        return ['error' => $upload['error']];
-    }
-    $filename = wp_unique_filename($upload['path'], $name);
-    $file = $upload['path'] . '/' . $filename;
-    wp_mkdir_p(dirname($file));
-    if (file_put_contents($file, $bits) === false) {
-        return ['error' => 'Could not write file'];
-    }
-    return ['file' => $file, 'url' => $upload['url'] . '/' . $filename, 'type' => wp_check_filetype($filename)['type'], 'error' => false];
-}
 
-function wp_get_attachment_url($attachment_id = 0)
-{
-    $file = get_post_meta((int) $attachment_id, '_wp_attached_file', true);
-    if (!$file || get_post($attachment_id) === null) {
-        return false;
-    }
-    return apply_filters('wp_get_attachment_url', wp_get_upload_dir()['baseurl'] . '/' . ltrim((string) $file, '/'), (int) $attachment_id);
-}
 
-function get_attached_file($attachment_id, $unfiltered = false)
-{
-    $file = (string) get_post_meta((int) $attachment_id, '_wp_attached_file', true);
-    if ($file !== '' && !str_starts_with($file, '/') && !preg_match('|^.:\\\\|', $file)) {
-        $file = wp_get_upload_dir()['basedir'] . '/' . $file;
-    }
-    return $unfiltered ? $file : apply_filters('get_attached_file', $file, (int) $attachment_id);
-}
 
 function wp_max_upload_size()
 {
@@ -295,27 +299,12 @@ function wp_ob_end_flush_all()
     }
 }
 
-function wp_maybe_load_widgets()
-{
-}
 
-function wp_widgets_add_menu()
-{
-}
 
 function wp_scheduled_delete()
 {
 }
 
-function wp_get_schedules()
-{
-    return apply_filters('cron_schedules', [
-        'hourly' => ['interval' => HOUR_IN_SECONDS, 'display' => 'Once Hourly'],
-        'twicedaily' => ['interval' => 12 * HOUR_IN_SECONDS, 'display' => 'Twice Daily'],
-        'daily' => ['interval' => DAY_IN_SECONDS, 'display' => 'Once Daily'],
-        'weekly' => ['interval' => WEEK_IN_SECONDS, 'display' => 'Once Weekly'],
-    ]);
-}
 
 function wp_remote_fopen($uri)
 {

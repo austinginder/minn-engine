@@ -67,11 +67,21 @@ function remove_theme_mods()
 function get_theme_support($feature, ...$args)
 {
     $supports = Runtime::current()->get('theme_supports', []);
+    if (!array_key_exists($feature, $supports) && wp_is_block_theme()) {
+        // A block theme carries the reference's implied supports.
+        $implied = ['html5' => [['comment-list', 'comment-form', 'search-form', 'gallery', 'caption', 'style', 'script']], 'post-thumbnails' => true, 'responsive-embeds' => true, 'editor-styles' => true, 'automatic-feed-links' => true, 'title-tag' => true, 'wp-block-styles' => true, 'align-wide' => true];
+        if (isset($implied[$feature])) {
+            $supports[$feature] = $implied[$feature];
+        }
+    }
     if (!array_key_exists($feature, $supports)) {
         return false;
     }
     if ($args === [] || $supports[$feature] === true) {
         return $supports[$feature];
+    }
+    if (is_array($supports[$feature][0] ?? null) && array_is_list($supports[$feature][0])) {
+        return in_array($args[0], $supports[$feature][0], true);
     }
     return $supports[$feature][0][$args[0]] ?? false;
 }

@@ -493,7 +493,7 @@ function get_permalink($post = 0, $leavename = false)
         return false;
     }
     $permalinks = Runtime::current()->get('permalinks');
-    $link = $permalinks === null ? home_url('/?p=' . $post->ID) : $permalinks->forPost($post->to_array());
+    $link = $permalinks === null ? home_url('/?p=' . $post->ID) : ($post->post_type === 'attachment' ? $permalinks->forAttachment($post->to_array()) : $permalinks->forPost($post->to_array()));
     if ($post->post_type === 'page') {
         return apply_filters('page_link', $link, $post->ID, $post->post_status !== 'publish' || $leavename);
     }
@@ -1203,10 +1203,6 @@ function wp_delete_post_revision($revision)
     return $revision;
 }
 
-function wp_delete_attachment($post_id, $force_delete = false)
-{
-    return wp_delete_post($post_id, true);
-}
 
 function wp_set_post_categories($post_id = 0, $post_categories = [], $append = false)
 {

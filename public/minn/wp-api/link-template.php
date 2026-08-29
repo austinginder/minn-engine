@@ -353,15 +353,7 @@ function _wp_upload_dir($time = null)
 
 
 
-function get_avatar_url($id_or_email, $args = null)
-{
-    return false;
-}
 
-function get_avatar($id_or_email, $size = 96, $default_value = '', $alt = '', $args = null)
-{
-    return false;
-}
 
 function get_search_link($query = '')
 {
