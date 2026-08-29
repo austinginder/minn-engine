@@ -84,9 +84,16 @@ function cookie_value( array $set_cookies, string $name_prefix ): ?string {
 
 echo "login-endpoint suite: $ENGINE / $REF (oracle)\n";
 
-// 1. GET renders a form with the expected fields.
-[ $gs, , $form ] = http( 'GET', "$ENGINE/wp-login.php" );
-check( 200 === $gs, 'GET /wp-login.php returns 200', "status $gs" );
+// 1. GET renders a form with the expected fields; the page people see is /minn-admin/login.
+[ $gs, , $form ] = http( 'GET', "$ENGINE/minn-admin/login" );
+check( 200 === $gs, 'GET /minn-admin/login returns 200', "status $gs" );
+[ $bs, $bh ] = http( 'GET', "$ENGINE/wp-login.php" );
+check( 302 === $bs && str_ends_with( (string) $bh['location'], '/minn-admin/login' ), 'a bare GET /wp-login.php sends the browser to /minn-admin/login', "$bs " . (string) ( $bh['location'] ?? '' ) );
+[ $ps, , $lost ] = http( 'GET', "$ENGINE/minn-admin/login/lost-password" );
+check( 200 === $ps && str_contains( $lost, 'name="user_login"' ) && str_contains( $form, '/minn-admin/login/lost-password' ), 'the lost-password page has a clean path and the form links to it', "status $ps" );
+check( str_contains( $form, 'class="switch"' ) && str_contains( $form, 'name="rememberme"' ), 'remember-me is a switch' );
+[ $ts ] = http( 'GET', "$ENGINE/wp-login.php?redirect_to=%2Fsample-page%2F" );
+check( 200 === $ts, 'GET /wp-login.php with a query still answers in place for tooling', "status $ts" );
 check(
 	str_contains( $form, 'name="log"' ) && str_contains( $form, 'name="pwd"' ) && str_contains( $form, 'method="post"' ),
 	'login form has log, pwd, and posts to itself'

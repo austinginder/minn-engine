@@ -79,12 +79,25 @@ and re-fetching a nonce.
   full write verb list when the authenticated caller views their own record.
 - Errors: `rest_user_invalid_id` "Invalid user ID." (404).
 
-## The login endpoint (`/wp-login.php`)
+## The login endpoint (`/minn-admin/login`, and `/wp-login.php` for tooling)
 
 A browser signs in here, and the engine issues a session it can use
-everywhere. Suite: `tests/login-endpoint.test.php` (12 checks).
+everywhere. Suite: `tests/login-endpoint.test.php` (14 checks).
 
-- `GET /wp-login.php` renders a login form (`log`, `pwd`, `rememberme`,
+- The page people see is `/minn-admin/login`: the form, the lost-password
+  and reset flows (`/minn-admin/login/lost-password`, `/minn-admin/login/reset`),
+  and logout (`/minn-admin/login/logout`) all render there and link there; an
+  unauthenticated `/minn-admin` redirects there with `redirect_to`, and the
+  boot payload's `site.logout` and the front bar's Sign out point there.
+- `/wp-login.php` is kept for what still names it: `wp user login` token
+  links, uptime probes, scripted sign-ins, the reference's own reset
+  emails. Every action answers in place with the same shapes and links
+  (a request that came in on wp-login.php keeps its links on
+  wp-login.php); a bare `GET /wp-login.php` with no query is a 302 to
+  `/minn-admin/login`. `/wp-admin/` is likewise a 302 to `/minn-admin/`,
+  not a 404: monitors and hosting panels probe both, and a 404 there is the
+  one signal that would tell them this is not WordPress.
+- `GET` renders a login form (`log`, `pwd`, `rememberme`,
   optional `redirect_to`).
 - `POST` verifies the password (`minn_login`), creates a session
   (`minn_create_session`), and sets the three WordPress auth cookies, then

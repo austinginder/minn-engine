@@ -9,7 +9,7 @@ use Minn\Support\Html;
 /** The sign-in page markup. */
 final class LoginForm
 {
-    public static function render(string $siteName, string $action, string $redirectTo, string $error, string $message = ''): string
+    public static function render(string $siteName, string $action, string $redirectTo, string $error, string $message = '', string $lostPasswordUrl = ''): string
     {
         $site = Html::esc($siteName);
         $redirect = Html::esc($redirectTo);
@@ -27,10 +27,10 @@ final class LoginForm
             . '<input type="text" name="log" id="log" autocapitalize="none" autocomplete="username" autofocus>'
             . '<label for="pwd">Password</label>'
             . '<input type="password" name="pwd" id="pwd" autocomplete="current-password">'
-            . '<label class="row"><input type="checkbox" name="rememberme" value="forever"> Remember Me</label>'
+            . '<label class="switch"><input type="checkbox" name="rememberme" value="forever" role="switch"><span class="knob" aria-hidden="true"></span><span>Remember me</span></label>'
             . $redirectField
             . '<button type="submit" name="wp-submit">Log In</button>'
-            . '<p class="hint"><a href="' . Html::attr($action . '?action=lostpassword') . '">Lost your password?</a></p>'
+            . '<p class="hint"><a href="' . Html::attr($lostPasswordUrl !== '' ? $lostPasswordUrl : $action . '?action=lostpassword') . '">Lost your password?</a></p>'
             . '</form></body></html>';
     }
 
@@ -93,7 +93,15 @@ final class LoginForm
         label { display:block; font-size:12px; color:#9d9da7; margin:14px 0 5px; }
         input[type=text],input[type=password] { width:100%; box-sizing:border-box; padding:9px 11px;
                background:#0b0b0d; border:1px solid #31313a; border-radius:8px; color:#ececed; font-size:14px; }
-        .row { display:flex; align-items:center; gap:7px; margin-top:14px; font-size:13px; color:#9d9da7; }
+        .switch { display:flex; align-items:center; gap:10px; margin-top:16px; font-size:13px; color:#9d9da7; cursor:pointer; }
+        .switch input { position:absolute; opacity:0; width:0; height:0; }
+        .switch .knob { position:relative; flex:0 0 34px; width:34px; height:20px; border-radius:999px; background:#31313a;
+               border:1px solid #3a3a44; transition:background .15s, border-color .15s; }
+        .switch .knob::after { content:""; position:absolute; top:2px; left:2px; width:14px; height:14px; border-radius:50%;
+               background:#ececed; transition:transform .15s; }
+        .switch input:checked + .knob { background:#6459f0; border-color:#6459f0; }
+        .switch input:checked + .knob::after { transform:translateX(14px); background:#fff; }
+        .switch input:focus-visible + .knob { outline:2px solid #8a80f8; outline-offset:2px; }
         button { margin-top:18px; width:100%; padding:10px; background:#6459f0; color:#fff; border:0;
                border-radius:8px; font-size:14px; font-weight:600; cursor:pointer; }
         .err { background:rgba(228,107,107,.12); border:1px solid rgba(228,107,107,.4); color:#e46b6b;

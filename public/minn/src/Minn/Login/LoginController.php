@@ -25,13 +25,18 @@ use Minn\Mail\Message;
 use Minn\Auth\PortableHash;
 
 /**
- * The wp-login.php surface: a GET form, a POST that verifies the password,
- * creates a session, and sets the real auth cookies, and a logout that
- * clears them. The cookies validate on the engine AND on WordPress.
+ * Signing in. The page people see is /minn-admin/login: the form, the
+ * lost-password and reset flows, and logout all live there and link there.
+ * /wp-login.php stays as the address tooling knows (one-time login links,
+ * uptime probes, scripted sign-ins) and answers in place with the same
+ * shapes; a bare GET of it sends a browser to the clean page. Sessions
+ * and cookies validate on the engine AND on WordPress either way.
  */
 final readonly class LoginController
 {
     private const DAY = 86400;
+
+    public const PATH = '/minn-admin/login';
 
     public function __construct(
         private Site $site,
@@ -46,17 +51,25 @@ final readonly class LoginController
     ) {
     }
 
+    /** Clean path segment => the action wp-login.php spells with ?action=. */
+    private const SEGMENTS = ['lost-password' => 'lostpassword', 'reset' => 'rp', 'logout' => 'logout'];
+
+    #[Route(Method::Get, self::PATH)]
+    #[Route(Method::Get, self::PATH . '/{segment:lost-password|reset|logout}')]
     #[Route(Method::Get, '/wp-login.php')]
     public function form(Request $request): Response
     {
-        if ($request->query('action') === 'logout') {
+        if ($request->path === '/wp-login.php' && $request->query === []) {
+            return Response::redirect($this->permalinks->url(self::PATH), 302);
+        }
+        if ($this->action($request) === 'logout') {
             return $this->logout($request);
         }
         if ($request->has('user_id') && $request->has('cove_login_token')) {
             return $this->tokenLogin($request);
         }
         $siteName = (string) ($this->site->option('blogname') ?? 'Site');
-        switch ((string) $request->query('action', '')) {
+        switch ($this->action($request)) {
             case 'lostpassword':
             case 'retrievepassword':
                 $error = match ((string) $request->query('error', '')) {
@@ -64,15 +77,15 @@ final readonly class LoginController
                     'expiredkey' => 'Your password reset link has expired. Please request a new link below.',
                     default => '',
                 };
-                return Response::html(LoginForm::lostPassword($siteName, $this->permalinks->url('/wp-login.php?action=lostpassword'), $error, ''));
+                return Response::html(LoginForm::lostPassword($siteName, $this->actionUrl($request, 'lostpassword'), $error, ''));
             case 'rp':
                 return $this->openResetLink($request);
             case 'resetpass':
                 [$user, $key] = $this->resetSession($request);
                 if ($user === null) {
-                    return Response::redirect($this->permalinks->url('/wp-login.php?action=lostpassword&error=invalidkey'), 302);
+                    return Response::redirect($this->actionUrl($request, 'lostpassword', 'error=invalidkey'), 302);
                 }
-                return Response::html(LoginForm::resetPassword($siteName, $this->permalinks->url('/wp-login.php?action=resetpass'), $key, (string) $user['user_login'], ''));
+                return Response::html(LoginForm::resetPassword($siteName, $this->actionUrl($request, 'resetpass'), $key, (string) $user['user_login'], ''));
         }
         $message = match ((string) $request->query('checkemail', '')) {
             'confirm' => 'Check your email for the confirmation link, then visit the login page.',
@@ -87,7 +100,7 @@ final readonly class LoginController
     /** POST lostpassword mints a key and mails the link; POST resetpass saves the new password. Null for other actions. */
     private function lostPassword(Request $request): ?Response
     {
-        $action = (string) $request->query('action', '');
+        $action = $this->action($request);
         if ($action === 'resetpass') {
             return $this->savePassword($request);
         }
@@ -107,15 +120,15 @@ final readonly class LoginController
         $login = trim((string) ($request->form['user_login'] ?? ''));
         $siteName = (string) ($this->site->option('blogname') ?? 'Site');
         if ($login === '') {
-            return Response::html(LoginForm::lostPassword($siteName, $this->permalinks->url('/wp-login.php?action=lostpassword'), 'Error: Please enter a username or email address.', ''));
+            return Response::html(LoginForm::lostPassword($siteName, $this->actionUrl($request, 'lostpassword'), 'Error: Please enter a username or email address.', ''));
         }
         $user = $this->users->findByLogin($login) ?? (str_contains($login, '@') ? $this->users->findByEmail($login) : null);
         if ($user === null) {
             $this->throttle->recordFailure($request->remoteAddress);
-            return Response::html(LoginForm::lostPassword($siteName, $this->permalinks->url('/wp-login.php?action=lostpassword'), 'Error: There is no account with that username or email address.', ''));
+            return Response::html(LoginForm::lostPassword($siteName, $this->actionUrl($request, 'lostpassword'), 'Error: There is no account with that username or email address.', ''));
         }
         $key = $this->reset->issue($user);
-        $link = $this->permalinks->url('/wp-login.php') . '?action=rp&key=' . rawurlencode($key) . '&login=' . rawurlencode((string) $user['user_login']);
+        $link = $this->actionUrl($request, 'rp', 'key=' . rawurlencode($key) . '&login=' . rawurlencode((string) $user['user_login']));
         $this->mailer->send(new Message(
             [(string) $user['user_email']],
             '[' . $siteName . '] Password Reset',
@@ -125,7 +138,7 @@ final readonly class LoginController
             . "To reset your password, visit the following address:\n\n{$link}\n\n"
             . "This password reset request originated from the IP address {$request->remoteAddress}.\n",
         ));
-        return Response::redirect($this->permalinks->url('/wp-login.php?checkemail=confirm'), 302);
+        return Response::redirect($this->permalinks->url($this->base($request) . '?checkemail=confirm'), 302);
     }
 
     /**
@@ -138,15 +151,15 @@ final readonly class LoginController
         $key = (string) $request->query('key', '');
         $login = (string) $request->query('login', '');
         if ($key !== '' && $login !== '') {
-            return Response::redirect($this->permalinks->url('/wp-login.php?action=rp'), 302)
-                ->withCookie('wp-resetpass-' . $this->cookies->hash(), $login . ':' . $key, ['path' => '/wp-login.php', 'httponly' => true, 'secure' => $request->secure, 'samesite' => 'Lax']);
+            return Response::redirect($this->actionUrl($request, 'rp'), 302)
+                ->withCookie('wp-resetpass-' . $this->cookies->hash(), $login . ':' . $key, ['path' => $this->base($request), 'httponly' => true, 'secure' => $request->secure, 'samesite' => 'Lax']);
         }
         [$user, $cookieKey] = $this->resetSession($request);
         if ($user === null) {
-            return Response::redirect($this->permalinks->url('/wp-login.php?action=lostpassword&error=invalidkey'), 302);
+            return Response::redirect($this->actionUrl($request, 'lostpassword', 'error=invalidkey'), 302);
         }
         $siteName = (string) ($this->site->option('blogname') ?? 'Site');
-        return Response::html(LoginForm::resetPassword($siteName, $this->permalinks->url('/wp-login.php?action=resetpass'), $cookieKey, (string) $user['user_login'], ''));
+        return Response::html(LoginForm::resetPassword($siteName, $this->actionUrl($request, 'resetpass'), $cookieKey, (string) $user['user_login'], ''));
     }
 
     /** The user and key from the reset cookie, when the key is still good. @return array{0: ?array, 1: string} */
@@ -174,12 +187,12 @@ final readonly class LoginController
         [$user, $key] = $this->resetSession($request);
         $formKey = (string) ($request->form['rp_key'] ?? '');
         if ($user === null || !hash_equals($key, $formKey)) {
-            return Response::redirect($this->permalinks->url('/wp-login.php?action=lostpassword&error=invalidkey'), 302);
+            return Response::redirect($this->actionUrl($request, 'lostpassword', 'error=invalidkey'), 302);
         }
         $siteName = (string) ($this->site->option('blogname') ?? 'Site');
         $pass1 = (string) ($request->form['pass1'] ?? '');
         $pass2 = (string) ($request->form['pass2'] ?? '');
-        $action = $this->permalinks->url('/wp-login.php?action=resetpass');
+        $action = $this->actionUrl($request, 'resetpass');
         if ($pass1 === '') {
             return Response::html(LoginForm::resetPassword($siteName, $action, $key, (string) $user['user_login'], 'Error: The password cannot be empty.'));
         }
@@ -189,8 +202,8 @@ final readonly class LoginController
         $this->users->update((int) $user['ID'], ['user_pass' => Password::hash($pass1)]);
         $this->reset->clear($user);
         $this->sessions->destroyAll((int) $user['ID']);
-        return $this->cookies->clear(Response::html(LoginForm::notice($siteName, 'Password Reset', 'Your password has been reset.', $this->permalinks->url('/wp-login.php'))))
-            ->withCookie('wp-resetpass-' . $this->cookies->hash(), ' ', ['expires' => time() - 31536000, 'path' => '/wp-login.php', 'httponly' => true, 'secure' => $request->secure, 'samesite' => 'Lax']);
+        return $this->cookies->clear(Response::html(LoginForm::notice($siteName, 'Password Reset', 'Your password has been reset.', $this->permalinks->url($this->base($request)))))
+            ->withCookie('wp-resetpass-' . $this->cookies->hash(), ' ', ['expires' => time() - 31536000, 'path' => $this->base($request), 'httponly' => true, 'secure' => $request->secure, 'samesite' => 'Lax']);
     }
 
     /**
@@ -201,7 +214,7 @@ final readonly class LoginController
      */
     private function tokenLogin(Request $request): Response
     {
-        $error = 'Invalid one-time login token. <a href="' . $this->permalinks->url('/wp-login.php') . '">Try signing in instead</a>?';
+        $error = 'Invalid one-time login token. <a href="' . $this->permalinks->url($this->base($request)) . '">Try signing in instead</a>?';
         $wait = $this->throttle->retryAfter($request->remoteAddress);
         if ($wait !== null) {
             return $this->tooManyAttempts($request, $wait);
@@ -229,13 +242,15 @@ final readonly class LoginController
         $this->users->deleteMeta($id, 'cove_login_token_time');
         $expiration = time() + 14 * self::DAY;
         $session = $this->sessions->create($id, $expiration, $request->remoteAddress, (string) ($request->header('user-agent') ?? ''));
-        return $this->cookies->attach(Response::redirect($this->permalinks->url('/wp-admin/'), 302), $user, $expiration, $session, $request->secure, persistent: true);
+        return $this->cookies->attach(Response::redirect($this->permalinks->url('/minn-admin/'), 302), $user, $expiration, $session, $request->secure, persistent: true);
     }
 
+    #[Route(Method::Post, self::PATH)]
+    #[Route(Method::Post, self::PATH . '/{segment:lost-password|reset|logout}')]
     #[Route(Method::Post, '/wp-login.php')]
     public function signIn(Request $request): Response
     {
-        if ($request->query('action') === 'logout') {
+        if ($this->action($request) === 'logout') {
             return $this->form($request);
         }
         $reset = $this->lostPassword($request);
@@ -287,13 +302,13 @@ final readonly class LoginController
     private function logout(Request $request): Response
     {
         $session = $this->authenticator->session($request->cookies);
-        $signedOut = $this->cookies->clear(Response::redirect($this->permalinks->url('/wp-login.php?loggedout=true'), 302));
+        $signedOut = $this->cookies->clear(Response::redirect($this->permalinks->url($this->base($request) . '?loggedout=true'), 302));
         if (!$session instanceof Authenticated) {
             return $signedOut;
         }
         $nonce = (string) ($request->query('_wpnonce') ?? $request->form['_wpnonce'] ?? '');
         if (!Nonce::verify($nonce, $session->id(), $session->token, 'log-out')) {
-            $link = $this->permalinks->url('/wp-login.php?action=logout&_wpnonce=' . Nonce::create($session->id(), $session->token, 'log-out'));
+            $link = $this->actionUrl($request, 'logout', '_wpnonce=' . Nonce::create($session->id(), $session->token, 'log-out'));
             return Response::html(
                 '<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Log Out</title></head><body>'
                 . '<p>You are attempting to log out of ' . Html::esc((string) ($this->site->option('blogname') ?? 'this site')) . '.</p>'
@@ -302,6 +317,37 @@ final readonly class LoginController
         }
         $this->sessions->destroy($session->id(), $session->token);
         return $signedOut;
+    }
+
+    /**
+     * The action asked for: a clean path segment (/minn-admin/login/reset)
+     * or wp-login.php's ?action=. The reset flow's two halves share the
+     * "reset" segment; a POST there saves the password.
+     */
+    private function action(Request $request): string
+    {
+        $segment = substr($request->path, strlen(self::PATH) + 1);
+        if (str_starts_with($request->path, self::PATH . '/') && isset(self::SEGMENTS[$segment])) {
+            $action = self::SEGMENTS[$segment];
+            return $action === 'rp' && $request->method === Method::Post ? 'resetpass' : $action;
+        }
+        return (string) $request->query('action', '');
+    }
+
+    /** An action's address on the page this request came in on: a path under the clean page, a query on wp-login.php. */
+    private function actionUrl(Request $request, string $action, string $query = ''): string
+    {
+        if ($request->path === '/wp-login.php') {
+            return $this->permalinks->url('/wp-login.php?action=' . $action . ($query === '' ? '' : '&' . $query));
+        }
+        $segment = array_search($action === 'resetpass' ? 'rp' : $action, self::SEGMENTS, true);
+        return $this->permalinks->url(self::PATH . '/' . $segment . ($query === '' ? '' : '?' . $query));
+    }
+
+    /** The sign-in page this request arrived at: the clean page, or wp-login.php for the tooling that still names it. */
+    private function base(Request $request): string
+    {
+        return $request->path === '/wp-login.php' ? '/wp-login.php' : self::PATH;
     }
 
     /** A guessed-at address waits out the window; the page says so and the status lets tooling see it. */
@@ -316,10 +362,11 @@ final readonly class LoginController
     {
         return LoginForm::render(
             (string) ($this->site->option('blogname') ?? 'Site'),
-            $this->permalinks->url('/wp-login.php'),
+            $this->permalinks->url($this->base($request)),
             (string) ($request->query('redirect_to') ?? ''),
             $error,
             $message,
+            $this->actionUrl($request, 'lostpassword'),
         );
     }
 }

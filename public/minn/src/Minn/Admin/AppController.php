@@ -40,7 +40,7 @@ final readonly class AppController
         $session = $this->authenticator->session($request->cookies);
         if (!$session instanceof Authenticated) {
             $current = ($request->secure ? 'https' : 'http') . '://' . ($request->host ?: 'localhost') . $request->path . $request->queryStringWithout();
-            return Response::redirect($this->permalinks->url('/wp-login.php?redirect_to=' . rawurlencode($current)), 302);
+            return Response::redirect($this->permalinks->url('/minn-admin/login?redirect_to=' . rawurlencode($current)), 302);
         }
         if (!$this->capabilities->can($session->id(), 'edit_posts')) {
             return Response::html('<!doctype html><title>Not allowed</title><p>You do not have permission to access this admin.', 403);

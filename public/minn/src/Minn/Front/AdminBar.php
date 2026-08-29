@@ -172,7 +172,7 @@ final readonly class AdminBar
             . '<div class="minn-bar-menu-label">' . Html::esc(html_entity_decode((string) $user['display_name'], ENT_QUOTES | ENT_HTML5, 'UTF-8')) . '</div>'
             . self::menuItem($this->appPath('profile'), '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>', 'Your profile')
             . '<div class="minn-bar-menu-rule"></div>'
-            . self::menuItem($this->permalinks->url('/wp-login.php?action=logout'), '<path d="M10 4H5v16h5M14 8l4 4-4 4M8 12h10"/>', 'Sign out')
+            . self::menuItem($this->permalinks->url('/minn-admin/login/logout'), '<path d="M10 4H5v16h5M14 8l4 4-4 4M8 12h10"/>', 'Sign out')
             . '</div>';
 
         return $out . '</div></div>' . "\n";

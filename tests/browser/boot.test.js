@@ -1,6 +1,6 @@
 // Minn Admin boots on Minn Engine — the milestone-7 proof, in a real browser.
 //
-// Logs in through the engine's /wp-login.php, loads /minn-admin/, and asserts
+// Logs in through the engine's /minn-admin/login, loads /minn-admin/, and asserts
 // that app.js runs: the boot spinner is replaced by the real app chrome, the
 // nav renders, content loads from wp/v2 through the engine, and no fatal
 // console/page errors occur. Content-panel data proves the SPA is reading the
@@ -39,7 +39,7 @@ const ok = ( c, label, detail = '' ) => {
 
 	try {
 		// 1. Sign in through the engine's own login form.
-		await page.goto( `${BASE}/wp-login.php`, { waitUntil: 'domcontentloaded', timeout: 20000 } );
+		await page.goto( `${BASE}/minn-admin/login`, { waitUntil: 'domcontentloaded', timeout: 20000 } );
 		await page.fill( 'input[name="log"]', USER );
 		await page.fill( 'input[name="pwd"]', PASS );
 		await Promise.all( [

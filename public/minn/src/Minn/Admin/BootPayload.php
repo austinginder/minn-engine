@@ -43,7 +43,7 @@ final readonly class BootPayload
             // query into a rest_route value.
             'restUrl' => $this->permalinks->url('/wp-json/'),
             'nonce' => Nonce::create($userId, $session->token),
-            'appUrl' => $this->permalinks->url('/minn-admin'),
+            'appUrl' => $this->permalinks->url('/minn-admin/'),
             'version' => $this->app->version(),
             'engine' => 'Minn Engine/' . $this->engineVersion,
             'user' => [
@@ -60,7 +60,7 @@ final readonly class BootPayload
                 'icon' => '',
                 'url' => $this->permalinks->url('/'),
                 'adminUrl' => $this->permalinks->url('/minn-admin/'),
-                'logout' => $this->permalinks->url('/wp-login.php?action=logout'),
+                'logout' => $this->permalinks->url('/minn-admin/login/logout'),
                 'blockTheme' => $this->blockTheme,
                 'hasSidebars' => false,
             ],
