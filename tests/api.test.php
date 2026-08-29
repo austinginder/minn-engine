@@ -9,6 +9,7 @@
 declare(strict_types=1);
 
 $root = dirname(__DIR__);
+require __DIR__ . '/lib.php'; // pins the reference theme the fixtures were captured under
 $pass = 0;
 $fail = 0;
 $check = static function (string $label, bool $ok, string $detail = '') use (&$pass, &$fail): void {
@@ -21,7 +22,7 @@ $check = static function (string $label, bool $ok, string $detail = '') use (&$p
     }
 };
 
-foreach (['functions' => 'api-probe.php', 'admin' => 'admin-probe.php', 'content' => 'content-probe.php', 'media' => 'media-probe.php', 'rest' => 'rest-probe.php', 'blocks' => 'blocks-probe.php', 'interactivity' => 'interactivity-probe.php'] as $fixture => $probe) {
+foreach (['functions' => 'api-probe.php', 'admin' => 'admin-probe.php', 'content' => 'content-probe.php', 'media' => 'media-probe.php', 'rest' => 'rest-probe.php', 'blocks' => 'blocks-probe.php', 'interactivity' => 'interactivity-probe.php', 'script-modules' => 'script-modules-probe.php'] as $fixture => $probe) {
     $expected = json_decode(file_get_contents($root . "/contracts/fixtures/api/{$fixture}.json"), true);
     $out = shell_exec('php ' . escapeshellarg($root . '/tests/tools/run-api-probe.php') . ' ' . escapeshellarg($probe) . ' 2>/dev/null');
     $actual = json_decode((string) $out, true);

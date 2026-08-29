@@ -60,6 +60,8 @@ if [ -d browser/node_modules ]; then
 	node browser/geometry.test.js || failed=1
 	printf "\n=== browser: admin views (dogfood) ===\n"
 	node browser/admin-views.test.js || failed=1
+	printf "\n=== browser: interactivity (dogfood) ===\n"
+	node browser/interactivity.test.js || failed=1
 fi
 
 printf '\n'

@@ -277,22 +277,6 @@ function wp_enqueue_editor()
 {
 }
 
-function wp_register_script_module($id, $src, $deps = [], $version = false, $args = [])
-{
-}
-
-function wp_enqueue_script_module($id, $src = '', $deps = [], $version = false, $args = [])
-{
-}
-
-function wp_dequeue_script_module($id)
-{
-}
-
-function wp_deregister_script_module($id)
-{
-}
-
 function wp_default_scripts($scripts)
 {
 }
@@ -327,3 +311,70 @@ function wp_enqueue_classic_theme_styles()
 {
 }
 
+// Script modules.
+
+function _minn_script_module_url(string $src, string|false|null $version): string
+{
+    if ($version === false) {
+        $version = (string) $GLOBALS['wp_version'];
+    }
+    if ($version !== null && $version !== '') {
+        $src = add_query_arg('ver', $version, $src);
+    }
+    return esc_url($src);
+}
+
+function wp_script_modules()
+{
+    return WP_Script_Modules::instance();
+}
+
+function wp_register_script_module($id, $src, $deps = [], $version = false, $args = [])
+{
+    wp_script_modules()->register((string) $id, (string) $src, (array) $deps, $version, (array) $args);
+}
+
+function wp_enqueue_script_module($id, $src = '', $deps = [], $version = false, $args = [])
+{
+    wp_script_modules()->enqueue((string) $id, (string) $src, (array) $deps, $version, (array) $args);
+}
+
+function wp_dequeue_script_module($id)
+{
+    wp_script_modules()->dequeue((string) $id);
+}
+
+function wp_deregister_script_module($id)
+{
+    wp_script_modules()->deregister((string) $id);
+}
+
+function wp_set_script_module_translations($id, $domain = 'default', $path = '')
+{
+    wp_script_modules()->set_translations((string) $id, (string) $domain, (string) $path);
+}
+
+function wp_enqueue_block_editor_script_modules()
+{
+}
+
+/**
+ * The modules the reference registers itself, served from the engine's own
+ * MIT implementations: the interactivity runtime, the router, a11y, and the
+ * navigation block's view module.
+ */
+function wp_default_script_modules()
+{
+    $base = '/minn-engine/';
+    $args = ['in_footer' => true, 'fetchpriority' => 'low'];
+    $view = $args + ['attributes' => ['data-wp-router-options' => '{"loadOnClientNavigation":true}']];
+    wp_register_script_module('@wordpress/interactivity', $base . 'interactivity.js', [], MINN_ENGINE_VERSION, $args);
+    wp_register_script_module('@wordpress/a11y', $base . 'a11y.js', [], MINN_ENGINE_VERSION, $args);
+    wp_register_script_module('@wordpress/interactivity-router', $base . 'interactivity-router.js', [['id' => '@wordpress/a11y', 'import' => 'dynamic'], '@wordpress/interactivity'], MINN_ENGINE_VERSION, $args);
+    wp_register_script_module('@wordpress/block-library/navigation/view', $base . 'navigation-view.js', ['@wordpress/interactivity'], MINN_ENGINE_VERSION, $view);
+    foreach (['image', 'search', 'file', 'accordion', 'tabs', 'playlist'] as $block) {
+        wp_register_script_module('@wordpress/block-library/' . $block . '/view', $base . $block . '-view.js', ['@wordpress/interactivity'], MINN_ENGINE_VERSION, $view);
+    }
+    wp_register_script_module('@wordpress/block-library/query/view', $base . 'query-view.js', ['@wordpress/interactivity', ['id' => '@wordpress/interactivity-router', 'import' => 'dynamic']], MINN_ENGINE_VERSION, $view);
+    wp_register_script_module('@wordpress/block-library/form/view', $base . 'form-view.js', [], MINN_ENGINE_VERSION, $view);
+}

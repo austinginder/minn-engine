@@ -336,6 +336,71 @@ admin script). Fixture: `contracts/fixtures/api/interactivity.json`
   them at the reference's paths. A handle whose dependency is unregistered
   never prints, nor does anything that depends on it.
 
+## Script modules and the client runtime
+
+Fixture: `contracts/fixtures/api/script-modules.json` (51 rows,
+`script-modules-probe.php`); the engine's module URLs are masked to their ids
+on both stacks because the engine serves its own files.
+
+- **Registry** (`wp_register_script_module` etc., `WP_Script_Modules`):
+  the first registration of an id wins; dependencies are strings or
+  `['id' => .., 'import' => 'static'|'dynamic']` (default static); a missing
+  dependency logs `doing_it_wrong` at registration and the module never
+  prints; an invalid `fetchpriority` logs and falls back to `auto`;
+  `get_registered` answers `src, version, dependencies, in_footer,
+  fetchpriority`; enqueueing an unregistered id sits in the queue and prints
+  nothing; `enqueue` with a src registers first.
+- **Printing**: only enqueued modules print `<script type="module">` tags,
+  attributes in alphabetical order (`data-wp-router-options`, `fetchpriority`
+  unless auto, `id` `{id}-js-module`, `src`, `type`), once each (`done`);
+  `print_head_enqueued_script_modules` takes the ones not `in_footer`,
+  `print_enqueued_script_modules` the rest. The import map lists every
+  registered dependency (static and dynamic, depth first in declaration
+  order, of enqueued modules including already printed ones), never the
+  enqueued modules themselves, and prints nothing when empty. Preloads
+  (`rel, href, id, fetchpriority`) cover static dependencies that are not
+  themselves enqueued. URLs: `?ver=` from the version (false takes
+  `wp_version`, null adds none) through `esc_url`, so a bare `c.js` prints
+  as `http://c.js` and `&` as `&#038;`.
+- **Data**: `print_script_module_data` applies `script_module_data_{id}` to
+  every enqueued module and dependency and prints the non-empty ones as
+  `<script id="wp-script-module-data-{id}" type="application/json">` with
+  `<`/`>` hex-escaped and slashes and quotes plain; it is not marked done.
+  The interactivity runtime's data is `{config, state}` (non-empty parts,
+  config first); the router's is its two i18n strings. The a11y live-region
+  markup prints once the `@wordpress/a11y` tag has printed.
+- **Hooks**: `wp_head` 10 import map, head modules, preloads; `wp_footer`
+  10 modules and data, 20 a11y, 21 translations; `admin_print_footer_scripts`
+  9 import map, 10 modules, preloads, data, 11 translations, 20 a11y.
+- **Defaults** the reference registers (all `in_footer`, `fetchpriority`
+  low): `@wordpress/interactivity`, `@wordpress/a11y`,
+  `@wordpress/interactivity-router` (a11y dynamic, interactivity static),
+  and the block-library view modules for navigation, image, query (router
+  dynamic), search, file, form (no deps), accordion, tabs, playlist, each
+  carrying `data-wp-router-options="{"loadOnClientNavigation":true}"`. The
+  engine registers the same ids against `/minn-engine/*.js`.
+- **block.json**: `viewScriptModule` registers through
+  `register_block_script_module_id` (id `{name-with-dashes}-view-script-module`,
+  `-{n}` from the second entry; a non-`file:` value is used as the id as is;
+  the `.asset.php` beside the file supplies dependencies and version) and
+  `WP_Block::render` enqueues `view_script_module_ids`. The engine's own
+  navigation block enqueues `@wordpress/block-library/navigation/view`
+  whenever it emits interactive markup.
+- **The client runtime is the engine's own** (`assets/interactivity.js`,
+  MIT, no Preact): reactive proxies with effect tracking, per-element
+  context layers that inherit and write through to the parent, `store()`
+  merging with getters kept as getters and generator actions driven with
+  their scope, server state from the data script, and the directives
+  `interactive`, `context`, `bind`, `class`, `style`, `text`, `on`,
+  `on-window`, `on-document`, `init`, `watch`, `each` (server-rendered
+  children hydrated, client re-render on change). Exports match the
+  package's names; the Preact hooks throw a clear error. The navigation
+  view module (`assets/navigation-view.js`) implements the `core/navigation`
+  store the block's markup names; `a11y.js` and `interactivity-router.js`
+  are minimal (the router navigates for real). Verified by
+  `tests/browser/interactivity.test.js`: the dogfood site's mobile overlay
+  and a third-party plugin's toggle (mosne-dark-palette) run on it.
+
 ## What a plugin cannot do yet
 
 Twelve of the dogfood site's twenty-five plugins load as code now

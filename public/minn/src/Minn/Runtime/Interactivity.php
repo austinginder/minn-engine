@@ -47,6 +47,18 @@ final class Interactivity
         return $this->state[$namespace] ?? [];
     }
 
+    /** @return array<string, array<string, mixed>> every namespace's state, for the client */
+    public function allState(): array
+    {
+        return array_filter($this->state, static fn (array $s) => $s !== []);
+    }
+
+    /** @return array<string, array<string, mixed>> */
+    public function allConfig(): array
+    {
+        return array_filter($this->config, static fn (array $c) => $c !== []);
+    }
+
     /** @return array<string, mixed> */
     public function config(string $namespace, array $config = []): array
     {

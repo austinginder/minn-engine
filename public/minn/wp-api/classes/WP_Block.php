@@ -120,6 +120,11 @@ class WP_Block
                 wp_enqueue_script($view_script_handle);
             }
         }
+        if (!empty($this->block_type->view_script_module_ids)) {
+            foreach ($this->block_type->view_script_module_ids as $view_script_module_id) {
+                wp_enqueue_script_module($view_script_module_id);
+            }
+        }
         if (!empty($this->block_type->style_handles)) {
             foreach ($this->block_type->style_handles as $style_handle) {
                 wp_enqueue_style($style_handle);

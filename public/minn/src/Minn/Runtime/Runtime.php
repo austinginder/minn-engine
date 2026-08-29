@@ -23,6 +23,7 @@ final class Runtime
     private static ?Shortcodes $shortcodes = null;
     private static ?Registry $registry = null;
     private static ?Interactivity $interactivity = null;
+    private static ?ScriptModules $scriptModules = null;
     private static ?self $current = null;
     private static bool $facadeLoaded = false;
     /** @var array<string, mixed> plugin-visible state the facade keeps between calls */
@@ -102,6 +103,14 @@ final class Runtime
         return self::$shortcodes ??= new Shortcodes();
     }
 
+    public static function scriptModules(): ScriptModules
+    {
+        return self::$scriptModules ??= new ScriptModules(
+            static fn (string $src, string|false|null $version): string => \_minn_script_module_url($src, $version),
+            static fn (string $id, array $data): array => (array) self::hooks()->filter('script_module_data_' . $id, [$data]),
+        );
+    }
+
     public static function interactivity(): Interactivity
     {
         return self::$interactivity ??= new Interactivity();
@@ -164,6 +173,7 @@ final class Runtime
         self::$shortcodes = new Shortcodes();
         self::$registry = null;
         self::$interactivity = new Interactivity();
+        self::$scriptModules = null;
         self::$options = self::$current === null ? null : new Options(self::$current->db);
     }
 }

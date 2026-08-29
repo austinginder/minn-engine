@@ -524,6 +524,32 @@ function remove_block_asset_path_prefix($asset_handle_or_path)
     return $path;
 }
 
+/** The id a block.json script module field registers under, registering it from the file and its .asset.php on the way. */
+function register_block_script_module_id($metadata, $field_name, $index = 0)
+{
+    if (empty($metadata[$field_name])) {
+        return false;
+    }
+    $value = $metadata[$field_name];
+    if (is_array($value)) {
+        $value = $value[$index] ?? '';
+    }
+    $value = (string) $value;
+    if (!str_starts_with($value, 'file:')) {
+        return $value;
+    }
+    $path = dirname((string) ($metadata['file'] ?? ''));
+    $relative = remove_block_asset_path_prefix($value);
+    $id = generate_block_asset_handle($metadata['name'], $field_name, $index);
+    $asset_raw = $path . '/' . substr_replace($relative, '.asset.php', -strlen('.js'));
+    $asset_path = wp_normalize_path(realpath($asset_raw) ?: $asset_raw);
+    $module_path = wp_normalize_path(realpath($path . '/' . $relative) ?: $path . '/' . $relative);
+    $uri = str_starts_with($module_path, wp_normalize_path(WP_PLUGIN_DIR)) ? plugins_url(str_replace(wp_normalize_path(WP_PLUGIN_DIR), '', $module_path)) : str_replace(wp_normalize_path(ABSPATH), site_url('/'), $module_path);
+    $asset = file_exists($asset_path) ? require $asset_path : ['dependencies' => [], 'version' => false];
+    wp_register_script_module($id, $uri, $asset['dependencies'] ?? [], $asset['version'] ?? false);
+    return $id;
+}
+
 function generate_block_asset_handle($block_name, $field_name, $index = 0)
 {
     if (str_starts_with((string) $block_name, 'core/')) {
@@ -597,7 +623,14 @@ function register_block_type_from_metadata($file_or_folder, $args = [])
         }
     }
     if (!empty($metadata['viewScriptModule'])) {
-        $settings['view_script_module_ids'] = array_values((array) $metadata['viewScriptModule']);
+        $ids = [];
+        foreach (array_values((array) $metadata['viewScriptModule']) as $index => $value) {
+            $id = register_block_script_module_id($metadata + ['viewScriptModule' => $value], 'viewScriptModule', $index);
+            if ($id !== false) {
+                $ids[] = $id;
+            }
+        }
+        $settings['view_script_module_ids'] = $ids;
     }
     $style_fields = ['editorStyle' => 'editor_style_handles', 'style' => 'style_handles', 'viewStyle' => 'view_style_handles'];
     foreach ($style_fields as $metadata_field_name => $settings_field_name) {
