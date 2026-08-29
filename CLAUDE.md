@@ -19,8 +19,9 @@ The MIT license survives only if the implementation stays clean:
 3. **No GPL assets ship in this repository.** No WordPress core JavaScript,
    block-library CSS, bundled themes, or Dashicons. Check the license of every
    dependency before adding it.
-4. **Never execute GPL plugin or WordPress code in-process.** There is no
-   hook-compatibility shim, by design (see Tier 2 below).
+4. **Never execute WordPress core code in-process.** Plugins load as
+   programs against the engine's own runtime (Wine / Mono). There is no
+   WordPress code here to shim. See `contracts/lexicon.md`.
 5. **Trademark:** "WordPress" appears only in truthful compatibility statements
    ("compatible with WordPress", "reads a WordPress database"). Never in a
    project name, domain, or anything implying endorsement.
@@ -39,10 +40,16 @@ permalinks, feeds, sitemaps, and a block-rendering subset for `post_content`.
 The definition of done for any Tier 1 surface: real hosting, backup, migration,
 and fleet tooling runs against it and cannot tell it is not WordPress.
 
-**Tier 2 — never:** hook-level PHP plugin compatibility, wp-admin, the PHP
-template hierarchy, and legacy layers beyond read-tolerance. Extensions target
-the engine's own declarative-manifest contract instead, and Minn Admin is the
-admin interface.
+**Tier 2 — the WordPress runtime, reimplemented:** hooks, options, `WP_Query`,
+`$wpdb`, and the rest of the procedural API plugins call, clean-room, so
+unmodified plugins load. "Any plugin just works" means front end and data.
+
+**The third rail — no `/wp-admin/`.** WordPress speaks to tooling, to plugin
+PHP, and to humans in a browser. Minn answers the first two. Humans go through
+Minn Admin. Admin *registrations* (`add_menu_page`) are Hear: recorded so
+plugins boot, never rendered. Plugin settings screens are not coming.
+`contracts/lexicon.md` is the Speak / Hear / Mute glossary. Mute names stay
+placeholders. Do not graduate them into `wp-api/` to shrink the skip list.
 
 ## Engineering conventions
 

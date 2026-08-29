@@ -5,8 +5,16 @@ machine-readable or fixture-backed specification of a WordPress operational
 surface that Minn Engine commits to honoring, written from observed behavior
 and never from WordPress source code (see the legal ground rules in CLAUDE.md).
 
+`lexicon.md` is the policy layer on top of the inventory: which WordPress
+families Minn Speaks, Hears, or Mutes. WordPress speaks to tooling, plugin
+PHP, and humans in a browser. Minn answers the first two. `/wp-admin/` is
+not a Minn surface. Agents read the lexicon before adding a runtime symbol.
+
 Planned layout:
 
+- `lexicon.md` — Speak / Hear / Mute: the WordPress families Minn implements,
+  the ones it recognizes so plugins load, and the ones it will never host
+  (no `/wp-admin/` UI; Minn Admin is the only admin).
 - `schema/` — the `wp_*` table contract: tables, columns, semantics, and the
   known value quirks (serialized blobs, `''` versus `'closed'` option values,
   local versus GMT datetime columns).

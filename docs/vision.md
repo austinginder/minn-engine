@@ -30,7 +30,9 @@ The correct precedent is not "a better CMS." It is Nginx against Apache, MariaDB
 
 ## 3. The play: two tiers of compatibility, with a hard line between them
 
-The strategy lives or dies on knowing exactly which WordPress surfaces to honor and which to refuse. The operational contract is sacred. The internal API is not.
+The strategy lives or dies on knowing exactly which WordPress surfaces to honor and which to refuse. The operational contract is sacred. The internal API is not. WordPress speaks to three audiences: tooling, plugin PHP, and humans in a browser. Minn answers the first two. The third is Minn Admin. `/wp-admin/` is not a Minn surface.
+
+The family-level glossary (Speak / Hear / Mute) lives in `contracts/lexicon.md`. Agents read it before adding a runtime symbol.
 
 **Tier 1 — the operational contract:**
 
@@ -47,9 +49,9 @@ The first draft of this document refused hook-level plugin compatibility and ans
 
 - The hook engine (`add_action`, `add_filter`, priorities, `remove_filter`, `current_filter`) and the request lifecycle in the observed order (`muplugins_loaded`, `plugins_loaded`, `init`, `wp`, `template_redirect`, `wp_head`, `the_content`, `wp_footer`, REST, cron, activation and uninstall)
 - The procedural API plugins reach for, as a thin facade over the engine's own classes: options and transients, meta, posts, terms, users, `WP_Query` and the Loop globals, `$wpdb` with `prepare` and `dbDelta`, capabilities and nonces, i18n and `.mo` files, shortcodes, script and style enqueueing, HTTP, mail, cron, rewrite rules, `register_rest_route`, kses, filesystem and image APIs
-- An admin host: `/wp-admin/` served for real with an original shell that carries WordPress's class names (`.wrap`, `.form-table`, `.notice`, list tables, meta boxes), the Settings API, `admin-ajax.php` and `admin-post.php`. Minn Admin lists plugin menus and hosts those screens; it stays the admin, it stops being the only one
+- Admin *registrations*, not admin screens: `add_menu_page` records a row so plugins boot; the Settings API exists as recording. Nothing is rendered. `/wp-admin/` 302s to `/minn-admin/`. Plugin settings PHP is ignored by design. Minn Admin adapters own the UI. This is Hear, not Speak (`contracts/lexicon.md`).
 - Block registration from `block.json` and the editor globals plugin scripts expect
-- The long tail in the order real plugins fatal without it: widgets, the customizer, XML-RPC, the upgrader, multisite
+- The long tail of runtime symbols, in the order real plugins fatal without them. XML-RPC, the Customizer, the upgrader UI, and multisite stay mute as products.
 
 Plugins are loaded in-process from `active_plugins`, unmodified. No hook shim over WordPress code: there is no WordPress code here to shim. The runtime is the engine.
 
@@ -97,7 +99,7 @@ What this costs, named honestly: the engine is no longer "low tens of thousands 
 ## 6. Honest hard parts
 
 - **Serialized PHP is forever.** Reading real WordPress databases means tolerating serialized-PHP blobs in options and postmeta indefinitely. Greenfield sites keep it out of new data; migrated sites drag the long tail in. Design greenfield-first.
-- **The runtime is the long road.** Front-end plugins work once the hook engine and the content API exist; settings-page plugins need the admin host; editor plugins need the block editor globals. Each layer is measured by the reference test suite and by real plugins, and "any plugin" is reached layer by layer, not declared.
+- **The runtime is the long road.** Front-end plugins work once the hook engine and the content API exist. A plugin's own settings screen is never hosted: Minn Admin adapters own that UI. Editor plugins need the block editor globals. Each layer is measured by the reference test suite and by real plugins. "Any plugin" means front end and data, reached layer by layer, not declared.
 - **WooCommerce-shaped sites are out of scope for years.** A large share of real small-business sites are brochure, forms, and content, which is exactly the tractable slice.
 - **Bus factor.** The customer-control argument only transfers once someone other than the founder can maintain the engine. MIT plus machine-readable contracts plus exhaustive suites is the mitigation, and agent legibility is the honest answer, but it deserves naming.
 
@@ -105,7 +107,7 @@ What this costs, named honestly: the engine is no longer "low tens of thousands 
 
 - **Phase 0 (shipped)** — Minn Admin is the daily admin on WordPress: a complete, REST-pure admin with a proven extension contract, running against real sites today. Classic wp-admin stays as a fallback. On the engine there is no wp-admin; Minn Admin is the admin.
 - **Phase 1 (next)** — the engine serves greenfield sites on our own hosting. Front end plus REST for new sites where the whole stack is ours to verify. Minn Admin boots unmodified. The compatibility suite runs the fleet tooling against it until the hosting layer cannot tell.
-- **Phase 2** — the WordPress runtime: plugins load unmodified, layer by layer (front end, admin host, editor, long tail), measured against the reference test suite.
+- **Phase 2** — the WordPress runtime: plugins load unmodified, layer by layer (front end, admin registrations, editor, long tail), measured against the reference test suite. There is no wp-admin; Minn Admin is the admin.
 - **Phase 3 (earned)** — migration for the tractable slice, with the serialized-PHP and dynamic-block caveats enforced honestly by the tooling itself.
 
 Minnow wanted to be a clean break. Minn Engine wants the opposite: indistinguishable at the seams, and radically simpler inside.

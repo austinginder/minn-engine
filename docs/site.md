@@ -31,10 +31,13 @@ the same look.
 
 The page is built from `docs/vision.md`. Section by section: the thesis
 (WordPress as a coordination standard, the five legs ranked), the graveyard
-lesson and the Nginx precedent, the two tiers, the oracle method and the facts it
-caught, the license analysis, status (working and not yet, said plainly), the
-hard parts, a FAQ, and the on-ramp: WordPress users are pointed at Minn Admin
-first, because it is the shipped phase and it is the interface the engine boots.
+lesson and the Nginx precedent, the two tiers plus the three-audience visual
+(tooling and plugin PHP Speak; humans are Mute: Minn Admin is the only UI),
+the oracle method and the facts it caught, the license analysis, status
+(working and not yet, said plainly), the hard parts, a FAQ, and the on-ramp:
+WordPress users are pointed at Minn Admin first, because it is the shipped
+phase and it is the interface the engine boots. The glossary behind the
+visual is `contracts/lexicon.md`.
 
 The theme runs no PHP on the engine. `functions.php` exists only for the
 reference (it enqueues `style.css`, which the engine links on its own); the

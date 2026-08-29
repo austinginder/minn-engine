@@ -17,6 +17,11 @@ here is WordPress code: every function is written from
 `contracts/api/*.json` (the interface, extracted by reflection) and
 `contracts/fixtures/api/*.json` (behaviour, captured by probe batteries run on
 the reference). Section 5 of `docs/vision.md` has the legal reasoning.
+`contracts/lexicon.md` is the Speak / Hear / Mute policy: which WordPress
+families the runtime implements, which it records so plugins boot, and
+which it will never host. `/wp-admin/` is Mute. Admin registrations are
+Hear. Do not graduate a mute placeholder into `wp-api/` to shrink the
+skip list.
 
 | Piece | Where | What it is |
 |---|---|---|
@@ -524,9 +529,10 @@ Facts worth keeping:
 
 ## E3 as placeholders: the admin host that is not there
 
-Minn has no `/wp-admin/` and will not grow one; Minn Admin is the admin. What
-plugins need from the admin host is for its symbols to exist so they load
-and stay quiet. Three generated layers do that:
+Minn has no `/wp-admin/` and will not grow one; Minn Admin is the admin.
+`contracts/lexicon.md` calls this Mute (the screens) and Hear (the
+registrations). What plugins need is for admin *symbols* to exist so they
+load and stay quiet. Three generated layers do that:
 
 - **Placeholder symbols**: `tests/tools/stub-symbols.php` writes
   `wp-api/placeholders.php` and `wp-api/classes/placeholders/Placeholders.php`
@@ -653,14 +659,15 @@ on plain HTTP.
 
 All twenty-five of the dogfood site's plugins load as code now
 (`runtime-report.php`), and the nine dogfood pages render at parity with
-them running, Jetpack included. What the rest ask for, in order: the admin host
-(`WP_List_Table`, screens and screen options, `iframe_header`, the
-`WP_Filesystem` family and the upgraders); `WP_HTML_Processor` (the tag
-processor exists; the tree-aware one does not); `WP_Site`/multisite shims;
-`WP_Term_Query`/`WP_User_Query` objects; `.mo` translations; `fetch_feed`;
-the customizer and widget screens (the classes exist so plugins load;
-nothing is served); a front-end main query fed from the engine's own
-resolution (the conditional tags answer on the command line only).
+them running, Jetpack included. Remaining Speak / Hear gaps, in order:
+`WP_HTML_Processor` (the tag processor exists; the tree-aware one does
+not); `.mo` translations; `fetch_feed`; `WP_Term_Query` as a real query
+object; a front-end main query fed from the engine's own resolution
+(conditional tags on the command line only). Mute, and staying mute:
+`WP_List_Table`, screens and screen options, `iframe_header`, upgrader
+skins, the Customizer and widget *screens*, XML-RPC, multisite UI. Those
+names stay placeholders (`contracts/lexicon.md`). Plugin settings PHP is
+ignored; Minn Admin adapters own the UI.
 
 ## The facade stays a mapping layer
 
