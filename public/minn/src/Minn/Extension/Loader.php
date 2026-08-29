@@ -40,6 +40,12 @@ final class Loader
         return $this->found;
     }
 
+    /** Forgets the cached activation list after an option write. */
+    public function refresh(): void
+    {
+        $this->active = [];
+    }
+
     /** @return list<Manifest> the extensions this site has switched on */
     public function active(): array
     {

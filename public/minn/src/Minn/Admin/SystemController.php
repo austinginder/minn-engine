@@ -1,0 +1,101 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Minn\Admin;
+
+use Minn\Http\Method;
+use Minn\Http\Request;
+use Minn\Http\Response;
+use Minn\Http\Route;
+use Minn\Rest\Caller;
+use Minn\Rest\Fields;
+use Minn\Rest\Reply;
+use Minn\RestError;
+
+/** The System view: diagnostics, the scheduled-post list, autoloaded options, and the logs. */
+final readonly class SystemController
+{
+    public function __construct(private Diagnostics $diagnostics, private Logs $logs, private Caller $caller)
+    {
+    }
+
+    #[Route(Method::Get, '/minn-admin/v1/system')]
+    public function system(Request $request): Response
+    {
+        $this->requireOwner();
+        return $this->reply($request, $this->diagnostics->payload($request));
+    }
+
+    #[Route(Method::Get, '/minn-admin/v1/system/cron')]
+    public function cron(Request $request): Response
+    {
+        $this->requireOwner();
+        return $this->reply($request, $this->diagnostics->cron());
+    }
+
+    #[Route(Method::Get, '/minn-admin/v1/system/autoload')]
+    public function autoload(Request $request): Response
+    {
+        $this->requireOwner();
+        return $this->reply($request, $this->diagnostics->autoload());
+    }
+
+    /** The engine never rewrites wp-config.php; the file is the site's, edited by hand. */
+    #[Route(Method::Post, '/minn-admin/v1/system/config')]
+    public function config(Request $request): Response
+    {
+        $this->requireOwner();
+        throw new RestError('not_editable', 'Minn Engine does not rewrite wp-config.php. Change the constant in the file itself.', 400);
+    }
+
+    #[Route(Method::Get, '/minn-admin/v1/system/logs')]
+    public function logs(Request $request): Response
+    {
+        $this->requireOwner();
+        return $this->reply($request, ['sources' => $this->logs->listPayload()]);
+    }
+
+    #[Route(Method::Get, '/minn-admin/v1/system/logs/{id:[a-zA-Z0-9:_.-]+}')]
+    public function log(Request $request, string $id): Response
+    {
+        $this->requireOwner();
+        return $this->reply($request, $this->logs->read($id));
+    }
+
+    #[Route(Method::Delete, '/minn-admin/v1/system/logs/{id:[a-zA-Z0-9:_.-]+}')]
+    public function clearLog(Request $request, string $id): Response
+    {
+        $this->requireOwner();
+        $this->logs->clear($id);
+        return $this->reply($request, ['cleared' => true]);
+    }
+
+    #[Route(Method::Get, '/minn-admin/v1/system/debug-log')]
+    public function debugLog(Request $request): Response
+    {
+        $this->requireOwner();
+        return $this->reply($request, $this->logs->tail($this->logs->debugLogPath()));
+    }
+
+    #[Route(Method::Delete, '/minn-admin/v1/system/debug-log')]
+    public function clearDebugLog(Request $request): Response
+    {
+        $this->requireOwner();
+        $this->logs->clear('debug');
+        return $this->reply($request, ['cleared' => true]);
+    }
+
+    private function requireOwner(): void
+    {
+        $this->caller->require('rest_forbidden', 'Sorry, you are not allowed to do that.');
+        if (!$this->caller->can('manage_options')) {
+            throw new RestError('rest_forbidden', 'Sorry, you are not allowed to do that.', 403);
+        }
+    }
+
+    private function reply(Request $request, mixed $data): Response
+    {
+        return Reply::item($data, Fields::fromQuery($request->query));
+    }
+}

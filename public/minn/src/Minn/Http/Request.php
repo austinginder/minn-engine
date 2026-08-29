@@ -29,6 +29,8 @@ final readonly class Request
         public array $form = [],
         public array $files = [],
         public string $remoteAddress = '',
+        /** what the server says about itself: software, protocol, and address; diagnostics only */
+        public array $server = [],
     ) {
     }
 
@@ -61,6 +63,11 @@ final readonly class Request
             form: $_POST,
             files: $_FILES,
             remoteAddress: (string) ($_SERVER['REMOTE_ADDR'] ?? ''),
+            server: [
+                'software' => (string) ($_SERVER['SERVER_SOFTWARE'] ?? ''),
+                'protocol' => (string) ($_SERVER['SERVER_PROTOCOL'] ?? ''),
+                'address' => (string) ($_SERVER['SERVER_ADDR'] ?? ''),
+            ],
         );
     }
 
@@ -77,7 +84,7 @@ final readonly class Request
     /** The same request addressed to another path (a REST route carried in ?rest_route=). */
     public function withPath(string $path): self
     {
-        return new self($this->method, $path, $this->query, $this->headers, $this->cookies, $this->body, $this->secure, $this->host, $this->form, $this->files, $this->remoteAddress);
+        return new self($this->method, $path, $this->query, $this->headers, $this->cookies, $this->body, $this->secure, $this->host, $this->form, $this->files, $this->remoteAddress, $this->server);
     }
 
     public function query(string $key, ?string $default = null): ?string

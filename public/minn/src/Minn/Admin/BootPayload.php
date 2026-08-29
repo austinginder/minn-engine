@@ -24,6 +24,8 @@ final readonly class BootPayload
         private Capabilities $capabilities,
         private App $app,
         private string $engineVersion,
+        private Appearance $appearance,
+        private bool $blockTheme = false,
     ) {
     }
 
@@ -50,8 +52,8 @@ final readonly class BootPayload
                 'name' => $user['display_name'],
                 'role' => $role,
                 'avatar' => 'https://secure.gravatar.com/avatar/' . hash('sha256', strtolower(trim((string) $user['user_email']))) . '?s=64&d=mm&r=g',
-                'appearance' => ['scheme' => 'minn'],
-                'policy' => new stdClass(),
+                'appearance' => $this->appearance->read($userId),
+                'policy' => ['signin' => 'minn', 'toolbar' => 'minn'],
             ],
             'site' => [
                 'name' => $this->site->option('blogname') ?? 'Site',
@@ -59,7 +61,7 @@ final readonly class BootPayload
                 'url' => $this->permalinks->url('/'),
                 'adminUrl' => $this->permalinks->url('/minn-admin/'),
                 'logout' => $this->permalinks->url('/wp-login.php?action=logout'),
-                'blockTheme' => false,
+                'blockTheme' => $this->blockTheme,
                 'hasSidebars' => false,
             ],
             'gmtOffset' => (float) ($this->site->option('gmt_offset') ?? 0),
@@ -71,7 +73,23 @@ final readonly class BootPayload
             'caps' => [
                 'plugins' => $can('activate_plugins'),
                 'update' => $can('update_plugins'),
+                'delete' => $can('delete_plugins'),
+                'install' => false,
                 'themes' => $can('switch_themes'),
+                'deleteThemes' => $can('delete_themes'),
+                'updateThemes' => $can('update_themes'),
+                'updateLanguages' => false,
+                'installThemes' => false,
+                'licenses' => false,
+                'deleteUsers' => $can('delete_users'),
+                'removeUsers' => false,
+                'networkPlugins' => false,
+                'networkThemes' => false,
+                'orders' => false,
+                'products' => false,
+                'coupons' => false,
+                'customers' => false,
+                'subscriptions' => false,
                 'settings' => $can('manage_options'),
                 'moderate' => $can('moderate_comments'),
                 'terms' => $can('manage_categories'),
@@ -90,6 +108,10 @@ final readonly class BootPayload
             'multisite' => false,
             'wc' => false,
             'ajaxUrl' => $this->permalinks->url('/wp-admin/admin-ajax.php'),
+            // No admin-ajax plugin toggles: the app falls back to PUT wp/v2/plugins.
+            'pluginAjax' => null,
+            'comments' => true,
+            'pretty' => $this->permalinks->isPretty(),
         ];
     }
 }

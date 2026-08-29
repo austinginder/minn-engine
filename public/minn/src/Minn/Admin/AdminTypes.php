@@ -65,6 +65,28 @@ final class AdminTypes
         return $out;
     }
 
+    public function restBaseOf(string $slug): string
+    {
+        return (string) ($this->types->all()[$slug]['rest_base'] ?? $slug);
+    }
+
+    public function singularOf(string $slug): string
+    {
+        return (string) ($this->extra()[$slug]['labels']['singular_name'] ?? '');
+    }
+
+    /** The viewable types a person edits in the app: slug => rest base. @return array<string, string> */
+    public function editable(): array
+    {
+        $out = [];
+        foreach ($this->types->all() as $slug => $type) {
+            if (!empty($this->extra()[$slug]['viewable']) && $slug !== 'attachment') {
+                $out[$slug] = (string) $type['rest_base'];
+            }
+        }
+        return $out;
+    }
+
     /** Whether a UI post type still supports comments. */
     public function commentsEnabled(): bool
     {

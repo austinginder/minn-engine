@@ -203,12 +203,75 @@ now matched by the engine (caught by the auth/caps/writes suites):
   OTHER user holding a `_edit_lock` within core's 150s window as
   `{ user, name }`, else null).
 
+## The Manage views (suite `admin-surfaces`, 59 checks)
+
+Every route below sits behind the `edit_posts` floor; the finer gate is
+named per route. Where the plugin answers from site data the engine
+matches it at live parity; where the plugin answers from WordPress
+internals the engine answers for itself in the same shape.
+
+**Structure.** `GET term-taxonomies` (parity: show_ui taxonomies that
+organise a public type and pass the caller's `manage_terms`; categories,
+tags, then alphabetical; `count` counts every term, empty ones included).
+`GET post-types` (manage_options; parity apart from `backends`, which is
+`[]` because the engine stores no post-type definitions: core types from
+`data/types-admin.json` supports, site-declared types as source `minn`,
+`post` carries `post_format` the way the reference registers it, `count`
+sums publish/future/draft/pending/private). `GET taxonomies`
+(manage_options; parity apart from `backends`). Creating or editing types
+and taxonomies has no route: that is the `minn.json` manifest's job.
+
+**Extensions.** `GET themes` (switch_themes): every theme folder with a
+style.css, active first; `block` is the presence of `templates/index.html`;
+`on_wporg` false, `update` null, `auto_updates` false: there is no update
+channel. `POST themes/activate {stylesheet}` writes `stylesheet`,
+`template`, and `current_theme` (404 for an unknown folder or a missing
+parent). `GET plugin-updates` is the empty shape with `autoAllowed: false`;
+`GET plugin-meta` is `{}`; `GET translations` is `{count: 0, groups: []}`.
+The plugin list itself is `wp/v2/plugins` (contracts/rest/plugins.md).
+
+**System** (manage_options). `GET system` carries the plugin's keys
+(`generated, checks, config, logs, licenses, extensions, integrations,
+groups`) with the engine's own facts: checks `engine, php, https, memory,
+opcache, debug, uploads, autoload, cron, mail`; groups `Minn Engine, PHP,
+Database (+ tables, autoload), Server`; `config.editable` is false and
+every constant is `locked` (the engine never rewrites wp-config.php, and
+`POST system/config` refuses with 400 `not_editable`); `licenses` and
+`integrations` are null; `extensions` lists manifests first, then the
+WordPress plugin folders marked "not run". `GET system/cron` lists every
+scheduled post as a one-off `minn_publish_post` event; `GET
+system/autoload` mirrors the plugin's query; `GET system/logs`,
+`GET/DELETE system/logs/{id}`, and `GET/DELETE system/debug-log` read the
+debug log the failure handler writes and PHP's own error log when it is a
+separate file inside the site (`Minn\Admin\Logs`; the last 256 KB, the
+partial first line dropped; files outside the site are named, never read).
+
+**Sessions.** `GET users/{id}/sessions` (self, or `edit_users`) lists the
+live rows of `session_tokens` as `{verifier, ip, ua, login, expiration,
+current}` newest first; `verifier` is the store's key, the sha256 of the
+token, so `current` is computable from the caller's own token. `DELETE
+users/{id}/sessions` signs the person out everywhere, keeping the caller's
+own session when they act on themselves; `DELETE
+users/{id}/sessions/{verifier}` removes one (404 `not_found`). The
+reference reads the engine's rewritten store (round trip in the suite).
+
+**Appearance.** `GET/POST me/appearance` and `users/{id}/appearance`
+(`edit_users` for others) read and write the plugin's `minn_admin_appearance`
+user meta as a serialized array (decoded by `Serialized::decode`, never
+`unserialize`), so a scheme picked on either stack shows on the other.
+`defaultAdmin` and `frontBar` are always reported `true` and never written:
+the engine has no other admin and no other bar. The boot payload's
+`user.policy` is `{signin: 'minn', toolbar: 'minn'}` for the same reason.
+
+**Documents.** `GET changelog` and `GET guide` serve the bundle's own
+`changelog.md` and `docs/user-guide.md` with the app version (parity).
+`GET users/{id}/hidden` is `{hidden: []}`.
+
 ## Known gaps (recorded, not hidden)
 
-- Plugin/theme update rows and captured admin notices need extension
-  awareness the engine does not have.
+- Captured admin notices (`/notices/*`), `/stats`, `/overview/traffic-day`
+  and the adapter namespaces need plugin runtimes the engine does not have.
 - `sanitize_text_field` on the read id is approximated (tag strip +
   whitespace collapse); ids are machine-generated slugs in practice.
-- The remaining dashboard routes (`/overview/activity`,
-  `/overview/traffic-day`, `/stats`, `/boot-status`, `/notices/*`) are not
-  yet implemented; the app degrades per-panel.
+- `wp/v2/users/{id}/application-passwords` lists `[]`: no passwords exist
+  and none can be created yet.

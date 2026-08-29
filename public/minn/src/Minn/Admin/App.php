@@ -47,6 +47,19 @@ final readonly class App
         return '0.0.0';
     }
 
+    /** The absolute path of a readable file inside the app, or null. */
+    public function file(string $relative): ?string
+    {
+        if (!$this->installed()) {
+            return null;
+        }
+        $full = realpath($this->dir . '/' . ltrim($relative, '/'));
+        if ($full === false || !str_starts_with($full, realpath($this->dir) . '/') || !is_file($full) || !is_readable($full)) {
+            return null;
+        }
+        return $full;
+    }
+
     /** A self-busting asset version: app version plus file mtime. */
     public function assetVersion(string $relative): string
     {

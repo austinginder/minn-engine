@@ -5,13 +5,22 @@ declare(strict_types=1);
 namespace Minn\Rest;
 
 use Minn\Admin\AdminTypes;
+use Minn\Admin\App;
+use Minn\Admin\Appearance;
+use Minn\Admin\Diagnostics;
+use Minn\Admin\Logs;
+use Minn\Admin\SystemController;
+use Minn\Admin\ManageController;
+use Minn\Admin\SessionsController;
 use Minn\Admin\CoreStatus;
 use Minn\Admin\Dashboard;
 use Minn\Admin\Notifications;
 use Minn\Admin\V1Controller;
 use Minn\Auth\Authenticator;
 use Minn\Auth\Capabilities;
+use Minn\Auth\Sessions;
 use Minn\Content\Comments;
+use Minn\Content\Inventory;
 use Minn\Content\Menus;
 use Minn\Content\Posts;
 use Minn\Content\PostWriter;
@@ -62,8 +71,10 @@ final readonly class Api
         $postObject = new PostObject($db, $posts, $users, $permalinks, $url, $caller);
         $termObject = new TermObject($db, $permalinks, $url, $caller);
         $userObject = new UserObject($db, $users, $permalinks, $url, $caller);
-        $declared = (new Loader(rtrim(ABSPATH, '/') . '/wp-content', $site))->declaredTypes();
-        $types = new Types($url, $declared);
+        $contentDir = rtrim(ABSPATH, '/') . '/wp-content';
+        $loader = new Loader($contentDir, $site);
+        $types = new Types($url, $loader->declaredTypes());
+        $taxonomies = new Taxonomies($url);
         $uploads = new Uploads($site, $permalinks, ABSPATH . 'wp-content/uploads');
         $mediaObject = new MediaObject($posts, $uploads, $permalinks, $url, $caller);
         $commentObject = new CommentObject(new Comments($db), $posts, $permalinks, $url, $caller);
@@ -79,6 +90,16 @@ final readonly class Api
             new TermsController($db, $terms, $site, $termObject, $caller),
             new UsersController($db, $users, $site, $userObject, $url, $caller, $capabilities->roles()),
             new TypesController($types),
+            new TaxonomiesController($taxonomies, $caller),
+            new SearchController($db, $types, $permalinks, $url, $caller),
+            new PluginsController($site, new Inventory($contentDir, $site), $loader, $url, $caller),
+            new SessionsController($users, new Sessions($users), $caller),
+            new ManageController($db, $site, $types, $taxonomies, $loader, new Inventory($contentDir, $site), $permalinks, new App(MINN_ENGINE_DIR . '/admin'), new Appearance($users), $caller, $contentDir),
+            new SystemController(
+                new Diagnostics($db, $site, $permalinks, new Inventory($contentDir, $site), $loader, new Logs(rtrim(ABSPATH, '/')), MINN_ENGINE_VERSION, rtrim(ABSPATH, '/')),
+                new Logs(rtrim(ABSPATH, '/')),
+                $caller,
+            ),
             new SettingsController(new Settings($site), $caller),
             new CommentsController(new Comments($db), $posts, $site, $commentObject, $caller),
             new RevisionsController($posts, new Revisions($db, $writer, $site), $url, $caller),

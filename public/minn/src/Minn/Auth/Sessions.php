@@ -79,7 +79,12 @@ final readonly class Sessions
     /** Removes one session; true when it existed. */
     public function destroy(int $userId, string $token): bool
     {
-        $key = hash('sha256', $token);
+        return $this->destroyKey($userId, hash('sha256', $token));
+    }
+
+    /** Removes the session stored under a key (the sha256 of its token); true when it existed. */
+    public function destroyKey(int $userId, string $key): bool
+    {
         $sessions = $this->read($userId);
         if (!isset($sessions[$key])) {
             return false;
@@ -87,6 +92,13 @@ final readonly class Sessions
         unset($sessions[$key]);
         $this->write($userId, $sessions);
         return true;
+    }
+
+    /** Ends every session of the user except the one stored under the given key. */
+    public function destroyOthers(int $userId, string $keepKey): void
+    {
+        $sessions = $this->read($userId);
+        $this->write($userId, isset($sessions[$keepKey]) ? [$keepKey => $sessions[$keepKey]] : []);
     }
 
     /** @return array<string, array{expiration: int, ip: string, ua: string, login: int}> */

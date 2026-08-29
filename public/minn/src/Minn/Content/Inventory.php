@@ -181,6 +181,36 @@ final readonly class Inventory
         return array_values($items);
     }
 
+    /**
+     * Every regular plugin's main file: relative "dir/file.php" (or
+     * "file.php" for a single-file plugin) to its absolute path.
+     *
+     * @return array<string, string>
+     */
+    public function pluginFiles(): array
+    {
+        $dir = $this->contentDir . '/plugins';
+        $out = [];
+        foreach (is_dir($dir) ? (scandir($dir) ?: []) : [] as $entry) {
+            if ($entry[0] === '.' || $entry === 'index.php') {
+                continue;
+            }
+            $path = $dir . '/' . $entry;
+            if (is_file($path) && str_ends_with($entry, '.php')) {
+                if (FileHeaders::values($path, ['Plugin Name'])['Plugin Name'] !== '') {
+                    $out[$entry] = $path;
+                }
+            } elseif (is_dir($path)) {
+                $file = self::mainPluginFile($path, $entry);
+                if ($file !== null) {
+                    $out[$entry . '/' . basename($file)] = $file;
+                }
+            }
+        }
+        ksort($out, SORT_STRING);
+        return $out;
+    }
+
     private static function mainPluginFile(string $dir, string $slug): ?string
     {
         $preferred = $dir . '/' . $slug . '.php';

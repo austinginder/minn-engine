@@ -89,6 +89,8 @@ final readonly class Capabilities
                 : $this->mapPostCapability($capability, $userId, $postId),
             'edit_page' => $this->mapPostCapability('edit_post', $userId, (int) $postId),
             'delete_page' => $this->mapPostCapability('delete_post', $userId, (int) $postId),
+            'edit_categories', 'delete_categories', 'manage_post_tags', 'edit_post_tags', 'delete_post_tags' => ['manage_categories'],
+            'assign_categories', 'assign_post_tags' => ['edit_posts'],
             default => [$capability],
         };
     }

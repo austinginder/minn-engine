@@ -59,17 +59,38 @@ post and page with correct statuses, filter tabs (All / Posts / Pages /
 Trash), sortable columns, and row actions, all read live through the engine.
 No fatal console or page errors.
 
-## Honest gaps (the `minn-admin/v1` surface)
+## The engine is the only admin
 
-app.js also calls the plugin's own `minn-admin/v1` namespace — `overview`
-(dashboard stats), `notifications`, `plugin-updates`, `plugin-meta`, `core`,
-`system`, and the ~100 adapters — plus `wp/v2/plugins`. The engine does not
-implement those yet, so those calls `404` and app.js degrades them gracefully
-(the Overview dashboard shows an error card; Content works fully because it
-rides `wp/v2`). Implementing a first slice of `minn-admin/v1` (starting with
-`overview` and `notifications`) is the next admin milestone. Media, Comments,
-and Users views depend on `wp/v2/media`, `wp/v2/comments`, and the write side
-of `wp/v2/users`, which are not built yet either.
+The boot payload's `engine: "Minn Engine/x"` key is how the app knows there
+is no WordPress behind it. On that flag Minn Admin (since 0.36.0) hides the
+sidebar's WordPress button, the "Classic wp-admin" palette command, and the
+three profile switches that only exist beside wp-admin, and labels the
+engine's post types "Managed by Minn Engine". The engine reports
+`pluginAjax: null` so plugin toggles ride `PUT wp/v2/plugins/{plugin}`, and
+`site.blockTheme` from the active theme.
+
+## The Minn bar on the public site
+
+`Minn\Front\AdminBar` renders the app's own front-end bar on every themed
+page for a signed-in reader who can `edit_posts`: the same markup the
+plugin prints, the bundle's `assets/css/bar.css` and `assets/js/bar.js`
+served through `/minn-admin-asset/`, and `window.MINN_BAR` with the REST
+base, a `wp_rest` nonce, the app URL, the capability-filtered command list,
+the searchable post types, and the status chip (only "Hidden from search"
+when `blog_public` is 0, with the settings fix for `manage_options`). The
+Edit button targets the singular being viewed when the reader can edit it
+(`/minn-admin/editor/{rest_base}/{id}`). The body gains `minn-front-bar`;
+previews and anonymous readers get no bar. The bar is on for everyone who
+passes the gate: there is no per-person opt-in on the engine. Suite:
+`admin-surfaces` (section 8) and `tests/browser/admin-views.test.js`.
+
+## Honest gaps
+
+The adapter namespaces (`minn-admin/v1/<plugin>/*`), captured admin notices,
+`/stats`, and installing plugins or themes need runtimes the engine does not
+have; the app degrades those panels. Everything the Manage nav shows
+(Extensions, Users, Menus, Structure, System, Settings) answers from the
+engine now: see `contracts/rest/minn-admin-v1.md`.
 
 The point of this milestone is proven: **the admin app the whole vision hangs
 on runs on the from-scratch, MIT engine.**

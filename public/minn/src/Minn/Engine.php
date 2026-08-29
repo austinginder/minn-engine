@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Minn;
 
+use Minn\Admin\AdminTypes;
 use Minn\Admin\App;
+use Minn\Admin\Appearance;
 use Minn\Admin\AppController;
 use Minn\Admin\BootPayload;
 use Minn\Auth\Authenticated;
@@ -18,6 +20,7 @@ use Minn\Content\Posts;
 use Minn\Content\Site;
 use Minn\Content\Users;
 use Minn\Content\Comments;
+use Minn\Front\AdminBar;
 use Minn\Front\AssetsController;
 use Minn\Front\Feeds;
 use Minn\Front\ProbeController;
@@ -32,6 +35,8 @@ use Minn\Http\Response;
 use Minn\Http\Router;
 use Minn\Login\LoginController;
 use Minn\Rest\Api;
+use Minn\Rest\RestUrl;
+use Minn\Rest\Types;
 use Minn\Theme\PageRenderer;
 use Minn\Theme\Theme;
 use Minn\Auth\Salts;
@@ -118,7 +123,10 @@ final readonly class Engine
         $resolver = Resolver::fromDb($db, $canReadUnpublished);
         $permalinks = $resolver->permalinks();
         $theme = Theme::active($site, $permalinks, ABSPATH . 'wp-content/themes');
-        $pages = $theme === null ? null : PageRenderer::create($db, $theme, $permalinks, $resolver->perPage());
+        $appearance = new Appearance($users);
+        $adminTypes = new AdminTypes(new Types(new RestUrl($permalinks), (new Loader(ABSPATH . 'wp-content', $site))->declaredTypes()), $capabilities);
+        $bar = AdminBar::forReader($session instanceof Authenticated ? $session : null, $capabilities, $site, $permalinks, $app, $appearance, $adminTypes);
+        $pages = $theme === null ? null : PageRenderer::create($db, $theme, $permalinks, $resolver->perPage(), $bar);
 
         $posts = new Posts($db);
         $generator = (string) (\Minn\Support\Serialized::field($site->option('_site_transient_update_core'), 'version_checked') ?? '');
@@ -130,7 +138,7 @@ final readonly class Engine
 
         $router = (new Router())->register(
             new AssetsController($this->engineDir . '/assets'),
-            new AppController($app, new BootPayload($site, $permalinks, $capabilities, $app, $this->version), $authenticator, $capabilities, $permalinks, $this->version),
+            new AppController($app, new BootPayload($site, $permalinks, $capabilities, $app, $this->version, $appearance, $theme !== null), $authenticator, $capabilities, $permalinks, $this->version),
             new LoginController($site, $permalinks, $authenticator, $sessions, new AuthCookies($db, $cookie), $users, new LoginThrottle($db), new PasswordReset($users), Mailer::forSite($site)),
             $probes,
             new CommentPostController($site, $posts, new Comments($db), $permalinks, $authenticator, $capabilities, new AuthCookies($db, $cookie)),

@@ -21,6 +21,7 @@ use Minn\Content\Users;
 use Minn\Db;
 use Minn\Front\Kind;
 use Minn\Front\Permalinks;
+use Minn\Front\AdminBar;
 use Minn\Front\Resolution;
 use Minn\Front\Resolver;
 use Minn\Support\Html;
@@ -45,10 +46,11 @@ final readonly class PageRenderer
         private Templates $templates,
         private Renderer $renderer,
         private int $perPage,
+        private ?AdminBar $bar = null,
     ) {
     }
 
-    public static function create(Db $db, Theme $theme, Permalinks $permalinks, int $perPage): self
+    public static function create(Db $db, Theme $theme, Permalinks $permalinks, int $perPage, ?AdminBar $bar = null): self
     {
         $site = new Site($db);
         $posts = new Posts($db);
@@ -60,7 +62,7 @@ final readonly class PageRenderer
         (new QueryBlocks($posts, $site, $permalinks))->register($renderer);
         (new Navigation($db, $posts, $permalinks))->register($renderer);
         (new Comments($db, new CommentStore($db), $site, $permalinks))->register($renderer);
-        return new self($db, $site, $posts, $permalinks, $theme, $templates, $renderer, $perPage);
+        return new self($db, $site, $posts, $permalinks, $theme, $templates, $renderer, $perPage, $bar);
     }
 
     /**
@@ -87,7 +89,7 @@ final readonly class PageRenderer
             array_splice($classes, $at, 0, $tokens);
         }
         if (Reader::current()->loggedIn()) {
-            // The reference also adds admin-bar tokens here; the engine has no admin bar.
+            // The reference adds its own toolbar tokens here; the engine's bar is the Minn bar, named below.
             $classes[] = 'logged-in';
         }
         if ((int) ($this->site->option('site_logo') ?? 0) > 0) {
@@ -101,6 +103,9 @@ final readonly class PageRenderer
             $classes[] = 'wp-child-theme-' . $this->theme->slug;
         }
         array_push($classes, ...(Extensions::seams()?->bodyClasses() ?? []));
+        if ($this->bar !== null && !$resolution->preview) {
+            $classes[] = 'minn-front-bar';
+        }
         return $classes;
     }
 
@@ -124,6 +129,7 @@ final readonly class PageRenderer
         $themeStyle = $this->theme->styleUri();
 
         $title = Extensions::seams()?->applyTitle($title) ?? $title;
+        $bar = $resolution->preview ? null : $this->bar;
         $document = '<!DOCTYPE html>' . "\n" . '<html lang="en">' . "\n" . '<head>' . "\n"
             . '<meta charset="UTF-8" />' . "\n"
             . '<meta name="viewport" content="width=device-width, initial-scale=1" />' . "\n"
@@ -134,11 +140,13 @@ final readonly class PageRenderer
             . ($themeStyle === null ? '' : '<link rel="stylesheet" id="' . Html::attr($this->theme->slug) . '-style-css" href="' . Html::attr($themeStyle) . '" />' . "\n")
             . (Extensions::seams()?->renderHead() ?? '')
             . ($fontFaces === '' ? '' : '<style class="wp-fonts-local">' . "\n" . $fontFaces . '</style>' . "\n")
+            . ($bar === null ? '' : $bar->head())
             . '</head>' . "\n"
             . '<body class="' . Html::attr($bodyClass) . '">' . "\n"
             . '<a class="skip-link screen-reader-text" id="wp-skip-link" href="#wp--skip-link--target">Skip to content</a>'
             . '<div class="wp-site-blocks">' . $body . '</div>' . "\n"
             . (Extensions::seams()?->renderFooter() ?? '')
+            . ($bar === null ? '' : $bar->render($resolution))
             . '</body>' . "\n" . '</html>' . "\n";
         return Extensions::seams()?->applyDocumentFilters($document) ?? $document;
     }

@@ -18,3 +18,9 @@ public/minn/admin
 # Browser test deps
 tests/browser/node_modules
 tests/browser/package-lock.json
+
+# The Minn Admin plugin folder as the reference sees it (its own repo; the engine lists it, never runs it)
+public/wp-content/plugins/minn-admin
+
+# The engine writes its failure log here; never a fixture
+public/wp-content/debug.log

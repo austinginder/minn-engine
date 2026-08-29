@@ -30,7 +30,7 @@ start_reference "$PWD/../wp-reference" 8123
 start_reference "$DOGFOOD_REF" 8124
 
 failed=0
-for suite in style rest-posts auth caps writes login-endpoint rest-parity minn-v1 comments media settings users terms write-fields editor permalinks blocks theme styles probes dogfood cli layout hardening security install cron-mail reader extensions front-page menus declared-types; do
+for suite in style rest-posts auth caps writes login-endpoint rest-parity minn-v1 comments media settings users terms write-fields editor permalinks blocks theme styles probes dogfood cli layout hardening security install cron-mail reader extensions front-page menus declared-types admin-surfaces; do
 	printf '\n=== %s ===\n' "$suite"
 	php "$suite.test.php" || failed=1
 done
@@ -43,6 +43,8 @@ if [ -d browser/node_modules ]; then
 	node browser/geometry.test.js --dev || failed=1
 	printf "\n=== browser: geometry (dogfood) ===\n"
 	node browser/geometry.test.js || failed=1
+	printf "\n=== browser: admin views (dogfood) ===\n"
+	node browser/admin-views.test.js || failed=1
 fi
 
 printf '\n'
