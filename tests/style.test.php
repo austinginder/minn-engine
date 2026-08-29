@@ -81,7 +81,7 @@ foreach ($files as $path) {
 // whose body runs past forty lines (a decision hiding in a signature).
 // Lower a number here when a file loses its last offender; never raise one.
 $facadeQueries = [];
-$facadeLong = ['add_query_arg', 'register_rest_route', 'esc_url', 'get_avatar', 'get_avatar_data', 'image_get_intermediate_size', 'image_resize_dimensions', 'register_block_type_from_metadata', 'wp_calculate_image_srcset', 'wp_get_attachment_image', 'wp_http_validate_url', 'wp_insert_user', 'wp_prepare_attachment_for_js'];
+$facadeLong = ['add_query_arg', 'register_rest_route', 'esc_url', 'get_avatar', 'get_avatar_data', 'image_get_intermediate_size', 'image_resize_dimensions', 'wp_calculate_image_srcset', 'wp_get_attachment_image', 'wp_http_validate_url', 'wp_prepare_attachment_for_js'];
 $facadeDir = dirname($root) . '/wp-api';
 foreach (glob("{$facadeDir}/*.php") as $file) {
     $name = basename($file);

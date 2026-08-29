@@ -5,6 +5,7 @@ use Minn\Blocks\Block as MinnBlock;
 use Minn\Blocks\Parser;
 use Minn\Content\Blocks as MinnBlocks;
 use Minn\Runtime\Runtime;
+use Minn\Runtime\BlockMetadata;
 
 /** @internal the engine's block value objects as the arrays plugin code reads */
 function _minn_block_to_array(MinnBlock $block): array
@@ -589,97 +590,25 @@ function register_block_type_from_metadata($file_or_folder, $args = [])
     }
     $metadata['file'] = wp_normalize_path(realpath($metadata_file));
     $metadata = apply_filters('block_type_metadata', $metadata);
-    // block.json's textdomain feeds translation only; the registered type carries none unless given as an argument.
-    $textdomain = $metadata['textdomain'] ?? null;
-    $settings = [];
-    $property_mappings = ['apiVersion' => 'api_version', 'name' => 'name', 'title' => 'title', 'category' => 'category', 'parent' => 'parent', 'ancestor' => 'ancestor', 'icon' => 'icon', 'description' => 'description', 'keywords' => 'keywords', 'attributes' => 'attributes', 'providesContext' => 'provides_context', 'usesContext' => 'uses_context', 'selectors' => 'selectors', 'supports' => 'supports', 'styles' => 'styles', 'variations' => 'variations', 'example' => 'example', 'allowedBlocks' => 'allowed_blocks'];
-    foreach ($property_mappings as $key => $mapped_key) {
-        if (isset($metadata[$key])) {
-            $settings[$mapped_key] = $metadata[$key];
-        }
-    }
-    $script_fields = ['editorScript' => 'editor_script_handles', 'script' => 'script_handles', 'viewScript' => 'view_script_handles'];
-    foreach ($script_fields as $metadata_field_name => $settings_field_name) {
-        if (!empty($settings[$metadata_field_name])) {
-            $metadata[$metadata_field_name] = $settings[$metadata_field_name];
-        }
-        if (!empty($metadata[$metadata_field_name])) {
-            $scripts = $metadata[$metadata_field_name];
-            $processed = [];
-            if (is_array($scripts)) {
-                for ($index = 0; $index < count($scripts); $index++) {
-                    $result = register_block_script_handle($metadata, $metadata_field_name, $index);
-                    if ($result) {
-                        $processed[] = $result;
-                    }
-                }
-            } else {
-                $result = register_block_script_handle($metadata, $metadata_field_name);
-                if ($result) {
-                    $processed[] = $result;
-                }
+    $settings = BlockMetadata::settings(
+        $metadata,
+        static fn (array $meta, string $field, int $index) => register_block_script_handle($meta, $field, $index),
+        static fn (array $meta, string $field, int $index) => register_block_style_handle($meta, $field, $index),
+        static fn (array $meta, string $field, int $index) => register_block_script_module_id($meta, $field, $index),
+        static function (string $render) use ($metadata): ?Closure {
+            $path = wp_normalize_path(realpath(dirname($metadata['file']) . '/' . remove_block_asset_path_prefix($render)) ?: '');
+            if ($path === '' || !is_file($path)) {
+                return null;
             }
-            $settings[$settings_field_name] = $processed;
-        }
-    }
-    if (!empty($metadata['viewScriptModule'])) {
-        $ids = [];
-        foreach (array_values((array) $metadata['viewScriptModule']) as $index => $value) {
-            $id = register_block_script_module_id($metadata + ['viewScriptModule' => $value], 'viewScriptModule', $index);
-            if ($id !== false) {
-                $ids[] = $id;
-            }
-        }
-        $settings['view_script_module_ids'] = $ids;
-    }
-    $style_fields = ['editorStyle' => 'editor_style_handles', 'style' => 'style_handles', 'viewStyle' => 'view_style_handles'];
-    foreach ($style_fields as $metadata_field_name => $settings_field_name) {
-        if (!empty($settings[$metadata_field_name])) {
-            $metadata[$metadata_field_name] = $settings[$metadata_field_name];
-        }
-        if (!empty($metadata[$metadata_field_name])) {
-            $styles = $metadata[$metadata_field_name];
-            $processed = [];
-            if (is_array($styles)) {
-                for ($index = 0; $index < count($styles); $index++) {
-                    $result = register_block_style_handle($metadata, $metadata_field_name, $index);
-                    if ($result) {
-                        $processed[] = $result;
-                    }
-                }
-            } else {
-                $result = register_block_style_handle($metadata, $metadata_field_name);
-                if ($result) {
-                    $processed[] = $result;
-                }
-            }
-            $settings[$settings_field_name] = $processed;
-        }
-    }
-    if (!empty($metadata['blockHooks'])) {
-        $position_mappings = ['before' => 'before', 'after' => 'after', 'firstChild' => 'first_child', 'lastChild' => 'last_child'];
-        $settings['block_hooks'] = [];
-        foreach ($metadata['blockHooks'] as $anchor_block_name => $position) {
-            if (!isset($position_mappings[$position])) {
-                continue;
-            }
-            $settings['block_hooks'][$anchor_block_name] = $position_mappings[$position];
-        }
-    }
-    if (!empty($metadata['render'])) {
-        $template_path = wp_normalize_path(realpath(dirname($metadata['file']) . '/' . remove_block_asset_path_prefix($metadata['render'])) ?: '');
-        if ($template_path !== '' && is_file($template_path)) {
-            $settings['render_callback'] = static function ($attributes, $content, $block) use ($template_path) {
+            return static function ($attributes, $content, $block) use ($path) {
                 ob_start();
-                require $template_path;
+                require $path;
                 return (string) ob_get_clean();
             };
-        }
-    }
-    $settings = array_merge($settings, (array) $args);
-    $settings = apply_filters('block_type_metadata_settings', $settings, $metadata);
-    $metadata['name'] = $settings['name'] ?? $metadata['name'];
-    return WP_Block_Type_Registry::get_instance()->register($metadata['name'], $settings);
+        },
+    );
+    $settings = apply_filters('block_type_metadata_settings', array_merge($settings, (array) $args), $metadata);
+    return WP_Block_Type_Registry::get_instance()->register($settings['name'] ?? $metadata['name'], $settings);
 }
 
 function wp_register_block_metadata_collection($path, $manifest)

@@ -3,6 +3,8 @@
 
 use Minn\Content\Users;
 use Minn\Runtime\Runtime;
+use Minn\Runtime\Refusal;
+use Minn\Runtime\UserInsert;
 use Minn\Runtime\PostLookup;
 
 function _minn_rewrite(): WP_Rewrite
@@ -223,80 +225,46 @@ function wp_insert_user($userdata)
     if ($update && !$existing) {
         return new WP_Error('invalid_user_id', 'Invalid user ID.');
     }
+    $insert = new UserInsert(
+        static fn (string $login): string => (string) sanitize_user($login, true),
+        static fn (string $slug): string => (string) sanitize_title($slug),
+        static fn (string $email): bool => (bool) is_email($email),
+        static fn (string $login): bool => (bool) username_exists($login),
+        static fn (string $email): int => (int) email_exists($email),
+        static fn (string $role): bool => isset(Runtime::current()->capabilities->roles()->all()[$role]),
+    );
+    $resolved = $insert->resolve($userdata, $existing ? $existing->to_array() : null);
+    if ($resolved instanceof Refusal) {
+        return new WP_Error($resolved->code, $resolved->message, $resolved->data);
+    }
     $users = new Users(Runtime::current()->db);
-    $login = $update ? $existing->user_login : sanitize_user(trim((string) ($userdata['user_login'] ?? '')), true);
     if (!$update) {
-        if ($login === '') {
-            return new WP_Error('empty_user_login', 'Cannot create a user with an empty login name.');
-        }
-        if (mb_strlen($login) > 60) {
-            return new WP_Error('user_login_too_long', 'Username may not be longer than 60 characters.');
-        }
-        if (username_exists($login)) {
-            return new WP_Error('existing_user_login', 'Sorry, that username already exists!');
-        }
-        if (empty($userdata['user_pass'])) {
-            return new WP_Error('empty_user_pass', 'A password is required for a new user.');
-        }
-    }
-    $email = isset($userdata['user_email']) ? (string) $userdata['user_email'] : ($update ? $existing->user_email : '');
-    if ($email !== '' && !is_email($email)) {
-        return new WP_Error('invalid_email', 'The email address isn&#8217;t correct.');
-    }
-    $emailOwner = $email !== '' ? email_exists($email) : false;
-    if ($emailOwner && (!$update || (int) $emailOwner !== (int) $userdata['ID'])) {
-        return new WP_Error('existing_user_email', 'Sorry, that email address is already used!');
-    }
-    $nicename = isset($userdata['user_nicename']) && $userdata['user_nicename'] !== '' ? sanitize_title((string) $userdata['user_nicename']) : ($update ? $existing->user_nicename : null);
-    $display_name = isset($userdata['display_name']) && $userdata['display_name'] !== '' ? (string) $userdata['display_name'] : ($update ? $existing->display_name : '');
-    $role = $userdata['role'] ?? null;
-    if ($role !== null && !isset(Runtime::current()->capabilities->roles()->all()[$role])) {
-        return new WP_Error('invalid_role', 'Invalid role.');
-    }
-    $meta_keys = ['nickname', 'first_name', 'last_name', 'description', 'rich_editing', 'syntax_highlighting', 'comment_shortcuts', 'admin_color', 'use_ssl', 'show_admin_bar_front', 'locale'];
-    if (!$update) {
-        $id = $users->createAccount([
-            'login' => $login,
-            'password' => (string) $userdata['user_pass'],
-            'email' => $email,
-            'url' => (string) ($userdata['user_url'] ?? ''),
-            'nicename' => $nicename,
-            'display_name' => $display_name,
-            'role' => $role ?? (string) get_option('default_role'),
-            'nickname' => (string) ($userdata['nickname'] ?? $login),
-            'first_name' => (string) ($userdata['first_name'] ?? ''),
-            'last_name' => (string) ($userdata['last_name'] ?? ''),
-            'description' => (string) ($userdata['description'] ?? ''),
-            'locale' => (string) ($userdata['locale'] ?? ''),
-        ]);
+        $id = $users->createAccount(UserInsert::account($userdata, $resolved, (string) get_option('default_role')));
         if (!empty($userdata['user_registered'])) {
             $users->update($id, ['user_registered' => (string) $userdata['user_registered']]);
         }
         wp_cache_delete($id, 'user_meta');
-        $user = get_userdata($id);
         do_action('user_register', $id, $userdata);
         return $id;
     }
-    $id = (int) $userdata['ID'];
-    $columns = [];
-    foreach (['user_email' => $email, 'user_url' => isset($userdata['user_url']) ? Minn\Support\Kses::url((string) $userdata['user_url']) : null, 'user_nicename' => $nicename, 'display_name' => $display_name, 'user_registered' => $userdata['user_registered'] ?? null] as $column => $value) {
-        if ($value !== null && (string) $value !== (string) $existing->{$column}) {
-            $columns[$column] = (string) $value;
-        }
-    }
-    if (!empty($userdata['user_pass'])) {
-        $columns['user_pass'] = wp_hash_password((string) $userdata['user_pass']);
-    }
+    return _minn_update_user_profile($existing, $userdata, $resolved);
+}
+
+/** @internal the update half of wp_insert_user: changed columns, the profile meta, the role */
+function _minn_update_user_profile(WP_User $existing, array $userdata, array $resolved): int
+{
+    $id = $existing->ID;
+    $columns = UserInsert::changes($userdata, $existing->to_array(), $resolved, static fn (string $url): string => Minn\Support\Kses::url($url), static fn (string $password): string => (string) wp_hash_password($password));
     if ($columns !== []) {
-        $users->update($id, $columns);
+        (new Users(Runtime::current()->db))->update($id, $columns);
     }
-    foreach ($meta_keys as $key) {
+    foreach (UserInsert::META_KEYS as $key) {
         if (array_key_exists($key, $userdata)) {
             update_user_meta($id, $key, $userdata[$key]);
         }
     }
-    if ($role !== null) {
-        $existing->set_role($role);
+    if ($resolved['role'] !== null) {
+        $existing->set_role($resolved['role']);
     }
     wp_cache_delete($id, 'user_meta');
     do_action('profile_update', $id, $existing, $userdata);
