@@ -51,7 +51,9 @@ registrations, each a typed closure, called in registration order:
 
 A manifest may add `"covers"`: what part of the replaced plugin the extension
 provides when it is not all of it; preflight prints it and lights AMBER instead of
-GREEN for that plugin.
+GREEN for that plugin. `"shortcodes"` and `"blocks"` name the content tokens
+the extension actually renders; preflight treats those as provided and still
+AMBERs any other shortcode or third-party block in the site's content.
 
 Not yet seams (next ports decide their shape): routes and REST controllers, cron
 jobs, CLI verbs, file assets by URL (a plugin folder is web-served, so an extension
@@ -86,9 +88,9 @@ allowed; the manifest's `license` says which. The engine never depends on either
 | `minn-ga-google-analytics` | ga-google-analytics | the gtag snippet from `gap_options`, head or footer, anonymize flag |
 | `minn-wp-retina-2x` | wp-retina-2x | a `name@2x.ext` file beside a full-size image joins the srcset at twice the width |
 | `minn-gallery-custom-links` | gallery-custom-links | anchors from `_gallery_link_*` attachment meta; the plugin's whole-document pass (attribute names lower-cased once something was linked; the count comment before `</body>`) |
-| `minn-jetpack-slideshow` | jetpack (covers: the slideshow block only) | the block's images without the lazy `auto` hint, the block's stylesheet, Swiper, and view script from the plugin's own folder, plus the extension's own `assets/wp-globals.js` (the `wp.domReady`, `wp.i18n`, `wp.escapeHtml` browser globals the view script expects the page to provide; the reference ships them from its script library) |
-| `minn-mosne-dark-palette` | mosne-dark-palette | the `mosne/dark-palette` navigation item from its attributes (labels, default mode, `enableAuto`, classes), its styles from the plugin's build folder, the generated palette rule (`html[data-theme="dark"]` re-points every `--wp--preset--color--{slug}` to a `--mosne-dark-palette-{slug}` variable from the block's `darkColorsPalette`; the scheme flips when `themeOption` is dark), and the head script that sets `data-theme` before paint; the toggle itself runs on the extension's own `assets/view.js` (the plugin's view script is a module on the block interactivity runtime, which the engine does not provide) |
-| `minn-ml-slider`, `minn-modula` | ml-slider, modula (covers: body class only) | the body class each added; the site's content uses neither |
+| `minn-jetpack-slideshow` | jetpack (covers: the slideshow block only; blocks: `jetpack/slideshow`) | the block's images without the lazy `auto` hint, the block's stylesheet, Swiper, and view script from the plugin's own folder, plus the extension's own `assets/wp-globals.js` (the `wp.domReady`, `wp.i18n`, `wp.escapeHtml` browser globals the view script expects the page to provide; the reference ships them from its script library) |
+| `minn-mosne-dark-palette` | mosne-dark-palette (blocks: `mosne/dark-palette`) | the `mosne/dark-palette` navigation item from its attributes (labels, default mode, `enableAuto`, classes), its styles from the plugin's build folder, the generated palette rule (`html[data-theme="dark"]` re-points every `--wp--preset--color--{slug}` to a `--mosne-dark-palette-{slug}` variable from the block's `darkColorsPalette`; the scheme flips when `themeOption` is dark), and the head script that sets `data-theme` before paint; the toggle itself runs on the extension's own `assets/view.js` (the plugin's view script is a module on the block interactivity runtime, which the engine does not provide) |
+| `minn-ml-slider`, `minn-modula` | ml-slider, modula (covers: body class only) | the body class each added; shortcodes and gallery blocks still AMBER in preflight |
 | `minn-autodescription` | autodescription (covers: titles, description, robots, canonical, Open Graph, Twitter, the schema.org graph; not its sitemap or query alterations) | the title (`{page} | {site}`, `{site} | {tagline}` at home), the meta block per page kind, and the ld+json graph with breadcrumbs, from the plugin's settings option and `_genesis_*` meta. Search descriptions are 160 characters, social ones 300, both cut on a word with an ellipsis unless a sentence ended; the og:image is the featured image with its size and alt, else the first content image, else the site icon |
 
 The child theme's `functions.php` printed its own Open Graph block on singular

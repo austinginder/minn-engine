@@ -15,19 +15,24 @@ namespace Minn\Extension;
  *     "license": "MIT",
  *     "replaces": ["block-visibility/block-visibility.php"],
  *     "autoload": {"Minn\\Ext\\BlockVisibility\\": "src/"},
- *     "extension": "Minn\\Ext\\BlockVisibility\\Extension"
+ *     "extension": "Minn\\Ext\\BlockVisibility\\Extension",
+ *     "shortcodes": ["example_tag"],
+ *     "blocks": ["vendor/block"]
  *   }
  *
  * "replaces" names the WordPress plugin files whose behaviour this
  * extension stands in for; the extension is active whenever one of them is
  * in active_plugins, or when its own folder is listed there, or when it is
- * named in the minn_active_extensions option.
+ * named in the minn_active_extensions option. "shortcodes" and "blocks"
+ * are the content tokens preflight treats as provided instead of missing.
  */
 final readonly class Manifest
 {
     /**
      * @param list<string> $replaces
      * @param array<string, string> $autoload namespace prefix => directory
+     * @param list<string> $shortcodes
+     * @param list<string> $blocks
      */
     public function __construct(
         public string $slug,
@@ -40,6 +45,8 @@ final readonly class Manifest
         public string $extension,
         /** what of the replaced plugin this provides, when not all of it */
         public string $covers = '',
+        public array $shortcodes = [],
+        public array $blocks = [],
     ) {
     }
 
@@ -63,6 +70,8 @@ final readonly class Manifest
             array_map('strval', (array) ($data['autoload'] ?? [])),
             $data['extension'],
             (string) ($data['covers'] ?? ''),
+            array_values(array_map('strval', (array) ($data['shortcodes'] ?? []))),
+            array_values(array_map('strval', (array) ($data['blocks'] ?? []))),
         );
     }
 }

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Cli;
 
+use Minn\Content\ContentScan;
+use Minn\Extension\Manifest;
 use Minn\Support\Serialized;
 use mysqli;
 use Throwable;
@@ -130,11 +132,30 @@ final class Installer
             }
         }
         $plugins = Serialized::stringList($option('active_plugins'));
+        $own = json_decode((string) ($option('minn_active_extensions') ?? '[]'), true);
+        $own = is_array($own) ? array_map('strval', $own) : [];
         $provided = [];
+        $coveredShortcodes = [];
+        $coveredBlocks = [];
         foreach (glob("{$root}/wp-content/{plugins,mu-plugins}/*/minn.json", GLOB_BRACE) ?: [] as $manifestFile) {
-            $manifest = \Minn\Extension\Manifest::read(dirname($manifestFile));
-            foreach ($manifest?->replaces ?? [] as $file) {
+            $manifest = Manifest::read(dirname($manifestFile));
+            if ($manifest === null) {
+                continue;
+            }
+            foreach ($manifest->replaces as $file) {
                 $provided[$file] = $manifest->slug . ($manifest->covers === '' ? '' : ' extension (' . $manifest->covers . ')');
+            }
+            $active = array_intersect($manifest->replaces, $plugins) !== []
+                || in_array($manifest->slug, $own, true)
+                || str_contains($manifest->dir, '/mu-plugins/')
+                || array_filter($plugins, static fn (string $p) => str_starts_with($p, $manifest->slug . '/')) !== [];
+            if ($active) {
+                foreach ($manifest->shortcodes as $tag) {
+                    $coveredShortcodes[$tag] = $manifest->slug;
+                }
+                foreach ($manifest->blocks as $name) {
+                    $coveredBlocks[$name] = $manifest->slug;
+                }
             }
         }
         $missing = array_values(array_filter($plugins, static fn (string $p) => !isset($provided[$p])));
@@ -152,9 +173,111 @@ final class Installer
         if ($mu !== []) {
             $this->light('AMBER', 'mu-plugins will not run: ' . implode(', ', $mu));
         }
+        $this->surveyContent($db, $config['prefix'], $coveredShortcodes, $coveredBlocks);
         $db->close();
         $this->say("Result: {$this->worst}");
         return $this->worst;
+    }
+
+    /**
+     * Shortcodes, third-party blocks, menu storage, extra tables, extra
+     * post types. The prefix is the identifier read from wp-config as text.
+     *
+     * @param array<string, string> $coveredShortcodes tag => extension slug
+     * @param array<string, string> $coveredBlocks block name => extension slug
+     */
+    private function surveyContent(mysqli $db, string $prefix, array $coveredShortcodes, array $coveredBlocks): void
+    {
+        $typesIn = "'" . implode("','", ContentScan::CONTENT_TYPES) . "'";
+        $shortcodes = [];
+        $blocks = [];
+        $result = $db->query("SELECT post_content FROM {$prefix}posts WHERE post_type IN ({$typesIn}) AND post_status NOT IN ('trash','auto-draft','inherit') AND post_content != ''");
+        if ($result) {
+            while ($row = $result->fetch_row()) {
+                $content = (string) $row[0];
+                foreach (ContentScan::shortcodes($content) as $tag => $count) {
+                    $shortcodes[$tag] = ($shortcodes[$tag] ?? 0) + $count;
+                }
+                foreach (ContentScan::blocks($content) as $name => $count) {
+                    $blocks[$name] = ($blocks[$name] ?? 0) + $count;
+                }
+            }
+        }
+        $unknownShortcodes = array_keys(array_diff_key($shortcodes, $coveredShortcodes));
+        $providedShortcodes = array_keys(array_intersect_key($shortcodes, $coveredShortcodes));
+        if ($providedShortcodes !== []) {
+            $this->light('GREEN', count($providedShortcodes) . ' shortcode' . (count($providedShortcodes) === 1 ? '' : 's') . ' provided by extensions: ' . ContentScan::listed($providedShortcodes));
+        }
+        if ($unknownShortcodes !== []) {
+            $this->light('AMBER', count($unknownShortcodes) . ' shortcode' . (count($unknownShortcodes) === 1 ? '' : 's') . ' in content have no extension: ' . ContentScan::listed($unknownShortcodes));
+        } elseif ($shortcodes === []) {
+            $this->light('GREEN', 'no shortcodes in content');
+        }
+
+        $thirdParty = ContentScan::thirdParty($blocks);
+        $unknownBlocks = array_keys(array_diff_key($thirdParty, $coveredBlocks));
+        $providedBlocks = array_keys(array_intersect_key($thirdParty, $coveredBlocks));
+        if ($providedBlocks !== []) {
+            $this->light('GREEN', count($providedBlocks) . ' third-party block' . (count($providedBlocks) === 1 ? '' : 's') . ' provided by extensions: ' . ContentScan::listed($providedBlocks));
+        }
+        if ($unknownBlocks !== []) {
+            $this->light('AMBER', count($unknownBlocks) . ' third-party block' . (count($unknownBlocks) === 1 ? '' : 's') . ' have no extension: ' . ContentScan::listed($unknownBlocks));
+        } elseif ($thirdParty === []) {
+            $this->light('GREEN', 'no third-party blocks in content');
+        }
+
+        $nav = 0;
+        $classic = 0;
+        $items = 0;
+        $navRow = $db->query("SELECT COUNT(*) FROM {$prefix}posts WHERE post_type = 'wp_navigation' AND post_status = 'publish'");
+        if ($navRow) {
+            $nav = (int) $navRow->fetch_row()[0];
+        }
+        $classicRow = $db->query("SELECT COUNT(*) FROM {$prefix}term_taxonomy WHERE taxonomy = 'nav_menu' AND count > 0");
+        if ($classicRow) {
+            $classic = (int) $classicRow->fetch_row()[0];
+        }
+        $itemRow = $db->query("SELECT COUNT(*) FROM {$prefix}posts WHERE post_type = 'nav_menu_item' AND post_status != 'trash'");
+        if ($itemRow) {
+            $items = (int) $itemRow->fetch_row()[0];
+        }
+        if ($nav > 0) {
+            $this->light('GREEN', $nav . ' wp_navigation menu' . ($nav === 1 ? '' : 's'));
+        }
+        if ($classic > 0) {
+            $this->light('AMBER', $classic . ' classic nav_menu' . ($classic === 1 ? '' : 's') . ' with ' . $items . ' item' . ($items === 1 ? '' : 's') . ' (the engine reads wp_navigation posts only)');
+        } elseif ($nav === 0) {
+            $this->light('GREEN', 'no menus');
+        }
+
+        $shown = $db->query('SHOW TABLES');
+        $tables = [];
+        if ($shown) {
+            while ($row = $shown->fetch_row()) {
+                $tables[] = (string) $row[0];
+            }
+        }
+        $extra = ContentScan::extraTables($tables, $prefix);
+        if ($extra === []) {
+            $this->light('GREEN', 'no extra tables');
+        } else {
+            $families = ContentScan::tableFamilies($extra);
+            $this->light('AMBER', count($extra) . ' extra tables in ' . count($families) . ' famil' . (count($families) === 1 ? 'y' : 'ies') . ' the engine does not read: ' . ContentScan::listed($families));
+        }
+
+        $typeRows = $db->query("SELECT DISTINCT post_type FROM {$prefix}posts WHERE post_status NOT IN ('trash','auto-draft','inherit')");
+        $types = [];
+        if ($typeRows) {
+            while ($row = $typeRows->fetch_row()) {
+                $types[] = (string) $row[0];
+            }
+        }
+        $extraTypes = ContentScan::extraTypes($types);
+        if ($extraTypes === []) {
+            $this->light('GREEN', 'no extra post types');
+        } else {
+            $this->light('AMBER', count($extraTypes) . ' extra post types the engine does not serve: ' . ContentScan::listed($extraTypes));
+        }
     }
 
     /** @param array<string, string|true> $options */

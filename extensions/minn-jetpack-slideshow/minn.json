@@ -9,5 +9,6 @@
     "Minn\\Ext\\JetpackSlideshow\\": "src/"
   },
   "extension": "Minn\\Ext\\JetpackSlideshow\\Extension",
-  "covers": "the slideshow block only"
+  "covers": "the slideshow block only",
+  "blocks": ["jetpack/slideshow"]
 }

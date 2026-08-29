@@ -5,7 +5,7 @@
   "replaces": [
     "ml-slider/ml-slider.php"
   ],
-  "covers": "the body class only; this site's content has no sliders or galleries from it",
+  "covers": "the body class only",
   "autoload": {
     "Minn\\Ext\\MetaSlider\\": "src/"
   },

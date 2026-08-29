@@ -25,6 +25,16 @@ reports, each line GREEN, AMBER, or RED:
   is GREEN, a classic theme is RED (the engine renders block themes only), PHP
   templates inside a block theme are AMBER;
 - active plugins and mu-plugins: AMBER, each named, because none of them will run;
+- shortcodes in `post`, `page`, `wp_block`, `wp_template`, `wp_template_part`,
+  and `wp_navigation` content: GREEN when a `minn.json` lists the tag under
+  `shortcodes`, AMBER otherwise;
+- third-party block namespaces (`<!-- wp:vendor/name`): GREEN when a
+  `minn.json` lists the name under `blocks`, AMBER otherwise. Core blocks
+  (`<!-- wp:paragraph`, `<!-- wp:core/…`) are the engine's and stay quiet;
+- menus: published `wp_navigation` posts are GREEN (the engine reads them);
+  classic `nav_menu` terms with items are AMBER (the engine does not);
+- extra tables and extra post types: AMBER, grouped by family, because they
+  are plugin data the engine does not read.
 
 RED stops `install` unless `--force` is passed.
 

@@ -15,6 +15,9 @@ $SCRATCH = sys_get_temp_dir() . '/minn-install-' . getmypid();
 $WEBROOT = "$SCRATCH/public";
 $PARK = "$SCRATCH/wp-parked";
 
+require_once "$ENGINE_DIR/src/Minn/Autoloader.php";
+Minn\Autoloader::register();
+
 $pass = 0;
 $fail = 0;
 $check = static function (string $label, bool $ok, string $detail = '') use (&$pass, &$fail): void {
@@ -86,6 +89,11 @@ $configBefore = md5_file("$WEBROOT/wp-config.php");
 $check('status reads a WordPress webroot', $code === 0 && str_contains($out, ': wordpress'), $out);
 [$out, $code] = $minn('preflight ' . escapeshellarg($WEBROOT));
 $check('preflight passes a block-theme site (GREEN or AMBER)', $code === 0 && preg_match('/Result: (GREEN|AMBER)/', $out) === 1 && str_contains($out, 'is a block theme'), $out);
+$check('preflight reports wp_navigation menus', str_contains($out, 'wp_navigation menu'), $out);
+$check('preflight reports no shortcodes on the engine site', str_contains($out, 'no shortcodes in content'), $out);
+$check('preflight reports no third-party blocks on the engine site', str_contains($out, 'no third-party blocks in content'), $out);
+$check('preflight reports no extra tables on the engine site', str_contains($out, 'no extra tables'), $out);
+$check('preflight reports no extra post types on the engine site', str_contains($out, 'no extra post types'), $out);
 [$out, $code] = $minn('eject ' . escapeshellarg($WEBROOT));
 $check('eject refuses a WordPress webroot', $code === 1 && str_contains($out, 'not installed'), $out);
 
@@ -158,6 +166,33 @@ $check(
     'docker getenv_docker preflight does not claim the constants are missing',
     !str_contains($dockerText, 'no database constants'),
     $dockerText,
+);
+
+$scan = Minn\Content\ContentScan::shortcodes('See [eeb_protect_content]secret[/eeb_protect_content] and [[gallery]] and [metaslider id="1"] and [/close].');
+$check('content scan finds opening shortcodes and skips escaped ones', $scan === ['eeb_protect_content' => 1, 'metaslider' => 1], json_encode($scan));
+$blocks = Minn\Content\ContentScan::blocks('<!-- wp:paragraph --><p>x</p><!-- /wp:paragraph --><!-- wp:jetpack/slideshow {"ids":[1]} /-->');
+$check('content scan names core and third-party blocks', isset($blocks['core/paragraph'], $blocks['jetpack/slideshow']), json_encode($blocks));
+$check('content scan flags only third-party block names', array_keys(Minn\Content\ContentScan::thirdParty($blocks)) === ['jetpack/slideshow'], json_encode($blocks));
+$extra = Minn\Content\ContentScan::extraTables(['wp_posts', 'wp_options', 'wp_woocommerce_orders', 'other_table'], 'wp_');
+$check('content scan extra tables drop the prefix and skip core', $extra === ['woocommerce_orders'], json_encode($extra));
+$families = Minn\Content\ContentScan::tableFamilies(['actionscheduler_actions', 'wfHits', 'wfls_settings', 'itsec_logs', 'wfBlocks7']);
+$check('content scan groups extra tables into families', $families === ['actionscheduler', 'itsec', 'wordfence'], json_encode($families));
+$check('content scan extra types drop built-in ones', Minn\Content\ContentScan::extraTypes(['post', 'page', 'product', 'foogallery']) === ['foogallery', 'product']);
+$check('content scan lists a long set with a cap', Minn\Content\ContentScan::listed(['d', 'b', 'c', 'a'], 3) === 'a, b, c and 1 more');
+
+$manifestDir = "$SCRATCH/manifest-plugin";
+mkdir($manifestDir, 0755, true);
+file_put_contents("$manifestDir/minn.json", json_encode([
+    'name' => 'Scan fixture',
+    'extension' => 'Minn\\Ext\\Scan\\Extension',
+    'shortcodes' => ['eeb_protect_content'],
+    'blocks' => ['jetpack/slideshow', 'mosne/dark-palette'],
+], JSON_UNESCAPED_SLASHES));
+$manifest = Minn\Extension\Manifest::read($manifestDir);
+$check(
+    'manifest reads shortcodes and blocks',
+    $manifest !== null && $manifest->shortcodes === ['eeb_protect_content'] && $manifest->blocks === ['jetpack/slideshow', 'mosne/dark-palette'],
+    json_encode($manifest),
 );
 
 echo "\n{$pass} passed, {$fail} failed\n";
