@@ -26,6 +26,7 @@ final readonly class BootPayload
         private string $engineVersion,
         private Appearance $appearance,
         private bool $blockTheme = false,
+        private ?Translations $translations = null,
     ) {
     }
 
@@ -36,6 +37,8 @@ final readonly class BootPayload
         $roles = $this->capabilities->rolesOf($userId);
         $role = $roles === [] ? '' : ($this->capabilities->roles()->all()[$roles[0]]['name'] ?? $roles[0]);
         $can = fn (string $capability): bool => $this->capabilities->can($userId, $capability);
+        $locale = $this->translations?->localeOf($userId) ?? ($this->site->option('WPLANG') ?: 'en_US');
+        [$i18n, $plural] = $this->translations?->catalog($locale) ?? [[], ''];
 
         return [
             // The pretty REST base: the client appends "wp/v2/posts?context=edit&…",
@@ -65,11 +68,11 @@ final readonly class BootPayload
                 'hasSidebars' => false,
             ],
             'gmtOffset' => (float) ($this->site->option('gmt_offset') ?? 0),
-            'locale' => $this->site->option('WPLANG') ?: 'en_US',
-            'rtl' => false,
-            'i18n' => new stdClass(),
-            'i18nPlural' => 'nplurals=2; plural=(n != 1);',
-            'languages' => [],
+            'locale' => $locale,
+            'rtl' => Translations::isRtl($locale),
+            'i18n' => $i18n === [] ? new stdClass() : $i18n,
+            'i18nPlural' => $plural,
+            'languages' => $this->translations?->installed() ?? [['', 'Site default'], ['en_US', 'English (United States)']],
             'caps' => [
                 'plugins' => $can('activate_plugins'),
                 'update' => $can('update_plugins'),

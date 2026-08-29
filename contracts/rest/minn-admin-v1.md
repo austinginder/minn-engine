@@ -263,6 +263,22 @@ user meta as a serialized array (decoded by `Serialized::decode`, never
 the engine has no other admin and no other bar. The boot payload's
 `user.policy` is `{signin: 'minn', toolbar: 'minn'}` for the same reason.
 
+**Languages** (suite section 5b). A person's locale is their `locale` user
+meta, else `WPLANG`, else `en_US`, as the reference resolves it; the boot
+payload and `GET boot-locale` carry `locale`, `rtl`, the app's `i18n` map
+and `i18nPlural` rule read from the JED catalogs under
+`wp-content/languages/plugins/minn-admin-<locale>-*.json` (the bundle's
+`languages/` folder is the fallback), and the shell's `<html lang dir>`
+follow. `GET languages` lists what is on disk as installed (a core pack or a
+Minn Admin pack), the captured registry as available, `canInstall` for
+`manage_options`. `POST me/language`, `users/{id}/language` and
+`site/language {locale}` write the meta or `WPLANG`; a locale with no files
+yet is installed first by fetching Minn Admin's own pack from the release
+the bundle's `manifest.json` names (https only, sha256 checked, only that
+locale's files unpacked into `wp-content/languages/plugins/`), which is the
+same set of files the reference's updater writes. Core language packs are
+not fetched: the engine has no core strings to translate with them yet.
+
 **Documents.** `GET changelog` and `GET guide` serve the bundle's own
 `changelog.md` and `docs/user-guide.md` with the app version (parity).
 `GET users/{id}/hidden` is `{hidden: []}`.

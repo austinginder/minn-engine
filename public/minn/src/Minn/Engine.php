@@ -7,6 +7,7 @@ namespace Minn;
 use Minn\Admin\AdminTypes;
 use Minn\Admin\App;
 use Minn\Admin\Appearance;
+use Minn\Admin\Translations;
 use Minn\Admin\AppController;
 use Minn\Admin\BootPayload;
 use Minn\Auth\Authenticated;
@@ -140,7 +141,7 @@ final readonly class Engine
             new AssetsController($this->engineDir . '/assets'),
             // The sign-in page sits under /minn-admin/, so it registers ahead of the shell's catch-all.
             new LoginController($site, $permalinks, $authenticator, $sessions, new AuthCookies($db, $cookie), $users, new LoginThrottle($db), new PasswordReset($users), Mailer::forSite($site)),
-            new AppController($app, new BootPayload($site, $permalinks, $capabilities, $app, $this->version, $appearance, $theme !== null), $authenticator, $capabilities, $permalinks, $this->version),
+            new AppController($app, new BootPayload($site, $permalinks, $capabilities, $app, $this->version, $appearance, $theme !== null, new Translations($users, $site, $app, ABSPATH . 'wp-content')), $authenticator, $capabilities, $permalinks, $this->version),
             $probes,
             new CommentPostController($site, $posts, new Comments($db), $permalinks, $authenticator, $capabilities, new AuthCookies($db, $cookie)),
             $front,

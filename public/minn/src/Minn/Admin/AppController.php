@@ -85,10 +85,12 @@ final readonly class AppController
         $cssVersion = Html::esc($this->app->assetVersion('assets/css/app.css'));
         $jsVersion = Html::esc($this->app->assetVersion('assets/js/app.js'));
         $json = json_encode($boot, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+        $lang = Html::attr(str_replace('_', '-', (string) ($boot['locale'] ?? 'en_US')));
+        $dir = !empty($boot['rtl']) ? 'rtl' : 'ltr';
 
         return <<<HTML
         <!DOCTYPE html>
-        <html lang="en" dir="ltr" data-theme="dark">
+        <html lang="{$lang}" dir="{$dir}" data-theme="dark">
         <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">

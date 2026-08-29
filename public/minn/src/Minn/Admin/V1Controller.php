@@ -189,17 +189,6 @@ final readonly class V1Controller
         ]);
     }
 
-    /** The available list is captured registry data; installed reflects this site. */
-    #[Route(Method::Get, '/minn-admin/v1/languages')]
-    public function languages(Request $request): Response
-    {
-        $this->requireFloor();
-        $this->requireCap('manage_options');
-        $data = (array) json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/languages.json'), true);
-        $data['current'] = (string) ($this->site->option('WPLANG') ?? '');
-        return $this->reply($request, $data);
-    }
-
     #[Route(Method::Get, '/minn-admin/v1/media/months')]
     public function mediaMonths(Request $request): Response
     {

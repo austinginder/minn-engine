@@ -165,9 +165,10 @@ check( 200 === $s && 1 === count( $rb['sessions'] ?? array() ), 'WordPress reads
 // 5. Bundled documents, appearance, the update slots.
 as_parity( 'changelog matches', '/minn-admin/v1/changelog', $admin );
 as_parity( 'guide matches', '/minn-admin/v1/guide', $admin );
-as_parity( 'plugin-updates matches (auto-updates are never offered here)', '/minn-admin/v1/plugin-updates', $admin, array( 'autoAllowed' ) );
+as_parity( 'plugin-updates matches (auto-updates and wordpress.org language updates are never offered here)', '/minn-admin/v1/plugin-updates', $admin, array( 'autoAllowed', 'translations', 'translationGroups' ) );
 as_parity( 'plugin-meta matches', '/minn-admin/v1/plugin-meta', $admin );
-as_parity( 'translations matches', '/minn-admin/v1/translations', $admin );
+[ $s, $b ] = as_fetch( $ENGINE, '/minn-admin/v1/translations', $admin );
+check( 200 === $s && array( 'count' => 0, 'groups' => array() ) === $b, 'translations reports nothing pending (no wordpress.org channel)', json_encode( $b ) );
 as_parity( 'users/1/hidden matches', '/minn-admin/v1/users/1/hidden', $admin );
 [ $s, $b ] = as_fetch( $ENGINE, '/wp/v2/users/me/application-passwords', $admin );
 check( 200 === $s && array() === $b, 'application-passwords lists none', "status $s " . json_encode( $b ) );
@@ -179,6 +180,29 @@ check( 'ocean' === ( $rb['scheme'] ?? '' ) && ( $rb['custom']['dark']['bg'] ?? '
 as_fetch( $REF, '/minn-admin/v1/me/appearance', $admin, 'POST', '{"scheme":"minn"}' );
 [ , $b ] = as_fetch( $ENGINE, '/minn-admin/v1/me/appearance', $admin );
 check( 'minn' === ( $b['scheme'] ?? '' ), 'engine reads the WordPress-written appearance', json_encode( $b ) );
+
+// 5b. Languages: the person's locale is the reference's `locale` meta; a pack installs on first use.
+[ $s, $b ] = as_fetch( $ENGINE, '/minn-admin/v1/languages', $admin );
+check( 200 === $s && array( 'installed', 'available', 'canInstall', 'current', 'site' ) === array_keys( $b ) && array( '', 'Site default' ) === $b['installed'][0], 'languages carries the plugin\'s shape', json_encode( array_keys( $b ) ) );
+$hasPack = array() !== glob( "$ROOT/public/wp-content/languages/plugins/minn-admin-es_ES-*.json" );
+[ $s, $b ] = as_fetch( $ENGINE, '/minn-admin/v1/me/language', $admin, 'POST', '{"locale":"es_ES"}' );
+if ( 200 !== $s && ! $hasPack ) {
+	echo "  --  es_ES pack not installable here (offline?); skipping the catalog checks\n";
+} else {
+	check( 200 === $s && 'es_ES' === ( $b['locale'] ?? '' ) && ( $hasPack ? false === $b['installed'] : true === $b['installed'] ), 'me/language saves the locale and installs the pack the first time', json_encode( $b ) );
+	[ , $me ] = as_fetch( $REF, '/wp/v2/users/me?context=edit', $admin );
+	check( 'es_ES' === ( $me['locale'] ?? '' ), 'WordPress reads the engine-written locale', json_encode( $me['locale'] ?? null ) );
+	[ $s, $b ] = as_fetch( $ENGINE, '/minn-admin/v1/boot-locale', $admin );
+	check( 200 === $s && 'es_ES' === $b['locale'] && 'Texto' === ( $b['i18n']['Text'] ?? '' ) && str_starts_with( (string) $b['i18nPlural'], 'nplurals=2' ), 'boot-locale carries the Spanish catalog and plural rule', json_encode( array( $b['locale'] ?? null, $b['i18n']['Text'] ?? null, $b['i18nPlural'] ?? null ) ) );
+	[ , $b ] = as_fetch( $ENGINE, '/minn-admin/v1/languages', $admin );
+	check( in_array( 'es_ES', array_column( $b['installed'], 0 ), true ), 'the installed list names the pack on disk' );
+	$html = (string) @file_get_contents( "$ENGINE/minn-admin/", false, stream_context_create( array( 'ssl' => array( 'verify_peer' => false, 'verify_peer_name' => false ), 'http' => array( 'header' => 'Cookie: ' . $admin['cookie_name'] . '=' . $admin['cookie'] ) ) ) );
+	check( str_contains( $html, '<html lang="es-ES"' ) && str_contains( $html, '"Texto"' ), 'the shell boots in the person\'s language' );
+}
+[ $s, $b ] = as_fetch( $ENGINE, '/minn-admin/v1/me/language', $admin, 'POST', '{"locale":""}' );
+check( 200 === $s && '' === ( $b['locale'] ?? 'x' ), 'clearing the locale falls back to the site default' );
+[ $s ] = as_fetch( $ENGINE, '/minn-admin/v1/me/language', $author, 'POST', '{"locale":"xx_XX"}' );
+check( 403 === $s, 'an author cannot install a language', "status $s" );
 
 // 6. Extensions: themes and plugins.
 [ $rs, $rb ] = as_fetch( $REF, '/minn-admin/v1/themes', $admin );

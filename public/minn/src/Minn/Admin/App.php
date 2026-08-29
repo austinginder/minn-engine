@@ -26,6 +26,11 @@ final readonly class App
     {
     }
 
+    public function dir(): string
+    {
+        return $this->dir;
+    }
+
     public function installed(): bool
     {
         return is_dir($this->dir);
