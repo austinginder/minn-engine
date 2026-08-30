@@ -1,5 +1,7 @@
 <?php
 
+use Minn\Front\SitemapXml;
+
 /** The sitemaps server: registry, renderer, index. URLs come from the engine's own sitemap routes. */
 class WP_Sitemaps
 {
@@ -122,14 +124,8 @@ class WP_Sitemaps_Renderer
 
     public function __construct()
     {
-        $stylesheet_url = $this->get_sitemap_stylesheet_url();
-        if ($stylesheet_url) {
-            $this->stylesheet = '<?xml-stylesheet type="text/xsl" href="' . esc_url($stylesheet_url) . '" ?>';
-        }
-        $stylesheet_index_url = $this->get_sitemap_index_stylesheet_url();
-        if ($stylesheet_index_url) {
-            $this->stylesheet_index = '<?xml-stylesheet type="text/xsl" href="' . esc_url($stylesheet_index_url) . '" ?>';
-        }
+        $this->stylesheet = (string) $this->get_sitemap_stylesheet_url();
+        $this->stylesheet_index = (string) $this->get_sitemap_index_stylesheet_url();
     }
 
     public function get_sitemap_stylesheet_url()
@@ -152,15 +148,7 @@ class WP_Sitemaps_Renderer
 
     public function get_sitemap_index_xml($sitemaps)
     {
-        $out = '<?xml version="1.0" encoding="UTF-8"?>' . "\n" . $this->stylesheet_index . '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
-        foreach ($sitemaps as $entry) {
-            $out .= '<sitemap>';
-            foreach ($entry as $name => $value) {
-                $out .= '<' . $name . '>' . esc_html((string) $value) . '</' . $name . '>';
-            }
-            $out .= '</sitemap>';
-        }
-        return $out . '</sitemapindex>' . "\n";
+        return SitemapXml::index(array_map(static fn ($entry) => array_map('strval', (array) $entry), (array) $sitemaps), $this->stylesheet_index !== '' ? esc_url($this->stylesheet_index) : null);
     }
 
     public function render_sitemap($url_list)
@@ -171,15 +159,7 @@ class WP_Sitemaps_Renderer
 
     public function get_sitemap_xml($url_list)
     {
-        $out = '<?xml version="1.0" encoding="UTF-8"?>' . "\n" . $this->stylesheet . '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
-        foreach ($url_list as $entry) {
-            $out .= '<url>';
-            foreach ($entry as $name => $value) {
-                $out .= '<' . $name . '>' . esc_html((string) $value) . '</' . $name . '>';
-            }
-            $out .= '</url>';
-        }
-        return $out . '</urlset>' . "\n";
+        return SitemapXml::urlset(array_map(static fn ($entry) => array_map('strval', (array) $entry), (array) $url_list), $this->stylesheet !== '' ? esc_url($this->stylesheet) : null);
     }
 }
 

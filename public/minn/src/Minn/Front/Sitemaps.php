@@ -25,13 +25,13 @@ final readonly class Sitemaps
 
     public function index(): string
     {
-        $entries = '';
+        $entries = [];
         foreach ($this->providers() as $provider) {
             for ($page = 1; $page <= $provider['pages']; $page++) {
-                $entries .= '<sitemap><loc>' . $this->permalinks->url("/wp-sitemap-{$provider['slug']}-{$page}.xml") . '</loc></sitemap>';
+                $entries[] = ['loc' => $this->permalinks->url("/wp-sitemap-{$provider['slug']}-{$page}.xml")];
             }
         }
-        return $this->document('wp-sitemap-index.xsl', '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . $entries . '</sitemapindex>');
+        return SitemapXml::index($entries, $this->permalinks->url('/wp-sitemap-index.xsl'));
     }
 
     /** One provider page, or null when the name or page does not exist. */
@@ -46,11 +46,7 @@ final readonly class Sitemaps
         if ($urls === null || $urls === []) {
             return null;
         }
-        $entries = '';
-        foreach ($urls as [$loc, $lastmod]) {
-            $entries .= '<url><loc>' . $loc . '</loc>' . ($lastmod === null ? '' : '<lastmod>' . $lastmod . '</lastmod>') . '</url>';
-        }
-        return $this->document('wp-sitemap.xsl', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . $entries . '</urlset>');
+        return SitemapXml::urlset(array_map(static fn (array $url) => ['loc' => $url[0], 'lastmod' => $url[1]], $urls), $this->permalinks->url('/wp-sitemap.xsl'));
     }
 
     /** @return list<array{slug: string, pages: int}> */
@@ -132,13 +128,6 @@ final readonly class Sitemaps
              WHERE u.ID IN (SELECT post_author FROM {$this->db->table('posts')} WHERE post_type = 'post' AND post_status = 'publish')
              ORDER BY u.ID ASC",
         );
-    }
-
-    private function document(string $stylesheet, string $body): string
-    {
-        return '<?xml version="1.0" encoding="UTF-8"?>' . "\n"
-            . '<?xml-stylesheet type="text/xsl" href="' . $this->permalinks->url('/' . $stylesheet) . '" ?>' . "\n"
-            . $body . "\n";
     }
 
     /** The engine's own stylesheet for browsers that open a sitemap. */
