@@ -801,6 +801,17 @@ mode spellings (`Support\Paths`), query strings (`Url::buildQuery`), JSON
 sanitising (`Support\Json`), CURIE compaction (`Rest\Links`) and block asset
 handles (`BlockMetadata::assetHandle`).
 
+The composing functions got the same treatment next: the map's `composes`
+kind hides logic between facade calls, so the longest ones were read one by
+one. What carried a decision moved: `Slug::dashes` (the reference's dashed
+title, save-context folding included), `Uploads::layout` (where uploads live
+from the options), `Parser::contains` (block search by delimiter),
+`Content\CommentClasses`, `Schema::combining` (anyOf / oneOf branch
+selection), `Url::parse` / `withScheme` / `safeRedirect`, `Support\Time::span`,
+`Html::textField`, `TermQuery::coerce`, `Rest\RouteTable::normalise`, and
+`Blocks\BlockName`. What stayed is orchestration: hooks fired around one
+call, `WP_Error` construction, option reads that plugin filters may change.
+
 ## The second plugin surface: WooCommerce loads
 
 WooCommerce 11 on a fresh lab site (`minnwoo.localhost`, oracle on
