@@ -923,7 +923,14 @@ and `WP_Theme::__get` are loose-input hydration; `wpdb::update` is the
 format juggling already ruled mapping; `wp_convert_widget_settings` is
 widget-option (Hear) data conversion; `WP_REST_Response::as_error` and
 `WP_REST_Server::register_route` are WP-shape construction and recording.
-The leaf ceiling is 13.
+The leaf ceiling is 13. The longest composing functions were read too and
+stay for cause: `_minn_comment_form_body` and `wp_list_comments` interleave
+a hook or a walk-state global with nearly every line; `image_downsize`
+composes facade siblings around its filter; `_wp_make_subsizes`' per-size
+editor loop with incremental metadata writes is the reference's observable
+behaviour and meets the engine's own `Media\Images` pipeline one layer down
+at `Media\Canvas`; `url_to_postid` already rides Posts and verifies through
+Permalinks; `get_bloginfo` is a key switch, which is the mapping.
 
 The review also surfaced a REAL gap, bigger than thinning: the engine has
 two disconnected sitemap implementations. `Front\Sitemaps` serves
