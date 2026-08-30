@@ -170,6 +170,16 @@ as_parity( 'plugin-meta matches', '/minn-admin/v1/plugin-meta', $admin );
 [ $s, $b ] = as_fetch( $ENGINE, '/minn-admin/v1/translations', $admin );
 check( 200 === $s && array( 'count' => 0, 'groups' => array() ) === $b, 'translations reports nothing pending (no wordpress.org channel)', json_encode( $b ) );
 as_parity( 'users/1/hidden matches', '/minn-admin/v1/users/1/hidden', $admin );
+// Per-user hides: the app's user meta map, the same whichever stack wrote it.
+// The reference's state slices (surfaces, designs, block forms) come from its
+// adapter registries; the engine has none, so the restore list is what is compared.
+as_parity( 'hide a core view', '/minn-admin/v1/integrations/hide', $admin, array( 'surfaces', 'editorPanels', 'designs', 'editorCommands', 'blockForms', 'insertBlocks' ), 'POST', '{"id":"core:comments"}' );
+as_parity( 'the hide shows in the restore list', '/minn-admin/v1/users/1/hidden', $admin );
+as_parity( 'a hide the person cannot see is refused', '/minn-admin/v1/integrations/hide', $admin, array(), 'POST', '{"id":"surface:nothing"}' );
+as_parity( 'an admin restores it for the user', '/minn-admin/v1/users/1/integrations/unhide', $admin, array(), 'POST', '{"integration":"core:comments"}' );
+as_parity( 'hide and self-unhide', '/minn-admin/v1/integrations/hide', $admin, array( 'surfaces', 'editorPanels', 'designs', 'editorCommands', 'blockForms', 'insertBlocks' ), 'POST', '{"id":"core:media"}' );
+as_parity( 'self-unhide', '/minn-admin/v1/integrations/unhide', $admin, array( 'surfaces', 'editorPanels', 'designs', 'editorCommands', 'blockForms', 'insertBlocks' ), 'POST', '{"id":"core:media"}' );
+as_parity( 'restore list empty again', '/minn-admin/v1/users/1/hidden', $admin );
 [ $s, $b ] = as_fetch( $ENGINE, '/wp/v2/users/me/application-passwords', $admin );
 check( 200 === $s && array() === $b, 'application-passwords lists none', "status $s " . json_encode( $b ) );
 as_parity( 'appearance matches apart from the two switches the engine keeps on', '/minn-admin/v1/me/appearance', $admin, array( 'defaultAdmin', 'frontBar' ) );

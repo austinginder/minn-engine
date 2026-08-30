@@ -41,6 +41,7 @@ final readonly class ManageController
         private Permalinks $permalinks,
         private App $app,
         private Appearance $appearance,
+        private HiddenIntegrations $hiddenIntegrations,
         private Caller $caller,
         private string $contentDir,
     ) {
@@ -260,12 +261,69 @@ final readonly class ManageController
         return $this->reply($request, $this->appearance->save($this->editableUser($id), $this->appearanceBody($request)));
     }
 
-    /** Nothing is hidden per person on the engine; the integrations list is the whole list. */
+    /** The target user's restore list, for the user edit page. */
     #[Route(Method::Get, '/minn-admin/v1/users/{id:\d+}/hidden')]
     public function hidden(Request $request, string $id): Response
     {
-        $this->editableUser($id);
-        return $this->reply($request, ['hidden' => []]);
+        return $this->reply($request, ['hidden' => $this->hiddenIntegrations->listFor($this->editableUser($id))]);
+    }
+
+    /** An administrator restores something another person hid; hiding stays that person's own choice. */
+    #[Route(Method::Post, '/minn-admin/v1/users/{id:\d+}/integrations/unhide')]
+    public function unhideForUser(Request $request, string $id): Response
+    {
+        $userId = $this->editableUser($id);
+        $integration = $request->json()['integration'] ?? $request->query('integration');
+        if (!is_string($integration) || $integration === '') {
+            throw RestError::missingParams(['integration']);
+        }
+        $this->hiddenIntegrations->unhide($userId, HiddenIntegrations::sanitize($integration));
+        return $this->reply($request, ['ok' => true, 'hidden' => $this->hiddenIntegrations->listFor($userId)]);
+    }
+
+    #[Route(Method::Post, '/minn-admin/v1/integrations/hide')]
+    public function hide(Request $request): Response
+    {
+        $userId = $this->requireFloor();
+        if (!$this->hiddenIntegrations->hide($userId, $this->integrationId($request))) {
+            throw new RestError('minn_unknown_integration', 'That integration is not registered.', 400);
+        }
+        return $this->reply($request, $this->integrationState($userId));
+    }
+
+    #[Route(Method::Post, '/minn-admin/v1/integrations/unhide')]
+    public function unhide(Request $request): Response
+    {
+        $userId = $this->requireFloor();
+        $this->hiddenIntegrations->unhide($userId, $this->integrationId($request));
+        return $this->reply($request, $this->integrationState($userId));
+    }
+
+    private function integrationId(Request $request): string
+    {
+        $id = $request->json()['id'] ?? $request->query('id');
+        if (!is_string($id) || $id === '') {
+            throw RestError::missingParams(['id']);
+        }
+        return HiddenIntegrations::sanitize($id);
+    }
+
+    /**
+     * The boot slices a hide or unhide repaints from. The engine registers no
+     * plugin surfaces, editor panels, design sources, or block forms.
+     */
+    private function integrationState(int $userId): array
+    {
+        return [
+            'ok' => true,
+            'surfaces' => [],
+            'editorPanels' => [],
+            'hidden' => $this->hiddenIntegrations->listFor($userId),
+            'designs' => [],
+            'editorCommands' => [],
+            'blockForms' => [],
+            'insertBlocks' => [],
+        ];
     }
 
     /** @return array{version: string, markdown: string} */

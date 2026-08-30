@@ -25,6 +25,7 @@ final readonly class BootPayload
         private App $app,
         private string $engineVersion,
         private Appearance $appearance,
+        private HiddenIntegrations $hidden,
         private bool $blockTheme = false,
         private ?Translations $translations = null,
     ) {
@@ -119,6 +120,7 @@ final readonly class BootPayload
             // No admin-ajax plugin toggles: the app falls back to PUT wp/v2/plugins.
             'pluginAjax' => null,
             'comments' => true,
+            'hidden' => $this->hidden->listFor($userId),
             'pretty' => $this->permalinks->isPretty(),
         ];
     }

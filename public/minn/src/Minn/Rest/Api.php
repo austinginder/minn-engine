@@ -8,6 +8,7 @@ use Minn\Admin\AdminTypes;
 use Minn\Admin\App;
 use Minn\Admin\Appearance;
 use Minn\Admin\Diagnostics;
+use Minn\Admin\HiddenIntegrations;
 use Minn\Admin\LanguageController;
 use Minn\Admin\Translations;
 use Minn\Admin\Logs;
@@ -103,7 +104,7 @@ final readonly class Api
             new SearchController($db, $types, $permalinks, $url, $caller),
             new PluginsController($site, new Inventory($contentDir, $site), $loader, $url, $caller, new Packages($site, $contentDir), $contentDir),
             new SessionsController($users, new Sessions($users), $caller),
-            new ManageController($db, $site, $types, $taxonomies, $loader, new Inventory($contentDir, $site), $permalinks, new App(MINN_ENGINE_DIR . '/admin'), new Appearance($users), $caller, $contentDir),
+            new ManageController($db, $site, $types, $taxonomies, $loader, new Inventory($contentDir, $site), $permalinks, new App(MINN_ENGINE_DIR . '/admin'), new Appearance($users), new HiddenIntegrations($users, $capabilities), $caller, $contentDir),
             new LanguageController(new Translations($users, $site, new App(MINN_ENGINE_DIR . '/admin'), $contentDir), $users, $site, $capabilities, $caller),
             new PackagesController(new Packages($site, $contentDir), $site, $caller),
             new RenderController($db, $site, $posts, $permalinks, $caller, $contentDir . '/themes'),
