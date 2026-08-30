@@ -35,7 +35,11 @@ final class Html
         return (string) preg_replace_callback($pattern, static function (array $m) use ($joined): string {
             [$whole, $tag, $attributes, $selfClose] = $m;
             if (preg_match('/\sclass="([^"]*)"/', $attributes, $c)) {
-                $attributes = str_replace($c[0], ' class="' . ($c[1] === '' ? $joined : $c[1] . ' ' . $joined) . '"', $attributes);
+                // A class the element already carries is not added twice.
+                $have = preg_split('/\s+/', trim($c[1]), -1, PREG_SPLIT_NO_EMPTY) ?: [];
+                $fresh = array_values(array_diff(preg_split('/\s+/', $joined, -1, PREG_SPLIT_NO_EMPTY) ?: [], $have));
+                $merged = trim($c[1] . ($fresh === [] ? '' : ' ' . implode(' ', $fresh)));
+                $attributes = str_replace($c[0], ' class="' . $merged . '"', $attributes);
             } else {
                 $attributes .= ' class="' . $joined . '"';
             }

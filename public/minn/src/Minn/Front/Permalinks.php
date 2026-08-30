@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
+use Closure;
+use Minn\Runtime\Registry;
+use Minn\Runtime\Runtime;
 use Minn\Content\Posts;
 use Minn\Content\Terms;
 use Minn\Db;
@@ -23,7 +26,33 @@ final readonly class Permalinks
         public string $structure,
         public int $frontPageId = 0,
         public int $postsPageId = 0,
+        /** @var (Closure(): ?Registry)|null the plugin registrations, once the runtime has them */
+        private ?Closure $registry = null,
     ) {
+    }
+
+    /** The rewrite slug a plugin gave its post type, else the type's name. */
+    public function typeSlug(string $type): string
+    {
+        $row = $this->registry === null ? null : ($this->registry)()?->postType($type);
+        $slug = $row['rewrite']['slug'] ?? null;
+        return is_string($slug) && $slug !== '' ? trim($slug, '/') : $type;
+    }
+
+    /** The rewrite slug a plugin gave its taxonomy; null for one the engine does not know. */
+    public function taxonomySlug(string $taxonomy): ?string
+    {
+        $row = $this->registry === null ? null : ($this->registry)()?->taxonomy($taxonomy);
+        $slug = $row['rewrite']['slug'] ?? null;
+        return is_string($slug) && $slug !== '' ? trim($slug, '/') : ($row === null ? null : $taxonomy);
+    }
+
+    /** A post type archive's address: its has_archive slug, or the type's slug when has_archive is true. */
+    public function forPostTypeArchive(array $type): string
+    {
+        $archive = $type['has_archive'] ?? false;
+        $slug = is_string($archive) && $archive !== '' ? trim($archive, '/') : $this->typeSlug((string) $type['name']);
+        return $this->isPretty() ? $this->url('/' . $slug . '/') : $this->url('/?post_type=' . rawurlencode((string) $type['name']));
     }
 
     public static function fromDb(Db $db): self
@@ -35,6 +64,7 @@ final readonly class Permalinks
             $db->option('permalink_structure') ?? '',
             ($db->option('show_on_front') ?? 'posts') === 'page' ? (int) ($db->option('page_on_front') ?? 0) : 0,
             ($db->option('show_on_front') ?? 'posts') === 'page' ? (int) ($db->option('page_for_posts') ?? 0) : 0,
+            static fn (): ?Registry => Runtime::booted() ? Runtime::registry() : null,
         );
     }
 
@@ -56,7 +86,7 @@ final readonly class Permalinks
         }
         if ($post['post_type'] !== 'post') {
             if ($this->isPretty() && $this->hasPrettyLink($post)) {
-                return $this->url('/' . $post['post_type'] . '/' . $post['post_name'] . '/');
+                return $this->url('/' . $this->typeSlug((string) $post['post_type']) . '/' . $post['post_name'] . '/');
             }
             return $this->url('/?p=' . $id);
         }
@@ -109,7 +139,11 @@ final readonly class Permalinks
                 ? $this->url('/?cat=' . (int) $term['term_id'])
                 : $this->url('/?tag=' . $term['slug']);
         }
-        $base = $taxonomy === 'category' ? 'category' : 'tag';
+        $base = match ($taxonomy) {
+            'category' => 'category',
+            'post_tag' => 'tag',
+            default => $this->taxonomySlug($taxonomy) ?? $taxonomy,
+        };
         return $this->url("/{$base}/" . $this->terms->pathOf($term) . '/');
     }
 

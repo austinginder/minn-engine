@@ -83,7 +83,7 @@ final readonly class PageRenderer
         $classes = array_values(array_diff($coreClasses, $paging));
         if ($resolution->kind === Kind::Single) {
             $at = (int) array_search('single', $classes, true);
-            array_splice($classes, $at, 0, ['wp-singular', 'post-template-default']);
+            array_splice($classes, $at, 0, ['wp-singular', (string) ($resolution->record['post_type'] ?? 'post') . '-template-default']);
         } elseif ($resolution->kind === Kind::Page) {
             $template = $this->templates->customTemplate($resolution->id());
             $tokens = $template === null
@@ -123,13 +123,21 @@ final readonly class PageRenderer
         if ($template === null) {
             return null;
         }
-        $query = $this->mainQuery($resolution);
-        if (Runtime::booted()) {
-            \_minn_seed_main_query(MainQuery::vars($resolution), array_map(static fn (array $p) => (int) $p['ID'], $query['posts']), $query['total'], $this->perPage, $resolution->postsPage);
-            Runtime::hooks()->action('template_redirect', []);
+        $perPage = $this->perPage;
+        if (Runtime::booted() && in_array($resolution->kind, [Kind::PostTypeArchive, Kind::Taxonomy], true)) {
+            // A plugin's archive is the plugin's query: WP_Query with pre_get_posts, so it sets its own page size and order.
+            $query = \_minn_run_main_query(MainQuery::vars($resolution), $resolution->paged, $this->perPage);
+            $perPage = $query['perPage'];
+            $this->lifecycle();
+        } else {
+            $query = $this->mainQuery($resolution);
+            if (Runtime::booted()) {
+                \_minn_seed_main_query(MainQuery::vars($resolution), array_map(static fn (array $p) => (int) $p['ID'], $query['posts']), $query['total'], $this->perPage, $resolution->postsPage);
+                $this->lifecycle();
+            }
         }
         RenderState::reset();
-        $this->renderer->withContext(new Context($resolution, $query['posts'], $query['total'], $this->perPage, true));
+        $this->renderer->withContext(new Context($resolution, $query['posts'], $query['total'], $perPage, true));
         // The reference texturizes the rendered template as a whole, after the
         // blocks: straight quotes in a theme's own markup curl, content that was
         // texturized on its way in is left alone.
@@ -153,8 +161,13 @@ final readonly class PageRenderer
         $title = Extensions::seams()?->applyTitle($title) ?? $title;
         if (Runtime::booted()) {
             // Plugin code rewrites the title through the reference's filters; the engine's parts feed them.
-            Runtime::current()->set('document_title_parts', DocumentTitle::parts($resolution, (string) ($this->site->option('blogname') ?? ''), (string) ($this->site->option('blogdescription') ?? '')));
-            $title = \_minn_document_title(DocumentTitle::parts($resolution, (string) ($this->site->option('blogname') ?? ''), (string) ($this->site->option('blogdescription') ?? '')));
+            $parts = DocumentTitle::parts($resolution, (string) ($this->site->option('blogname') ?? ''), (string) ($this->site->option('blogdescription') ?? ''));
+            if ($resolution->kind === Kind::PostTypeArchive) {
+                // A plugin may rename its archive (WooCommerce titles the product archive after the shop page).
+                $parts['title'] = (string) \apply_filters('post_type_archive_title', $parts['title'], (string) ($resolution->record['name'] ?? ''));
+            }
+            Runtime::current()->set('document_title_parts', $parts);
+            $title = \_minn_document_title($parts);
         }
         $bar = $resolution->preview ? null : $this->bar;
         $stylesheets = '<link rel="stylesheet" id="minn-blocks-css" href="' . Html::attr($this->permalinks->url('/minn-engine/blocks.css')) . '" />' . "\n"
@@ -240,12 +253,29 @@ final readonly class PageRenderer
         return $out;
     }
 
+    /** The reference's front-end lifecycle once the main query stands: "wp" with the request object, then template_redirect. */
+    private function lifecycle(): void
+    {
+        Runtime::hooks()->action('wp', [$GLOBALS['wp'] ?? null]);
+        Runtime::hooks()->action('template_redirect', []);
+    }
+
+    /** @return list<string> the post types a plugin's taxonomy attaches to */
+    private function objectTypes(string $taxonomy): array
+    {
+        $row = Runtime::booted() ? Runtime::registry()->taxonomy($taxonomy) : null;
+        $types = array_values(array_map('strval', (array) ($row['object_type'] ?? [])));
+        return $types === [] ? ['post'] : $types;
+    }
+
     /** @return array{posts: list<array>, total: int} */
     private function mainQuery(Resolution $resolution): array
     {
         $record = $resolution->record ?? [];
         $filter = match ($resolution->kind) {
             Kind::Category, Kind::Tag => ['term' => (int) $record['term_taxonomy_id']],
+            Kind::Taxonomy => ['term' => (int) $record['term_taxonomy_id'], 'types' => $this->objectTypes((string) $record['taxonomy'])],
+            Kind::PostTypeArchive => ['types' => [(string) $record['name']]],
             Kind::Author => ['author' => (int) ($record['ID'] ?? -1)],
             Kind::Date => array_combine(['from', 'to'], Resolver::dateRange(...$resolution->date) ?? ['1970-01-01', '1970-01-01']),
             Kind::Search => ['search' => (string) $resolution->search],

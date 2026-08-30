@@ -67,3 +67,8 @@ add_filter('comment_text', 'make_clickable', 9);
 add_filter('comment_text', 'force_balance_tags', 25);
 add_filter('comment_text', 'convert_smilies', 20);
 add_filter('comment_text', 'wpautop', 30);
+
+// Embeds run before the paragraphs do, as the reference orders them.
+$GLOBALS['wp_embed'] ??= new WP_Embed();
+add_filter('the_content', [$GLOBALS['wp_embed'], 'run_shortcode'], 8);
+add_filter('the_content', [$GLOBALS['wp_embed'], 'autoembed'], 8);

@@ -15,6 +15,7 @@ use Minn\Content\Posts;
 use Minn\Content\Site;
 use Minn\Content\Texturize;
 use Minn\Front\Kind;
+use Minn\Runtime\Runtime;
 use Minn\Front\Permalinks;
 use Minn\Support\Html;
 use Minn\Support\Serialized;
@@ -153,6 +154,8 @@ final class QueryBlocks
         $text = match ($resolution->kind) {
             Kind::Category => $titled('Category', Html::esc((string) $record['name'])),
             Kind::Tag => $titled('Tag', Html::esc((string) $record['name'])),
+            Kind::Taxonomy => $titled($this->taxonomyLabel((string) $record['taxonomy']), Html::esc((string) $record['name'])),
+            Kind::PostTypeArchive => Html::esc($this->archiveTitle($record)),
             Kind::Author => $titled('Author', Html::esc((string) ($record['display_name'] ?? $resolution->authorName))),
             Kind::Date => $this->dateTitle($resolution->date),
             Kind::Search => 'Search results for: ' . Texturize::text('"' . Html::esc((string) $resolution->search) . '"'),
@@ -248,7 +251,8 @@ final class QueryBlocks
         $resolution = $renderer->context()->resolution;
         $record = $resolution->record ?? [];
         return match ($resolution->kind) {
-            Kind::Category, Kind::Tag => $this->permalinks->forTerm($record),
+            Kind::Category, Kind::Tag, Kind::Taxonomy => $this->permalinks->forTerm($record),
+            Kind::PostTypeArchive => $this->permalinks->forPostTypeArchive($record),
             Kind::Author => $record === [] ? $this->permalinks->url('/author/' . $resolution->authorName . '/') : $this->permalinks->forAuthor($record),
             Kind::Date => $this->permalinks->forDate(...$resolution->date),
             Kind::Search => $this->permalinks->forSearch((string) $resolution->search),
@@ -268,10 +272,24 @@ final class QueryBlocks
         return '<div class="wp-block-query-pagination-numbers">' . implode("\n", $items) . '</div>';
     }
 
+    /** A post type archive's title: the type's label, renamed by the post_type_archive_title filter when a plugin does. */
+    private function archiveTitle(array $type): string
+    {
+        $label = (string) ($type['label'] ?? $type['name'] ?? '');
+        return Runtime::booted() ? (string) \apply_filters('post_type_archive_title', $label, (string) ($type['name'] ?? '')) : $label;
+    }
+
+    /** The singular label a plugin registered for its taxonomy, for the archive title prefix. */
+    private function taxonomyLabel(string $taxonomy): string
+    {
+        $row = Runtime::booted() ? Runtime::registry()->taxonomy($taxonomy) : null;
+        return (string) ($row['labels']['singular_name'] ?? $row['label'] ?? ucfirst($taxonomy));
+    }
+
     private function termDescription(Block $block, Renderer $renderer): string
     {
         $resolution = $renderer->context()->resolution;
-        if (!in_array($resolution->kind, [Kind::Category, Kind::Tag], true)) {
+        if (!in_array($resolution->kind, [Kind::Category, Kind::Tag, Kind::Taxonomy], true)) {
             return '';
         }
         $term = (new \Minn\Content\Terms(\Minn\Db::shared()))->row((int) $resolution->record['term_id'], (string) $resolution->record['taxonomy']);

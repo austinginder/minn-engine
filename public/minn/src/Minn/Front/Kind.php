@@ -15,6 +15,10 @@ enum Kind
     case Author;
     case Date;
     case Search;
+    /** a term archive of a plugin's taxonomy */
+    case Taxonomy;
+    /** the archive of a plugin's post type */
+    case PostTypeArchive;
     case NotFound;
     case Redirect;
 }

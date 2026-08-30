@@ -20,7 +20,11 @@ final class MainQuery
         $record = $resolution->record ?? [];
         $vars = match ($resolution->kind) {
             Kind::Home => [],
-            Kind::Single => ['p' => (int) ($record['ID'] ?? 0), 'post_type' => (string) ($record['post_type'] ?? 'post'), 'name' => (string) ($record['post_name'] ?? '')],
+            Kind::Single => ($record['post_type'] ?? 'post') === 'post'
+                ? ['p' => (int) ($record['ID'] ?? 0), 'post_type' => 'post', 'name' => (string) ($record['post_name'] ?? '')]
+                : [(string) $record['post_type'] => (string) ($record['post_name'] ?? ''), 'post_type' => (string) $record['post_type'], 'name' => (string) ($record['post_name'] ?? '')],
+            Kind::Taxonomy => [(string) ($record['taxonomy'] ?? '') => (string) ($record['slug'] ?? '')],
+            Kind::PostTypeArchive => ['post_type' => (string) ($record['name'] ?? '')],
             Kind::Page => $resolution->postsPage ? [] : ['page_id' => (int) ($record['ID'] ?? 0), 'pagename' => (string) ($record['post_name'] ?? '')],
             Kind::Category => ['cat' => (int) ($record['term_id'] ?? 0), 'category_name' => (string) ($record['slug'] ?? '')],
             Kind::Tag => ['tag' => (string) ($record['slug'] ?? '')],

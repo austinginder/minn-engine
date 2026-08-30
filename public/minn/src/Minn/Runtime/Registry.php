@@ -23,6 +23,9 @@ final class Registry
     /** @var list<string> */
     public readonly array $publicQueryVars;
 
+    /** @var array<string, array<string, mixed>> features declared for types not yet registered */
+    private array $pendingSupports = [];
+
     public function __construct(string $engineDir)
     {
         $data = json_decode((string) file_get_contents($engineDir . '/data/registry.json'), true) ?: [];
@@ -142,6 +145,8 @@ final class Registry
         if ($type['query_var'] === true) {
             $type['query_var'] = $name;
         }
+        $type['supports'] += $this->pendingSupports[$name] ?? [];
+        unset($this->pendingSupports[$name]);
         $this->postTypes[$name] = $type;
         foreach ($type['taxonomies'] as $taxonomy) {
             $this->addObjectType($taxonomy, $name);
@@ -206,17 +211,30 @@ final class Registry
         return true;
     }
 
+    /**
+     * Support declared before the type registers waits aside (the reference
+     * keeps features apart from the type objects, so declaring one does not
+     * make the type exist) and merges in when register_post_type arrives.
+     */
     public function addSupport(string $type, string $feature, array $args): void
     {
+        $value = $args === [] ? true : [$args[0] ?? $args];
         if (!isset($this->postTypes[$type])) {
-            $this->postTypes[$type] = ['name' => $type, 'supports' => []];
+            $this->pendingSupports[$type][$feature] = $value;
+            return;
         }
-        $this->postTypes[$type]['supports'][$feature] = $args === [] ? true : [$args[0] ?? $args];
+        $this->postTypes[$type]['supports'][$feature] = $value;
     }
 
     public function removeSupport(string $type, string $feature): void
     {
-        unset($this->postTypes[$type]['supports'][$feature]);
+        unset($this->postTypes[$type]['supports'][$feature], $this->pendingSupports[$type][$feature]);
+    }
+
+    /** @return array<string, mixed> the features a type supports, registered or declared ahead */
+    public function supports(string $type): array
+    {
+        return ($this->postTypes[$type]['supports'] ?? []) + ($this->pendingSupports[$type] ?? []);
     }
 
     /** @param list<string> $objectTypes @param array<string, mixed> $args */

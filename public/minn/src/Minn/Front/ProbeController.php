@@ -161,7 +161,8 @@ final readonly class ProbeController
         $record = $resolution->record ?? [];
         [$filter, $title] = match ($resolution->kind) {
             Kind::Home => [[], $resolution->postsPage ? htmlspecialchars((string) $record['post_title'], ENT_QUOTES) . ' &#8211; ' . $siteName : $siteName],
-            Kind::Category, Kind::Tag => [['term' => (int) $record['term_taxonomy_id']], htmlspecialchars((string) $record['name'], ENT_QUOTES) . ' &#8211; ' . $siteName],
+            Kind::Category, Kind::Tag, Kind::Taxonomy => [['term' => (int) $record['term_taxonomy_id']], htmlspecialchars((string) $record['name'], ENT_QUOTES) . ' &#8211; ' . $siteName],
+            Kind::PostTypeArchive => [['types' => [(string) $record['name']]], htmlspecialchars((string) ($record['label'] ?? ''), ENT_QUOTES) . ' &#8211; ' . $siteName],
             Kind::Author => [['author' => (int) ($record['ID'] ?? -1)], htmlspecialchars((string) ($record['display_name'] ?? $resolution->authorName), ENT_QUOTES) . ' &#8211; ' . $siteName],
             Kind::Date => [array_combine(['from', 'to'], Resolver::dateRange(...$resolution->date) ?? ['1970-01-01', '1970-01-01']), $siteName],
             Kind::Search => [['search' => (string) $resolution->search], $siteName],

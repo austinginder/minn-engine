@@ -9,6 +9,7 @@ use Minn\Db;
 use Minn\Front\Kind;
 use Minn\Front\Resolution;
 use Minn\Runtime\BlockTemplates;
+use Minn\Runtime\Runtime;
 
 /**
  * Which template renders a resolution, and where its markup comes from:
@@ -55,12 +56,50 @@ final readonly class Templates
      */
     public function candidates(Resolution $resolution): array
     {
+        return $this->filtered($resolution, $this->hierarchy($resolution));
+    }
+
+    /**
+     * Plugins reshape the hierarchy through the reference's
+     * "{type}_template_hierarchy" filters (WooCommerce sends its taxonomies to
+     * archive-product that way); the filter sees PHP file names and hands
+     * back the same, which become slugs again.
+     *
+     * @param list<string> $slugs
+     * @return list<string>
+     */
+    private function filtered(Resolution $resolution, array $slugs): array
+    {
+        $type = match ($resolution->kind) {
+            Kind::Single => 'single',
+            Kind::Page => 'page',
+            Kind::Category => 'category',
+            Kind::Tag => 'tag',
+            Kind::Taxonomy => 'taxonomy',
+            Kind::PostTypeArchive => 'archive',
+            Kind::Author => 'author',
+            Kind::Date => 'date',
+            Kind::Search => 'search',
+            Kind::NotFound => '404',
+            default => null,
+        };
+        if ($type === null || !Runtime::booted()) {
+            return $slugs;
+        }
+        $names = array_map(static fn (string $slug) => $slug . '.php', $slugs);
+        $names = (array) \apply_filters("{$type}_template_hierarchy", $names);
+        return array_values(array_unique(array_map(static fn ($name) => (string) preg_replace('/\.php$/', '', (string) $name), $names)));
+    }
+
+    /** @return list<string> */
+    private function hierarchy(Resolution $resolution): array
+    {
         $record = $resolution->record ?? [];
         return match ($resolution->kind) {
             Kind::Home => $resolution->postsPage ? ['home', 'index'] : ['front-page', 'home', 'index'],
             Kind::Single => [
-                'single-post-' . ($record['post_name'] ?? ''),
-                'single-post',
+                'single-' . ($record['post_type'] ?? 'post') . '-' . ($record['post_name'] ?? ''),
+                'single-' . ($record['post_type'] ?? 'post'),
                 'single',
                 'singular',
                 'index',
@@ -76,6 +115,8 @@ final readonly class Templates
             ])),
             Kind::Category => ['category-' . ($record['slug'] ?? ''), 'category-' . (int) ($record['term_id'] ?? 0), 'category', 'archive', 'index'],
             Kind::Tag => ['tag-' . ($record['slug'] ?? ''), 'tag-' . (int) ($record['term_id'] ?? 0), 'tag', 'archive', 'index'],
+            Kind::Taxonomy => ['taxonomy-' . ($record['taxonomy'] ?? '') . '-' . ($record['slug'] ?? ''), 'taxonomy-' . ($record['taxonomy'] ?? ''), 'taxonomy', 'archive', 'index'],
+            Kind::PostTypeArchive => ['archive-' . ($record['name'] ?? ''), 'archive', 'index'],
             Kind::Author => ['author-' . ($record['user_nicename'] ?? ''), 'author-' . (int) ($record['ID'] ?? 0), 'author', 'archive', 'index'],
             Kind::Date => ['date', 'archive', 'index'],
             Kind::Search => ['search', 'index'],

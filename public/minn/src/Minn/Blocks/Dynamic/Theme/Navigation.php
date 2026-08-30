@@ -256,7 +256,7 @@ final readonly class Navigation
                     . '<ul data-wp-on--focus="actions.openMenuOnFocus" class="wp-block-navigation__submenu-container">' . $this->pageItems($tree, $id, $currentId, $ancestors, $submenuColors) . '</ul></li>';
                 continue;
             }
-            $itemClasses = 'wp-block-pages-list__item' . $marker . ' wp-block-navigation-item' . ($parent > 0 ? ' open-on-hover-click' . $submenuColors : '') . $home;
+            $itemClasses = 'wp-block-pages-list__item' . $marker . ' wp-block-navigation-item open-on-hover-click' . ($parent > 0 ? $submenuColors : '') . $home;
             $out .= '<li class="' . $itemClasses . '">' . $link . '</li>';
         }
         return $out;

@@ -31,7 +31,14 @@ final readonly class Renderer
     {
         $classes = match ($resolution->kind) {
             Kind::Home => $resolution->postsPage ? ['blog'] : ['home', 'blog'],
-            Kind::Single => ['single', 'single-post', 'postid-' . $resolution->id(), 'single-format-standard'],
+            Kind::Single => [
+                'single',
+                'single-' . (string) ($resolution->record['post_type'] ?? 'post'),
+                'postid-' . $resolution->id(),
+                ...(($resolution->record['post_type'] ?? 'post') === 'post' ? ['single-format-standard'] : []),
+            ],
+            Kind::Taxonomy => ['archive', 'tax-' . (string) $resolution->record['taxonomy'], 'term-' . (string) $resolution->record['slug'], 'term-' . $resolution->id()],
+            Kind::PostTypeArchive => ['archive', 'post-type-archive', 'post-type-archive-' . (string) ($resolution->record['name'] ?? '')],
             Kind::Page => [...($resolution->front ? ['home'] : []), ...$this->pageClasses($resolution->record)],
             Kind::Category => ['archive', 'category', 'category-' . $resolution->record['slug'], 'category-' . $resolution->id()],
             Kind::Tag => ['archive', 'tag', 'tag-' . $resolution->record['slug'], 'tag-' . $resolution->id()],

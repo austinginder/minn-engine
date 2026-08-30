@@ -216,4 +216,5 @@ function _minn_bind_hook_globals(): void
     $GLOBALS['wp_filters'] = &$hooks->counters(false);
     $GLOBALS['wp_current_filter'] = &$hooks->stackRef();
     $GLOBALS['wp_roles'] = wp_roles();
+    $GLOBALS['wp_embed'] ??= new WP_Embed();
 }

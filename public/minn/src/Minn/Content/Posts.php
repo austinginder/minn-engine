@@ -128,15 +128,16 @@ final readonly class Posts
     /**
      * A page of published posts for an archive.
      *
-     * @param array{term?: int, author?: int, from?: string, to?: string, search?: string} $filter
+     * @param array{term?: int, author?: int, from?: string, to?: string, search?: string, types?: list<string>} $filter
      * @return array{posts: list<array>, total: int}
      */
     public function archive(array $filter, int $page, int $perPage): array
     {
         $posts = $this->db->table('posts');
         $statuses = Reader::current()->listableStatuses('post');
-        $where = ["p.post_type = 'post'", 'p.post_status IN (' . implode(',', array_fill(0, count($statuses), '?')) . ')'];
-        $params = $statuses;
+        $types = array_values(array_map('strval', $filter['types'] ?? ['post']));
+        $where = ['p.post_type IN (' . implode(',', array_fill(0, count($types), '?')) . ')', 'p.post_status IN (' . implode(',', array_fill(0, count($statuses), '?')) . ')'];
+        $params = [...$types, ...$statuses];
         $join = '';
         if (isset($filter['term'])) {
             $join = "INNER JOIN {$this->db->table('term_relationships')} tr ON tr.object_id = p.ID";

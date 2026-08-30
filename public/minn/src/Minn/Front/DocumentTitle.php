@@ -32,7 +32,8 @@ final class DocumentTitle
         $title = match ($resolution->kind) {
             Kind::Home, Kind::Single, Kind::Page => (string) ($record['post_title'] ?? ''),
             Kind::NotFound => 'Page not found',
-            Kind::Category, Kind::Tag => (string) ($record['name'] ?? ''),
+            Kind::Category, Kind::Tag, Kind::Taxonomy => (string) ($record['name'] ?? ''),
+            Kind::PostTypeArchive => (string) ($record['label'] ?? $record['name'] ?? ''),
             Kind::Author => (string) ($record['display_name'] ?? $resolution->authorName),
             Kind::Search => 'Search Results for &#8220;' . (string) $resolution->search . '&#8221;',
             default => '',

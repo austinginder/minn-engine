@@ -9,6 +9,7 @@ use Minn\Content\Posts;
 use Minn\Content\Terms;
 use Minn\Db;
 use Minn\Http\Request;
+use Minn\Runtime\Runtime;
 use Minn\Content\Reader;
 use Minn\Auth\Nonce;
 
@@ -118,7 +119,7 @@ final readonly class Resolver
             return $single ?? Resolution::notFound();
         }
 
-        $resolution = match (true) {
+        $resolution = $this->pluginRoute($segments, $paged) ?? match (true) {
             $segments === [] => $this->home($paged),
             $segments[0] === 'category' => $this->termArchive('category', array_slice($segments, 1), $paged),
             $segments[0] === 'tag' => $this->termArchive('post_tag', array_slice($segments, 1), $paged),
@@ -219,6 +220,71 @@ final readonly class Resolver
             "SELECT COUNT(*) FROM {$this->db->table('posts')} WHERE post_type = 'post' AND post_status = 'publish'",
         );
         return $paged > 1 && $paged > $this->pages($total) ? Resolution::notFound() : Resolution::home($paged);
+    }
+
+    /**
+     * A plugin's post type or taxonomy behind the path: its archive at the
+     * has_archive slug (which wins over a page of the same name), a single
+     * under the type's rewrite slug, or a term under the taxonomy's. Only
+     * once the runtime has loaded the plugins that register them.
+     *
+     * @param list<string> $segments
+     */
+    private function pluginRoute(array $segments, int $paged): ?Resolution
+    {
+        $registry = Runtime::booted() ? Runtime::registry() : null;
+        if ($registry === null || $segments === []) {
+            return null;
+        }
+        foreach ($registry->postTypes() as $name => $type) {
+            if (!empty($type['_builtin']) || empty($type['publicly_queryable']) || empty($type['rewrite'])) {
+                continue;
+            }
+            $archive = $type['has_archive'] ?? false;
+            $archiveSlug = is_string($archive) && $archive !== '' ? $archive : ($archive === true ? $this->permalinks->typeSlug((string) $name) : null);
+            if ($archiveSlug !== null && $segments === self::segmentsOf($archiveSlug)) {
+                $total = $this->posts->archive(['types' => [(string) $name]], 1, 1)['total'];
+                return $paged > 1 && $paged > $this->pages($total) ? Resolution::notFound() : Resolution::postTypeArchive(['name' => (string) $name] + $type, $paged);
+            }
+            $prefix = self::segmentsOf($this->permalinks->typeSlug((string) $name));
+            if (count($segments) === count($prefix) + 1 && array_slice($segments, 0, count($prefix)) === $prefix) {
+                $post = $this->posts->findByName(end($segments), [(string) $name], publishedOnly: false);
+                return $post !== null && $this->readable($post) ? Resolution::single($post, $paged) : Resolution::notFound();
+            }
+        }
+        foreach ($registry->taxonomies() as $name => $taxonomy) {
+            if (!empty($taxonomy['_builtin']) || empty($taxonomy['publicly_queryable']) || empty($taxonomy['rewrite'])) {
+                continue;
+            }
+            $prefix = self::segmentsOf($this->permalinks->taxonomySlug((string) $name) ?? (string) $name);
+            if (count($segments) > count($prefix) && array_slice($segments, 0, count($prefix)) === $prefix) {
+                return $this->taxonomyArchive((string) $name, (array) ($taxonomy['object_type'] ?? []), array_slice($segments, count($prefix)), $paged);
+            }
+        }
+        return null;
+    }
+
+    /** @return list<string> */
+    private static function segmentsOf(string $slug): array
+    {
+        return array_values(array_filter(explode('/', $slug), static fn (string $s) => $s !== ''));
+    }
+
+    /**
+     * @param list<string> $types the post types the taxonomy attaches to
+     * @param list<string> $slugs
+     */
+    private function taxonomyArchive(string $taxonomy, array $types, array $slugs, int $paged): Resolution
+    {
+        $term = $this->terms->findBySlug($taxonomy, end($slugs));
+        if ($term === null || strcasecmp($this->terms->pathOf($term), implode('/', $slugs)) !== 0) {
+            return Resolution::notFound();
+        }
+        $total = $this->posts->archive(['term' => (int) $term['term_taxonomy_id'], 'types' => $types === [] ? ['post'] : $types], 1, 1)['total'];
+        if ($total === 0 || $paged > $this->pages($total)) {
+            return Resolution::notFound();
+        }
+        return Resolution::taxonomy($term, $paged);
     }
 
     /** @param list<string> $slugs */

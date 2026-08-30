@@ -84,7 +84,7 @@ class WP_Block
 
     public function render($options = [])
     {
-        $options = wp_parse_args($options, ['dynamic' => true]);
+        $options = wp_parse_args($options, ['dynamic' => true, 'minn_filters' => true]);
         $is_dynamic = $options['dynamic'] && $this->name && $this->block_type !== null && $this->block_type->is_dynamic();
         $block_content = '';
         if (!$options['dynamic'] || empty($this->block_type->skip_inner_blocks)) {
@@ -129,6 +129,10 @@ class WP_Block
             foreach ($this->block_type->style_handles as $style_handle) {
                 wp_enqueue_style($style_handle);
             }
+        }
+        if (($options['minn_filters'] ?? true) === false) {
+            // The engine's renderer applies the render_block filters once around a bridged block.
+            return $block_content;
         }
         $block_content = apply_filters('render_block', $block_content, $this->parsed_block, $this);
         $block_content = apply_filters("render_block_{$this->name}", $block_content, $this->parsed_block, $this);

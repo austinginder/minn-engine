@@ -849,6 +849,48 @@ the oracle taught, by area:
   turns a standalone hyphen into an en dash (`a - b`, `end -`, `- start`;
   `a-b` stays), which the document title depends on.
 
+### A plugin's post types and taxonomies on the front end
+
+The resolver (`Front\Resolver::pluginRoute`) reads the runtime registry
+once plugins have registered: a type's archive answers at its `has_archive`
+slug (a string) or its rewrite slug (`true`), and wins over a page of the
+same name (`/shop/` is the product archive on the reference, not the shop
+page); a single answers under the type's rewrite slug; a term under the
+taxonomy's rewrite slug, hierarchical paths checked whole. Two resolution
+kinds carry them, `Kind::Taxonomy` (the term row) and `Kind::PostTypeArchive`
+(the registered type), with the reference's body classes (`single
+single-product postid-N` without a format class, `archive tax-product_cat
+term-clothing term-28`, `archive post-type-archive post-type-archive-product`),
+template candidates (`single-{type}-{slug}`, `single-{type}`;
+`taxonomy-{tax}-{slug}`, `taxonomy-{tax}`, `taxonomy`, `archive`;
+`archive-{type}`, `archive`), query vars (`product=hoodie&post_type=product&name=hoodie`,
+`product_cat=clothing`, `post_type=product`) and titles (the type's label
+through `post_type_archive_title`, which WooCommerce answers with "Shop").
+Template candidates run through the reference's `{type}_template_hierarchy`
+filters as PHP names (WooCommerce sends its taxonomies to `archive-product`
+that way; it registers no `taxonomy-product_cat` template).
+
+What the lab taught about the main query: a plugin archive's main query is
+a real `WP_Query` (`_minn_run_main_query`), made the main query before it
+runs so `is_main_query()` holds inside `pre_get_posts`, with no
+`posts_per_page` in its vars (WooCommerce keeps a page size it finds and
+only supplies its 16 when the var is empty; `fill_query_vars` leaves the
+var "" and the option applies at run time). After the main query stands the
+engine fires `wp` (with the request object) then `template_redirect`;
+WooCommerce's breadcrumbs, product data and gallery all need `wp`. A single
+of a plugin type seeds by name and type (its vars carry no `p`). Support
+declared with `add_post_type_support` before the type registers waits
+aside; it used to create a skeleton row that made `post_type_exists` true
+and WooCommerce skip its own registration. Every page-list item carries
+`open-on-hover-click`. A bridged plugin block renders once through
+`WP_Block` with the context `render_block()` builds; the engine's
+`BlockFilters` applies the render filters around it and the block object
+skips them (`minn_filters` false), because WooCommerce's collection
+renderer resets its state after the first `render_block_woocommerce/product-collection`
+and returns "" on a second pass. `$wp_embed` is a real `WP_Embed`
+(the [embed] shortcode, URLs alone on a line, handlers, then a link) on
+`the_content` at 8. `get_block_wrapper_attributes` names a class once.
+
 Known gaps after this pass: the engine registers no core shortcodes
 (`[gallery]`, `[caption]`, `[audio]`, `[video]`, `[playlist]`, `[embed]`)
 where the reference registers seven; `wp_list_comments` prints only the

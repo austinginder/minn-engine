@@ -41,7 +41,17 @@ function _minn_render_core_block(WP_Block $block, string $content = ''): string
 function _minn_bridge_dynamic_block(string $name): void
 {
     MinnBlocks::renderer()->registerDynamic($name, static function (MinnBlock $block): string {
-        return render_block(_minn_block_to_array($block));
+        // The engine's BlockFilters already ran pre_render_block, render_block_data and render_block around this
+        // call; the block object gets the context render_block() would build, and renders once.
+        $parsed = _minn_block_to_array($block);
+        $context = [];
+        $post = get_post();
+        if ($post instanceof WP_Post) {
+            $context['postId'] = $post->ID;
+            $context['postType'] = $post->post_type;
+        }
+        $context = apply_filters('render_block_context', $context, $parsed, null);
+        return (new WP_Block($parsed, $context))->render(['minn_filters' => false]);
     });
 }
 
@@ -237,6 +247,10 @@ function get_block_wrapper_attributes($extra_attributes = [])
             $new_attributes[$attribute] = $extra_attributes[$attribute] . ' ' . $new_attributes[$attribute];
             unset($extra_attributes[$attribute]);
         }
+    }
+    if (!empty($new_attributes['class'])) {
+        // A class named by both the caller and the block supports appears once.
+        $new_attributes['class'] = implode(' ', array_unique(preg_split('/\s+/', trim((string) $new_attributes['class']), -1, PREG_SPLIT_NO_EMPTY) ?: []));
     }
     $attributes = array_merge($new_attributes, $extra_attributes);
     $normalized = [];
@@ -1031,4 +1045,20 @@ function get_block_template($id, $template_type = 'wp_template')
         $template = WP_Block_Templates_Registry::get_instance()->get_registered((string) $id);
     }
     return apply_filters('get_block_template', $template, $id, $template_type);
+}
+
+/** True when any inner block (however deep) shows the featured image: the block itself, or a cover set to use it. */
+function block_core_post_template_uses_featured_image($inner_blocks)
+{
+    foreach ($inner_blocks as $block) {
+        $parsed = $block instanceof WP_Block ? $block->parsed_block : (array) $block;
+        $name = (string) ($parsed['blockName'] ?? '');
+        if ($name === 'core/post-featured-image' || ($name === 'core/cover' && !empty($parsed['attrs']['useFeaturedImage']))) {
+            return true;
+        }
+        if (!empty($parsed['innerBlocks']) && block_core_post_template_uses_featured_image($parsed['innerBlocks'])) {
+            return true;
+        }
+    }
+    return false;
 }

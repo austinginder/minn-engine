@@ -35,6 +35,18 @@ final class Shortcodes
         return isset($this->tags[$tag]);
     }
 
+    /** @return array<string, callable> every registered tag and its handler, to restore after a narrowed run */
+    public function all(): array
+    {
+        return $this->tags;
+    }
+
+    /** @param array<string, callable> $tags */
+    public function restore(array $tags): void
+    {
+        $this->tags = $tags;
+    }
+
     /** @return list<string> */
     public function names(): array
     {

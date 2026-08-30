@@ -100,7 +100,8 @@ class WP_Query
         $template = Runtime::registry()->queryVars;
         foreach ($template as $key => $default) {
             if (!isset($query_vars[$key])) {
-                $query_vars[$key] = is_array($default) ? [] : ($key === 'p' ? 0 : ($key === 'posts_per_page' ? (int) get_option('posts_per_page') : $default));
+                // posts_per_page stays empty until the query runs, so pre_get_posts can tell "unset" from the option's value.
+                $query_vars[$key] = is_array($default) ? [] : ($key === 'p' ? 0 : ($key === 'posts_per_page' ? '' : $default));
             }
         }
         foreach (Runtime::registry()->taxonomies() as $taxonomy) {
@@ -287,7 +288,7 @@ class WP_Query
         if ($this->found_posts > 0 && !empty($result['sticky'])) {
             // The reference counts only the queried rows; stickies ride on top of the page.
         }
-        $perPage = !empty($q['nopaging']) ? 0 : (int) ($q['posts_per_page'] ?? 10);
+        $perPage = !empty($q['nopaging']) ? 0 : (int) (($q['posts_per_page'] ?? '') === '' ? get_option('posts_per_page', 10) : $q['posts_per_page']);
         $this->max_num_pages = $perPage > 0 && $this->found_posts > 0 ? (int) ceil($this->found_posts / $perPage) : ($this->found_posts > 0 || $this->post_count > 0 ? 1 : 0);
         if ($this->post_count > 0 && $fields === 'all') {
             $this->post = $this->posts[0];
@@ -381,7 +382,15 @@ class WP_Query
             } elseif ($this->is_tag) {
                 $term = !empty($q['tag_id']) ? get_term((int) $q['tag_id'], 'post_tag') : (!empty($q['tag']) ? get_term_by('slug', (string) $q['tag'], 'post_tag') : null);
             } else {
-                foreach ((array) ($q['tax_query'] ?? []) as $clause) {
+                foreach (Runtime::registry()->taxonomies() as $name => $taxonomy) {
+                    $var = $taxonomy['query_var'] ?? false;
+                    if (is_string($var) && $var !== '' && !in_array($var, ['category_name', 'tag'], true) && !empty($q[$var])) {
+                        $slugs = explode('/', (string) $q[$var]);
+                        $term = get_term_by('slug', end($slugs), (string) $name);
+                        break;
+                    }
+                }
+                foreach ($term instanceof WP_Term ? [] : (array) ($q['tax_query'] ?? []) as $clause) {
                     if (is_array($clause) && isset($clause['taxonomy'], $clause['terms'])) {
                         $terms = (array) $clause['terms'];
                         $field = (string) ($clause['field'] ?? 'term_id');

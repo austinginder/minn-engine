@@ -559,7 +559,8 @@ function get_post_type_archive_link($post_type)
     if ($type === null || !$type->has_archive) {
         return false;
     }
-    $slug = is_array($type->rewrite) && !empty($type->rewrite['slug']) ? $type->rewrite['slug'] : ($type->has_archive === true ? $type->name : (string) $type->has_archive);
+    // A named archive (has_archive "shop") lives at that name; otherwise at the type's rewrite slug.
+    $slug = is_string($type->has_archive) && $type->has_archive !== '' ? $type->has_archive : (is_array($type->rewrite) && !empty($type->rewrite['slug']) ? $type->rewrite['slug'] : $type->name);
     return apply_filters('post_type_archive_link', home_url('/' . $slug . '/'), $post_type);
 }
 
@@ -1168,7 +1169,7 @@ function get_post_type_capabilities($args)
 
 function get_all_post_type_supports($post_type)
 {
-    return Runtime::registry()->postType((string) $post_type)['supports'] ?? [];
+    return Runtime::registry()->supports((string) $post_type);
 }
 
 function post_type_supports($post_type, $feature)
@@ -1503,4 +1504,16 @@ function update_post_caches(&$posts, $post_type = 'post', $update_term_cache = t
 function update_post_thumbnail_cache($wp_query = null)
 {
     return null;
+}
+
+/** An attachment page shows the file's own link ahead of its content; any other post passes through. */
+function prepend_attachment($content)
+{
+    $post = get_post();
+    if (!$post || $post->post_type !== 'attachment') {
+        return $content;
+    }
+    $link = wp_get_attachment_link(0, 'medium', false);
+    $link = apply_filters('prepend_attachment', $link);
+    return '<p class="attachment">' . $link . "</p>\n" . $content;
 }

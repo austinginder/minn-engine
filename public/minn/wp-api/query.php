@@ -288,6 +288,23 @@ function get_the_archive_description()
  * @param array<string, mixed> $vars
  * @param list<int> $postIds
  */
+/**
+ * @internal the main query for a plugin's archive runs through WP_Query, so pre_get_posts can shape it
+ * (per page, order, hidden items), and becomes the main query; rows come back for the engine's context
+ * @return array{posts: list<array>, total: int, perPage: int}
+ */
+function _minn_run_main_query(array $vars, int $paged, int $perPage): array
+{
+    $query = new WP_Query();
+    // The main query is the main query while it runs, so is_main_query() holds inside pre_get_posts.
+    $GLOBALS['wp_the_query'] = $query;
+    $GLOBALS['wp_query'] = $query;
+    // No posts_per_page in the vars: the page size is the option's until a plugin's pre_get_posts says otherwise.
+    $query->query($vars + ($paged > 1 ? ['paged' => $paged] : []));
+    $rows = array_map(static fn ($p) => $p instanceof WP_Post ? $p->to_array() : (array) $p, $query->posts);
+    return ['posts' => $rows, 'total' => (int) $query->found_posts, 'perPage' => max(1, (int) ($query->query_vars['posts_per_page'] ?? $perPage))];
+}
+
 function _minn_seed_main_query(array $vars, array $postIds, int $total, int $perPage, bool $postsPage = false): void
 {
     $query = new WP_Query();
@@ -309,7 +326,12 @@ function _minn_seed_main_query(array $vars, array $postIds, int $total, int $per
         }
     }
     if ($posts === [] && ($query->is_singular || $query->is_attachment)) {
+        // A post named by id, or (a plugin's type) by name and type.
         $single = get_post((int) ($vars['p'] ?? $vars['page_id'] ?? 0));
+        if ($single === null && !empty($vars['name']) && !empty($vars['post_type'])) {
+            $row = _minn_posts()->findByName((string) $vars['name'], [(string) $vars['post_type']], publishedOnly: false);
+            $single = $row === null ? null : get_post((int) $row['ID']);
+        }
         if ($single instanceof WP_Post) {
             $posts[] = $single;
         }

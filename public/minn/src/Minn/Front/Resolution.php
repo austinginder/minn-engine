@@ -64,6 +64,18 @@ final readonly class Resolution
         return new self($taxonomy === 'category' ? Kind::Category : Kind::Tag, $term, $paged);
     }
 
+    /** A plugin taxonomy's term archive; the record is the term row (with its taxonomy). */
+    public static function taxonomy(array $term, int $paged = 1): self
+    {
+        return new self(Kind::Taxonomy, $term, $paged);
+    }
+
+    /** A plugin post type's archive; the record is the registered type (name, label, ...). */
+    public static function postTypeArchive(array $type, int $paged = 1): self
+    {
+        return new self(Kind::PostTypeArchive, $type, $paged);
+    }
+
     public static function author(string $name, ?array $user, int $paged = 1): self
     {
         return new self(Kind::Author, $user, $paged, authorName: $name);

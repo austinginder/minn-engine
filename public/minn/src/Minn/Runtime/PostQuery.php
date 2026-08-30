@@ -84,9 +84,9 @@ final class PostQuery
         if (!empty($q['nopaging'])) {
             return 0;
         }
-        $perPage = $q['posts_per_page'] ?? 10;
+        $perPage = $q['posts_per_page'] ?? '';
         if ($perPage === '' || $perPage === null) {
-            $perPage = 10;
+            $perPage = (int) ($this->db->option('posts_per_page') ?? 10);
         }
         return (int) $perPage < 0 ? 0 : (int) $perPage;
     }
