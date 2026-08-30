@@ -88,6 +88,48 @@ function minn_test_pin_theme( string $slug = 'twentytwentyfive' ): void {
 		}
 	);
 }
+/**
+ * The fixtures and the prose checks were captured in English. A language
+ * switched on for testing (WPLANG, or a user's locale meta) would change
+ * what the reference renders and what the app loads, so every suite pins
+ * en_US while it runs and puts the setting back on shutdown. run-all.sh
+ * pins once and sets MINN_TEST_KEEP_LOCALE so the suites skip their own.
+ */
+function minn_test_pin_locale(): void {
+	$public = dirname( __DIR__ ) . '/public';
+	$wp     = static function ( string $args ) use ( $public ): string {
+		return trim( (string) shell_exec( 'cd ' . escapeshellarg( $public ) . ' && /opt/homebrew/bin/wp ' . $args . ' 2>/dev/null' ) );
+	};
+	$prefix = $wp( 'config get table_prefix' ) ?: 'wp_';
+	$row    = $wp( 'db query ' . escapeshellarg( "SELECT CONCAT('=', option_value) FROM {$prefix}options WHERE option_name = 'WPLANG'" ) . ' --skip-column-names' );
+	$exists = str_starts_with( $row, '=' );
+	$site   = $exists ? substr( $row, 1 ) : null;
+	$users  = array();
+	foreach ( array_filter( explode( "\n", $wp( 'db query ' . escapeshellarg( "SELECT user_id, meta_value FROM {$prefix}usermeta WHERE meta_key = 'locale' AND meta_value <> ''" ) . ' --skip-column-names' ) ) ) as $row ) {
+		[ $id, $locale ] = array_pad( preg_split( '/\t/', $row ), 2, '' );
+		$users[ (int) $id ] = $locale;
+	}
+	if ( ( $site ?? '' ) === '' && $users === array() ) {
+		return;
+	}
+	$wp( 'db query ' . escapeshellarg( "UPDATE {$prefix}usermeta SET meta_value = '' WHERE meta_key = 'locale'" ) );
+	if ( $exists ) {
+		$wp( 'option update WPLANG "" >/dev/null' );
+	}
+	register_shutdown_function(
+		static function () use ( $wp, $prefix, $exists, $site, $users ): void {
+			if ( $exists && $site !== null && $site !== '' ) {
+				$wp( 'option update WPLANG ' . escapeshellarg( $site ) . ' >/dev/null' );
+			}
+			foreach ( $users as $id => $locale ) {
+				$wp( 'db query ' . escapeshellarg( "UPDATE {$prefix}usermeta SET meta_value = '" . addslashes( $locale ) . "' WHERE meta_key = 'locale' AND user_id = " . (int) $id ) );
+			}
+		}
+	);
+}
 if ( getenv( 'MINN_TEST_KEEP_THEME' ) === false ) {
 	minn_test_pin_theme();
+}
+if ( getenv( 'MINN_TEST_KEEP_LOCALE' ) === false ) {
+	minn_test_pin_locale();
 }

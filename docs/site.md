@@ -76,6 +76,27 @@ pages (the lexicon uses it too).
 - The source is not on GitHub yet; the page says so and points at Minn Admin's
   repository. Swap the GitHub links when the engine repository goes public.
 
+## Languages during a test run
+
+Two things keep a language switched on for testing from bending the suites.
+`wp-reference/wp-content/languages` is a symlink to the engine's
+`public/wp-content/languages` (the same arrangement as uploads), so both stacks
+read the same packs and `/minn-admin/v1/languages` agrees. And every suite pins
+en_US while it runs (`minn_test_pin_locale()` in `tests/lib.php`: `WPLANG` and
+every user's `locale` meta go to empty and come back on shutdown; `run-all.sh`
+pins once and sets `MINN_TEST_KEEP_LOCALE`; the browser suites do the same
+through `pin-theme.js`), because the fixtures and the prose checks are English.
+
+The reference counts a language as installed when its core pack is on disk
+(`get_available_languages()`), so a language installed for testing needs the
+core pack too: `cd wp-reference && wp language core install <locale>`. The
+engine's own install fetches only the Minn Admin pack today; fetching the
+core pack alongside it, so the folder matches what WordPress would leave, is
+the language milestone's next step. The engine does not yet render its public
+pages from core packs, which is why the pin matters: with a core pack present
+and `WPLANG` set, the reference would render translated and the engine would
+not.
+
 ## The parity suites and the theme pin
 
 The fixtures under `contracts/fixtures/theme/` and the geometry suite were

@@ -39,12 +39,29 @@ pin_theme() {
 	( cd ../public && $WP option update template twentytwentyfive >/dev/null 2>&1 && $WP option update stylesheet twentytwentyfive >/dev/null 2>&1 )
 	export MINN_TEST_KEEP_THEME=1
 }
+# A language switched on for testing (WPLANG or a user's locale meta) would
+# change what the reference renders; pin en_US for the run, restore on exit.
+prefix="$( cd ../public && $WP config get table_prefix 2>/dev/null )"; prefix="${prefix:-wp_}"
+saved_wplang="$( cd ../public && $WP option get WPLANG 2>/dev/null )"
+saved_locales="$( cd ../public && $WP db query "SELECT user_id, meta_value FROM ${prefix}usermeta WHERE meta_key = 'locale' AND meta_value <> ''" --skip-column-names 2>/dev/null )"
+pin_locale() {
+	( cd ../public && $WP db query "UPDATE ${prefix}usermeta SET meta_value = '' WHERE meta_key = 'locale'" >/dev/null 2>&1; [ -n "$saved_wplang" ] && $WP option update WPLANG "" >/dev/null 2>&1 )
+	export MINN_TEST_KEEP_LOCALE=1
+}
+restore_locale() {
+	[ -n "$saved_wplang" ] && ( cd ../public && $WP option update WPLANG "$saved_wplang" >/dev/null 2>&1 )
+	printf '%s\n' "$saved_locales" | while IFS=$'\t' read -r id locale; do
+		[ -n "$id" ] && ( cd ../public && $WP db query "UPDATE ${prefix}usermeta SET meta_value = '$locale' WHERE meta_key = 'locale' AND user_id = $id" >/dev/null 2>&1 )
+	done
+	return 0
+}
 restore_theme() {
 	[ -n "$saved_template" ] && ( cd ../public && $WP option update template "$saved_template" >/dev/null 2>&1 && $WP option update stylesheet "$saved_stylesheet" >/dev/null 2>&1 )
 }
-cleanup() { stop_references; restore_theme; }
+cleanup() { stop_references; restore_theme; restore_locale; }
 trap cleanup EXIT
 pin_theme
+pin_locale
 start_reference "$PWD/../wp-reference" 8123
 start_reference "$DOGFOOD_REF" 8124
 
