@@ -46,7 +46,10 @@ $check = static function (bool $ok, string $label, string $detail = '') use (&$p
 $check($h['status'] === 200, 'front page answers 200');
 $check(str_contains($home, 'wp-theme-minn-site'), 'the site theme is active');
 $check(str_contains($home, '<title>Minn Engine</title>'), 'document title is the site name');
-$check(str_contains($home, 'served by Minn Engine'), 'the footer says who served the page');
+$check(str_contains($home, 'served by Minn'), 'the footer says who served the page');
+$check(str_contains($home, 'class="minn-wordmark">minn</span>'), 'the header wordmark is Minn');
+$check(!str_contains($home, 'minn<small>engine</small>'), 'the header does not say engine');
+$check(str_contains($home, 'What is Minn, and what is Minn Engine?'), 'the FAQ names the product vs the engine');
 $check(str_contains($home, '/wp-content/themes/minn-site/style.css'), 'the theme stylesheet is linked');
 $check(!str_contains($home, 'CHECKS_COUNT'), 'no unfilled placeholders on the page');
 $check(str_contains($home, 'href="#content">Skip to content'), 'skip link targets the template\'s own main id');
