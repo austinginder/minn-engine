@@ -219,18 +219,29 @@ final readonly class LexiconPage
             c.setAttribute('aria-pressed', c.getAttribute('data-lex-filter') === filter ? 'true' : 'false');
         });
     }
+    function reveal(smooth) {
+        if (filter === 'all') { return; }
+        var target = document.getElementById(filter);
+        if (!target) { return; }
+        target.scrollIntoView({ behavior: smooth ? 'smooth' : 'instant', block: 'start' });
+    }
     chips.forEach(function (c) {
         c.addEventListener('click', function () {
             filter = c.getAttribute('data-lex-filter') || 'all';
             if (filter !== 'all') { history.replaceState(null, '', '#' + filter); }
             else { history.replaceState(null, '', location.pathname); }
             apply();
+            reveal(true);
         });
     });
     if (q) { q.addEventListener('input', apply); }
     var hash = (location.hash || '').replace('#', '').toLowerCase();
     if (hash === 'speak' || hash === 'hear' || hash === 'mute') { filter = hash; }
     apply();
+    reveal(false);
+    // The browser's own hash scroll runs after inline scripts and
+    // would park the heading under the sticky bar. Repeat on load.
+    window.addEventListener('load', function () { reveal(false); });
 })();
 </script>
 JS;
