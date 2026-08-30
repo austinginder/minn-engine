@@ -39,7 +39,8 @@ $check('lifecycle order in wp_head', str_contains($html, '<meta name="minn-test-
 // Theme stylesheet links are the theme's own to enqueue; tests/styles.test.php pins them to the reference's set.
 $check('enqueued style printed', preg_match("#<link rel='stylesheet' id='minn-test-plugin-css' href='" . preg_quote($base, '#') . "/wp-content/plugins/minn-test-plugin/probe\\.css\\?ver=1\\.0\\.0' media='all' />#", $html) === 1);
 $check('footer script printed in the footer', preg_match('#<script id="minn-test-plugin-js" src="' . preg_quote($base, '#') . '/wp-content/plugins/minn-test-plugin/probe\.js\?ver=1\.0\.0"></script>#', $html) === 1 && strpos($html, 'id="minn-test-plugin-js"') > strpos($html, '</main>'), substr((string) strstr($html, 'minn-test-plugin-js"'), 0, 160));
-$check('localized data before the script', str_contains($html, '<script id="minn-test-plugin-js-extra">' . "\n" . 'var minnTestPlugin = ' . json_encode(['home' => $base . '/', 'admin' => '']) . ';'), substr((string) strstr($html, 'minn-test-plugin-js-extra'), 0, 160));
+// wp_localize_script prints its JSON with slashes unescaped, as the reference does.
+$check('localized data before the script', str_contains($html, '<script id="minn-test-plugin-js-extra">' . "\n" . 'var minnTestPlugin = ' . json_encode(['home' => $base . '/', 'admin' => ''], JSON_UNESCAPED_SLASHES) . ';'), substr((string) strstr($html, 'minn-test-plugin-js-extra'), 0, 160));
 $check('body_class filter', preg_match('/<body class="[^"]*\bminn-test-plugin-body\b/', $html) === 1);
 $check('the_content filter on the post', str_contains($html, '<p class="minn-test-plugin-content">' . htmlspecialchars((string) get_option('blogname'), ENT_QUOTES) . '</p>'));
 $check('wp_footer output', str_contains($html, '<!-- minn-test-plugin footer: Twenty Twenty-Five -->'));

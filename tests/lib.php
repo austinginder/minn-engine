@@ -67,6 +67,11 @@ function minn_test_diff( $a, $b, string $path = '$' ): ?string {
  * a suite that needs a different theme calls this with its slug.
  */
 function minn_test_pin_theme( string $slug = 'twentytwentyfive' ): void {
+	// Only the FIRST pin in a process saves the original and registers the
+	// restore: shutdown functions run in registration order, so a second
+	// pin's restore would otherwise win and strand the site on the first
+	// pin's theme (a classic-suite run used to leave twentytwentyfive up).
+	static $pinned = false;
 	$public = dirname( __DIR__ ) . '/public';
 	$wp     = static function ( string $args ) use ( $public ): string {
 		return trim( (string) shell_exec( 'cd ' . escapeshellarg( $public ) . ' && /opt/homebrew/bin/wp ' . $args . ' 2>/dev/null' ) );
@@ -78,6 +83,10 @@ function minn_test_pin_theme( string $slug = 'twentytwentyfive' ): void {
 	foreach ( array_keys( $saved ) as $name ) {
 		$wp( 'option update ' . $name . ' ' . escapeshellarg( $slug ) . ' >/dev/null' );
 	}
+	if ( $pinned ) {
+		return;
+	}
+	$pinned = true;
 	register_shutdown_function(
 		static function () use ( $wp, $saved ): void {
 			foreach ( $saved as $name => $value ) {
