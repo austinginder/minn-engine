@@ -26,6 +26,7 @@ final readonly class Notifications
         private Users $users,
         private Capabilities $capabilities,
         private Dashboard $dashboard,
+        private Updates $updates,
     ) {
     }
 
@@ -58,6 +59,36 @@ final readonly class Notifications
             }
         }
 
+        if ($this->capabilities->can($userId, 'update_plugins')) {
+            $checked = (int) ($this->updates->state()['checked'] ?? $now);
+            $names = $this->updates->pluginNames();
+            foreach ($this->updates->pluginOffers() as $file => $version) {
+                $name = ($names[$file] ?? '') !== '' ? $names[$file] : $file;
+                $items[] = [
+                    'id' => 'plugin-' . $file . '-' . $version,
+                    'kind' => 'updates',
+                    'icon' => '⬆',
+                    'title' => sprintf('%1$s %2$s is available to install', $name, $version),
+                    'time' => $checked,
+                    'update' => ['type' => 'plugin', 'plugin' => $file, 'version' => $version, 'name' => $name],
+                ];
+            }
+        }
+        if ($this->capabilities->can($userId, 'update_themes')) {
+            $checked = (int) ($this->updates->state()['checked'] ?? $now);
+            $headers = $this->updates->themeHeaders();
+            foreach ($this->updates->themeOffers() as $stylesheet => $version) {
+                $name = ($headers[$stylesheet]['Theme Name'] ?? '') !== '' ? $headers[$stylesheet]['Theme Name'] : $stylesheet;
+                $items[] = [
+                    'id' => 'theme-' . $stylesheet . '-' . $version,
+                    'kind' => 'updates',
+                    'icon' => '⬆',
+                    'title' => sprintf('%1$s theme %2$s is available to install', $name, $version),
+                    'time' => $checked,
+                    'update' => ['type' => 'theme', 'stylesheet' => $stylesheet, 'version' => $version, 'name' => $name],
+                ];
+            }
+        }
         if ($this->capabilities->can($userId, 'update_plugins') || $this->capabilities->can($userId, 'update_themes')) {
             $count = $this->translationCount();
             if ($count > 0) {

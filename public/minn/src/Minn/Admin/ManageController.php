@@ -42,6 +42,7 @@ final readonly class ManageController
         private App $app,
         private Appearance $appearance,
         private HiddenIntegrations $hiddenIntegrations,
+        private Updates $updates,
         private Caller $caller,
         private string $contentDir,
     ) {
@@ -156,27 +157,29 @@ final readonly class ManageController
         $this->requireFloor();
         $this->requireCap('switch_themes');
         $active = (string) ($this->site->option('stylesheet') ?? '');
+        $offers = $this->caller->can('update_themes') ? $this->updates->themeOffers() : [];
+        $auto = $this->updates->auto('theme');
         $items = [];
         foreach ($this->themeFolders() as $slug => $headers) {
             $items[] = [
                 'stylesheet' => $slug,
-                'name' => $headers['Theme Name'],
+                'name' => self::themeText($headers['Theme Name']),
                 'version' => $headers['Version'],
-                'author' => strip_tags($headers['Author']),
+                'author' => self::themeText($headers['Author']),
                 'author_uri' => $headers['Author URI'],
                 'theme_uri' => $headers['Theme URI'],
                 'screenshot' => $this->screenshot($slug),
                 'active' => $slug === $active,
                 'parent' => $headers['Template'] === '' ? null : $headers['Template'],
-                'on_wporg' => false,
+                'on_wporg' => $this->updates->themeOnDirectory($slug),
                 'network' => false,
-                'update' => null,
+                'update' => $offers[$slug] ?? null,
                 'block' => is_file("{$this->contentDir}/themes/{$slug}/templates/index.html"),
-                'auto_update' => false,
+                'auto_update' => in_array($slug, $auto, true),
             ];
         }
         usort($items, static fn (array $a, array $b): int => ($b['active'] <=> $a['active']) ?: strcasecmp($a['name'], $b['name']));
-        return $this->reply($request, ['themes' => $items, 'auto_updates' => false]);
+        return $this->reply($request, ['themes' => $items, 'auto_updates' => $this->caller->can('update_themes')]);
     }
 
     #[Route(Method::Post, '/minn-admin/v1/themes/activate')]
@@ -197,23 +200,6 @@ final readonly class ManageController
         $this->site->setOption('template', $template === '' ? $stylesheet : $template);
         $this->site->setOption('current_theme', $folders[$stylesheet]['Theme Name']);
         return $this->reply($request, ['active' => $stylesheet]);
-    }
-
-    /** No update channel: nothing is ever pending. */
-    #[Route(Method::Get, '/minn-admin/v1/plugin-updates')]
-    public function pluginUpdates(Request $request): Response
-    {
-        $this->requireFloor();
-        $this->requireCap('update_plugins');
-        return $this->reply($request, ['updates' => [], 'themes' => [], 'translations' => 0, 'translationGroups' => [], 'auto' => [], 'autoAllowed' => false]);
-    }
-
-    #[Route(Method::Get, '/minn-admin/v1/plugin-meta')]
-    public function pluginMeta(Request $request): Response
-    {
-        $this->requireFloor();
-        $this->requireCap('activate_plugins');
-        return $this->reply($request, new \stdClass());
     }
 
     #[Route(Method::Get, '/minn-admin/v1/translations')]
@@ -347,6 +333,12 @@ final readonly class ManageController
             throw new RestError('rest_forbidden', 'Sorry, you are not allowed to do that.', 403);
         }
         return $userId;
+    }
+
+    /** A theme header as the reference serves it: tags stripped, a bare ampersand entity-encoded. */
+    private static function themeText(string $value): string
+    {
+        return (string) preg_replace('/&(?!(?:#\d+|#x[0-9a-f]+|[a-z][a-z0-9]*);)/i', '&amp;', strip_tags($value));
     }
 
     /** @return array<string, array<string, string>> slug => style.css headers */

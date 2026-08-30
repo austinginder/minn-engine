@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Cron;
 
+use Minn\Admin\Updates;
 use Minn\Content\PostWriter;
 use Minn\Content\Site;
 use Minn\Db;
@@ -19,7 +20,7 @@ final readonly class Cron
     private const LOCK = 'minn_cron_lock';
     private const LOCK_TTL = 60;
 
-    public function __construct(private Db $db, private Site $site, private PostWriter $writer)
+    public function __construct(private Db $db, private Site $site, private PostWriter $writer, private ?Updates $updates = null)
     {
     }
 
@@ -35,6 +36,11 @@ final readonly class Cron
             $report[] = "published {$published} scheduled post" . ($published === 1 ? '' : 's');
             $report[] = 'swept ' . $this->sweepTransients() . ' expired transients';
             $report[] = 'swept ' . $this->sweepThrottle() . ' expired throttle rows';
+            if ($this->updates !== null && (int) ($this->site->option('minn_auto_updates_last') ?? 0) < time() - 86400) {
+                $this->site->setOption('minn_auto_updates_last', (string) time());
+                $done = $this->updates->runAuto();
+                $report[] = 'applied ' . count($done) . ' automatic update' . (count($done) === 1 ? '' : 's');
+            }
             $this->site->setOption('minn_cron_last', (string) time());
             return $report;
         } finally {

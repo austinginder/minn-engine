@@ -11,6 +11,8 @@ use Minn\Admin\Diagnostics;
 use Minn\Admin\HiddenIntegrations;
 use Minn\Admin\LanguageController;
 use Minn\Admin\Translations;
+use Minn\Admin\Updates;
+use Minn\Admin\UpdatesController;
 use Minn\Admin\Logs;
 use Minn\Admin\SystemController;
 use Minn\Admin\ManageController;
@@ -89,7 +91,8 @@ final readonly class Api
         $commentObject = new CommentObject(new Comments($db), $posts, $permalinks, $url, $caller);
 
         $dashboard = new Dashboard($db, $site, $users, $capabilities, ABSPATH . 'wp-content/uploads');
-        $notifications = new Notifications($db, $site, $users, $capabilities, $dashboard);
+        $updates = new Updates($site, new Inventory($contentDir, $site), new Packages($site, $contentDir), $contentDir, $permalinks->url('/'), \Minn\Engine::WP_VERSION);
+        $notifications = new Notifications($db, $site, $users, $capabilities, $dashboard, $updates);
         $menus = new Menus($db, $posts, $terms, $permalinks, $writer, $site);
 
         $router = new Router();
@@ -104,9 +107,10 @@ final readonly class Api
             new SearchController($db, $types, $permalinks, $url, $caller),
             new PluginsController($site, new Inventory($contentDir, $site), $loader, $url, $caller, new Packages($site, $contentDir), $contentDir),
             new SessionsController($users, new Sessions($users), $caller),
-            new ManageController($db, $site, $types, $taxonomies, $loader, new Inventory($contentDir, $site), $permalinks, new App(MINN_ENGINE_DIR . '/admin'), new Appearance($users), new HiddenIntegrations($users, $capabilities), $caller, $contentDir),
+            new ManageController($db, $site, $types, $taxonomies, $loader, new Inventory($contentDir, $site), $permalinks, new App(MINN_ENGINE_DIR . '/admin'), new Appearance($users), new HiddenIntegrations($users, $capabilities), $updates, $caller, $contentDir),
             new LanguageController(new Translations($users, $site, new App(MINN_ENGINE_DIR . '/admin'), $contentDir), $users, $site, $capabilities, $caller),
             new PackagesController(new Packages($site, $contentDir), $site, $caller),
+            new UpdatesController($updates, $caller),
             new RenderController($db, $site, $posts, $permalinks, $caller, $contentDir . '/themes'),
             new SystemController(
                 new Diagnostics($db, $site, $permalinks, new Inventory($contentDir, $site), $loader, new Logs(rtrim(ABSPATH, '/')), MINN_ENGINE_VERSION, rtrim(ABSPATH, '/')),

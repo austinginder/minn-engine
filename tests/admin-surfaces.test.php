@@ -292,8 +292,12 @@ check( in_array( 'minn-zip-theme', array_column( $b['themes'] ?? array(), 'style
 check( 200 === $s && ! is_dir( "$ROOT/public/wp-content/themes/minn-zip-theme" ), 'themes/delete removes the folder', json_encode( $b ) );
 [ $s, $b ] = as_fetch( $ENGINE, '/minn-admin/v1/themes/delete', $admin, 'POST', '{"stylesheet":"twentytwentyfive"}' );
 check( 400 === $s, 'the active theme cannot be deleted', "status $s" );
+shell_exec( 'rm -rf ' . escapeshellarg( "$ROOT/public/wp-content/plugins/wp-plugin-x" ) );
 [ $s, $b ] = $upload( '/minn-admin/v1/plugins/upload', $zipOf( "$pk/wp-plugin-x", 'wp-plugin-x' ) );
-check( 400 === $s && 'not_extension' === ( $b['code'] ?? '' ) && ! is_dir( "$ROOT/public/wp-content/plugins/wp-plugin-x" ), 'a WordPress plugin zip is refused with the reason', json_encode( $b ) );
+check( 200 === $s && is_dir( "$ROOT/public/wp-content/plugins/wp-plugin-x" ), 'a WordPress plugin zip installs (plugins run on the engine)', json_encode( $b ) );
+[ $s, $b ] = as_fetch( $ENGINE, '/wp/v2/plugins/wp-plugin-x/wp-plugin-x', $admin, 'DELETE' );
+clearstatcache();
+check( 200 === $s && ! is_dir( "$ROOT/public/wp-content/plugins/wp-plugin-x" ), 'and deletes again', json_encode( $b ) );
 [ $s, $b ] = as_fetch( $ENGINE, '/minn-admin/v1/plugins/search?q=seo', $admin );
 check( 200 === $s && array() === ( $b['plugins'] ?? null ), 'the plugin directory search is honestly empty', json_encode( $b ) );
 [ $s ] = as_fetch( $ENGINE, '/minn-admin/v1/themes/search?q=twenty', $author );

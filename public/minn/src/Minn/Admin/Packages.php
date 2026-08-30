@@ -166,14 +166,11 @@ final readonly class Packages
         foreach (glob("{$dir}/*.php") ?: [] as $file) {
             $headers = FileHeaders::values($file, ['Plugin Name', 'Version']);
             if ($headers['Plugin Name'] !== '') {
-                if ($strict) {
-                    throw new RestError('not_extension', "\"{$headers['Plugin Name']}\" is a WordPress plugin. Minn Engine runs Minn extensions (a folder with a minn.json); a WordPress plugin would install but never run.", 400);
-                }
                 return ['name' => $headers['Plugin Name'], 'version' => $headers['Version'], 'kind' => 'plugin'];
             }
         }
         if ($strict) {
-            throw new RestError('not_extension', 'The archive is not a Minn extension: no minn.json in its folder.', 400);
+            throw new RestError('not_plugin', 'The archive is not a plugin: no minn.json and no file with a Plugin Name header in its folder.', 400);
         }
         return ['name' => '', 'version' => '', 'kind' => 'unknown'];
     }

@@ -16,6 +16,7 @@ use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\RestError;
 use Minn\Support\FileHeaders;
+use Minn\Content\Texturize;
 use Minn\Support\Html;
 use Minn\Support\Serialized;
 
@@ -157,27 +158,62 @@ final readonly class PluginsController
     {
         $h = FileHeaders::values($path, ['Plugin Name', 'Plugin URI', 'Version', 'Description', 'Author', 'Author URI', 'Text Domain', 'Network', 'Requires at least', 'Requires PHP']);
         $key = preg_replace('/\.php$/', '', $relative);
-        $author = strip_tags($h['Author']);
-        $description = strip_tags($h['Description']);
-        $rendered = Html::esc($description);
+        $author = self::text($h['Author']);
+        $authorUri = self::uri($h['Author URI']);
+        // The description keeps the inline markup the reference allows in headers,
+        // raw as filtered, rendered as texturized with the author line appended.
+        $description = self::description($h['Description']);
+        $rendered = Texturize::html($description);
         if ($author !== '') {
-            $rendered .= ' <cite>By ' . ($h['Author URI'] !== '' ? '<a href="' . Html::attr($h['Author URI']) . '">' . Html::esc($author) . '</a>' : Html::esc($author)) . '.</cite>';
+            $rendered .= ' <cite>By ' . ($authorUri !== '' ? '<a href="' . $authorUri . '">' . $author . '</a>' : $author) . '.</cite>';
         }
         return [
             'plugin' => $key,
             'status' => $active ? 'active' : 'inactive',
-            'name' => $h['Plugin Name'],
-            'plugin_uri' => $h['Plugin URI'],
-            'author' => $h['Author'],
-            'author_uri' => $h['Author URI'],
-            'description' => ['raw' => $h['Description'], 'rendered' => $rendered],
+            'name' => self::text($h['Plugin Name']),
+            'plugin_uri' => self::uri($h['Plugin URI']),
+            'author' => $author,
+            'author_uri' => $authorUri,
+            'description' => ['raw' => $description, 'rendered' => $rendered],
             'version' => $h['Version'],
             'network_only' => strtolower($h['Network']) === 'true',
             'requires_wp' => $h['Requires at least'],
             'requires_php' => $h['Requires PHP'],
-            'textdomain' => $h['Text Domain'],
+            // A missing Text Domain header defaults to the folder (or the single file's name).
+            'textdomain' => $h['Text Domain'] !== '' ? $h['Text Domain'] : (str_contains($relative, '/') ? dirname($relative) : basename($relative, '.php')),
             '_links' => $this->links($key),
         ];
+    }
+
+    /** A header as the reference serves it: tags stripped (or cut to an allowlist), a bare ampersand entity-encoded. */
+    private static function text(string $value, string $allowed = ''): string
+    {
+        return (string) preg_replace('/&(?!(?:#\d+|#x[0-9a-f]+|[a-z][a-z0-9]*);)/i', '&amp;', strip_tags($value, $allowed));
+    }
+
+    /** The Description header cut to the reference's allowlist: a (href, title), abbr and acronym (title), code, em, strong. */
+    private static function description(string $value): string
+    {
+        $allowed = ['a' => ['href', 'title'], 'abbr' => ['title'], 'acronym' => ['title'], 'code' => [], 'em' => [], 'strong' => []];
+        $text = self::text($value, '<' . implode('><', array_keys($allowed)) . '>');
+        return (string) preg_replace_callback('/<([a-z]+)(\s[^>]*)?>/i', static function (array $m) use ($allowed): string {
+            $tag = strtolower($m[1]);
+            $kept = '';
+            if (preg_match_all('/([a-z-]+)\s*=\s*("[^"]*"|\'[^\']*\')/i', $m[2] ?? '', $attrs, PREG_SET_ORDER)) {
+                foreach ($attrs as $attr) {
+                    if (in_array(strtolower($attr[1]), $allowed[$tag] ?? [], true)) {
+                        $kept .= ' ' . strtolower($attr[1]) . '=' . $attr[2];
+                    }
+                }
+            }
+            return "<{$tag}{$kept}>";
+        }, $text);
+    }
+
+    /** A header URL as the reference serves it: a bare ampersand becomes &#038;. */
+    private static function uri(string $value): string
+    {
+        return (string) preg_replace('/&(?!(?:#\d+|#x[0-9a-f]+|[a-z][a-z0-9]*);)/i', '&#038;', strip_tags($value));
     }
 
     private function links(string $key): array

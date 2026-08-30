@@ -10,6 +10,9 @@ use Minn\Admin\Appearance;
 use Minn\Admin\Translations;
 use Minn\Admin\AppController;
 use Minn\Admin\HiddenIntegrations;
+use Minn\Content\Inventory;
+use Minn\Admin\Packages;
+use Minn\Admin\Updates;
 use Minn\Admin\BootPayload;
 use Minn\Auth\Authenticated;
 use Minn\Auth\AuthCookies;
@@ -177,7 +180,7 @@ final readonly class Engine
         $generator = (string) (\Minn\Support\Serialized::field($site->option('_site_transient_update_core'), 'version_checked') ?? '');
         $feeds = new Feeds($db, $site, $posts, new Comments($db), $users, $permalinks, $generator);
         $front = null;
-        $cron = new Cron($db, $site, new PostWriter($db, $posts, $site));
+        $cron = new Cron($db, $site, new PostWriter($db, $posts, $site), new Updates($site, new Inventory(ABSPATH . 'wp-content', $site), new Packages($site, ABSPATH . 'wp-content'), ABSPATH . 'wp-content', $permalinks->url('/'), self::WP_VERSION));
         $probes = new ProbeController($site, $posts, $permalinks, $resolver, $feeds, new Sitemaps($db, $site, $permalinks), static function () use (&$front): Response { return $front->notFound(); }, $cron);
         $front = new FrontController($resolver, new Renderer($db, $posts, $permalinks, $resolver->perPage()), $pages, $probes, $cron);
 

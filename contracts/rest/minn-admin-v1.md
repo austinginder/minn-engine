@@ -238,9 +238,10 @@ from downloads.wordpress.org; `POST themes/upload` (multipart `file`,
 optional `overwrite`) unpacks a zip; `POST themes/delete {stylesheet}`
 removes a folder that is not the active theme or its parent. Extensions:
 `POST plugins/upload` and `POST plugins/install-url {url | github, asset}`
-accept a folder carrying `minn.json`; a WordPress plugin zip is refused
-400 `not_extension` with its name in the message (it would install but
-never run), and `GET plugins/search` is honestly empty. `DELETE
+accept a folder carrying `minn.json` or a file with a Plugin Name header
+(WordPress plugins load as code on the engine since Track E); an archive
+with neither is refused 400 `not_plugin`, and `GET plugins/search` is
+honestly empty. `DELETE
 wp/v2/plugins/{plugin}` removes an inactive folder. Every archive goes
 through one unpacker: https only, exactly one top-level folder, no
 absolute or dotted paths, identity checked (style.css Theme Name;
@@ -317,3 +318,37 @@ not fetched: the engine has no core strings to translate with them yet.
   whitespace collapse); ids are machine-generated slugs in practice.
 - `wp/v2/users/{id}/application-passwords` lists `[]`: no passwords exist
   and none can be created yet.
+
+## Updates (2026-08-29)
+
+The engine asks wordpress.org itself (`api.wordpress.org/plugins/update-check/1.1/`
+and `themes/update-check/1.1/`, sent the installed headers and `all=true`) and keeps
+the answer in the `minn_updates` option as JSON for twelve hours; `POST check-updates`
+asks again now. Offers are only listed where the installed version is older
+(`real_plugin_updates` on the reference). Pinned by `tests/updates.test.php` on the
+dogfood site against its own reference, both freshly checked:
+
+- `GET plugin-updates` → `{updates: {file: version}, themes: {stylesheet: version},
+  translations: 0, translationGroups: [], auto: [file…], autoAllowed: true}`. Language
+  packs are wordpress.org state the engine does not carry, so translations stay 0.
+- `GET plugin-meta` → `{file: {slug, icon, url}}` for every plugin the directory knows
+  (offers and current alike; the svg, 2x, or 1x icon; the directory URL).
+- `POST check-updates {}` → `{ok, pluginUpdates, themeUpdates, translations: 0,
+  translationGroups: [], plugins: n, themes: n}`.
+- `POST plugins/update {plugin}` (with or without `.php`) downloads the offer's
+  `downloads.wordpress.org` package through the one unpacker, replaces the folder,
+  and answers `{updated: true, version}`; nothing offered → 400 `no_update`; an
+  active plugin stays active (`active_plugins` is untouched by a folder swap).
+  `POST plugins/update-all {}` → `{updated: [], failed: [], errors: []}` (`{updated: []}`
+  when nothing was pending). `POST themes/update {stylesheet}` the same for themes.
+- `POST auto-updates {type: plugin|theme, asset, enabled}` → `{auto: [...]}` writes
+  `auto_update_plugins` / `auto_update_themes` (serialized string lists, the shape the
+  app and WordPress share); an unknown asset is 404 `minn_auto_updates_unknown`.
+  `Minn\Cron` applies the listed offers once a day (`minn_auto_updates_last`).
+- `GET themes` items carry `on_wporg` (the directory knows the stylesheet), `update`
+  (the offered version or null) and `auto_update`; `auto_updates` is true for a caller
+  with `update_themes`. Theme names and authors are served as the reference serves
+  headers: tags stripped, a bare `&` as `&amp;`.
+- Notifications gain the reference's rows: `plugin-{file}-{version}` and
+  `theme-{stylesheet}-{version}` of kind `updates` with the `update` payload the app
+  renders its in-row button from, timed at the check.
