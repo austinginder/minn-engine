@@ -37,7 +37,12 @@ the oracle method and the facts it caught, the license analysis, status
 (working and not yet, said plainly), the hard parts, a FAQ, and the on-ramp:
 WordPress users are pointed at Minn Admin first, because it is the shipped
 phase and it is the interface the engine boots. The glossary behind the
-visual is `contracts/lexicon.md`.
+visual is `contracts/lexicon.md`. The engine serves that file as a filterable
+page at `/lexicon/` (raw at `/lexicon.md`): Speak / Hear / Mute chips, a
+family search, sourced from the markdown so the page cannot drift from the
+policy. It is an engine route, not a WordPress page, so the site-suite
+oracle body-diff does not include it. Theme chrome (nav link, homepage
+"Browse the lexicon", CSS) lives in the theme repo.
 
 The theme runs no PHP on the engine. `functions.php` exists only for the
 reference (it enqueues `style.css`, which the engine links on its own); the

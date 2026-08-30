@@ -27,6 +27,7 @@ use Minn\Front\Feeds;
 use Minn\Front\ProbeController;
 use Minn\Front\Sitemaps;
 use Minn\Front\FrontController;
+use Minn\Front\LexiconController;
 use Minn\Front\Renderer;
 use Minn\Front\Resolver;
 use Minn\Http\Failure;
@@ -185,6 +186,7 @@ final readonly class Engine
             new LoginController($site, $permalinks, $authenticator, $sessions, new AuthCookies($db, $cookie), $users, new LoginThrottle($db), new PasswordReset($users), Mailer::forSite($site)),
             new AppController($app, new BootPayload($site, $permalinks, $capabilities, $app, $this->version, $appearance, $theme !== null, new Translations($users, $site, $app, ABSPATH . 'wp-content')), $authenticator, $capabilities, $permalinks, $this->version, $adminOff),
             $probes,
+            new LexiconController($this->engineDir, $permalinks, $site, ABSPATH . 'wp-content/themes'),
             new CommentPostController($site, $posts, new Comments($db), $permalinks, $authenticator, $capabilities, new AuthCookies($db, $cookie)),
             $front,
         );

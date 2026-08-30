@@ -54,6 +54,8 @@ $check(!preg_match('/class="[^"]*has-global-padding/', $home), 'no global paddin
 $check(str_contains($home, '&#8220;Compatible with WordPress&#8221;'), 'template markup is texturized');
 $check(str_contains($home, 'Minn Admin is the only UI'), 'the visual draws the no-wp-admin line');
 $check(str_contains($home, 'Audience 3'), 'the three-audience visual is on the page');
+$check(str_contains($home, 'href="/lexicon/"'), 'the homepage links to the lexicon');
+$check(str_contains($home, 'Browse the lexicon'), 'the visual points at the glossary page');
 foreach (['/wp-content/themes/minn-site/style.css', '/wp-content/themes/minn-site/assets/fonts/hanken-grotesk.woff2', '/wp-content/themes/minn-site/assets/fonts/jetbrains-mono.woff2'] as $asset) {
     [$ah] = minn_test_fetch($ENGINE . $asset);
     $check($ah['status'] === 200, "asset served: $asset");
