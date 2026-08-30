@@ -12,7 +12,7 @@ copies them over; `minn eject` reverses it (`docs/install.md`, `tests/install.te
 
 | File | Who reads it | What the engine ships |
 |---|---|---|
-| `index.php` | Web server, WP-CLI (`extract_subdir_path`) | The stock front controller shape: requires `wp-config.php`. |
+| `index.php` | Web server, WP-CLI (`extract_subdir_path`) | The stock front controller shape: defines `ABSPATH` (WordPress does this before `wp-config.php` runs), then requires `wp-config.php`. |
 | `wp-config.php` | Every backup/migration tool (regex), WP-CLI (`config` and `db` commands eval it with the trailing require stripped) | Never shipped, never edited: the file WordPress generated stays. |
 | `wp-settings.php` | `wp-config.php` (its last line), WP-CLI when loading WordPress | Two lines: `require minn/bootstrap.php`. Under WP-CLI the boot stops after the autoloader; reached for a command the engine does not answer it prints the engine's refusal (below). |
 | `wp-cli.yml` | WP-CLI (project config) | `require: minn/cli.php`, the engine's verbs. |
