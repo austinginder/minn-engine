@@ -51,17 +51,33 @@ function ok( cond, label, detail ) {
 		ok( page.url().includes( '/minn-admin' ), 'token login lands in /minn-admin', page.url() );
 		const view = async ( route ) => {
 			await page.goto( `${ BASE }/minn-admin/${ route }`, { waitUntil: 'domcontentloaded', timeout: 20000 } );
-			await page.waitForTimeout( 3000 );
+			await page.waitForFunction( () => {
+				const t = ( document.querySelector( '#minn-view' ) || document.body ).innerText || '';
+				return t.length > 40 && ! /Loading (extensions|your profile|content|settings)/.test( t );
+			}, null, { timeout: 20000 } ).catch( () => {} );
 			return page.evaluate( () => ( document.querySelector( '#minn-view' ) || document.body ).innerText );
 		};
 		let text = await view( 'extensions' );
 		const nav = await page.evaluate( () => document.body.innerText );
 		ok( /Activity Log/.test( nav ), 'the Tools group lists the Stream adapter\'s Activity Log', nav.slice( 0, 120 ) );
 		ok( /Plugins/.test( text ) && /Block Visibility/.test( text ) && /By /.test( text ) && ! /Something went wrong/.test( text ), 'Extensions lists the site\'s plugins with their authors', text.slice( 0, 160 ) );
+		await page.waitForSelector( '[data-xtab="themes"]', { timeout: 15000 } );
+		await page.click( '[data-xtab="themes"]' );
+		await page.waitForSelector( '.minn-theme', { timeout: 15000 } );
+		const themes = await page.evaluate( () => ( {
+			engine: !!( window.MINN && window.MINN.engine ),
+			preview: document.querySelectorAll( 'a.minn-theme-preview' ).length,
+			cards: document.querySelectorAll( '.minn-theme' ).length,
+		} ) );
+		ok( themes.engine, 'the boot payload names Minn Engine' );
+		ok( themes.cards > 0 && themes.preview === 0, 'theme cards have no Live preview bail-out', JSON.stringify( themes ) );
+		text = await view( 'stream' );
+		ok( ! /Open Stream/.test( text ), 'Activity Log has no Open Stream bail-out', text.slice( 0, 200 ) );
 		text = await view( 'posttypes' );
 		ok( /Post Types/.test( text ) && /Minn Engine/.test( text ) && ! /WordPress/.test( text ), 'Structure lists post types managed by Minn Engine', text.slice( 0, 200 ) );
 		text = await view( 'system' );
 		ok( /Minn Engine/.test( text ) && /healthy/.test( text ) && ! /Something went wrong/.test( text ), 'System renders the engine diagnostics', text.slice( 0, 200 ) );
+		ok( ! /one-shot jobs/.test( text ) && ! await page.$( '#minn-sys-tools' ), 'System has no Tools card on the engine' );
 		text = await view( 'profile' );
 		ok( /Sessions/.test( text ) && /this session/.test( text ), 'the profile lists live sessions', text.slice( -300 ) );
 		const gone = await page.evaluate( () => ( {
