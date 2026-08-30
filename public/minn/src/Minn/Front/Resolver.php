@@ -68,7 +68,19 @@ final readonly class Resolver
 
     public function resolve(Request $request): Resolution
     {
+        // A plugin's own rewrite rules: 'top' rules outrank everything the
+        // engine would resolve, 'bottom' rules catch what it could not.
+        $ruleVars = PluginRules::match($request->path, top: true);
+        if ($ruleVars !== null) {
+            return $this->fromRuleVars($ruleVars);
+        }
         $resolution = $this->resolvePath($request);
+        if ($resolution->kind === Kind::NotFound) {
+            $ruleVars = PluginRules::match($request->path, top: false);
+            if ($ruleVars !== null) {
+                return $this->fromRuleVars($ruleVars);
+            }
+        }
         // A preview link names an autosave: preview_id plus the reader's own nonce for that post.
         if ($resolution->kind === Kind::Single || $resolution->kind === Kind::Page) {
             $reader = Reader::current();
@@ -79,6 +91,40 @@ final readonly class Resolver
             }
         }
         return $resolution;
+    }
+
+    /**
+     * The resolution a matched plugin rewrite rule stands for: its content
+     * vars when it names content, the home query otherwise (the reference's
+     * shape for a rule that only sets a plugin's own flags). The vars stay
+     * on the request state so get_query_var() answers them and the plugin's
+     * template_include callback can take the page over.
+     *
+     * @param array<string, string> $vars
+     */
+    private function fromRuleVars(array $vars): Resolution
+    {
+        if (Runtime::booted()) {
+            Runtime::current()->set(PluginRules::STATE, $vars);
+        }
+        $paged = max(1, (int) ($vars['paged'] ?? 1));
+        $id = (int) ($vars['p'] ?? $vars['page_id'] ?? 0);
+        if ($id > 0) {
+            $post = $this->posts->find($id);
+            if ($post !== null && $this->readable($post)) {
+                return Resolution::single($post, $paged);
+            }
+            return Resolution::notFound();
+        }
+        $pagename = (string) ($vars['pagename'] ?? '');
+        if ($pagename !== '') {
+            $single = $this->resolveSingle(array_values(array_filter(explode('/', $pagename), static fn (string $s) => $s !== '')), $paged);
+            return $single ?? Resolution::notFound();
+        }
+        if (($vars['s'] ?? '') !== '') {
+            return Resolution::search((string) $vars['s'], $paged);
+        }
+        return Resolution::home($paged);
     }
 
     private function resolvePath(Request $request): Resolution

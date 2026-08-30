@@ -86,7 +86,29 @@ if ($referenceUp) {
     echo "  --  reference not running on :8123; REST parity rows skipped\n";
 }
 
+// The plugin's routed page: a rewrite rule plus template_include take the
+// response over (the CaptainCore Manager shape). The engine matches the
+// registered rules live; the reference matches from its flushed option, so
+// flush around the battery and again after the plugin switches back off.
+$flush = static function (): void {
+    shell_exec('cd ' . escapeshellarg(dirname(__DIR__) . '/wp-reference') . ' && /opt/homebrew/bin/wp rewrite flush 2>/dev/null');
+};
+[$h, $appHtml] = minn_test_fetch($base . '/minn-test-app/orders/');
+$check('rewrite rule routes to the plugin template', ($h['status'] ?? 0) === 200 && str_contains($appHtml, '<body class="minn-test-app">') && str_contains($appHtml, '<p id="route">orders</p>'), substr((string) strstr((string) $appHtml, '<body'), 0, 160));
+[$h, $appRoot] = minn_test_fetch($base . '/minn-test-app/');
+$check('rewrite rule base path routes too', ($h['status'] ?? 0) === 200 && str_contains($appRoot, '<p id="route">(root)</p>'), substr((string) strstr((string) $appRoot, '<body'), 0, 160));
+if ($referenceUp) {
+    $flush();
+    [$rh, $refApp] = minn_test_fetch($reference . '/minn-test-app/orders/');
+    $check('reference serves the routed page byte for byte', ($rh['status'] ?? 0) === 200 && $refApp === $appHtml, ($rh['status'] ?? 0) . ' ' . substr((string) $refApp, 0, 120));
+} else {
+    echo "  --  reference not running on :8123; routed-page parity row skipped\n";
+}
+
 update_option('active_plugins', $before);
+if ($referenceUp) {
+    $flush();
+}
 [, $off] = minn_test_fetch($base . '/hello-world/');
 $check('deactivated: no marks', !str_contains($off, 'minn-test-plugin'));
 

@@ -127,6 +127,18 @@ final readonly class PageRenderer
         }
         $bridge = $this->bridge ?? new MainQueryBridge($this->site, $this->posts, $this->perPage);
         $query = $bridge->stand($resolution);
+        // The reference filters template_include under block themes too (the
+        // canvas is the incoming value); a plugin swapping in its own PHP file
+        // takes the whole response over, the CaptainCore Manager shape.
+        if (Runtime::booted()) {
+            $canvas = MINN_ENGINE_DIR . '/wp-api/template-canvas.php';
+            $swapped = (string) \apply_filters('template_include', $canvas);
+            if ($swapped !== $canvas && $swapped !== '' && is_file($swapped)) {
+                ob_start();
+                \load_template($swapped, false);
+                return (string) ob_get_clean();
+            }
+        }
         $perPage = $query['perPage'];
         RenderState::reset();
         $this->renderer->withContext(new Context($resolution, $query['posts'], $query['total'], $perPage, true));

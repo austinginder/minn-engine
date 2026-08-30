@@ -37,6 +37,8 @@ final class MainQuery
         if ($resolution->paged > 1) {
             $vars['paged'] = $resolution->paged;
         }
-        return $vars;
+        // A matched plugin rewrite rule's vars ride along so get_query_var()
+        // answers them; the resolution's own content vars win a collision.
+        return $vars + \Minn\Front\PluginRules::stashed();
     }
 }

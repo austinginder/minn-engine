@@ -73,3 +73,24 @@ add_action('rest_api_init', static function () {
         'permission_callback' => '__return_true',
     ]);
 });
+
+// A routed page of its own, the CaptainCore Manager shape: a rewrite rule
+// maps the path onto plugin query vars and template_include takes the
+// response over when the flag var is present.
+add_action('init', static function () {
+    add_rewrite_rule('^minn-test-app/?$', 'index.php?minn_test_app=1', 'top');
+    add_rewrite_rule('^minn-test-app/(.+?)/?$', 'index.php?minn_test_app=1&minn_test_route=$matches[1]', 'top');
+});
+
+add_filter('query_vars', static function ($vars) {
+    $vars[] = 'minn_test_app';
+    $vars[] = 'minn_test_route';
+    return $vars;
+});
+
+add_filter('template_include', static function ($template) {
+    if (get_query_var('minn_test_app')) {
+        return __DIR__ . '/app-template.php';
+    }
+    return $template;
+});
