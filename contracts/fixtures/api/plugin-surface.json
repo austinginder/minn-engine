@@ -129,7 +129,12 @@
     ],
     [
         "wp_get_installed_translations core",
-        []
+        [
+            "admin",
+            "admin-network",
+            "continents-cities",
+            "default"
+        ]
     ],
     [
         "wp_get_installed_translations plugins",

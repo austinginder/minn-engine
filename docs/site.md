@@ -95,7 +95,10 @@ core pack alongside it, so the folder matches what WordPress would leave, is
 the language milestone's next step. The engine does not yet render its public
 pages from core packs, which is why the pin matters: with a core pack present
 and `WPLANG` set, the reference would render translated and the engine would
-not.
+not. One fixture depends on a core pack being present: the api suite's
+`plugin-surface` row for `wp_get_installed_translations('core')` lists the
+core text domains, which is the same set for any locale, so keep at least one
+core pack installed (es_ES today) or recapture the fixture.
 
 ## The parity suites and the theme pin
 
