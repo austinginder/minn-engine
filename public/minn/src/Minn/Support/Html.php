@@ -46,4 +46,14 @@ final class Html
             return '<' . $tag . $attributes . ($selfClose === '/' ? '/' : '') . '>';
         }, $html, 1);
     }
+
+    /** Drops script and style elements with their contents, then every other tag; whitespace runs optionally collapse to one space. */
+    public static function stripAllTags(string $text, bool $collapseWhitespace = false): string
+    {
+        $text = strip_tags((string) preg_replace('@<(script|style)[^>]*?>.*?</\\1>@si', '', $text));
+        if ($collapseWhitespace) {
+            $text = (string) preg_replace('/[\r\n\t ]+/', ' ', $text);
+        }
+        return trim($text);
+    }
 }

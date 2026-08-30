@@ -1,11 +1,16 @@
 <?php
 /** Escaping, sanitising, and the small string helpers. Behaviour from contracts/fixtures/api/functions.json. */
 
+use Minn\Content\Autop;
 use Minn\Content\Blocks;
 use Minn\Content\Texturize;
 use Minn\Runtime\Runtime;
+use Minn\Support\Accents;
 use Minn\Support\Email;
 use Minn\Support\Entities;
+use Minn\Support\Html;
+use Minn\Support\Json;
+use Minn\Support\Paths;
 use Minn\Support\Url;
 
 function wp_check_invalid_utf8($text, $strip = false)
@@ -152,18 +157,7 @@ function sanitize_textarea_field($str)
 
 function wp_strip_all_tags($text, $remove_breaks = false)
 {
-    if (is_null($text)) {
-        return '';
-    }
-    if (!is_scalar($text)) {
-        return '';
-    }
-    $text = preg_replace('@<(script|style)[^>]*?>.*?</\\1>@si', '', (string) $text);
-    $text = strip_tags($text);
-    if ($remove_breaks) {
-        $text = preg_replace('/[\r\n\t ]+/', ' ', $text);
-    }
-    return trim($text);
+    return is_scalar($text) ? Html::stripAllTags((string) $text, (bool) $remove_breaks) : '';
 }
 
 function trailingslashit($value)
@@ -219,18 +213,7 @@ function wp_json_encode($value, $flags = 0, $depth = 512)
 /** @internal invalid UTF-8 becomes ? so encoding can succeed */
 function _minn_json_sanitize($value)
 {
-    if (is_string($value)) {
-        return preg_match('/^./us', $value) === 1 || $value === '' ? $value : (string) preg_replace('/[\x80-\xff]/', '?', $value);
-    }
-    if (is_array($value)) {
-        return array_map('_minn_json_sanitize', $value);
-    }
-    if (is_object($value)) {
-        foreach (get_object_vars($value) as $k => $v) {
-            $value->{$k} = _minn_json_sanitize($v);
-        }
-    }
-    return $value;
+    return Json::sanitize($value);
 }
 
 function sanitize_key($key)
@@ -254,23 +237,7 @@ function sanitize_html_class($classname, $fallback = '')
 
 function remove_accents($text, $locale = '')
 {
-    $text = (string) $text;
-    if (!preg_match('/[\x80-\xff]/', $text)) {
-        return $text;
-    }
-    $map = ['ß' => 'ss', 'Æ' => 'AE', 'æ' => 'ae', 'Œ' => 'OE', 'œ' => 'oe', 'Ø' => 'O', 'ø' => 'o', 'Đ' => 'D', 'đ' => 'd', 'Ł' => 'L', 'ł' => 'l', 'Þ' => 'TH', 'þ' => 'th', 'Ð' => 'D', 'ð' => 'd', '€' => 'E', '£' => '', '“' => '', '”' => '', '‘' => '', '’' => '', '–' => '-', '—' => '-', '…' => ''];
-    $text = strtr($text, $map);
-    $out = '';
-    foreach (preg_split('//u', $text, -1, PREG_SPLIT_NO_EMPTY) as $char) {
-        if (ord($char) < 0x80) {
-            $out .= $char;
-            continue;
-        }
-        $decomposed = Normalizer::normalize($char, Normalizer::FORM_D);
-        $stripped = preg_replace('/\p{Mn}+/u', '', (string) $decomposed);
-        $out .= $stripped === '' || preg_match('/[\x80-\xff]/', $stripped) ? $char : $stripped;
-    }
-    return $out;
+    return Accents::strip((string) $text);
 }
 
 function sanitize_title($title, $fallback_title = '', $context = 'save')
@@ -404,20 +371,7 @@ function urldecode_deep($value)
 
 function wp_specialchars_decode($text, $quote_style = ENT_NOQUOTES)
 {
-    $text = (string) $text;
-    if ($text === '' || !str_contains($text, '&')) {
-        return $text;
-    }
-    $translate = ['&amp;' => '&', '&#038;' => '&', '&#x26;' => '&', '&lt;' => '<', '&#060;' => '<', '&#x3C;' => '<', '&gt;' => '>', '&#062;' => '>', '&#x3E;' => '>'];
-    $quotes = ['&quot;' => '"', '&#034;' => '"', '&#x22;' => '"', '&#039;' => "'", '&#x27;' => "'", '&#39;' => "'", '&apos;' => "'"];
-    if ($quote_style === ENT_QUOTES) {
-        $translate = array_merge($translate, $quotes);
-    } elseif ($quote_style === ENT_COMPAT || $quote_style === 'double') {
-        $translate = array_merge($translate, array_slice($quotes, 0, 3, true));
-    } elseif ($quote_style === 'single') {
-        $translate = array_merge($translate, array_slice($quotes, 3, null, true));
-    }
-    return strtr($text, $translate);
+    return Entities::decode((string) $text, is_int($quote_style) || is_string($quote_style) ? $quote_style : ENT_NOQUOTES);
 }
 
 function zeroise($number, $threshold)
@@ -493,34 +447,7 @@ function wptexturize($text, $reset = false)
 
 function wpautop($text, $br = true)
 {
-    $text = (string) $text;
-    if (trim($text) === '') {
-        return '';
-    }
-    $text .= "\n";
-    $blocks = '(?:table|thead|tfoot|caption|col|colgroup|tbody|tr|td|th|div|dl|dd|dt|ul|ol|li|pre|form|map|area|blockquote|address|style|p|h[1-6]|hr|fieldset|legend|section|article|aside|hgroup|header|footer|nav|figure|figcaption|details|menu|summary)';
-    $text = preg_replace('|<br\s*/?>\s*<br\s*/?>|', "\n\n", $text);
-    $text = preg_replace('!(<' . $blocks . '[\s/>])!', "\n\n$1", $text);
-    $text = preg_replace('!(</' . $blocks . '>)!', "$1\n\n", $text);
-    $text = str_replace(["\r\n", "\r"], "\n", $text);
-    $text = preg_replace("/\n\n+/", "\n\n", $text);
-    $paragraphs = preg_split('/\n\s*\n/', $text, -1, PREG_SPLIT_NO_EMPTY);
-    $text = '';
-    foreach ($paragraphs as $paragraph) {
-        $text .= '<p>' . trim($paragraph, "\n") . "</p>\n";
-    }
-    $text = preg_replace('|<p>\s*</p>|', '', $text);
-    $text = preg_replace('!<p>\s*(</?' . $blocks . '[^>]*>)\s*</p>!', '$1', $text);
-    $text = preg_replace('|<p>(<li.+?)</p>|', '$1', $text);
-    $text = preg_replace('!<p>\s*(</?' . $blocks . '[^>]*>)!', '$1', $text);
-    $text = preg_replace('!(</?' . $blocks . '[^>]*>)\s*</p>!', '$1', $text);
-    if ($br) {
-        $text = preg_replace('|(?<!<br />)\s*\n|', "<br />\n", $text);
-        $text = preg_replace('!(</?' . $blocks . '[^>]*>)\s*<br />!', '$1', $text);
-        $text = preg_replace('!<br />(\s*</?(?:p|li|div|dl|dd|dt|th|pre|td|ul|ol)[^>]*>)!', '$1', $text);
-    }
-    $text = preg_replace("|\n</p>$|", '</p>', $text);
-    return $text;
+    return Autop::apply((string) $text, (bool) $br);
 }
 
 function make_clickable($text)
@@ -534,18 +461,7 @@ function make_clickable($text)
 
 function wp_normalize_path($path)
 {
-    $path = (string) $path;
-    $wrapper = '';
-    if (preg_match('#^([a-zA-Z0-9+.-]+)://#', $path, $m) && !preg_match('/^[a-zA-Z]:/', $path)) {
-        $wrapper = $m[1] . '://';
-        $path = substr($path, strlen($wrapper));
-    }
-    $path = str_replace('\\', '/', $path);
-    $path = preg_replace('|(?<=.)/+|', '/', $path);
-    if (preg_match('/^[a-z]:/', $path)) {
-        $path = ucfirst($path);
-    }
-    return $wrapper . $path;
+    return Paths::normalize((string) $path);
 }
 
 function wp_parse_url($url, $component = -1)
@@ -626,18 +542,7 @@ function add_query_arg(...$args)
 /** @internal keys are encoded, values are left as given (the reference shows raw values) */
 function _minn_build_query(array $data, string $prefix = ''): string
 {
-    $pairs = [];
-    foreach ($data as $k => $v) {
-        $key = $prefix === '' ? urlencode((string) $k) : $prefix . '%5B' . urlencode((string) $k) . '%5D';
-        if (is_array($v) || is_object($v)) {
-            $pairs[] = _minn_build_query((array) $v, $key);
-        } elseif ($v === null) {
-            $pairs[] = $key;
-        } else {
-            $pairs[] = $key . '=' . (is_bool($v) ? (int) $v : (string) $v);
-        }
-    }
-    return implode('&', array_filter($pairs, static fn ($p) => $p !== ''));
+    return Url::buildQuery($data, $prefix);
 }
 
 function remove_query_arg($key, $query = false)

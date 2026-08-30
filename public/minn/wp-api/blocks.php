@@ -549,28 +549,7 @@ function register_block_script_module_id($metadata, $field_name, $index = 0)
 
 function generate_block_asset_handle($block_name, $field_name, $index = 0)
 {
-    if (str_starts_with((string) $block_name, 'core/')) {
-        $asset_handle = str_replace('core/', 'wp-block-', (string) $block_name);
-        if (str_starts_with($field_name, 'editor')) {
-            $asset_handle .= '-editor';
-        }
-        if (str_starts_with($field_name, 'view')) {
-            $asset_handle .= '-view';
-        }
-        if (str_ends_with(strtolower($field_name), 'scriptmodule')) {
-            $asset_handle .= '-script-module';
-        }
-        if ($index > 0) {
-            $asset_handle .= '-' . ($index + 1);
-        }
-        return $asset_handle;
-    }
-    $field_mappings = ['editorScript' => 'editor-script', 'editorStyle' => 'editor-style', 'script' => 'script', 'style' => 'style', 'viewScript' => 'view-script', 'viewScriptModule' => 'view-script-module', 'viewStyle' => 'view-style'];
-    $asset_handle = str_replace('/', '-', (string) $block_name) . '-' . $field_mappings[$field_name];
-    if ($index > 0) {
-        $asset_handle .= '-' . ($index + 1);
-    }
-    return $asset_handle;
+    return BlockMetadata::assetHandle((string) $block_name, (string) $field_name, (int) $index);
 }
 
 function register_block_type_from_metadata($file_or_folder, $args = [])

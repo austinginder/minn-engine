@@ -4,6 +4,7 @@ use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Rest\AdditionalFields;
 use Minn\Rest\Api;
+use Minn\Rest\Links;
 use Minn\Rest\RouteIndex;
 use Minn\Rest\RouteMatch;
 use Minn\Runtime\Refusal;
@@ -290,34 +291,7 @@ class WP_REST_Server
 
     public static function get_compact_response_links($response)
     {
-        $links = self::get_response_links($response);
-        if (empty($links)) {
-            return [];
-        }
-        $curies = $response->get_curies();
-        $used_curies = [];
-        foreach ($links as $rel => $items) {
-            foreach ($curies as $curie) {
-                $href_prefix = substr($curie['href'], 0, strpos($curie['href'], '{rel}'));
-                if (!str_starts_with($rel, $href_prefix)) {
-                    continue;
-                }
-                $used_curies[$curie['name']] = $curie;
-                $rel_regex = str_replace('\{rel\}', '(.+)', preg_quote($curie['href'], '!'));
-                preg_match('!' . $rel_regex . '!', $rel, $matches);
-                if ($matches) {
-                    $new_rel = $curie['name'] . ':' . $matches[1];
-                    $used_curies[$curie['name']] = $curie;
-                    $links[$new_rel] = $items;
-                    unset($links[$rel]);
-                    break;
-                }
-            }
-        }
-        if (!empty($used_curies)) {
-            $links['curies'] = array_values($used_curies);
-        }
-        return $links;
+        return Links::compact((array) self::get_response_links($response), (array) $response->get_curies());
     }
 
     public function envelope_response($response, $embed)

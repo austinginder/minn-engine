@@ -1,6 +1,7 @@
 <?php
 
 use Minn\Support\DirectoryListing;
+use Minn\Support\Paths;
 
 /** The filesystem abstraction, always the direct method: PHP's own file functions. */
 class WP_Filesystem_Base
@@ -59,33 +60,7 @@ class WP_Filesystem_Base
 
     public function gethchmod($file)
     {
-        $perms = intval($this->getchmod($file), 8);
-        $info = 'u';
-        if (($perms & 0xC000) === 0xC000) {
-            $info = 's';
-        } elseif (($perms & 0xA000) === 0xA000) {
-            $info = 'l';
-        } elseif (($perms & 0x8000) === 0x8000) {
-            $info = '-';
-        } elseif (($perms & 0x6000) === 0x6000) {
-            $info = 'b';
-        } elseif (($perms & 0x4000) === 0x4000) {
-            $info = 'd';
-        } elseif (($perms & 0x2000) === 0x2000) {
-            $info = 'c';
-        } elseif (($perms & 0x1000) === 0x1000) {
-            $info = 'p';
-        }
-        $info .= ($perms & 0x0100) ? 'r' : '-';
-        $info .= ($perms & 0x0080) ? 'w' : '-';
-        $info .= ($perms & 0x0040) ? (($perms & 0x0800) ? 's' : 'x') : (($perms & 0x0800) ? 'S' : '-');
-        $info .= ($perms & 0x0020) ? 'r' : '-';
-        $info .= ($perms & 0x0010) ? 'w' : '-';
-        $info .= ($perms & 0x0008) ? (($perms & 0x0400) ? 's' : 'x') : (($perms & 0x0400) ? 'S' : '-');
-        $info .= ($perms & 0x0004) ? 'r' : '-';
-        $info .= ($perms & 0x0002) ? 'w' : '-';
-        $info .= ($perms & 0x0001) ? (($perms & 0x0200) ? 't' : 'x') : (($perms & 0x0200) ? 'T' : '-');
-        return $info;
+        return Paths::symbolicMode(intval($this->getchmod($file), 8));
     }
 
     public function getchmod($file)

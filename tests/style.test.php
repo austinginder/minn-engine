@@ -120,6 +120,18 @@ foreach ([...glob("{$facadeDir}/*.php"), ...glob("{$facadeDir}/classes/*.php")] 
 }
 $check('facade: the ratchet lists only functions that are still long', true);
 
+// The mapping audit trail: contracts/api/mappings.json (tests/tools/facade-map.php)
+// names the Minn methods every facade function calls. It must be current, and the
+// count of leaf functions over fifteen lines (plain PHP with no Minn behind it) may
+// only fall. Regenerate with `php tests/tools/facade-map.php`; lower the number
+// here when a leaf gains a Minn class, never raise it.
+$mapping = json_decode((string) shell_exec('php ' . escapeshellarg(dirname(__DIR__) . '/tests/tools/facade-map.php') . ' --check 2>/dev/null'), true);
+$check('facade map: tests/tools/facade-map.php runs', is_array($mapping));
+$check('facade map: contracts/api/mappings.json is current', is_array($mapping) && ($mapping['stale'] ?? true) === false, 'run php tests/tools/facade-map.php');
+$leafCeiling = 16;
+$check("facade map: leaf functions over fifteen lines stay at or under {$leafCeiling}", is_array($mapping) && ($mapping['leafLinesOver15'] ?? PHP_INT_MAX) <= $leafCeiling, (string) ($mapping['leafLinesOver15'] ?? '?'));
+
+
 $legacy = array_map('basename', glob("{$root}/*.php"));
 echo "\n  legacy procedural files remaining: " . count($legacy) . ' (' . implode(', ', $legacy) . ")\n";
 echo "\n{$pass} passed, {$fail} failed\n";

@@ -88,4 +88,20 @@ final class BlockMetadata
         }
         return $handles;
     }
+
+    private const FIELD_HANDLES = ['editorScript' => 'editor-script', 'editorStyle' => 'editor-style', 'script' => 'script', 'style' => 'style', 'viewScript' => 'view-script', 'viewScriptModule' => 'view-script-module', 'viewStyle' => 'view-style'];
+
+    /** The script or style handle a block.json field registers under; core blocks keep the `wp-block-` spelling. */
+    public static function assetHandle(string $block, string $field, int $index = 0): string
+    {
+        if (str_starts_with($block, 'core/')) {
+            $handle = str_replace('core/', 'wp-block-', $block)
+                . (str_starts_with($field, 'editor') ? '-editor' : '')
+                . (str_starts_with($field, 'view') ? '-view' : '')
+                . (str_ends_with(strtolower($field), 'scriptmodule') ? '-script-module' : '');
+        } else {
+            $handle = str_replace('/', '-', $block) . '-' . (self::FIELD_HANDLES[$field] ?? $field);
+        }
+        return $index > 0 ? $handle . '-' . ($index + 1) : $handle;
+    }
 }

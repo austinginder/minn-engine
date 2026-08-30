@@ -41,4 +41,23 @@ final class Entities
         $text = (string) preg_replace('/&(?!(?:#\d+|#[xX][0-9a-fA-F]+|[A-Za-z][A-Za-z0-9]*);)/', '&amp;', $text);
         return (string) preg_replace('/&amp;amp;(?=[A-Za-z0-9#]+;)/', '&amp;', $text);
     }
+
+    private const DECODE = ['&amp;' => '&', '&#038;' => '&', '&#x26;' => '&', '&lt;' => '<', '&#060;' => '<', '&#x3C;' => '<', '&gt;' => '>', '&#062;' => '>', '&#x3E;' => '>'];
+    private const DOUBLE_QUOTES = ['&quot;' => '"', '&#034;' => '"', '&#x22;' => '"'];
+    private const SINGLE_QUOTES = ['&#039;' => "'", '&#x27;' => "'", '&#39;' => "'", '&apos;' => "'"];
+
+    /** The reverse of specialchars: the five characters back, with the quote pairs the style asks for. */
+    public static function decode(string $text, int|string $quoteStyle): string
+    {
+        if ($text === '' || !str_contains($text, '&')) {
+            return $text;
+        }
+        $table = self::DECODE + match ($quoteStyle) {
+            ENT_QUOTES => self::DOUBLE_QUOTES + self::SINGLE_QUOTES,
+            ENT_COMPAT, 'double' => self::DOUBLE_QUOTES,
+            'single' => self::SINGLE_QUOTES,
+            default => [],
+        };
+        return strtr($text, $table);
+    }
 }
