@@ -24,9 +24,8 @@ final readonly class LexiconPage
     public function html(): string
     {
         $title = Html::esc($this->lexicon->title) . ' · ' . Html::esc($this->siteName);
-        $css = $this->themeDir !== null
-            ? '<link rel="stylesheet" href="' . Html::attr($this->themeUri . '/style.css') . '" />' . "\n"
-            : '';
+        $chrome = new SiteChrome($this->themeDir);
+        $css = $chrome->stylesheet($this->themeUri);
         return '<!DOCTYPE html>' . "\n" . '<html lang="en">' . "\n" . '<head>' . "\n"
             . '<meta charset="UTF-8" />' . "\n"
             . '<meta name="viewport" content="width=device-width, initial-scale=1" />' . "\n"
@@ -35,14 +34,14 @@ final readonly class LexiconPage
             . '</head>' . "\n"
             . '<body class="minn-lex-page">' . "\n"
             . '<a class="skip-link" href="#content">Skip to content</a>' . "\n"
-            . $this->part('header')
+            . $chrome->part('header', LexiconController::PATH)
             . '<main id="content" class="minn-lexicon">' . "\n"
             . '<header class="minn-lex-hero"><span class="minn-kicker">The glossary</span><h1>'
             . Html::esc($this->lexicon->title) . '</h1></header>' . "\n"
             . $this->toolbar()
             . $this->body()
             . '</main>' . "\n"
-            . $this->part('footer')
+            . $chrome->part('footer', LexiconController::PATH)
             . $this->script()
             . '</body>' . "\n" . '</html>' . "\n";
     }
@@ -151,23 +150,6 @@ final readonly class LexiconPage
             $out .= "</tr>\n";
         }
         return $out . "</tbody></table></div>\n";
-    }
-
-    private function part(string $slug): string
-    {
-        if ($this->themeDir === null) {
-            return '';
-        }
-        $file = $this->themeDir . '/parts/' . $slug . '.html';
-        if (!is_file($file)) {
-            return '';
-        }
-        $raw = (string) file_get_contents($file);
-        $raw = (string) preg_replace('/<!--\s*\/?wp:[^>]*-->/', '', $raw);
-        if ($slug === 'header') {
-            $raw = str_replace('href="/lexicon/"', 'href="/lexicon/" aria-current="page"', $raw);
-        }
-        return trim($raw) . "\n";
     }
 
     public static function inline(string $text): string

@@ -48,6 +48,23 @@ The theme runs no PHP on the engine. `functions.php` exists only for the
 reference (it enqueues `style.css`, which the engine links on its own); the
 theme toggle and the scroll reveal are inline scripts in the parts.
 
+## The code-size page
+
+`/code-size/` compares how much PHP, JavaScript and CSS ships in WordPress
+core (wp-admin, wp-includes and the root files of the release zip) and in
+Minn (the `public/minn` deploy unit plus the Minn Admin plugin as its release
+zip ships it). `tests/tools/code-size.php` downloads the current release from
+wordpress.org into the gitignored `.cache/`, measures both trees with one
+rule set (minified duplicates skipped, bundled libraries on their own row,
+lines as newline counts, bytes alongside) and writes `contracts/code-size.json`.
+`Front\CodeSize` reads it, `Front\CodeSizePage` paints it in the site chrome,
+and `/code-size.json` serves it raw. Refresh at each release with
+`php tests/tools/code-size.php` (or `--wordpress=7.2` for a named version);
+the versions on the page come from the measured trees, never from prose.
+`tests/code-size.test.php` pins the report's arithmetic and the page.
+`Front\SiteChrome` is the shared header/footer painter for these engine-only
+pages (the lexicon uses it too).
+
 ## Keeping the marketing page honest
 
 - Numbers on the page (classes, suites, checks, inventory sizes, plugins loading

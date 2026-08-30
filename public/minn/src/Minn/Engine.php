@@ -31,6 +31,7 @@ use Minn\Front\Feeds;
 use Minn\Front\ProbeController;
 use Minn\Front\Sitemaps;
 use Minn\Front\FrontController;
+use Minn\Front\CodeSizeController;
 use Minn\Front\LexiconController;
 use Minn\Front\Renderer;
 use Minn\Front\Resolver;
@@ -191,6 +192,7 @@ final readonly class Engine
             new AppController($app, new BootPayload($site, $permalinks, $capabilities, $app, $this->version, $appearance, new HiddenIntegrations($users, $capabilities), $posts, $theme !== null, new Translations($users, $site, $app, ABSPATH . 'wp-content')), $authenticator, $capabilities, $permalinks, $this->version, $adminOff),
             $probes,
             new LexiconController($this->engineDir, $permalinks, $site, ABSPATH . 'wp-content/themes'),
+            new CodeSizeController($this->engineDir, $permalinks, $site, ABSPATH . 'wp-content/themes'),
             new CommentPostController($site, $posts, new Comments($db), $permalinks, $authenticator, $capabilities, new AuthCookies($db, $cookie)),
             $front,
         );

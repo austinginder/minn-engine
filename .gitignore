@@ -35,3 +35,6 @@ public/wp-content/mu-plugins/captaincore-helper.php
 
 # Marketing theme: its own git repo, checked out at site/minn-site (see site/README.md)
 site/minn-site/
+
+# Pristine WordPress releases downloaded by tests/tools/code-size.php
+.cache/

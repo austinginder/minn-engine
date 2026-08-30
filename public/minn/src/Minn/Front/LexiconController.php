@@ -50,9 +50,7 @@ final readonly class LexiconController
         if ($path === null) {
             return new Response(404, ['Content-Type' => 'text/plain; charset=utf-8'], 'Lexicon not found.');
         }
-        $themeDir = is_file($this->themesDir . '/minn-site/style.css')
-            ? $this->themesDir . '/minn-site'
-            : null;
+        $themeDir = SiteChrome::locate($this->themesDir);
         $html = (new LexiconPage(
             Lexicon::fromFile($path),
             $this->permalinks,
