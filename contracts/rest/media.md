@@ -2,7 +2,7 @@
 
 Status: implemented (list, single, upload over both transports, GD
 sub-sizes, field edits, force delete including files). Suite:
-`tests/media.test.php` (24 checks; every upload is proven by reading it
+`tests/media.test.php` (every upload is proven by reading it
 back through real WordPress byte-identically — the serialized metadata
 blob is the crux).
 
@@ -62,8 +62,14 @@ recorded gap.
 ## Routes
 
 - List: `post_status = inherit` attachments, newest first, `per_page`
-  (default 10) / `page`, `include`, `_fields`, `X-WP-Total` headers;
-  `context=edit` needs `edit_posts`.
+  (default 10) / `page`, `include`, `author` / `author_exclude` (id lists),
+  `parent` (id list; `0` is unattached), `media_type`
+  (`image|video|text|application|audio`, else `400 rest_invalid_param`
+  with `media_type[0] is not one of …`), `mime_type`, `search` (every
+  word in title/excerpt/content), `after` / `before` (exclusive on
+  site-local `post_date`; invalid is `400 rest_invalid_date`), `_fields`,
+  `X-WP-Total` headers; `context=edit` needs `edit_posts`. Minn Admin's
+  Mine / Unattached / type / month filters are these query args.
 - Single: 404 `rest_post_invalid_id`; edit context needs `edit_post`.
 - Create (`upload_files`; author qualifies): multipart field `file` (the
   Minn Admin app's transport) or a raw body with

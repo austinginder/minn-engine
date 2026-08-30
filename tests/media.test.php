@@ -227,6 +227,16 @@ check( $gone && ! is_file( $updir ), 'force delete removed the files on disk' );
 md_parity( 'anonymous cannot upload', $Q, null, 'POST', '{}' );
 [ $st, $b ] = md_upload( $ENGINE, $author, $probe, 'author-upload.png' );
 check( 201 === $st && 3 === (int) ( $b['author'] ?? 0 ), 'author may upload (upload_files)' );
+$aid = (int) ( $b['id'] ?? 0 );
+md_parity( 'list author=3 (Mine)', $Q . '&author=3&_fields=id,author&per_page=100', $admin );
+md_parity( 'list author=999 is empty', $Q . '&author=999&_fields=id', $admin );
+md_parity( 'list parent=0 (Unattached)', $Q . '&parent=0&_fields=id,post&per_page=100', $admin );
+md_parity( 'list media_type=video', $Q . '&media_type=video&_fields=id', $admin );
+md_parity( 'list media_type=bogus', $Q . '&media_type=bogus', $admin );
+md_parity( 'list after invalid date', $Q . '&after=not-a-date', $admin );
+[ $st, $b ] = md_fetch( $ENGINE, $Q . '&author=3&_fields=id,author&per_page=100', $admin );
+$ids = array_column( is_array( $b ) ? $b : array(), 'id' );
+check( in_array( $aid, $ids, true ), 'Mine includes the author upload', json_encode( $ids ) );
 
 echo "\n$pass passed, $fail failed\n";
 exit( $fail > 0 ? 1 : 0 );

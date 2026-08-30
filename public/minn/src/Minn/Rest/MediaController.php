@@ -50,11 +50,7 @@ final readonly class MediaController
         $order = strtoupper((string) $request->query('order', 'desc')) === 'ASC' ? 'ASC' : 'DESC';
         $where = "post_type = 'attachment' AND post_status = 'inherit'";
         $params = [];
-        $include = array_filter(array_map(intval(...), explode(',', (string) $request->query('include', ''))));
-        if ($include !== []) {
-            $where .= ' AND ID IN (' . implode(',', array_fill(0, count($include), '?')) . ')';
-            $params = array_values($include);
-        }
+        $this->applyListFilters($request, $where, $params);
         $table = $this->db->table('posts');
         $total = (int) $this->db->value("SELECT COUNT(*) FROM {$table} WHERE {$where}", $params);
         $rows = $this->db->rows(
@@ -67,6 +63,111 @@ final readonly class MediaController
             (int) ceil($total / $perPage),
             Fields::fromQuery($request->query),
         );
+    }
+
+    /**
+     * The library's query args, captured from the oracle: author/parent as
+     * id lists (parent keeps 0 for unattached), media_type as a mime
+     * prefix, after/before exclusive on site-local post_date, search as
+     * every word in title/excerpt/content.
+     *
+     * @param array<int, mixed> $params
+     */
+    private function applyListFilters(Request $request, string &$where, array &$params): void
+    {
+        $include = self::intList((string) $request->query('include', ''));
+        if ($include !== []) {
+            $where .= ' AND ID IN (' . implode(',', array_fill(0, count($include), '?')) . ')';
+            $params = [...$params, ...$include];
+        }
+        $author = $request->query('author');
+        if ($author !== null && $author !== '') {
+            $ids = self::intList($author);
+            if ($ids !== []) {
+                $where .= ' AND post_author IN (' . implode(',', array_fill(0, count($ids), '?')) . ')';
+                $params = [...$params, ...$ids];
+            }
+        }
+        $authorExclude = $request->query('author_exclude');
+        if ($authorExclude !== null && $authorExclude !== '') {
+            $ids = self::intList($authorExclude);
+            if ($ids !== []) {
+                $where .= ' AND post_author NOT IN (' . implode(',', array_fill(0, count($ids), '?')) . ')';
+                $params = [...$params, ...$ids];
+            }
+        }
+        $parent = $request->query('parent');
+        if ($parent !== null && $parent !== '') {
+            $ids = self::intList($parent, true);
+            if ($ids !== []) {
+                $where .= ' AND post_parent IN (' . implode(',', array_fill(0, count($ids), '?')) . ')';
+                $params = [...$params, ...$ids];
+            }
+        }
+        $mediaType = $request->query('media_type');
+        if ($mediaType !== null && $mediaType !== '') {
+            $allowed = ['image', 'video', 'text', 'application', 'audio'];
+            if (!in_array($mediaType, $allowed, true)) {
+                $message = 'media_type[0] is not one of image, video, text, application, and audio.';
+                throw new RestError('rest_invalid_param', 'Invalid parameter(s): media_type', 400, [
+                    'params' => ['media_type' => $message],
+                    'details' => ['media_type' => ['code' => 'rest_not_in_enum', 'message' => $message, 'data' => null]],
+                ]);
+            }
+            $where .= ' AND post_mime_type LIKE ?';
+            $params[] = $mediaType . '/%';
+        }
+        $mime = $request->query('mime_type');
+        if ($mime !== null && $mime !== '') {
+            $where .= ' AND post_mime_type = ?';
+            $params[] = $mime;
+        }
+        foreach (preg_split('/\s+/', trim((string) $request->query('search', ''))) ?: [] as $word) {
+            if ($word === '') {
+                continue;
+            }
+            $like = '%' . addcslashes($word, '%_\\') . '%';
+            $where .= ' AND (post_title LIKE ? OR post_excerpt LIKE ? OR post_content LIKE ?)';
+            $params = [...$params, $like, $like, $like];
+        }
+        $after = $request->query('after');
+        if ($after !== null && $after !== '') {
+            $where .= ' AND post_date > ?';
+            $params[] = self::restDate($after, 'after');
+        }
+        $before = $request->query('before');
+        if ($before !== null && $before !== '') {
+            $where .= ' AND post_date < ?';
+            $params[] = self::restDate($before, 'before');
+        }
+    }
+
+    /** @return list<int> */
+    private static function intList(string $csv, bool $keepZero = false): array
+    {
+        $out = [];
+        foreach (explode(',', $csv) as $part) {
+            $part = trim($part);
+            if ($part === '' || !ctype_digit($part)) {
+                continue;
+            }
+            $n = (int) $part;
+            if ($n !== 0 || $keepZero) {
+                $out[] = $n;
+            }
+        }
+        return array_values(array_unique($out));
+    }
+
+    private static function restDate(string $value, string $param): string
+    {
+        if (preg_match('/^\d{4}-\d{2}-\d{2}(?:[T ]\d{2}:\d{2}(?::\d{2})?)?$/', $value) !== 1) {
+            throw new RestError('rest_invalid_param', "Invalid parameter(s): {$param}", 400, [
+                'params' => [$param => 'Invalid date.'],
+                'details' => [$param => ['code' => 'rest_invalid_date', 'message' => 'Invalid date.', 'data' => null]],
+            ]);
+        }
+        return str_replace('T', ' ', $value);
     }
 
     #[Route(Method::Get, '/wp/v2/media/{id:\d+}')]
