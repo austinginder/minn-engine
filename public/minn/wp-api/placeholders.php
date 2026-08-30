@@ -247,12 +247,6 @@ function get_importers()
     return null;
 }
 
-function get_index_template()
-{
-    \Minn\Runtime\PlaceholderTrace::hit('get_index_template');
-    return null;
-}
-
 function get_inline_data($post)
 {
     \Minn\Runtime\PlaceholderTrace::hit('get_inline_data');
@@ -316,12 +310,6 @@ function get_privacy_policy_url()
 function get_sample_permalink($post, $title = NULL, $name = NULL)
 {
     \Minn\Runtime\PlaceholderTrace::hit('get_sample_permalink');
-    return null;
-}
-
-function get_singular_template()
-{
-    \Minn\Runtime\PlaceholderTrace::hit('get_singular_template');
     return null;
 }
 
@@ -430,12 +418,6 @@ function postbox_classes($box_id, $screen_id)
 function register_importer($id, $name, $description, $callback)
 {
     \Minn\Runtime\PlaceholderTrace::hit('register_importer');
-    return null;
-}
-
-function rel_canonical()
-{
-    \Minn\Runtime\PlaceholderTrace::hit('rel_canonical');
     return null;
 }
 
@@ -721,12 +703,6 @@ function wp_maybe_auto_update()
     return null;
 }
 
-function wp_nav_menu($args = [])
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_nav_menu');
-    return null;
-}
-
 function wp_new_comment($commentdata, $wp_error = false)
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_new_comment');
@@ -778,12 +754,6 @@ function wp_scripts_get_suffix($type = '')
 function wp_should_load_block_editor_scripts_and_styles()
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_should_load_block_editor_scripts_and_styles');
-    return null;
-}
-
-function wp_site_icon()
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_site_icon');
     return null;
 }
 

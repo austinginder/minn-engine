@@ -86,6 +86,16 @@ class WP_Embed
         if ($html !== false) {
             return $html;
         }
+        // The stored oEmbed cache on the post answers before any fetch, the reference's order.
+        if ($this->usecache && (int) $this->post_ID > 0) {
+            $cached = get_post_meta((int) $this->post_ID, '_oembed_' . md5($url . serialize($attr)), true);
+            if ($cached === '{{unknown}}') {
+                return $this->maybe_make_link($url);
+            }
+            if (is_string($cached) && $cached !== '') {
+                return apply_filters('embed_oembed_html', $cached, $url, $attr, (int) $this->post_ID);
+            }
+        }
         $html = wp_oembed_get($url, $attr);
         if ($html) {
             return apply_filters('embed_oembed_html', $html, $url, $attr, (int) $this->post_ID);

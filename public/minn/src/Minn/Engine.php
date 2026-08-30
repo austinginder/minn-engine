@@ -167,6 +167,11 @@ final readonly class Engine
         $runtime->set('theme', $theme);
         $runtime->set('permalinks', $permalinks);
         $runtime->set('engine_routes', static fn (): array => Api::forRequest($db, $request)->routes());
+        $classicTheme = $theme === null ? \Minn\Theme\ClassicTheme::active($site, ABSPATH . 'wp-content/themes') : null;
+        if ($classicTheme !== null) {
+            // The classic head defaults register at setup_theme, ahead of the theme's own wp_head hooks.
+            $runtime->set('classic_theme', $classicTheme->stylesheet);
+        }
         Plugins::load($runtime);
         $seams = new Seams($db, $site, $request, Reader::current());
         (new Loader(ABSPATH . 'wp-content', $site))->register($seams);
@@ -176,6 +181,7 @@ final readonly class Engine
         $adminOff = App::switchedOff(ABSPATH . 'wp-content', $site);
         $bar = $adminOff ? null : AdminBar::forReader($session instanceof Authenticated ? $session : null, $capabilities, $site, $permalinks, $app, $appearance, $adminTypes);
         $pages = $theme === null ? null : PageRenderer::create($db, $theme, $permalinks, $resolver->perPage(), $bar);
+        $classic = $classicTheme === null ? null : \Minn\Theme\ClassicRenderer::create($db, $classicTheme, Theme::forStyles($site, $permalinks, ABSPATH . 'wp-content/themes'), $permalinks, $resolver->perPage(), $bar);
 
         $posts = new Posts($db);
         $generator = (string) (\Minn\Support\Serialized::field($site->option('_site_transient_update_core'), 'version_checked') ?? '');
@@ -183,7 +189,7 @@ final readonly class Engine
         $front = null;
         $cron = new Cron($db, $site, new PostWriter($db, $posts, $site), new Updates($site, new Inventory(ABSPATH . 'wp-content', $site), new Packages($site, ABSPATH . 'wp-content'), ABSPATH . 'wp-content', $permalinks->url('/'), self::WP_VERSION));
         $probes = new ProbeController($site, $posts, $permalinks, $resolver, $feeds, new Sitemaps($db, $site, $permalinks), static function () use (&$front): Response { return $front->notFound(); }, $cron);
-        $front = new FrontController($resolver, new Renderer($db, $posts, $permalinks, $resolver->perPage()), $pages, $probes, $cron);
+        $front = new FrontController($resolver, new Renderer($db, $posts, $permalinks, $resolver->perPage()), $pages, $probes, $cron, $classic);
 
         $router = (new Router())->register(
             new AssetsController($this->engineDir . '/assets'),

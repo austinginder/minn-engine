@@ -410,10 +410,13 @@ final readonly class Resolver
             if ((int) $page['ID'] === $this->permalinks->frontPageId) {
                 return Resolution::redirect($this->permalinks->url('/'));
             }
-            // The posts page lists the blog; a page number under it would be one of the page's
-            // own sub-pages, which it has none of, so that is a 404 rather than page two.
+            // The posts page paginates like the home listing: page/N serves
+            // the blog's page N, and past the last page it is a 404.
             if ((int) $page['ID'] === $this->permalinks->postsPageId) {
-                return $paged > 1 ? Resolution::notFound() : Resolution::postsPage($page);
+                $total = (int) $this->db->value(
+                    "SELECT COUNT(*) FROM {$this->db->table('posts')} WHERE post_type = 'post' AND post_status = 'publish'",
+                );
+                return $paged > 1 && $paged > $this->pages($total) ? Resolution::notFound() : Resolution::postsPage($page, $paged);
             }
             return Resolution::single($page, $paged);
         }

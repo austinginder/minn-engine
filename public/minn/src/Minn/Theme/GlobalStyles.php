@@ -75,7 +75,7 @@ final readonly class GlobalStyles
         $out .= '.wp-block-button{--wp--preset--dimension--25: 25%;--wp--preset--dimension--50: 50%;--wp--preset--dimension--75: 75%;--wp--preset--dimension--100: 100%;}';
         $layout = (array) ($settings['layout'] ?? []);
         $out .= ':root { --wp--style--global--content-size: ' . ($layout['contentSize'] ?? '620px') . ';--wp--style--global--wide-size: ' . ($layout['wideSize'] ?? '1000px') . '; }';
-        $out .= self::structuralRules((string) Styles::value((string) ($styles['spacing']['blockGap'] ?? '24px')));
+        $out .= self::structuralRules((string) Styles::value((string) ($styles['spacing']['blockGap'] ?? '24px')), (bool) ($this->theme->json()['settings']['useRootPaddingAwareAlignments'] ?? false));
         $out .= $this->rootStyles($styles);
         $out .= $this->elementStyles((array) ($styles['elements'] ?? []), '');
         $out .= $this->presetClasses($presets);
@@ -314,15 +314,16 @@ final readonly class GlobalStyles
         return $out;
     }
 
-    /** The engine's own layout rules on the reference's class hooks. */
-    private static function structuralRules(string $gap): string
+    /** The engine's own layout rules on the reference's class hooks; the global-padding rules exist only under root-padding-aware alignments. */
+    private static function structuralRules(string $gap, bool $aware = true): string
     {
-        return ':where(body) { margin: 0; }'
-            . '.wp-site-blocks { padding-top: var(--wp--style--root--padding-top); padding-bottom: var(--wp--style--root--padding-bottom); }'
+        $globalPadding = !$aware ? '' : '.wp-site-blocks { padding-top: var(--wp--style--root--padding-top); padding-bottom: var(--wp--style--root--padding-bottom); }'
             . '.has-global-padding { padding-right: var(--wp--style--root--padding-right); padding-left: var(--wp--style--root--padding-left); }'
             . '.has-global-padding > .alignfull { margin-right: calc(var(--wp--style--root--padding-right) * -1); margin-left: calc(var(--wp--style--root--padding-left) * -1); }'
             . '.has-global-padding :where(:not(.alignfull.is-layout-flow) > .has-global-padding:not(.wp-block-block, .alignfull)) { padding-right: 0; padding-left: 0; }'
-            . '.has-global-padding :where(:not(.alignfull.is-layout-flow) > .has-global-padding:not(.wp-block-block, .alignfull)) > .alignfull { margin-left: 0; margin-right: 0; }'
+            . '.has-global-padding :where(:not(.alignfull.is-layout-flow) > .has-global-padding:not(.wp-block-block, .alignfull)) > .alignfull { margin-left: 0; margin-right: 0; }';
+        return ':where(body) { margin: 0; }'
+            . $globalPadding
             . '.wp-site-blocks > .alignleft { float: left; margin-right: 2em; }.wp-site-blocks > .alignright { float: right; margin-left: 2em; }.wp-site-blocks > .aligncenter { justify-content: center; margin-left: auto; margin-right: auto; }'
             . ":where(.wp-site-blocks) > * { margin-block-start: {$gap}; margin-block-end: 0; }:where(.wp-site-blocks) > :first-child { margin-block-start: 0; }:where(.wp-site-blocks) > :last-child { margin-block-end: 0; }"
             . ":root { --wp--style--block-gap: {$gap}; }"
@@ -353,10 +354,13 @@ final readonly class GlobalStyles
     private function rootStyles(array $styles): string
     {
         $aware = (bool) ($this->theme->json()['settings']['useRootPaddingAwareAlignments'] ?? false);
-        $declarations = self::declarations($aware ? array_diff_key($styles, ['spacing' => 1]) + ['spacing' => array_diff_key((array) ($styles['spacing'] ?? []), ['padding' => 1])] : $styles, ['blockGap']);
+        $declarations = self::declarations($aware ? array_diff_key($styles, ['spacing' => 1]) + ['spacing' => array_diff_key((array) ($styles['spacing'] ?? []), ['padding' => 1])] : array_diff_key($styles, ['spacing' => 1]) + ['spacing' => array_diff_key((array) ($styles['spacing'] ?? []), ['padding' => 1])], ['blockGap']);
         $padding = (array) ($styles['spacing']['padding'] ?? []);
+        // Root padding is custom properties only under root-padding-aware
+        // alignments; otherwise it lands on body outright (0px when unset).
         foreach (['top', 'right', 'bottom', 'left'] as $side) {
-            $declarations[] = "--wp--style--root--padding-{$side}: " . Styles::value((string) ($padding[$side] ?? '0px'));
+            $property = $aware ? "--wp--style--root--padding-{$side}" : "padding-{$side}";
+            $declarations[] = "{$property}: " . Styles::value((string) ($padding[$side] ?? '0px'));
         }
         return 'body{' . implode(';', $declarations) . ';}';
     }

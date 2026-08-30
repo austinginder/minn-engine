@@ -28,6 +28,8 @@ final class Pagination
         $aria = (string) $args['aria_current'];
         $before = (string) $args['before_page_number'];
         $after = (string) $args['after_page_number'];
+        // No per-number aria-labels: the reference prints none (WooCommerce
+        // adds them through the paginate_links_output filter where it runs).
         $out = [];
         if ($args['prev_next'] && $current > 1) {
             $out[] = '<a class="prev page-numbers" href="' . $link($current - 1) . '">' . $args['prev_text'] . '</a>';

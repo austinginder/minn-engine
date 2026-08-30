@@ -171,7 +171,15 @@ function get_sidebar($name = null, $args = [])
 function get_search_form($args = [])
 {
     $args = wp_parse_args($args, ['echo' => true, 'aria_label' => '']);
-    $form = '<form role="search" method="get" class="search-form" action="' . esc_url(home_url('/')) . '"><label><span class="screen-reader-text">Search for:</span><input type="search" class="search-field" placeholder="Search &hellip;" value="' . get_search_query() . '" name="s" /></label><input type="submit" class="search-submit" value="Search" /></form>';
+    // A theme's own searchform.php wins over the default form, as the reference loads it.
+    $template = locate_template(['searchform.php']);
+    if ($template !== '') {
+        ob_start();
+        load_template($template, false, $args);
+        $form = (string) ob_get_clean();
+    } else {
+        $form = '<form role="search" method="get" class="search-form" action="' . esc_url(home_url('/')) . '"><label><span class="screen-reader-text">Search for:</span><input type="search" class="search-field" placeholder="Search &hellip;" value="' . get_search_query() . '" name="s" /></label><input type="submit" class="search-submit" value="Search" /></form>';
+    }
     $form = apply_filters('get_search_form', $form, $args);
     if ($args['echo']) {
         echo $form;
@@ -455,6 +463,312 @@ function get_query_template($type, $templates = [])
         $template = MINN_ENGINE_DIR . '/wp-api/template-canvas.php';
     }
     return apply_filters("{$type}_template", $template, $type, $templates);
+}
+
+function get_index_template()
+{
+    return get_query_template('index');
+}
+
+function get_404_template()
+{
+    return get_query_template('404');
+}
+
+function get_search_template()
+{
+    return get_query_template('search');
+}
+
+function get_front_page_template()
+{
+    return get_query_template('front_page', \Minn\Theme\Hierarchy::frontPage());
+}
+
+function get_home_template()
+{
+    return get_query_template('home', \Minn\Theme\Hierarchy::home());
+}
+
+function get_privacy_policy_template()
+{
+    return get_query_template('privacy_policy', \Minn\Theme\Hierarchy::privacyPolicy());
+}
+
+function get_singular_template()
+{
+    return get_query_template('singular');
+}
+
+function get_page_template()
+{
+    $id = (int) get_queried_object_id();
+    $post = get_post($id);
+    $slug = (string) ($post->post_name ?? get_query_var('pagename'));
+    return get_query_template('page', \Minn\Theme\Hierarchy::page((string) get_page_template_slug($post), $slug, $id));
+}
+
+function get_single_template()
+{
+    $post = get_queried_object();
+    if (!$post instanceof WP_Post) {
+        return get_query_template('single', ['single.php']);
+    }
+    return get_query_template('single', \Minn\Theme\Hierarchy::single((string) $post->post_type, (string) $post->post_name, (string) get_page_template_slug($post)));
+}
+
+function get_attachment_template()
+{
+    $post = get_queried_object();
+    $mime = $post instanceof WP_Post ? (string) $post->post_mime_type : '';
+    return get_query_template('attachment', \Minn\Theme\Hierarchy::attachment($mime));
+}
+
+function get_category_template()
+{
+    $term = get_queried_object();
+    $templates = $term instanceof WP_Term ? \Minn\Theme\Hierarchy::term('category', (string) $term->slug, (int) $term->term_id) : ['category.php'];
+    return get_query_template('category', $templates);
+}
+
+function get_tag_template()
+{
+    $term = get_queried_object();
+    $templates = $term instanceof WP_Term ? \Minn\Theme\Hierarchy::term('post_tag', (string) $term->slug, (int) $term->term_id) : ['tag.php'];
+    return get_query_template('tag', $templates);
+}
+
+function get_taxonomy_template()
+{
+    $term = get_queried_object();
+    $templates = $term instanceof WP_Term ? \Minn\Theme\Hierarchy::term((string) $term->taxonomy, (string) $term->slug, (int) $term->term_id) : ['taxonomy.php'];
+    return get_query_template('taxonomy', $templates);
+}
+
+function get_author_template()
+{
+    $author = get_queried_object();
+    $templates = $author instanceof WP_User
+        ? \Minn\Theme\Hierarchy::author((string) $author->user_nicename, (int) $author->ID)
+        : \Minn\Theme\Hierarchy::author((string) get_query_var('author_name'), (int) get_query_var('author'));
+    return get_query_template('author', $templates);
+}
+
+function get_date_template()
+{
+    return get_query_template('date');
+}
+
+function get_archive_template()
+{
+    $types = array_values(array_filter(array_map('strval', (array) get_query_var('post_type'))));
+    return get_query_template('archive', \Minn\Theme\Hierarchy::archive($types));
+}
+
+function get_post_type_archive_template()
+{
+    $type = (array) get_query_var('post_type');
+    $object = get_post_type_object((string) reset($type));
+    if ($object !== null && empty($object->has_archive)) {
+        return '';
+    }
+    return get_archive_template();
+}
+
+/** @internal the reference's wp_head defaults, registered ahead of the classic theme's own hooks; a plugin's remove_action() finds them by name */
+function _minn_classic_head_defaults()
+{
+    if (!Runtime::current()->get('classic_theme')) {
+        return;
+    }
+    add_action('wp_head', '_wp_render_title_tag', 1, 0);
+    add_action('wp_head', 'wp_robots', 1, 0);
+    add_action('wp_head', 'wp_resource_hints', 2, 0);
+    add_action('wp_head', 'feed_links', 2, 1);
+    add_action('wp_head', 'feed_links_extra', 3, 1);
+    // Registered at 4 AND 10 like the reference; the function prints once.
+    add_action('wp_head', 'wp_oembed_add_discovery_links', 4, 0);
+    add_action('wp_head', 'rest_output_link_wp_head', 10, 0);
+    add_action('wp_head', 'rsd_link', 10, 0);
+    add_action('wp_head', 'wp_generator', 10, 0);
+    add_action('wp_head', 'rel_canonical', 10, 0);
+    add_action('wp_head', 'wp_shortlink_wp_head', 10, 0);
+    add_action('wp_head', 'wp_oembed_add_discovery_links', 10, 0);
+    add_action('wp_head', 'wp_site_icon', 99, 0);
+    add_action('wp_enqueue_scripts', '_minn_enqueue_auto_sizes_style', 0);
+    add_action('wp_head', '_minn_classic_bar_head', 200, 0);
+    add_action('wp_footer', '_minn_classic_bar_footer', 200, 0);
+}
+
+/** @internal the Minn front bar's head assets on a classic theme's page */
+function _minn_classic_bar_head()
+{
+    $bar = Runtime::current()->get('classic_bar');
+    if ($bar instanceof \Minn\Front\AdminBar) {
+        echo $bar->head();
+    }
+}
+
+/** @internal the Minn front bar itself, printed from the theme's wp_footer() */
+function _minn_classic_bar_footer()
+{
+    $bar = Runtime::current()->get('classic_bar');
+    $resolution = Runtime::current()->get('classic_resolution');
+    if ($bar instanceof \Minn\Front\AdminBar && $resolution instanceof \Minn\Front\Resolution) {
+        echo $bar->render($resolution);
+    }
+}
+
+/** Speculative loading for signed-out visitors under pretty permalinks: conservative prefetch away from the WordPress paths. */
+function wp_print_speculation_rules()
+{
+    if (!Runtime::current()->get('classic_theme') || is_user_logged_in() || !$GLOBALS['wp_rewrite']->using_permalinks()) {
+        return;
+    }
+    $exclude = ['/wp-*.php', '/wp-admin/*', '/wp-content/uploads/*', '/wp-content/*', '/wp-content/plugins/*'];
+    foreach (array_unique([get_stylesheet(), get_template()]) as $slug) {
+        $exclude[] = '/wp-content/themes/' . $slug . '/*';
+    }
+    $exclude[] = '/*\\?(.+)';
+    $rules = ['prefetch' => [[
+        'source' => 'document',
+        'where' => ['and' => [
+            ['href_matches' => '/*'],
+            ['not' => ['href_matches' => $exclude]],
+            ['not' => ['selector_matches' => 'a[rel~="nofollow"]']],
+            ['not' => ['selector_matches' => '.no-prefetch, .no-prefetch a']],
+        ]],
+        'eagerness' => 'conservative',
+    ]]];
+    echo "<script type=\"speculationrules\">\n" . json_encode($rules, JSON_UNESCAPED_SLASHES) . "\n</script>\n";
+}
+
+/** @internal the reference's auto-sizes containment style, first in the queue */
+function _minn_enqueue_auto_sizes_style()
+{
+    wp_register_style('wp-img-auto-sizes-contain', false, [], false);
+    wp_add_inline_style('wp-img-auto-sizes-contain', 'img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}');
+    wp_enqueue_style('wp-img-auto-sizes-contain');
+}
+
+/** The reference renders the title tag itself when the theme declares title-tag support. */
+function _wp_render_title_tag()
+{
+    if (!current_theme_supports('title-tag')) {
+        return;
+    }
+    echo '<title>' . wp_get_document_title() . '</title>' . "\n";
+}
+
+function feed_links($args = [])
+{
+    $head = Runtime::current()->get('classic_head');
+    if ($head instanceof \Minn\Theme\HeadLinks && current_theme_supports('automatic-feed-links')) {
+        echo $head->feedLinks();
+    }
+}
+
+function feed_links_extra($args = [])
+{
+    $head = Runtime::current()->get('classic_head');
+    $resolution = Runtime::current()->get('classic_resolution');
+    if ($head instanceof \Minn\Theme\HeadLinks && $resolution instanceof \Minn\Front\Resolution && current_theme_supports('automatic-feed-links')) {
+        echo $head->extraFeedLink($resolution);
+    }
+}
+
+/**
+ * Resource hints: dns-prefetch for the hosts of enqueued assets away from
+ * the page's own host, plus what the wp_resource_hints filter adds
+ * (preconnect entries print their full URL, the reference's shape).
+ */
+function wp_resource_hints()
+{
+    $own = (string) (Runtime::current()->request?->host ?? '');
+    $hints = ['dns-prefetch' => array_values(array_unique([..._minn_assets('script')->externalHosts($own), ..._minn_assets('style')->externalHosts($own)])), 'preconnect' => []];
+    foreach ($hints as $relation => $urls) {
+        $urls = apply_filters('wp_resource_hints', $urls, $relation);
+        $unique = [];
+        foreach ($urls as $url) {
+            $attrs = is_array($url) ? $url : ['href' => $url];
+            $href = (string) ($attrs['href'] ?? '');
+            if ($href === '' || isset($unique[$href])) {
+                continue;
+            }
+            $unique[$href] = true;
+            if ($relation === 'dns-prefetch') {
+                $host = (string) (parse_url($href, PHP_URL_HOST) ?: $href);
+                echo "<link rel='dns-prefetch' href='//" . esc_attr(ltrim($host, '/')) . "' />\n";
+                continue;
+            }
+            $extra = '';
+            foreach ($attrs as $name => $value) {
+                if ($name === 'href') {
+                    continue;
+                }
+                $extra .= is_int($name) ? ' ' . esc_attr((string) $value) : ' ' . esc_attr((string) $name) . "='" . esc_attr((string) $value) . "'";
+            }
+            echo "<link href='" . esc_url($href) . "'" . $extra . " rel='" . esc_attr($relation) . "' />\n";
+        }
+    }
+}
+
+function wp_site_icon()
+{
+    $head = Runtime::current()->get('classic_head');
+    if ($head instanceof \Minn\Theme\HeadLinks) {
+        echo $head->icons();
+    }
+}
+
+/**
+ * The reference registers this on wp_head at BOTH 4 and 10 and prints once
+ * (the discovery links appear ahead of the styles); the guard keeps the
+ * second firing quiet while a plugin's remove_action() at either priority
+ * still finds a registration.
+ */
+function wp_oembed_add_discovery_links()
+{
+    if (!is_singular() || Runtime::current()->get('oembed_discovery_printed')) {
+        return;
+    }
+    Runtime::current()->set('oembed_discovery_printed', true);
+    $permalink = (string) get_permalink();
+    $base = home_url('/wp-json/oembed/1.0/embed');
+    $output = '<link rel="alternate" title="oEmbed (JSON)" type="application/json+oembed" href="' . esc_url($base . '?url=' . urlencode($permalink)) . '" />' . "\n";
+    $output .= '<link rel="alternate" title="oEmbed (XML)" type="text/xml+oembed" href="' . esc_url($base . '?url=' . urlencode($permalink) . '&format=xml') . '" />' . "\n";
+    echo apply_filters('oembed_discovery_links', $output);
+}
+
+/** The Really Simple Discovery link the reference prints from wp_head. */
+function rsd_link()
+{
+    $head = Runtime::current()->get('classic_head');
+    if ($head instanceof \Minn\Theme\HeadLinks) {
+        echo $head->rsdLink();
+    }
+}
+
+function wp_generator()
+{
+    the_generator('xhtml');
+}
+
+function the_generator($type)
+{
+    echo apply_filters('the_generator', get_the_generator($type), $type) . "\n";
+}
+
+function get_the_generator($type = '')
+{
+    $version = (string) ($GLOBALS['wp_version'] ?? '');
+    $gen = match ($type) {
+        'atom' => '<generator uri="https://wordpress.org/" version="' . esc_attr($version) . '">WordPress</generator>',
+        'rss2' => '<generator>' . esc_url_raw('https://wordpress.org/?v=' . $version) . '</generator>',
+        'comment' => '<!-- generator="WordPress/' . esc_attr($version) . '" -->',
+        default => '<meta name="generator" content="WordPress ' . esc_attr($version) . '" />',
+    };
+    return apply_filters("get_the_generator_{$type}", $gen, $type);
 }
 
 /** @internal whether the theme (or its parent) ships a block template for any of the PHP names given */

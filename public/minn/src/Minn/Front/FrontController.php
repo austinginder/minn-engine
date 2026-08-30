@@ -8,13 +8,15 @@ use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
+use Minn\Theme\ClassicRenderer;
 use Minn\Theme\PageRenderer;
 use Minn\Cron\Cron;
 
 /**
  * The public site. One catch-all route: resolve the URL, then either
- * redirect or render, through the active block theme when there is one
- * and the interim template otherwise.
+ * redirect or render, through the active block theme when there is one,
+ * the classic PHP template runner when the theme is classic, and the
+ * interim template otherwise.
  */
 final readonly class FrontController
 {
@@ -24,6 +26,7 @@ final readonly class FrontController
         private ?PageRenderer $theme = null,
         private ?ProbeController $probes = null,
         private ?Cron $cron = null,
+        private ?ClassicRenderer $classic = null,
     ) {
     }
 
@@ -32,6 +35,7 @@ final readonly class FrontController
     {
         $resolution = Resolution::notFound();
         $html = $this->theme?->render($resolution, $this->renderer->bodyClasses($resolution), $this->renderer->title($resolution))
+            ?? $this->classic?->render($resolution, $this->renderer->bodyClasses($resolution), $this->renderer->title($resolution))
             ?? $this->renderer->render($resolution);
         return Response::html($html, 404);
     }
@@ -51,6 +55,7 @@ final readonly class FrontController
             return $this->probes->queryFeed($request, $resolution, (string) $request->query('feed', 'rss2'));
         }
         $html = $this->theme?->render($resolution, $this->renderer->bodyClasses($resolution), $this->renderer->title($resolution))
+            ?? $this->classic?->render($resolution, $this->renderer->bodyClasses($resolution), $this->renderer->title($resolution))
             ?? $this->renderer->render($resolution);
         return Response::html($html, $resolution->status)
             ->withHeader('Link', '<' . $this->resolver->permalinks()->url('/wp-json/') . '>; rel="https://api.w.org/"')

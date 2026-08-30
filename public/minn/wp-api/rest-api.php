@@ -412,8 +412,14 @@ function rest_output_link_header()
 {
 }
 
+/** No trailing newline: the reference continues the line with the RSD link. */
 function rest_output_link_wp_head()
 {
+    $head = Runtime::current()->get('classic_head');
+    $resolution = Runtime::current()->get('classic_resolution');
+    if ($head instanceof \Minn\Theme\HeadLinks && $resolution instanceof \Minn\Front\Resolution) {
+        echo $head->restLink() . $head->jsonAlternate($resolution);
+    }
 }
 
 function rest_add_application_passwords_to_index($response)

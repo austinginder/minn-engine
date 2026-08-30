@@ -191,7 +191,14 @@ function get_the_content($more_link_text = null, $strip_teaser = false, $post = 
 
 function the_content($more_link_text = null, $strip_teaser = false)
 {
-    $content = apply_filters('the_content', get_the_content($more_link_text, $strip_teaser));
+    // Under a classic theme the tag runs the engine's whole content pipeline;
+    // a bare apply_filters('the_content', ...) elsewhere stays a plain filter run.
+    if (Runtime::current()->get('classic_theme')) {
+        $post = get_post();
+        $content = $post === null ? '' : \Minn\Theme\ClassicContent::render($post->to_array(), $more_link_text);
+    } else {
+        $content = apply_filters('the_content', get_the_content($more_link_text, $strip_teaser));
+    }
     echo str_replace(']]>', ']]&gt;', $content);
 }
 
@@ -206,8 +213,9 @@ function get_the_excerpt($post = null)
     }
     $excerpt = $post->post_excerpt;
     if ($excerpt === '') {
+        // Texturized entities stay entities: the reference's generated excerpt
+        // keeps &#8217; from the content pipeline, and the theme prints it as-is.
         $excerpt = trim(wp_strip_all_tags(Excerpt::render($post->to_array())));
-        $excerpt = html_entity_decode($excerpt, ENT_QUOTES | ENT_HTML5, 'UTF-8');
     }
     return apply_filters('get_the_excerpt', $excerpt, $post);
 }
@@ -1464,6 +1472,26 @@ function get_post_class($css_class = '', $post = null)
         $terms,
     );
     return array_unique(apply_filters('post_class', $classes, $extra, $post->ID));
+}
+
+/** The body's class list: the tokens the classic renderer stood for this page, the caller's extras, then the body_class filter. */
+function get_body_class($css_class = '')
+{
+    $classes = array_map('strval', (array) Runtime::current()->get('classic_body_classes', []));
+    $extra = is_array($css_class) ? $css_class : preg_split('/\s+/', trim((string) $css_class), -1, PREG_SPLIT_NO_EMPTY);
+    $extra = array_map(static fn ($c) => PostClasses::htmlClass((string) $c), (array) $extra);
+    array_push($classes, ...array_filter($extra));
+    return array_unique(array_map('esc_attr', (array) apply_filters('body_class', $classes, $extra)));
+}
+
+function body_class($css_class = '')
+{
+    echo 'class="' . esc_attr(implode(' ', get_body_class($css_class))) . '"';
+}
+
+function post_class($css_class = '', $post = null)
+{
+    echo 'class="' . esc_attr(implode(' ', get_post_class($css_class, $post))) . '"';
 }
 
 /** The page template file a page chose, "" for the default, false when there is no post. */

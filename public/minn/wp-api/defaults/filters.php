@@ -20,11 +20,19 @@ add_filter('the_excerpt', 'convert_smilies');
 add_filter('the_excerpt', 'convert_chars');
 add_filter('the_excerpt', 'wpautop');
 add_action('wp_head', 'wp_enqueue_scripts', 1);
+// A classic theme gets the reference's wp_head defaults, registered before its own hooks.
+add_action('setup_theme', '_minn_classic_head_defaults', 1);
 add_action('wp_head', 'wp_print_styles', 8);
 add_action('wp_head', '_minn_print_engine_styles', 8);
 add_action('wp_head', 'wp_print_head_scripts', 9);
+add_action('wp_footer', 'wp_print_speculation_rules', 10);
 add_action('wp_footer', '_wp_footer_scripts', 20);
 add_filter('option_blog_charset', '_wp_specialchars');
+// The robots meta directives, in the reference's registration order (it decides the directive order in the tag).
+add_filter('wp_robots', 'wp_robots_noindex');
+add_filter('wp_robots', 'wp_robots_noindex_embeds');
+add_filter('wp_robots', 'wp_robots_noindex_search');
+add_filter('wp_robots', 'wp_robots_max_image_preview_large');
 
 // The author name, term description, and link description are always filtered.
 add_filter('pre_comment_author_name', 'wp_filter_kses');

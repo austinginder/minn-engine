@@ -345,13 +345,23 @@ function get_search_link($query = '')
     return apply_filters('search_link', $link, $search);
 }
 
+/** A page number's link on the CURRENT request: the request path with its page/N segment swapped, the query string kept. */
 function get_pagenum_link($pagenum = 1, $escape = true)
 {
-    $url = home_url('/');
-    if ((int) $pagenum > 1) {
-        $url .= 'page/' . (int) $pagenum . '/';
+    $pagenum = max(1, (int) $pagenum);
+    $request = Runtime::booted() ? Runtime::current()->request : null;
+    $path = (string) ($request?->path ?? '/');
+    $path = (string) preg_replace('#/page/\d+/?$#', '/', $path);
+    if ($path === '' || $path[0] !== '/') {
+        $path = '/';
     }
-    return $escape ? esc_url($url) : esc_url_raw($url);
+    if ($pagenum > 1) {
+        $path = trailingslashit($path) . user_trailingslashit('page/' . $pagenum, 'paged');
+    }
+    $query = array_diff_key($request?->query ?? [], ['paged' => 1, 'page' => 1]);
+    $url = home_url($path) . ($query === [] ? '' : '?' . http_build_query($query));
+    $result = apply_filters('get_pagenum_link', $url, $pagenum);
+    return $escape ? esc_url($result) : esc_url_raw($result);
 }
 
 function get_edit_term_link($term, $taxonomy = '', $object_type = '')
@@ -444,5 +454,81 @@ function paginate_links($args = '')
     if ($links === null) {
         return null;
     }
-    return Pagination::format($links, (string) $args['type']);
+    $out = Pagination::format($links, (string) $args['type']);
+    // WooCommerce decorates page numbers through this filter; array output skips it like the reference.
+    return is_string($out) ? apply_filters('paginate_links_output', $out, $args) : $out;
+}
+
+/** The reference's navigation wrapper: nav, screen-reader heading, the links. */
+function _navigation_markup($links, $css_class = 'posts-navigation', $screen_reader_text = '', $aria_label = '')
+{
+    if ($screen_reader_text === '') {
+        $screen_reader_text = 'Posts navigation';
+    }
+    if ($aria_label === '') {
+        $aria_label = $screen_reader_text;
+    }
+    $template = '
+	<nav class="navigation %1$s" aria-label="%4$s">
+		<h2 class="screen-reader-text">%2$s</h2>
+		<div class="nav-links">%3$s</div>
+	</nav>';
+    $template = apply_filters('navigation_markup_template', $template, $css_class);
+    return sprintf($template, sanitize_html_class($css_class), esc_html($screen_reader_text), $links, esc_attr($aria_label));
+}
+
+function get_the_posts_pagination($args = [])
+{
+    if ((int) ($GLOBALS['wp_query']->max_num_pages ?? 0) <= 1) {
+        return '';
+    }
+    // A caller's screen_reader_text names the nav when no aria_label is given.
+    if (isset($args['screen_reader_text']) && !isset($args['aria_label'])) {
+        $args['aria_label'] = $args['screen_reader_text'];
+    }
+    $args = wp_parse_args($args, ['mid_size' => 1, 'prev_text' => 'Previous', 'next_text' => 'Next', 'screen_reader_text' => 'Posts pagination', 'aria_label' => 'Posts pagination', 'class' => 'pagination']);
+    if (isset($args['type']) && $args['type'] === 'array') {
+        $args['type'] = 'plain';
+    }
+    $links = paginate_links($args);
+    if (!$links) {
+        return '';
+    }
+    return _navigation_markup($links, $args['class'], $args['screen_reader_text'], $args['aria_label']);
+}
+
+function the_posts_pagination($args = [])
+{
+    echo get_the_posts_pagination($args);
+}
+
+/** The canonical link on singular views, at the queried object's own permalink. */
+function rel_canonical()
+{
+    if (!is_singular()) {
+        return;
+    }
+    $id = (int) get_queried_object_id();
+    if ($id < 1) {
+        return;
+    }
+    $url = (string) get_permalink($id);
+    if ($url === '') {
+        return;
+    }
+    $page = (int) get_query_var('page');
+    if ($page >= 2) {
+        $url = trailingslashit($url) . user_trailingslashit((string) $page, 'single_paged');
+    }
+    echo '<link rel="canonical" href="' . esc_url($url) . '" />' . "\n";
+}
+
+/** The shortlink head tag on singular views, after the canonical in the reference's order. */
+function wp_shortlink_wp_head()
+{
+    $head = Runtime::current()->get('classic_head');
+    $resolution = Runtime::current()->get('classic_resolution');
+    if ($head instanceof \Minn\Theme\HeadLinks && $resolution instanceof \Minn\Front\Resolution) {
+        echo $head->shortlink($resolution);
+    }
 }

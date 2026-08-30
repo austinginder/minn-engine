@@ -53,20 +53,11 @@ function wp_date($format, $timestamp = null, $timezone = null)
 
 function date_i18n($format, $timestamp_with_offset = false, $gmt = false)
 {
-    $timestamp = $timestamp_with_offset;
-    if ($timestamp === false || $timestamp === null) {
-        $timestamp = current_time('timestamp', $gmt);
-    }
-    if (!is_numeric($timestamp)) {
-        $timestamp = current_time('timestamp', $gmt);
-    }
+    $timestamp = is_numeric($timestamp_with_offset) ? (int) $timestamp_with_offset : current_time('timestamp', $gmt);
+    // The timestamp arrives pre-offset ("WordPress local"): its digits print
+    // as-is, attached to the site timezone only for timezone-name formats.
     $timezone = $gmt ? new DateTimeZone('UTC') : wp_timezone();
-    if (!$gmt) {
-        $timestamp -= (int) ((float) get_option('gmt_offset') * HOUR_IN_SECONDS);
-        $timestamp += (new DateTime('@' . $timestamp))->setTimezone($timezone)->getOffset() * 0;
-    }
-    $datetime = date_create('@' . (int) $timestamp);
-    $datetime->setTimezone($timezone);
+    $datetime = date_create(gmdate('Y-m-d H:i:s', $timestamp), $timezone);
     $date = $datetime->format($format);
     return apply_filters('date_i18n', $date, $format, $timestamp_with_offset, $gmt);
 }

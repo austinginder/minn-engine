@@ -51,6 +51,8 @@ final readonly class PageRenderer
         private Renderer $renderer,
         private int $perPage,
         private ?AdminBar $bar = null,
+        private ?MainQueryBridge $bridge = null,
+        private ?HeadLinks $headLinks = null,
     ) {
     }
 
@@ -66,7 +68,7 @@ final readonly class PageRenderer
         (new QueryBlocks($posts, $site, $permalinks))->register($renderer);
         (new Navigation($db, $posts, $permalinks))->register($renderer);
         (new Comments($db, new CommentStore($db), $site, $permalinks))->register($renderer);
-        return new self($db, $site, $posts, $permalinks, $theme, $templates, $renderer, $perPage, $bar);
+        return new self($db, $site, $posts, $permalinks, $theme, $templates, $renderer, $perPage, $bar, new MainQueryBridge($site, $posts, $perPage), new HeadLinks($site, $posts, $permalinks));
     }
 
     /**
@@ -123,19 +125,9 @@ final readonly class PageRenderer
         if ($template === null) {
             return null;
         }
-        $perPage = $this->perPage;
-        if (Runtime::booted() && in_array($resolution->kind, [Kind::PostTypeArchive, Kind::Taxonomy], true)) {
-            // A plugin's archive is the plugin's query: WP_Query with pre_get_posts, so it sets its own page size and order.
-            $query = \_minn_run_main_query(MainQuery::vars($resolution), $resolution->paged, $this->perPage);
-            $perPage = $query['perPage'];
-            $this->lifecycle();
-        } else {
-            $query = $this->mainQuery($resolution);
-            if (Runtime::booted()) {
-                \_minn_seed_main_query(MainQuery::vars($resolution), array_map(static fn (array $p) => (int) $p['ID'], $query['posts']), $query['total'], $this->perPage, $resolution->postsPage);
-                $this->lifecycle();
-            }
-        }
+        $bridge = $this->bridge ?? new MainQueryBridge($this->site, $this->posts, $this->perPage);
+        $query = $bridge->stand($resolution);
+        $perPage = $query['perPage'];
         RenderState::reset();
         $this->renderer->withContext(new Context($resolution, $query['posts'], $query['total'], $perPage, true));
         // The reference texturizes the rendered template as a whole, after the
@@ -202,90 +194,8 @@ final readonly class PageRenderer
         return Extensions::seams()?->applyDocumentFilters($document) ?? $document;
     }
 
-    /**
-     * The links the reference puts in every head: the site and comments
-     * feeds (plus the archive's own feed), the REST discovery link, the
-     * JSON alternate for the queried object, and the site icon set.
-     */
     private function headLinks(Resolution $resolution): string
     {
-        $site = Html::esc((string) ($this->site->option('blogname') ?? ''));
-        $feed = fn (string $path): string => Html::attr($this->permalinks->url($path));
-        $out = '<link rel="alternate" type="application/rss+xml" title="' . $site . ' &raquo; Feed" href="' . $feed('/feed/') . '" />' . "\n"
-            . '<link rel="alternate" type="application/rss+xml" title="' . $site . ' &raquo; Comments Feed" href="' . $feed('/comments/feed/') . '" />' . "\n";
-        $record = $resolution->record ?? [];
-        $json = null;
-        switch ($resolution->kind) {
-            case Kind::Category:
-            case Kind::Tag:
-                $label = $resolution->kind === Kind::Category ? 'Category' : 'Tag';
-                $out .= '<link rel="alternate" type="application/rss+xml" title="' . $site . ' &raquo; ' . Html::esc((string) $record['name']) . ' ' . $label . ' Feed" href="' . Html::attr($this->permalinks->forTerm($record) . 'feed/') . '" />' . "\n";
-                $json = '/wp/v2/' . ($resolution->kind === Kind::Category ? 'categories' : 'tags') . '/' . (int) $record['term_id'];
-                break;
-            case Kind::Search:
-                $out .= '<link rel="alternate" type="application/rss+xml" title="' . $site . ' &raquo; Search Results for &#8220;' . Html::esc((string) $resolution->search) . '&#8221; Feed" href="' . $feed('/search/' . rawurlencode((string) $resolution->search) . '/feed/rss2/') . '" />' . "\n";
-                break;
-            case Kind::Single:
-            case Kind::Page:
-                // The static front page announces its own comments feed while comments or pings are
-                // open on it, even with none yet; every other single needs a comment first.
-                $open = ($record['comment_status'] ?? '') === 'open' || ($record['ping_status'] ?? '') === 'open';
-                if ((int) ($record['comment_count'] ?? 0) > 0 || ($resolution->front && $open)) {
-                    $own = $record['post_type'] === 'page' ? $this->permalinks->pagePath($record) : $this->permalinks->forPost($record);
-                    $out .= '<link rel="alternate" type="application/rss+xml" title="' . $site . ' &raquo; ' . Html::esc((string) $record['post_title']) . ' Comments Feed" href="' . Html::attr($own . 'feed/') . '" />' . "\n";
-                }
-                $json = '/wp/v2/' . ($record['post_type'] === 'page' ? 'pages' : 'posts') . '/' . (int) $record['ID'];
-                break;
-        }
-        $out .= '<link rel="https://api.w.org/" href="' . $feed('/wp-json/') . '" />' . "\n";
-        if ($json !== null) {
-            $out .= '<link rel="alternate" title="JSON" type="application/json" href="' . $feed('/wp-json' . $json) . '" />' . "\n";
-        }
-        $icon = (int) ($this->site->option('site_icon') ?? 0);
-        $iconFile = $icon > 0 ? $this->posts->meta($icon, '_wp_attached_file') : null;
-        if ($iconFile !== null) {
-            $url = Html::attr($this->permalinks->url('/wp-content/uploads/' . $iconFile));
-            $out .= '<link rel="icon" href="' . $url . '" sizes="32x32" />' . "\n"
-                . '<link rel="icon" href="' . $url . '" sizes="192x192" />' . "\n"
-                . '<link rel="apple-touch-icon" href="' . $url . '" />' . "\n"
-                . '<meta name="msapplication-TileImage" content="' . $url . '" />' . "\n";
-        }
-        return $out;
-    }
-
-    /** The reference's front-end lifecycle once the main query stands: "wp" with the request object, then template_redirect. */
-    private function lifecycle(): void
-    {
-        Runtime::hooks()->action('wp', [$GLOBALS['wp'] ?? null]);
-        Runtime::hooks()->action('template_redirect', []);
-    }
-
-    /** @return list<string> the post types a plugin's taxonomy attaches to */
-    private function objectTypes(string $taxonomy): array
-    {
-        $row = Runtime::booted() ? Runtime::registry()->taxonomy($taxonomy) : null;
-        $types = array_values(array_map('strval', (array) ($row['object_type'] ?? [])));
-        return $types === [] ? ['post'] : $types;
-    }
-
-    /** @return array{posts: list<array>, total: int} */
-    private function mainQuery(Resolution $resolution): array
-    {
-        $record = $resolution->record ?? [];
-        $filter = match ($resolution->kind) {
-            Kind::Category, Kind::Tag => ['term' => (int) $record['term_taxonomy_id']],
-            Kind::Taxonomy => ['term' => (int) $record['term_taxonomy_id'], 'types' => $this->objectTypes((string) $record['taxonomy'])],
-            Kind::PostTypeArchive => ['types' => [(string) $record['name']]],
-            Kind::Author => ['author' => (int) ($record['ID'] ?? -1)],
-            Kind::Date => array_combine(['from', 'to'], Resolver::dateRange(...$resolution->date) ?? ['1970-01-01', '1970-01-01']),
-            Kind::Search => ['search' => (string) $resolution->search],
-            Kind::Home => [],
-            default => null,
-        };
-        if ($filter === null) {
-            return ['posts' => [], 'total' => 0];
-        }
-        $sticky = $resolution->kind === Kind::Home ? Serialized::intList($this->site->option('sticky_posts')) : [];
-        return $this->posts->listing($filter, $resolution->paged, $this->perPage, $sticky);
+        return ($this->headLinks ?? new HeadLinks($this->site, $this->posts, $this->permalinks))->all($resolution);
     }
 }

@@ -6,7 +6,8 @@
 add_action('init', static function (): void {
     wp_register_script('jquery-core', '/wp-includes/js/jquery/jquery.min.js', [], '3.7.1');
     wp_register_script('jquery-migrate', '/wp-includes/js/jquery/jquery-migrate.min.js', [], '3.4.1');
-    wp_register_script('jquery', false, ['jquery-core', 'jquery-migrate'], '3.7.1');
+    // The reference's jquery alias depends on jquery-core alone; migrate stays registered for code that asks for it.
+    wp_register_script('jquery', false, ['jquery-core'], '3.7.1');
     // The wp.* utility packages the engine reimplements (MIT, assets/wp), with the reference's dependency graph.
     $wp = static fn (string $file) => '/minn-engine/wp-' . $file . '.js';
     wp_register_script('wp-polyfill', $wp('polyfill'), [], MINN_ENGINE_VERSION);

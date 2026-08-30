@@ -527,7 +527,11 @@ function wp_oembed_get($url, $args = '')
 
 function wp_embed_defaults($url = '')
 {
-    return apply_filters('embed_defaults', ['width' => (int) get_option('embed_size_w') ?: 500, 'height' => (int) get_option('embed_size_h') ?: 750], $url);
+    // The theme's content width drives the size; the height is capped at 1000.
+    // These exact numbers feed the oEmbed cache key, so they must match.
+    $width = (int) ($GLOBALS['content_width'] ?? 0) ?: 500;
+    $height = (int) min(ceil($width * 1.5), 1000);
+    return apply_filters('embed_defaults', ['width' => $width, 'height' => $height], $url);
 }
 
 function fetch_feed($url)

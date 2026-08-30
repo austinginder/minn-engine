@@ -57,6 +57,30 @@ final class Assets
         $this->changed();
     }
 
+    /** @return list<string> hosts of enqueued sources (dependencies first) away from the given host, for dns-prefetch hints */
+    public function externalHosts(string $ownHost): array
+    {
+        $hosts = [];
+        $seen = [];
+        $walk = function (string $handle) use (&$walk, &$hosts, &$seen, $ownHost): void {
+            if (isset($seen[$handle]) || !isset($this->items[$handle])) {
+                return;
+            }
+            $seen[$handle] = true;
+            foreach ((array) ($this->items[$handle]['deps'] ?? []) as $dep) {
+                $walk((string) $dep);
+            }
+            $host = parse_url((string) ($this->items[$handle]['src'] ?? ''), PHP_URL_HOST);
+            if (is_string($host) && $host !== '' && $host !== $ownHost && !in_array($host, $hosts, true)) {
+                $hosts[] = $host;
+            }
+        };
+        foreach ($this->queue as $handle) {
+            $walk($handle);
+        }
+        return $hosts;
+    }
+
     public function deregister(string $handle): void
     {
         unset($this->items[$handle]);
@@ -133,7 +157,8 @@ final class Assets
                 $data[$k] = html_entity_decode((string) $v, ENT_QUOTES, 'UTF-8');
             }
         }
-        $this->items[$handle]['localized'][] = 'var ' . $name . ' = ' . json_encode($data) . ';';
+        // The reference prints localized data with slashes unescaped.
+        $this->items[$handle]['localized'][] = 'var ' . $name . ' = ' . json_encode($data, JSON_UNESCAPED_SLASHES) . ';';
         $this->changed();
         return true;
         $this->changed();

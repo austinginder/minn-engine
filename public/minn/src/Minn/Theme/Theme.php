@@ -31,14 +31,27 @@ final class Theme
 
     public static function active(Site $site, Permalinks $permalinks, string $themesDir): ?self
     {
-        $slug = (string) ($site->option('stylesheet') ?? '');
-        $parentSlug = (string) ($site->option('template') ?? $slug);
-        $parent = $parentSlug !== '' && $parentSlug !== $slug ? self::at($parentSlug, $themesDir, $permalinks) : null;
-        $child = self::at($slug, $themesDir, $permalinks, $parent);
-        if ($child === null || !is_dir("{$child->dir}/templates") && !($parent !== null && is_dir("{$parent->dir}/templates"))) {
+        $child = self::forStyles($site, $permalinks, $themesDir);
+        // A block theme ships a block template index; theme.json plus an
+        // empty templates/ directory is a classic theme with editor tokens
+        // (wp_is_block_theme on the reference draws the same line).
+        if ($child === null || !is_file("{$child->dir}/templates/index.html") && !($child->parent !== null && is_file("{$child->parent->dir}/templates/index.html"))) {
             return null;
         }
         return $child;
+    }
+
+    /**
+     * The active theme as styling data (theme.json present), whether or not
+     * it is a block theme; the classic renderer prints its presets where the
+     * reference prints a classic theme's global styles.
+     */
+    public static function forStyles(Site $site, Permalinks $permalinks, string $themesDir): ?self
+    {
+        $slug = (string) ($site->option('stylesheet') ?? '');
+        $parentSlug = (string) ($site->option('template') ?? $slug);
+        $parent = $parentSlug !== '' && $parentSlug !== $slug ? self::at($parentSlug, $themesDir, $permalinks) : null;
+        return self::at($slug, $themesDir, $permalinks, $parent);
     }
 
     private static function at(string $slug, string $themesDir, Permalinks $permalinks, ?Theme $parent = null): ?self

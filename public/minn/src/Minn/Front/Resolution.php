@@ -54,9 +54,9 @@ final readonly class Resolution
     }
 
     /** The page that stands for the blog: a home listing whose record is the page. */
-    public static function postsPage(array $page): self
+    public static function postsPage(array $page, int $paged = 1): self
     {
-        return new self(Kind::Home, $page, 1, postsPage: true);
+        return new self(Kind::Home, $page, $paged, postsPage: true);
     }
 
     public static function term(string $taxonomy, array $term, int $paged = 1): self
