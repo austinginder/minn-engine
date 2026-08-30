@@ -164,18 +164,38 @@ final readonly class Packages
         return html_entity_decode(strip_tags($value), ENT_QUOTES | ENT_HTML5, 'UTF-8');
     }
 
+    /**
+     * One wordpress.org theme record, or null when the slug is unknown.
+     *
+     * @return array<string, mixed>|null
+     */
+    public function directoryTheme(string $slug): ?array
+    {
+        $data = json_decode($this->fetch(self::WPORG_THEMES . '?action=theme_information&request[slug]=' . rawurlencode($slug) . '&request[fields][download_link]=1'), true);
+        if (!is_array($data) || isset($data['error']) || !isset($data['slug'])) {
+            return null;
+        }
+        return $data;
+    }
+
     /** Installs a wordpress.org theme by slug; returns its stylesheet folder. */
-    public function installTheme(string $slug): string
+    public function installTheme(string $slug, bool $overwrite = false, string $version = ''): string
     {
         if (!preg_match('/^[a-z0-9-]+$/', $slug)) {
             throw new RestError('bad_slug', 'That is not a theme slug.', 400);
         }
-        $data = json_decode($this->fetch(self::WPORG_THEMES . '?action=theme_information&request[slug]=' . rawurlencode($slug) . '&request[fields][download_link]=1'), true);
+        $data = $this->directoryTheme($slug);
         $link = (string) ($data['download_link'] ?? '');
-        if ($link === '' || !str_starts_with($link, 'https://downloads.wordpress.org/')) {
+        if ($version !== '') {
+            if (!preg_match('/^[0-9][A-Za-z0-9._-]*$/', $version)) {
+                throw new RestError('bad_slug', 'That is not a theme version.', 400);
+            }
+            $link = 'https://downloads.wordpress.org/theme/' . $slug . '.' . $version . '.zip';
+        }
+        if ($data === null || $link === '' || !str_starts_with($link, 'https://downloads.wordpress.org/')) {
             throw new RestError('theme_not_found', 'wordpress.org has no theme by that slug.', 404);
         }
-        return $this->unpack($this->fetch($link), 'theme', false)['folder'];
+        return $this->unpack($this->fetch($link), 'theme', $overwrite)['folder'];
     }
 
     /**
@@ -291,7 +311,7 @@ final readonly class Packages
         if (!str_starts_with($url, 'https://')) {
             throw new RestError('bad_url', 'Packages are fetched over https only.', 400);
         }
-        $context = stream_context_create(['http' => ['timeout' => 60, 'follow_location' => 1, 'user_agent' => 'WordPress/' . \Minn\Engine::WP_VERSION . '; ' . $this->site->option('home')], 'ssl' => ['verify_peer' => true]]);
+        $context = stream_context_create(['http' => ['timeout' => 60, 'follow_location' => 1, 'ignore_errors' => true, 'user_agent' => 'WordPress/' . \Minn\Engine::WP_VERSION . '; ' . $this->site->option('home')], 'ssl' => ['verify_peer' => true]]);
         $body = @file_get_contents($url, false, $context);
         if ($body === false || $body === '') {
             throw new RestError('download_failed', 'The download failed. Check the site can reach ' . (string) parse_url($url, PHP_URL_HOST) . ' and try again.', 502);

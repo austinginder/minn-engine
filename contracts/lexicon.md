@@ -82,7 +82,7 @@ not here.
 | Feeds / sitemaps / probes | `/feed/`, `/wp-sitemap.xml`, `robots.txt`, `wp-cron.php` | Byte-level where the contract says so. | `front/probes.md` |
 | Block render | `post_content` block markup, `content.rendered` | Engine parser + renderer. Theme.php is never executed. | `blocks.md`, `front/theme.md` |
 | Block themes | `theme.json`, `templates/`, `parts/`, `wp_template*` | Read as data. Classic PHP themes are Mute (preflight RED). | `front/theme.md` |
-| WP-CLI ops | `option`, `user`, `plugin list/activate`, `theme list`, `db`, `search-replace`, `wp minn *` | `before_wp_load` verbs plus WP-CLI's own `config`/`db`. | `cli.md` |
+| WP-CLI ops | `option`, `user`, `plugin list/activate`, `theme list/install/activate/delete`, `db`, `search-replace`, `wp minn *` | `before_wp_load` verbs plus WP-CLI's own `config`/`db`. | `cli.md` |
 | Cron / mail | due `future` posts, `wp-cron.php`, `wp_mail`, password reset | Engine runner; `cron` option events are a later slice. | `cron-mail.md` |
 | Install / eject | five-minute install, core files on disk | `minn install` / `eject`. Not `install.php`. | `docs/install.md` |
 

@@ -32,6 +32,9 @@ final class Commands
         self::leaf('plugin activate', [PluginCommand::class, 'activate'], $early);
         self::leaf('plugin deactivate', [PluginCommand::class, 'deactivate'], $early);
         self::leaf('theme list', [ThemeCommand::class, 'list'], $early);
+        self::leaf('theme install', [ThemeCommand::class, 'install'], $early);
+        self::leaf('theme activate', [ThemeCommand::class, 'activate'], $early);
+        self::leaf('theme delete', [ThemeCommand::class, 'delete'], $early);
         self::leaf('cache flush', [CacheCommand::class, 'flush'], $early);
         self::replace('search-replace', SearchReplaceCommand::class, $early);
         WP_CLI::add_command('minn', MinnCommand::class, $early);

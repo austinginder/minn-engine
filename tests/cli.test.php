@@ -98,6 +98,13 @@ foreach ([
     'theme list --format=count',
     'theme list --status=active --field=name',
     'theme list --status=inactive --format=count',
+    'theme install zz-no-such-theme-xyz',
+    'theme install twentytwentyfive',
+    'theme install zz-no-such-theme-xyz twentytwentyfive',
+    'theme activate nope-nope',
+    'theme activate twentytwentyfive',
+    'theme delete nope-nope',
+    'theme delete twentytwentyfive',
     'cache flush',
     'user create uniqueloginzzz admin@minn-engine.localhost',
     'user create badroleuser badrole@example.test --role=not-a-role',
@@ -240,6 +247,28 @@ $run($ENGINE_DIR, 'option delete minn_sr_probe');
 [$out, $code] = $run($ENGINE_DIR, 'option set minn_cli_set hello');
 $check('option set is update', $code === 0 && str_contains($out, "Updated 'minn_cli_set' option."), $out);
 $run($ENGINE_DIR, 'option delete minn_cli_set');
+
+$stripCache = static function (string $out): string {
+    return (string) preg_replace("/\nUsing cached file '[^']+'\\.\\.\\.\n/", "\n", $out);
+};
+$compareInstall = static function (string $label, string $command) use ($run, $check, $stripCache, $ENGINE_DIR, $REF_DIR): void {
+    $cleanup = static function (string $dir) use ($run): void {
+        $run($dir, 'theme activate twentytwentyfive');
+        $run($dir, 'theme delete twentysixteen');
+    };
+    [$engineOut, $engineCode] = $run($ENGINE_DIR, $command);
+    $cleanup($ENGINE_DIR);
+    [$refOut, $refCode] = $run($REF_DIR, $command);
+    $cleanup($REF_DIR);
+    $check(
+        $label,
+        $stripCache($engineOut) === $stripCache($refOut) && $engineCode === $refCode,
+        "wp {$command}\n      engine[{$engineCode}]: " . substr($stripCache($engineOut), 0, 400) . "\n      ref[{$refCode}]:    " . substr($stripCache($refOut), 0, 400),
+    );
+};
+$compareInstall('theme install twentysixteen matches the reference', 'theme install twentysixteen');
+$compareInstall('theme install twentysixteen twentytwentyfive matches the reference', 'theme install twentysixteen twentytwentyfive');
+$compareInstall('theme install twentysixteen --activate matches the reference', 'theme install twentysixteen --activate');
 
 echo "\n{$pass} passed, {$fail} failed\n";
 exit($fail === 0 ? 0 : 1);
