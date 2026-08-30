@@ -108,7 +108,7 @@ echo "updates suite: $ENGINE (engine) / $REF (reference)\n";
 $admin = up_mint( 1 );
 
 // 1. Both stacks ask wordpress.org now; the offers agree.
-up_parity( 'check-updates agrees', '/minn-admin/v1/check-updates', $admin, array(), 'POST', '{}' );
+up_parity( 'check-updates agrees (translation offers are wordpress.org state the engine does not carry)', '/minn-admin/v1/check-updates', $admin, array( 'translations' ), 'POST', '{}' );
 up_parity( 'plugin-updates agrees (translations are wordpress.org state the engine does not carry)', '/minn-admin/v1/plugin-updates', $admin, array( 'translations', 'translationGroups', 'autoAllowed' ) );
 up_parity( 'plugin-meta agrees', '/minn-admin/v1/plugin-meta', $admin );
 up_parity( 'themes carry the offers and directory flags', '/minn-admin/v1/themes', $admin, array( 'screenshot' ) );
@@ -119,7 +119,7 @@ check( true === ( $eb['autoAllowed'] ?? null ), 'per-item auto-updates are offer
 $rows = function ( $b ) {
 	$out = array();
 	foreach ( $b['items'] ?? array() as $it ) {
-		if ( 'updates' === ( $it['kind'] ?? '' ) ) {
+		if ( 'updates' === ( $it['kind'] ?? '' ) && ! str_starts_with( (string) $it['id'], 'translations-' ) ) {
 			$out[ $it['id'] ] = array( $it['title'], $it['update'] ?? null );
 		}
 	}
