@@ -23,6 +23,18 @@ Working today:
 - WordPress cookie and REST-nonce authentication, proven in both directions: a session minted by WordPress works on the engine, and a cookie minted by the engine is accepted by WordPress
 - A working `/wp-login.php`: a browser signs in against the engine, receives real WordPress auth cookies, and that session is accepted by both the engine and WordPress. Logout clears it
 
+## Install
+
+On a host, from the WordPress webroot (the directory with `wp-config.php`):
+
+```
+bash <(curl -sL https://minn.run/install)
+```
+
+That downloads the latest engine zip, runs preflight, and swaps the webroot over.
+`wp-config.php`, `wp-content/`, and the database stay where they are. Reverse it
+with `php minn/bin/minn eject .`. See `docs/install.md`.
+
 ## Layout
 
 The engine is one folder, `public/minn/`, dropped into a WordPress webroot beside an untouched `wp-config.php`:

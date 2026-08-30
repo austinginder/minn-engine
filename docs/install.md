@@ -4,6 +4,20 @@ The engine goes into an existing WordPress webroot in one command and comes
 back out in one command. Nothing it does touches `wp-config.php`, `wp-content/`,
 or the database's content.
 
+On a host, from the directory that contains `wp-config.php`:
+
+```
+bash <(curl -sL https://minn.run/install)
+```
+
+That script downloads the latest `minn.zip` release (the `public/minn/` tree,
+Minn Admin bundled at `minn/admin`), runs preflight, and hands off to
+`php minn/bin/minn install`. Flags: `--force`, `--engine-url=URL`, `--park=DIR`.
+The installer lives at the repo root as `install.sh` and is served from
+https://minn.run/install.
+
+The same swap, run by hand from a checkout:
+
 ```
 php minn/bin/minn preflight /path/to/public
 php minn/bin/minn install   /path/to/public [--park=/path/to/wp-parked] [--force]
@@ -11,9 +25,9 @@ php minn/bin/minn status    /path/to/public
 php minn/bin/minn eject     /path/to/public
 ```
 
-The same four verbs run through WP-CLI from any directory once `minn/cli.php` is
-loaded: on a WordPress site `wp --require=/path/to/minn/cli.php minn preflight`; on
-an engine site simply `wp minn status`.
+The four verbs also run through WP-CLI once `minn/cli.php` is loaded: on a
+WordPress site `wp --require=/path/to/minn/cli.php minn preflight`; on an
+engine site simply `wp minn status`.
 
 ## Preflight
 

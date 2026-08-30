@@ -1,0 +1,431 @@
+{
+    "measured": "2026-08-30",
+    "method": {
+        "languages": "PHP, JavaScript and CSS files",
+        "lines": "newline counts, blank lines and comments included",
+        "minified": "a minified file is skipped when the unminified copy sits beside it, and counted when it is the only copy",
+        "thirdParty": "bundled third-party libraries are measured and shown on their own row",
+        "wordpressExcludes": "wp-content (the bundled themes and plugins are not the runtime)",
+        "minnExcludes": "the engine's data files and Minn Admin's tests, translation sources and release tooling (what its release zip leaves out)",
+        "refresh": "php tests/tools/code-size.php"
+    },
+    "stacks": [
+        {
+            "id": "wordpress",
+            "label": "WordPress",
+            "version": "7.1",
+            "source": "https://downloads.wordpress.org/release/wordpress-7.1.zip",
+            "describe": "The admin screens, the runtime and the root files of the release zip",
+            "components": [
+                {
+                    "id": "libraries",
+                    "label": "Bundled libraries",
+                    "note": "jQuery, TinyMCE, CodeMirror, MediaElement, Plupload, Backbone, Underscore, React and lodash (js/dist/vendor), PHPMailer, Requests, SimplePie, sodium_compat, getID3, IXR, Text_Diff, php-compat",
+                    "thirdParty": true,
+                    "files": 441,
+                    "lines": 294828,
+                    "bytes": 12844790,
+                    "languages": {
+                        "css": {
+                            "files": 13,
+                            "lines": 2931,
+                            "bytes": 130165
+                        },
+                        "js": {
+                            "files": 134,
+                            "lines": 187796,
+                            "bytes": 8854104
+                        },
+                        "php": {
+                            "files": 294,
+                            "lines": 104101,
+                            "bytes": 3860521
+                        }
+                    }
+                },
+                {
+                    "id": "editor-packages",
+                    "label": "Block editor packages",
+                    "note": "wp-includes/js/dist: the built @wordpress/* packages",
+                    "thirdParty": false,
+                    "files": 128,
+                    "lines": 693725,
+                    "bytes": 39004930,
+                    "languages": {
+                        "js": {
+                            "files": 97,
+                            "lines": 693563,
+                            "bytes": 38994563
+                        },
+                        "php": {
+                            "files": 31,
+                            "lines": 162,
+                            "bytes": 10367
+                        }
+                    }
+                },
+                {
+                    "id": "blocks",
+                    "label": "Core blocks",
+                    "note": "wp-includes/blocks",
+                    "thirdParty": false,
+                    "files": 406,
+                    "lines": 46759,
+                    "bytes": 1350553,
+                    "languages": {
+                        "css": {
+                            "files": 312,
+                            "lines": 22830,
+                            "bytes": 599062
+                        },
+                        "php": {
+                            "files": 94,
+                            "lines": 23929,
+                            "bytes": 751491
+                        }
+                    }
+                },
+                {
+                    "id": "wp-admin",
+                    "label": "Admin screens",
+                    "note": "wp-admin",
+                    "thirdParty": false,
+                    "files": 368,
+                    "lines": 248374,
+                    "bytes": 7271363,
+                    "languages": {
+                        "css": {
+                            "files": 69,
+                            "lines": 69123,
+                            "bytes": 1532720
+                        },
+                        "js": {
+                            "files": 57,
+                            "lines": 47937,
+                            "bytes": 1464344
+                        },
+                        "php": {
+                            "files": 242,
+                            "lines": 131314,
+                            "bytes": 4274299
+                        }
+                    }
+                },
+                {
+                    "id": "wp-includes",
+                    "label": "Runtime",
+                    "note": "wp-includes: functions, classes, REST, the rest of the JS and CSS",
+                    "thirdParty": false,
+                    "files": 773,
+                    "lines": 515157,
+                    "bytes": 16463350,
+                    "languages": {
+                        "css": {
+                            "files": 85,
+                            "lines": 92791,
+                            "bytes": 2602329
+                        },
+                        "js": {
+                            "files": 48,
+                            "lines": 70103,
+                            "bytes": 2356830
+                        },
+                        "php": {
+                            "files": 640,
+                            "lines": 352263,
+                            "bytes": 11504191
+                        }
+                    }
+                },
+                {
+                    "id": "root",
+                    "label": "Root files",
+                    "note": "index.php, wp-load.php, wp-settings.php, wp-login.php, xmlrpc.php, ...",
+                    "thirdParty": false,
+                    "files": 14,
+                    "lines": 4956,
+                    "bytes": 164280,
+                    "languages": {
+                        "php": {
+                            "files": 14,
+                            "lines": 4956,
+                            "bytes": 164280
+                        }
+                    }
+                }
+            ],
+            "totals": {
+                "files": 2130,
+                "lines": 1803799,
+                "bytes": 77099266,
+                "languages": {
+                    "css": {
+                        "files": 479,
+                        "lines": 187675,
+                        "bytes": 4864276
+                    },
+                    "js": {
+                        "files": 336,
+                        "lines": 999399,
+                        "bytes": 51669841
+                    },
+                    "php": {
+                        "files": 1315,
+                        "lines": 616725,
+                        "bytes": 20565149
+                    }
+                }
+            },
+            "own": {
+                "files": 1689,
+                "lines": 1508971,
+                "bytes": 64254476,
+                "languages": {
+                    "css": {
+                        "files": 466,
+                        "lines": 184744,
+                        "bytes": 4734111
+                    },
+                    "js": {
+                        "files": 202,
+                        "lines": 811603,
+                        "bytes": 42815737
+                    },
+                    "php": {
+                        "files": 1021,
+                        "lines": 512624,
+                        "bytes": 16704628
+                    }
+                }
+            },
+            "thirdParty": {
+                "files": 441,
+                "lines": 294828,
+                "bytes": 12844790,
+                "languages": {
+                    "css": {
+                        "files": 13,
+                        "lines": 2931,
+                        "bytes": 130165
+                    },
+                    "js": {
+                        "files": 134,
+                        "lines": 187796,
+                        "bytes": 8854104
+                    },
+                    "php": {
+                        "files": 294,
+                        "lines": 104101,
+                        "bytes": 3860521
+                    }
+                }
+            },
+            "minifiedSkipped": 766
+        },
+        {
+            "id": "minn",
+            "label": "Minn",
+            "version": "0.0.1",
+            "adminVersion": "0.36.0",
+            "source": "minn-run/minn-engine public/minn and the minn-admin plugin",
+            "describe": "The engine deploy unit (public/minn) and the Minn Admin plugin as it ships",
+            "components": [
+                {
+                    "id": "libraries",
+                    "label": "Bundled libraries",
+                    "note": "jQuery and jQuery Migrate (assets/vendor), for plugins that expect them",
+                    "thirdParty": true,
+                    "files": 2,
+                    "lines": 4,
+                    "bytes": 101130,
+                    "languages": {
+                        "js": {
+                            "files": 2,
+                            "lines": 4,
+                            "bytes": 101130
+                        }
+                    }
+                },
+                {
+                    "id": "engine",
+                    "label": "The engine",
+                    "note": "src/Minn: request handling, content, REST, auth, blocks, theme, media, the runtime",
+                    "thirdParty": false,
+                    "files": 246,
+                    "lines": 34475,
+                    "bytes": 1416410,
+                    "languages": {
+                        "php": {
+                            "files": 246,
+                            "lines": 34475,
+                            "bytes": 1416410
+                        }
+                    }
+                },
+                {
+                    "id": "facade",
+                    "label": "The WordPress facade",
+                    "note": "wp-api: the functions and classes plugin code calls, mapped onto the engine",
+                    "thirdParty": false,
+                    "files": 79,
+                    "lines": 27535,
+                    "bytes": 916319,
+                    "languages": {
+                        "php": {
+                            "files": 79,
+                            "lines": 27535,
+                            "bytes": 916319
+                        }
+                    }
+                },
+                {
+                    "id": "assets",
+                    "label": "Front-end runtime",
+                    "note": "assets: the interactivity runtime, block view scripts, the block stylesheet",
+                    "thirdParty": false,
+                    "files": 22,
+                    "lines": 1534,
+                    "bytes": 81860,
+                    "languages": {
+                        "css": {
+                            "files": 1,
+                            "lines": 366,
+                            "bytes": 38279
+                        },
+                        "js": {
+                            "files": 21,
+                            "lines": 1168,
+                            "bytes": 43581
+                        }
+                    }
+                },
+                {
+                    "id": "boot",
+                    "label": "Boot, CLI, layout",
+                    "note": "bootstrap.php, cli.php, bin/, layout/",
+                    "thirdParty": false,
+                    "files": 5,
+                    "lines": 89,
+                    "bytes": 2950,
+                    "languages": {
+                        "php": {
+                            "files": 5,
+                            "lines": 89,
+                            "bytes": 2950
+                        }
+                    }
+                },
+                {
+                    "id": "admin-php",
+                    "label": "Minn Admin: adapters and REST",
+                    "note": "includes: the WordPress adapters and the minn-admin/v1 routes",
+                    "thirdParty": false,
+                    "files": 116,
+                    "lines": 73022,
+                    "bytes": 2872457,
+                    "languages": {
+                        "php": {
+                            "files": 116,
+                            "lines": 73022,
+                            "bytes": 2872457
+                        }
+                    }
+                },
+                {
+                    "id": "admin-app",
+                    "label": "Minn Admin: the app",
+                    "note": "assets: the admin SPA, its stylesheet",
+                    "thirdParty": false,
+                    "files": 4,
+                    "lines": 50885,
+                    "bytes": 2500010,
+                    "languages": {
+                        "css": {
+                            "files": 2,
+                            "lines": 5548,
+                            "bytes": 325991
+                        },
+                        "js": {
+                            "files": 2,
+                            "lines": 45337,
+                            "bytes": 2174019
+                        }
+                    }
+                },
+                {
+                    "id": "admin-boot",
+                    "label": "Minn Admin: plugin file and docs",
+                    "note": "minn-admin.php, docs",
+                    "thirdParty": false,
+                    "files": 3,
+                    "lines": 587,
+                    "bytes": 27091,
+                    "languages": {
+                        "php": {
+                            "files": 3,
+                            "lines": 587,
+                            "bytes": 27091
+                        }
+                    }
+                }
+            ],
+            "totals": {
+                "files": 477,
+                "lines": 188131,
+                "bytes": 7918227,
+                "languages": {
+                    "css": {
+                        "files": 3,
+                        "lines": 5914,
+                        "bytes": 364270
+                    },
+                    "js": {
+                        "files": 25,
+                        "lines": 46509,
+                        "bytes": 2318730
+                    },
+                    "php": {
+                        "files": 449,
+                        "lines": 135708,
+                        "bytes": 5235227
+                    }
+                }
+            },
+            "own": {
+                "files": 475,
+                "lines": 188127,
+                "bytes": 7817097,
+                "languages": {
+                    "css": {
+                        "files": 3,
+                        "lines": 5914,
+                        "bytes": 364270
+                    },
+                    "js": {
+                        "files": 23,
+                        "lines": 46505,
+                        "bytes": 2217600
+                    },
+                    "php": {
+                        "files": 449,
+                        "lines": 135708,
+                        "bytes": 5235227
+                    }
+                }
+            },
+            "thirdParty": {
+                "files": 2,
+                "lines": 4,
+                "bytes": 101130,
+                "languages": {
+                    "js": {
+                        "files": 2,
+                        "lines": 4,
+                        "bytes": 101130
+                    }
+                }
+            },
+            "minifiedSkipped": 0
+        }
+    ]
+}
