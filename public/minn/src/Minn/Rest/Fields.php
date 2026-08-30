@@ -73,4 +73,28 @@ final readonly class Fields
         }
         return $out;
     }
+
+    /**
+     * The fields a response keeps when a caller names some: known fields as
+     * given, dotted paths whose root is known, and `id` whenever it exists.
+     *
+     * @param list<string> $available
+     * @param list<string> $requested the parsed `_fields` list
+     * @return list<string>
+     */
+    public static function select(array $available, array $requested): array
+    {
+        $requested = array_map('trim', $requested);
+        if (in_array('id', $available, true)) {
+            $requested[] = 'id';
+        }
+        $kept = [];
+        foreach ($requested as $field) {
+            $root = str_contains($field, '.') ? strtok($field, '.') : $field;
+            if (in_array($root, $available, true)) {
+                $kept[] = $field;
+            }
+        }
+        return $kept;
+    }
 }

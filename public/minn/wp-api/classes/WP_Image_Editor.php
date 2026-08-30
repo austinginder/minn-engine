@@ -1,5 +1,7 @@
 <?php
 
+use Minn\Media\Canvas;
+
 /** The image editor contract and its GD implementation, from the observed sizes and file names. */
 abstract class WP_Image_Editor
 {
@@ -129,7 +131,7 @@ abstract class WP_Image_Editor
 
 final class WP_Image_Editor_GD extends WP_Image_Editor
 {
-    protected $image;
+    private ?Canvas $canvas = null;
 
     public static function test($args = [])
     {
@@ -143,23 +145,24 @@ final class WP_Image_Editor_GD extends WP_Image_Editor
 
     public function load()
     {
-        if ($this->image) {
+        if ($this->canvas !== null) {
             return true;
         }
         if (!is_file($this->file)) {
             return new WP_Error('error_loading_image', 'File doesn&#8217;t exist?', $this->file);
         }
-        $data = @file_get_contents($this->file);
-        $image = $data === false ? false : @imagecreatefromstring($data);
-        if (!$image) {
+        $canvas = Canvas::open($this->file);
+        if ($canvas === null) {
             return new WP_Error('invalid_image', 'File is not an image.', $this->file);
         }
-        imagealphablending($image, false);
-        imagesavealpha($image, true);
-        $this->image = $image;
         $this->mime_type = wp_get_image_mime($this->file) ?: 'image/png';
-        $this->update_size(imagesx($image), imagesy($image));
-        return true;
+        return $this->adopt($canvas);
+    }
+
+    private function adopt(Canvas $canvas): bool
+    {
+        $this->canvas = $canvas;
+        return $this->update_size($canvas->width, $canvas->height);
     }
 
     public function resize($max_w, $max_h, $crop = false)
@@ -167,24 +170,17 @@ final class WP_Image_Editor_GD extends WP_Image_Editor
         if ($this->size['width'] === (int) $max_w && $this->size['height'] === (int) $max_h) {
             return true;
         }
-        $dims = image_resize_dimensions($this->size['width'], $this->size['height'], $max_w, $max_h, $crop);
-        if (!$dims) {
+        $box = image_resize_dimensions($this->size['width'], $this->size['height'], $max_w, $max_h, $crop);
+        if (!$box) {
             return new WP_Error('error_getting_dimensions', 'Could not calculate resized image dimensions', $this->file);
         }
-        [$dst_x, $dst_y, $src_x, $src_y, $dst_w, $dst_h, $src_w, $src_h] = $dims;
-        $resized = imagecreatetruecolor($dst_w, $dst_h);
-        imagealphablending($resized, false);
-        imagesavealpha($resized, true);
-        imagecopyresampled($resized, $this->image, $dst_x, $dst_y, $src_x, $src_y, $dst_w, $dst_h, $src_w, $src_h);
-        $this->image = $resized;
-        $this->update_size($dst_w, $dst_h);
-        return true;
+        return $this->adopt($this->canvas->resample($box));
     }
 
     public function multi_resize($sizes)
     {
         $metadata = [];
-        $original = $this->image;
+        $original = $this->canvas;
         $originalSize = $this->size;
         foreach ($sizes as $name => $size) {
             if (!isset($size['width']) && !isset($size['height'])) {
@@ -199,7 +195,7 @@ final class WP_Image_Editor_GD extends WP_Image_Editor
                     $metadata[$name] = $saved;
                 }
             }
-            $this->image = $original;
+            $this->canvas = $original;
             $this->size = $originalSize;
         }
         return $metadata;
@@ -207,53 +203,31 @@ final class WP_Image_Editor_GD extends WP_Image_Editor
 
     public function crop($src_x, $src_y, $src_w, $src_h, $dst_w = null, $dst_h = null, $src_abs = false)
     {
-        $dst_w = $dst_w ?? $src_w;
-        $dst_h = $dst_h ?? $src_h;
         if ($src_abs) {
             $src_w -= $src_x;
             $src_h -= $src_y;
         }
-        $dst = imagecreatetruecolor((int) $dst_w, (int) $dst_h);
-        imagealphablending($dst, false);
-        imagesavealpha($dst, true);
-        imagecopyresampled($dst, $this->image, 0, 0, (int) $src_x, (int) $src_y, (int) $dst_w, (int) $dst_h, (int) $src_w, (int) $src_h);
-        $this->image = $dst;
-        $this->update_size((int) $dst_w, (int) $dst_h);
-        return true;
+        return $this->adopt($this->canvas->crop((int) $src_x, (int) $src_y, (int) $src_w, (int) $src_h, $dst_w === null ? null : (int) $dst_w, $dst_h === null ? null : (int) $dst_h));
     }
 
     public function rotate($angle)
     {
-        $rotated = imagerotate($this->image, (float) $angle, 0);
-        if (!$rotated) {
+        $rotated = $this->canvas->rotate((float) $angle);
+        if ($rotated === null) {
             return new WP_Error('image_rotate_error', 'Image rotate failed.', $this->file);
         }
-        $this->image = $rotated;
-        $this->update_size(imagesx($rotated), imagesy($rotated));
-        return true;
+        return $this->adopt($rotated);
     }
 
     public function flip($horz, $vert)
     {
-        if ($horz) {
-            imageflip($this->image, IMG_FLIP_VERTICAL);
-        }
-        if ($vert) {
-            imageflip($this->image, IMG_FLIP_HORIZONTAL);
-        }
-        return true;
+        return $this->adopt($this->canvas->flip((bool) $horz, (bool) $vert));
     }
 
     public function save($destfilename = null, $mime_type = null)
     {
         [$filename, $extension, $mime_type] = $this->get_output_format($destfilename, $mime_type);
-        $written = match ($mime_type) {
-            'image/png' => $this->make_image($filename, 'imagepng', [$this->image, $filename]),
-            'image/gif' => $this->make_image($filename, 'imagegif', [$this->image, $filename]),
-            'image/webp' => $this->make_image($filename, 'imagewebp', [$this->image, $filename, $this->get_quality()]),
-            default => $this->make_image($filename, 'imagejpeg', [$this->image, $filename, $this->get_quality()]),
-        };
-        if (!$written) {
+        if (!$this->canvas->write($filename, $mime_type, $this->get_quality())) {
             return new WP_Error('image_save_error', 'Image Editor Save Failed');
         }
         return ['path' => $filename, 'file' => wp_basename(apply_filters('image_make_intermediate_size', $filename)), 'width' => $this->size['width'], 'height' => $this->size['height'], 'mime-type' => $mime_type, 'filesize' => (int) filesize($filename)];
@@ -263,11 +237,6 @@ final class WP_Image_Editor_GD extends WP_Image_Editor
     {
         [, , $mime_type] = $this->get_output_format(null, $mime_type);
         header("Content-Type: {$mime_type}");
-        return match ($mime_type) {
-            'image/png' => imagepng($this->image),
-            'image/gif' => imagegif($this->image),
-            'image/webp' => imagewebp($this->image, null, $this->get_quality()),
-            default => imagejpeg($this->image, null, $this->get_quality()),
-        };
+        return $this->canvas->stream($mime_type, $this->get_quality());
     }
 }

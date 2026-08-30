@@ -25,88 +25,48 @@ final readonly class Images
         ];
     }
 
-    /** Fits (w, h) inside (maxW, maxH); 0 means unconstrained. Rounds like the reference. */
+    /** Fits (w, h) inside (maxW, maxH); 0 means unconstrained. One rule with the facade's wp_constrain_dimensions. */
     public static function constrain(int $width, int $height, int $maxWidth, int $maxHeight): array
     {
-        $ratios = [];
-        if ($maxWidth > 0) {
-            $ratios[] = $maxWidth / $width;
-        }
-        if ($maxHeight > 0) {
-            $ratios[] = $maxHeight / $height;
-        }
-        $ratio = $ratios === [] ? 1 : min($ratios);
-        if ($ratio >= 1) {
-            return [$width, $height];
-        }
-        return [(int) round($width * $ratio), (int) round($height * $ratio)];
+        return Sizing::constrain($width, $height, $maxWidth, $maxHeight);
     }
 
     /** Generates the sub-sizes for one image; returns the sizes metadata map. */
     public function makeSubsizes(string $path, string $mime): array
     {
-        [$width, $height] = getimagesize($path);
-        $source = match ($mime) {
-            'image/png' => imagecreatefrompng($path),
-            'image/jpeg' => imagecreatefromjpeg($path),
-            'image/gif' => imagecreatefromgif($path),
-            'image/webp' => imagecreatefromwebp($path),
-            default => null,
-        };
-        if (!$source) {
+        $source = in_array($mime, ['image/png', 'image/jpeg', 'image/gif', 'image/webp'], true) ? Canvas::open($path) : null;
+        if ($source === null) {
             return [];
         }
-        imagesavealpha($source, true);
+        $width = $source->width;
+        $height = $source->height;
         $dir = dirname($path);
         $stem = preg_replace('/\.[^.]+$/', '', basename($path));
         $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
         $sizes = [];
-
         foreach ($this->ladder() as $name => [$maxWidth, $maxHeight, $crop]) {
             if ($crop) {
                 if ($width < $maxWidth || $height < $maxHeight) {
                     continue;
                 }
-                $targetWidth = $maxWidth;
-                $targetHeight = $maxHeight;
                 // Centre crop: cover the target box, then trim.
                 $scale = max($maxWidth / $width, $maxHeight / $height);
                 $cropWidth = (int) round($maxWidth / $scale);
                 $cropHeight = (int) round($maxHeight / $scale);
-                $sourceX = (int) floor(($width - $cropWidth) / 2);
-                $sourceY = (int) floor(($height - $cropHeight) / 2);
+                $box = [0, 0, (int) floor(($width - $cropWidth) / 2), (int) floor(($height - $cropHeight) / 2), $maxWidth, $maxHeight, $cropWidth, $cropHeight];
             } else {
                 [$targetWidth, $targetHeight] = self::constrain($width, $height, $maxWidth, $maxHeight);
                 if (($targetWidth === $width && $targetHeight === $height) || $targetWidth < 1 || $targetHeight < 1) {
                     continue;
                 }
-                $sourceX = 0;
-                $sourceY = 0;
-                $cropWidth = $width;
-                $cropHeight = $height;
+                $box = [0, 0, 0, 0, $targetWidth, $targetHeight, $width, $height];
             }
-            $target = imagecreatetruecolor($targetWidth, $targetHeight);
-            imagealphablending($target, false);
-            imagesavealpha($target, true);
-            imagecopyresampled($target, $source, 0, 0, $sourceX, $sourceY, $targetWidth, $targetHeight, $cropWidth, $cropHeight);
-            $file = "{$stem}-{$targetWidth}x{$targetHeight}.{$ext}";
+            $target = $source->resample($box);
+            $file = "{$stem}-{$target->width}x{$target->height}.{$ext}";
             $out = "{$dir}/{$file}";
-            match ($mime) {
-                'image/png' => imagepng($target, $out),
-                'image/jpeg' => imagejpeg($target, $out, 82),
-                'image/gif' => imagegif($target, $out),
-                'image/webp' => imagewebp($target, $out, 82),
-            };
-            imagedestroy($target);
-            $sizes[$name] = [
-                'file' => $file,
-                'width' => $targetWidth,
-                'height' => $targetHeight,
-                'mime-type' => $mime,
-                'filesize' => (int) filesize($out),
-            ];
+            $target->write($out, $mime, 82);
+            $sizes[$name] = ['file' => $file, 'width' => $target->width, 'height' => $target->height, 'mime-type' => $mime, 'filesize' => (int) filesize($out)];
         }
-        imagedestroy($source);
         return $sizes;
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+use Minn\Rest\Fields;
+
 /** The controller base plugin code extends. Defaults from contracts/fixtures/api/rest.json. */
 abstract class WP_REST_Controller
 {
@@ -209,40 +211,16 @@ abstract class WP_REST_Controller
 
     public function get_fields_for_response($request)
     {
-        $schema = $this->get_item_schema();
-        $properties = $schema['properties'] ?? [];
-        $additional_fields = $this->get_additional_fields();
-        foreach ($additional_fields as $field_name => $field_options) {
+        $properties = $this->get_item_schema()['properties'] ?? [];
+        foreach ($this->get_additional_fields() as $field_name => $field_options) {
             if ($field_options['schema']) {
                 $properties[$field_name] = $field_options;
             }
         }
         $properties['_links'] = ['type' => 'object'];
         $fields = array_keys($properties);
-        if (!isset($request['_fields'])) {
-            return $fields;
-        }
-        $requested_fields = wp_parse_list($request['_fields']);
-        if ($requested_fields === []) {
-            return $fields;
-        }
-        $requested_fields = array_map('trim', $requested_fields);
-        if (in_array('id', $fields, true)) {
-            $requested_fields[] = 'id';
-        }
-        return array_reduce($requested_fields, static function ($response_fields, $field) use ($fields) {
-            if (in_array($field, $fields, true)) {
-                $response_fields[] = $field;
-                return $response_fields;
-            }
-            if (str_contains($field, '.')) {
-                $parent = strtok($field, '.');
-                if (in_array($parent, $fields, true)) {
-                    $response_fields[] = $field;
-                }
-            }
-            return $response_fields;
-        }, []);
+        $requested = isset($request['_fields']) ? wp_parse_list($request['_fields']) : [];
+        return $requested === [] ? $fields : Fields::select($fields, $requested);
     }
 
     public function get_endpoint_args_for_item_schema($method = WP_REST_Server::CREATABLE)

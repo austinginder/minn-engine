@@ -1,5 +1,7 @@
 <?php
 
+use Minn\Runtime\OEmbed;
+
 /** The oEmbed provider table (data/oembed-providers.json) and the lookup; fetching is left to wp_remote_get. */
 class WP_oEmbed
 {
@@ -35,26 +37,9 @@ class WP_oEmbed
 
     public function get_provider($url, $args = '')
     {
-        $args = wp_parse_args($args);
-        $provider = false;
-        if (!isset($args['discover'])) {
-            $args['discover'] = true;
-        }
-        foreach ($this->providers as $matchmask => $data) {
-            [$providerurl, $regex] = $data;
-            if (!$regex) {
-                $matchmask = '#' . str_replace('___wildcard___', '(.+)', preg_quote(str_replace('*', '___wildcard___', $matchmask), '#')) . '#i';
-                $matchmask = preg_replace('|^#http\\\\://|', '#https?\://', $matchmask);
-            }
-            if (preg_match($matchmask, $url)) {
-                $provider = str_replace('{format}', 'json', $providerurl);
-                break;
-            }
-        }
-        if (!$provider && $args['discover']) {
-            $provider = $this->discover($url);
-        }
-        return $provider;
+        $args = wp_parse_args($args, ['discover' => true]);
+        $provider = OEmbed::providerFor($this->providers, (string) $url);
+        return $provider ?? ($args['discover'] ? $this->discover($url) : false);
     }
 
     public static function _add_provider_early($format, $provider, $regex = false)
@@ -138,33 +123,19 @@ class WP_oEmbed
 
     private function _parse_json($response_body)
     {
-        $data = json_decode(trim($response_body));
-        return ($data && is_object($data)) ? $data : false;
+        $data = OEmbed::parseJson((string) $response_body);
+        return $data === null ? false : (object) $data;
     }
 
     private function _parse_xml($response_body)
     {
-        if (!function_exists('simplexml_import_dom') || !class_exists('DOMDocument', false)) {
-            return false;
-        }
         return $this->_parse_xml_body($response_body);
     }
 
     private function _parse_xml_body($response_body)
     {
-        $dom = new DOMDocument();
-        if (!$dom->loadXML($response_body)) {
-            return false;
-        }
-        if ('oembed' !== $dom->documentElement->tagName) {
-            return false;
-        }
-        $xml = simplexml_import_dom($dom->documentElement);
-        $return = new stdClass();
-        foreach ($xml as $key => $value) {
-            $return->$key = (string) $value;
-        }
-        return $return;
+        $data = OEmbed::parseXml((string) $response_body);
+        return $data === null ? false : (object) $data;
     }
 
     public function data2html($data, $url)
@@ -172,52 +143,12 @@ class WP_oEmbed
         if (!is_object($data) || empty($data->type)) {
             return false;
         }
-        $return = false;
-        switch ($data->type) {
-            case 'photo':
-                if (empty($data->url) || empty($data->width) || empty($data->height)) {
-                    break;
-                }
-                $title = !empty($data->title) && is_string($data->title) ? $data->title : '';
-                $return = '<a href="' . esc_url($url) . '"><img src="' . esc_url($data->url) . '" alt="' . esc_attr($title) . '" width="' . esc_attr($data->width) . '" height="' . esc_attr($data->height) . '" /></a>';
-                break;
-            case 'video':
-            case 'rich':
-                if (!empty($data->html) && is_string($data->html)) {
-                    $return = $data->html;
-                }
-                break;
-            case 'link':
-                if (!empty($data->title) && is_string($data->title)) {
-                    $return = '<a href="' . esc_url($url) . '">' . esc_html($data->title) . '</a>';
-                }
-                break;
-        }
-        return apply_filters('oembed_dataparse', $return, $data, $url);
+        $html = OEmbed::html(get_object_vars($data), (string) $url, static fn (string $v) => esc_url($v), static fn (string $v) => esc_attr($v), static fn (string $v) => esc_html($v));
+        return apply_filters('oembed_dataparse', $html ?? false, $data, $url);
     }
 
     public function _strip_newlines($html, $data, $url)
     {
-        if (!str_contains($html, "\n")) {
-            return $html;
-        }
-        $count = 1;
-        $found = [];
-        $token = '__PRE__';
-        $search = ["\t", "\n", "\r", ' '];
-        $replace = ['__TAB__', '__NL__', '__CR__', '__SPACE__'];
-        $tokenized = str_replace($search, $replace, $html);
-        preg_match_all('#(<pre[^>]*>.+?</pre>)#i', $tokenized, $matches, PREG_SET_ORDER);
-        foreach ($matches as $i => $match) {
-            $tag_html = str_replace($replace, $search, $match[0]);
-            $tag_token = $token . $i;
-            $found[$tag_token] = $tag_html;
-            $html = str_replace($tag_html, $tag_token, $html, $count);
-        }
-        $replaced = str_replace($replace, $search, $html);
-        $stripped = str_replace(["\r\n", "\n"], '', $replaced);
-        $pre = array_values($found);
-        $tokens = array_keys($found);
-        return str_replace($tokens, $pre, $stripped);
+        return OEmbed::stripNewlines((string) $html);
     }
 }

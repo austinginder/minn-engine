@@ -1,5 +1,7 @@
 <?php
 
+use Minn\Theme\Folder;
+
 /** A theme by its style.css headers and folder. */
 class WP_Theme
 {
@@ -14,20 +16,15 @@ class WP_Theme
 
     public function __construct($theme_dir, $theme_root, $_child = null)
     {
-        $this->theme_root = (string) $theme_root;
-        $this->stylesheet = (string) $theme_dir;
-        $file = $this->theme_root . '/' . $this->stylesheet . '/style.css';
-        if (!is_file($file)) {
+        $folder = Folder::read((string) $theme_root, (string) $theme_dir, self::$headers, static fn (string $file, array $labels) => get_file_data($file, $labels, 'theme'));
+        $this->theme_root = $folder->root;
+        $this->stylesheet = $folder->slug;
+        $this->headersData = $folder->headers;
+        $this->template = $folder->template;
+        if (!$folder->exists) {
             $this->errors = new WP_Error('theme_not_found', 'The theme directory "' . $this->stylesheet . '" does not exist.');
-            $this->template = $this->stylesheet;
-            foreach (array_keys(self::$headers) as $key) {
-                $this->headersData[$key] = '';
-            }
-            $this->headersData['Name'] = $this->stylesheet;
             return;
         }
-        $this->headersData = get_file_data($file, self::$headers, 'theme');
-        $this->template = $this->headersData['Template'] !== '' ? $this->headersData['Template'] : $this->stylesheet;
         if ($this->template !== $this->stylesheet) {
             $this->parent = new WP_Theme($this->template, $this->theme_root, $this);
         }
@@ -138,12 +135,11 @@ class WP_Theme
 
     public function get_screenshot($uri = 'uri')
     {
-        foreach (['png', 'gif', 'jpg', 'jpeg', 'webp', 'avif'] as $ext) {
-            if (is_file($this->get_stylesheet_directory() . '/screenshot.' . $ext)) {
-                return $uri === 'relative' ? 'screenshot.' . $ext : $this->get_stylesheet_directory_uri() . '/screenshot.' . $ext;
-            }
+        $file = Folder::read($this->theme_root, $this->stylesheet, self::$headers)->screenshot();
+        if ($file === null) {
+            return false;
         }
-        return false;
+        return $uri === 'relative' ? $file : $this->get_stylesheet_directory_uri() . '/' . $file;
     }
 
     public function get_files($type = null, $depth = 0, $search_parent = false)
@@ -173,24 +169,12 @@ class WP_Theme
 
     public function is_block_theme()
     {
-        foreach ([$this->get_stylesheet_directory(), $this->get_template_directory()] as $dir) {
-            if (is_file($dir . '/templates/index.html') || is_file($dir . '/block-templates/index.html')) {
-                return true;
-            }
-        }
-        return false;
+        return Folder::isBlockTheme([$this->get_stylesheet_directory(), $this->get_template_directory()]);
     }
 
     public function get_file_path($file = '')
     {
-        $file = ltrim((string) $file, '/');
-        if ($file === '') {
-            return $this->get_stylesheet_directory();
-        }
-        if (is_file($this->get_stylesheet_directory() . '/' . $file)) {
-            return $this->get_stylesheet_directory() . '/' . $file;
-        }
-        return $this->get_template_directory() . '/' . $file;
+        return Folder::filePath($this->get_stylesheet_directory(), $this->get_template_directory(), (string) $file);
     }
 
     public function offsetGet($offset)
