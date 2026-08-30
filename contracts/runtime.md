@@ -732,6 +732,39 @@ class as a closure rather than reimplemented, so plugin filters keep
 applying. The ratchet's two lists are empty; a new query or a new forty-line
 function in `wp-api/` fails the style suite.
 
+The second pass (2026-08-30, later the same day) brought `wp-api/classes/`
+under the same ratchet; the class files had never been measured, and the
+longest methods in the facade lived there. The rule for a class is the
+rule for a function: a `WP_*` method normalises, calls one `Minn\` method,
+and shapes the return into the object plugin code expects. Nothing in
+`classes/` runs past forty lines now, and the facade as a whole makes one
+query fewer (the `WP_User` slug lookup joined the `Users` repository). What
+moved this time:
+
+| Facade | Minn class | What it holds |
+|---|---|---|
+| `WP_Query` | `Runtime\QueryFlags`, `Runtime\QueriedObject` | the is_* flags a set of query variables implies; which object a query is about (term by id or slug, post type, posts page, post, author) |
+| `WP_Http` | `Http\Client`, `Http\Outbound`, `Http\Exchange` | the curl transport: request value in, status + last-hop headers + Set-Cookie values + body out |
+| `WP_REST_Server` | `Rest\RouteMatch`, `Rest\RouteIndex`, `Rest\AdditionalFields` | handler lookup by method and path with captured params and defaults; the index description of one route; which object type a wp/v2 route serves |
+| `WP_REST_Request` | `Rest\ParamCheck` | the required / validate / sanitize pass over declared arguments |
+| `WP_Block_Supports` | `Blocks\Supports` | wrapper class, style, and id from a block's supports and attributes |
+| `WP_Filesystem_Direct` | `Support\DirectoryListing` | the directory walk (dot entries, hidden entries, recursion) |
+| `cron.php` | `Runtime\CronTable` | the cron option as data: keys, duplicate window, insert, remove, find, next run, due |
+| `blocks.php` | `Blocks\QueryVars`, `Blocks\Selector` | Query Loop context to query variables; a block type's root or feature selector |
+| `rest-api.php` | `Rest\Schema::endpointArgs` | item schema to endpoint argument map |
+| `meta.php` | `Runtime\Meta::idsToUpdate` | which of a key's rows an update touches |
+| `formatting.php` | `Support\Email`, `Support\Entities` | the address rules and their refusal reasons; special-character encoding with the quote styles and the no-double-encode rule |
+| `media.php` | `Media\Sizing::constrain`, `Media\Kind`, `Media\Uploads::attachmentFiles` | the constrained box; image/audio/video by MIME then extension; every file an attachment owns |
+| `comment.php` | `Content\Comments::changedColumns` | the columns an update really changes, with the approval shorthands |
+
+The callbacks plugin code supplies (a REST `validate_callback`, a block's
+`render_callback`, a route's `schema`) are still invoked from the facade or
+handed in as closures that return plain values; a `Minn\` class never sees a
+`WP_Error`. The oracle earned its keep once more here: the `plugin-surface2`
+fixture's template-part hash had drifted with the reference's own header
+(both stacks agreed on the new value), which the extended suite surfaced on
+its first run.
+
 ## The second plugin surface: WooCommerce loads
 
 WooCommerce 11 on a fresh lab site (`minnwoo.localhost`, oracle on
