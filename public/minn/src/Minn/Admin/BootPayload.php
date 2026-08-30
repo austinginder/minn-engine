@@ -52,6 +52,9 @@ final readonly class BootPayload
         $locale = $this->translations?->localeOf($userId) ?? ($this->site->option('WPLANG') ?: 'en_US');
         [$i18n, $plural] = $this->translations?->catalog($locale) ?? [[], ''];
         $plugin = $this->pluginPayload();
+        // WooCommerce runs as code on the runtime; the Commerce views key off
+        // these, and wc/v3 answers through the plugin's own REST controllers.
+        $wc = is_bool($plugin['wc'] ?? null) ? $plugin['wc'] : (Runtime::booted() && class_exists('WooCommerce', false));
 
         $payload = [
             // The pretty REST base: the client appends "wp/v2/posts?context=edit&…",
@@ -101,11 +104,13 @@ final readonly class BootPayload
                 'removeUsers' => false,
                 'networkPlugins' => false,
                 'networkThemes' => false,
-                'orders' => false,
-                'products' => false,
-                'coupons' => false,
-                'customers' => false,
-                'subscriptions' => false,
+                // The commerce caps mirror the plugin's own conditions: WC loaded,
+                // the WC capability, and for coupons the store having them enabled.
+                'orders' => $wc && $can('edit_shop_orders'),
+                'products' => $wc && $can('edit_products'),
+                'coupons' => $wc && (!function_exists('wc_coupons_enabled') || \wc_coupons_enabled()) && $can('edit_shop_coupons'),
+                'customers' => $wc && ($can('manage_woocommerce') || $can('edit_shop_orders')),
+                'subscriptions' => $wc && class_exists('WC_Subscriptions', false) && $can('edit_shop_orders'),
                 'settings' => $can('manage_options'),
                 'moderate' => $can('moderate_comments'),
                 'terms' => $can('manage_categories'),
@@ -122,7 +127,7 @@ final readonly class BootPayload
             ],
             'ownOnly' => [],
             'multisite' => false,
-            'wc' => false,
+            'wc' => $wc,
             'ajaxUrl' => $this->permalinks->url('/wp-admin/admin-ajax.php'),
             // No admin-ajax plugin toggles: the app falls back to PUT wp/v2/plugins.
             'pluginAjax' => null,
