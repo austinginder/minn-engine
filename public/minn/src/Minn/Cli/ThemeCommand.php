@@ -379,4 +379,64 @@ final class ThemeCommand
         }
         WP_CLI::halt(1);
     }
+
+    /**
+     * Checks if a given theme is active. Exit 0 when it is, 1 when not.
+     *
+     * ## OPTIONS
+     *
+     * <theme>
+     * : The theme folder to check.
+     *
+     * @when before_wp_load
+     */
+    public function is_active(array $args, array $assocArgs): void
+    {
+        $runtime = Runtime::boot();
+        if ((string) ($runtime->site->option('stylesheet') ?? '') !== (string) ($args[0] ?? '')) {
+            WP_CLI::halt(1);
+        }
+    }
+
+    /**
+     * Searches the wordpress.org theme directory.
+     *
+     * ## OPTIONS
+     *
+     * <search>
+     * : The string to search for.
+     *
+     * [--page=<page>]
+     * : Optional page to display.
+     * ---
+     * default: 1
+     * ---
+     *
+     * [--per-page=<per-page>]
+     * : Optional number of results to display. Defaults to 10.
+     *
+     * [--field=<field>]
+     * : Prints the value of a single field for each theme.
+     *
+     * [--fields=<fields>]
+     * : Limit the output to specific object fields. Defaults to name,slug,rating.
+     *
+     * [--format=<format>]
+     * : Render output in a particular format.
+     * ---
+     * default: table
+     * options:
+     *   - table
+     *   - csv
+     *   - json
+     *   - count
+     *   - yaml
+     * ---
+     *
+     * @when before_wp_load
+     */
+    public function search(array $args, array $assocArgs): void
+    {
+        DirectorySearch::run('theme', $args, $assocArgs);
+    }
 }

@@ -182,6 +182,68 @@ final readonly class Packages
     }
 
     /**
+     * A page of wordpress.org themes for `wp theme search`.
+     *
+     * @return array{items: list<array<string, mixed>>, total: int}
+     */
+    public function queryThemes(string $search, int $page, int $perPage): array
+    {
+        $json = $this->fetch(self::WPORG_THEMES . '?action=query_themes&' . http_build_query(['request' => [
+            'search' => $search,
+            'page' => $page,
+            'per_page' => $perPage,
+        ]]));
+        $data = json_decode($json, true);
+        if (!is_array($data) || !isset($data['themes'])) {
+            throw new RestError('themes_api_failed', 'wordpress.org did not answer the theme search.', 502);
+        }
+        $items = [];
+        foreach ((array) $data['themes'] as $theme) {
+            if (!is_array($theme)) {
+                continue;
+            }
+            $slug = (string) ($theme['slug'] ?? '');
+            if ($slug !== '' && !isset($theme['url'])) {
+                $theme['url'] = 'https://wordpress.org/themes/' . $slug . '/';
+            }
+            $items[] = $theme;
+        }
+        $info = is_array($data['info'] ?? null) ? $data['info'] : [];
+        return ['items' => $items, 'total' => (int) ($info['results'] ?? count($items))];
+    }
+
+    /**
+     * A page of wordpress.org plugins for `wp plugin search`.
+     *
+     * @return array{items: list<array<string, mixed>>, total: int}
+     */
+    public function queryPlugins(string $search, int $page, int $perPage): array
+    {
+        $json = $this->fetch(self::WPORG_PLUGINS . '?action=query_plugins&' . http_build_query(['request' => [
+            'search' => $search,
+            'page' => $page,
+            'per_page' => $perPage,
+        ]]));
+        $data = json_decode($json, true);
+        if (!is_array($data) || !isset($data['plugins'])) {
+            throw new RestError('plugins_api_failed', 'wordpress.org did not answer the plugin search.', 502);
+        }
+        $items = [];
+        foreach ((array) $data['plugins'] as $plugin) {
+            if (!is_array($plugin)) {
+                continue;
+            }
+            $slug = (string) ($plugin['slug'] ?? '');
+            if ($slug !== '' && !isset($plugin['url'])) {
+                $plugin['url'] = 'https://wordpress.org/plugins/' . $slug . '/';
+            }
+            $items[] = $plugin;
+        }
+        $info = is_array($data['info'] ?? null) ? $data['info'] : [];
+        return ['items' => $items, 'total' => (int) ($info['results'] ?? count($items))];
+    }
+
+    /**
      * One wordpress.org theme record, or null when the slug is unknown.
      *
      * @return array<string, mixed>|null

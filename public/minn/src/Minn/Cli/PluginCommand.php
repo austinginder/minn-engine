@@ -255,6 +255,75 @@ final class PluginCommand
         WP_CLI::halt(1);
     }
 
+    /**
+     * Checks if a given plugin is active. Exit 0 when it is, 1 when not.
+     *
+     * ## OPTIONS
+     *
+     * <plugin>
+     * : The plugin folder to check.
+     *
+     * [--network]
+     * : Ignored on a single site.
+     *
+     * @when before_wp_load
+     */
+    public function is_active(array $args, array $assocArgs): void
+    {
+        $runtime = Runtime::boot();
+        $contentDir = ABSPATH . 'wp-content';
+        $state = new PluginState($runtime->site, new Inventory($contentDir, $runtime->site), new Loader($contentDir, $runtime->site));
+        $plugin = $state->find((string) ($args[0] ?? ''));
+        if ($plugin === null || !$state->isActive($plugin)) {
+            WP_CLI::halt(1);
+        }
+    }
+
+    /**
+     * Searches the wordpress.org plugin directory.
+     *
+     * ## OPTIONS
+     *
+     * <search>
+     * : The string to search for.
+     *
+     * [--page=<page>]
+     * : Optional page to display.
+     * ---
+     * default: 1
+     * ---
+     *
+     * [--per-page=<per-page>]
+     * : Optional number of results to display.
+     * ---
+     * default: 10
+     * ---
+     *
+     * [--field=<field>]
+     * : Prints the value of a single field for each plugin.
+     *
+     * [--fields=<fields>]
+     * : Limit the output to specific object fields. Defaults to name,slug,rating.
+     *
+     * [--format=<format>]
+     * : Render output in a particular format.
+     * ---
+     * default: table
+     * options:
+     *   - table
+     *   - csv
+     *   - json
+     *   - count
+     *   - yaml
+     * ---
+     *
+     * @when before_wp_load
+     */
+    public function search(array $args, array $assocArgs): void
+    {
+        DirectorySearch::run('plugin', $args, $assocArgs);
+    }
+
     /** The reference's wording, line for line: one warning per miss, a Success summary or an Error with none done. */
     private function switch(array $slugs, bool $on): void
     {

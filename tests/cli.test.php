@@ -107,9 +107,15 @@ foreach ([
     'theme delete twentytwentyfive',
     'theme is-installed twentytwentyfive',
     'theme is-installed nope-nope',
+    'theme is-active twentytwentyfive',
+    'theme is-active minn-site',
+    'theme is-active nope-nope',
     'plugin install zz-no-such-plugin-xyz',
     'plugin is-installed minn-admin',
     'plugin is-installed nope-nope',
+    'plugin is-active minn-admin',
+    'plugin is-active minn-test-types',
+    'plugin is-active nope-nope',
     'plugin delete nope-nope',
     'plugin update',
     'plugin update nope-nope',
@@ -129,6 +135,21 @@ foreach ([
     'theme update twentysixteen',
     'theme update twentytwentyfive twentysixteen',
     'theme update --all --exclude=',
+    'theme search zz-no-such-xyz-theme-zzzzzz',
+    'theme search zz-no-such-xyz-theme-zzzzzz --format=count',
+    'theme search zz-no-such-xyz-theme-zzzzzz --format=json',
+    'plugin search zz-no-such-xyz-plugin-zzzzzz',
+    'plugin search zz-no-such-xyz-plugin-zzzzzz --format=count',
+    'theme search photo --per-page=3 --fields=name,slug,rating --format=json',
+    'plugin search hello --per-page=3 --fields=name,slug,rating --format=json',
+    'maintenance-mode status',
+    'maintenance-mode is-active',
+    'maintenance-mode activate',
+    'maintenance-mode activate',
+    'maintenance-mode status',
+    'maintenance-mode is-active',
+    'maintenance-mode deactivate',
+    'maintenance-mode deactivate',
     'cache flush',
     'user create uniqueloginzzz admin@minn-engine.localhost',
     'user create badroleuser badrole@example.test --role=not-a-role',
@@ -371,6 +392,8 @@ $check(
 [$got] = $run($ENGINE_DIR, 'option get permalink_structure');
 $check('rewrite structure stored permalink_structure', trim($got) === '/%year%/%postname%/', $got);
 $run($ENGINE_DIR, "rewrite structure '/%postname%/'");
+@unlink("$ENGINE_DIR/.maintenance");
+@unlink("$REF_DIR/.maintenance");
 
 echo "\n{$pass} passed, {$fail} failed\n";
 exit($fail === 0 ? 0 : 1);

@@ -34,6 +34,8 @@ final class Commands
         self::leaf('plugin deactivate', [PluginCommand::class, 'deactivate'], $early);
         self::leaf('plugin delete', [PluginCommand::class, 'delete'], $early);
         self::leaf('plugin is-installed', [PluginCommand::class, 'is_installed'], $early);
+        self::leaf('plugin is-active', [PluginCommand::class, 'is_active'], $early);
+        self::leaf('plugin search', [PluginCommand::class, 'search'], $early);
         self::leaf('plugin update', [PluginCommand::class, 'update'], $early);
         self::leaf('plugin upgrade', [PluginCommand::class, 'update'], $early);
         self::leaf('theme list', [ThemeCommand::class, 'list'], $early);
@@ -41,12 +43,19 @@ final class Commands
         self::leaf('theme activate', [ThemeCommand::class, 'activate'], $early);
         self::leaf('theme delete', [ThemeCommand::class, 'delete'], $early);
         self::leaf('theme is-installed', [ThemeCommand::class, 'is_installed'], $early);
+        self::leaf('theme is-active', [ThemeCommand::class, 'is_active'], $early);
+        self::leaf('theme search', [ThemeCommand::class, 'search'], $early);
         self::leaf('theme update', [ThemeCommand::class, 'update'], $early);
         self::leaf('theme upgrade', [ThemeCommand::class, 'update'], $early);
         self::leaf('cache flush', [CacheCommand::class, 'flush'], $early);
         self::leaf('rewrite flush', [RewriteCommand::class, 'flush'], $early);
         self::leaf('rewrite structure', [RewriteCommand::class, 'structure'], $early);
         self::replace('search-replace', SearchReplaceCommand::class, $early);
+        self::replace('maintenance-mode', MaintenanceCommand::class, $early);
+        self::leaf('maintenance-mode activate', [MaintenanceCommand::class, 'activate'], $early);
+        self::leaf('maintenance-mode deactivate', [MaintenanceCommand::class, 'deactivate'], $early);
+        self::leaf('maintenance-mode status', [MaintenanceCommand::class, 'status'], $early);
+        self::leaf('maintenance-mode is-active', [MaintenanceCommand::class, 'is_active'], $early);
         WP_CLI::add_command('minn', MinnCommand::class, $early);
     }
 
