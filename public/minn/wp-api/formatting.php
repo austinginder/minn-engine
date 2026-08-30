@@ -536,24 +536,7 @@ function wp_list_sort($input_list, $orderby = [], $order = 'ASC', $preserve_keys
     if (!is_array($orderby)) {
         $orderby = [$orderby => $order];
     }
-    $sort = static function ($a, $b) use ($orderby): int {
-        foreach ($orderby as $field => $direction) {
-            $av = is_object($a) ? ($a->{$field} ?? null) : ($a[$field] ?? null);
-            $bv = is_object($b) ? ($b->{$field} ?? null) : ($b[$field] ?? null);
-            if ($av == $bv) {
-                continue;
-            }
-            $result = $av < $bv ? -1 : 1;
-            return strtoupper((string) $direction) === 'DESC' ? -$result : $result;
-        }
-        return 0;
-    };
-    if ($preserve_keys) {
-        uasort($input_list, $sort);
-    } else {
-        usort($input_list, $sort);
-    }
-    return $input_list;
+    return \Minn\Support\Lists::sort((array) $input_list, $orderby, (bool) $preserve_keys);
 }
 
 function wp_array_slice_assoc($input_array, $keys)

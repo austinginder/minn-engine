@@ -2,13 +2,13 @@
     "generated": "2026-08-30",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 295,
-        "composes": 656,
-        "leaf": 304,
-        "noop": 1115,
-        "functions": 2364,
-        "minnMethods": 329,
-        "leafLinesOver15": 16
+        "minn": 300,
+        "composes": 651,
+        "leaf": 302,
+        "noop": 1116,
+        "functions": 2363,
+        "minnMethods": 335,
+        "leafLinesOver15": 14
     },
     "functions": {
         "NOOP_Translations::add_entry": {
@@ -1634,12 +1634,12 @@
         },
         "WP_Filesystem_Base::getnumchmodfromh": {
             "file": "classes/WP_Filesystem.php",
-            "lines": 17,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "count"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\Files::octalFromSymbolic"
+            ],
+            "composes": []
         },
         "WP_Filesystem_Base::group": {
             "file": "classes/WP_Filesystem.php",
@@ -1808,12 +1808,12 @@
         },
         "WP_Filesystem_Direct::chmod": {
             "file": "classes/WP_Filesystem.php",
-            "lines": 17,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "trailingslashit"
-            ]
+            "lines": 13,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Support\\Files::chmodTree"
+            ],
+            "composes": []
         },
         "WP_Filesystem_Direct::chown": {
             "file": "classes/WP_Filesystem.php",
@@ -1840,12 +1840,12 @@
         },
         "WP_Filesystem_Direct::delete": {
             "file": "classes/WP_Filesystem.php",
-            "lines": 24,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "trailingslashit"
-            ]
+            "lines": 11,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Support\\Files::deleteTree"
+            ],
+            "composes": []
         },
         "WP_Filesystem_Direct::dirlist": {
             "file": "classes/WP_Filesystem.php",
@@ -6523,24 +6523,18 @@
         },
         "_minn_archive_title_parts": {
             "file": "query.php",
-            "lines": 19,
-            "kind": "composes",
-            "minn": [],
+            "lines": 10,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Runtime::current",
+                "Minn\\Runtime\\Runtime::get",
+                "Minn\\Theme\\ArchiveTitle::parts"
+            ],
             "composes": [
-                "_minn_taxonomy_label",
-                "date_i18n",
                 "esc_html",
+                "get_option",
                 "get_queried_object",
-                "get_query_var",
-                "get_the_author",
-                "is_author",
-                "is_category",
-                "is_date",
-                "is_day",
-                "is_month",
-                "is_post_type_archive",
-                "is_tag",
-                "is_tax"
+                "is_post_type_archive"
             ]
         },
         "_minn_array_to_block": {
@@ -7216,16 +7210,6 @@
             "kind": "noop",
             "minn": [],
             "composes": []
-        },
-        "_minn_taxonomy_label": {
-            "file": "query.php",
-            "lines": 3,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "get_queried_object",
-                "get_taxonomy"
-            ]
         },
         "_minn_term_fields": {
             "file": "taxonomy.php",
@@ -19532,9 +19516,11 @@
         },
         "wp_list_sort": {
             "file": "formatting.php",
-            "lines": 21,
-            "kind": "leaf",
-            "minn": [],
+            "lines": 4,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Support\\Lists::sort"
+            ],
             "composes": []
         },
         "wp_load_alloptions": {
@@ -21667,9 +21653,11 @@
         },
         "wpdb::get_results": {
             "file": "classes/wpdb.php",
-            "lines": 25,
-            "kind": "leaf",
-            "minn": [],
+            "lines": 4,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Support\\Lists::shapeRows"
+            ],
             "composes": []
         },
         "wpdb::get_row": {

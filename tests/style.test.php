@@ -128,7 +128,7 @@ $check('facade: the ratchet lists only functions that are still long', true);
 $mapping = json_decode((string) shell_exec('php ' . escapeshellarg(dirname(__DIR__) . '/tests/tools/facade-map.php') . ' --check 2>/dev/null'), true);
 $check('facade map: tests/tools/facade-map.php runs', is_array($mapping));
 $check('facade map: contracts/api/mappings.json is current', is_array($mapping) && ($mapping['stale'] ?? true) === false, 'run php tests/tools/facade-map.php');
-$leafCeiling = 16;
+$leafCeiling = 14;
 $check("facade map: leaf functions over fifteen lines stay at or under {$leafCeiling}", is_array($mapping) && ($mapping['leafLinesOver15'] ?? PHP_INT_MAX) <= $leafCeiling, (string) ($mapping['leafLinesOver15'] ?? '?'));
 
 

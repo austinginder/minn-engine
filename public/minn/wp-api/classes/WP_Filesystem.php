@@ -70,23 +70,7 @@ class WP_Filesystem_Base
 
     public function getnumchmodfromh($mode)
     {
-        $realmode = '';
-        $legal = ['', 'w', 'r', 'x', '-'];
-        $attarray = preg_split('//', $mode);
-        for ($i = 0, $c = count($attarray); $i < $c; $i++) {
-            $key = array_search($attarray[$i], $legal, true);
-            if ($key) {
-                $realmode .= $legal[$key];
-            }
-        }
-        $mode = str_pad($realmode, 10, '-', STR_PAD_LEFT);
-        $trans = ['-' => '0', 'r' => '4', 'w' => '2', 'x' => '1'];
-        $mode = strtr($mode, $trans);
-        $newmode = $mode[0];
-        $newmode .= $mode[1] + $mode[2] + $mode[3];
-        $newmode .= $mode[4] + $mode[5] + $mode[6];
-        $newmode .= $mode[7] + $mode[8] + $mode[9];
-        return $newmode;
+        return \Minn\Support\Files::octalFromSymbolic((string) $mode);
     }
 
     public function is_binary($text)
@@ -300,11 +284,7 @@ class WP_Filesystem_Direct extends WP_Filesystem_Base
         if (!$recursive || !$this->is_dir($file)) {
             return @chmod($file, $mode);
         }
-        $file = trailingslashit($file);
-        foreach ($this->dirlist($file) as $filename => $filemeta) {
-            $this->chmod($file . $filename, $mode, $recursive);
-        }
-        return true;
+        return \Minn\Support\Files::chmodTree($file, (int) $mode);
     }
 
     public function chown($file, $owner, $recursive = false)
@@ -395,20 +375,7 @@ class WP_Filesystem_Direct extends WP_Filesystem_Base
         if (!$recursive && $this->is_dir($file)) {
             return @rmdir($file);
         }
-        $file = trailingslashit($file);
-        $filelist = $this->dirlist($file, true);
-        $retval = true;
-        if (is_array($filelist)) {
-            foreach ($filelist as $filename => $fileinfo) {
-                if (!$this->delete($file . $filename, $recursive, $fileinfo['type'])) {
-                    $retval = false;
-                }
-            }
-        }
-        if (file_exists($file) && !@rmdir($file)) {
-            $retval = false;
-        }
-        return $retval;
+        return \Minn\Support\Files::deleteTree($file);
     }
 
     public function exists($path)

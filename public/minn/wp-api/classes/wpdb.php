@@ -275,28 +275,7 @@ class wpdb
         if ($query !== null) {
             $this->query($query);
         }
-        $rows = (array) $this->last_result;
-        if ($output === OBJECT) {
-            return $rows;
-        }
-        if ($output === OBJECT_K) {
-            $out = [];
-            foreach ($rows as $row) {
-                $values = array_values(get_object_vars($row));
-                $key = (string) ($values[0] ?? '');
-                if (!isset($out[$key])) {
-                    $out[$key] = $row;
-                }
-            }
-            return $out;
-        }
-        if ($output === ARRAY_A) {
-            return array_map(static fn ($r) => get_object_vars($r), $rows);
-        }
-        if ($output === ARRAY_N) {
-            return array_map(static fn ($r) => array_values(get_object_vars($r)), $rows);
-        }
-        return $rows;
+        return \Minn\Support\Lists::shapeRows((array) $this->last_result, (string) $output);
     }
 
     public function get_col_info($info_type = 'name', $col_offset = -1)

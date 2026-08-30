@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Minn\Blocks\Dynamic\Theme;
 
-use DateTimeImmutable;
-use DateTimeZone;
 use Minn\Blocks\Block;
 use Minn\Blocks\Layout;
 use Minn\Blocks\Renderer;
@@ -150,16 +148,11 @@ final class QueryBlocks
         $record = $resolution->record ?? [];
         // Without its prefix an archive title is the bare name.
         $prefix = (bool) $block->attr('showPrefix', true);
-        $titled = static fn (string $label, string $name) => $prefix ? $label . ': <span>' . $name . '</span>' : $name;
+        [$label, $name] = \Minn\Theme\ArchiveTitle::parts($resolution, (string) ($this->site->option('date_format') ?? ''));
         $text = match ($resolution->kind) {
-            Kind::Category => $titled('Category', Html::esc((string) $record['name'])),
-            Kind::Tag => $titled('Tag', Html::esc((string) $record['name'])),
-            Kind::Taxonomy => $titled($this->taxonomyLabel((string) $record['taxonomy']), Html::esc((string) $record['name'])),
             Kind::PostTypeArchive => Html::esc($this->archiveTitle($record)),
-            Kind::Author => $titled('Author', Html::esc((string) ($record['display_name'] ?? $resolution->authorName))),
-            Kind::Date => $this->dateTitle($resolution->date),
             Kind::Search => 'Search results for: ' . Texturize::text('"' . Html::esc((string) $resolution->search) . '"'),
-            default => '',
+            default => $name === '' ? '' : ($prefix ? \Minn\Theme\ArchiveTitle::compose($label, $name) : $name),
         };
         if ($text === '') {
             return '';
@@ -167,23 +160,6 @@ final class QueryBlocks
         $level = (int) $block->attr('level', 1);
         $align = Styles::align($block->attrs);
         return Wrapper::open('h' . $level, 'wp-block-query-title', $block, styleFirst: true, extraClasses: $align === null ? [] : [$align]) . $text . '</h' . $level . '>';
-    }
-
-    /** @param array{0: int, 1: ?int, 2: ?int}|null $date */
-    private function dateTitle(?array $date): string
-    {
-        if ($date === null) {
-            return '';
-        }
-        [$year, $month, $day] = $date;
-        $utc = new DateTimeZone('UTC');
-        if ($day !== null) {
-            return 'Day: <span>' . (new DateTimeImmutable(sprintf('%04d-%02d-%02d', $year, $month, $day), $utc))->format($this->site->option('date_format') ?: 'F j, Y') . '</span>';
-        }
-        if ($month !== null) {
-            return 'Month: <span>' . (new DateTimeImmutable(sprintf('%04d-%02d-01', $year, $month), $utc))->format('F Y') . '</span>';
-        }
-        return 'Year: <span>' . $year . '</span>';
     }
 
     private function noResults(Block $block, Renderer $renderer): string
@@ -277,13 +253,6 @@ final class QueryBlocks
     {
         $label = (string) ($type['label'] ?? $type['name'] ?? '');
         return Runtime::booted() ? (string) \apply_filters('post_type_archive_title', $label, (string) ($type['name'] ?? '')) : $label;
-    }
-
-    /** The singular label a plugin registered for its taxonomy, for the archive title prefix. */
-    private function taxonomyLabel(string $taxonomy): string
-    {
-        $row = Runtime::booted() ? Runtime::registry()->taxonomy($taxonomy) : null;
-        return (string) ($row['labels']['singular_name'] ?? $row['label'] ?? ucfirst($taxonomy));
     }
 
     private function termDescription(Block $block, Renderer $renderer): string

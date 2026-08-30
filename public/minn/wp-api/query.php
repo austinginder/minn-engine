@@ -274,33 +274,16 @@ function get_the_archive_title()
 /** @internal @return array{string, string} the label prefix (with its trailing colon) and the escaped bare name */
 function _minn_archive_title_parts()
 {
-    if (is_category() || is_tag() || is_tax()) {
-        $term = get_queried_object();
-        $name = $term instanceof WP_Term ? esc_html($term->name) : '';
-        $label = is_category() ? 'Category:' : (is_tag() ? 'Tag:' : _minn_taxonomy_label());
-        return [$name === '' ? '' : $label, $name];
-    }
-    if (is_author()) {
-        return ['Author:', esc_html((string) get_the_author())];
-    }
-    if (is_date()) {
-        $stamp = gmmktime(12, 0, 0, max(1, (int) get_query_var('monthnum')), max(1, (int) get_query_var('day')), (int) get_query_var('year'));
-        $format = is_day() ? 'F j, Y' : (is_month() ? 'F Y' : 'Y');
-        return [is_day() ? 'Day:' : (is_month() ? 'Month:' : 'Year:'), esc_html((string) date_i18n($format, $stamp))];
-    }
     if (is_post_type_archive()) {
         $object = get_queried_object();
         return ['Archives:', $object instanceof WP_Post_Type ? esc_html((string) $object->labels->name) : ''];
     }
-    return ['', ''];
-}
-
-/** @internal the queried taxonomy's singular label with a trailing colon */
-function _minn_taxonomy_label()
-{
-    $term = get_queried_object();
-    $taxonomy = $term instanceof WP_Term ? get_taxonomy($term->taxonomy) : null;
-    return ($taxonomy->labels->singular_name ?? 'Archives') . ':';
+    $resolution = Runtime::current()->get('classic_resolution');
+    if (!$resolution instanceof \Minn\Front\Resolution) {
+        return ['', ''];
+    }
+    [$label, $name] = \Minn\Theme\ArchiveTitle::parts($resolution, (string) get_option('date_format'));
+    return [$label === '' || $name === '' ? '' : $label . ':', $name];
 }
 
 function get_the_archive_description()

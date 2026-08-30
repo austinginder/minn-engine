@@ -910,6 +910,20 @@ selection), `Url::parse` / `withScheme` / `safeRedirect`, `Support\Time::span`,
 `Blocks\BlockName`. What stayed is orchestration: hooks fired around one
 call, `WP_Error` construction, option reads that plugin filters may change.
 
+Round four (2026-08-30, after the classic runner landed): the archive-title
+labels the classic facade and the block path computed separately unified in
+`Theme\ArchiveTitle` (one source of truth for Category:/Tag:/Author:/date
+labels; search and post-type archives stay with their callers because their
+captured shapes differ); `WP_Filesystem_Direct`'s recursive tree work and
+the symbolic-to-octal permission conversion moved to `Support\Files` (its
+deleteTree deliberately unlinks a symlinked directory instead of following
+it: the dev sites symlink plugin folders into the tree); `wp_list_sort` and
+wpdb's output-format shaping moved to `Support\Lists`. The over-15-line
+leaf ceiling ratcheted 16 to 14. What stayed put on review: value-object
+constructors (`WP_User`, `WP_Post_Type`, `WP_Theme::__get`), recorded state
+(`WP_Rewrite`), Hear (`customize.php`, `WP_Widget`), and wpdb's remaining
+format juggling, which is the mapping itself.
+
 ## The second plugin surface: WooCommerce loads
 
 WooCommerce 11 on a fresh lab site (`minnwoo.localhost`, oracle on
