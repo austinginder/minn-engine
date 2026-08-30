@@ -1,5 +1,7 @@
 <?php
 
+use Minn\Support\DirectoryListing;
+
 /** The filesystem abstraction, always the direct method: PHP's own file functions. */
 class WP_Filesystem_Base
 {
@@ -514,54 +516,15 @@ class WP_Filesystem_Direct extends WP_Filesystem_Base
 
     public function dirlist($path, $include_hidden = true, $recursive = false)
     {
+        $limit_file = null;
         if ($this->is_file($path)) {
             $limit_file = basename($path);
             $path = dirname($path);
-        } else {
-            $limit_file = false;
         }
-        if (!$this->is_dir($path) || !$this->is_readable($path)) {
-            return false;
-        }
-        $dir = dir($path);
-        if (!$dir) {
-            return false;
-        }
-        $path = trailingslashit($path);
-        $ret = [];
-        while (false !== ($entry = $dir->read())) {
-            $struc = [];
-            $struc['name'] = $entry;
-            if ($struc['name'] === '.' || $struc['name'] === '..') {
-                continue;
-            }
-            if (!$include_hidden && $struc['name'][0] === '.') {
-                continue;
-            }
-            if ($limit_file && $struc['name'] !== $limit_file) {
-                continue;
-            }
-            $struc['perms'] = $this->gethchmod($path . $entry);
-            $struc['permsn'] = $this->getnumchmodfromh($struc['perms']);
-            $struc['number'] = false;
-            $struc['owner'] = $this->owner($path . $entry);
-            $struc['group'] = $this->group($path . $entry);
-            $struc['size'] = $this->size($path . $entry);
-            $struc['lastmodunix'] = $this->mtime($path . $entry);
-            $struc['lastmod'] = gmdate('M j', $struc['lastmodunix']);
-            $struc['time'] = gmdate('h:i:s', $struc['lastmodunix']);
-            $struc['type'] = $this->is_dir($path . $entry) ? 'd' : 'f';
-            if ($struc['type'] === 'd') {
-                if ($recursive) {
-                    $struc['files'] = $this->dirlist($path . $struc['name'], $include_hidden, $recursive);
-                } else {
-                    $struc['files'] = [];
-                }
-            }
-            $ret[$struc['name']] = $struc;
-        }
-        $dir->close();
-        unset($dir);
-        return $ret;
+        return DirectoryListing::read((string) $path, (bool) $include_hidden, (bool) $recursive, $limit_file, function (string $file): array {
+            $perms = $this->gethchmod($file);
+            $modified = $this->mtime($file);
+            return ['perms' => $perms, 'permsn' => $this->getnumchmodfromh($perms), 'number' => false, 'owner' => $this->owner($file), 'group' => $this->group($file), 'size' => $this->size($file), 'lastmodunix' => $modified, 'lastmod' => gmdate('M j', $modified), 'time' => gmdate('h:i:s', $modified)];
+        });
     }
 }

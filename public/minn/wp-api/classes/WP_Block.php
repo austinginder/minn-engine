@@ -1,6 +1,7 @@
 <?php
 
 use Minn\Blocks\Block as MinnBlock;
+use Minn\Blocks\Supports;
 use Minn\Content\Blocks as MinnBlocks;
 use Minn\Runtime\Runtime;
 
@@ -86,19 +87,7 @@ class WP_Block
     {
         $options = wp_parse_args($options, ['dynamic' => true, 'minn_filters' => true]);
         $is_dynamic = $options['dynamic'] && $this->name && $this->block_type !== null && $this->block_type->is_dynamic();
-        $block_content = '';
-        if (!$options['dynamic'] || empty($this->block_type->skip_inner_blocks)) {
-            $index = 0;
-            foreach ($this->inner_content as $chunk) {
-                if (is_string($chunk)) {
-                    $block_content .= $chunk;
-                } else {
-                    $inner_block = $this->inner_blocks[$index];
-                    $block_content .= $inner_block->render();
-                    $index++;
-                }
-            }
-        }
+        $block_content = !$options['dynamic'] || empty($this->block_type->skip_inner_blocks) ? $this->render_inner_blocks() : '';
         if ($is_dynamic) {
             $global_post = $GLOBALS['post'] ?? null;
             $parent = WP_Block_Supports::$block_to_render;
@@ -110,33 +99,40 @@ class WP_Block
             // A static core block takes its classes from the engine's own renderer, which applies the block filters itself.
             return _minn_render_core_block($this, $block_content);
         }
-        if (!empty($this->block_type->script_handles)) {
-            foreach ($this->block_type->script_handles as $script_handle) {
-                wp_enqueue_script($script_handle);
-            }
-        }
-        if (!empty($this->block_type->view_script_handles)) {
-            foreach ($this->block_type->view_script_handles as $view_script_handle) {
-                wp_enqueue_script($view_script_handle);
-            }
-        }
-        if (!empty($this->block_type->view_script_module_ids)) {
-            foreach ($this->block_type->view_script_module_ids as $view_script_module_id) {
-                wp_enqueue_script_module($view_script_module_id);
-            }
-        }
-        if (!empty($this->block_type->style_handles)) {
-            foreach ($this->block_type->style_handles as $style_handle) {
-                wp_enqueue_style($style_handle);
-            }
-        }
+        $this->enqueue_assets();
         if (($options['minn_filters'] ?? true) === false) {
             // The engine's renderer applies the render_block filters once around a bridged block.
             return $block_content;
         }
         $block_content = apply_filters('render_block', $block_content, $this->parsed_block, $this);
-        $block_content = apply_filters("render_block_{$this->name}", $block_content, $this->parsed_block, $this);
-        return $block_content;
+        return apply_filters("render_block_{$this->name}", $block_content, $this->parsed_block, $this);
+    }
+
+    /** Inner content is a list of HTML chunks with null slots where the inner blocks go, in order. */
+    private function render_inner_blocks(): string
+    {
+        $content = '';
+        $index = 0;
+        foreach ($this->inner_content as $chunk) {
+            $content .= is_string($chunk) ? $chunk : $this->inner_blocks[$index++]->render();
+        }
+        return $content;
+    }
+
+    private function enqueue_assets(): void
+    {
+        if ($this->block_type === null) {
+            return;
+        }
+        foreach ([...(array) $this->block_type->script_handles, ...(array) $this->block_type->view_script_handles] as $handle) {
+            wp_enqueue_script($handle);
+        }
+        foreach ((array) $this->block_type->view_script_module_ids as $id) {
+            wp_enqueue_script_module($id);
+        }
+        foreach ((array) $this->block_type->style_handles as $handle) {
+            wp_enqueue_style($handle);
+        }
     }
 }
 
@@ -253,72 +249,7 @@ final class WP_Block_Supports
         }
         $attributes = $block_type->prepare_attributes_for_render($block['attrs'] ?? []);
         $supports = is_array($block_type->supports) ? $block_type->supports : [];
-        $classes = [];
-        $styles = [];
-        $output = [];
-        if (!empty($supports['align']) && !empty($attributes['align']) && is_string($attributes['align'])) {
-            $classes[] = 'align' . $attributes['align'];
-        }
-        if (!isset($supports['className']) || $supports['className'] !== false) {
-            if (!empty($attributes['className']) && (!isset($supports['customClassName']) || $supports['customClassName'] !== false)) {
-                $classes[] = (string) $attributes['className'];
-            }
-            $classes[] = wp_get_block_default_classname($block['blockName']);
-        } elseif (!empty($attributes['className']) && (!isset($supports['customClassName']) || $supports['customClassName'] !== false)) {
-            $classes[] = (string) $attributes['className'];
-        }
-        $color = $supports['color'] ?? null;
-        if ($color) {
-            $text = !empty($color['text']) || $color === true;
-            $background = !empty($color['background']) || $color === true;
-            $gradient = !empty($color['gradients']);
-            $custom = $attributes['style']['color'] ?? [];
-            if ($text) {
-                if (!empty($attributes['textColor'])) {
-                    $classes[] = 'has-text-color';
-                    $classes[] = 'has-' . _wp_to_kebab_case((string) $attributes['textColor']) . '-color';
-                } elseif (!empty($custom['text'])) {
-                    $classes[] = 'has-text-color';
-                    $styles[] = 'color:' . $custom['text'];
-                }
-            }
-            if ($background) {
-                if (!empty($attributes['backgroundColor'])) {
-                    $classes[] = 'has-background';
-                    $classes[] = 'has-' . _wp_to_kebab_case((string) $attributes['backgroundColor']) . '-background-color';
-                } elseif (!empty($custom['background'])) {
-                    $classes[] = 'has-background';
-                    $styles[] = 'background-color:' . $custom['background'];
-                }
-            }
-            if ($gradient) {
-                if (!empty($attributes['gradient'])) {
-                    $classes[] = 'has-background';
-                    $classes[] = 'has-' . _wp_to_kebab_case((string) $attributes['gradient']) . '-gradient-background';
-                } elseif (!empty($custom['gradient'])) {
-                    $classes[] = 'has-background';
-                    $styles[] = 'background:' . $custom['gradient'];
-                }
-            }
-        }
-        $typography = $supports['typography'] ?? null;
-        if ($typography && (!empty($typography['fontSize']) || $typography === true)) {
-            if (!empty($attributes['fontSize'])) {
-                $classes[] = 'has-' . _wp_to_kebab_case((string) $attributes['fontSize']) . '-font-size';
-            } elseif (!empty($attributes['style']['typography']['fontSize'])) {
-                $styles[] = 'font-size:' . $attributes['style']['typography']['fontSize'];
-            }
-        }
-        if ($classes !== []) {
-            $output['class'] = implode(' ', array_unique($classes));
-        }
-        if ($styles !== []) {
-            $output['style'] = implode(';', $styles) . ';';
-        }
-        if (!empty($supports['anchor']) && !empty($attributes['anchor'])) {
-            $output['id'] = (string) $attributes['anchor'];
-        }
-        return $output;
+        return Supports::attributes($attributes, $supports, wp_get_block_default_classname($block['blockName']), static fn (string $name) => _wp_to_kebab_case($name));
     }
 
     public function register_attributes()

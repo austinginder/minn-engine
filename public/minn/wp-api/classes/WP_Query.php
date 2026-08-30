@@ -1,5 +1,7 @@
 <?php
 
+use Minn\Runtime\QueriedObject;
+use Minn\Runtime\QueryFlags;
 use Minn\Runtime\Runtime;
 
 /**
@@ -127,105 +129,11 @@ class WP_Query
         } elseif (!isset($this->query)) {
             $this->query = $this->query_vars;
         }
-        $this->query_vars = $this->fill_query_vars($this->query_vars);
-        $q = &$this->query_vars;
         $this->init_query_flags();
-        foreach (['p', 'page_id', 'attachment_id', 'year', 'monthnum', 'day', 'w', 'paged', 'cat'] as $key) {
-            if ($key === 'cat') {
-                continue;
-            }
-            if (isset($q[$key]) && $q[$key] !== '' && !is_array($q[$key])) {
-                $q[$key] = (int) $q[$key];
-            }
-        }
-        if ((int) $q['p'] < 0 || (int) $q['page_id'] < 0) {
-            $this->is_404 = true;
-            $q['error'] = '404';
-        }
-        if (isset($q['error']) && $q['error'] === '404') {
-            $this->is_404 = true;
-        }
-        if (!empty($q['embed'])) {
-            $this->is_embed = true;
-        }
-        if (!empty($q['tb'])) {
-            $this->is_trackback = true;
-        }
-        if (!empty($q['paged']) && (int) $q['paged'] > 1) {
-            $this->is_paged = true;
-        }
-        if (!empty($q['s'])) {
-            $this->is_search = true;
-        }
-        if (!empty($q['feed'])) {
-            $this->is_feed = true;
-        }
-        if (!empty($q['attachment']) || !empty($q['attachment_id'])) {
-            $this->is_single = true;
-            $this->is_attachment = true;
-        } elseif (!empty($q['p']) || !empty($q['name'])) {
-            $this->is_single = true;
-        } elseif (!empty($q['page_id']) || !empty($q['pagename'])) {
-            $this->is_page = true;
-        } else {
-            if ($q['year'] || $q['monthnum'] || $q['day'] || $q['w'] || !empty($q['m']) || !empty($q['hour']) || !empty($q['minute']) || !empty($q['second'])) {
-                $this->is_date = true;
-                if ($q['year']) {
-                    $this->is_year = true;
-                }
-                if ($q['monthnum']) {
-                    $this->is_month = true;
-                }
-                if ($q['day']) {
-                    $this->is_day = true;
-                }
-                if (!empty($q['hour']) || !empty($q['minute']) || !empty($q['second'])) {
-                    $this->is_time = true;
-                }
-            }
-            $positiveCats = array_filter(array_map('intval', preg_split('/[\s,]+/', (string) ($q['cat'] ?? ''), -1, PREG_SPLIT_NO_EMPTY)), static fn (int $c) => $c > 0);
-            if ($positiveCats !== [] || !empty($q['category_name']) || !empty($q['category__in']) || !empty($q['category__and'])) {
-                $this->is_category = true;
-            }
-            if (!empty($q['tag']) || !empty($q['tag_id']) || !empty($q['tag__in']) || !empty($q['tag__and']) || !empty($q['tag_slug__in']) || !empty($q['tag_slug__and'])) {
-                $this->is_tag = true;
-            }
-            if (!empty($q['tax_query']) && is_array($q['tax_query'])) {
-                $this->is_tax = true;
-            }
-            foreach (Runtime::registry()->taxonomies() as $name => $taxonomy) {
-                $var = $taxonomy['query_var'] ?? false;
-                if (is_string($var) && $var !== '' && !in_array($var, ['category_name', 'tag'], true) && !empty($q[$var])) {
-                    $this->is_tax = true;
-                }
-            }
-            if (!empty($q['author']) || !empty($q['author_name']) || !empty($q['author__in'])) {
-                $this->is_author = true;
-            }
-            if (!empty($q['post_type']) && !is_array($q['post_type']) && $q['post_type'] !== 'any') {
-                $type = Runtime::registry()->postType((string) $q['post_type']);
-                if ($type !== null && !empty($type['has_archive'])) {
-                    $this->is_post_type_archive = true;
-                }
-            }
-            if ($this->is_date || $this->is_category || $this->is_tag || $this->is_tax || $this->is_author || $this->is_post_type_archive) {
-                $this->is_archive = true;
-            }
-        }
-        if ($this->is_single || $this->is_page) {
-            $this->is_singular = true;
-        }
-        if (!$this->is_singular && !$this->is_archive && !$this->is_search && !$this->is_feed && !$this->is_trackback && !$this->is_404 && !$this->is_embed) {
-            $this->is_home = true;
-        }
-        if ($this->is_page && (int) $q['page_id'] > 0 && (int) $q['page_id'] === (int) get_option('page_for_posts')) {
-            $this->is_home = true;
-            $this->is_page = false;
-            $this->is_singular = false;
-            $this->is_posts_page = true;
-        }
-        if ($this->is_page && (int) get_option('wp_page_for_privacy_policy') > 0 && (int) $q['page_id'] === (int) get_option('wp_page_for_privacy_policy')) {
-            $this->is_privacy_policy = true;
+        $derived = QueryFlags::derive($this->fill_query_vars($this->query_vars), Runtime::registry(), static fn (string $name) => get_option($name));
+        $this->query_vars = $derived->vars;
+        foreach ($derived->flags as $flag => $on) {
+            $this->{$flag} = $on;
         }
         $this->is_admin = is_admin();
         do_action_ref_array('parse_query', [&$this]);
@@ -374,50 +282,28 @@ class WP_Query
         }
         $this->queried_object = null;
         $this->queried_object_id = null;
-        $q = $this->query_vars;
-        if ($this->is_category || $this->is_tag || $this->is_tax) {
-            $term = null;
-            if ($this->is_category) {
-                $term = !empty($q['cat']) ? get_term((int) $q['cat'], 'category') : (!empty($q['category_name']) ? get_term_by('slug', basename((string) $q['category_name']), 'category') : null);
-            } elseif ($this->is_tag) {
-                $term = !empty($q['tag_id']) ? get_term((int) $q['tag_id'], 'post_tag') : (!empty($q['tag']) ? get_term_by('slug', (string) $q['tag'], 'post_tag') : null);
-            } else {
-                foreach (Runtime::registry()->taxonomies() as $name => $taxonomy) {
-                    $var = $taxonomy['query_var'] ?? false;
-                    if (is_string($var) && $var !== '' && !in_array($var, ['category_name', 'tag'], true) && !empty($q[$var])) {
-                        $slugs = explode('/', (string) $q[$var]);
-                        $term = get_term_by('slug', end($slugs), (string) $name);
-                        break;
-                    }
-                }
-                foreach ($term instanceof WP_Term ? [] : (array) ($q['tax_query'] ?? []) as $clause) {
-                    if (is_array($clause) && isset($clause['taxonomy'], $clause['terms'])) {
-                        $terms = (array) $clause['terms'];
-                        $field = (string) ($clause['field'] ?? 'term_id');
-                        $term = $field === 'term_id' ? get_term((int) reset($terms), (string) $clause['taxonomy']) : get_term_by($field, (string) reset($terms), (string) $clause['taxonomy']);
-                        break;
-                    }
-                }
-            }
-            if ($term instanceof WP_Term) {
-                $this->queried_object = $term;
-                $this->queried_object_id = $term->term_id;
-            }
-        } elseif ($this->is_post_type_archive) {
-            $this->queried_object = get_post_type_object((string) $q['post_type']);
-        } elseif ($this->is_posts_page) {
-            $this->queried_object = get_post((int) get_option('page_for_posts'));
-            $this->queried_object_id = (int) get_option('page_for_posts');
-        } elseif ($this->is_singular && !empty($this->post)) {
-            $this->queried_object = $this->post;
-            $this->queried_object_id = (int) $this->post->ID;
-        } elseif ($this->is_author) {
-            $user = !empty($q['author']) ? get_userdata((int) $q['author']) : (!empty($q['author_name']) ? get_user_by('slug', (string) $q['author_name']) : false);
-            if ($user) {
-                $this->queried_object = $user;
-                $this->queried_object_id = $user->ID;
-            }
+        $flags = array_filter(get_object_vars($this), static fn ($value, string $key) => str_starts_with($key, 'is_') && $value, ARRAY_FILTER_USE_BOTH);
+        $where = QueriedObject::locate($this->query_vars, $flags, Runtime::registry(), static fn (string $name) => get_option($name));
+        $object = match ($where->kind) {
+            'term' => $where->field === 'id' ? get_term((int) $where->value, $where->taxonomy) : get_term_by($where->field, (string) $where->value, $where->taxonomy),
+            'post_type' => get_post_type_object((string) $where->value),
+            'posts_page' => get_post((int) $where->value),
+            'post' => !empty($this->post) ? $this->post : null,
+            'author' => $where->field === 'id' ? get_userdata((int) $where->value) : get_user_by('slug', (string) $where->value),
+            default => null,
+        };
+        if ($where->kind === 'term' && !$object instanceof WP_Term) {
+            $object = null;
         }
+        if ($object instanceof WP_Term) {
+            $this->queried_object_id = $object->term_id;
+        } elseif ($object instanceof WP_Post || $object instanceof WP_User) {
+            $this->queried_object_id = (int) $object->ID;
+        }
+        if ($where->kind === 'posts_page') {
+            $this->queried_object_id = (int) $where->value;
+        }
+        $this->queried_object = $object ?: null;
         return $this->queried_object;
     }
 

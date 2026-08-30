@@ -1,5 +1,7 @@
 <?php
 
+use Minn\Rest\ParamCheck;
+
 /** The request object a route callback receives. Shapes from contracts/fixtures/api/rest.json. */
 class WP_REST_Request implements ArrayAccess
 {
@@ -315,37 +317,21 @@ class WP_REST_Request implements ArrayAccess
         if (empty($attributes['args'])) {
             return true;
         }
-        $order = $this->get_parameter_order();
-        $invalid_params = [];
-        $invalid_details = [];
-        foreach ($order as $type) {
-            if (empty($this->params[$type])) {
-                continue;
-            }
-            foreach ($this->params[$type] as $key => $value) {
-                if (!isset($attributes['args'][$key])) {
-                    continue;
-                }
-                $param_args = $attributes['args'][$key];
-                if (!isset($param_args['sanitize_callback'])) {
-                    continue;
-                }
-                if ($param_args['sanitize_callback'] === false || $param_args['sanitize_callback'] === null) {
-                    continue;
-                }
-                $sanitized_value = call_user_func($param_args['sanitize_callback'], $value, $this, $key);
-                if (is_wp_error($sanitized_value)) {
-                    $invalid_params[$key] = implode(' ', $sanitized_value->get_error_messages());
-                    $invalid_details[$key] = rest_convert_error_to_response($sanitized_value)->get_data();
-                } else {
-                    $this->params[$type][$key] = $sanitized_value;
-                }
+        $args = $attributes['args'];
+        $ordered = [];
+        foreach ($this->get_parameter_order() as $type) {
+            if (!empty($this->params[$type])) {
+                $ordered[$type] = $this->params[$type];
             }
         }
-        if ($invalid_params) {
-            return new WP_Error('rest_invalid_param', sprintf('Invalid parameter(s): %s', implode(', ', array_keys($invalid_params))), ['status' => 400, 'params' => $invalid_params, 'details' => $invalid_details]);
+        [$sanitized, $refusal] = ParamCheck::sanitize($ordered, $args, function (string $key, $value) use ($args) {
+            $result = call_user_func($args[$key]['sanitize_callback'], $value, $this, $key);
+            return is_wp_error($result) ? ['error' => [implode(' ', $result->get_error_messages()), rest_convert_error_to_response($result)->get_data()]] : ['value' => $result];
+        });
+        foreach ($sanitized as $type => $values) {
+            $this->params[$type] = $values;
         }
-        return true;
+        return $refusal === null ? true : new WP_Error($refusal->code, $refusal->message, $refusal->data);
     }
 
     public function has_valid_params()
@@ -357,35 +343,13 @@ class WP_REST_Request implements ArrayAccess
             }
         }
         $attributes = $this->get_attributes();
-        $required = [];
         $args = empty($attributes['args']) ? [] : $attributes['args'];
-        foreach ($args as $key => $arg) {
-            $param = $this->get_param($key);
-            if (isset($arg['required']) && $arg['required'] === true && $param === null) {
-                $required[] = $key;
-            }
-        }
-        if (!empty($required)) {
-            return new WP_Error('rest_missing_callback_param', sprintf('Missing parameter(s): %s', implode(', ', $required)), ['status' => 400, 'params' => $required]);
-        }
-        $invalid_params = [];
-        $invalid_details = [];
-        foreach ($args as $key => $arg) {
-            $param = $this->get_param($key);
-            if ($param !== null && !empty($arg['validate_callback'])) {
-                $valid_check = call_user_func($arg['validate_callback'], $param, $this, $key);
-                if ($valid_check === false) {
-                    $invalid_params[$key] = 'Invalid parameter.';
-                    $invalid_details[$key] = ['code' => 'rest_invalid_param', 'message' => 'Invalid parameter.', 'data' => null];
-                }
-                if (is_wp_error($valid_check)) {
-                    $invalid_params[$key] = implode(' ', $valid_check->get_error_messages());
-                    $invalid_details[$key] = rest_convert_error_to_response($valid_check)->get_data();
-                }
-            }
-        }
-        if ($invalid_params) {
-            return new WP_Error('rest_invalid_param', sprintf('Invalid parameter(s): %s', implode(', ', array_keys($invalid_params))), ['status' => 400, 'params' => $invalid_params, 'details' => $invalid_details]);
+        $refusal = ParamCheck::validate($args, fn (string $key) => $this->get_param($key), function (string $key, $value) use ($args) {
+            $verdict = call_user_func($args[$key]['validate_callback'], $value, $this, $key);
+            return is_wp_error($verdict) ? [implode(' ', $verdict->get_error_messages()), rest_convert_error_to_response($verdict)->get_data()] : $verdict !== false;
+        });
+        if ($refusal !== null) {
+            return new WP_Error($refusal->code, $refusal->message, $refusal->data);
         }
         if (isset($attributes['validate_callback'])) {
             $valid_check = call_user_func($attributes['validate_callback'], $this);

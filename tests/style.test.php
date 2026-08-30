@@ -83,19 +83,38 @@ foreach ($files as $path) {
 $facadeQueries = [];
 $facadeLong = [];
 $facadeDir = dirname($root) . '/wp-api';
-foreach (glob("{$facadeDir}/*.php") as $file) {
-    $name = basename($file);
-    if ($name === 'placeholders.php') {
+// Functions and methods, by brace matching: a method's body ends at the brace that closes it.
+$facadeBodies = static function (string $src): array {
+    preg_match_all('/^[ \t]*(?:(?:public|protected|private|static|final|abstract)\s+)*function\s+&?(\w+)\s*\(/m', $src, $heads, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
+    $bodies = [];
+    foreach ($heads as $head) {
+        $open = strpos($src, '{', $head[0][1] + strlen($head[0][0]));
+        $close = strpos($src, ';', $head[0][1] + strlen($head[0][0]));
+        if ($open === false || ($close !== false && $close < $open)) {
+            continue;
+        }
+        $depth = 0;
+        for ($pos = $open, $length = strlen($src); $pos < $length; $pos++) {
+            $depth += match ($src[$pos]) { '{' => 1, '}' => -1, default => 0 };
+            if ($depth === 0) {
+                break;
+            }
+        }
+        $bodies[] = [$head[1][0], substr_count(substr($src, $open, $pos - $open), "\n") - 1];
+    }
+    return $bodies;
+};
+foreach ([...glob("{$facadeDir}/*.php"), ...glob("{$facadeDir}/classes/*.php")] as $file) {
+    $name = str_replace("{$facadeDir}/", '', $file);
+    if (str_contains($name, 'placeholders')) {
         continue;
     }
     $src = (string) file_get_contents($file);
-    $queries = preg_match_all('/(?:\$db|Runtime::current\(\)->db)->(rows|row|value|execute)\(/', $src);
+    $queries = preg_match_all('/(?:\$db|Runtime::current\(\)->db|->db)->(rows|row|value|execute)\(/', $src);
     $check("facade {$name}: queries stay at or under " . ($facadeQueries[$name] ?? 0), $queries <= ($facadeQueries[$name] ?? 0), "{$queries} query calls; move the work into src/Minn/");
-    preg_match_all('/^function\s+(\w+)\s*\([^\n]*\n\{\n(.*?)^\}/ms', $src, $fns, PREG_SET_ORDER);
-    foreach ($fns as $fn) {
-        $lines = substr_count($fn[2], "\n");
-        if ($lines > 40 && !in_array($fn[1], $facadeLong, true)) {
-            $check("facade {$name}: {$fn[1]}() stays a mapping", false, "{$lines} lines; a facade function normalises input, calls one Minn method, shapes the return");
+    foreach ($facadeBodies($src) as [$fn, $lines]) {
+        if ($lines > 40 && !in_array($fn, $facadeLong, true)) {
+            $check("facade {$name}: {$fn}() stays a mapping", false, "{$lines} lines; a facade function normalises input, calls one Minn method, shapes the return");
         }
     }
 }

@@ -3,6 +3,9 @@
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Rest\Api;
+use Minn\Rest\RouteIndex;
+use Minn\Rest\RouteMatch;
+use Minn\Runtime\Refusal;
 use Minn\Runtime\Runtime;
 
 /**
@@ -128,51 +131,14 @@ class WP_REST_Server
     /** The routes' methods and regexes, for the engine's fallback and the index. */
     public function match_request_to_handler($request)
     {
-        $method = $request->get_method();
-        $path = $request->get_route();
-        $with_namespace = [];
-        foreach ($this->get_namespaces() as $namespace) {
-            if (str_starts_with(trim($path, '/'), $namespace)) {
-                $with_namespace[] = $this->get_routes($namespace);
-            }
+        $match = RouteMatch::find($this->get_namespaces(), fn (string $namespace) => $this->get_routes($namespace), $request->get_method(), $request->get_route());
+        if ($match instanceof Refusal) {
+            return new WP_Error($match->code, $match->message, $match->data);
         }
-        if ($with_namespace) {
-            $routes = array_merge(...$with_namespace);
-        } else {
-            $routes = $this->get_routes();
-        }
-        foreach ($routes as $route => $handlers) {
-            $match = preg_match('@^' . $route . '$@i', $path, $matches);
-            if (!$match) {
-                continue;
-            }
-            $args = [];
-            foreach ($matches as $param => $value) {
-                if (!is_int($param)) {
-                    $args[$param] = $value;
-                }
-            }
-            foreach ($handlers as $handler) {
-                $callback = $handler['callback'];
-                if (empty($handler['methods'][$method])) {
-                    continue;
-                }
-                if (!is_callable($callback)) {
-                    return new WP_Error('rest_invalid_handler', 'The handler for the route is invalid.', ['status' => 500]);
-                }
-                $request->set_url_params($args);
-                $request->set_attributes($handler);
-                $defaults = [];
-                foreach ($handler['args'] as $arg => $options) {
-                    if (isset($options['default'])) {
-                        $defaults[$arg] = $options['default'];
-                    }
-                }
-                $request->set_default_params($defaults);
-                return [$route, $handler];
-            }
-        }
-        return new WP_Error('rest_no_route', 'No route was found matching the URL and request method.', ['status' => 404]);
+        $request->set_url_params($match['params']);
+        $request->set_attributes($match['handler']);
+        $request->set_default_params($match['defaults']);
+        return [$match['route'], $match['handler']];
     }
 
     public function dispatch($request)
@@ -438,78 +404,7 @@ class WP_REST_Server
 
     public function get_data_for_route($route, $callbacks, $context = 'view')
     {
-        $data = ['namespace' => '', 'methods' => [], 'endpoints' => []];
-        $route_options = $this->get_route_options($route);
-        if ($route_options) {
-            if (isset($route_options['namespace'])) {
-                $data['namespace'] = $route_options['namespace'];
-            }
-            if (isset($route_options['schema']) && $context === 'help') {
-                $data['schema'] = call_user_func($route_options['schema']);
-            }
-        }
-        $allow_batch = false;
-        foreach ($callbacks as $callback) {
-            if (empty($callback['show_in_index'])) {
-                continue;
-            }
-            $data['methods'] = array_merge($data['methods'], array_keys($callback['methods']));
-            $endpoint_data = ['methods' => array_keys($callback['methods'])];
-            $callback_batch = $callback['allow_batch'] ?? $allow_batch;
-            if ($callback_batch) {
-                $endpoint_data['allow_batch'] = $callback_batch;
-            }
-            if (isset($callback['args'])) {
-                $endpoint_data['args'] = [];
-                foreach ($callback['args'] as $key => $opts) {
-                    if (is_string($opts)) {
-                        $opts = [$opts => 0];
-                    } elseif (!is_array($opts)) {
-                        $opts = [];
-                    }
-                    $arg_data = ['required' => !empty($opts['required'])];
-                    if (isset($opts['default'])) {
-                        $arg_data['default'] = $opts['default'];
-                    }
-                    if (isset($opts['enum'])) {
-                        $arg_data['enum'] = $opts['enum'];
-                    }
-                    if (isset($opts['description'])) {
-                        $arg_data['description'] = $opts['description'];
-                    }
-                    if (isset($opts['type'])) {
-                        $arg_data['type'] = $opts['type'];
-                    }
-                    if (isset($opts['items'])) {
-                        $arg_data['items'] = $opts['items'];
-                    }
-                    foreach (['minimum', 'maximum', 'exclusiveMinimum', 'exclusiveMaximum', 'minLength', 'maxLength', 'pattern', 'format', 'properties', 'additionalProperties', 'oneOf', 'anyOf', 'minItems', 'maxItems', 'uniqueItems'] as $keyword) {
-                        if (isset($opts[$keyword])) {
-                            $arg_data[$keyword] = $opts[$keyword];
-                        }
-                    }
-                    $required = $arg_data['required'];
-                    unset($arg_data['required']);
-                    $ordered = [];
-                    foreach ($opts as $k => $v) {
-                        if (array_key_exists($k, $arg_data)) {
-                            $ordered[$k] = $arg_data[$k];
-                        }
-                    }
-                    $ordered['required'] = $required;
-                    $endpoint_data['args'][$key] = $ordered;
-                }
-            }
-            $data['endpoints'][] = $endpoint_data;
-            if (strpos($route, '(?P<') === false) {
-                $data['_links'] = ['self' => [['href' => rest_url($route)]]];
-            }
-        }
-        $data['methods'] = array_keys(array_flip($data['methods']));
-        if (empty($data['methods'])) {
-            return null;
-        }
-        return $data;
+        return RouteIndex::describe((string) $route, $callbacks, $this->get_route_options($route) ?: [], (string) $context, static fn (string $route) => rest_url($route));
     }
 
     public function get_max_batch_size()

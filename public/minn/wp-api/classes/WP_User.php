@@ -53,7 +53,7 @@ class WP_User
             'id', 'ID' => is_numeric($value) && (int) $value > 0 ? $users->find((int) $value) : null,
             'login' => $users->findByLogin((string) $value),
             'email' => $users->findByEmail((string) $value),
-            'slug' => Runtime::current()->db->row('SELECT * FROM ' . Runtime::current()->db->table('users') . ' WHERE user_nicename = ? LIMIT 1', [(string) $value]),
+            'slug' => $users->findBySlug((string) $value),
             default => null,
         };
         if ($row === null) {

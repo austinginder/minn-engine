@@ -30,6 +30,11 @@ final readonly class Users
         return $this->db->row("SELECT * FROM {$this->db->table('users')} WHERE user_email = ? LIMIT 1", [$email]);
     }
 
+    public function findBySlug(string $nicename): ?array
+    {
+        return $this->db->row("SELECT * FROM {$this->db->table('users')} WHERE user_nicename = ? LIMIT 1", [$nicename]);
+    }
+
     /** The unique-nicename rule: sanitized login, -2, -3 on collision. */
     public function uniqueNicename(string $base, int $skipId = 0): string
     {
