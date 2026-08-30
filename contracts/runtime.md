@@ -783,6 +783,24 @@ facade's `WP_Sitemaps_Renderer` alike. Left as shape on purpose: `WP_Rewrite`
 and `WP` (recorded state), `wpdb` (the SQL seam), `WP_Error`, `WP_Screen`,
 `WP_REST_Response` (value objects), `customize.php` and `WP_Widget` (Hear).
 
+`contracts/api/mappings.json` is the audit trail (`php tests/tools/facade-map.php`
+regenerates it; the style suite fails when it is stale). Every facade function
+and method is listed with the Minn methods it calls, the facade functions it
+composes, and its length, under one of four kinds: `minn` (calls into
+`src/Minn`), `composes` (calls other facade functions only), `leaf` (plain PHP
+with no call either way), `noop` (at most one line). The numbers at the time
+of writing: 2,272 functions, 257 minn, 643 composes, 298 leaf, 1,080 noop,
+285 distinct Minn methods. `--leaves` lists the leaves longest first; the
+suite pins how many run past fifteen lines, and the sixteen that do are shape
+by design (`wpdb` result shaping, constructors that copy rows into objects,
+`WP_Hook::apply_filters` over the shared hook storage, `WP_Screen`, generic
+list sorting). The leaf pass that produced the number moved `wpautop`
+(`Content\Autop`), `remove_accents` (`Support\Accents`), entity decoding and
+tag stripping (`Support\Entities::decode`, `Html::stripAllTags`), path and
+mode spellings (`Support\Paths`), query strings (`Url::buildQuery`), JSON
+sanitising (`Support\Json`), CURIE compaction (`Rest\Links`) and block asset
+handles (`BlockMetadata::assetHandle`).
+
 ## The second plugin surface: WooCommerce loads
 
 WooCommerce 11 on a fresh lab site (`minnwoo.localhost`, oracle on
