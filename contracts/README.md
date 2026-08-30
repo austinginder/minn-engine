@@ -14,8 +14,8 @@ Planned layout:
 
 - `lexicon.md` — Speak / Hear / Mute: the WordPress families Minn implements,
   the ones it recognizes so plugins load, and the ones it will never host
-  (no `/wp-admin/` UI; Minn Admin is the only admin). Served as `/lexicon/`
-  on the Minn site (raw `/lexicon.md`); the markdown is the source.
+  (no `/wp-admin/` UI; Minn Admin is the only admin). The Minn site theme
+  renders a copy at `/lexicon/`; this file is the policy agents read.
 - `schema/` — the `wp_*` table contract: tables, columns, semantics, and the
   known value quirks (serialized blobs, `''` versus `'closed'` option values,
   local versus GMT datetime columns).

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 /**
  * Measures how much code ships in WordPress core and in Minn (the engine
- * plus the Minn Admin plugin) and writes contracts/code-size.json, the data
- * behind /code-size/ on the Minn site.
+ * plus the Minn Admin plugin) and writes contracts/code-size.json plus
+ * site/minn-site/content/code-size.json (the theme page /code-size/).
  *
  *   php tests/tools/code-size.php                  latest WordPress from wordpress.org
  *   php tests/tools/code-size.php --wordpress=7.1  a named release
@@ -249,6 +249,10 @@ $report = [
     ],
 ];
 file_put_contents("{$root}/contracts/code-size.json", json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
+$themeReport = "{$root}/site/minn-site/content/code-size.json";
+if (is_dir(dirname($themeReport))) {
+    file_put_contents($themeReport, json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
+}
 foreach ($report['stacks'] as $stack) {
     printf("%-10s %-8s %9s files %12s lines %14s bytes (own %s lines, libraries %s lines)\n", $stack['label'], $stack['version'], number_format($stack['totals']['files']), number_format($stack['totals']['lines']), number_format($stack['totals']['bytes']), number_format($stack['own']['lines']), number_format($stack['thirdParty']['lines']));
     foreach ($stack['components'] as $row) {
@@ -256,3 +260,6 @@ foreach ($report['stacks'] as $stack) {
     }
 }
 echo "wrote contracts/code-size.json\n";
+if (is_file($themeReport ?? '')) {
+    echo "wrote site/minn-site/content/code-size.json\n";
+}

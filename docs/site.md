@@ -37,33 +37,24 @@ the oracle method and the facts it caught, the license analysis, status
 (working and not yet, said plainly), the hard parts, a FAQ, and the on-ramp:
 WordPress users are pointed at Minn Admin first, because it is the shipped
 phase and it is the interface the engine boots. The glossary behind the
-visual is `contracts/lexicon.md`. The engine serves that file as a filterable
-page at `/lexicon/` (raw at `/lexicon.md`): Speak / Hear / Mute chips, a
-family search, sourced from the markdown so the page cannot drift from the
-policy. It is an engine route, not a WordPress page, so the site-suite
-oracle body-diff does not include it. Theme chrome (nav link, homepage
-"Browse the lexicon", CSS) lives in the theme repo.
+visual is `contracts/lexicon.md` (the Speak / Hear / Mute policy). The
+**minn-site theme** serves that glossary as a filterable page at `/lexicon/`
+(raw at `/lexicon.md`) from its own `content/lexicon.md`. `/code-size/` is
+the same: a theme page. The engine does not register these routes.
 
-The theme runs no PHP on the engine. `functions.php` exists only for the
-reference (it enqueues `style.css`, which the engine links on its own); the
-theme toggle and the scroll reveal are inline scripts in the parts.
+`functions.php` enqueues `style.css` and owns those two pages (it answers
+on `init`, so WordPress and the engine both serve them). The theme toggle
+and the scroll reveal stay inline in the parts.
 
 ## The code-size page
 
-`/code-size/` compares how much PHP, JavaScript and CSS ships in WordPress
-core (wp-admin, wp-includes and the root files of the release zip) and in
-Minn (the `public/minn` deploy unit plus the Minn Admin plugin as its release
-zip ships it). `tests/tools/code-size.php` downloads the current release from
-wordpress.org into the gitignored `.cache/`, measures both trees with one
-rule set (minified duplicates skipped, bundled libraries on their own row,
-lines as newline counts, bytes alongside) and writes `contracts/code-size.json`.
-`Front\CodeSize` reads it, `Front\CodeSizePage` paints it in the site chrome,
-and `/code-size.json` serves it raw. Refresh at each release with
-`php tests/tools/code-size.php` (or `--wordpress=7.2` for a named version);
-the versions on the page come from the measured trees, never from prose.
-`tests/code-size.test.php` pins the report's arithmetic and the page.
-`Front\SiteChrome` is the shared header/footer painter for these engine-only
-pages (the lexicon uses it too).
+`/code-size/` lives in the theme. The numbers come from
+`tests/tools/code-size.php`, which downloads the current WordPress release
+from wordpress.org into the gitignored `.cache/`, measures both trees, and
+writes `contracts/code-size.json` plus `site/minn-site/content/code-size.json`.
+Refresh at each release with `php tests/tools/code-size.php` (or
+`--wordpress=7.2` for a named version). `tests/code-size.test.php` pins the
+report's arithmetic, not the page.
 
 ## Keeping the marketing page honest
 

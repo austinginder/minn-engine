@@ -65,6 +65,19 @@ $check(str_contains($home, 'Minn Admin is the only UI'), 'the visual draws the n
 $check(str_contains($home, 'Audience 3'), 'the three-audience visual is on the page');
 $check(str_contains($home, 'href="/lexicon/"'), 'the homepage links to the lexicon');
 $check(str_contains($home, 'Browse the lexicon'), 'the visual points at the glossary page');
+
+[$lh, $lex] = minn_test_fetch($ENGINE . '/lexicon/');
+$check($lh['status'] === 200, 'theme /lexicon/ answers 200', (string) $lh['status']);
+$check(str_contains($lex, '<title>The WordPress lexicon'), 'lexicon title');
+$check(str_contains($lex, 'data-lex-filter="speak"'), 'lexicon Speak chip');
+$check(str_contains($lex, 'aria-current="page"'), 'lexicon nav is current');
+[$mdh] = minn_test_fetch($ENGINE . '/lexicon.md');
+$check($mdh['status'] === 200, 'theme /lexicon.md answers 200', (string) $mdh['status']);
+[$csh, $cs] = minn_test_fetch($ENGINE . '/code-size/');
+$check($csh['status'] === 200, 'theme /code-size/ answers 200', (string) $csh['status']);
+$check(str_contains($cs, '<title>Code size · Minn</title>'), 'code-size title');
+[$jsh] = minn_test_fetch($ENGINE . '/code-size.json');
+$check($jsh['status'] === 200, 'theme /code-size.json answers 200', (string) $jsh['status']);
 foreach (['/wp-content/themes/minn-site/style.css', '/wp-content/themes/minn-site/assets/fonts/hanken-grotesk.woff2', '/wp-content/themes/minn-site/assets/fonts/jetbrains-mono.woff2'] as $asset) {
     [$ah] = minn_test_fetch($ENGINE . $asset);
     $check($ah['status'] === 200, "asset served: $asset");
