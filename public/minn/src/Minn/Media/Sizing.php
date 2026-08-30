@@ -14,6 +14,32 @@ use Closure;
 final class Sizing
 {
     /**
+     * The largest box inside the limits that keeps the ratio: only sides over
+     * their limit shrink, the smaller ratio wins, and a result one pixel short
+     * of a limit it was constrained by snaps to that limit.
+     *
+     * @return array{0: int, 1: int}
+     */
+    public static function constrain(int $width, int $height, int $maxWidth, int $maxHeight): array
+    {
+        if (!$maxWidth && !$maxHeight) {
+            return [$width, $height];
+        }
+        $widthRatio = $maxWidth > 0 && $width > $maxWidth ? $maxWidth / $width : 1.0;
+        $heightRatio = $maxHeight > 0 && $height > $maxHeight ? $maxHeight / $height : 1.0;
+        $ratio = min($widthRatio, $heightRatio);
+        $w = max(1, (int) round($width * $ratio));
+        $h = max(1, (int) round($height * $ratio));
+        if ($widthRatio < 1.0 && $w === $maxWidth - 1) {
+            $w = $maxWidth;
+        }
+        if ($heightRatio < 1.0 && $h === $maxHeight - 1) {
+            $h = $maxHeight;
+        }
+        return [$w, $h];
+    }
+
+    /**
      * The GD-style resize box (dst x, dst y, src x, src y, dst w, dst h, src w, src h),
      * or null when the image would only grow or nothing changes.
      *

@@ -4,6 +4,8 @@
 use Minn\Content\Blocks;
 use Minn\Content\Texturize;
 use Minn\Runtime\Runtime;
+use Minn\Support\Email;
+use Minn\Support\Entities;
 use Minn\Support\Url;
 
 function wp_check_invalid_utf8($text, $strip = false)
@@ -28,43 +30,7 @@ function _minn_known_entity(string $name): bool
 
 function _wp_specialchars($text, $quote_style = ENT_NOQUOTES, $charset = false, $double_encode = false)
 {
-    $text = (string) $text;
-    if ($text === '') {
-        return '';
-    }
-    if (!preg_match('/[&<>"\']/', $text)) {
-        return $text;
-    }
-    if ($quote_style === 'single') {
-        $flags = ENT_NOQUOTES;
-        $single = true;
-    } elseif ($quote_style === 'double') {
-        $flags = ENT_COMPAT;
-        $single = false;
-    } else {
-        $flags = $quote_style === false || $quote_style === 0 ? ENT_NOQUOTES : (int) $quote_style;
-        $single = false;
-    }
-    if (!$double_encode) {
-        $text = preg_replace_callback('/&(#\d+|#[xX][0-9a-fA-F]+|[A-Za-z][A-Za-z0-9]*);/', static function (array $m): string {
-            $name = $m[1];
-            if ($name[0] === '#') {
-                return '&' . $name . ';';
-            }
-            return _minn_known_entity($name) ? '&' . $name . ';' : '&amp;' . $name . ';';
-        }, $text);
-        $text = preg_replace('/&(?!(?:#\d+|#[xX][0-9a-fA-F]+|[A-Za-z][A-Za-z0-9]*);)/', '&amp;', $text);
-        $text = preg_replace('/&amp;amp;(?=[A-Za-z0-9#]+;)/', '&amp;', $text);
-        $text = htmlspecialchars($text, $flags & ~ENT_HTML401 | ENT_SUBSTITUTE, 'UTF-8', false);
-    } else {
-        $text = htmlspecialchars($text, $flags | ENT_SUBSTITUTE, 'UTF-8', true);
-    }
-    if ($single) {
-        $text = str_replace("'", '&#039;', $text);
-    } elseif ($flags & ENT_QUOTES) {
-        $text = str_replace("'", '&#039;', $text);
-    }
-    return $text;
+    return Entities::specialchars((string) $text, $quote_style, (bool) $double_encode, static fn (string $name) => _minn_known_entity($name));
 }
 
 function esc_html($text)
@@ -370,60 +336,14 @@ function sanitize_file_name($filename)
 
 function sanitize_email($email)
 {
-    $raw = (string) $email;
-    $email = trim($raw);
-    if (strlen($email) < 6 || !str_contains($email, '@') || strrpos($email, '@') === 0) {
-        return apply_filters('sanitize_email', '', $raw, 'email_too_short');
-    }
-    [$local, $domain] = explode('@', $email, 2) + ['', ''];
-    if (substr_count($email, '@') !== 1) {
-        return apply_filters('sanitize_email', '', $raw, 'email_no_at');
-    }
-    $local = preg_replace('/[^a-zA-Z0-9!#$%&\'*+\/=?^_`{|}~\.-]/', '', $local);
-    if ($local === '') {
-        return apply_filters('sanitize_email', '', $raw, 'local_invalid_chars');
-    }
-    $domain = preg_replace('/\.{2,}/', '', $domain);
-    $domain = trim($domain, " \t\n\r\0\x0B.");
-    if ($domain === '' || !str_contains($domain, '.')) {
-        return apply_filters('sanitize_email', '', $raw, 'domain_no_periods');
-    }
-    $subs = [];
-    foreach (explode('.', $domain) as $sub) {
-        $sub = trim(preg_replace('/[^a-z0-9-]+/i', '', $sub), '-');
-        if ($sub !== '') {
-            $subs[] = $sub;
-        }
-    }
-    if (count($subs) < 2) {
-        return apply_filters('sanitize_email', '', $raw, 'domain_no_valid_subs');
-    }
-    return apply_filters('sanitize_email', $local . '@' . implode('.', $subs), $raw, null);
+    [$clean, $reason] = Email::sanitize((string) $email);
+    return apply_filters('sanitize_email', $clean, (string) $email, $reason);
 }
 
 function is_email($email, $deprecated = false)
 {
-    $email = (string) $email;
-    if (strlen($email) < 6 || substr_count($email, '@') !== 1) {
-        return apply_filters('is_email', false, $email, 'email_too_short');
-    }
-    [$local, $domain] = explode('@', $email, 2);
-    if (!preg_match('/^[a-zA-Z0-9!#$%&\'*+\/=?^_`{|}~\.-]+$/', $local)) {
-        return apply_filters('is_email', false, $email, 'local_invalid_chars');
-    }
-    if (preg_match('/\.{2,}/', $domain) || trim($domain, " \t\n\r\0\x0B.") !== $domain) {
-        return apply_filters('is_email', false, $email, 'domain_period_sequence');
-    }
-    $subs = explode('.', $domain);
-    if (count($subs) < 2) {
-        return apply_filters('is_email', false, $email, 'domain_no_periods');
-    }
-    foreach ($subs as $sub) {
-        if (trim($sub, '-') !== $sub || !preg_match('/^[a-z0-9-]+$/i', $sub)) {
-            return apply_filters('is_email', false, $email, 'sub_hyphen_limits');
-        }
-    }
-    return apply_filters('is_email', $email, $email, null);
+    $reason = Email::check((string) $email);
+    return apply_filters('is_email', $reason === null ? (string) $email : false, (string) $email, $reason);
 }
 
 function stripslashes_deep($value)

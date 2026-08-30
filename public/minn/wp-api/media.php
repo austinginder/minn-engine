@@ -1,11 +1,13 @@
 <?php
 /** Attachments, image sizes, and the media helpers. Behaviour from contracts/fixtures/api/media.json. */
 
-use Minn\Media\Metadata;
 use Minn\Blocks\RenderState;
-use Minn\Runtime\Runtime;
+use Minn\Media\Kind;
+use Minn\Media\Metadata;
 use Minn\Media\Sizing;
+use Minn\Media\Uploads;
 use Minn\Runtime\PostLookup;
+use Minn\Runtime\Runtime;
 
 /** @internal the registered sizes: the four from the options plus the two big ones, plus add_image_size */
 function _minn_image_sizes(): array
@@ -68,35 +70,11 @@ function wp_get_registered_image_subsizes()
 
 function wp_constrain_dimensions($current_width, $current_height, $max_width = 0, $max_height = 0)
 {
-    $current_width = (int) $current_width;
-    $current_height = (int) $current_height;
-    $max_width = (int) $max_width;
-    $max_height = (int) $max_height;
-    if (!$max_width && !$max_height) {
-        return [$current_width, $current_height];
+    $constrained = Sizing::constrain((int) $current_width, (int) $current_height, (int) $max_width, (int) $max_height);
+    if (!(int) $max_width && !(int) $max_height) {
+        return $constrained;
     }
-    $width_ratio = 1.0;
-    $height_ratio = 1.0;
-    $did_width = false;
-    $did_height = false;
-    if ($max_width > 0 && $current_width > 0 && $current_width > $max_width) {
-        $width_ratio = $max_width / $current_width;
-        $did_width = true;
-    }
-    if ($max_height > 0 && $current_height > 0 && $current_height > $max_height) {
-        $height_ratio = $max_height / $current_height;
-        $did_height = true;
-    }
-    $smaller_ratio = min($width_ratio, $height_ratio);
-    $w = max(1, (int) round($current_width * $smaller_ratio));
-    $h = max(1, (int) round($current_height * $smaller_ratio));
-    if ($did_width && $w === $max_width - 1) {
-        $w = $max_width;
-    }
-    if ($did_height && $h === $max_height - 1) {
-        $h = $max_height;
-    }
-    return apply_filters('wp_constrain_dimensions', [$w, $h], $current_width, $current_height, $max_width, $max_height);
+    return apply_filters('wp_constrain_dimensions', $constrained, (int) $current_width, (int) $current_height, (int) $max_width, (int) $max_height);
 }
 
 function image_resize_dimensions($orig_w, $orig_h, $dest_w, $dest_h, $crop = false)
@@ -212,30 +190,12 @@ function wp_get_attachment_thumb_url($post_id = 0)
 function wp_attachment_is($type, $post = null)
 {
     $post = get_post($post);
-    if ($post === null) {
+    $file = $post === null ? '' : (string) get_attached_file($post->ID);
+    if ($file === '') {
         return false;
-    }
-    $file = get_attached_file($post->ID);
-    if (!$file) {
-        return false;
-    }
-    if (str_starts_with((string) $post->post_mime_type, $type . '/')) {
-        return true;
     }
     $check = wp_check_filetype($file);
-    if (empty($check['ext'])) {
-        return false;
-    }
-    $ext = strtolower((string) $check['ext']);
-    if ($post->post_mime_type === 'import' || $post->post_mime_type === '') {
-        // fall through to the extension check
-    }
-    return match ($type) {
-        'image' => in_array($ext, ['jpg', 'jpeg', 'jpe', 'gif', 'png', 'webp', 'avif', 'heic'], true),
-        'audio' => in_array($ext, wp_get_audio_extensions(), true),
-        'video' => in_array($ext, wp_get_video_extensions(), true),
-        default => $type === $ext,
-    };
+    return Kind::matches((string) $type, (string) $post->post_mime_type, (string) ($check['ext'] ?: ''), wp_get_audio_extensions(), wp_get_video_extensions());
 }
 
 function wp_attachment_is_image($post = null)
@@ -818,31 +778,10 @@ function wp_delete_attachment($post_id, $force_delete = false)
 
 function wp_delete_attachment_files($post_id, $meta, $backup_sizes, $file)
 {
-    $uploadpath = wp_get_upload_dir();
-    $deleted = true;
-    if (!empty($meta['thumb'])) {
-        $thumbfile = str_replace(wp_basename((string) $file), $meta['thumb'], (string) $file);
-        wp_delete_file($thumbfile);
+    foreach (Uploads::attachmentFiles((string) $file, is_array($meta) ? $meta : [], is_array($backup_sizes) ? $backup_sizes : null) as $path) {
+        wp_delete_file($path);
     }
-    if (isset($meta['sizes']) && is_array($meta['sizes'])) {
-        $intermediate_dir = path_join($uploadpath['basedir'], dirname((string) $file));
-        foreach ($meta['sizes'] as $size => $sizeinfo) {
-            $intermediate_file = str_replace(wp_basename((string) $file), $sizeinfo['file'], (string) $file);
-            wp_delete_file(path_join(dirname((string) $file), $sizeinfo['file']));
-        }
-    }
-    if (!empty($meta['original_image'])) {
-        wp_delete_file(path_join(dirname((string) $file), $meta['original_image']));
-    }
-    if (is_array($backup_sizes)) {
-        foreach ($backup_sizes as $size => $sizeinfo) {
-            wp_delete_file(path_join(dirname((string) $file), $sizeinfo['file']));
-        }
-    }
-    if ($file && is_file($file)) {
-        wp_delete_file($file);
-    }
-    return $deleted;
+    return true;
 }
 
 function wp_delete_file($file)

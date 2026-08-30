@@ -112,4 +112,39 @@ final readonly class Uploads
         }
         @unlink($this->pathFor($relativePath));
     }
+
+    /**
+     * Every file an attachment owns, in deletion order: the legacy thumb, each
+     * sub-size, the original image, the backup sizes, then the file itself.
+     *
+     * @param array<string, mixed> $meta the attachment metadata
+     * @param array<string, array<string, mixed>>|null $backupSizes
+     * @return list<string> absolute paths, unique, only the main file checked for existence
+     */
+    public static function attachmentFiles(string $file, array $meta, ?array $backupSizes): array
+    {
+        $directory = dirname($file);
+        $sibling = static fn (string $name): string => str_starts_with($name, '/') ? $name : $directory . '/' . $name;
+        $paths = [];
+        if (!empty($meta['thumb'])) {
+            $paths[] = str_replace(basename($file), (string) $meta['thumb'], $file);
+        }
+        foreach ((array) ($meta['sizes'] ?? []) as $size) {
+            if (is_array($size) && isset($size['file'])) {
+                $paths[] = $sibling((string) $size['file']);
+            }
+        }
+        if (!empty($meta['original_image'])) {
+            $paths[] = $sibling((string) $meta['original_image']);
+        }
+        foreach ((array) $backupSizes as $size) {
+            if (is_array($size) && isset($size['file'])) {
+                $paths[] = $sibling((string) $size['file']);
+            }
+        }
+        if ($file !== '' && is_file($file)) {
+            $paths[] = $file;
+        }
+        return $paths;
+    }
 }

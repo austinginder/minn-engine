@@ -151,20 +151,7 @@ function wp_update_comment($commentarr, $wp_error = false)
     if ($comment === null) {
         return $wp_error ? new WP_Error('invalid_comment_id', 'Invalid comment ID.') : false;
     }
-    $columns = [];
-    foreach (['comment_post_ID', 'comment_author', 'comment_author_email', 'comment_author_url', 'comment_author_IP', 'comment_date', 'comment_date_gmt', 'comment_content', 'comment_karma', 'comment_approved', 'comment_agent', 'comment_type', 'comment_parent', 'user_id'] as $key) {
-        if (array_key_exists($key, $data) && (string) $data[$key] !== (string) $comment->{$key}) {
-            $columns[$key] = $data[$key];
-        }
-    }
-    if (isset($columns['comment_approved'])) {
-        $columns['comment_approved'] = match ((string) $columns['comment_approved']) {
-            'hold' => '0',
-            'approve' => '1',
-            default => (string) $columns['comment_approved'],
-        };
-    }
-    $columns = apply_filters('wp_update_comment_data', $columns, $comment->to_array(), $data);
+    $columns = apply_filters('wp_update_comment_data', Comments::changedColumns($data, $comment->to_array()), $comment->to_array(), $data);
     if (is_wp_error($columns)) {
         return $wp_error ? $columns : 0;
     }

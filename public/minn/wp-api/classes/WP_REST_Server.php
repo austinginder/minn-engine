@@ -2,6 +2,7 @@
 
 use Minn\Http\Method;
 use Minn\Http\Request;
+use Minn\Rest\AdditionalFields;
 use Minn\Rest\Api;
 use Minn\Rest\RouteIndex;
 use Minn\Rest\RouteMatch;
@@ -252,43 +253,11 @@ class WP_REST_Server
     public static function attach_additional_fields(string $route, mixed $data): mixed
     {
         $fields = $GLOBALS['wp_rest_additional_fields'] ?? [];
-        if ($fields === [] || !is_array($data) || !preg_match('#^/wp/v2/([a-z_-]+)(/\d+)?$#', $route, $m)) {
+        $target = $fields === [] || !is_array($data) ? null : AdditionalFields::typeForRoute($route, Runtime::registry());
+        if ($target === null || empty($fields[$target[0]])) {
             return $data;
         }
-        $base = $m[1];
-        $type = null;
-        foreach (Runtime::registry()->postTypes() as $name => $row) {
-            if (($row['rest_base'] ?: $name) === $base) {
-                $type = $name;
-                break;
-            }
-        }
-        if ($type === null) {
-            foreach (Runtime::registry()->taxonomies() as $name => $row) {
-                if (($row['rest_base'] ?: $name) === $base) {
-                    $type = $name;
-                    break;
-                }
-            }
-        }
-        if ($type === null) {
-            $type = match ($base) { 'users' => 'user', 'comments' => 'comment', 'media' => 'attachment', default => null };
-        }
-        if ($type === null || empty($fields[$type])) {
-            return $data;
-        }
-        $apply = static function (array $item) use ($fields, $type): array {
-            foreach ($fields[$type] as $name => $options) {
-                if (!empty($options['get_callback'])) {
-                    $item[$name] = call_user_func($options['get_callback'], $item, $name, null, $type);
-                }
-            }
-            return $item;
-        };
-        if (isset($m[2]) || isset($data['id'])) {
-            return $apply($data);
-        }
-        return array_map(static fn ($item) => is_array($item) ? $apply($item) : $item, $data);
+        return AdditionalFields::apply($fields[$target[0]], $target[0], $target[1], $data, static fn ($callback, array $item, string $name, string $type) => call_user_func($callback, $item, $name, null, $type));
     }
 
     public function response_to_data($response, $embed)

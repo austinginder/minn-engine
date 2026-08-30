@@ -9,6 +9,8 @@ use Minn\Db;
 /** Reads and writes over the comments table. */
 final readonly class Comments
 {
+    private const UPDATABLE = ['comment_post_ID', 'comment_author', 'comment_author_email', 'comment_author_url', 'comment_author_IP', 'comment_date', 'comment_date_gmt', 'comment_content', 'comment_karma', 'comment_approved', 'comment_agent', 'comment_type', 'comment_parent', 'user_id'];
+
     public function __construct(private Db $db)
     {
     }
@@ -170,5 +172,31 @@ final readonly class Comments
             'spam', 'trash' => [$status],
             default => null,
         };
+    }
+
+    /**
+     * The columns an update really changes, compared as strings against the
+     * stored row; the approval shorthands hold/approve become the stored 0/1.
+     *
+     * @param array<string, mixed> $data
+     * @param array<string, mixed> $current
+     * @return array<string, mixed>
+     */
+    public static function changedColumns(array $data, array $current): array
+    {
+        $columns = [];
+        foreach (self::UPDATABLE as $key) {
+            if (array_key_exists($key, $data) && (string) $data[$key] !== (string) ($current[$key] ?? '')) {
+                $columns[$key] = $data[$key];
+            }
+        }
+        if (isset($columns['comment_approved'])) {
+            $columns['comment_approved'] = match ((string) $columns['comment_approved']) {
+                'hold' => '0',
+                'approve' => '1',
+                default => (string) $columns['comment_approved'],
+            };
+        }
+        return $columns;
     }
 }
