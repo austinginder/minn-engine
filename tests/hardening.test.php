@@ -66,6 +66,7 @@ $check('sign-in page: Cache-Control no-store', str_contains($login['headers']['c
 $check('sign-in page: nosniff', ($login['headers']['x-content-type-options'] ?? '') === 'nosniff');
 $home = $request("$ENGINE/");
 $check('front page: nosniff', ($home['headers']['x-content-type-options'] ?? '') === 'nosniff');
+$check('front page: X-Powered-By is Minn', ($home['headers']['x-powered-by'] ?? '') === 'Minn', $home['headers']['x-powered-by'] ?? '');
 $check('front page: no X-Frame-Options (embeddable, as the reference)', !isset($home['headers']['x-frame-options']));
 $admin = $request("$ENGINE/minn-admin/");
 $check('admin: X-Frame-Options SAMEORIGIN on the redirect too', ($admin['headers']['x-frame-options'] ?? '') === 'SAMEORIGIN', json_encode($admin['headers']));

@@ -54,7 +54,7 @@ final readonly class AppController
             return Response::html($this->offPage());
         }
         return Response::html($this->render($this->payload->build($session)))
-            ->withHeader('X-Powered-By', 'Minn Engine/' . $this->engineVersion);
+            ->withHeader('X-Powered-By', 'Minn/' . $this->engineVersion);
     }
 
     /** The engine without an admin: the site keeps serving; the command that brings the admin back is named. */

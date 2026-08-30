@@ -68,4 +68,4 @@ Apache (`wp-content/uploads/.htaccess`):
 
 Also at the server: TLS with HSTS, `client_max_body_size` in line with the upload
 limit, and `X-Powered-By` stripped if the PHP version should not be advertised (the
-engine's own header names the engine).
+engine's own header names Minn).
