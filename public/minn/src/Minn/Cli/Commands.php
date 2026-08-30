@@ -34,11 +34,15 @@ final class Commands
         self::leaf('plugin deactivate', [PluginCommand::class, 'deactivate'], $early);
         self::leaf('plugin delete', [PluginCommand::class, 'delete'], $early);
         self::leaf('plugin is-installed', [PluginCommand::class, 'is_installed'], $early);
+        self::leaf('plugin update', [PluginCommand::class, 'update'], $early);
+        self::leaf('plugin upgrade', [PluginCommand::class, 'update'], $early);
         self::leaf('theme list', [ThemeCommand::class, 'list'], $early);
         self::leaf('theme install', [ThemeCommand::class, 'install'], $early);
         self::leaf('theme activate', [ThemeCommand::class, 'activate'], $early);
         self::leaf('theme delete', [ThemeCommand::class, 'delete'], $early);
         self::leaf('theme is-installed', [ThemeCommand::class, 'is_installed'], $early);
+        self::leaf('theme update', [ThemeCommand::class, 'update'], $early);
+        self::leaf('theme upgrade', [ThemeCommand::class, 'update'], $early);
         self::leaf('cache flush', [CacheCommand::class, 'flush'], $early);
         self::leaf('rewrite flush', [RewriteCommand::class, 'flush'], $early);
         self::leaf('rewrite structure', [RewriteCommand::class, 'structure'], $early);

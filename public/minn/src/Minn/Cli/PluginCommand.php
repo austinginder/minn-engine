@@ -12,7 +12,7 @@ use Minn\RestError;
 use WP_CLI;
 use WP_CLI\Formatter;
 
-/** `wp plugin list|install|activate|deactivate|delete`: the inventory and the fleet's install/delete. */
+/** `wp plugin list|install|update|activate|deactivate|delete`: the inventory and the fleet's install/update/delete. */
 final class PluginCommand
 {
     private const FIELDS = ['name', 'status', 'update', 'version', 'update_version', 'auto_update'];
@@ -146,6 +146,55 @@ final class PluginCommand
             return;
         }
         WP_CLI::error('No plugins installed.');
+    }
+
+    /**
+     * Updates one or more plugins from wordpress.org.
+     *
+     * ## OPTIONS
+     *
+     * [<plugin>...]
+     * : One or more plugins to update.
+     *
+     * [--all]
+     * : If set, all plugins that have updates will be updated.
+     *
+     * [--exclude=<name>]
+     * : Comma separated list of plugin names that should be excluded from updating.
+     *
+     * [--minor]
+     * : Only perform updates for minor releases.
+     *
+     * [--patch]
+     * : Only perform updates for patch releases.
+     *
+     * [--format=<format>]
+     * : Render output in a particular format.
+     * ---
+     * default: table
+     * options:
+     *   - table
+     *   - csv
+     *   - json
+     *   - summary
+     * ---
+     *
+     * [--version=<version>]
+     * : If set, the plugin will be updated to the specified version.
+     *
+     * [--dry-run]
+     * : Preview which plugins would be updated.
+     *
+     * @alias upgrade
+     * @when before_wp_load
+     */
+    public function update(array $args, array $assocArgs): void
+    {
+        if ((string) ($assocArgs['version'] ?? '') !== '') {
+            $this->pinVersion($args, (string) $assocArgs['version']);
+            return;
+        }
+        AssetUpdate::boot('plugin')->run($args, $assocArgs);
     }
 
     /**
@@ -325,6 +374,31 @@ final class PluginCommand
         WP_CLI::log('Plugin installed successfully.');
         $fresh = true;
         return $result['folder'];
+    }
+
+    /** `--version` on update force-installs that release using the install wording. */
+    private function pinVersion(array $args, string $version): void
+    {
+        if ($args === []) {
+            WP_CLI::error('Please specify one or more plugins, or use --all.');
+        }
+        $runtime = Runtime::boot();
+        $packages = new Packages($runtime->site, rtrim(ABSPATH, '/') . '/wp-content');
+        $done = 0;
+        foreach ($args as $slug) {
+            $dest = rtrim(ABSPATH, '/') . '/wp-content/plugins/' . $slug;
+            if (!is_dir($dest) && !is_file($dest . '.php')) {
+                WP_CLI::warning("The '{$slug}' plugin could not be found.");
+                continue;
+            }
+            $fresh = false;
+            if ($this->installOne($packages, $slug, true, $version, $fresh) !== null && $fresh) {
+                $done++;
+            }
+        }
+        if ($done > 0) {
+            WP_CLI::success("Installed {$done} of " . count($args) . ' plugins.');
+        }
     }
 
     private function activateFolder(Runtime $runtime, string $folder): void

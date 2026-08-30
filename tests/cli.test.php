@@ -111,6 +111,24 @@ foreach ([
     'plugin is-installed minn-admin',
     'plugin is-installed nope-nope',
     'plugin delete nope-nope',
+    'plugin update',
+    'plugin update nope-nope',
+    'plugin update --all',
+    'plugin update --all --dry-run',
+    'plugin update minn-admin',
+    'plugin update hello-dolly',
+    'plugin update hello-dolly minn-admin',
+    'plugin update --all --format=json',
+    'plugin update --all --exclude=',
+    'plugin update --all --exclude=minn-admin',
+    'theme update',
+    'theme update nope-nope',
+    'theme update --all',
+    'theme update --all --dry-run',
+    'theme update twentytwentyfive',
+    'theme update twentysixteen',
+    'theme update twentytwentyfive twentysixteen',
+    'theme update --all --exclude=',
     'cache flush',
     'user create uniqueloginzzz admin@minn-engine.localhost',
     'user create badroleuser badrole@example.test --role=not-a-role',
@@ -298,6 +316,49 @@ $run($REF_DIR, 'plugin install hello-dolly');
 $same('plugin install hello-dolly when already on disk', 'plugin install hello-dolly');
 $run($ENGINE_DIR, 'plugin delete hello-dolly');
 $run($REF_DIR, 'plugin delete hello-dolly');
+
+$sameStripped = static function (string $label, string $command) use ($run, $check, $stripCache, $ENGINE_DIR, $REF_DIR): void {
+    [$engineOut, $engineCode] = $run($ENGINE_DIR, $command);
+    [$refOut, $refCode] = $run($REF_DIR, $command);
+    $check(
+        $label,
+        $stripCache($engineOut) === $stripCache($refOut) && $engineCode === $refCode,
+        "wp {$command}\n      engine[{$engineCode}]: " . substr($stripCache($engineOut), 0, 400) . "\n      ref[{$refCode}]:    " . substr($stripCache($refOut), 0, 400),
+    );
+};
+$run($ENGINE_DIR, 'plugin install hello-dolly --version=1.6');
+$run($REF_DIR, 'plugin install hello-dolly --version=1.6');
+$same('plugin update --all --dry-run with an offer', 'plugin update --all --dry-run');
+$same('plugin update --all --exclude=hello-dolly with an offer', 'plugin update --all --exclude=hello-dolly');
+$sameStripped('plugin update hello-dolly matches the reference', 'plugin update hello-dolly');
+$run($ENGINE_DIR, 'plugin delete hello-dolly');
+$run($REF_DIR, 'plugin delete hello-dolly');
+
+$run($ENGINE_DIR, 'theme install twentysixteen --version=3.8');
+$same('theme update --all --dry-run with an offer', 'theme update --all --dry-run');
+$run($ENGINE_DIR, 'theme activate twentytwentyfive');
+$run($ENGINE_DIR, 'theme delete twentysixteen');
+$compareThemeUpdate = static function (string $label, string $command) use ($run, $check, $stripCache, $ENGINE_DIR, $REF_DIR): void {
+    $prep = static function (string $dir) use ($run): void {
+        $run($dir, 'theme install twentysixteen --version=3.8 --force');
+    };
+    $cleanup = static function (string $dir) use ($run): void {
+        $run($dir, 'theme activate twentytwentyfive');
+        $run($dir, 'theme delete twentysixteen');
+    };
+    $prep($ENGINE_DIR);
+    [$engineOut, $engineCode] = $run($ENGINE_DIR, $command);
+    $cleanup($ENGINE_DIR);
+    $prep($REF_DIR);
+    [$refOut, $refCode] = $run($REF_DIR, $command);
+    $cleanup($REF_DIR);
+    $check(
+        $label,
+        $stripCache($engineOut) === $stripCache($refOut) && $engineCode === $refCode,
+        "wp {$command}\n      engine[{$engineCode}]: " . substr($stripCache($engineOut), 0, 400) . "\n      ref[{$refCode}]:    " . substr($stripCache($refOut), 0, 400),
+    );
+};
+$compareThemeUpdate('theme update twentysixteen matches the reference', 'theme update twentysixteen');
 
 [$out, $code] = $run($ENGINE_DIR, 'rewrite flush');
 $check('rewrite flush succeeds', $code === 0 && $out === 'Success: Rewrite rules flushed.', "[$code] {$out}");

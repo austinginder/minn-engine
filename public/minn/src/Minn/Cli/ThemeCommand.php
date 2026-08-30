@@ -12,8 +12,8 @@ use WP_CLI;
 use WP_CLI\Formatter;
 
 /**
- * `wp theme list|install|activate|delete`: the inventory CaptainCore
- * reads, and the install the fleet's `wp theme install` runs.
+ * `wp theme list|install|update|activate|delete`: the inventory CaptainCore
+ * reads, and the install/update the fleet's `wp theme` verbs run.
  */
 final class ThemeCommand
 {
@@ -116,6 +116,55 @@ final class ThemeCommand
     }
 
     /**
+     * Updates one or more themes from wordpress.org.
+     *
+     * ## OPTIONS
+     *
+     * [<theme>...]
+     * : One or more themes to update.
+     *
+     * [--all]
+     * : If set, all themes that have updates will be updated.
+     *
+     * [--exclude=<theme-names>]
+     * : Comma separated list of theme names that should be excluded from updating.
+     *
+     * [--minor]
+     * : Only perform updates for minor releases.
+     *
+     * [--patch]
+     * : Only perform updates for patch releases.
+     *
+     * [--format=<format>]
+     * : Render output in a particular format.
+     * ---
+     * default: table
+     * options:
+     *   - table
+     *   - csv
+     *   - json
+     *   - summary
+     * ---
+     *
+     * [--version=<version>]
+     * : If set, the theme will be updated to the specified version.
+     *
+     * [--dry-run]
+     * : Preview which themes would be updated.
+     *
+     * @alias upgrade
+     * @when before_wp_load
+     */
+    public function update(array $args, array $assocArgs): void
+    {
+        if ((string) ($assocArgs['version'] ?? '') !== '') {
+            $this->pinVersion($args, (string) $assocArgs['version']);
+            return;
+        }
+        AssetUpdate::boot('theme')->run($args, $assocArgs);
+    }
+
+    /**
      * Activates a theme.
      *
      * ## OPTIONS
@@ -174,6 +223,29 @@ final class ThemeCommand
             WP_CLI::error('No themes deleted.');
         }
         WP_CLI::success('Theme already deleted.');
+    }
+
+    /** `--version` on update force-installs that release using the install wording. */
+    private function pinVersion(array $args, string $version): void
+    {
+        if ($args === []) {
+            WP_CLI::error('Please specify one or more themes, or use --all.');
+        }
+        $runtime = Runtime::boot();
+        $packages = new Packages($runtime->site, rtrim(ABSPATH, '/') . '/wp-content');
+        $done = 0;
+        foreach ($args as $slug) {
+            if (!is_dir(rtrim(ABSPATH, '/') . '/wp-content/themes/' . $slug)) {
+                WP_CLI::error("The '{$slug}' theme could not be found.");
+            }
+            $fresh = false;
+            if ($this->installOne($packages, $slug, true, $version, $fresh) !== null && $fresh) {
+                $done++;
+            }
+        }
+        if ($done > 0) {
+            WP_CLI::success("Installed {$done} of " . count($args) . ' themes.');
+        }
     }
 
     /**

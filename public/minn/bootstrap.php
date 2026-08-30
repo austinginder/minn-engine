@@ -23,7 +23,7 @@ if (defined('WP_CLI') && WP_CLI) {
     if (!defined('MINN_CLI_RUNTIME')) {
         WP_CLI::error(
             "This command needs WordPress itself, which Minn Engine does not contain.\n"
-            . 'The engine answers: option get/add/update/delete/set, user list/get/login/create/update/delete, plugin list/install/activate/deactivate/delete/is-installed, theme list/install/activate/delete/is-installed, cache flush, rewrite flush/structure, search-replace, minn version/info/probe, '
+            . 'The engine answers: option get/add/update/delete/set, user list/get/login/create/update/delete, plugin list/install/update/activate/deactivate/delete/is-installed, theme list/install/update/activate/delete/is-installed, cache flush, rewrite flush/structure, search-replace, minn version/info/probe, '
             . "and WP-CLI's own config and db commands."
         );
     }
