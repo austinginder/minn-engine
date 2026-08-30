@@ -8,8 +8,9 @@ management surface the editor and taxonomy views drive.
 ## List parameters
 
 `orderby` (name default | count | id | slug), `order` (asc default),
-`search` (name substring), `include`, `per_page`/`page` with the
-`X-WP-Total` headers, `_fields`.
+`search` (name substring), `include`, `exclude`, `slug` (comma list),
+`post` (terms of that post; invalid id is `400 rest_post_invalid_id`),
+`per_page`/`page` with the `X-WP-Total` headers, `_fields`.
 
 ## Capability model (oracle-pinned)
 
@@ -43,7 +44,7 @@ response `{ deleted: true, previous }`.
 
 ## Known gaps
 
-- No `hide_empty`, `post` (terms-of-a-post) or `parent` list filters.
+- No `hide_empty` or `parent` list filters.
 - `count` on the deleted term's former posts is not recounted here (the
   write path's recount covers assignment changes; a delete leaves
   detached posts uncounted exactly as observed so far — revisit with a

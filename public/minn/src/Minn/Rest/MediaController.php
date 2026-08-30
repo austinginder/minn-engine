@@ -104,6 +104,22 @@ final readonly class MediaController
                 $params = [...$params, ...$ids];
             }
         }
+        $parentExclude = $request->query('parent_exclude');
+        if ($parentExclude !== null && $parentExclude !== '') {
+            $ids = self::intList($parentExclude, true);
+            if ($ids !== []) {
+                $where .= ' AND post_parent NOT IN (' . implode(',', array_fill(0, count($ids), '?')) . ')';
+                $params = [...$params, ...$ids];
+            }
+        }
+        $slug = (string) $request->query('slug', '');
+        if ($slug !== '') {
+            $slugs = array_values(array_filter(explode(',', $slug), static fn (string $s) => $s !== ''));
+            if ($slugs !== []) {
+                $where .= ' AND post_name IN (' . implode(',', array_fill(0, count($slugs), '?')) . ')';
+                $params = [...$params, ...$slugs];
+            }
+        }
         $mediaType = $request->query('media_type');
         if ($mediaType !== null && $mediaType !== '') {
             $allowed = ['image', 'video', 'text', 'application', 'audio'];

@@ -63,7 +63,7 @@ recorded gap.
 
 - List: `post_status = inherit` attachments, newest first, `per_page`
   (default 10) / `page`, `include`, `author` / `author_exclude` (id lists),
-  `parent` (id list; `0` is unattached), `media_type`
+  `parent` / `parent_exclude` (id lists; `0` is unattached), `slug`, `media_type`
   (`image|video|text|application|audio`, else `400 rest_invalid_param`
   with `media_type[0] is not one of …`), `mime_type`, `search` (every
   word in title/excerpt/content), `after` / `before` (exclusive on

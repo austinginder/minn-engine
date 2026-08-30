@@ -74,10 +74,31 @@ final readonly class UsersController
             : "u.ID IN ( SELECT post_author FROM {$this->db->table('posts')}
                WHERE post_status = 'publish' AND post_type IN ('post','page') )";
         $params = [];
-        $include = array_filter(array_map(intval(...), explode(',', (string) $request->query('include', ''))));
+        $include = array_values(array_filter(array_map(intval(...), explode(',', (string) $request->query('include', ''))), static fn (int $id) => $id > 0));
         if ($include !== []) {
             $where .= ' AND u.ID IN (' . implode(',', array_fill(0, count($include), '?')) . ')';
-            $params = array_values($include);
+            $params = [...$params, ...$include];
+        }
+        $exclude = array_values(array_filter(array_map(intval(...), explode(',', (string) $request->query('exclude', ''))), static fn (int $id) => $id > 0));
+        if ($exclude !== []) {
+            $where .= ' AND u.ID NOT IN (' . implode(',', array_fill(0, count($exclude), '?')) . ')';
+            $params = [...$params, ...$exclude];
+        }
+        $slug = (string) $request->query('slug', '');
+        if ($slug !== '') {
+            $slugs = array_values(array_filter(explode(',', $slug), static fn (string $s) => $s !== ''));
+            if ($slugs !== []) {
+                $where .= ' AND u.user_nicename IN (' . implode(',', array_fill(0, count($slugs), '?')) . ')';
+                $params = [...$params, ...$slugs];
+            }
+        }
+        foreach (preg_split('/\s+/', trim((string) $request->query('search', ''))) ?: [] as $word) {
+            if ($word === '') {
+                continue;
+            }
+            $like = '%' . addcslashes($word, '%_\\') . '%';
+            $where .= ' AND (u.user_login LIKE ? OR u.user_nicename LIKE ? OR u.display_name LIKE ?)';
+            $params = [...$params, $like, $like, $like];
         }
         $table = $this->db->table('users');
         $total = (int) $this->db->value("SELECT COUNT(*) FROM {$table} u WHERE {$where}", $params);

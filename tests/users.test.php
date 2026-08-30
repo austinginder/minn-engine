@@ -125,6 +125,10 @@ us_parity( "the app's list query", $Q . '&context=edit&per_page=50&orderby=name&
 us_parity( 'edit list full objects', $Q . '&context=edit&per_page=100', $admin );
 us_parity( 'orderby registered_date desc', $Q . '&context=edit&orderby=registered_date&order=desc&_fields=id,name', $admin );
 us_parity( 'include filter', $Q . '&context=edit&include=1,3&_fields=id,name', $admin );
+us_parity( 'exclude filter', $Q . '&exclude=1&_fields=id', $admin );
+us_parity( 'slug filter', $Q . '&slug=admin&_fields=id,slug', null );
+us_parity( 'search login', $Q . '&search=admin&_fields=id,slug', null );
+us_parity( 'search display name', $Q . '&search=Erin&_fields=id,name', null );
 us_parity( 'edit list refused (editor)', $Q . '&context=edit', $editor );
 us_parity( 'edit list refused (anonymous)', $Q . '&context=edit', null );
 us_parity( 'single edit self (author)', $Q . '%2F3&context=edit', $author );

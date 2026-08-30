@@ -121,6 +121,8 @@ $QT     = 'rest_route=' . rawurlencode( '/wp/v2/tags' );
 
 // 1. The app's list queries and capability-driven hints.
 tm_parity( 'categories by count desc', $QC . '&per_page=100&orderby=count&order=desc&_fields=id,name,count', $admin );
+tm_parity( 'categories exclude', $QC . '&exclude=1&_fields=id', $admin );
+tm_parity( 'categories slug', $QC . '&slug=uncategorized&_fields=id,slug', $admin );
 tm_parity( 'tags search', $QT . '&search=eng', $admin );
 tm_parity( 'tags include', $QT . '&include=2,3&_fields=id,name', $author );
 tm_parity( 'category single (admin hints)', $QC . '%2F1', $admin );

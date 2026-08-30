@@ -52,6 +52,9 @@ normalize the capture origin to the engine origin before comparing.
   Because `wp/v2/types` is one associative payload, `_fields` strips every
   type key and the response is literally `[]` over HTTP; the engine
   reproduces this quirk by construction.
+- **List filters**: `author` / `author_exclude` (id lists), `parent` /
+  `parent_exclude` (id lists; `0` is top-level), `menu_order` (exact
+  integer, including 0), `include` / `exclude`, `slug`, `search`.
 - **Pages**: link is `/?page_id={id}`; fields add `parent` and `menu_order`
   and drop sticky, format, categories, and tags; `class_list` has no
   `format-*` entry; `_links` gains an embeddable `up` entry when the page

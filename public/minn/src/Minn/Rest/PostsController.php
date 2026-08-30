@@ -82,9 +82,20 @@ final readonly class PostsController
             $params[] = $userId;
         }
         $author = $request->query('author');
-        if ($author !== null && ctype_digit($author)) {
-            $where .= ' AND post_author = ?';
-            $params[] = (int) $author;
+        if ($author !== null && $author !== '') {
+            $ids = self::ids($author);
+            if ($ids !== []) {
+                $where .= ' AND post_author IN (' . implode(',', array_fill(0, count($ids), '?')) . ')';
+                $params = [...$params, ...$ids];
+            }
+        }
+        $authorExclude = $request->query('author_exclude');
+        if ($authorExclude !== null && $authorExclude !== '') {
+            $ids = self::ids($authorExclude);
+            if ($ids !== []) {
+                $where .= ' AND post_author NOT IN (' . implode(',', array_fill(0, count($ids), '?')) . ')';
+                $params = [...$params, ...$ids];
+            }
         }
         $include = self::ids((string) $request->query('include', ''));
         if ($include !== []) {
@@ -103,9 +114,25 @@ final readonly class PostsController
             $params = [...$params, ...$slugs];
         }
         $parent = $request->query('parent');
-        if ($parent !== null && ctype_digit($parent)) {
-            $where .= ' AND post_parent = ?';
-            $params[] = (int) $parent;
+        if ($parent !== null && $parent !== '') {
+            $ids = self::ids($parent, true);
+            if ($ids !== []) {
+                $where .= ' AND post_parent IN (' . implode(',', array_fill(0, count($ids), '?')) . ')';
+                $params = [...$params, ...$ids];
+            }
+        }
+        $parentExclude = $request->query('parent_exclude');
+        if ($parentExclude !== null && $parentExclude !== '') {
+            $ids = self::ids($parentExclude, true);
+            if ($ids !== []) {
+                $where .= ' AND post_parent NOT IN (' . implode(',', array_fill(0, count($ids), '?')) . ')';
+                $params = [...$params, ...$ids];
+            }
+        }
+        $menuOrder = $request->query('menu_order');
+        if ($menuOrder !== null && $menuOrder !== '' && preg_match('/^-?\d+$/', $menuOrder) === 1) {
+            $where .= ' AND menu_order = ?';
+            $params[] = (int) $menuOrder;
         }
         // Every whitespace-separated word must appear in the title, excerpt, or content.
         foreach (preg_split('/\s+/', trim((string) $request->query('search', ''))) ?: [] as $word) {
@@ -153,9 +180,20 @@ final readonly class PostsController
     }
 
     /** @return list<int> */
-    private static function ids(string $csv): array
+    private static function ids(string $csv, bool $keepZero = false): array
     {
-        return array_values(array_filter(array_map(intval(...), explode(',', $csv)), static fn (int $id) => $id > 0));
+        $out = [];
+        foreach (explode(',', $csv) as $part) {
+            $part = trim($part);
+            if ($part === '' || !ctype_digit($part)) {
+                continue;
+            }
+            $n = (int) $part;
+            if ($n !== 0 || $keepZero) {
+                $out[] = $n;
+            }
+        }
+        return array_values(array_unique($out));
     }
 
     #[Route(Method::Get, '/wp/v2/{base:posts|pages}/{id:\d+}')]

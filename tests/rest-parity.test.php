@@ -27,8 +27,14 @@ $fail = 0;
 
 function parity( string $label, string $route ): void {
 	global $ENGINE, $REF, $pass, $fail;
-	[ $rh, $rb ] = minn_test_fetch( "$REF/?rest_route=" . rawurlencode( $route ) . '' );
-	[ $eh, $eb ] = minn_test_fetch( "$ENGINE/?rest_route=" . rawurlencode( $route ) . '' );
+	$path  = $route;
+	$extra = '';
+	if ( str_contains( $route, '&' ) ) {
+		[ $path, $qs ] = explode( '&', $route, 2 );
+		$extra         = '&' . $qs;
+	}
+	[ $rh, $rb ] = minn_test_fetch( "$REF/?rest_route=" . rawurlencode( $path ) . $extra );
+	[ $eh, $eb ] = minn_test_fetch( "$ENGINE/?rest_route=" . rawurlencode( $path ) . $extra );
 
 	$ok = true;
 	$why = '';
@@ -78,11 +84,18 @@ parity( 'posts _fields unknown key', '/wp/v2/posts&_fields=bogus' );
 parity( 'single _fields', '/wp/v2/posts/1&_fields=id,slug,link' );
 
 parity( 'pages list', '/wp/v2/pages' );
+parity( 'posts author_exclude', '/wp/v2/posts&author_exclude=1&_fields=id,author' );
+parity( 'posts author list', '/wp/v2/posts&author=1,3&_fields=id,author' );
+parity( 'pages author_exclude', '/wp/v2/pages&author_exclude=1&_fields=id,author' );
+parity( 'pages menu_order', '/wp/v2/pages&menu_order=0&_fields=id,menu_order' );
+parity( 'pages parent_exclude', '/wp/v2/pages&parent_exclude=0&_fields=id,parent' );
 parity( 'pages single parent', '/wp/v2/pages/2' );
 parity( 'pages single child (up link)', '/wp/v2/pages/6' );
 parity( 'pages invalid id', '/wp/v2/pages/999' );
 
 parity( 'categories list', '/wp/v2/categories' );
+parity( 'categories exclude', '/wp/v2/categories&exclude=1&_fields=id' );
+parity( 'categories slug', '/wp/v2/categories&slug=uncategorized&_fields=id,slug' );
 parity( 'categories single', '/wp/v2/categories/1' );
 parity( 'tags list', '/wp/v2/tags' );
 parity( 'tags single', '/wp/v2/tags/2' );

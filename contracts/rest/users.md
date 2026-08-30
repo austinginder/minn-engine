@@ -15,7 +15,9 @@ Read-side basics (view objects, /me, the failure matrix) live in
 - `context=edit` needs `list_users` → `rest_forbidden_context`
   ("Sorry, you are not allowed to **edit** users." — not "list").
 - `orderby` (name | id | registered_date | slug | email; default name),
-  `order` (asc default), `include`, `per_page`/`page` + `X-WP-Total`
+  `order` (asc default), `include`, `exclude`, `slug` (user_nicename,
+  comma list), `search` (case-insensitive substring of login, nicename,
+  or display name; not email), `per_page`/`page` + `X-WP-Total`
   headers, `_fields`. `minn_switch_url` is absent with no switch provider
   installed — matching the oracle, where the lazy field also stays away.
 - Single `context=edit`: self, or `list_users`.
@@ -70,5 +72,5 @@ usermeta; response `{ deleted: true, previous }`.
 
 - No `roles`/email validation beyond existence checks (bad role strings
   are stored as-is; core validates against the role registry).
-- `who=authors`, `search`, `slug` list filters.
+- `who=authors`, `roles`, `capabilities`, `has_published_posts` list filters.
 - Multisite semantics (spam/deleted flags, network caps) — single-site only.

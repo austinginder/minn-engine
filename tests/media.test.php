@@ -234,6 +234,8 @@ md_parity( 'list parent=0 (Unattached)', $Q . '&parent=0&_fields=id,post&per_pag
 md_parity( 'list media_type=video', $Q . '&media_type=video&_fields=id', $admin );
 md_parity( 'list media_type=bogus', $Q . '&media_type=bogus', $admin );
 md_parity( 'list after invalid date', $Q . '&after=not-a-date', $admin );
+md_parity( 'list parent_exclude=0', $Q . '&parent_exclude=0&_fields=id', $admin );
+md_parity( 'list slug=battery-image', $Q . '&slug=battery-image&_fields=id,slug', $admin );
 [ $st, $b ] = md_fetch( $ENGINE, $Q . '&author=3&_fields=id,author&per_page=100', $admin );
 $ids = array_column( is_array( $b ) ? $b : array(), 'id' );
 check( in_array( $aid, $ids, true ), 'Mine includes the author upload', json_encode( $ids ) );

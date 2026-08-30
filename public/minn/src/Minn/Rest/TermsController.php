@@ -44,10 +44,23 @@ final readonly class TermsController
             $where .= ' AND t.name LIKE ?';
             $params[] = '%' . addcslashes($search, '%_\\') . '%';
         }
-        $include = array_filter(array_map(intval(...), explode(',', (string) $request->query('include', ''))));
+        $include = array_values(array_filter(array_map(intval(...), explode(',', (string) $request->query('include', ''))), static fn (int $id) => $id > 0));
         if ($include !== []) {
             $where .= ' AND t.term_id IN (' . implode(',', array_fill(0, count($include), '?')) . ')';
-            $params = [...$params, ...array_values($include)];
+            $params = [...$params, ...$include];
+        }
+        $exclude = array_values(array_filter(array_map(intval(...), explode(',', (string) $request->query('exclude', ''))), static fn (int $id) => $id > 0));
+        if ($exclude !== []) {
+            $where .= ' AND t.term_id NOT IN (' . implode(',', array_fill(0, count($exclude), '?')) . ')';
+            $params = [...$params, ...$exclude];
+        }
+        $slug = (string) $request->query('slug', '');
+        if ($slug !== '') {
+            $slugs = array_values(array_filter(explode(',', $slug), static fn (string $s) => $s !== ''));
+            if ($slugs !== []) {
+                $where .= ' AND t.slug IN (' . implode(',', array_fill(0, count($slugs), '?')) . ')';
+                $params = [...$params, ...$slugs];
+            }
         }
         $post = $request->query('post');
         if ($post !== null && ctype_digit($post)) {
