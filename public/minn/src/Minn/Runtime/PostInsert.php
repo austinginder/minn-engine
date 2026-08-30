@@ -100,7 +100,8 @@ final readonly class PostInsert
         if ($dateGmt === '' || str_starts_with($dateGmt, '0000-00-00')) {
             if (in_array($status, ['draft', 'pending', 'auto-draft'], true)) {
                 $dateGmt = '0000-00-00 00:00:00';
-            } elseif ($update && !str_starts_with((string) $existing['post_date_gmt'], '0000') && !array_key_exists('post_date', $columns)) {
+            } elseif ($update && !str_starts_with((string) $existing['post_date_gmt'], '0000')) {
+                // The reference keeps a stored GMT date across an update that names only post_date.
                 $dateGmt = (string) $existing['post_date_gmt'];
             } else {
                 $dateGmt = ($this->gmtFromDate)($date);

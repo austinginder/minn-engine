@@ -120,7 +120,6 @@
     "wp_get_theme_file_editable_extensions",
     "wp_get_update_data",
     "wp_get_update_php_url",
-    "wp_is_file_mod_allowed",
     "wp_is_jsonp_request",
     "wp_link_pages",
     "wp_list_pages",

@@ -10,6 +10,7 @@ use Minn\Auth\Nonce;
 use Minn\Content\Posts;
 use Minn\Content\Site;
 use Minn\Front\Permalinks;
+use Minn\Runtime\Runtime;
 use stdClass;
 
 /**
@@ -19,6 +20,9 @@ use stdClass;
  */
 final readonly class BootPayload
 {
+    /** Boot keys the plugin computes that point the app at wp-admin pages the engine does not serve. */
+    private const PLUGIN_KEYS_WITHHELD = ['notices'];
+
     public function __construct(
         private Site $site,
         private Permalinks $permalinks,
@@ -47,6 +51,7 @@ final readonly class BootPayload
         $can = fn (string $capability): bool => $this->capabilities->can($userId, $capability);
         $locale = $this->translations?->localeOf($userId) ?? ($this->site->option('WPLANG') ?: 'en_US');
         [$i18n, $plural] = $this->translations?->catalog($locale) ?? [[], ''];
+        $plugin = $this->pluginPayload();
 
         $payload = [
             // The pretty REST base: the client appends "wp/v2/posts?context=edit&…",
@@ -121,11 +126,53 @@ final readonly class BootPayload
             'ajaxUrl' => $this->permalinks->url('/wp-admin/admin-ajax.php'),
             // No admin-ajax plugin toggles: the app falls back to PUT wp/v2/plugins.
             'pluginAjax' => null,
-            'comments' => true,
+            'comments' => is_bool($plugin['comments'] ?? null) ? $plugin['comments'] : true,
             'hidden' => $this->hidden->listFor($userId),
             'pretty' => $this->permalinks->isPretty(),
-        ] + $this->adapterSlices();
+        ] + ($plugin === null ? $this->adapterSlices() : array_diff_key($plugin, array_flip(self::PLUGIN_KEYS_WITHHELD)));
         return $payload;
+    }
+
+    /**
+     * What Minn Admin's own boot_payload() computes when the plugin runs as
+     * code on the runtime, so the app boots with the same keys on both
+     * stacks (connectors, discussion defaults, roles, post formats, the
+     * adapter flags). Engine-owned keys win; the withheld ones would send
+     * the app to a wp-admin page the engine does not have.
+     */
+    private function pluginPayload(): ?array
+    {
+        if (!Runtime::booted() || !class_exists('Minn_Admin', false) || !method_exists('Minn_Admin', 'boot_payload')) {
+            return null;
+        }
+        try {
+            $this->standHomeQuery();
+            $payload = \Minn_Admin::boot_payload();
+            return is_array($payload) ? $payload : null;
+        } catch (\Throwable $e) {
+            error_log('Minn Engine: Minn Admin boot_payload failed on the runtime: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * The reference serves the app shell from the home query, so the global
+     * post is the newest post while the payload is built; the comments
+     * feature check reads it through the comments_open filter (a site that
+     * closes comments on old posts reports the feature off when its newest
+     * post is old).
+     */
+    private function standHomeQuery(): void
+    {
+        if (!function_exists('_minn_run_main_query')) {
+            return;
+        }
+        \_minn_run_main_query([], 1, 10);
+        $query = $GLOBALS['wp_query'] ?? null;
+        if (is_object($query) && isset($query->post) && $query->post !== null) {
+            $GLOBALS['post'] = $query->post;
+            Runtime::current()->set('post', $query->post);
+        }
     }
 
     /** The site icon as the app shows it in the sidebar: the attachment file behind the site_icon option. */

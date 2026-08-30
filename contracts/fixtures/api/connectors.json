@@ -1,0 +1,818 @@
+[
+    [
+        "registry",
+        [
+            "WP_Connector_Registry",
+            true,
+            1
+        ]
+    ],
+    [
+        "default ids",
+        [
+            "anthropic",
+            "google",
+            "openai",
+            "akismet",
+            "cleantalk"
+        ]
+    ],
+    [
+        "default rows",
+        {
+            "anthropic": {
+                "name": "Anthropic",
+                "description": "Text generation with Claude.",
+                "type": "ai_provider",
+                "authentication": {
+                    "method": "api_key",
+                    "credentials_url": "https://platform.claude.com/settings/keys",
+                    "setting_name": "connectors_ai_anthropic_api_key",
+                    "constant_name": "ANTHROPIC_API_KEY",
+                    "env_var_name": "ANTHROPIC_API_KEY"
+                },
+                "plugin": {
+                    "file": "ai-provider-for-anthropic/plugin.php",
+                    "is_active": "{closure}"
+                }
+            },
+            "google": {
+                "name": "Google",
+                "description": "Text and image generation with Gemini and Imagen.",
+                "type": "ai_provider",
+                "authentication": {
+                    "method": "api_key",
+                    "credentials_url": "https://aistudio.google.com/api-keys",
+                    "setting_name": "connectors_ai_google_api_key",
+                    "constant_name": "GOOGLE_API_KEY",
+                    "env_var_name": "GOOGLE_API_KEY"
+                },
+                "plugin": {
+                    "file": "ai-provider-for-google/plugin.php",
+                    "is_active": "{closure}"
+                }
+            },
+            "openai": {
+                "name": "OpenAI",
+                "description": "Text and image generation with GPT and Dall-E.",
+                "type": "ai_provider",
+                "authentication": {
+                    "method": "api_key",
+                    "credentials_url": "https://platform.openai.com/api-keys",
+                    "setting_name": "connectors_ai_openai_api_key",
+                    "constant_name": "OPENAI_API_KEY",
+                    "env_var_name": "OPENAI_API_KEY"
+                },
+                "plugin": {
+                    "file": "ai-provider-for-openai/plugin.php",
+                    "is_active": "{closure}"
+                }
+            },
+            "akismet": {
+                "name": "Akismet Anti-spam",
+                "description": "Protect your site from spam.",
+                "type": "spam_filtering",
+                "authentication": {
+                    "method": "api_key",
+                    "credentials_url": "https://akismet.com/get/",
+                    "setting_name": "wordpress_api_key",
+                    "constant_name": "WPCOM_API_KEY"
+                },
+                "plugin": {
+                    "file": "akismet/akismet.php",
+                    "is_active": "{closure}"
+                }
+            },
+            "cleantalk": {
+                "name": "CleanTalk Anti-Spam",
+                "description": "Cloud spam filtering for comments, registrations and forms.",
+                "type": "spam_filtering",
+                "authentication": {
+                    "method": "api_key",
+                    "credentials_url": "https://cleantalk.org/my",
+                    "setting_name": "connectors_spam_filtering_cleantalk_api_key",
+                    "constant_name": "CLEANTALK_ACCESS_KEY"
+                },
+                "plugin": {
+                    "file": "cleantalk-spam-protect/cleantalk.php",
+                    "is_active": "{closure}"
+                }
+            }
+        }
+    ],
+    [
+        "get_connector",
+        [
+            true,
+            null,
+            [
+                "Function WP_Connector_Registry::get_registered was called incorrectly. Connector \"nope\" not found."
+            ]
+        ]
+    ],
+    [
+        "is_registered",
+        [
+            true,
+            true,
+            false,
+            false
+        ]
+    ],
+    [
+        "get_registered",
+        [
+            true,
+            null,
+            [
+                "Function WP_Connector_Registry::get_registered was called incorrectly. Connector \"nope\" not found."
+            ]
+        ]
+    ],
+    [
+        "is_active default",
+        {
+            "anthropic": false,
+            "google": false,
+            "openai": false,
+            "akismet": false,
+            "cleantalk": false
+        }
+    ],
+    [
+        "registered settings",
+        []
+    ],
+    [
+        "register no type",
+        [
+            null,
+            [
+                "Function WP_Connector_Registry::register was called incorrectly. Connector \"minn_probe_a\" requires a non-empty \"type\" string."
+            ]
+        ]
+    ],
+    [
+        "register empty type",
+        [
+            null,
+            [
+                "Function WP_Connector_Registry::register was called incorrectly. Connector \"minn_probe_a\" requires a non-empty \"type\" string."
+            ]
+        ]
+    ],
+    [
+        "register no name",
+        [
+            null,
+            [
+                "Function WP_Connector_Registry::register was called incorrectly. Connector \"minn_probe_a\" requires a non-empty \"name\" string."
+            ]
+        ]
+    ],
+    [
+        "register first",
+        [
+            {
+                "name": "A",
+                "description": "",
+                "type": "custom",
+                "authentication": {
+                    "method": "none"
+                },
+                "plugin": {
+                    "is_active": "__return_true"
+                }
+            },
+            []
+        ]
+    ],
+    [
+        "register dup",
+        [
+            null,
+            [
+                "Function WP_Connector_Registry::register was called incorrectly. Connector \"minn_probe_a\" is already registered."
+            ]
+        ]
+    ],
+    [
+        "register dup before type",
+        [
+            null,
+            [
+                "Function WP_Connector_Registry::register was called incorrectly. Connector \"minn_probe_a\" is already registered."
+            ]
+        ]
+    ],
+    [
+        "register bad id before type",
+        [
+            null,
+            [
+                "Function WP_Connector_Registry::register was called incorrectly. Connector ID must contain only lowercase alphanumeric characters, hyphens, and underscores."
+            ]
+        ]
+    ],
+    [
+        "register bad ids",
+        [
+            null,
+            null,
+            null,
+            null,
+            [
+                "Function WP_Connector_Registry::register was called incorrectly. Connector ID must contain only lowercase alphanumeric characters, hyphens, and underscores."
+            ]
+        ]
+    ],
+    [
+        "register hyphen id",
+        [
+            null,
+            [
+                "Function WP_Connector_Registry::register was called incorrectly. Connector \"minn-probe-d\" requires an \"authentication\" array."
+            ]
+        ]
+    ],
+    [
+        "register full",
+        [
+            {
+                "name": "B",
+                "description": "desc",
+                "type": "cloud_service",
+                "authentication": {
+                    "method": "api_key",
+                    "credentials_url": "https://example.invalid/keys",
+                    "setting_name": "minn_probe_b_key",
+                    "constant_name": "MINN_PROBE_B",
+                    "env_var_name": "MINN_PROBE_B"
+                },
+                "logo_url": "https://example.invalid/logo.svg",
+                "plugin": {
+                    "file": "minn-probe/plugin.php",
+                    "is_active": "__return_true"
+                }
+            },
+            []
+        ]
+    ],
+    [
+        "register auth none",
+        [
+            {
+                "name": "C",
+                "description": "",
+                "type": "cloud_service",
+                "authentication": {
+                    "method": "none"
+                },
+                "plugin": {
+                    "is_active": "__return_true"
+                }
+            },
+            []
+        ]
+    ],
+    [
+        "register is_active callable",
+        [
+            {
+                "name": "E",
+                "description": "",
+                "type": "custom",
+                "authentication": {
+                    "method": "none"
+                },
+                "plugin": {
+                    "file": "e/e.php",
+                    "is_active": "__return_false"
+                }
+            },
+            []
+        ]
+    ],
+    [
+        "register is_active not callable",
+        [
+            null,
+            [
+                "Function WP_Connector_Registry::register was called incorrectly. Connector \"minn_probe_g\" plugin is_active must be callable."
+            ]
+        ]
+    ],
+    [
+        "register auth empty",
+        [
+            null,
+            [
+                "Function WP_Connector_Registry::register was called incorrectly. Connector \"minn_probe_g\" authentication method must be \"api_key\", \"application_password\", or \"none\"."
+            ]
+        ]
+    ],
+    [
+        "register auth unknown method",
+        [
+            null,
+            [
+                "Function WP_Connector_Registry::register was called incorrectly. Connector \"minn_probe_g\" authentication method must be \"api_key\", \"application_password\", or \"none\"."
+            ]
+        ]
+    ],
+    [
+        "register api_key no setting",
+        [
+            {
+                "name": "G",
+                "description": "",
+                "type": "kind",
+                "authentication": {
+                    "method": "api_key",
+                    "setting_name": "connectors_kind_minn_probe_g_api_key"
+                },
+                "plugin": {
+                    "is_active": "__return_true"
+                }
+            },
+            []
+        ]
+    ],
+    [
+        "register application_password",
+        [
+            {
+                "name": "H",
+                "description": "",
+                "type": "kind",
+                "authentication": {
+                    "method": "application_password",
+                    "setting_name": "minn_probe_h_creds"
+                },
+                "plugin": {
+                    "is_active": "__return_true"
+                }
+            },
+            []
+        ]
+    ],
+    [
+        "register plugin without file",
+        [
+            {
+                "name": "I",
+                "description": "",
+                "type": "kind",
+                "authentication": {
+                    "method": "none"
+                },
+                "plugin": {
+                    "is_active": "__return_true"
+                }
+            },
+            []
+        ]
+    ],
+    [
+        "register whitespace name",
+        [
+            {
+                "name": "  ",
+                "description": "",
+                "type": "kind",
+                "authentication": {
+                    "method": "none"
+                },
+                "logo_url": "rel/logo.svg",
+                "plugin": {
+                    "is_active": "__return_true"
+                }
+            },
+            []
+        ]
+    ],
+    [
+        "register non-string values",
+        [
+            null,
+            [
+                "Function WP_Connector_Registry::register was called incorrectly. Connector \"minn_probe_f\" requires a non-empty \"name\" string."
+            ]
+        ]
+    ],
+    [
+        "ids after register",
+        [
+            "anthropic",
+            "google",
+            "openai",
+            "akismet",
+            "cleantalk",
+            "minn_probe_a",
+            "minn_probe_b",
+            "minn_probe_c",
+            "minn_probe_e",
+            "minn_probe_g",
+            "minn_probe_h",
+            "minn_probe_i",
+            "minn_probe_j"
+        ]
+    ],
+    [
+        "unregister",
+        [
+            {
+                "name": "A",
+                "description": "",
+                "type": "custom",
+                "authentication": {
+                    "method": "none"
+                },
+                "plugin": {
+                    "is_active": "__return_true"
+                }
+            },
+            null,
+            null,
+            [
+                "Function WP_Connector_Registry::unregister was called incorrectly. Connector \"minn_probe_a\" not found.",
+                "Function WP_Connector_Registry::unregister was called incorrectly. Connector \"nope\" not found."
+            ],
+            false
+        ]
+    ],
+    [
+        "ids after cleanup",
+        [
+            "anthropic",
+            "google",
+            "openai",
+            "akismet",
+            "cleantalk"
+        ]
+    ],
+    [
+        "hook arg",
+        [
+            [
+                [
+                    "WP_Connector_Registry",
+                    true
+                ]
+            ],
+            [
+                "Function WP_Connector_Registry::register was called incorrectly. Connector \"cleantalk\" is already registered."
+            ]
+        ]
+    ],
+    [
+        "hooked registered",
+        [
+            true,
+            {
+                "name": "Hooked",
+                "description": "",
+                "type": "custom",
+                "authentication": {
+                    "method": "none"
+                },
+                "plugin": {
+                    "is_active": "__return_true"
+                }
+            }
+        ]
+    ],
+    [
+        "lifecycle hooks",
+        [
+            15,
+            20,
+            20
+        ]
+    ],
+    [
+        "fresh registry",
+        [
+            0,
+            false
+        ]
+    ],
+    [
+        "swapped registry",
+        [
+            5,
+            false
+        ]
+    ],
+    [
+        "restored registry",
+        5
+    ],
+    [
+        "mask",
+        [
+            "",
+            "a",
+            "abc",
+            "abcd",
+            "•bcde",
+            "••cdef",
+            "•••defg",
+            "••••efgh",
+            "•••••fghi",
+            "••••••••••••••••cdef",
+            "••••••••••••••••alue",
+            "••••••••••••••••xxxx",
+            "••••••••••••••••xxxx",
+            "••••••••••••••••xxxx"
+        ]
+    ],
+    [
+        "logo and validity",
+        [
+            null,
+            null,
+            null,
+            null,
+            [
+                "Function WP_Connector_Registry::set_instance was called incorrectly. The connector registry instance must be set during the init action.",
+                "Function _wp_connectors_is_ai_api_key_valid was called incorrectly. The provider \"anthropic\" is not registered in the AI client registry.",
+                "Function _wp_connectors_is_ai_api_key_valid was called incorrectly. The provider \"nope\" is not registered in the AI client registry."
+            ]
+        ]
+    ],
+    [
+        "source none",
+        "none"
+    ],
+    [
+        "source database",
+        [
+            "database",
+            "database"
+        ]
+    ],
+    [
+        "source env",
+        [
+            "env",
+            "env"
+        ]
+    ],
+    [
+        "source empty env",
+        "database"
+    ],
+    [
+        "source constant",
+        [
+            "constant",
+            "constant",
+            "database",
+            "database"
+        ]
+    ],
+    [
+        "source empty option",
+        "none"
+    ],
+    [
+        "parse credentials",
+        [
+            {
+                "username": "",
+                "password": ""
+            },
+            {
+                "username": "user",
+                "password": "pass word"
+            },
+            {
+                "username": "u",
+                "password": "p:x"
+            },
+            {
+                "username": "",
+                "password": ""
+            },
+            {
+                "username": "",
+                "password": ""
+            },
+            {
+                "username": "",
+                "password": ""
+            },
+            {
+                "username": "",
+                "password": ""
+            },
+            {
+                "username": "user",
+                "password": "pass"
+            }
+        ]
+    ],
+    [
+        "sanitize credentials",
+        [
+            {
+                "username": "",
+                "password": ""
+            },
+            {
+                "username": "u",
+                "password": "p"
+            },
+            {
+                "username": "",
+                "password": ""
+            },
+            {
+                "username": "u",
+                "password": "p"
+            },
+            {
+                "username": "u",
+                "password": "p"
+            },
+            {
+                "username": "u",
+                "password": ""
+            },
+            {
+                "username": "u",
+                "password": "ab"
+            },
+            {
+                "username": "",
+                "password": ""
+            },
+            {
+                "username": "",
+                "password": ""
+            }
+        ]
+    ],
+    [
+        "credentials from auth",
+        [
+            {
+                "username": "",
+                "password": "",
+                "source": "none"
+            },
+            {
+                "username": "",
+                "password": "",
+                "source": "none"
+            },
+            {
+                "username": "",
+                "password": "",
+                "source": "none"
+            }
+        ]
+    ],
+    [
+        "credentials stored",
+        {
+            "username": "u",
+            "password": "p",
+            "source": "database"
+        }
+    ],
+    [
+        "credentials stored string",
+        {
+            "username": "",
+            "password": "",
+            "source": "none"
+        }
+    ],
+    [
+        "credentials env",
+        {
+            "username": "envu",
+            "password": "envp",
+            "source": "env"
+        }
+    ],
+    [
+        "credentials constant",
+        {
+            "username": "cu",
+            "password": "cp",
+            "source": "constant"
+        }
+    ],
+    [
+        "comments_open hooks",
+        [
+            10,
+            true
+        ]
+    ],
+    [
+        "closer off",
+        [
+            true,
+            false,
+            true
+        ]
+    ],
+    [
+        "closer on",
+        [
+            false,
+            true,
+            true,
+            false,
+            false
+        ]
+    ],
+    [
+        "closer bad ids",
+        [
+            true
+        ]
+    ],
+    [
+        "closer global old",
+        [
+            false,
+            false,
+            false,
+            false,
+            false,
+            true
+        ]
+    ],
+    [
+        "closer global new",
+        [
+            true,
+            true
+        ]
+    ],
+    [
+        "closer days zero",
+        true
+    ],
+    [
+        "closer days fifteen",
+        [
+            true,
+            true
+        ]
+    ],
+    [
+        "closer types page",
+        [
+            false,
+            true
+        ]
+    ],
+    [
+        "closer cpt",
+        [
+            "minn_probe_cpt",
+            true
+        ]
+    ],
+    [
+        "closer gmt date rules",
+        [
+            true,
+            false
+        ]
+    ],
+    [
+        "closer types default",
+        [
+            "post"
+        ]
+    ],
+    [
+        "closer draft",
+        false
+    ],
+    [
+        "closer closed status",
+        [
+            false,
+            false
+        ]
+    ],
+    [
+        "comments_open new open",
+        true
+    ],
+    [
+        "options restored",
+        [
+            "0",
+            "0"
+        ]
+    ]
+]

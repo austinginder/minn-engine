@@ -72,3 +72,9 @@ add_filter('comment_text', 'wpautop', 30);
 $GLOBALS['wp_embed'] ??= new WP_Embed();
 add_filter('the_content', [$GLOBALS['wp_embed'], 'run_shortcode'], 8);
 add_filter('the_content', [$GLOBALS['wp_embed'], 'autoembed'], 8);
+
+// Comments close on old posts when Discussion says so; the connectors registry fills at init 15.
+add_filter('comments_open', '_close_comments_for_old_post', 10, 2);
+add_action('init', '_wp_connectors_init', 15);
+add_action('init', '_wp_register_default_connector_settings', 20);
+add_action('init', '_wp_connectors_pass_default_keys_to_ai_client', 20);

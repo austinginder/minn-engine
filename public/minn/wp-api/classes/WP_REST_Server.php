@@ -25,6 +25,7 @@ class WP_REST_Server
 
     protected $namespaces = [];
     protected $endpoints = [];
+    protected ?array $engine_endpoints = null;
     protected $route_options = [];
     protected $embed_cache = [];
     protected $dispatching_requests = [];
@@ -85,7 +86,7 @@ class WP_REST_Server
 
     public function get_routes($route_namespace = '')
     {
-        $endpoints = $this->endpoints;
+        $endpoints = $this->endpoints + $this->engine_endpoints();
         if ($route_namespace) {
             $endpoints = wp_list_filter($endpoints, ['namespace' => $route_namespace]);
         }
@@ -98,7 +99,40 @@ class WP_REST_Server
 
     public function get_namespaces()
     {
-        return array_keys($this->namespaces);
+        $namespaces = array_keys($this->namespaces);
+        foreach ($this->engine_endpoints() as $handlers) {
+            if (($handlers['namespace'] ?? '') !== '' && !in_array($handlers['namespace'], $namespaces, true)) {
+                $namespaces[] = $handlers['namespace'];
+            }
+        }
+        return $namespaces;
+    }
+
+    /** The engine's own routes as table entries, so plugin code that reads the table sees the whole site; each answers through the engine. */
+    protected function engine_endpoints(): array
+    {
+        if ($this->engine_endpoints !== null) {
+            return $this->engine_endpoints;
+        }
+        $this->engine_endpoints = [];
+        $map = Runtime::booted() ? Runtime::current()->get('engine_routes') : null;
+        $map = $map instanceof Closure ? $map() : $map;
+        foreach (is_array($map) ? $map : [] as $route => $methods) {
+            if ($route === '/' || isset($this->endpoints[$route])) {
+                continue;
+            }
+            $methods = in_array('*', $methods, true) ? ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'] : $methods;
+            $this->engine_endpoints[$route] = [
+                ['methods' => implode(',', $methods), 'callback' => [$this, 'engine_callback'], 'permission_callback' => '__return_true', 'args' => []],
+                'namespace' => preg_match('#^/([^/]+/v\d+)#', $route, $m) ? $m[1] : '',
+            ];
+        }
+        return $this->engine_endpoints;
+    }
+
+    public function engine_callback($request)
+    {
+        return $this->engine_response($request) ?? new WP_Error('rest_no_route', 'No route was found matching the URL and request method.', ['status' => 404]);
     }
 
     public function get_route_options($route)

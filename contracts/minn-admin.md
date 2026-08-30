@@ -32,6 +32,20 @@ options and capability engine: `restUrl`, a real `wp_rest` `nonce`, `user`
 `caps` map computed through `minn_user_can`. It also carries
 `engine: "Minn Engine/x"` so it is self-identifying.
 
+When Minn Admin runs as code on the runtime, the engine also asks the plugin's
+own `Minn_Admin::boot_payload()` and adopts every key it does not compute
+itself (connectors, discussion defaults, roles, post formats, the adapter
+flags such as `cache`, `visibility`, `spamUsers`); engine-owned keys win. One
+key is withheld on purpose: `notices`, the wp-admin capture the app would
+otherwise trigger against a page the engine does not serve (so `menuRemoved`,
+which comes from that capture, stays empty here). Before asking, the engine
+stands the home query the way the reference serves the shell from, so the
+newest post is the global post while the payload is built: the plugin's
+`comments` detection reads `comments_open` for post 0 through that global, and
+a site that closes comments on old posts reports the feature off when its
+newest post is old. That is why the Comments entry is absent from the sidebar
+on both stacks for the dogfood site.
+
 **The load-bearing detail: `restUrl` is the pretty `/wp-json/` form, not the
 plain `?rest_route=/` form.** app.js builds request URLs as
 `restUrl + "wp/v2/posts?context=edit&status=…"`. With the plain form the

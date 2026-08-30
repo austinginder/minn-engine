@@ -539,6 +539,75 @@ Facts worth keeping:
   false. `_wp_oembed_get_object` is a singleton `WP_oEmbed` whose provider
   table is `data/oembed-providers.json` (captured from the reference).
 
+## Connectors, the old-post comment closer, and plugin_loaded
+
+Fixture: `contracts/fixtures/api/connectors.json` (68 rows, `connectors-probe.php`).
+The probe stands the plugins and the lifecycle itself on a CLI boot of the
+engine (`Plugins::load` fires init), because the reference has run them by the
+time `wp eval-file` starts.
+
+- **The registry** is `WP_Connector_Registry` over `Minn\Runtime\Connectors`.
+  `_wp_connectors_init` runs at init 15: it registers the four core rows
+  (anthropic, google, openai, akismet) and then fires `wp_connectors_init` with
+  the registry, which is where plugins add theirs (Jetpack's `wordpress_com`
+  card, Minn Admin's CleanTalk adapter). `_wp_register_default_connector_settings`
+  and `_wp_connectors_pass_default_keys_to_ai_client` sit at init 20.
+- **Registration is refused, in this order**, with `_doing_it_wrong` and a null
+  return: an id outside `[a-z0-9_-]`, an id already registered, a missing or
+  empty `type`, a missing or empty `name` (whitespace passes), a non-array
+  `authentication`, a method other than api_key / application_password / none,
+  a `plugin.is_active` that is not callable. Unknown keys are dropped; the
+  stored row is name, description ('' unless a string), type, authentication
+  (method, credentials_url, setting_name, constant_name, env_var_name, in that
+  order whatever order the caller used), logo_url when given, plugin (file when
+  given, then is_active, `__return_true` by default). An api_key connector
+  without a setting name gets `connectors_{type}_{id}_api_key`. `unregister`
+  returns the row it removed; a miss is `_doing_it_wrong` + null, as is
+  `get_registered` of an unknown id. `set_instance` only takes effect during
+  the init action; outside it the call is refused and the instance kept.
+- **Keys**: `_wp_connectors_mask_api_key` shows keys of four characters or
+  fewer whole, otherwise the last four behind at most sixteen bullets (the
+  count is in bytes). `_wp_connectors_get_api_key_source` answers env, then
+  constant (a string constant only), then database, else none; empty values
+  do not count. Application-password credentials are "user:password" split at
+  the first colon and trimmed (either half empty means both empty); the
+  sanitiser accepts only an array of the two fields; the stored form the
+  getter honours is that array (a "user:password" string in the option reads
+  as none), after the env and constant sources.
+- **What is not there**: `_wp_connectors_is_ai_api_key_valid` always refuses
+  (there is no AI client registry); the provider logo resolver returns null;
+  the script-module data and the settings-dispatch masking for the wp-admin
+  page are not provided. A connector's key setting is registered only while
+  its provider plugin is active, which the app reads as `registered`; the
+  registration's args are the engine's own, no provider plugin having been
+  captured.
+- **Comments close on old posts** (`_close_comments_for_old_post`, on
+  `comments_open` at 10): with `close_comments_for_old_posts` on and
+  `close_comments_days_old` above zero, a `post` whose `post_date_gmt` is more
+  than that many whole days old reads closed (fifteen days old stays open at a
+  setting of fifteen), whatever its status. Pages and other types never close,
+  and the `close_comments_posts_types` filter changed nothing on the reference.
+  A missing post (and post id 0 with no global post) passes the value through.
+  With the setting off, `get_option('close_comments_days_old')` on the
+  reference is the default 14 when the row is absent; the engine returns
+  false there (no option defaults yet).
+- **`wp_update_post` keeps a stored `post_date_gmt`** across an update that
+  names only `post_date`: the GMT column is recomputed only when it is zero.
+- **`plugin_loaded` and `mu_plugin_loaded`** fire after each file with the
+  file's path. Jetpack schedules its entire configuration (the connection
+  manager, and with it the connector card) from `plugin_loaded`, so without it
+  Jetpack loads but never configures.
+- **The runtime server's route table includes the engine's own routes**
+  (`WP_REST_Server::get_routes()` and `get_namespaces()` fold in
+  `Rest\EngineRoutes`, the router's patterns in the reference's regex form;
+  each entry answers through the engine). Plugin code reads that table to
+  learn what the site serves: Minn Admin's comment detection treats a missing
+  `/wp/v2/comments` as the feature being off, which hid the Comments view on
+  the engine for the wrong reason.
+- **`wp_is_file_mod_allowed`** is true unless `DISALLOW_FILE_MODS` says
+  otherwise, through the `file_mod_allowed` filter (it was a placeholder,
+  which made every connector's Install button disappear).
+
 ## E3 as placeholders: the admin host that is not there
 
 Minn has no `/wp-admin/` and will not grow one; Minn Admin is the admin.

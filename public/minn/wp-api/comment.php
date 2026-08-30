@@ -948,3 +948,10 @@ function wp_check_comment_disallowed_list($author, $email, $url, $comment, $user
     }
     return false;
 }
+
+function _close_comments_for_old_post($open, $post_id)
+{
+    $post = get_post($post_id ?: null);
+    $closer = new Minn\Runtime\CommentCloser((bool) get_option('close_comments_for_old_posts'), (int) get_option('close_comments_days_old'));
+    return $closer->open((bool) $open, $post instanceof WP_Post ? $post->to_array() : null, time());
+}

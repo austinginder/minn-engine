@@ -31,8 +31,6 @@ use Minn\Front\Feeds;
 use Minn\Front\ProbeController;
 use Minn\Front\Sitemaps;
 use Minn\Front\FrontController;
-use Minn\Front\CodeSizeController;
-use Minn\Front\LexiconController;
 use Minn\Front\Renderer;
 use Minn\Front\Resolver;
 use Minn\Http\Failure;
@@ -119,6 +117,7 @@ final readonly class Engine
         $runtime = Runtime::boot(new Runtime($db, $site, $request, Reader::current(), $capabilities, $this->engineDir, ABSPATH, self::WP_VERSION));
         $runtime->set('permalinks', \Minn\Front\Permalinks::fromDb($db));
         $runtime->set('block_theme', Theme::active($site, \Minn\Front\Permalinks::fromDb($db), ABSPATH . 'wp-content/themes') !== null);
+        $runtime->set('engine_routes', static fn (): array => $api->routes());
         Plugins::load($runtime);
         // Creating the server fires rest_api_init once; the plugins' routes register there.
         \rest_get_server();
@@ -167,6 +166,7 @@ final readonly class Engine
         $runtime->set('block_theme', $theme !== null);
         $runtime->set('theme', $theme);
         $runtime->set('permalinks', $permalinks);
+        $runtime->set('engine_routes', static fn (): array => Api::forRequest($db, $request)->routes());
         Plugins::load($runtime);
         $seams = new Seams($db, $site, $request, Reader::current());
         (new Loader(ABSPATH . 'wp-content', $site))->register($seams);
@@ -191,8 +191,6 @@ final readonly class Engine
             new LoginController($site, $permalinks, $authenticator, $sessions, new AuthCookies($db, $cookie), $users, new LoginThrottle($db), new PasswordReset($users), Mailer::forSite($site)),
             new AppController($app, new BootPayload($site, $permalinks, $capabilities, $app, $this->version, $appearance, new HiddenIntegrations($users, $capabilities), $posts, $theme !== null, new Translations($users, $site, $app, ABSPATH . 'wp-content')), $authenticator, $capabilities, $permalinks, $this->version, $adminOff),
             $probes,
-            new LexiconController($this->engineDir, $permalinks, $site, ABSPATH . 'wp-content/themes'),
-            new CodeSizeController($this->engineDir, $permalinks, $site, ABSPATH . 'wp-content/themes'),
             new CommentPostController($site, $posts, new Comments($db), $permalinks, $authenticator, $capabilities, new AuthCookies($db, $cookie)),
             $front,
         );

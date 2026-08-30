@@ -43,10 +43,11 @@ final class Plugins
     public static function load(Runtime $runtime): void
     {
         $content = $runtime->contentDir();
+        $hooks = Runtime::hooks();
         foreach (glob($content . '/mu-plugins/*.php') ?: [] as $file) {
             self::includeFile($file, basename($file), $runtime);
+            $hooks->action('mu_plugin_loaded', [$file]);
         }
-        $hooks = Runtime::hooks();
         $hooks->action('muplugins_loaded', []);
         $active = $runtime->options()->get('active_plugins');
         foreach (is_array($active) ? $active : [] as $plugin) {
@@ -59,6 +60,8 @@ final class Plugins
                 continue;
             }
             self::includeFile($file, $plugin, $runtime);
+            // Each file is announced as it lands (Jetpack schedules its whole configuration from this one).
+            $hooks->action('plugin_loaded', [$file]);
             if ($plugin === self::MINN_ADMIN && self::isLoaded($plugin)) {
                 foreach (self::MINN_ADMIN_HOOKS as [$hook, $callback, $priority]) {
                     $hooks->remove($hook, $callback, $priority);

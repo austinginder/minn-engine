@@ -34,7 +34,7 @@ final readonly class IndexController
         $routes = ['/' => ['namespace' => '', 'methods' => ['GET'], 'endpoints' => [['methods' => ['GET'], 'args' => ['context' => ['default' => 'view', 'required' => false]]]], '_links' => ['self' => [['href' => $this->url->to('/')]]]]];
         $namespaces = [];
         foreach ($this->router->routes() as $pattern => $methods) {
-            foreach (self::wordPressForms($pattern) as $route) {
+            foreach (EngineRoutes::forms($pattern) as $route) {
             if ($route === '/') {
                 continue;
             }
@@ -68,39 +68,5 @@ final readonly class IndexController
             'site_icon_url' => '',
             '_links' => ['help' => [['href' => 'https://developer.wordpress.org/rest-api/']]],
         ], Fields::fromQuery($request->query));
-    }
-
-    /**
-     * Route patterns in the reference's regex form: {id:\d+} becomes
-     * (?P<id>\d+), and a capture that is a plain choice of literals
-     * ({base:posts|pages}) becomes one concrete route per literal.
-     *
-     * @return list<string>
-     */
-    private static function wordPressForms(string $pattern): array
-    {
-        $routes = [$pattern];
-        while (true) {
-            $expanded = [];
-            $changed = false;
-            foreach ($routes as $route) {
-                if (preg_match('/\{(\w+):([a-z_0-9|-]+)\}/', $route, $m) && str_contains($m[2], '|')) {
-                    foreach (explode('|', $m[2]) as $literal) {
-                        $expanded[] = str_replace($m[0], $literal, $route);
-                    }
-                    $changed = true;
-                } else {
-                    $expanded[] = $route;
-                }
-            }
-            $routes = $expanded;
-            if (!$changed) {
-                break;
-            }
-        }
-        return array_map(static fn (string $route) => preg_replace_callback('/\{(\w+)(?::([^}]+)|\*)?\}/', static function (array $m): string {
-            $constraint = isset($m[2]) && $m[2] !== '' ? $m[2] : (str_ends_with($m[0], '*}') ? '.*' : '[^/]+');
-            return '(?P<' . $m[1] . '>' . $constraint . ')';
-        }, $route), $routes);
     }
 }

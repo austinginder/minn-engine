@@ -100,6 +100,12 @@ function is_plugin_inactive($plugin)
     return !is_plugin_active($plugin);
 }
 
+/** File changes (installs, updates, deletes) are allowed unless wp-config forbids them; the filter has the last word. */
+function wp_is_file_mod_allowed($context)
+{
+    return (bool) apply_filters('file_mod_allowed', !defined('DISALLOW_FILE_MODS') || !DISALLOW_FILE_MODS, $context);
+}
+
 function is_plugin_active_for_network($plugin)
 {
     return false;

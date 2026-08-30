@@ -204,7 +204,12 @@ parity('a user with no published content is not public', "/wp/v2/users/$quiet", 
 parity('anonymous callers cannot order users by email', '/wp/v2/users?orderby=email', null);
 parity('reusable blocks are empty for anonymous callers', '/wp/v2/blocks', null, 'GET', null, '0');
 [$eb, $rb] = parity('an author lists only their own unpublished posts', '/wp/v2/posts?status=draft,pending,private&context=edit&per_page=100', $author);
-check(array_column((array) $eb, 'id') === array_column((array) $rb, 'id'), 'the same rows on both stacks', json_encode([array_column((array) $eb, 'id'), array_column((array) $rb, 'id')]));
+// Drafts created in the same second tie on date, and the reference's order among tied rows is not stable (it moves with the table), so the rows are compared as a set.
+$engineIds = array_column((array) $eb, 'id');
+$referenceIds = array_column((array) $rb, 'id');
+sort($engineIds);
+sort($referenceIds);
+check($engineIds === $referenceIds, 'the same rows on both stacks', json_encode([$engineIds, $referenceIds]));
 parity('media cannot be attached to a post the caller cannot edit', '/wp/v2/media', $author, 'POST', ['post' => 1]);
 
 // 5. Password-protected content on the front end (engine only: same words the reference showed).

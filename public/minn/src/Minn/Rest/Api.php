@@ -68,6 +68,12 @@ final readonly class Api
     ) {
     }
 
+    /** @return array<string, list<string>> the engine's routes in the reference's form, route => methods */
+    public function routes(): array
+    {
+        return EngineRoutes::map($this->router);
+    }
+
     public static function forRequest(Db $db, Request $request): self
     {
         $users = new Users($db);

@@ -703,12 +703,6 @@ function wp_get_update_php_url()
     return null;
 }
 
-function wp_is_file_mod_allowed($context)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_is_file_mod_allowed');
-    return null;
-}
-
 function wp_link_pages($args = '')
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_link_pages');

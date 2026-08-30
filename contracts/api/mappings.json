@@ -2,12 +2,12 @@
     "generated": "2026-08-30",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 268,
-        "composes": 630,
-        "leaf": 298,
-        "noop": 1082,
-        "functions": 2272,
-        "minnMethods": 299,
+        "minn": 270,
+        "composes": 637,
+        "leaf": 299,
+        "noop": 1099,
+        "functions": 2299,
+        "minnMethods": 307,
         "leafLinesOver15": 16
     },
     "functions": {
@@ -865,6 +865,80 @@
             "kind": "leaf",
             "minn": [],
             "composes": []
+        },
+        "WP_Connector_Registry::__construct": {
+            "file": "classes/WP_Connector_Registry.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Connectors::__construct"
+            ],
+            "composes": []
+        },
+        "WP_Connector_Registry::get_all_registered": {
+            "file": "classes/WP_Connector_Registry.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Connector_Registry::get_instance": {
+            "file": "classes/WP_Connector_Registry.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Connector_Registry::get_registered": {
+            "file": "classes/WP_Connector_Registry.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_doing_it_wrong"
+            ]
+        },
+        "WP_Connector_Registry::is_registered": {
+            "file": "classes/WP_Connector_Registry.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Connector_Registry::register": {
+            "file": "classes/WP_Connector_Registry.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_doing_it_wrong"
+            ]
+        },
+        "WP_Connector_Registry::set_instance": {
+            "file": "classes/WP_Connector_Registry.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_doing_it_wrong",
+                "doing_action"
+            ]
+        },
+        "WP_Connector_Registry::store": {
+            "file": "classes/WP_Connector_Registry.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Connector_Registry::unregister": {
+            "file": "classes/WP_Connector_Registry.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_doing_it_wrong"
+            ]
         },
         "WP_Customize_Control::__construct": {
             "file": "customize.php",
@@ -3865,6 +3939,24 @@
                 "is_wp_error"
             ]
         },
+        "WP_REST_Server::engine_callback": {
+            "file": "classes/WP_REST_Server.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_REST_Server::engine_endpoints": {
+            "file": "classes/WP_REST_Server.php",
+            "lines": 17,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Runtime::booted",
+                "Minn\\Runtime\\Runtime::current",
+                "Minn\\Runtime\\Runtime::get"
+            ],
+            "composes": []
+        },
         "WP_REST_Server::engine_response": {
             "file": "classes/WP_REST_Server.php",
             "lines": 24,
@@ -3985,8 +4077,8 @@
         },
         "WP_REST_Server::get_namespaces": {
             "file": "classes/WP_REST_Server.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 7,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
@@ -6169,6 +6261,19 @@
             "minn": [],
             "composes": []
         },
+        "_close_comments_for_old_post": {
+            "file": "comment.php",
+            "lines": 3,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\CommentCloser::__construct",
+                "Minn\\Runtime\\CommentCloser::open"
+            ],
+            "composes": [
+                "get_option",
+                "get_post"
+            ]
+        },
         "_default_wp_die_handler": {
             "file": "pluggable.php",
             "lines": 15,
@@ -7210,6 +7315,68 @@
             "minn": [],
             "composes": []
         },
+        "_wp_connectors_get_api_key_source": {
+            "file": "connectors.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Connectors::keySource"
+            ],
+            "composes": [
+                "get_option"
+            ]
+        },
+        "_wp_connectors_init": {
+            "file": "connectors.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_wp_connectors_register_default_ai_providers",
+                "do_action"
+            ]
+        },
+        "_wp_connectors_is_ai_api_key_valid": {
+            "file": "connectors.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_doing_it_wrong"
+            ]
+        },
+        "_wp_connectors_mask_api_key": {
+            "file": "connectors.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Connectors::mask"
+            ],
+            "composes": []
+        },
+        "_wp_connectors_pass_default_keys_to_ai_client": {
+            "file": "connectors.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "_wp_connectors_register_default_ai_providers": {
+            "file": "connectors.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "is_plugin_active"
+            ]
+        },
+        "_wp_connectors_resolve_ai_provider_logo_url": {
+            "file": "connectors.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "_wp_die_process_input": {
             "file": "pluggable.php",
             "lines": 24,
@@ -7309,6 +7476,16 @@
             "kind": "leaf",
             "minn": [],
             "composes": []
+        },
+        "_wp_register_default_connector_settings": {
+            "file": "connectors.php",
+            "lines": 10,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "register_setting",
+                "wp_get_connectors"
+            ]
         },
         "_wp_relative_upload_path": {
             "file": "media.php",
@@ -16513,6 +16690,38 @@
             "minn": [],
             "composes": []
         },
+        "wp_connectors_get_application_password_credentials": {
+            "file": "connectors.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Connectors::credentials"
+            ],
+            "composes": [
+                "get_option",
+                "sanitize_text_field"
+            ]
+        },
+        "wp_connectors_parse_application_password_credentials": {
+            "file": "connectors.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Connectors::parseCredentials"
+            ],
+            "composes": []
+        },
+        "wp_connectors_sanitize_application_password_credentials": {
+            "file": "connectors.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Connectors::sanitizeCredentials"
+            ],
+            "composes": [
+                "sanitize_text_field"
+            ]
+        },
         "wp_constrain_dimensions": {
             "file": "media.php",
             "lines": 5,
@@ -17427,6 +17636,20 @@
             "composes": [
                 "get_comment"
             ]
+        },
+        "wp_get_connector": {
+            "file": "connectors.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "wp_get_connectors": {
+            "file": "connectors.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
         },
         "wp_get_current_commenter": {
             "file": "comment.php",
@@ -18371,6 +18594,13 @@
             ],
             "composes": []
         },
+        "wp_is_connector_registered": {
+            "file": "connectors.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "wp_is_development_mode": {
             "file": "load.php",
             "lines": 2,
@@ -18378,6 +18608,15 @@
             "minn": [],
             "composes": [
                 "wp_get_development_mode"
+            ]
+        },
+        "wp_is_file_mod_allowed": {
+            "file": "plugin.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "apply_filters"
             ]
         },
         "wp_is_ini_value_changeable": {
