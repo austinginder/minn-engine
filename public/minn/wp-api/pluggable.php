@@ -1,14 +1,15 @@
 <?php
 /** Nonces, hashes, passwords, referers, wp_die, and mail. */
 
+use Minn\Auth\AuthCookies;
+use Minn\Auth\Cookie;
 use Minn\Auth\Nonce;
 use Minn\Auth\Password;
 use Minn\Auth\Salts;
-use Minn\Auth\AuthCookies;
-use Minn\Auth\Cookie;
 use Minn\Auth\Sessions;
-use Minn\Runtime\Runtime;
 use Minn\Content\Users;
+use Minn\Runtime\Runtime;
+use Minn\Support\Url;
 
 function wp_get_session_token()
 {
@@ -162,26 +163,8 @@ function wp_get_original_referer()
 function wp_validate_redirect($location, $fallback_url = '')
 {
     $location = wp_sanitize_redirect(trim((string) $location, " \t\n\r\0\x08\x0B"));
-    if (str_starts_with($location, '//')) {
-        $location = 'http:' . $location;
-    }
-    $test = str_starts_with($location, '/') ? 'http://placeholder.invalid' . $location : $location;
-    $parts = wp_parse_url($test);
-    if ($parts === false || !isset($parts['host'])) {
-        return $fallback_url;
-    }
-    if (isset($parts['scheme']) && !in_array($parts['scheme'], ['http', 'https'], true)) {
-        return $fallback_url;
-    }
-    if (isset($parts['user']) || isset($parts['pass'])) {
-        return $fallback_url;
-    }
-    $home = wp_parse_url(home_url());
-    $allowed = apply_filters('allowed_redirect_hosts', [$home['host'] ?? ''], $parts['host']);
-    if ($parts['host'] !== 'placeholder.invalid' && !in_array($parts['host'], (array) $allowed, true)) {
-        return $fallback_url;
-    }
-    return $location;
+    $safe = Url::safeRedirect($location, static fn (string $host) => (array) apply_filters('allowed_redirect_hosts', [wp_parse_url(home_url())['host'] ?? ''], $host));
+    return $safe ?? $fallback_url;
 }
 
 function wp_sanitize_redirect($location)

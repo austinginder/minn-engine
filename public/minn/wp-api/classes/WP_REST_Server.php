@@ -7,6 +7,7 @@ use Minn\Rest\Api;
 use Minn\Rest\Links;
 use Minn\Rest\RouteIndex;
 use Minn\Rest\RouteMatch;
+use Minn\Rest\RouteTable;
 use Minn\Runtime\Refusal;
 use Minn\Runtime\Runtime;
 
@@ -88,36 +89,11 @@ class WP_REST_Server
         if ($route_namespace) {
             $endpoints = wp_list_filter($endpoints, ['namespace' => $route_namespace]);
         }
-        $endpoints = apply_filters('rest_endpoints', $endpoints);
-        foreach ($endpoints as $route => &$handlers) {
-            if (isset($handlers['callback'])) {
-                $handlers = [$handlers];
-            }
-            if (!isset($this->route_options[$route])) {
-                $this->route_options[$route] = [];
-            }
-            foreach ($handlers as $key => &$handler) {
-                if (!is_numeric($key)) {
-                    $this->route_options[$route][$key] = $handler;
-                    unset($handlers[$key]);
-                    continue;
-                }
-                $handler = wp_parse_args($handler, ['methods' => [], 'accept_json' => false, 'accept_raw' => false, 'show_in_index' => true, 'args' => []]);
-                if (is_string($handler['methods'])) {
-                    $methods = explode(',', $handler['methods']);
-                } elseif (is_array($handler['methods'])) {
-                    $methods = $handler['methods'];
-                } else {
-                    $methods = [];
-                }
-                $handler['methods'] = [];
-                foreach ($methods as $method) {
-                    $method = strtoupper(trim($method));
-                    $handler['methods'][$method] = true;
-                }
-            }
+        [$routes, $options] = RouteTable::normalise((array) apply_filters('rest_endpoints', $endpoints));
+        foreach ($options as $route => $found) {
+            $this->route_options[$route] = $found + ($this->route_options[$route] ?? []);
         }
-        return $endpoints;
+        return $routes;
     }
 
     public function get_namespaces()

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Support;
 
+use Closure;
+
 final class Html
 {
     public static function esc(?string $value): string
@@ -55,5 +57,30 @@ final class Html
             $text = (string) preg_replace('/[\r\n\t ]+/', ' ', $text);
         }
         return trim($text);
+    }
+
+    /**
+     * A single line of plain text from user input: tags stripped, control
+     * whitespace folded, percent escapes removed. The caller passes its own
+     * UTF-8 check and less-than encoder so its filters keep applying.
+     *
+     * @param Closure(string): string $validUtf8 @param Closure(string): string $encodeLessThan
+     */
+    public static function textField(string $text, bool $keepNewlines, Closure $validUtf8, Closure $encodeLessThan): string
+    {
+        $filtered = $validUtf8($text);
+        if (str_contains($filtered, '<')) {
+            $filtered = str_replace("<\n", "&lt;\n", self::stripAllTags($encodeLessThan($filtered)));
+        }
+        if (!$keepNewlines) {
+            $filtered = (string) preg_replace('/[\r\n\t ]+/', ' ', $filtered);
+        }
+        $filtered = str_replace("\0", '', trim($filtered));
+        $found = false;
+        while (preg_match('/%[a-f0-9]{2}/i', $filtered, $match)) {
+            $filtered = str_replace($match[0], '', $filtered);
+            $found = true;
+        }
+        return $found ? trim((string) preg_replace('/ +/', ' ', $filtered)) : $filtered;
     }
 }

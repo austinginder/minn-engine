@@ -1,5 +1,6 @@
 <?php
 
+use Minn\Blocks\BlockName;
 use Minn\Runtime\Runtime;
 
 /** A block type as registered; the core set is data/blocks.json. Shapes from contracts/fixtures/api/blocks.json. */
@@ -191,30 +192,18 @@ final class WP_Block_Type_Registry
     public function register($name, $args = [])
     {
         $this->seed();
-        $block_type = null;
-        if ($name instanceof WP_Block_Type) {
-            $block_type = $name;
-            $name = $block_type->name;
-        }
-        if (!is_string($name)) {
-            _doing_it_wrong(__METHOD__, 'Block type names must be strings.', '5.0.0');
-            return false;
-        }
-        if (preg_match('/[A-Z]+/', $name)) {
-            _doing_it_wrong(__METHOD__, 'Block type names must not contain uppercase characters.', '5.0.0');
-            return false;
-        }
-        if (!preg_match('/^[a-z0-9-]+\/[a-z0-9-]+$/', $name)) {
-            _doing_it_wrong(__METHOD__, 'Block type names must contain a namespace prefix. Example: my-plugin/my-custom-block-type', '5.0.0');
+        $block_type = $name instanceof WP_Block_Type ? $name : null;
+        $name = $block_type?->name ?? $name;
+        $refused = BlockName::refuse($name);
+        if ($refused !== null) {
+            _doing_it_wrong(__METHOD__, $refused->message, '5.0.0');
             return false;
         }
         if ($this->is_registered($name)) {
             _doing_it_wrong(__METHOD__, sprintf('Block type "%s" is already registered.', $name), '5.0.0');
             return false;
         }
-        if (!$block_type) {
-            $block_type = new WP_Block_Type($name, $args);
-        }
+        $block_type ??= new WP_Block_Type($name, $args);
         $this->registered_block_types[$name] = $block_type;
         if ($block_type->is_dynamic() && function_exists('_minn_bridge_dynamic_block')) {
             _minn_bridge_dynamic_block($name);

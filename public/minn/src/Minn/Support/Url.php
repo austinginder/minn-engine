@@ -141,4 +141,69 @@ final class Url
         }
         return implode('&', array_filter($pairs, static fn (string $pair) => $pair !== ''));
     }
+
+    /** parse_url that also accepts scheme-relative and path-only URLs; a single component by its PHP_URL_* constant. */
+    public static function parse(string $url, int $component = -1): array|string|int|false|null
+    {
+        $drop = [];
+        if (str_starts_with($url, '//')) {
+            $drop = ['scheme'];
+            $url = 'placeholder:' . $url;
+        } elseif (str_starts_with($url, '/')) {
+            $drop = ['scheme', 'host'];
+            $url = 'placeholder://placeholder' . $url;
+        }
+        $parts = parse_url($url);
+        if ($parts === false) {
+            return $component === -1 ? false : null;
+        }
+        foreach ($drop as $key) {
+            unset($parts[$key]);
+        }
+        if ($component === -1) {
+            return $parts;
+        }
+        $key = match ($component) {
+            PHP_URL_SCHEME => 'scheme', PHP_URL_HOST => 'host', PHP_URL_PORT => 'port', PHP_URL_USER => 'user', PHP_URL_PASS => 'pass', PHP_URL_PATH => 'path', PHP_URL_QUERY => 'query', PHP_URL_FRAGMENT => 'fragment', default => null,
+        };
+        return $key === null ? null : ($parts[$key] ?? null);
+    }
+
+    /** The URL under a scheme, or scheme-and-host stripped for 'relative'; a protocol-relative URL is read as http first. */
+    public static function withScheme(string $url, string $scheme): string
+    {
+        $url = trim($url);
+        if (str_starts_with($url, '//')) {
+            $url = 'http:' . $url;
+        }
+        if ($scheme !== 'relative') {
+            return (string) preg_replace('#^\w+://#', $scheme . '://', $url);
+        }
+        $url = ltrim((string) preg_replace('#^\w+://[^/]*#', '', $url));
+        return $url !== '' && $url[0] === '/' ? '/' . ltrim($url, "/ \t\n\r\0\x0B") : $url;
+    }
+
+    /**
+     * A redirect target the site may send a browser to: http(s) only, no
+     * credentials, and a host the caller allows (local paths always pass).
+     *
+     * @param Closure(string): list<string> $allowedHosts the hosts allowed for the target's host
+     */
+    public static function safeRedirect(string $location, Closure $allowedHosts): ?string
+    {
+        if (str_starts_with($location, '//')) {
+            $location = 'http:' . $location;
+        }
+        $parts = self::parse(str_starts_with($location, '/') ? 'http://placeholder.invalid' . $location : $location);
+        if (!is_array($parts) || !isset($parts['host'])) {
+            return null;
+        }
+        if ((isset($parts['scheme']) && !in_array($parts['scheme'], ['http', 'https'], true)) || isset($parts['user']) || isset($parts['pass'])) {
+            return null;
+        }
+        if ($parts['host'] !== 'placeholder.invalid' && !in_array($parts['host'], $allowedHosts($parts['host']), true)) {
+            return null;
+        }
+        return $location;
+    }
 }

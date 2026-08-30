@@ -133,21 +133,9 @@ function has_block($block_name, $post = null)
     }
     if (!is_string($post)) {
         $wp_post = get_post($post);
-        if ($wp_post instanceof WP_Post) {
-            $post = $wp_post->post_content;
-        }
+        $post = $wp_post instanceof WP_Post ? $wp_post->post_content : $post;
     }
-    if (!str_contains((string) $block_name, '/')) {
-        $block_name = 'core/' . $block_name;
-    }
-    if (str_starts_with((string) $block_name, 'core/')) {
-        $block_name = substr((string) $block_name, 5);
-        if (str_contains((string) $post, '<!-- wp:' . $block_name . ' ') || str_contains((string) $post, '<!-- wp:' . $block_name . ' /-->') || str_contains((string) $post, '<!-- wp:' . $block_name . ' -->') || str_contains((string) $post, '<!-- wp:' . $block_name . '/-->')) {
-            return true;
-        }
-        $block_name = 'core/' . $block_name;
-    }
-    return str_contains((string) $post, '<!-- wp:' . $block_name . ' ') || str_contains((string) $post, '<!-- wp:' . $block_name . ' /-->') || str_contains((string) $post, '<!-- wp:' . $block_name . ' -->') || str_contains((string) $post, '<!-- wp:' . $block_name . '/-->');
+    return Parser::contains((string) $post, (string) $block_name);
 }
 
 function block_version($content)

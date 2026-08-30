@@ -2,12 +2,12 @@
     "generated": "2026-08-30",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 257,
-        "composes": 643,
+        "minn": 268,
+        "composes": 630,
         "leaf": 298,
-        "noop": 1080,
+        "noop": 1082,
         "functions": 2272,
-        "minnMethods": 285,
+        "minnMethods": 299,
         "leafLinesOver15": 16
     },
     "functions": {
@@ -719,9 +719,11 @@
         },
         "WP_Block_Type_Registry::register": {
             "file": "classes/WP_Block_Type.php",
-            "lines": 30,
-            "kind": "composes",
-            "minn": [],
+            "lines": 18,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Blocks\\BlockName::refuse"
+            ],
             "composes": [
                 "_doing_it_wrong",
                 "_minn_bridge_dynamic_block"
@@ -4014,13 +4016,14 @@
         },
         "WP_REST_Server::get_routes": {
             "file": "classes/WP_REST_Server.php",
-            "lines": 34,
-            "kind": "composes",
-            "minn": [],
+            "lines": 9,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Rest\\RouteTable::normalise"
+            ],
             "composes": [
                 "apply_filters",
-                "wp_list_filter",
-                "wp_parse_args"
+                "wp_list_filter"
             ]
         },
         "WP_REST_Server::is_dispatching": {
@@ -5286,11 +5289,12 @@
         },
         "WP_Term_Query::parse_query": {
             "file": "classes/WP_Term_Query.php",
-            "lines": 35,
-            "kind": "composes",
-            "minn": [],
+            "lines": 7,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\TermQuery::coerce"
+            ],
             "composes": [
-                "absint",
                 "apply_filters",
                 "do_action_ref_array",
                 "wp_parse_args",
@@ -7139,13 +7143,14 @@
         },
         "_sanitize_text_fields": {
             "file": "formatting.php",
-            "lines": 24,
-            "kind": "composes",
-            "minn": [],
+            "lines": 4,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Support\\Html::textField"
+            ],
             "composes": [
                 "wp_check_invalid_utf8",
-                "wp_pre_kses_less_than",
-                "wp_strip_all_tags"
+                "wp_pre_kses_less_than"
             ]
         },
         "_scalar_wp_die_handler": {
@@ -7335,14 +7340,15 @@
         },
         "_wp_upload_dir": {
             "file": "link-template.php",
-            "lines": 26,
-            "kind": "composes",
-            "minn": [],
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Media\\Uploads::layout"
+            ],
             "composes": [
                 "apply_filters",
                 "current_time",
-                "get_option",
-                "trailingslashit"
+                "get_option"
             ]
         },
         "_x": {
@@ -9524,9 +9530,11 @@
         },
         "get_comment_class": {
             "file": "comment.php",
-            "lines": 28,
-            "kind": "composes",
-            "minn": [],
+            "lines": 17,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Content\\CommentClasses::build"
+            ],
             "composes": [
                 "apply_filters",
                 "get_comment",
@@ -11777,9 +11785,11 @@
         },
         "has_block": {
             "file": "blocks.php",
-            "lines": 20,
-            "kind": "composes",
-            "minn": [],
+            "lines": 8,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Blocks\\Parser::contains"
+            ],
             "composes": [
                 "get_post",
                 "has_blocks"
@@ -11960,9 +11970,11 @@
         },
         "human_time_diff": {
             "file": "formatting.php",
-            "lines": 25,
-            "kind": "composes",
-            "minn": [],
+            "lines": 5,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Support\\Time::span"
+            ],
             "composes": [
                 "_n",
                 "apply_filters"
@@ -14148,11 +14160,13 @@
         },
         "rest_find_one_matching_schema": {
             "file": "rest-api.php",
-            "lines": 25,
-            "kind": "composes",
-            "minn": [],
+            "lines": 15,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Rest\\Schema::combining",
+                "Minn\\Runtime\\Refusal::__construct"
+            ],
             "composes": [
-                "count",
                 "is_wp_error",
                 "rest_get_combining_operation_error",
                 "rest_validate_value_from_schema"
@@ -14670,9 +14684,11 @@
         },
         "sanitize_title_with_dashes": {
             "file": "formatting.php",
-            "lines": 21,
-            "kind": "composes",
-            "minn": [],
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Content\\Slug::dashes"
+            ],
             "composes": [
                 "_minn_utf8_uri_encode"
             ]
@@ -14937,9 +14953,11 @@
         },
         "set_url_scheme": {
             "file": "formatting.php",
-            "lines": 21,
-            "kind": "composes",
-            "minn": [],
+            "lines": 7,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Support\\Url::withScheme"
+            ],
             "composes": [
                 "apply_filters",
                 "force_ssl_admin",
@@ -19044,12 +19062,12 @@
         },
         "wp_parse_url": {
             "file": "formatting.php",
-            "lines": 23,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "parse_url"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\Url::parse"
+            ],
+            "composes": []
         },
         "wp_password_change_notification": {
             "file": "pluggable.php",
@@ -20483,9 +20501,11 @@
         },
         "wp_validate_redirect": {
             "file": "pluggable.php",
-            "lines": 21,
-            "kind": "composes",
-            "minn": [],
+            "lines": 3,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Support\\Url::safeRedirect"
+            ],
             "composes": [
                 "apply_filters",
                 "home_url",

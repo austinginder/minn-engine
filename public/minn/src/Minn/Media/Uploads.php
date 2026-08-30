@@ -147,4 +147,29 @@ final readonly class Uploads
         }
         return $paths;
     }
+
+    /**
+     * Where uploads live, from the site's options: the default folder under
+     * wp-content, a relative upload_path under ABSPATH, or an absolute one;
+     * the URL likewise, with year/month subfolders when the site asks.
+     *
+     * @return array{path: string, url: string, subdir: string, basedir: string, baseurl: string, error: false}
+     */
+    public static function layout(string $uploadPath, string $uploadUrlPath, string $siteUrl, string $contentDir, string $contentUrl, string $abspath, bool $yearMonth, string $time): array
+    {
+        $uploadPath = trim($uploadPath);
+        if ($uploadPath === '' || $uploadPath === 'wp-content/uploads') {
+            $dir = $contentDir . '/uploads';
+        } elseif (!str_starts_with($uploadPath, $abspath)) {
+            $dir = rtrim($abspath, '/') . '/' . $uploadPath;
+        } else {
+            $dir = $uploadPath;
+        }
+        $url = $uploadUrlPath;
+        if ($url === '') {
+            $url = $uploadPath === '' || $uploadPath === 'wp-content/uploads' || $uploadPath === $dir ? $contentUrl . '/uploads' : rtrim($siteUrl, '/') . '/' . $uploadPath;
+        }
+        $subdir = $yearMonth ? '/' . substr($time, 0, 4) . '/' . substr($time, 5, 2) : '';
+        return ['path' => $dir . $subdir, 'url' => $url . $subdir, 'subdir' => $subdir, 'basedir' => $dir, 'baseurl' => $url, 'error' => false];
+    }
 }

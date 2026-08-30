@@ -439,31 +439,21 @@ function rest_is_ip_address($ip)
 /** The first (anyOf) or only (oneOf) schema the value satisfies, else the reference's refusal. */
 function rest_find_one_matching_schema($value, $args, $param, $stop_after_first_match = false)
 {
-    $candidates = $args['anyOf'] ?? $args['oneOf'] ?? [];
-    $matches = [];
-    $errors = [];
-    foreach ($candidates as $index => $schema) {
+    $found = Schema::combining($value, (array) $args, (bool) $stop_after_first_match, static function ($value, array $schema) use ($param) {
         $result = rest_validate_value_from_schema($value, $schema, $param);
-        if (!is_wp_error($result)) {
-            $matches[$index] = $schema;
-            if ($stop_after_first_match || isset($args['anyOf'])) {
-                return $schema;
-            }
-            continue;
-        }
-        $errors[] = ['error_object' => $result, 'schema' => $schema, 'index' => $index];
+        return is_wp_error($result) ? new Refusal($result->get_error_code(), $result->get_error_message(), $result) : true;
+    });
+    if (isset($found['schema'])) {
+        return $found['schema'];
     }
-    if (count($matches) === 1) {
-        return reset($matches);
+    if (isset($found['errors'])) {
+        return rest_get_combining_operation_error($value, $param, array_map(static fn (array $e) => ['error_object' => $e['error']->data, 'schema' => $e['schema'], 'index' => $e['index']], $found['errors']));
     }
-    if ($matches === []) {
-        return rest_get_combining_operation_error($value, $param, $errors);
-    }
-    $titles = array_filter(array_map(static fn ($s) => $s['title'] ?? '', $matches));
+    $titles = array_filter(array_map(static fn ($s) => $s['title'] ?? '', $found['matches']));
     $message = $titles !== []
         ? sprintf('%s matches %s, but more than one of these is allowed.', $param, implode(', ', $titles))
         : sprintf('%s matches more than one of the expected formats.', $param);
-    return new WP_Error('rest_one_of_multiple_matches', $message, ['positions' => array_keys($matches)]);
+    return new WP_Error('rest_one_of_multiple_matches', $message, ['positions' => array_keys($found['matches'])]);
 }
 
 /** One refusal for a value that matched none of the combined schemas. */

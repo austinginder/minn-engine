@@ -354,4 +354,40 @@ final readonly class TermQuery
     {
         return '%' . addcslashes($needle, '%_\\') . '%';
     }
+
+    /**
+     * The typed shape of term query variables: counts as absolute integers,
+     * lists as lists, flags as booleans, the ways plugin code spells them
+     * tolerated on the way in.
+     *
+     * @param Closure(mixed): list<int> $idList the caller's id-list parser
+     */
+    public static function coerce(array $query, Closure $idList): array
+    {
+        $query['number'] = abs((int) $query['number']);
+        $query['offset'] = abs((int) $query['offset']);
+        if ($query['taxonomy'] !== null) {
+            $query['taxonomy'] = array_values(array_map('strval', (array) $query['taxonomy']));
+        }
+        if ($query['object_ids'] !== null) {
+            $query['object_ids'] = array_map('intval', (array) $query['object_ids']);
+        }
+        foreach (['include', 'exclude', 'exclude_tree', 'term_taxonomy_id'] as $key) {
+            $query[$key] = $query[$key] === '' || $query[$key] === null ? [] : $idList($query[$key]);
+        }
+        if ($query['term_taxonomy_id'] === []) {
+            $query['term_taxonomy_id'] = '';
+        }
+        foreach (['name', 'slug'] as $key) {
+            $query[$key] = $query[$key] === '' || $query[$key] === null ? [] : array_values(array_map('strval', (array) $query[$key]));
+        }
+        if (is_string($query['hide_empty'])) {
+            $query['hide_empty'] = $query['hide_empty'] === '1' || $query['hide_empty'] === 'true';
+        }
+        foreach (['hide_empty', 'hierarchical', 'childless', 'pad_counts', 'cache_results', 'update_term_meta_cache'] as $flag) {
+            $query[$flag] = (bool) $query[$flag];
+        }
+        $query['child_of'] = (int) $query['child_of'];
+        return $query;
+    }
 }

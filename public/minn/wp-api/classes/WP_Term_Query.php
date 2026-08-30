@@ -1,5 +1,7 @@
 <?php
 
+use Minn\Runtime\TermQuery;
+
 /** Term queries as an object; the work is get_terms(), so both agree by construction. */
 class WP_Term_Query
 {
@@ -26,35 +28,7 @@ class WP_Term_Query
         }
         $taxonomies = isset($query['taxonomy']) ? (array) $query['taxonomy'] : null;
         $this->query_var_defaults = apply_filters('get_terms_defaults', $this->query_var_defaults, $taxonomies);
-        $query = wp_parse_args((array) $query, $this->query_var_defaults);
-        $query['number'] = absint($query['number']);
-        $query['offset'] = absint($query['offset']);
-        if ($query['taxonomy'] !== null) {
-            $query['taxonomy'] = array_values(array_map('strval', (array) $query['taxonomy']));
-        }
-        if ($query['object_ids'] !== null) {
-            $query['object_ids'] = array_map('intval', (array) $query['object_ids']);
-        }
-        foreach (['include', 'exclude', 'exclude_tree', 'term_taxonomy_id'] as $key) {
-            $query[$key] = $query[$key] === '' || $query[$key] === null ? [] : wp_parse_id_list($query[$key]);
-        }
-        if (is_array($query['term_taxonomy_id']) && $query['term_taxonomy_id'] === []) {
-            $query['term_taxonomy_id'] = '';
-        }
-        foreach (['name', 'slug'] as $key) {
-            $query[$key] = $query[$key] === '' || $query[$key] === null ? [] : array_values(array_map('strval', (array) $query[$key]));
-        }
-        if (is_string($query['hide_empty'])) {
-            $query['hide_empty'] = $query['hide_empty'] === '1' || $query['hide_empty'] === 'true';
-        }
-        $query['hide_empty'] = (bool) $query['hide_empty'];
-        $query['hierarchical'] = (bool) $query['hierarchical'];
-        $query['childless'] = (bool) $query['childless'];
-        $query['pad_counts'] = (bool) $query['pad_counts'];
-        $query['cache_results'] = (bool) $query['cache_results'];
-        $query['update_term_meta_cache'] = (bool) $query['update_term_meta_cache'];
-        $query['child_of'] = (int) $query['child_of'];
-        $this->query_vars = $query;
+        $this->query_vars = TermQuery::coerce(wp_parse_args((array) $query, $this->query_var_defaults), static fn ($list) => wp_parse_id_list($list));
         do_action_ref_array('parse_term_query', [&$this]);
     }
 

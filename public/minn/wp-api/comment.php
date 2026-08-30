@@ -1,11 +1,12 @@
 <?php
 /** Comments: reads, counts, the writers. Behaviour from contracts/fixtures/api/media.json. */
 
-use Minn\Content\Comments;
+use Minn\Content\CommentClasses;
 use Minn\Content\CommentModeration;
+use Minn\Content\Comments;
 use Minn\Front\CommentList;
-use Minn\Runtime\Runtime;
 use Minn\Runtime\CommentQuery;
+use Minn\Runtime\Runtime;
 
 /** @internal */
 function _minn_comments(): Comments
@@ -368,29 +369,18 @@ function get_comment_class($css_class = '', $comment_id = null, $post = null)
     if ($comment === null) {
         return [];
     }
-    $type = $comment->comment_type === '' ? 'comment' : $comment->comment_type;
-    $classes = [$type === 'comment' ? 'comment' : $type];
     $user = (int) $comment->user_id > 0 ? get_userdata((int) $comment->user_id) : null;
-    if ($user) {
-        $classes[] = 'byuser';
-        $classes[] = 'comment-author-' . sanitize_html_class($user->user_nicename, (string) $comment->user_id);
-        $post = get_post($post ?? $comment->comment_post_ID);
-        if ($post && (int) $comment->user_id === (int) $post->post_author) {
-            $classes[] = 'bypostauthor';
-        }
-    }
+    $post = $user ? get_post($post ?? $comment->comment_post_ID) : null;
     $comment_alt = (int) ($comment_alt ?? 0);
     $comment_depth = (int) ($comment_depth ?? 0) ?: 1;
     $comment_thread_alt = (int) ($comment_thread_alt ?? 0);
-    array_push($classes, ...($comment_alt % 2 ? ['odd', 'alt'] : ['even']));
+    $extra = is_array($css_class) ? $css_class : preg_split('/\s+/', trim((string) $css_class), -1, PREG_SPLIT_NO_EMPTY);
+    $classes = CommentClasses::build((string) $comment->comment_type, $user ? sanitize_html_class($user->user_nicename, (string) $comment->user_id) : null, $post && (int) $comment->user_id === (int) $post->post_author, $comment_alt, $comment_depth, $comment_thread_alt, $extra);
     $comment_alt++;
     if ($comment_depth === 1) {
-        array_push($classes, ...($comment_thread_alt % 2 ? ['thread-odd', 'thread-alt'] : ['thread-even']));
         $comment_thread_alt++;
     }
-    $classes[] = 'depth-' . $comment_depth;
-    $extra = is_array($css_class) ? $css_class : preg_split('/\s+/', trim((string) $css_class), -1, PREG_SPLIT_NO_EMPTY);
-    return apply_filters('comment_class', array_map('esc_attr', array_merge($classes, $extra)), $css_class, $comment->comment_ID, $comment, $post);
+    return apply_filters('comment_class', array_map('esc_attr', $classes), $css_class, $comment->comment_ID, $comment, $post);
 }
 
 function comment_class($css_class = '', $comment = null, $post = null, $display = true)

@@ -2,6 +2,7 @@
 /** URLs of the site and its pieces. */
 
 use Minn\Front\Pagination;
+use Minn\Media\Uploads;
 use Minn\Runtime\Runtime;
 
 function get_home_url($blog_id = null, $path = '', $scheme = null)
@@ -321,32 +322,8 @@ function wp_get_upload_dir()
 
 function _wp_upload_dir($time = null)
 {
-    $siteurl = (string) get_option('siteurl');
-    $uploadPath = trim((string) get_option('upload_path'));
-    if ($uploadPath === '' || $uploadPath === 'wp-content/uploads') {
-        $dir = WP_CONTENT_DIR . '/uploads';
-    } elseif (!str_starts_with($uploadPath, ABSPATH)) {
-        $dir = rtrim(ABSPATH, '/') . '/' . $uploadPath;
-    } else {
-        $dir = $uploadPath;
-    }
-    $url = (string) get_option('upload_url_path');
-    if ($url === '') {
-        $url = $uploadPath === '' || $uploadPath === 'wp-content/uploads' || $uploadPath === $dir ? WP_CONTENT_URL . '/uploads' : trailingslashit($siteurl) . $uploadPath;
-    }
-    $subdir = '';
-    if (get_option('uploads_use_yearmonth_folders')) {
-        $time ??= current_time('mysql');
-        $subdir = '/' . substr((string) $time, 0, 4) . '/' . substr((string) $time, 5, 2);
-    }
-    return apply_filters('upload_dir', [
-        'path' => $dir . $subdir,
-        'url' => $url . $subdir,
-        'subdir' => $subdir,
-        'basedir' => $dir,
-        'baseurl' => $url,
-        'error' => false,
-    ]);
+    $layout = Uploads::layout((string) get_option('upload_path'), (string) get_option('upload_url_path'), (string) get_option('siteurl'), WP_CONTENT_DIR, WP_CONTENT_URL, ABSPATH, (bool) get_option('uploads_use_yearmonth_folders'), (string) ($time ?? current_time('mysql')));
+    return apply_filters('upload_dir', $layout);
 }
 
 

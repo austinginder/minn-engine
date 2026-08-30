@@ -79,4 +79,21 @@ final class Parser
         }
         return $output;
     }
+
+    /** Whether serialized content carries a block by name; a bare name means core/, and core blocks are also found by their short delimiter. */
+    public static function contains(string $content, string $name): bool
+    {
+        if (!str_contains($name, '/')) {
+            $name = 'core/' . $name;
+        }
+        $spellings = str_starts_with($name, 'core/') ? [substr($name, 5), $name] : [$name];
+        foreach ($spellings as $spelling) {
+            foreach ([' ', ' /-->', ' -->', '/-->'] as $tail) {
+                if (str_contains($content, '<!-- wp:' . $spelling . $tail)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }

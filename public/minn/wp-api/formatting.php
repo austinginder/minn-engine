@@ -3,6 +3,7 @@
 
 use Minn\Content\Autop;
 use Minn\Content\Blocks;
+use Minn\Content\Slug;
 use Minn\Content\Texturize;
 use Minn\Runtime\Runtime;
 use Minn\Support\Accents;
@@ -11,6 +12,7 @@ use Minn\Support\Entities;
 use Minn\Support\Html;
 use Minn\Support\Json;
 use Minn\Support\Paths;
+use Minn\Support\Time;
 use Minn\Support\Url;
 
 function wp_check_invalid_utf8($text, $strip = false)
@@ -122,27 +124,7 @@ function _sanitize_text_fields($str, $keep_newlines = false)
     if (is_object($str) || is_array($str)) {
         return '';
     }
-    $str = (string) $str;
-    $filtered = wp_check_invalid_utf8($str);
-    if (str_contains($filtered, '<')) {
-        $filtered = wp_pre_kses_less_than($filtered);
-        $filtered = wp_strip_all_tags($filtered, false);
-        $filtered = str_replace("<\n", "&lt;\n", $filtered);
-    }
-    if (!$keep_newlines) {
-        $filtered = preg_replace('/[\r\n\t ]+/', ' ', $filtered);
-    }
-    $filtered = trim($filtered);
-    $filtered = str_replace("\0", '', $filtered);
-    $found = false;
-    while (preg_match('/%[a-f0-9]{2}/i', $filtered, $match)) {
-        $filtered = str_replace($match[0], '', $filtered);
-        $found = true;
-    }
-    if ($found) {
-        $filtered = trim(preg_replace('/ +/', ' ', $filtered));
-    }
-    return $filtered;
+    return Html::textField((string) $str, (bool) $keep_newlines, static fn (string $t) => wp_check_invalid_utf8($t), static fn (string $t) => wp_pre_kses_less_than($t));
 }
 
 function sanitize_text_field($str)
@@ -253,27 +235,7 @@ function sanitize_title($title, $fallback_title = '', $context = 'save')
 
 function sanitize_title_with_dashes($title, $raw_title = '', $context = 'display')
 {
-    $title = strip_tags((string) $title);
-    $title = preg_replace('|%([a-fA-F0-9][a-fA-F0-9])|', '---$1---', $title);
-    $title = str_replace('%', '', $title);
-    $title = preg_replace('|---([a-fA-F0-9][a-fA-F0-9])---|', '%$1', $title);
-    if (mb_check_encoding($title, 'UTF-8')) {
-        $title = mb_strtolower($title, 'UTF-8');
-        $title = _minn_utf8_uri_encode($title, 200);
-    }
-    $title = strtolower($title);
-    if ($context === 'save') {
-        $title = str_replace(['%c2%a0', '%e2%80%93', '%e2%80%94'], '-', $title);
-        $title = str_replace(['&nbsp;', '&#160;', '&ndash;', '&#8211;', '&mdash;', '&#8212;', '/', '×', '%c3%97'], '-', $title);
-        $title = str_replace(['%c2%ad', '%c2%a1', '%c2%bf', '%c2%ab', '%c2%bb', '%e2%80%b9', '%e2%80%ba', '%e2%80%98', '%e2%80%99', '%e2%80%9c', '%e2%80%9d', '%e2%80%9a', '%e2%80%9b', '%e2%80%9e', '%e2%80%9f', '%e2%80%a2', '%c2%a9', '%c2%ae', '%c2%b0', '%e2%80%a6', '%e2%84%a2', '%c2%b4', '%cb%8a', '%cc%81', '%cd%81', '%cc%80', '%cc%84', '%cc%8c', '%e2%82%ac', '%c2%a3', '%e2%80%80', '%e2%80%81', '%e2%80%82', '%e2%80%83', '%e2%80%84', '%e2%80%85', '%e2%80%86', '%e2%80%87', '%e2%80%88', '%e2%80%89', '%e2%80%8a', '%e2%80%8b', '%e2%80%8c', '%e2%80%8d', '%e2%80%8e', '%e2%80%8f', '%e2%80%aa', '%e2%80%ab', '%e2%80%ac', '%e2%80%ad', '%e2%80%ae', '%e2%80%af', '%e2%81%9f', '%e3%80%80', '%ef%bb%bf'], '', $title);
-        $title = str_replace('%c3%97', 'x', $title);
-    }
-    $title = preg_replace('/&.+?;/', '', $title);
-    $title = str_replace('.', '-', $title);
-    $title = preg_replace('/[^%a-z0-9 _-]/', '', $title);
-    $title = preg_replace('/\s+/', '-', $title);
-    $title = preg_replace('|-+|', '-', $title);
-    return trim($title, '-');
+    return Slug::dashes((string) $title, $context === 'save', static fn (string $text, int $length) => _minn_utf8_uri_encode($text, $length));
 }
 
 /** @internal percent-encodes non-ASCII bytes the way slugs need */
@@ -466,29 +428,7 @@ function wp_normalize_path($path)
 
 function wp_parse_url($url, $component = -1)
 {
-    $url = (string) $url;
-    $toUnset = [];
-    if (str_starts_with($url, '//')) {
-        $toUnset[] = 'scheme';
-        $url = 'placeholder:' . $url;
-    } elseif (str_starts_with($url, '/')) {
-        $toUnset = ['scheme', 'host'];
-        $url = 'placeholder://placeholder' . $url;
-    }
-    $parts = parse_url($url);
-    if ($parts === false) {
-        return $component === -1 ? false : null;
-    }
-    foreach ($toUnset as $key) {
-        unset($parts[$key]);
-    }
-    if ($component === -1) {
-        return $parts;
-    }
-    $key = match ($component) {
-        PHP_URL_SCHEME => 'scheme', PHP_URL_HOST => 'host', PHP_URL_PORT => 'port', PHP_URL_USER => 'user', PHP_URL_PASS => 'pass', PHP_URL_PATH => 'path', PHP_URL_QUERY => 'query', PHP_URL_FRAGMENT => 'fragment', default => null,
-    };
-    return $key === null ? null : ($parts[$key] ?? null);
+    return Url::parse((string) $url, (int) $component);
 }
 
 function _get_component_from_parsed_url_array($url_parts, $component = -1)
@@ -498,27 +438,13 @@ function _get_component_from_parsed_url_array($url_parts, $component = -1)
 
 function set_url_scheme($url, $scheme = null)
 {
-    $original = $url;
-    $url = trim((string) $url);
-    if ($scheme === null) {
-        $scheme = is_ssl() ? 'https' : 'http';
-    } elseif ($scheme === 'admin' || $scheme === 'login' || $scheme === 'login_post' || $scheme === 'rpc') {
-        $scheme = is_ssl() || force_ssl_admin() ? 'https' : 'http';
-    } elseif ($scheme !== 'http' && $scheme !== 'https' && $scheme !== 'relative') {
-        $scheme = is_ssl() ? 'https' : 'http';
-    }
-    if (str_starts_with($url, '//')) {
-        $url = 'http:' . $url;
-    }
-    if ($scheme === 'relative') {
-        $url = ltrim(preg_replace('#^\w+://[^/]*#', '', $url));
-        if ($url !== '' && $url[0] === '/') {
-            $url = '/' . ltrim($url, "/ \t\n\r\0\x0B");
-        }
-    } else {
-        $url = preg_replace('#^\w+://#', $scheme . '://', $url);
-    }
-    return apply_filters('set_url_scheme', $url, $scheme, $original);
+    $adminScheme = is_ssl() || force_ssl_admin() ? 'https' : 'http';
+    $scheme = match ($scheme) {
+        'http', 'https', 'relative' => $scheme,
+        'admin', 'login', 'login_post', 'rpc' => $adminScheme,
+        default => is_ssl() ? 'https' : 'http',
+    };
+    return apply_filters('set_url_scheme', Url::withScheme((string) $url, $scheme), $scheme, $url);
 }
 
 function force_ssl_admin($force = null)
@@ -742,28 +668,8 @@ function human_time_diff($from, $to = 0)
 {
     $to = (int) $to === 0 ? time() : (int) $to;
     $diff = abs($to - (int) $from);
-    if ($diff < MINUTE_IN_SECONDS) {
-        $secs = max($diff, 1);
-        $since = sprintf(_n('%s second', '%s seconds', $secs), $secs);
-    } elseif ($diff < HOUR_IN_SECONDS) {
-        $mins = max((int) round($diff / MINUTE_IN_SECONDS), 1);
-        $since = sprintf(_n('%s minute', '%s minutes', $mins), $mins);
-    } elseif ($diff < DAY_IN_SECONDS) {
-        $hours = max((int) round($diff / HOUR_IN_SECONDS), 1);
-        $since = sprintf(_n('%s hour', '%s hours', $hours), $hours);
-    } elseif ($diff < WEEK_IN_SECONDS) {
-        $days = max((int) round($diff / DAY_IN_SECONDS), 1);
-        $since = sprintf(_n('%s day', '%s days', $days), $days);
-    } elseif ($diff < MONTH_IN_SECONDS) {
-        $weeks = max((int) round($diff / WEEK_IN_SECONDS), 1);
-        $since = sprintf(_n('%s week', '%s weeks', $weeks), $weeks);
-    } elseif ($diff < YEAR_IN_SECONDS) {
-        $months = max((int) round($diff / MONTH_IN_SECONDS), 1);
-        $since = sprintf(_n('%s month', '%s months', $months), $months);
-    } else {
-        $years = max((int) round($diff / YEAR_IN_SECONDS), 1);
-        $since = sprintf(_n('%s year', '%s years', $years), $years);
-    }
+    [$count, $unit] = Time::span($diff);
+    $since = sprintf(_n("%s {$unit}", "%s {$unit}s", $count), $count);
     return apply_filters('human_time_diff', $since, $diff, $from, $to);
 }
 
