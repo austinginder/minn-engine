@@ -6,7 +6,7 @@ A from-scratch, MIT-licensed engine that speaks WordPress's operational contract
 
 *Working draft, August 2026.*
 
-## 1. The thesis: WordPress is not software, it is a coordination standard
+## 1. The thesis: WordPress is not only software, it is a coordination standard
 
 WordPress remains the dominant web platform because customers, hosts, developers, and now AI agents all coordinate there. The portable unit of site, the frozen schema, the REST API, and the labor pool are the product. The PHP is one implementation of those contracts.
 
