@@ -29,13 +29,19 @@ final class Commands
         self::leaf('user update', [UserCommand::class, 'update'], $early);
         self::leaf('user delete', [UserCommand::class, 'delete'], $early);
         self::leaf('plugin list', [PluginCommand::class, 'list'], $early);
+        self::leaf('plugin install', [PluginCommand::class, 'install'], $early);
         self::leaf('plugin activate', [PluginCommand::class, 'activate'], $early);
         self::leaf('plugin deactivate', [PluginCommand::class, 'deactivate'], $early);
+        self::leaf('plugin delete', [PluginCommand::class, 'delete'], $early);
+        self::leaf('plugin is-installed', [PluginCommand::class, 'is_installed'], $early);
         self::leaf('theme list', [ThemeCommand::class, 'list'], $early);
         self::leaf('theme install', [ThemeCommand::class, 'install'], $early);
         self::leaf('theme activate', [ThemeCommand::class, 'activate'], $early);
         self::leaf('theme delete', [ThemeCommand::class, 'delete'], $early);
+        self::leaf('theme is-installed', [ThemeCommand::class, 'is_installed'], $early);
         self::leaf('cache flush', [CacheCommand::class, 'flush'], $early);
+        self::leaf('rewrite flush', [RewriteCommand::class, 'flush'], $early);
+        self::leaf('rewrite structure', [RewriteCommand::class, 'structure'], $early);
         self::replace('search-replace', SearchReplaceCommand::class, $early);
         WP_CLI::add_command('minn', MinnCommand::class, $early);
     }

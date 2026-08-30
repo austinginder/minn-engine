@@ -105,6 +105,12 @@ foreach ([
     'theme activate twentytwentyfive',
     'theme delete nope-nope',
     'theme delete twentytwentyfive',
+    'theme is-installed twentytwentyfive',
+    'theme is-installed nope-nope',
+    'plugin install zz-no-such-plugin-xyz',
+    'plugin is-installed minn-admin',
+    'plugin is-installed nope-nope',
+    'plugin delete nope-nope',
     'cache flush',
     'user create uniqueloginzzz admin@minn-engine.localhost',
     'user create badroleuser badrole@example.test --role=not-a-role',
@@ -269,6 +275,41 @@ $compareInstall = static function (string $label, string $command) use ($run, $c
 $compareInstall('theme install twentysixteen matches the reference', 'theme install twentysixteen');
 $compareInstall('theme install twentysixteen twentytwentyfive matches the reference', 'theme install twentysixteen twentytwentyfive');
 $compareInstall('theme install twentysixteen --activate matches the reference', 'theme install twentysixteen --activate');
+
+$comparePlugin = static function (string $label, string $command) use ($run, $check, $stripCache, $ENGINE_DIR, $REF_DIR): void {
+    $cleanup = static function (string $dir) use ($run): void {
+        $run($dir, 'plugin deactivate hello-dolly');
+        $run($dir, 'plugin delete hello-dolly');
+    };
+    [$engineOut, $engineCode] = $run($ENGINE_DIR, $command);
+    $cleanup($ENGINE_DIR);
+    [$refOut, $refCode] = $run($REF_DIR, $command);
+    $cleanup($REF_DIR);
+    $check(
+        $label,
+        $stripCache($engineOut) === $stripCache($refOut) && $engineCode === $refCode,
+        "wp {$command}\n      engine[{$engineCode}]: " . substr($stripCache($engineOut), 0, 400) . "\n      ref[{$refCode}]:    " . substr($stripCache($refOut), 0, 400),
+    );
+};
+$comparePlugin('plugin install hello-dolly matches the reference', 'plugin install hello-dolly');
+$comparePlugin('plugin install hello-dolly --activate matches the reference', 'plugin install hello-dolly --activate');
+$run($ENGINE_DIR, 'plugin install hello-dolly');
+$run($REF_DIR, 'plugin install hello-dolly');
+$same('plugin install hello-dolly when already on disk', 'plugin install hello-dolly');
+$run($ENGINE_DIR, 'plugin delete hello-dolly');
+$run($REF_DIR, 'plugin delete hello-dolly');
+
+[$out, $code] = $run($ENGINE_DIR, 'rewrite flush');
+$check('rewrite flush succeeds', $code === 0 && $out === 'Success: Rewrite rules flushed.', "[$code] {$out}");
+[$out, $code] = $run($ENGINE_DIR, "rewrite structure '/%year%/%postname%/'");
+$check(
+    'rewrite structure sets and flushes',
+    $code === 0 && str_contains($out, 'Success: Rewrite structure set.') && str_contains($out, 'Success: Rewrite rules flushed.'),
+    "[$code] {$out}",
+);
+[$got] = $run($ENGINE_DIR, 'option get permalink_structure');
+$check('rewrite structure stored permalink_structure', trim($got) === '/%year%/%postname%/', $got);
+$run($ENGINE_DIR, "rewrite structure '/%postname%/'");
 
 echo "\n{$pass} passed, {$fail} failed\n";
 exit($fail === 0 ? 0 : 1);

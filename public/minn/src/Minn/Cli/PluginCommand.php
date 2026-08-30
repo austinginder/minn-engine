@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace Minn\Cli;
 
+use Minn\Admin\Packages;
 use Minn\Content\Inventory;
 use Minn\Content\PluginState;
 use Minn\Extension\Loader;
+use Minn\RestError;
 use WP_CLI;
 use WP_CLI\Formatter;
 
-/** `wp plugin list|activate|deactivate`: the inventory CaptainCore's fetch-site-data reads, and the switch the off page names. */
+/** `wp plugin list|install|activate|deactivate|delete`: the inventory and the fleet's install/delete. */
 final class PluginCommand
 {
     private const FIELDS = ['name', 'status', 'update', 'version', 'update_version', 'auto_update'];
@@ -86,6 +88,124 @@ final class PluginCommand
         $this->switch($args, false);
     }
 
+    /**
+     * Installs one or more plugins from wordpress.org, a zip, or a URL.
+     *
+     * ## OPTIONS
+     *
+     * <plugin|zip|url>...
+     * : A plugin slug, a local zip path, or a zip URL.
+     *
+     * [--version=<version>]
+     * : Install that wordpress.org version instead of the current one.
+     *
+     * [--force]
+     * : Overwrite an installed copy of the same folder.
+     *
+     * [--activate]
+     * : Activate the plugin after it is installed (or if it is already on disk).
+     *
+     * @when before_wp_load
+     */
+    public function install(array $args, array $assocArgs): void
+    {
+        $runtime = Runtime::boot();
+        $packages = new Packages($runtime->site, rtrim(ABSPATH, '/') . '/wp-content');
+        $force = isset($assocArgs['force']);
+        $activate = isset($assocArgs['activate']);
+        $version = (string) ($assocArgs['version'] ?? '');
+        $done = 0;
+        $already = 0;
+        $missing = 0;
+        foreach ($args as $source) {
+            $fresh = false;
+            $folder = $this->installOne($packages, $source, $force, $version, $fresh);
+            if ($folder === null) {
+                $missing++;
+                continue;
+            }
+            if ($fresh) {
+                $done++;
+            } else {
+                $already++;
+            }
+            if ($activate) {
+                $this->activateFolder($runtime, $folder);
+            }
+        }
+        $total = count($args);
+        if ($done > 0 && $missing === 0) {
+            WP_CLI::success("Installed {$done} of {$total} plugins.");
+            return;
+        }
+        if ($done > 0) {
+            WP_CLI::error("Only installed {$done} of {$total} plugins.");
+        }
+        if ($missing === 0 && $already > 0) {
+            WP_CLI::success('Plugin already installed.');
+            return;
+        }
+        WP_CLI::error('No plugins installed.');
+    }
+
+    /**
+     * Deletes plugin files without deactivating.
+     *
+     * ## OPTIONS
+     *
+     * [<plugin>...]
+     * : One or more plugin folders to delete.
+     *
+     * @when before_wp_load
+     */
+    public function delete(array $args, array $assocArgs): void
+    {
+        $runtime = Runtime::boot();
+        $packages = new Packages($runtime->site, rtrim(ABSPATH, '/') . '/wp-content');
+        $done = 0;
+        foreach ($args as $slug) {
+            $dir = rtrim(ABSPATH, '/') . '/wp-content/plugins/' . $slug;
+            $file = $dir . '.php';
+            if (!is_dir($dir) && !is_file($file)) {
+                WP_CLI::warning("The '{$slug}' plugin could not be found.");
+                continue;
+            }
+            if (is_file($file) && !is_dir($dir)) {
+                unlink($file);
+            } else {
+                $packages->remove('plugin', $slug);
+            }
+            WP_CLI::log("Deleted '{$slug}' plugin.");
+            $done++;
+        }
+        if ($done > 0) {
+            WP_CLI::success("Deleted {$done} of " . count($args) . ' plugins.');
+            return;
+        }
+        WP_CLI::success('Plugin already deleted.');
+    }
+
+    /**
+     * Checks if a given plugin is installed. Exit 0 when it is, 1 when not.
+     *
+     * ## OPTIONS
+     *
+     * <plugin>
+     * : The plugin folder to check.
+     *
+     * @when before_wp_load
+     */
+    public function is_installed(array $args, array $assocArgs): void
+    {
+        Runtime::boot();
+        $slug = (string) ($args[0] ?? '');
+        $root = rtrim(ABSPATH, '/') . '/wp-content/plugins/' . $slug;
+        if (is_dir($root) || is_file($root . '.php')) {
+            return;
+        }
+        WP_CLI::halt(1);
+    }
+
     /** The reference's wording, line for line: one warning per miss, a Success summary or an Error with none done. */
     private function switch(array $slugs, bool $on): void
     {
@@ -117,5 +237,110 @@ final class PluginCommand
             WP_CLI::error('No plugins ' . $verb . '.');
         }
         WP_CLI::success(ucfirst($verb) . " {$done} of {$total} plugins.");
+    }
+
+    private function installOne(Packages $packages, string $source, bool $force, string $version, ?bool &$fresh): ?string
+    {
+        $fresh = false;
+        $plugins = rtrim(ABSPATH, '/') . '/wp-content/plugins';
+        if (preg_match('#^https?://#i', $source)) {
+            return $this->installArchive($packages, $source, $force, $fresh);
+        }
+        if (is_file($source) || str_ends_with(strtolower($source), '.zip')) {
+            if (!is_file($source)) {
+                WP_CLI::warning("{$source}: Invalid plugin slug.");
+                WP_CLI::warning("The '{$source}' plugin could not be found.");
+                return null;
+            }
+            return $this->installArchive($packages, $source, $force, $fresh);
+        }
+        if (!preg_match('/^[a-z0-9-]+$/', $source)) {
+            WP_CLI::warning("{$source}: Invalid plugin slug.");
+            WP_CLI::warning("The '{$source}' plugin could not be found.");
+            return null;
+        }
+        $dest = "{$plugins}/{$source}";
+        if ((is_dir($dest) || is_file($dest . '.php')) && !$force) {
+            WP_CLI::warning("{$source}: Plugin already installed.");
+            return $source;
+        }
+        try {
+            $info = $packages->directoryPlugin($source);
+        } catch (RestError) {
+            $info = null;
+        }
+        if ($info === null) {
+            WP_CLI::warning("{$source}: Plugin not found.");
+            WP_CLI::warning("The '{$source}' plugin could not be found.");
+            return null;
+        }
+        $name = html_entity_decode(strip_tags((string) ($info['name'] ?? $source)), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $useVersion = $version !== '' ? $version : (string) ($info['version'] ?? '');
+        $link = $version !== ''
+            ? 'https://downloads.wordpress.org/plugin/' . $source . '.' . $version . '.zip'
+            : (string) ($info['download_link'] ?? '');
+        WP_CLI::log("Installing {$name} ({$useVersion})");
+        WP_CLI::log("Downloading installation package from {$link}...");
+        $existed = is_dir($dest);
+        try {
+            WP_CLI::log('Unpacking the package...');
+            WP_CLI::log('Installing the plugin...');
+            if ($existed) {
+                WP_CLI::log('Removing the old version of the plugin...');
+            }
+            $folder = $packages->installPlugin($source, $force, $version);
+        } catch (RestError $error) {
+            WP_CLI::warning($source . ': ' . $error->getMessage());
+            WP_CLI::warning("The '{$source}' plugin could not be found.");
+            return null;
+        }
+        WP_CLI::log($existed ? 'Plugin updated successfully.' : 'Plugin installed successfully.');
+        $fresh = true;
+        return $folder;
+    }
+
+    private function installArchive(Packages $packages, string $source, bool $force, ?bool &$fresh): ?string
+    {
+        $fresh = false;
+        try {
+            if (preg_match('#^https?://#i', $source)) {
+                WP_CLI::log("Downloading installation package from {$source}...");
+                $bytes = $packages->fetch(preg_replace('#^http://#i', 'https://', $source) ?? $source);
+            } else {
+                $bytes = (string) file_get_contents($source);
+            }
+            WP_CLI::log('Unpacking the package...');
+            WP_CLI::log('Installing the plugin...');
+            $result = $packages->unpack($bytes, 'plugin', $force);
+        } catch (RestError $error) {
+            if ($error->status === 409) {
+                $folder = basename((string) ($error->extra['destination'] ?? ''));
+                WP_CLI::warning(($folder !== '' ? $folder : $source) . ': Plugin already installed.');
+                return $folder !== '' ? $folder : null;
+            }
+            WP_CLI::warning($source . ': ' . $error->getMessage());
+            WP_CLI::warning("The '{$source}' plugin could not be found.");
+            return null;
+        }
+        WP_CLI::log('Plugin installed successfully.');
+        $fresh = true;
+        return $result['folder'];
+    }
+
+    private function activateFolder(Runtime $runtime, string $folder): void
+    {
+        $contentDir = rtrim(ABSPATH, '/') . '/wp-content';
+        $state = new PluginState($runtime->site, new Inventory($contentDir, $runtime->site), new Loader($contentDir, $runtime->site));
+        $plugin = $state->find($folder);
+        WP_CLI::log("Activating '{$folder}'...");
+        if ($plugin === null) {
+            WP_CLI::warning("The '{$folder}' plugin could not be found.");
+            return;
+        }
+        if ($state->isActive($plugin)) {
+            return;
+        }
+        $state->setActive($plugin, true);
+        WP_CLI::log("Plugin '{$folder}' activated.");
     }
 }

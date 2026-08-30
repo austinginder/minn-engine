@@ -24,7 +24,7 @@ copies them over; `minn eject` reverses it (`docs/install.md`, `tests/install.te
 |---|---|---|
 | `before_wp_load` | nothing on disk | The engine's verbs (`contracts/cli.md`); WP-CLI's own `config get/list/path`, `core version [--extra]`, `cli …`. |
 | `after_wp_config_load` | `wp-includes/version.php` + `wp-config.php` | WP-CLI's `db query/export/import/check/optimize/repair/reset/drop/create`, straight to MySQL with the config's credentials. |
-| `after_wp_load` | WordPress | Refused: `Error: This command needs WordPress itself, which Minn Engine does not contain.` followed by the list of verbs that do work. Covers leftover bundle leaves (`theme search`/`update`, `plugin install`, `post`, `core is-installed/update`, `db tables/size`), not the engine's own `plugin list/activate/deactivate` or `theme list/install/activate/delete`. |
+| `after_wp_load` | WordPress | Refused: `Error: This command needs WordPress itself, which Minn Engine does not contain.` followed by the list of verbs that do work. Covers leftover bundle leaves (`plugin update`, `theme update`/`search`, `post`, `core is-installed/update`, `db tables/size`), not the engine's own plugin/theme/rewrite/cache verbs. |
 
 ## Deliberately absent
 

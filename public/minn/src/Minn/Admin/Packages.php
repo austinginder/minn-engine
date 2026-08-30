@@ -110,6 +110,9 @@ final readonly class Packages
             return $cache[$slug]['card'];
         }
         $plugin = $this->directoryPlugin($slug);
+        if ($plugin === null) {
+            throw new RestError('plugins_api_failed', 'Plugin not found.', 404);
+        }
         $icons = is_array($plugin['icons'] ?? null) ? $plugin['icons'] : [];
         $card = [
             'slug' => $slug,
@@ -132,20 +135,34 @@ final readonly class Packages
     }
 
     /** Installs a wordpress.org plugin by slug; returns its folder. */
-    public function installPlugin(string $slug): string
+    public function installPlugin(string $slug, bool $overwrite = false, string $version = ''): string
     {
         if (!preg_match('/^[a-z0-9-]+$/', $slug)) {
             throw new RestError('rest_invalid_param', 'Invalid parameter(s): slug', 400, ['params' => ['slug' => 'Invalid parameter.']]);
         }
-        $link = (string) ($this->directoryPlugin($slug)['download_link'] ?? '');
+        $data = $this->directoryPlugin($slug);
+        if ($data === null) {
+            throw new RestError('plugins_api_failed', 'Plugin not found.', 404);
+        }
+        $link = (string) ($data['download_link'] ?? '');
+        if ($version !== '') {
+            if (!preg_match('/^[0-9][A-Za-z0-9._-]*$/', $version)) {
+                throw new RestError('rest_invalid_param', 'Invalid parameter(s): version', 400, ['params' => ['version' => 'Invalid parameter.']]);
+            }
+            $link = 'https://downloads.wordpress.org/plugin/' . $slug . '.' . $version . '.zip';
+        }
         if ($link === '' || !str_starts_with($link, 'https://downloads.wordpress.org/')) {
             throw new RestError('rest_plugin_install_failed', 'The plugin has no download link on wordpress.org.', 500);
         }
-        return $this->unpack($this->fetch($link), 'plugin', false)['folder'];
+        return $this->unpack($this->fetch($link), 'plugin', $overwrite)['folder'];
     }
 
-    /** One directory record, or the reference's not-found refusal. */
-    private function directoryPlugin(string $slug): array
+    /**
+     * One wordpress.org plugin record, or null when the slug is unknown.
+     *
+     * @return array<string, mixed>|null
+     */
+    public function directoryPlugin(string $slug): ?array
     {
         $json = $this->fetch(self::WPORG_PLUGINS . '?action=plugin_information&' . http_build_query(['request' => [
             'slug' => $slug,
@@ -153,7 +170,7 @@ final readonly class Packages
         ]]));
         $data = json_decode($json, true);
         if (!is_array($data) || isset($data['error']) || !isset($data['slug'])) {
-            throw new RestError('plugins_api_failed', (string) ($data['error'] ?? 'Plugin not found.'), 404);
+            return null;
         }
         return $data;
     }
@@ -270,6 +287,10 @@ final readonly class Packages
             throw new RestError('bad_slug', 'That is not a folder name.', 400);
         }
         $dir = "{$this->contentDir}/" . ($kind === 'theme' ? 'themes' : 'plugins') . "/{$folder}";
+        if (is_link($dir)) {
+            unlink($dir);
+            return;
+        }
         if (!is_dir($dir)) {
             throw new RestError('not_found', ucfirst($kind) . ' not found.', 404);
         }

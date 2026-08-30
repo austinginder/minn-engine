@@ -287,4 +287,24 @@ final class ThemeCommand
         $runtime->site->setOption('current_theme', $headers['Theme Name']);
         WP_CLI::success("Switched to '{$headers['Theme Name']}' theme.");
     }
+
+    /**
+     * Checks if a given theme is installed. Exit 0 when it is, 1 when not.
+     *
+     * ## OPTIONS
+     *
+     * <theme>
+     * : The theme folder to check.
+     *
+     * @when before_wp_load
+     */
+    public function is_installed(array $args, array $assocArgs): void
+    {
+        Runtime::boot();
+        $slug = (string) ($args[0] ?? '');
+        if (is_dir(rtrim(ABSPATH, '/') . '/wp-content/themes/' . $slug)) {
+            return;
+        }
+        WP_CLI::halt(1);
+    }
 }
