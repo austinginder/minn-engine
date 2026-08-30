@@ -395,6 +395,44 @@ final readonly class Schema
     }
 
     /** An object schema that names its properties forbids the others unless it says otherwise, all the way down. */
+    private const ENDPOINT_KEYWORDS = ['type', 'format', 'enum', 'items', 'properties', 'additionalProperties', 'patternProperties', 'minProperties', 'maxProperties', 'minimum', 'maximum', 'exclusiveMinimum', 'exclusiveMaximum', 'multipleOf', 'minLength', 'maxLength', 'pattern', 'minItems', 'maxItems', 'uniqueItems', 'anyOf', 'oneOf'];
+
+    /**
+     * The argument map a route derives from an item schema: every writable
+     * property with the default validators, its keywords, defaults and
+     * required flags on the create route only, and any arg_options overrides.
+     */
+    public static function endpointArgs(array $schema, bool $creatable): array
+    {
+        $args = [];
+        foreach ((array) ($schema['properties'] ?? []) as $field => $params) {
+            if (!empty($params['readonly'])) {
+                continue;
+            }
+            $arg = ['validate_callback' => 'rest_validate_request_arg', 'sanitize_callback' => 'rest_sanitize_request_arg'];
+            if ($creatable && isset($params['default'])) {
+                $arg['default'] = $params['default'];
+            }
+            if ($creatable && !empty($params['required'])) {
+                $arg['required'] = true;
+            }
+            foreach (self::ENDPOINT_KEYWORDS as $keyword) {
+                if (isset($params[$keyword])) {
+                    $arg[$keyword] = $params[$keyword];
+                }
+            }
+            if (isset($params['arg_options'])) {
+                $overrides = (array) $params['arg_options'];
+                if (!$creatable) {
+                    unset($overrides['required']);
+                }
+                $arg = array_merge($arg, $overrides);
+            }
+            $args[$field] = $arg;
+        }
+        return $args;
+    }
+
     public static function closeObjects(array $schema): array
     {
         $type = (array) ($schema['type'] ?? []);

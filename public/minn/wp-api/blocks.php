@@ -3,9 +3,11 @@
 
 use Minn\Blocks\Block as MinnBlock;
 use Minn\Blocks\Parser;
+use Minn\Blocks\QueryVars;
+use Minn\Blocks\Selector;
 use Minn\Content\Blocks as MinnBlocks;
-use Minn\Runtime\Runtime;
 use Minn\Runtime\BlockMetadata;
+use Minn\Runtime\Runtime;
 
 /** @internal the engine's block value objects as the arrays plugin code reads */
 function _minn_block_to_array(MinnBlock $block): array
@@ -206,34 +208,7 @@ function wp_get_block_css_selector($block_type, $target = 'root', $fallback = fa
     if (!$block_type instanceof WP_Block_Type) {
         return null;
     }
-    $has_selectors = !empty($block_type->selectors);
-    $root_selector = null;
-    if ($has_selectors && isset($block_type->selectors['root'])) {
-        $root_selector = $block_type->selectors['root'];
-    } elseif (isset($block_type->supports['__experimentalSelector']) && is_string($block_type->supports['__experimentalSelector'])) {
-        $root_selector = $block_type->supports['__experimentalSelector'];
-    }
-    if ($root_selector === null) {
-        $root_selector = '.' . wp_get_block_default_classname($block_type->name);
-    }
-    if ($target === 'root' || $target === '' || $target === null) {
-        return $root_selector;
-    }
-    $target_path = is_string($target) ? explode('.', $target) : (array) $target;
-    if ($has_selectors) {
-        $selector = _wp_array_get($block_type->selectors, $target_path, null);
-        if (is_string($selector)) {
-            return $selector;
-        }
-        if (is_array($selector) && isset($selector['root'])) {
-            return $selector['root'];
-        }
-    }
-    $feature = $target_path[0] ?? '';
-    if ($feature !== '' && isset($block_type->supports[$feature]['__experimentalSelector']) && is_string($block_type->supports[$feature]['__experimentalSelector'])) {
-        return $block_type->supports[$feature]['__experimentalSelector'];
-    }
-    return $fallback ? $root_selector : null;
+    return Selector::resolve((array) ($block_type->selectors ?: []), (array) ($block_type->supports ?: []), $target, (bool) $fallback, wp_get_block_default_classname($block_type->name));
 }
 
 function get_block_wrapper_attributes($extra_attributes = [])
@@ -794,83 +769,15 @@ function render_block_core_template_part($attributes)
 /** The WP_Query vars a query loop's context asks for on a page of it. */
 function build_query_vars_from_query_block($block, $page)
 {
-    $query = ['post_type' => 'post', 'order' => 'DESC', 'orderby' => 'date', 'post__not_in' => [], 'tax_query' => []];
-    $q = $block->context['query'] ?? null;
-    if (!is_array($q)) {
-        return $query;
-    }
-    if (!empty($q['postType']) && post_type_exists((string) $q['postType'])) {
-        $query['post_type'] = (string) $q['postType'];
-    }
-    $query = _minn_query_block_sticky($query, $q);
-    if (!empty($q['exclude'])) {
-        $query['post__not_in'] = array_merge($query['post__not_in'], array_map('intval', (array) $q['exclude']));
-    }
-    if (!empty($q['perPage'])) {
-        $query['offset'] = ((int) ($q['perPage']) * ((int) $page - 1)) + (int) ($q['offset'] ?? 0);
-        $query['posts_per_page'] = (int) $q['perPage'];
-    }
-    $query['tax_query'] = _minn_query_block_tax_query($q);
-    if (isset($q['order'])) {
-        $query['order'] = strtoupper((string) $q['order']);
-    }
-    if (isset($q['orderBy'])) {
-        $query['orderby'] = (string) $q['orderBy'];
-    }
-    if (isset($q['author'])) {
-        $query['author__in'] = array_map('intval', preg_split('/[\s,]+/', (string) $q['author'], -1, PREG_SPLIT_NO_EMPTY) ?: []);
-    }
-    if (!empty($q['search'])) {
-        $query['s'] = (string) $q['search'];
-    }
-    if (!empty($q['parents'])) {
-        $query['post_parent__in'] = array_map('intval', (array) $q['parents']);
-    }
-    return apply_filters('query_loop_block_query_vars', $query, $block, $page);
+    $context = $block->context['query'] ?? null;
+    $sticky = array_map('intval', (array) get_option('sticky_posts', []));
+    $query = QueryVars::fromContext(is_array($context) ? $context : null, (int) $page, $sticky, static fn (string $type) => post_type_exists($type), static fn (string $taxonomy) => is_taxonomy_viewable($taxonomy));
+    return is_array($context) ? apply_filters('query_loop_block_query_vars', $query, $block, $page) : $query;
 }
 
 /** @internal the sticky setting: "only" lists the sticky posts, "exclude" keeps them out */
-function _minn_query_block_sticky(array $query, array $q): array
-{
-    if (!isset($q['sticky']) || $q['sticky'] === '') {
-        return $query;
-    }
-    $sticky = array_map('intval', (array) get_option('sticky_posts', []));
-    if ($q['sticky'] === 'only') {
-        $query['post__in'] = $sticky === [] ? [0] : $sticky;
-        $query['ignore_sticky_posts'] = 1;
-    } else {
-        $query['post__not_in'] = array_merge($query['post__not_in'], $sticky);
-    }
-    return $query;
-}
 
 /** @internal the tax_query a query loop's taxonomy and format settings become */
-function _minn_query_block_tax_query(array $q): array
-{
-    $tax = [];
-    if (!empty($q['taxQuery']) && is_array($q['taxQuery'])) {
-        $clauses = [];
-        foreach ($q['taxQuery'] as $taxonomy => $terms) {
-            if (is_taxonomy_viewable((string) $taxonomy) && !empty($terms)) {
-                $clauses[] = ['taxonomy' => (string) $taxonomy, 'terms' => array_map('intval', array_filter((array) $terms)), 'include_children' => false];
-            }
-        }
-        $tax[] = $clauses;
-    }
-    if (!empty($q['format']) && is_array($q['format'])) {
-        $formats = array_values(array_filter($q['format'], static fn ($f) => $f !== 'standard'));
-        $clause = ['relation' => 'OR'];
-        if ($formats !== []) {
-            $clause[] = ['taxonomy' => 'post_format', 'field' => 'slug', 'terms' => array_map(static fn ($f) => 'post-format-' . $f, $formats), 'operator' => 'IN'];
-        }
-        if (in_array('standard', $q['format'], true)) {
-            $clause[] = ['taxonomy' => 'post_format', 'operator' => 'NOT EXISTS'];
-        }
-        $tax[] = $clause;
-    }
-    return $tax === [] ? [] : ['relation' => 'AND'] + $tax;
-}
 
 /** The comment query vars a comment template's context asks for. */
 function build_comment_query_vars_from_block($block)

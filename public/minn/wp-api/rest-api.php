@@ -366,33 +366,7 @@ function rest_get_queried_resource_route()
 
 function rest_get_endpoint_args_for_schema($schema, $method = WP_REST_Server::CREATABLE)
 {
-    $schema_properties = !empty($schema['properties']) ? $schema['properties'] : [];
-    $endpoint_args = [];
-    $valid_schema_properties = ['type', 'format', 'enum', 'items', 'properties', 'additionalProperties', 'patternProperties', 'minProperties', 'maxProperties', 'minimum', 'maximum', 'exclusiveMinimum', 'exclusiveMaximum', 'multipleOf', 'minLength', 'maxLength', 'pattern', 'minItems', 'maxItems', 'uniqueItems', 'anyOf', 'oneOf'];
-    foreach ($schema_properties as $field_id => $params) {
-        if (!empty($params['readonly'])) {
-            continue;
-        }
-        $endpoint_args[$field_id] = ['validate_callback' => 'rest_validate_request_arg', 'sanitize_callback' => 'rest_sanitize_request_arg'];
-        if (WP_REST_Server::CREATABLE === $method && isset($params['default'])) {
-            $endpoint_args[$field_id]['default'] = $params['default'];
-        }
-        if (WP_REST_Server::CREATABLE === $method && !empty($params['required'])) {
-            $endpoint_args[$field_id]['required'] = true;
-        }
-        foreach ($valid_schema_properties as $schema_prop) {
-            if (isset($params[$schema_prop])) {
-                $endpoint_args[$field_id][$schema_prop] = $params[$schema_prop];
-            }
-        }
-        if (isset($params['arg_options'])) {
-            if (WP_REST_Server::CREATABLE !== $method) {
-                unset($params['arg_options']['required']);
-            }
-            $endpoint_args[$field_id] = array_merge($endpoint_args[$field_id], $params['arg_options']);
-        }
-    }
-    return $endpoint_args;
+    return Schema::endpointArgs((array) $schema, $method === WP_REST_Server::CREATABLE);
 }
 
 function rest_filter_response_by_context($response_data, $schema, $context)

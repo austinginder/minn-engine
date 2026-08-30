@@ -100,8 +100,7 @@ function update_metadata($meta_type, $object_id, $meta_key, $meta_value, $prev_v
         return false;
     }
     $meta_key = wp_unslash($meta_key);
-    $meta_value = wp_unslash($meta_value);
-    $meta_value = sanitize_meta($meta_key, $meta_value, $meta_type);
+    $meta_value = sanitize_meta($meta_key, wp_unslash($meta_value), $meta_type);
     $check = apply_filters("update_{$meta_type}_metadata", null, $object_id, $meta_key, $meta_value, $prev_value);
     if ($check !== null) {
         return (bool) $check;
@@ -111,15 +110,7 @@ function update_metadata($meta_type, $object_id, $meta_key, $meta_value, $prev_v
         return add_metadata($meta_type, $object_id, $meta_key, $meta_value);
     }
     $stored = Options::toStorage($meta_value);
-    if ($prev_value === '' && $stored === (string) $rows[0]['meta_value']) {
-        return false;
-    }
-    $ids = [];
-    foreach ($rows as $row) {
-        if ($prev_value === '' || Options::toStorage($prev_value) === (string) $row['meta_value']) {
-            $ids[] = (int) $row['meta_id'];
-        }
-    }
+    $ids = Meta::idsToUpdate($rows, $stored, $prev_value === '' ? null : Options::toStorage($prev_value));
     if ($ids === []) {
         return false;
     }

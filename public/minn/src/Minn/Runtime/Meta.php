@@ -46,6 +46,28 @@ final readonly class Meta
     }
 
     /** @param list<int> $ids */
+    /**
+     * Which of a key's rows an update touches: none when no previous value was
+     * named and the first row already holds the value, all of them when no
+     * previous value was named, otherwise only the rows holding it.
+     *
+     * @param list<array<string, mixed>> $rows
+     * @return list<int>
+     */
+    public static function idsToUpdate(array $rows, string $stored, ?string $previous): array
+    {
+        if ($previous === null && $stored === (string) ($rows[0]['meta_value'] ?? '')) {
+            return [];
+        }
+        $ids = [];
+        foreach ($rows as $row) {
+            if ($previous === null || $previous === (string) $row['meta_value']) {
+                $ids[] = (int) $row['meta_id'];
+            }
+        }
+        return $ids;
+    }
+
     public function updateRows(string $type, array $ids, string $stored): void
     {
         if ($ids === []) {
