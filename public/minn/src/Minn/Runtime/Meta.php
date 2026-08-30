@@ -20,6 +20,35 @@ final readonly class Meta
         return isset(self::TABLES[$type]);
     }
 
+    /**
+     * The meta clauses hidden in flat query vars (meta_key, meta_value, the
+     * compare and type variants), merged ahead of an explicit meta_query,
+     * the reference's precedence for WP_Meta_Query::parse_query_vars.
+     *
+     * @param array<string, mixed> $queryVars
+     * @return list<mixed>
+     */
+    public static function clausesFromQueryVars(array $queryVars): array
+    {
+        $clause = [];
+        foreach (['key' => 'meta_key', 'compare' => 'meta_compare', 'type' => 'meta_type', 'compare_key' => 'meta_compare_key', 'type_key' => 'meta_type_key'] as $to => $from) {
+            if (isset($queryVars[$from]) && $queryVars[$from] !== '') {
+                $clause[$to] = $queryVars[$from];
+            }
+        }
+        if (isset($queryVars['meta_value']) && (!is_array($queryVars['meta_value']) || $queryVars['meta_value'] !== [])) {
+            $clause['value'] = $queryVars['meta_value'];
+        }
+        $clauses = [];
+        if (isset($clause['key']) || isset($clause['value'])) {
+            $clauses[] = $clause;
+        }
+        if (!empty($queryVars['meta_query']) && is_array($queryVars['meta_query'])) {
+            $clauses = array_merge($clauses, $queryVars['meta_query']);
+        }
+        return $clauses;
+    }
+
     /** Every row of an object's meta, values as stored, grouped by key in id order. @return array<string, list<string>> */
     public function all(string $type, int $objectId): array
     {

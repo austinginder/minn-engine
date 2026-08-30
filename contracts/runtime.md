@@ -910,6 +910,33 @@ selection), `Url::parse` / `withScheme` / `safeRedirect`, `Support\Time::span`,
 `Blocks\BlockName`. What stayed is orchestration: hooks fired around one
 call, `WP_Error` construction, option reads that plugin filters may change.
 
+Round five (same evening) settled the rest of the over-15 list by
+classification rather than extraction, so a later pass does not re-read
+them: `WP_Meta_Query::parse_query_vars` moved (`Runtime\Meta::
+clausesFromQueryVars`, the flat meta_key/meta_value vars merged ahead of an
+explicit meta_query); everything else stays with a reason. `WP_REST_Request
+::parse_json_params` is guard clauses and WP_Error shaping; `WP_Hook::
+apply_filters` runs standalone instances over their own storage with local
+nesting state and cannot delegate to `Runtime\Hooks`; `WP_Screen::get` is
+the Hear screen-identity registry; `WP_User`/`WP_Post_Type` constructors
+and `WP_Theme::__get` are loose-input hydration; `wpdb::update` is the
+format juggling already ruled mapping; `wp_convert_widget_settings` is
+widget-option (Hear) data conversion; `WP_REST_Response::as_error` and
+`WP_REST_Server::register_route` are WP-shape construction and recording.
+The leaf ceiling is 13.
+
+The review also surfaced a REAL gap, bigger than thinning: the engine has
+two disconnected sitemap implementations. `Front\Sitemaps` serves
+/wp-sitemap.xml (pinned at oracle parity by the probes suite, direct SQL,
+fixed providers) while the facade's `WP_Sitemaps` registry exists for
+plugin code, and the front routes never consult it, so a plugin's
+registered provider or wp_sitemaps_* filters change NOTHING on the served
+sitemap. Unifying them (front routes consulting the registry and filters
+when the runtime is booted) is capture-first milestone work, not a
+refactor: the two even order content differently (post_date vs ID), so the
+oracle has to arbitrate. Until then this is a Speak gap: sitemap plugins
+appear to work but their output never ships.
+
 Round four (2026-08-30, after the classic runner landed): the archive-title
 labels the classic facade and the block path computed separately unified in
 `Theme\ArchiveTitle` (one source of truth for Category:/Tag:/Author:/date

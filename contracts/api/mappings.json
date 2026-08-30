@@ -4,11 +4,11 @@
     "summary": {
         "minn": 300,
         "composes": 651,
-        "leaf": 302,
-        "noop": 1116,
+        "leaf": 301,
+        "noop": 1117,
         "functions": 2363,
-        "minnMethods": 335,
-        "leafLinesOver15": 14
+        "minnMethods": 336,
+        "leafLinesOver15": 13
     },
     "functions": {
         "NOOP_Translations::add_entry": {
@@ -2719,9 +2719,11 @@
         },
         "WP_Meta_Query::parse_query_vars": {
             "file": "classes/WP_Meta_Query.php",
-            "lines": 17,
-            "kind": "leaf",
-            "minn": [],
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Meta::clausesFromQueryVars"
+            ],
             "composes": []
         },
         "WP_Meta_Query::sanitize_query": {

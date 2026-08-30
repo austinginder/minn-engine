@@ -38,23 +38,7 @@ class WP_Meta_Query
     /** The legacy meta_key / meta_value / meta_compare / meta_type vars as one clause. */
     public function parse_query_vars($qv)
     {
-        $clause = [];
-        foreach (['key' => 'meta_key', 'compare' => 'meta_compare', 'type' => 'meta_type', 'compare_key' => 'meta_compare_key', 'type_key' => 'meta_type_key'] as $to => $from) {
-            if (isset($qv[$from]) && $qv[$from] !== '') {
-                $clause[$to] = $qv[$from];
-            }
-        }
-        if (isset($qv['meta_value']) && (!is_array($qv['meta_value']) || $qv['meta_value'] !== [])) {
-            $clause['value'] = $qv['meta_value'];
-        }
-        $queries = [];
-        if (isset($clause['key']) || isset($clause['value'])) {
-            $queries[] = $clause;
-        }
-        if (!empty($qv['meta_query']) && is_array($qv['meta_query'])) {
-            $queries = array_merge($queries, $qv['meta_query']);
-        }
-        $this->__construct($queries);
+        $this->__construct(\Minn\Runtime\Meta::clausesFromQueryVars((array) $qv));
     }
 
     public function get_cast_for_type($type = '')
