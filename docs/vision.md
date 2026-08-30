@@ -26,7 +26,7 @@ Ghost, Craft, Statamic, October: none of them dented WordPress, and they all fai
 
 Minnow, the earlier experiment, taught the same lesson from inside. It made two choices that doomed it: a clean break (its own docs warned against porting a site from WordPress) and mechanical transmutation of WordPress's source. The first abandoned the moat. The second, it turns out, was also the one legally radioactive move for an MIT project. Both lessons are load-bearing here.
 
-The correct precedent is not "a better CMS." It is Nginx against Apache, MariaDB against MySQL, FrankenPHP against PHP-FPM: a from-scratch engine that speaks the incumbent's interface so precisely that the surrounding infrastructure cannot tell. You do not rebuild a Schelling point. You inherit it through compatibility.
+The correct precedent is not "a better CMS." It is Nginx against Apache, MariaDB against MySQL, FrankenPHP against PHP-FPM: a from-scratch engine that speaks the incumbent's interface so precisely that the surrounding infrastructure cannot tell. You do not ask the world to move. You inherit it through compatibility.
 
 ## 3. The play: two tiers of compatibility, with a hard line between them
 
