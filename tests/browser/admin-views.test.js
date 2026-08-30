@@ -55,6 +55,8 @@ function ok( cond, label, detail ) {
 			return page.evaluate( () => ( document.querySelector( '#minn-view' ) || document.body ).innerText );
 		};
 		let text = await view( 'extensions' );
+		const nav = await page.evaluate( () => document.body.innerText );
+		ok( /Activity Log/.test( nav ), 'the Tools group lists the Stream adapter\'s Activity Log', nav.slice( 0, 120 ) );
 		ok( /Plugins/.test( text ) && /Block Visibility/.test( text ) && /By /.test( text ) && ! /Something went wrong/.test( text ), 'Extensions lists the site\'s plugins with their authors', text.slice( 0, 160 ) );
 		text = await view( 'posttypes' );
 		ok( /Post Types/.test( text ) && /Minn Engine/.test( text ) && ! /WordPress/.test( text ), 'Structure lists post types managed by Minn Engine', text.slice( 0, 200 ) );

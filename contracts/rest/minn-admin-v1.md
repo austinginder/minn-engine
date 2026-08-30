@@ -352,3 +352,40 @@ dogfood site against its own reference, both freshly checked:
 - Notifications gain the reference's rows: `plugin-{file}-{version}` and
   `theme-{stylesheet}-{version}` of kind `updates` with the `update` payload the app
   renders its in-row button from, timed at the check.
+
+## The plugin directory (2026-08-29)
+
+WordPress plugins run on the engine, so the wordpress.org directory answers here too,
+through `api.wordpress.org/plugins/info/1.2/` (parameters bracket-encoded, a
+WordPress-style User-Agent; the API answers nothing otherwise):
+
+- `GET plugins/search?q=&page=` → `{plugins: [{slug, name, description, installs, rating,
+  version, icon, installed}], page, pages, total}`, twelve per page, `installed` the plugin
+  file when the folder exists.
+- `GET plugins/info?slug=` → `{slug, name, author, description, installs, version, rating,
+  icon, source: "wporg"}`, cached twelve hours per slug in the `minn_plugin_info` option.
+- `POST wp/v2/plugins {slug, status?}` (the app's catalog install) downloads the directory's
+  `download_link` through the one unpacker and answers 201 with the plugin item; `status:
+  active` activates it (needs `activate_plugins`); no slug is `rest_missing_callback_param`.
+- `POST plugins/upload` and `plugins/install-url` accept WordPress plugin zips as well as
+  Minn extensions.
+
+Minn Admin's app still hides the catalog on `B.engine`; lifting that gate is an app change.
+
+## Minn Admin runs as code (2026-08-29)
+
+The plugin folder passes the runtime's symbol gate with nothing missing, so the runtime
+loads `minn-admin/minn-admin.php` like any other plugin. The engine keeps the shell, the
+front bar, the sign-in flow, and maintenance: right after the include the runtime removes
+`Minn_Admin::maybe_render_app`, `maybe_maintenance_mode`, `maintenance_rest`,
+`login_redirect`, `enforce_toolbar_policy` and the four `Minn_Admin_Bar` hooks
+(`Runtime\Plugins::MINN_ADMIN_HOOKS`). The engine's own `minn-admin/v1` and `wp/v2`
+controllers answer first; every route the plugin registers that the engine has no
+controller for (`surfaces`, `stream/*`, `licenses`, `connectors`, `custom-css`, `db/*`,
+the adapter routes) answers through the runtime fallback. The boot payload gains the
+plugin's own slices when it is loaded: `surfaces`, `editorPanels`, `designs`,
+`editorCommands`, `blockForms`, `insertBlocks`, plus `caps.licenses` from
+`minn_admin_licenses_can_manage()`. On the dogfood site this lights the Tools group
+(Stream's Activity Log), the Licenses tab, Settings → Design (custom CSS, gated on
+`edit_css`, which the engine maps to `unfiltered_html`) and Connectors. The site icon in
+the sidebar is the `site_icon` attachment's file URL.
