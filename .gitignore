@@ -38,3 +38,6 @@ site/minn-site/
 
 # Pristine WordPress releases downloaded by tests/tools/code-size.php
 .cache/
+
+# Language packs (core and plugin) installed for testing; shared with wp-reference by symlink
+public/wp-content/languages/
