@@ -765,6 +765,24 @@ fixture's template-part hash had drifted with the reference's own header
 (both stacks agreed on the new value), which the extended suite surfaced on
 its first run.
 
+The third pass turned to the facade classes that had no Minn behind them
+at all. The rule there: a `WP_*` class keeps its shape (properties, method
+names, return types plugin code reads) and a Minn class owns the state or the
+work. `Media\Canvas` holds the GD bitmap and every pixel operation, and both
+`WP_Image_Editor_GD` and the engine's own `Images::makeSubsizes` draw through
+it (one `Sizing::constrain` rule now, where the engine and the facade used to
+carry two). `Runtime\Patterns` is the pattern, pattern-category and
+block-style store the three `WP_Block_*_Registry` classes read; `Runtime\OEmbed`
+matches providers, parses JSON and XML payloads, builds the embed markup and
+strips newlines around `<pre>`; `Theme\Folder` reads a theme folder (headers
+through the facade's reader so `extra_theme_headers` still applies, template
+folder, screenshot, block-theme check, file lookup); `Rest\Fields::select`
+is the `_fields` selection a controller applies; `Front\SitemapXml` builds
+the index and URL-set documents for the engine's sitemap routes and the
+facade's `WP_Sitemaps_Renderer` alike. Left as shape on purpose: `WP_Rewrite`
+and `WP` (recorded state), `wpdb` (the SQL seam), `WP_Error`, `WP_Screen`,
+`WP_REST_Response` (value objects), `customize.php` and `WP_Widget` (Hear).
+
 ## The second plugin surface: WooCommerce loads
 
 WooCommerce 11 on a fresh lab site (`minnwoo.localhost`, oracle on
