@@ -8,7 +8,7 @@ A from-scratch, MIT-licensed engine that speaks WordPress's operational contract
 
 ## 1. The thesis: WordPress is not software, it is a coordination standard
 
-WordPress remains the default because customers, hosts, developers, and now AI agents all coordinate there. The portable unit of site, the frozen schema, the REST API, and the labor pool are the product. The PHP is one implementation of those contracts.
+WordPress remains the dominant web platform because customers, hosts, developers, and now AI agents all coordinate there. The portable unit of site, the frozen schema, the REST API, and the labor pool are the product. The PHP is one implementation of those contracts.
 
 What "WordPress" actually consists of, ranked by how much it matters:
 
