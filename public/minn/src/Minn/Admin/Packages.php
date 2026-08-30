@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Admin;
 
+use Minn\Content\Inventory;
 use Minn\Content\Site;
 use Minn\Extension\Manifest;
 use Minn\RestError;
@@ -21,6 +22,9 @@ use Minn\Support\FileHeaders;
 final readonly class Packages
 {
     private const WPORG_THEMES = 'https://api.wordpress.org/themes/info/1.2/';
+    private const WPORG_PLUGINS = 'https://api.wordpress.org/plugins/info/1.2/';
+    private const INFO_OPTION = 'minn_plugin_info';
+    private const INFO_TTL = 12 * 3600;
 
     public function __construct(private Site $site, private string $contentDir)
     {
@@ -51,6 +55,113 @@ final readonly class Packages
             ];
         }
         return $items;
+    }
+
+    /**
+     * wordpress.org plugin search: twelve per page with icons, short
+     * descriptions, install counts, and ratings, plus which results are
+     * already installed (by folder). @return array{plugins: list<array>, page: int, pages: int, total: int}
+     */
+    public function searchPlugins(string $query, int $page): array
+    {
+        $page = max(1, $page);
+        $json = $this->fetch(self::WPORG_PLUGINS . '?action=query_plugins&' . http_build_query(['request' => [
+            'search' => $query,
+            'per_page' => 12,
+            'page' => $page,
+            'fields' => ['icons' => 1, 'short_description' => 1, 'active_installs' => 1, 'rating' => 1],
+        ]]));
+        $data = json_decode($json, true);
+        if (!is_array($data) || !isset($data['plugins'])) {
+            throw new RestError('plugins_api_failed', 'wordpress.org did not answer the plugin search.', 502);
+        }
+        $installed = [];
+        foreach ((new Inventory($this->contentDir, $this->site))->pluginFiles() as $relative => $path) {
+            $installed[dirname($relative)] = $relative;
+        }
+        $items = [];
+        foreach ((array) $data['plugins'] as $plugin) {
+            $icons = is_array($plugin['icons'] ?? null) ? $plugin['icons'] : [];
+            $slug = (string) ($plugin['slug'] ?? '');
+            $items[] = [
+                'slug' => $slug,
+                'name' => self::plain((string) ($plugin['name'] ?? $slug)),
+                'description' => self::plain((string) ($plugin['short_description'] ?? '')),
+                'installs' => (int) ($plugin['active_installs'] ?? 0),
+                'rating' => (int) ($plugin['rating'] ?? 0),
+                'version' => (string) ($plugin['version'] ?? ''),
+                'icon' => (string) ($icons['1x'] ?? $icons['default'] ?? ''),
+                'installed' => $installed[$slug] ?? null,
+            ];
+        }
+        $info = is_array($data['info'] ?? null) ? $data['info'] : [];
+        return ['plugins' => $items, 'page' => $page, 'pages' => (int) ($info['pages'] ?? 1), 'total' => (int) ($info['results'] ?? count($items))];
+    }
+
+    /** The slim card for one directory plugin, cached twelve hours per slug. */
+    public function pluginInfo(string $slug): array
+    {
+        if (!preg_match('/^[a-z0-9-]+$/', $slug)) {
+            throw new RestError('no_slug', 'Plugin slug is required.', 400);
+        }
+        $cache = json_decode((string) ($this->site->option(self::INFO_OPTION) ?? ''), true);
+        $cache = is_array($cache) ? $cache : [];
+        if (isset($cache[$slug]['at']) && (int) $cache[$slug]['at'] > time() - self::INFO_TTL && is_array($cache[$slug]['card'] ?? null)) {
+            return $cache[$slug]['card'];
+        }
+        $plugin = $this->directoryPlugin($slug);
+        $icons = is_array($plugin['icons'] ?? null) ? $plugin['icons'] : [];
+        $card = [
+            'slug' => $slug,
+            'name' => self::plain((string) ($plugin['name'] ?? $slug)),
+            'author' => self::plain((string) ($plugin['author'] ?? '')),
+            'description' => self::plain((string) ($plugin['short_description'] ?? '')),
+            'installs' => (int) ($plugin['active_installs'] ?? 0),
+            'version' => (string) ($plugin['version'] ?? ''),
+            'rating' => (int) ($plugin['rating'] ?? 0),
+            'icon' => (string) ($icons['2x'] ?? $icons['1x'] ?? $icons['default'] ?? ''),
+            'source' => 'wporg',
+        ];
+        $cache[$slug] = ['at' => time(), 'card' => $card];
+        if (count($cache) > 50) {
+            uasort($cache, static fn (array $a, array $b): int => $b['at'] <=> $a['at']);
+            $cache = array_slice($cache, 0, 50, true);
+        }
+        $this->site->setOption(self::INFO_OPTION, (string) json_encode($cache, JSON_UNESCAPED_SLASHES));
+        return $card;
+    }
+
+    /** Installs a wordpress.org plugin by slug; returns its folder. */
+    public function installPlugin(string $slug): string
+    {
+        if (!preg_match('/^[a-z0-9-]+$/', $slug)) {
+            throw new RestError('rest_invalid_param', 'Invalid parameter(s): slug', 400, ['params' => ['slug' => 'Invalid parameter.']]);
+        }
+        $link = (string) ($this->directoryPlugin($slug)['download_link'] ?? '');
+        if ($link === '' || !str_starts_with($link, 'https://downloads.wordpress.org/')) {
+            throw new RestError('rest_plugin_install_failed', 'The plugin has no download link on wordpress.org.', 500);
+        }
+        return $this->unpack($this->fetch($link), 'plugin', false)['folder'];
+    }
+
+    /** One directory record, or the reference's not-found refusal. */
+    private function directoryPlugin(string $slug): array
+    {
+        $json = $this->fetch(self::WPORG_PLUGINS . '?action=plugin_information&' . http_build_query(['request' => [
+            'slug' => $slug,
+            'fields' => ['short_description' => 1, 'icons' => 1, 'active_installs' => 1, 'rating' => 1, 'download_link' => 1, 'sections' => 0, 'description' => 0, 'reviews' => 0, 'ratings' => 0, 'tags' => 0, 'contributors' => 0],
+        ]]));
+        $data = json_decode($json, true);
+        if (!is_array($data) || isset($data['error']) || !isset($data['slug'])) {
+            throw new RestError('plugins_api_failed', (string) ($data['error'] ?? 'Plugin not found.'), 404);
+        }
+        return $data;
+    }
+
+    /** Directory text as the app shows it: tags stripped, entities decoded. */
+    private static function plain(string $value): string
+    {
+        return html_entity_decode(strip_tags($value), ENT_QUOTES | ENT_HTML5, 'UTF-8');
     }
 
     /** Installs a wordpress.org theme by slug; returns its stylesheet folder. */
@@ -180,7 +291,7 @@ final readonly class Packages
         if (!str_starts_with($url, 'https://')) {
             throw new RestError('bad_url', 'Packages are fetched over https only.', 400);
         }
-        $context = stream_context_create(['http' => ['timeout' => 60, 'follow_location' => 1, 'user_agent' => 'Minn Engine/' . MINN_ENGINE_VERSION], 'ssl' => ['verify_peer' => true]]);
+        $context = stream_context_create(['http' => ['timeout' => 60, 'follow_location' => 1, 'user_agent' => 'WordPress/' . \Minn\Engine::WP_VERSION . '; ' . $this->site->option('home')], 'ssl' => ['verify_peer' => true]]);
         $body = @file_get_contents($url, false, $context);
         if ($body === false || $body === '') {
             throw new RestError('download_failed', 'The download failed. Check the site can reach ' . (string) parse_url($url, PHP_URL_HOST) . ' and try again.', 502);

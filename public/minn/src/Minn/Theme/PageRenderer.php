@@ -156,7 +156,6 @@ final readonly class PageRenderer
         $styles = new GlobalStyles($this->theme, $this->templates->userStyles());
         $globalStyles = $styles->css();
         $fontFaces = $styles->fontFaces();
-        $themeStyle = $this->theme->styleUri();
 
         $title = Extensions::seams()?->applyTitle($title) ?? $title;
         if (Runtime::booted()) {
@@ -170,9 +169,10 @@ final readonly class PageRenderer
             $title = \_minn_document_title($parts);
         }
         $bar = $resolution->preview ? null : $this->bar;
+        // The theme's own style.css is the theme's to enqueue from its
+        // functions.php, which the runtime loads; the reference links it no other way.
         $stylesheets = '<link rel="stylesheet" id="minn-blocks-css" href="' . Html::attr($this->permalinks->url('/minn-engine/blocks.css')) . '" />' . "\n"
-            . '<style id="global-styles-inline-css">' . "\n" . $globalStyles . "\n" . '</style>' . "\n"
-            . ($themeStyle === null ? '' : '<link rel="stylesheet" id="' . Html::attr($this->theme->slug) . '-style-css" href="' . Html::attr($themeStyle) . '" />' . "\n");
+            . '<style id="global-styles-inline-css">' . "\n" . $globalStyles . "\n" . '</style>' . "\n";
         // With the runtime up, the engine's stylesheets print where the
         // reference prints a theme's: inside wp_head, after plugin styles.
         $runtimeHead = '';

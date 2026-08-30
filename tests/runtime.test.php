@@ -36,7 +36,7 @@ update_option('active_plugins', array_values(array_unique(array_merge($before, [
 [$headers, $html] = minn_test_fetch($base . '/hello-world/');
 $check('page renders', ($headers['status'] ?? 0) === 200, (string) ($headers['status'] ?? 'no status'));
 $check('lifecycle order in wp_head', str_contains($html, '<meta name="minn-test-plugin" content="plugins_loaded,init,wp_loaded,template_redirect,wp_head">'), substr((string) strstr($html, 'minn-test-plugin" content='), 0, 120));
-$check('wp_head mark precedes the theme stylesheet', strpos($html, 'name="minn-test-plugin"') < strpos($html, '-style-css'));
+// Theme stylesheet links are the theme's own to enqueue; tests/styles.test.php pins them to the reference's set.
 $check('enqueued style printed', preg_match("#<link rel='stylesheet' id='minn-test-plugin-css' href='" . preg_quote($base, '#') . "/wp-content/plugins/minn-test-plugin/probe\\.css\\?ver=1\\.0\\.0' media='all' />#", $html) === 1);
 $check('footer script printed in the footer', preg_match('#<script id="minn-test-plugin-js" src="' . preg_quote($base, '#') . '/wp-content/plugins/minn-test-plugin/probe\.js\?ver=1\.0\.0"></script>#', $html) === 1 && strpos($html, 'id="minn-test-plugin-js"') > strpos($html, '</main>'), substr((string) strstr($html, 'minn-test-plugin-js"'), 0, 160));
 $check('localized data before the script', str_contains($html, '<script id="minn-test-plugin-js-extra">' . "\n" . 'var minnTestPlugin = ' . json_encode(['home' => $base . '/', 'admin' => '']) . ';'), substr((string) strstr($html, 'minn-test-plugin-js-extra'), 0, 160));

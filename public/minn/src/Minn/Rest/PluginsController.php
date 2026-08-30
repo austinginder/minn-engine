@@ -50,6 +50,43 @@ final readonly class PluginsController
         return Reply::item($items, Fields::fromQuery($request->query));
     }
 
+    /** Installs a wordpress.org plugin by slug, optionally activating it; answers 201 with the item. */
+    #[Route(Method::Post, '/wp/v2/plugins')]
+    public function install(Request $request): Response
+    {
+        $this->requireManager();
+        if (!$this->caller->can('install_plugins')) {
+            throw new RestError('rest_cannot_install_plugin', 'Sorry, you are not allowed to install plugins on this site.', 403);
+        }
+        $body = $request->json();
+        $slug = (string) ($body['slug'] ?? '');
+        if ($slug === '') {
+            throw RestError::missingParams(['slug']);
+        }
+        $status = (string) ($body['status'] ?? 'inactive');
+        if (!in_array($status, ['active', 'inactive'], true)) {
+            throw new RestError('rest_invalid_param', 'Invalid parameter(s): status', 400, ['params' => ['status' => 'status is not one of inactive, active.']]);
+        }
+        if ($status === 'active' && !$this->caller->can('activate_plugins')) {
+            throw new RestError('rest_cannot_activate_plugin', 'Sorry, you are not allowed to activate plugins.', 403);
+        }
+        $folder = $this->packages->installPlugin($slug);
+        $key = null;
+        foreach ($this->inventory->pluginFiles() as $relative => $path) {
+            if (dirname($relative) === $folder) {
+                $key = preg_replace('/\.php$/', '', $relative);
+                break;
+            }
+        }
+        if ($key === null) {
+            throw new RestError('rest_plugin_install_failed', 'The installed folder carries no plugin file.', 500);
+        }
+        if ($status === 'active') {
+            (new PluginState($this->site, $this->inventory, $this->extensions))->setActive($key . '.php', true);
+        }
+        return Reply::item($this->find($key), Fields::fromQuery($request->query), 201);
+    }
+
     #[Route(Method::Get, '/wp/v2/plugins/{plugin:[^.\/]+(?:\/[^.\/]+)?}')]
     public function single(Request $request, string $plugin): Response
     {

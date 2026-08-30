@@ -88,10 +88,22 @@ extension seams). `shutdown` fires from a PHP shutdown function.
 Inside `wp_head` the reference's own registrations run at their priorities:
 `wp_enqueue_scripts` at 1, `wp_print_styles` at 8, `wp_print_head_scripts`
 at 9; inside `wp_footer`, `_wp_footer_scripts` at 20. The engine's own
-stylesheets (blocks.css, the global styles, the theme's style.css) print
-from a callback at `wp_head` priority 8 registered after `wp_print_styles`,
-so plugin styles come first and a plugin's `wp_head` output at a lower
-priority precedes them, as on the reference.
+stylesheets (blocks.css and the global styles) print from a callback at
+`wp_head` priority 8 registered after `wp_print_styles`, so plugin styles
+come first and a plugin's `wp_head` output at a lower priority precedes
+them, as on the reference. The theme's `style.css` is not the engine's to
+link: the reference links it only when the theme enqueues it, so the theme
+does that itself (below).
+
+**The active theme's `functions.php` (2026-08-29).** Between `setup_theme`
+and `after_setup_theme`, as the reference's lifecycle shows, the runtime
+includes the child theme's `functions.php` and then the parent's, each through
+the same symbol gate as a plugin folder (reported as `theme:{slug}` by
+`runtime-report.php` when it cannot load). Templates, parts, and patterns never
+run as PHP; a block theme's `functions.php` only registers hooks, enqueues its
+stylesheet, and registers block styles, pattern categories, and bindings. This
+retired the last site extension on dogfood: the child theme's Open Graph
+block now prints from its own `wp_head` callback.
 
 **Not in the defaults, by design:** the reference's `the_content` /
 `the_title` / `the_excerpt` chains (`wptexturize`, `wpautop`, `do_blocks`,

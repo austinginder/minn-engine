@@ -45,7 +45,10 @@ $check = static function (bool $ok, string $label, string $detail = '') use (&$p
 [$h, $home] = minn_test_fetch($ENGINE . '/');
 $check($h['status'] === 200, 'front page answers 200');
 $check(str_contains($home, 'wp-theme-minn-site'), 'the site theme is active');
-$check(str_contains($home, '<title>Minn Engine</title>'), 'document title is the site name');
+[, $refHome] = minn_test_fetch($REF . '/');
+preg_match('#<title>(.*?)</title>#s', $home, $et);
+preg_match('#<title>(.*?)</title>#s', $refHome, $rt);
+$check(($et[1] ?? '') !== '' && ($et[1] ?? '') === ($rt[1] ?? null), 'document title matches the reference', ($et[1] ?? '') . ' vs ' . ($rt[1] ?? ''));
 $check(str_contains($home, 'served by Minn'), 'the footer says who served the page');
 $check(str_contains($home, 'class="minn-wordmark">minn</span>'), 'the header wordmark is Minn');
 $check(!str_contains($home, 'minn<small>engine</small>'), 'the header does not say engine');

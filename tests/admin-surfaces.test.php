@@ -299,7 +299,7 @@ check( 200 === $s && is_dir( "$ROOT/public/wp-content/plugins/wp-plugin-x" ), 'a
 clearstatcache();
 check( 200 === $s && ! is_dir( "$ROOT/public/wp-content/plugins/wp-plugin-x" ), 'and deletes again', json_encode( $b ) );
 [ $s, $b ] = as_fetch( $ENGINE, '/minn-admin/v1/plugins/search?q=seo', $admin );
-check( 200 === $s && array() === ( $b['plugins'] ?? null ), 'the plugin directory search is honestly empty', json_encode( $b ) );
+check( 200 === $s && count( $b['plugins'] ?? array() ) > 0 && isset( $b['plugins'][0]['slug'], $b['plugins'][0]['icon'] ), 'the plugin directory search answers from wordpress.org', substr( json_encode( $b ), 0, 200 ) );
 [ $s ] = as_fetch( $ENGINE, '/minn-admin/v1/themes/search?q=twenty', $author );
 check( 403 === $s, 'theme search needs install_themes', "status $s" );
 [ $s, $b ] = as_fetch( $ENGINE, '/minn-admin/v1/themes/search?q=twentytwentyfive', $admin );

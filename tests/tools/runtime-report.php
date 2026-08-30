@@ -17,4 +17,15 @@ foreach (is_array($active) ? $active : [] as $plugin) {
     $missing = Minn\Runtime\Symbols::missing($dir, Minn\Runtime\Runtime::options());
     $report[$plugin] = ['state' => ($missing['functions'] === [] && $missing['classes'] === [] && !$missing['truncated']) ? 'loads' : 'skipped'] + $missing;
 }
+// The active theme's functions.php goes through the same gate (child, then parent).
+$stylesheet = (string) ($runtime->options()->get('stylesheet') ?? '');
+$template = (string) ($runtime->options()->get('template') ?? $stylesheet);
+foreach (array_unique([$stylesheet, $template]) as $slug) {
+    $dir = $content . '/themes/' . $slug;
+    if ($slug === '' || !is_file($dir . '/functions.php')) {
+        continue;
+    }
+    $missing = Minn\Runtime\Symbols::missing($dir, Minn\Runtime\Runtime::options());
+    $report['theme:' . $slug] = ['state' => ($missing['functions'] === [] && $missing['classes'] === [] && !$missing['truncated']) ? 'loads' : 'skipped'] + $missing;
+}
 echo json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), "\n";

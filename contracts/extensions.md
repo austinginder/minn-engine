@@ -99,10 +99,14 @@ allowed; the manifest's `license` says which. The engine never depends on either
 | `minn-ml-slider`, `minn-modula` | ml-slider, modula (covers: body class only) | the body class each added; shortcodes and gallery blocks still AMBER in preflight |
 | `minn-autodescription` | autodescription (covers: titles, description, robots, canonical, Open Graph, Twitter, the schema.org graph; not its sitemap or query alterations) | the title (`{page} | {site}`, `{site} | {tagline}` at home), the meta block per page kind, and the ld+json graph with breadcrumbs, from the plugin's settings option and `_genesis_*` meta. Search descriptions are 160 characters, social ones 300, both cut on a word with an ellipsis unless a sentence ended; the og:image is the featured image with its size and alt, else the first content image, else the site icon |
 
-The child theme's `functions.php` printed its own Open Graph block on singular
-pages; that is site code, so it lives with the site as
-`wp-content/plugins/dogfoodchild-head/` (activated through `minn_active_extensions`),
-not in the engine repo.
+**Retired on the dogfood site (2026-08-29).** Every plugin above loads as code
+through the runtime (Track E), so dogfood no longer carries the port
+symlinks: its plugins folder holds the 41 WordPress plugins its reference lists,
+`minn_active_extensions` is empty, and `wp/v2/plugins` matches the reference
+entry for entry. The child theme's Open Graph block, once the site extension
+`dogfoodchild-head` (kept under the site's `retired/`), prints from the theme's
+own `functions.php`, which the runtime now loads. The ports stay in the engine
+repo's `extensions/` for the dev site's extension suite and as porting examples.
 
 ## Scripts a port cannot borrow
 

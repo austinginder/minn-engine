@@ -93,6 +93,8 @@ final readonly class Capabilities
             'assign_categories', 'assign_post_tags' => ['edit_posts'],
             'edit_term', 'delete_term' => ['manage_categories'],
             'edit_user' => $postId !== null && $postId === $userId ? [] : ['edit_users'],
+            'edit_css' => ['unfiltered_html'],
+            'update_languages' => ['update_core'],
             'assign_term' => ['edit_posts'],
             default => [$capability],
         };

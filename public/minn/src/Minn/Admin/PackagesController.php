@@ -56,7 +56,7 @@ final readonly class PackagesController
         return $this->reply($request, ['deleted' => true]);
     }
 
-    /** A Minn extension zip; a WordPress plugin is refused with the reason. */
+    /** A plugin zip: a WordPress plugin or a Minn extension. */
     #[Route(Method::Post, '/minn-admin/v1/plugins/upload')]
     public function uploadPlugin(Request $request): Response
     {
@@ -98,12 +98,18 @@ final readonly class PackagesController
         return $this->reply($request, ['installed' => true, 'plugin' => $result['folder'] . '/' . $result['folder'], 'url' => $url]);
     }
 
-    /** No wordpress.org plugin directory on the engine: plugins from it would install but never run. */
     #[Route(Method::Get, '/minn-admin/v1/plugins/search')]
     public function searchPlugins(Request $request): Response
     {
         $this->requireCap('install_plugins');
-        return $this->reply($request, ['plugins' => [], 'page' => 1, 'pages' => 0, 'total' => 0]);
+        return $this->reply($request, $this->packages->searchPlugins(trim((string) ($request->query('q') ?? '')), (int) ($request->query('page') ?? 1)));
+    }
+
+    #[Route(Method::Get, '/minn-admin/v1/plugins/info')]
+    public function pluginInfo(Request $request): Response
+    {
+        $this->requireCap('install_plugins');
+        return $this->reply($request, $this->packages->pluginInfo(trim((string) ($request->query('slug') ?? ''))));
     }
 
     private function uploaded(Request $request, string $kind): string

@@ -7,6 +7,7 @@ namespace Minn\Admin;
 use Minn\Auth\Authenticated;
 use Minn\Auth\Capabilities;
 use Minn\Auth\Nonce;
+use Minn\Content\Posts;
 use Minn\Content\Site;
 use Minn\Front\Permalinks;
 use stdClass;
@@ -26,6 +27,7 @@ final readonly class BootPayload
         private string $engineVersion,
         private Appearance $appearance,
         private HiddenIntegrations $hidden,
+        private Posts $posts,
         private bool $blockTheme = false,
         private ?Translations $translations = null,
     ) {
@@ -46,7 +48,7 @@ final readonly class BootPayload
         $locale = $this->translations?->localeOf($userId) ?? ($this->site->option('WPLANG') ?: 'en_US');
         [$i18n, $plural] = $this->translations?->catalog($locale) ?? [[], ''];
 
-        return [
+        $payload = [
             // The pretty REST base: the client appends "wp/v2/posts?context=edit&…",
             // so the route must live in the path or the first "?" folds the
             // query into a rest_route value.
@@ -66,7 +68,7 @@ final readonly class BootPayload
             ],
             'site' => [
                 'name' => $this->site->option('blogname') ?? 'Site',
-                'icon' => '',
+                'icon' => $this->siteIcon(),
                 'url' => $this->permalinks->url('/'),
                 'adminUrl' => $this->permalinks->url('/minn-admin/'),
                 'logout' => $this->permalinks->url('/minn-admin/login/logout'),
@@ -89,7 +91,7 @@ final readonly class BootPayload
                 'updateThemes' => $can('update_themes'),
                 'updateLanguages' => false,
                 'installThemes' => $can('install_themes'),
-                'licenses' => false,
+                'licenses' => function_exists('minn_admin_licenses_can_manage') ? (bool) \minn_admin_licenses_can_manage() : false,
                 'deleteUsers' => $can('delete_users'),
                 'removeUsers' => false,
                 'networkPlugins' => false,
@@ -122,6 +124,41 @@ final readonly class BootPayload
             'comments' => true,
             'hidden' => $this->hidden->listFor($userId),
             'pretty' => $this->permalinks->isPretty(),
-        ];
+        ] + $this->adapterSlices();
+        return $payload;
+    }
+
+    /** The site icon as the app shows it in the sidebar: the attachment file behind the site_icon option. */
+    private function siteIcon(): string
+    {
+        $icon = (int) ($this->site->option('site_icon') ?? 0);
+        $file = $icon > 0 ? $this->posts->meta($icon, '_wp_attached_file') : null;
+        return $file === null ? '' : $this->permalinks->url('/wp-content/uploads/' . $file);
+    }
+
+    /**
+     * What Minn Admin's own adapters contribute when the plugin runs as code
+     * on the runtime: plugin surfaces (Tools), editor panels, design
+     * sources, editor commands, block forms. Absent, the app's fallbacks apply.
+     */
+    private function adapterSlices(): array
+    {
+        if (!class_exists('Minn_Admin_Surfaces', false) || !class_exists('Minn_Admin', false)) {
+            return [];
+        }
+        try {
+            $rawForms = \apply_filters('minn_admin_block_forms', []);
+            return [
+                'surfaces' => \Minn_Admin_Surfaces::for_current_user(),
+                'editorPanels' => \Minn_Admin_Surfaces::editor_panels_for_current_user(),
+                'designs' => \Minn_Admin::design_sources(),
+                'editorCommands' => \Minn_Admin::editor_commands(),
+                'blockForms' => \Minn_Admin::filter_block_forms($rawForms),
+                'insertBlocks' => \Minn_Admin::insertable_blocks($rawForms),
+            ];
+        } catch (\Throwable $e) {
+            error_log('Minn Engine: Minn Admin adapters failed while building the boot payload: ' . $e->getMessage());
+            return [];
+        }
     }
 }

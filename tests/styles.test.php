@@ -61,7 +61,13 @@ $check($unstyled === [], 'every numbered style variation has a rule', implode(',
 
 [$h, $body] = minn_test_fetch("$ENGINE/minn-engine/blocks.css");
 $check($h['status'] === 200 && str_contains($body, '.wp-block-columns'), 'the engine block stylesheet is served');
-$check(str_contains($engineHome, '/wp-content/themes/twentytwentyfive/style.css'), 'the theme stylesheet is linked');
+// Theme stylesheet links are the theme's own to enqueue (functions.php runs through the
+// runtime); the engine links none itself, so the two stacks must print the same set.
+$themeLinks = static function (string $html): array {
+    preg_match_all('#<link[^>]*rel=[\'"]stylesheet[\'"][^>]*href=[\'"]([^\'"]*/wp-content/themes/[^\'"]*)[\'"]#', $html, $m);
+    return array_map(static fn (string $href): string => preg_replace('#^https?://[^/]+#', '', $href), $m[1]);
+};
+$check($themeLinks($engineHome) === $themeLinks($fetch("$REF/")), 'theme stylesheet links match the reference', json_encode($themeLinks($engineHome)) . ' vs ' . json_encode($themeLinks($fetch("$REF/"))));
 
 echo "\n$pass passed, $fail failed\n";
 exit($fail === 0 ? 0 : 1);

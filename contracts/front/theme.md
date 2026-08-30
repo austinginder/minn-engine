@@ -93,10 +93,14 @@ newline right after a closing tag is swallowed. Anything else renders as nothing
 
 ## Stylesheets (20b)
 
-The head carries three stylesheets: the engine's own block stylesheet
+The head carries two stylesheets of the engine's own: the block stylesheet
 (`/minn-engine/blocks.css`, served from `public/minn/assets/`; structure and behaviour for the
-core block class names, original work), the generated global styles (`Minn\Theme\GlobalStyles`,
-inline as `#global-styles-inline-css`), and the theme's own `style.css`.
+core block class names, original work) and the generated global styles (`Minn\Theme\GlobalStyles`,
+inline as `#global-styles-inline-css`). The theme's own `style.css` is linked only when the
+theme enqueues it from its `functions.php`, which the runtime loads (`contracts/runtime.md`);
+the reference links it no other way (a block theme without a `functions.php`, like the dogfood
+site's parent copy, gets no link on either stack). Until 2026-08-29 the engine linked it itself;
+`tests/styles.test.php` now pins the theme links to the reference's set.
 
 What the generator reproduces from theme.json, checked against the reference by
 `tests/styles.test.php`: every `--wp--preset--*` custom property (core default colours,

@@ -15,8 +15,25 @@ use Throwable;
  */
 final class Plugins
 {
-    /** Plugin files the engine answers itself; never loaded as code. */
-    private const NATIVE = ['minn-admin/minn-admin.php'];
+    /**
+     * Minn Admin loads as code for its adapters (surfaces, licenses,
+     * connectors, custom CSS, the plugin routes the engine has no
+     * controller for), but the engine owns the shell, the front bar, the
+     * sign-in flow, and maintenance: those hooks come off right after the
+     * include so the two never print twice or disagree.
+     */
+    private const MINN_ADMIN = 'minn-admin/minn-admin.php';
+    private const MINN_ADMIN_HOOKS = [
+        ['template_redirect', ['Minn_Admin', 'maybe_render_app'], 0],
+        ['template_redirect', ['Minn_Admin', 'maybe_maintenance_mode'], 1],
+        ['rest_authentication_errors', ['Minn_Admin', 'maintenance_rest'], 20],
+        ['login_redirect', ['Minn_Admin', 'login_redirect'], 20],
+        ['show_admin_bar', ['Minn_Admin', 'enforce_toolbar_policy'], 99],
+        ['show_admin_bar', ['Minn_Admin_Bar', 'suppress_core_bar'], 100],
+        ['wp_enqueue_scripts', ['Minn_Admin_Bar', 'enqueue'], 10],
+        ['wp_footer', ['Minn_Admin_Bar', 'render'], 10],
+        ['body_class', ['Minn_Admin_Bar', 'body_class'], 10],
+    ];
 
     /** @var list<string> plugin files (relative) loaded as code this request */
     private static array $loaded = [];
@@ -34,7 +51,7 @@ final class Plugins
         $active = $runtime->options()->get('active_plugins');
         foreach (is_array($active) ? $active : [] as $plugin) {
             $plugin = (string) $plugin;
-            if (in_array($plugin, self::NATIVE, true) || !preg_match('#^[A-Za-z0-9_.-]+(/[A-Za-z0-9_.-]+)?\.php$#', $plugin)) {
+            if (!preg_match('#^[A-Za-z0-9_.-]+(/[A-Za-z0-9_.-]+)?\.php$#', $plugin)) {
                 continue;
             }
             $file = $content . '/plugins/' . $plugin;
@@ -42,13 +59,41 @@ final class Plugins
                 continue;
             }
             self::includeFile($file, $plugin, $runtime);
+            if ($plugin === self::MINN_ADMIN && self::isLoaded($plugin)) {
+                foreach (self::MINN_ADMIN_HOOKS as [$hook, $callback, $priority]) {
+                    $hooks->remove($hook, $callback, $priority);
+                }
+            }
         }
         $hooks->action('plugins_loaded', []);
         $hooks->action('sanitize_comment_cookies', []);
         $hooks->action('setup_theme', []);
+        self::loadThemeFunctions($runtime);
         $hooks->action('after_setup_theme', []);
         $hooks->action('init', []);
         $hooks->action('wp_loaded', []);
+    }
+
+    /**
+     * The active theme's functions.php, child first then parent, between
+     * setup_theme and after_setup_theme as the reference loads them. Each
+     * file goes through the same symbol gate as a plugin folder and is
+     * reported under "theme:{slug}" when it cannot load. Templates never
+     * run as PHP; a block theme's functions.php only registers hooks.
+     */
+    private static function loadThemeFunctions(Runtime $runtime): void
+    {
+        $options = $runtime->options();
+        $stylesheet = (string) ($options->get('stylesheet') ?? '');
+        $template = (string) ($options->get('template') ?? $stylesheet);
+        $themes = $runtime->contentDir() . '/themes';
+        $slugs = $stylesheet === $template ? [$stylesheet] : [$stylesheet, $template];
+        foreach ($slugs as $slug) {
+            if (!preg_match('/^[A-Za-z0-9._-]+$/', $slug) || !is_file("{$themes}/{$slug}/functions.php")) {
+                continue;
+            }
+            self::includeFile("{$themes}/{$slug}/functions.php", "theme:{$slug}", $runtime);
+        }
     }
 
     /** @return list<string> */
@@ -71,7 +116,7 @@ final class Plugins
 
     private static function includeFile(string $file, string $name, Runtime $runtime): void
     {
-        $dir = str_contains($name, '/') ? dirname($file) : $file;
+        $dir = str_contains($name, '/') || str_starts_with($name, 'theme:') ? dirname($file) : $file;
         $missing = Symbols::missing($dir, Runtime::options());
         if ($missing['functions'] !== [] || $missing['classes'] !== [] || $missing['truncated']) {
             self::$skipped[$name] = $missing;
