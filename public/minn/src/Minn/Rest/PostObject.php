@@ -277,8 +277,6 @@ final readonly class PostObject
             }
         }
         $links['self'][0]['targetHints']['allow'] = $allow;
-        // The author link is always present in edit context.
-        $links['author'] ??= [['embeddable' => true, 'href' => $this->url->to('/wp/v2/users/' . (int) $p['post_author'])]];
 
         $self = '/wp/v2/' . self::restBase($type) . '/' . $id;
         $others = $type === 'page' ? 'edit_others_pages' : 'edit_others_posts';

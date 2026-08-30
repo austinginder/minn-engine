@@ -24,7 +24,7 @@ final class Reply
 
     public static function item(mixed $data, ?Fields $fields, int $status = 200): Response
     {
-        if ($fields !== null && is_array($data) && $status < 400) {
+        if ($fields !== null && !$fields->deferred && is_array($data) && $status < 400) {
             $data = $fields->apply($data);
         }
         return new Response($status, self::HEADERS, (string) json_encode($data));

@@ -17,10 +17,14 @@ final class Blocks
 
     public static function render(string $raw): string
     {
-        if (trim($raw) !== '' && !str_contains($raw, '<!-- wp:') && !preg_match('/<(p|div|ul|ol|h\d|blockquote|pre|table|figure)[\s>]/i', $raw)) {
+        if (str_contains($raw, '<!-- wp:')) {
+            return self::renderer()->render($raw);
+        }
+        if (trim($raw) !== '' && !preg_match('/<(p|div|ul|ol|h\d|blockquote|pre|table|figure)[\s>]/i', $raw)) {
             return self::paragraphs($raw);
         }
-        return self::renderer()->render($raw);
+        // Classic markup that already carries paragraphs: each closes on its own line.
+        return (string) preg_replace('#</p>(?!\n)#', "</p>\n", self::renderer()->render($raw));
     }
 
     public static function renderer(): Renderer

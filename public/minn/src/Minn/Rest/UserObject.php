@@ -46,8 +46,8 @@ final readonly class UserObject
             '_links' => [
                 'self' => [[
                     'href' => $this->url->to('/wp/v2/users/' . $id),
-                    // A caller viewing their own record sees the write verbs.
-                    'targetHints' => ['allow' => $isSelf ? ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'] : ['GET']],
+                    // A caller who may edit the record (their own, or any with edit_users) sees the write verbs.
+                    'targetHints' => ['allow' => $isSelf || $this->caller->can('edit_user', $id) ? ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'] : ['GET']],
                 ]],
                 'collection' => [['href' => $this->url->to('/wp/v2/users')]],
             ],

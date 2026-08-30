@@ -49,6 +49,14 @@ final readonly class TermsController
             $where .= ' AND t.term_id IN (' . implode(',', array_fill(0, count($include), '?')) . ')';
             $params = [...$params, ...array_values($include)];
         }
+        $post = $request->query('post');
+        if ($post !== null && ctype_digit($post)) {
+            if ($this->db->value("SELECT ID FROM {$this->db->table('posts')} WHERE ID = ?", [(int) $post]) === null) {
+                throw new RestError('rest_post_invalid_id', 'Invalid post ID.', 400);
+            }
+            $where .= " AND tt.term_taxonomy_id IN (SELECT term_taxonomy_id FROM {$this->db->table('term_relationships')} WHERE object_id = ?)";
+            $params[] = (int) $post;
+        }
 
         $terms = $this->db->table('terms');
         $taxonomy = $this->db->table('term_taxonomy');

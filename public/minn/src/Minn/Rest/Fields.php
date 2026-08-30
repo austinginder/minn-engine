@@ -13,8 +13,12 @@ namespace Minn\Rest;
  */
 final readonly class Fields
 {
-    /** @param list<string> $paths */
-    private function __construct(public array $paths)
+    /**
+     * @param list<string> $paths
+     * @param bool $deferred true when _embed rides along: a single object is
+     *                       embedded first and filtered by Embed afterwards
+     */
+    private function __construct(public array $paths, public bool $deferred = false)
     {
     }
 
@@ -29,7 +33,16 @@ final readonly class Fields
             $raw = implode(',', $raw);
         }
         $paths = array_values(array_filter(array_map(trim(...), explode(',', (string) $raw)), static fn (string $s) => $s !== ''));
-        return $paths === [] ? null : new self($paths);
+        return $paths === [] ? null : new self($paths, array_key_exists('_embed', $query));
+    }
+
+    /** The same paths plus _links whenever _embedded is among them: the reference's single-object rule under _embed. */
+    public function withLinksForEmbedded(): self
+    {
+        if (!in_array('_embedded', $this->paths, true) || in_array('_links', $this->paths, true)) {
+            return $this;
+        }
+        return new self([...$this->paths, '_links'], $this->deferred);
     }
 
     public function apply(array $object): array

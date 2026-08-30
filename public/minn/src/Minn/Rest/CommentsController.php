@@ -46,7 +46,20 @@ final readonly class CommentsController
         $tokens = Comments::tokensFor($status) ?? [$status];
         $perPage = max(1, min(100, (int) $request->query('per_page', '10')));
         $page = max(1, (int) $request->query('page', '1'));
-        $result = $this->comments->page($tokens, $page, $perPage, publicPostsOnly: !$this->caller->can('moderate_comments'));
+        $post = $request->query('post');
+        $postId = $post !== null && ctype_digit($post) ? (int) $post : null;
+        // A post the caller cannot read refuses the whole list; an unknown one lists nothing.
+        if ($postId !== null && ($row = $this->posts->find($postId)) !== null
+            && ($row['post_status'] !== 'publish' || $row['post_password'] !== '') && !$this->caller->can('read_post', $postId)) {
+            throw $this->caller->refuse('rest_cannot_read_post', 'Sorry, you are not allowed to read the post for this comment.');
+        }
+        $result = $this->comments->page(
+            $tokens,
+            $page,
+            $perPage,
+            publicPostsOnly: !$this->caller->can('moderate_comments'),
+            postId: $postId,
+        );
         return Reply::list(
             array_map(fn (array $c) => $this->object->build($c, $context === 'edit'), $result['comments']),
             $result['total'],

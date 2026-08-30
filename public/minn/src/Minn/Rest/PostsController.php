@@ -15,6 +15,17 @@ use Minn\RestError;
 /** wp/v2 posts and pages, read side. */
 final readonly class PostsController
 {
+    private const ORDER_BY = [
+        'date' => 'post_date',
+        'modified' => 'post_modified',
+        'title' => 'post_title',
+        'slug' => 'post_name',
+        'id' => 'ID',
+        'author' => 'post_author',
+        'menu_order' => 'menu_order',
+        'include' => 'include',
+    ];
+
     public function __construct(
         private Db $db,
         private Posts $posts,
@@ -42,11 +53,17 @@ final readonly class PostsController
             ? array_values(array_filter(array_map(trim(...), explode(',', (string) $request->query('status')))))
             : $publicOnly;
         $needsAuth = $context === 'edit' || array_diff($requested, $publicOnly) !== [];
+        $editCap = $type === 'page' ? 'edit_pages' : 'edit_posts';
+        // A status beyond publish is a parameter error for a caller without the type's edit cap.
+        if (array_diff($requested, $publicOnly) !== [] && !$this->caller->can($editCap)) {
+            $inner = ['code' => 'rest_forbidden_status', 'message' => 'Status is forbidden.', 'data' => ['status' => $this->caller->id() > 0 ? 403 : 401]];
+            throw new RestError('rest_invalid_param', 'Invalid parameter(s): status', 400, ['params' => ['status' => 'Status is forbidden.'], 'details' => ['status' => $inner]]);
+        }
         $userId = 0;
         if ($needsAuth) {
             $refusal = 'Sorry, you are not allowed to edit posts in this post type.';
             $userId = $this->caller->require('rest_forbidden_context', $refusal, 401)->id();
-            if (!$this->caller->can($type === 'page' ? 'edit_pages' : 'edit_posts')) {
+            if (!$this->caller->can($editCap)) {
                 throw new RestError('rest_forbidden_context', $refusal, 403);
             }
         }
@@ -55,8 +72,9 @@ final readonly class PostsController
         $placeholders = implode(',', array_fill(0, count($statuses), '?'));
         $params = [$type, ...$statuses];
         $where = "post_type = ? AND post_status IN ({$placeholders})";
-        // Another author's unpublished posts need edit_others_*; private ones read_private_*.
-        if ($needsAuth && !$this->caller->can($type === 'page' ? 'edit_others_pages' : 'edit_others_posts')) {
+        $others = $this->caller->can($type === 'page' ? 'edit_others_pages' : 'edit_others_posts');
+        if ($needsAuth && !$others) {
+            // Another author's unpublished posts need edit_others_*; private ones read_private_*.
             $where .= " AND (post_status = 'publish' OR post_author = ?)";
             $params[] = $userId;
         } elseif ($needsAuth && in_array('private', $statuses, true) && !$this->caller->can($type === 'page' ? 'read_private_pages' : 'read_private_posts')) {
@@ -68,6 +86,50 @@ final readonly class PostsController
             $where .= ' AND post_author = ?';
             $params[] = (int) $author;
         }
+        $include = self::ids((string) $request->query('include', ''));
+        if ($include !== []) {
+            $where .= ' AND ID IN (' . implode(',', array_fill(0, count($include), '?')) . ')';
+            $params = [...$params, ...$include];
+        }
+        $exclude = self::ids((string) $request->query('exclude', ''));
+        if ($exclude !== []) {
+            $where .= ' AND ID NOT IN (' . implode(',', array_fill(0, count($exclude), '?')) . ')';
+            $params = [...$params, ...$exclude];
+        }
+        $slug = (string) $request->query('slug', '');
+        if ($slug !== '') {
+            $slugs = array_values(array_filter(explode(',', $slug), static fn (string $s) => $s !== ''));
+            $where .= ' AND post_name IN (' . implode(',', array_fill(0, count($slugs), '?')) . ')';
+            $params = [...$params, ...$slugs];
+        }
+        $parent = $request->query('parent');
+        if ($parent !== null && ctype_digit($parent)) {
+            $where .= ' AND post_parent = ?';
+            $params[] = (int) $parent;
+        }
+        // Every whitespace-separated word must appear in the title, excerpt, or content.
+        foreach (preg_split('/\s+/', trim((string) $request->query('search', ''))) ?: [] as $word) {
+            if ($word === '') {
+                continue;
+            }
+            $like = '%' . addcslashes($word, '%_\\') . '%';
+            $where .= ' AND (post_title LIKE ? OR post_excerpt LIKE ? OR post_content LIKE ?)';
+            $params = [...$params, $like, $like, $like];
+        }
+        $orderBy = self::ORDER_BY[(string) $request->query('orderby', 'date')] ?? 'post_date';
+        $order = strtoupper((string) $request->query('order', 'desc')) === 'ASC' ? 'ASC' : 'DESC';
+        if ($orderBy === 'post_date') {
+            // Same-date rows: the reference lists the newest id first on a plain
+            // list and the oldest first once search or include narrows the query.
+            $ties = $include !== [] || trim((string) $request->query('search', '')) !== '' ? 'ASC' : 'DESC';
+            $orderBy = "post_date {$order}, ID {$ties}";
+            $order = '';
+        }
+        if ($orderBy === 'include') {
+            // The include list is its own order; the order parameter does not reverse it.
+            $orderBy = $include === [] ? 'post_date' : 'FIELD(ID, ' . implode(',', $include) . ')';
+            $order = '';
+        }
 
         $table = $this->db->table('posts');
         $total = (int) $this->db->value("SELECT COUNT(*) FROM {$table} WHERE {$where}", $params);
@@ -76,13 +138,24 @@ final readonly class PostsController
             throw new RestError('rest_post_invalid_page_number', 'The page number requested is larger than the number of pages available.', 400);
         }
         $rows = $this->db->rows(
-            "SELECT * FROM {$table} WHERE {$where} ORDER BY post_date DESC LIMIT ?, ?",
+            "SELECT * FROM {$table} WHERE {$where} ORDER BY {$orderBy} {$order} LIMIT ?, ?",
             [...$params, ($page - 1) * $perPage, $perPage],
         );
+        if ($context === 'edit' && !$others) {
+            // Edit context drops the rows the caller cannot edit AFTER the page was cut: a
+            // page of five may come back with one item while the totals still count them all.
+            $rows = array_values(array_filter($rows, fn (array $row) => $this->caller->can('edit_post', (int) $row['ID'])));
+        }
         $objects = $context === 'edit'
             ? array_map(fn (array $row) => $this->object->edit($row, $userId), $rows)
             : array_map(fn (array $row) => $this->object->view($row), $rows);
         return Reply::list($objects, $total, $totalPages, Fields::fromQuery($request->query));
+    }
+
+    /** @return list<int> */
+    private static function ids(string $csv): array
+    {
+        return array_values(array_filter(array_map(intval(...), explode(',', $csv)), static fn (int $id) => $id > 0));
     }
 
     #[Route(Method::Get, '/wp/v2/{base:posts|pages}/{id:\d+}')]

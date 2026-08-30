@@ -61,6 +61,7 @@ final readonly class Api
         private TermObject $termObject,
         private UserObject $userObject,
         private Types $types,
+        private Embed $embed,
     ) {
     }
 
@@ -121,7 +122,7 @@ final readonly class Api
         $postsWrite = new PostsWriteController($posts, $writer, $site, $postObject, $url, $caller);
         $router->register($postsController, $postsWrite);
         $router->register(new DeclaredPostsController($types, $postsController, $postsWrite));
-        return new self($db, $request, $caller, $router, $postObject, $termObject, $userObject, $types);
+        return new self($db, $request, $caller, $router, $postObject, $termObject, $userObject, $types, new Embed($router, $types, $taxonomies));
     }
 
     public function caller(): Caller
@@ -155,6 +156,9 @@ final readonly class Api
         $request = $this->request->withPath('/' . trim($route, '/'));
         try {
             $response = $this->router->dispatch($request);
+            if ($response !== null) {
+                $response = $this->embed->decorate($request, $response);
+            }
             if ($response === null && Runtime::booted()) {
                 $response = RuntimeRoutes::dispatch($request);
             }
