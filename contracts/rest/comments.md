@@ -2,9 +2,9 @@
 
 Status: implemented (list with status tabs and pagination headers, single,
 create, moderation updates, trash, force delete). Suite:
-`tests/comments.test.php` (30 checks: read parity in both contexts and
-every refusal rung, plus the write lifecycle proven cross-stack in both
-directions).
+`tests/comments.test.php` (read parity in both contexts, collection
+filters, every refusal rung, plus the write lifecycle proven
+cross-stack in both directions).
 
 The Comments admin view drives this surface: an edit-context list per
 status tab, status flips, replies, and force deletes.
@@ -37,6 +37,18 @@ meta, _links }`. Edit context inserts `author_email`, `author_ip`,
 - List defaults: `status=approve`, `per_page=10`, `page=1`, newest first
   by `comment_date_gmt`. Pagination rides `X-WP-Total` /
   `X-WP-TotalPages`. `_fields` filters per item.
+- **List filters**: `include` / `exclude` (id lists; `0` is kept),
+  `parent` / `parent_exclude` (id lists; `0` is a top-level comment),
+  `post` (id list; `0` without `moderate_comments` → `rest_cannot_read`
+  "comments without a post"; an unreadable post in the list →
+  `rest_cannot_read_post`), `search` (one substring across content,
+  author name, and author email; `%`/`_` are literals), `after` /
+  `before` (exclusive on site-local `comment_date`; a date-time with
+  seconds, else `400 rest_invalid_date`). `author` / `author_exclude`
+  (id lists, `0` is an anonymous commenter) and `author_email` (exact,
+  case-insensitive; invalid → `400 rest_invalid_email`) need
+  `edit_posts` → `rest_forbidden_param`. `type` defaults to `comment`
+  (`comment_type` empty or `comment`); any other type needs `edit_posts`.
 - `context=edit` needs `moderate_comments` → `rest_forbidden_context`
   (401 anonymous / 403 authenticated). A non-approve `status` needs
   `edit_posts` → `rest_forbidden_param` (an author CAN query the hold tab).
@@ -77,3 +89,6 @@ meta, _links }`. Edit context inserts `author_email`, `author_ip`,
 - `make_clickable` in the renderer.
 - Comment queries do not restrict by post readability the way the
   minn-admin/v1 feeds do; this matches core's behavior on this surface.
+- `password` (unlock a protected parent post) and `offset` / `order` /
+  `orderby` are not collection filters the hunter treats as membership
+  args; they stay unimplemented.

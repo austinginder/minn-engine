@@ -12,6 +12,7 @@ use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\RestError;
+use Minn\Support\Email;
 use Minn\Support\Kses;
 use Minn\Mail\Mailer;
 use Minn\Mail\Message;
@@ -46,19 +47,12 @@ final readonly class CommentsController
         $tokens = Comments::tokensFor($status) ?? [$status];
         $perPage = max(1, min(100, (int) $request->query('per_page', '10')));
         $page = max(1, (int) $request->query('page', '1'));
-        $post = $request->query('post');
-        $postId = $post !== null && ctype_digit($post) ? (int) $post : null;
-        // A post the caller cannot read refuses the whole list; an unknown one lists nothing.
-        if ($postId !== null && ($row = $this->posts->find($postId)) !== null
-            && ($row['post_status'] !== 'publish' || $row['post_password'] !== '') && !$this->caller->can('read_post', $postId)) {
-            throw $this->caller->refuse('rest_cannot_read_post', 'Sorry, you are not allowed to read the post for this comment.');
-        }
         $result = $this->comments->page(
             $tokens,
             $page,
             $perPage,
             publicPostsOnly: !$this->caller->can('moderate_comments'),
-            postId: $postId,
+            filters: $this->listFilters($request),
         );
         return Reply::list(
             array_map(fn (array $c) => $this->object->build($c, $context === 'edit'), $result['comments']),
@@ -214,6 +208,130 @@ final readonly class CommentsController
         $this->comments->update($commentId, ['comment_approved' => 'trash']);
         $this->comments->recount($postId);
         return Reply::item($this->object->build($this->comments->find($commentId), true), $fields);
+    }
+
+    /**
+     * Collection filters captured from the oracle: include/exclude/parent
+     * as id lists (0 is kept), search as a substring across content/author
+     * /email, after/before exclusive on site-local comment_date.
+     * author / author_exclude / author_email / a non-comment type need
+     * edit_posts; post=0 without moderate_comments is rest_cannot_read.
+     *
+     * @return array<string, mixed>
+     */
+    private function listFilters(Request $request): array
+    {
+        $filters = [];
+        $post = self::ids((string) $request->query('post', ''));
+        if (in_array(0, $post, true) && !$this->caller->can('moderate_comments')) {
+            throw $this->caller->refuse('rest_cannot_read', 'Sorry, you are not allowed to read comments without a post.');
+        }
+        foreach ($post as $postId) {
+            if ($postId === 0) {
+                continue;
+            }
+            $row = $this->posts->find($postId);
+            if ($row !== null && ($row['post_status'] !== 'publish' || $row['post_password'] !== '') && !$this->caller->can('read_post', $postId)) {
+                throw $this->caller->refuse('rest_cannot_read_post', 'Sorry, you are not allowed to read the post for this comment.');
+            }
+        }
+        if ($post !== []) {
+            $filters['post'] = $post;
+        }
+        $include = self::ids((string) $request->query('include', ''));
+        if ($include !== []) {
+            $filters['include'] = $include;
+        }
+        $exclude = self::ids((string) $request->query('exclude', ''));
+        if ($exclude !== []) {
+            $filters['exclude'] = $exclude;
+        }
+        $parent = self::ids((string) $request->query('parent', ''));
+        if ($parent !== []) {
+            $filters['parent'] = $parent;
+        }
+        $parentExclude = self::ids((string) $request->query('parent_exclude', ''));
+        if ($parentExclude !== []) {
+            $filters['parentExclude'] = $parentExclude;
+        }
+        $type = $request->query('type');
+        if ($type !== null && $type !== '' && $type !== 'comment' && !$this->caller->can('edit_posts')) {
+            throw $this->caller->refuse('rest_forbidden_param', 'Query parameter not permitted: type');
+        }
+        if ($type !== null && $type !== '') {
+            $filters['type'] = $type;
+        }
+        $author = $request->query('author');
+        if ($author !== null && $author !== '') {
+            if (!$this->caller->can('edit_posts')) {
+                throw $this->caller->refuse('rest_forbidden_param', 'Query parameter not permitted: author');
+            }
+            $ids = self::ids($author);
+            if ($ids !== []) {
+                $filters['author'] = $ids;
+            }
+        }
+        $authorExclude = $request->query('author_exclude');
+        if ($authorExclude !== null && $authorExclude !== '') {
+            if (!$this->caller->can('edit_posts')) {
+                throw $this->caller->refuse('rest_forbidden_param', 'Query parameter not permitted: author_exclude');
+            }
+            $ids = self::ids($authorExclude);
+            if ($ids !== []) {
+                $filters['authorExclude'] = $ids;
+            }
+        }
+        $email = $request->query('author_email');
+        if ($email !== null && $email !== '') {
+            if (Email::check($email) !== null) {
+                throw new RestError('rest_invalid_param', 'Invalid parameter(s): author_email', 400, [
+                    'params' => ['author_email' => 'Invalid email address.'],
+                    'details' => ['author_email' => ['code' => 'rest_invalid_email', 'message' => 'Invalid email address.', 'data' => null]],
+                ]);
+            }
+            if (!$this->caller->can('edit_posts')) {
+                throw $this->caller->refuse('rest_forbidden_param', 'Query parameter not permitted: author_email');
+            }
+            $filters['authorEmail'] = $email;
+        }
+        $search = $request->query('search');
+        if ($search !== null && $search !== '') {
+            $filters['search'] = $search;
+        }
+        $after = $request->query('after');
+        if ($after !== null && $after !== '') {
+            $filters['after'] = self::restDate($after, 'after');
+        }
+        $before = $request->query('before');
+        if ($before !== null && $before !== '') {
+            $filters['before'] = self::restDate($before, 'before');
+        }
+        return $filters;
+    }
+
+    /** @return list<int> */
+    private static function ids(string $csv): array
+    {
+        $out = [];
+        foreach (explode(',', $csv) as $part) {
+            $part = trim($part);
+            if ($part === '' || !ctype_digit($part)) {
+                continue;
+            }
+            $out[] = (int) $part;
+        }
+        return array_values(array_unique($out));
+    }
+
+    private static function restDate(string $value, string $param): string
+    {
+        if (preg_match('/^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}(?:Z|[+-]\d{2}:\d{2})?$/', $value) !== 1) {
+            throw new RestError('rest_invalid_param', "Invalid parameter(s): {$param}", 400, [
+                'params' => [$param => 'Invalid date.'],
+                'details' => [$param => ['code' => 'rest_invalid_date', 'message' => 'Invalid date.', 'data' => null]],
+            ]);
+        }
+        return (string) preg_replace('/(Z|[+-]\d{2}:\d{2})$/', '', str_replace('T', ' ', $value));
     }
 
     /** A comment row of the plain kind, or the reference's invalid-id error. */

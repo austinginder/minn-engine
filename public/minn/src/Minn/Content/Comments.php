@@ -37,19 +37,52 @@ final readonly class Comments
     /**
      * A page of plain comments in the given approval states, newest first.
      *
+     * $filters keys, all optional: post, include, exclude, parent,
+     * parentExclude, author, authorExclude (id lists; 0 is kept),
+     * authorEmail, search, after, before, type.
+     *
      * @param list<string> $approvedTokens
+     * @param array<string, mixed> $filters
      * @return array{comments: list<array>, total: int}
      */
-    public function page(array $approvedTokens, int $page, int $perPage, bool $publicPostsOnly = false, ?int $postId = null): array
+    public function page(array $approvedTokens, int $page, int $perPage, bool $publicPostsOnly = false, array $filters = []): array
     {
         $placeholders = implode(',', array_fill(0, count($approvedTokens), '?'));
         $params = $approvedTokens;
         $from = "FROM {$this->db->table('comments')} c"
             . ($publicPostsOnly ? " INNER JOIN {$this->db->table('posts')} p ON p.ID = c.comment_post_ID AND p.post_status = 'publish' AND p.post_password = ''" : '')
-            . " WHERE c.comment_approved IN ({$placeholders}) AND c.comment_type IN ('', 'comment')";
-        if ($postId !== null) {
-            $from .= ' AND c.comment_post_ID = ?';
-            $params[] = $postId;
+            . " WHERE c.comment_approved IN ({$placeholders})";
+        $type = (string) ($filters['type'] ?? 'comment');
+        if ($type === '' || $type === 'comment') {
+            $from .= " AND c.comment_type IN ('', 'comment')";
+        } else {
+            $from .= ' AND c.comment_type = ?';
+            $params[] = $type;
+        }
+        $this->idFilter($from, $params, 'c.comment_post_ID', $filters['post'] ?? []);
+        $this->idFilter($from, $params, 'c.comment_ID', $filters['include'] ?? []);
+        $this->idFilter($from, $params, 'c.comment_ID', $filters['exclude'] ?? [], true);
+        $this->idFilter($from, $params, 'c.comment_parent', $filters['parent'] ?? []);
+        $this->idFilter($from, $params, 'c.comment_parent', $filters['parentExclude'] ?? [], true);
+        $this->idFilter($from, $params, 'c.user_id', $filters['author'] ?? []);
+        $this->idFilter($from, $params, 'c.user_id', $filters['authorExclude'] ?? [], true);
+        if (($filters['authorEmail'] ?? '') !== '') {
+            $from .= ' AND LOWER(c.comment_author_email) = ?';
+            $params[] = strtolower((string) $filters['authorEmail']);
+        }
+        $search = trim((string) ($filters['search'] ?? ''));
+        if ($search !== '') {
+            $like = '%' . addcslashes($search, '%_\\') . '%';
+            $from .= ' AND (c.comment_content LIKE ? OR c.comment_author LIKE ? OR c.comment_author_email LIKE ?)';
+            $params = [...$params, $like, $like, $like];
+        }
+        if (($filters['after'] ?? '') !== '') {
+            $from .= ' AND c.comment_date > ?';
+            $params[] = $filters['after'];
+        }
+        if (($filters['before'] ?? '') !== '') {
+            $from .= ' AND c.comment_date < ?';
+            $params[] = $filters['before'];
         }
         $total = (int) $this->db->value("SELECT COUNT(*) {$from}", $params);
         $rows = $this->db->rows(
@@ -57,6 +90,17 @@ final readonly class Comments
             [...$params, $perPage, ($page - 1) * $perPage],
         );
         return ['comments' => $rows, 'total' => $total];
+    }
+
+    /** @param list<int> $ids */
+    private function idFilter(string &$from, array &$params, string $column, array $ids, bool $not = false): void
+    {
+        if ($ids === []) {
+            return;
+        }
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+        $from .= ' AND ' . $column . ($not ? ' NOT' : '') . ' IN (' . $placeholders . ')';
+        $params = [...$params, ...$ids];
     }
 
     /** The same words on the same post from the same person, in any status but trash or spam. */

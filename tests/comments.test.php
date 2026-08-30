@@ -145,6 +145,27 @@ check(
 	json_encode( array( $rh['x-wp-total'] ?? null, $eh['x-wp-total'] ?? null ) )
 );
 
+cm_parity( 'list exclude=1', $Q . '&exclude=1&_fields=id', null );
+cm_parity( 'list include=1', $Q . '&include=1&_fields=id', null );
+cm_parity( 'list parent=0', $Q . '&parent=0&_fields=id,parent', null );
+cm_parity( 'list parent_exclude=0', $Q . '&parent_exclude=0&_fields=id', null );
+cm_parity( 'list parent=1 empty', $Q . '&parent=1&_fields=id', null );
+cm_parity( 'list search miss', $Q . '&search=zzzzz&_fields=id', null );
+cm_parity( 'list search hit', $Q . '&search=hi&_fields=id', null );
+cm_parity( 'list after exclusive miss', $Q . '&after=2099-01-01T00:00:00&_fields=id', null );
+cm_parity( 'list before exclusive miss', $Q . '&before=2000-01-01T00:00:00&_fields=id', null );
+cm_parity( 'list after invalid date', $Q . '&after=not-a-date', null );
+cm_parity( 'list author forbidden (anonymous)', $Q . '&author=0', null );
+cm_parity( 'list author=0 (admin)', $Q . '&author=0&_fields=id,author', $admin );
+cm_parity( 'list author_exclude=0 (admin)', $Q . '&author_exclude=0&_fields=id', $admin );
+cm_parity( 'list type=review forbidden (anonymous)', $Q . '&type=review', null );
+cm_parity( 'list type=review (author)', $Q . '&type=review&_fields=id', $author );
+cm_parity( 'list author_email invalid', $Q . '&author_email=a@b.c', null );
+cm_parity( 'list author_email forbidden (anonymous)', $Q . '&author_email=foo@bar.com', null );
+cm_parity( 'list author_email match (admin)', $Q . '&author_email=wapuu@wordpress.example&_fields=id', $admin );
+cm_parity( 'list post=0 forbidden (anonymous)', $Q . '&post=0', null );
+cm_parity( 'list post=0 (admin)', $Q . '&post=0&_fields=id', $admin );
+
 // 2. Engine creates; WordPress reads it back.
 $content = "Engine reply: it's alive\n\nSecond paragraph\nwith a soft break";
 [ $st, $created ] = cm_fetch( $ENGINE, $Q, $admin, 'POST', json_encode( array( 'post' => 1, 'parent' => 1, 'content' => $content ) ) );

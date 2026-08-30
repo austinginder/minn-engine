@@ -7,8 +7,11 @@ reads it, the UI looks broken while the request is a 200.
 The Mine miss on media was `author=3`: the app sent it, the oracle
 narrowed to 17, the engine kept returning 817. Collection filters the
 hunter then found (`author_exclude`, `parent_exclude`, `menu_order`,
-`slug`, `exclude`, users `search`) are implemented from that same
-capture.
+`slug`, `exclude`, users `search`, comments `exclude` /
+`parent_exclude`) are implemented from that same capture. Comments
+also honour the matching `include` / `parent` pair, plus search,
+after/before, author lists, author_email, and type (see
+`contracts/rest/comments.md`).
 
 ## How to uncover the next one
 
