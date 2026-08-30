@@ -146,18 +146,18 @@
     [
         "get_bloginfo_rss",
         [
-            "Minn Engine",
+            "Minn",
             "Indistinguishable at the seams. Radically simpler inside.",
             "{home}",
             "en-US",
             "UTF-8",
-            "Minn Engine",
-            "Minn Engine"
+            "Minn",
+            "Minn"
         ]
     ],
     [
         "bloginfo_rss",
-        "Minn Engine"
+        "Minn"
     ],
     [
         "get_bloginfo_rss escaped",

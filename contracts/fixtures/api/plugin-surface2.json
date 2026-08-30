@@ -508,7 +508,7 @@
     ],
     [
         "render_block_core_template_part header text",
-        " Minn Engine Sample PageDocs "
+        " Minn Sample PageDocs "
     ],
     [
         "build_query_vars_from_query_block",

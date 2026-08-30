@@ -1245,7 +1245,7 @@
     ],
     [
         "get_bloginfo name",
-        "Minn Engine"
+        "Minn"
     ],
     [
         "get_bloginfo description",
@@ -1333,19 +1333,19 @@
     ],
     [
         "get_bloginfo bogus",
-        "Minn Engine"
+        "Minn"
     ],
     [
         "get_bloginfo ",
-        "Minn Engine"
+        "Minn"
     ],
     [
         "get_bloginfo display",
-        "Minn Engine"
+        "Minn"
     ],
     [
         "bloginfo",
-        "Minn Engine"
+        "Minn"
     ],
     [
         "wp_customize_url",

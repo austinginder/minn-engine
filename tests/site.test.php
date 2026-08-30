@@ -49,6 +49,7 @@ $check(str_contains($home, 'wp-theme-minn-site'), 'the site theme is active');
 preg_match('#<title>(.*?)</title>#s', $home, $et);
 preg_match('#<title>(.*?)</title>#s', $refHome, $rt);
 $check(($et[1] ?? '') !== '' && ($et[1] ?? '') === ($rt[1] ?? null), 'document title matches the reference', ($et[1] ?? '') . ' vs ' . ($rt[1] ?? ''));
+$check(str_starts_with($et[1] ?? '', 'Minn') && !str_contains($et[1] ?? '', 'Minn Engine'), 'the tab uses the product name', $et[1] ?? '');
 $check(str_contains($home, 'served by Minn'), 'the footer says who served the page');
 $check(str_contains($home, 'class="minn-wordmark">minn</span>'), 'the header wordmark is Minn');
 $check(!str_contains($home, 'minn<small>engine</small>'), 'the header does not say engine');

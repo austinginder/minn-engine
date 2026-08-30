@@ -8,7 +8,7 @@
 	>
 
 <channel>
-	<title>Uncategorized &#8211; Minn Engine</title>
+	<title>Uncategorized &#8211; Minn</title>
 	<atom:link href="https://minn-engine.localhost/category/uncategorized/feed/" rel="self" type="application/rss+xml" />
 	<link>https://minn-engine.localhost</link>
 	<description>Indistinguishable at the seams. Radically simpler inside.</description>

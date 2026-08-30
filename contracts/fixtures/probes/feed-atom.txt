@@ -3,7 +3,7 @@
 	xmlns:thr="http://purl.org/syndication/thread/1.0"
 	xml:lang="en-US"
 	>
-	<title type="text">Minn Engine</title>
+	<title type="text">Minn</title>
 	<subtitle type="text">Indistinguishable at the seams. Radically simpler inside.</subtitle>
 
 	<updated>2026-08-28T11:30:13Z</updated>

@@ -70,7 +70,7 @@ $say('get_bloginfo_rss', array_map($rel, [get_bloginfo_rss('name'), get_bloginfo
 $say('bloginfo_rss', $capture(static fn () => bloginfo_rss('name')));
 update_option('blogname', 'Probe & <b>Site</b> “q”');
 $say('get_bloginfo_rss escaped', get_bloginfo_rss('name'));
-update_option('blogname', 'Minn Engine');
+update_option('blogname', 'Minn');
 
 // Meta deletion by key.
 add_post_meta(1, 'minn_probe_bykey', 'a');

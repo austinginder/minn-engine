@@ -56,7 +56,7 @@ final readonly class LexiconController
         $html = (new LexiconPage(
             Lexicon::fromFile($path),
             $this->permalinks,
-            (string) ($this->site->option('blogname') ?? 'Minn Engine'),
+            (string) ($this->site->option('blogname') ?? 'Minn'),
             $themeDir,
             $this->permalinks->url('/wp-content/themes/minn-site'),
         ))->html();
