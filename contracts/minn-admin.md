@@ -19,7 +19,10 @@ directly (no WordPress source is involved either way).
   logged-in user who can `edit_posts`; otherwise it 302-redirects to
   `/wp-login.php?redirect_to=…`.
 - `GET /minn-admin-asset/<path>` serves the app's CSS/JS/fonts from the
-  symlinked dir (path-traversal guarded, read-only).
+  bundled dir (path-traversal guarded, read-only). On hosts that 404 missing
+  `.js`/`.css` before PHP runs, install copies those files to
+  `minn-admin-asset/assets/` on the webroot so nginx serves them as static
+  files. The PHP route stays as a fallback.
 - `GET /wp-admin/admin-ajax.php?action=rest-nonce` returns a fresh `wp_rest`
   nonce for the signed-in user — the one admin-ajax action app.js needs, for
   its nonce-refresh-and-retry path.
