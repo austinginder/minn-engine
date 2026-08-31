@@ -765,6 +765,52 @@ masks. A plugin template that calls wp_head() under a BLOCK theme gets
 only runtime-registered hooks (the classic head state is not stood); the
 classic path sets the full head state, which is where CaptainCore runs.
 
+## The shop-dogfood symbols round (2026-08-31)
+
+Seventeen functions and five classes took shop-dogfood from 27 loading
+plugins to 33: gravityforms, gravitysmtp, advanced-custom-fields-pro,
+code-snippets, perfmatters, and redirection all load as code now, and
+every Minn Admin surface the reference offers (Forms, Email, Snippets,
+Redirects, Backups, Field Groups, Performance, plus Commerce) answers on
+the engine. Probed facts worth keeping:
+
+- get_lastpostmodified covers the public types (a future-dated page moves
+  'any', a nav_menu_item does not); the 'server' variant carries a
+  microsecond suffix. sanitize_mime_type KEEPS case. like_escape
+  backslashes only % and _. The network option functions read and write
+  the plain options table on a single site. wp_default_editor answers
+  tinymce even where user_can_richedit probes false (the CLI does, no
+  browser). wp_match_mime_types re-orders its result keys in a pattern the
+  probes could not explain ([n..4 desc, 2, 3, 1] by position); the engine
+  keeps natural pattern order, membership and value order match.
+- WP_MatchesMapRegex urlencodes every substitution; `Front\PluginRules`
+  now does the same, so a captured '&x=1' cannot split into extra query
+  vars. WP_Ajax_Response's XML and send() envelope are pinned from
+  captures. WP_Textdomain_Registry records paths and scans the language
+  dir (`Support\Paths::translationDir`); the boot sets the global.
+- PHPMailer\PHPMailer\{PHPMailer,SMTP,Exception} are the engine's own:
+  state recording in the class, MIME composition in `Mail\Mime`, SMTP
+  delivery through `Mail\Smtp::sendRaw` (send() now composes onto it).
+  Gravity SMTP assigns the STATIC PHPMailer::$validator before anything
+  else, so the property must exist. Its sandbox (test_mode) short-circuits
+  before send either way.
+- WP_User_Query graduated from placeholder to real (`Runtime\UserQuery`):
+  WooCommerce's sales report runs one on the front. Probed shapes: 'ID'
+  fields come back as STRINGS, a column array as stdClass records holding
+  only those columns, 'all' as WP_User. `Support\Serialized::encode` now
+  writes objects with PHP's own serializer (maybe_serialize's contract;
+  writing runs nothing, reads stay on the tolerant decoders).
+- perfmatters' hidden login works end to end: the new wp-login.php SHAPE
+  FILE (layout + installer + suite updated) boots like index.php when hit
+  directly, and when plugin code require's it mid-request it throws
+  `Login\ServeLogin`, which Engine::respond() catches to answer the
+  current request with the sign-in surface. The engine CLI's login token
+  is now stored RAW, the captaincore-helper mu-plugin's own format: with
+  a hide-login plugin standing $pagenow, the helper validates the token
+  itself and compares verbatim (hashes minted earlier still verify).
+  /wp-login.php direct now 403s on shop-dogfood BY THE PLUGIN, oracle
+  parity; sign in through the hidden slug.
+
 ## What a plugin cannot do yet
 
 All twenty-five of the dogfood site's plugins load as code now
