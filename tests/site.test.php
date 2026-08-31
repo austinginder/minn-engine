@@ -58,7 +58,8 @@ $check(str_contains($home, '/wp-content/themes/minn-site/style.css'), 'the theme
 $check(!str_contains($home, 'CHECKS_COUNT'), 'no unfilled placeholders on the page');
 $check(str_contains($home, 'href="#content">Skip to content'), 'skip link targets the template\'s own main id');
 $check(!preg_match('/class="[^"]*has-global-padding/', $home), 'no global padding class without useRootPaddingAwareAlignments');
-$check(str_contains($home, '&#8220;Compatible with WordPress&#8221;'), 'template markup is texturized');
+[, $texturizePage] = minn_test_fetch($ENGINE . '/texturize-battery-its-quoted-fine/');
+$check(str_contains($texturizePage, '&#8220;quoted&#8221;'), 'template markup is texturized');
 $check(str_contains($home, 'A modern PHP engine'), 'the hero names what Minn is');
 $check(str_contains($home, 'fluently speaks WordPress'), 'the hero names the compatibility');
 $check(str_contains($home, 'Built from') && str_contains($home, 'scratch'), 'the hero says built from scratch');
