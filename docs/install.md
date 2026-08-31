@@ -70,8 +70,15 @@ the fallback). The engine itself loads `wp-config.php` normally for CLI and web.
 2. Copies the engine's `minn/` folder in (or leaves it when the webroot's `minn` is
    already the engine, as on a development site with a symlink).
 3. Writes the shape files from `minn/layout/`: `index.php`, `wp-login.php`,
-   `wp-settings.php`, `wp-cli.yml`, `wp-includes/version.php`.
-4. Records what it did in `minn/.install.json`: the park, the entries moved,
+   `wp-settings.php`, `wp-cli.yml`, `wp-includes/version.php`, `wp-admin/index.php`.
+   `wp-admin/index.php` has to exist on disk: hosts such as Kinsta 403 a
+   directory without an index, and `/wp-admin/` must keep 302ing to
+   `/minn-admin/`.
+4. Writes empty PHP placeholders for every `wp-includes/*.php` and
+   `wp-admin/includes/*.php` the reference has (`data/reference-files.json`),
+   so a plugin `require ABSPATH . 'wp-admin/includes/plugin.php'` resolves.
+   The engine already provides those symbols; the files are the contract.
+5. Records what it did in `minn/.install.json`: the park, the entries moved,
    the engine version.
 
 Static CSS and JS are served from inside `minn/` (`minn/admin/assets/`,
@@ -97,10 +104,10 @@ reproduced on FrankenPHP during the round trip below.
 
 Removes the shape files, any leftover copies from an earlier installer
 (`minn-admin-asset/`, `minn-engine/`, `wp-includes/js/jquery/`), the engine's
-`wp-includes/`, and `minn/` (a symlink is unlinked, a copy deleted), moves
-every parked entry back, and removes the park when it is empty. The tree is
-the one install found, byte for byte (`tests/install.test.php` proves it on a
-scratch webroot).
+`wp-includes/` and `wp-admin/` (shape files plus require placeholders), and
+`minn/` (a symlink is unlinked, a copy deleted), moves every parked entry
+back, and removes the park when it is empty. The tree is the one install
+found, byte for byte (`tests/install.test.php` proves it on a scratch webroot).
 
 The engine's only footprint in the database is its sign-in throttle rows
 (`wp_options`, `minn_login_throttle_*`); everything else it writes is in the shapes

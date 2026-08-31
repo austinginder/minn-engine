@@ -28,11 +28,11 @@ $check = static function (string $label, bool $ok, string $detail = '') use (&$p
 
 echo "layout suite: $PUBLIC\n";
 
-foreach (['index.php', 'wp-login.php', 'wp-settings.php', 'wp-cli.yml', 'wp-includes/version.php'] as $file) {
+foreach (['index.php', 'wp-login.php', 'wp-settings.php', 'wp-cli.yml', 'wp-includes/version.php', 'wp-admin/index.php'] as $file) {
     $check("shape file $file present", is_file("$PUBLIC/$file"));
     $check("minn/layout/$file matches the webroot copy", is_file("$PUBLIC/minn/layout/$file") && file_get_contents("$PUBLIC/minn/layout/$file") === file_get_contents("$PUBLIC/$file"));
 }
-foreach (['wp-load.php', 'wp-blog-header.php', 'wp-admin/index.php', 'xmlrpc.php'] as $file) {
+foreach (['wp-load.php', 'wp-blog-header.php', 'xmlrpc.php'] as $file) {
     $check("no $file (nothing here runs WordPress)", !file_exists("$PUBLIC/$file"));
 }
 $version = (string) file_get_contents("$PUBLIC/wp-includes/version.php");

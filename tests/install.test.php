@@ -101,8 +101,9 @@ $check('eject refuses a WordPress webroot', $code === 1 && str_contains($out, 'n
 [$out, $code] = $minn('install ' . escapeshellarg($WEBROOT) . ' --park=' . escapeshellarg($PARK));
 $check('install succeeds', $code === 0 && str_contains($out, 'Installed.'), $out);
 $check('core files are parked', is_file("$PARK/wp-load.php") && is_dir("$PARK/wp-admin") && is_file("$PARK/wp-includes/js/wp.js") && is_file("$PARK/index.php"));
-$check('the webroot has no WordPress entry points', !file_exists("$WEBROOT/wp-load.php") && !file_exists("$WEBROOT/wp-admin") && !file_exists("$WEBROOT/xmlrpc.php"));
-$check('the shape files match the layout templates', md5_file("$WEBROOT/index.php") === md5_file("$ENGINE_DIR/layout/index.php") && md5_file("$WEBROOT/wp-settings.php") === md5_file("$ENGINE_DIR/layout/wp-settings.php") && md5_file("$WEBROOT/wp-cli.yml") === md5_file("$ENGINE_DIR/layout/wp-cli.yml") && md5_file("$WEBROOT/wp-includes/version.php") === md5_file("$ENGINE_DIR/layout/wp-includes/version.php"));
+$check('the webroot has no WordPress entry points', !file_exists("$WEBROOT/wp-load.php") && !file_exists("$WEBROOT/xmlrpc.php") && !file_exists("$WEBROOT/wp-admin/about.php") && !file_exists("$WEBROOT/wp-admin/css"));
+$check('the shape files match the layout templates', md5_file("$WEBROOT/index.php") === md5_file("$ENGINE_DIR/layout/index.php") && md5_file("$WEBROOT/wp-settings.php") === md5_file("$ENGINE_DIR/layout/wp-settings.php") && md5_file("$WEBROOT/wp-cli.yml") === md5_file("$ENGINE_DIR/layout/wp-cli.yml") && md5_file("$WEBROOT/wp-includes/version.php") === md5_file("$ENGINE_DIR/layout/wp-includes/version.php") && md5_file("$WEBROOT/wp-admin/index.php") === md5_file("$ENGINE_DIR/layout/wp-admin/index.php"));
+$check('require placeholders exist so plugins can include wp-admin files', is_file("$WEBROOT/wp-admin/includes/plugin.php") && is_file("$WEBROOT/wp-includes/class-phpmailer.php"));
 $check('the engine is a real copy with its sources', is_file("$WEBROOT/minn/bootstrap.php") && is_file("$WEBROOT/minn/src/Minn/Engine.php") && !is_link("$WEBROOT/minn") && is_file("$WEBROOT/minn/data/social-icons.json"));
 $check(
     'static assets live inside minn/, not extra webroot folders',

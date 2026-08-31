@@ -25,8 +25,8 @@ public/wp-content/plugins/minn-admin
 # The engine writes its failure log here; never a fixture
 public/wp-content/debug.log
 
-# The reference file layout the engine writes as placeholders (tests/tools/site-skeleton.php); version.php is real and tracked.
-public/wp-admin/
+# The reference file layout the engine writes as placeholders (tests/tools/site-skeleton.php); version.php and wp-admin/index.php are real shape files and tracked.
+public/wp-admin/includes/
 public/wp-includes/*
 !public/wp-includes/version.php
 

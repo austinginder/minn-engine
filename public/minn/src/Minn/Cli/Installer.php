@@ -27,7 +27,9 @@ final class Installer
         'wp-config-sample.php', 'wp-cron.php', 'wp-links-opml.php', 'wp-load.php', 'wp-login.php', 'wp-mail.php',
         'wp-settings.php', 'wp-signup.php', 'wp-trackback.php', 'xmlrpc.php', 'license.txt', 'readme.html',
     ];
-    private const LAYOUT = ['index.php', 'wp-login.php', 'wp-settings.php', 'wp-cli.yml', 'wp-includes/version.php'];
+    private const LAYOUT = ['index.php', 'wp-login.php', 'wp-settings.php', 'wp-cli.yml', 'wp-includes/version.php', 'wp-admin/index.php'];
+    /** Webroot trees install writes (shape files + require placeholders) and eject deletes before restoring the park. */
+    private const WRITTEN_TREES = ['wp-includes', 'wp-admin'];
     /**
      * Leftover webroot copies from an earlier installer that published
      * assets outside minn/. Eject still deletes them.
@@ -335,11 +337,14 @@ final class Installer
         } else {
             $this->say("Engine already at {$target}");
         }
-        @mkdir("{$root}/wp-includes", 0755, true);
         foreach (self::LAYOUT as $file) {
-            copy("{$this->engineDir}/layout/{$file}", "{$root}/{$file}");
+            $dest = "{$root}/{$file}";
+            @mkdir(dirname($dest), 0755, true);
+            copy("{$this->engineDir}/layout/{$file}", $dest);
         }
         $this->say('Wrote ' . implode(', ', self::LAYOUT));
+        $placeholders = $this->writePlaceholders($root);
+        $this->say("Wrote {$placeholders} require placeholders");
         file_put_contents("{$target}/" . self::MANIFEST, json_encode([
             'installed' => gmdate('c'),
             'engine_version' => self::version(),
@@ -365,16 +370,16 @@ final class Installer
             return 1;
         }
         foreach ((array) ($manifest['layout'] ?? self::LAYOUT) as $file) {
+            if (str_starts_with($file, 'wp-includes/') || str_starts_with($file, 'wp-admin/')) {
+                continue;
+            }
             @unlink("{$root}/{$file}");
+        }
+        foreach (self::WRITTEN_TREES as $tree) {
+            self::removeTree("{$root}/{$tree}");
         }
         foreach ((array) ($manifest['published'] ?? self::LEGACY_PUBLISHED) as $path) {
             self::removeTree("{$root}/{$path}");
-        }
-        if (is_dir("{$root}/wp-includes/js") && count(scandir("{$root}/wp-includes/js") ?: []) <= 2) {
-            rmdir("{$root}/wp-includes/js");
-        }
-        if (is_dir("{$root}/wp-includes") && count(scandir("{$root}/wp-includes") ?: []) <= 2) {
-            rmdir("{$root}/wp-includes");
         }
         $engine = "{$root}/minn";
         if (is_link($engine)) {
@@ -412,6 +417,31 @@ final class Installer
     {
         $file = "{$root}/minn/" . self::MANIFEST;
         return is_file($file) ? (array) json_decode((string) file_get_contents($file), true) : [];
+    }
+
+    /**
+     * Empty PHP files for every wp-includes/*.php and wp-admin/includes/*.php
+     * the reference has, so a plugin `require ABSPATH . 'wp-admin/includes/plugin.php'`
+     * resolves. The engine already provides the symbols; the file is the contract.
+     */
+    private function writePlaceholders(string $root): int
+    {
+        $list = $this->engineDir . '/data/reference-files.json';
+        $files = is_file($list) ? json_decode((string) file_get_contents($list), true) : [];
+        $written = 0;
+        foreach (is_array($files) ? $files : [] as $file) {
+            if (!is_string($file) || $file === '' || str_contains($file, '..')) {
+                continue;
+            }
+            $path = "{$root}/{$file}";
+            if (file_exists($path)) {
+                continue;
+            }
+            @mkdir(dirname($path), 0755, true);
+            file_put_contents($path, "<?php\n// Minn Engine placeholder for the reference's {$file}: the engine provides these symbols itself, so a plugin that requires this file gets nothing and continues.\n");
+            $written++;
+        }
+        return $written;
     }
 
     /** The database constants and prefix, read from the file as text: nothing in it runs. */

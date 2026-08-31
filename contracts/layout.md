@@ -18,6 +18,7 @@ copies them over; `minn eject` reverses it (`docs/install.md`, `tests/install.te
 | `wp-cli.yml` | WP-CLI (project config) | `require: minn/cli.php`, the engine's verbs. |
 | `wp-includes/version.php` | WP-CLI (`wp_exists()` is `file_exists` on it; `check_wp_version()` includes it and wants `$wp_version >= 3.7`; `core version` parses `$wp_version`, `$wp_db_version`, `$tinymce_version`, `$wp_local_package` by string search), hosting panels, backup tools | The release whose contracts the engine speaks (`7.1`, db revision `61833`), as plain assignments in the shape readers expect. No WordPress code. |
 | `wp-login.php` | nginx (a missing `.php` is a 404 before PHP runs), hide-login plugins that `require ABSPATH . 'wp-login.php'` | Boots the engine the way `index.php` does, or throws `ServeLogin` when required mid-request. |
+| `wp-admin/index.php` | nginx (a directory without an index is a 403 before PHP runs) | Boots the engine the way `index.php` does; the router 302s `/wp-admin/` to `/minn-admin/`. Required mid-request, does nothing. |
 
 ## Static assets
 
@@ -42,11 +43,16 @@ missing files through `index.php`. Nothing extra is copied to the webroot.
 
 ## Deliberately absent
 
-- `wp-load.php`, `wp-blog-header.php`, `wp-admin/`, `xmlrpc.php` files: nothing at the
+- `wp-load.php`, `wp-blog-header.php`, `xmlrpc.php` files: nothing at the
   webroot runs WordPress. WP-CLI finds the root through `index.php` or the working
-  directory instead; `/wp-admin/` and `/xmlrpc.php` are answered by the router
+  directory instead; `/xmlrpc.php` is answered by the router
   (`contracts/front/probes.md`).
-- `wp-includes/` holds `version.php`. A tool that lists or checksums core files
+- `/wp-admin/` as a human UI: the path 302s to `/minn-admin/`. The directory
+  exists on disk only so nginx does not 403 it and so plugin `require`s of
+  `wp-admin/includes/*.php` resolve to empty placeholders (the engine already
+  provides the symbols). There is no WordPress admin code here.
+- `wp-includes/` holds `version.php` plus the same empty placeholders for
+  `wp-includes/*.php`. A tool that lists or checksums core files
   (`wp core verify-checksums`, CaptainCore's `core_file_hashes`) sees an install
   that is not WordPress; that is the truthful signal, and `minn preflight`
   (Track C) is where it is explained to an operator.

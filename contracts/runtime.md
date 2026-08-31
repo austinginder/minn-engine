@@ -651,13 +651,15 @@ load and stay quiet. Three generated layers do that:
   the location when there is one, or returns it when told not to redirect;
   `wp_is_jsonp_request()` is `isset($_GET['_jsonp'])`, an empty or invalid
   callback included. Cases are in the permalink fixture (102 cases).
-- **The file skeleton**: `tests/tools/site-skeleton.php <site root>` writes
-  every `wp-includes/*.php` and `wp-admin/includes/*.php` the reference has
-  (`data/reference-files.json`, 1,139 files) as one-line placeholders under
-  the site's `public/`, so `require ABSPATH . 'wp-admin/includes/image.php'`
-  gets a file that does nothing. Nothing outside those two trees is written,
-  so no engine route is shadowed. The files are gitignored; run the tool
-  for each site (run-all does for the two local ones).
+- **The file skeleton**: `minn install` writes every `wp-includes/*.php` and
+  `wp-admin/includes/*.php` the reference has (`data/reference-files.json`,
+  1,139 files) as one-line placeholders, plus `wp-admin/index.php` so a host
+  that 403s a directory without an index still 302s `/wp-admin/` to
+  `/minn-admin/`. A plugin `require ABSPATH . 'wp-admin/includes/plugin.php'`
+  gets a file that does nothing; the engine already provides the symbols.
+  Nothing outside those two trees is written, so no engine route is shadowed.
+  The placeholder files are gitignored; `tests/tools/site-skeleton.php` still
+  writes them on the local sites (run-all does for the two local ones).
 - **Globals plugins read directly**: `$wp_scripts` and `$wp_styles` are
   live views of the registries (a plugin may reorder `$wp_styles->queue`;
   the printer takes it back), `$allowedposttags`, `$allowedtags`,
