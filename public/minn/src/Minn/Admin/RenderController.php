@@ -65,7 +65,7 @@ final readonly class RenderController
     /** @return array{urls: list<string>, inline: string} */
     private function styles(): array
     {
-        $urls = [$this->permalinks->url('/minn-engine/blocks.css')];
+        $urls = [$this->permalinks->url('/minn/assets/blocks.css')];
         $inline = '';
         $theme = Theme::active($this->site, $this->permalinks, $this->themesDir);
         if ($theme !== null) {

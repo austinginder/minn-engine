@@ -18,11 +18,10 @@ directly (no WordPress source is involved either way).
 - `GET /minn-admin` and `/minn-admin/*` render the shell. The route requires a
   logged-in user who can `edit_posts`; otherwise it 302-redirects to
   `/wp-login.php?redirect_to=…`.
-- `GET /minn-admin-asset/<path>` serves the app's CSS/JS/fonts from the
-  bundled dir (path-traversal guarded, read-only). On hosts that 404 missing
-  `.js`/`.css` before PHP runs, install copies those files to
-  `minn-admin-asset/assets/` on the webroot so nginx serves them as static
-  files. The PHP route stays as a fallback.
+- `GET /minn/admin/assets/<path>` serves the app's CSS/JS/fonts from the
+  bundled dir (path-traversal guarded, read-only). That URL is the file on
+  disk, so hosts that 404 missing `.js`/`.css` still serve them. The PHP
+  route stays as a fallback.
 - `GET /wp-admin/admin-ajax.php?action=rest-nonce` returns a fresh `wp_rest`
   nonce for the signed-in user — the one admin-ajax action app.js needs, for
   its nonce-refresh-and-retry path.
@@ -103,7 +102,7 @@ dialog says exactly this instead of promising wp-admin.
 `Minn\Front\AdminBar` renders the app's own front-end bar on every themed
 page for a signed-in reader who can `edit_posts`: the same markup the
 plugin prints, the bundle's `assets/css/bar.css` and `assets/js/bar.js`
-served through `/minn-admin-asset/`, and `window.MINN_BAR` with the REST
+served through `/minn/admin/assets/`, and `window.MINN_BAR` with the REST
 base, a `wp_rest` nonce, the app URL, the capability-filtered command list,
 the searchable post types, and the status chip (only "Hidden from search"
 when `blog_public` is 0, with the settings fix for `manage_options`). The

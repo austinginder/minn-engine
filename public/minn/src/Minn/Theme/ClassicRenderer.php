@@ -146,7 +146,7 @@ final readonly class ClassicRenderer
     private function registerStyles(): void
     {
         $trailer = defined('WP_DEBUG') && WP_DEBUG ? "\n/*# sourceURL=global-styles-inline-css */" : '';
-        $styles = '<link rel="stylesheet" id="minn-blocks-css" href="' . Html::attr($this->permalinks->url('/minn-engine/blocks.css')) . '" />' . "\n";
+        $styles = '<link rel="stylesheet" id="minn-blocks-css" href="' . Html::attr($this->permalinks->url('/minn/assets/blocks.css')) . '" />' . "\n";
         if ($this->styleTheme !== null) {
             $globalStyles = new GlobalStyles($this->styleTheme, null);
             $styles .= '<style id="global-styles-inline-css">' . "\n" . $globalStyles->css() . $trailer . "\n" . '</style>' . "\n";

@@ -50,7 +50,7 @@ function check( cond, label, detail = '' ) {
 		imports: JSON.parse( document.querySelector( 'script#wp-importmap' )?.textContent || '{}' ).imports || {},
 	} ) );
 	check( modules.importmap, 'the page prints an import map', JSON.stringify( modules ) );
-	check( '@wordpress/interactivity' in modules.imports && modules.imports[ '@wordpress/interactivity' ].includes( '/minn-engine/interactivity.js' ), 'the import map resolves @wordpress/interactivity to the engine runtime', JSON.stringify( modules.imports ) );
+	check( '@wordpress/interactivity' in modules.imports && modules.imports[ '@wordpress/interactivity' ].includes( '/minn/assets/interactivity.js' ), 'the import map resolves @wordpress/interactivity to the engine runtime', JSON.stringify( modules.imports ) );
 	check( modules.navModule, 'the navigation view module is printed' );
 	check( modules.pluginModule, 'the plugin view module (mosne-dark-palette) is printed' );
 

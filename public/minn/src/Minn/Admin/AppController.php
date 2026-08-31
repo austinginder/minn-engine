@@ -75,10 +75,10 @@ final readonly class AppController
         HTML;
     }
 
-    #[Route(Method::Get, '/minn-admin-asset/{path*}')]
+    #[Route(Method::Get, '/minn/admin/assets/{path*}')]
     public function asset(Request $request, string $path): Response
     {
-        $asset = $this->app->asset($path);
+        $asset = $this->app->asset('assets/' . ltrim($path, '/'));
         if ($asset === null) {
             return new Response(404);
         }
@@ -119,7 +119,7 @@ final readonly class AppController
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
         <meta name="robots" content="noindex, nofollow">
         <title>Minn Admin — {$name}</title>
-        <link rel="stylesheet" href="/minn-admin-asset/assets/css/app.css?ver={$cssVersion}">
+        <link rel="stylesheet" href="/minn/admin/assets/css/app.css?ver={$cssVersion}">
         <script>
         try {
         \tvar stored = localStorage.getItem( 'minn-theme' );
@@ -143,7 +143,7 @@ final readonly class AppController
         </head>
         <body>
         <div id="minn-app"><div class="minn-boot-spinner"></div></div>
-        <script src="/minn-admin-asset/assets/js/app.js?ver={$jsVersion}"></script>
+        <script src="/minn/admin/assets/js/app.js?ver={$jsVersion}"></script>
         </body>
         </html>
         HTML;

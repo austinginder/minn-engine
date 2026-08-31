@@ -101,7 +101,7 @@ not here.
 | Shortcodes / assets / i18n | `add_shortcode`, `wp_enqueue_script`, `__()` | Shortcodes after the engine pipeline. jQuery is MIT, ours. | `runtime.md` |
 | HTTP / cron API | `wp_remote_get`, `wp_schedule_event` | curl; option-shaped cron. | `runtime.md` |
 | HTML API | `WP_HTML_Tag_Processor` | Maps to `Minn\Html\Tags`. `WP_HTML_Processor` not yet (Hear until then). | `runtime.md` |
-| Interactivity | directives, script modules | Engine's own JS at `/minn-engine/*.js`. Editor packages are not provided. | `runtime.md` |
+| Interactivity | directives, script modules | Engine's own JS at `/minn/assets/*.js`. Editor packages are not provided. | `runtime.md` |
 
 ### Minn Admin (the human UI)
 

@@ -1,15 +1,15 @@
 <?php
 // The script handles the reference registers itself and plugin code depends on.
-// The engine ships the MIT-licensed libraries under assets/vendor and serves them
-// at the reference's paths so plugin markup stays byte-identical.
+// The engine ships the MIT-licensed libraries under minn/assets and serves them
+// from that folder so hosts can read the files off disk.
 
 add_action('init', static function (): void {
-    wp_register_script('jquery-core', '/wp-includes/js/jquery/jquery.min.js', [], '3.7.1');
-    wp_register_script('jquery-migrate', '/wp-includes/js/jquery/jquery-migrate.min.js', [], '3.4.1');
+    wp_register_script('jquery-core', '/minn/assets/vendor/jquery/jquery.min.js', [], '3.7.1');
+    wp_register_script('jquery-migrate', '/minn/assets/vendor/jquery/jquery-migrate.min.js', [], '3.4.1');
     // The reference's jquery alias depends on jquery-core alone; migrate stays registered for code that asks for it.
     wp_register_script('jquery', false, ['jquery-core'], '3.7.1');
     // The wp.* utility packages the engine reimplements (MIT, assets/wp), with the reference's dependency graph.
-    $wp = static fn (string $file) => '/minn-engine/wp-' . $file . '.js';
+    $wp = static fn (string $file) => '/minn/assets/wp/' . $file . '.js';
     wp_register_script('wp-polyfill', $wp('polyfill'), [], MINN_ENGINE_VERSION);
     wp_register_script('wp-hooks', $wp('hooks'), [], MINN_ENGINE_VERSION);
     wp_register_script('wp-i18n', $wp('i18n'), ['wp-hooks'], MINN_ENGINE_VERSION);

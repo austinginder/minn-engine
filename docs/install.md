@@ -71,14 +71,12 @@ the fallback). The engine itself loads `wp-config.php` normally for CLI and web.
    already the engine, as on a development site with a symlink).
 3. Writes the shape files from `minn/layout/`: `index.php`, `wp-login.php`,
    `wp-settings.php`, `wp-cli.yml`, `wp-includes/version.php`.
-4. Copies static assets onto the webroot as regular files (never symlinks):
-   `minn-admin-asset/assets/` from the bundled Minn Admin, `minn-engine/` from
-   the engine's own CSS/JS (with `wp-*.js` aliases for the `assets/wp/` files),
-   and `wp-includes/js/jquery/` from the bundled jQuery. Hosts that 404 missing
-   `.js`/`.css` without passing the request to PHP still serve the admin and
-   the engine's front-end scripts. The PHP asset routes stay as a fallback.
-5. Records what it did in `minn/.install.json`: the park, the entries moved, the
-   engine version, and the published trees eject will delete.
+4. Records what it did in `minn/.install.json`: the park, the entries moved,
+   the engine version.
+
+Static CSS and JS are served from inside `minn/` (`minn/admin/assets/`,
+`minn/assets/`). Hosts that 404 missing `.js`/`.css` find those files on
+disk at `/minn/...`, so they do not need extra copies at the webroot.
 
 `.htaccess`, `wp-content/`, and `wp-config.php` stay where they are. The copy skips
 `.git`, `node_modules`, `tests`, and `docs` inside the engine and the admin bundle.
@@ -97,11 +95,12 @@ reproduced on FrankenPHP during the round trip below.
 
 ## Eject
 
-Removes the shape files, the published asset trees (`minn-admin-asset/`,
-`minn-engine/`, `wp-includes/js/jquery/`), the engine's `wp-includes/`, and
-`minn/` (a symlink is unlinked, a copy deleted), moves every parked entry
-back, and removes the park when it is empty. The tree is the one install
-found, byte for byte (`tests/install.test.php` proves it on a scratch webroot).
+Removes the shape files, any leftover copies from an earlier installer
+(`minn-admin-asset/`, `minn-engine/`, `wp-includes/js/jquery/`), the engine's
+`wp-includes/`, and `minn/` (a symlink is unlinked, a copy deleted), moves
+every parked entry back, and removes the park when it is empty. The tree is
+the one install found, byte for byte (`tests/install.test.php` proves it on a
+scratch webroot).
 
 The engine's only footprint in the database is its sign-in throttle rows
 (`wp_options`, `minn_login_throttle_*`); everything else it writes is in the shapes

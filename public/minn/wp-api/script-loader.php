@@ -373,7 +373,7 @@ function wp_enqueue_block_editor_script_modules()
  */
 function wp_default_script_modules()
 {
-    $base = '/minn-engine/';
+    $base = '/minn/assets/';
     $args = ['in_footer' => true, 'fetchpriority' => 'low'];
     $view = $args + ['attributes' => ['data-wp-router-options' => '{"loadOnClientNavigation":true}']];
     wp_register_script_module('@wordpress/interactivity', $base . 'interactivity.js', [], MINN_ENGINE_VERSION, $args);

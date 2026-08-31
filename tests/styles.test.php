@@ -59,7 +59,7 @@ $variationCss = $globalStyles($fetch("$ENGINE/zz-block-battery-layout/"));
 $unstyled = array_values(array_filter(array_unique($m[0]), static fn (string $class) => !str_contains($variationCss, ".$class")));
 $check($unstyled === [], 'every numbered style variation has a rule', implode(', ', $unstyled));
 
-[$h, $body] = minn_test_fetch("$ENGINE/minn-engine/blocks.css");
+[$h, $body] = minn_test_fetch("$ENGINE/minn/assets/blocks.css");
 $check($h['status'] === 200 && str_contains($body, '.wp-block-columns'), 'the engine block stylesheet is served');
 // Theme stylesheet links are the theme's own to enqueue (functions.php runs through the
 // runtime); the engine links none itself, so the two stacks must print the same set.

@@ -18,16 +18,16 @@ final readonly class AssetsController
     {
     }
 
-    #[Route(Method::Get, '/minn-engine/{file:[a-z0-9.-]+}')]
-    public function asset(Request $request, string $file): Response
+    #[Route(Method::Get, '/minn/assets/{path*}')]
+    public function asset(Request $request, string $path): Response
     {
-        // The wp.* packages live in assets/wp and serve as wp-{name}.js.
-        $path = realpath($this->assetsDir . '/' . (str_starts_with($file, 'wp-') ? 'wp/' . substr($file, 3) : $file));
-        $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
-        if ($path === false || !str_starts_with($path, realpath($this->assetsDir) . '/') || !isset(self::TYPES[$ext])) {
+        $relative = str_replace('..', '', $path);
+        $full = realpath($this->assetsDir . '/' . $relative);
+        $ext = strtolower(pathinfo($relative, PATHINFO_EXTENSION));
+        if ($full === false || !str_starts_with($full, realpath($this->assetsDir) . '/') || !isset(self::TYPES[$ext])) {
             return new Response(404);
         }
-        return new Response(200, ['Content-Type' => self::TYPES[$ext], 'Cache-Control' => 'public, max-age=300'], (string) file_get_contents($path));
+        return new Response(200, ['Content-Type' => self::TYPES[$ext], 'Cache-Control' => 'public, max-age=300'], (string) file_get_contents($full));
     }
 
     /** The MIT libraries the engine ships, served at the paths the reference registers them under. */

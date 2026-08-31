@@ -19,21 +19,18 @@ copies them over; `minn eject` reverses it (`docs/install.md`, `tests/install.te
 | `wp-includes/version.php` | WP-CLI (`wp_exists()` is `file_exists` on it; `check_wp_version()` includes it and wants `$wp_version >= 3.7`; `core version` parses `$wp_version`, `$wp_db_version`, `$tinymce_version`, `$wp_local_package` by string search), hosting panels, backup tools | The release whose contracts the engine speaks (`7.1`, db revision `61833`), as plain assignments in the shape readers expect. No WordPress code. |
 | `wp-login.php` | nginx (a missing `.php` is a 404 before PHP runs), hide-login plugins that `require ABSPATH . 'wp-login.php'` | Boots the engine the way `index.php` does, or throws `ServeLogin` when required mid-request. |
 
-## Published static assets
+## Static assets
 
-Hosts such as Kinsta put `.js` and `.css` in a static location that 404s when the
-file is not on disk. The engine's PHP routes (`/minn-admin-asset/{path}`,
-`/minn-engine/{file}`, `/wp-includes/js/jquery/{file}`) never run. Install copies
-those trees onto the webroot as regular files, never symlinks:
+Hosts such as Kinsta 404 missing `.js`/`.css` without passing the request to PHP.
+The files already live inside `minn/`, so the public URLs are those paths:
 
-| Path | Source |
+| URL | On disk |
 |---|---|
-| `minn-admin-asset/assets/` | `minn/admin/assets/` (the bundled Minn Admin) |
-| `minn-engine/` | `minn/assets/*.js` and `*.css`, plus `wp-<name>.js` copies of `minn/assets/wp/<name>.js` so existing URLs match |
-| `wp-includes/js/jquery/` | `minn/assets/vendor/jquery/` (MIT) |
+| `/minn/admin/assets/…` | `minn/admin/assets/` (bundled Minn Admin) |
+| `/minn/assets/…` | `minn/assets/` (engine CSS/JS, `wp/`, vendor jQuery) |
 
-The PHP routes stay as a fallback on stacks (Cove) that send missing files through
-`index.php`. Eject deletes the published trees.
+PHP routes for the same paths stay as a fallback on stacks (Cove) that send
+missing files through `index.php`. Nothing extra is copied to the webroot.
 
 ## WP-CLI phases and what they need
 
@@ -49,10 +46,10 @@ The PHP routes stay as a fallback on stacks (Cove) that send missing files throu
   webroot runs WordPress. WP-CLI finds the root through `index.php` or the working
   directory instead; `/wp-admin/` and `/xmlrpc.php` are answered by the router
   (`contracts/front/probes.md`).
-- `wp-includes/` holds `version.php` plus the published jQuery files. A tool that
-  lists or checksums core files (`wp core verify-checksums`, CaptainCore's
-  `core_file_hashes`) sees an install that is not WordPress; that is the truthful
-  signal, and `minn preflight` (Track C) is where it is explained to an operator.
+- `wp-includes/` holds `version.php`. A tool that lists or checksums core files
+  (`wp core verify-checksums`, CaptainCore's `core_file_hashes`) sees an install
+  that is not WordPress; that is the truthful signal, and `minn preflight`
+  (Track C) is where it is explained to an operator.
 
 ## What the fleet tooling was found to read
 

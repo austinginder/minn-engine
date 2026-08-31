@@ -395,7 +395,7 @@ on both stacks because the engine serves its own files.
   and the block-library view modules for navigation, image, query (router
   dynamic), search, file, form (no deps), accordion, tabs, playlist, each
   carrying `data-wp-router-options="{"loadOnClientNavigation":true}"`. The
-  engine registers the same ids against `/minn-engine/*.js`.
+  engine registers the same ids against `/minn/assets/*.js`.
 - **block.json**: `viewScriptModule` registers through
   `register_block_script_module_id` (id `{name-with-dashes}-view-script-module`,
   `-{n}` from the second entry; a non-`file:` value is used as the id as is;

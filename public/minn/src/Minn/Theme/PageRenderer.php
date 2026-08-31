@@ -175,7 +175,7 @@ final readonly class PageRenderer
         $bar = $resolution->preview ? null : $this->bar;
         // The theme's own style.css is the theme's to enqueue from its
         // functions.php, which the runtime loads; the reference links it no other way.
-        $stylesheets = '<link rel="stylesheet" id="minn-blocks-css" href="' . Html::attr($this->permalinks->url('/minn-engine/blocks.css')) . '" />' . "\n"
+        $stylesheets = '<link rel="stylesheet" id="minn-blocks-css" href="' . Html::attr($this->permalinks->url('/minn/assets/blocks.css')) . '" />' . "\n"
             . '<style id="global-styles-inline-css">' . "\n" . $globalStyles . "\n" . '</style>' . "\n";
         // With the runtime up, the engine's stylesheets print where the
         // reference prints a theme's: inside wp_head, after plugin styles.

@@ -333,7 +333,7 @@ foreach ( array( "$pk/minn-zip-theme/templates", "$pk/minn-zip-theme", "$pk/wp-p
 // 6a2. Editor previews render through the site's own renderer with the site's own stylesheets.
 [ $s, $b ] = as_fetch( $ENGINE, '/minn-admin/v1/render-blocks', $admin, 'POST', '{"blocks":["<!-- wp:paragraph --><p>Hi</p><!-- /wp:paragraph -->","<!-- wp:latest-posts /-->"],"post":1}' );
 check( 200 === $s && '<p class="wp-block-paragraph">Hi</p>' === ( $b['rendered'][0] ?? '' ) && str_contains( (string) ( $b['rendered'][1] ?? '' ), 'wp-block-latest-posts__list' ), 'render-blocks renders static and dynamic blocks', json_encode( $b['rendered'] ?? $b ) );
-check( in_array( "$ENGINE/minn-engine/blocks.css", $b['styles']['urls'] ?? array(), true ) && str_contains( (string) ( $b['styles']['inline'] ?? '' ), '--wp--preset--color' ), 'render-blocks carries the engine stylesheet and theme.json rules', json_encode( array_keys( $b['styles'] ?? array() ) ) );
+check( in_array( "$ENGINE/minn/assets/blocks.css", $b['styles']['urls'] ?? array(), true ) && str_contains( (string) ( $b['styles']['inline'] ?? '' ), '--wp--preset--color' ), 'render-blocks carries the engine stylesheet and theme.json rules', json_encode( array_keys( $b['styles'] ?? array() ) ) );
 [ $s, $b ] = as_fetch( $ENGINE, '/minn-admin/v1/editor-styles', $admin );
 check( 200 === $s && count( $b['urls'] ?? array() ) >= 1 && isset( $b['inline'] ), 'editor-styles carries the same set' );
 [ $s ] = as_fetch( $ENGINE, '/minn-admin/v1/render-blocks', $admin, 'POST', '{"blocks":"nope"}' );
@@ -378,11 +378,11 @@ check( 403 === $s, 'system needs manage_options', "status $s" );
 $ctx  = stream_context_create( array( 'ssl' => array( 'verify_peer' => false, 'verify_peer_name' => false ), 'http' => array( 'ignore_errors' => true, 'header' => 'Cookie: ' . $admin['cookie_name'] . '=' . $admin['cookie'] ) ) );
 $html = (string) @file_get_contents( "$ENGINE/hello-world/", false, $ctx );
 check( str_contains( $html, 'id="minn-bar-root"' ) && str_contains( $html, 'minn-front-bar' ), 'a signed-in editor gets the Minn bar and its body class' );
-check( str_contains( $html, '/minn-admin-asset/assets/css/bar.css' ) && str_contains( $html, '/minn-admin-asset/assets/js/bar.js' ) && str_contains( $html, 'window.MINN_BAR = {' ), 'the bar loads the app bundle\'s own assets and config' );
+check( str_contains( $html, '/minn/admin/assets/css/bar.css' ) && str_contains( $html, '/minn/admin/assets/js/bar.js' ) && str_contains( $html, 'window.MINN_BAR = {' ), 'the bar loads the app bundle\'s own assets and config' );
 check( str_contains( $html, 'minn-admin/editor/posts/1' ), 'the bar offers Edit for the post being viewed' );
 $anon = (string) @file_get_contents( "$ENGINE/hello-world/", false, stream_context_create( array( 'ssl' => array( 'verify_peer' => false, 'verify_peer_name' => false ) ) ) );
 check( ! str_contains( $anon, 'minn-bar-root' ) && ! str_contains( $anon, 'minn-front-bar' ), 'anonymous readers see no bar' );
-$css = minn_test_fetch( "$ENGINE/minn-admin-asset/assets/css/bar.css" );
+$css = minn_test_fetch( "$ENGINE/minn/admin/assets/css/bar.css" );
 check( 200 === $css[0]['status'] && str_starts_with( $css[0]['content-type'] ?? '', 'text/css' ), 'bar.css is served', json_encode( $css[0] ) );
 
 echo "\n$pass passed, $fail failed\n";

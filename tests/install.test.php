@@ -105,27 +105,12 @@ $check('the webroot has no WordPress entry points', !file_exists("$WEBROOT/wp-lo
 $check('the shape files match the layout templates', md5_file("$WEBROOT/index.php") === md5_file("$ENGINE_DIR/layout/index.php") && md5_file("$WEBROOT/wp-settings.php") === md5_file("$ENGINE_DIR/layout/wp-settings.php") && md5_file("$WEBROOT/wp-cli.yml") === md5_file("$ENGINE_DIR/layout/wp-cli.yml") && md5_file("$WEBROOT/wp-includes/version.php") === md5_file("$ENGINE_DIR/layout/wp-includes/version.php"));
 $check('the engine is a real copy with its sources', is_file("$WEBROOT/minn/bootstrap.php") && is_file("$WEBROOT/minn/src/Minn/Engine.php") && !is_link("$WEBROOT/minn") && is_file("$WEBROOT/minn/data/social-icons.json"));
 $check(
-    'Minn Admin assets are copied to the webroot, not symlinked',
-    is_file("$WEBROOT/minn-admin-asset/assets/css/app.css")
-        && is_file("$WEBROOT/minn-admin-asset/assets/js/app.js")
-        && !is_link("$WEBROOT/minn-admin-asset")
-        && !is_link("$WEBROOT/minn-admin-asset/assets")
-        && md5_file("$WEBROOT/minn-admin-asset/assets/js/app.js") === md5_file("$ENGINE_DIR/admin/assets/js/app.js"),
-);
-$check(
-    'engine assets are copied under /minn-engine with wp-* aliases',
-    is_file("$WEBROOT/minn-engine/blocks.css")
-        && is_file("$WEBROOT/minn-engine/interactivity.js")
-        && is_file("$WEBROOT/minn-engine/wp-api-fetch.js")
-        && !is_link("$WEBROOT/minn-engine")
-        && md5_file("$WEBROOT/minn-engine/blocks.css") === md5_file("$ENGINE_DIR/assets/blocks.css")
-        && md5_file("$WEBROOT/minn-engine/wp-api-fetch.js") === md5_file("$ENGINE_DIR/assets/wp/api-fetch.js"),
-);
-$check(
-    'jquery is copied under wp-includes/js/jquery',
-    is_file("$WEBROOT/wp-includes/js/jquery/jquery.min.js")
-        && !is_link("$WEBROOT/wp-includes/js/jquery/jquery.min.js")
-        && md5_file("$WEBROOT/wp-includes/js/jquery/jquery.min.js") === md5_file("$ENGINE_DIR/assets/vendor/jquery/jquery.min.js"),
+    'static assets live inside minn/, not extra webroot folders',
+    is_file("$WEBROOT/minn/admin/assets/js/app.js")
+        && is_file("$WEBROOT/minn/assets/blocks.css")
+        && is_file("$WEBROOT/minn/assets/vendor/jquery/jquery.min.js")
+        && !file_exists("$WEBROOT/minn-admin-asset")
+        && !file_exists("$WEBROOT/minn-engine"),
 );
 $check('wp-config.php is untouched', md5_file("$WEBROOT/wp-config.php") === $configBefore);
 $check('wp-content is untouched', file_exists("$WEBROOT/wp-content/uploads") && is_link("$WEBROOT/wp-content/themes") && is_file("$WEBROOT/.htaccess"));

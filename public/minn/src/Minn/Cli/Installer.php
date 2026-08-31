@@ -12,11 +12,11 @@ use Throwable;
 
 /**
  * The swap, both ways. Install parks WordPress's own files beside the
- * webroot, lays the engine, its shape files, and published static asset
- * copies down, and leaves wp-config.php and wp-content untouched; eject
- * puts every parked file back and removes what install wrote. A manifest
- * in minn/.install.json is the record eject works from. Preflight says
- * what the site will and will not get before anything moves.
+ * webroot, lays the engine and its shape files down, and leaves
+ * wp-config.php and wp-content untouched; eject puts every parked file
+ * back and removes what install wrote. A manifest in minn/.install.json
+ * is the record eject works from. Preflight says what the site will and
+ * will not get before anything moves.
  */
 final class Installer
 {
@@ -29,11 +29,10 @@ final class Installer
     ];
     private const LAYOUT = ['index.php', 'wp-login.php', 'wp-settings.php', 'wp-cli.yml', 'wp-includes/version.php'];
     /**
-     * Static trees copied to the webroot so hosts that 404 missing .js/.css
-     * (Kinsta nginx) still serve Minn Admin and the engine's own assets.
-     * Real copies, never symlinks: eject deletes the trees.
+     * Leftover webroot copies from an earlier installer that published
+     * assets outside minn/. Eject still deletes them.
      */
-    private const PUBLISHED = ['minn-admin-asset', 'minn-engine', 'wp-includes/js/jquery'];
+    private const LEGACY_PUBLISHED = ['minn-admin-asset', 'minn-engine', 'wp-includes/js/jquery'];
     /** Development-only trees inside the engine or the admin bundle that never ship. */
     private const SKIP = ['.git', 'node_modules', 'tests', 'docs', '.DS_Store', self::MANIFEST];
 
@@ -341,15 +340,12 @@ final class Installer
             copy("{$this->engineDir}/layout/{$file}", "{$root}/{$file}");
         }
         $this->say('Wrote ' . implode(', ', self::LAYOUT));
-        $this->publishStatic($root);
-        $this->say('Published ' . implode(', ', self::PUBLISHED));
         file_put_contents("{$target}/" . self::MANIFEST, json_encode([
             'installed' => gmdate('c'),
             'engine_version' => self::version(),
             'park' => $park,
             'moved' => $moved,
             'layout' => self::LAYOUT,
-            'published' => self::PUBLISHED,
         ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
         $this->say('Installed. wp-config.php and wp-content were not touched; `minn eject` reverses this.');
         $this->say('Note: a PHP opcode cache may serve the old index.php or wp-settings.php for a few seconds (opcache.revalidate_freq); clear it if the host offers a way.');
@@ -371,7 +367,7 @@ final class Installer
         foreach ((array) ($manifest['layout'] ?? self::LAYOUT) as $file) {
             @unlink("{$root}/{$file}");
         }
-        foreach ((array) ($manifest['published'] ?? self::PUBLISHED) as $path) {
+        foreach ((array) ($manifest['published'] ?? self::LEGACY_PUBLISHED) as $path) {
             self::removeTree("{$root}/{$path}");
         }
         if (is_dir("{$root}/wp-includes/js") && count(scandir("{$root}/wp-includes/js") ?: []) <= 2) {
@@ -461,48 +457,6 @@ final class Installer
         }
         $value = getenv($name);
         return $value === false ? $default : $value;
-    }
-
-    /**
-     * Copy static trees onto the webroot as regular files. Hosts that
-     * 404 missing .js/.css never reach the engine's asset routes.
-     */
-    private function publishStatic(string $root): void
-    {
-        $adminAssets = $this->engineDir . '/admin/assets';
-        if (is_dir($adminAssets)) {
-            self::copyTree($adminAssets, $root . '/minn-admin-asset/assets');
-        }
-        $assets = $this->engineDir . '/assets';
-        if (!is_dir($assets)) {
-            return;
-        }
-        @mkdir($root . '/minn-engine', 0755, true);
-        foreach (scandir($assets) ?: [] as $entry) {
-            if ($entry === '.' || $entry === '..' || is_dir($assets . '/' . $entry)) {
-                continue;
-            }
-            copy($assets . '/' . $entry, $root . '/minn-engine/' . $entry);
-        }
-        $wp = $assets . '/wp';
-        if (is_dir($wp)) {
-            foreach (scandir($wp) ?: [] as $entry) {
-                if (!str_ends_with($entry, '.js')) {
-                    continue;
-                }
-                copy($wp . '/' . $entry, $root . '/minn-engine/wp-' . $entry);
-            }
-        }
-        $jquery = $assets . '/vendor/jquery';
-        if (is_dir($jquery)) {
-            @mkdir($root . '/wp-includes/js/jquery', 0755, true);
-            foreach (scandir($jquery) ?: [] as $entry) {
-                if ($entry === '.' || $entry === '..') {
-                    continue;
-                }
-                copy($jquery . '/' . $entry, $root . '/wp-includes/js/jquery/' . $entry);
-            }
-        }
     }
 
     /** rename() first; copy+remove when the park is on another filesystem. */

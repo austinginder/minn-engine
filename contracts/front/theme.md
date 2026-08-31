@@ -94,7 +94,7 @@ newline right after a closing tag is swallowed. Anything else renders as nothing
 ## Stylesheets (20b)
 
 The head carries two stylesheets of the engine's own: the block stylesheet
-(`/minn-engine/blocks.css`, served from `public/minn/assets/`; structure and behaviour for the
+(`/minn/assets/blocks.css`, served from `public/minn/assets/`; structure and behaviour for the
 core block class names, original work) and the generated global styles (`Minn\Theme\GlobalStyles`,
 inline as `#global-styles-inline-css`). The theme's own `style.css` is linked only when the
 theme enqueues it from its `functions.php`, which the runtime loads (`contracts/runtime.md`);
