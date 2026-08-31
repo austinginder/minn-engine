@@ -54,6 +54,7 @@ final class Runtime
         _minn_main_query();
         _minn_rewrite();
         $GLOBALS['wpdb'] = new \wpdb(defined('DB_USER') ? DB_USER : '', defined('DB_PASSWORD') ? DB_PASSWORD : '', defined('DB_NAME') ? DB_NAME : '', defined('DB_HOST') ? DB_HOST : '');
+        $GLOBALS['wp_textdomain_registry'] = new \WP_Textdomain_Registry();
         register_shutdown_function(static function (): void {
             self::hooks()->action('shutdown', []);
         });

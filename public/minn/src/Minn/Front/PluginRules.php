@@ -51,9 +51,11 @@ final class PluginRules
                 continue;
             }
             $query = (string) preg_replace('!^.+\?!', '', $query);
+            // Substitutions are urlencoded like the reference's WP_MatchesMapRegex,
+            // so a captured '&x=1' cannot split into extra query vars.
             $query = (string) preg_replace_callback(
                 '/\$matches\[(\d+)\]/',
-                static fn (array $m): string => (string) ($matches[(int) $m[1]] ?? ''),
+                static fn (array $m): string => urlencode((string) ($matches[(int) $m[1]] ?? '')),
                 $query,
             );
             parse_str($query, $vars);

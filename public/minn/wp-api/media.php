@@ -1085,3 +1085,31 @@ function wp_omit_loading_attr_threshold($force = false)
     }
     return $threshold;
 }
+
+function wp_match_mime_types($wildcard_mime_types, $real_mime_types)
+{
+    $patterns = is_array($wildcard_mime_types) ? $wildcard_mime_types : array_map('trim', explode(',', (string) $wildcard_mime_types));
+    return \Minn\Media\Kind::matchWildcards(array_map('strval', $patterns), array_map('strval', (array) $real_mime_types));
+}
+
+/** Streams an image editor's current image at the requested type; anything else has nothing to stream. */
+function wp_stream_image($image, $mime_type, $attachment_id)
+{
+    if ($image instanceof WP_Image_Editor) {
+        $image = apply_filters('image_editor_save_pre', $image, $attachment_id);
+        return !is_wp_error($image->stream($mime_type));
+    }
+    return false;
+}
+
+/** The media-modal compat slot: both members are strings, empty for an ordinary attachment (probed). */
+function get_compat_media_markup($attachment_id, $args = null)
+{
+    $args = wp_parse_args((array) $args, ['in_modal' => false]);
+    $form_fields = apply_filters('attachment_fields_to_edit', [], get_post((int) $attachment_id));
+    $item = '';
+    foreach ((array) $form_fields as $field) {
+        $item .= is_array($field) ? (string) ($field['tr'] ?? '') : '';
+    }
+    return ['item' => $item, 'meta' => ''];
+}

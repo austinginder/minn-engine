@@ -7,6 +7,30 @@ namespace Minn\Support;
 /** File-system path and permission spellings. */
 final class Paths
 {
+    /**
+     * The trailing-slashed directory holding a text domain's {domain}-{locale}.mo:
+     * a custom path first, then the language dir's plugins and themes folders,
+     * then the dir itself for the default domain; false when none has the file.
+     */
+    public static function translationDir(string $domain, string $locale, string $langDir, ?string $customPath): string|false
+    {
+        if ($customPath !== null && file_exists("{$customPath}/{$domain}-{$locale}.mo")) {
+            return $customPath . '/';
+        }
+        if ($langDir === '') {
+            return false;
+        }
+        foreach (["{$langDir}/plugins/{$domain}-{$locale}.mo", "{$langDir}/themes/{$domain}-{$locale}.mo"] as $candidate) {
+            if (file_exists($candidate)) {
+                return dirname($candidate) . '/';
+            }
+        }
+        if ($domain === 'default' && file_exists("{$langDir}/{$locale}.mo")) {
+            return $langDir . '/';
+        }
+        return false;
+    }
+
     /** Forward slashes only, runs collapsed, a stream wrapper kept, a Windows drive letter upper-cased. */
     public static function normalize(string $path): string
     {

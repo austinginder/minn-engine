@@ -57,6 +57,31 @@ final class Lists
     }
 
     /**
+     * Every descendant of one root in a flat parent-linked list, preorder
+     * (a child ahead of its own children), the shape _get_term_children and
+     * get_page_children walk. Visited ids guard against a parent cycle.
+     *
+     * @param list<mixed> $items
+     * @param callable(mixed): int $id
+     * @param callable(mixed): int $parent
+     * @param list<int> $visited
+     * @return list<mixed>
+     */
+    public static function descendants(array $items, int $rootId, callable $id, callable $parent, array $visited = []): array
+    {
+        $out = [];
+        foreach ($items as $item) {
+            $itemId = $id($item);
+            if ($parent($item) !== $rootId || in_array($itemId, $visited, true)) {
+                continue;
+            }
+            $out[] = $item;
+            $out = [...$out, ...self::descendants($items, $itemId, $id, $parent, [...$visited, $rootId, $itemId])];
+        }
+        return $out;
+    }
+
+    /**
      * @param list<object> $rows
      * @return array<string, object>
      */

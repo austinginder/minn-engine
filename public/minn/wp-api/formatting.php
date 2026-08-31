@@ -840,3 +840,16 @@ function _cleanup_header_comment($str)
 {
     return trim((string) preg_replace('/\s*(?:\*\/|\?>).*/', '', (string) $str));
 }
+
+/** Keeps case, drops anything outside the probed set: letters, digits, dash, dot, plus, star, slash. */
+function sanitize_mime_type($mime_type)
+{
+    $sanitized = (string) preg_replace('#[^-+*.a-zA-Z0-9/]#', '', (string) $mime_type);
+    return apply_filters('sanitize_mime_type', $sanitized, $mime_type);
+}
+
+/** Deprecated LIKE escape: backslash ahead of % and _ only, backslashes left alone (probed). */
+function like_escape($text)
+{
+    return str_replace(['%', '_'], ['\\%', '\\_'], (string) $text);
+}

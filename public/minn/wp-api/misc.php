@@ -543,3 +543,38 @@ function wp_no_robots()
 {
     header('X-Robots-Tag: noindex, noarchive', true);
 }
+
+/** Sets each named global from the request's POST else GET value, empty string when absent. */
+function wp_reset_vars($vars)
+{
+    $request = Runtime::current()->request;
+    foreach ((array) $vars as $var) {
+        $value = $request?->form[$var] ?? $request?->query[$var] ?? '';
+        $GLOBALS[$var] = is_scalar($value) ? (string) $value : $value;
+    }
+}
+
+/** The rich-editing preference, browser-gated: false without a browser user agent (the CLI probes false even for admins). */
+function user_can_richedit()
+{
+    $pref = get_user_option('rich_editing');
+    $wants = $pref === false || $pref === 'true' || $pref === true;
+    $agent = (string) (Runtime::current()->request?->header('user-agent') ?? '');
+    return (bool) apply_filters('user_can_richedit', $wants && stripos($agent, 'mozilla') !== false);
+}
+
+/** The reference answers tinymce even where rich editing probes false. */
+function wp_default_editor()
+{
+    return apply_filters('wp_default_editor', 'tinymce');
+}
+
+/** Runtime\Constants::define() already defined the cookie constants at boot; nothing is left to define when plugin code calls this. */
+function wp_cookie_constants()
+{
+}
+
+/** Runtime\Constants::define() already defined the plugin directory constants at boot. */
+function wp_plugin_directory_constants()
+{
+}

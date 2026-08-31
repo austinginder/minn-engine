@@ -1545,3 +1545,31 @@ function prepend_attachment($content)
     $link = apply_filters('prepend_attachment', $link);
     return '<p class="attachment">' . $link . "</p>\n" . $content;
 }
+
+/** The newest modification among published content, format Y-m-d H:i:s; the server variant carries microseconds, as probed. */
+function get_lastpostmodified($timezone = 'server', $post_type = 'any')
+{
+    $type = (string) $post_type;
+    if ($type !== 'any' && get_post_type_object($type) === null) {
+        return false;
+    }
+    $value = _minn_posts()->lastModified($type === 'any' ? null : $type, strtolower((string) $timezone) === 'gmt');
+    if ($value === null) {
+        return false;
+    }
+    if (strtolower((string) $timezone) === 'server') {
+        $value .= '.000000';
+    }
+    return apply_filters('get_lastpostmodified', $value, $timezone, $post_type);
+}
+
+/** Every descendant page of one page within the caller's own list, preorder. */
+function get_page_children($page_id, $pages)
+{
+    return \Minn\Support\Lists::descendants(
+        array_values((array) $pages),
+        (int) $page_id,
+        static fn ($p) => (int) (is_object($p) ? $p->ID : ($p['ID'] ?? 0)),
+        static fn ($p) => (int) (is_object($p) ? $p->post_parent : ($p['post_parent'] ?? 0)),
+    );
+}

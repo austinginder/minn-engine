@@ -288,6 +288,25 @@ final readonly class Posts
         return ['posts' => array_slice([...$sticky, ...$rest], 0, $perPage), 'total' => $result['total']];
     }
 
+    /**
+     * The newest modification time among published posts, for
+     * get_lastpostmodified: one type or all of them, blog or GMT column.
+     */
+    public function lastModified(?string $type, bool $gmt): ?string
+    {
+        $column = $gmt ? 'post_modified_gmt' : 'post_modified';
+        $sql = "SELECT MAX({$column}) FROM {$this->db->table('posts')} WHERE post_status = 'publish'";
+        $params = [];
+        if ($type !== null && $type !== 'any') {
+            $sql .= ' AND post_type = ?';
+            $params[] = $type;
+        } else {
+            $sql .= " AND post_type IN ('post', 'page', 'attachment')";
+        }
+        $value = $this->db->value($sql, $params);
+        return $value === null || $value === '' ? null : (string) $value;
+    }
+
     /** The newest autosave of a post by one author, or null. */
     public function newestAutosave(int $postId, int $userId): ?array
     {

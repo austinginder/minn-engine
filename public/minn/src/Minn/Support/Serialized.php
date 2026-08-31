@@ -184,6 +184,13 @@ final class Serialized
             }
             return 'a:' . count($value) . ':{' . $body . '}';
         }
+        if (is_object($value)) {
+            // Plugin code stores objects (maybe_serialize's contract); WRITING
+            // them with PHP's own serializer runs nothing and matches the
+            // reference byte for byte. Only the reverse direction is the
+            // hazard, and reads stay on the tolerant decoders.
+            return serialize($value);
+        }
         throw new \ValueError('encode');
     }
 

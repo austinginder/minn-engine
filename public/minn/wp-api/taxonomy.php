@@ -905,3 +905,51 @@ function wp_dropdown_categories($args = '')
     }
     return $output;
 }
+
+/** Every descendant of one term within the caller's own list (ids or term objects), preorder; ancestors guard against loops. */
+function _get_term_children($term_id, $terms, $taxonomy, &$ancestors = [])
+{
+    if ((int) $term_id === 0 && !taxonomy_exists((string) $taxonomy)) {
+        return new WP_Error('invalid_taxonomy', 'Invalid taxonomy.');
+    }
+    return \Minn\Support\Lists::descendants(
+        array_values((array) $terms),
+        (int) $term_id,
+        static fn ($t) => (int) (is_object($t) ? $t->term_id : (is_array($t) ? ($t['term_id'] ?? 0) : $t)),
+        static function ($t) use ($taxonomy) {
+            if (is_object($t)) {
+                return (int) $t->parent;
+            }
+            if (is_array($t)) {
+                return (int) ($t['parent'] ?? 0);
+            }
+            $term = get_term((int) $t, (string) $taxonomy);
+            return $term instanceof WP_Term ? (int) $term->parent : -1;
+        },
+        array_map('intval', (array) $ancestors),
+    );
+}
+
+/** Whether the object has one of the terms (ids, slugs, or names), or any term of the taxonomy at all. */
+function is_object_in_term($object_id, $taxonomy, $terms = null)
+{
+    if (!taxonomy_exists((string) $taxonomy)) {
+        return new WP_Error('invalid_taxonomy', 'Invalid taxonomy.');
+    }
+    $object_terms = wp_get_object_terms([(int) $object_id], [(string) $taxonomy]);
+    if (is_wp_error($object_terms)) {
+        return $object_terms;
+    }
+    if (empty($terms)) {
+        return $object_terms !== [];
+    }
+    foreach ((array) $terms as $wanted) {
+        foreach ($object_terms as $term) {
+            $held = is_object($term) ? [(int) $term->term_id, (string) $term->slug, (string) $term->name] : [(int) $term];
+            if (in_array(is_numeric($wanted) ? (int) $wanted : (string) $wanted, $held, true)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}

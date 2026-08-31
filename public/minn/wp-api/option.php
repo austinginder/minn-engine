@@ -35,6 +35,24 @@ function get_network_option($network_id, $option, $default_value = false)
     return get_option($option, $default_value);
 }
 
+// On a single site the network options read and write the options table
+// (probed 2026-08-30: the value round-trips through get_option, an
+// unchanged update returns false, delete removes the regular option).
+function add_network_option($network_id, $option, $value)
+{
+    return add_option($option, $value);
+}
+
+function update_network_option($network_id, $option, $value)
+{
+    return update_option($option, $value);
+}
+
+function delete_network_option($network_id, $option)
+{
+    return delete_option($option);
+}
+
 function add_option($option, $value = '', $deprecated = '', $autoload = null)
 {
     $option = trim((string) $option);

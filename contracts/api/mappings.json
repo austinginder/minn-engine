@@ -1,13 +1,13 @@
 {
-    "generated": "2026-08-30",
+    "generated": "2026-08-31",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 300,
-        "composes": 651,
-        "leaf": 301,
-        "noop": 1117,
-        "functions": 2363,
-        "minnMethods": 336,
+        "minn": 310,
+        "composes": 657,
+        "leaf": 321,
+        "noop": 1149,
+        "functions": 2431,
+        "minnMethods": 345,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -78,6 +78,195 @@
             "file": "classes/NOOP_Translations.php",
             "lines": 1,
             "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::__construct": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::addAddress": {
+            "file": "classes/PHPMailer.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::addAttachment": {
+            "file": "classes/PHPMailer.php",
+            "lines": 5,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::addBCC": {
+            "file": "classes/PHPMailer.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::addCC": {
+            "file": "classes/PHPMailer.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::addCustomHeader": {
+            "file": "classes/PHPMailer.php",
+            "lines": 5,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::addReplyTo": {
+            "file": "classes/PHPMailer.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::clearAddresses": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::clearAllRecipients": {
+            "file": "classes/PHPMailer.php",
+            "lines": 3,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::clearAttachments": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::clearBCCs": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::clearCCs": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::clearCustomHeaders": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::clearReplyTos": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::fail": {
+            "file": "classes/PHPMailer.php",
+            "lines": 5,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::getSentMIMEMessage": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::getToAddresses": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::isHTML": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::isMail": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::isSMTP": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::postSend": {
+            "file": "classes/PHPMailer.php",
+            "lines": 11,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Mail\\Mailer::encodeHeader"
+            ],
+            "composes": []
+        },
+        "PHPMailer::preSend": {
+            "file": "classes/PHPMailer.php",
+            "lines": 19,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Mail\\Mime::compose"
+            ],
+            "composes": []
+        },
+        "PHPMailer::send": {
+            "file": "classes/PHPMailer.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::setFrom": {
+            "file": "classes/PHPMailer.php",
+            "lines": 3,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::smtp": {
+            "file": "classes/PHPMailer.php",
+            "lines": 3,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Mail\\MailSettings::__construct",
+                "Minn\\Mail\\Smtp::__construct"
+            ],
+            "composes": []
+        },
+        "PHPMailer::smtpConnect": {
+            "file": "classes/PHPMailer.php",
+            "lines": 6,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
@@ -167,6 +356,36 @@
             "kind": "noop",
             "minn": [],
             "composes": []
+        },
+        "WP_Ajax_Response::__construct": {
+            "file": "classes/WP_Ajax_Response.php",
+            "lines": 3,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Ajax_Response::add": {
+            "file": "classes/WP_Ajax_Response.php",
+            "lines": 30,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "esc_attr",
+                "is_wp_error",
+                "maybe_serialize",
+                "wp_parse_args"
+            ]
+        },
+        "WP_Ajax_Response::send": {
+            "file": "classes/WP_Ajax_Response.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_option",
+                "header",
+                "wp_die"
+            ]
         },
         "WP_Block::__construct": {
             "file": "classes/WP_Block.php",
@@ -2658,6 +2877,34 @@
             "minn": [
                 "Minn\\Runtime\\Runtime::interactivity"
             ],
+            "composes": []
+        },
+        "WP_MatchesMapRegex::__construct": {
+            "file": "classes/WP_MatchesMapRegex.php",
+            "lines": 3,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_MatchesMapRegex::_map": {
+            "file": "classes/WP_MatchesMapRegex.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_MatchesMapRegex::apply": {
+            "file": "classes/WP_MatchesMapRegex.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_MatchesMapRegex::callback": {
+            "file": "classes/WP_MatchesMapRegex.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
             "composes": []
         },
         "WP_Meta_Query::__construct": {
@@ -5405,6 +5652,78 @@
                 "wp_parse_args"
             ]
         },
+        "WP_Textdomain_Registry::find": {
+            "file": "classes/WP_Textdomain_Registry.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\Paths::translationDir"
+            ],
+            "composes": []
+        },
+        "WP_Textdomain_Registry::get": {
+            "file": "classes/WP_Textdomain_Registry.php",
+            "lines": 6,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Textdomain_Registry::get_language_files_from_path": {
+            "file": "classes/WP_Textdomain_Registry.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Textdomain_Registry::get_path_from_lang_dir": {
+            "file": "classes/WP_Textdomain_Registry.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Textdomain_Registry::get_paths_for_domain": {
+            "file": "classes/WP_Textdomain_Registry.php",
+            "lines": 5,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Textdomain_Registry::has": {
+            "file": "classes/WP_Textdomain_Registry.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Textdomain_Registry::init": {
+            "file": "classes/WP_Textdomain_Registry.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Textdomain_Registry::invalidate_mo_files_cache": {
+            "file": "classes/WP_Textdomain_Registry.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Textdomain_Registry::set": {
+            "file": "classes/WP_Textdomain_Registry.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Textdomain_Registry::set_custom_path": {
+            "file": "classes/WP_Textdomain_Registry.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "WP_Theme::__construct": {
             "file": "classes/WP_Theme.php",
             "lines": 12,
@@ -5830,6 +6149,68 @@
             "composes": [
                 "update_user_meta"
             ]
+        },
+        "WP_User_Query::__construct": {
+            "file": "classes/WP_User_Query.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_User_Query::get": {
+            "file": "classes/WP_User_Query.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_User_Query::get_results": {
+            "file": "classes/WP_User_Query.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_User_Query::get_total": {
+            "file": "classes/WP_User_Query.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_User_Query::prepare_query": {
+            "file": "classes/WP_User_Query.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "wp_parse_args"
+            ]
+        },
+        "WP_User_Query::query": {
+            "file": "classes/WP_User_Query.php",
+            "lines": 3,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Runtime::current",
+                "Minn\\Runtime\\Runtime::db",
+                "Minn\\Runtime\\UserQuery::__construct"
+            ],
+            "composes": []
+        },
+        "WP_User_Query::set": {
+            "file": "classes/WP_User_Query.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_User_Query::shape": {
+            "file": "classes/WP_User_Query.php",
+            "lines": 14,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
         },
         "WP_Widget::__construct": {
             "file": "classes/WP_Widget.php",
@@ -6480,6 +6861,18 @@
             "minn": [],
             "composes": [
                 "get_option"
+            ]
+        },
+        "_get_term_children": {
+            "file": "taxonomy.php",
+            "lines": 19,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Support\\Lists::descendants"
+            ],
+            "composes": [
+                "get_term",
+                "taxonomy_exists"
             ]
         },
         "_get_widget_id_base": {
@@ -7890,6 +8283,15 @@
                 "wp_unslash"
             ]
         },
+        "add_network_option": {
+            "file": "option.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "add_option"
+            ]
+        },
         "add_option": {
             "file": "option.php",
             "lines": 17,
@@ -8807,6 +9209,15 @@
                 "do_action",
                 "wp_cache_delete",
                 "wp_unslash"
+            ]
+        },
+        "delete_network_option": {
+            "file": "option.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "delete_option"
             ]
         },
         "delete_option": {
@@ -10187,6 +10598,17 @@
                 "user_trailingslashit"
             ]
         },
+        "get_compat_media_markup": {
+            "file": "media.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "get_post",
+                "wp_parse_args"
+            ]
+        },
         "get_core_updates": {
             "file": "admin.php",
             "lines": 14,
@@ -10581,6 +11003,19 @@
                 "is_rtl"
             ]
         },
+        "get_lastpostmodified": {
+            "file": "post.php",
+            "lines": 12,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Content\\Posts::lastModified"
+            ],
+            "composes": [
+                "_minn_posts",
+                "apply_filters",
+                "get_post_type_object"
+            ]
+        },
         "get_locale": {
             "file": "l10n.php",
             "lines": 6,
@@ -10768,6 +11203,15 @@
                 "_minn_post_lookup",
                 "get_post"
             ]
+        },
+        "get_page_children": {
+            "file": "post.php",
+            "lines": 6,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Support\\Lists::descendants"
+            ],
+            "composes": []
         },
         "get_page_link": {
             "file": "post.php",
@@ -13063,6 +13507,17 @@
             ],
             "composes": []
         },
+        "is_object_in_term": {
+            "file": "taxonomy.php",
+            "lines": 19,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "is_wp_error",
+                "taxonomy_exists",
+                "wp_get_object_terms"
+            ]
+        },
         "is_page": {
             "file": "query.php",
             "lines": 1,
@@ -13456,6 +13911,13 @@
             "composes": [
                 "get_language_attributes"
             ]
+        },
+        "like_escape": {
+            "file": "formatting.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
         },
         "links_add_base_url": {
             "file": "misc.php",
@@ -15262,6 +15724,15 @@
                 "apply_filters"
             ]
         },
+        "sanitize_mime_type": {
+            "file": "formatting.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters"
+            ]
+        },
         "sanitize_option": {
             "file": "option.php",
             "lines": 1,
@@ -16429,6 +16900,15 @@
                 "wp_unslash"
             ]
         },
+        "update_network_option": {
+            "file": "option.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "update_option"
+            ]
+        },
         "update_option": {
             "file": "option.php",
             "lines": 17,
@@ -16592,6 +17072,19 @@
             "minn": [],
             "composes": [
                 "get_userdata"
+            ]
+        },
+        "user_can_richedit": {
+            "file": "misc.php",
+            "lines": 4,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Runtime::current",
+                "Minn\\Runtime\\Runtime::request"
+            ],
+            "composes": [
+                "apply_filters",
+                "get_user_option"
             ]
         },
         "user_trailingslashit": {
@@ -17274,6 +17767,13 @@
             "minn": [],
             "composes": []
         },
+        "wp_cookie_constants": {
+            "file": "misc.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "wp_count_attachments": {
             "file": "post.php",
             "lines": 1,
@@ -17404,6 +17904,15 @@
             "kind": "noop",
             "minn": [],
             "composes": []
+        },
+        "wp_default_editor": {
+            "file": "misc.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "apply_filters"
+            ]
         },
         "wp_default_script_modules": {
             "file": "script-loader.php",
@@ -19610,6 +20119,15 @@
             "minn": [],
             "composes": []
         },
+        "wp_match_mime_types": {
+            "file": "media.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Media\\Kind::matchWildcards"
+            ],
+            "composes": []
+        },
         "wp_max_upload_size": {
             "file": "functions.php",
             "lines": 1,
@@ -19906,6 +20424,13 @@
         "wp_password_needs_rehash": {
             "file": "pluggable.php",
             "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "wp_plugin_directory_constants": {
+            "file": "misc.php",
+            "lines": 0,
             "kind": "noop",
             "minn": [],
             "composes": []
@@ -20369,6 +20894,16 @@
             "composes": [
                 "wp_reset_postdata"
             ]
+        },
+        "wp_reset_vars": {
+            "file": "misc.php",
+            "lines": 5,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Runtime::current",
+                "Minn\\Runtime\\Runtime::request"
+            ],
+            "composes": []
         },
         "wp_resource_hints": {
             "file": "template.php",
@@ -20959,6 +21494,16 @@
             "kind": "noop",
             "minn": [],
             "composes": []
+        },
+        "wp_stream_image": {
+            "file": "media.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "is_wp_error"
+            ]
         },
         "wp_strip_all_tags": {
             "file": "formatting.php",
