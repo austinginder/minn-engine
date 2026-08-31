@@ -189,7 +189,12 @@ final class Kses
         return self::css($style);
     }
 
-    /** Listed properties only; no url() outside images, and no expression, behavior, or script anywhere. */
+    /**
+     * Listed properties plus custom properties (the reference keeps
+     * --my-var:4px); no url() outside images, relative image urls allowed
+     * (the reference keeps url(x.png)); no expression, behavior, script,
+     * or data: anywhere.
+     */
     private static function css(string $style): string
     {
         $kept = [];
@@ -199,15 +204,16 @@ final class Kses
             }
             [$property, $value] = array_map('trim', explode(':', $declaration, 2));
             $property = strtolower($property);
-            if (!in_array($property, self::CSS_PROPERTIES, true) || $value === '') {
+            $custom = preg_match('/^--[a-z0-9_-]+$/', $property) === 1;
+            if ((!$custom && !in_array($property, self::CSS_PROPERTIES, true)) || $value === '') {
                 continue;
             }
-            if (preg_match('/expression|behavior|javascript|vbscript|@import|\\\\|[<>{}]/i', $value)) {
+            if (preg_match('/expression|behavior|javascript|vbscript|@import|data:|\\\\|[<>{}]/i', $value)) {
                 continue;
             }
             if (preg_match('/url\s*\(/i', $value)) {
                 $image = in_array($property, ['background', 'background-image', 'list-style', 'list-style-image'], true);
-                if (!$image || !preg_match('/^[^()]*url\s*\(\s*["\']?(?:https?:)?\/[^"\')]*["\']?\s*\)[^()]*$/i', $value)) {
+                if (!$image || !preg_match('/^[^()]*url\s*\(\s*["\']?[^"\')]*["\']?\s*\)[^()]*$/i', $value)) {
                     continue;
                 }
             }
