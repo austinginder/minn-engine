@@ -126,8 +126,12 @@ final class UserCommand
         $runtime = Runtime::boot();
         $user = self::find($args[0]) ?? WP_CLI::error("User not found: {$args[0]}");
         $token = substr(sha1(random_bytes(24)), 0, 7);
-        // Only the hash is stored; the link carries the token.
-        $runtime->users->setMeta((int) $user['ID'], 'cove_login_token', hash('sha256', $token));
+        // Stored raw, the captaincore-helper mu-plugin's own format: with a
+        // hide-login plugin standing $pagenow the helper validates this token
+        // itself, and it compares the stored value to the link verbatim. The
+        // trade-off (a database read yields the link) is bounded by the
+        // 15-minute single-use window and matches every real Cove site.
+        $runtime->users->setMeta((int) $user['ID'], 'cove_login_token', $token);
         $runtime->users->setMeta((int) $user['ID'], 'cove_login_token_time', (string) time());
         WP_CLI::log($runtime->permalinks->url('/wp-login.php') . '?user_id=' . (int) $user['ID'] . '&cove_login_token=' . $token);
     }

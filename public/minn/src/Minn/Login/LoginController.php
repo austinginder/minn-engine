@@ -233,8 +233,10 @@ final readonly class LoginController
             $this->throttle->recordFailure($request->remoteAddress);
             return Response::html($error, 403);
         }
-        // The meta holds the token's hash (a database read alone yields no link).
-        if (!hash_equals($token, hash('sha256', (string) $request->query('cove_login_token', '')))) {
+        // The meta holds the raw token (the helper mu-plugin's own format);
+        // a hash is still accepted for a link minted before the change.
+        $provided = (string) $request->query('cove_login_token', '');
+        if (!hash_equals($token, $provided) && !hash_equals($token, hash('sha256', $provided))) {
             $this->throttle->recordFailure($request->remoteAddress);
             return Response::html($error, 403);
         }

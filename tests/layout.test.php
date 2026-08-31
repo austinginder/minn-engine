@@ -28,7 +28,7 @@ $check = static function (string $label, bool $ok, string $detail = '') use (&$p
 
 echo "layout suite: $PUBLIC\n";
 
-foreach (['index.php', 'wp-settings.php', 'wp-cli.yml', 'wp-includes/version.php'] as $file) {
+foreach (['index.php', 'wp-login.php', 'wp-settings.php', 'wp-cli.yml', 'wp-includes/version.php'] as $file) {
     $check("shape file $file present", is_file("$PUBLIC/$file"));
     $check("minn/layout/$file matches the webroot copy", is_file("$PUBLIC/minn/layout/$file") && file_get_contents("$PUBLIC/minn/layout/$file") === file_get_contents("$PUBLIC/$file"));
 }

@@ -16,6 +16,7 @@ use Minn\Admin\Updates;
 use Minn\Admin\BootPayload;
 use Minn\Auth\Authenticated;
 use Minn\Auth\AuthCookies;
+use Minn\Http\Method;
 use Minn\Auth\Authenticator;
 use Minn\Auth\Capabilities;
 use Minn\Auth\Cookie;
@@ -172,6 +173,19 @@ final readonly class Engine
             // The classic head defaults register at setup_theme, ahead of the theme's own wp_head hooks.
             $runtime->set('classic_theme', $classicTheme->stylesheet);
         }
+        try {
+            $this->frontPipeline($db, $request, $runtime, $site, $users, $sessions, $cookie, $authenticator, $capabilities, $app, $session, $resolver, $permalinks, $theme, $classicTheme);
+        } catch (\Minn\Login\ServeLogin) {
+            // A hide-login plugin require'd wp-login.php mid-request: the
+            // current request gets the sign-in surface, whatever its path.
+            $login = new LoginController($site, $permalinks, $authenticator, $sessions, new AuthCookies($db, $cookie), $users, new LoginThrottle($db), new PasswordReset($users), Mailer::forSite($site));
+            ($request->method === Method::Post ? $login->signIn($request) : $login->form($request))->send();
+        }
+    }
+
+    /** The themed front, admin app, and probe pipeline; split out so a mid-request ServeLogin signal can unwind it cleanly. */
+    private function frontPipeline(Db $db, Request $request, Runtime $runtime, Site $site, Users $users, Sessions $sessions, Cookie $cookie, Authenticator $authenticator, Capabilities $capabilities, App $app, mixed $session, Resolver $resolver, \Minn\Front\Permalinks $permalinks, ?Theme $theme, ?\Minn\Theme\ClassicTheme $classicTheme): never
+    {
         Plugins::load($runtime);
         $seams = new Seams($db, $site, $request, Reader::current());
         (new Loader(ABSPATH . 'wp-content', $site))->register($seams);

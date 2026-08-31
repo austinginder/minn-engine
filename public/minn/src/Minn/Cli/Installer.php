@@ -27,7 +27,7 @@ final class Installer
         'wp-config-sample.php', 'wp-cron.php', 'wp-links-opml.php', 'wp-load.php', 'wp-login.php', 'wp-mail.php',
         'wp-settings.php', 'wp-signup.php', 'wp-trackback.php', 'xmlrpc.php', 'license.txt', 'readme.html',
     ];
-    private const LAYOUT = ['index.php', 'wp-settings.php', 'wp-cli.yml', 'wp-includes/version.php'];
+    private const LAYOUT = ['index.php', 'wp-login.php', 'wp-settings.php', 'wp-cli.yml', 'wp-includes/version.php'];
     /** Development-only trees inside the engine or the admin bundle that never ship. */
     private const SKIP = ['.git', 'node_modules', 'tests', 'docs', '.DS_Store', self::MANIFEST];
 
