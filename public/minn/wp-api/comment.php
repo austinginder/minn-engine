@@ -955,3 +955,66 @@ function _close_comments_for_old_post($open, $post_id)
     $closer = new Minn\Runtime\CommentCloser((bool) get_option('close_comments_for_old_posts'), (int) get_option('close_comments_days_old'));
     return $closer->open((bool) $open, $post instanceof WP_Post ? $post->to_array() : null, time());
 }
+
+/**
+ * Whether a new comment may be approved outright, the reference's option
+ * gauntlet: manual moderation, the link budget, the moderation keys, and
+ * the previously-approved-author requirement (both probe cases refused
+ * under the dev defaults because the authors had no approved history).
+ */
+function check_comment($author, $email, $url, $comment, $user_ip, $user_agent, $comment_type)
+{
+    if ((string) get_option('comment_moderation') === '1') {
+        return false;
+    }
+    $max = (int) get_option('comment_max_links');
+    if ($max > 0 && preg_match_all('#(https?://|<a [^>]*href)#i', (string) $comment) >= $max) {
+        return false;
+    }
+    foreach (explode("\n", (string) get_option('moderation_keys')) as $word) {
+        $word = trim($word);
+        if ($word !== '' && preg_match('#' . preg_quote($word, '#') . '#i', $author . ' ' . $email . ' ' . $url . ' ' . $comment . ' ' . $user_ip . ' ' . $user_agent)) {
+            return false;
+        }
+    }
+    if ((string) get_option('comment_previously_approved') === '1') {
+        return _minn_comments()->hasApprovedByEmail((string) $email);
+    }
+    return true;
+}
+
+/** Mails the moderation queue notice to the site admin; gated by the notify_moderator filter over the option. */
+function wp_new_comment_notify_moderator($comment_id)
+{
+    $comment = get_comment($comment_id);
+    $notify = (bool) apply_filters('notify_moderator', (string) get_option('moderation_notify') === '1', (int) $comment_id);
+    if ($comment === null || !$notify) {
+        return false;
+    }
+    $post = get_post((int) $comment->comment_post_ID);
+    $subject = '[' . wp_specialchars_decode((string) get_option('blogname'), ENT_QUOTES) . '] Please moderate: "' . ($post->post_title ?? '') . '"';
+    $message = sprintf("A new comment on the post \"%s\" is waiting for your approval\n%s\n\n", $post->post_title ?? '', get_permalink($post))
+        . sprintf("Author: %s\nEmail: %s\n\nComment:\n%s\n\n", $comment->comment_author, $comment->comment_author_email, $comment->comment_content)
+        . 'Moderate it here: ' . admin_url('comment.php?action=approve&c=' . (int) $comment_id) . "\n";
+    return (bool) wp_mail((string) get_option('admin_email'), $subject, $message);
+}
+
+/** Mails the post's author about a new comment; gated by the notify_post_author filter over the option. */
+function wp_new_comment_notify_postauthor($comment_id)
+{
+    $comment = get_comment($comment_id);
+    $notify = (bool) apply_filters('notify_post_author', (string) get_option('comments_notify') === '1', (int) $comment_id);
+    if ($comment === null || !$notify) {
+        return false;
+    }
+    $post = get_post((int) $comment->comment_post_ID);
+    $author = $post === null ? null : get_userdata((int) $post->post_author);
+    if ($author === false || $author === null || (int) ($comment->user_id ?? 0) === (int) $post->post_author || (string) $author->user_email === '') {
+        return false;
+    }
+    $subject = '[' . wp_specialchars_decode((string) get_option('blogname'), ENT_QUOTES) . '] Comment: "' . $post->post_title . '"';
+    $message = sprintf("New comment on your post \"%s\"\n", $post->post_title)
+        . sprintf("Author: %s\nEmail: %s\n\nComment:\n%s\n\n", $comment->comment_author, $comment->comment_author_email, $comment->comment_content)
+        . 'See all comments on this post here: ' . get_permalink($post) . "#comments\n";
+    return (bool) wp_mail((string) $author->user_email, $subject, $message);
+}

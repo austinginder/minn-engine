@@ -811,6 +811,54 @@ the engine. Probed facts worth keeping:
   /wp-login.php direct now 403s on shop-dogfood BY THE PLUGIN, oracle
   parity; sign in through the hidden slug.
 
+## The second symbols round: everything but polylang (2026-08-31)
+
+Sixteen more plugins load; shop-dogfood runs 48 of its 49 (rank-math,
+seriously-simple-podcasting, search-filter and pro, akismet, smush,
+user-switching, wpmudev-updates, user-role-editor-pro, bnfw,
+genesis-blocks, the WooCommerce satellite trio, and the rest). All seven
+parity pages AND the head meta stay byte-identical with rank-math
+printing its SEO tags on both stacks, and the editor-panels list matches
+the reference exactly. Only polylang stays gated: loading a multilingual
+rewrite layer deserves its own verified session. Facts:
+
+- Rank Math strips the category base on this site: BOTH stacks 404
+  /category/security/ and serve /security/ (which resolves to the
+  Security PAGE, colliding slug and all). The parity script's category
+  path moved; do not read that 404 as a regression.
+- Auth cookies mint per scheme through `AuthCookies::mint` and parse to
+  the probed five-key map; an empty token gets a fresh session.
+  `PasswordHash` rides `Auth\PortableHash`. check_comment applies the
+  option gauntlet (both probe cases refuse under the dev defaults because
+  comment_previously_approved demands an approved history;
+  `Comments::hasApprovedByEmail` is the lookup).
+- The abilities API is a recording registry (`Runtime\Abilities`) that
+  fires wp_abilities_api_init ONCE on first access, the reference's lazy
+  shape; the eval probe could not register because it fired the action
+  out of band, so registration-on-the-hook is the pinned path.
+- The style engine's declarations run through the kses css filter
+  (probed: a-b drops, --my-var and url(x.png) stay, an injected
+  close-brace tail is cut); pretty with no indent joins one spaced line,
+  pretty inside a rule stacks tab-indented lines. `Support\Kses::css`
+  loosened to the reference on two probed points, custom properties and
+  relative image urls, and tightened with an explicit data: block.
+- `Walker_Category` prints the same cat-item markup as the engine's own
+  wp_list_categories path. Feed helpers ride the classic content
+  pipeline; the av shortcodes carry the captured cache-busting source and
+  bare-link fallback with a shared per-request instance counter.
+  insert_with_markers writes the captured four-line preamble block
+  (`Support\Markers`). get_lastpostmodified, network options,
+  wp_unique_post_slug (`PostWriter::uniqueSlug`), and the rest are probed
+  one-liners over existing Minn classes.
+- Mute names added to the placeholder list for these plugins: the block
+  editor settings pair (E4 pending), wp(), wp_timezone_choice, the admin
+  screen and checklist chrome, WP_Site_Health, WP_Automatic_Updater.
+  The trace log says whether any fires on the front.
+- Still short of the reference: insertBlocks lists 36 of the oracle's 43
+  (genesis-blocks/SSP/arve block registrations pending), and the oracle
+  under `php -S` can DIE during a heavy search request; when a parity run
+  shows the reference side empty, restart 8127 before reading diffs.
+
 ## What a plugin cannot do yet
 
 All twenty-five of the dogfood site's plugins load as code now

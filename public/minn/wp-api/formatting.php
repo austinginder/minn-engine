@@ -853,3 +853,10 @@ function like_escape($text)
 {
     return str_replace(['%', '_'], ['\\%', '\\_'], (string) $text);
 }
+
+/** Letters, digits, underscores, and dashes survive (probed: bad locale!<x> becomes badlocalex). */
+function sanitize_locale_name($locale_name)
+{
+    $sanitized = (string) preg_replace('/[^A-Za-z0-9_-]/', '', (string) $locale_name);
+    return apply_filters('sanitize_locale_name', $sanitized, $locale_name);
+}

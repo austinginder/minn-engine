@@ -116,6 +116,18 @@ final readonly class Comments
     }
 
     /** A comment from the same address or email within the window. */
+    /** Whether this author email has any approved comment, the previously-approved gate check_comment applies. */
+    public function hasApprovedByEmail(string $email): bool
+    {
+        if ($email === '') {
+            return false;
+        }
+        return (int) $this->db->value(
+            "SELECT COUNT(*) FROM {$this->db->table('comments')} WHERE comment_author_email = ? AND comment_approved = '1' LIMIT 1",
+            [$email],
+        ) > 0;
+    }
+
     public function flooding(string $email, string $address, int $seconds): bool
     {
         $since = gmdate('Y-m-d H:i:s', time() - $seconds);

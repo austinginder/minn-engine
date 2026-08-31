@@ -31,3 +31,24 @@ function self_link()
     $host = wp_parse_url(home_url());
     echo esc_url(apply_filters('self_link', set_url_scheme('http://' . ($_SERVER['HTTP_HOST'] ?? ($host['host'] ?? '')) . wp_unslash($_SERVER['REQUEST_URI'] ?? '/'))));
 }
+
+/** The post title for a feed item, filtered but otherwise plain (probed). */
+function get_the_title_rss($post = 0)
+{
+    return apply_filters('the_title_rss', get_the_title($post), $post);
+}
+
+/** The rendered content for a feed item: the full pipeline, CDATA close escaped, then the feed filter. */
+function get_the_content_feed($feed_type = null)
+{
+    if ($feed_type === null) {
+        $feed_type = 'rss2';
+    }
+    $post = get_post();
+    if ($post === null) {
+        return '';
+    }
+    $content = \Minn\Theme\ClassicContent::render($post->to_array(), null);
+    $content = str_replace(']]>', ']]&gt;', $content);
+    return apply_filters('the_content_feed', $content, $feed_type);
+}

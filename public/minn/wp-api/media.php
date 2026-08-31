@@ -1113,3 +1113,64 @@ function get_compat_media_markup($attachment_id, $args = null)
     }
     return ['item' => $item, 'meta' => ''];
 }
+
+/** @internal shared per-request instance counter for the av shortcodes */
+function _minn_av_instance(string $kind): int
+{
+    $key = 'av_instance_' . $kind;
+    $n = (int) (Runtime::current()->get($key) ?? 0) + 1;
+    Runtime::current()->set($key, $n);
+    return $n;
+}
+
+/** The captured player markup: source with a cache-busting query, the bare link as fallback. */
+function wp_audio_shortcode($attr, $content = '')
+{
+    $attr = shortcode_atts(['src' => '', 'loop' => '', 'autoplay' => '', 'preload' => 'none', 'class' => 'wp-audio-shortcode', 'style' => 'width: 100%;'], (array) $attr, 'audio');
+    $src = (string) $attr['src'];
+    if ($src === '') {
+        return null;
+    }
+    $n = _minn_av_instance('audio');
+    $type = wp_check_filetype($src)['type'] ?: 'audio/mpeg';
+    $html = '<audio class="' . esc_attr($attr['class']) . '" id="audio-' . $n . '-1" preload="' . esc_attr($attr['preload']) . '" style="' . esc_attr($attr['style']) . '" controls="controls">'
+        . '<source type="' . esc_attr($type) . '" src="' . esc_url($src . '?_=' . $n) . '" />'
+        . '<a href="' . esc_url($src) . '">' . esc_html($src) . '</a></audio>';
+    return apply_filters('wp_audio_shortcode', $html, $attr, '', $n, '');
+}
+
+/** The captured video markup: sized wrapper div, source with the cache buster, link fallback. */
+function wp_video_shortcode($attr, $content = '')
+{
+    $attr = shortcode_atts(['src' => '', 'poster' => '', 'width' => 640, 'height' => 360, 'loop' => '', 'autoplay' => '', 'muted' => '', 'preload' => 'metadata', 'class' => 'wp-video-shortcode'], (array) $attr, 'video');
+    $src = (string) $attr['src'];
+    if ($src === '') {
+        return null;
+    }
+    $n = _minn_av_instance('video');
+    $type = wp_check_filetype($src)['type'] ?: 'video/mp4';
+    $poster = $attr['poster'] !== '' ? ' poster="' . esc_url((string) $attr['poster']) . '"' : '';
+    $html = '<div style="width: ' . (int) $attr['width'] . 'px;" class="wp-video">'
+        . '<video class="' . esc_attr($attr['class']) . '" id="video-' . $n . '-1" width="' . (int) $attr['width'] . '" height="' . (int) $attr['height'] . '"' . $poster . ' preload="' . esc_attr($attr['preload']) . '" controls="controls">'
+        . '<source type="' . esc_attr($type) . '" src="' . esc_url($src . '?_=' . $n) . '" />'
+        . '<a href="' . esc_url($src) . '">' . esc_html($src) . '</a></video></div>';
+    return apply_filters('wp_video_shortcode', $html, $attr, '', $n, '');
+}
+
+/** Registered sizes the attachment's metadata lacks and its dimensions can fit (empty for the battery attachment, probed). */
+function wp_get_missing_image_subsizes($attachment_id)
+{
+    $meta = wp_get_attachment_metadata((int) $attachment_id);
+    if (!is_array($meta) || empty($meta['width']) || empty($meta['height'])) {
+        return [];
+    }
+    $have = array_keys((array) ($meta['sizes'] ?? []));
+    $missing = [];
+    foreach (_minn_image_sizes() as $name => $size) {
+        $fits = (int) $size['width'] < (int) $meta['width'] || (int) $size['height'] < (int) $meta['height'];
+        if (!in_array($name, $have, true) && $fits && (int) $size['width'] > 0) {
+            $missing[$name] = $size;
+        }
+    }
+    return apply_filters('wp_get_missing_image_subsizes', $missing, $meta, (int) $attachment_id);
+}

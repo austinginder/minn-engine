@@ -578,3 +578,73 @@ function wp_cookie_constants()
 function wp_plugin_directory_constants()
 {
 }
+
+/** Both the site and home URLs on https (probed true on the dev reference). */
+function wp_is_using_https()
+{
+    return str_starts_with((string) get_option('siteurl'), 'https://') && str_starts_with((string) get_option('home'), 'https://');
+}
+
+/** JSONP callback names: word characters and dots only (probed: my.Fn_2 yes, bad() and a-b no). */
+function wp_check_jsonp_callback($callback)
+{
+    if (!is_string($callback)) {
+        return false;
+    }
+    return preg_match('/[^\w.]/', $callback) === 0;
+}
+
+function calendar_week_mod($num)
+{
+    return fmod((float) $num, 7);
+}
+
+/** Recursive key sort in place, the probed shape. */
+function wp_recursive_ksort(&$input_array)
+{
+    foreach ($input_array as &$value) {
+        if (is_array($value)) {
+            wp_recursive_ksort($value);
+        }
+    }
+    unset($value);
+    return ksort($input_array);
+}
+
+function wp_using_themes()
+{
+    return defined('WP_USE_THEMES') ? (bool) WP_USE_THEMES : true;
+}
+
+function get_main_network_id()
+{
+    return 1;
+}
+
+/** True only while a .maintenance file at the webroot is fresh. */
+function wp_is_maintenance_mode()
+{
+    $file = ABSPATH . '.maintenance';
+    if (!file_exists($file)) {
+        return false;
+    }
+    $upgrading = 0;
+    include $file;
+    return $upgrading >= time() - 600 && (bool) apply_filters('enable_maintenance_mode', true, $upgrading);
+}
+
+function wp_should_upgrade_global_tables()
+{
+    return (bool) apply_filters('wp_should_upgrade_global_tables', true);
+}
+
+function wp_can_install_language_pack()
+{
+    return (bool) apply_filters('file_mod_allowed', !defined('DISALLOW_FILE_MODS') || !DISALLOW_FILE_MODS, 'download_language_pack');
+}
+
+/** Maintains a marker block in a file (the .htaccess shape), preamble and all. */
+function insert_with_markers($filename, $marker, $insertion)
+{
+    return \Minn\Support\Markers::write((string) $filename, (string) $marker, array_map('strval', (array) $insertion));
+}

@@ -1573,3 +1573,11 @@ function get_page_children($page_id, $pages)
         static fn ($p) => (int) (is_object($p) ? $p->post_parent : ($p['post_parent'] ?? 0)),
     );
 }
+
+/** A slug unique within the posts table, the writer's own -2 counting. */
+function wp_unique_post_slug($slug, $post_id, $post_status, $post_type, $post_parent)
+{
+    $writer = new \Minn\Content\PostWriter(Runtime::current()->db, _minn_posts(), new \Minn\Content\Site(Runtime::current()->db));
+    $unique = $writer->uniqueSlug((string) $slug, (int) $post_id);
+    return apply_filters('wp_unique_post_slug', $unique, $post_id, $post_status, $post_type, $post_parent, $slug);
+}

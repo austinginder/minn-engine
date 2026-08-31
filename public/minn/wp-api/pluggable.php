@@ -502,3 +502,37 @@ function wp_set_auth_cookie($user_id, $remember = false, $secure = '', $token = 
     setcookie('wordpress_logged_in_' . $hash, $loggedIn, ['expires' => $expire, 'path' => '/', 'secure' => $secureLoggedIn, 'httponly' => true]);
     return null;
 }
+
+/** A cookie under the named scheme's salt; an empty token gets a fresh session, the reference's shape. */
+function wp_generate_auth_cookie($user_id, $expiration, $scheme = 'auth', $token = '')
+{
+    $runtime = Runtime::current();
+    $user = (new Users($runtime->db))->find((int) $user_id);
+    if ($user === null) {
+        return '';
+    }
+    if ((string) $token === '') {
+        $request = $runtime->request;
+        $token = (new Sessions(new Users($runtime->db)))->create((int) $user_id, (int) $expiration, (string) ($request?->remoteAddress ?? ''), (string) ($request?->header('user-agent') ?? ''));
+    }
+    $cookie = AuthCookies::mint($user, (int) $expiration, (string) $token, (string) $scheme);
+    return apply_filters('auth_cookie', $cookie, (int) $user_id, (int) $expiration, (string) $scheme, (string) $token);
+}
+
+/** The four-part cookie split into its named fields plus the scheme, false when it does not parse (probed keys). */
+function wp_parse_auth_cookie($cookie = '', $scheme = '')
+{
+    if ((string) $cookie === '') {
+        $names = ['auth' => defined('AUTH_COOKIE') ? AUTH_COOKIE : '', 'secure_auth' => defined('SECURE_AUTH_COOKIE') ? SECURE_AUTH_COOKIE : '', 'logged_in' => defined('LOGGED_IN_COOKIE') ? LOGGED_IN_COOKIE : ''];
+        if ($scheme === '') {
+            $scheme = is_ssl() ? 'secure_auth' : 'auth';
+        }
+        $cookie = (string) (Runtime::current()->request?->cookies[$names[$scheme] ?? ''] ?? '');
+    }
+    $parts = explode('|', (string) $cookie);
+    if (count($parts) !== 4) {
+        return false;
+    }
+    [$username, $expiration, $token, $hmac] = $parts;
+    return ['username' => $username, 'expiration' => $expiration, 'token' => $token, 'hmac' => $hmac, 'scheme' => $scheme ?: 'auth'];
+}

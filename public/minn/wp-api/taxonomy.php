@@ -953,3 +953,54 @@ function is_object_in_term($object_id, $taxonomy, $terms = null)
     }
     return false;
 }
+
+/** The term's ancestor chain as links (or names), each followed by the separator, the probed shape. */
+function get_term_parents_list($term_id, $taxonomy, $args = [])
+{
+    $args = wp_parse_args($args, ['format' => 'name', 'separator' => '/', 'link' => true, 'inclusive' => true]);
+    $term = get_term((int) $term_id, (string) $taxonomy);
+    if (!$term instanceof WP_Term) {
+        return is_wp_error($term) ? $term : '';
+    }
+    $chain = array_reverse(get_ancestors($term->term_id, (string) $taxonomy, 'taxonomy'));
+    if ($args['inclusive']) {
+        $chain[] = $term->term_id;
+    }
+    $out = '';
+    foreach ($chain as $id) {
+        $ancestor = get_term((int) $id, (string) $taxonomy);
+        if (!$ancestor instanceof WP_Term) {
+            continue;
+        }
+        $name = $args['format'] === 'slug' ? $ancestor->slug : $ancestor->name;
+        $out .= ($args['link'] ? '<a href="' . esc_url((string) get_term_link($ancestor)) . '">' . esc_html($name) . '</a>' : esc_html($name)) . $args['separator'];
+    }
+    return $out;
+}
+
+/** The post's category links, rel="category tag", joined by the separator (a ul.post-categories without one). */
+function the_category($separator = '', $parents = '', $post_id = false)
+{
+    $categories = get_the_category($post_id);
+    if (!is_array($categories) || $categories === []) {
+        return;
+    }
+    $links = array_map(static fn ($c) => '<a href="' . esc_url((string) get_term_link($c)) . '" rel="category tag">' . esc_html($c->name) . '</a>', $categories);
+    if ((string) $separator === '') {
+        echo '<ul class="post-categories"><li>' . implode('</li><li>', $links) . '</li></ul>';
+        return;
+    }
+    echo implode((string) $separator, $links);
+}
+
+/** The post's tag links, rel="tag"; nothing prints for a post without tags (probed). */
+function the_tags($before = null, $sep = ', ', $after = '')
+{
+    $post = get_post();
+    $tags = $post === null ? [] : (get_the_terms($post->ID, 'post_tag') ?: []);
+    if (!is_array($tags) || $tags === []) {
+        return;
+    }
+    $links = array_map(static fn ($t) => '<a href="' . esc_url((string) get_term_link($t)) . '" rel="tag">' . esc_html($t->name) . '</a>', $tags);
+    echo ($before ?? 'Tags: ') . implode((string) $sep, $links) . $after;
+}
