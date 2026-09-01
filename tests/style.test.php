@@ -219,6 +219,37 @@ $docs = json_decode((string) shell_exec('php ' . escapeshellarg(dirname(__DIR__)
 $check('api docs: tests/tools/api-docs.php runs', is_array($docs));
 $check('api docs: docs/api/ is current', is_array($docs) && ($docs['stale'] ?? true) === false, 'run php tests/tools/api-docs.php');
 
+// Three more shapes that only fall, read from the same model: a public
+// method with no sentence above it, a boolean parameter (two methods in
+// one: name the branch, or pass the caller), and a constructor taking six
+// or more (take the two or three the class calls; Services makes the rest
+// cheap). Lower a ceiling when a class loses its last offender.
+$undocumentedCeiling = 933;
+$boolParamCeiling = 147;
+$wideConstructorCeiling = 47;
+$model = json_decode((string) file_get_contents(dirname(__DIR__) . '/contracts/api/minn.json'), true);
+$undocumented = 0;
+$boolParams = 0;
+$wideConstructors = 0;
+foreach ($model['classes'] ?? [] as $class) {
+    if (count($class['constructor']['params'] ?? []) >= 6) {
+        $wideConstructors++;
+    }
+    foreach ($class['methods'] as $method) {
+        if ($method['visibility'] === 'public' && $method['doc'] === '') {
+            $undocumented++;
+        }
+        foreach ($method['params'] as $param) {
+            if ($param['type'] === 'bool') {
+                $boolParams++;
+            }
+        }
+    }
+}
+$check("engine: public methods without a docblock stay at or under {$undocumentedCeiling}", $undocumented <= $undocumentedCeiling, (string) $undocumented);
+$check("engine: boolean parameters stay at or under {$boolParamCeiling}", $boolParams <= $boolParamCeiling, (string) $boolParams);
+$check("engine: constructors with six or more parameters stay at or under {$wideConstructorCeiling}", $wideConstructors <= $wideConstructorCeiling, (string) $wideConstructors);
+
 $legacy = array_map('basename', glob("{$root}/*.php"));
 echo "\n  legacy procedural files remaining: " . count($legacy) . ' (' . implode(', ', $legacy) . ")\n";
 echo "\n{$pass} passed, {$fail} failed\n";
