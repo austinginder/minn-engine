@@ -61,14 +61,41 @@ final readonly class GlobalStyles
     {
     }
 
+    /** The theme.json (plus site-editor) styles node, under the engine's own defaults. */
+    public function styles(): array
+    {
+        $json = $this->user === null ? $this->theme->json() : Theme::merge($this->theme->json(), $this->user);
+        $defaults = (array) json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/styles.json'), true);
+        return Theme::merge($defaults, (array) ($json['styles'] ?? []));
+    }
+
+    /**
+     * The same node with every `var:preset|…` token resolved to the custom
+     * property it names, which is the shape a caller reading the styles as
+     * data expects (the CSS writer resolves them on the way out instead).
+     */
+    public function resolvedStyles(): array
+    {
+        $resolve = static function (array $node) use (&$resolve): array {
+            foreach ($node as $key => $value) {
+                if (is_array($value)) {
+                    $node[$key] = $resolve($value);
+                } elseif (is_string($value) && str_starts_with($value, 'var:')) {
+                    $node[$key] = 'var(--wp--' . str_replace('|', '--', substr($value, 4)) . ')';
+                }
+            }
+            return $node;
+        };
+        return $resolve($this->styles());
+    }
+
     public function css(): string
     {
         $json = $this->user === null ? $this->theme->json() : Theme::merge($this->theme->json(), $this->user);
         $settings = (array) ($json['settings'] ?? []);
         // Core's own theme.json sits under the theme's: the button element's inherit-everything
         // defaults print for every theme, each key replaceable by the theme.
-        $defaults = (array) json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/styles.json'), true);
-        $styles = Theme::merge($defaults, (array) ($json['styles'] ?? []));
+        $styles = $this->styles();
         $presets = $this->presets($settings);
 
         $out = ':root{' . $this->presetProperties($presets) . '}';

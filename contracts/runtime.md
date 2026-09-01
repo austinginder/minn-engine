@@ -1306,3 +1306,21 @@ mini-cart and the customer account after `core/navigation` in a header.
   read `weekday_abbrev`, and a null global fatals the whole page). English
   strings through the translation filters; the engine renders no core
   translations yet.
+
+## wp_get_global_styles (2026-09-01)
+
+The active theme's merged styles node: the engine's own `data/styles.json`
+defaults under the theme's `theme.json` styles, plus the site editor's
+saved global styles. Every `var:preset|…` token is resolved to the custom
+property it names (`var:preset|color|base` reads back as
+`var(--wp--preset--color--base)`); the CSS writer resolves them on the way
+out instead, so `GlobalStyles::styles()` is the raw node and
+`resolvedStyles()` the one a data caller sees. A path that names nothing
+yields the whole tree, matching the reference's array read. WooCommerce
+gates its `woocommerce-block-theme-has-button-styles` body class on
+`elements.button` being present here.
+
+NOTE for probe rows: the api suite compares transcripts with json_encode,
+so a row must not pin a key ORDER that is only a merge artifact (the
+styles maps are the case in point; their CSS emission order is pinned by
+the styles suite instead). Pin the value by name, or the sorted key set.

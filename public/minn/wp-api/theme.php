@@ -225,9 +225,39 @@ function wp_get_global_settings($path = [], $context = [])
     return [];
 }
 
+/**
+ * The active theme's merged styles node (theme.json under the engine's
+ * defaults, plus the site editor's saved global styles). A path that names
+ * nothing yields the whole tree, as the reference's array read does.
+ */
 function wp_get_global_styles($path = [], $context = [])
 {
-    return [];
+    $styles = _minn_global_styles();
+    foreach ((array) $path as $key) {
+        if (!is_array($styles) || !array_key_exists($key, $styles)) {
+            return _minn_global_styles();
+        }
+        $styles = $styles[$key];
+    }
+    return $styles;
+}
+
+/** @internal the merged styles node for the active theme, or [] without one */
+function _minn_global_styles(): array
+{
+    static $cached = null;
+    if ($cached !== null) {
+        return $cached;
+    }
+    $runtime = Runtime::current();
+    $site = new Minn\Content\Site($runtime->db);
+    $permalinks = Minn\Front\Permalinks::fromDb($runtime->db);
+    $theme = Minn\Theme\Theme::forStyles($site, $permalinks, ABSPATH . 'wp-content/themes');
+    if ($theme === null) {
+        return $cached = [];
+    }
+    $templates = new Minn\Theme\Templates($runtime->db, new Minn\Content\Posts($runtime->db), $theme);
+    return $cached = (new Minn\Theme\GlobalStyles($theme, $templates->userStyles()))->resolvedStyles();
 }
 
 function wp_get_global_stylesheet($types = [])

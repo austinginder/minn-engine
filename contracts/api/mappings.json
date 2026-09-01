@@ -2,12 +2,12 @@
     "generated": "2026-09-01",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 321,
-        "composes": 675,
+        "minn": 322,
+        "composes": 676,
         "leaf": 339,
-        "noop": 1192,
-        "functions": 2521,
-        "minnMethods": 358,
+        "noop": 1191,
+        "functions": 2522,
+        "minnMethods": 363,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -7616,6 +7616,22 @@
                 "wp_enqueue_style",
                 "wp_register_style"
             ]
+        },
+        "_minn_global_styles": {
+            "file": "theme.php",
+            "lines": 13,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Content\\Posts::__construct",
+                "Minn\\Content\\Site::__construct",
+                "Minn\\Front\\Permalinks::fromDb",
+                "Minn\\Runtime\\Runtime::current",
+                "Minn\\Theme\\GlobalStyles::__construct",
+                "Minn\\Theme\\Templates::__construct",
+                "Minn\\Theme\\Templates::userStyles",
+                "Minn\\Theme\\Theme::forStyles"
+            ],
+            "composes": []
         },
         "_minn_hooked_block_types": {
             "file": "blocks.php",
@@ -19397,10 +19413,12 @@
         },
         "wp_get_global_styles": {
             "file": "theme.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 8,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "_minn_global_styles"
+            ]
         },
         "wp_get_global_styles_svg_filters": {
             "file": "blocks.php",

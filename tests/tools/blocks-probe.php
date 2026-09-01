@@ -148,6 +148,24 @@ $say('oembed', (static function () { $r = [wp_oembed_add_provider('#https?://pro
 $say('fetch_feed', (static function () use ($kind) { $f = fetch_feed('http://nonexistent.invalid/feed'); return [$kind($f), $f instanceof WP_Error ? $f->get_error_code() : null]; })());
 
 $say('wp_theme_get_element_class_name', [wp_theme_get_element_class_name('button'), wp_theme_get_element_class_name('caption'), wp_theme_get_element_class_name('heading'), wp_theme_get_element_class_name(''), wp_theme_get_element_class_name('nope')]);
+// The merged styles node plugin code reads to decide whether the theme
+// styles an element at all (WooCommerce gates a body class on it).
+// Key ORDER carries no contract (callers ask array_key_exists; the CSS
+// order is the styles suite's business), so the sets are what is pinned.
+$sorted = static function (mixed $value): array {
+    $keys = array_keys((array) $value);
+    sort($keys);
+    return $keys;
+};
+$say('wp_get_global_styles keys', [
+    $sorted(wp_get_global_styles()),
+    $sorted(wp_get_global_styles(['elements'])),
+    $sorted(wp_get_global_styles(['elements', 'button'])),
+    // The values, by name: the map's own key order is a merge artifact,
+    // and CSS emission order is the styles suite's business.
+    array_map(static fn (string $k) => wp_get_global_styles(['elements', 'button', 'color'])[$k] ?? null, ['text', 'background']),
+    wp_get_global_styles(['nope', 'deep']) === wp_get_global_styles(),
+]);
 
 // Context cascade: rendering a WP_Block's inner blocks passes each one's
 // context through render_block_context at every nesting level (how a query

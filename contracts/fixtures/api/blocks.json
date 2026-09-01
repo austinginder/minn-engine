@@ -1138,6 +1138,43 @@
         ]
     ],
     [
+        "wp_get_global_styles keys",
+        [
+            [
+                "blocks",
+                "color",
+                "elements",
+                "spacing",
+                "typography"
+            ],
+            [
+                "button",
+                "caption",
+                "h1",
+                "h2",
+                "h3",
+                "h4",
+                "h5",
+                "h6",
+                "heading",
+                "link"
+            ],
+            [
+                ":focus",
+                ":hover",
+                "border",
+                "color",
+                "spacing",
+                "typography"
+            ],
+            [
+                "var(--wp--preset--color--base)",
+                "var(--wp--preset--color--contrast)"
+            ],
+            true
+        ]
+    ],
+    [
         "context cascade child",
         "[child {\"postId\":1,\"postType\":\"post\"}][child {\"postId\":5,\"postType\":\"post\"}]"
     ],
