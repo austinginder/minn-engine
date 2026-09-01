@@ -37,6 +37,7 @@ final readonly class ApplicationPasswordsController
     ) {
     }
 
+    /** The user's application passwords. */
     #[Route(Method::Get, '/wp/v2/users/{id:\d+|me}/application-passwords')]
     public function list(Request $request, string $id): Response
     {
@@ -45,6 +46,7 @@ final readonly class ApplicationPasswordsController
         return Reply::item($items, Fields::fromQuery($request->query));
     }
 
+    /** Mints one; the plain password is in this answer only. */
     #[Route(Method::Post, '/wp/v2/users/{id:\d+|me}/application-passwords')]
     public function create(Request $request, string $id): Response
     {
@@ -64,6 +66,7 @@ final readonly class ApplicationPasswordsController
         return Reply::item($item, Fields::fromQuery($request->query), 201);
     }
 
+    /** Removes every one. */
     #[Route(Method::Delete, '/wp/v2/users/{id:\d+|me}/application-passwords')]
     public function deleteAll(Request $request, string $id): Response
     {
@@ -71,6 +74,7 @@ final readonly class ApplicationPasswordsController
         return Reply::item(['deleted' => true, 'count' => $this->passwords->deleteAll($user->id)], null);
     }
 
+    /** The password the current Basic auth session used. */
     #[Route(Method::Get, '/wp/v2/users/{id:\d+|me}/application-passwords/introspect')]
     public function introspect(Request $request, string $id): Response
     {
@@ -83,6 +87,7 @@ final readonly class ApplicationPasswordsController
         return Reply::item($this->item($user, $fresh), Fields::fromQuery($request->query));
     }
 
+    /** One password by uuid. */
     #[Route(Method::Get, '/wp/v2/users/{id:\d+|me}/application-passwords/{uuid:[0-9a-fA-F-]+}')]
     public function single(Request $request, string $id, string $uuid): Response
     {
@@ -90,6 +95,7 @@ final readonly class ApplicationPasswordsController
         return Reply::item($this->item($user, $this->existing($user, $uuid)), Fields::fromQuery($request->query));
     }
 
+    /** Renames one. */
     #[Route(Method::Post, '/wp/v2/users/{id:\d+|me}/application-passwords/{uuid:[0-9a-fA-F-]+}')]
     #[Route(Method::Put, '/wp/v2/users/{id:\d+|me}/application-passwords/{uuid:[0-9a-fA-F-]+}')]
     #[Route(Method::Patch, '/wp/v2/users/{id:\d+|me}/application-passwords/{uuid:[0-9a-fA-F-]+}')]
@@ -107,6 +113,7 @@ final readonly class ApplicationPasswordsController
         return Reply::item($this->item($user, $record), Fields::fromQuery($request->query));
     }
 
+    /** Removes one. */
     #[Route(Method::Delete, '/wp/v2/users/{id:\d+|me}/application-passwords/{uuid:[0-9a-fA-F-]+}')]
     public function delete(Request $request, string $id, string $uuid): Response
     {

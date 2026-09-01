@@ -4,17 +4,17 @@ the wp verbs the engine answers itself
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`AssetUpdate`](#assetupdate) | final class | 321 | Shared wording for `wp plugin update` and `wp theme update`. Captured |
+| [`AssetUpdate`](#assetupdate) | final class | 326 | Shared wording for `wp plugin update` and `wp theme update`. Captured |
 | [`CacheCommand`](#cachecommand) | final class | 15 | `wp cache flush`: the engine has no object cache, so this is a no-op success. |
-| [`Commands`](#commands) | final class | 86 | The verbs the engine answers to. Every one is registered for the |
-| [`DirectorySearch`](#directorysearch) | final class | 33 | Shared wording for `wp theme search` and `wp plugin search`. The |
-| [`Installer`](#installer) | final class | 631 | The swap, both ways. Install parks WordPress's own files beside the |
+| [`Commands`](#commands) | final class | 87 | The verbs the engine answers to. Every one is registered for the |
+| [`DirectorySearch`](#directorysearch) | final class | 37 | Shared wording for `wp theme search` and `wp plugin search`. The |
+| [`Installer`](#installer) | final class | 641 | The swap, both ways. Install parks WordPress's own files beside the |
 | [`MaintenanceCommand`](#maintenancecommand) | final class | 65 | `wp maintenance-mode`: the `.maintenance` marker in the webroot. The |
 | [`MinnCommand`](#minncommand) | final class | 302 | Identifies the engine. |
 | [`OptionCommand`](#optioncommand) | final class | 191 | Options, read and written straight to the options table. Serialized |
 | [`PluginCommand`](#plugincommand) | final class | 474 | `wp plugin list\|install\|update\|activate\|deactivate\|delete`: the inventory and the fleet's install/update/delete. |
 | [`RewriteCommand`](#rewritecommand) | final class | 52 | `wp rewrite flush\|structure`: permalink_structure is the engine's |
-| [`Runtime`](#runtime) | final class | 37 | The engine, booted for a command: reads the site's wp-config.php (which |
+| [`Runtime`](#runtime) | final class | 38 | The engine, booted for a command: reads the site's wp-config.php (which |
 | [`SearchReplaceCommand`](#searchreplacecommand) | final class | 143 | `wp search-replace`: walks every string column, including serialized |
 | [`ThemeCommand`](#themecommand) | final class | 425 | `wp theme list\|install\|update\|activate\|delete`: the inventory CaptainCore |
 | [`UserCommand`](#usercommand) | final class | 366 | Users: the list and get views, and the one-time login link. |
@@ -38,11 +38,15 @@ __construct(string $kind, Minn\Admin\Updates $updates, Minn\Content\Inventory $i
 
 ### static `boot(string $kind): self`
 
+The updater for one kind of asset, with the runtime up.
+
 ### `run(array $names, array $assocArgs): void`
+
+Updates the named assets, or all of them.
 
 - `@param list<string> $names`
 
-Internals: `offers()` (private, line 96), `previewRow()` (private, line 144), `apply()` (private, line 156), `render()` (private, line 189), `emit()` (private, line 239), `skipped()` (private, line 260), `missing()` (private, line 268), `installed()` (private, line 277), `titleFor()` (private, line 290), `statusByName()` (private, line 304), `channel()` (private, line 315), `samePrefix()` (private, line 326), `pluginSlug()` (private, line 338)
+Internals: `offers()` (private, line 101), `previewRow()` (private, line 149), `apply()` (private, line 161), `render()` (private, line 194), `emit()` (private, line 244), `skipped()` (private, line 265), `missing()` (private, line 273), `installed()` (private, line 282), `titleFor()` (private, line 295), `statusByName()` (private, line 309), `channel()` (private, line 320), `samePrefix()` (private, line 331), `pluginSlug()` (private, line 343)
 
 
 ## CacheCommand
@@ -72,7 +76,9 @@ addition lands after the bundle and overrides its leaf).
 
 ### static `register(): void`
 
-Internals: `leaf()` (private, line 70), `replace()` (private, line 86)
+Registers every engine verb with WP-CLI in the phase it runs in.
+
+Internals: `leaf()` (private, line 71), `replace()` (private, line 87)
 
 
 ## DirectorySearch
@@ -88,6 +94,8 @@ only for table/yaml. json/csv/count print the Formatter output alone.
 Used by: `Minn\Cli\PluginCommand`, `Minn\Cli\ThemeCommand`
 
 ### static `run(string $kind, array $args, array $assocArgs): void`
+
+Searches wordpress.org for one kind of asset and prints the page.
 
 - `@param array<string, mixed> $assocArgs`
 
@@ -116,6 +124,8 @@ Used by: `Minn\Cli\MinnCommand`
 
 ### static `main(array $argv, string $engineDir): int`
 
+The bin entry: runs one command against a webroot and returns the exit code.
+
 - `@param list<string> $argv`
 
 ### static `themeKind(string $dir, string $parentDir): string`
@@ -126,17 +136,23 @@ is a classic theme.
 
 ### `status(string $root): int`
 
+Prints what the webroot is running.
+
 ### `preflight(string $root): string`
 
 What the site will and will not get; the worst light decides install.
 
 ### `install(string $root, array $options): int`
 
+Installs the engine into a webroot when the preflight allows it.
+
 - `@param array<string, string|true> $options`
 
 ### `eject(string $root): int`
 
-Internals: `help()` (private, line 99), `optionReader()` (private, line 150), `preflightTheme()` (private, line 162), `preflightPlugins()` (private, line 201), `surveyContent()` (private, line 272), `surveyMarkup()` (private, line 281), `surveyMenus()` (private, line 322), `surveyTables()` (private, line 349), `surveyTypes()` (private, line 368), `state()` (private, line 492), `manifest()` (private, line 503), `writePlaceholders()` (private, line 514), `readConfig()` (private, line 535), `env()` (private, line 569), `move()` (private, line 580), `copyTree()` (private, line 596), `removeTree()` (private, line 615), `version()` (private, line 632), `light()` (private, line 638), `say()` (private, line 647)
+Puts WordPress back and removes the engine's files.
+
+Internals: `help()` (private, line 103), `optionReader()` (private, line 155), `preflightTheme()` (private, line 167), `preflightPlugins()` (private, line 206), `surveyContent()` (private, line 277), `surveyMarkup()` (private, line 286), `surveyMenus()` (private, line 327), `surveyTables()` (private, line 354), `surveyTypes()` (private, line 373), `state()` (private, line 502), `manifest()` (private, line 513), `writePlaceholders()` (private, line 524), `readConfig()` (private, line 545), `env()` (private, line 579), `move()` (private, line 590), `copyTree()` (private, line 606), `removeTree()` (private, line 625), `version()` (private, line 642), `light()` (private, line 648), `say()` (private, line 657)
 
 
 ## MaintenanceCommand
@@ -632,7 +648,9 @@ Used by: `Minn\Cli\AssetUpdate`, `Minn\Cli\DirectorySearch`, `Minn\Cli\Maintenan
 
 ### static `boot(): self`
 
-Internals: `loadConfig()` (private, line 47)
+The engine's runtime for a CLI process, booted once.
+
+Internals: `loadConfig()` (private, line 48)
 
 
 ## SearchReplaceCommand

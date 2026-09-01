@@ -22,11 +22,13 @@ final readonly class CommentObject
     ) {
     }
 
+    /** The REST URL builder. */
     public function url(): RestUrl
     {
         return $this->url;
     }
 
+    /** The wp/v2 comment shape, with the edit-context fields when asked. */
     public function build(CommentRecord $c, bool $edit): array
     {
         $id = $c->id;

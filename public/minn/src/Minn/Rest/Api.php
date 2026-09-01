@@ -41,12 +41,17 @@ final readonly class Api
     ) {
     }
 
-    /** @return array<string, list<string>> the engine's routes in the reference's form, route => methods */
+    /**
+     * The engine's routes in the reference's index form.
+     *
+     * @return array<string, list<string>> the engine's routes in the reference's form, route => methods
+     */
     public function routes(): array
     {
         return EngineRoutes::map($this->router);
     }
 
+    /** The API for one request: the shared services and the route table. */
     public static function forRequest(Db $db, Request $request): self
     {
         $s = Services::forRequest($db, $request);
@@ -97,26 +102,31 @@ final readonly class Api
         return [...$controllers, $postsController, $postsWrite, new NavigationController($postsController, $postsWrite), new DeclaredPostsController($s->types(), $postsController, $postsWrite)];
     }
 
+    /** Who is making this request. */
     public function caller(): Caller
     {
         return $this->caller;
     }
 
+    /** The wp/v2 post shape. */
     public function postObject(): PostObject
     {
         return $this->postObject;
     }
 
+    /** The wp/v2 term shape. */
     public function termObject(): TermObject
     {
         return $this->termObject;
     }
 
+    /** The wp/v2 user shape. */
     public function userObject(): UserObject
     {
         return $this->userObject;
     }
 
+    /** The post types the surface knows. */
     public function types(): Types
     {
         return $this->types;

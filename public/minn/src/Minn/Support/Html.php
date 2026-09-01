@@ -8,11 +8,13 @@ use Closure;
 
 final class Html
 {
+    /** Text escaped for HTML. */
     public static function esc(?string $value): string
     {
         return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
     }
 
+    /** Text escaped for an attribute value. */
     public static function attr(?string $value): string
     {
         return self::esc($value);

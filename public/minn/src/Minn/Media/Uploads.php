@@ -31,21 +31,25 @@ final readonly class Uploads
     ) {
     }
 
+    /** The uploads directory on disk. */
     public function baseDir(): string
     {
         return $this->baseDir;
     }
 
+    /** The uploads directory's URL. */
     public function baseUrl(): string
     {
         return $this->permalinks->url('/wp-content/uploads');
     }
 
+    /** The URL of a file by its relative path. */
     public function urlFor(string $relativePath): string
     {
         return $this->baseUrl() . '/' . $relativePath;
     }
 
+    /** The path of a file by its relative path. */
     public function pathFor(string $relativePath): string
     {
         return $this->baseDir . '/' . $relativePath;

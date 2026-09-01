@@ -13,7 +13,11 @@ final readonly class Images
     {
     }
 
-    /** @return array<string, array{0: int, 1: int, 2: bool}> name => [max width, max height, crop] */
+    /**
+     * The registered sizes from the site's options, largest last.
+     *
+     * @return array<string, array{0: int, 1: int, 2: bool}> name => [max width, max height, crop]
+     */
     public function ladder(): array
     {
         $option = fn (string $name, int $default): int => (int) ($this->site->option($name) ?? $default);

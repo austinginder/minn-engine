@@ -23,6 +23,7 @@ final readonly class MenuItemObject
     ) {
     }
 
+    /** The wp/v2 menu-item shape. */
     public function view(MenuItem $item, bool $edit): array
     {
         $canWrite = $this->caller->can('edit_theme_options');

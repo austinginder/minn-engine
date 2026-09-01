@@ -22,6 +22,7 @@ final class PortableHash
         return self::crypt($password, '$P$' . self::ALPHABET[$countLog2] . $salt);
     }
 
+    /** Whether a password matches a portable hash from the published algorithm. */
     public static function verify(string $password, string $hash): bool
     {
         if (strlen($hash) !== 34 || !str_starts_with($hash, '$P$')) {

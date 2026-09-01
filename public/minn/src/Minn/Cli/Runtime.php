@@ -29,6 +29,7 @@ final class Runtime
     ) {
     }
 
+    /** The engine's runtime for a CLI process, booted once. */
     public static function boot(): self
     {
         if (self::$shared !== null) {

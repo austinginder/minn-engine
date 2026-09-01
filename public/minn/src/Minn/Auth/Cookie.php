@@ -29,6 +29,7 @@ final readonly class Cookie
         return 'wordpress_logged_in_' . md5($this->db->option('siteurl') ?? '');
     }
 
+    /** A sign-in cookie value for a user, expiry, and session token. */
     public function mint(UserRecord $user, int $expiration, string $token): string
     {
         $username = $user->login;
@@ -36,6 +37,7 @@ final readonly class Cookie
         return "{$username}|{$expiration}|{$token}|{$hmac}";
     }
 
+    /** The session a cookie value proves, or null when any part fails. */
     public function validate(string $value): ?Authenticated
     {
         $parts = explode('|', $value);

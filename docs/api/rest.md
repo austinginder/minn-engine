@@ -4,56 +4,56 @@ the wp/v2 surface: shapes and controllers
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`AdditionalFields`](#additionalfields) | final class | 40 | Which object type a wp/v2 route serves, so fields registered for that type can ride on the engine's own responses. |
-| [`Api`](#api) | final readonly class | 117 | The REST API: wires the controllers for one request and dispatches a |
-| [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 164 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
-| [`BatchRequest`](#batchrequest) | final class | 30 | The requests a batch payload names, normalised into descriptors the |
-| [`Caller`](#caller) | final class | 81 | Who is making this REST call. Resolved once from the cookie and nonce; |
-| [`CommentObject`](#commentobject) | final readonly class | 72 | The wp/v2 comment object; edit context adds the moderation-desk fields. |
-| [`CommentsController`](#commentscontroller) | final readonly class | 277 | wp/v2/comments: the status tabs with pagination headers, single, |
-| [`Context`](#context) | enum | 17 | The view a REST caller asked for. View is the public shape, edit adds the |
-| [`DeclaredPostsController`](#declaredpostscontroller) | final readonly class | 51 | wp/v2/{rest_base} for extra post types declared by an active extension. |
+| [`AdditionalFields`](#additionalfields) | final class | 46 | Which object type a wp/v2 route serves, so fields registered for that type can ride on the engine's own responses. |
+| [`Api`](#api) | final readonly class | 127 | The REST API: wires the controllers for one request and dispatches a |
+| [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 171 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
+| [`BatchRequest`](#batchrequest) | final class | 32 | The requests a batch payload names, normalised into descriptors the |
+| [`Caller`](#caller) | final class | 85 | Who is making this REST call. Resolved once from the cookie and nonce; |
+| [`CommentObject`](#commentobject) | final readonly class | 74 | The wp/v2 comment object; edit context adds the moderation-desk fields. |
+| [`CommentsController`](#commentscontroller) | final readonly class | 279 | wp/v2/comments: the status tabs with pagination headers, single, |
+| [`Context`](#context) | enum | 18 | The view a REST caller asked for. View is the public shape, edit adds the |
+| [`DeclaredPostsController`](#declaredpostscontroller) | final readonly class | 56 | wp/v2/{rest_base} for extra post types declared by an active extension. |
 | [`Embed`](#embed) | final class | 180 | The _embed decoration and the embed context. Every embeddable link in an |
-| [`EngineRoutes`](#engineroutes) | final class | 48 | The engine's own REST routes in the reference's regex form, for the |
-| [`Fields`](#fields) | final readonly class | 87 | The _fields response filter. Dot paths descend ("title.rendered"); the |
-| [`IndexController`](#indexcontroller) | final readonly class | 52 | The API index at /wp-json/: the site facts monitors read (name, url, |
-| [`Links`](#links) | final class | 33 | Response link relations compacted through CURIEs: a rel that matches a CURIE's template becomes `name:suffix`, and the used CURIEs ride along. |
-| [`ListQuery`](#listquery) | final readonly class | 137 | The collection parameters a wp/v2 list accepts, read once from the |
-| [`MediaController`](#mediacontroller) | final readonly class | 204 | wp/v2/media: list, single, upload on both transports (multipart field |
-| [`MediaObject`](#mediaobject) | final readonly class | 155 | The wp/v2 media object, view and edit context. |
-| [`MenuItemObject`](#menuitemobject) | final readonly class | 72 | The wp/v2/menu-items resource. |
-| [`MenuObject`](#menuobject) | final readonly class | 33 | The wp/v2/menus resource: a nav_menu term plus locations and auto_add. |
-| [`MenusController`](#menuscontroller) | final readonly class | 296 | wp/v2/menus, menu-items, and menu-locations. Viewing needs edit_posts; |
-| [`NavigationController`](#navigationcontroller) | final readonly class | 43 | wp/v2/navigation: the block theme's navigation menus, stored as |
-| [`ParamCheck`](#paramcheck) | final class | 71 | The required / validate / sanitize pass over a request's declared arguments. |
-| [`PluginsController`](#pluginscontroller) | final readonly class | 243 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
-| [`PostObject`](#postobject) | final readonly class | 391 | Builds the wp/v2 post and page objects in the reference's shape: the |
-| [`PostsController`](#postscontroller) | final readonly class | 163 | wp/v2 posts and pages, read side. |
-| [`PostsWriteController`](#postswritecontroller) | final readonly class | 300 | wp/v2 posts and pages, write side: create, update, trash, and force |
-| [`Reply`](#reply) | final class | 42 | JSON responses in the reference's shape: its header set, its json_encode |
-| [`RestUrl`](#resturl) | final readonly class | 33 | REST URLs in the form the reference emits for the site's permalink mode: |
-| [`RevisionsController`](#revisionscontroller) | final readonly class | 128 | wp/v2 revisions and autosaves under posts and pages, plus wp/v2/blocks. |
-| [`RouteArgs`](#routeargs) | final class | 34 | The argument groups a route registers with, filled the way register_rest_route fills them. |
-| [`RouteIndex`](#routeindex) | final class | 59 | The description of one route the REST index publishes: namespace, methods, endpoints with their argument schemas, self link. |
-| [`RouteMatch`](#routematch) | final class | 40 | Finds the registered handler for a method and path among the runtime's route table. |
-| [`RouteTable`](#routetable) | final class | 36 | The registered endpoints in dispatch shape: one handler list per route, methods as a set, non-numeric keys lifted into the route's options. |
+| [`EngineRoutes`](#engineroutes) | final class | 52 | The engine's own REST routes in the reference's regex form, for the |
+| [`Fields`](#fields) | final readonly class | 92 | The _fields response filter. Dot paths descend ("title.rendered"); the |
+| [`IndexController`](#indexcontroller) | final readonly class | 53 | The API index at /wp-json/: the site facts monitors read (name, url, |
+| [`Links`](#links) | final class | 35 | Response link relations compacted through CURIEs: a rel that matches a CURIE's template becomes `name:suffix`, and the used CURIEs ride along. |
+| [`ListQuery`](#listquery) | final readonly class | 141 | The collection parameters a wp/v2 list accepts, read once from the |
+| [`MediaController`](#mediacontroller) | final readonly class | 207 | wp/v2/media: list, single, upload on both transports (multipart field |
+| [`MediaObject`](#mediaobject) | final readonly class | 157 | The wp/v2 media object, view and edit context. |
+| [`MenuItemObject`](#menuitemobject) | final readonly class | 73 | The wp/v2/menu-items resource. |
+| [`MenuObject`](#menuobject) | final readonly class | 37 | The wp/v2/menus resource: a nav_menu term plus locations and auto_add. |
+| [`MenusController`](#menuscontroller) | final readonly class | 307 | wp/v2/menus, menu-items, and menu-locations. Viewing needs edit_posts; |
+| [`NavigationController`](#navigationcontroller) | final readonly class | 48 | wp/v2/navigation: the block theme's navigation menus, stored as |
+| [`ParamCheck`](#paramcheck) | final class | 75 | The required / validate / sanitize pass over a request's declared arguments. |
+| [`PluginsController`](#pluginscontroller) | final readonly class | 247 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
+| [`PostObject`](#postobject) | final readonly class | 394 | Builds the wp/v2 post and page objects in the reference's shape: the |
+| [`PostsController`](#postscontroller) | final readonly class | 167 | wp/v2 posts and pages, read side. |
+| [`PostsWriteController`](#postswritecontroller) | final readonly class | 306 | wp/v2 posts and pages, write side: create, update, trash, and force |
+| [`Reply`](#reply) | final class | 48 | JSON responses in the reference's shape: its header set, its json_encode |
+| [`RestUrl`](#resturl) | final readonly class | 38 | REST URLs in the form the reference emits for the site's permalink mode: |
+| [`RevisionsController`](#revisionscontroller) | final readonly class | 129 | wp/v2 revisions and autosaves under posts and pages, plus wp/v2/blocks. |
+| [`RouteArgs`](#routeargs) | final class | 36 | The argument groups a route registers with, filled the way register_rest_route fills them. |
+| [`RouteIndex`](#routeindex) | final class | 61 | The description of one route the REST index publishes: namespace, methods, endpoints with their argument schemas, self link. |
+| [`RouteMatch`](#routematch) | final class | 42 | Finds the registered handler for a method and path among the runtime's route table. |
+| [`RouteTable`](#routetable) | final class | 38 | The registered endpoints in dispatch shape: one handler list per route, methods as a set, non-numeric keys lifted into the route's options. |
 | [`RuntimeRoutes`](#runtimeroutes) | final class | 56 | Routes plugin code registered with register_rest_route(), answered |
-| [`Schema`](#schema) | final readonly class | 465 | JSON-schema handling the way the REST API's argument validation does it: |
-| [`SchemaValues`](#schemavalues) | final class | 186 | The value side of JSON Schema, as the reference applies it: what counts |
-| [`SearchController`](#searchcontroller) | final readonly class | 135 | wp/v2 search over published content: id, title, url, type, and the |
+| [`Schema`](#schema) | final readonly class | 468 | JSON-schema handling the way the REST API's argument validation does it: |
+| [`SchemaValues`](#schemavalues) | final class | 201 | The value side of JSON Schema, as the reference applies it: what counts |
+| [`SearchController`](#searchcontroller) | final readonly class | 136 | wp/v2 search over published content: id, title, url, type, and the |
 | [`Services`](#services) | final class | 366 | The objects one REST request shares, each made once, on first use, from |
-| [`Settings`](#settings) | final readonly class | 75 | The registered settings the Settings views read and write, mapped to |
-| [`SettingsController`](#settingscontroller) | final readonly class | 24 | wp/v2/settings: read and write, both behind manage_options. |
-| [`Taxonomies`](#taxonomies) | final class | 43 | The taxonomy registry the wp/v2 surface describes: the core set seeded |
-| [`TaxonomiesController`](#taxonomiescontroller) | final readonly class | 46 | wp/v2 taxonomies: the registry, whole or per type, in view or edit context. |
-| [`TemplateObject`](#templateobject) | final readonly class | 95 | The wp/v2/templates and wp/v2/template-parts resource. |
-| [`TemplatesController`](#templatescontroller) | final readonly class | 196 | wp/v2/templates and wp/v2/template-parts: the block theme's templates as |
-| [`TermObject`](#termobject) | final readonly class | 69 | The wp/v2 category and tag objects. |
-| [`TermsController`](#termscontroller) | final readonly class | 192 | wp/v2 categories and tags: list, single, and the create/update/delete the taxonomy admin drives. |
-| [`Types`](#types) | final class | 79 | The engine's registry of built-in post types, seeded from the observed |
-| [`TypesController`](#typescontroller) | final readonly class | 23 | wp/v2 types. |
-| [`UserObject`](#userobject) | final readonly class | 94 | The wp/v2 user objects: the public view shape and the edit-context shape. |
-| [`UsersController`](#userscontroller) | final readonly class | 296 | wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives. |
+| [`Settings`](#settings) | final readonly class | 76 | The registered settings the Settings views read and write, mapped to |
+| [`SettingsController`](#settingscontroller) | final readonly class | 25 | wp/v2/settings: read and write, both behind manage_options. |
+| [`Taxonomies`](#taxonomies) | final class | 48 | The taxonomy registry the wp/v2 surface describes: the core set seeded |
+| [`TaxonomiesController`](#taxonomiescontroller) | final readonly class | 47 | wp/v2 taxonomies: the registry, whole or per type, in view or edit context. |
+| [`TemplateObject`](#templateobject) | final readonly class | 97 | The wp/v2/templates and wp/v2/template-parts resource. |
+| [`TemplatesController`](#templatescontroller) | final readonly class | 204 | wp/v2/templates and wp/v2/template-parts: the block theme's templates as |
+| [`TermObject`](#termobject) | final readonly class | 75 | The wp/v2 category and tag objects. |
+| [`TermsController`](#termscontroller) | final readonly class | 195 | wp/v2 categories and tags: list, single, and the create/update/delete the taxonomy admin drives. |
+| [`Types`](#types) | final class | 87 | The engine's registry of built-in post types, seeded from the observed |
+| [`TypesController`](#typescontroller) | final readonly class | 24 | wp/v2 types. |
+| [`UserObject`](#userobject) | final readonly class | 95 | The wp/v2 user objects: the public view shape and the edit-context shape. |
+| [`UsersController`](#userscontroller) | final readonly class | 299 | wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives. |
 
 ## AdditionalFields
 
@@ -63,9 +63,13 @@ Which object type a wp/v2 route serves, so fields registered for that type can r
 
 ### static `typeForRoute(string $route, Minn\Runtime\Registry $registry): ?array`
 
+The object type a wp/v2 route serves, or null.
+
 - `@return array{0: string, 1: bool}|null the object type and whether the route is a single item`
 
 ### static `apply(array $fields, string $type, bool $single, mixed $data, callable $call): mixed`
+
+The registered fields' values added to a response, item by item.
 
 - `@param array<string, array<string, mixed>> $fields the type's registered fields`
 - `@param callable(callable, array, string, string): mixed $call runs one get_callback`
@@ -88,25 +92,39 @@ __construct(Minn\Db $db, Minn\Http\Request $request, Minn\Rest\Caller $caller, M
 
 ### `routes(): array`
 
+The engine's routes in the reference's index form.
+
 - `@return array<string, list<string>> the engine's routes in the reference's form, route => methods`
 
 ### static `forRequest(Minn\Db $db, Minn\Http\Request $request): self`
 
+The API for one request: the shared services and the route table.
+
 ### `caller(): Minn\Rest\Caller`
+
+Who is making this request.
 
 ### `postObject(): Minn\Rest\PostObject`
 
+The wp/v2 post shape.
+
 ### `termObject(): Minn\Rest\TermObject`
+
+The wp/v2 term shape.
 
 ### `userObject(): Minn\Rest\UserObject`
 
+The wp/v2 user shape.
+
 ### `types(): Minn\Rest\Types`
+
+The post types the surface knows.
 
 ### `handle(string $route): Minn\Http\Response`
 
 Resolves a REST route (from the path or from ?rest_route=) to a response.
 
-Internals: `controllers()` (private, line 64)
+Internals: `controllers()` (private, line 69)
 
 
 ## ApplicationPasswordsController
@@ -133,21 +151,31 @@ __construct(Minn\Content\Users $users, Minn\Content\Site $site, Minn\Auth\Applic
 
 Route: `GET /wp/v2/users/{id:\d+|me}/application-passwords`
 
+The user's application passwords.
+
 ### `create(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
 Route: `POST /wp/v2/users/{id:\d+|me}/application-passwords`
+
+Mints one; the plain password is in this answer only.
 
 ### `deleteAll(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
 Route: `DELETE /wp/v2/users/{id:\d+|me}/application-passwords`
 
+Removes every one.
+
 ### `introspect(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
 Route: `GET /wp/v2/users/{id:\d+|me}/application-passwords/introspect`
 
+The password the current Basic auth session used.
+
 ### `single(Minn\Http\Request $request, string $id, string $uuid): Minn\Http\Response`
 
 Route: `GET /wp/v2/users/{id:\d+|me}/application-passwords/{uuid:[0-9a-fA-F-]+}`
+
+One password by uuid.
 
 ### `update(Minn\Http\Request $request, string $id, string $uuid): Minn\Http\Response`
 
@@ -157,11 +185,15 @@ Route: `PUT /wp/v2/users/{id:\d+|me}/application-passwords/{uuid:[0-9a-fA-F-]+}`
 
 Route: `PATCH /wp/v2/users/{id:\d+|me}/application-passwords/{uuid:[0-9a-fA-F-]+}`
 
+Renames one.
+
 ### `delete(Minn\Http\Request $request, string $id, string $uuid): Minn\Http\Response`
 
 Route: `DELETE /wp/v2/users/{id:\d+|me}/application-passwords/{uuid:[0-9a-fA-F-]+}`
 
-Internals: `subject()` (private, line 122), `existing()` (private, line 147), `validate()` (private, line 156), `item()` (private, line 166), `when()` (private, line 180)
+Removes one.
+
+Internals: `subject()` (private, line 129), `existing()` (private, line 154), `validate()` (private, line 163), `item()` (private, line 173), `when()` (private, line 187)
 
 
 ## BatchRequest
@@ -174,6 +206,8 @@ off here so each sub-request carries its own query parameters, which is
 what lets one round trip stand in for several.
 
 ### static `describe(mixed $requests): array`
+
+The batch body's requests in the reference's normalised form.
 
 - `@return list<array{method: string, path: string, query: array<string, mixed>, body: ?array, headers: ?array}>`
 
@@ -194,11 +228,19 @@ __construct(Minn\Http\Request $request, Minn\Auth\Authenticator $authenticator, 
 
 ### `session(): ?Minn\Auth\Authenticated`
 
+The session, or null for an anonymous or refused caller.
+
 ### `id(): int`
+
+The caller's user id, 0 when anonymous.
 
 ### `can(string $capability, ?int $postId = NULL): bool`
 
+Whether the caller holds a capability, on a post when given.
+
 ### `capabilities(): Minn\Auth\Capabilities`
+
+The capability engine.
 
 ### `require(string $code = 'rest_not_logged_in', string $message = 'You are not currently logged in.', int $status = 401): Minn\Auth\Authenticated`
 
@@ -219,7 +261,7 @@ same rest_forbidden the reference uses. Returns the caller's id.
 
 401 for an anonymous caller, 403 for one who is signed in but refused.
 
-Internals: `resolve()` (private, line 94)
+Internals: `resolve()` (private, line 98)
 
 
 ## CommentObject
@@ -237,7 +279,11 @@ __construct(Minn\Content\Comments $comments, Minn\Content\Posts $posts, Minn\Fro
 
 ### `url(): Minn\Rest\RestUrl`
 
+The REST URL builder.
+
 ### `build(Minn\Content\CommentRecord $c, bool $edit): array`
+
+The wp/v2 comment shape, with the edit-context fields when asked.
 
 
 ## CommentsController
@@ -258,9 +304,13 @@ __construct(Minn\Content\Comments $comments, Minn\Content\Posts $posts, Minn\Con
 
 Route: `GET /wp/v2/comments`
 
+The comments list with its status tabs and pagination headers.
+
 ### `single(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
 Route: `GET /wp/v2/comments/{id:\d+}`
+
+One comment, if the caller may read it.
 
 ### `create(Minn\Http\Request $request): Minn\Http\Response`
 
@@ -284,7 +334,7 @@ Route: `DELETE /wp/v2/comments/{id:\d+}`
 
 Trash remembers where the comment came from; force removes it outright.
 
-Internals: `notifyModerator()` (private, line 141), `filter()` (private, line 209), `guarded()` (private, line 232), `date()` (private, line 263), `plainComment()` (private, line 278), `cleanComment()` (private, line 292)
+Internals: `notifyModerator()` (private, line 143), `filter()` (private, line 211), `guarded()` (private, line 234), `date()` (private, line 265), `plainComment()` (private, line 280), `cleanComment()` (private, line 294)
 
 
 ## Context
@@ -304,6 +354,8 @@ Used by: `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\MediaCont
 The context a request names, view when it names none or names one the route does not serve.
 
 ### `isEdit(): bool`
+
+Whether this is the edit context.
 
 
 ## DeclaredPostsController
@@ -325,13 +377,19 @@ __construct(Minn\Rest\Types $types, Minn\Rest\PostsController $reads, Minn\Rest\
 
 Route: `GET /wp/v2/{base:[a-z0-9_-]+}`
 
+A declared type's list.
+
 ### `single(Minn\Http\Request $request, string $base, string $id): Minn\Http\Response`
 
 Route: `GET /wp/v2/{base:[a-z0-9_-]+}/{id:\d+}`
 
+A declared type's single post.
+
 ### `create(Minn\Http\Request $request, string $base): Minn\Http\Response`
 
 Route: `POST /wp/v2/{base:[a-z0-9_-]+}`
+
+Creates a post of a declared type.
 
 ### `update(Minn\Http\Request $request, string $base, string $id): Minn\Http\Response`
 
@@ -341,11 +399,15 @@ Route: `PUT /wp/v2/{base:[a-z0-9_-]+}/{id:\d+}`
 
 Route: `PATCH /wp/v2/{base:[a-z0-9_-]+}/{id:\d+}`
 
+Updates a post of a declared type.
+
 ### `delete(Minn\Http\Request $request, string $base, string $id): Minn\Http\Response`
 
 Route: `DELETE /wp/v2/{base:[a-z0-9_-]+}/{id:\d+}`
 
-Internals: `slug()` (private, line 60)
+Trashes or deletes a post of a declared type.
+
+Internals: `slug()` (private, line 65)
 
 
 ## Embed
@@ -397,6 +459,8 @@ Used by: `Minn\Rest\Api`, `Minn\Rest\IndexController`
 
 ### static `map(Minn\Http\Router $router): array`
 
+The router's routes as route => methods, the way the index lists them.
+
 - `@return array<string, list<string>> route => methods`
 
 ### static `forms(string $pattern): array`
@@ -426,6 +490,8 @@ Used by: `Minn\Admin\SessionsController`, `Minn\Rest\ApplicationPasswordsControl
 
 ### static `fromQuery(array $query): ?self`
 
+The _fields selection a query carries, or null for everything.
+
 - `@param array<string, mixed> $query`
 
 ### `withLinksForEmbedded(): self`
@@ -433,6 +499,8 @@ Used by: `Minn\Admin\SessionsController`, `Minn\Rest\ApplicationPasswordsControl
 The same paths plus _links whenever _embedded is among them: the reference's single-object rule under _embed.
 
 ### `apply(array $object): array`
+
+The object with only the selected fields.
 
 ### static `select(array $available, array $requested): array`
 
@@ -443,7 +511,7 @@ given, dotted paths whose root is known, and `id` whenever it exists.
 - `@param list<string> $requested the parsed `_fields` list`
 - `@return list<string>`
 
-Internals: `filter()` (private, line 53)
+Internals: `filter()` (private, line 58)
 
 
 ## IndexController
@@ -465,6 +533,8 @@ __construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, Minn\Res
 
 Route: `GET /`
 
+The REST index: namespaces, routes, and the site's description.
+
 
 ## Links
 
@@ -473,6 +543,8 @@ Route: `GET /`
 Response link relations compacted through CURIEs: a rel that matches a CURIE's template becomes `name:suffix`, and the used CURIEs ride along.
 
 ### static `compact(array $links, array $curies): array`
+
+Links with their curies applied, as the reference compacts them.
 
 - `@param array<string, mixed> $links rel => items`
 - `@param list<array{name: string, href: string, templated?: bool}> $curies`
@@ -519,6 +591,8 @@ __construct(int $page = 1, int $perPage = 10, array $include = array ( ), array 
 
 ### static `fromRequest(Minn\Http\Request $request): self`
 
+The list parameters read from the request.
+
 ### `clauses(): array`
 
 The narrowing clauses, each starting with " AND", and their parameters
@@ -529,9 +603,15 @@ excerpt, or the content.
 
 ### `isSearch(): bool`
 
+Whether a search narrows the list.
+
 ### `offset(): int`
 
+The first row of the requested page.
+
 ### `totalPages(int $total): int`
+
+How many pages a total makes at this page size.
 
 ### `isPastTheEnd(int $total): bool`
 
@@ -544,7 +624,7 @@ asked for: parent=0 means "top level", author=0 means nothing.
 
 - `@return list<int>`
 
-Internals: `list()` (private, line 142), `words()` (private, line 148)
+Internals: `list()` (private, line 146), `words()` (private, line 152)
 
 
 ## MediaController
@@ -566,13 +646,19 @@ __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Content\PostWriter $wri
 
 Route: `GET /wp/v2/media`
 
+The media library list.
+
 ### `single(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
 Route: `GET /wp/v2/media/{id:\d+}`
 
+One attachment.
+
 ### `create(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `POST /wp/v2/media`
+
+Uploads a file and creates its attachment.
 
 ### `update(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
@@ -590,7 +676,7 @@ Route: `DELETE /wp/v2/media/{id:\d+}`
 
 Attachments cannot be trashed; force removes the row, its meta, and its files.
 
-Internals: `libraryClauses()` (private, line 75), `restDate()` (private, line 107), `attachment()` (private, line 211), `setMetaValue()` (private, line 220)
+Internals: `libraryClauses()` (private, line 76), `restDate()` (private, line 108), `attachment()` (private, line 214), `setMetaValue()` (private, line 223)
 
 
 ## MediaObject
@@ -608,9 +694,13 @@ __construct(Minn\Content\Posts $posts, Minn\Media\Uploads $uploads, Minn\Front\P
 
 ### `url(): Minn\Rest\RestUrl`
 
+The REST URL builder.
+
 ### `build(Minn\Content\PostRecord $p, bool $edit): array`
 
-Internals: `details()` (private, line 115), `descriptionHtml()` (private, line 149)
+The wp/v2 media shape, with the edit-context fields when asked.
+
+Internals: `details()` (private, line 117), `descriptionHtml()` (private, line 151)
 
 
 ## MenuItemObject
@@ -630,6 +720,8 @@ __construct(Minn\Rest\RestUrl $url, Minn\Rest\Caller $caller)
 
 ### `view(Minn\Content\MenuItem $item, bool $edit): array`
 
+The wp/v2 menu-item shape.
+
 
 ## MenuObject
 
@@ -645,6 +737,8 @@ __construct(Minn\Content\Menus $menus, Minn\Rest\RestUrl $url, Minn\Rest\Caller 
 
 
 ### `view(Minn\Content\TermRecord $term): array`
+
+The wp/v2 menu shape.
 
 - `@param array<string, mixed> $term`
 
@@ -667,13 +761,19 @@ __construct(Minn\Content\Menus $menus, Minn\Rest\MenuObject $menuObject, Minn\Re
 
 Route: `GET /wp/v2/menus`
 
+Every classic menu.
+
 ### `singleMenu(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
 Route: `GET /wp/v2/menus/{id:\d+}`
 
+One menu.
+
 ### `createMenu(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `POST /wp/v2/menus`
+
+Creates a menu.
 
 ### `updateMenu(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
@@ -683,21 +783,31 @@ Route: `PUT /wp/v2/menus/{id:\d+}`
 
 Route: `PATCH /wp/v2/menus/{id:\d+}`
 
+Renames or re-describes a menu.
+
 ### `deleteMenu(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
 Route: `DELETE /wp/v2/menus/{id:\d+}`
+
+Deletes a menu and its items.
 
 ### `listItems(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `GET /wp/v2/menu-items`
 
+The items of a menu.
+
 ### `singleItem(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
 Route: `GET /wp/v2/menu-items/{id:\d+}`
 
+One menu item.
+
 ### `createItem(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `POST /wp/v2/menu-items`
+
+Creates a menu item.
 
 ### `updateItem(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
@@ -707,15 +817,21 @@ Route: `PUT /wp/v2/menu-items/{id:\d+}`
 
 Route: `PATCH /wp/v2/menu-items/{id:\d+}`
 
+Updates a menu item.
+
 ### `deleteItem(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
 Route: `DELETE /wp/v2/menu-items/{id:\d+}`
+
+Deletes a menu item.
 
 ### `locations(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `GET /wp/v2/menu-locations`
 
-Internals: `gate()` (private, line 265), `writeGate()` (private, line 273), `titleFrom()` (private, line 282), `urlFrom()` (private, line 292), `refuse()` (private, line 302), `plain()` (private, line 312)
+The theme's menu locations.
+
+Internals: `gate()` (private, line 276), `writeGate()` (private, line 284), `titleFrom()` (private, line 293), `urlFrom()` (private, line 303), `refuse()` (private, line 313), `plain()` (private, line 323)
 
 
 ## NavigationController
@@ -741,13 +857,19 @@ __construct(Minn\Rest\PostsController $reads, Minn\Rest\PostsWriteController $wr
 
 Route: `GET /wp/v2/navigation`
 
+The navigation posts.
+
 ### `single(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
 Route: `GET /wp/v2/navigation/{id:\d+}`
 
+One navigation post.
+
 ### `create(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `POST /wp/v2/navigation`
+
+Creates a navigation post.
 
 ### `update(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
@@ -757,9 +879,13 @@ Route: `PUT /wp/v2/navigation/{id:\d+}`
 
 Route: `PATCH /wp/v2/navigation/{id:\d+}`
 
+Updates a navigation post.
+
 ### `delete(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
 Route: `DELETE /wp/v2/navigation/{id:\d+}`
+
+Trashes or deletes a navigation post.
 
 
 ## ParamCheck
@@ -772,18 +898,22 @@ hands them in already normalised to true, false, or [message, details].
 
 ### static `validate(array $args, callable $param, callable $validate): ?Minn\Runtime\Refusal`
 
+The first refusal among the request's parameters, or null when all pass.
+
 - `@param array<string, array<string, mixed>> $args`
 - `@param callable(string): mixed $param the request's value for one argument`
 - `@param callable(string, mixed): (bool|array{0: string, 1: mixed}) $validate true, false, or [message, details]`
 
 ### static `sanitize(array $params, array $args, callable $sanitize): array`
 
+The parameters after sanitising, or the refusal listing every invalid one.
+
 - `@param array<string, array<string, mixed>> $params the request's parameter groups, by source, in precedence order`
 - `@param array<string, array<string, mixed>> $args`
 - `@param callable(string, mixed): (array{value: mixed}|array{error: array{0: string, 1: mixed}}) $sanitize`
 - `@return array{0: array<string, array<string, mixed>>, 1: Refusal|null} the parameters after sanitising, and the refusal if any failed`
 
-Internals: `refusal()` (private, line 77)
+Internals: `refusal()` (private, line 81)
 
 
 ## PluginsController
@@ -808,6 +938,8 @@ __construct(Minn\Content\Site $site, Minn\Content\Inventory $inventory, Minn\Ext
 
 Route: `GET /wp/v2/plugins`
 
+The plugins list, optionally by status.
+
 ### `install(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `POST /wp/v2/plugins`
@@ -818,6 +950,8 @@ Installs a wordpress.org plugin by slug, optionally activating it; answers 201 w
 
 Route: `GET /wp/v2/plugins/{plugin:[^.\/]+(?:\/[^.\/]+)?}`
 
+One plugin.
+
 ### `update(Minn\Http\Request $request, string $plugin): Minn\Http\Response`
 
 Route: `PUT /wp/v2/plugins/{plugin:[^.\/]+(?:\/[^.\/]+)?}`
@@ -826,11 +960,15 @@ Route: `POST /wp/v2/plugins/{plugin:[^.\/]+(?:\/[^.\/]+)?}`
 
 Route: `PATCH /wp/v2/plugins/{plugin:[^.\/]+(?:\/[^.\/]+)?}`
 
+Activates or deactivates a plugin.
+
 ### `delete(Minn\Http\Request $request, string $plugin): Minn\Http\Response`
 
 Route: `DELETE /wp/v2/plugins/{plugin:[^.\/]+(?:\/[^.\/]+)?}`
 
-Internals: `items()` (private, line 136), `find()` (private, line 151), `manifestFor()` (private, line 161), `extensionItem()` (private, line 171), `pluginItem()` (private, line 194), `text()` (private, line 226), `description()` (private, line 232), `uri()` (private, line 251), `links()` (private, line 256), `extensionKey()` (private, line 261), `requireManager()` (private, line 266)
+Deletes an inactive plugin.
+
+Internals: `items()` (private, line 140), `find()` (private, line 155), `manifestFor()` (private, line 165), `extensionItem()` (private, line 175), `pluginItem()` (private, line 198), `text()` (private, line 230), `description()` (private, line 236), `uri()` (private, line 255), `links()` (private, line 260), `extensionKey()` (private, line 265), `requireManager()` (private, line 270)
 
 
 ## PostObject
@@ -852,11 +990,15 @@ __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Content\Users $users, M
 
 ### static `restBase(string $type): string`
 
+The rest_base of a type.
+
 ### `view(Minn\Content\PostRecord $p): array`
 
 The view-context object: the shared fields, then the type's own, then class_list and _links.
 
 ### `links(Minn\Content\PostRecord $p): array`
+
+The _links of a post in the view context.
 
 ### `edit(Minn\Content\PostRecord $p, int $userId): array`
 
@@ -884,7 +1026,9 @@ The view links plus the caller's verbs and cap-gated wp:action-* entries.
 
 ### static `date(string $mysql): string`
 
-Internals: `navigationView()` (private, line 56), `viewTerms()` (private, line 117), `typeFields()` (private, line 133), `classList()` (private, line 163), `format()` (private, line 185), `allow()` (private, line 397)
+A MySQL datetime in the reference's ISO form.
+
+Internals: `navigationView()` (private, line 57), `viewTerms()` (private, line 118), `typeFields()` (private, line 134), `classList()` (private, line 164), `format()` (private, line 186), `allow()` (private, line 399)
 
 
 ## PostsController
@@ -906,15 +1050,23 @@ __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Rest\PostObject $object
 
 Route: `GET /wp/v2/{base:posts|pages}`
 
+The posts or pages list.
+
 ### `serveList(Minn\Http\Request $request, string $type): Minn\Http\Response`
+
+The list for any post type, with the reference's status and visibility rules.
 
 ### `single(Minn\Http\Request $request, string $base, string $id): Minn\Http\Response`
 
 Route: `GET /wp/v2/{base:posts|pages}/{id:\d+}`
 
+One post or page.
+
 ### `serveSingle(Minn\Http\Request $request, string $type, string $id): Minn\Http\Response`
 
-Internals: `visibleStatuses()` (private, line 90), `visibility()` (private, line 120), `orderSql()` (private, line 134)
+One post of any type, with the reference's read rules.
+
+Internals: `visibleStatuses()` (private, line 92), `visibility()` (private, line 122), `orderSql()` (private, line 136)
 
 
 ## PostsWriteController
@@ -938,7 +1090,11 @@ __construct(Minn\Content\Posts $posts, Minn\Content\PostWriter $writer, Minn\Con
 
 Route: `POST /wp/v2/{base:posts|pages}`
 
+Creates a post or page.
+
 ### `serveCreate(Minn\Http\Request $request, string $type, string $base): Minn\Http\Response`
+
+Creates a post of any type from the body.
 
 ### `update(Minn\Http\Request $request, string $base, string $id): Minn\Http\Response`
 
@@ -948,19 +1104,27 @@ Route: `PUT /wp/v2/{base:posts|pages}/{id:\d+}`
 
 Route: `PATCH /wp/v2/{base:posts|pages}/{id:\d+}`
 
+Updates a post or page.
+
 ### `serveUpdate(Minn\Http\Request $request, string $type, string $id): Minn\Http\Response`
+
+Updates a post of any type from the body.
 
 ### `delete(Minn\Http\Request $request, string $base, string $id): Minn\Http\Response`
 
 Route: `DELETE /wp/v2/{base:posts|pages}/{id:\d+}`
 
+Trashes or deletes a post or page.
+
 ### `serveDelete(Minn\Http\Request $request, string $type, string $id): Minn\Http\Response`
+
+Trashes a post of any type, or deletes it with force.
 
 ### static `field(mixed $value): string`
 
 A field that may arrive as a scalar or as {raw: ...}.
 
-Internals: `scheduledIfFuture()` (private, line 201), `fieldColumns()` (private, line 220), `statusColumns()` (private, line 265), `checkStickyPasswordConflict()` (private, line 290), `validStatus()` (private, line 302), `clean()` (private, line 311)
+Internals: `scheduledIfFuture()` (private, line 207), `fieldColumns()` (private, line 226), `statusColumns()` (private, line 271), `checkStickyPasswordConflict()` (private, line 296), `validStatus()` (private, line 308), `clean()` (private, line 317)
 
 
 ## Reply
@@ -981,11 +1145,17 @@ One item, shaped by the request's own _fields: what nearly every handler ends wi
 
 ### static `item(mixed $data, ?Minn\Rest\Fields $fields, int $status = 200): Minn\Http\Response`
 
+One object as a response, the selected fields applied.
+
 ### static `list(array $rows, int $total, int $totalPages, ?Minn\Rest\Fields $fields): Minn\Http\Response`
+
+A list response with the total and page-count headers.
 
 - `@param list<array> $rows`
 
 ### static `error(Minn\RestError $error): Minn\Http\Response`
+
+A REST error as the reference's error body.
 
 
 ## RestUrl
@@ -1006,7 +1176,11 @@ __construct(Minn\Front\Permalinks $permalinks)
 
 ### `home(string $path = ''): string`
 
+A URL under the site's home.
+
 ### `to(string $route, array $args = array ( )): string`
+
+The URL of a REST route, pretty or plain as the site is set.
 
 - `@param array<string, string|int> $args`
 
@@ -1038,6 +1212,8 @@ Real revisions, not autosaves.
 
 Route: `GET /wp/v2/{base:posts|pages}/{id:\d+}/autosaves`
 
+The autosaves of a post.
+
 ### `createAutosave(Minn\Http\Request $request, string $base, string $id): Minn\Http\Response`
 
 Route: `POST /wp/v2/{base:posts|pages}/{id:\d+}/autosaves`
@@ -1054,7 +1230,7 @@ Reusable blocks and synced patterns (wp_block rows).
 
 One revision row as wp/v2 serves it (autosaves and revisions alike).
 
-Internals: `clean()` (private, line 69), `requireParent()` (private, line 135)
+Internals: `clean()` (private, line 70), `requireParent()` (private, line 136)
 
 
 ## RouteArgs
@@ -1064,6 +1240,8 @@ Internals: `clean()` (private, line 69), `requireParent()` (private, line 135)
 The argument groups a route registers with, filled the way register_rest_route fills them.
 
 ### static `normalise(array $args): array`
+
+Route arguments with the shared args folded into each endpoint.
 
 - `@param array<string, mixed> $args a single handler (with 'callback') or a list of handler groups, plus optional shared 'args'`
 - `@return array{0: array<int|string, mixed>, 1: bool} the groups, and whether any lacks a permission_callback`
@@ -1079,12 +1257,14 @@ The description of one route the REST index publishes: namespace, methods, endpo
 
 ### static `describe(string $route, array $callbacks, array $options, string $context, callable $restUrl): ?array`
 
+One route as the index describes it, or null when hidden.
+
 - `@param list<array<string, mixed>> $callbacks the route's handler groups`
 - `@param array<string, mixed> $options the route's non-numeric options (namespace, schema)`
 - `@param callable(string): string $restUrl`
 - `@return array<string, mixed>|null null when no endpoint shows in the index`
 
-Internals: `argument()` (private, line 50)
+Internals: `argument()` (private, line 52)
 
 
 ## RouteMatch
@@ -1094,6 +1274,8 @@ Internals: `argument()` (private, line 50)
 Finds the registered handler for a method and path among the runtime's route table.
 
 ### static `find(array $namespaces, callable $routesFor, string $method, string $path): Minn\Runtime\Refusal|array`
+
+The handler for a method and path across the registered namespaces, or the refusal.
 
 - `@param list<string> $namespaces the registered namespaces`
 - `@param callable(string): array<string, list<array<string, mixed>>> $routesFor the (filtered) routes of one namespace, or all when given ''`
@@ -1109,6 +1291,8 @@ The registered endpoints in dispatch shape: one handler list per route, methods 
 - const `HANDLER_DEFAULTS` = `array (   'methods' =>    array (   ),   'accept_json' => false,   'accept_raw' => false,   'show_in_index' => true,   'args' =>    array (   ), )`
 
 ### static `normalise(array $endpoints): array`
+
+Registered endpoints as a route table with their options.
 
 - `@param array<string, mixed> $endpoints route => a handler or a list of handlers plus options`
 - `@return array{0: array<string, list<array<string, mixed>>>, 1: array<string, array<string, mixed>>} the routes, and the options found per route`
@@ -1157,7 +1341,11 @@ __construct(Closure $email, Closure $number, Closure $format)
 
 ### `validate(mixed $value, array $args, string $param = ''): Minn\Runtime\Refusal|true`
 
+Whether a value satisfies a schema, or the reference's refusal.
+
 ### `sanitize(mixed $value, array $args, string $param = ''): mixed`
+
+A value coerced to its schema's types.
 
 ### `filterByContext(mixed $data, array $schema, string $context): mixed`
 
@@ -1175,7 +1363,9 @@ required flags on the create route only, and any arg_options overrides.
 
 ### static `closeObjects(array $schema): array`
 
-Internals: `validateComposite()` (private, line 101), `validateString()` (private, line 127), `validateNumber()` (private, line 145), `validateArray()` (private, line 157), `validateObject()` (private, line 183), `validateFormat()` (private, line 220), `validateBounds()` (private, line 232), `enum()` (private, line 269), `wrongType()` (private, line 284)
+The schema with additionalProperties closed on every object.
+
+Internals: `validateComposite()` (private, line 102), `validateString()` (private, line 128), `validateNumber()` (private, line 146), `validateArray()` (private, line 158), `validateObject()` (private, line 184), `validateFormat()` (private, line 221), `validateBounds()` (private, line 233), `enum()` (private, line 270), `wrongType()` (private, line 285)
 
 
 ## SchemaValues
@@ -1192,17 +1382,31 @@ Used by: `Minn\Rest\Schema`
 
 ### static `isBoolean(mixed $value): bool`
 
+Whether a value reads as a boolean, the strings included.
+
 ### static `toBoolean(mixed $value): mixed`
+
+The boolean a value reads as.
 
 ### static `isInteger(mixed $value): bool`
 
+Whether a value is a whole number.
+
 ### static `isArray(mixed $value): bool`
+
+Whether a value reads as a list, a comma-separated string included.
 
 ### static `toArray(mixed $value): array`
 
+The list a value reads as.
+
 ### static `isObject(mixed $value): bool`
 
+Whether a value reads as an object.
+
 ### static `toObject(mixed $value): array`
+
+The object a value reads as, as an array.
 
 ### static `bestType(mixed $value, array|string $types): string`
 
@@ -1210,7 +1414,11 @@ The one type among the candidates the value reads as, in the reference's order o
 
 ### static `valuesEqual(mixed $a, mixed $b): bool`
 
+Whether two values are equal by the reference's loose rules.
+
 ### static `patternProperty(string $property, array $args): ?array`
+
+The schema of the patternProperties entry a property name matches, or null.
 
 ### static `stabilize(mixed $value): mixed`
 
@@ -1222,9 +1430,15 @@ A timestamp for an RFC3339-shaped date, false otherwise; $forceUtc reads the off
 
 ### static `parseHexColor(mixed $color): mixed`
 
+A hex colour as given, or false.
+
 ### static `isUuid(mixed $uuid): bool`
 
+Whether a value is a version-4 uuid.
+
 ### static `list(mixed $value): array`
+
+A comma- or space-separated string as a list.
 
 - `@return list<string>`
 
@@ -1260,7 +1474,9 @@ __construct(Minn\Db $db, Minn\Rest\Types $types, Minn\Front\Permalinks $permalin
 
 Route: `GET /wp/v2/search`
 
-Internals: `item()` (private, line 71), `subtypes()` (private, line 94), `rankExpression()` (private, line 109), `terms()` (private, line 120), `escapeLike()` (private, line 137), `intParam()` (private, line 142)
+Search across post types with the reference's relevance order.
+
+Internals: `item()` (private, line 72), `subtypes()` (private, line 95), `rankExpression()` (private, line 110), `terms()` (private, line 121), `escapeLike()` (private, line 138), `intParam()` (private, line 143)
 
 
 ## Services
@@ -1480,6 +1696,8 @@ __construct(Minn\Content\Site $site)
 
 ### `payload(): array`
 
+Every registered setting with its current value.
+
 ### `store(array $body): void`
 
 Writes the registered keys in a body; unregistered keys are ignored.
@@ -1508,6 +1726,8 @@ Route: `PUT /wp/v2/settings`
 
 Route: `PATCH /wp/v2/settings`
 
+The site settings: read, or write from the body.
+
 
 ## Taxonomies
 
@@ -1526,9 +1746,13 @@ __construct(Minn\Rest\RestUrl $url)
 
 ### `all(): array`
 
+Every taxonomy the surface knows, by slug.
+
 - `@return array<string, array> keyed by taxonomy slug`
 
 ### `find(string $slug): ?array`
+
+One taxonomy by slug, or null.
 
 ### `forType(string $type): array`
 
@@ -1564,7 +1788,9 @@ A whole-payload reply like types: _fields filters the map, not its members.
 
 Route: `GET /wp/v2/taxonomies/{slug:[\w-]+}`
 
-Internals: `context()` (private, line 51)
+One taxonomy.
+
+Internals: `context()` (private, line 52)
 
 
 ## TemplateObject
@@ -1582,9 +1808,13 @@ __construct(Minn\Theme\TemplateIndex $index, Minn\Content\Posts $posts, Minn\Res
 
 ### `base(string $type): string`
 
+The rest_base of a template type.
+
 ### `view(Minn\Theme\TemplateRecord $record, bool $edit): array`
 
-Internals: `links()` (private, line 81)
+The wp/v2 template shape.
+
+Internals: `links()` (private, line 83)
 
 
 ## TemplatesController
@@ -1612,17 +1842,25 @@ __construct(Minn\Theme\TemplateIndex $index, Minn\Theme\TemplateWriter $writer, 
 
 Route: `GET /wp/v2/templates`
 
+The templates list.
+
 ### `parts(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `GET /wp/v2/template-parts`
+
+The template parts list.
 
 ### `template(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
 Route: `GET /wp/v2/templates/{id*}`
 
+One template.
+
 ### `part(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
 Route: `GET /wp/v2/template-parts/{id*}`
+
+One template part.
 
 ### `saveTemplate(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
@@ -1632,6 +1870,8 @@ Route: `PUT /wp/v2/templates/{id*}`
 
 Route: `PATCH /wp/v2/templates/{id*}`
 
+Saves a template.
+
 ### `savePart(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
 Route: `POST /wp/v2/template-parts/{id*}`
@@ -1640,15 +1880,21 @@ Route: `PUT /wp/v2/template-parts/{id*}`
 
 Route: `PATCH /wp/v2/template-parts/{id*}`
 
+Saves a template part.
+
 ### `deleteTemplate(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
 Route: `DELETE /wp/v2/templates/{id*}`
+
+Deletes a customised template.
 
 ### `deletePart(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
 Route: `DELETE /wp/v2/template-parts/{id*}`
 
-Internals: `listing()` (private, line 89), `single()` (private, line 106), `save()` (private, line 115), `delete()` (private, line 142), `trashed()` (private, line 159), `record()` (private, line 181), `readable()` (private, line 191), `requireWrite()` (private, line 202), `text()` (private, line 211)
+Deletes a customised template part.
+
+Internals: `listing()` (private, line 97), `single()` (private, line 114), `save()` (private, line 123), `delete()` (private, line 150), `trashed()` (private, line 167), `record()` (private, line 189), `readable()` (private, line 199), `requireWrite()` (private, line 210), `text()` (private, line 219)
 
 
 ## TermObject
@@ -1668,13 +1914,19 @@ __construct(Minn\Db $db, Minn\Front\Permalinks $permalinks, Minn\Rest\RestUrl $u
 
 ### `url(): Minn\Rest\RestUrl`
 
+The REST URL builder.
+
 ### static `config(string $restBase): array`
+
+The taxonomy behind a rest_base.
 
 - `@return array{taxonomy: string, has_parent: bool, post_arg: string}`
 
 ### `view(Minn\Content\TermRecord $term, string $restBase): array`
 
-Internals: `allowedVerbs()` (private, line 71)
+The wp/v2 term shape.
+
+Internals: `allowedVerbs()` (private, line 77)
 
 
 ## TermsController
@@ -1696,9 +1948,13 @@ __construct(Minn\Db $db, Minn\Content\Terms $terms, Minn\Content\Site $site, Min
 
 Route: `GET /wp/v2/{base:categories|tags}`
 
+The categories or tags list.
+
 ### `single(Minn\Http\Request $request, string $base, string $id): Minn\Http\Response`
 
 Route: `GET /wp/v2/{base:categories|tags}/{id:\d+}`
+
+One category or tag.
 
 ### `create(Minn\Http\Request $request, string $base): Minn\Http\Response`
 
@@ -1713,6 +1969,8 @@ Route: `POST /wp/v2/{base:categories|tags}/{id:\d+}`
 Route: `PUT /wp/v2/{base:categories|tags}/{id:\d+}`
 
 Route: `PATCH /wp/v2/{base:categories|tags}/{id:\d+}`
+
+Updates a category or tag.
 
 ### `delete(Minn\Http\Request $request, string $base, string $id): Minn\Http\Response`
 
@@ -1738,15 +1996,25 @@ __construct(Minn\Rest\RestUrl $url, array $declared = array ( ))
 
 ### `all(): array`
 
+Every post type the surface knows, by slug.
+
 - `@return array<string, array> keyed by type slug`
 
 ### `find(string $slug): ?array`
 
+One post type by slug, or null.
+
 ### `slugForRestBase(string $base): ?string`
+
+The type behind a rest_base, or null.
 
 ### `isDeclared(string $slug): bool`
 
+Whether an extension declared this type.
+
 ### `restBase(string $slug): string`
+
+The rest_base of a type slug.
 
 
 ## TypesController
@@ -1772,6 +2040,8 @@ Deliberately a whole-payload reply: _fields strips every type key, yielding [].
 
 Route: `GET /wp/v2/types/{slug:[\w-]+}`
 
+One post type.
+
 
 ## UserObject
 
@@ -1791,6 +2061,8 @@ __construct(Minn\Db $db, Minn\Content\Users $users, Minn\Front\Permalinks $perma
 Gravatar URLs in the sizes the reference emits (sha256 of the email).
 
 ### `view(Minn\Content\UserRecord $u, bool $isSelf = false): array`
+
+The wp/v2 user shape in the view context.
 
 ### `edit(Minn\Content\UserRecord $u): array`
 
@@ -1818,6 +2090,8 @@ __construct(Minn\Db $db, Minn\Content\Users $users, Minn\Content\Site $site, Min
 
 Route: `GET /wp/v2/users/me`
 
+The signed-in user.
+
 ### `list(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `GET /wp/v2/users`
@@ -1827,6 +2101,8 @@ View context lists published authors; edit context lists everyone.
 ### `single(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
 Route: `GET /wp/v2/users/{id:\d+}`
+
+One user.
 
 ### `create(Minn\Http\Request $request): Minn\Http\Response`
 
@@ -1842,11 +2118,13 @@ Route: `PUT /wp/v2/users/{id:\d+}`
 
 Route: `PATCH /wp/v2/users/{id:\d+}`
 
+Updates a user.
+
 ### `delete(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
 Route: `DELETE /wp/v2/users/{id:\d+}`
 
 reassign is REQUIRED (checked before the user lookup), and so is force.
 
-Internals: `welcome()` (private, line 139), `hasPublishedContent()` (private, line 152), `validRole()` (private, line 161), `validEmail()` (private, line 169)
+Internals: `welcome()` (private, line 141), `hasPublishedContent()` (private, line 154), `validRole()` (private, line 163), `validEmail()` (private, line 171)
 

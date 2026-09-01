@@ -4,23 +4,23 @@ passwords, sessions, cookies, nonces, roles and capabilities
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`ApplicationPasswords`](#applicationpasswords) | final readonly class | 135 | Application passwords as the reference stores them: a serialized list in |
-| [`AuthCookies`](#authcookies) | final readonly class | 54 | The three cookies a sign-in sets: the auth cookie on the admin and |
-| [`AuthFailure`](#authfailure) | final readonly class | 16 | Why a request is not authenticated, as the reference's error code: a |
-| [`Authenticated`](#authenticated) | final readonly class | 15 | A validated session: the user row and the raw session token behind it. |
-| [`Authenticator`](#authenticator) | final readonly class | 108 | Resolves the current user two ways. A page load carries the cookie alone; |
-| [`Capabilities`](#capabilities) | final readonly class | 151 | The capability engine: a user's roles from {prefix}capabilities usermeta, |
-| [`Cookie`](#cookie) | final readonly class | 73 | The logged_in auth cookie: username\|expiration\|token\|hmac, with |
-| [`LoginThrottle`](#loginthrottle) | final readonly class | 76 | Failed sign-ins per address, so a password guesser meets a wall: twenty |
-| [`Nonce`](#nonce) | final class | 30 | The wp_rest nonce: ten characters of HMAC-md5(tick\|wp_rest\|uid\|token) |
-| [`Password`](#password) | final class | 32 | The stored password scheme. A modern "$wp$2y$..." value is bcrypt over |
-| [`PasswordReset`](#passwordreset) | final readonly class | 45 | Password reset keys in the reference's storage shape: user_activation_key |
-| [`Phpass`](#phpass) | final class | 60 | The portable phpass hash ($P$), from Openwall's public description of the |
-| [`PortableHash`](#portablehash) | final class | 60 | The portable phpass hash ("$P$"), the shape the reference stores in |
-| [`Roles`](#roles) | final class | 64 | Role definitions from the site's {prefix}user_roles option, parsed by a |
-| [`Salts`](#salts) | final class | 34 | The site's own secret material, read from the constants wp-config.php |
-| [`Sessions`](#sessions) | final readonly class | 155 | The session_tokens usermeta store: {sha256(token): {expiration, ip, ua, |
-| [`TypeCapabilities`](#typecapabilities) | final readonly class | 36 | The capability names a post type's permissions are built from. Posts and |
+| [`ApplicationPasswords`](#applicationpasswords) | final readonly class | 153 | Application passwords as the reference stores them: a serialized list in |
+| [`AuthCookies`](#authcookies) | final readonly class | 55 | The three cookies a sign-in sets: the auth cookie on the admin and |
+| [`AuthFailure`](#authfailure) | final readonly class | 18 | Why a request is not authenticated, as the reference's error code: a |
+| [`Authenticated`](#authenticated) | final readonly class | 16 | A validated session: the user row and the raw session token behind it. |
+| [`Authenticator`](#authenticator) | final readonly class | 121 | Resolves the current user two ways. A page load carries the cookie alone; |
+| [`Capabilities`](#capabilities) | final readonly class | 161 | The capability engine: a user's roles from {prefix}capabilities usermeta, |
+| [`Cookie`](#cookie) | final readonly class | 75 | The logged_in auth cookie: username\|expiration\|token\|hmac, with |
+| [`LoginThrottle`](#loginthrottle) | final readonly class | 78 | Failed sign-ins per address, so a password guesser meets a wall: twenty |
+| [`Nonce`](#nonce) | final class | 34 | The wp_rest nonce: ten characters of HMAC-md5(tick\|wp_rest\|uid\|token) |
+| [`Password`](#password) | final class | 33 | The stored password scheme. A modern "$wp$2y$..." value is bcrypt over |
+| [`PasswordReset`](#passwordreset) | final readonly class | 46 | Password reset keys in the reference's storage shape: user_activation_key |
+| [`Phpass`](#phpass) | final class | 62 | The portable phpass hash ($P$), from Openwall's public description of the |
+| [`PortableHash`](#portablehash) | final class | 61 | The portable phpass hash ("$P$"), the shape the reference stores in |
+| [`Roles`](#roles) | final class | 68 | Role definitions from the site's {prefix}user_roles option, parsed by a |
+| [`Salts`](#salts) | final class | 35 | The site's own secret material, read from the constants wp-config.php |
+| [`Sessions`](#sessions) | final readonly class | 160 | The session_tokens usermeta store: {sha256(token): {expiration, ip, ua, |
+| [`TypeCapabilities`](#typecapabilities) | final readonly class | 41 | The capability names a post type's permissions are built from. Posts and |
 
 ## ApplicationPasswords
 
@@ -44,17 +44,25 @@ __construct(Minn\Content\Users $users)
 
 ### `all(int $userId): array`
 
+Every application password of a user, as stored records without the hash's plain text.
+
 - `@return list<array<string, mixed>>`
 
 ### `find(int $userId, string $uuid): ?array`
+
+One record by uuid, or null.
 
 - `@return array<string, mixed>|null`
 
 ### `create(int $userId, string $name, string $appId): array`
 
+Mints a password, stores its hash, and returns the record with the plain text once.
+
 - `@return array{0: array<string, mixed>, 1: string} the stored record and the one-time plaintext`
 
 ### `rename(int $userId, string $uuid, string $name): ?array`
+
+Renames one password; null when the uuid is unknown.
 
 ### `touch(int $userId, string $uuid, string $ip): ?array`
 
@@ -62,7 +70,11 @@ Records a use: the time and the address it came from.
 
 ### `delete(int $userId, string $uuid): ?array`
 
+Removes one password and returns its record; null when unknown.
+
 ### `deleteAll(int $userId): int`
+
+Removes every application password of a user and returns how many.
 
 ### `verify(int $userId, string $password): ?array`
 
@@ -76,7 +88,7 @@ Twenty-four letters and digits.
 
 The plaintext as shown once: groups of four, space separated.
 
-Internals: `change()` (private, line 125), `save()` (private, line 140), `uuid()` (private, line 145)
+Internals: `change()` (private, line 143), `save()` (private, line 158), `uuid()` (private, line 163)
 
 
 ## AuthCookies
@@ -105,6 +117,8 @@ A non-persistent sign-in keeps the server expiry but sends session cookies the b
 
 ### `clear(Minn\Http\Response $response): Minn\Http\Response`
 
+The response with every sign-in cookie expired.
+
 ### static `mint(Minn\Content\UserRecord $user, int $expiration, string $token, string $scheme): string`
 
 A cookie value under any scheme's salt (auth, secure_auth, logged_in).
@@ -128,7 +142,11 @@ __construct(string $code)
 
 ### static `notLoggedIn(): self`
 
+No usable session.
+
 ### static `invalidNonce(): self`
+
+A session whose nonce did not verify.
 
 
 ## Authenticated
@@ -150,6 +168,8 @@ __construct(Minn\Content\UserRecord $user, string $token, ?array $applicationPas
 
 ### `id(): int`
 
+The signed-in user's id.
+
 
 ## Authenticator
 
@@ -167,11 +187,17 @@ __construct(Minn\Auth\Cookie $cookie, Minn\Content\Users $users)
 
 ### static `fromDb(Minn\Db $db): self`
 
+An authenticator over the shared database door.
+
 ### `session(array $cookies): Minn\Auth\Authenticated|Minn\Auth\AuthFailure`
+
+The session the cookie jar carries, or why there is none.
 
 - `@param array<string, string> $cookies`
 
 ### `rest(array $cookies, ?string $nonce): Minn\Auth\Authenticated|Minn\Auth\AuthFailure`
+
+The session for a REST call: the cookie, then the nonce.
 
 - `@param array<string, string> $cookies`
 
@@ -190,6 +216,8 @@ The user an Authorization: Basic header's application password unlocks, with the
 Application passwords need HTTPS, unless plugin code says otherwise through the reference's filter.
 
 ### static `applicationPasswordsAvailableFor(Minn\Content\UserRecord $user): bool`
+
+Whether Basic auth may sign this user in; the runtime's filter has the last word.
 
 - `@param array<string, mixed> $user`
 
@@ -215,13 +243,21 @@ __construct(Minn\Db $db, Minn\Content\Users $users, Minn\Auth\Roles $roles)
 
 ### static `fromDb(Minn\Db $db): self`
 
+The capability engine over the shared database door.
+
 ### `roles(): Minn\Auth\Roles`
 
+The role definitions.
+
 ### `rolesOf(int $userId): array`
+
+The role slugs a user holds.
 
 - `@return list<string> role slugs`
 
 ### `primitivesOf(int $userId): array`
+
+Every primitive capability a user holds through their roles.
 
 - `@return array<string, true> the union of primitives the user's roles grant`
 
@@ -235,7 +271,7 @@ The primitives a capability requires, all of which must be held.
 
 - `@return list<string>`
 
-Internals: `mapPostCapability()` (private, line 104), `fold()` (private, line 152), `trashedFrom()` (private, line 157)
+Internals: `mapPostCapability()` (private, line 114), `fold()` (private, line 162), `trashedFrom()` (private, line 167)
 
 
 ## Cookie
@@ -260,7 +296,11 @@ The cookie name this site uses: a hash of the siteurl option.
 
 ### `mint(Minn\Content\UserRecord $user, int $expiration, string $token): string`
 
+A sign-in cookie value for a user, expiry, and session token.
+
 ### `validate(string $value): ?Minn\Auth\Authenticated`
+
+The session a cookie value proves, or null when any part fails.
 
 ### `fromJar(array $cookies): ?string`
 
@@ -270,7 +310,7 @@ derived from a different host.
 
 - `@param array<string, string> $cookies`
 
-Internals: `signature()` (private, line 84)
+Internals: `signature()` (private, line 86)
 
 
 ## LoginThrottle
@@ -299,9 +339,13 @@ Seconds the address must wait, or null when it may try.
 
 ### `recordFailure(string $address, ?int $now = NULL): void`
 
+Counts one failed sign-in from an address within the current window.
+
 ### `clear(string $address): void`
 
-Internals: `read()` (private, line 55), `write()` (private, line 64), `prune()` (private, line 76), `key()` (private, line 86)
+Forgets an address's failures.
+
+Internals: `read()` (private, line 57), `write()` (private, line 66), `prune()` (private, line 78), `key()` (private, line 88)
 
 
 ## Nonce
@@ -317,11 +361,19 @@ Used by: `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Auth\Authen
 
 ### static `tick(): float`
 
+The current half-life tick a nonce is bound to.
+
 ### static `create(int $userId, string $token, string $action = 'wp_rest'): string`
+
+A wp_rest nonce for a user and session token at the current tick.
 
 ### static `verify(string $nonce, int $userId, string $token, string $action = 'wp_rest'): bool`
 
+Whether a nonce is valid at this tick or the one before.
+
 ### static `at(float $tick, int $userId, string $token, string $action): string`
+
+The nonce for a given tick.
 
 
 ## Password
@@ -335,6 +387,8 @@ bcrypt. Legacy phpass "$P$" hashes are not verified.
 Used by: `Minn\Auth\ApplicationPasswords`, `Minn\Auth\AuthCookies`, `Minn\Auth\Authenticator`, `Minn\Auth\Cookie`, `Minn\Cli\UserCommand`, `Minn\Content\Users`, `Minn\Login\LoginController`, `Minn\Rest\UsersController`
 
 ### static `verify(string $password, string $hash): bool`
+
+Whether a password matches a stored hash of either scheme.
 
 ### static `hash(string $password): string`
 
@@ -381,7 +435,9 @@ True when the key matches the stored hash and has not expired.
 
 ### `clear(Minn\Content\UserRecord $user): void`
 
-Internals: `hash()` (private, line 57)
+Forgets a user's reset key.
+
+Internals: `hash()` (private, line 58)
 
 
 ## Phpass
@@ -399,9 +455,13 @@ Used by: `Minn\Auth\ApplicationPasswords`
 
 ### static `hash(string $password, int $log2Rounds = 11): string`
 
+A portable phpass hash of a password.
+
 ### static `verify(string $password, string $hash): bool`
 
-Internals: `crypt()` (private, line 31), `encode()` (private, line 47)
+Whether a password matches a portable phpass hash.
+
+Internals: `crypt()` (private, line 33), `encode()` (private, line 49)
 
 
 ## PortableHash
@@ -424,7 +484,9 @@ The reference's cookies carry 2^13 iterations; it accepts nothing weaker.
 
 ### static `verify(string $password, string $hash): bool`
 
-Internals: `crypt()` (private, line 33), `encode()` (private, line 48)
+Whether a password matches a portable hash from the published algorithm.
+
+Internals: `crypt()` (private, line 34), `encode()` (private, line 49)
 
 
 ## Roles
@@ -458,6 +520,8 @@ Drops the parsed map so the next read sees a rewritten option.
 
 ### `all(): array`
 
+Every role with its name and capabilities, from the option or the shipped defaults.
+
 ### static `parse(?string $blob): ?array`
 
 Each role is a string key over a two-entry array of "name" and
@@ -481,6 +545,8 @@ Used by: `Minn\Auth\AuthCookies`, `Minn\Auth\Cookie`, `Minn\Auth\Nonce`, `Minn\A
 True when every key and salt is defined and none is the installer's placeholder.
 
 ### static `for(string $scheme): string`
+
+The key and salt of a scheme joined, as the reference feeds them to its HMACs.
 
 ### static `hash(string $data, string $scheme): string`
 
@@ -508,6 +574,8 @@ A 43-character token; only sha256(token) is ever stored or compared.
 
 ### `isLive(int $userId, string $token): bool`
 
+Whether a session token is still stored and unexpired for a user.
+
 ### `create(int $userId, int $expiration, string $ip, string $userAgent): string`
 
 Creates a session, pruning expired ones, and returns the raw token.
@@ -530,13 +598,15 @@ Ends every session of the user except the one stored under the given key.
 
 ### `read(int $userId): array`
 
+Every stored session of a user, keyed by token hash.
+
 - `@return array<string, array{expiration: int, ip: string, ua: string, login: int}>`
 
 ### static `serialize(array $sessions): string`
 
 The map in PHP's serialized form, entry keys in the order given.
 
-Internals: `parseEntry()` (private, line 120), `prune()` (private, line 138), `write()` (private, line 144), `string()` (private, line 164)
+Internals: `parseEntry()` (private, line 125), `prune()` (private, line 143), `write()` (private, line 149), `string()` (private, line 169)
 
 
 ## TypeCapabilities
@@ -559,11 +629,21 @@ A cap name built from the post/page family, folded when the type folds.
 
 ### static `plural(string $type): string`
 
+The capability stem of a type: pages for page, posts for everything else.
+
 ### static `edit(string $type): string`
+
+The edit capability of a type.
 
 ### static `editOthers(string $type): string`
 
+The edit-others capability of a type.
+
 ### static `publish(string $type): string`
 
+The publish capability of a type.
+
 ### static `readPrivate(string $type): string`
+
+The read-private capability of a type.
 

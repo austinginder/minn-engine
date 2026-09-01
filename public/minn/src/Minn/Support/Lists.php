@@ -13,6 +13,8 @@ namespace Minn\Support;
 final class Lists
 {
     /**
+     * Items sorted by several fields, each ascending or descending.
+     *
      * @param array<int|string, mixed> $items
      * @param array<string, string> $orderby field => ASC|DESC
      * @return array<int|string, mixed>

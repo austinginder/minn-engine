@@ -79,7 +79,11 @@ final class Kses
         'aspect-ratio', 'box-shadow', 'box-sizing', 'z-index',
     ];
 
-    /** @param array<string, list<string>> $allowed */
+    /**
+     * HTML with only the allowed tags and attributes kept.
+     *
+     * @param array<string, list<string>> $allowed
+     */
     public static function filter(string $html, array $allowed): string
     {
         return (string) preg_replace_callback(

@@ -34,30 +34,35 @@ final readonly class TemplatesController
     ) {
     }
 
+    /** The templates list. */
     #[Route(Method::Get, '/wp/v2/templates')]
     public function templates(Request $request): Response
     {
         return $this->listing($request, TemplateIndex::TEMPLATE);
     }
 
+    /** The template parts list. */
     #[Route(Method::Get, '/wp/v2/template-parts')]
     public function parts(Request $request): Response
     {
         return $this->listing($request, TemplateIndex::PART);
     }
 
+    /** One template. */
     #[Route(Method::Get, '/wp/v2/templates/{id*}')]
     public function template(Request $request, string $id): Response
     {
         return $this->single($request, TemplateIndex::TEMPLATE, $id);
     }
 
+    /** One template part. */
     #[Route(Method::Get, '/wp/v2/template-parts/{id*}')]
     public function part(Request $request, string $id): Response
     {
         return $this->single($request, TemplateIndex::PART, $id);
     }
 
+    /** Saves a template. */
     #[Route(Method::Post, '/wp/v2/templates/{id*}')]
     #[Route(Method::Put, '/wp/v2/templates/{id*}')]
     #[Route(Method::Patch, '/wp/v2/templates/{id*}')]
@@ -66,6 +71,7 @@ final readonly class TemplatesController
         return $this->save($request, TemplateIndex::TEMPLATE, $id);
     }
 
+    /** Saves a template part. */
     #[Route(Method::Post, '/wp/v2/template-parts/{id*}')]
     #[Route(Method::Put, '/wp/v2/template-parts/{id*}')]
     #[Route(Method::Patch, '/wp/v2/template-parts/{id*}')]
@@ -74,12 +80,14 @@ final readonly class TemplatesController
         return $this->save($request, TemplateIndex::PART, $id);
     }
 
+    /** Deletes a customised template. */
     #[Route(Method::Delete, '/wp/v2/templates/{id*}')]
     public function deleteTemplate(Request $request, string $id): Response
     {
         return $this->delete($request, TemplateIndex::TEMPLATE, $id);
     }
 
+    /** Deletes a customised template part. */
     #[Route(Method::Delete, '/wp/v2/template-parts/{id*}')]
     public function deletePart(Request $request, string $id): Response
     {

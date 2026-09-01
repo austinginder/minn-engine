@@ -29,6 +29,7 @@ final readonly class TermsController
     ) {
     }
 
+    /** The categories or tags list. */
     #[Route(Method::Get, '/wp/v2/{base:categories|tags}')]
     public function list(Request $request, string $base): Response
     {
@@ -92,6 +93,7 @@ final readonly class TermsController
         );
     }
 
+    /** One category or tag. */
     #[Route(Method::Get, '/wp/v2/{base:categories|tags}/{id:\d+}')]
     public function single(Request $request, string $base, string $id): Response
     {
@@ -149,6 +151,7 @@ final readonly class TermsController
             ->withHeader('Location', $this->object->url()->to("/wp/v2/{$base}/{$termId}"));
     }
 
+    /** Updates a category or tag. */
     #[Route(Method::Post, '/wp/v2/{base:categories|tags}/{id:\d+}')]
     #[Route(Method::Put, '/wp/v2/{base:categories|tags}/{id:\d+}')]
     #[Route(Method::Patch, '/wp/v2/{base:categories|tags}/{id:\d+}')]

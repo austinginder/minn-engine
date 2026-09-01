@@ -47,6 +47,7 @@ final readonly class Settings
     {
     }
 
+    /** Every registered setting with its current value. */
     public function payload(): array
     {
         $out = [];

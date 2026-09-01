@@ -7,6 +7,7 @@ namespace Minn\Support;
 /** Makes a value encodable: strings that are not valid UTF-8 get their high bytes replaced, recursively. */
 final class Json
 {
+    /** A value with every string made valid UTF-8, ready to encode. */
     public static function sanitize(mixed $value): mixed
     {
         if (is_string($value)) {

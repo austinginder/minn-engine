@@ -18,6 +18,7 @@ final readonly class Mailer
     {
     }
 
+    /** A mailer using the site's own settings. */
     public static function forSite(Site $site): self
     {
         return new self(MailSettings::fromSite($site), ABSPATH . 'wp-content/minn-mail.log');
@@ -41,6 +42,7 @@ final readonly class Mailer
         );
     }
 
+    /** Sends one message over the configured transport; false on failure. */
     public function send(Message $message): bool
     {
         $from = $message->fromEmail !== '' ? $message->fromEmail : $this->settings->fromEmail;
@@ -83,6 +85,7 @@ final readonly class Mailer
         return file_put_contents($this->logFile, $line, FILE_APPEND | LOCK_EX) !== false;
     }
 
+    /** A mail address with an optional display name, header-encoded. */
     public static function address(string $email, string $name): string
     {
         $name = trim(str_replace(["\r", "\n"], '', $name));

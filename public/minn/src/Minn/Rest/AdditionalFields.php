@@ -9,7 +9,11 @@ use Minn\Runtime\Registry;
 /** Which object type a wp/v2 route serves, so fields registered for that type can ride on the engine's own responses. */
 final class AdditionalFields
 {
-    /** @return array{0: string, 1: bool}|null the object type and whether the route is a single item */
+    /**
+     * The object type a wp/v2 route serves, or null.
+     *
+     * @return array{0: string, 1: bool}|null the object type and whether the route is a single item
+     */
     public static function typeForRoute(string $route, Registry $registry): ?array
     {
         if (!preg_match('#^/wp/v2/([a-z_-]+)(/\d+)?$#', $route, $m)) {
@@ -28,6 +32,8 @@ final class AdditionalFields
     }
 
     /**
+     * The registered fields' values added to a response, item by item.
+     *
      * @param array<string, array<string, mixed>> $fields the type's registered fields
      * @param callable(callable, array, string, string): mixed $call runs one get_callback
      */

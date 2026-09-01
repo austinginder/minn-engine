@@ -32,6 +32,7 @@ final readonly class UserObject
         return $urls;
     }
 
+    /** The wp/v2 user shape in the view context. */
     public function view(UserRecord $u, bool $isSelf = false): array
     {
         $id = $u->id;

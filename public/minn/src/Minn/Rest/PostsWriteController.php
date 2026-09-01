@@ -37,12 +37,14 @@ final readonly class PostsWriteController
     ) {
     }
 
+    /** Creates a post or page. */
     #[Route(Method::Post, '/wp/v2/{base:posts|pages}')]
     public function create(Request $request, string $base): Response
     {
         return $this->serveCreate($request, $base === 'pages' ? 'page' : 'post', $base);
     }
 
+    /** Creates a post of any type from the body. */
     public function serveCreate(Request $request, string $type, string $base): Response
     {
         $userId = $this->caller->require('rest_cannot_create', 'Sorry, you are not allowed to create posts as this user.')->id();
@@ -123,6 +125,7 @@ final readonly class PostsWriteController
             ->withHeader('Location', $this->url->to('/wp/v2/' . $base . '/' . $id));
     }
 
+    /** Updates a post or page. */
     #[Route(Method::Post, '/wp/v2/{base:posts|pages}/{id:\d+}')]
     #[Route(Method::Put, '/wp/v2/{base:posts|pages}/{id:\d+}')]
     #[Route(Method::Patch, '/wp/v2/{base:posts|pages}/{id:\d+}')]
@@ -131,6 +134,7 @@ final readonly class PostsWriteController
         return $this->serveUpdate($request, $base === 'pages' ? 'page' : 'post', $id);
     }
 
+    /** Updates a post of any type from the body. */
     public function serveUpdate(Request $request, string $type, string $id): Response
     {
         $postId = (int) $id;
@@ -161,12 +165,14 @@ final readonly class PostsWriteController
         return Reply::item($this->object->edit($this->posts->find($postId), $userId), Fields::fromQuery($request->query));
     }
 
+    /** Trashes or deletes a post or page. */
     #[Route(Method::Delete, '/wp/v2/{base:posts|pages}/{id:\d+}')]
     public function delete(Request $request, string $base, string $id): Response
     {
         return $this->serveDelete($request, $base === 'pages' ? 'page' : 'post', $id);
     }
 
+    /** Trashes a post of any type, or deletes it with force. */
     public function serveDelete(Request $request, string $type, string $id): Response
     {
         $postId = (int) $id;

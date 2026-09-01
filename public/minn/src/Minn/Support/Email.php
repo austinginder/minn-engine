@@ -14,7 +14,11 @@ final class Email
 {
     private const LOCAL_CHARACTER = 'a-zA-Z0-9!#$%&\'*+\/=?^_`{|}~\.-';
 
-    /** @return string|null the reason the address is refused, null when it passes */
+    /**
+     * Why an address is invalid, or null when it passes the reference's checks.
+     *
+     * @return string|null the reason the address is refused, null when it passes
+     */
     public static function check(string $email): ?string
     {
         if (strlen($email) < 6 || substr_count($email, '@') !== 1) {
@@ -39,7 +43,11 @@ final class Email
         return null;
     }
 
-    /** @return array{0: string, 1: string|null} the cleaned address (empty when refused) and the reason */
+    /**
+     * An address with the characters the reference strips removed, and what was removed.
+     *
+     * @return array{0: string, 1: string|null} the cleaned address (empty when refused) and the reason
+     */
     public static function sanitize(string $raw): array
     {
         $email = trim($raw);

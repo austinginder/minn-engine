@@ -46,7 +46,11 @@ final class Installer
     {
     }
 
-    /** @param list<string> $argv */
+    /**
+     * The bin entry: runs one command against a webroot and returns the exit code.
+     *
+     * @param list<string> $argv
+     */
     public static function main(array $argv, string $engineDir): int
     {
         $command = $argv[0] ?? 'help';
@@ -102,6 +106,7 @@ final class Installer
         return 0;
     }
 
+    /** Prints what the webroot is running. */
     public function status(string $root): int
     {
         $state = $this->state($root);
@@ -387,7 +392,11 @@ final class Installer
     }
     }
 
-    /** @param array<string, string|true> $options */
+    /**
+     * Installs the engine into a webroot when the preflight allows it.
+     *
+     * @param array<string, string|true> $options
+     */
     public function install(string $root, array $options): int
     {
         $light = $this->preflight($root);
@@ -444,6 +453,7 @@ final class Installer
         return 0;
     }
 
+    /** Puts WordPress back and removes the engine's files. */
     public function eject(string $root): int
     {
         if ($this->state($root) !== 'minn') {

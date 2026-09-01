@@ -9,6 +9,7 @@ use Minn\Support\Html;
 /** The sign-in page markup. */
 final class LoginForm
 {
+    /** The sign-in page's HTML. */
     public static function render(string $siteName, string $action, string $redirectTo, string $error, string $message = '', string $lostPasswordUrl = ''): string
     {
         $site = Html::esc($siteName);

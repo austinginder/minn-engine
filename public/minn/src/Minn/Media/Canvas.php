@@ -17,6 +17,7 @@ final readonly class Canvas
     {
     }
 
+    /** A canvas from an image file, or null when it cannot be decoded. */
     public static function open(string $path): ?self
     {
         $bytes = @file_get_contents($path);
@@ -44,17 +45,20 @@ final readonly class Canvas
         return new self($target, imagesx($target), imagesy($target));
     }
 
+    /** A canvas cut to a rectangle, resized to a target when given. */
     public function crop(int $x, int $y, int $width, int $height, ?int $targetWidth = null, ?int $targetHeight = null): self
     {
         return $this->resample([0, 0, $x, $y, $targetWidth ?? $width, $targetHeight ?? $height, $width, $height]);
     }
 
+    /** A canvas turned by an angle, or null when GD refuses. */
     public function rotate(float $angle): ?self
     {
         $rotated = imagerotate($this->image, $angle, 0);
         return $rotated ? new self($rotated, imagesx($rotated), imagesy($rotated)) : null;
     }
 
+    /** A canvas mirrored on either axis. */
     public function flip(bool $vertical, bool $horizontal): self
     {
         $copy = $this->resample([0, 0, 0, 0, $this->width, $this->height, $this->width, $this->height]);
@@ -77,6 +81,7 @@ final readonly class Canvas
         return $this->encode($mime, $path, $quality);
     }
 
+    /** Writes the image to the output in a format, at a quality. */
     public function stream(string $mime, int $quality): bool
     {
         return $this->encode($mime, null, $quality);

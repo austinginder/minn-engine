@@ -11,6 +11,8 @@ namespace Minn\Support;
 final class SearchReplace
 {
     /**
+     * A value with one string replaced, and how many times.
+     *
      * @return array{0: string, 1: int} replacement and how many times $old occurred
      */
     public static function in(string $value, string $old, string $new): array

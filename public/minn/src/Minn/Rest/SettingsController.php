@@ -19,6 +19,7 @@ final readonly class SettingsController
     ) {
     }
 
+    /** The site settings: read, or write from the body. */
     #[Route(Method::Get, '/wp/v2/settings')]
     #[Route(Method::Post, '/wp/v2/settings')]
     #[Route(Method::Put, '/wp/v2/settings')]

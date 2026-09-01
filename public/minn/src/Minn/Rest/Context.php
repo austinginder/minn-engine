@@ -23,6 +23,7 @@ enum Context: string
         return self::tryFrom((string) ($request->query('context') ?? '')) ?? self::View;
     }
 
+    /** Whether this is the edit context. */
     public function isEdit(): bool
     {
         return $this === self::Edit;

@@ -21,7 +21,11 @@ final class Types
     ) {
     }
 
-    /** @return array<string, array> keyed by type slug */
+    /**
+     * Every post type the surface knows, by slug.
+     *
+     * @return array<string, array> keyed by type slug
+     */
     public function all(): array
     {
         if ($this->types === null) {
@@ -56,11 +60,13 @@ final class Types
         return $this->types;
     }
 
+    /** One post type by slug, or null. */
     public function find(string $slug): ?array
     {
         return $this->all()[$slug] ?? null;
     }
 
+    /** The type behind a rest_base, or null. */
     public function slugForRestBase(string $base): ?string
     {
         foreach ($this->all() as $slug => $type) {
@@ -71,11 +77,13 @@ final class Types
         return null;
     }
 
+    /** Whether an extension declared this type. */
     public function isDeclared(string $slug): bool
     {
         return isset($this->declared[$slug]);
     }
 
+    /** The rest_base of a type slug. */
     public function restBase(string $slug): string
     {
         if ($slug === 'page') {

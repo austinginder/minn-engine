@@ -14,12 +14,14 @@ final class Phpass
 {
     private const ALPHABET = './0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 
+    /** A portable phpass hash of a password. */
     public static function hash(string $password, int $log2Rounds = 11): string
     {
         $salt = self::encode(random_bytes(6), 6);
         return self::crypt($password, '$P$' . self::ALPHABET[$log2Rounds] . $salt);
     }
 
+    /** Whether a password matches a portable phpass hash. */
     public static function verify(string $password, string $hash): bool
     {
         if (strlen($hash) !== 34 || !str_starts_with($hash, '$P$')) {

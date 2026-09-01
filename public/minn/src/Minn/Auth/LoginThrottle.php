@@ -33,6 +33,7 @@ final readonly class LoginThrottle
         return $start + self::WINDOW - $now;
     }
 
+    /** Counts one failed sign-in from an address within the current window. */
     public function recordFailure(string $address, ?int $now = null): void
     {
         $now ??= time();
@@ -46,6 +47,7 @@ final readonly class LoginThrottle
         }
     }
 
+    /** Forgets an address's failures. */
     public function clear(string $address): void
     {
         $this->db->execute("DELETE FROM {$this->db->table('options')} WHERE option_name = ?", [self::key($address)]);

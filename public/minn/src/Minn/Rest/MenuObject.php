@@ -17,7 +17,11 @@ final readonly class MenuObject
     ) {
     }
 
-    /** @param array<string, mixed> $term */
+    /**
+     * The wp/v2 menu shape.
+     *
+     * @param array<string, mixed> $term
+     */
     public function view(TermRecord $term): array
     {
         $id = (int) $term['term_id'];

@@ -4,12 +4,12 @@ sending mail and the notices the engine sends
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`MailSettings`](#mailsettings) | final readonly class | 59 | How mail leaves the site, from the minn_mail option (JSON or a serialized |
-| [`Mailer`](#mailer) | final readonly class | 84 | Sends a Message through the configured transport. Failures are logged |
+| [`MailSettings`](#mailsettings) | final readonly class | 60 | How mail leaves the site, from the minn_mail option (JSON or a serialized |
+| [`Mailer`](#mailer) | final readonly class | 87 | Sends a Message through the configured transport. Failures are logged |
 | [`Message`](#message) | final readonly class | 18 | One outgoing plain-text email. |
-| [`Mime`](#mime) | final readonly class | 81 | A full MIME message from recorded mailer state, for the PHPMailer facade: |
+| [`Mime`](#mime) | final readonly class | 83 | A full MIME message from recorded mailer state, for the PHPMailer facade: |
 | [`Notices`](#notices) | final readonly class | 65 | The messages the engine itself sends, worded as the reference words them |
-| [`Smtp`](#smtp) | final readonly class | 82 | A small SMTP client: SSL or STARTTLS, AUTH LOGIN or PLAIN, one message per connection. |
+| [`Smtp`](#smtp) | final readonly class | 86 | A small SMTP client: SSL or STARTTLS, AUTH LOGIN or PLAIN, one message per connection. |
 
 ## MailSettings
 
@@ -39,6 +39,8 @@ __construct(string $transport = 'mail', string $host = '', int $port = 587, stri
 
 ### static `fromSite(Minn\Content\Site $site): self`
 
+The site's mail settings from its minn_mail option, or the defaults.
+
 ### `toArray(): array`
 
 The option's JSON, secrets included, for the settings surface.
@@ -60,6 +62,8 @@ __construct(Minn\Mail\MailSettings $settings, string $logFile)
 
 ### static `forSite(Minn\Content\Site $site): self`
 
+A mailer using the site's own settings.
+
 ### static `mail(array|string $to, string $subject, string $body): bool`
 
 The one-line send: a recipient, a subject, a body, through the site's
@@ -71,13 +75,17 @@ The engine's own notices, worded once, from this site's name and address.
 
 ### `send(Minn\Mail\Message $message): bool`
 
+Sends one message over the configured transport; false on failure.
+
 ### static `address(string $email, string $name): string`
+
+A mail address with an optional display name, header-encoded.
 
 ### static `encodeHeader(string $value): string`
 
 A header value: no line breaks, encoded when not plain ASCII.
 
-Internals: `viaMail()` (private, line 65), `log()` (private, line 74)
+Internals: `viaMail()` (private, line 67), `log()` (private, line 76)
 
 
 ## Message
@@ -114,6 +122,8 @@ multipart/mixed wrap with base64 attachments when files ride along.
 
 ### static `compose(string $from, string $fromName, array $to, array $cc, array $bcc, array $replyTo, string $subject, string $body, string $contentType, string $charset, array $customHeaders, array $attachments, string $sender = ''): string`
 
+A whole MIME message, headers and body, from its parts.
+
 - `@param list<array{0: string, 1: string}> $to [address, name]`
 - `@param list<array{0: string, 1: string}> $cc`
 - `@param list<array{0: string, 1: string}> $bcc`
@@ -121,7 +131,7 @@ multipart/mixed wrap with base64 attachments when files ride along.
 - `@param list<array{0: string, 1: string}> $customHeaders [name, value]`
 - `@param list<array{0: string, 1: string}> $attachments [path, name]`
 
-Internals: `payload()` (private, line 62), `addressList()` (private, line 88)
+Internals: `payload()` (private, line 64), `addressList()` (private, line 90)
 
 
 ## Notices
@@ -169,6 +179,8 @@ __construct(Minn\Mail\MailSettings $settings)
 
 ### `send(string $from, string $fromName, array $to, string $subject, string $body): bool`
 
+Sends one message over SMTP; false on failure.
+
 - `@param list<string> $to`
 
 ### `sendRaw(string $from, array $recipients, string $data): bool`
@@ -177,5 +189,5 @@ One raw MIME message (headers and body) to the listed envelope recipients. @para
 
 - `@param list<string> $recipients`
 
-Internals: `command()` (private, line 69), `expect()` (private, line 76)
+Internals: `command()` (private, line 73), `expect()` (private, line 80)
 

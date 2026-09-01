@@ -23,6 +23,7 @@ final readonly class Sessions
         return substr(rtrim(strtr(base64_encode(random_bytes(32)), '+/', '-_'), '='), 0, 43);
     }
 
+    /** Whether a session token is still stored and unexpired for a user. */
     public function isLive(int $userId, string $token): bool
     {
         $want = hash('sha256', $token);
@@ -101,7 +102,11 @@ final readonly class Sessions
         $this->write($userId, isset($sessions[$keepKey]) ? [$keepKey => $sessions[$keepKey]] : []);
     }
 
-    /** @return array<string, array{expiration: int, ip: string, ua: string, login: int}> */
+    /**
+     * Every stored session of a user, keyed by token hash.
+     *
+     * @return array<string, array{expiration: int, ip: string, ua: string, login: int}>
+     */
     public function read(int $userId): array
     {
         $blob = $this->users->meta($userId, 'session_tokens');

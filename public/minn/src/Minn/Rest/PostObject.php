@@ -37,6 +37,7 @@ final readonly class PostObject
     ) {
     }
 
+    /** The rest_base of a type. */
     public static function restBase(string $type): string
     {
         return match ($type) {
@@ -187,6 +188,7 @@ final readonly class PostObject
         return $formatTerms === [] ? 'standard' : str_replace('post-format-', '', $formatTerms[0][1]);
     }
 
+    /** The _links of a post in the view context. */
     public function links(PostRecord $p): array
     {
         $id = $p->id;
@@ -408,6 +410,7 @@ final readonly class PostObject
         return $allow;
     }
 
+    /** A MySQL datetime in the reference's ISO form. */
     public static function date(string $mysql): string
     {
         return str_replace(' ', 'T', $mysql);

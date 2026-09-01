@@ -41,6 +41,7 @@ final readonly class UsersController
     ) {
     }
 
+    /** The signed-in user. */
     #[Route(Method::Get, '/wp/v2/users/me')]
     public function me(Request $request): Response
     {
@@ -112,6 +113,7 @@ final readonly class UsersController
         return Reply::list($objects, $total, (int) ceil($total / $perPage), Fields::fromQuery($request->query));
     }
 
+    /** One user. */
     #[Route(Method::Get, '/wp/v2/users/{id:\d+}')]
     public function single(Request $request, string $id): Response
     {
@@ -217,6 +219,7 @@ final readonly class UsersController
             ->withHeader('Location', $this->url->to('/wp/v2/users/' . $newId));
     }
 
+    /** Updates a user. */
     #[Route(Method::Post, '/wp/v2/users/{id:\d+}')]
     #[Route(Method::Put, '/wp/v2/users/{id:\d+}')]
     #[Route(Method::Patch, '/wp/v2/users/{id:\d+}')]

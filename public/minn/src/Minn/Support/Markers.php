@@ -12,7 +12,11 @@ namespace Minn\Support;
  */
 final class Markers
 {
-    /** @param list<string> $lines */
+    /**
+     * Replaces the lines between a marker's begin and end comments in a file.
+     *
+     * @param list<string> $lines
+     */
     public static function write(string $file, string $marker, array $lines): bool
     {
         if (!file_exists($file) && !is_writable(dirname($file))) {

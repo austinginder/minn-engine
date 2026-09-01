@@ -42,6 +42,7 @@ final readonly class ListQuery
     ) {
     }
 
+    /** The list parameters read from the request. */
     public static function fromRequest(Request $request): self
     {
         $menuOrder = (string) $request->query('menu_order', '');
@@ -95,16 +96,19 @@ final readonly class ListQuery
         return [$where, $params];
     }
 
+    /** Whether a search narrows the list. */
     public function isSearch(): bool
     {
         return $this->words !== [];
     }
 
+    /** The first row of the requested page. */
     public function offset(): int
     {
         return ($this->page - 1) * $this->perPage;
     }
 
+    /** How many pages a total makes at this page size. */
     public function totalPages(int $total): int
     {
         return (int) ceil($total / $this->perPage);

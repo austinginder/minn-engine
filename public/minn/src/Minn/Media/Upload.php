@@ -45,6 +45,7 @@ final readonly class Upload
         return Uploads::MIMES[strtolower(pathinfo($this->filename, PATHINFO_EXTENSION))] ?? null;
     }
 
+    /** Whether the file is an image the engine will make sizes for; SVG is not. */
     public function isImage(): bool
     {
         $mime = $this->mime();

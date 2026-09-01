@@ -30,6 +30,7 @@ final class Salts
         return true;
     }
 
+    /** The key and salt of a scheme joined, as the reference feeds them to its HMACs. */
     public static function for(string $scheme): string
     {
         [$key, $salt] = self::SCHEMES[$scheme];

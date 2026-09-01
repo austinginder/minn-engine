@@ -11,6 +11,7 @@ final class Accents
 {
     private const SPELLINGS = ['ß' => 'ss', 'Æ' => 'AE', 'æ' => 'ae', 'Œ' => 'OE', 'œ' => 'oe', 'Ø' => 'O', 'ø' => 'o', 'Đ' => 'D', 'đ' => 'd', 'Ł' => 'L', 'ł' => 'l', 'Þ' => 'TH', 'þ' => 'th', 'Ð' => 'D', 'ð' => 'd', '€' => 'E', '£' => '', '“' => '', '”' => '', '‘' => '', '’' => '', '–' => '-', '—' => '-', '…' => ''];
 
+    /** The text with accented letters replaced by their plain forms. */
     public static function strip(string $text): string
     {
         if (!preg_match('/[\x80-\xff]/', $text)) {

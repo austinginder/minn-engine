@@ -11,6 +11,7 @@ namespace Minn\Auth;
  */
 final class Password
 {
+    /** Whether a password matches a stored hash of either scheme. */
     public static function verify(string $password, string $hash): bool
     {
         if (str_starts_with($hash, '$wp$')) {

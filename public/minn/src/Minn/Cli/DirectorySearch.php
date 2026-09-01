@@ -18,7 +18,11 @@ final class DirectorySearch
 {
     private const FIELDS = ['name', 'slug', 'rating'];
 
-    /** @param array<string, mixed> $assocArgs */
+    /**
+     * Searches wordpress.org for one kind of asset and prints the page.
+     *
+     * @param array<string, mixed> $assocArgs
+     */
     public static function run(string $kind, array $args, array $assocArgs): void
     {
         $page = max(1, (int) ($assocArgs['page'] ?? 1));

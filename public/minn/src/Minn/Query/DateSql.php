@@ -57,6 +57,7 @@ final class DateSql
         return $clean;
     }
 
+    /** Whether a date query is one clause rather than a group of them. */
     public static function isFirstOrder(array $query): bool
     {
         foreach (array_merge(['after', 'before', 'column', 'compare'], self::PART_ORDER) as $key) {
@@ -82,6 +83,7 @@ final class DateSql
         return $this->tables['posts'] . '.' . $this->defaultColumn;
     }
 
+    /** The WHERE fragment for a date query. */
     public function build(array $queries): string
     {
         $where = $this->group($queries, 0);

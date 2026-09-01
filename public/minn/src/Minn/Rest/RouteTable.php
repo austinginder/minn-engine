@@ -10,6 +10,8 @@ final class RouteTable
     private const HANDLER_DEFAULTS = ['methods' => [], 'accept_json' => false, 'accept_raw' => false, 'show_in_index' => true, 'args' => []];
 
     /**
+     * Registered endpoints as a route table with their options.
+     *
      * @param array<string, mixed> $endpoints route => a handler or a list of handlers plus options
      * @return array{0: array<string, list<array<string, mixed>>>, 1: array<string, array<string, mixed>>} the routes, and the options found per route
      */

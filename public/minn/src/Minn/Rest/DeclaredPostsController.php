@@ -24,18 +24,21 @@ final readonly class DeclaredPostsController
     ) {
     }
 
+    /** A declared type's list. */
     #[Route(Method::Get, '/wp/v2/{base:[a-z0-9_-]+}')]
     public function list(Request $request, string $base): Response
     {
         return $this->reads->serveList($request, $this->slug($base));
     }
 
+    /** A declared type's single post. */
     #[Route(Method::Get, '/wp/v2/{base:[a-z0-9_-]+}/{id:\d+}')]
     public function single(Request $request, string $base, string $id): Response
     {
         return $this->reads->serveSingle($request, $this->slug($base), $id);
     }
 
+    /** Creates a post of a declared type. */
     #[Route(Method::Post, '/wp/v2/{base:[a-z0-9_-]+}')]
     public function create(Request $request, string $base): Response
     {
@@ -43,6 +46,7 @@ final readonly class DeclaredPostsController
         return $this->writes->serveCreate($request, $slug, $base);
     }
 
+    /** Updates a post of a declared type. */
     #[Route(Method::Post, '/wp/v2/{base:[a-z0-9_-]+}/{id:\d+}')]
     #[Route(Method::Put, '/wp/v2/{base:[a-z0-9_-]+}/{id:\d+}')]
     #[Route(Method::Patch, '/wp/v2/{base:[a-z0-9_-]+}/{id:\d+}')]
@@ -51,6 +55,7 @@ final readonly class DeclaredPostsController
         return $this->writes->serveUpdate($request, $this->slug($base), $id);
     }
 
+    /** Trashes or deletes a post of a declared type. */
     #[Route(Method::Delete, '/wp/v2/{base:[a-z0-9_-]+}/{id:\d+}')]
     public function delete(Request $request, string $base, string $id): Response
     {

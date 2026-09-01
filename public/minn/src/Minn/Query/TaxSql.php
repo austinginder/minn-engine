@@ -34,6 +34,7 @@ final class TaxSql
     ) {
     }
 
+    /** The query with every clause in its canonical shape. */
     public static function sanitize(array $queries): array
     {
         $clean = [];
@@ -66,7 +67,11 @@ final class TaxSql
         return $clean;
     }
 
-    /** @return array{join: string, where: string} */
+    /**
+     * The JOIN and WHERE fragments for a taxonomy query.
+     *
+     * @return array{join: string, where: string}
+     */
     public function build(array $queries): array
     {
         if ($queries === []) {
@@ -76,7 +81,11 @@ final class TaxSql
         return ['join' => $this->join, 'where' => $where === '' ? '' : ' AND ' . $where];
     }
 
-    /** @return array<string, array{terms: list<mixed>, field: string}> the terms asked for, by taxonomy */
+    /**
+     * The terms the last build matched, by taxonomy.
+     *
+     * @return array<string, array{terms: list<mixed>, field: string}> the terms asked for, by taxonomy
+     */
     public function queriedTerms(): array
     {
         return $this->queriedTerms;

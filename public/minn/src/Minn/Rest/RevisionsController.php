@@ -37,6 +37,7 @@ final readonly class RevisionsController
         return Reply::list(array_map(fn (array $r) => $this->object($r), $rows), count($rows), 1, Fields::fromQuery($request->query));
     }
 
+    /** The autosaves of a post. */
     #[Route(Method::Get, '/wp/v2/{base:posts|pages}/{id:\d+}/autosaves')]
     public function autosaves(Request $request, string $base, string $id): Response
     {

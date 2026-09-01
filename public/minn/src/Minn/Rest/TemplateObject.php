@@ -19,11 +19,13 @@ final readonly class TemplateObject
     ) {
     }
 
+    /** The rest_base of a template type. */
     public function base(string $type): string
     {
         return $type === TemplateIndex::PART ? 'template-parts' : 'templates';
     }
 
+    /** The wp/v2 template shape. */
     public function view(TemplateRecord $record, bool $edit): array
     {
         $id = $record->id();

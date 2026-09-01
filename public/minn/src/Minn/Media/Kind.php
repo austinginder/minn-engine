@@ -40,6 +40,7 @@ final class Kind
         return $matches;
     }
 
+    /** Whether a file is of a media type, by mime prefix or by extension list. */
     public static function matches(string $type, string $mime, string $extension, array $audioExtensions, array $videoExtensions): bool
     {
         if (str_starts_with($mime, $type . '/')) {

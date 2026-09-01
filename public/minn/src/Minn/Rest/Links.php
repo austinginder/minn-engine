@@ -8,6 +8,8 @@ namespace Minn\Rest;
 final class Links
 {
     /**
+     * Links with their curies applied, as the reference compacts them.
+     *
      * @param array<string, mixed> $links rel => items
      * @param list<array{name: string, href: string, templated?: bool}> $curies
      * @return array<string, mixed>

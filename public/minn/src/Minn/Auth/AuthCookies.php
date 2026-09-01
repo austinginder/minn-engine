@@ -42,6 +42,7 @@ final readonly class AuthCookies
             ->withCookie('wordpress_logged_in_' . $hash, $loggedIn, ['path' => '/'] + $common);
     }
 
+    /** The response with every sign-in cookie expired. */
     public function clear(Response $response): Response
     {
         $hash = $this->hash();

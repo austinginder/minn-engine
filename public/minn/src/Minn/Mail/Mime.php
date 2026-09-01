@@ -12,6 +12,8 @@ namespace Minn\Mail;
 final readonly class Mime
 {
     /**
+     * A whole MIME message, headers and body, from its parts.
+     *
      * @param list<array{0: string, 1: string}> $to [address, name]
      * @param list<array{0: string, 1: string}> $cc
      * @param list<array{0: string, 1: string}> $bcc

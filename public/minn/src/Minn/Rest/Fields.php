@@ -22,7 +22,11 @@ final readonly class Fields
     {
     }
 
-    /** @param array<string, mixed> $query */
+    /**
+     * The _fields selection a query carries, or null for everything.
+     *
+     * @param array<string, mixed> $query
+     */
     public static function fromQuery(array $query): ?self
     {
         $raw = $query['_fields'] ?? null;
@@ -45,6 +49,7 @@ final readonly class Fields
         return new self([...$this->paths, '_links'], $this->deferred);
     }
 
+    /** The object with only the selected fields. */
     public function apply(array $object): array
     {
         return self::filter($object, $this->paths);

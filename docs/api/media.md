@@ -4,14 +4,14 @@ uploads, image sizes and attachment metadata
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Canvas`](#canvas) | final readonly class | 81 | One GD bitmap and the operations the media layer needs on it. Every |
-| [`Gallery`](#gallery) | final class | 52 | The classic `[gallery]` shortcode's markup. Every gallery on a page is |
-| [`Images`](#images) | final readonly class | 63 | GD sub-size generation from the size options the site stores. |
-| [`Kind`](#kind) | final class | 52 | Whether an attachment is an image, audio, video, or a given extension, judged by its MIME type first and its file extension second. |
-| [`Metadata`](#metadata) | final class | 106 | The _wp_attachment_metadata blob: parsed by scanning for the shapes it |
+| [`Canvas`](#canvas) | final readonly class | 86 | One GD bitmap and the operations the media layer needs on it. Every |
+| [`Gallery`](#gallery) | final class | 54 | The classic `[gallery]` shortcode's markup. Every gallery on a page is |
+| [`Images`](#images) | final readonly class | 67 | GD sub-size generation from the size options the site stores. |
+| [`Kind`](#kind) | final class | 53 | Whether an attachment is an image, audio, video, or a given extension, judged by its MIME type first and its file extension second. |
+| [`Metadata`](#metadata) | final class | 111 | The _wp_attachment_metadata blob: parsed by scanning for the shapes it |
 | [`Sizing`](#sizing) | final class | 207 | The image size arithmetic the media functions share: the crop or scale a |
-| [`Upload`](#upload) | final readonly class | 51 | One file arriving for the library, on either transport: a multipart |
-| [`Uploads`](#uploads) | final readonly class | 165 | The uploads directory: paths, URLs, the allowed types, and landing a file. |
+| [`Upload`](#upload) | final readonly class | 52 | One file arriving for the library, on either transport: a multipart |
+| [`Uploads`](#uploads) | final readonly class | 169 | The uploads directory: paths, URLs, the allowed types, and landing a file. |
 | [`Writer`](#writer) | final readonly class | 66 | Turns an Upload into an attachment: the file lands in the dated uploads |
 
 ## Canvas
@@ -29,6 +29,8 @@ Used by: `Minn\Media\Images`
 
 ### static `open(string $path): ?self`
 
+A canvas from an image file, or null when it cannot be decoded.
+
 ### `resample(array $box): self`
 
 Resamples a source box onto a destination box.
@@ -37,9 +39,15 @@ Resamples a source box onto a destination box.
 
 ### `crop(int $x, int $y, int $width, int $height, ?int $targetWidth = NULL, ?int $targetHeight = NULL): self`
 
+A canvas cut to a rectangle, resized to a target when given.
+
 ### `rotate(float $angle): ?self`
 
+A canvas turned by an angle, or null when GD refuses.
+
 ### `flip(bool $vertical, bool $horizontal): self`
+
+A canvas mirrored on either axis.
 
 ### `write(string $path, string $mime, int $quality): bool`
 
@@ -47,7 +55,9 @@ Writes the bitmap in the given format; the directory is created when missing.
 
 ### `stream(string $mime, int $quality): bool`
 
-Internals: `encode()` (private, line 85)
+Writes the image to the output in a format, at a quality.
+
+Internals: `encode()` (private, line 90)
 
 
 ## Gallery
@@ -65,10 +75,12 @@ enough that they are contract rather than formatting.
 
 ### static `render(array $items, array $args, int $instance, int $postId): string`
 
+The gallery shortcode's HTML for these attachments.
+
 - `@param list<array{icon: string, orientation: string, caption: string, caption_id: string}> $items`
 - `@param array{itemtag: string, icontag: string, captiontag: string, columns: int, size: string} $args`
 
-Internals: `caption()` (private, line 47), `tag()` (private, line 57), `token()` (private, line 64)
+Internals: `caption()` (private, line 49), `tag()` (private, line 59), `token()` (private, line 66)
 
 
 ## Images
@@ -85,6 +97,8 @@ __construct(Minn\Content\Site $site)
 
 
 ### `ladder(): array`
+
+The registered sizes from the site's options, largest last.
 
 - `@return array<string, array{0: int, 1: int, 2: bool}> name => [max width, max height, crop]`
 
@@ -116,6 +130,8 @@ Real mime types grouped under the wildcard patterns that match them
 
 ### static `matches(string $type, string $mime, string $extension, array $audioExtensions, array $videoExtensions): bool`
 
+Whether a file is of a media type, by mime prefix or by extension list.
+
 
 ## Metadata
 
@@ -132,9 +148,13 @@ Used by: `Minn\Admin\V1Controller`, `Minn\Blocks\ImageTags`, `Minn\Media\Writer`
 
 ### static `parse(?string $blob): array`
 
+The attachment metadata blob as an array, tolerant of anything missing.
+
 - `@return array{width: int, height: int, file: string, filesize: int, sizes: array<string, array>, image_meta: ?array}`
 
 ### static `serialize(array $meta): string`
+
+The metadata as the reference's serialized blob, without unserialize ever being needed.
 
 ### static `blankImageMeta(): array`
 
@@ -231,6 +251,8 @@ The mime type the extension maps to, or null for one the library refuses.
 
 ### `isImage(): bool`
 
+Whether the file is an image the engine will make sizes for; SVG is not.
+
 ### static `parentOf(Minn\Http\Request $request): int`
 
 The post the client wants the file attached to: form field, query, or JSON body.
@@ -253,11 +275,19 @@ __construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, string $
 
 ### `baseDir(): string`
 
+The uploads directory on disk.
+
 ### `baseUrl(): string`
+
+The uploads directory's URL.
 
 ### `urlFor(string $relativePath): string`
 
+The URL of a file by its relative path.
+
 ### `pathFor(string $relativePath): string`
+
+The path of a file by its relative path.
 
 ### static `sanitizeName(string $filename): string`
 

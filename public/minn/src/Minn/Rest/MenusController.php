@@ -29,6 +29,7 @@ final readonly class MenusController
     ) {
     }
 
+    /** Every classic menu. */
     #[Route(Method::Get, '/wp/v2/menus')]
     public function listMenus(Request $request): Response
     {
@@ -56,6 +57,7 @@ final readonly class MenusController
         );
     }
 
+    /** One menu. */
     #[Route(Method::Get, '/wp/v2/menus/{id:\d+}')]
     public function singleMenu(Request $request, string $id): Response
     {
@@ -67,6 +69,7 @@ final readonly class MenusController
         return Reply::item($this->menuObject->view($row), Fields::fromQuery($request->query));
     }
 
+    /** Creates a menu. */
     #[Route(Method::Post, '/wp/v2/menus')]
     public function createMenu(Request $request): Response
     {
@@ -83,6 +86,7 @@ final readonly class MenusController
             ->withHeader('Location', $this->url->to("/wp/v2/menus/{$id}"));
     }
 
+    /** Renames or re-describes a menu. */
     #[Route(Method::Post, '/wp/v2/menus/{id:\d+}')]
     #[Route(Method::Put, '/wp/v2/menus/{id:\d+}')]
     #[Route(Method::Patch, '/wp/v2/menus/{id:\d+}')]
@@ -106,6 +110,7 @@ final readonly class MenusController
         return Reply::item($this->menuObject->view($this->menus->find((int) $id) ?? $row), Fields::fromQuery($request->query));
     }
 
+    /** Deletes a menu and its items. */
     #[Route(Method::Delete, '/wp/v2/menus/{id:\d+}')]
     public function deleteMenu(Request $request, string $id): Response
     {
@@ -123,6 +128,7 @@ final readonly class MenusController
         return Reply::item(['deleted' => true, 'previous' => $previous], Fields::fromQuery($request->query));
     }
 
+    /** The items of a menu. */
     #[Route(Method::Get, '/wp/v2/menu-items')]
     public function listItems(Request $request): Response
     {
@@ -142,6 +148,7 @@ final readonly class MenusController
         );
     }
 
+    /** One menu item. */
     #[Route(Method::Get, '/wp/v2/menu-items/{id:\d+}')]
     public function singleItem(Request $request, string $id): Response
     {
@@ -154,6 +161,7 @@ final readonly class MenusController
         return Reply::item($this->itemObject->view($item, $edit), Fields::fromQuery($request->query));
     }
 
+    /** Creates a menu item. */
     #[Route(Method::Post, '/wp/v2/menu-items')]
     public function createItem(Request $request): Response
     {
@@ -184,6 +192,7 @@ final readonly class MenusController
             ->withHeader('Location', $this->url->to("/wp/v2/menu-items/{$id}"));
     }
 
+    /** Updates a menu item. */
     #[Route(Method::Post, '/wp/v2/menu-items/{id:\d+}')]
     #[Route(Method::Put, '/wp/v2/menu-items/{id:\d+}')]
     #[Route(Method::Patch, '/wp/v2/menu-items/{id:\d+}')]
@@ -236,6 +245,7 @@ final readonly class MenusController
         return Reply::item($this->itemObject->view($this->menus->findItem((int) $id), true), Fields::fromQuery($request->query));
     }
 
+    /** Deletes a menu item. */
     #[Route(Method::Delete, '/wp/v2/menu-items/{id:\d+}')]
     public function deleteItem(Request $request, string $id): Response
     {
@@ -253,6 +263,7 @@ final readonly class MenusController
         return Reply::item(['deleted' => true, 'previous' => $previous], Fields::fromQuery($request->query));
     }
 
+    /** The theme's menu locations. */
     #[Route(Method::Get, '/wp/v2/menu-locations')]
     public function locations(Request $request): Response
     {

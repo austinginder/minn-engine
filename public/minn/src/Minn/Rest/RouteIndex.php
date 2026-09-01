@@ -10,6 +10,8 @@ final class RouteIndex
     private const SCHEMA_KEYWORDS = ['default', 'enum', 'description', 'type', 'items', 'minimum', 'maximum', 'exclusiveMinimum', 'exclusiveMaximum', 'minLength', 'maxLength', 'pattern', 'format', 'properties', 'additionalProperties', 'oneOf', 'anyOf', 'minItems', 'maxItems', 'uniqueItems'];
 
     /**
+     * One route as the index describes it, or null when hidden.
+     *
      * @param list<array<string, mixed>> $callbacks the route's handler groups
      * @param array<string, mixed> $options the route's non-numeric options (namespace, schema)
      * @param callable(string): string $restUrl

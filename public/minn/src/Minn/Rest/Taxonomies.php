@@ -17,7 +17,11 @@ final class Taxonomies
     {
     }
 
-    /** @return array<string, array> keyed by taxonomy slug */
+    /**
+     * Every taxonomy the surface knows, by slug.
+     *
+     * @return array<string, array> keyed by taxonomy slug
+     */
     public function all(): array
     {
         if ($this->taxonomies === null) {
@@ -34,6 +38,7 @@ final class Taxonomies
         return $this->taxonomies;
     }
 
+    /** One taxonomy by slug, or null. */
     public function find(string $slug): ?array
     {
         return $this->all()[$slug] ?? null;

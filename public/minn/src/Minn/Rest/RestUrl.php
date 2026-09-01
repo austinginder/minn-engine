@@ -18,12 +18,17 @@ final readonly class RestUrl
     {
     }
 
+    /** A URL under the site's home. */
     public function home(string $path = ''): string
     {
         return $this->permalinks->url($path);
     }
 
-    /** @param array<string, string|int> $args */
+    /**
+     * The URL of a REST route, pretty or plain as the site is set.
+     *
+     * @param array<string, string|int> $args
+     */
     public function to(string $route, array $args = []): string
     {
         $pretty = $this->permalinks->isPretty();

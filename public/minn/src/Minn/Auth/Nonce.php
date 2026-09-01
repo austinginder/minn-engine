@@ -12,16 +12,19 @@ final class Nonce
 {
     private const LIFETIME = 86400;
 
+    /** The current half-life tick a nonce is bound to. */
     public static function tick(): float
     {
         return ceil(time() / (self::LIFETIME / 2));
     }
 
+    /** A wp_rest nonce for a user and session token at the current tick. */
     public static function create(int $userId, string $token, string $action = 'wp_rest'): string
     {
         return self::at(self::tick(), $userId, $token, $action);
     }
 
+    /** Whether a nonce is valid at this tick or the one before. */
     public static function verify(string $nonce, int $userId, string $token, string $action = 'wp_rest'): bool
     {
         $tick = self::tick();
@@ -33,6 +36,7 @@ final class Nonce
         return false;
     }
 
+    /** The nonce for a given tick. */
     public static function at(float $tick, int $userId, string $token, string $action): string
     {
         return substr(Salts::hash("{$tick}|{$action}|{$userId}|{$token}", 'nonce'), -12, 10);

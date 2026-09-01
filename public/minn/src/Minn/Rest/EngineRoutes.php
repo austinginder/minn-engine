@@ -14,7 +14,11 @@ use Minn\Http\Router;
  */
 final class EngineRoutes
 {
-    /** @return array<string, list<string>> route => methods */
+    /**
+     * The router's routes as route => methods, the way the index lists them.
+     *
+     * @return array<string, list<string>> route => methods
+     */
     public static function map(Router $router): array
     {
         $map = [];

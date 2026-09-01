@@ -12,6 +12,8 @@ namespace Minn\Support;
 final class Entities
 {
     /**
+     * The reference's special-characters escaping, with its quote styles and double-encoding rule.
+     *
      * @param int|string|false $quoteStyle ENT_* flags, 'single', 'double', or false for none
      * @param callable(string): bool $knownEntity whether a named entity is in the allowed table
      */

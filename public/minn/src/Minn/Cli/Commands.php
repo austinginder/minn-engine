@@ -14,6 +14,7 @@ use WP_CLI;
  */
 final class Commands
 {
+    /** Registers every engine verb with WP-CLI in the phase it runs in. */
     public static function register(): void
     {
         $early = ['when' => 'before_wp_load'];

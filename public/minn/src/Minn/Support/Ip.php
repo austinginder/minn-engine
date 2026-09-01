@@ -15,6 +15,7 @@ final class Ip
 {
     private const UNSPECIFIED = '0.0.0.0';
 
+    /** An address with its last octet, or its tail, zeroed. */
     public static function anonymize(string $address): string
     {
         $address = trim($address);

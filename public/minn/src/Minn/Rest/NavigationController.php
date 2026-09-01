@@ -26,24 +26,28 @@ final readonly class NavigationController
     ) {
     }
 
+    /** The navigation posts. */
     #[Route(Method::Get, '/wp/v2/navigation')]
     public function list(Request $request): Response
     {
         return $this->reads->serveList($request, self::TYPE);
     }
 
+    /** One navigation post. */
     #[Route(Method::Get, '/wp/v2/navigation/{id:\d+}')]
     public function single(Request $request, string $id): Response
     {
         return $this->reads->serveSingle($request, self::TYPE, $id);
     }
 
+    /** Creates a navigation post. */
     #[Route(Method::Post, '/wp/v2/navigation')]
     public function create(Request $request): Response
     {
         return $this->writes->serveCreate($request, self::TYPE, self::BASE);
     }
 
+    /** Updates a navigation post. */
     #[Route(Method::Post, '/wp/v2/navigation/{id:\d+}')]
     #[Route(Method::Put, '/wp/v2/navigation/{id:\d+}')]
     #[Route(Method::Patch, '/wp/v2/navigation/{id:\d+}')]
@@ -52,6 +56,7 @@ final readonly class NavigationController
         return $this->writes->serveUpdate($request, self::TYPE, $id);
     }
 
+    /** Trashes or deletes a navigation post. */
     #[Route(Method::Delete, '/wp/v2/navigation/{id:\d+}')]
     public function delete(Request $request, string $id): Response
     {

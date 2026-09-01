@@ -8,6 +8,8 @@ namespace Minn\Rest;
 final class RouteArgs
 {
     /**
+     * Route arguments with the shared args folded into each endpoint.
+     *
      * @param array<string, mixed> $args a single handler (with 'callback') or a list of handler groups, plus optional shared 'args'
      * @return array{0: array<int|string, mixed>, 1: bool} the groups, and whether any lacks a permission_callback
      */

@@ -17,6 +17,8 @@ namespace Minn\Media;
 final class Gallery
 {
     /**
+     * The gallery shortcode's HTML for these attachments.
+     *
      * @param list<array{icon: string, orientation: string, caption: string, caption_id: string}> $items
      * @param array{itemtag: string, icontag: string, captiontag: string, columns: int, size: string} $args
      */

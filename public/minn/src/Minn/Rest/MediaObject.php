@@ -26,11 +26,13 @@ final readonly class MediaObject
     ) {
     }
 
+    /** The REST URL builder. */
     public function url(): RestUrl
     {
         return $this->url;
     }
 
+    /** The wp/v2 media shape, with the edit-context fields when asked. */
     public function build(PostRecord $p, bool $edit): array
     {
         $id = $p->id;

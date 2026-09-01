@@ -10,6 +10,8 @@ use Minn\Runtime\Refusal;
 final class RouteMatch
 {
     /**
+     * The handler for a method and path across the registered namespaces, or the refusal.
+     *
      * @param list<string> $namespaces the registered namespaces
      * @param callable(string): array<string, list<array<string, mixed>>> $routesFor the (filtered) routes of one namespace, or all when given ''
      * @return array{route: string, handler: array<string, mixed>, params: array<string, string>, defaults: array<string, mixed>}|Refusal

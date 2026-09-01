@@ -22,13 +22,18 @@ final readonly class Authenticator
     ) {
     }
 
+    /** An authenticator over the shared database door. */
     public static function fromDb(Db $db): self
     {
         $users = new Users($db);
         return new self(new Cookie($db, $users, new Sessions($users)), $users);
     }
 
-    /** @param array<string, string> $cookies */
+    /**
+     * The session the cookie jar carries, or why there is none.
+     *
+     * @param array<string, string> $cookies
+     */
     public function session(array $cookies): Authenticated|AuthFailure
     {
         $value = $this->cookie->fromJar($cookies);
@@ -38,7 +43,11 @@ final readonly class Authenticator
         return $this->cookie->validate($value) ?? AuthFailure::notLoggedIn();
     }
 
-    /** @param array<string, string> $cookies */
+    /**
+     * The session for a REST call: the cookie, then the nonce.
+     *
+     * @param array<string, string> $cookies
+     */
     public function rest(array $cookies, ?string $nonce): Authenticated|AuthFailure
     {
         $session = $this->session($cookies);
@@ -103,7 +112,11 @@ final readonly class Authenticator
         return $available;
     }
 
-    /** @param array<string, mixed> $user */
+    /**
+     * Whether Basic auth may sign this user in; the runtime's filter has the last word.
+     *
+     * @param array<string, mixed> $user
+     */
     public static function applicationPasswordsAvailableFor(UserRecord $user): bool
     {
         if (!Runtime::booted()) {

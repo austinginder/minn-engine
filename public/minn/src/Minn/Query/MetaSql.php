@@ -78,7 +78,11 @@ final class MetaSql
         return isset($query['key']) || isset($query['value']);
     }
 
-    /** @return array{join: string, where: string} */
+    /**
+     * The JOIN and WHERE fragments for a meta query.
+     *
+     * @return array{join: string, where: string}
+     */
     public function build(array $queries): array
     {
         if ($queries === []) {
@@ -89,7 +93,11 @@ final class MetaSql
         return ['join' => $this->join, 'where' => $where === '' ? '' : ' AND ' . $where];
     }
 
-    /** @return array<string, array{alias: string, cast: string}> clauses seen while building, by name or alias */
+    /**
+     * The clauses the last build resolved, by name.
+     *
+     * @return array<string, array{alias: string, cast: string}> clauses seen while building, by name or alias
+     */
     public function clauses(): array
     {
         return $this->clauses;
@@ -114,6 +122,7 @@ final class MetaSql
         return false;
     }
 
+    /** Whether any level of the query relates its clauses by OR. */
     public static function hasOr(array $queries): bool
     {
         foreach ($queries as $key => $query) {

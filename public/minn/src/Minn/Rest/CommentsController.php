@@ -34,6 +34,7 @@ final readonly class CommentsController
     ) {
     }
 
+    /** The comments list with its status tabs and pagination headers. */
     #[Route(Method::Get, '/wp/v2/comments')]
     public function list(Request $request): Response
     {
@@ -64,6 +65,7 @@ final readonly class CommentsController
         );
     }
 
+    /** One comment, if the caller may read it. */
     #[Route(Method::Get, '/wp/v2/comments/{id:\d+}')]
     public function single(Request $request, string $id): Response
     {

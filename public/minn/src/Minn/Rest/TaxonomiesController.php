@@ -33,6 +33,7 @@ final readonly class TaxonomiesController
         return Reply::item($out === [] ? new \stdClass() : $out, Fields::fromQuery($request->query));
     }
 
+    /** One taxonomy. */
     #[Route(Method::Get, '/wp/v2/taxonomies/{slug:[\w-]+}')]
     public function single(Request $request, string $slug): Response
     {

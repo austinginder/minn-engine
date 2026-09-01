@@ -33,6 +33,7 @@ final readonly class SearchController
     ) {
     }
 
+    /** Search across post types with the reference's relevance order. */
     #[Route(Method::Get, '/wp/v2/search')]
     public function list(Request $request): Response
     {

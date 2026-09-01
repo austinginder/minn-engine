@@ -28,6 +28,7 @@ final readonly class IndexController
     ) {
     }
 
+    /** The REST index: namespaces, routes, and the site's description. */
     #[Route(Method::Get, '/')]
     public function index(Request $request): Response
     {

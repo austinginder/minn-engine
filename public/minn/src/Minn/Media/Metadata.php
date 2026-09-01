@@ -17,7 +17,11 @@ final class Metadata
         'focal_length', 'iso', 'shutter_speed', 'title', 'orientation',
     ];
 
-    /** @return array{width: int, height: int, file: string, filesize: int, sizes: array<string, array>, image_meta: ?array} */
+    /**
+     * The attachment metadata blob as an array, tolerant of anything missing.
+     *
+     * @return array{width: int, height: int, file: string, filesize: int, sizes: array<string, array>, image_meta: ?array}
+     */
     public static function parse(?string $blob): array
     {
         $meta = ['width' => 0, 'height' => 0, 'file' => '', 'filesize' => 0, 'sizes' => [], 'image_meta' => null];
@@ -64,6 +68,7 @@ final class Metadata
         return $meta;
     }
 
+    /** The metadata as the reference's serialized blob, without unserialize ever being needed. */
     public static function serialize(array $meta): string
     {
         $string = static fn (string $value): string => 's:' . strlen($value) . ':"' . $value . '";';

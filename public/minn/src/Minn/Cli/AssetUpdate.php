@@ -28,6 +28,7 @@ final class AssetUpdate
     ) {
     }
 
+    /** The updater for one kind of asset, with the runtime up. */
     public static function boot(string $kind): self
     {
         $runtime = Runtime::boot();
@@ -39,7 +40,11 @@ final class AssetUpdate
         return new self($kind, $updates, $inventory);
     }
 
-    /** @param list<string> $names */
+    /**
+     * Updates the named assets, or all of them.
+     *
+     * @param list<string> $names
+     */
     public function run(array $names, array $assocArgs): void
     {
         $all = isset($assocArgs['all']);

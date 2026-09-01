@@ -53,6 +53,7 @@ final readonly class LoginController
     /** Clean path segment => the action wp-login.php spells with ?action=. */
     private const SEGMENTS = ['lost-password' => 'lostpassword', 'reset' => 'rp', 'logout' => 'logout'];
 
+    /** The sign-in, lost-password, reset, and logout pages. */
     #[Route(Method::Get, self::PATH)]
     #[Route(Method::Get, self::PATH . '/{segment:lost-password|reset|logout}')]
     #[Route(Method::Get, '/wp-login.php')]
@@ -240,6 +241,7 @@ final readonly class LoginController
         return $this->cookies->attach(Response::redirect($this->permalinks->url('/minn-admin/'), 302), $user, $expiration, $session, $request->secure, persistent: true);
     }
 
+    /** Handles the posted form for each of those pages. */
     #[Route(Method::Post, self::PATH)]
     #[Route(Method::Post, self::PATH . '/{segment:lost-password|reset|logout}')]
     #[Route(Method::Post, '/wp-login.php')]

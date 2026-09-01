@@ -4,10 +4,10 @@ shared SQL fragments
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`DateSql`](#datesql) | final class | 155 | The WHERE fragment of a date query in the reference's shape: before and |
-| [`MetaSql`](#metasql) | final class | 233 | The JOIN and WHERE fragments of a meta query in the reference's shape: |
+| [`DateSql`](#datesql) | final class | 157 | The WHERE fragment of a date query in the reference's shape: before and |
+| [`MetaSql`](#metasql) | final class | 242 | The JOIN and WHERE fragments of a meta query in the reference's shape: |
 | [`Sql`](#sql) | final class | 26 | Literal quoting for the SQL fragments the query classes hand to plugins, |
-| [`TaxSql`](#taxsql) | final class | 133 | The JOIN and WHERE fragments of a taxonomy query in the reference's |
+| [`TaxSql`](#taxsql) | final class | 142 | The JOIN and WHERE fragments of a taxonomy query in the reference's |
 
 ## DateSql
 
@@ -34,17 +34,21 @@ Sanitises to the reference's shape: every level carries column, compare and rela
 
 ### static `isFirstOrder(array $query): bool`
 
+Whether a date query is one clause rather than a group of them.
+
 ### `validateColumn(string $column): string`
 
 A column name as "table.column", the default for anything unknown.
 
 ### `build(array $queries): string`
 
+The WHERE fragment for a date query.
+
 ### static `datetime(mixed $value, bool $endOfUnit): string`
 
 A full datetime from a string or a parts array; a parts array rounds up to the end of its unit when asked.
 
-Internals: `group()` (private, line 91), `clause()` (private, line 109), `part()` (private, line 133), `compare()` (private, line 162)
+Internals: `group()` (private, line 93), `clause()` (private, line 111), `part()` (private, line 135), `compare()` (private, line 164)
 
 
 ## MetaSql
@@ -78,19 +82,25 @@ A clause rather than a group: it names a key or a value.
 
 ### `build(array $queries): array`
 
+The JOIN and WHERE fragments for a meta query.
+
 - `@return array{join: string, where: string}`
 
 ### `clauses(): array`
+
+The clauses the last build resolved, by name.
 
 - `@return array<string, array{alias: string, cast: string}> clauses seen while building, by name or alias`
 
 ### static `hasOr(array $queries): bool`
 
+Whether any level of the query relates its clauses by OR.
+
 ### static `cast(string $type): string`
 
 The CAST target for a clause type; CHAR means no cast.
 
-Internals: `hasOrWithNotExists()` (private, line 99), `group()` (private, line 130), `clause()` (private, line 157), `keyClause()` (private, line 178), `valueClause()` (private, line 190), `values()` (private, line 202), `alias()` (private, line 211)
+Internals: `hasOrWithNotExists()` (private, line 107), `group()` (private, line 139), `clause()` (private, line 166), `keyClause()` (private, line 187), `valueClause()` (private, line 199), `values()` (private, line 211), `alias()` (private, line 220)
 
 
 ## Sql
@@ -137,13 +147,19 @@ __construct(string $relationships, string $termTaxonomy, string $primaryTable, s
 
 ### static `sanitize(array $queries): array`
 
+The query with every clause in its canonical shape.
+
 ### `build(array $queries): array`
+
+The JOIN and WHERE fragments for a taxonomy query.
 
 - `@return array{join: string, where: string}`
 
 ### `queriedTerms(): array`
 
+The terms the last build matched, by taxonomy.
+
 - `@return array<string, array{terms: list<mixed>, field: string}> the terms asked for, by taxonomy`
 
-Internals: `group()` (private, line 85), `clause()` (private, line 111), `inClause()` (private, line 135)
+Internals: `group()` (private, line 94), `clause()` (private, line 120), `inClause()` (private, line 144)
 

@@ -9,7 +9,11 @@ final class Time
 {
     private const UNITS = [['second', 1], ['minute', 60], ['hour', 3600], ['day', 86400], ['week', 604800], ['month', 2592000], ['year', 31536000]];
 
-    /** @return array{0: int, 1: string} count and unit name */
+    /**
+     * A number of seconds as its largest whole unit and count.
+     *
+     * @return array{0: int, 1: string} count and unit name
+     */
     public static function span(int $seconds): array
     {
         $seconds = abs($seconds);

@@ -26,22 +26,26 @@ final class Caller
     ) {
     }
 
+    /** The session, or null for an anonymous or refused caller. */
     public function session(): ?Authenticated
     {
         $resolved = $this->resolve();
         return $resolved instanceof Authenticated ? $resolved : null;
     }
 
+    /** The caller's user id, 0 when anonymous. */
     public function id(): int
     {
         return $this->session()?->id() ?? 0;
     }
 
+    /** Whether the caller holds a capability, on a post when given. */
     public function can(string $capability, ?int $postId = null): bool
     {
         return $this->capabilities->can($this->id(), $capability, $postId);
     }
 
+    /** The capability engine. */
     public function capabilities(): Capabilities
     {
         return $this->capabilities;

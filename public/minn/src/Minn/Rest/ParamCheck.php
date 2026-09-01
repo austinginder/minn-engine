@@ -14,6 +14,8 @@ use Minn\Runtime\Refusal;
 final class ParamCheck
 {
     /**
+     * The first refusal among the request's parameters, or null when all pass.
+     *
      * @param array<string, array<string, mixed>> $args
      * @param callable(string): mixed $param the request's value for one argument
      * @param callable(string, mixed): (bool|array{0: string, 1: mixed}) $validate true, false, or [message, details]
@@ -48,6 +50,8 @@ final class ParamCheck
     }
 
     /**
+     * The parameters after sanitising, or the refusal listing every invalid one.
+     *
      * @param array<string, array<string, mixed>> $params the request's parameter groups, by source, in precedence order
      * @param array<string, array<string, mixed>> $args
      * @param callable(string, mixed): (array{value: mixed}|array{error: array{0: string, 1: mixed}}) $sanitize

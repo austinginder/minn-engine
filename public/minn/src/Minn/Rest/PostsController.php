@@ -36,12 +36,14 @@ final readonly class PostsController
     ) {
     }
 
+    /** The posts or pages list. */
     #[Route(Method::Get, '/wp/v2/{base:posts|pages}')]
     public function list(Request $request, string $base): Response
     {
         return $this->serveList($request, $base === 'pages' ? 'page' : 'post');
     }
 
+    /** The list for any post type, with the reference's status and visibility rules. */
     public function serveList(Request $request, string $type): Response
     {
         $query = ListQuery::fromRequest($request);
@@ -147,12 +149,14 @@ final readonly class PostsController
         return "{$orderBy} {$query->order}";
     }
 
+    /** One post or page. */
     #[Route(Method::Get, '/wp/v2/{base:posts|pages}/{id:\d+}')]
     public function single(Request $request, string $base, string $id): Response
     {
         return $this->serveSingle($request, $base === 'pages' ? 'page' : 'post', $id);
     }
 
+    /** One post of any type, with the reference's read rules. */
     public function serveSingle(Request $request, string $type, string $id): Response
     {
         $postId = (int) $id;

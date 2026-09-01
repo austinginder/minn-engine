@@ -29,6 +29,7 @@ final class Reply
         return self::item($data, Fields::fromQuery($request->query), $status);
     }
 
+    /** One object as a response, the selected fields applied. */
     public static function item(mixed $data, ?Fields $fields, int $status = 200): Response
     {
         if ($fields !== null && !$fields->deferred && is_array($data) && $status < 400) {
@@ -37,7 +38,11 @@ final class Reply
         return new Response($status, self::HEADERS, (string) json_encode($data));
     }
 
-    /** @param list<array> $rows */
+    /**
+     * A list response with the total and page-count headers.
+     *
+     * @param list<array> $rows
+     */
     public static function list(array $rows, int $total, int $totalPages, ?Fields $fields): Response
     {
         if ($fields !== null) {
@@ -50,6 +55,7 @@ final class Reply
         );
     }
 
+    /** A REST error as the reference's error body. */
     public static function error(RestError $error): Response
     {
         return new Response($error->status, self::HEADERS, (string) json_encode($error->payload()));

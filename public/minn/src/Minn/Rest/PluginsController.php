@@ -41,6 +41,7 @@ final readonly class PluginsController
     ) {
     }
 
+    /** The plugins list, optionally by status. */
     #[Route(Method::Get, '/wp/v2/plugins')]
     public function list(Request $request): Response
     {
@@ -87,6 +88,7 @@ final readonly class PluginsController
         return Reply::item($this->find($key), Fields::fromQuery($request->query), 201);
     }
 
+    /** One plugin. */
     #[Route(Method::Get, '/wp/v2/plugins/{plugin:[^.\/]+(?:\/[^.\/]+)?}')]
     public function single(Request $request, string $plugin): Response
     {
@@ -94,6 +96,7 @@ final readonly class PluginsController
         return Reply::item($this->find($plugin), Fields::fromQuery($request->query));
     }
 
+    /** Activates or deactivates a plugin. */
     #[Route(Method::Put, '/wp/v2/plugins/{plugin:[^.\/]+(?:\/[^.\/]+)?}')]
     #[Route(Method::Post, '/wp/v2/plugins/{plugin:[^.\/]+(?:\/[^.\/]+)?}')]
     #[Route(Method::Patch, '/wp/v2/plugins/{plugin:[^.\/]+(?:\/[^.\/]+)?}')]
@@ -112,6 +115,7 @@ final readonly class PluginsController
         return Reply::item($this->find($plugin), Fields::fromQuery($request->query));
     }
 
+    /** Deletes an inactive plugin. */
     #[Route(Method::Delete, '/wp/v2/plugins/{plugin:[^.\/]+(?:\/[^.\/]+)?}')]
     public function delete(Request $request, string $plugin): Response
     {

@@ -39,6 +39,7 @@ final readonly class MediaController
     ) {
     }
 
+    /** The media library list. */
     #[Route(Method::Get, '/wp/v2/media')]
     public function list(Request $request): Response
     {
@@ -115,6 +116,7 @@ final readonly class MediaController
         return str_replace('T', ' ', $value);
     }
 
+    /** One attachment. */
     #[Route(Method::Get, '/wp/v2/media/{id:\d+}')]
     public function single(Request $request, string $id): Response
     {
@@ -126,6 +128,7 @@ final readonly class MediaController
         return Reply::item($this->object->build($attachment, $edit), Fields::fromQuery($request->query));
     }
 
+    /** Uploads a file and creates its attachment. */
     #[Route(Method::Post, '/wp/v2/media')]
     public function create(Request $request): Response
     {

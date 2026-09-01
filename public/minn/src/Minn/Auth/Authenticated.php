@@ -17,6 +17,7 @@ final readonly class Authenticated
     ) {
     }
 
+    /** The signed-in user's id. */
     public function id(): int
     {
         return $this->user->id;

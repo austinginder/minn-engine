@@ -15,11 +15,13 @@ final readonly class AuthFailure
     {
     }
 
+    /** No usable session. */
     public static function notLoggedIn(): self
     {
         return new self('rest_not_logged_in');
     }
 
+    /** A session whose nonce did not verify. */
     public static function invalidNonce(): self
     {
         return new self('rest_cookie_invalid_nonce');

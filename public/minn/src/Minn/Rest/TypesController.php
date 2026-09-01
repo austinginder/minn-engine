@@ -24,6 +24,7 @@ final readonly class TypesController
         return Reply::item($this->types->all(), Fields::fromQuery($request->query));
     }
 
+    /** One post type. */
     #[Route(Method::Get, '/wp/v2/types/{slug:[\w-]+}')]
     public function single(Request $request, string $slug): Response
     {

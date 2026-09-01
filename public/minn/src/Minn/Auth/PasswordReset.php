@@ -49,6 +49,7 @@ final readonly class PasswordReset
         return (int) $m[1] + self::LIFETIME < time() ? 'expired' : 'valid';
     }
 
+    /** Forgets a user's reset key. */
     public function clear(UserRecord $user): void
     {
         $this->users->update($user->id, ['user_activation_key' => '']);

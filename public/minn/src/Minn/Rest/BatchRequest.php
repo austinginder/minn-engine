@@ -13,6 +13,8 @@ namespace Minn\Rest;
 final class BatchRequest
 {
     /**
+     * The batch body's requests in the reference's normalised form.
+     *
      * @param mixed $requests the batch payload's `requests` member
      * @return list<array{method: string, path: string, query: array<string, mixed>, body: ?array, headers: ?array}>
      */

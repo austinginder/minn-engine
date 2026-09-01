@@ -41,7 +41,11 @@ final class Roles
         $this->roles = null;
     }
 
-    /** @return RoleMap */
+    /**
+     * Every role with its name and capabilities, from the option or the shipped defaults.
+     *
+     * @return RoleMap
+     */
     public function all(): array
     {
         return $this->roles ??= self::parse($this->db->option($this->db->prefix() . 'user_roles'))

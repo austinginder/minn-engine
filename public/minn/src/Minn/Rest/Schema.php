@@ -28,6 +28,7 @@ final readonly class Schema
     {
     }
 
+    /** Whether a value satisfies a schema, or the reference's refusal. */
     public function validate(mixed $value, array $args, string $param = ''): true|Refusal
     {
         $composite = $this->validateComposite($value, $args, $param);
@@ -286,6 +287,7 @@ final readonly class Schema
         return new Refusal('rest_invalid_type', sprintf('%1$s is not of type %2$s.', $param, $type), ['param' => $param]);
     }
 
+    /** A value coerced to its schema's types. */
     public function sanitize(mixed $value, array $args, string $param = ''): mixed
     {
         foreach (['anyOf', 'oneOf'] as $combinator) {
@@ -463,6 +465,7 @@ final readonly class Schema
         return $args;
     }
 
+    /** The schema with additionalProperties closed on every object. */
     public static function closeObjects(array $schema): array
     {
         $type = (array) ($schema['type'] ?? []);

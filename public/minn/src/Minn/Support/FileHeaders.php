@@ -12,6 +12,8 @@ namespace Minn\Support;
 final class FileHeaders
 {
     /**
+     * The header values of a plugin or theme file, by label.
+     *
      * @param list<string> $labels
      * @return array<string, string>
      */

@@ -4,8 +4,8 @@
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`LoginController`](#logincontroller) | final readonly class | 334 | Signing in. The page people see is /minn-admin/login: the form, the |
-| [`LoginForm`](#loginform) | final class | 136 | The sign-in page markup. |
+| [`LoginController`](#logincontroller) | final readonly class | 336 | Signing in. The page people see is /minn-admin/login: the form, the |
+| [`LoginForm`](#loginform) | final class | 137 | The sign-in page markup. |
 | [`ServeLogin`](#servelogin) | final class | 3 | Thrown by the wp-login.php shape file when plugin code require's it |
 
 ## LoginController
@@ -38,6 +38,8 @@ Route: `GET /minn-admin/login/{segment:lost-password|reset|logout}`
 
 Route: `GET /wp-login.php`
 
+The sign-in, lost-password, reset, and logout pages.
+
 ### `signIn(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `POST /minn-admin/login`
@@ -46,7 +48,9 @@ Route: `POST /minn-admin/login/{segment:lost-password|reset|logout}`
 
 Route: `POST /wp-login.php`
 
-Internals: `lostPassword()` (private, line 100), `openResetLink()` (private, line 142), `resetSession()` (private, line 159), `savePassword()` (private, line 174), `tokenLogin()` (private, line 208), `safeRedirect()` (private, line 278), `logout()` (private, line 297), `action()` (private, line 322), `actionUrl()` (private, line 333), `base()` (private, line 343), `tooManyAttempts()` (private, line 349), `render()` (private, line 356)
+Handles the posted form for each of those pages.
+
+Internals: `lostPassword()` (private, line 101), `openResetLink()` (private, line 143), `resetSession()` (private, line 160), `savePassword()` (private, line 175), `tokenLogin()` (private, line 209), `safeRedirect()` (private, line 280), `logout()` (private, line 299), `action()` (private, line 324), `actionUrl()` (private, line 335), `base()` (private, line 345), `tooManyAttempts()` (private, line 351), `render()` (private, line 358)
 
 
 ## LoginForm
@@ -60,6 +64,8 @@ The sign-in page markup.
 Used by: `Minn\Login\LoginController`
 
 ### static `render(string $siteName, string $action, string $redirectTo, string $error, string $message = '', string $lostPasswordUrl = ''): string`
+
+The sign-in page's HTML.
 
 ### static `embedded(array $args, string $top, string $middle, string $bottom): string`
 
@@ -81,7 +87,7 @@ The new-password form; the key rides in a hidden field as on the reference.
 
 A message with a link back to sign-in.
 
-Internals: `page()` (private, line 109)
+Internals: `page()` (private, line 110)
 
 
 ## ServeLogin

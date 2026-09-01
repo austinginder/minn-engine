@@ -17,6 +17,7 @@ use stdClass;
  */
 final class SchemaValues
 {
+    /** Whether a value reads as a boolean, the strings included. */
     public static function isBoolean(mixed $value): bool
     {
         if (is_bool($value)) {
@@ -28,6 +29,7 @@ final class SchemaValues
         return is_int($value) && in_array($value, [0, 1], true);
     }
 
+    /** The boolean a value reads as. */
     public static function toBoolean(mixed $value): mixed
     {
         if (is_string($value)) {
@@ -39,11 +41,13 @@ final class SchemaValues
         return (bool) $value;
     }
 
+    /** Whether a value is a whole number. */
     public static function isInteger(mixed $value): bool
     {
         return is_numeric($value) && round((float) $value) === (float) $value;
     }
 
+    /** Whether a value reads as a list, a comma-separated string included. */
     public static function isArray(mixed $value): bool
     {
         if (is_scalar($value)) {
@@ -52,6 +56,7 @@ final class SchemaValues
         return is_array($value) && ($value === [] || array_keys($value) === range(0, count($value) - 1));
     }
 
+    /** The list a value reads as. */
     public static function toArray(mixed $value): array
     {
         if (is_scalar($value)) {
@@ -60,6 +65,7 @@ final class SchemaValues
         return is_array($value) ? array_values($value) : [];
     }
 
+    /** Whether a value reads as an object. */
     public static function isObject(mixed $value): bool
     {
         if ($value === '' || $value instanceof stdClass) {
@@ -71,6 +77,7 @@ final class SchemaValues
         return is_array($value);
     }
 
+    /** The object a value reads as, as an array. */
     public static function toObject(mixed $value): array
     {
         if ($value === '') {
@@ -101,6 +108,7 @@ final class SchemaValues
         return '';
     }
 
+    /** Whether two values are equal by the reference's loose rules. */
     public static function valuesEqual(mixed $a, mixed $b): bool
     {
         if (is_array($a) && is_array($b)) {
@@ -120,6 +128,7 @@ final class SchemaValues
         return $a === $b;
     }
 
+    /** The schema of the patternProperties entry a property name matches, or null. */
     public static function patternProperty(string $property, array $args): ?array
     {
         foreach ($args['patternProperties'] ?? [] as $pattern => $schema) {
@@ -156,17 +165,23 @@ final class SchemaValues
         return strtotime($date);
     }
 
+    /** A hex colour as given, or false. */
     public static function parseHexColor(mixed $color): mixed
     {
         return preg_match('|^#([A-Fa-f0-9]{3}){1,2}$|', (string) $color) ? $color : false;
     }
 
+    /** Whether a value is a version-4 uuid. */
     public static function isUuid(mixed $uuid): bool
     {
         return is_string($uuid) && preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $uuid) === 1;
     }
 
-    /** @return list<string> */
+    /**
+     * A comma- or space-separated string as a list.
+     *
+     * @return list<string>
+     */
     public static function list(mixed $value): array
     {
         return preg_split('/[\s,]+/', (string) $value, -1, PREG_SPLIT_NO_EMPTY) ?: [];

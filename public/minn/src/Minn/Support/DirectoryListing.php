@@ -8,6 +8,8 @@ namespace Minn\Support;
 final class DirectoryListing
 {
     /**
+     * A directory's entries described one by one, or false when unreadable.
+     *
      * @param callable(string): array<string, mixed> $describe the entry's own fields for an absolute path
      * @return array<string, array<string, mixed>>|false false when the path is not a readable directory
      */

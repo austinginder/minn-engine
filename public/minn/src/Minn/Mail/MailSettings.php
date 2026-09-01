@@ -33,6 +33,7 @@ final readonly class MailSettings
     ) {
     }
 
+    /** The site's mail settings from its minn_mail option, or the defaults. */
     public static function fromSite(Site $site): self
     {
         // Stored as JSON by the engine's settings, or serialized by `wp option update --format=json`.

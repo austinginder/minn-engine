@@ -13,7 +13,11 @@ final readonly class Smtp
     {
     }
 
-    /** @param list<string> $to */
+    /**
+     * Sends one message over SMTP; false on failure.
+     *
+     * @param list<string> $to
+     */
     public function send(string $from, string $fromName, array $to, string $subject, string $body): bool
     {
         $headers = 'From: ' . Mailer::address($from, $fromName) . "\r\n"

@@ -4,24 +4,24 @@ escaping, serialized readers, small helpers
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Accents`](#accents) | final class | 21 | Accented and special Latin characters to their plain ASCII spelling; a character with no ASCII form stays as it is. |
-| [`DirectoryListing`](#directorylisting) | final class | 32 | Walks a directory the way the filesystem API lists it: named entries, dot entries skipped, hidden ones optional, recursion optional. |
-| [`Email`](#email) | final class | 61 | The address rules the reference applies: a local part from a fixed |
-| [`Entities`](#entities) | final class | 52 | HTML special-character encoding with the reference's quote styles and its |
-| [`FileHeaders`](#fileheaders) | final class | 25 | Header values from a plugin or theme file. The labels (Plugin Name, |
+| [`Accents`](#accents) | final class | 22 | Accented and special Latin characters to their plain ASCII spelling; a character with no ASCII form stays as it is. |
+| [`DirectoryListing`](#directorylisting) | final class | 34 | Walks a directory the way the filesystem API lists it: named entries, dot entries skipped, hidden ones optional, recursion optional. |
+| [`Email`](#email) | final class | 69 | The address rules the reference applies: a local part from a fixed |
+| [`Entities`](#entities) | final class | 54 | HTML special-character encoding with the reference's quote styles and its |
+| [`FileHeaders`](#fileheaders) | final class | 27 | Header values from a plugin or theme file. The labels (Plugin Name, |
 | [`FileTree`](#filetree) | final class | 70 | Whole-directory reads and copies. The engine's own installer, the update |
 | [`Files`](#files) | final class | 61 | Recursive filesystem work behind WP_Filesystem_Direct: best-effort tree |
-| [`Html`](#html) | final class | 78 |  |
-| [`Ip`](#ip) | final class | 21 | Addresses with their identifying tail removed, for logs and analytics that |
-| [`Json`](#json) | final class | 18 | Makes a value encodable: strings that are not valid UTF-8 get their high bytes replaced, recursively. |
-| [`Kses`](#kses) | final class | 211 | The HTML a user without unfiltered_html may store. Tags outside the |
-| [`Lists`](#lists) | final class | 88 | List shaping behind the facade's array utilities: the multi-field sort |
+| [`Html`](#html) | final class | 80 |  |
+| [`Ip`](#ip) | final class | 22 | Addresses with their identifying tail removed, for logs and analytics that |
+| [`Json`](#json) | final class | 19 | Makes a value encodable: strings that are not valid UTF-8 get their high bytes replaced, recursively. |
+| [`Kses`](#kses) | final class | 215 | The HTML a user without unfiltered_html may store. Tags outside the |
+| [`Lists`](#lists) | final class | 90 | List shaping behind the facade's array utilities: the multi-field sort |
 | [`Locale`](#locale) | final class | 31 | The locale's calendar and number vocabulary as data: the names a site |
-| [`Markers`](#markers) | final class | 24 | The BEGIN/END marker blocks insert_with_markers() maintains in files like |
+| [`Markers`](#markers) | final class | 28 | The BEGIN/END marker blocks insert_with_markers() maintains in files like |
 | [`Paths`](#paths) | final class | 64 | File-system path and permission spellings. |
-| [`SearchReplace`](#searchreplace) | final class | 36 | String replace that walks serialized-PHP arrays of scalars without |
+| [`SearchReplace`](#searchreplace) | final class | 38 | String replace that walks serialized-PHP arrays of scalars without |
 | [`Serialized`](#serialized) | final class | 195 | Tolerant readers for the serialized-PHP blobs WordPress stores. Nothing |
-| [`Time`](#time) | final class | 17 | Human-scale spans: a number of seconds as the largest whole unit it fills, rounded, never below one. |
+| [`Time`](#time) | final class | 21 | Human-scale spans: a number of seconds as the largest whole unit it fills, rounded, never below one. |
 | [`Url`](#url) | final class | 196 | URL shaping the escaping and query helpers share: the character cleanup |
 
 ## Accents
@@ -34,6 +34,8 @@ Accented and special Latin characters to their plain ASCII spelling; a character
 
 ### static `strip(string $text): string`
 
+The text with accented letters replaced by their plain forms.
+
 
 ## DirectoryListing
 
@@ -42,6 +44,8 @@ Accented and special Latin characters to their plain ASCII spelling; a character
 Walks a directory the way the filesystem API lists it: named entries, dot entries skipped, hidden ones optional, recursion optional.
 
 ### static `read(string $path, bool $includeHidden, bool $recursive, ?string $onlyName, callable $describe): array|false`
+
+A directory's entries described one by one, or false when unreadable.
 
 - `@param callable(string): array<string, mixed> $describe the entry's own fields for an absolute path`
 - `@return array<string, array<string, mixed>>|false false when the path is not a readable directory`
@@ -62,7 +66,11 @@ Used by: `Minn\Rest\CommentsController`
 
 ### static `check(string $email): ?string`
 
+Why an address is invalid, or null when it passes the reference's checks.
+
 ### static `sanitize(string $raw): array`
+
+An address with the characters the reference strips removed, and what was removed.
 
 - `@return array{0: string, 1: string|null} the cleaned address (empty when refused) and the reason`
 
@@ -81,13 +89,15 @@ named or numeric entity stays as it is.
 
 ### static `specialchars(string $text, string|int|false $quoteStyle, bool $doubleEncode, callable $knownEntity): string`
 
+The reference's special-characters escaping, with its quote styles and double-encoding rule.
+
 - `@param callable(string): bool $knownEntity whether a named entity is in the allowed table`
 
 ### static `decode(string $text, string|int $quoteStyle): string`
 
 The reverse of specialchars: the five characters back, with the quote pairs the style asks for.
 
-Internals: `encodeStrayAmpersands()` (private, line 38)
+Internals: `encodeStrayAmpersands()` (private, line 40)
 
 
 ## FileHeaders
@@ -101,6 +111,8 @@ reader is a line scan of the first 8 KB, never PHP execution.
 Used by: `Minn\Admin\App`, `Minn\Admin\Diagnostics`, `Minn\Admin\ManageController`, `Minn\Admin\Packages`, `Minn\Admin\Updates`, `Minn\Cli\ThemeCommand`, `Minn\Content\Inventory`, `Minn\Rest\PluginsController`, `Minn\Theme\Folder`
 
 ### static `values(string $file, array $labels): array`
+
+The header values of a plugin or theme file, by label.
 
 - `@param list<string> $labels`
 - `@return array<string, string>`
@@ -166,7 +178,11 @@ Used by: `Minn\Admin\AppController`, `Minn\Admin\LanguageChoices`, `Minn\Blocks\
 
 ### static `esc(?string $value): string`
 
+Text escaped for HTML.
+
 ### static `attr(?string $value): string`
+
+Text escaped for an attribute value.
 
 ### static `addClasses(string $html, array $classes, ?string $onClass = NULL): string`
 
@@ -203,6 +219,8 @@ so a malformed value can never leak through unchanged.
 
 ### static `anonymize(string $address): string`
 
+An address with its last octet, or its tail, zeroed.
+
 
 ## Json
 
@@ -211,6 +229,8 @@ so a malformed value can never leak through unchanged.
 Makes a value encodable: strings that are not valid UTF-8 get their high bytes replaced, recursively.
 
 ### static `sanitize(mixed $value): mixed`
+
+A value with every string made valid UTF-8, ready to encode.
 
 
 ## Kses
@@ -234,6 +254,8 @@ Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\SocialLinks`
 
 ### static `filter(string $html, array $allowed): string`
 
+HTML with only the allowed tags and attributes kept.
+
 - `@param array<string, list<string>> $allowed`
 
 ### static `text(string $value): string`
@@ -252,7 +274,7 @@ A URL inside markup: an unsafe scheme is cut off and the rest kept, as the refer
 
 A style attribute's value with only the listed properties kept.
 
-Internals: `attributes()` (private, line 138), `srcset()` (private, line 175), `css()` (private, line 198)
+Internals: `attributes()` (private, line 142), `srcset()` (private, line 179), `css()` (private, line 202)
 
 
 ## Lists
@@ -265,6 +287,8 @@ wins) and the row-shape conversions wpdb hands back for its OBJECT_K /
 ARRAY_A / ARRAY_N output formats.
 
 ### static `sort(array $items, array $orderby, bool $preserveKeys): array`
+
+Items sorted by several fields, each ascending or descending.
 
 - `@param array<int|string, mixed> $items`
 - `@param array<string, string> $orderby field => ASC|DESC`
@@ -290,7 +314,7 @@ get_page_children walk. Visited ids guard against a parent cycle.
 - `@param list<int> $visited`
 - `@return list<mixed>`
 
-Internals: `keyedByFirstColumn()` (private, line 88)
+Internals: `keyedByFirstColumn()` (private, line 90)
 
 
 ## Locale
@@ -338,6 +362,8 @@ do-not-edit preamble ahead of the inserted lines.
 
 ### static `write(string $file, string $marker, array $lines): bool`
 
+Replaces the lines between a marker's begin and end comments in a file.
+
 - `@param list<string> $lines`
 
 
@@ -373,9 +399,11 @@ Used by: `Minn\Cli\SearchReplaceCommand`
 
 ### static `in(string $value, string $old, string $new): array`
 
+A value with one string replaced, and how many times.
+
 - `@return array{0: string, 1: int} replacement and how many times $old occurred`
 
-Internals: `walk()` (private, line 31)
+Internals: `walk()` (private, line 33)
 
 
 ## Serialized
@@ -429,6 +457,8 @@ Human-scale spans: a number of seconds as the largest whole unit it fills, round
 - const `UNITS` = `array (   0 =>    array (     0 => 'second',     1 => 1,   ),   1 =>    array (     0 => 'minute',     1 => 60,   ),   2 =>    array (     0 => 'hour',     1 => 3600,   ),   3 =>    array (     0 => 'day',     1 => 86400,   ),   4 =>    array (     0 => 'week',     1 => 604800,   ),   5 =>    array (     0 => 'month',     1 => 2592000,   ),   6 =>    array (     0 => 'year',     1 => 31536000,   ), )`
 
 ### static `span(int $seconds): array`
+
+A number of seconds as its largest whole unit and count.
 
 - `@return array{0: int, 1: string} count and unit name`
 

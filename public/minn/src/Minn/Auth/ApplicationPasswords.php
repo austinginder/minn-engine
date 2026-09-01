@@ -23,7 +23,11 @@ final readonly class ApplicationPasswords
     {
     }
 
-    /** @return list<array<string, mixed>> */
+    /**
+     * Every application password of a user, as stored records without the hash's plain text.
+     *
+     * @return list<array<string, mixed>>
+     */
     public function all(int $userId): array
     {
         $raw = $this->users->meta($userId, self::META);
@@ -34,7 +38,11 @@ final readonly class ApplicationPasswords
         return is_array($list) ? array_values(array_filter($list, 'is_array')) : [];
     }
 
-    /** @return array<string, mixed>|null */
+    /**
+     * One record by uuid, or null.
+     *
+     * @return array<string, mixed>|null
+     */
     public function find(int $userId, string $uuid): ?array
     {
         foreach ($this->all($userId) as $item) {
@@ -45,7 +53,11 @@ final readonly class ApplicationPasswords
         return null;
     }
 
-    /** @return array{0: array<string, mixed>, 1: string} the stored record and the one-time plaintext */
+    /**
+     * Mints a password, stores its hash, and returns the record with the plain text once.
+     *
+     * @return array{0: array<string, mixed>, 1: string} the stored record and the one-time plaintext
+     */
     public function create(int $userId, string $name, string $appId): array
     {
         $plain = self::generate();
@@ -56,6 +68,7 @@ final readonly class ApplicationPasswords
         return [$record, self::chunked($plain)];
     }
 
+    /** Renames one password; null when the uuid is unknown. */
     public function rename(int $userId, string $uuid, string $name): ?array
     {
         return $this->change($userId, $uuid, ['name' => $name]);
@@ -67,6 +80,7 @@ final readonly class ApplicationPasswords
         return $this->change($userId, $uuid, ['last_used' => time(), 'last_ip' => $ip]);
     }
 
+    /** Removes one password and returns its record; null when unknown. */
     public function delete(int $userId, string $uuid): ?array
     {
         $kept = [];
@@ -84,7 +98,11 @@ final readonly class ApplicationPasswords
         return $removed;
     }
 
-    /** @return int how many went */
+    /**
+     * Removes every application password of a user and returns how many.
+     *
+     * @return int how many went
+     */
     public function deleteAll(int $userId): int
     {
         $count = count($this->all($userId));

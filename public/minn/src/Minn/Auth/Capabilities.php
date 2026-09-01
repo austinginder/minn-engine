@@ -21,17 +21,23 @@ final readonly class Capabilities
     ) {
     }
 
+    /** The capability engine over the shared database door. */
     public static function fromDb(Db $db): self
     {
         return new self($db, new Users($db), new Roles($db));
     }
 
+    /** The role definitions. */
     public function roles(): Roles
     {
         return $this->roles;
     }
 
-    /** @return list<string> role slugs */
+    /**
+     * The role slugs a user holds.
+     *
+     * @return list<string> role slugs
+     */
     public function rolesOf(int $userId): array
     {
         $blob = $this->users->meta($userId, $this->db->prefix() . 'capabilities');
@@ -45,7 +51,11 @@ final readonly class Capabilities
             : [];
     }
 
-    /** @return array<string, true> the union of primitives the user's roles grant */
+    /**
+     * Every primitive capability a user holds through their roles.
+     *
+     * @return array<string, true> the union of primitives the user's roles grant
+     */
     public function primitivesOf(int $userId): array
     {
         $all = $this->roles->all();
