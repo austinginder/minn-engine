@@ -65,7 +65,7 @@ $check(!preg_match('/class="[^"]*has-global-padding/', $home), 'no global paddin
 [, $texturizePage] = minn_test_fetch($ENGINE . '/texturize-battery-its-quoted-fine/');
 $check(str_contains($texturizePage, '&#8220;quoted&#8221;'), 'template markup is texturized');
 $check(str_contains($home, 'A modern PHP engine'), 'the hero names what Minn is');
-$check(str_contains($home, 'Compatible with WordPress sites'), 'the hero names the compatibility');
+$check(str_contains($home, 'Minn fluently speaks with WordPress sites'), 'the hero names the compatibility');
 $check(str_contains($home, 'Built from') && str_contains($home, 'scratch'), 'the hero says built from scratch');
 $check(str_contains($home, 'Minn Admin is the only UI'), 'the visual draws the no-wp-admin line');
 $check(str_contains($home, 'Audience 3'), 'the three-audience visual is on the page');
