@@ -17,7 +17,7 @@
             ],
             "usedBy": [
                 "Minn\\Admin\\Dashboard",
-                "Minn\\Rest\\Api"
+                "Minn\\Rest\\Services"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Db $db, Minn\\Content\\Site $site)",
@@ -161,7 +161,7 @@
             "usedBy": [
                 "Minn\\Admin\\Dashboard",
                 "Minn\\Admin\\Notifications",
-                "Minn\\Rest\\Api"
+                "Minn\\Rest\\Services"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Db $db, Minn\\Content\\Users $users, Minn\\Auth\\Capabilities $capabilities)",
@@ -688,7 +688,7 @@
                 "Minn\\Admin\\Translations",
                 "Minn\\Engine",
                 "Minn\\Front\\AdminBar",
-                "Minn\\Rest\\Api"
+                "Minn\\Rest\\Services"
             ],
             "constructor": {
                 "signature": "__construct(string $dir)",
@@ -1136,7 +1136,7 @@
                 "Minn\\Admin\\ManageController",
                 "Minn\\Engine",
                 "Minn\\Front\\AdminBar",
-                "Minn\\Rest\\Api"
+                "Minn\\Rest\\Services"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Content\\Users $users)",
@@ -1733,7 +1733,7 @@
             ],
             "usedBy": [
                 "Minn\\Admin\\V1Controller",
-                "Minn\\Rest\\Api"
+                "Minn\\Rest\\Services"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Db $db, Minn\\Content\\Site $site, Minn\\Content\\Users $users, Minn\\Auth\\Capabilities $capabilities, Minn\\Admin\\ActivityChart $chart, Minn\\Admin\\ActivityFeed $feed, string $uploadsDir)",
@@ -2283,7 +2283,7 @@
             ],
             "usedBy": [
                 "Minn\\Admin\\SystemController",
-                "Minn\\Rest\\Api"
+                "Minn\\Rest\\Services"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Db $db, Minn\\Content\\Site $site, Minn\\Front\\Permalinks $permalinks, Minn\\Content\\Inventory $inventory, Minn\\Extension\\Loader $extensions, Minn\\Admin\\Logs $logs, string $engineVersion, string $webroot)",
@@ -2954,7 +2954,7 @@
                 "Minn\\Admin\\BootPayload",
                 "Minn\\Admin\\ManageController",
                 "Minn\\Engine",
-                "Minn\\Rest\\Api"
+                "Minn\\Rest\\Services"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Content\\Users $users, Minn\\Auth\\Capabilities $capabilities)",
@@ -3636,7 +3636,7 @@
             "usedBy": [
                 "Minn\\Admin\\Diagnostics",
                 "Minn\\Admin\\SystemController",
-                "Minn\\Rest\\Api"
+                "Minn\\Rest\\Services"
             ],
             "constructor": {
                 "signature": "__construct(string $webroot)",
@@ -4751,7 +4751,7 @@
             ],
             "usedBy": [
                 "Minn\\Admin\\V1Controller",
-                "Minn\\Rest\\Api"
+                "Minn\\Rest\\Services"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Db $db, Minn\\Content\\Site $site, Minn\\Content\\Users $users, Minn\\Auth\\Capabilities $capabilities, Minn\\Admin\\ActivityFeed $feed, Minn\\Admin\\Updates $updates)",
@@ -5135,8 +5135,8 @@
                 "Minn\\Cli\\PluginCommand",
                 "Minn\\Cli\\ThemeCommand",
                 "Minn\\Engine",
-                "Minn\\Rest\\Api",
-                "Minn\\Rest\\PluginsController"
+                "Minn\\Rest\\PluginsController",
+                "Minn\\Rest\\Services"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Content\\Site $site, string $contentDir)",
@@ -6772,7 +6772,7 @@
                 "Minn\\Admin\\BootPayload",
                 "Minn\\Admin\\LanguageController",
                 "Minn\\Engine",
-                "Minn\\Rest\\Api"
+                "Minn\\Rest\\Services"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Content\\Users $users, Minn\\Content\\Site $site, Minn\\Admin\\App $app, string $contentDir)",
@@ -7112,7 +7112,7 @@
                 "Minn\\Cli\\AssetUpdate",
                 "Minn\\Cron\\Cron",
                 "Minn\\Engine",
-                "Minn\\Rest\\Api"
+                "Minn\\Rest\\Services"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Content\\Site $site, Minn\\Content\\Inventory $inventory, Minn\\Admin\\Packages $packages, string $contentDir, string $home, string $wpVersion)",
@@ -8741,8 +8741,8 @@
             ],
             "usedBy": [
                 "Minn\\Auth\\Authenticator",
-                "Minn\\Rest\\Api",
-                "Minn\\Rest\\ApplicationPasswordsController"
+                "Minn\\Rest\\ApplicationPasswordsController",
+                "Minn\\Rest\\Services"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Content\\Users $users)",
@@ -9522,10 +9522,10 @@
                 "Minn\\Engine",
                 "Minn\\Front\\CommentPostController",
                 "Minn\\Login\\LoginController",
-                "Minn\\Rest\\Api",
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\Caller",
-                "Minn\\Rest\\IndexController"
+                "Minn\\Rest\\IndexController",
+                "Minn\\Rest\\Services"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Auth\\Cookie $cookie, Minn\\Content\\Users $users)",
@@ -9785,8 +9785,8 @@
                 "Minn\\Engine",
                 "Minn\\Front\\AdminBar",
                 "Minn\\Front\\CommentPostController",
-                "Minn\\Rest\\Api",
                 "Minn\\Rest\\Caller",
+                "Minn\\Rest\\Services",
                 "Minn\\Runtime\\Runtime"
             ],
             "constructor": {
@@ -11513,7 +11513,7 @@
                 "Minn\\Auth\\Cookie",
                 "Minn\\Engine",
                 "Minn\\Login\\LoginController",
-                "Minn\\Rest\\Api"
+                "Minn\\Rest\\Services"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Content\\Users $users)",
@@ -22904,9 +22904,9 @@
                 "Minn\\Engine",
                 "Minn\\Front\\CommentPostController",
                 "Minn\\Front\\Feeds",
-                "Minn\\Rest\\Api",
                 "Minn\\Rest\\CommentObject",
                 "Minn\\Rest\\CommentsController",
+                "Minn\\Rest\\Services",
                 "Minn\\Theme\\PageRenderer"
             ],
             "constructor": {
@@ -23860,8 +23860,8 @@
                 "Minn\\Cli\\ThemeCommand",
                 "Minn\\Content\\PluginState",
                 "Minn\\Engine",
-                "Minn\\Rest\\Api",
-                "Minn\\Rest\\PluginsController"
+                "Minn\\Rest\\PluginsController",
+                "Minn\\Rest\\Services"
             ],
             "constructor": {
                 "signature": "__construct(string $contentDir, Minn\\Content\\Site $site)",
@@ -24400,9 +24400,9 @@
             ],
             "usedBy": [
                 "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
-                "Minn\\Rest\\Api",
                 "Minn\\Rest\\MenuObject",
-                "Minn\\Rest\\MenusController"
+                "Minn\\Rest\\MenusController",
+                "Minn\\Rest\\Services"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Db $db, Minn\\Content\\Posts $posts, Minn\\Content\\Terms $terms, Minn\\Front\\Permalinks $permalinks, ?Minn\\Content\\PostWriter $writer = NULL, ?Minn\\Content\\Site $site = NULL)",
@@ -26767,9 +26767,9 @@
                 "Minn\\Cron\\Cron",
                 "Minn\\Engine",
                 "Minn\\Media\\Writer",
-                "Minn\\Rest\\Api",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\PostsWriteController",
+                "Minn\\Rest\\Services",
                 "Minn\\Runtime\\PostInsert",
                 "Minn\\Runtime\\TermWriter",
                 "Minn\\Theme\\TemplateWriter"
@@ -27408,7 +27408,6 @@
                 "Minn\\Front\\ProbeController",
                 "Minn\\Front\\Renderer",
                 "Minn\\Front\\Resolver",
-                "Minn\\Rest\\Api",
                 "Minn\\Rest\\CommentObject",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\MediaController",
@@ -27417,6 +27416,7 @@
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\PostsWriteController",
                 "Minn\\Rest\\RevisionsController",
+                "Minn\\Rest\\Services",
                 "Minn\\Rest\\TemplateObject",
                 "Minn\\Runtime\\PostQuery",
                 "Minn\\Theme\\ClassicRenderer",
@@ -28359,8 +28359,8 @@
                 "Minn\\Db"
             ],
             "usedBy": [
-                "Minn\\Rest\\Api",
-                "Minn\\Rest\\RevisionsController"
+                "Minn\\Rest\\RevisionsController",
+                "Minn\\Rest\\Services"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Db $db, Minn\\Content\\PostWriter $writer, Minn\\Content\\Site $site)",
@@ -28563,13 +28563,13 @@
                 "Minn\\Media\\Images",
                 "Minn\\Media\\Uploads",
                 "Minn\\Media\\Writer",
-                "Minn\\Rest\\Api",
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\IndexController",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PostsWriteController",
+                "Minn\\Rest\\Services",
                 "Minn\\Rest\\Settings",
                 "Minn\\Rest\\TermsController",
                 "Minn\\Rest\\UsersController",
@@ -29362,7 +29362,7 @@
                 "Minn\\Content\\Menus",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Front\\Resolver",
-                "Minn\\Rest\\Api",
+                "Minn\\Rest\\Services",
                 "Minn\\Rest\\TermsController",
                 "Minn\\Runtime\\TermWriter",
                 "Minn\\Theme\\TemplateWriter"
@@ -30258,9 +30258,9 @@
                 "Minn\\Engine",
                 "Minn\\Front\\Feeds",
                 "Minn\\Login\\LoginController",
-                "Minn\\Rest\\Api",
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\PostObject",
+                "Minn\\Rest\\Services",
                 "Minn\\Rest\\UserObject",
                 "Minn\\Rest\\UsersController",
                 "Minn\\Theme\\PageRenderer"
@@ -30982,6 +30982,7 @@
                 "Minn\\Rest\\PostObject",
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\SearchController",
+                "Minn\\Rest\\Services",
                 "Minn\\Rest\\TermObject",
                 "Minn\\Rest\\TermsController",
                 "Minn\\Rest\\UserObject",
@@ -31435,7 +31436,7 @@
             "usedBy": [
                 "Minn\\Admin\\Packages",
                 "Minn\\Cli\\AssetUpdate",
-                "Minn\\Rest\\Api"
+                "Minn\\Rest\\Services"
             ],
             "constructor": {
                 "signature": "__construct(string $version, string $engineDir)",
@@ -31837,8 +31838,8 @@
                 "Minn\\Cli\\PluginCommand",
                 "Minn\\Content\\PluginState",
                 "Minn\\Engine",
-                "Minn\\Rest\\Api",
-                "Minn\\Rest\\PluginsController"
+                "Minn\\Rest\\PluginsController",
+                "Minn\\Rest\\Services"
             ],
             "constructor": {
                 "signature": "__construct(string $contentDir, Minn\\Content\\Site $site)",
@@ -35674,13 +35675,13 @@
                 "Minn\\Front\\Sitemaps",
                 "Minn\\Login\\LoginController",
                 "Minn\\Media\\Uploads",
-                "Minn\\Rest\\Api",
                 "Minn\\Rest\\CommentObject",
                 "Minn\\Rest\\IndexController",
                 "Minn\\Rest\\MediaObject",
                 "Minn\\Rest\\PostObject",
                 "Minn\\Rest\\RestUrl",
                 "Minn\\Rest\\SearchController",
+                "Minn\\Rest\\Services",
                 "Minn\\Rest\\TermObject",
                 "Minn\\Rest\\UserObject",
                 "Minn\\Theme\\ClassicContent",
@@ -41823,6 +41824,7 @@
                 "Minn\\Rest\\RevisionsController",
                 "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Rest\\SearchController",
+                "Minn\\Rest\\Services",
                 "Minn\\Rest\\SettingsController",
                 "Minn\\Rest\\TaxonomiesController",
                 "Minn\\Rest\\TemplatesController",
@@ -45363,7 +45365,7 @@
             ],
             "usedBy": [
                 "Minn\\Media\\Writer",
-                "Minn\\Rest\\Api"
+                "Minn\\Rest\\Services"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Content\\Site $site)",
@@ -46164,9 +46166,9 @@
                 "Minn\\Blocks\\Renderer",
                 "Minn\\Media\\Upload",
                 "Minn\\Media\\Writer",
-                "Minn\\Rest\\Api",
                 "Minn\\Rest\\MediaController",
-                "Minn\\Rest\\MediaObject"
+                "Minn\\Rest\\MediaObject",
+                "Minn\\Rest\\Services"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Content\\Site $site, Minn\\Front\\Permalinks $permalinks, string $baseDir)",
@@ -46514,8 +46516,8 @@
                 "Minn\\Media\\Uploads"
             ],
             "usedBy": [
-                "Minn\\Rest\\Api",
-                "Minn\\Rest\\MediaController"
+                "Minn\\Rest\\MediaController",
+                "Minn\\Rest\\Services"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Content\\PostWriter $posts, Minn\\Content\\Site $site, Minn\\Media\\Uploads $uploads, Minn\\Media\\Images $images)",
@@ -48152,67 +48154,34 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Api.php",
-            "lines": 145,
+            "lines": 117,
             "doc": "The REST API: wires the controllers for one request and dispatches a\nroute. Errors thrown anywhere underneath become the reference's error\npayload under the reference's headers.",
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Admin\\ActivityChart",
-                "Minn\\Admin\\ActivityFeed",
                 "Minn\\Admin\\AdminTypes",
-                "Minn\\Admin\\App",
-                "Minn\\Admin\\Appearance",
                 "Minn\\Admin\\CoreStatus",
-                "Minn\\Admin\\Dashboard",
-                "Minn\\Admin\\Diagnostics",
-                "Minn\\Admin\\HiddenIntegrations",
                 "Minn\\Admin\\LanguageController",
-                "Minn\\Admin\\Logs",
                 "Minn\\Admin\\ManageController",
-                "Minn\\Admin\\Notifications",
-                "Minn\\Admin\\Packages",
                 "Minn\\Admin\\PackagesController",
                 "Minn\\Admin\\RenderController",
                 "Minn\\Admin\\SessionsController",
                 "Minn\\Admin\\SystemController",
-                "Minn\\Admin\\Translations",
-                "Minn\\Admin\\Updates",
                 "Minn\\Admin\\UpdatesController",
                 "Minn\\Admin\\V1Controller",
-                "Minn\\Auth\\ApplicationPasswords",
-                "Minn\\Auth\\Authenticator",
-                "Minn\\Auth\\Capabilities",
-                "Minn\\Auth\\Sessions",
-                "Minn\\Content\\Comments",
-                "Minn\\Content\\Inventory",
-                "Minn\\Content\\Menus",
-                "Minn\\Content\\PostWriter",
-                "Minn\\Content\\Posts",
-                "Minn\\Content\\Revisions",
-                "Minn\\Content\\Site",
-                "Minn\\Content\\Terms",
-                "Minn\\Content\\Users",
                 "Minn\\Db",
-                "Minn\\Engine",
-                "Minn\\Extension\\Loader",
-                "Minn\\Front\\Permalinks",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Router",
-                "Minn\\Media\\Images",
-                "Minn\\Media\\Uploads",
-                "Minn\\Media\\Writer",
                 "Minn\\RestError",
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\Caller",
-                "Minn\\Rest\\CommentObject",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\DeclaredPostsController",
                 "Minn\\Rest\\Embed",
                 "Minn\\Rest\\EngineRoutes",
                 "Minn\\Rest\\IndexController",
                 "Minn\\Rest\\MediaController",
-                "Minn\\Rest\\MediaObject",
                 "Minn\\Rest\\MenuItemObject",
                 "Minn\\Rest\\MenuObject",
                 "Minn\\Rest\\MenusController",
@@ -48222,14 +48191,12 @@
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\PostsWriteController",
                 "Minn\\Rest\\Reply",
-                "Minn\\Rest\\RestUrl",
                 "Minn\\Rest\\RevisionsController",
                 "Minn\\Rest\\RuntimeRoutes",
-                "Minn\\Rest\\Schema",
                 "Minn\\Rest\\SearchController",
+                "Minn\\Rest\\Services",
                 "Minn\\Rest\\Settings",
                 "Minn\\Rest\\SettingsController",
-                "Minn\\Rest\\Taxonomies",
                 "Minn\\Rest\\TaxonomiesController",
                 "Minn\\Rest\\TemplateObject",
                 "Minn\\Rest\\TemplatesController",
@@ -48239,10 +48206,7 @@
                 "Minn\\Rest\\TypesController",
                 "Minn\\Rest\\UserObject",
                 "Minn\\Rest\\UsersController",
-                "Minn\\Runtime\\Runtime",
-                "Minn\\Theme\\TemplateIndex",
-                "Minn\\Theme\\TemplateWriter",
-                "Minn\\Theme\\Theme"
+                "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
                 "Minn\\Engine"
@@ -48317,8 +48281,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 64,
-                "end": 75
+                "line": 31,
+                "end": 42
             },
             "cases": [],
             "constants": [],
@@ -48417,8 +48381,8 @@
                         "@return array<string, list<string>> the engine's routes in the reference's form, route => methods"
                     ],
                     "params": [],
-                    "line": 78,
-                    "end": 81
+                    "line": 45,
+                    "end": 48
                 },
                 {
                     "routes": [],
@@ -48444,8 +48408,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 83,
-                    "end": 159
+                    "line": 50,
+                    "end": 56
                 },
                 {
                     "routes": [],
@@ -48456,8 +48420,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 161,
-                    "end": 164
+                    "line": 100,
+                    "end": 103
                 },
                 {
                     "routes": [],
@@ -48468,8 +48432,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 166,
-                    "end": 169
+                    "line": 105,
+                    "end": 108
                 },
                 {
                     "routes": [],
@@ -48480,8 +48444,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 171,
-                    "end": 174
+                    "line": 110,
+                    "end": 113
                 },
                 {
                     "routes": [],
@@ -48492,8 +48456,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 176,
-                    "end": 179
+                    "line": 115,
+                    "end": 118
                 },
                 {
                     "routes": [],
@@ -48504,8 +48468,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 181,
-                    "end": 184
+                    "line": 120,
+                    "end": 123
                 },
                 {
                     "routes": [],
@@ -48524,8 +48488,37 @@
                             "doc": ""
                         }
                     ],
-                    "line": 187,
-                    "end": 205
+                    "line": 126,
+                    "end": 144
+                },
+                {
+                    "routes": [],
+                    "name": "controllers",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "controllers(Minn\\Rest\\Services $s, Minn\\Http\\Router $router): array",
+                    "doc": "The route table: every controller, built from the shared services.\nTemplates join only under a block theme.",
+                    "shapes": [
+                        "@return list<object>"
+                    ],
+                    "params": [
+                        {
+                            "name": "s",
+                            "type": "Minn\\Rest\\Services",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "router",
+                            "type": "Minn\\Http\\Router",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 64,
+                    "end": 98
                 }
             ]
         },
@@ -49142,6 +49135,7 @@
                 "Minn\\Rest\\PostsWriteController",
                 "Minn\\Rest\\RevisionsController",
                 "Minn\\Rest\\SearchController",
+                "Minn\\Rest\\Services",
                 "Minn\\Rest\\SettingsController",
                 "Minn\\Rest\\TaxonomiesController",
                 "Minn\\Rest\\TemplateObject",
@@ -49383,8 +49377,8 @@
                 "Minn\\Rest\\UserObject"
             ],
             "usedBy": [
-                "Minn\\Rest\\Api",
-                "Minn\\Rest\\CommentsController"
+                "Minn\\Rest\\CommentsController",
+                "Minn\\Rest\\Services"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Content\\Comments $comments, Minn\\Content\\Posts $posts, Minn\\Front\\Permalinks $permalinks, Minn\\Rest\\RestUrl $url, Minn\\Rest\\Caller $caller)",
@@ -51911,8 +51905,8 @@
                 "Minn\\Support\\Html"
             ],
             "usedBy": [
-                "Minn\\Rest\\Api",
-                "Minn\\Rest\\MediaController"
+                "Minn\\Rest\\MediaController",
+                "Minn\\Rest\\Services"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Content\\Posts $posts, Minn\\Media\\Uploads $uploads, Minn\\Front\\Permalinks $permalinks, Minn\\Rest\\RestUrl $url, Minn\\Rest\\Caller $caller)",
@@ -53771,6 +53765,7 @@
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\PostsWriteController",
                 "Minn\\Rest\\RevisionsController",
+                "Minn\\Rest\\Services",
                 "Minn\\Rest\\UserObject"
             ],
             "constructor": {
@@ -55323,7 +55318,6 @@
             ],
             "usedBy": [
                 "Minn\\Engine",
-                "Minn\\Rest\\Api",
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\CommentObject",
                 "Minn\\Rest\\IndexController",
@@ -55336,6 +55330,7 @@
                 "Minn\\Rest\\PostsWriteController",
                 "Minn\\Rest\\RevisionsController",
                 "Minn\\Rest\\SearchController",
+                "Minn\\Rest\\Services",
                 "Minn\\Rest\\Taxonomies",
                 "Minn\\Rest\\TemplateObject",
                 "Minn\\Rest\\TermObject",
@@ -56092,9 +56087,9 @@
                 "Minn\\Runtime\\Refusal"
             ],
             "usedBy": [
-                "Minn\\Rest\\Api",
                 "Minn\\Rest\\ApplicationPasswordsController",
-                "Minn\\Rest\\SchemaValues"
+                "Minn\\Rest\\SchemaValues",
+                "Minn\\Rest\\Services"
             ],
             "constructor": {
                 "signature": "__construct(Closure $email, Closure $number, Closure $format)",
@@ -57370,6 +57365,757 @@
             ]
         },
         {
+            "name": "Minn\\Rest\\Services",
+            "short": "Services",
+            "namespace": "Minn\\Rest",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Rest/Services.php",
+            "lines": 324,
+            "doc": "The objects one REST request shares, each made once, on first use, from\nthe database door and the request. Every getter is typed and names its\ndependencies in plain constructor calls: there is no autowiring, and\nget() knows only the names listed here, so a wrong one fails at the\nfirst call rather than deep in a handler.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Admin\\ActivityChart",
+                "Minn\\Admin\\ActivityFeed",
+                "Minn\\Admin\\App",
+                "Minn\\Admin\\Appearance",
+                "Minn\\Admin\\Dashboard",
+                "Minn\\Admin\\Diagnostics",
+                "Minn\\Admin\\HiddenIntegrations",
+                "Minn\\Admin\\Logs",
+                "Minn\\Admin\\Notifications",
+                "Minn\\Admin\\Packages",
+                "Minn\\Admin\\Translations",
+                "Minn\\Admin\\Updates",
+                "Minn\\Auth\\ApplicationPasswords",
+                "Minn\\Auth\\Authenticator",
+                "Minn\\Auth\\Capabilities",
+                "Minn\\Auth\\Sessions",
+                "Minn\\Content\\Comments",
+                "Minn\\Content\\Inventory",
+                "Minn\\Content\\Menus",
+                "Minn\\Content\\PostWriter",
+                "Minn\\Content\\Posts",
+                "Minn\\Content\\Revisions",
+                "Minn\\Content\\Site",
+                "Minn\\Content\\Terms",
+                "Minn\\Content\\Users",
+                "Minn\\Db",
+                "Minn\\Engine",
+                "Minn\\Extension\\Loader",
+                "Minn\\Front\\Permalinks",
+                "Minn\\Http\\Request",
+                "Minn\\Media\\Images",
+                "Minn\\Media\\Uploads",
+                "Minn\\Media\\Writer",
+                "Minn\\Rest\\Caller",
+                "Minn\\Rest\\CommentObject",
+                "Minn\\Rest\\MediaObject",
+                "Minn\\Rest\\PostObject",
+                "Minn\\Rest\\RestUrl",
+                "Minn\\Rest\\Schema",
+                "Minn\\Rest\\Taxonomies",
+                "Minn\\Rest\\TermObject",
+                "Minn\\Rest\\Types",
+                "Minn\\Rest\\UserObject",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Theme\\TemplateIndex",
+                "Minn\\Theme\\TemplateWriter",
+                "Minn\\Theme\\Theme"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\Api"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Db $db, Minn\\Http\\Request $request, string $root, string $engineDir)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "db",
+                        "type": "Minn\\Db",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "request",
+                        "type": "Minn\\Http\\Request",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "root",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "engineDir",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "private",
+                "line": 100,
+                "end": 106
+            },
+            "cases": [],
+            "constants": [
+                {
+                    "name": "NAMED",
+                    "value": "array (   'Minn\\\\Content\\\\Users' => 'users',   'Minn\\\\Content\\\\Posts' => 'posts',   'Minn\\\\Content\\\\Terms' => 'terms',   'Minn\\\\Content\\\\Comments' => 'comments',   'Minn\\\\Content\\\\Site' => 'site',   'Minn\\\\Content\\\\PostWriter' => 'writer',   'Minn\\\\Front\\\\Permalinks' => 'permalinks',   'Minn\\\\Rest\\\\RestUrl' => 'url',   'Minn\\\\Auth\\\\Capabilities' => 'capabilities',   'Minn\\\\Rest\\\\Caller' => 'caller',   'Minn\\\\Extension\\\\Loader' => 'loader',   'Minn\\\\Rest\\\\Types' => 'types',   'Minn\\\\Rest\\\\Taxonomies' => 'taxonomies',   'Minn\\\\Media\\\\Uploads' => 'uploads',   'Minn\\\\Content\\\\Inventory' => 'inventory',   'Minn\\\\Admin\\\\Packages' => 'packages',   'Minn\\\\Admin\\\\App' => 'app',   'Minn\\\\Admin\\\\Logs' => 'logs',   'Minn\\\\Admin\\\\Updates' => 'updates',   'Minn\\\\Content\\\\Menus' => 'menus',   'Minn\\\\Content\\\\Revisions' => 'revisions',   'Minn\\\\Auth\\\\Sessions' => 'sessions',   'Minn\\\\Auth\\\\ApplicationPasswords' => 'applicationPasswords',   'Minn\\\\Admin\\\\Translations' => 'translations',   'Minn\\\\Admin\\\\Appearance' => 'appearance',   'Minn\\\\Admin\\\\HiddenIntegrations' => 'hiddenIntegrations',   'Minn\\\\Admin\\\\ActivityFeed' => 'activityFeed',   'Minn\\\\Admin\\\\Dashboard' => 'dashboard',   'Minn\\\\Admin\\\\Notifications' => 'notifications',   'Minn\\\\Admin\\\\Diagnostics' => 'diagnostics',   'Minn\\\\Media\\\\Writer' => 'mediaWriter',   'Minn\\\\Rest\\\\Schema' => 'schema',   'Minn\\\\Rest\\\\PostObject' => 'postObject',   'Minn\\\\Rest\\\\TermObject' => 'termObject',   'Minn\\\\Rest\\\\UserObject' => 'userObject',   'Minn\\\\Rest\\\\MediaObject' => 'mediaObject',   'Minn\\\\Rest\\\\CommentObject' => 'commentObject', )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "made",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "db",
+                    "type": "Minn\\Db",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "request",
+                    "type": "Minn\\Http\\Request",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "root",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "engineDir",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "forRequest",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "forRequest(Minn\\Db $db, Minn\\Http\\Request $request): self",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "db",
+                            "type": "Minn\\Db",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 108,
+                    "end": 111
+                },
+                {
+                    "routes": [],
+                    "name": "get",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "get(string $class): object",
+                    "doc": "The service registered under a class name. Only the names in NAMED\nanswer; anything else is a programming error and says so at once.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "class",
+                            "type": "string",
+                            "shape": "class-string<T>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 121,
+                    "end": 126
+                },
+                {
+                    "routes": [],
+                    "name": "db",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "db(): Minn\\Db",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 128,
+                    "end": 131
+                },
+                {
+                    "routes": [],
+                    "name": "request",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "request(): Minn\\Http\\Request",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 133,
+                    "end": 136
+                },
+                {
+                    "routes": [],
+                    "name": "root",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "root(): string",
+                    "doc": "The site root, no trailing slash.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 139,
+                    "end": 142
+                },
+                {
+                    "routes": [],
+                    "name": "contentDir",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "contentDir(): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 144,
+                    "end": 147
+                },
+                {
+                    "routes": [],
+                    "name": "users",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "users(): Minn\\Content\\Users",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 151,
+                    "end": 154
+                },
+                {
+                    "routes": [],
+                    "name": "posts",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "posts(): Minn\\Content\\Posts",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 156,
+                    "end": 159
+                },
+                {
+                    "routes": [],
+                    "name": "terms",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "terms(): Minn\\Content\\Terms",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 161,
+                    "end": 164
+                },
+                {
+                    "routes": [],
+                    "name": "comments",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "comments(): Minn\\Content\\Comments",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 166,
+                    "end": 169
+                },
+                {
+                    "routes": [],
+                    "name": "site",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "site(): Minn\\Content\\Site",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 171,
+                    "end": 174
+                },
+                {
+                    "routes": [],
+                    "name": "writer",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "writer(): Minn\\Content\\PostWriter",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 176,
+                    "end": 179
+                },
+                {
+                    "routes": [],
+                    "name": "revisions",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "revisions(): Minn\\Content\\Revisions",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 181,
+                    "end": 184
+                },
+                {
+                    "routes": [],
+                    "name": "menus",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "menus(): Minn\\Content\\Menus",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 186,
+                    "end": 189
+                },
+                {
+                    "routes": [],
+                    "name": "inventory",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "inventory(): Minn\\Content\\Inventory",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 191,
+                    "end": 194
+                },
+                {
+                    "routes": [],
+                    "name": "permalinks",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "permalinks(): Minn\\Front\\Permalinks",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 198,
+                    "end": 201
+                },
+                {
+                    "routes": [],
+                    "name": "url",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "url(): Minn\\Rest\\RestUrl",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 203,
+                    "end": 206
+                },
+                {
+                    "routes": [],
+                    "name": "capabilities",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "capabilities(): Minn\\Auth\\Capabilities",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 208,
+                    "end": 211
+                },
+                {
+                    "routes": [],
+                    "name": "caller",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "caller(): Minn\\Rest\\Caller",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 213,
+                    "end": 216
+                },
+                {
+                    "routes": [],
+                    "name": "sessions",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "sessions(): Minn\\Auth\\Sessions",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 218,
+                    "end": 221
+                },
+                {
+                    "routes": [],
+                    "name": "applicationPasswords",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "applicationPasswords(): Minn\\Auth\\ApplicationPasswords",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 223,
+                    "end": 226
+                },
+                {
+                    "routes": [],
+                    "name": "loader",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "loader(): Minn\\Extension\\Loader",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 230,
+                    "end": 233
+                },
+                {
+                    "routes": [],
+                    "name": "types",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "types(): Minn\\Rest\\Types",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 235,
+                    "end": 238
+                },
+                {
+                    "routes": [],
+                    "name": "taxonomies",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "taxonomies(): Minn\\Rest\\Taxonomies",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 240,
+                    "end": 243
+                },
+                {
+                    "routes": [],
+                    "name": "uploads",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "uploads(): Minn\\Media\\Uploads",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 245,
+                    "end": 248
+                },
+                {
+                    "routes": [],
+                    "name": "mediaWriter",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "mediaWriter(): Minn\\Media\\Writer",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 250,
+                    "end": 253
+                },
+                {
+                    "routes": [],
+                    "name": "schema",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "schema(): Minn\\Rest\\Schema",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 255,
+                    "end": 262
+                },
+                {
+                    "routes": [],
+                    "name": "app",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "app(): Minn\\Admin\\App",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 266,
+                    "end": 269
+                },
+                {
+                    "routes": [],
+                    "name": "packages",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "packages(): Minn\\Admin\\Packages",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 271,
+                    "end": 274
+                },
+                {
+                    "routes": [],
+                    "name": "logs",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "logs(): Minn\\Admin\\Logs",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 276,
+                    "end": 279
+                },
+                {
+                    "routes": [],
+                    "name": "updates",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "updates(): Minn\\Admin\\Updates",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 281,
+                    "end": 284
+                },
+                {
+                    "routes": [],
+                    "name": "translations",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "translations(): Minn\\Admin\\Translations",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 286,
+                    "end": 289
+                },
+                {
+                    "routes": [],
+                    "name": "appearance",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "appearance(): Minn\\Admin\\Appearance",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 291,
+                    "end": 294
+                },
+                {
+                    "routes": [],
+                    "name": "hiddenIntegrations",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "hiddenIntegrations(): Minn\\Admin\\HiddenIntegrations",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 296,
+                    "end": 299
+                },
+                {
+                    "routes": [],
+                    "name": "activityFeed",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "activityFeed(): Minn\\Admin\\ActivityFeed",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 301,
+                    "end": 304
+                },
+                {
+                    "routes": [],
+                    "name": "dashboard",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "dashboard(): Minn\\Admin\\Dashboard",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 306,
+                    "end": 309
+                },
+                {
+                    "routes": [],
+                    "name": "notifications",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "notifications(): Minn\\Admin\\Notifications",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 311,
+                    "end": 314
+                },
+                {
+                    "routes": [],
+                    "name": "diagnostics",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "diagnostics(): Minn\\Admin\\Diagnostics",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 316,
+                    "end": 319
+                },
+                {
+                    "routes": [],
+                    "name": "templates",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "templates(): ?Minn\\Theme\\TemplateIndex",
+                    "doc": "The active block theme's templates; null under a classic theme, where the routes answer as the reference does when it never registered them.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 324,
+                    "end": 331
+                },
+                {
+                    "routes": [],
+                    "name": "templateWriter",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "templateWriter(): ?Minn\\Theme\\TemplateWriter",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 333,
+                    "end": 337
+                },
+                {
+                    "routes": [],
+                    "name": "postObject",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "postObject(): Minn\\Rest\\PostObject",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 341,
+                    "end": 344
+                },
+                {
+                    "routes": [],
+                    "name": "termObject",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "termObject(): Minn\\Rest\\TermObject",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 346,
+                    "end": 349
+                },
+                {
+                    "routes": [],
+                    "name": "userObject",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "userObject(): Minn\\Rest\\UserObject",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 351,
+                    "end": 354
+                },
+                {
+                    "routes": [],
+                    "name": "mediaObject",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "mediaObject(): Minn\\Rest\\MediaObject",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 356,
+                    "end": 359
+                },
+                {
+                    "routes": [],
+                    "name": "commentObject",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "commentObject(): Minn\\Rest\\CommentObject",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 361,
+                    "end": 364
+                },
+                {
+                    "routes": [],
+                    "name": "share",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "share(string $name, Closure $make): object",
+                    "doc": "",
+                    "shapes": [
+                        "@param Closure(): T $make"
+                    ],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "class-string<T>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "make",
+                            "type": "Closure",
+                            "shape": "Closure(): T",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 372,
+                    "end": 376
+                }
+            ]
+        },
+        {
             "name": "Minn\\Rest\\Settings",
             "short": "Settings",
             "namespace": "Minn\\Rest",
@@ -57571,8 +58317,8 @@
             ],
             "usedBy": [
                 "Minn\\Admin\\ManageController",
-                "Minn\\Rest\\Api",
                 "Minn\\Rest\\Embed",
+                "Minn\\Rest\\Services",
                 "Minn\\Rest\\TaxonomiesController"
             ],
             "constructor": {
@@ -58595,6 +59341,7 @@
             ],
             "usedBy": [
                 "Minn\\Rest\\Api",
+                "Minn\\Rest\\Services",
                 "Minn\\Rest\\TermsController"
             ],
             "constructor": {
@@ -59095,6 +59842,7 @@
                 "Minn\\Rest\\DeclaredPostsController",
                 "Minn\\Rest\\Embed",
                 "Minn\\Rest\\SearchController",
+                "Minn\\Rest\\Services",
                 "Minn\\Rest\\TypesController"
             ],
             "constructor": {
@@ -59381,6 +60129,7 @@
                 "Minn\\Blocks\\Dynamic\\LatestComments",
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\CommentObject",
+                "Minn\\Rest\\Services",
                 "Minn\\Rest\\UsersController"
             ],
             "constructor": {
@@ -68561,6 +69310,7 @@
                 "Minn\\Front\\PluginRules",
                 "Minn\\Front\\Resolver",
                 "Minn\\Rest\\Api",
+                "Minn\\Rest\\Services",
                 "Minn\\Runtime\\Abilities",
                 "Minn\\Runtime\\BlockFilters",
                 "Minn\\Runtime\\BlockHooks",
@@ -77753,7 +78503,7 @@
                 "Minn\\Theme\\Theme"
             ],
             "usedBy": [
-                "Minn\\Rest\\Api",
+                "Minn\\Rest\\Services",
                 "Minn\\Rest\\TemplateObject",
                 "Minn\\Rest\\TemplatesController",
                 "Minn\\Theme\\TemplateWriter"
@@ -78859,7 +79609,7 @@
                 "Minn\\Theme\\TemplateRecord"
             ],
             "usedBy": [
-                "Minn\\Rest\\Api",
+                "Minn\\Rest\\Services",
                 "Minn\\Rest\\TemplatesController"
             ],
             "constructor": {
@@ -79402,7 +80152,7 @@
                 "Minn\\Blocks\\Dynamic\\Theme\\Structure",
                 "Minn\\Blocks\\Renderer",
                 "Minn\\Engine",
-                "Minn\\Rest\\Api",
+                "Minn\\Rest\\Services",
                 "Minn\\Theme\\ClassicRenderer",
                 "Minn\\Theme\\GlobalStyles",
                 "Minn\\Theme\\PageRenderer",

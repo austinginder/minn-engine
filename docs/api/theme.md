@@ -402,7 +402,7 @@ be restored by deleting the row.
 - const `TEMPLATE` = `'wp_template'`
 - const `PART` = `'wp_template_part'`
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplatesController`, `Minn\Theme\TemplateWriter`
+Used by: `Minn\Rest\Services`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplatesController`, `Minn\Theme\TemplateWriter`
 
 ```php
 __construct(Minn\Db $db, Minn\Theme\Theme $theme, Minn\Content\Site $site, ?Minn\Runtime\BlockTemplates $registered = NULL)
@@ -532,7 +532,7 @@ Saving and removing block templates. A template the theme ships is never
 touched on disk: editing one writes a wp_template row that shadows the
 file, and deleting that row is what "reset to the theme version" means.
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\TemplatesController`
+Used by: `Minn\Rest\Services`, `Minn\Rest\TemplatesController`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\PostWriter $writer, Minn\Content\Terms $terms, Minn\Content\Site $site, Minn\Theme\TemplateIndex $index)
@@ -607,7 +607,7 @@ merges the same way, with the child's preset lists replacing the
 parent's whole. The engine reads the site's installed theme the way it
 reads the site's database; it never runs the theme's PHP.
 
-Used by: `Minn\Admin\RenderController`, `Minn\Admin\V1Controller`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Engine`, `Minn\Rest\Api`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\GlobalStyles`, `Minn\Theme\PageRenderer`, `Minn\Theme\TemplateIndex`, `Minn\Theme\TemplatePatterns`, `Minn\Theme\Templates`
+Used by: `Minn\Admin\RenderController`, `Minn\Admin\V1Controller`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Engine`, `Minn\Rest\Services`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\GlobalStyles`, `Minn\Theme\PageRenderer`, `Minn\Theme\TemplateIndex`, `Minn\Theme\TemplatePatterns`, `Minn\Theme\Templates`
 
 ```php
 __construct(string $slug, string $dir, string $uri, ?Minn\Theme\Theme $parent = NULL)

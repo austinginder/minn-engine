@@ -5,7 +5,7 @@ the wp/v2 surface: shapes and controllers
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`AdditionalFields`](#additionalfields) | final class | 40 | Which object type a wp/v2 route serves, so fields registered for that type can ride on the engine's own responses. |
-| [`Api`](#api) | final readonly class | 145 | The REST API: wires the controllers for one request and dispatches a |
+| [`Api`](#api) | final readonly class | 117 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 164 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`BatchRequest`](#batchrequest) | final class | 30 | The requests a batch payload names, normalised into descriptors the |
 | [`Caller`](#caller) | final class | 59 | Who is making this REST call. Resolved once from the cookie and nonce; |
@@ -41,6 +41,7 @@ the wp/v2 surface: shapes and controllers
 | [`Schema`](#schema) | final readonly class | 465 | JSON-schema handling the way the REST API's argument validation does it: |
 | [`SchemaValues`](#schemavalues) | final class | 186 | The value side of JSON Schema, as the reference applies it: what counts |
 | [`SearchController`](#searchcontroller) | final readonly class | 135 | wp/v2 search over published content: id, title, url, type, and the |
+| [`Services`](#services) | final class | 324 | The objects one REST request shares, each made once, on first use, from |
 | [`Settings`](#settings) | final readonly class | 75 | The registered settings the Settings views read and write, mapped to |
 | [`SettingsController`](#settingscontroller) | final readonly class | 24 | wp/v2/settings: read and write, both behind manage_options. |
 | [`Taxonomies`](#taxonomies) | final class | 43 | The taxonomy registry the wp/v2 surface describes: the core set seeded |
@@ -104,6 +105,8 @@ __construct(Minn\Db $db, Minn\Http\Request $request, Minn\Rest\Caller $caller, M
 ### `handle(string $route): Minn\Http\Response`
 
 Resolves a REST route (from the path or from ?rest_route=) to a response.
+
+Internals: `controllers()` (private, line 64)
 
 
 ## ApplicationPasswordsController
@@ -182,7 +185,7 @@ what lets one round trip stand in for several.
 Who is making this REST call. Resolved once from the cookie and nonce;
 an anonymous or failed caller has id 0 and every capability check fails.
 
-Used by: `Minn\Admin\LanguageController`, `Minn\Admin\ManageController`, `Minn\Admin\PackagesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SystemController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermObject`, `Minn\Rest\TermsController`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`
+Used by: `Minn\Admin\LanguageController`, `Minn\Admin\ManageController`, `Minn\Admin\PackagesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SystemController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermObject`, `Minn\Rest\TermsController`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`
 
 ```php
 __construct(Minn\Http\Request $request, Minn\Auth\Authenticator $authenticator, Minn\Auth\Capabilities $capabilities)
@@ -215,7 +218,7 @@ Internals: `resolve()` (private, line 72)
 
 The wp/v2 comment object; edit context adds the moderation-desk fields.
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\CommentsController`
+Used by: `Minn\Rest\CommentsController`, `Minn\Rest\Services`
 
 ```php
 __construct(Minn\Content\Comments $comments, Minn\Content\Posts $posts, Minn\Front\Permalinks $permalinks, Minn\Rest\RestUrl $url, Minn\Rest\Caller $caller)
@@ -586,7 +589,7 @@ Internals: `libraryClauses()` (private, line 75), `restDate()` (private, line 10
 
 The wp/v2 media object, view and edit context.
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\MediaController`
+Used by: `Minn\Rest\MediaController`, `Minn\Rest\Services`
 
 ```php
 __construct(Minn\Content\Posts $posts, Minn\Media\Uploads $uploads, Minn\Front\Permalinks $permalinks, Minn\Rest\RestUrl $url, Minn\Rest\Caller $caller)
@@ -830,7 +833,7 @@ fields, and cap-gated wp:action-* links), and their _links blocks.
 
 - const `NAVIGATION` = `'wp_navigation'` — The one post type whose REST shape is not post-shaped.
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\CommentObject`, `Minn\Rest\MediaObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\UserObject`
+Used by: `Minn\Rest\Api`, `Minn\Rest\CommentObject`, `Minn\Rest\MediaObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\Services`, `Minn\Rest\UserObject`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Content\Users $users, Minn\Front\Permalinks $permalinks, Minn\Rest\RestUrl $url, Minn\Rest\Caller $caller)
@@ -980,7 +983,7 @@ REST URLs in the form the reference emits for the site's permalink mode:
 {home}/index.php?rest_route=/wp/v2/... with the route value URL-encoded
 when query args ride along.
 
-Used by: `Minn\Engine`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\CommentObject`, `Minn\Rest\IndexController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\Taxonomies`, `Minn\Rest\TemplateObject`, `Minn\Rest\TermObject`, `Minn\Rest\Types`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`
+Used by: `Minn\Engine`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\CommentObject`, `Minn\Rest\IndexController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\Taxonomies`, `Minn\Rest\TemplateObject`, `Minn\Rest\TermObject`, `Minn\Rest\Types`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`
 
 ```php
 __construct(Minn\Front\Permalinks $permalinks)
@@ -1128,7 +1131,7 @@ tests the schema vocabulary needs. Behaviour pinned by contracts/fixtures/api/re
 - const `TYPES` = `array (   0 => 'array',   1 => 'object',   2 => 'string',   3 => 'number',   4 => 'integer',   5 => 'boolean',   6 => 'null', )`
 - const `ENDPOINT_KEYWORDS` = `array (   0 => 'type',   1 => 'format',   2 => 'enum',   3 => 'items',   4 => 'properties',   5 => 'additionalProperties',   6 => 'patternProperties',   7 => 'minProperties',   8 => 'maxProperties',   9 => 'minimum',   10 => 'maximum',   11 => 'exclusiveMinimum',   12 => 'exclusiveMaximum',   13 => 'multipleOf',   14 => 'minLength',   15 => 'maxLength',   16 => 'pattern',   17 => 'minItems',   18 => 'maxItems',   19 => 'uniqueItems',   20 => 'anyOf',   21 => 'oneOf', )` — An object schema that names its properties forbids the others unless it says otherwise, all the way down.
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\SchemaValues`
+Used by: `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\SchemaValues`, `Minn\Rest\Services`
 
 ```php
 __construct(Closure $email, Closure $number, Closure $format)
@@ -1246,6 +1249,121 @@ Route: `GET /wp/v2/search`
 Internals: `item()` (private, line 71), `subtypes()` (private, line 94), `rankExpression()` (private, line 109), `terms()` (private, line 120), `escapeLike()` (private, line 137), `intParam()` (private, line 142)
 
 
+## Services
+
+`final class Minn\Rest\Services` · `public/minn/src/Minn/Rest/Services.php`
+
+The objects one REST request shares, each made once, on first use, from
+the database door and the request. Every getter is typed and names its
+dependencies in plain constructor calls: there is no autowiring, and
+get() knows only the names listed here, so a wrong one fails at the
+first call rather than deep in a handler.
+
+- const `NAMED` = `array (   'Minn\\Content\\Users' => 'users',   'Minn\\Content\\Posts' => 'posts',   'Minn\\Content\\Terms' => 'terms',   'Minn\\Content\\Comments' => 'comments',   'Minn\\Content\\Site' => 'site',   'Minn\\Content\\PostWriter' => 'writer',   'Minn\\Front\\Permalinks' => 'permalinks',   'Minn\\Rest\\RestUrl' => 'url',   'Minn\\Auth\\Capabilities' => 'capabilities',   'Minn\\Rest\\Caller' => 'caller',   'Minn\\Extension\\Loader' => 'loader',   'Minn\\Rest\\Types' => 'types',   'Minn\\Rest\\Taxonomies' => 'taxonomies',   'Minn\\Media\\Uploads' => 'uploads',   'Minn\\Content\\Inventory' => 'inventory',   'Minn\\Admin\\Packages' => 'packages',   'Minn\\Admin\\App' => 'app',   'Minn\\Admin\\Logs' => 'logs',   'Minn\\Admin\\Updates' => 'updates',   'Minn\\Content\\Menus' => 'menus',   'Minn\\Content\\Revisions' => 'revisions',   'Minn\\Auth\\Sessions' => 'sessions',   'Minn\\Auth\\ApplicationPasswords' => 'applicationPasswords',   'Minn\\Admin\\Translations' => 'translations',   'Minn\\Admin\\Appearance' => 'appearance',   'Minn\\Admin\\HiddenIntegrations' => 'hiddenIntegrations',   'Minn\\Admin\\ActivityFeed' => 'activityFeed',   'Minn\\Admin\\Dashboard' => 'dashboard',   'Minn\\Admin\\Notifications' => 'notifications',   'Minn\\Admin\\Diagnostics' => 'diagnostics',   'Minn\\Media\\Writer' => 'mediaWriter',   'Minn\\Rest\\Schema' => 'schema',   'Minn\\Rest\\PostObject' => 'postObject',   'Minn\\Rest\\TermObject' => 'termObject',   'Minn\\Rest\\UserObject' => 'userObject',   'Minn\\Rest\\MediaObject' => 'mediaObject',   'Minn\\Rest\\CommentObject' => 'commentObject', )`
+
+Used by: `Minn\Rest\Api`
+
+
+### static `forRequest(Minn\Db $db, Minn\Http\Request $request): self`
+
+### `get(string $class): object`
+
+The service registered under a class name. Only the names in NAMED
+answer; anything else is a programming error and says so at once.
+
+### `db(): Minn\Db`
+
+### `request(): Minn\Http\Request`
+
+### `root(): string`
+
+The site root, no trailing slash.
+
+### `contentDir(): string`
+
+### `users(): Minn\Content\Users`
+
+### `posts(): Minn\Content\Posts`
+
+### `terms(): Minn\Content\Terms`
+
+### `comments(): Minn\Content\Comments`
+
+### `site(): Minn\Content\Site`
+
+### `writer(): Minn\Content\PostWriter`
+
+### `revisions(): Minn\Content\Revisions`
+
+### `menus(): Minn\Content\Menus`
+
+### `inventory(): Minn\Content\Inventory`
+
+### `permalinks(): Minn\Front\Permalinks`
+
+### `url(): Minn\Rest\RestUrl`
+
+### `capabilities(): Minn\Auth\Capabilities`
+
+### `caller(): Minn\Rest\Caller`
+
+### `sessions(): Minn\Auth\Sessions`
+
+### `applicationPasswords(): Minn\Auth\ApplicationPasswords`
+
+### `loader(): Minn\Extension\Loader`
+
+### `types(): Minn\Rest\Types`
+
+### `taxonomies(): Minn\Rest\Taxonomies`
+
+### `uploads(): Minn\Media\Uploads`
+
+### `mediaWriter(): Minn\Media\Writer`
+
+### `schema(): Minn\Rest\Schema`
+
+### `app(): Minn\Admin\App`
+
+### `packages(): Minn\Admin\Packages`
+
+### `logs(): Minn\Admin\Logs`
+
+### `updates(): Minn\Admin\Updates`
+
+### `translations(): Minn\Admin\Translations`
+
+### `appearance(): Minn\Admin\Appearance`
+
+### `hiddenIntegrations(): Minn\Admin\HiddenIntegrations`
+
+### `activityFeed(): Minn\Admin\ActivityFeed`
+
+### `dashboard(): Minn\Admin\Dashboard`
+
+### `notifications(): Minn\Admin\Notifications`
+
+### `diagnostics(): Minn\Admin\Diagnostics`
+
+### `templates(): ?Minn\Theme\TemplateIndex`
+
+The active block theme's templates; null under a classic theme, where the routes answer as the reference does when it never registered them.
+
+### `templateWriter(): ?Minn\Theme\TemplateWriter`
+
+### `postObject(): Minn\Rest\PostObject`
+
+### `termObject(): Minn\Rest\TermObject`
+
+### `userObject(): Minn\Rest\UserObject`
+
+### `mediaObject(): Minn\Rest\MediaObject`
+
+### `commentObject(): Minn\Rest\CommentObject`
+
+Internals: `share()` (private, line 372)
+
+
 ## Settings
 
 `final readonly class Minn\Rest\Settings` · `public/minn/src/Minn/Rest/Settings.php`
@@ -1301,7 +1419,7 @@ The taxonomy registry the wp/v2 surface describes: the core set seeded
 from the reference (data/taxonomies.json) with the reference's own
 labels, capabilities, and visibility flags.
 
-Used by: `Minn\Admin\ManageController`, `Minn\Rest\Api`, `Minn\Rest\Embed`, `Minn\Rest\TaxonomiesController`
+Used by: `Minn\Admin\ManageController`, `Minn\Rest\Embed`, `Minn\Rest\Services`, `Minn\Rest\TaxonomiesController`
 
 ```php
 __construct(Minn\Rest\RestUrl $url)
@@ -1443,7 +1561,7 @@ The wp/v2 category and tag objects.
 
 - const `TAXONOMIES` = `array (   'categories' =>    array (     'taxonomy' => 'category',     'has_parent' => true,     'post_arg' => 'categories',   ),   'tags' =>    array (     'taxonomy' => 'post_tag',     'has_parent' => false,     'post_arg' => 'tags',   ), )`
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\TermsController`
+Used by: `Minn\Rest\Api`, `Minn\Rest\Services`, `Minn\Rest\TermsController`
 
 ```php
 __construct(Minn\Db $db, Minn\Front\Permalinks $permalinks, Minn\Rest\RestUrl $url, Minn\Rest\Caller $caller)
@@ -1512,7 +1630,7 @@ The default category is capability-denied before the force check.
 The engine's registry of built-in post types, seeded from the observed
 contract (src/data/types.json) with _links attached at runtime.
 
-Used by: `Minn\Admin\AdminTypes`, `Minn\Admin\ManageController`, `Minn\Engine`, `Minn\Rest\Api`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\Embed`, `Minn\Rest\SearchController`, `Minn\Rest\TypesController`
+Used by: `Minn\Admin\AdminTypes`, `Minn\Admin\ManageController`, `Minn\Engine`, `Minn\Rest\Api`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\Embed`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\TypesController`
 
 ```php
 __construct(Minn\Rest\RestUrl $url, array $declared = array ( ))
@@ -1563,7 +1681,7 @@ Route: `GET /wp/v2/types/{slug:[\w-]+}`
 
 The wp/v2 user objects: the public view shape and the edit-context shape.
 
-Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Rest\Api`, `Minn\Rest\CommentObject`, `Minn\Rest\UsersController`
+Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Rest\Api`, `Minn\Rest\CommentObject`, `Minn\Rest\Services`, `Minn\Rest\UsersController`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Users $users, Minn\Front\Permalinks $permalinks, Minn\Rest\RestUrl $url, Minn\Rest\Caller $caller)

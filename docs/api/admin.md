@@ -40,7 +40,7 @@ comment, counted per bar. A window over 45 days is drawn in weeks,
 anything shorter in days; each bar carries the (from, to] GMT bounds
 the drill-down asks for.
 
-Used by: `Minn\Admin\Dashboard`, `Minn\Rest\Api`
+Used by: `Minn\Admin\Dashboard`, `Minn\Rest\Services`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Site $site)
@@ -68,7 +68,7 @@ What happened lately, as the overview and the bell tell it: the caller's
 own recent posts and the latest comments, and the events behind one
 chart bar. Also the visibility rule every comment row is put through.
 
-Used by: `Minn\Admin\Dashboard`, `Minn\Admin\Notifications`, `Minn\Rest\Api`
+Used by: `Minn\Admin\Dashboard`, `Minn\Admin\Notifications`, `Minn\Rest\Services`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Users $users, Minn\Auth\Capabilities $capabilities)
@@ -151,7 +151,7 @@ shell and assets from. Minn Admin is MIT, so reading its files is fine.
 
 - const `ASSET_TYPES` = `array (   'css' => 'text/css',   'js' => 'application/javascript',   'woff2' => 'font/woff2',   'woff' => 'font/woff',   'svg' => 'image/svg+xml',   'png' => 'image/png',   'json' => 'application/json', )`
 
-Used by: `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Admin\ManageController`, `Minn\Admin\Translations`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Rest\Api`
+Used by: `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Admin\ManageController`, `Minn\Admin\Translations`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Rest\Services`
 
 ```php
 __construct(string $dir)
@@ -238,7 +238,7 @@ writes to them.
 - const `SLOTS` = `array (   0 => 'bg',   1 => 'bg2',   2 => 'panel',   3 => 'panel2',   4 => 'hover',   5 => 'border',   6 => 'border2',   7 => 'text',   8 => 'text2',   9 => 'text3',   10 => 'accent',   11 => 'accent2',   12 => 'accentFg', )` — Scheme slots in the order the app lists them.
 - const `BASE` = `array (   'dark' =>    array (     'bg' => '#0b0b0d',     'bg2' => '#101013',     'panel' => '#151518',     'panel2' => '#1b1b1f',     'hover' => '#202027',     'border' => '#242429',     'border2' => '#31313a',     'text' => '#ececed',     'text2' => '#9d9da7',     'text3' => '#63636d',     'accent' => '#6e62f5',     'accent2' => '#8a80f8',     'accentFg' => '#ffffff',   ),   'light' =>    array (     'bg' => '#f6f6f7',     'bg2' => '#ffffff',     'panel' => '#ffffff',     'panel2' => '#f4f4f6',     'hover' => '#eeeef1',     'border' => '#e7e7ea',     'border2' => '#dadade',     'text' => '#1a1a1f',     'text2' => '#5e5e69',     'text3' => '#9696a0',     'accent' => '#6a5ef2',     'accent2' => '#5a4ef0',     'accentFg' => '#ffffff',   ), )` — The app's own Minn tokens, the fill for incomplete custom maps.
 
-Used by: `Minn\Admin\BootPayload`, `Minn\Admin\ManageController`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Rest\Api`
+Used by: `Minn\Admin\BootPayload`, `Minn\Admin\ManageController`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Rest\Services`
 
 ```php
 __construct(Minn\Content\Users $users)
@@ -311,7 +311,7 @@ __construct(Minn\Content\Site $site)
 The overview payload: stat cards, the activity chart, and the recent
 activity feed, plus the per-bar activity drill-down.
 
-Used by: `Minn\Admin\V1Controller`, `Minn\Rest\Api`
+Used by: `Minn\Admin\V1Controller`, `Minn\Rest\Services`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Site $site, Minn\Content\Users $users, Minn\Auth\Capabilities $capabilities, Minn\Admin\ActivityChart $chart, Minn\Admin\ActivityFeed $feed, string $uploadsDir)
@@ -352,7 +352,7 @@ Every number is read live; nothing is cached or fetched from outside.
 
 - const `AUTOLOAD_VALUES` = `array (   0 => 'yes',   1 => 'on',   2 => 'auto',   3 => 'auto-on', )`
 
-Used by: `Minn\Admin\SystemController`, `Minn\Rest\Api`
+Used by: `Minn\Admin\SystemController`, `Minn\Rest\Services`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, Minn\Content\Inventory $inventory, Minn\Extension\Loader $extensions, Minn\Admin\Logs $logs, string $engineVersion, string $webroot)
@@ -416,7 +416,7 @@ unregistered and a stored hide of one is simply not listed.
 - const `CORE` = `array (   'content' =>    array (     0 => 'Content',     1 => 'edit_posts',   ),   'media' =>    array (     0 => 'Media',     1 => 'upload_files',   ),   'comments' =>    array (     0 => 'Comments',     1 => 'moderate_comments',   ),   'orders' =>    array (     0 => 'Orders',     1 => 'edit_shop_orders',   ),   'subscriptions' =>    array (     0 => 'Subscriptions',     1 => 'edit_shop_orders',   ),   'products' =>    array (     0 => 'Products',     1 => 'edit_products',   ),   'coupons' =>    array (     0 => 'Coupons',     1 => 'edit_shop_coupons',   ),   'customers' =>    array (     0 => 'Customers',     1 => 'list_users',   ),   'users' =>    array (     0 => 'Users',     1 => 'list_users',   ),   'terms' =>    array (     0 => 'Terms',     1 => 'manage_categories',   ),   'menus' =>    array (     0 => 'Menus',     1 => 'edit_theme_options',   ),   'widgets' =>    array (     0 => 'Widgets',     1 => 'edit_theme_options',   ),   'posttypes' =>    array (     0 => 'Structure',     1 => 'manage_options',   ),   'extensions' =>    array (     0 => 'Extensions',     1 => 'activate_plugins',   ),   'database' =>    array (     0 => 'Database',     1 => 'manage_options',   ),   'system' =>    array (     0 => 'System',     1 => 'manage_options',   ),   'settings' =>    array (     0 => 'Settings',     1 => 'manage_options',   ), )` — Core view id => [label, the capability that shows the view].
 - const `CAP` = `100` — Newest hides kept when the map is capped.
 
-Used by: `Minn\Admin\BootPayload`, `Minn\Admin\ManageController`, `Minn\Engine`, `Minn\Rest\Api`
+Used by: `Minn\Admin\BootPayload`, `Minn\Admin\ManageController`, `Minn\Engine`, `Minn\Rest\Services`
 
 ```php
 __construct(Minn\Content\Users $users, Minn\Auth\Capabilities $capabilities)
@@ -517,7 +517,7 @@ never read; it may be another tenant's.
 
 - const `TAIL_BYTES` = `262144`
 
-Used by: `Minn\Admin\Diagnostics`, `Minn\Admin\SystemController`, `Minn\Rest\Api`
+Used by: `Minn\Admin\Diagnostics`, `Minn\Admin\SystemController`, `Minn\Rest\Services`
 
 ```php
 __construct(string $webroot)
@@ -650,7 +650,7 @@ theme update rows need an extension inventory the engine does not have
 (a recorded gap); on the reference database those sections are empty,
 so parity holds by construction.
 
-Used by: `Minn\Admin\V1Controller`, `Minn\Rest\Api`
+Used by: `Minn\Admin\V1Controller`, `Minn\Rest\Services`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Site $site, Minn\Content\Users $users, Minn\Auth\Capabilities $capabilities, Minn\Admin\ActivityFeed $feed, Minn\Admin\Updates $updates)
@@ -683,7 +683,7 @@ checked before it is moved into place.
 - const `INFO_OPTION` = `'minn_plugin_info'`
 - const `INFO_TTL` = `43200`
 
-Used by: `Minn\Admin\PackagesController`, `Minn\Admin\Updates`, `Minn\Cli\AssetUpdate`, `Minn\Cli\DirectorySearch`, `Minn\Cli\PluginCommand`, `Minn\Cli\ThemeCommand`, `Minn\Engine`, `Minn\Rest\Api`, `Minn\Rest\PluginsController`
+Used by: `Minn\Admin\PackagesController`, `Minn\Admin\Updates`, `Minn\Cli\AssetUpdate`, `Minn\Cli\DirectorySearch`, `Minn\Cli\PluginCommand`, `Minn\Cli\ThemeCommand`, `Minn\Engine`, `Minn\Rest\PluginsController`, `Minn\Rest\Services`
 
 ```php
 __construct(Minn\Content\Site $site, string $contentDir)
@@ -939,7 +939,7 @@ locale's files, so an eject leaves the files WordPress would have written.
 
 - const `RTL` = `array (   0 => 'ar',   1 => 'ary',   2 => 'azb',   3 => 'ckb',   4 => 'dv',   5 => 'fa_AF',   6 => 'fa_IR',   7 => 'haz',   8 => 'he_IL',   9 => 'ps',   10 => 'skr',   11 => 'ug_CN',   12 => 'ur', )`
 
-Used by: `Minn\Admin\BootPayload`, `Minn\Admin\LanguageController`, `Minn\Engine`, `Minn\Rest\Api`
+Used by: `Minn\Admin\BootPayload`, `Minn\Admin\LanguageController`, `Minn\Engine`, `Minn\Rest\Services`
 
 ```php
 __construct(Minn\Content\Users $users, Minn\Content\Site $site, Minn\Admin\App $app, string $contentDir)
@@ -1002,7 +1002,7 @@ auto_update_themes options, in the shape the app already reads.
 - const `THEMES_API` = `'https://api.wordpress.org/themes/update-check/1.1/'`
 - const `PACKAGE_HOST` = `'https://downloads.wordpress.org/'`
 
-Used by: `Minn\Admin\ManageController`, `Minn\Admin\Notifications`, `Minn\Admin\UpdatesController`, `Minn\Cli\AssetUpdate`, `Minn\Cron\Cron`, `Minn\Engine`, `Minn\Rest\Api`
+Used by: `Minn\Admin\ManageController`, `Minn\Admin\Notifications`, `Minn\Admin\UpdatesController`, `Minn\Cli\AssetUpdate`, `Minn\Cron\Cron`, `Minn\Engine`, `Minn\Rest\Services`
 
 ```php
 __construct(Minn\Content\Site $site, Minn\Content\Inventory $inventory, Minn\Admin\Packages $packages, string $contentDir, string $home, string $wpVersion)

@@ -77,7 +77,7 @@ Internals: `caption()` (private, line 47), `tag()` (private, line 57), `token()`
 
 GD sub-size generation from the size options the site stores.
 
-Used by: `Minn\Media\Writer`, `Minn\Rest\Api`
+Used by: `Minn\Media\Writer`, `Minn\Rest\Services`
 
 ```php
 __construct(Minn\Content\Site $site)
@@ -244,7 +244,7 @@ The uploads directory: paths, URLs, the allowed types, and landing a file.
 
 - const `MIMES` = `array (   'png' => 'image/png',   'jpg' => 'image/jpeg',   'jpeg' => 'image/jpeg',   'gif' => 'image/gif',   'webp' => 'image/webp',   'pdf' => 'application/pdf',   'txt' => 'text/plain',   'mp4' => 'video/mp4',   'mp3' => 'audio/mpeg',   'zip' => 'application/zip', )` — extension => canonical mime
 
-Used by: `Minn\Blocks\ImageTags`, `Minn\Blocks\Renderer`, `Minn\Media\Upload`, `Minn\Media\Writer`, `Minn\Rest\Api`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`
+Used by: `Minn\Blocks\ImageTags`, `Minn\Blocks\Renderer`, `Minn\Media\Upload`, `Minn\Media\Writer`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\Services`
 
 ```php
 __construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, string $baseDir)
@@ -302,7 +302,7 @@ directory under a unique name, the row is inserted with the stored
 name as its title and slug, and an image gets its sub-sizes and the
 serialized metadata blob.
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\MediaController`
+Used by: `Minn\Rest\MediaController`, `Minn\Rest\Services`
 
 ```php
 __construct(Minn\Content\PostWriter $posts, Minn\Content\Site $site, Minn\Media\Uploads $uploads, Minn\Media\Images $images)

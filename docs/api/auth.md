@@ -35,7 +35,7 @@ A hash the reference made with its own fast scheme cannot be verified here.
 
 - const `META` = `'_application_passwords'`
 
-Used by: `Minn\Auth\Authenticator`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`
+Used by: `Minn\Auth\Authenticator`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\Services`
 
 ```php
 __construct(Minn\Content\Users $users)
@@ -158,7 +158,7 @@ __construct(Minn\Content\UserRecord $user, string $token, ?array $applicationPas
 Resolves the current user two ways. A page load carries the cookie alone;
 a REST call must also carry a nonce bound to the same session.
 
-Used by: `Minn\Admin\AppController`, `Minn\Engine`, `Minn\Front\CommentPostController`, `Minn\Login\LoginController`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\Caller`, `Minn\Rest\IndexController`
+Used by: `Minn\Admin\AppController`, `Minn\Engine`, `Minn\Front\CommentPostController`, `Minn\Login\LoginController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\Caller`, `Minn\Rest\IndexController`, `Minn\Rest\Services`
 
 ```php
 __construct(Minn\Auth\Cookie $cookie, Minn\Content\Users $users)
@@ -206,7 +206,7 @@ The capability engine: a user's roles from {prefix}capabilities usermeta,
 the primitives those roles grant, and the meta-capability mapping for
 edit_post, delete_post, and read_post.
 
-Used by: `Minn\Admin\ActivityFeed`, `Minn\Admin\AdminTypes`, `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Admin\Dashboard`, `Minn\Admin\HiddenIntegrations`, `Minn\Admin\LanguageController`, `Minn\Admin\Notifications`, `Minn\Cli\Runtime`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Front\CommentPostController`, `Minn\Rest\Api`, `Minn\Rest\Caller`, `Minn\Runtime\Runtime`
+Used by: `Minn\Admin\ActivityFeed`, `Minn\Admin\AdminTypes`, `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Admin\Dashboard`, `Minn\Admin\HiddenIntegrations`, `Minn\Admin\LanguageController`, `Minn\Admin\Notifications`, `Minn\Cli\Runtime`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Front\CommentPostController`, `Minn\Rest\Caller`, `Minn\Rest\Services`, `Minn\Runtime\Runtime`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Users $users, Minn\Auth\Roles $roles)
@@ -495,7 +495,7 @@ The session_tokens usermeta store: {sha256(token): {expiration, ip, ua,
 login}}. Read by a bounded scan of the serialized blob and written by
 serializing it ourselves, so stored data is never executed.
 
-Used by: `Minn\Admin\SessionsController`, `Minn\Auth\Authenticator`, `Minn\Auth\Cookie`, `Minn\Engine`, `Minn\Login\LoginController`, `Minn\Rest\Api`
+Used by: `Minn\Admin\SessionsController`, `Minn\Auth\Authenticator`, `Minn\Auth\Cookie`, `Minn\Engine`, `Minn\Login\LoginController`, `Minn\Rest\Services`
 
 ```php
 __construct(Minn\Content\Users $users)

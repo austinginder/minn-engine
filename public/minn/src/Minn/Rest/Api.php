@@ -5,54 +5,21 @@ declare(strict_types=1);
 namespace Minn\Rest;
 
 use Minn\Admin\AdminTypes;
-use Minn\Admin\App;
-use Minn\Admin\Appearance;
-use Minn\Admin\Diagnostics;
-use Minn\Admin\HiddenIntegrations;
 use Minn\Admin\LanguageController;
-use Minn\Admin\Translations;
-use Minn\Admin\Updates;
 use Minn\Admin\UpdatesController;
-use Minn\Admin\Logs;
 use Minn\Admin\SystemController;
 use Minn\Admin\ManageController;
-use Minn\Admin\Packages;
 use Minn\Admin\PackagesController;
 use Minn\Admin\RenderController;
 use Minn\Admin\SessionsController;
 use Minn\Admin\CoreStatus;
-use Minn\Admin\ActivityChart;
-use Minn\Admin\ActivityFeed;
-use Minn\Admin\Dashboard;
-use Minn\Admin\Notifications;
 use Minn\Admin\V1Controller;
-use Minn\Auth\ApplicationPasswords;
-use Minn\Auth\Authenticator;
-use Minn\Auth\Capabilities;
-use Minn\Auth\Sessions;
-use Minn\Content\Comments;
-use Minn\Content\Inventory;
-use Minn\Content\Menus;
-use Minn\Content\Posts;
-use Minn\Content\PostWriter;
-use Minn\Content\Revisions;
-use Minn\Content\Site;
-use Minn\Content\Terms;
-use Minn\Content\Users;
 use Minn\Db;
-use Minn\Extension\Loader;
-use Minn\Front\Permalinks;
 use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Router;
-use Minn\Media\Images;
-use Minn\Media\Uploads;
-use Minn\Media\Writer;
 use Minn\RestError;
 use Minn\Runtime\Runtime;
-use Minn\Theme\TemplateIndex;
-use Minn\Theme\TemplateWriter;
-use Minn\Theme\Theme;
 
 /**
  * The REST API: wires the controllers for one request and dispatches a
@@ -82,80 +49,52 @@ final readonly class Api
 
     public static function forRequest(Db $db, Request $request): self
     {
-        $users = new Users($db);
-        $posts = new Posts($db);
-        $terms = new Terms($db);
-        $site = new Site($db);
-        $writer = new PostWriter($db, $posts, $site);
-        $permalinks = Permalinks::fromDb($db);
-        $url = new RestUrl($permalinks);
-        $capabilities = Capabilities::fromDb($db);
-        $caller = new Caller($request, Authenticator::fromDb($db), $capabilities);
-        $postObject = new PostObject($db, $posts, $users, $permalinks, $url, $caller);
-        $termObject = new TermObject($db, $permalinks, $url, $caller);
-        $userObject = new UserObject($db, $users, $permalinks, $url, $caller);
-        $contentDir = rtrim(ABSPATH, '/') . '/wp-content';
-        $loader = new Loader($contentDir, $site);
-        $types = new Types($url, $loader->declaredTypes());
-        $taxonomies = new Taxonomies($url);
-        $uploads = new Uploads($site, $permalinks, ABSPATH . 'wp-content/uploads');
-        $mediaObject = new MediaObject($posts, $uploads, $permalinks, $url, $caller);
-        $commentObject = new CommentObject(new Comments($db), $posts, $permalinks, $url, $caller);
-
-        $feed = new ActivityFeed($db, $users, $capabilities);
-        $dashboard = new Dashboard($db, $site, $users, $capabilities, new ActivityChart($db, $site), $feed, ABSPATH . 'wp-content/uploads');
-        $updates = new Updates($site, new Inventory($contentDir, $site), new Packages($site, $contentDir), $contentDir, $permalinks->url('/'), \Minn\Engine::WP_VERSION);
-        $notifications = new Notifications($db, $site, $users, $capabilities, $feed, $updates);
-        $menus = new Menus($db, $posts, $terms, $permalinks, $writer, $site);
-        // A classic theme has no block templates; the index stays null and
-        // the routes answer the way the reference does when it never
-        // registered them.
-        $blockTheme = Theme::active($site, $permalinks, $contentDir . '/themes');
-        $templates = $blockTheme === null ? null : new TemplateIndex($db, $blockTheme, $site, Runtime::booted() ? Runtime::blockTemplates() : null);
-        $templateWriter = $templates === null ? null : new TemplateWriter($db, $writer, $terms, $site, $templates);
-
+        $s = Services::forRequest($db, $request);
         $router = new Router();
-        $router->register(
-            new IndexController($site, $permalinks, $url, $router),
-            new V1Controller($db, $site, $posts, $writer, $permalinks, $dashboard, $notifications, new CoreStatus($site), new AdminTypes($types, $capabilities), $caller, $users),
-            new TermsController($db, $terms, $site, $termObject, $caller),
-            new UsersController($db, $users, $site, $userObject, $url, $caller, $capabilities->roles()),
-            new ApplicationPasswordsController($users, $site, new ApplicationPasswords($users), $url, $caller, new Schema(static fn (string $e): bool => (bool) filter_var($e, FILTER_VALIDATE_EMAIL), static fn (int|float $n): string => number_format((float) $n), static fn (string $f, mixed $v): mixed => $v)),
-            new TypesController($types),
-            new TaxonomiesController($taxonomies, $caller),
-            new SearchController($db, $types, $permalinks, $url, $caller),
-            new PluginsController($site, new Inventory($contentDir, $site), $loader, $url, $caller, new Packages($site, $contentDir), $contentDir),
-            new SessionsController($users, new Sessions($users), $caller),
-            new ManageController($db, $site, $types, $taxonomies, $loader, new Inventory($contentDir, $site), $permalinks, new App(MINN_ENGINE_DIR . '/admin'), new Appearance($users), new HiddenIntegrations($users, $capabilities), $updates, $caller, $contentDir),
-            new LanguageController(new Translations($users, $site, new App(MINN_ENGINE_DIR . '/admin'), $contentDir), $users, $site, $capabilities, $caller),
-            new PackagesController(new Packages($site, $contentDir), $site, $caller),
-            new UpdatesController($updates, $caller),
-            new RenderController($db, $site, $posts, $permalinks, $caller, $contentDir . '/themes'),
-            new SystemController(
-                new Diagnostics($db, $site, $permalinks, new Inventory($contentDir, $site), $loader, new Logs(rtrim(ABSPATH, '/')), MINN_ENGINE_VERSION, rtrim(ABSPATH, '/')),
-                new Logs(rtrim(ABSPATH, '/')),
-                $caller,
-            ),
-            new SettingsController(new Settings($site), $caller),
-            new CommentsController(new Comments($db), $posts, $site, $commentObject, $caller),
-            new RevisionsController($posts, new Revisions($db, $writer, $site), $url, $caller),
-            new MediaController($db, $posts, $writer, $site, $uploads, new Writer($writer, $site, $uploads, new Images($site)), $mediaObject, $caller),
-            new MenusController($menus, new MenuObject($menus, $url, $caller), new MenuItemObject($url, $caller), $caller, $url),
+        $router->register(...self::controllers($s, $router));
+        return new self($db, $request, $s->caller(), $router, $s->postObject(), $s->termObject(), $s->userObject(), $s->types(), new Embed($router, $s->types(), $s->taxonomies()));
+    }
 
-        );
+    /**
+     * The route table: every controller, built from the shared services.
+     * Templates join only under a block theme.
+     *
+     * @return list<object>
+     */
+    private static function controllers(Services $s, Router $router): array
+    {
+        $caller = $s->caller();
+        $postsController = new PostsController($s->db(), $s->posts(), $s->postObject(), $caller);
+        $postsWrite = new PostsWriteController($s->posts(), $s->writer(), $s->site(), $s->postObject(), $s->url(), $caller);
+        $controllers = [
+            new IndexController($s->site(), $s->permalinks(), $s->url(), $router),
+            new V1Controller($s->db(), $s->site(), $s->posts(), $s->writer(), $s->permalinks(), $s->dashboard(), $s->notifications(), new CoreStatus($s->site()), new AdminTypes($s->types(), $s->capabilities()), $caller, $s->users()),
+            new TermsController($s->db(), $s->terms(), $s->site(), $s->termObject(), $caller),
+            new UsersController($s->db(), $s->users(), $s->site(), $s->userObject(), $s->url(), $caller, $s->capabilities()->roles()),
+            new ApplicationPasswordsController($s->users(), $s->site(), $s->applicationPasswords(), $s->url(), $caller, $s->schema()),
+            new TypesController($s->types()),
+            new TaxonomiesController($s->taxonomies(), $caller),
+            new SearchController($s->db(), $s->types(), $s->permalinks(), $s->url(), $caller),
+            new PluginsController($s->site(), $s->inventory(), $s->loader(), $s->url(), $caller, $s->packages(), $s->contentDir()),
+            new SessionsController($s->users(), $s->sessions(), $caller),
+            new ManageController($s->db(), $s->site(), $s->types(), $s->taxonomies(), $s->loader(), $s->inventory(), $s->permalinks(), $s->app(), $s->appearance(), $s->hiddenIntegrations(), $s->updates(), $caller, $s->contentDir()),
+            new LanguageController($s->translations(), $s->users(), $s->site(), $s->capabilities(), $caller),
+            new PackagesController($s->packages(), $s->site(), $caller),
+            new UpdatesController($s->updates(), $caller),
+            new RenderController($s->db(), $s->site(), $s->posts(), $s->permalinks(), $caller, $s->contentDir() . '/themes'),
+            new SystemController($s->diagnostics(), $s->logs(), $caller),
+            new SettingsController(new Settings($s->site()), $caller),
+            new CommentsController($s->comments(), $s->posts(), $s->site(), $s->commentObject(), $caller),
+            new RevisionsController($s->posts(), $s->revisions(), $s->url(), $caller),
+            new MediaController($s->db(), $s->posts(), $s->writer(), $s->site(), $s->uploads(), $s->mediaWriter(), $s->mediaObject(), $caller),
+            new MenusController($s->menus(), new MenuObject($s->menus(), $s->url(), $caller), new MenuItemObject($s->url(), $caller), $caller, $s->url()),
+        ];
+        $templates = $s->templates();
+        $templateWriter = $s->templateWriter();
         if ($templates !== null && $templateWriter !== null) {
-            $router->register(new TemplatesController(
-                $templates,
-                $templateWriter,
-                new TemplateObject($templates, $posts, $url, $caller),
-                $caller,
-            ));
+            $controllers[] = new TemplatesController($templates, $templateWriter, new TemplateObject($templates, $s->posts(), $s->url(), $caller), $caller);
         }
-        $postsController = new PostsController($db, $posts, $postObject, $caller);
-        $postsWrite = new PostsWriteController($posts, $writer, $site, $postObject, $url, $caller);
-        $router->register($postsController, $postsWrite, new NavigationController($postsController, $postsWrite));
-        $router->register(new DeclaredPostsController($types, $postsController, $postsWrite));
-        return new self($db, $request, $caller, $router, $postObject, $termObject, $userObject, $types, new Embed($router, $types, $taxonomies));
+        return [...$controllers, $postsController, $postsWrite, new NavigationController($postsController, $postsWrite), new DeclaredPostsController($s->types(), $postsController, $postsWrite)];
     }
 
     public function caller(): Caller
