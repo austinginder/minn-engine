@@ -74,6 +74,8 @@ $check(str_contains($home, 'Audience 3'), 'the three-audience visual is on the p
 $check(str_contains($home, 'href="/lexicon/"'), 'the homepage links to the lexicon');
 $check(str_contains($home, 'href="/looks-like/"'), 'the homepage links to looks-like');
 $check(str_contains($home, 'Browse the lexicon'), 'the visual points at the glossary page');
+$check(str_contains($home, 'Classic PHP themes run'), 'classic PHP themes are on the working list');
+$check(!str_contains($home, 'are out of scope; preflight flags them'), 'classic PHP themes are not on the not-yet list');
 
 [$lh, $lex] = minn_test_fetch($ENGINE . '/lexicon/');
 $check($lh['status'] === 200, 'theme /lexicon/ answers 200', (string) $lh['status']);

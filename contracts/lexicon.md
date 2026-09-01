@@ -82,7 +82,8 @@ not here.
 | Permalinks | `permalink_structure`, `?p=`, archives, `_wp_old_slug` | Resolver plus every `link` field. | `front/permalinks.md` |
 | Feeds / sitemaps / probes | `/feed/`, `/wp-sitemap.xml`, `robots.txt`, `wp-cron.php` | Byte-level where the contract says so. | `front/probes.md` |
 | Block render | `post_content` block markup, `content.rendered` | Engine parser + renderer. Theme.php is never executed. | `blocks.md`, `front/theme.md` |
-| Block themes | `theme.json`, `templates/`, `parts/`, `wp_template*` | Read as data. Classic PHP themes are Mute (preflight RED). | `front/theme.md` |
+| Block themes | `theme.json`, `templates/`, `parts/`, `wp_template*` | Read as data. | `front/theme.md` |
+| Classic PHP themes | `get_header()`, PHP template hierarchy | Hierarchy, `wp_head` defaults, live body parity. | `front/classic.md` |
 | WP-CLI ops | `option`, `user`, `plugin list/install/update/activate/delete/search`, `theme list/install/update/activate/delete/search`, `rewrite flush/structure`, `maintenance-mode`, `db`, `search-replace`, `wp minn *` | `before_wp_load` verbs plus WP-CLI's own `config`/`db`. | `cli.md` |
 | Cron / mail | due `future` posts, `wp-cron.php`, `wp_mail`, password reset | Engine runner; `cron` option events are a later slice. | `cron-mail.md` |
 | Install / eject | five-minute install, core files on disk | `minn install` / `eject`. Not `install.php`. | `docs/install.md` |
@@ -180,7 +181,6 @@ coming.
 | Filesystem credentials modal | FTP/SSH prompt | `direct` only. No modal. |
 | Press This / mail-by-post / OPML | `press-this.php`, `wp-mail.php`, `wp-links-opml.php` | Mute. Files absent. |
 | WooCommerce-shaped sites | orders, products, Woo admin | Out of scope for years. Brochure, forms, and content are the tractable slice. |
-| Classic PHP themes | `get_header()`, PHP template hierarchy | Preflight RED. Block themes only. |
 | Plugin settings pages | `add_options_page` callbacks, `admin.php?page=` | Hear the registration. Mute the host. Adapter, or the page does not exist. |
 
 ### Names that stay placeholders
