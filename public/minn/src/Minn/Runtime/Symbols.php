@@ -38,41 +38,48 @@ final class Symbols
             $cache[$key] = ['mtime' => $newest, 'count' => count($files), 'scan' => $scan];
             $options->update('minn_runtime_symbols', $cache, 'off');
         }
-        // Only the reference's own interface counts: a function or class the
-        // plugin needs from WordPress. Its own integrations with other plugins
-        // and PHP extensions are its business.
-        $interface = self::interfaceNames();
+        return self::verdict($scan, count($files), SymbolGap::ofLoadedFacade(MINN_ENGINE_DIR));
+    }
+
+    /**
+     * The same read against an exported gap instead of the running engine, so a
+     * folder can be judged with no database, no options, and no facade loaded.
+     *
+     * @return array{functions: list<string>, classes: list<string>, files: int, truncated: bool}
+     */
+    public static function missingAgainst(string $dir, SymbolGap $gap): array
+    {
+        $files = self::phpFiles($dir);
+        return self::verdict(self::scan($files), count($files), $gap);
+    }
+
+    /**
+     * Only the reference's own interface counts: a function or class the plugin
+     * needs from WordPress. Its own integrations with other plugins and PHP
+     * extensions are its business.
+     *
+     * @param array{calls: list<string>, classes: list<string>, declared: array<string, true>, declaredClasses: array<string, true>, guarded: array<string, true>, truncated: bool} $scan
+     * @return array{functions: list<string>, classes: list<string>, files: int, truncated: bool}
+     */
+    private static function verdict(array $scan, int $files, SymbolGap $gap): array
+    {
         $missingFunctions = [];
         foreach ($scan['calls'] as $name) {
             $lower = strtolower($name);
-            if (isset($interface['functions'][$lower]) && !function_exists($name) && !isset($scan['declared'][$lower]) && !isset($scan['guarded'][$lower])) {
+            if ($gap->lacksFunction($name) && !isset($scan['declared'][$lower]) && !isset($scan['guarded'][$lower])) {
                 $missingFunctions[] = $name;
             }
         }
         $missingClasses = [];
         foreach ($scan['classes'] as $name) {
             $lower = strtolower($name);
-            if (isset($interface['classes'][$lower]) && !class_exists($name) && !interface_exists($name) && !trait_exists($name) && !enum_exists($name) && !isset($scan['declaredClasses'][$lower]) && !isset($scan['guarded'][$lower])) {
+            if ($gap->lacksClass($name) && !isset($scan['declaredClasses'][$lower]) && !isset($scan['guarded'][$lower])) {
                 $missingClasses[] = $name;
             }
         }
         sort($missingFunctions);
         sort($missingClasses);
-        return ['functions' => $missingFunctions, 'classes' => $missingClasses, 'files' => count($files), 'truncated' => $scan['truncated']];
-    }
-
-    /** @return array{functions: array<string, true>, classes: array<string, true>} lower-cased names of the reference's interface */
-    private static function interfaceNames(): array
-    {
-        static $names = null;
-        if ($names === null) {
-            $data = json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/api-names.json'), true) ?: [];
-            $names = [
-                'functions' => array_fill_keys(array_map('strtolower', $data['functions'] ?? []), true),
-                'classes' => array_fill_keys(array_map('strtolower', $data['classes'] ?? []), true),
-            ];
-        }
-        return $names;
+        return ['functions' => $missingFunctions, 'classes' => $missingClasses, 'files' => $files, 'truncated' => $scan['truncated']];
     }
 
     /** @return list<string> */

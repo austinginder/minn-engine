@@ -1335,7 +1335,7 @@ function get_the_author_posts_link()
     if (!$author instanceof WP_User) {
         return '';
     }
-    return sprintf('<a href="%1$s" title="%2$s" rel="author">%3$s</a>', esc_url(get_author_posts_url($author->ID)), esc_attr(sprintf('Posts by %s', get_the_author())), get_the_author());
+    return sprintf('<a href="%1$s" rel="author">%2$s</a>', esc_url(get_author_posts_url($author->ID)), get_the_author());
 }
 
 function count_user_posts($userid, $post_type = 'post', $public_only = false)
@@ -1580,4 +1580,9 @@ function wp_unique_post_slug($slug, $post_id, $post_status, $post_type, $post_pa
     $writer = new \Minn\Content\PostWriter(Runtime::current()->db, _minn_posts(), new \Minn\Content\Site(Runtime::current()->db));
     $unique = $writer->uniqueSlug((string) $slug, (int) $post_id);
     return apply_filters('wp_unique_post_slug', $unique, $post_id, $post_status, $post_type, $post_parent, $slug);
+}
+
+function the_author_posts_link($deprecated = '')
+{
+    echo get_the_author_posts_link();
 }

@@ -271,12 +271,6 @@ function get_metadata_by_mid($meta_type, $meta_id)
     return null;
 }
 
-function get_next_posts_page_link($max_page = 0)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('get_next_posts_page_link');
-    return null;
-}
-
 function get_page_templates($post = NULL, $post_type = 'page')
 {
     \Minn\Runtime\PlaceholderTrace::hit('get_page_templates');
@@ -607,12 +601,6 @@ function wp_comment_trashnotice()
     return null;
 }
 
-function wp_create_nav_menu($menu_name)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_create_nav_menu');
-    return null;
-}
-
 function wp_create_post_autosave($post_data)
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_create_post_autosave');
@@ -634,12 +622,6 @@ function wp_crop_image($src, $src_x, $src_y, $src_w, $src_h, $dst_w, $dst_h, $sr
 function wp_debug_backtrace_summary($ignore_class = NULL, $skip_frames = 0, $pretty = true)
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_debug_backtrace_summary');
-    return null;
-}
-
-function wp_delete_nav_menu($menu)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_delete_nav_menu');
     return null;
 }
 
@@ -856,12 +838,6 @@ function wp_update_image_subsizes($attachment_id)
 function wp_update_nav_menu_item($menu_id = 0, $menu_item_db_id = 0, $menu_item_data = [], $fire_after_hooks = true)
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_update_nav_menu_item');
-    return null;
-}
-
-function wp_update_nav_menu_object($menu_id = 0, $menu_data = [])
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_update_nav_menu_object');
     return null;
 }
 

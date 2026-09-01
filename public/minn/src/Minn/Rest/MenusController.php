@@ -10,7 +10,7 @@ use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\RestError;
-use Minn\Support\Html;
+use Minn\Runtime\Refusal;
 use Minn\Support\Kses;
 
 /**
@@ -75,19 +75,7 @@ final readonly class MenusController
             throw RestError::missingParams(['name']);
         }
         $name = $this->plain((string) $body['name']);
-        if ($name === '') {
-            throw new RestError('empty_term_name', 'A name is required for this term.', 400);
-        }
-        $existing = $this->menus->idByName($name);
-        if ($existing !== null) {
-            throw new RestError(
-                'menu_exists',
-                'The menu name <strong>' . Html::esc($name) . '</strong> conflicts with another menu name. Please try another.',
-                400,
-                ['term_id' => $existing],
-                ['additional_data' => [$existing]],
-            );
-        }
+        $this->refuse($this->menus->refuseName($name));
         $id = $this->menus->createMenu($name, $this->plain((string) ($body['description'] ?? '')));
         $row = $this->menus->find($id);
         return Reply::item($this->menuObject->view($row ?? []), Fields::fromQuery($request->query), 201)
@@ -106,20 +94,8 @@ final readonly class MenusController
         }
         $body = $request->json();
         $name = array_key_exists('name', $body) ? $this->plain((string) $body['name']) : null;
-        if ($name === '') {
-            throw new RestError('empty_term_name', 'A name is required for this term.', 400);
-        }
         if ($name !== null) {
-            $existing = $this->menus->idByName($name);
-            if ($existing !== null && $existing !== (int) $id) {
-                throw new RestError(
-                    'menu_exists',
-                    'The menu name <strong>' . Html::esc($name) . '</strong> conflicts with another menu name. Please try another.',
-                    400,
-                    ['term_id' => $existing],
-                    ['additional_data' => [$existing]],
-                );
-            }
+            $this->refuse($this->menus->refuseName($name, (int) $id));
         }
         $this->menus->updateMenu(
             (int) $id,
@@ -319,6 +295,17 @@ final readonly class MenusController
             return '';
         }
         return $this->caller->can('unfiltered_html') ? $url : Kses::url($url);
+    }
+
+    /** A refused menu name, in the shape the reference's REST error carries. */
+    private function refuse(?Refusal $refusal): void
+    {
+        if ($refusal === null) {
+            return;
+        }
+        $extra = $refusal->data === null ? [] : ['term_id' => $refusal->data];
+        $top = $refusal->data === null ? [] : ['additional_data' => [$refusal->data]];
+        throw new RestError($refusal->code, $refusal->message, 400, $extra, $top);
     }
 
     private function plain(string $value): string

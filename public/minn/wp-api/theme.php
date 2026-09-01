@@ -264,3 +264,20 @@ function wp_get_global_stylesheet($types = [])
 {
     return '';
 }
+
+function the_custom_logo($blog_id = 0)
+{
+    echo get_custom_logo($blog_id);
+}
+
+/**
+ * The menu assigned to a theme location, by name. An unassigned location and a
+ * location the theme never registered both read as an empty string.
+ */
+function wp_get_nav_menu_name($location)
+{
+    $locations = get_nav_menu_locations();
+    $menu = isset($locations[$location]) ? wp_get_nav_menu_object($locations[$location]) : false;
+    $name = $menu && !is_wp_error($menu) ? (string) $menu->name : '';
+    return apply_filters('wp_get_nav_menu_name', $name, $location);
+}

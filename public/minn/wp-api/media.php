@@ -1174,3 +1174,15 @@ function wp_get_missing_image_subsizes($attachment_id)
     }
     return apply_filters('wp_get_missing_image_subsizes', $missing, $meta, (int) $attachment_id);
 }
+
+function get_the_post_thumbnail_caption($post = null)
+{
+    $id = get_post_thumbnail_id($post);
+    $caption = $id ? (string) wp_get_attachment_caption($id) : '';
+    return $caption;
+}
+
+function the_post_thumbnail_caption($post = null)
+{
+    echo apply_filters('the_post_thumbnail_caption', get_the_post_thumbnail_caption($post));
+}

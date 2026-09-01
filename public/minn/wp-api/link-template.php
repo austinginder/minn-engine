@@ -219,6 +219,20 @@ function get_theme_file_uri($file = '')
     return apply_filters('theme_file_uri', $url, $file);
 }
 
+function get_parent_theme_file_uri($file = '')
+{
+    $file = ltrim((string) $file, '/');
+    $url = $file === '' ? get_template_directory_uri() : get_template_directory_uri() . '/' . $file;
+    return apply_filters('parent_theme_file_uri', $url, $file);
+}
+
+function get_parent_theme_file_path($file = '')
+{
+    $file = ltrim((string) $file, '/');
+    $path = $file === '' ? get_template_directory() : get_template_directory() . '/' . $file;
+    return apply_filters('parent_theme_file_path', $path, $file);
+}
+
 function get_theme_file_path($file = '')
 {
     $file = ltrim((string) $file, '/');
@@ -598,4 +612,111 @@ function get_the_post_navigation($args = [])
 function the_post_navigation($args = [])
 {
     echo get_the_post_navigation($args);
+}
+
+function get_next_posts_page_link($max_page = 0)
+{
+    if (is_single()) {
+        return null;
+    }
+    $paged = (int) get_query_var('paged') ?: 1;
+    $max_page = (int) $max_page;
+    if ($max_page > 0 && $paged >= $max_page) {
+        return null;
+    }
+    return get_pagenum_link($paged + 1);
+}
+
+function get_previous_posts_page_link()
+{
+    if (is_single()) {
+        return null;
+    }
+    $paged = (int) get_query_var('paged');
+    return get_pagenum_link(max(1, $paged - 1));
+}
+
+function get_next_posts_link($label = null, $max_page = 0)
+{
+    $max_page = (int) $max_page ?: (int) ($GLOBALS['wp_query']->max_num_pages ?? 0);
+    $paged = (int) get_query_var('paged') ?: 1;
+    $next = Minn\Front\ListingLinks::neighbours($paged, $max_page)[1];
+    if (is_single() || $next === null) {
+        return null;
+    }
+    return Minn\Front\ListingLinks::anchor(
+        esc_url(next_posts($max_page, false)),
+        (string) apply_filters('next_posts_link_attributes', ''),
+        Minn\Front\ListingLinks::label((string) ($label ?? ''), 'Next Page &raquo;'),
+    );
+}
+
+function get_previous_posts_link($label = null)
+{
+    $paged = (int) get_query_var('paged') ?: 1;
+    $previous = Minn\Front\ListingLinks::neighbours($paged, PHP_INT_MAX)[0];
+    if (is_single() || $previous === null) {
+        return null;
+    }
+    return Minn\Front\ListingLinks::anchor(
+        esc_url(previous_posts(false)),
+        (string) apply_filters('previous_posts_link_attributes', ''),
+        Minn\Front\ListingLinks::label((string) ($label ?? ''), '&laquo; Previous Page'),
+    );
+}
+
+function next_posts_link($label = null, $max_page = 0)
+{
+    echo get_next_posts_link($label, $max_page);
+}
+
+function previous_posts_link($label = null)
+{
+    echo get_previous_posts_link($label);
+}
+
+function next_posts($max_page = 0, $display = true)
+{
+    $link = get_next_posts_page_link($max_page);
+    $url = $link === null ? '' : esc_url(html_entity_decode($link));
+    if (!$display) {
+        return $url;
+    }
+    echo $url;
+}
+
+function previous_posts($display = true)
+{
+    $link = get_previous_posts_page_link();
+    $url = $link === null ? '' : esc_url(html_entity_decode($link));
+    if (!$display) {
+        return $url;
+    }
+    echo $url;
+}
+
+function get_the_posts_navigation($args = [])
+{
+    if ((int) ($GLOBALS['wp_query']->max_num_pages ?? 0) <= 1) {
+        return '';
+    }
+    $aria = Minn\Front\PostNavigation::ariaLabel((array) $args, 'Posts');
+    $args = wp_parse_args($args, ['prev_text' => 'Older posts', 'next_text' => 'Newer posts', 'screen_reader_text' => 'Posts navigation', 'aria_label' => 'Posts', 'class' => 'posts-navigation']);
+    // The older posts sit in the previous slot: a reader moving back through
+    // the archive is moving forward through the page numbers.
+    $links = '';
+    $older = get_next_posts_link($args['prev_text']);
+    if ($older) {
+        $links .= '<div class="nav-previous">' . $older . '</div>';
+    }
+    $newer = get_previous_posts_link($args['next_text']);
+    if ($newer) {
+        $links .= '<div class="nav-next">' . $newer . '</div>';
+    }
+    return $links === '' ? '' : _navigation_markup($links, $args['class'], $args['screen_reader_text'], $aria);
+}
+
+function the_posts_navigation($args = [])
+{
+    echo get_the_posts_navigation($args);
 }

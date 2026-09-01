@@ -7,6 +7,8 @@ namespace Minn\Content;
 use Minn\Blocks\Block;
 use Minn\Db;
 use Minn\Front\Permalinks;
+use Minn\Runtime\Refusal;
+use Minn\Support\Html;
 use Minn\Support\Serialized;
 
 /**
@@ -280,6 +282,27 @@ final readonly class Menus
             [$id],
         );
         return $row === null ? null : $this->hydrate($row, null);
+    }
+
+    /**
+     * Whether a name may be given to a menu. A menu keeps its own name; any
+     * other menu holding it refuses the write, and the refused id rides along
+     * so a caller can point at the menu in the way.
+     */
+    public function refuseName(string $name, int $keeping = 0): ?Refusal
+    {
+        if ($name === '') {
+            return new Refusal('empty_term_name', 'A name is required for this term.');
+        }
+        $existing = $this->idByName($name);
+        if ($existing === null || $existing === $keeping) {
+            return null;
+        }
+        return new Refusal(
+            'menu_exists',
+            'The menu name <strong>' . Html::esc($name) . '</strong> conflicts with another menu name. Please try another.',
+            $existing,
+        );
     }
 
     public function createMenu(string $name, string $description = ''): int

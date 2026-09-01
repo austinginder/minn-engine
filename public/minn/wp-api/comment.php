@@ -16,7 +16,8 @@ function _minn_comments(): Comments
 
 function get_comment($comment = null, $output = OBJECT)
 {
-    if ($comment === null) {
+    // Any empty id means the comment being read, not "no comment".
+    if (empty($comment)) {
         $comment = $GLOBALS['comment'] ?? null;
     }
     if ($comment instanceof WP_Comment) {
@@ -641,7 +642,14 @@ function get_comments_pagenum_link($pagenum = 1, $max_page = 0)
 {
     $pagenum = (int) $pagenum;
     $permalink = get_permalink();
-    $result = $permalink === '' ? '' : ($GLOBALS['wp_rewrite']->using_permalinks() ? user_trailingslashit(trailingslashit($permalink) . 'comment-page-' . $pagenum, 'commentpaged') : add_query_arg('cpage', $pagenum, $permalink));
+    $bare = Minn\Front\ListingLinks::bareCommentPage((string) get_option('default_comments_page'), (int) $max_page);
+    if ($permalink === '' || $pagenum === $bare) {
+        $result = $permalink;
+    } elseif ($GLOBALS['wp_rewrite']->using_permalinks()) {
+        $result = user_trailingslashit(trailingslashit($permalink) . 'comment-page-' . $pagenum, 'commentpaged');
+    } else {
+        $result = add_query_arg('cpage', $pagenum, $permalink);
+    }
     return apply_filters('get_comments_pagenum_link', $result . '#comments');
 }
 
@@ -703,13 +711,16 @@ function get_next_comments_link($label = '', $max_page = 0, $page = null)
         return null;
     }
     $page = (int) ($page ?? (get_query_var('cpage') ?: 1));
-    $next = $page + 1;
     $max_page = (int) $max_page ?: (int) ($GLOBALS['wp_query']->max_num_comment_pages ?? 0) ?: (int) get_comment_pages_count();
-    if ($next > $max_page) {
+    $next = Minn\Front\ListingLinks::neighbours($page, $max_page)[1];
+    if ($next === null) {
         return null;
     }
-    $label = $label === '' ? 'Newer Comments &raquo;' : $label;
-    return '<a href="' . esc_url(get_comments_pagenum_link($next, $max_page)) . '" ' . apply_filters('next_comments_link_attributes', '') . '>' . preg_replace('/&([^#])(?![a-z]{1,8};)/i', '&#038;$1', $label) . '</a>';
+    return Minn\Front\ListingLinks::anchor(
+        esc_url(get_comments_pagenum_link($next, $max_page)),
+        (string) apply_filters('next_comments_link_attributes', ''),
+        Minn\Front\ListingLinks::label((string) $label, 'Newer Comments &raquo;'),
+    );
 }
 
 function get_previous_comments_link($label = '', $page = null)
@@ -718,11 +729,15 @@ function get_previous_comments_link($label = '', $page = null)
         return null;
     }
     $page = (int) ($page ?? (get_query_var('cpage') ?: 1));
-    if ($page <= 1) {
+    $previous = Minn\Front\ListingLinks::neighbours($page, PHP_INT_MAX)[0];
+    if ($previous === null) {
         return null;
     }
-    $label = $label === '' ? '&laquo; Older Comments' : $label;
-    return '<a href="' . esc_url(get_comments_pagenum_link($page - 1)) . '" ' . apply_filters('previous_comments_link_attributes', '') . '>' . preg_replace('/&([^#])(?![a-z]{1,8};)/i', '&#038;$1', $label) . '</a>';
+    return Minn\Front\ListingLinks::anchor(
+        esc_url(get_comments_pagenum_link($previous)),
+        (string) apply_filters('previous_comments_link_attributes', ''),
+        Minn\Front\ListingLinks::label((string) $label, '&laquo; Older Comments'),
+    );
 }
 
 function next_comments_link($label = '', $max_page = 0)
@@ -1045,4 +1060,90 @@ function edit_comment_link($text = null, $before = '', $after = '')
     $text ??= 'Edit This';
     $link = '<a class="comment-edit-link" href="' . esc_url((string) get_edit_comment_link($comment)) . '">' . $text . '</a>';
     echo $before . apply_filters('edit_comment_link', $link, (int) $comment->comment_ID, $text) . $after;
+}
+
+/** The bare URL of a post's comments area, echoed for a theme to wrap. */
+function comments_link($deprecated = '', $deprecated_2 = '')
+{
+    echo esc_url(get_comments_link());
+}
+
+function comments_popup_link($zero = false, $one = false, $more = false, $css_class = '', $none = false)
+{
+    $number = get_comments_number();
+    if ($number === 0 && !comments_open() && !pings_open()) {
+        if ($none !== false) {
+            echo '<span' . ($css_class !== '' ? ' class="' . esc_attr($css_class) . '"' : '') . '>' . ($none === '' ? 'Comments Off' : $none) . '</span>';
+        }
+        return;
+    }
+    // Only the defaults carry the screen-reader title; a theme that supplies
+    // its own wording is left alone.
+    if ($zero === false && $one === false && $more === false) {
+        $text = get_comments_number_text();
+        $text .= '<span class="screen-reader-text"> on ' . get_the_title() . '</span>';
+        echo '<a href="' . esc_url(get_comments_link()) . '">' . $text . '</a>';
+        return;
+    }
+    echo Minn\Front\ListingLinks::anchor(
+        esc_url(get_comments_link()),
+        $css_class !== '' ? 'class="' . esc_attr($css_class) . '" ' : '',
+        get_comments_number_text($zero === false ? '' : $zero, $one === false ? '' : $one, $more === false ? '' : $more),
+    );
+}
+
+function get_the_comments_navigation($args = [])
+{
+    if ((int) ($GLOBALS['wp_query']->max_num_comment_pages ?? 0) <= 1) {
+        return '';
+    }
+    $aria = Minn\Front\PostNavigation::ariaLabel((array) $args, 'Comments');
+    $args = wp_parse_args($args, ['prev_text' => 'Older comments', 'next_text' => 'Newer comments', 'screen_reader_text' => 'Comments navigation', 'aria_label' => 'Comments', 'class' => 'comment-navigation']);
+    $links = '';
+    $previous = get_previous_comments_link($args['prev_text']);
+    if ($previous) {
+        $links .= '<div class="nav-previous">' . $previous . '</div>';
+    }
+    $next = get_next_comments_link($args['next_text']);
+    if ($next) {
+        $links .= '<div class="nav-next">' . $next . '</div>';
+    }
+    return $links === '' ? '' : _navigation_markup($links, $args['class'], $args['screen_reader_text'], $aria);
+}
+
+function the_comments_navigation($args = [])
+{
+    echo get_the_comments_navigation($args);
+}
+
+function get_the_comments_pagination($args = [])
+{
+    $aria = Minn\Front\PostNavigation::ariaLabel((array) $args, 'Comments pagination');
+    $args = wp_parse_args($args, ['screen_reader_text' => 'Comments pagination', 'aria_label' => 'Comments pagination', 'class' => 'comments-pagination']);
+    $args['echo'] = false;
+    if (!isset($args['type']) || $args['type'] === 'array') {
+        $args['type'] = 'plain';
+    }
+    $links = paginate_comments_links($args);
+    return $links ? _navigation_markup($links, $args['class'], $args['screen_reader_text'], $aria) : '';
+}
+
+function the_comments_pagination($args = [])
+{
+    echo get_the_comments_pagination($args);
+}
+
+function comment_author_link($comment_id = 0)
+{
+    echo get_comment_author_link($comment_id);
+}
+
+function comment_date($format = '', $comment_id = 0)
+{
+    echo get_comment_date($format, $comment_id);
+}
+
+function comment_time($format = '', $comment_id = 0)
+{
+    echo get_comment_time($format);
 }

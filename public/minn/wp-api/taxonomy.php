@@ -1055,3 +1055,64 @@ function get_the_category_list($separator = '', $parents = '', $post_id = false)
     }
     return apply_filters('the_category', TermLinks::categories($rows, $separator), $separator, $parents);
 }
+
+/** @internal */
+function _minn_menus(): Minn\Content\Menus
+{
+    $runtime = Minn\Runtime\Runtime::current();
+    return new Minn\Content\Menus(
+        $runtime->db,
+        _minn_posts(),
+        _minn_terms(),
+        Minn\Front\Permalinks::fromDb($runtime->db),
+        _minn_post_writer(),
+        $runtime->site,
+    );
+}
+
+function wp_create_nav_menu($menu_name)
+{
+    return wp_update_nav_menu_object(0, ['menu-name' => $menu_name]);
+}
+
+function wp_update_nav_menu_object($menu_id = 0, $menu_data = [])
+{
+    $menu_id = (int) $menu_id;
+    $menus = _minn_menus();
+    $named = array_key_exists('menu-name', $menu_data);
+    $name = trim((string) ($menu_data['menu-name'] ?? ''));
+    if ($named || $menu_id === 0) {
+        $refusal = $menus->refuseName($name, $menu_id);
+        if ($refusal !== null) {
+            return new WP_Error($refusal->code, $refusal->message, $refusal->data);
+        }
+    }
+    $description = array_key_exists('description', $menu_data) ? (string) $menu_data['description'] : null;
+    if ($menu_id === 0) {
+        $menu_id = $menus->createMenu($name, (string) $description);
+        do_action('wp_create_nav_menu', $menu_id, $menu_data);
+    } else {
+        $menus->updateMenu($menu_id, $named ? $name : null, $description);
+    }
+    do_action('wp_update_nav_menu', $menu_id, $menu_data);
+    return $menu_id;
+}
+
+function wp_delete_nav_menu($menu)
+{
+    $object = wp_get_nav_menu_object($menu);
+    if (!$object) {
+        return false;
+    }
+    $id = (int) $object->term_id;
+    _minn_menus()->deleteMenu($id);
+    // A deleted menu leaves its theme locations empty rather than pointing at
+    // a term that is gone.
+    $locations = get_nav_menu_locations();
+    $kept = array_filter($locations, static fn ($assigned) => (int) $assigned !== $id);
+    if (count($kept) !== count($locations)) {
+        set_theme_mod('nav_menu_locations', $kept);
+    }
+    do_action('wp_delete_nav_menu', $id);
+    return true;
+}
