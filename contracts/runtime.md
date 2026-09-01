@@ -1610,3 +1610,20 @@ a probe against the reference, never by reading its source.
   translation carries it after.
 - **`[gallery]` treats `ids` as the include list** and orders by
   `post__in` unless the caller asked for another order.
+
+### Honest gap: the eager-image budget on shop-dogfood
+
+On `shop-dogfood`'s `/about/` the body holds exactly one image, 1000x750.
+The reference gives it `fetchpriority="high"` and no lazy attribute; the
+engine marks it `loading="lazy"`, which means `RenderState::nextImage()`
+had already passed three by the time the only visible image was rendered.
+Something ahead of the body is spending the budget: a call to
+`wp_get_loading_optimization_attributes` for markup that is built and then
+discarded, or one image counted more than once on the way through the
+content filters.
+
+This predates the catalogue waves (verified against the engine as it
+stood at commit 80363f4) and is not the 50,000-pixel rule, which is
+right. What is missing is the rule for **which calls count** against the
+budget. Deriving it needs a probe that renders a page on the reference
+with a hook counting every call, not a guess.
