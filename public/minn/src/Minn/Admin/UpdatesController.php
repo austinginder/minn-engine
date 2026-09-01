@@ -52,7 +52,7 @@ final readonly class UpdatesController
         if (!$this->caller->can('update_plugins') && !$this->caller->can('update_themes')) {
             throw $this->caller->refuse('rest_forbidden', 'Sorry, you are not allowed to do that.');
         }
-        $this->updates->state(true);
+        $this->updates->refresh();
         $plugins = $this->caller->can('update_plugins') ? $this->updates->pluginOffers() : [];
         $themes = $this->caller->can('update_themes') ? $this->updates->themeOffers() : [];
         return Reply::answer($request, [
@@ -88,7 +88,7 @@ final readonly class UpdatesController
     {
         $this->caller->require();
         $this->caller->requireCap('update_plugins');
-        $this->updates->state(true);
+        $this->updates->refresh();
         $updated = [];
         $failed = [];
         $errors = [];
@@ -132,7 +132,7 @@ final readonly class UpdatesController
         if ($asset === '') {
             throw RestError::missingParams(['asset']);
         }
-        return Reply::answer($request, ['auto' => $this->updates->setAuto($type, $asset, (bool) ($body['enabled'] ?? false))]);
+        return Reply::answer($request, ['auto' => !empty($body['enabled']) ? $this->updates->enableAuto($type, $asset) : $this->updates->disableAuto($type, $asset)]);
     }
 
 }

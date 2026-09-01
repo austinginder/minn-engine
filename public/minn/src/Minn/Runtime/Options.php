@@ -88,11 +88,22 @@ final class Options
     }
 
     /** Flips the autoload column; false when the option is missing or already so. */
-    public function setAutoload(string $name, bool $on): bool
+    public function markAutoload(string $name): bool
+    {
+        return $this->switchAutoload($name, 'on', ['on', 'yes']);
+    }
+
+    /** Stops an option loading on every request; false when it already did not, or is unset. */
+    public function unmarkAutoload(string $name): bool
+    {
+        return $this->switchAutoload($name, 'off', ['off', 'no']);
+    }
+
+    /** @param list<string> $already the stored values that already mean $wanted */
+    private function switchAutoload(string $name, string $wanted, array $already): bool
     {
         $current = $this->db->value("SELECT autoload FROM {$this->db->table('options')} WHERE option_name = ? LIMIT 1", [$name]);
-        $wanted = $on ? 'on' : 'off';
-        if ($current === null || in_array((string) $current, $on ? ['on', 'yes'] : ['off', 'no'], true)) {
+        if ($current === null || in_array((string) $current, $already, true)) {
             return false;
         }
         $this->db->execute("UPDATE {$this->db->table('options')} SET autoload = ? WHERE option_name = ?", [$wanted, $name]);

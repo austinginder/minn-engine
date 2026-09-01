@@ -70,7 +70,7 @@ final class PluginCommand
      */
     public function activate(array $args, array $assocArgs): void
     {
-        $this->switch($args, true);
+        $this->switch($args, 'activate');
     }
 
     /**
@@ -85,7 +85,7 @@ final class PluginCommand
      */
     public function deactivate(array $args, array $assocArgs): void
     {
-        $this->switch($args, false);
+        $this->switch($args, 'deactivate');
     }
 
     /**
@@ -325,8 +325,9 @@ final class PluginCommand
     }
 
     /** The reference's wording, line for line: one warning per miss, a Success summary or an Error with none done. */
-    private function switch(array $slugs, bool $on): void
+    private function switch(array $slugs, string $verb): void
     {
+        $on = $verb === 'activate';
         $runtime = Runtime::boot();
         $contentDir = ABSPATH . 'wp-content';
         $state = new PluginState($runtime->site, new Inventory($contentDir, $runtime->site), new Loader($contentDir, $runtime->site));
@@ -346,7 +347,7 @@ final class PluginCommand
                 }
                 continue;
             }
-            $state->setActive($plugin, $on);
+            $on ? $state->activate($plugin) : $state->deactivate($plugin);
             WP_CLI::log("Plugin '{$slug}' {$verb}.");
             $done++;
         }
@@ -406,7 +407,7 @@ final class PluginCommand
             if ($existed) {
                 WP_CLI::log('Removing the old version of the plugin...');
             }
-            $folder = $packages->installPlugin($source, $force, $version);
+            $folder = ($force ? $packages->replacePlugin($source, $version) : $packages->installPlugin($source, $version));
         } catch (RestError $error) {
             WP_CLI::warning($source . ': ' . $error->getMessage());
             WP_CLI::warning("The '{$source}' plugin could not be found.");
@@ -429,7 +430,7 @@ final class PluginCommand
             }
             WP_CLI::log('Unpacking the package...');
             WP_CLI::log('Installing the plugin...');
-            $result = $packages->unpack($bytes, 'plugin', $force);
+            $result = ($force ? $packages->unpackReplacing($bytes, 'plugin') : $packages->unpack($bytes, 'plugin'));
         } catch (RestError $error) {
             if ($error->status === 409) {
                 $folder = basename((string) ($error->extra['destination'] ?? ''));
@@ -483,7 +484,7 @@ final class PluginCommand
         if ($state->isActive($plugin)) {
             return;
         }
-        $state->setActive($plugin, true);
+        $state->activate($plugin);
         WP_CLI::log("Plugin '{$folder}' activated.");
     }
 }

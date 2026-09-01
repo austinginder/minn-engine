@@ -29,7 +29,7 @@ class WP_Script_Modules
 
     public function set_in_footer(string $id, bool $in_footer): bool
     {
-        return Runtime::scriptModules()->setInFooter($id, $in_footer);
+        return $in_footer ? Runtime::scriptModules()->moveToFooter($id) : Runtime::scriptModules()->moveToHead($id);
     }
 
     public function enqueue(string $id, string $src = '', array $deps = [], $version = false, array $args = []): void

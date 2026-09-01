@@ -33,7 +33,7 @@ final readonly class RevisionsController
     public function revisions(Request $request, string $base, string $id): Response
     {
         $this->requireParent((int) $id, $base);
-        $rows = $this->revisions->of((int) $id, autosaves: false);
+        $rows = $this->revisions->revisionsOf((int) $id);
         return Reply::list(array_map(fn (array $r) => $this->object($r), $rows), count($rows), 1, Fields::fromQuery($request->query));
     }
 
@@ -42,7 +42,7 @@ final readonly class RevisionsController
     public function autosaves(Request $request, string $base, string $id): Response
     {
         $this->requireParent((int) $id, $base);
-        $rows = $this->revisions->of((int) $id, autosaves: true);
+        $rows = $this->revisions->autosavesOf((int) $id);
         $objects = array_map(fn (array $r) => $this->object($r), $rows);
         $fields = Fields::fromQuery($request->query);
         if ($fields !== null) {

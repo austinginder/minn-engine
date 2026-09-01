@@ -43,7 +43,8 @@ final readonly class MediaController
     #[Route(Method::Get, '/wp/v2/media')]
     public function list(Request $request): Response
     {
-        $edit = Context::of($request)->isEdit();
+        $context = Context::of($request);
+        $edit = $context->isEdit();
         if ($edit && !$this->caller->can('edit_posts')) {
             throw $this->caller->refuse('rest_forbidden_context', 'Sorry, you are not allowed to edit posts in this post type.');
         }
@@ -59,7 +60,7 @@ final readonly class MediaController
             [...$params, $query->perPage, $query->offset()],
         );
         return Reply::list(
-            array_map(fn (PostRecord $p) => $this->object->build($p, $edit), PostRecord::fromRows($rows)),
+            array_map(fn (PostRecord $p) => $this->object->build($p, $context), PostRecord::fromRows($rows)),
             $total,
             $query->totalPages($total),
             Fields::fromQuery($request->query),
@@ -121,11 +122,12 @@ final readonly class MediaController
     public function single(Request $request, string $id): Response
     {
         $attachment = $this->attachment((int) $id);
-        $edit = Context::of($request)->isEdit();
+        $context = Context::of($request);
+        $edit = $context->isEdit();
         if ($edit && !$this->caller->can('edit_post', (int) $id)) {
             throw $this->caller->refuse('rest_forbidden_context', 'Sorry, you are not allowed to edit this post.');
         }
-        return Reply::item($this->object->build($attachment, $edit), Fields::fromQuery($request->query));
+        return Reply::item($this->object->build($attachment, $context), Fields::fromQuery($request->query));
     }
 
     /** Uploads a file and creates its attachment. */
@@ -148,7 +150,7 @@ final readonly class MediaController
             throw new RestError('rest_upload_unknown_error', 'Sorry, you are not allowed to upload this file type.', 500);
         }
         $id = $this->library->attach($upload, $userId);
-        return Reply::item($this->object->build($this->posts->find($id), true), Fields::fromQuery($request->query), 201)
+        return Reply::item($this->object->build($this->posts->find($id), Context::Edit), Fields::fromQuery($request->query), 201)
             ->withHeader('Location', $this->object->url()->to('/wp/v2/media/' . $id));
     }
 
@@ -186,7 +188,7 @@ final readonly class MediaController
             $columns['post_modified_gmt'] = gmdate('Y-m-d H:i:s');
             $this->writer->update($attachmentId, $columns);
         }
-        return Reply::item($this->object->build($this->posts->find($attachmentId), true), Fields::fromQuery($request->query));
+        return Reply::item($this->object->build($this->posts->find($attachmentId), Context::Edit), Fields::fromQuery($request->query));
     }
 
     /** Attachments cannot be trashed; force removes the row, its meta, and its files. */
@@ -201,7 +203,7 @@ final readonly class MediaController
         if (!filter_var($request->query('force', ''), FILTER_VALIDATE_BOOLEAN)) {
             throw new RestError('rest_trash_not_supported', "The post does not support trashing. Set 'force=true' to delete.", 501);
         }
-        $previous = $this->object->build($attachment, true);
+        $previous = $this->object->build($attachment, Context::Edit);
         $file = $this->posts->meta($attachmentId, '_wp_attached_file');
         if ($file !== null && $file !== '') {
             $this->uploads->remove($file, Metadata::parse($this->posts->meta($attachmentId, '_wp_attachment_metadata'))['sizes']);

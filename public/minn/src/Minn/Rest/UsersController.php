@@ -48,7 +48,7 @@ final readonly class UsersController
         $user = $this->caller->require()->user;
         $fields = Fields::fromQuery($request->query);
         return Reply::item(
-            Context::of($request)->isEdit() ? $this->object->edit($user) : $this->object->view($user, true),
+            Context::of($request)->isEdit() ? $this->object->edit($user) : $this->object->view($user),
             $fields,
         );
     }
@@ -109,7 +109,7 @@ final readonly class UsersController
         );
         $objects = $context->isEdit()
             ? array_map(fn (UserRecord $u) => $this->object->edit($u), UserRecord::fromRows($rows))
-            : array_map(fn (UserRecord $u) => $this->object->view($u, $u->id === $self), UserRecord::fromRows($rows));
+            : array_map(fn (UserRecord $u) => $this->object->view($u), UserRecord::fromRows($rows));
         return Reply::list($objects, $total, (int) ceil($total / $perPage), Fields::fromQuery($request->query));
     }
 
@@ -134,7 +134,7 @@ final readonly class UsersController
         if ($self !== $userId && !$this->caller->can('list_users') && !$this->hasPublishedContent($userId)) {
             throw $this->caller->refuse('rest_user_cannot_view', 'Sorry, you are not allowed to list users.');
         }
-        return Reply::item($this->object->view($user, $self === $userId), $fields);
+        return Reply::item($this->object->view($user), $fields);
     }
 
     /** A new account hears about itself with a link to choose a password. */

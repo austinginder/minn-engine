@@ -53,8 +53,8 @@ final readonly class ListQuery
             exclude: self::ids((string) $request->query('exclude', '')),
             author: self::ids((string) $request->query('author', '')),
             authorExclude: self::ids((string) $request->query('author_exclude', '')),
-            parent: self::ids((string) $request->query('parent', ''), true),
-            parentExclude: self::ids((string) $request->query('parent_exclude', ''), true),
+            parent: self::idsWithZero((string) $request->query('parent', '')),
+            parentExclude: self::idsWithZero((string) $request->query('parent_exclude', '')),
             slugs: self::list((string) $request->query('slug', '')),
             words: self::words((string) $request->query('search', '')),
             menuOrder: preg_match('/^-?\d+$/', $menuOrder) === 1 ? (int) $menuOrder : null,
@@ -121,22 +121,29 @@ final readonly class ListQuery
     }
 
     /**
-     * A comma-separated id list as distinct integers. Zero is dropped unless
-     * asked for: parent=0 means "top level", author=0 means nothing.
+     * A comma-separated id list as distinct integers, zero dropped: author=0
+     * means nothing.
      *
      * @return list<int>
      */
-    public static function ids(string $csv, bool $keepZero = false): array
+    public static function ids(string $csv): array
+    {
+        return array_values(array_filter(self::idsWithZero($csv), static fn (int $n) => $n !== 0));
+    }
+
+    /**
+     * The same list with zero kept: parent=0 means "top level", and a comment's
+     * post=0 means "no post".
+     *
+     * @return list<int>
+     */
+    public static function idsWithZero(string $csv): array
     {
         $out = [];
         foreach (explode(',', $csv) as $part) {
             $part = trim($part);
-            if ($part === '' || !ctype_digit($part)) {
-                continue;
-            }
-            $n = (int) $part;
-            if ($n !== 0 || $keepZero) {
-                $out[] = $n;
+            if ($part !== '' && ctype_digit($part)) {
+                $out[] = (int) $part;
             }
         }
         return array_values(array_unique($out));

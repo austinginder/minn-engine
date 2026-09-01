@@ -50,15 +50,15 @@ final readonly class CommentsController
         $tokens = Comments::tokensFor($status) ?? [$status];
         $perPage = max(1, min(100, (int) $request->query('per_page', '10')));
         $page = max(1, (int) $request->query('page', '1'));
+        $filter = $this->guarded(self::filter($request));
         $result = $this->comments->page(
             $tokens,
             $page,
             $perPage,
-            publicPostsOnly: !$this->caller->can('moderate_comments'),
-            filter: $this->guarded($this->filter($request)),
+            $this->caller->can('moderate_comments') ? $filter : $filter->onPublicPosts(),
         );
         return Reply::list(
-            array_map(fn (CommentRecord $c) => $this->object->build($c, $context->isEdit()), $result['comments']),
+            array_map(fn (CommentRecord $c) => $this->object->build($c, $context), $result['comments']),
             $result['total'],
             (int) ceil($result['total'] / $perPage),
             Fields::fromQuery($request->query),
@@ -78,11 +78,12 @@ final readonly class CommentsController
         if (!$moderator && ($post === null || !$post->isPublished() || $post->isProtected()) && !$this->caller->can('edit_post', $comment->postId)) {
             throw $this->caller->refuse('rest_cannot_read', 'Sorry, you are not allowed to read this comment.');
         }
-        $edit = Context::of($request)->isEdit();
+        $context = Context::of($request);
+        $edit = $context->isEdit();
         if ($edit && !$moderator) {
             throw $this->caller->refuse('rest_forbidden_context', 'Sorry, you are not allowed to edit comments.');
         }
-        return Reply::item($this->object->build($comment, $edit), Fields::fromQuery($request->query));
+        return Reply::item($this->object->build($comment, $context), Fields::fromQuery($request->query));
     }
 
     /** A signed-in reply; the author fields come from the user. */
@@ -135,7 +136,7 @@ final readonly class CommentsController
         } elseif (($this->site->option('moderation_notify') ?? '1') === '1') {
             $this->notifyModerator($post, $content, $user->displayName);
         }
-        return Reply::item($this->object->build($this->comments->find($id), true), Fields::fromQuery($request->query), 201)
+        return Reply::item($this->object->build($this->comments->find($id), Context::Edit), Fields::fromQuery($request->query), 201)
             ->withHeader('Location', $this->object->url()->to('/wp/v2/comments/' . $id));
     }
 
@@ -177,7 +178,7 @@ final readonly class CommentsController
                 $this->comments->update($commentId, [$column => $value]);
             }
         }
-        return Reply::item($this->object->build($this->comments->find($commentId), true), Fields::fromQuery($request->query));
+        return Reply::item($this->object->build($this->comments->find($commentId), Context::Edit), Fields::fromQuery($request->query));
     }
 
     /** Trash remembers where the comment came from; force removes it outright. */
@@ -192,7 +193,7 @@ final readonly class CommentsController
         $postId = $comment->postId;
         $fields = Fields::fromQuery($request->query);
         if (filter_var($request->query('force', ''), FILTER_VALIDATE_BOOLEAN)) {
-            $previous = $this->object->build($comment, true);
+            $previous = $this->object->build($comment, Context::Edit);
             $this->comments->delete($commentId);
             $this->comments->recount($postId);
             return Reply::item(['deleted' => true, 'previous' => $previous], $fields);
@@ -204,20 +205,20 @@ final readonly class CommentsController
         $this->comments->addMeta($commentId, '_wp_trash_meta_time', (string) time());
         $this->comments->update($commentId, ['comment_approved' => 'trash']);
         $this->comments->recount($postId);
-        return Reply::item($this->object->build($this->comments->find($commentId), true), $fields);
+        return Reply::item($this->object->build($this->comments->find($commentId), Context::Edit), $fields);
     }
 
     /** The collection parameters as the reference reads them; the caps are checked by guarded(). */
     private static function filter(Request $request): CommentFilter
     {
         return new CommentFilter(
-            post: ListQuery::ids((string) $request->query('post', ''), true),
-            include: ListQuery::ids((string) $request->query('include', ''), true),
-            exclude: ListQuery::ids((string) $request->query('exclude', ''), true),
-            parent: ListQuery::ids((string) $request->query('parent', ''), true),
-            parentExclude: ListQuery::ids((string) $request->query('parent_exclude', ''), true),
-            author: ListQuery::ids((string) $request->query('author', ''), true),
-            authorExclude: ListQuery::ids((string) $request->query('author_exclude', ''), true),
+            post: ListQuery::idsWithZero((string) $request->query('post', '')),
+            include: ListQuery::idsWithZero((string) $request->query('include', '')),
+            exclude: ListQuery::idsWithZero((string) $request->query('exclude', '')),
+            parent: ListQuery::idsWithZero((string) $request->query('parent', '')),
+            parentExclude: ListQuery::idsWithZero((string) $request->query('parent_exclude', '')),
+            author: ListQuery::idsWithZero((string) $request->query('author', '')),
+            authorExclude: ListQuery::idsWithZero((string) $request->query('author_exclude', '')),
             authorEmail: (string) $request->query('author_email', ''),
             type: (string) $request->query('type', 'comment') ?: 'comment',
             search: (string) $request->query('search', ''),

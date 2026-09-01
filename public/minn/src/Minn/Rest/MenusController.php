@@ -139,9 +139,10 @@ final readonly class MenusController
         $page = max(1, (int) $request->query('page', '1'));
         $total = count($items);
         $slice = array_slice($items, ($page - 1) * $perPage, $perPage);
-        $edit = Context::of($request)->isEdit();
+        $context = Context::of($request);
+        $edit = $context->isEdit();
         return Reply::list(
-            array_map(fn ($item) => $this->itemObject->view($item, $edit), $slice),
+            array_map(fn ($item) => $this->itemObject->view($item, $context), $slice),
             $total,
             (int) ceil($total / $perPage),
             Fields::fromQuery($request->query),
@@ -157,8 +158,9 @@ final readonly class MenusController
         if ($item === null) {
             throw new RestError('rest_post_invalid_id', 'Invalid post ID.', 404);
         }
-        $edit = Context::of($request)->isEdit();
-        return Reply::item($this->itemObject->view($item, $edit), Fields::fromQuery($request->query));
+        $context = Context::of($request);
+        $edit = $context->isEdit();
+        return Reply::item($this->itemObject->view($item, $context), Fields::fromQuery($request->query));
     }
 
     /** Creates a menu item. */
@@ -188,7 +190,7 @@ final readonly class MenusController
             'authorId' => $this->caller->id(),
         ]);
         $item = $this->menus->findItem($id);
-        return Reply::item($this->itemObject->view($item, true), Fields::fromQuery($request->query), 201)
+        return Reply::item($this->itemObject->view($item, Context::Edit), Fields::fromQuery($request->query), 201)
             ->withHeader('Location', $this->url->to("/wp/v2/menu-items/{$id}"));
     }
 
@@ -242,7 +244,7 @@ final readonly class MenusController
             $fields['description'] = (string) $body['description'];
         }
         $this->menus->updateItem((int) $id, $fields);
-        return Reply::item($this->itemObject->view($this->menus->findItem((int) $id), true), Fields::fromQuery($request->query));
+        return Reply::item($this->itemObject->view($this->menus->findItem((int) $id), Context::Edit), Fields::fromQuery($request->query));
     }
 
     /** Deletes a menu item. */
@@ -257,7 +259,7 @@ final readonly class MenusController
         if (!filter_var($request->query('force', ''), FILTER_VALIDATE_BOOLEAN)) {
             throw new RestError('rest_trash_not_supported', "Menu items do not support trashing. Set 'force=true' to delete.", 501);
         }
-        $previous = $this->itemObject->view($item, false);
+        $previous = $this->itemObject->view($item, Context::View);
         unset($previous['_links']);
         $this->menus->deleteItem((int) $id);
         return Reply::item(['deleted' => true, 'previous' => $previous], Fields::fromQuery($request->query));

@@ -221,7 +221,10 @@ final class WP_Image_Editor_GD extends WP_Image_Editor
 
     public function flip($horz, $vert)
     {
-        return $this->adopt($this->canvas->flip((bool) $horz, (bool) $vert));
+        $canvas = $this->canvas->copy();
+        $canvas = $vert ? $canvas->flipVertical() : $canvas;
+        $canvas = $horz ? $canvas->flipHorizontal() : $canvas;
+        return $this->adopt($canvas);
     }
 
     public function save($destfilename = null, $mime_type = null)

@@ -18,7 +18,7 @@ return [
         $q = ListQuery::fromRequest($request(['per_page' => '500', 'page' => '-3']));
         return $q->perPage === 100 && $q->page === 1 && $q->offset() === 0;
     },
-    'ids drop blanks, non-digits, duplicates, and zero unless kept' => static fn () => ListQuery::ids(' 3,,x,3,0,7') === [3, 7] && ListQuery::ids('0,4', true) === [0, 4],
+    'ids drop blanks, non-digits, duplicates, and zero; idsWithZero keeps zero' => static fn () => ListQuery::ids(' 3,,x,3,0,7') === [3, 7] && ListQuery::idsWithZero('0,4') === [0, 4],
     'clauses follow the fields with their parameters in the same order' => static function () use ($request) {
         $q = ListQuery::fromRequest($request(['author' => '2', 'include' => '5,6', 'slug' => 'a,,b', 'parent' => '0', 'search' => ' two  words ']));
         [$where, $params] = $q->clauses();

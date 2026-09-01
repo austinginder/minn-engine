@@ -104,7 +104,18 @@ final readonly class Translations
     }
 
     /** The languages route's payload; `current` is the raw meta of the user asked about. */
-    public function payload(int $forUser, bool $canInstall): array
+    public function payload(int $forUser): array
+    {
+        return $this->languages($forUser, true);
+    }
+
+    /** The same payload for a caller who may switch languages but not install one: no available list. */
+    public function readOnlyPayload(int $forUser): array
+    {
+        return $this->languages($forUser, false);
+    }
+
+    private function languages(int $forUser, bool $canInstall): array
     {
         $installed = $this->installed();
         $have = array_flip(array_column($installed, 0));

@@ -46,11 +46,14 @@ final class Hooks
 
     /** @return array<string, int> */
     /** How often each action, or each filter, has run, by hook. */
-    public function &counters(bool $actions): array
+    public function &actionCounters(): array
     {
-        if ($actions) {
-            return $this->actionsDone;
-        }
+        return $this->actionsDone;
+    }
+
+    /** How often each filter has run, by hook, by reference for the facade's global. */
+    public function &filterCounters(): array
+    {
         return $this->filtersDone;
     }
 

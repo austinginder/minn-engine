@@ -113,12 +113,23 @@ final class ScriptModules
     }
 
     /** Moves a module to the footer or the head. */
-    public function setInFooter(string $id, bool $inFooter): bool
+    public function moveToFooter(string $id): bool
+    {
+        return $this->placeIn($id, 'footer');
+    }
+
+    /** Prints a module in the head; false when it is not registered. */
+    public function moveToHead(string $id): bool
+    {
+        return $this->placeIn($id, 'head');
+    }
+
+    private function placeIn(string $id, string $where): bool
     {
         if (!isset($this->registered[$id])) {
             return false;
         }
-        $this->registered[$id]['in_footer'] = $inFooter;
+        $this->registered[$id]['in_footer'] = $where === 'footer';
         return true;
     }
 

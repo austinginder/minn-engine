@@ -337,7 +337,7 @@ final readonly class Resolver
             }
             $prefix = self::segmentsOf($this->permalinks->typeSlug((string) $name));
             if (count($segments) === count($prefix) + 1 && array_slice($segments, 0, count($prefix)) === $prefix) {
-                $post = $this->posts->findByName(end($segments), [(string) $name], publishedOnly: false);
+                $post = $this->posts->findByNameAnyStatus(end($segments), [(string) $name]);
                 return $post !== null && $this->readable($post) ? Resolution::single($post, $paged) : Resolution::notFound();
             }
         }
@@ -504,7 +504,7 @@ final readonly class Resolver
         if ($segments === []) {
             return null;
         }
-        $page = $this->posts->pageByPath($segments, publishedOnly: false);
+        $page = $this->posts->pageByPathAnyStatus($segments);
         if ($page !== null && $this->readable($page)) {
             // The static front page answers only at the site root.
             if ($page->id === $this->permalinks->frontPageId) {
@@ -524,7 +524,7 @@ final readonly class Resolver
         if ($regex !== null && preg_match($regex, implode('/', $segments), $m)) {
             $post = isset($m['post_id'])
                 ? $this->posts->find((int) $m['post_id'])
-                : $this->posts->findByName($m['postname'], ['post'], publishedOnly: false);
+                : $this->posts->findByNameAnyStatus($m['postname'], ['post']);
             if ($post !== null && $post->type === 'post' && $this->readable($post)) {
                 return Resolution::single($post, $paged);
             }

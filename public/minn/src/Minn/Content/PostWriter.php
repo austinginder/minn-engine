@@ -165,14 +165,24 @@ final readonly class PostWriter
     }
 
     /** Rewrites the sticky_posts option with or without one id. */
-    public function setSticky(int $id, bool $on): void
+    public function stick(int $id): void
     {
         $ids = Serialized::intList($this->site->option('sticky_posts'));
-        if ($on && !in_array($id, $ids, true)) {
+        if (!in_array($id, $ids, true)) {
             $ids[] = $id;
-        } elseif (!$on) {
-            $ids = array_values(array_diff($ids, [$id]));
         }
+        $this->saveSticky($ids);
+    }
+
+    /** Takes a post off the sticky list. */
+    public function unstick(int $id): void
+    {
+        $this->saveSticky(array_values(array_diff(Serialized::intList($this->site->option('sticky_posts')), [$id])));
+    }
+
+    /** @param list<int> $ids */
+    private function saveSticky(array $ids): void
+    {
         $out = 'a:' . count($ids) . ':{';
         foreach (array_values($ids) as $index => $value) {
             $out .= "i:{$index};i:{$value};";
@@ -209,7 +219,7 @@ final readonly class PostWriter
     public function applyExtendedFields(int $id, array $body, string $type): void
     {
         if (isset($body['sticky']) && $type === 'post') {
-            $this->setSticky($id, (bool) $body['sticky']);
+            $body['sticky'] ? $this->stick($id) : $this->unstick($id);
         }
         if (isset($body['format']) && $type === 'post') {
             $this->setFormat($id, (string) $body['format']);

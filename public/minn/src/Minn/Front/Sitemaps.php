@@ -135,11 +135,19 @@ final readonly class Sitemaps
     }
 
     /** The engine's own stylesheet for browsers that open a sitemap. */
-    public static function stylesheet(bool $index): string
+    public static function stylesheet(): string
     {
-        $rows = $index
-            ? '<xsl:for-each select="sitemap:sitemapindex/sitemap:sitemap"><tr><td><a href="{sitemap:loc}"><xsl:value-of select="sitemap:loc"/></a></td></tr></xsl:for-each>'
-            : '<xsl:for-each select="sitemap:urlset/sitemap:url"><tr><td><a href="{sitemap:loc}"><xsl:value-of select="sitemap:loc"/></a></td><td><xsl:value-of select="sitemap:lastmod"/></td></tr></xsl:for-each>';
+        return self::xsl('<xsl:for-each select="sitemap:urlset/sitemap:url"><tr><td><a href="{sitemap:loc}"><xsl:value-of select="sitemap:loc"/></a></td><td><xsl:value-of select="sitemap:lastmod"/></td></tr></xsl:for-each>');
+    }
+
+    /** The stylesheet the sitemap index links: one column, the sitemaps. */
+    public static function indexStylesheet(): string
+    {
+        return self::xsl('<xsl:for-each select="sitemap:sitemapindex/sitemap:sitemap"><tr><td><a href="{sitemap:loc}"><xsl:value-of select="sitemap:loc"/></a></td></tr></xsl:for-each>');
+    }
+
+    private static function xsl(string $rows): string
+    {
         return '<?xml version="1.0" encoding="UTF-8"?>' . "\n"
             . '<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sitemap="http://www.sitemaps.org/schemas/sitemap/0.9" exclude-result-prefixes="sitemap">' . "\n"
             . '<xsl:output method="html" encoding="UTF-8" indent="yes"/>' . "\n"

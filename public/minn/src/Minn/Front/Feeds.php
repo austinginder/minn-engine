@@ -314,7 +314,7 @@ final readonly class Feeds
         if (PasswordGate::is($post)) {
             return PasswordGate::EXCERPT;
         }
-        return trim(strip_tags(Excerpt::render($post, stopAtMore: false, forFeed: true)));
+        return trim(strip_tags(Excerpt::forFeed($post)));
     }
 
     private function language(): string

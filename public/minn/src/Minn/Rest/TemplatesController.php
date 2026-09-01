@@ -97,11 +97,12 @@ final readonly class TemplatesController
     private function listing(Request $request, string $type): Response
     {
         $index = $this->readable();
-        $edit = Context::of($request)->isEdit();
+        $context = Context::of($request);
+        $edit = $context->isEdit();
         $fields = Fields::fromQuery($request->query);
         $rows = array_map(
-            function (TemplateRecord $record) use ($edit, $fields): array {
-                $row = $this->object->view($record, $edit);
+            function (TemplateRecord $record) use ($context, $fields): array {
+                $row = $this->object->view($record, $context);
                 return $fields === null ? $row : $fields->apply($row);
             },
             $index->all($type),
@@ -115,7 +116,7 @@ final readonly class TemplatesController
     {
         $record = $this->record($type, $id);
         return Reply::item(
-            $this->object->view($record, Context::of($request)->isEdit()),
+            $this->object->view($record, Context::of($request)),
             Fields::fromQuery($request->query),
         );
     }
@@ -136,7 +137,7 @@ final readonly class TemplatesController
         );
         $this->writer->save($record, $fields, $this->caller->id());
         return Reply::item(
-            $this->object->view($this->record($type, $id), true),
+            $this->object->view($this->record($type, $id), Context::Edit),
             Fields::fromQuery($request->query),
         );
     }
@@ -157,9 +158,9 @@ final readonly class TemplatesController
         $fields = Fields::fromQuery($request->query);
         if ($request->query('force') !== 'true') {
             $this->writer->trash($record);
-            return Reply::item($this->object->view($this->trashed($record), true), $fields);
+            return Reply::item($this->object->view($this->trashed($record), Context::Edit), $fields);
         }
-        $previous = $this->object->view($record, true);
+        $previous = $this->object->view($record, Context::Edit);
         $this->writer->destroy($record);
         return Reply::item(['deleted' => true, 'previous' => $previous], $fields);
     }

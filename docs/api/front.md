@@ -17,13 +17,13 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`Pagination`](#pagination) | final class | 62 | Numbered page links in the reference's shape: previous, the end and |
 | [`Permalinks`](#permalinks) | final readonly class | 234 | Builds public URLs from the site's permalink structure. With an empty |
 | [`PluginRules`](#pluginrules) | final class | 71 | Rewrite rules a plugin registered through add_rewrite_rule(): the |
-| [`PostNavigation`](#postnavigation) | final class | 25 | The links to the posts either side of this one, and the nav block that |
+| [`PostNavigation`](#postnavigation) | final class | 36 | The links to the posts either side of this one, and the nav block that |
 | [`ProbeController`](#probecontroller) | final readonly class | 184 | The surface monitors, crawlers, and hosting checks hit that is not a |
 | [`Renderer`](#renderer) | final readonly class | 156 | The interim public theme: one clean template until the block-theme |
 | [`Resolution`](#resolution) | final readonly class | 108 | The outcome of resolving a public URL: which kind of thing it names, |
 | [`Resolver`](#resolver) | final readonly class | 550 | Turns a public URL into a Resolution, following the reference's observed |
 | [`SitemapXml`](#sitemapxml) | final class | 43 | The two sitemap documents, index and URL set, from entry maps; one builder for the engine's routes and the facade's renderer. |
-| [`Sitemaps`](#sitemaps) | final readonly class | 139 | The sitemap index and its providers (posts, pages, categories, tags, |
+| [`Sitemaps`](#sitemaps) | final readonly class | 147 | The sitemap index and its providers (posts, pages, categories, tags, |
 | [`TermLists`](#termlists) | final class | 177 | The two term listings themes print: the nested category list and the |
 
 ## AdminBar
@@ -449,9 +449,13 @@ or rel="next".
 
 Titles arrive already filtered; this only assembles.
 
-### static `link(string $url, string $title, string $format, string $linkFormat, bool $previous): string`
+### static `previous(string $url, string $title, string $format, string $linkFormat): string`
 
 A previous or next post link in the reference's format.
+
+### static `next(string $url, string $title, string $format, string $linkFormat): string`
+
+The next-post link in the reference's format.
 
 ### static `ariaLabel(array $args, string $default): string`
 
@@ -460,6 +464,8 @@ otherwise a caller-supplied screen-reader text stands in for it, and
 only with neither does the default apply.
 
 - `@param array<string, mixed> $args the caller's own arguments`
+
+Internals: `link()` (private, line 31)
 
 
 ## ProbeController
@@ -789,11 +795,15 @@ The sitemap index's XML.
 
 One provider page, or null when the name or page does not exist.
 
-### static `stylesheet(bool $index): string`
+### static `stylesheet(): string`
 
 The engine's own stylesheet for browsers that open a sitemap.
 
-Internals: `providers()` (private, line 57), `contentUrls()` (private, line 83), `termUrls()` (private, line 106), `userUrls()` (private, line 121), `authors()` (private, line 128), `iso()` (private, line 152)
+### static `indexStylesheet(): string`
+
+The stylesheet the sitemap index links: one column, the sitemaps.
+
+Internals: `providers()` (private, line 57), `contentUrls()` (private, line 83), `termUrls()` (private, line 106), `userUrls()` (private, line 121), `authors()` (private, line 128), `xsl()` (private, line 149), `iso()` (private, line 160)
 
 
 ## TermLists

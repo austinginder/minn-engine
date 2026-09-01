@@ -218,8 +218,8 @@ function _minn_bind_hook_globals(): void
     $hooks->onNew(static function (string $name): void {
         $GLOBALS['wp_filter'][$name] = WP_Hook::bound($name);
     });
-    $GLOBALS['wp_actions'] = &$hooks->counters(true);
-    $GLOBALS['wp_filters'] = &$hooks->counters(false);
+    $GLOBALS['wp_actions'] = &$hooks->actionCounters();
+    $GLOBALS['wp_filters'] = &$hooks->filterCounters();
     $GLOBALS['wp_current_filter'] = &$hooks->stackRef();
     $GLOBALS['wp_roles'] = wp_roles();
     $GLOBALS['wp_embed'] ??= new WP_Embed();

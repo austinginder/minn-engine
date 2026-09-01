@@ -63,10 +63,20 @@ final class Abilities
     }
 
     /** Removes an ability or a category. */
-    public static function unregister(string $name, bool $category = false): bool
+    public static function unregister(string $name): bool
+    {
+        return self::forget('abilities', $name);
+    }
+
+    /** Removes a category. */
+    public static function unregisterCategory(string $slug): bool
+    {
+        return self::forget('categories', $slug);
+    }
+
+    private static function forget(string $key, string $name): bool
     {
         $state = self::state();
-        $key = $category ? 'categories' : 'abilities';
         if (!isset($state[$key][$name])) {
             return false;
         }
@@ -80,11 +90,17 @@ final class Abilities
      *
      * @return array<string, mixed>|null
      */
-    public static function find(string $name, bool $category = false): ?array
+    public static function find(string $name): ?array
     {
         self::initialize();
-        $state = self::state();
-        return $state[$category ? 'categories' : 'abilities'][$name] ?? null;
+        return self::state()['abilities'][$name] ?? null;
+    }
+
+    /** One category, or null. */
+    public static function findCategory(string $slug): ?array
+    {
+        self::initialize();
+        return self::state()['categories'][$slug] ?? null;
     }
 
     /**
@@ -92,9 +108,16 @@ final class Abilities
      *
      * @return array<string, array>
      */
-    public static function all(bool $categories = false): array
+    public static function all(): array
     {
         self::initialize();
-        return self::state()[$categories ? 'categories' : 'abilities'];
+        return self::state()['abilities'];
+    }
+
+    /** Every category. */
+    public static function allCategories(): array
+    {
+        self::initialize();
+        return self::state()['categories'];
     }
 }

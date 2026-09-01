@@ -16,7 +16,7 @@ function wp_register_ability(string $name, array $args)
 
 function wp_unregister_ability_category(string $slug)
 {
-    return Abilities::unregister($slug, category: true);
+    return Abilities::unregisterCategory($slug);
 }
 
 function wp_unregister_ability(string $name)
@@ -47,15 +47,15 @@ function wp_has_ability(string $name)
 
 function wp_get_ability_category(string $slug)
 {
-    return Abilities::find($slug, category: true);
+    return Abilities::findCategory($slug);
 }
 
 function wp_get_ability_categories()
 {
-    return Abilities::all(categories: true);
+    return Abilities::allCategories();
 }
 
 function wp_has_ability_category(string $slug)
 {
-    return Abilities::find($slug, category: true) !== null;
+    return Abilities::findCategory($slug) !== null;
 }

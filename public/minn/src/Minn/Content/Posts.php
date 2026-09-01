@@ -34,9 +34,20 @@ final readonly class Posts
      *
      * @param list<string> $types
      */
-    public function findByName(string $name, array $types, bool $publishedOnly = true): ?PostRecord
+    public function findByName(string $name, array $types): ?PostRecord
     {
-        $status = $publishedOnly ? "AND post_status = 'publish'" : "AND post_status <> 'trash'";
+        return $this->byName($name, $types, "AND post_status = 'publish'");
+    }
+
+    /** The post with this slug among the given types in any status but trash, or null. @param list<string> $types */
+    public function findByNameAnyStatus(string $name, array $types): ?PostRecord
+    {
+        return $this->byName($name, $types, "AND post_status <> 'trash'");
+    }
+
+    /** @param list<string> $types */
+    private function byName(string $name, array $types, string $status): ?PostRecord
+    {
         return self::record($this->db->row(
             "SELECT * FROM {$this->db->table('posts')}
              WHERE post_name = ? AND post_type IN (?) {$status}
@@ -70,11 +81,22 @@ final readonly class Posts
      *
      * @param list<string> $segments
      */
-    public function pageByPath(array $segments, bool $publishedOnly = true): ?PostRecord
+    public function pageByPath(array $segments): ?PostRecord
+    {
+        return $this->byPath($segments, "AND post_status = 'publish'");
+    }
+
+    /** The page at a slug path in any status but trash, or null. @param list<string> $segments */
+    public function pageByPathAnyStatus(array $segments): ?PostRecord
+    {
+        return $this->byPath($segments, "AND post_status <> 'trash'");
+    }
+
+    /** @param list<string> $segments */
+    private function byPath(array $segments, string $status): ?PostRecord
     {
         $parent = 0;
         $page = null;
-        $status = $publishedOnly ? "AND post_status = 'publish'" : "AND post_status <> 'trash'";
         foreach ($segments as $segment) {
             $page = self::record($this->db->row(
                 "SELECT * FROM {$this->db->table('posts')}
@@ -267,10 +289,19 @@ final readonly class Posts
     }
 
     /** The adjacent published post by date; previous = older, next = newer. */
-    public function adjacent(PostRecord $post, bool $next): ?PostRecord
+    public function next(PostRecord $post): ?PostRecord
     {
-        $operator = $next ? '>' : '<';
-        $order = $next ? 'ASC' : 'DESC';
+        return $this->neighbour($post, '>', 'ASC');
+    }
+
+    /** The published post of the same type before this one, by date then id, or null. */
+    public function previous(PostRecord $post): ?PostRecord
+    {
+        return $this->neighbour($post, '<', 'DESC');
+    }
+
+    private function neighbour(PostRecord $post, string $operator, string $order): ?PostRecord
+    {
         return self::record($this->db->row(
             "SELECT * FROM {$this->db->table('posts')}
              WHERE post_type = ? AND post_status = 'publish'
@@ -331,9 +362,19 @@ final readonly class Posts
      * The newest modification time among published posts, for
      * get_lastpostmodified: one type or all of them, blog or GMT column.
      */
-    public function lastModified(?string $type, bool $gmt): ?string
+    public function lastModified(?string $type): ?string
     {
-        $column = $gmt ? 'post_modified_gmt' : 'post_modified';
+        return $this->latest($type, 'post_modified');
+    }
+
+    /** The newest GMT modified stamp among published posts of a type, or of the three core types. */
+    public function lastModifiedGmt(?string $type): ?string
+    {
+        return $this->latest($type, 'post_modified_gmt');
+    }
+
+    private function latest(?string $type, string $column): ?string
+    {
         $sql = "SELECT MAX({$column}) FROM {$this->db->table('posts')} WHERE post_status = 'publish'";
         $params = [];
         if ($type !== null && $type !== 'any') {

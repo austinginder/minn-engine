@@ -110,14 +110,14 @@ final readonly class ProbeController
     #[Route(Method::Get, '/wp-sitemap.xsl')]
     public function sitemapStylesheet(Request $request): Response
     {
-        return self::xml(Sitemaps::stylesheet(false));
+        return self::xml(Sitemaps::stylesheet());
     }
 
     /** The sitemap index stylesheet. */
     #[Route(Method::Get, '/wp-sitemap-index.xsl')]
     public function sitemapIndexStylesheet(Request $request): Response
     {
-        return self::xml(Sitemaps::stylesheet(true));
+        return self::xml(Sitemaps::indexStylesheet());
     }
 
     /** The site feed in one of its kinds. */

@@ -7,7 +7,8 @@ namespace Minn\Content;
 /**
  * What a comment listing is narrowed to. Every field is optional; the id
  * lists keep zero, because post=0 means "comments without a post". Dates
- * are site-local "Y-m-d H:i:s", after and before both exclusive.
+ * are site-local "Y-m-d H:i:s", after and before both exclusive. With publicPostsOnly the
+ * comments of unpublished or protected posts are left out.
  */
 final readonly class CommentFilter
 {
@@ -33,7 +34,14 @@ final readonly class CommentFilter
         public string $search = '',
         public string $after = '',
         public string $before = '',
+        public bool $publicPostsOnly = false,
     ) {
+    }
+
+    /** The same filter kept to comments on published, unprotected posts: what an anonymous reader may see. */
+    public function onPublicPosts(): self
+    {
+        return new self($this->post, $this->include, $this->exclude, $this->parent, $this->parentExclude, $this->author, $this->authorExclude, $this->authorEmail, $this->type, $this->search, $this->after, $this->before, true);
     }
 
     /** No narrowing at all. */

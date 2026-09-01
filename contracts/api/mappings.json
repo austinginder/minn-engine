@@ -4,10 +4,10 @@
     "summary": {
         "minn": 354,
         "composes": 706,
-        "leaf": 351,
-        "noop": 1239,
+        "leaf": 352,
+        "noop": 1238,
         "functions": 2644,
-        "minnMethods": 396,
+        "minnMethods": 403,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -673,8 +673,7 @@
             "kind": "composes",
             "minn": [],
             "composes": [
-                "_doing_it_wrong",
-                "did_action"
+                "_doing_it_wrong"
             ]
         },
         "WP_Block_Pattern_Categories_Registry::unregister": {
@@ -727,8 +726,7 @@
             "kind": "composes",
             "minn": [],
             "composes": [
-                "_doing_it_wrong",
-                "did_action"
+                "_doing_it_wrong"
             ]
         },
         "WP_Block_Patterns_Registry::store": {
@@ -2951,8 +2949,8 @@
         },
         "WP_Image_Editor_GD::flip": {
             "file": "classes/WP_Image_Editor.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 4,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
@@ -7637,7 +7635,8 @@
             "lines": 10,
             "kind": "minn",
             "minn": [
-                "Minn\\Runtime\\Runtime::counters",
+                "Minn\\Runtime\\Runtime::actionCounters",
+                "Minn\\Runtime\\Runtime::filterCounters",
                 "Minn\\Runtime\\Runtime::hooks",
                 "Minn\\Runtime\\Runtime::onNew",
                 "Minn\\Runtime\\Runtime::stackRef"
@@ -8307,7 +8306,7 @@
             "lines": 40,
             "kind": "minn",
             "minn": [
-                "Minn\\Content\\Posts::findByName"
+                "Minn\\Content\\Posts::findByNameAnyStatus"
             ],
             "composes": [
                 "_minn_posts",
@@ -10783,7 +10782,8 @@
             "kind": "minn",
             "minn": [
                 "Minn\\Content\\PostRecord::fromRow",
-                "Minn\\Content\\Posts::adjacent"
+                "Minn\\Content\\Posts::next",
+                "Minn\\Content\\Posts::previous"
             ],
             "composes": [
                 "_minn_posts",
@@ -10795,7 +10795,8 @@
             "lines": 9,
             "kind": "minn",
             "minn": [
-                "Minn\\Front\\PostNavigation::link"
+                "Minn\\Front\\PostNavigation::next",
+                "Minn\\Front\\PostNavigation::previous"
             ],
             "composes": [
                 "apply_filters",
@@ -11977,7 +11978,8 @@
             "lines": 12,
             "kind": "minn",
             "minn": [
-                "Minn\\Content\\Posts::lastModified"
+                "Minn\\Content\\Posts::lastModified",
+                "Minn\\Content\\Posts::lastModifiedGmt"
             ],
             "composes": [
                 "_minn_posts",
@@ -12209,8 +12211,8 @@
             "lines": 14,
             "kind": "minn",
             "minn": [
-                "Minn\\Content\\Posts::findByName",
-                "Minn\\Content\\Posts::pageByPath"
+                "Minn\\Content\\Posts::findByNameAnyStatus",
+                "Minn\\Content\\Posts::pageByPathAnyStatus"
             ],
             "composes": [
                 "_minn_posts",
@@ -18584,8 +18586,8 @@
             "lines": 32,
             "kind": "minn",
             "minn": [
-                "Minn\\Content\\Posts::findByName",
-                "Minn\\Content\\Posts::pageByPath",
+                "Minn\\Content\\Posts::findByNameAnyStatus",
+                "Minn\\Content\\Posts::pageByPathAnyStatus",
                 "Minn\\Runtime\\Runtime::current",
                 "Minn\\Runtime\\Runtime::forPost",
                 "Minn\\Runtime\\Runtime::get"
@@ -20197,7 +20199,7 @@
             "lines": 1,
             "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Abilities::all"
+                "Minn\\Runtime\\Abilities::allCategories"
             ],
             "composes": []
         },
@@ -20206,7 +20208,7 @@
             "lines": 1,
             "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Abilities::find"
+                "Minn\\Runtime\\Abilities::findCategory"
             ],
             "composes": []
         },
@@ -21106,7 +21108,7 @@
             "lines": 1,
             "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Abilities::find"
+                "Minn\\Runtime\\Abilities::findCategory"
             ],
             "composes": []
         },
@@ -23758,7 +23760,7 @@
             "lines": 1,
             "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Abilities::unregister"
+                "Minn\\Runtime\\Abilities::unregisterCategory"
             ],
             "composes": []
         },

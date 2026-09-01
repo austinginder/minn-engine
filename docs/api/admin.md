@@ -10,9 +10,9 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`App`](#app) | final readonly class | 98 | The Minn Admin app on disk: the symlinked dev copy the engine serves the |
 | [`AppController`](#appcontroller) | final readonly class | 131 | Serves Minn Admin from the engine: the path-routed shell (every |
 | [`Appearance`](#appearance) | final readonly class | 79 | A person's Minn Admin appearance: the colour scheme and its custom |
-| [`BootPayload`](#bootpayload) | final readonly class | 230 | The window.MINN boot payload, assembled from the engine: the keys app.js |
+| [`BootPayload`](#bootpayload) | final readonly class | 242 | The window.MINN boot payload, assembled from the engine: the keys app.js |
 | [`CoreStatus`](#corestatus) | final readonly class | 24 | The installed version comes from the update_core transient's |
-| [`Dashboard`](#dashboard) | final readonly class | 289 | The overview payload: stat cards, the activity chart, and the recent |
+| [`Dashboard`](#dashboard) | final readonly class | 290 | The overview payload: stat cards, the activity chart, and the recent |
 | [`Diagnostics`](#diagnostics) | final readonly class | 402 | The System view's facts about this install: the engine, PHP, the |
 | [`Format`](#format) | final class | 51 | The dashboard's number, size, age, and title formatting. |
 | [`HiddenIntegrations`](#hiddenintegrations) | final readonly class | 94 | What a person hid from their own Minn Admin: the app's per-user map |
@@ -21,13 +21,13 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`Logs`](#logs) | final readonly class | 150 | The log files the System view can read and clear: the debug log the |
 | [`ManageController`](#managecontroller) | final readonly class | 372 | The Manage half of minn-admin/v1: the Structure view (post types, |
 | [`Notifications`](#notifications) | final readonly class | 202 | The bell feed: pending and recent comments, translation and core update |
-| [`Packages`](#packages) | final readonly class | 393 | Putting themes and extensions on disk. Themes come from wordpress.org |
+| [`Packages`](#packages) | final readonly class | 441 | Putting themes and extensions on disk. Themes come from wordpress.org |
 | [`PackagesController`](#packagescontroller) | final readonly class | 116 | Adding and removing themes and extensions from the Extensions view. |
 | [`RenderController`](#rendercontroller) | final readonly class | 54 | The editor's island previews: block markup rendered by the same |
 | [`SessionsController`](#sessionscontroller) | final readonly class | 73 | A person's sign-in sessions, read from the same session_tokens store |
 | [`SystemController`](#systemcontroller) | final readonly class | 89 | The System view: diagnostics, the scheduled-post list, autoloaded options, and the logs. |
-| [`Translations`](#translations) | final readonly class | 226 | Languages for the admin. A person's locale is their `locale` user meta, |
-| [`Updates`](#updates) | final class | 303 | Update offers from wordpress.org for the site's plugins and themes: the |
+| [`Translations`](#translations) | final readonly class | 237 | Languages for the admin. A person's locale is their `locale` user meta, |
+| [`Updates`](#updates) | final class | 323 | Update offers from wordpress.org for the site's plugins and themes: the |
 | [`UpdatesController`](#updatescontroller) | final readonly class | 123 | The minn-admin/v1 update routes: offers, directory meta, the check, the installs, the auto-update lists. |
 | [`V1Controller`](#v1controller) | final readonly class | 316 | The minn-admin/v1 namespace: the dashboard burst, the editor helpers, |
 
@@ -311,7 +311,7 @@ The site's name, or Site when it has none.
 
 The window.MINN payload the app boots from, for one signed-in session.
 
-Internals: `userSlice()` (private, line 91), `siteSlice()` (private, line 108), `caps()` (private, line 135), `pluginPayload()` (private, line 182), `standHomeQuery()` (private, line 204), `siteIcon()` (private, line 218), `adapterSlices()` (private, line 230)
+Internals: `userSlice()` (private, line 91), `siteSlice()` (private, line 108), `commerce()` (private, line 134), `caps()` (private, line 146), `pluginPayload()` (private, line 194), `standHomeQuery()` (private, line 216), `siteIcon()` (private, line 230), `adapterSlices()` (private, line 242)
 
 
 ## CoreStatus
@@ -371,7 +371,7 @@ At most six unique sanitize_key metric ids; anything else drops.
 
 The events behind one chart bar, (from, to] GMT.
 
-Internals: `postsCard()` (private, line 73), `pagesCard()` (private, line 88), `usersCard()` (private, line 93), `commentsCard()` (private, line 99), `mediaCard()` (private, line 113), `metricCatalog()` (private, line 130), `overlayMetricKeys()` (private, line 222), `statusCounts()` (private, line 264), `commentCounts()` (private, line 275), `uploadsSize()` (private, line 289)
+Internals: `postsCard()` (private, line 68), `pagesCard()` (private, line 85), `usersCard()` (private, line 90), `commentsCard()` (private, line 96), `mediaCard()` (private, line 112), `metricCatalog()` (private, line 129), `overlayMetricKeys()` (private, line 223), `statusCounts()` (private, line 265), `commentCounts()` (private, line 276), `uploadsSize()` (private, line 290)
 
 
 ## Diagnostics
@@ -798,9 +798,13 @@ already installed (by folder). @return array{plugins: list<array>, page: int, pa
 
 The slim card for one directory plugin, cached twelve hours per slug.
 
-### `installPlugin(string $slug, bool $overwrite = false, string $version = ''): string`
+### `installPlugin(string $slug, string $version = ''): string`
 
 Installs a wordpress.org plugin by slug; returns its folder.
+
+### `replacePlugin(string $slug, string $version = ''): string`
+
+Installs a wordpress.org plugin over the folder already there.
 
 ### `directoryPlugin(string $slug): ?array`
 
@@ -826,16 +830,24 @@ One wordpress.org theme record, or null when the slug is unknown.
 
 - `@return array<string, mixed>|null`
 
-### `installTheme(string $slug, bool $overwrite = false, string $version = ''): string`
+### `installTheme(string $slug, string $version = ''): string`
 
 Installs a wordpress.org theme by slug; returns its stylesheet folder.
 
-### `unpack(string $zip, string $kind, bool $overwrite): array`
+### `replaceTheme(string $slug, string $version = ''): string`
+
+Installs a wordpress.org theme over the folder already there.
+
+### `unpack(string $zip, string $kind): array`
 
 Unpacks an uploaded or downloaded archive into wp-content/themes or
 wp-content/plugins. @return array{folder: string, name: string, version: string, kind: string}
 
 - `@return array{folder: string, name: string, version: string, kind: string}`
+
+### `unpackReplacing(string $zip, string $kind): array`
+
+Unpacks a zip over a folder already there, replacing it whole.
 
 ### `remove(string $kind, string $folder): void`
 
@@ -845,7 +857,7 @@ Removes a theme or plugin folder that is not in use.
 
 A package over https, refusing anything else.
 
-Internals: `plain()` (private, line 179), `identify()` (private, line 367), `removeTree()` (private, line 406)
+Internals: `pluginPackage()` (private, line 151), `plain()` (private, line 192), `themePackage()` (private, line 286), `place()` (private, line 335), `identify()` (private, line 408), `describe()` (private, line 422), `removeTree()` (private, line 455)
 
 
 ## PackagesController
@@ -1102,9 +1114,13 @@ The locales with a pack on disk, the two defaults first.
 
 - `@return list<array{0: string, 1: string}> the site-default row, en_US, then every installed locale`
 
-### `payload(int $forUser, bool $canInstall): array`
+### `payload(int $forUser): array`
 
 The languages route's payload; `current` is the raw meta of the user asked about.
+
+### `readOnlyPayload(int $forUser): array`
+
+The same payload for a caller who may switch languages but not install one: no available list.
 
 ### `install(string $locale): bool`
 
@@ -1112,7 +1128,7 @@ Fetches and unpacks Minn Admin's language pack for a locale from the
 release the bundle's manifest names. True when files were written;
 false when the manifest offers no pack for the locale.
 
-Internals: `catalogFiles()` (private, line 189), `installedCodes()` (private, line 201), `names()` (private, line 222), `download()` (private, line 234)
+Internals: `languages()` (private, line 118), `catalogFiles()` (private, line 200), `installedCodes()` (private, line 212), `names()` (private, line 233), `download()` (private, line 245)
 
 
 ## Updates
@@ -1141,9 +1157,13 @@ __construct(Minn\Content\Site $site, Minn\Content\Inventory $inventory, Minn\Adm
 ```
 
 
-### `state(bool $fresh = false): array`
+### `state(): array`
 
 The stored answer, refreshed when older than the TTL or absent.
+
+### `refresh(): array`
+
+Asks wordpress.org now, whatever the cache says, and keeps the answer.
 
 ### `check(): array`
 
@@ -1185,11 +1205,15 @@ The auto-update list for plugins or themes, trimmed to what is installed. @retur
 
 - `@return list<string>`
 
-### `setAuto(string $type, string $asset, bool $enabled): array`
+### `enableAuto(string $type, string $asset): array`
 
 Turns auto-updates on or off for one plugin or theme.
 
 - `@return list<string> the list after the change`
+
+### `disableAuto(string $type, string $asset): array`
+
+Takes one plugin or theme off the auto-update list; the list after.
 
 ### `runAuto(): array`
 
@@ -1215,7 +1239,7 @@ Stylesheet => style.css headers. @return array<string, array<string, string>>
 
 - `@return array<string, array<string, string>>`
 
-Internals: `install()` (private, line 265), `consume()` (private, line 277), `post()` (private, line 289), `map()` (private, line 313), `safeUrl()` (private, line 321)
+Internals: `saveAuto()` (private, line 216), `install()` (private, line 285), `consume()` (private, line 297), `post()` (private, line 309), `map()` (private, line 333), `safeUrl()` (private, line 341)
 
 
 ## UpdatesController

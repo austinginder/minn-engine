@@ -20,7 +20,7 @@ final class WP_Block_Patterns_Registry
 
     public function register($pattern_name, $pattern_properties)
     {
-        $refused = self::store()->registerPattern($pattern_name, $pattern_properties, (bool) did_action('init'));
+        $refused = self::store()->registerPattern($pattern_name, $pattern_properties);
         if ($refused !== null) {
             _doing_it_wrong(__METHOD__, $refused->message, '5.5.0');
             return false;
@@ -66,7 +66,7 @@ final class WP_Block_Patterns_Registry
 
     public function get_all_registered($outside_init_only = false)
     {
-        return array_map($this->with_content(...), self::store()->patterns((bool) $outside_init_only));
+        return array_map($this->with_content(...), ($outside_init_only ? self::store()->patternsAfterInit() : self::store()->patterns()));
     }
 
     public function is_registered($pattern_name)
@@ -91,7 +91,7 @@ final class WP_Block_Pattern_Categories_Registry
 
     public function register($category_name, $category_properties)
     {
-        $refused = WP_Block_Patterns_Registry::store()->registerCategory($category_name, $category_properties, (bool) did_action('init'));
+        $refused = WP_Block_Patterns_Registry::store()->registerCategory($category_name, $category_properties);
         if ($refused !== null) {
             _doing_it_wrong(__METHOD__, $refused->message, '5.5.0');
             return false;
@@ -115,7 +115,7 @@ final class WP_Block_Pattern_Categories_Registry
 
     public function get_all_registered($outside_init_only = false)
     {
-        return WP_Block_Patterns_Registry::store()->categories((bool) $outside_init_only);
+        return ($outside_init_only ? WP_Block_Patterns_Registry::store()->categoriesAfterInit() : WP_Block_Patterns_Registry::store()->categories());
     }
 
     public function is_registered($category_name)

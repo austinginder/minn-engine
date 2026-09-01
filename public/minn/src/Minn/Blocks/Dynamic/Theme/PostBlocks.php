@@ -217,7 +217,7 @@ final readonly class PostBlocks
         $post = $renderer->context()->post();
         $next = $block->attr('type', 'next') !== 'previous';
         $direction = $next ? 'next' : 'previous';
-        $target = $post === null ? null : $this->posts->adjacent($post, $next);
+        $target = $post === null ? null : ($next ? $this->posts->next($post) : $this->posts->previous($post));
         $inner = '';
         if ($target !== null) {
             $arrow = (string) $block->attr('arrow', 'none');

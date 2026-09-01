@@ -83,7 +83,7 @@ final readonly class PluginsController
             throw new RestError('rest_plugin_install_failed', 'The installed folder carries no plugin file.', 500);
         }
         if ($status === 'active') {
-            (new PluginState($this->site, $this->inventory, $this->extensions))->setActive($key . '.php', true);
+            (new PluginState($this->site, $this->inventory, $this->extensions))->activate($key . '.php');
         }
         return Reply::item($this->find($key), Fields::fromQuery($request->query), 201);
     }
@@ -110,7 +110,8 @@ final readonly class PluginsController
         }
         if ($status !== $item['status']) {
             $state = new PluginState($this->site, $this->inventory, $this->extensions);
-            $state->setActive($this->manifestFor($plugin) ?? $plugin . '.php', $status === 'active');
+            $target = $this->manifestFor($plugin) ?? $plugin . '.php';
+            $status === 'active' ? $state->activate($target) : $state->deactivate($target);
         }
         return Reply::item($this->find($plugin), Fields::fromQuery($request->query));
     }

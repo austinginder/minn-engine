@@ -9,8 +9,8 @@ the wp/v2 surface: shapes and controllers
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 171 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`BatchRequest`](#batchrequest) | final class | 32 | The requests a batch payload names, normalised into descriptors the |
 | [`Caller`](#caller) | final class | 85 | Who is making this REST call. Resolved once from the cookie and nonce; |
-| [`CommentObject`](#commentobject) | final readonly class | 74 | The wp/v2 comment object; edit context adds the moderation-desk fields. |
-| [`CommentsController`](#commentscontroller) | final readonly class | 279 | wp/v2/comments: the status tabs with pagination headers, single, |
+| [`CommentObject`](#commentobject) | final readonly class | 75 | The wp/v2 comment object; edit context adds the moderation-desk fields. |
+| [`CommentsController`](#commentscontroller) | final readonly class | 280 | wp/v2/comments: the status tabs with pagination headers, single, |
 | [`Context`](#context) | enum | 18 | The view a REST caller asked for. View is the public shape, edit adds the |
 | [`DeclaredPostsController`](#declaredpostscontroller) | final readonly class | 56 | wp/v2/{rest_base} for extra post types declared by an active extension. |
 | [`Embed`](#embed) | final class | 180 | The _embed decoration and the embed context. Every embeddable link in an |
@@ -18,15 +18,15 @@ the wp/v2 surface: shapes and controllers
 | [`Fields`](#fields) | final readonly class | 92 | The _fields response filter. Dot paths descend ("title.rendered"); the |
 | [`IndexController`](#indexcontroller) | final readonly class | 53 | The API index at /wp-json/: the site facts monitors read (name, url, |
 | [`Links`](#links) | final class | 35 | Response link relations compacted through CURIEs: a rel that matches a CURIE's template becomes `name:suffix`, and the used CURIEs ride along. |
-| [`ListQuery`](#listquery) | final readonly class | 141 | The collection parameters a wp/v2 list accepts, read once from the |
-| [`MediaController`](#mediacontroller) | final readonly class | 207 | wp/v2/media: list, single, upload on both transports (multipart field |
-| [`MediaObject`](#mediaobject) | final readonly class | 157 | The wp/v2 media object, view and edit context. |
-| [`MenuItemObject`](#menuitemobject) | final readonly class | 73 | The wp/v2/menu-items resource. |
+| [`ListQuery`](#listquery) | final readonly class | 148 | The collection parameters a wp/v2 list accepts, read once from the |
+| [`MediaController`](#mediacontroller) | final readonly class | 209 | wp/v2/media: list, single, upload on both transports (multipart field |
+| [`MediaObject`](#mediaobject) | final readonly class | 158 | The wp/v2 media object, view and edit context. |
+| [`MenuItemObject`](#menuitemobject) | final readonly class | 74 | The wp/v2/menu-items resource. |
 | [`MenuObject`](#menuobject) | final readonly class | 37 | The wp/v2/menus resource: a nav_menu term plus locations and auto_add. |
-| [`MenusController`](#menuscontroller) | final readonly class | 307 | wp/v2/menus, menu-items, and menu-locations. Viewing needs edit_posts; |
+| [`MenusController`](#menuscontroller) | final readonly class | 309 | wp/v2/menus, menu-items, and menu-locations. Viewing needs edit_posts; |
 | [`NavigationController`](#navigationcontroller) | final readonly class | 48 | wp/v2/navigation: the block theme's navigation menus, stored as |
 | [`ParamCheck`](#paramcheck) | final class | 75 | The required / validate / sanitize pass over a request's declared arguments. |
-| [`PluginsController`](#pluginscontroller) | final readonly class | 247 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
+| [`PluginsController`](#pluginscontroller) | final readonly class | 248 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
 | [`PostObject`](#postobject) | final readonly class | 394 | Builds the wp/v2 post and page objects in the reference's shape: the |
 | [`PostsController`](#postscontroller) | final readonly class | 167 | wp/v2 posts and pages, read side. |
 | [`PostsWriteController`](#postswritecontroller) | final readonly class | 306 | wp/v2 posts and pages, write side: create, update, trash, and force |
@@ -46,13 +46,13 @@ the wp/v2 surface: shapes and controllers
 | [`SettingsController`](#settingscontroller) | final readonly class | 25 | wp/v2/settings: read and write, both behind manage_options. |
 | [`Taxonomies`](#taxonomies) | final class | 48 | The taxonomy registry the wp/v2 surface describes: the core set seeded |
 | [`TaxonomiesController`](#taxonomiescontroller) | final readonly class | 47 | wp/v2 taxonomies: the registry, whole or per type, in view or edit context. |
-| [`TemplateObject`](#templateobject) | final readonly class | 97 | The wp/v2/templates and wp/v2/template-parts resource. |
-| [`TemplatesController`](#templatescontroller) | final readonly class | 204 | wp/v2/templates and wp/v2/template-parts: the block theme's templates as |
+| [`TemplateObject`](#templateobject) | final readonly class | 98 | The wp/v2/templates and wp/v2/template-parts resource. |
+| [`TemplatesController`](#templatescontroller) | final readonly class | 205 | wp/v2/templates and wp/v2/template-parts: the block theme's templates as |
 | [`TermObject`](#termobject) | final readonly class | 75 | The wp/v2 category and tag objects. |
 | [`TermsController`](#termscontroller) | final readonly class | 195 | wp/v2 categories and tags: list, single, and the create/update/delete the taxonomy admin drives. |
 | [`Types`](#types) | final class | 87 | The engine's registry of built-in post types, seeded from the observed |
 | [`TypesController`](#typescontroller) | final readonly class | 24 | wp/v2 types. |
-| [`UserObject`](#userobject) | final readonly class | 95 | The wp/v2 user objects: the public view shape and the edit-context shape. |
+| [`UserObject`](#userobject) | final readonly class | 97 | The wp/v2 user objects: the public view shape and the edit-context shape. |
 | [`UsersController`](#userscontroller) | final readonly class | 299 | wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives. |
 
 ## AdditionalFields
@@ -281,7 +281,7 @@ __construct(Minn\Content\Comments $comments, Minn\Content\Posts $posts, Minn\Fro
 
 The REST URL builder.
 
-### `build(Minn\Content\CommentRecord $c, bool $edit): array`
+### `build(Minn\Content\CommentRecord $c, Minn\Rest\Context $context): array`
 
 The wp/v2 comment shape, with the edit-context fields when asked.
 
@@ -334,7 +334,7 @@ Route: `DELETE /wp/v2/comments/{id:\d+}`
 
 Trash remembers where the comment came from; force removes it outright.
 
-Internals: `notifyModerator()` (private, line 143), `filter()` (private, line 211), `guarded()` (private, line 234), `date()` (private, line 265), `plainComment()` (private, line 280), `cleanComment()` (private, line 294)
+Internals: `notifyModerator()` (private, line 144), `filter()` (private, line 212), `guarded()` (private, line 235), `date()` (private, line 266), `plainComment()` (private, line 281), `cleanComment()` (private, line 295)
 
 
 ## Context
@@ -347,7 +347,7 @@ a linked resource carries when it rides inside another response.
 
 Cases: `View` = `'view'`, `Edit` = `'edit'`, `Embed` = `'embed'`
 
-Used by: `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\PostsController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TemplatesController`, `Minn\Rest\UsersController`
+Used by: `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenusController`, `Minn\Rest\PostsController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplatesController`, `Minn\Rest\UsersController`
 
 ### static `of(Minn\Http\Request $request): self`
 
@@ -617,14 +617,21 @@ How many pages a total makes at this page size.
 
 A page past the last one is a parameter error, except page one of nothing.
 
-### static `ids(string $csv, bool $keepZero = false): array`
+### static `ids(string $csv): array`
 
-A comma-separated id list as distinct integers. Zero is dropped unless
-asked for: parent=0 means "top level", author=0 means nothing.
+A comma-separated id list as distinct integers, zero dropped: author=0
+means nothing.
 
 - `@return list<int>`
 
-Internals: `list()` (private, line 146), `words()` (private, line 152)
+### static `idsWithZero(string $csv): array`
+
+The same list with zero kept: parent=0 means "top level", and a comment's
+post=0 means "no post".
+
+- `@return list<int>`
+
+Internals: `list()` (private, line 153), `words()` (private, line 159)
 
 
 ## MediaController
@@ -676,7 +683,7 @@ Route: `DELETE /wp/v2/media/{id:\d+}`
 
 Attachments cannot be trashed; force removes the row, its meta, and its files.
 
-Internals: `libraryClauses()` (private, line 76), `restDate()` (private, line 108), `attachment()` (private, line 214), `setMetaValue()` (private, line 223)
+Internals: `libraryClauses()` (private, line 77), `restDate()` (private, line 109), `attachment()` (private, line 216), `setMetaValue()` (private, line 225)
 
 
 ## MediaObject
@@ -696,11 +703,11 @@ __construct(Minn\Content\Posts $posts, Minn\Media\Uploads $uploads, Minn\Front\P
 
 The REST URL builder.
 
-### `build(Minn\Content\PostRecord $p, bool $edit): array`
+### `build(Minn\Content\PostRecord $p, Minn\Rest\Context $context): array`
 
 The wp/v2 media shape, with the edit-context fields when asked.
 
-Internals: `details()` (private, line 117), `descriptionHtml()` (private, line 151)
+Internals: `details()` (private, line 118), `descriptionHtml()` (private, line 152)
 
 
 ## MenuItemObject
@@ -718,7 +725,7 @@ __construct(Minn\Rest\RestUrl $url, Minn\Rest\Caller $caller)
 ```
 
 
-### `view(Minn\Content\MenuItem $item, bool $edit): array`
+### `view(Minn\Content\MenuItem $item, Minn\Rest\Context $context): array`
 
 The wp/v2 menu-item shape.
 
@@ -831,7 +838,7 @@ Route: `GET /wp/v2/menu-locations`
 
 The theme's menu locations.
 
-Internals: `gate()` (private, line 276), `writeGate()` (private, line 284), `titleFrom()` (private, line 293), `urlFrom()` (private, line 303), `refuse()` (private, line 313), `plain()` (private, line 323)
+Internals: `gate()` (private, line 278), `writeGate()` (private, line 286), `titleFrom()` (private, line 295), `urlFrom()` (private, line 305), `refuse()` (private, line 315), `plain()` (private, line 325)
 
 
 ## NavigationController
@@ -968,7 +975,7 @@ Route: `DELETE /wp/v2/plugins/{plugin:[^.\/]+(?:\/[^.\/]+)?}`
 
 Deletes an inactive plugin.
 
-Internals: `items()` (private, line 140), `find()` (private, line 155), `manifestFor()` (private, line 165), `extensionItem()` (private, line 175), `pluginItem()` (private, line 198), `text()` (private, line 230), `description()` (private, line 236), `uri()` (private, line 255), `links()` (private, line 260), `extensionKey()` (private, line 265), `requireManager()` (private, line 270)
+Internals: `items()` (private, line 141), `find()` (private, line 156), `manifestFor()` (private, line 166), `extensionItem()` (private, line 176), `pluginItem()` (private, line 199), `text()` (private, line 231), `description()` (private, line 237), `uri()` (private, line 256), `links()` (private, line 261), `extensionKey()` (private, line 266), `requireManager()` (private, line 271)
 
 
 ## PostObject
@@ -1810,11 +1817,11 @@ __construct(Minn\Theme\TemplateIndex $index, Minn\Content\Posts $posts, Minn\Res
 
 The rest_base of a template type.
 
-### `view(Minn\Theme\TemplateRecord $record, bool $edit): array`
+### `view(Minn\Theme\TemplateRecord $record, Minn\Rest\Context $context): array`
 
 The wp/v2 template shape.
 
-Internals: `links()` (private, line 83)
+Internals: `links()` (private, line 84)
 
 
 ## TemplatesController
@@ -1894,7 +1901,7 @@ Route: `DELETE /wp/v2/template-parts/{id*}`
 
 Deletes a customised template part.
 
-Internals: `listing()` (private, line 97), `single()` (private, line 114), `save()` (private, line 123), `delete()` (private, line 150), `trashed()` (private, line 167), `record()` (private, line 189), `readable()` (private, line 199), `requireWrite()` (private, line 210), `text()` (private, line 219)
+Internals: `listing()` (private, line 97), `single()` (private, line 115), `save()` (private, line 124), `delete()` (private, line 151), `trashed()` (private, line 168), `record()` (private, line 190), `readable()` (private, line 200), `requireWrite()` (private, line 211), `text()` (private, line 220)
 
 
 ## TermObject
@@ -2060,7 +2067,7 @@ __construct(Minn\Db $db, Minn\Content\Users $users, Minn\Front\Permalinks $perma
 
 Gravatar URLs in the sizes the reference emits (sha256 of the email).
 
-### `view(Minn\Content\UserRecord $u, bool $isSelf = false): array`
+### `view(Minn\Content\UserRecord $u): array`
 
 The wp/v2 user shape in the view context.
 

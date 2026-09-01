@@ -37,20 +37,15 @@ final readonly class Dashboard
         $media = $this->statusCounts('attachment');
         $comments = $this->commentCounts();
 
-        // The count deltas are cap-gated the way the matching views are: a
-        // site-wide draft total belongs to edit_others_posts, the moderation
-        // queue size to moderate_comments.
-        $seesDrafts = $this->capabilities->can($userId, 'edit_others_posts');
-        $moderates = $this->capabilities->can($userId, 'moderate_comments');
         $stats = [
-            $this->postsCard($posts, $seesDrafts),
+            $this->postsCard($posts, $userId),
             $this->pagesCard($pages),
             ($comments['approved'] === 0 && $comments['moderated'] === 0 && $this->capabilities->can($userId, 'list_users'))
                 ? $this->usersCard()
-                : $this->commentsCard($comments, $moderates),
+                : $this->commentsCard($comments, $userId),
             $this->mediaCard($media),
         ];
-        $catalog = $this->metricCatalog($userId, $stats, $posts, $pages, $comments, $media, $seesDrafts, $moderates);
+        $catalog = $this->metricCatalog($userId, $stats, $posts, $pages, $comments, $media);
         $layout = $this->metricLayout($userId, $catalog, $stats);
         $hour = (int) gmdate('G', $now + $offset);
         return [
@@ -70,8 +65,10 @@ final readonly class Dashboard
     }
 
     /** @param array<string, int> $posts */
-    private function postsCard(array $posts, bool $seesDrafts): array
+    private function postsCard(array $posts, int $userId): array
     {
+        // A site-wide draft total belongs to edit_others_posts, the way the Content view gates it.
+        $seesDrafts = $this->capabilities->can($userId, 'edit_others_posts');
         $drafts = $posts['draft'] ?? 0;
         return [
             'key' => 'posts',
@@ -96,8 +93,10 @@ final readonly class Dashboard
     }
 
     /** @param array<string, int> $comments */
-    private function commentsCard(array $comments, bool $moderates): array
+    private function commentsCard(array $comments, int $userId): array
     {
+        // The moderation queue size belongs to moderate_comments, the way the Comments view gates it.
+        $moderates = $this->capabilities->can($userId, 'moderate_comments');
         return [
             'key' => 'comments',
             'group' => 'content',
@@ -127,8 +126,10 @@ final readonly class Dashboard
      * @param array<string, int> $media
      * @return list<array>
      */
-    private function metricCatalog(int $userId, array $stats, array $posts, array $pages, array $comments, array $media, bool $seesDrafts, bool $moderates): array
+    private function metricCatalog(int $userId, array $stats, array $posts, array $pages, array $comments, array $media): array
     {
+        $seesDrafts = $this->capabilities->can($userId, 'edit_others_posts');
+        $moderates = $this->capabilities->can($userId, 'moderate_comments');
         $catalog = [];
         $have = [];
         $add = static function (array $row) use (&$catalog, &$have): void {
@@ -142,13 +143,13 @@ final readonly class Dashboard
         foreach ($stats as $row) {
             $add($row);
         }
-        $add($this->postsCard($posts, $seesDrafts));
+        $add($this->postsCard($posts, $userId));
         if ($seesDrafts) {
             $drafts = $posts['draft'] ?? 0;
             $add(['key' => 'drafts', 'group' => 'content', 'label' => 'Drafts', 'value' => Format::number($drafts), 'delta' => 'posts', 'up' => $drafts > 0 ? 'warn' : null, 'goto' => 'content:posts']);
         }
         $add($this->pagesCard($pages));
-        $add($this->commentsCard($comments, $moderates));
+        $add($this->commentsCard($comments, $userId));
         if ($moderates) {
             $add(['key' => 'comments_pending', 'group' => 'content', 'label' => 'Pending comments', 'value' => Format::number($comments['moderated']), 'delta' => 'awaiting review', 'up' => $comments['moderated'] > 0 ? 'warn' : null, 'goto' => 'comments:hold']);
         }

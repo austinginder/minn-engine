@@ -356,7 +356,7 @@ function _minn_seed_main_query(array $vars, array $postIds, int $total, int $per
         // A post named by id, or (a plugin's type) by name and type.
         $single = get_post((int) ($vars['p'] ?? $vars['page_id'] ?? 0));
         if ($single === null && !empty($vars['name']) && !empty($vars['post_type'])) {
-            $row = _minn_posts()->findByName((string) $vars['name'], [(string) $vars['post_type']], publishedOnly: false);
+            $row = _minn_posts()->findByNameAnyStatus((string) $vars['name'], [(string) $vars['post_type']]);
             $single = $row === null ? null : get_post((int) $row['ID']);
         }
         if ($single instanceof WP_Post) {

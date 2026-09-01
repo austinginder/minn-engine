@@ -42,7 +42,7 @@ final readonly class PackagesController
     public function uploadTheme(Request $request): Response
     {
         $this->caller->requireFloor('install_themes');
-        $result = $this->packages->unpack($this->uploaded($request, 'Theme'), 'theme', !empty($request->form['overwrite']));
+        $result = !empty($request->form['overwrite']) ? $this->packages->unpackReplacing($this->uploaded($request, 'Theme'), 'theme') : $this->packages->unpack($this->uploaded($request, 'Theme'), 'theme');
         return Reply::answer($request, ['installed' => true, 'stylesheet' => $result['folder']]);
     }
 
@@ -64,7 +64,7 @@ final readonly class PackagesController
     public function uploadPlugin(Request $request): Response
     {
         $this->caller->requireFloor('install_plugins');
-        $result = $this->packages->unpack($this->uploaded($request, 'Plugin'), 'extension', !empty($request->form['overwrite']));
+        $result = !empty($request->form['overwrite']) ? $this->packages->unpackReplacing($this->uploaded($request, 'Plugin'), 'extension') : $this->packages->unpack($this->uploaded($request, 'Plugin'), 'extension');
         return Reply::answer($request, ['installed' => true, 'plugin' => $result['folder'] . '/' . $result['folder']]);
     }
 
@@ -97,7 +97,7 @@ final readonly class PackagesController
         if ($url === '') {
             throw new RestError('no_source', 'Provide a zip URL or a github owner/repo.', 400);
         }
-        $result = $this->packages->unpack($this->packages->fetch($url), 'extension', false);
+        $result = $this->packages->unpack($this->packages->fetch($url), 'extension');
         return Reply::answer($request, ['installed' => true, 'plugin' => $result['folder'] . '/' . $result['folder'], 'url' => $url]);
     }
 

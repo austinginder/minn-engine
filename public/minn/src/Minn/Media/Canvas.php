@@ -59,15 +59,27 @@ final readonly class Canvas
     }
 
     /** A canvas mirrored on either axis. */
-    public function flip(bool $vertical, bool $horizontal): self
+    public function flipVertical(): self
     {
-        $copy = $this->resample([0, 0, 0, 0, $this->width, $this->height, $this->width, $this->height]);
-        if ($vertical) {
-            imageflip($copy->image, IMG_FLIP_VERTICAL);
-        }
-        if ($horizontal) {
-            imageflip($copy->image, IMG_FLIP_HORIZONTAL);
-        }
+        return $this->flipped(IMG_FLIP_VERTICAL);
+    }
+
+    /** A canvas mirrored left to right. */
+    public function flipHorizontal(): self
+    {
+        return $this->flipped(IMG_FLIP_HORIZONTAL);
+    }
+
+    /** An untouched copy of the canvas. */
+    public function copy(): self
+    {
+        return $this->resample([0, 0, 0, 0, $this->width, $this->height, $this->width, $this->height]);
+    }
+
+    private function flipped(int $mode): self
+    {
+        $copy = $this->copy();
+        imageflip($copy->image, $mode);
         return $copy;
     }
 

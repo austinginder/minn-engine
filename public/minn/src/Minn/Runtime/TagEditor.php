@@ -78,18 +78,33 @@ final class TagEditor
     }
 
     /** Adds or removes a class. */
-    public function toggleClass(string $class, bool $on): void
+    public function addClass(string $class): void
+    {
+        $classes = $this->classes();
+        if (!in_array($class, $classes, true)) {
+            $this->setClasses([...$classes, $class]);
+        }
+    }
+
+    /** Removes a class, and the attribute when it was the last one. */
+    public function removeClass(string $class): void
+    {
+        $classes = $this->classes();
+        if (in_array($class, $classes, true)) {
+            $this->setClasses(array_values(array_filter($classes, static fn (string $c) => $c !== $class)));
+        }
+    }
+
+    /** @return list<string> */
+    private function classes(): array
     {
         $current = $this->get('class');
-        $classes = $current === null ? [] : preg_split('/\s+/', trim($current), -1, PREG_SPLIT_NO_EMPTY);
-        $present = in_array($class, $classes, true);
-        if ($on && !$present) {
-            $classes[] = $class;
-        } elseif (!$on && $present) {
-            $classes = array_values(array_filter($classes, static fn (string $c) => $c !== $class));
-        } else {
-            return;
-        }
+        return $current === null ? [] : preg_split('/\s+/', trim($current), -1, PREG_SPLIT_NO_EMPTY);
+    }
+
+    /** @param list<string> $classes */
+    private function setClasses(array $classes): void
+    {
         if ($classes === []) {
             $this->remove('class');
         } else {

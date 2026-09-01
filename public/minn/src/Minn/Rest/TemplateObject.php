@@ -26,8 +26,9 @@ final readonly class TemplateObject
     }
 
     /** The wp/v2 template shape. */
-    public function view(TemplateRecord $record, bool $edit): array
+    public function view(TemplateRecord $record, Context $context): array
     {
+        $edit = $context->isEdit();
         $id = $record->id();
         $markup = $this->index->markup($record->content);
         $content = ['raw' => $markup];

@@ -400,13 +400,13 @@ function get_page_by_path($page_path, $output = OBJECT, $post_type = 'page')
     }
     $types = (array) $post_type;
     if (!in_array('page', $types, true) || count($types) !== 1) {
-        $row = _minn_posts()->findByName(end($segments), $types, false);
+        $row = _minn_posts()->findByNameAnyStatus(end($segments), $types);
         if ($row === null || count($segments) > 1) {
             return null;
         }
         return get_post((int) $row['ID'], $output);
     }
-    $row = _minn_posts()->pageByPath($segments, false);
+    $row = _minn_posts()->pageByPathAnyStatus($segments);
     return $row === null ? null : get_post((int) $row['ID'], $output);
 }
 
@@ -456,11 +456,11 @@ function url_to_postid($url)
     $permalinks = Runtime::current()->get('permalinks');
     if ($permalinks !== null) {
         $segments = explode('/', $path);
-        $page = _minn_posts()->pageByPath($segments, false);
+        $page = _minn_posts()->pageByPathAnyStatus($segments);
         if ($page !== null) {
             return (int) $page['ID'];
         }
-        $post = _minn_posts()->findByName(end($segments), ['post'], false);
+        $post = _minn_posts()->findByNameAnyStatus(end($segments), ['post']);
         if ($post !== null && $permalinks->forPost($post) === rtrim($home, '/') . '/' . $path . '/') {
             return (int) $post['ID'];
         }
@@ -586,7 +586,7 @@ function get_adjacent_post($in_same_term = false, $excluded_terms = '', $previou
     if ($post === null) {
         return null;
     }
-    $row = _minn_posts()->adjacent(Minn\Content\PostRecord::fromRow($post->to_array()), !$previous);
+    $row = $previous ? _minn_posts()->previous(Minn\Content\PostRecord::fromRow($post->to_array())) : _minn_posts()->next(Minn\Content\PostRecord::fromRow($post->to_array()));
     return $row === null ? null : get_post((int) $row['ID']);
 }
 
@@ -1555,7 +1555,7 @@ function get_lastpostmodified($timezone = 'server', $post_type = 'any')
     if ($type !== 'any' && get_post_type_object($type) === null) {
         return false;
     }
-    $value = _minn_posts()->lastModified($type === 'any' ? null : $type, strtolower((string) $timezone) === 'gmt');
+    $value = strtolower((string) $timezone) === 'gmt' ? _minn_posts()->lastModifiedGmt($type === 'any' ? null : $type) : _minn_posts()->lastModified($type === 'any' ? null : $type);
     if ($value === null) {
         return false;
     }

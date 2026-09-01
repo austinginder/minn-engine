@@ -23,8 +23,9 @@ final class Patterns
     private array $styles = [];
 
     /** Registers a block pattern, or the refusal. */
-    public function registerPattern(mixed $name, mixed $properties, bool $afterInit): ?Refusal
+    public function registerPattern(mixed $name, mixed $properties): ?Refusal
     {
+        $afterInit = Runtime::hooks()->actionsDone('init') > 0;
         if (!is_string($name)) {
             return new Refusal('pattern_name', 'Pattern name must be a string.');
         }
@@ -53,9 +54,9 @@ final class Patterns
     }
 
     /** One pattern, or null. */
-    public function pattern(string $name, bool $afterInitOnly = false): ?array
+    public function pattern(string $name): ?array
     {
-        return $afterInitOnly ? ($this->patternsAfterInit[$name] ?? null) : ($this->patterns[$name] ?? null);
+        return $this->patterns[$name] ?? null;
     }
 
     /**
@@ -63,14 +64,21 @@ final class Patterns
      *
      * @return list<array<string, mixed>>
      */
-    public function patterns(bool $afterInitOnly = false): array
+    public function patterns(): array
     {
-        return array_values($afterInitOnly ? $this->patternsAfterInit : $this->patterns);
+        return array_values($this->patterns);
+    }
+
+    /** The patterns registered after init, which the editor lists separately. */
+    public function patternsAfterInit(): array
+    {
+        return array_values($this->patternsAfterInit);
     }
 
     /** Registers a pattern category, or the refusal. */
-    public function registerCategory(mixed $name, mixed $properties, bool $afterInit): ?Refusal
+    public function registerCategory(mixed $name, mixed $properties): ?Refusal
     {
+        $afterInit = Runtime::hooks()->actionsDone('init') > 0;
         if (!is_string($name)) {
             return new Refusal('category_name', 'Block pattern category name must be a string.');
         }
@@ -103,9 +111,15 @@ final class Patterns
      *
      * @return list<array<string, mixed>>
      */
-    public function categories(bool $afterInitOnly = false): array
+    public function categories(): array
     {
-        return array_values($afterInitOnly ? $this->categoriesAfterInit : $this->categories);
+        return array_values($this->categories);
+    }
+
+    /** The categories registered after init. */
+    public function categoriesAfterInit(): array
+    {
+        return array_values($this->categoriesAfterInit);
     }
 
     /**

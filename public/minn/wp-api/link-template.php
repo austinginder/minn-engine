@@ -563,7 +563,7 @@ function get_adjacent_post_link($format, $link, $in_same_term = false, $excluded
     if ($post instanceof WP_Post) {
         $title = get_the_title($post) ?: ($previous ? 'Previous Post' : 'Next Post');
         $title = apply_filters('the_title', $title, $post->ID);
-        $output = PostNavigation::link((string) get_permalink($post), $title, $format, $link, $previous);
+        $output = $previous ? PostNavigation::previous((string) get_permalink($post), $title, $format, $link) : PostNavigation::next((string) get_permalink($post), $title, $format, $link);
     }
     return apply_filters("{$adjacent}_post_link", $output, $format, $link, $post, $adjacent);
 }

@@ -435,7 +435,7 @@ function wp_set_option_autoload_values($options)
     $results = [];
     foreach ((array) $options as $name => $autoload) {
         $on = in_array($autoload, [true, 'yes', 'on', 'auto-on'], true) || $autoload === 1;
-        $results[$name] = Runtime::options()->setAutoload((string) $name, $on);
+        $results[$name] = $on ? Runtime::options()->markAutoload((string) $name) : Runtime::options()->unmarkAutoload((string) $name);
     }
     return $results;
 }

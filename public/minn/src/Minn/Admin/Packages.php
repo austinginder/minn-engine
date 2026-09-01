@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Admin;
 
+use Closure;
 use Minn\Content\Inventory;
 use Minn\Content\Site;
 use Minn\Extension\Manifest;
@@ -135,7 +136,19 @@ final readonly class Packages
     }
 
     /** Installs a wordpress.org plugin by slug; returns its folder. */
-    public function installPlugin(string $slug, bool $overwrite = false, string $version = ''): string
+    public function installPlugin(string $slug, string $version = ''): string
+    {
+        return $this->unpack($this->fetch($this->pluginPackage($slug, $version)), 'plugin')['folder'];
+    }
+
+    /** Installs a wordpress.org plugin over the folder already there. */
+    public function replacePlugin(string $slug, string $version = ''): string
+    {
+        return $this->unpackReplacing($this->fetch($this->pluginPackage($slug, $version)), 'plugin')['folder'];
+    }
+
+    /** The download link of a wordpress.org plugin, at a version when one is asked for. */
+    private function pluginPackage(string $slug, string $version): string
     {
         if (!preg_match('/^[a-z0-9-]+$/', $slug)) {
             throw new RestError('rest_invalid_param', 'Invalid parameter(s): slug', 400, ['params' => ['slug' => 'Invalid parameter.']]);
@@ -154,7 +167,7 @@ final readonly class Packages
         if ($link === '' || !str_starts_with($link, 'https://downloads.wordpress.org/')) {
             throw new RestError('rest_plugin_install_failed', 'The plugin has no download link on wordpress.org.', 500);
         }
-        return $this->unpack($this->fetch($link), 'plugin', $overwrite)['folder'];
+        return $link;
     }
 
     /**
@@ -258,7 +271,19 @@ final readonly class Packages
     }
 
     /** Installs a wordpress.org theme by slug; returns its stylesheet folder. */
-    public function installTheme(string $slug, bool $overwrite = false, string $version = ''): string
+    public function installTheme(string $slug, string $version = ''): string
+    {
+        return $this->unpack($this->fetch($this->themePackage($slug, $version)), 'theme')['folder'];
+    }
+
+    /** Installs a wordpress.org theme over the folder already there. */
+    public function replaceTheme(string $slug, string $version = ''): string
+    {
+        return $this->unpackReplacing($this->fetch($this->themePackage($slug, $version)), 'theme')['folder'];
+    }
+
+    /** The download link of a wordpress.org theme, at a version when one is asked for. */
+    private function themePackage(string $slug, string $version): string
     {
         if (!preg_match('/^[a-z0-9-]+$/', $slug)) {
             throw new RestError('bad_slug', 'That is not a theme slug.', 400);
@@ -274,14 +299,40 @@ final readonly class Packages
         if ($data === null || $link === '' || !str_starts_with($link, 'https://downloads.wordpress.org/')) {
             throw new RestError('theme_not_found', 'wordpress.org has no theme by that slug.', 404);
         }
-        return $this->unpack($this->fetch($link), 'theme', $overwrite)['folder'];
+        return $link;
     }
 
     /**
      * Unpacks an uploaded or downloaded archive into wp-content/themes or
      * wp-content/plugins. @return array{folder: string, name: string, version: string, kind: string}
      */
-    public function unpack(string $zip, string $kind, bool $overwrite): array
+    public function unpack(string $zip, string $kind): array
+    {
+        return $this->place($zip, $kind, function (string $dest, string $kind, array $identity): void {
+            $current = $this->describe($dest, $kind);
+            throw new RestError('folder_exists', 'Destination folder already exists.', 409, [
+                'destination' => $dest,
+                'current_name' => $current['name'],
+                'current_version' => $current['version'],
+                'new_name' => $identity['name'],
+                'new_version' => $identity['version'],
+            ]);
+        });
+    }
+
+    /** Unpacks a zip over a folder already there, replacing it whole. */
+    public function unpackReplacing(string $zip, string $kind): array
+    {
+        return $this->place($zip, $kind, static fn (string $dest): mixed => self::removeTree($dest));
+    }
+
+    /**
+     * Unpacks a zip into wp-content; $onExisting decides what happens to a
+     * folder already at the destination (refuse, or clear it).
+     *
+     * @param Closure(string, string, array): mixed $onExisting
+     */
+    private function place(string $zip, string $kind, Closure $onExisting): array
     {
         $tmp = tempnam(sys_get_temp_dir(), 'minn-pkg-');
         file_put_contents($tmp, $zip);
@@ -317,18 +368,8 @@ final readonly class Packages
             $source = "{$stage}/{$top}";
             $identity = $this->identify($source, $kind);
             $dest = "{$this->contentDir}/" . ($kind === 'theme' ? 'themes' : 'plugins') . "/{$top}";
-            if (is_dir($dest) && !$overwrite) {
-                $current = $this->identify($dest, $kind, false);
-                throw new RestError('folder_exists', 'Destination folder already exists.', 409, [
-                    'destination' => $dest,
-                    'current_name' => $current['name'],
-                    'current_version' => $current['version'],
-                    'new_name' => $identity['name'],
-                    'new_version' => $identity['version'],
-                ]);
-            }
             if (is_dir($dest)) {
-                self::removeTree($dest);
+                $onExisting($dest, $kind, $identity);
             }
             if (!rename($source, $dest)) {
                 throw new RestError('install_failed', 'The folder could not be moved into place.', 500);
@@ -364,14 +405,25 @@ final readonly class Packages
      * extension (minn.json), or a WordPress plugin, which is named so the
      * refusal can say what was uploaded. @return array{name: string, version: string, kind: string}
      */
-    private function identify(string $dir, string $kind, bool $strict = true): array
+    private function identify(string $dir, string $kind): array
+    {
+        $identity = $this->describe($dir, $kind);
+        if ($identity['kind'] === 'unknown') {
+            throw new RestError(
+                $kind === 'theme' ? 'not_theme' : 'not_plugin',
+                $kind === 'theme' ? 'The archive is not a theme: no style.css with a Theme Name.' : 'The archive is not a plugin: no minn.json and no file with a Plugin Name header in its folder.',
+                400,
+            );
+        }
+        return $identity;
+    }
+
+    /** What a folder holds by its headers; kind "unknown" when nothing identifies it. @return array{name: string, version: string, kind: string} */
+    private function describe(string $dir, string $kind): array
     {
         if ($kind === 'theme') {
             $headers = FileHeaders::values("{$dir}/style.css", ['Theme Name', 'Version']);
-            if ($headers['Theme Name'] === '' && $strict) {
-                throw new RestError('not_theme', 'The archive is not a theme: no style.css with a Theme Name.', 400);
-            }
-            return ['name' => $headers['Theme Name'], 'version' => $headers['Version'], 'kind' => 'theme'];
+            return ['name' => $headers['Theme Name'], 'version' => $headers['Version'], 'kind' => $headers['Theme Name'] === '' ? 'unknown' : 'theme'];
         }
         $manifest = Manifest::read($dir);
         if ($manifest !== null) {
@@ -382,9 +434,6 @@ final readonly class Packages
             if ($headers['Plugin Name'] !== '') {
                 return ['name' => $headers['Plugin Name'], 'version' => $headers['Version'], 'kind' => 'plugin'];
             }
-        }
-        if ($strict) {
-            throw new RestError('not_plugin', 'The archive is not a plugin: no minn.json and no file with a Plugin Name header in its folder.', 400);
         }
         return ['name' => '', 'version' => '', 'kind' => 'unknown'];
     }

@@ -21,9 +21,19 @@ final readonly class Revisions
      *
      * @return list<array> newest first
      */
-    public function of(int $parentId, bool $autosaves): array
+    public function revisionsOf(int $parentId): array
     {
-        $comparison = $autosaves ? 'LIKE' : 'NOT LIKE';
+        return $this->named($parentId, 'NOT LIKE');
+    }
+
+    /** The autosaves of a post, newest first, as rows. */
+    public function autosavesOf(int $parentId): array
+    {
+        return $this->named($parentId, 'LIKE');
+    }
+
+    private function named(int $parentId, string $comparison): array
+    {
         return $this->db->rows(
             "SELECT * FROM {$this->db->table('posts')}
              WHERE post_parent = ? AND post_type = 'revision' AND post_name {$comparison} ?

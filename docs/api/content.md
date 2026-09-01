@@ -7,27 +7,27 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`Autop`](#autop) | final class | 34 | Classic-content paragraphing: blank lines become paragraphs, single |
 | [`Blocks`](#blocks) | final class | 40 | The content pipeline's front door: block markup goes through the block |
 | [`CommentClasses`](#commentclasses) | final class | 26 | The class tokens a rendered comment carries: its type, its author, odd/even and thread alternation, depth, then the caller's extras. |
-| [`CommentFilter`](#commentfilter) | final readonly class | 39 | What a comment listing is narrowed to. Every field is optional; the id |
+| [`CommentFilter`](#commentfilter) | final readonly class | 46 | What a comment listing is narrowed to. Every field is optional; the id |
 | [`CommentModeration`](#commentmoderation) | final readonly class | 43 | Whether a comment may be stored and in what state: the duplicate and |
 | [`CommentRecord`](#commentrecord) | final readonly class | 114 | One row of the comments table, read by name: $comment->author, ->content, |
-| [`Comments`](#comments) | final readonly class | 256 | Reads and writes over the comments table. |
+| [`Comments`](#comments) | final readonly class | 255 | Reads and writes over the comments table. |
 | [`ContentScan`](#contentscan) | final class | 196 | What a site's stored content asks of the engine: shortcodes, block |
-| [`Excerpt`](#excerpt) | final class | 83 | The reference's generated excerpt, as captured from probe posts: |
+| [`Excerpt`](#excerpt) | final class | 101 | The reference's generated excerpt, as captured from probe posts: |
 | [`Inventory`](#inventory) | final readonly class | 237 | Plugins, themes, must-use plugins, and drop-ins as they sit on disk. |
 | [`MenuItem`](#menuitem) | final readonly class | 22 | One classic nav_menu_item, fields resolved from the post, its |
 | [`Menus`](#menus) | final readonly class | 485 | Classic nav_menu terms and nav_menu_item posts. The front uses these |
 | [`MoreTag`](#moretag) | final class | 20 | The `<!--more-->` marker that splits a post into the part a listing shows |
 | [`Page`](#page) | final readonly class | 49 | One page of a listing: the rows on it and how many rows the whole |
 | [`PasswordGate`](#passwordgate) | final class | 34 | A password-protected post on the front end: its body is the password |
-| [`PluginState`](#pluginstate) | final readonly class | 66 | Switching plugins on and off, the way the reference records it: a |
+| [`PluginState`](#pluginstate) | final readonly class | 86 | Switching plugins on and off, the way the reference records it: a |
 | [`PostClasses`](#postclasses) | final class | 55 | The class list a post carries on its article element, in the reference's |
 | [`PostFilter`](#postfilter) | final readonly class | 55 | What a listing is narrowed to. Every field is optional and the object is |
 | [`PostRecord`](#postrecord) | final readonly class | 156 | One row of the posts table, read by name. The columns keep their |
 | [`PostStatus`](#poststatus) | enum | 42 | The statuses a post row can hold; the value is the column's own spelling. |
-| [`PostWriter`](#postwriter) | final readonly class | 306 | Every write to the posts table and its satellites: rows, meta, term |
-| [`Posts`](#posts) | final readonly class | 369 | Reads over the posts table. A single post comes back as a PostRecord and |
+| [`PostWriter`](#postwriter) | final readonly class | 316 | Every write to the posts table and its satellites: rows, meta, term |
+| [`Posts`](#posts) | final readonly class | 410 | Reads over the posts table. A single post comes back as a PostRecord and |
 | [`Reader`](#reader) | final class | 54 | Who is reading this request: their user id, whether they may read |
-| [`Revisions`](#revisions) | final readonly class | 76 | Revision rows: the plain snapshots and the per-author autosave slots. |
+| [`Revisions`](#revisions) | final readonly class | 86 | Revision rows: the plain snapshots and the per-author autosave slots. |
 | [`Site`](#site) | final readonly class | 54 | Site-wide options and the site's clock. |
 | [`Slug`](#slug) | final class | 56 |  |
 | [`TermLinks`](#termlinks) | final class | 39 | A post's terms rendered as links, in the two shapes the reference |
@@ -96,12 +96,13 @@ The class list a comment's list item carries, in the reference's order.
 
 What a comment listing is narrowed to. Every field is optional; the id
 lists keep zero, because post=0 means "comments without a post". Dates
-are site-local "Y-m-d H:i:s", after and before both exclusive.
+are site-local "Y-m-d H:i:s", after and before both exclusive. With publicPostsOnly the
+comments of unpublished or protected posts are left out.
 
 Used by: `Minn\Content\Comments`, `Minn\Rest\CommentsController`
 
 ```php
-__construct(array $post = array ( ), array $include = array ( ), array $exclude = array ( ), array $parent = array ( ), array $parentExclude = array ( ), array $author = array ( ), array $authorExclude = array ( ), string $authorEmail = '', string $type = 'comment', string $search = '', string $after = '', string $before = '')
+__construct(array $post = array ( ), array $include = array ( ), array $exclude = array ( ), array $parent = array ( ), array $parentExclude = array ( ), array $author = array ( ), array $authorExclude = array ( ), string $authorEmail = '', string $type = 'comment', string $search = '', string $after = '', string $before = '', bool $publicPostsOnly = false)
 ```
 - `@param list<int> $post`
 - `@param list<int> $include`
@@ -123,6 +124,11 @@ __construct(array $post = array ( ), array $include = array ( ), array $exclude 
 - readonly `string $search`
 - readonly `string $after`
 - readonly `string $before`
+- readonly `bool $publicPostsOnly`
+
+### `onPublicPosts(): self`
+
+The same filter kept to comments on published, unprotected posts: what an anonymous reader may see.
 
 ### static `all(): self`
 
@@ -263,11 +269,10 @@ One meta value of a comment, or null when it has none.
 
 Adds a meta row; a second row with the same key is allowed, as the reference allows it.
 
-### `page(array $approvedTokens, int $page, int $perPage, bool $publicPostsOnly = false, ?Minn\Content\CommentFilter $filter = NULL): array`
+### `page(array $approvedTokens, int $page, int $perPage, ?Minn\Content\CommentFilter $filter = NULL): array`
 
 One page of comments carrying the given approval tokens, newest first,
-narrowed by the filter; with $publicPostsOnly the comments of unpublished
-or password-protected posts are left out.
+narrowed by the filter.
 
 - `@param list<string> $approvedTokens`
 - `@return array{comments: list<CommentRecord>, total: int}`
@@ -335,7 +340,7 @@ stored row; the approval shorthands hold/approve become the stored 0/1.
 - `@param array<string, mixed> $current`
 - `@return array<string, mixed>`
 
-Internals: `idFilter()` (private, line 96)
+Internals: `idFilter()` (private, line 95)
 
 
 ## ContentScan
@@ -428,13 +433,19 @@ texturized (a feed texturizes first, so its inline code stays raw). A hand-writt
 
 Used by: `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Front\Feeds`, `Minn\Front\Renderer`, `Minn\Rest\PostObject`
 
-### static `render(Minn\Content\PostRecord $post, bool $stopAtMore = true, bool $forFeed = false): string`
+### static `render(Minn\Content\PostRecord $post): string`
 
 The more tag ends a listing's excerpt but not a feed's, and a feed
 texturizes before the tags go (so inline code keeps straight quotes)
 where a listing texturizes the finished text.
 
-Internals: `recordRendered()` (private, line 78), `allowedMarkup()` (private, line 88)
+### static `forFeed(Minn\Content\PostRecord $post): string`
+
+The excerpt as a feed carries it: the whole content counts (no stop at
+the more tag), texturize runs before the tags are stripped, and the
+paragraph is not texturized again.
+
+Internals: `source()` (private, line 62), `words()` (private, line 73), `recordRendered()` (private, line 96), `allowedMarkup()` (private, line 106)
 
 
 ## Inventory
@@ -749,11 +760,15 @@ folder there as active); only a pure extension uses the engine's list.
 
 Whether a plugin, by file, or a Minn extension is active.
 
-### `setActive(Minn\Extension\Manifest|string $plugin, bool $active): void`
+### `activate(Minn\Extension\Manifest|string $plugin): void`
 
 Records a plugin or an extension as active or not, in the option each kind uses.
 
-Internals: `setFileActive()` (private, line 74)
+### `deactivate(Minn\Extension\Manifest|string $plugin): void`
+
+Records a plugin, by file, or a Minn extension as inactive; an extension also deactivates the plugins it replaced.
+
+Internals: `ownWithout()` (private, line 80), `addFile()` (private, line 86), `removeFile()` (private, line 93), `filesWithout()` (private, line 99)
 
 
 ## PostClasses
@@ -1033,9 +1048,13 @@ term_taxonomy.count is stored and trusted on read, so every status change refres
 
 Whether the post is in the sticky_posts option.
 
-### `setSticky(int $id, bool $on): void`
+### `stick(int $id): void`
 
 Rewrites the sticky_posts option with or without one id.
+
+### `unstick(int $id): void`
+
+Takes a post off the sticky list.
 
 ### `setFormat(int $id, string $format): void`
 
@@ -1068,6 +1087,8 @@ Moves every post of one author to another.
 
 Hard-deletes a post with its revisions and its meta.
 
+Internals: `saveSticky()` (private, line 184)
+
 
 ## Posts
 
@@ -1087,9 +1108,15 @@ __construct(Minn\Db $db)
 
 The post with this id, or null.
 
-### `findByName(string $name, array $types, bool $publishedOnly = true): ?Minn\Content\PostRecord`
+### `findByName(string $name, array $types): ?Minn\Content\PostRecord`
 
 The post with this slug among the given types; published only unless asked otherwise.
+
+- `@param list<string> $types`
+
+### `findByNameAnyStatus(string $name, array $types): ?Minn\Content\PostRecord`
+
+The post with this slug among the given types in any status but trash, or null. @param list<string> $types
 
 - `@param list<string> $types`
 
@@ -1102,10 +1129,16 @@ its `?p=` form).
 
 - `@param list<string> $types`
 
-### `pageByPath(array $segments, bool $publishedOnly = true): ?Minn\Content\PostRecord`
+### `pageByPath(array $segments): ?Minn\Content\PostRecord`
 
 Walks a page hierarchy: ["sample-page", "docs"] finds the page named
 docs whose parent is named sample-page at the root.
+
+- `@param list<string> $segments`
+
+### `pageByPathAnyStatus(array $segments): ?Minn\Content\PostRecord`
+
+The page at a slug path in any status but trash, or null. @param list<string> $segments
 
 - `@param list<string> $segments`
 
@@ -1154,9 +1187,13 @@ The latest plain (non-autosave) revision id, or 0.
 
 Whether a live post carries an autosave newer than its saved state.
 
-### `adjacent(Minn\Content\PostRecord $post, bool $next): ?Minn\Content\PostRecord`
+### `next(Minn\Content\PostRecord $post): ?Minn\Content\PostRecord`
 
 The adjacent published post by date; previous = older, next = newer.
+
+### `previous(Minn\Content\PostRecord $post): ?Minn\Content\PostRecord`
+
+The published post of the same type before this one, by date then id, or null.
 
 ### `pageTree(): array`
 
@@ -1171,10 +1208,14 @@ pages.
 - `@param list<int> $stickyIds`
 - `@return array{posts: list<array>, total: int}`
 
-### `lastModified(?string $type, bool $gmt): ?string`
+### `lastModified(?string $type): ?string`
 
 The newest modification time among published posts, for
 get_lastpostmodified: one type or all of them, blog or GMT column.
+
+### `lastModifiedGmt(?string $type): ?string`
+
+The newest GMT modified stamp among published posts of a type, or of the three core types.
 
 ### `newestAutosave(int $postId, int $userId): ?Minn\Content\PostRecord`
 
@@ -1188,7 +1229,7 @@ Reusable blocks (wp_block rows) in one status, newest first, capped at 100.
 
 The slug of the post's first category, or null.
 
-Internals: `record()` (private, line 21), `scope()` (private, line 180), `like()` (private, line 206)
+Internals: `record()` (private, line 21), `byName()` (private, line 49), `byPath()` (private, line 96), `scope()` (private, line 202), `like()` (private, line 228), `neighbour()` (private, line 303), `latest()` (private, line 376)
 
 
 ## Reader
@@ -1254,15 +1295,21 @@ __construct(Minn\Db $db, Minn\Content\PostWriter $writer, Minn\Content\Site $sit
 ```
 
 
-### `of(int $parentId, bool $autosaves): array`
+### `revisionsOf(int $parentId): array`
 
 The revisions, or the autosaves, of a post, newest first, as rows.
 
 - `@return list<array> newest first`
 
+### `autosavesOf(int $parentId): array`
+
+The autosaves of a post, newest first, as rows.
+
 ### `saveAutosave(int $parentId, int $userId, string $title, string $content, string $excerpt): int`
 
 One autosave slot per author: updated in place when it exists.
+
+Internals: `named()` (private, line 35)
 
 
 ## Site

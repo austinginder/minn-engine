@@ -33,9 +33,10 @@ final readonly class UserObject
     }
 
     /** The wp/v2 user shape in the view context. */
-    public function view(UserRecord $u, bool $isSelf = false): array
+    public function view(UserRecord $u): array
     {
         $id = $u->id;
+        $isSelf = $this->caller->id() === $id;
         return [
             'id' => $id,
             'name' => $u->displayName,
@@ -64,7 +65,8 @@ final readonly class UserObject
     public function edit(UserRecord $u): array
     {
         $id = $u->id;
-        $view = $this->view($u, true);
+        $view = $this->view($u);
+        $view['_links']['self'][0]['targetHints']['allow'] = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
         $capabilities = $this->caller->capabilities();
         $roles = $capabilities->rolesOf($id);
         $all = $capabilities->primitivesOf($id);

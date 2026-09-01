@@ -298,7 +298,7 @@ final class Interactivity
             } elseif (str_starts_with($name, 'data-wp-class--')) {
                 $result = $this->evaluate($value, 'class');
                 if ($result !== self::UNRESOLVED) {
-                    $editor->toggleClass(substr($name, 15), (bool) $result);
+                    $result ? $editor->addClass(substr($name, 15)) : $editor->removeClass(substr($name, 15));
                 }
             } elseif (str_starts_with($name, 'data-wp-style--')) {
                 $result = $this->evaluate($value, 'style');

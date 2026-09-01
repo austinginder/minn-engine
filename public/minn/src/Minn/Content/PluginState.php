@@ -52,32 +52,52 @@ final readonly class PluginState
     }
 
     /** Records a plugin or an extension as active or not, in the option each kind uses. */
-    public function setActive(Manifest|string $plugin, bool $active): void
+    public function activate(Manifest|string $plugin): void
     {
         if ($plugin instanceof Manifest) {
-            $own = json_decode((string) ($this->site->option('minn_active_extensions') ?? '[]'), true);
-            $own = array_values(array_diff(is_array($own) ? array_map('strval', $own) : [], [$plugin->slug]));
-            if ($active) {
-                $own[] = $plugin->slug;
-            } else {
-                foreach ($plugin->replaces as $file) {
-                    $this->setFileActive($file, false);
-                }
-            }
-            $this->site->setOption('minn_active_extensions', (string) json_encode($own));
+            $this->site->setOption('minn_active_extensions', (string) json_encode([...$this->ownWithout($plugin), $plugin->slug]));
         } else {
-            $this->setFileActive($plugin, $active);
+            $this->addFile($plugin);
         }
         $this->extensions->refresh();
     }
 
-    private function setFileActive(string $file, bool $active): void
+    /** Records a plugin, by file, or a Minn extension as inactive; an extension also deactivates the plugins it replaced. */
+    public function deactivate(Manifest|string $plugin): void
     {
-        $list = array_values(array_diff(Serialized::stringList($this->site->option('active_plugins')), [$file]));
-        if ($active) {
-            $list[] = $file;
-            sort($list, SORT_STRING);
+        if ($plugin instanceof Manifest) {
+            foreach ($plugin->replaces as $file) {
+                $this->removeFile($file);
+            }
+            $this->site->setOption('minn_active_extensions', (string) json_encode($this->ownWithout($plugin)));
+        } else {
+            $this->removeFile($plugin);
         }
+        $this->extensions->refresh();
+    }
+
+    /** The active extensions minus one. @return list<string> */
+    private function ownWithout(Manifest $plugin): array
+    {
+        $own = json_decode((string) ($this->site->option('minn_active_extensions') ?? '[]'), true);
+        return array_values(array_diff(is_array($own) ? array_map('strval', $own) : [], [$plugin->slug]));
+    }
+
+    private function addFile(string $file): void
+    {
+        $list = [...$this->filesWithout($file), $file];
+        sort($list, SORT_STRING);
         $this->site->setOption('active_plugins', Serialized::serializeStringList($list));
+    }
+
+    private function removeFile(string $file): void
+    {
+        $this->site->setOption('active_plugins', Serialized::serializeStringList($this->filesWithout($file)));
+    }
+
+    /** The active plugin files minus one. @return list<string> */
+    private function filesWithout(string $file): array
+    {
+        return array_values(array_diff(Serialized::stringList($this->site->option('active_plugins')), [$file]));
     }
 }

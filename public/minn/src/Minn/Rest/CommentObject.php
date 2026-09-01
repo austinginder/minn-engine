@@ -29,8 +29,9 @@ final readonly class CommentObject
     }
 
     /** The wp/v2 comment shape, with the edit-context fields when asked. */
-    public function build(CommentRecord $c, bool $edit): array
+    public function build(CommentRecord $c, Context $context): array
     {
+        $edit = $context->isEdit();
         $id = $c->id;
         $postId = $c->postId;
         $post = $this->posts->find($postId);

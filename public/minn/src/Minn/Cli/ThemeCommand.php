@@ -301,7 +301,7 @@ final class ThemeCommand
             if ($existed) {
                 WP_CLI::log('Removing the old version of the theme...');
             }
-            $folder = $packages->installTheme($source, $force, $version);
+            $folder = ($force ? $packages->replaceTheme($source, $version) : $packages->installTheme($source, $version));
         } catch (RestError $error) {
             WP_CLI::warning($source . ': ' . $error->getMessage());
             WP_CLI::warning("The '{$source}' theme could not be found.");
@@ -324,7 +324,7 @@ final class ThemeCommand
             }
             WP_CLI::log('Unpacking the package...');
             WP_CLI::log('Installing the theme...');
-            $result = $packages->unpack($bytes, 'theme', $force);
+            $result = ($force ? $packages->unpackReplacing($bytes, 'theme') : $packages->unpack($bytes, 'theme'));
         } catch (RestError $error) {
             if ($error->status === 409) {
                 $folder = basename((string) ($error->extra['destination'] ?? ''));

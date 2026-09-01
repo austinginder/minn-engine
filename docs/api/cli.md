@@ -12,7 +12,7 @@ the wp verbs the engine answers itself
 | [`MaintenanceCommand`](#maintenancecommand) | final class | 65 | `wp maintenance-mode`: the `.maintenance` marker in the webroot. The |
 | [`MinnCommand`](#minncommand) | final class | 302 | Identifies the engine. |
 | [`OptionCommand`](#optioncommand) | final class | 191 | Options, read and written straight to the options table. Serialized |
-| [`PluginCommand`](#plugincommand) | final class | 474 | `wp plugin list\|install\|update\|activate\|deactivate\|delete`: the inventory and the fleet's install/update/delete. |
+| [`PluginCommand`](#plugincommand) | final class | 475 | `wp plugin list\|install\|update\|activate\|deactivate\|delete`: the inventory and the fleet's install/update/delete. |
 | [`RewriteCommand`](#rewritecommand) | final class | 52 | `wp rewrite flush\|structure`: permalink_structure is the engine's |
 | [`Runtime`](#runtime) | final class | 38 | The engine, booted for a command: reads the site's wp-config.php (which |
 | [`SearchReplaceCommand`](#searchreplacecommand) | final class | 143 | `wp search-replace`: walks every string column, including serialized |
@@ -589,7 +589,7 @@ options:
 - yaml
 ---
 
-Internals: `switch()` (private, line 328), `installOne()` (private, line 360), `installArchive()` (private, line 420), `pinVersion()` (private, line 449), `activateFolder()` (private, line 473)
+Internals: `switch()` (private, line 328), `installOne()` (private, line 361), `installArchive()` (private, line 421), `pinVersion()` (private, line 450), `activateFolder()` (private, line 474)
 
 
 ## RewriteCommand

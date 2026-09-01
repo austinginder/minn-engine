@@ -39,31 +39,49 @@ final class Excerpt
      * texturizes before the tags go (so inline code keeps straight quotes)
      * where a listing texturizes the finished text.
      */
-    public static function render(PostRecord $post, bool $stopAtMore = true, bool $forFeed = false): string
+    public static function render(PostRecord $post): string
     {
-        $source = $post->excerpt;
-        if ($source === '') {
-            $blocks = Parser::parse($post->content);
-            self::recordRendered($blocks);
-            $source = self::allowedMarkup($blocks);
-            $more = strpos($source, '<!--more-->');
-            if ($stopAtMore && $more !== false) {
-                $source = substr($source, 0, $more);
-            }
+        $source = self::source($post);
+        $more = $post->excerpt === '' ? strpos($source, '<!--more-->') : false;
+        $text = self::words($more === false ? $source : substr($source, 0, $more));
+        return $text === '' ? '' : Texturize::html('<p>' . $text . "</p>\n");
+    }
+
+    /**
+     * The excerpt as a feed carries it: the whole content counts (no stop at
+     * the more tag), texturize runs before the tags are stripped, and the
+     * paragraph is not texturized again.
+     */
+    public static function forFeed(PostRecord $post): string
+    {
+        $text = self::words(Texturize::html(self::source($post)));
+        return $text === '' ? '' : '<p>' . $text . "</p>\n";
+    }
+
+    /** The stored excerpt, or the content's allowed markup. */
+    private static function source(PostRecord $post): string
+    {
+        if ($post->excerpt !== '') {
+            return $post->excerpt;
         }
+        $blocks = Parser::parse($post->content);
+        self::recordRendered($blocks);
+        return self::allowedMarkup($blocks);
+    }
+
+    /** The first 55 words with tags gone, an ellipsis when cut, empty for none. */
+    private static function words(string $source): string
+    {
         $text = preg_replace_callback(
             '/<\/?([a-zA-Z][\w-]*)[^>]*>|<!--.*?-->/s',
             static fn (array $m) => isset($m[1]) && in_array(strtolower($m[1]), self::INLINE, true) ? '' : ' ',
-            $forFeed ? Texturize::html($source) : $source,
+            $source,
         );
         $words = preg_split('/\s+/', trim((string) $text), -1, PREG_SPLIT_NO_EMPTY);
         if ($words === []) {
             return '';
         }
-        $text = count($words) > 55
-            ? implode(' ', array_slice($words, 0, 55)) . ' [&hellip;]'
-            : implode(' ', $words);
-        return $forFeed ? '<p>' . $text . "</p>\n" : Texturize::html('<p>' . $text . "</p>\n");
+        return count($words) > 55 ? implode(' ', array_slice($words, 0, 55)) . ' [&hellip;]' : implode(' ', $words);
     }
 
     /** @param list<Block> $blocks */

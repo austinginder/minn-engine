@@ -4,7 +4,7 @@ uploads, image sizes and attachment metadata
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Canvas`](#canvas) | final readonly class | 86 | One GD bitmap and the operations the media layer needs on it. Every |
+| [`Canvas`](#canvas) | final readonly class | 98 | One GD bitmap and the operations the media layer needs on it. Every |
 | [`Gallery`](#gallery) | final class | 54 | The classic `[gallery]` shortcode's markup. Every gallery on a page is |
 | [`Images`](#images) | final readonly class | 67 | GD sub-size generation from the size options the site stores. |
 | [`Kind`](#kind) | final class | 53 | Whether an attachment is an image, audio, video, or a given extension, judged by its MIME type first and its file extension second. |
@@ -45,9 +45,17 @@ A canvas cut to a rectangle, resized to a target when given.
 
 A canvas turned by an angle, or null when GD refuses.
 
-### `flip(bool $vertical, bool $horizontal): self`
+### `flipVertical(): self`
 
 A canvas mirrored on either axis.
+
+### `flipHorizontal(): self`
+
+A canvas mirrored left to right.
+
+### `copy(): self`
+
+An untouched copy of the canvas.
 
 ### `write(string $path, string $mime, int $quality): bool`
 
@@ -57,7 +65,7 @@ Writes the bitmap in the given format; the directory is created when missing.
 
 Writes the image to the output in a format, at a quality.
 
-Internals: `encode()` (private, line 90)
+Internals: `flipped()` (private, line 79), `encode()` (private, line 102)
 
 
 ## Gallery

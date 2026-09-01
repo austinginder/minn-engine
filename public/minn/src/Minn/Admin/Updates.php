@@ -42,17 +42,21 @@ final class Updates
     }
 
     /** The stored answer, refreshed when older than the TTL or absent. */
-    public function state(bool $fresh = false): array
+    public function state(): array
     {
-        if ($this->state !== null && !$fresh) {
+        if ($this->state !== null) {
             return $this->state;
         }
-        if (!$fresh) {
-            $stored = json_decode((string) ($this->site->option(self::OPTION) ?? ''), true);
-            if (is_array($stored) && (int) ($stored['checked'] ?? 0) > time() - self::TTL) {
-                return $this->state = $stored;
-            }
+        $stored = json_decode((string) ($this->site->option(self::OPTION) ?? ''), true);
+        if (is_array($stored) && (int) ($stored['checked'] ?? 0) > time() - self::TTL) {
+            return $this->state = $stored;
         }
+        return $this->refresh();
+    }
+
+    /** Asks wordpress.org now, whatever the cache says, and keeps the answer. */
+    public function refresh(): array
+    {
         return $this->state = $this->check();
     }
 
@@ -191,14 +195,30 @@ final class Updates
      *
      * @return list<string> the list after the change
      */
-    public function setAuto(string $type, string $asset, bool $enabled): array
+    public function enableAuto(string $type, string $asset): array
+    {
+        return $this->saveAuto($type, $asset, [...$this->auto($type), $asset]);
+    }
+
+    /** Takes one plugin or theme off the auto-update list; the list after. */
+    public function disableAuto(string $type, string $asset): array
+    {
+        return $this->saveAuto($type, $asset, array_diff($this->auto($type), [$asset]));
+    }
+
+    /**
+     * Stores an auto-update list, kept to assets that exist; the asset being
+     * changed must be one of them.
+     *
+     * @param list<string> $list
+     * @return list<string>
+     */
+    private function saveAuto(string $type, string $asset, array $list): array
     {
         $known = $type === 'plugin' ? array_keys($this->pluginVersions()) : array_keys($this->themeHeaders());
         if (!in_array($asset, $known, true)) {
             throw new RestError('minn_auto_updates_unknown', $type === 'plugin' ? 'Unknown plugin.' : 'Unknown theme.', 404);
         }
-        $list = $this->auto($type);
-        $list = $enabled ? [...$list, $asset] : array_diff($list, [$asset]);
         $list = array_values(array_unique(array_intersect($list, $known)));
         $this->site->setOption("auto_update_{$type}s", Serialized::serializeStringList($list));
         return $list;
@@ -267,7 +287,7 @@ final class Updates
         if (!str_starts_with($package, self::PACKAGE_HOST)) {
             throw new RestError('update_failed', 'The offer carries no wordpress.org package.', 500);
         }
-        $result = $this->packages->unpack($this->packages->fetch($package), $kind, true);
+        $result = $this->packages->unpackReplacing($this->packages->fetch($package), $kind);
         if ($result['folder'] !== $folder) {
             throw new RestError('update_failed', "The package unpacked as {$result['folder']}, not {$folder}.", 500);
         }

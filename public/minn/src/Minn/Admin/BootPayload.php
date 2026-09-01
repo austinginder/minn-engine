@@ -54,7 +54,7 @@ final readonly class BootPayload
         $plugin = $this->pluginPayload();
         // WooCommerce runs as code on the runtime; the Commerce views key off
         // these, and wc/v3 answers through the plugin's own REST controllers.
-        $wc = is_bool($plugin['wc'] ?? null) ? $plugin['wc'] : (Runtime::booted() && class_exists('WooCommerce', false));
+        $wc = self::commerce($plugin);
 
         $payload = [
             // The pretty REST base: the client appends "wp/v2/posts?context=edit&…",
@@ -73,7 +73,7 @@ final readonly class BootPayload
             'i18n' => $i18n === [] ? new stdClass() : $i18n,
             'i18nPlural' => $plural,
             'languages' => $this->translations?->installed() ?? [['', 'Site default'], ['en_US', 'English (United States)']],
-            'caps' => $this->caps($userId, $wc),
+            'caps' => $this->caps($userId, $plugin),
             'ownOnly' => [],
             'multisite' => false,
             'wc' => $wc,
@@ -126,14 +126,26 @@ final readonly class BootPayload
     }
 
     /**
+     * Whether WooCommerce is running: the plugin's own answer when it gave one,
+     * else whether the runtime loaded the class.
+     *
+     * @param array<string, mixed>|null $plugin
+     */
+    private static function commerce(?array $plugin): bool
+    {
+        return is_bool($plugin['wc'] ?? null) ? $plugin['wc'] : (Runtime::booted() && class_exists('WooCommerce', false));
+    }
+
+    /**
      * What the app may show, each key a capability the reference gates the
      * same view on. The commerce caps mirror the plugin's own conditions:
      * WC loaded, the WC capability, and for coupons the store having them enabled.
      *
      * @return array<string, bool>
      */
-    private function caps(int $userId, bool $wc): array
+    private function caps(int $userId, ?array $plugin): array
     {
+        $wc = self::commerce($plugin);
         $can = fn (string $capability): bool => $this->capabilities->can($userId, $capability);
         return [
 

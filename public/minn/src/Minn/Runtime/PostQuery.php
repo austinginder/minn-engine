@@ -168,7 +168,7 @@ final class PostQuery
         }
         if (!empty($q['pagename'])) {
             $segments = array_values(array_filter(explode('/', trim((string) $q['pagename'], '/')), static fn ($s) => $s !== ''));
-            $page = (new \Minn\Content\Posts($this->db))->pageByPath($segments, false);
+            $page = (new \Minn\Content\Posts($this->db))->pageByPathAnyStatus($segments);
             $this->where[] = 'p.ID = ?';
             $this->params[] = $page === null ? 0 : (int) $page['ID'];
         }

@@ -36,7 +36,7 @@ final readonly class LanguageController
         if ($for > 0 && ($for === $self || !$this->caller->can('edit_users'))) {
             $for = 0;
         }
-        return Reply::answer($request, $this->translations->payload($for > 0 ? $for : $self, $this->caller->can('manage_options')));
+        return Reply::answer($request, $this->caller->can('manage_options') ? $this->translations->payload($for > 0 ? $for : $self) : $this->translations->readOnlyPayload($for > 0 ? $for : $self));
     }
 
     /** The slice of the boot payload a language switch repaints from. */

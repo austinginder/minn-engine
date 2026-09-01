@@ -4,7 +4,7 @@ the WordPress runtime plugins load against
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Abilities`](#abilities) | final class | 88 | The abilities registry behind the wp_*_ability facade: categories and |
+| [`Abilities`](#abilities) | final class | 111 | The abilities registry behind the wp_*_ability facade: categories and |
 | [`Assets`](#assets) | final class | 292 | The registry behind wp_register_/wp_enqueue_ for scripts and styles: |
 | [`Avatar`](#avatar) | final class | 62 | Avatars the way get_avatar_data and get_avatar decide them: the argument |
 | [`BlockFilters`](#blockfilters) | final class | 82 | The block-level filters plugin code hooks (pre_render_block, |
@@ -18,17 +18,17 @@ the WordPress runtime plugins load against
 | [`Constants`](#constants) | final class | 52 | The constants plugin code expects: the fixed set from data/constants.json |
 | [`CronTable`](#crontable) | final class | 113 | The cron option's shape, operated on as data: timestamp => hook => key => |
 | [`DbDelta`](#dbdelta) | final readonly class | 125 | dbDelta as the reference does it: a CREATE TABLE statement creates the |
-| [`Hooks`](#hooks) | final class | 248 | The hook registry plugin code registers into and the engine fires. |
+| [`Hooks`](#hooks) | final class | 251 | The hook registry plugin code registers into and the engine fires. |
 | [`Interactivity`](#interactivity) | final class | 509 | Server-side directive processing for the Interactivity API: the state and |
 | [`MainQuery`](#mainquery) | final class | 34 | The query variables the reference's main query would carry for a URL the |
 | [`Meta`](#meta) | final readonly class | 133 | The four meta tables behind get_metadata and friends: reads by object, and the row-level writes the update and delete rules need. |
 | [`NavMenu`](#navmenu) | final class | 303 | Nav-menu item decoration for wp_nav_menu(): the reference's class tokens |
 | [`OEmbed`](#oembed) | final class | 92 | oEmbed as data: provider matching against the wildcard table, response parsing, and the markup an oEmbed payload becomes. |
 | [`ObjectCache`](#objectcache) | final class | 52 | The per-request object cache behind wp_cache_*: groups of keys, nothing persistent. |
-| [`Options`](#options) | final class | 150 | Options as plugin code sees them: PHP values, decoded from the stored |
+| [`Options`](#options) | final class | 161 | Options as plugin code sees them: PHP values, decoded from the stored |
 | [`PageMenu`](#pagemenu) | final class | 40 | The page-list menu a classic theme falls back to when no menu is |
 | [`Pages`](#pages) | final class | 113 | get_pages() as the reference shapes it: its arguments as a post query, and the tree order of the result. |
-| [`Patterns`](#patterns) | final class | 147 | The block pattern, pattern category, and block style registries as data. |
+| [`Patterns`](#patterns) | final class | 161 | The block pattern, pattern category, and block style registries as data. |
 | [`PlaceholderTrace`](#placeholdertrace) | final class | 27 | Records every call into a generated placeholder while a site opts in by |
 | [`Plugins`](#plugins) | final class | 166 | Loads the site's plugins into the runtime the way the reference does: |
 | [`PostInsert`](#postinsert) | final readonly class | 160 | The decisions behind wp_insert_post: which columns a postarr fills, when |
@@ -40,13 +40,13 @@ the WordPress runtime plugins load against
 | [`Refusal`](#refusal) | final readonly class | 6 | A refused operation, the way plugin code expects to read it: a code, a message, optional data. The facade turns it into WP_Error. |
 | [`Registry`](#registry) | final class | 382 | Post types, taxonomies, and statuses as plugin code registers and reads |
 | [`Runtime`](#runtime) | final class | 210 | The WordPress runtime the engine offers plugin code: the procedural |
-| [`ScriptModules`](#scriptmodules) | final class | 297 | The script modules registry: registrations with typed dependencies, the |
+| [`ScriptModules`](#scriptmodules) | final class | 308 | The script modules registry: registrations with typed dependencies, the |
 | [`ScriptPack`](#scriptpack) | final class | 146 | The site-supplied script pack: the `wp-*` JavaScript packages the engine |
 | [`Shortcodes`](#shortcodes) | final class | 132 | The shortcode registry plugin code fills with add_shortcode, and the |
 | [`SymbolGap`](#symbolgap) | final readonly class | 69 | The part of the reference's interface the runtime does not answer: names in |
 | [`SymbolTable`](#symboltable) | final class | 60 | What a folder's PHP names, collected while its tokens are read: the |
 | [`Symbols`](#symbols) | final class | 222 | A static read of what a plugin's PHP calls: global functions and classes |
-| [`TagEditor`](#tageditor) | final class | 134 | Edits one start tag's attributes in place the way the reference's tag |
+| [`TagEditor`](#tageditor) | final class | 149 | Edits one start tag's attributes in place the way the reference's tag |
 | [`TermQuery`](#termquery) | final readonly class | 393 | Term reads in the shapes plugin code asks for: get_terms() arguments to |
 | [`TermWriter`](#termwriter) | final readonly class | 146 | The decisions behind wp_insert_term, wp_update_term, wp_delete_term, and |
 | [`TreeWalk`](#treewalk) | final class | 74 | The Walker contract's traversal: elements keyed by the walker's |
@@ -76,23 +76,35 @@ Registers an ability category.
 
 Registers an ability, or null when the name is taken or malformed.
 
-### static `unregister(string $name, bool $category = false): bool`
+### static `unregister(string $name): bool`
 
 Removes an ability or a category.
 
-### static `find(string $name, bool $category = false): ?array`
+### static `unregisterCategory(string $slug): bool`
+
+Removes a category.
+
+### static `find(string $name): ?array`
 
 One ability or category, or null.
 
 - `@return array<string, mixed>|null`
 
-### static `all(bool $categories = false): array`
+### static `findCategory(string $slug): ?array`
+
+One category, or null.
+
+### static `all(): array`
 
 Every ability, or every category.
 
 - `@return array<string, array>`
 
-Internals: `state()` (private, line 18), `save()` (private, line 24)
+### static `allCategories(): array`
+
+Every category.
+
+Internals: `state()` (private, line 18), `save()` (private, line 24), `forget()` (private, line 77)
 
 
 ## Assets
@@ -685,9 +697,13 @@ Called with each hook name the first time a callback registers under it.
 
 The live registry, for a hook object to share by reference.
 
-### `counters(bool $actions): array`
+### `actionCounters(): array`
 
 How often each action, or each filter, has run, by hook.
+
+### `filterCounters(): array`
+
+How often each filter has run, by hook, by reference for the facade's global.
 
 ### `stackRef(): array`
 
@@ -747,7 +763,7 @@ Every hook with callbacks, by name.
 
 - `@return array<string, array<int, list<callable>>> a read-only view for diagnostics`
 
-Internals: `run()` (private, line 192), `nextPriority()` (private, line 228), `fireAll()` (private, line 240), `id()` (private, line 254)
+Internals: `run()` (private, line 195), `nextPriority()` (private, line 231), `fireAll()` (private, line 243), `id()` (private, line 257)
 
 
 ## Interactivity
@@ -1032,9 +1048,13 @@ Adds an option only when it is unset.
 
 False when the value is unchanged, as the reference reports.
 
-### `setAutoload(string $name, bool $on): bool`
+### `markAutoload(string $name): bool`
 
 Flips the autoload column; false when the option is missing or already so.
+
+### `unmarkAutoload(string $name): bool`
+
+Stops an option loading on every request; false when it already did not, or is unset.
 
 ### `delete(string $name): bool`
 
@@ -1058,6 +1078,8 @@ What the reference stores: arrays serialized, scalars as their string form.
 ### static `fromStorage(string $raw): mixed`
 
 A stored option value decoded the way the reference reads it.
+
+Internals: `switchAutoload()` (private, line 103)
 
 
 ## PageMenu
@@ -1130,7 +1152,7 @@ Entries registered after init are remembered separately, because the
 editor asks for those on their own.
 
 
-### `registerPattern(mixed $name, mixed $properties, bool $afterInit): ?Minn\Runtime\Refusal`
+### `registerPattern(mixed $name, mixed $properties): ?Minn\Runtime\Refusal`
 
 Registers a block pattern, or the refusal.
 
@@ -1138,17 +1160,21 @@ Registers a block pattern, or the refusal.
 
 Forgets a pattern.
 
-### `pattern(string $name, bool $afterInitOnly = false): ?array`
+### `pattern(string $name): ?array`
 
 One pattern, or null.
 
-### `patterns(bool $afterInitOnly = false): array`
+### `patterns(): array`
 
 Every pattern.
 
 - `@return list<array<string, mixed>>`
 
-### `registerCategory(mixed $name, mixed $properties, bool $afterInit): ?Minn\Runtime\Refusal`
+### `patternsAfterInit(): array`
+
+The patterns registered after init, which the editor lists separately.
+
+### `registerCategory(mixed $name, mixed $properties): ?Minn\Runtime\Refusal`
 
 Registers a pattern category, or the refusal.
 
@@ -1160,11 +1186,15 @@ Forgets a category.
 
 One category, or null.
 
-### `categories(bool $afterInitOnly = false): array`
+### `categories(): array`
 
 Every category.
 
 - `@return list<array<string, mixed>>`
+
+### `categoriesAfterInit(): array`
+
+The categories registered after init.
 
 ### `registerStyle(mixed $blocks, mixed $properties): ?Minn\Runtime\Refusal`
 
@@ -1629,7 +1659,7 @@ The WordPress runtime the engine offers plugin code: the procedural
 facade under minn/wp-api/ plus the services it delegates to. One per
 request; the facade reaches it through these statics.
 
-Used by: `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Engine`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\PluginRules`, `Minn\Front\Resolver`, `Minn\Rest\Api`, `Minn\Rest\Services`, `Minn\Runtime\Abilities`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\Constants`, `Minn\Runtime\Interactivity`, `Minn\Runtime\NavMenu`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostQuery`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\TermWriter`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
+Used by: `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Engine`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\PluginRules`, `Minn\Front\Resolver`, `Minn\Rest\Api`, `Minn\Rest\Services`, `Minn\Runtime\Abilities`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\Constants`, `Minn\Runtime\Interactivity`, `Minn\Runtime\NavMenu`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostQuery`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\TermWriter`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Site $site, ?Minn\Http\Request $request, Minn\Content\Reader $reader, Minn\Auth\Capabilities $capabilities, string $engineDir, string $absPath, string $version, bool $isAdmin = false)
@@ -1769,9 +1799,13 @@ Forgets a module.
 
 Sets a module's fetch priority.
 
-### `setInFooter(string $id, bool $inFooter): bool`
+### `moveToFooter(string $id): bool`
 
 Moves a module to the footer or the head.
+
+### `moveToHead(string $id): bool`
+
+Prints a module in the head; false when it is not registered.
 
 ### `queue(): array`
 
@@ -1809,7 +1843,7 @@ The script-module-data tags.
 
 The a11y module's tag, once.
 
-Internals: `printTags()` (private, line 215), `marked()` (private, line 245), `complete()` (private, line 257), `dependencies()` (private, line 279), `urlOf()` (private, line 297), `attr()` (private, line 302), `wrong()` (private, line 307)
+Internals: `placeIn()` (private, line 127), `printTags()` (private, line 226), `marked()` (private, line 256), `complete()` (private, line 268), `dependencies()` (private, line 290), `urlOf()` (private, line 308), `attr()` (private, line 313), `wrong()` (private, line 318)
 
 
 ## ScriptPack
@@ -2078,9 +2112,13 @@ true sets a bare boolean attribute.
 
 Removes an attribute.
 
-### `toggleClass(string $class, bool $on): void`
+### `addClass(string $class): void`
 
 Adds or removes a class.
+
+### `removeClass(string $class): void`
+
+Removes a class, and the attribute when it was the last one.
 
 ### `setStyle(string $property, ?string $value): void`
 
@@ -2090,7 +2128,7 @@ Sets or removes one inline style property.
 
 The tag as edited.
 
-Internals: `splice()` (private, line 132)
+Internals: `classes()` (private, line 99), `setClasses()` (private, line 106), `splice()` (private, line 147)
 
 
 ## TermQuery

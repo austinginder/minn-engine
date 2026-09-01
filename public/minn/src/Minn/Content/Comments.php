@@ -40,18 +40,17 @@ final readonly class Comments
 
     /**
      * One page of comments carrying the given approval tokens, newest first,
-     * narrowed by the filter; with $publicPostsOnly the comments of unpublished
-     * or password-protected posts are left out.
+     * narrowed by the filter.
      *
      * @param list<string> $approvedTokens
      * @return array{comments: list<CommentRecord>, total: int}
      */
-    public function page(array $approvedTokens, int $page, int $perPage, bool $publicPostsOnly = false, ?CommentFilter $filter = null): array
+    public function page(array $approvedTokens, int $page, int $perPage, ?CommentFilter $filter = null): array
     {
         $filter ??= CommentFilter::all();
         $params = [$approvedTokens];
         $from = "FROM {$this->db->table('comments')} c"
-            . ($publicPostsOnly ? " INNER JOIN {$this->db->table('posts')} p ON p.ID = c.comment_post_ID AND p.post_status = 'publish' AND p.post_password = ''" : '')
+            . ($filter->publicPostsOnly ? " INNER JOIN {$this->db->table('posts')} p ON p.ID = c.comment_post_ID AND p.post_status = 'publish' AND p.post_password = ''" : '')
             . ' WHERE c.comment_approved IN (?)';
         if ($filter->isPlainType()) {
             $from .= " AND c.comment_type IN ('', 'comment')";

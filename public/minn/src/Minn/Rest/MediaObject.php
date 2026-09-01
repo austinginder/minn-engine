@@ -33,8 +33,9 @@ final readonly class MediaObject
     }
 
     /** The wp/v2 media shape, with the edit-context fields when asked. */
-    public function build(PostRecord $p, bool $edit): array
+    public function build(PostRecord $p, Context $context): array
     {
+        $edit = $context->isEdit();
         $id = $p->id;
         $meta = Metadata::parse($this->posts->meta($id, '_wp_attachment_metadata'));
         $file = $this->posts->meta($id, '_wp_attached_file') ?? '';
