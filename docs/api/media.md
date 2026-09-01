@@ -10,7 +10,9 @@ uploads, image sizes and attachment metadata
 | [`Kind`](#kind) | final class | 52 | Whether an attachment is an image, audio, video, or a given extension, judged by its MIME type first and its file extension second. |
 | [`Metadata`](#metadata) | final class | 106 | The _wp_attachment_metadata blob: parsed by scanning for the shapes it |
 | [`Sizing`](#sizing) | final class | 207 | The image size arithmetic the media functions share: the crop or scale a |
+| [`Upload`](#upload) | final readonly class | 50 | One file arriving for the library, on either transport: a multipart |
 | [`Uploads`](#uploads) | final readonly class | 165 | The uploads directory: paths, URLs, the allowed types, and landing a file. |
+| [`Writer`](#writer) | final readonly class | 66 | Turns an Upload into an attachment: the file lands in the dated uploads |
 
 ## Canvas
 
@@ -180,6 +182,35 @@ The image sizes an attachment offers the editor, each with orientation. @param C
 - `@param Closure(string): (array|false) $downsize`
 
 
+## Upload
+
+`final readonly class Minn\Media\Upload` · `public/minn/src/Minn/Media/Upload.php`
+
+One file arriving for the library, on either transport: a multipart
+field named "file" (a temporary upload to move) or a raw body whose
+Content-Disposition names the file. The parent is read from the same
+request, wherever the client put it.
+
+```php
+__construct(string $filename, ?string $movedFrom, ?string $raw, int $parent = 0)
+```
+
+- readonly `string $filename`
+- readonly `?string $movedFrom`
+- readonly `?string $raw`
+- readonly `int $parent`
+
+### static `fromRequest(Minn\Http\Request $request): ?self`
+
+Null when the request carries no file.
+
+### `mime(): ?string`
+
+The mime type the extension maps to, or null for one the library refuses.
+
+### `isImage(): bool`
+
+
 ## Uploads
 
 `final readonly class Minn\Media\Uploads` · `public/minn/src/Minn/Media/Uploads.php`
@@ -232,4 +263,22 @@ wp-content, a relative upload_path under ABSPATH, or an absolute one;
 the URL likewise, with year/month subfolders when the site asks.
 
 - `@return array{path: string, url: string, subdir: string, basedir: string, baseurl: string, error: false}`
+
+
+## Writer
+
+`final readonly class Minn\Media\Writer` · `public/minn/src/Minn/Media/Writer.php`
+
+Turns an Upload into an attachment: the file lands in the dated uploads
+directory under a unique name, the row is inserted with the stored
+name as its title and slug, and an image gets its sub-sizes and the
+serialized metadata blob.
+
+```php
+__construct(Minn\Content\PostWriter $posts, Minn\Content\Site $site, Minn\Media\Uploads $uploads, Minn\Media\Images $images)
+```
+
+### `attach(Minn\Media\Upload $upload, int $authorId): int`
+
+The new attachment's id. The mime is the caller's to check first.
 

@@ -12971,6 +12971,82 @@
             ]
         },
         {
+            "name": "Minn\\Media\\Upload",
+            "short": "Upload",
+            "namespace": "Minn\\Media",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Media/Upload.php",
+            "lines": 50,
+            "doc": "One file arriving for the library, on either transport: a multipart\nfield named \"file\" (a temporary upload to move) or a raw body whose\nContent-Disposition names the file. The parent is read from the same\nrequest, wherever the client put it.",
+            "implements": [],
+            "constructor": {
+                "signature": "__construct(string $filename, ?string $movedFrom, ?string $raw, int $parent = 0)",
+                "doc": "",
+                "shapes": []
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "filename",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": ""
+                },
+                {
+                    "name": "movedFrom",
+                    "type": "?string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": ""
+                },
+                {
+                    "name": "raw",
+                    "type": "?string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": ""
+                },
+                {
+                    "name": "parent",
+                    "type": "int",
+                    "readonly": true,
+                    "static": false,
+                    "doc": ""
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "fromRequest",
+                    "static": true,
+                    "signature": "fromRequest(Minn\\Http\\Request $request): ?self",
+                    "doc": "Null when the request carries no file.",
+                    "shapes": [],
+                    "line": 26
+                },
+                {
+                    "routes": [],
+                    "name": "mime",
+                    "static": false,
+                    "signature": "mime(): ?string",
+                    "doc": "The mime type the extension maps to, or null for one the library refuses.",
+                    "shapes": [],
+                    "line": 43
+                },
+                {
+                    "routes": [],
+                    "name": "isImage",
+                    "static": false,
+                    "signature": "isImage(): bool",
+                    "doc": "",
+                    "shapes": [],
+                    "line": 48
+                }
+            ]
+        },
+        {
             "name": "Minn\\Media\\Uploads",
             "short": "Uploads",
             "namespace": "Minn\\Media",
@@ -13080,6 +13156,35 @@
                         "@return array{path: string, url: string, subdir: string, basedir: string, baseurl: string, error: false}"
                     ],
                     "line": 158
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Media\\Writer",
+            "short": "Writer",
+            "namespace": "Minn\\Media",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Media/Writer.php",
+            "lines": 66,
+            "doc": "Turns an Upload into an attachment: the file lands in the dated uploads\ndirectory under a unique name, the row is inserted with the stored\nname as its title and slug, and an image gets its sub-sizes and the\nserialized metadata blob.",
+            "implements": [],
+            "constructor": {
+                "signature": "__construct(Minn\\Content\\PostWriter $posts, Minn\\Content\\Site $site, Minn\\Media\\Uploads $uploads, Minn\\Media\\Images $images)",
+                "doc": "",
+                "shapes": []
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "attach",
+                    "static": false,
+                    "signature": "attach(Minn\\Media\\Upload $upload, int $authorId): int",
+                    "doc": "The new attachment's id. The mime is the caller's to check first.",
+                    "shapes": [],
+                    "line": 28
                 }
             ]
         },
@@ -13494,7 +13599,7 @@
                     "shapes": [
                         "@return array<string, list<string>> the engine's routes in the reference's form, route => methods"
                     ],
-                    "line": 75
+                    "line": 76
                 },
                 {
                     "routes": [],
@@ -13503,7 +13608,7 @@
                     "signature": "forRequest(Minn\\Db $db, Minn\\Http\\Request $request): self",
                     "doc": "",
                     "shapes": [],
-                    "line": 80
+                    "line": 81
                 },
                 {
                     "routes": [],
@@ -13512,7 +13617,7 @@
                     "signature": "caller(): Minn\\Rest\\Caller",
                     "doc": "",
                     "shapes": [],
-                    "line": 157
+                    "line": 158
                 },
                 {
                     "routes": [],
@@ -13521,7 +13626,7 @@
                     "signature": "postObject(): Minn\\Rest\\PostObject",
                     "doc": "",
                     "shapes": [],
-                    "line": 162
+                    "line": 163
                 },
                 {
                     "routes": [],
@@ -13530,7 +13635,7 @@
                     "signature": "termObject(): Minn\\Rest\\TermObject",
                     "doc": "",
                     "shapes": [],
-                    "line": 167
+                    "line": 168
                 },
                 {
                     "routes": [],
@@ -13539,7 +13644,7 @@
                     "signature": "userObject(): Minn\\Rest\\UserObject",
                     "doc": "",
                     "shapes": [],
-                    "line": 172
+                    "line": 173
                 },
                 {
                     "routes": [],
@@ -13548,7 +13653,7 @@
                     "signature": "types(): Minn\\Rest\\Types",
                     "doc": "",
                     "shapes": [],
-                    "line": 177
+                    "line": 178
                 },
                 {
                     "routes": [],
@@ -13557,7 +13662,7 @@
                     "signature": "handle(string $route): Minn\\Http\\Response",
                     "doc": "Resolves a REST route (from the path or from ?rest_route=) to a response.",
                     "shapes": [],
-                    "line": 183
+                    "line": 184
                 }
             ]
         },
@@ -14215,16 +14320,204 @@
             ]
         },
         {
+            "name": "Minn\\Rest\\ListQuery",
+            "short": "ListQuery",
+            "namespace": "Minn\\Rest",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Rest/ListQuery.php",
+            "lines": 137,
+            "doc": "The collection parameters a wp/v2 list accepts, read once from the\nrequest into typed fields: the page, the id lists, the slugs, the search\nwords, and the ordering. clauses() turns the narrowing ones into the SQL\nfragments and parameters a controller appends to its own visibility\nclause, so posts, pages, and media build their lists the same way.",
+            "implements": [],
+            "constructor": {
+                "signature": "__construct(int $page = 1, int $perPage = 10, array $include = array ( ), array $exclude = array ( ), array $author = array ( ), array $authorExclude = array ( ), array $parent = array ( ), array $parentExclude = array ( ), array $slugs = array ( ), array $words = array ( ), ?int $menuOrder = NULL, string $orderBy = 'date', string $order = 'DESC')",
+                "doc": "",
+                "shapes": [
+                    "@param list<int> $include",
+                    "@param list<int> $exclude",
+                    "@param list<int> $author",
+                    "@param list<int> $authorExclude",
+                    "@param list<int> $parent",
+                    "@param list<int> $parentExclude",
+                    "@param list<string> $slugs",
+                    "@param list<string> $words"
+                ]
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "page",
+                    "type": "int",
+                    "readonly": true,
+                    "static": false,
+                    "doc": ""
+                },
+                {
+                    "name": "perPage",
+                    "type": "int",
+                    "readonly": true,
+                    "static": false,
+                    "doc": ""
+                },
+                {
+                    "name": "include",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": ""
+                },
+                {
+                    "name": "exclude",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": ""
+                },
+                {
+                    "name": "author",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": ""
+                },
+                {
+                    "name": "authorExclude",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": ""
+                },
+                {
+                    "name": "parent",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": ""
+                },
+                {
+                    "name": "parentExclude",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": ""
+                },
+                {
+                    "name": "slugs",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": ""
+                },
+                {
+                    "name": "words",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": ""
+                },
+                {
+                    "name": "menuOrder",
+                    "type": "?int",
+                    "readonly": true,
+                    "static": false,
+                    "doc": ""
+                },
+                {
+                    "name": "orderBy",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": ""
+                },
+                {
+                    "name": "order",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": ""
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "fromRequest",
+                    "static": true,
+                    "signature": "fromRequest(Minn\\Http\\Request $request): self",
+                    "doc": "",
+                    "shapes": [],
+                    "line": 45
+                },
+                {
+                    "routes": [],
+                    "name": "clauses",
+                    "static": false,
+                    "signature": "clauses(): array",
+                    "doc": "The narrowing clauses, each starting with \" AND\", and their parameters\nin the same order. Every search word must appear in the title, the\nexcerpt, or the content.",
+                    "shapes": [
+                        "@return array{string, list<mixed>}"
+                    ],
+                    "line": 72
+                },
+                {
+                    "routes": [],
+                    "name": "isSearch",
+                    "static": false,
+                    "signature": "isSearch(): bool",
+                    "doc": "",
+                    "shapes": [],
+                    "line": 98
+                },
+                {
+                    "routes": [],
+                    "name": "offset",
+                    "static": false,
+                    "signature": "offset(): int",
+                    "doc": "",
+                    "shapes": [],
+                    "line": 103
+                },
+                {
+                    "routes": [],
+                    "name": "totalPages",
+                    "static": false,
+                    "signature": "totalPages(int $total): int",
+                    "doc": "",
+                    "shapes": [],
+                    "line": 108
+                },
+                {
+                    "routes": [],
+                    "name": "isPastTheEnd",
+                    "static": false,
+                    "signature": "isPastTheEnd(int $total): bool",
+                    "doc": "A page past the last one is a parameter error, except page one of nothing.",
+                    "shapes": [],
+                    "line": 114
+                },
+                {
+                    "routes": [],
+                    "name": "ids",
+                    "static": true,
+                    "signature": "ids(string $csv, bool $keepZero = false): array",
+                    "doc": "A comma-separated id list as distinct integers. Zero is dropped unless\nasked for: parent=0 means \"top level\", author=0 means nothing.",
+                    "shapes": [
+                        "@return list<int>"
+                    ],
+                    "line": 125
+                }
+            ]
+        },
+        {
             "name": "Minn\\Rest\\MediaController",
             "short": "MediaController",
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/MediaController.php",
-            "lines": 335,
+            "lines": 203,
             "doc": "wp/v2/media: list, single, upload on both transports (multipart field\n\"file\", or a raw body with Content-Disposition), field edits, and force\ndelete with the files.",
             "implements": [],
             "constructor": {
-                "signature": "__construct(Minn\\Db $db, Minn\\Content\\Posts $posts, Minn\\Content\\PostWriter $writer, Minn\\Content\\Site $site, Minn\\Media\\Uploads $uploads, Minn\\Media\\Images $images, Minn\\Rest\\MediaObject $object, Minn\\Rest\\Caller $caller)",
+                "signature": "__construct(Minn\\Db $db, Minn\\Content\\Posts $posts, Minn\\Content\\PostWriter $writer, Minn\\Content\\Site $site, Minn\\Media\\Uploads $uploads, Minn\\Media\\Writer $library, Minn\\Rest\\MediaObject $object, Minn\\Rest\\Caller $caller)",
                 "doc": "",
                 "shapes": []
             },
@@ -14252,7 +14545,7 @@
                     "signature": "single(Minn\\Http\\Request $request, string $id): Minn\\Http\\Response",
                     "doc": "",
                     "shapes": [],
-                    "line": 191
+                    "line": 119
                 },
                 {
                     "routes": [
@@ -14263,7 +14556,7 @@
                     "signature": "create(Minn\\Http\\Request $request): Minn\\Http\\Response",
                     "doc": "",
                     "shapes": [],
-                    "line": 202
+                    "line": 130
                 },
                 {
                     "routes": [
@@ -14276,7 +14569,7 @@
                     "signature": "update(Minn\\Http\\Request $request, string $id): Minn\\Http\\Response",
                     "doc": "The editable fields the app uses.",
                     "shapes": [],
-                    "line": 287
+                    "line": 155
                 },
                 {
                     "routes": [
@@ -14287,7 +14580,7 @@
                     "signature": "delete(Minn\\Http\\Request $request, string $id): Minn\\Http\\Response",
                     "doc": "Attachments cannot be trashed; force removes the row, its meta, and its files.",
                     "shapes": [],
-                    "line": 322
+                    "line": 190
                 }
             ]
         },
@@ -14838,7 +15131,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/PostsController.php",
-            "lines": 213,
+            "lines": 163,
             "doc": "wp/v2 posts and pages, read side.",
             "implements": [],
             "constructor": {
@@ -14879,7 +15172,7 @@
                     "signature": "single(Minn\\Http\\Request $request, string $base, string $id): Minn\\Http\\Response",
                     "doc": "",
                     "shapes": [],
-                    "line": 201
+                    "line": 151
                 },
                 {
                     "routes": [],
@@ -14888,7 +15181,7 @@
                     "signature": "serveSingle(Minn\\Http\\Request $request, string $type, string $id): Minn\\Http\\Response",
                     "doc": "",
                     "shapes": [],
-                    "line": 206
+                    "line": 156
                 }
             ]
         },

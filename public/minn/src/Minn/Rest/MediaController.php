@@ -8,15 +8,15 @@ use Minn\Content\PostRecord;
 use Minn\Content\Posts;
 use Minn\Content\PostWriter;
 use Minn\Content\Site;
-use Minn\Content\Slug;
 use Minn\Db;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
-use Minn\Media\Images;
 use Minn\Media\Metadata;
+use Minn\Media\Upload;
 use Minn\Media\Uploads;
+use Minn\Media\Writer;
 use Minn\RestError;
 use Minn\Support\Kses;
 
@@ -33,7 +33,7 @@ final readonly class MediaController
         private PostWriter $writer,
         private Site $site,
         private Uploads $uploads,
-        private Images $images,
+        private Writer $library,
         private MediaObject $object,
         private Caller $caller,
     ) {
@@ -46,83 +46,38 @@ final readonly class MediaController
         if ($edit && !$this->caller->can('edit_posts')) {
             throw $this->caller->refuse('rest_forbidden_context', 'Sorry, you are not allowed to edit posts in this post type.');
         }
-        $perPage = max(1, min(100, (int) $request->query('per_page', '10')));
-        $page = max(1, (int) $request->query('page', '1'));
-        $order = strtoupper((string) $request->query('order', 'desc')) === 'ASC' ? 'ASC' : 'DESC';
-        $where = "post_type = 'attachment' AND post_status = 'inherit'";
-        $params = [];
-        $this->applyListFilters($request, $where, $params);
+        $query = ListQuery::fromRequest($request);
+        [$narrowing, $params] = $query->clauses();
+        [$library, $libraryParams] = self::libraryClauses($request);
+        $where = "post_type = 'attachment' AND post_status = 'inherit'" . $narrowing . $library;
+        $params = [...$params, ...$libraryParams];
         $table = $this->db->table('posts');
         $total = (int) $this->db->value("SELECT COUNT(*) FROM {$table} WHERE {$where}", $params);
         $rows = $this->db->rows(
-            "SELECT * FROM {$table} WHERE {$where} ORDER BY post_date {$order}, ID {$order} LIMIT ? OFFSET ?",
-            [...$params, $perPage, ($page - 1) * $perPage],
+            "SELECT * FROM {$table} WHERE {$where} ORDER BY post_date {$query->order}, ID {$query->order} LIMIT ? OFFSET ?",
+            [...$params, $query->perPage, $query->offset()],
         );
         return Reply::list(
             array_map(fn (PostRecord $p) => $this->object->build($p, $edit), PostRecord::fromRows($rows)),
             $total,
-            (int) ceil($total / $perPage),
+            $query->totalPages($total),
             Fields::fromQuery($request->query),
         );
     }
 
     /**
-     * The library's query args, captured from the oracle: author/parent as
-     * id lists (parent keeps 0 for unattached), media_type as a mime
-     * prefix, after/before exclusive on site-local post_date, search as
-     * every word in title/excerpt/content.
+     * The library's own narrowing, captured from the oracle: media_type as a
+     * mime prefix from a fixed set, mime_type exact, after/before exclusive
+     * on site-local post_date.
      *
-     * @param array<int, mixed> $params
+     * @return array{string, list<mixed>}
      */
-    private function applyListFilters(Request $request, string &$where, array &$params): void
+    private static function libraryClauses(Request $request): array
     {
-        $include = self::intList((string) $request->query('include', ''));
-        if ($include !== []) {
-            $where .= ' AND ID IN (?)';
-            $params[] = $include;
-        }
-        $author = $request->query('author');
-        if ($author !== null && $author !== '') {
-            $ids = self::intList($author);
-            if ($ids !== []) {
-                $where .= ' AND post_author IN (?)';
-                $params[] = $ids;
-            }
-        }
-        $authorExclude = $request->query('author_exclude');
-        if ($authorExclude !== null && $authorExclude !== '') {
-            $ids = self::intList($authorExclude);
-            if ($ids !== []) {
-                $where .= ' AND post_author NOT IN (?)';
-                $params[] = $ids;
-            }
-        }
-        $parent = $request->query('parent');
-        if ($parent !== null && $parent !== '') {
-            $ids = self::intList($parent, true);
-            if ($ids !== []) {
-                $where .= ' AND post_parent IN (?)';
-                $params[] = $ids;
-            }
-        }
-        $parentExclude = $request->query('parent_exclude');
-        if ($parentExclude !== null && $parentExclude !== '') {
-            $ids = self::intList($parentExclude, true);
-            if ($ids !== []) {
-                $where .= ' AND post_parent NOT IN (?)';
-                $params[] = $ids;
-            }
-        }
-        $slug = (string) $request->query('slug', '');
-        if ($slug !== '') {
-            $slugs = array_values(array_filter(explode(',', $slug), static fn (string $s) => $s !== ''));
-            if ($slugs !== []) {
-                $where .= ' AND post_name IN (?)';
-                $params[] = $slugs;
-            }
-        }
-        $mediaType = $request->query('media_type');
-        if ($mediaType !== null && $mediaType !== '') {
+        $where = '';
+        $params = [];
+        $mediaType = (string) $request->query('media_type', '');
+        if ($mediaType !== '') {
             $allowed = ['image', 'video', 'text', 'application', 'audio'];
             if (!in_array($mediaType, $allowed, true)) {
                 $message = 'media_type[0] is not one of image, video, text, application, and audio.';
@@ -134,46 +89,19 @@ final readonly class MediaController
             $where .= ' AND post_mime_type LIKE ?';
             $params[] = $mediaType . '/%';
         }
-        $mime = $request->query('mime_type');
-        if ($mime !== null && $mime !== '') {
+        $mime = (string) $request->query('mime_type', '');
+        if ($mime !== '') {
             $where .= ' AND post_mime_type = ?';
             $params[] = $mime;
         }
-        foreach (preg_split('/\s+/', trim((string) $request->query('search', ''))) ?: [] as $word) {
-            if ($word === '') {
-                continue;
-            }
-            $like = '%' . addcslashes($word, '%_\\') . '%';
-            $where .= ' AND (post_title LIKE ? OR post_excerpt LIKE ? OR post_content LIKE ?)';
-            $params = [...$params, $like, $like, $like];
-        }
-        $after = $request->query('after');
-        if ($after !== null && $after !== '') {
-            $where .= ' AND post_date > ?';
-            $params[] = self::restDate($after, 'after');
-        }
-        $before = $request->query('before');
-        if ($before !== null && $before !== '') {
-            $where .= ' AND post_date < ?';
-            $params[] = self::restDate($before, 'before');
-        }
-    }
-
-    /** @return list<int> */
-    private static function intList(string $csv, bool $keepZero = false): array
-    {
-        $out = [];
-        foreach (explode(',', $csv) as $part) {
-            $part = trim($part);
-            if ($part === '' || !ctype_digit($part)) {
-                continue;
-            }
-            $n = (int) $part;
-            if ($n !== 0 || $keepZero) {
-                $out[] = $n;
+        foreach (['after' => '>', 'before' => '<'] as $param => $operator) {
+            $value = (string) $request->query($param, '');
+            if ($value !== '') {
+                $where .= " AND post_date {$operator} ?";
+                $params[] = self::restDate($value, $param);
             }
         }
-        return array_values(array_unique($out));
+        return [$where, $params];
     }
 
     private static function restDate(string $value, string $param): string
@@ -205,77 +133,17 @@ final readonly class MediaController
         if (!$this->caller->can('upload_files')) {
             throw new RestError('rest_cannot_create', 'Sorry, you are not allowed to upload media on this site.', 403);
         }
-
-        $parent = (int) ($request->form['post'] ?? $request->query('post') ?? (trim($request->body) !== '' && str_starts_with(trim($request->body), '{') ? ($request->json()['post'] ?? 0) : 0));
-        if ($parent > 0 && !$this->caller->can('edit_post', $parent)) {
+        $upload = Upload::fromRequest($request);
+        if ($upload === null) {
+            throw new RestError('rest_upload_no_data', 'No data supplied.', 400);
+        }
+        if ($upload->parent > 0 && !$this->caller->can('edit_post', $upload->parent)) {
             throw new RestError('rest_cannot_edit', 'Sorry, you are not allowed to upload media to this post.', 403);
         }
-        $filename = '';
-        $movedFrom = null;
-        $raw = null;
-        if (!empty($request->files['file']['tmp_name'])) {
-            $filename = (string) $request->files['file']['name'];
-            $movedFrom = (string) $request->files['file']['tmp_name'];
-        } else {
-            if (preg_match('/filename\*?="?([^";]+)"?/', (string) ($request->header('content-disposition') ?? ''), $m)) {
-                $filename = trim($m[1]);
-            }
-            $raw = $request->body;
-            if ($filename === '' || $raw === '') {
-                throw new RestError('rest_upload_no_data', 'No data supplied.', 400);
-            }
-        }
-
-        $filename = Uploads::sanitizeName($filename);
-        $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
-        $mime = Uploads::MIMES[$ext] ?? null;
-        if ($mime === null) {
+        if ($upload->mime() === null) {
             throw new RestError('rest_upload_unknown_error', 'Sorry, you are not allowed to upload this file type.', 500);
         }
-        $relative = $this->uploads->store($filename, $movedFrom, $raw);
-        $path = $this->uploads->pathFor($relative);
-        $stored = basename($relative);
-        $isImage = str_starts_with($mime, 'image/') && $mime !== 'image/svg+xml';
-        $title = preg_replace('/\.[^.]+$/', '', $stored);
-        $now = $this->site->localNow();
-        $nowGmt = gmdate('Y-m-d H:i:s');
-
-        $id = $this->writer->insert([
-            'post_author' => $userId,
-            'post_date' => $now,
-            'post_date_gmt' => $nowGmt,
-            'post_content' => '',
-            'post_title' => $title,
-            'post_excerpt' => '',
-            'post_status' => 'inherit',
-            'comment_status' => 'open',
-            'ping_status' => 'closed',
-            'post_password' => '',
-            'post_name' => Slug::sanitize($title),
-            'to_ping' => '',
-            'pinged' => '',
-            'post_modified' => $now,
-            'post_modified_gmt' => $nowGmt,
-            'post_content_filtered' => '',
-            'post_parent' => $parent,
-            'guid' => $this->uploads->urlFor($relative),
-            'menu_order' => 0,
-            'post_type' => 'attachment',
-            'post_mime_type' => $mime,
-            'comment_count' => 0,
-        ]);
-        $this->writer->setMeta($id, '_wp_attached_file', $relative);
-        if ($isImage) {
-            [$width, $height] = getimagesize($path) ?: [0, 0];
-            $this->writer->setMeta($id, '_wp_attachment_metadata', Metadata::serialize([
-                'width' => (int) $width,
-                'height' => (int) $height,
-                'file' => $relative,
-                'filesize' => (int) filesize($path),
-                'sizes' => $this->images->makeSubsizes($path, $mime),
-                'image_meta' => Metadata::blankImageMeta(),
-            ]));
-        }
+        $id = $this->library->attach($upload, $userId);
         return Reply::item($this->object->build($this->posts->find($id), true), Fields::fromQuery($request->query), 201)
             ->withHeader('Location', $this->object->url()->to('/wp/v2/media/' . $id));
     }

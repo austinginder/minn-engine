@@ -45,6 +45,7 @@ use Minn\Http\Response;
 use Minn\Http\Router;
 use Minn\Media\Images;
 use Minn\Media\Uploads;
+use Minn\Media\Writer;
 use Minn\RestError;
 use Minn\Runtime\Runtime;
 use Minn\Theme\TemplateIndex;
@@ -135,7 +136,7 @@ final readonly class Api
             new SettingsController(new Settings($site), $caller),
             new CommentsController(new Comments($db), $posts, $site, $commentObject, $caller),
             new RevisionsController($posts, new Revisions($db, $writer, $site), $url, $caller),
-            new MediaController($db, $posts, $writer, $site, $uploads, new Images($site), $mediaObject, $caller),
+            new MediaController($db, $posts, $writer, $site, $uploads, new Writer($writer, $site, $uploads, new Images($site)), $mediaObject, $caller),
             new MenusController($menus, new MenuObject($menus, $url, $caller), new MenuItemObject($url, $caller), $caller, $url),
 
         );

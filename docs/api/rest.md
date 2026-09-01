@@ -18,7 +18,8 @@ the wp/v2 surface: shapes and controllers
 | [`Fields`](#fields) | final readonly class | 87 | The _fields response filter. Dot paths descend ("title.rendered"); the |
 | [`IndexController`](#indexcontroller) | final readonly class | 52 | The API index at /wp-json/: the site facts monitors read (name, url, |
 | [`Links`](#links) | final class | 33 | Response link relations compacted through CURIEs: a rel that matches a CURIE's template becomes `name:suffix`, and the used CURIEs ride along. |
-| [`MediaController`](#mediacontroller) | final readonly class | 335 | wp/v2/media: list, single, upload on both transports (multipart field |
+| [`ListQuery`](#listquery) | final readonly class | 137 | The collection parameters a wp/v2 list accepts, read once from the |
+| [`MediaController`](#mediacontroller) | final readonly class | 203 | wp/v2/media: list, single, upload on both transports (multipart field |
 | [`MediaObject`](#mediaobject) | final readonly class | 155 | The wp/v2 media object, view and edit context. |
 | [`MenuItemObject`](#menuitemobject) | final readonly class | 72 | The wp/v2/menu-items resource. |
 | [`MenuObject`](#menuobject) | final readonly class | 33 | The wp/v2/menus resource: a nav_menu term plus locations and auto_add. |
@@ -27,7 +28,7 @@ the wp/v2 surface: shapes and controllers
 | [`ParamCheck`](#paramcheck) | final class | 71 | The required / validate / sanitize pass over a request's declared arguments. |
 | [`PluginsController`](#pluginscontroller) | final readonly class | 243 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
 | [`PostObject`](#postobject) | final readonly class | 371 | Builds the wp/v2 post and page objects in the reference's shape: the |
-| [`PostsController`](#postscontroller) | final readonly class | 213 | wp/v2 posts and pages, read side. |
+| [`PostsController`](#postscontroller) | final readonly class | 163 | wp/v2 posts and pages, read side. |
 | [`PostsWriteController`](#postswritecontroller) | final readonly class | 271 | wp/v2 posts and pages, write side: create, update, trash, and force |
 | [`Reply`](#reply) | final class | 36 | JSON responses in the reference's shape: its header set, its json_encode |
 | [`RestUrl`](#resturl) | final readonly class | 33 | REST URLs in the form the reference emits for the site's permalink mode: |
@@ -417,6 +418,70 @@ Response link relations compacted through CURIEs: a rel that matches a CURIE's t
 - `@return array<string, mixed>`
 
 
+## ListQuery
+
+`final readonly class Minn\Rest\ListQuery` · `public/minn/src/Minn/Rest/ListQuery.php`
+
+The collection parameters a wp/v2 list accepts, read once from the
+request into typed fields: the page, the id lists, the slugs, the search
+words, and the ordering. clauses() turns the narrowing ones into the SQL
+fragments and parameters a controller appends to its own visibility
+clause, so posts, pages, and media build their lists the same way.
+
+```php
+__construct(int $page = 1, int $perPage = 10, array $include = array ( ), array $exclude = array ( ), array $author = array ( ), array $authorExclude = array ( ), array $parent = array ( ), array $parentExclude = array ( ), array $slugs = array ( ), array $words = array ( ), ?int $menuOrder = NULL, string $orderBy = 'date', string $order = 'DESC')
+```
+- `@param list<int> $include`
+- `@param list<int> $exclude`
+- `@param list<int> $author`
+- `@param list<int> $authorExclude`
+- `@param list<int> $parent`
+- `@param list<int> $parentExclude`
+- `@param list<string> $slugs`
+- `@param list<string> $words`
+
+- readonly `int $page`
+- readonly `int $perPage`
+- readonly `array $include`
+- readonly `array $exclude`
+- readonly `array $author`
+- readonly `array $authorExclude`
+- readonly `array $parent`
+- readonly `array $parentExclude`
+- readonly `array $slugs`
+- readonly `array $words`
+- readonly `?int $menuOrder`
+- readonly `string $orderBy`
+- readonly `string $order`
+
+### static `fromRequest(Minn\Http\Request $request): self`
+
+### `clauses(): array`
+
+The narrowing clauses, each starting with " AND", and their parameters
+in the same order. Every search word must appear in the title, the
+excerpt, or the content.
+
+- `@return array{string, list<mixed>}`
+
+### `isSearch(): bool`
+
+### `offset(): int`
+
+### `totalPages(int $total): int`
+
+### `isPastTheEnd(int $total): bool`
+
+A page past the last one is a parameter error, except page one of nothing.
+
+### static `ids(string $csv, bool $keepZero = false): array`
+
+A comma-separated id list as distinct integers. Zero is dropped unless
+asked for: parent=0 means "top level", author=0 means nothing.
+
+- `@return list<int>`
+
+
 ## MediaController
 
 `final readonly class Minn\Rest\MediaController` · `public/minn/src/Minn/Rest/MediaController.php`
@@ -426,7 +491,7 @@ wp/v2/media: list, single, upload on both transports (multipart field
 delete with the files.
 
 ```php
-__construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Content\PostWriter $writer, Minn\Content\Site $site, Minn\Media\Uploads $uploads, Minn\Media\Images $images, Minn\Rest\MediaObject $object, Minn\Rest\Caller $caller)
+__construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Content\PostWriter $writer, Minn\Content\Site $site, Minn\Media\Uploads $uploads, Minn\Media\Writer $library, Minn\Rest\MediaObject $object, Minn\Rest\Caller $caller)
 ```
 
 ### `list(Minn\Http\Request $request): Minn\Http\Response`
