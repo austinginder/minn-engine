@@ -18,6 +18,8 @@ final class Symbols
     private const SKIP_DIRS = ['node_modules', 'tests', 'test', '.git'];
 
     /**
+     * What a plugin folder needs that the runtime lacks, cached by mtime.
+     *
      * @return array{functions: list<string>, classes: list<string>, files: int, truncated: bool}
      */
     public static function missing(string $dir, Options $options): array

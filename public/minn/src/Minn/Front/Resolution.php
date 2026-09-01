@@ -37,21 +37,25 @@ final readonly class Resolution
     ) {
     }
 
+    /** The same resolution marked as a preview. */
     public function asPreview(): self
     {
         return new self($this->kind, $this->record, $this->paged, $this->location, $this->status, $this->search, $this->date, $this->authorName, $this->front, true, $this->postsPage);
     }
 
+    /** The home listing. */
     public static function home(int $paged = 1): self
     {
         return new self(Kind::Home, paged: $paged);
     }
 
+    /** A single post or page. */
     public static function single(PostRecord $post, int $paged = 1): self
     {
         return new self($post->isPage() ? Kind::Page : Kind::Single, $post, $paged);
     }
 
+    /** The static front page. */
     public static function frontPage(PostRecord $page, int $paged = 1): self
     {
         return new self(Kind::Page, $page, $paged, front: true);
@@ -63,6 +67,7 @@ final readonly class Resolution
         return new self(Kind::Home, $page, $paged, postsPage: true);
     }
 
+    /** A category or tag archive. */
     public static function term(string $taxonomy, TermRecord $term, int $paged = 1): self
     {
         return new self($taxonomy === 'category' ? Kind::Category : Kind::Tag, $term, $paged);
@@ -80,31 +85,37 @@ final readonly class Resolution
         return new self(Kind::PostTypeArchive, $type, $paged);
     }
 
+    /** An author archive. */
     public static function author(string $name, ?UserRecord $user, int $paged = 1): self
     {
         return new self(Kind::Author, $user, $paged, authorName: $name);
     }
 
+    /** A date archive. */
     public static function date(int $year, ?int $month, ?int $day, int $paged = 1): self
     {
         return new self(Kind::Date, paged: $paged, date: [$year, $month, $day]);
     }
 
+    /** A search. */
     public static function search(string $term, int $paged = 1): self
     {
         return new self(Kind::Search, paged: $paged, search: $term);
     }
 
+    /** A 404. */
     public static function notFound(): self
     {
         return new self(Kind::NotFound, status: 404);
     }
 
+    /** A redirect. */
     public static function redirect(string $location, int $status = 301): self
     {
         return new self(Kind::Redirect, location: $location, status: $status);
     }
 
+    /** The record's id, post or term. */
     public function id(): int
     {
         return (int) ($this->record['ID'] ?? $this->record['term_id'] ?? 0);

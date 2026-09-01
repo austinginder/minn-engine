@@ -45,6 +45,7 @@ final readonly class CommentPostController
     ) {
     }
 
+    /** The comment form's target. */
     #[Route(Method::Any, '/wp-comments-post.php')]
     public function post(Request $request): Response
     {

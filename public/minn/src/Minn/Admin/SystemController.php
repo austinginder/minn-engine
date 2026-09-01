@@ -19,6 +19,7 @@ final readonly class SystemController
     {
     }
 
+    /** The System view's payload. */
     #[Route(Method::Get, '/minn-admin/v1/system')]
     public function system(Request $request): Response
     {
@@ -26,6 +27,7 @@ final readonly class SystemController
         return Reply::answer($request, $this->diagnostics->payload($request));
     }
 
+    /** The scheduled posts. */
     #[Route(Method::Get, '/minn-admin/v1/system/cron')]
     public function cron(Request $request): Response
     {
@@ -33,6 +35,7 @@ final readonly class SystemController
         return Reply::answer($request, $this->diagnostics->cron());
     }
 
+    /** The autoloaded options. */
     #[Route(Method::Get, '/minn-admin/v1/system/autoload')]
     public function autoload(Request $request): Response
     {
@@ -48,6 +51,7 @@ final readonly class SystemController
         throw new RestError('not_editable', 'Minn Engine does not rewrite wp-config.php. Change the constant in the file itself.', 400);
     }
 
+    /** The logs list. */
     #[Route(Method::Get, '/minn-admin/v1/system/logs')]
     public function logs(Request $request): Response
     {
@@ -55,6 +59,7 @@ final readonly class SystemController
         return Reply::answer($request, ['sources' => $this->logs->listPayload()]);
     }
 
+    /** One log's tail. */
     #[Route(Method::Get, '/minn-admin/v1/system/logs/{id:[a-zA-Z0-9:_.-]+}')]
     public function log(Request $request, string $id): Response
     {
@@ -62,6 +67,7 @@ final readonly class SystemController
         return Reply::answer($request, $this->logs->read($id));
     }
 
+    /** Empties one log. */
     #[Route(Method::Delete, '/minn-admin/v1/system/logs/{id:[a-zA-Z0-9:_.-]+}')]
     public function clearLog(Request $request, string $id): Response
     {
@@ -70,6 +76,7 @@ final readonly class SystemController
         return Reply::answer($request, ['cleared' => true]);
     }
 
+    /** The debug log's tail. */
     #[Route(Method::Get, '/minn-admin/v1/system/debug-log')]
     public function debugLog(Request $request): Response
     {
@@ -77,6 +84,7 @@ final readonly class SystemController
         return Reply::answer($request, $this->logs->tail($this->logs->debugLogPath()));
     }
 
+    /** Empties the debug log. */
     #[Route(Method::Delete, '/minn-admin/v1/system/debug-log')]
     public function clearDebugLog(Request $request): Response
     {

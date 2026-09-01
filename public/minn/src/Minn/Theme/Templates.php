@@ -27,7 +27,11 @@ final readonly class Templates
     ) {
     }
 
-    /** @return array{slug: string, markup: string}|null */
+    /**
+     * The template that renders a resolution, or null.
+     *
+     * @return array{slug: string, markup: string}|null
+     */
     public function forResolution(Resolution $resolution): ?array
     {
         foreach ($this->candidates($resolution) as $slug) {
@@ -39,11 +43,13 @@ final readonly class Templates
         return null;
     }
 
+    /** A template's markup by slug, saved first. */
     public function template(string $slug): ?string
     {
         return $this->saved('wp_template', $slug) ?? $this->theme->templateFile($slug) ?? $this->registered?->bySlug($slug)['content'] ?? null;
     }
 
+    /** A template part's markup by slug, saved first. */
     public function part(string $slug): ?string
     {
         return $this->saved('wp_template_part', $slug) ?? $this->theme->partFile($slug);

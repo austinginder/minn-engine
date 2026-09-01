@@ -27,6 +27,7 @@ final readonly class LanguageController
     ) {
     }
 
+    /** The languages a user may pick, installed and available. */
     #[Route(Method::Get, '/minn-admin/v1/languages')]
     public function languages(Request $request): Response
     {
@@ -55,12 +56,14 @@ final readonly class LanguageController
         ]);
     }
 
+    /** Sets the caller's own locale. */
     #[Route(Method::Post, '/minn-admin/v1/me/language')]
     public function mine(Request $request): Response
     {
         return $this->setUserLocale($request, $this->caller->requireFloor());
     }
 
+    /** Sets another user's locale. */
     #[Route(Method::Post, '/minn-admin/v1/users/{id:\d+}/language')]
     public function user(Request $request, string $id): Response
     {
@@ -74,6 +77,7 @@ final readonly class LanguageController
         return $this->setUserLocale($request, (int) $id);
     }
 
+    /** Sets the site's locale. */
     #[Route(Method::Post, '/minn-admin/v1/site/language')]
     public function site(Request $request): Response
     {

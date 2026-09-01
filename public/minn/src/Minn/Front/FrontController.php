@@ -40,6 +40,7 @@ final readonly class FrontController
         return Response::html($html, 404);
     }
 
+    /** The public page for any path. */
     #[Route(Method::Any, '/{path*}')]
     public function show(Request $request): Response
     {

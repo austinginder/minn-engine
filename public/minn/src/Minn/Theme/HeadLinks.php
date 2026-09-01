@@ -28,11 +28,13 @@ final readonly class HeadLinks
     ) {
     }
 
+    /** Every head link for a resolution. */
     public function all(Resolution $resolution): string
     {
         return $this->feedLinks() . $this->extraFeedLink($resolution) . $this->restLink() . $this->jsonAlternate($resolution) . "\n" . $this->icons();
     }
 
+    /** The site and comments feed links. */
     public function feedLinks(): string
     {
         $site = Html::esc((string) ($this->site->option('blogname') ?? ''));
@@ -40,6 +42,7 @@ final readonly class HeadLinks
             . '<link rel="alternate" type="application/rss+xml" title="' . $site . ' &raquo; Comments Feed" href="' . Html::attr($this->permalinks->url('/comments/feed/')) . '" />' . "\n";
     }
 
+    /** The feed link a single or an archive adds. */
     public function extraFeedLink(Resolution $resolution): string
     {
         $site = Html::esc((string) ($this->site->option('blogname') ?? ''));
@@ -76,6 +79,7 @@ final readonly class HeadLinks
         return '<link rel="https://api.w.org/" href="' . Html::attr($this->permalinks->url('/wp-json/')) . '" />';
     }
 
+    /** The wp/v2 alternate link for the resolution. */
     public function jsonAlternate(Resolution $resolution): string
     {
         $record = $resolution->record ?? [];
@@ -91,6 +95,7 @@ final readonly class HeadLinks
         return '<link rel="alternate" title="JSON" type="application/json" href="' . Html::attr($this->permalinks->url('/wp-json' . $json)) . '" />';
     }
 
+    /** The RSD link. */
     public function rsdLink(): string
     {
         return '<link rel="EditURI" type="application/rsd+xml" title="RSD" href="' . Html::attr($this->permalinks->url('/xmlrpc.php?rsd')) . '" />' . "\n";
@@ -109,6 +114,7 @@ final readonly class HeadLinks
         return "<link rel='shortlink' href='" . Html::attr($this->permalinks->url('/?p=' . $id)) . "' />" . "\n";
     }
 
+    /** The site icon links. */
     public function icons(): string
     {
         $icon = (int) ($this->site->option('site_icon') ?? 0);

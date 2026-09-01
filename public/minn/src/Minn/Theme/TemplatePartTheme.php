@@ -16,6 +16,7 @@ final readonly class TemplatePartTheme
 {
     private const TAG = '<!-- wp:template-part';
 
+    /** Template part blocks with the theme attribute set. */
     public static function apply(string $markup, string $theme): string
     {
         $out = '';

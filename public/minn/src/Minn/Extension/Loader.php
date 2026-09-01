@@ -25,7 +25,11 @@ final class Loader
     {
     }
 
-    /** @return list<Manifest> every extension on disk */
+    /**
+     * Every extension manifest on disk.
+     *
+     * @return list<Manifest> every extension on disk
+     */
     public function found(): array
     {
         if ($this->found === []) {
@@ -47,7 +51,11 @@ final class Loader
         $this->active = [];
     }
 
-    /** @return list<Manifest> the extensions this site has switched on */
+    /**
+     * The manifests that are active.
+     *
+     * @return list<Manifest> the extensions this site has switched on
+     */
     public function active(): array
     {
         if ($this->active !== []) {
@@ -101,6 +109,7 @@ final class Loader
         return $out;
     }
 
+    /** Registers every active extension's seams. */
     public function register(Seams $seams): void
     {
         foreach ($this->active() as $manifest) {

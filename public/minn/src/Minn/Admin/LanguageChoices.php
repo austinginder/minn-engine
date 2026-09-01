@@ -22,6 +22,8 @@ final class LanguageChoices
     private const ENGLISH = 'English (United States)';
 
     /**
+     * The language select's HTML, installed languages first.
+     *
      * @param list<string> $installed locale codes the site already holds
      * @param array<string, array{language: string, native_name: string, iso: array<int|string, string>}> $available every translation the directory offers, keyed by locale
      */

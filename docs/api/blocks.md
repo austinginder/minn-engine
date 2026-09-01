@@ -5,20 +5,20 @@ the block parser and renderer
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`Attributes`](#attributes) | final readonly class | 30 | The JSON object a block delimiter carries, read in place. Rewriting one |
-| [`Block`](#block) | final readonly class | 27 | One parsed block. A null name is freeform HTML between blocks. The |
-| [`BlockName`](#blockname) | final class | 16 | The block name rules: a string, lower-case, `namespace/name`. |
-| [`Context`](#context) | final class | 68 | What the template blocks render against: the resolution, the main |
+| [`Block`](#block) | final readonly class | 29 | One parsed block. A null name is freeform HTML between blocks. The |
+| [`BlockName`](#blockname) | final class | 17 | The block name rules: a string, lower-case, `namespace/name`. |
+| [`Context`](#context) | final class | 76 | What the template blocks render against: the resolution, the main |
 | [`Elements`](#elements) | final class | 79 | Per-block element styles (style.elements in a block's attributes, the |
 | [`ImageTags`](#imagetags) | final readonly class | 167 | The attributes the reference adds to an <img> that carries a |
-| [`Layout`](#layout) | final class | 121 | The layout-support classes the reference adds at render time. Every |
-| [`Parser`](#parser) | final class | 87 | Parses block markup into a tree. The grammar is the delimiter comment: |
-| [`QueryVars`](#queryvars) | final class | 78 | The query variables a Query Loop block's context asks for, the way the reference's query block builds them. |
-| [`RenderState`](#renderstate) | final class | 217 | Per-request rendering state. The reference numbers galleries, style |
-| [`Renderer`](#renderer) | final class | 205 | Renders a block tree the way the reference renders post_content: |
-| [`Selector`](#selector) | final class | 40 | The CSS selector a block type declares for its root or for one feature, from its `selectors` map or the older per-support keys. |
+| [`Layout`](#layout) | final class | 126 | The layout-support classes the reference adds at render time. Every |
+| [`Parser`](#parser) | final class | 91 | Parses block markup into a tree. The grammar is the delimiter comment: |
+| [`QueryVars`](#queryvars) | final class | 80 | The query variables a Query Loop block's context asks for, the way the reference's query block builds them. |
+| [`RenderState`](#renderstate) | final class | 247 | Per-request rendering state. The reference numbers galleries, style |
+| [`Renderer`](#renderer) | final class | 219 | Renders a block tree the way the reference renders post_content: |
+| [`Selector`](#selector) | final class | 42 | The CSS selector a block type declares for its root or for one feature, from its `selectors` map or the older per-support keys. |
 | [`Styles`](#styles) | final class | 155 | The inline style and class names a block's "style" and preset |
-| [`Supports`](#supports) | final class | 70 | The wrapper attributes a block's supports declaration earns from its |
-| [`Wrapper`](#wrapper) | final class | 59 | The opening tag of a dynamic block's wrapper, in the reference's class |
+| [`Supports`](#supports) | final class | 72 | The wrapper attributes a block's supports declaration earns from its |
+| [`Wrapper`](#wrapper) | final class | 60 | The opening tag of a dynamic block's wrapper, in the reference's class |
 
 ## Attributes
 
@@ -57,7 +57,11 @@ __construct(?string $name, array $attrs, array $innerBlocks, string $innerHtml, 
 
 ### static `freeform(string $html): self`
 
+A block-less run of HTML, as the parser reads it.
+
 ### `attr(string $key, mixed $default = NULL): mixed`
+
+One attribute, or the default.
 
 ### `className(): string`
 
@@ -71,6 +75,8 @@ The class names declared on the block's own attributes (className).
 The block name rules: a string, lower-case, `namespace/name`.
 
 ### static `refuse(mixed $name): ?Minn\Runtime\Refusal`
+
+Why a block name is invalid, or null when it is fine.
 
 
 ## Context
@@ -96,11 +102,19 @@ __construct(Minn\Front\Resolution $resolution, array $posts, int $total, int $pe
 
 ### static `forRest(): self`
 
+A context for rendering outside a page: the home resolution and no posts.
+
 ### `post(): ?Minn\Content\PostRecord`
+
+The post being rendered, innermost first.
 
 ### `pushPost(Minn\Content\PostRecord $post): void`
 
+Enters a post's scope.
+
 ### `popPost(): void`
+
+Leaves the innermost post's scope.
 
 ### `inLoop(): bool`
 
@@ -108,11 +122,19 @@ Inside a post template loop (as opposed to the singular view).
 
 ### `comment(): ?Minn\Content\CommentRecord`
 
+The comment being rendered, if any.
+
 ### `withComment(?Minn\Content\CommentRecord $comment): void`
+
+Enters or leaves a comment's scope.
 
 ### `paged(): int`
 
+The page number being rendered.
+
 ### `totalPages(): int`
+
+How many pages the listing makes.
 
 
 ## Elements
@@ -186,7 +208,11 @@ Used by: `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Navigatio
 
 ### static `rootPaddingAware(bool $aware): void`
 
+Whether the theme uses root padding-aware alignments.
+
 ### static `classes(string $blockSlug, array $attrs, string $defaultType = 'flow', bool $alwaysContainer = false): array`
+
+The layout classes a block's wrapper carries.
 
 - `@return list<string>`
 
@@ -194,7 +220,7 @@ Used by: `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Navigatio
 
 The declarations behind a container class, in the reference's order.
 
-Internals: `hasRules()` (private, line 66), `suffix()` (private, line 134)
+Internals: `hasRules()` (private, line 71), `suffix()` (private, line 139)
 
 
 ## Parser
@@ -212,6 +238,8 @@ Used by: `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\Theme\Navigat
 
 ### static `parse(string $markup): array`
 
+Block markup as a tree of blocks.
+
 - `@return list<Block>`
 
 ### static `contains(string $content, string $name): bool`
@@ -227,12 +255,14 @@ The query variables a Query Loop block's context asks for, the way the reference
 
 ### static `fromContext(?array $context, int $page, array $sticky, callable $postTypeExists, callable $taxonomyViewable): array`
 
+The query vars a query block's context amounts to.
+
 - `@param array<string, mixed>|null $context the block's `query` context`
 - `@param list<int> $sticky the site's sticky post ids`
 - `@param callable(string): bool $postTypeExists`
 - `@param callable(string): bool $taxonomyViewable`
 
-Internals: `taxQuery()` (private, line 60)
+Internals: `taxQuery()` (private, line 62)
 
 
 ## RenderState
@@ -250,6 +280,8 @@ Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\Search`, `Mi
 
 
 ### static `nextId(): int`
+
+The next per-request counter value.
 
 ### static `nextImage(): int`
 
@@ -270,6 +302,8 @@ A container stylesheet this page needs: the class and its declarations.
 
 ### static `containers(): array`
 
+The layout containers rendering discovered.
+
 - `@return array<string, string>`
 
 ### static `recordBlock(string $blockName): void`
@@ -278,11 +312,17 @@ Every block name the page rendered; the stylesheet prints block styles for these
 
 ### static `blocks(): array`
 
+The block names rendering met.
+
 - `@return array<string, true>`
 
 ### static `recordVariation(string $blockName, string $style, int $instance): void`
 
+Notes a style variation instance for the stylesheet.
+
 ### static `variations(): array`
+
+The style variations rendering met.
 
 - `@return list<array{0: string, 1: string, 2: int}>`
 
@@ -302,7 +342,11 @@ inside one, so the navigation block marks the span it owns.
 
 ### static `leaveNavigation(): void`
 
+Leaves a navigation block.
+
 ### static `inNavigation(): bool`
+
+Whether rendering is inside a navigation block.
 
 ### static `enter(string $key): bool`
 
@@ -310,11 +354,15 @@ Marks a nested source as being rendered; false when it is already open (a cycle)
 
 ### static `leave(string $key): void`
 
+Leaves a cycle-guarded key.
+
 ### static `descend(): bool`
 
 True while the block tree is shallower than the cap; deeper blocks render as nothing.
 
 ### static `ascend(): void`
+
+Leaves one nesting level.
 
 ### static `depth(): int`
 
@@ -326,19 +374,31 @@ A dynamic block claims its element class before rendering, so a block that rende
 
 ### static `takePendingElements(): ?string`
 
+The pending elements class, cleared.
+
 ### static `recordElementRule(string $css): void`
 
+Adds a per-elements CSS rule.
+
 ### static `elementRules(): array`
+
+The per-elements CSS rules rendering produced.
 
 - `@return list<string>`
 
 ### static `recordGallery(int $instance): void`
 
+Notes a gallery instance.
+
 ### static `galleries(): array`
+
+The gallery instances rendering met.
 
 - `@return list<int>`
 
 ### static `reset(): void`
+
+Clears every per-request counter.
 
 
 ## Renderer
@@ -368,25 +428,41 @@ The numbered companion of a registered style variation, consuming a counter; nul
 
 ### `context(): Minn\Blocks\Context`
 
+What is being rendered.
+
 ### `withContext(Minn\Blocks\Context $context): void`
+
+Sets what is being rendered.
 
 ### `images(): Minn\Blocks\ImageTags`
 
+The image tag builder.
+
 ### static `forDb(Minn\Db $db): self`
 
+A renderer with every dynamic block wired over the database door.
+
 ### `registerDynamic(string $name, callable $render): void`
+
+Registers a dynamic block's render callback.
 
 - `@param callable(Block, Renderer): string $render`
 
 ### `render(string $markup): string`
 
+Block markup as HTML, texturized.
+
 ### `renderBlocks(array $blocks): string`
+
+A tree of blocks as HTML.
 
 - `@param list<Block> $blocks`
 
 ### `renderBlock(Minn\Blocks\Block $block): string`
 
-Internals: `renderNamed()` (private, line 171), `decorate()` (private, line 192), `gallery()` (private, line 224), `flexWithoutContainer()` (private, line 232)
+One block as HTML, with the filters around it.
+
+Internals: `renderNamed()` (private, line 185), `decorate()` (private, line 206), `gallery()` (private, line 238), `flexWithoutContainer()` (private, line 246)
 
 
 ## Selector
@@ -397,11 +473,13 @@ The CSS selector a block type declares for its root or for one feature, from its
 
 ### static `resolve(array $selectors, array $supports, array|string|null $target, bool $fallback, string $defaultClass): ?string`
 
+The CSS selector a block's style targets, or null.
+
 - `@param array<string, mixed> $selectors the block type's selectors map`
 - `@param array<string, mixed> $supports the block type's supports`
 - `@param string|list<string>|null $target 'root', a dotted feature path, or a path list`
 
-Internals: `at()` (private, line 37)
+Internals: `at()` (private, line 39)
 
 
 ## Styles
@@ -454,12 +532,14 @@ inline values, the font-size preset, the anchor id.
 
 ### static `attributes(array $attributes, array $supports, string $defaultClass, callable $kebab): array`
 
+The classes and inline styles a block's supports amount to.
+
 - `@param array<string, mixed> $attributes the block's prepared attributes`
 - `@param array<string, mixed> $supports the block type's supports`
 - `@param callable(string): string $kebab the slug form of a preset name (filtered on the reference)`
 - `@return array<string, string> class, style, id, only those that apply`
 
-Internals: `color()` (private, line 57)
+Internals: `color()` (private, line 59)
 
 
 ## Wrapper
@@ -476,4 +556,6 @@ the layout classes last; the style attribute inline.
 Used by: `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`
 
 ### static `open(string $tag, string $blockClass, Minn\Blocks\Block $block, bool $styleFirst = false, string $blockName = '', bool $linkColorClass = false, array $extraClasses = array ( ), array $trailingClasses = array ( )): string`
+
+A dynamic block's opening tag with its classes in the reference's order.
 

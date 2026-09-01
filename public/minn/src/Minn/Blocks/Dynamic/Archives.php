@@ -19,6 +19,7 @@ final readonly class Archives
     ) {
     }
 
+    /** The block's HTML. */
     public function render(Block $block, \Minn\Blocks\Renderer $renderer): string
     {
         $viewing = $renderer->context()->resolution->date;

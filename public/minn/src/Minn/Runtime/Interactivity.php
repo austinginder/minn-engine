@@ -31,7 +31,11 @@ final class Interactivity
     private ?array $element = null;
     private bool $processing = false;
 
-    /** @return array<string, mixed> */
+    /**
+     * Reads or extends a namespace's state.
+     *
+     * @return array<string, mixed>
+     */
     public function state(?string $namespace, array $state = []): array
     {
         if ($namespace === null || $namespace === '') {
@@ -47,19 +51,31 @@ final class Interactivity
         return $this->state[$namespace] ?? [];
     }
 
-    /** @return array<string, array<string, mixed>> every namespace's state, for the client */
+    /**
+     * Every namespace's state, for the client.
+     *
+     * @return array<string, array<string, mixed>> every namespace's state, for the client
+     */
     public function allState(): array
     {
         return array_filter($this->state, static fn (array $s) => $s !== []);
     }
 
-    /** @return array<string, array<string, mixed>> */
+    /**
+     * Every namespace's config, for the client.
+     *
+     * @return array<string, array<string, mixed>>
+     */
     public function allConfig(): array
     {
         return array_filter($this->config, static fn (array $c) => $c !== []);
     }
 
-    /** @return array<string, mixed> */
+    /**
+     * Reads or extends a namespace's config.
+     *
+     * @return array<string, mixed>
+     */
     public function config(string $namespace, array $config = []): array
     {
         if ($config !== []) {
@@ -68,7 +84,11 @@ final class Interactivity
         return $this->config[$namespace] ?? [];
     }
 
-    /** @return array<string, mixed> */
+    /**
+     * The current directive context of a namespace.
+     *
+     * @return array<string, mixed>
+     */
     public function context(?string $namespace = null): array
     {
         if (!$this->processing) {
@@ -79,7 +99,11 @@ final class Interactivity
         return $this->contexts === [] ? [] : (end($this->contexts)[$namespace] ?? []);
     }
 
-    /** @return array<string, mixed>|null */
+    /**
+     * The element whose directives are being evaluated.
+     *
+     * @return array<string, mixed>|null
+     */
     public function element(): ?array
     {
         if (!$this->processing) {
@@ -89,6 +113,7 @@ final class Interactivity
         return $this->element;
     }
 
+    /** HTML with its directives resolved on the server. */
     public function process(string $html): string
     {
         $tokens = $this->tokenize($html);

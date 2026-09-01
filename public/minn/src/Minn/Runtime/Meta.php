@@ -15,6 +15,7 @@ final readonly class Meta
     {
     }
 
+    /** Whether an object type has a meta table. */
     public static function knows(string $type): bool
     {
         return isset(self::TABLES[$type]);
@@ -60,6 +61,7 @@ final readonly class Meta
         return $out;
     }
 
+    /** Inserts a meta row and returns its id. */
     public function add(string $type, int $objectId, string $key, string $stored): int
     {
         [$table, $column] = self::TABLES[$type];
@@ -97,6 +99,7 @@ final readonly class Meta
         return $ids;
     }
 
+    /** Sets the value of the given meta rows. */
     public function updateRows(string $type, array $ids, string $stored): void
     {
         if ($ids === []) {
@@ -123,7 +126,11 @@ final readonly class Meta
         return array_map(static fn (array $r) => ['meta_id' => (int) $r['meta_id'], 'object_id' => (int) $r['object_id']], $this->db->rows($sql, $params));
     }
 
-    /** @param list<int> $ids */
+    /**
+     * Deletes the given meta rows.
+     *
+     * @param list<int> $ids
+     */
     public function deleteRows(string $type, array $ids): void
     {
         if ($ids === []) {

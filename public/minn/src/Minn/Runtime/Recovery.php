@@ -82,13 +82,21 @@ final readonly class Recovery
         return true;
     }
 
-    /** @return array<string, array<string, mixed>> */
+    /**
+     * The plugins recovery mode has paused.
+     *
+     * @return array<string, array<string, mixed>>
+     */
     public function pausedPlugins(): array
     {
         return $this->read(self::PLUGINS_OPTION);
     }
 
-    /** @return array<string, array<string, mixed>> */
+    /**
+     * The themes recovery mode has paused.
+     *
+     * @return array<string, array<string, mixed>>
+     */
     public function pausedThemes(): array
     {
         return $this->read(self::THEMES_OPTION);

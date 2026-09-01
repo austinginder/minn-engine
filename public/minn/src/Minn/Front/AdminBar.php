@@ -34,6 +34,7 @@ final readonly class AdminBar
     ) {
     }
 
+    /** The bar for a signed-in editor, or null for anyone else. */
     public static function forReader(?Authenticated $session, Capabilities $capabilities, Site $site, Permalinks $permalinks, App $app, Appearance $appearance, AdminTypes $types): ?self
     {
         if (!$session instanceof Authenticated || !$capabilities->can($session->id(), 'edit_posts') || !$app->installed()) {

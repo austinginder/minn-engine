@@ -20,12 +20,17 @@ final class Layout
     /** Whether the active theme opts into root-padding-aware alignments (theme.json settings.useRootPaddingAwareAlignments). */
     private static bool $rootPaddingAware = true;
 
+    /** Whether the theme uses root padding-aware alignments. */
     public static function rootPaddingAware(bool $aware): void
     {
         self::$rootPaddingAware = $aware;
     }
 
-    /** @return list<string> */
+    /**
+     * The layout classes a block's wrapper carries.
+     *
+     * @return list<string>
+     */
     public static function classes(string $blockSlug, array $attrs, string $defaultType = 'flow', bool $alwaysContainer = false): array
     {
         $layout = (array) ($attrs['layout'] ?? []);

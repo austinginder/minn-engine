@@ -48,6 +48,7 @@ final readonly class Resolver
     ) {
     }
 
+    /** A resolver over the site's own settings. */
     public static function fromDb(Db $db, Closure $canReadUnpublished): self
     {
         return new self(
@@ -60,11 +61,13 @@ final readonly class Resolver
         );
     }
 
+    /** The link builder. */
     public function permalinks(): Permalinks
     {
         return $this->permalinks;
     }
 
+    /** Posts per page. */
     public function perPage(): int
     {
         return $this->perPage;
@@ -437,7 +440,11 @@ final readonly class Resolver
         return Resolution::date($year, $month, $day, $paged);
     }
 
-    /** @return array{0: string, 1: string}|null */
+    /**
+     * The site-local bounds of a date archive, or null when the date is invalid.
+     *
+     * @return array{0: string, 1: string}|null
+     */
     public static function dateRange(int $year, ?int $month, ?int $day): ?array
     {
         if ($month !== null && ($month < 1 || $month > 12)) {

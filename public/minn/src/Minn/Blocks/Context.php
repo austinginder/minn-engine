@@ -32,11 +32,13 @@ final class Context
     ) {
     }
 
+    /** A context for rendering outside a page: the home resolution and no posts. */
     public static function forRest(): self
     {
         return new self(Resolution::home(), [], 0, 10, false);
     }
 
+    /** The post being rendered, innermost first. */
     public function post(): ?PostRecord
     {
         if ($this->postStack !== []) {
@@ -46,11 +48,13 @@ final class Context
         return $record instanceof PostRecord ? $record : null;
     }
 
+    /** Enters a post's scope. */
     public function pushPost(PostRecord $post): void
     {
         $this->postStack[] = $post;
     }
 
+    /** Leaves the innermost post's scope. */
     public function popPost(): void
     {
         array_pop($this->postStack);
@@ -62,21 +66,25 @@ final class Context
         return $this->postStack !== [];
     }
 
+    /** The comment being rendered, if any. */
     public function comment(): ?CommentRecord
     {
         return $this->comment;
     }
 
+    /** Enters or leaves a comment's scope. */
     public function withComment(?CommentRecord $comment): void
     {
         $this->comment = $comment;
     }
 
+    /** The page number being rendered. */
     public function paged(): int
     {
         return $this->resolution->paged;
     }
 
+    /** How many pages the listing makes. */
     public function totalPages(): int
     {
         return max(1, (int) ceil($this->total / max(1, $this->perPage)));

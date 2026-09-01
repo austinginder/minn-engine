@@ -56,6 +56,7 @@ final readonly class PageRenderer
     ) {
     }
 
+    /** A page renderer over the database door. */
     public static function create(Db $db, Theme $theme, Permalinks $permalinks, int $perPage, ?AdminBar $bar = null): self
     {
         $site = new Site($db);
@@ -119,6 +120,7 @@ final readonly class PageRenderer
         return $classes;
     }
 
+    /** The page for a resolution, or null when the theme has no template for it. */
     public function render(Resolution $resolution, array $coreClasses, string $title): ?string
     {
         $template = $this->templates->forResolution($resolution);

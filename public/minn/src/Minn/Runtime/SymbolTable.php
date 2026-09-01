@@ -22,21 +22,25 @@ final class SymbolTable
     /** @var array<string, true> */
     private array $guarded = [];
 
+    /** Notes a function called. */
     public function call(string $name): void
     {
         $this->calls[$name] = true;
     }
 
+    /** Notes a class referenced. */
     public function classRef(string $name): void
     {
         $this->classes[$name] = true;
     }
 
+    /** Notes a function the folder declares. */
     public function declare(string $function): void
     {
         $this->declared[strtolower($function)] = true;
     }
 
+    /** Notes a class the folder declares. */
     public function declareClass(string $class): void
     {
         $this->declaredClasses[strtolower($class)] = true;
@@ -48,7 +52,11 @@ final class SymbolTable
         $this->guarded[strtolower($name)] = true;
     }
 
-    /** @return array{calls: list<string>, classes: list<string>, declared: array<string, true>, declaredClasses: array<string, true>, guarded: array<string, true>, truncated: bool} */
+    /**
+     * The table as the gate reads it.
+     *
+     * @return array{calls: list<string>, classes: list<string>, declared: array<string, true>, declaredClasses: array<string, true>, guarded: array<string, true>, truncated: bool}
+     */
     public function toArray(bool $truncated): array
     {
         return [

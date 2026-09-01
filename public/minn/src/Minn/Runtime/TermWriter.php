@@ -25,6 +25,8 @@ final readonly class TermWriter
     }
 
     /**
+     * Inserts a term, or the refusal.
+     *
      * @param array{slug?: string, description?: string, parent?: int|string, alias_of?: string} $args
      * @return array{term_id: int, term_taxonomy_id: int}|Refusal
      */
@@ -59,6 +61,8 @@ final readonly class TermWriter
     }
 
     /**
+     * Updates a term, or the refusal.
+     *
      * @param array<string, mixed> $current the term's row
      * @param array<string, mixed> $args
      * @return array{name: string, slug: string, description: string, parent: int}|Refusal what to write

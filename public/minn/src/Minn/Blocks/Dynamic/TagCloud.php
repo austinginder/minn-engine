@@ -22,6 +22,7 @@ final readonly class TagCloud
     ) {
     }
 
+    /** The block's HTML. */
     public function render(Block $block): string
     {
         $tags = TermRecord::fromRows($this->db->rows(

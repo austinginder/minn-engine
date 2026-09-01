@@ -33,7 +33,11 @@ final class ScriptModules
     {
     }
 
-    /** @param list<string|array{id: string, import?: string}> $deps */
+    /**
+     * Registers a module by id.
+     *
+     * @param list<string|array{id: string, import?: string}> $deps
+     */
     public function register(string $id, string $src, array $deps, string|false|null $version, array $args): void
     {
         if (isset($this->registered[$id])) {
@@ -70,6 +74,7 @@ final class ScriptModules
         ];
     }
 
+    /** Queues a module, registering it when a source is given. */
     public function enqueue(string $id, string $src, array $deps, string|false|null $version, array $args): void
     {
         if ($src !== '') {
@@ -80,17 +85,20 @@ final class ScriptModules
         }
     }
 
+    /** Removes a module from the queue. */
     public function dequeue(string $id): void
     {
         $this->queue = array_values(array_filter($this->queue, static fn (string $q) => $q !== $id));
     }
 
+    /** Forgets a module. */
     public function deregister(string $id): void
     {
         unset($this->registered[$id]);
         $this->dequeue($id);
     }
 
+    /** Sets a module's fetch priority. */
     public function setFetchpriority(string $id, string $priority): bool
     {
         if (!isset($this->registered[$id])) {
@@ -104,6 +112,7 @@ final class ScriptModules
         return true;
     }
 
+    /** Moves a module to the footer or the head. */
     public function setInFooter(string $id, bool $inFooter): bool
     {
         if (!isset($this->registered[$id])) {
@@ -113,13 +122,21 @@ final class ScriptModules
         return true;
     }
 
-    /** @return list<string> */
+    /**
+     * The module ids queued.
+     *
+     * @return list<string>
+     */
     public function queue(): array
     {
         return $this->queue;
     }
 
-    /** @return array{src: string, version: string|false|null, dependencies: list<array{id: string, import: string}>, in_footer: bool, fetchpriority: string}|null */
+    /**
+     * One registered module, or null.
+     *
+     * @return array{src: string, version: string|false|null, dependencies: list<array{id: string, import: string}>, in_footer: bool, fetchpriority: string}|null
+     */
     public function registered(string $id): ?array
     {
         if (!isset($this->registered[$id])) {
@@ -130,6 +147,7 @@ final class ScriptModules
         return $item;
     }
 
+    /** The import map script tag. */
     public function printImportMap(): string
     {
         $imports = [];
@@ -142,6 +160,7 @@ final class ScriptModules
         return '<script id="wp-importmap" type="importmap">' . "\n" . json_encode(['imports' => $imports], JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n" . '</script>' . "\n";
     }
 
+    /** The modulepreload links. */
     public function printPreloads(): string
     {
         $out = '';
@@ -155,16 +174,19 @@ final class ScriptModules
         return $out;
     }
 
+    /** The head's module tags. */
     public function printHead(): string
     {
         return $this->printTags(false);
     }
 
+    /** The footer's module tags. */
     public function printFooter(): string
     {
         return $this->printTags(true);
     }
 
+    /** The script-module-data tags. */
     public function printData(): string
     {
         $marked = $this->marked();
@@ -180,6 +202,7 @@ final class ScriptModules
         return $out;
     }
 
+    /** The a11y module's tag, once. */
     public function printA11y(): string
     {
         if (!$this->a11yAvailable || $this->a11yPrinted) {

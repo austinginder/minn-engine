@@ -34,6 +34,7 @@ final readonly class Diagnostics
     ) {
     }
 
+    /** The System view: checks, config, logs, and the four info groups. */
     public function payload(Request $request): array
     {
         $autoload = $this->autoloadSummary();
@@ -224,6 +225,7 @@ final readonly class Diagnostics
         return ['now' => $now, 'disabled' => false, 'items' => $items];
     }
 
+    /** The autoloaded options: the summary and the largest rows. */
     public function autoload(): array
     {
         $summary = $this->autoloadSummary();

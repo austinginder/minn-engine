@@ -14,11 +14,13 @@ final class Decoder
     /** @var array<string, string>|null names that decode without a trailing semicolon, mapped to their text */
     private static ?array $legacy = null;
 
+    /** Text with its character references decoded. */
     public static function text(string $raw): string
     {
         return self::decode($raw, false);
     }
 
+    /** An attribute value with its character references decoded. */
     public static function attribute(string $raw): string
     {
         return self::decode($raw, true);

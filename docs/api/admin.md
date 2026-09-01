@@ -4,32 +4,32 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`ActivityChart`](#activitychart) | final readonly class | 61 | The overview's activity chart: published posts and pages plus every |
-| [`ActivityFeed`](#activityfeed) | final readonly class | 210 | What happened lately, as the overview and the bell tell it: the caller's |
-| [`AdminTypes`](#admintypes) | final class | 82 | Admin-facing type facts (viewable, labels, supports, the edit gate) live |
-| [`App`](#app) | final readonly class | 95 | The Minn Admin app on disk: the symlinked dev copy the engine serves the |
-| [`AppController`](#appcontroller) | final readonly class | 129 | Serves Minn Admin from the engine: the path-routed shell (every |
-| [`Appearance`](#appearance) | final readonly class | 74 | A person's Minn Admin appearance: the colour scheme and its custom |
-| [`BootPayload`](#bootpayload) | final readonly class | 228 | The window.MINN boot payload, assembled from the engine: the keys app.js |
-| [`CoreStatus`](#corestatus) | final readonly class | 23 | The installed version comes from the update_core transient's |
+| [`ActivityChart`](#activitychart) | final readonly class | 65 | The overview's activity chart: published posts and pages plus every |
+| [`ActivityFeed`](#activityfeed) | final readonly class | 212 | What happened lately, as the overview and the bell tell it: the caller's |
+| [`AdminTypes`](#admintypes) | final class | 85 | Admin-facing type facts (viewable, labels, supports, the edit gate) live |
+| [`App`](#app) | final readonly class | 98 | The Minn Admin app on disk: the symlinked dev copy the engine serves the |
+| [`AppController`](#appcontroller) | final readonly class | 131 | Serves Minn Admin from the engine: the path-routed shell (every |
+| [`Appearance`](#appearance) | final readonly class | 79 | A person's Minn Admin appearance: the colour scheme and its custom |
+| [`BootPayload`](#bootpayload) | final readonly class | 230 | The window.MINN boot payload, assembled from the engine: the keys app.js |
+| [`CoreStatus`](#corestatus) | final readonly class | 24 | The installed version comes from the update_core transient's |
 | [`Dashboard`](#dashboard) | final readonly class | 289 | The overview payload: stat cards, the activity chart, and the recent |
-| [`Diagnostics`](#diagnostics) | final readonly class | 400 | The System view's facts about this install: the engine, PHP, the |
+| [`Diagnostics`](#diagnostics) | final readonly class | 402 | The System view's facts about this install: the engine, PHP, the |
 | [`Format`](#format) | final class | 51 | The dashboard's number, size, age, and title formatting. |
-| [`HiddenIntegrations`](#hiddenintegrations) | final readonly class | 89 | What a person hid from their own Minn Admin: the app's per-user map |
-| [`LanguageChoices`](#languagechoices) | final class | 40 | The language picker's markup. English always leads the list and carries the |
-| [`LanguageController`](#languagecontroller) | final readonly class | 96 | Languages: what is installed, what a person reads in, what the site defaults to. |
-| [`Logs`](#logs) | final readonly class | 138 | The log files the System view can read and clear: the debug log the |
-| [`ManageController`](#managecontroller) | final readonly class | 359 | The Manage half of minn-admin/v1: the Structure view (post types, |
-| [`Notifications`](#notifications) | final readonly class | 201 | The bell feed: pending and recent comments, translation and core update |
-| [`Packages`](#packages) | final readonly class | 392 | Putting themes and extensions on disk. Themes come from wordpress.org |
-| [`PackagesController`](#packagescontroller) | final readonly class | 110 | Adding and removing themes and extensions from the Extensions view. |
-| [`RenderController`](#rendercontroller) | final readonly class | 53 | The editor's island previews: block markup rendered by the same |
-| [`SessionsController`](#sessionscontroller) | final readonly class | 71 | A person's sign-in sessions, read from the same session_tokens store |
-| [`SystemController`](#systemcontroller) | final readonly class | 81 | The System view: diagnostics, the scheduled-post list, autoloaded options, and the logs. |
-| [`Translations`](#translations) | final readonly class | 220 | Languages for the admin. A person's locale is their `locale` user meta, |
-| [`Updates`](#updates) | final class | 297 | Update offers from wordpress.org for the site's plugins and themes: the |
-| [`UpdatesController`](#updatescontroller) | final readonly class | 116 | The minn-admin/v1 update routes: offers, directory meta, the check, the installs, the auto-update lists. |
-| [`V1Controller`](#v1controller) | final readonly class | 304 | The minn-admin/v1 namespace: the dashboard burst, the editor helpers, |
+| [`HiddenIntegrations`](#hiddenintegrations) | final readonly class | 94 | What a person hid from their own Minn Admin: the app's per-user map |
+| [`LanguageChoices`](#languagechoices) | final class | 42 | The language picker's markup. English always leads the list and carries the |
+| [`LanguageController`](#languagecontroller) | final readonly class | 100 | Languages: what is installed, what a person reads in, what the site defaults to. |
+| [`Logs`](#logs) | final readonly class | 150 | The log files the System view can read and clear: the debug log the |
+| [`ManageController`](#managecontroller) | final readonly class | 372 | The Manage half of minn-admin/v1: the Structure view (post types, |
+| [`Notifications`](#notifications) | final readonly class | 202 | The bell feed: pending and recent comments, translation and core update |
+| [`Packages`](#packages) | final readonly class | 393 | Putting themes and extensions on disk. Themes come from wordpress.org |
+| [`PackagesController`](#packagescontroller) | final readonly class | 116 | Adding and removing themes and extensions from the Extensions view. |
+| [`RenderController`](#rendercontroller) | final readonly class | 54 | The editor's island previews: block markup rendered by the same |
+| [`SessionsController`](#sessionscontroller) | final readonly class | 73 | A person's sign-in sessions, read from the same session_tokens store |
+| [`SystemController`](#systemcontroller) | final readonly class | 89 | The System view: diagnostics, the scheduled-post list, autoloaded options, and the logs. |
+| [`Translations`](#translations) | final readonly class | 226 | Languages for the admin. A person's locale is their `locale` user meta, |
+| [`Updates`](#updates) | final class | 303 | Update offers from wordpress.org for the site's plugins and themes: the |
+| [`UpdatesController`](#updatescontroller) | final readonly class | 123 | The minn-admin/v1 update routes: offers, directory meta, the check, the installs, the auto-update lists. |
+| [`V1Controller`](#v1controller) | final readonly class | 316 | The minn-admin/v1 namespace: the dashboard burst, the editor helpers, |
 
 ## ActivityChart
 
@@ -48,6 +48,8 @@ __construct(Minn\Db $db, Minn\Content\Site $site)
 
 
 ### `bars(int $days, int $now): array`
+
+The bars for a window of days, counted from the database.
 
 - `@return list<array{label: string, value: int, from: string, to: string}>`
 
@@ -101,9 +103,13 @@ May this caller see a comment row that names its post?
 
 ### `postTitle(int $postId): string`
 
+A post's stored title, empty when the post is gone.
+
 ### `displayName(int $userId): string`
 
-Internals: `ownPosts()` (private, line 96), `latestComments()` (private, line 141), `publishedBetween()` (private, line 169), `commentsBetween()` (private, line 194)
+A user's display name, empty when the user is gone.
+
+Internals: `ownPosts()` (private, line 98), `latestComments()` (private, line 143), `publishedBetween()` (private, line 171), `commentsBetween()` (private, line 196)
 
 
 ## AdminTypes
@@ -123,13 +129,19 @@ __construct(Minn\Rest\Types $types, Minn\Auth\Capabilities $capabilities)
 
 ### `extra(): array`
 
+The types beyond post and page the app may show, with their labels.
+
 ### `section(int $userId): array`
 
 The boot-status types section: edit-visible types for this user, slimmed.
 
 ### `restBaseOf(string $slug): string`
 
+The rest_base of a type slug.
+
 ### `singularOf(string $slug): string`
+
+A type's singular label.
 
 ### `editable(): array`
 
@@ -167,9 +179,15 @@ such record and keeps its admin.
 
 ### `dir(): string`
 
+Where the bundle sits on disk.
+
 ### `installed(): bool`
 
+Whether the bundle is on disk.
+
 ### `version(): string`
+
+The bundle's version from its plugin header.
 
 ### `file(string $relative): ?string`
 
@@ -214,11 +232,15 @@ Requires a signed-in user who can edit content; otherwise the login form.
 
 Route: `GET /minn/admin/assets/{path*}`
 
+One file of the app bundle, with its content type and caching headers.
+
 ### `ajax(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `* /wp-admin/admin-ajax.php`
 
-Internals: `offPage()` (private, line 61), `render()` (private, line 105)
+The one admin-ajax action the app needs: a fresh REST nonce.
+
+Internals: `offPage()` (private, line 61), `render()` (private, line 107)
 
 
 ## Appearance
@@ -247,6 +269,8 @@ __construct(Minn\Content\Users $users)
 
 ### `read(int $userId): array`
 
+A user's saved appearance, normalised.
+
 - `@return array{scheme: string, custom: array, defaultAdmin: bool, frontBar: bool}`
 
 ### `save(int $userId, array $raw): array`
@@ -254,6 +278,8 @@ __construct(Minn\Content\Users $users)
 Merges the given keys over the stored map and writes it back; returns the normalised result.
 
 ### static `normalise(array $raw): array`
+
+The appearance with every field valid and every missing one defaulted.
 
 ### static `hex(string $value): string`
 
@@ -279,9 +305,13 @@ __construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, Minn\Aut
 
 ### `siteName(): string`
 
+The site's name, or Site when it has none.
+
 ### `build(Minn\Auth\Authenticated $session): array`
 
-Internals: `userSlice()` (private, line 89), `siteSlice()` (private, line 106), `caps()` (private, line 133), `pluginPayload()` (private, line 180), `standHomeQuery()` (private, line 202), `siteIcon()` (private, line 216), `adapterSlices()` (private, line 228)
+The window.MINN payload the app boots from, for one signed-in session.
+
+Internals: `userSlice()` (private, line 91), `siteSlice()` (private, line 108), `caps()` (private, line 135), `pluginPayload()` (private, line 182), `standHomeQuery()` (private, line 204), `siteIcon()` (private, line 218), `adapterSlices()` (private, line 230)
 
 
 ## CoreStatus
@@ -302,6 +332,8 @@ __construct(Minn\Content\Site $site)
 
 
 ### `data(): array`
+
+The core version and any offer from the update transient.
 
 
 ## Dashboard
@@ -361,6 +393,8 @@ __construct(Minn\Db $db, Minn\Content\Site $site, Minn\Front\Permalinks $permali
 
 ### `payload(Minn\Http\Request $request): array`
 
+The System view: checks, config, logs, and the four info groups.
+
 ### `config(): array`
 
 The wp-config debug constants as they stand; the engine never rewrites the file.
@@ -371,7 +405,9 @@ Every scheduled post as a one-off event, soonest first.
 
 ### `autoload(): array`
 
-Internals: `checks()` (private, line 67), `engineGroup()` (private, line 104), `phpGroup()` (private, line 125), `serverGroup()` (private, line 148), `opcacheOn()` (private, line 166), `autoloadSummary()` (private, line 248), `cronSummary()` (private, line 263), `futurePosts()` (private, line 281), `databaseGroup()` (private, line 289), `extensionsManifest()` (private, line 327), `activeThemeLabel()` (private, line 353), `check()` (private, line 368), `rows()` (private, line 374), `bytes()` (private, line 383), `offsetLabel()` (private, line 398), `relative()` (private, line 406)
+The autoloaded options: the summary and the largest rows.
+
+Internals: `checks()` (private, line 68), `engineGroup()` (private, line 105), `phpGroup()` (private, line 126), `serverGroup()` (private, line 149), `opcacheOn()` (private, line 167), `autoloadSummary()` (private, line 250), `cronSummary()` (private, line 265), `futurePosts()` (private, line 283), `databaseGroup()` (private, line 291), `extensionsManifest()` (private, line 329), `activeThemeLabel()` (private, line 355), `check()` (private, line 370), `rows()` (private, line 376), `bytes()` (private, line 385), `offsetLabel()` (private, line 400), `relative()` (private, line 408)
 
 
 ## Format
@@ -429,6 +465,8 @@ The id as the app sends it: lower-case, only word characters, colon, and dash.
 
 ### `map(int $userId): array`
 
+The views a user has hidden, by id.
+
 - `@return array<string, int> id => hidden-at`
 
 ### `listFor(int $userId): array`
@@ -442,6 +480,8 @@ The restore list: every hidden core view the person can still see. @return list<
 False when the id names nothing this person could hide.
 
 ### `unhide(int $userId, string $id): void`
+
+Shows a hidden view again.
 
 
 ## LanguageChoices
@@ -462,10 +502,12 @@ years.
 
 ### static `dropdown(string $name, string $id, array $installed, array $available, string $selected, bool $offerAvailable): string`
 
+The language select's HTML, installed languages first.
+
 - `@param list<string> $installed locale codes the site already holds`
 - `@param array<string, array{language: string, native_name: string, iso: array<int|string, string>}> $available every translation the directory offers, keyed by locale`
 
-Internals: `option()` (private, line 50)
+Internals: `option()` (private, line 52)
 
 
 ## LanguageController
@@ -485,6 +527,8 @@ __construct(Minn\Admin\Translations $translations, Minn\Content\Users $users, Mi
 
 Route: `GET /minn-admin/v1/languages`
 
+The languages a user may pick, installed and available.
+
 ### `bootLocale(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `GET /minn-admin/v1/boot-locale`
@@ -495,15 +539,21 @@ The slice of the boot payload a language switch repaints from.
 
 Route: `POST /minn-admin/v1/me/language`
 
+Sets the caller's own locale.
+
 ### `user(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
 Route: `POST /minn-admin/v1/users/{id:\d+}/language`
+
+Sets another user's locale.
 
 ### `site(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `POST /minn-admin/v1/site/language`
 
-Internals: `setUserLocale()` (private, line 87), `ensure()` (private, line 99)
+Sets the site's locale.
+
+Internals: `setUserLocale()` (private, line 91), `ensure()` (private, line 103)
 
 
 ## Logs
@@ -526,17 +576,27 @@ __construct(string $webroot)
 
 ### `sources(): array`
 
+Every log the engine knows about, with its path and group.
+
 - `@return array<string, array{label: string, group: string, path: string}>`
 
 ### `listPayload(): array`
+
+The logs list as the System view shows it.
 
 - `@return list<array> the sources that exist, debug first`
 
 ### `read(string $id): array`
 
+One log's tail, by id.
+
 ### `clear(string $id): void`
 
+Empties one log.
+
 ### `debugLogPath(): string`
+
+Where debug.log lives, from WP_DEBUG_LOG or the default.
 
 ### `tail(string $path): array`
 
@@ -547,6 +607,8 @@ The last TAIL_BYTES of a file, the partial first line dropped.
 True when the path resolves inside the webroot.
 
 ### static `human(int $bytes): string`
+
+A byte count in KB, MB, or GB.
 
 
 ## ManageController
@@ -571,6 +633,8 @@ __construct(Minn\Db $db, Minn\Content\Site $site, Minn\Rest\Types $types, Minn\R
 
 Route: `GET /minn-admin/v1/term-taxonomies`
 
+The taxonomies of each public type, for the Structure view.
+
 ### `postTypes(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `GET /minn-admin/v1/post-types`
@@ -581,41 +645,61 @@ The Structure view's post types: core and site-declared, with their live counts.
 
 Route: `GET /minn-admin/v1/taxonomies`
 
+Every taxonomy with its counts.
+
 ### `themes(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `GET /minn-admin/v1/themes`
+
+Every theme on disk with the active one marked.
 
 ### `activateTheme(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `POST /minn-admin/v1/themes/activate`
 
+Switches the active theme.
+
 ### `translations(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `GET /minn-admin/v1/translations`
+
+The translation offers; none on the engine.
 
 ### `changelog(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `GET /minn-admin/v1/changelog`
 
+The app's bundled changelog.
+
 ### `guide(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `GET /minn-admin/v1/guide`
+
+The app's bundled user guide.
 
 ### `myAppearance(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `GET /minn-admin/v1/me/appearance`
 
+The caller's appearance.
+
 ### `saveMyAppearance(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `POST /minn-admin/v1/me/appearance`
+
+Saves the caller's appearance.
 
 ### `userAppearance(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
 Route: `GET /minn-admin/v1/users/{id:\d+}/appearance`
 
+A user's appearance, for one who may edit them.
+
 ### `saveUserAppearance(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
 Route: `POST /minn-admin/v1/users/{id:\d+}/appearance`
+
+Saves a user's appearance.
 
 ### `hidden(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
@@ -633,11 +717,15 @@ An administrator restores something another person hid; hiding stays that person
 
 Route: `POST /minn-admin/v1/integrations/hide`
 
+Hides a view for the caller.
+
 ### `unhide(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `POST /minn-admin/v1/integrations/unhide`
 
-Internals: `integrationId()` (private, line 287), `integrationState()` (private, line 300), `bundled()` (private, line 315), `appearanceBody()` (private, line 321), `editableUser()` (private, line 327), `themeText()` (private, line 338), `themeFolders()` (private, line 344), `screenshot()` (private, line 360), `publicTypes()` (private, line 371), `termCount()` (private, line 376), `postCount()` (private, line 381)
+Shows a view again for the caller.
+
+Internals: `integrationId()` (private, line 300), `integrationState()` (private, line 313), `bundled()` (private, line 328), `appearanceBody()` (private, line 334), `editableUser()` (private, line 340), `themeText()` (private, line 351), `themeFolders()` (private, line 357), `screenshot()` (private, line 373), `publicTypes()` (private, line 384), `termCount()` (private, line 389), `postCount()` (private, line 394)
 
 
 ## Notifications
@@ -659,11 +747,13 @@ __construct(Minn\Db $db, Minn\Content\Site $site, Minn\Content\Users $users, Min
 
 ### `items(int $userId): array`
 
+The bell feed for a user, newest first, grouped and marked read or unread.
+
 ### `markRead(int $userId, string $id): void`
 
 An id marks one item read; an empty id marks everything read.
 
-Internals: `commentItems()` (private, line 64), `updateItems()` (private, line 92), `updateItem()` (private, line 123), `coreItems()` (private, line 134), `registrationItems()` (private, line 168), `commentItem()` (private, line 195), `translationCount()` (private, line 211)
+Internals: `commentItems()` (private, line 65), `updateItems()` (private, line 93), `updateItem()` (private, line 124), `coreItems()` (private, line 135), `registrationItems()` (private, line 169), `commentItem()` (private, line 196), `translationCount()` (private, line 212)
 
 
 ## Packages
@@ -753,7 +843,9 @@ Removes a theme or plugin folder that is not in use.
 
 ### `fetch(string $url): string`
 
-Internals: `plain()` (private, line 179), `identify()` (private, line 367), `removeTree()` (private, line 405)
+A package over https, refusing anything else.
+
+Internals: `plain()` (private, line 179), `identify()` (private, line 367), `removeTree()` (private, line 406)
 
 
 ## PackagesController
@@ -773,17 +865,25 @@ __construct(Minn\Admin\Packages $packages, Minn\Content\Site $site, Minn\Rest\Ca
 
 Route: `GET /minn-admin/v1/themes/search`
 
+Searches wordpress.org themes.
+
 ### `installTheme(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `POST /minn-admin/v1/themes/install`
+
+Installs a theme from wordpress.org by slug.
 
 ### `uploadTheme(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `POST /minn-admin/v1/themes/upload`
 
+Installs a theme from an uploaded zip.
+
 ### `deleteTheme(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `POST /minn-admin/v1/themes/delete`
+
+Deletes an inactive theme.
 
 ### `uploadPlugin(Minn\Http\Request $request): Minn\Http\Response`
 
@@ -801,11 +901,15 @@ A zip URL, or a GitHub owner/repo whose latest release carries a zip asset.
 
 Route: `GET /minn-admin/v1/plugins/search`
 
+Searches wordpress.org plugins.
+
 ### `pluginInfo(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `GET /minn-admin/v1/plugins/info`
 
-Internals: `uploaded()` (private, line 114)
+One wordpress.org plugin's details.
+
+Internals: `uploaded()` (private, line 120)
 
 
 ## RenderController
@@ -828,13 +932,15 @@ __construct(Minn\Db $db, Minn\Content\Site $site, Minn\Content\Posts $posts, Min
 
 Route: `POST /minn-admin/v1/render-blocks`
 
+Renders blocks for the editor's preview.
+
 ### `editorStyles(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `GET /minn-admin/v1/editor-styles`
 
 The stylesheets previews are scoped under: the engine's own, the theme's, and theme.json inline.
 
-Internals: `styles()` (private, line 65)
+Internals: `styles()` (private, line 66)
 
 
 ## SessionsController
@@ -857,6 +963,8 @@ __construct(Minn\Content\Users $users, Minn\Auth\Sessions $sessions, Minn\Rest\C
 
 Route: `GET /minn-admin/v1/users/{id:\d+}/sessions`
 
+A user's sessions, the caller's own marked.
+
 ### `destroyAll(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
 Route: `DELETE /minn-admin/v1/users/{id:\d+}/sessions`
@@ -867,7 +975,9 @@ Signs the person out everywhere; a caller acting on themselves keeps the session
 
 Route: `DELETE /minn-admin/v1/users/{id:\d+}/sessions/{verifier:[a-f0-9]{40,64}}`
 
-Internals: `target()` (private, line 82)
+Signs one session out.
+
+Internals: `target()` (private, line 84)
 
 
 ## SystemController
@@ -887,13 +997,19 @@ __construct(Minn\Admin\Diagnostics $diagnostics, Minn\Admin\Logs $logs, Minn\Res
 
 Route: `GET /minn-admin/v1/system`
 
+The System view's payload.
+
 ### `cron(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `GET /minn-admin/v1/system/cron`
 
+The scheduled posts.
+
 ### `autoload(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `GET /minn-admin/v1/system/autoload`
+
+The autoloaded options.
 
 ### `config(Minn\Http\Request $request): Minn\Http\Response`
 
@@ -905,23 +1021,33 @@ The engine never rewrites wp-config.php; the file is the site's, edited by hand.
 
 Route: `GET /minn-admin/v1/system/logs`
 
+The logs list.
+
 ### `log(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
 Route: `GET /minn-admin/v1/system/logs/{id:[a-zA-Z0-9:_.-]+}`
+
+One log's tail.
 
 ### `clearLog(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
 Route: `DELETE /minn-admin/v1/system/logs/{id:[a-zA-Z0-9:_.-]+}`
 
+Empties one log.
+
 ### `debugLog(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `GET /minn-admin/v1/system/debug-log`
+
+The debug log's tail.
 
 ### `clearDebugLog(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `DELETE /minn-admin/v1/system/debug-log`
 
-Internals: `requireOwner()` (private, line 88)
+Empties the debug log.
+
+Internals: `requireOwner()` (private, line 96)
 
 
 ## Translations
@@ -952,7 +1078,11 @@ The locale a person reads the admin in.
 
 ### `siteLocale(): string`
 
+The site's locale from WPLANG, en_US by default.
+
 ### static `isRtl(string $locale): bool`
+
+Whether a locale reads right to left.
 
 ### `catalog(string $locale): array`
 
@@ -968,6 +1098,8 @@ Whether a locale has any files on this site: a core pack or Minn Admin's own.
 
 ### `installed(): array`
 
+The locales with a pack on disk, the two defaults first.
+
 - `@return list<array{0: string, 1: string}> the site-default row, en_US, then every installed locale`
 
 ### `payload(int $forUser, bool $canInstall): array`
@@ -980,7 +1112,7 @@ Fetches and unpacks Minn Admin's language pack for a locale from the
 release the bundle's manifest names. True when files were written;
 false when the manifest offers no pack for the locale.
 
-Internals: `catalogFiles()` (private, line 183), `installedCodes()` (private, line 195), `names()` (private, line 216), `download()` (private, line 228)
+Internals: `catalogFiles()` (private, line 189), `installedCodes()` (private, line 201), `names()` (private, line 222), `download()` (private, line 234)
 
 
 ## Updates
@@ -1037,11 +1169,15 @@ Plugin file => slug, icon, directory URL, for every plugin the directory knows. 
 
 ### `themeOnDirectory(string $stylesheet): bool`
 
+Whether wordpress.org knows this theme.
+
 ### `updatePlugin(string $file): string`
 
 Applies the offer for one plugin file; returns the installed version afterwards.
 
 ### `updateTheme(string $stylesheet): string`
+
+Updates one theme to its offer; the new version.
 
 ### `auto(string $type): array`
 
@@ -1050,6 +1186,8 @@ The auto-update list for plugins or themes, trimmed to what is installed. @retur
 - `@return list<string>`
 
 ### `setAuto(string $type, string $asset, bool $enabled): array`
+
+Turns auto-updates on or off for one plugin or theme.
 
 - `@return list<string> the list after the change`
 
@@ -1077,7 +1215,7 @@ Stylesheet => style.css headers. @return array<string, array<string, string>>
 
 - `@return array<string, array<string, string>>`
 
-Internals: `install()` (private, line 259), `consume()` (private, line 271), `post()` (private, line 283), `map()` (private, line 307), `safeUrl()` (private, line 315)
+Internals: `install()` (private, line 265), `consume()` (private, line 277), `post()` (private, line 289), `map()` (private, line 313), `safeUrl()` (private, line 321)
 
 
 ## UpdatesController
@@ -1097,29 +1235,43 @@ __construct(Minn\Admin\Updates $updates, Minn\Rest\Caller $caller)
 
 Route: `GET /minn-admin/v1/plugin-updates`
 
+The plugin update offers.
+
 ### `pluginMeta(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `GET /minn-admin/v1/plugin-meta`
+
+Icons and details for the installed plugins.
 
 ### `check(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `POST /minn-admin/v1/check-updates`
 
+Asks wordpress.org again, now.
+
 ### `updatePlugin(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `POST /minn-admin/v1/plugins/update`
+
+Updates one plugin.
 
 ### `updateAll(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `POST /minn-admin/v1/plugins/update-all`
 
+Updates every plugin with an offer.
+
 ### `updateTheme(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `POST /minn-admin/v1/themes/update`
 
+Updates one theme.
+
 ### `autoUpdates(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `POST /minn-admin/v1/auto-updates`
+
+Turns auto-updates on or off for one asset.
 
 
 ## V1Controller
@@ -1141,13 +1293,19 @@ __construct(Minn\Db $db, Minn\Content\Site $site, Minn\Content\Posts $posts, Min
 
 Route: `GET /minn-admin/v1/overview`
 
+The overview payload.
+
 ### `overviewActivity(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `GET /minn-admin/v1/overview/activity`
 
+The events behind one chart bar.
+
 ### `notifications(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `GET /minn-admin/v1/notifications`
+
+The bell feed.
 
 ### `notificationsRead(Minn\Http\Request $request): Minn\Http\Response`
 
@@ -1158,6 +1316,8 @@ Body {id} marks one read; {} marks all read.
 ### `core(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `GET /minn-admin/v1/core`
+
+The core status.
 
 ### `bootStatus(Minn\Http\Request $request): Minn\Http\Response`
 
@@ -1172,9 +1332,13 @@ the plugin-inventory sections it has no installation for.
 
 Route: `POST /minn-admin/v1/posts/{id:\d+}/lock`
 
+Takes the edit lock on a post.
+
 ### `unlock(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
 Route: `POST /minn-admin/v1/posts/{id:\d+}/unlock`
+
+Releases the edit lock on a post.
 
 ### `templates(Minn\Http\Request $request): Minn\Http\Response`
 
@@ -1192,25 +1356,37 @@ Theme patterns are GPL theme content the engine does not carry.
 
 Route: `GET /minn-admin/v1/site-logo`
 
+The site logo attachment.
+
 ### `setOverviewMetrics(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `POST /minn-admin/v1/overview/metrics`
+
+Saves the caller's pick of overview cards.
 
 ### `setOverviewMetricDefaults(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `POST /minn-admin/v1/overview/metric-defaults`
 
+Saves the site's default overview cards.
+
 ### `permalinks(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `GET /minn-admin/v1/permalinks`
+
+The permalink structure.
 
 ### `spam(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `GET /minn-admin/v1/spam`
 
+The spam settings.
+
 ### `mediaMonths(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `GET /minn-admin/v1/media/months`
 
-Internals: `metricKeysFrom()` (private, line 191), `storedMetricLayout()` (private, line 208), `logoUrl()` (private, line 223), `days()` (private, line 282), `window()` (private, line 299), `parameterError()` (private, line 325)
+The months the library has uploads in.
+
+Internals: `metricKeysFrom()` (private, line 200), `storedMetricLayout()` (private, line 217), `logoUrl()` (private, line 232), `days()` (private, line 294), `window()` (private, line 311), `parameterError()` (private, line 337)
 

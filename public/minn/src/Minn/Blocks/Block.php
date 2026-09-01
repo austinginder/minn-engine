@@ -23,11 +23,13 @@ final readonly class Block
     ) {
     }
 
+    /** A block-less run of HTML, as the parser reads it. */
     public static function freeform(string $html): self
     {
         return new self(null, [], [], $html, [$html]);
     }
 
+    /** One attribute, or the default. */
     public function attr(string $key, mixed $default = null): mixed
     {
         return $this->attrs[$key] ?? $default;

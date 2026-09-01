@@ -30,6 +30,7 @@ final readonly class MainQueryBridge
     ) {
     }
 
+    /** The page of posts a resolution shows, through the runtime's main query when it is up. */
     public function stand(Resolution $resolution): Page
     {
         if (Runtime::booted() && in_array($resolution->kind, [Kind::PostTypeArchive, Kind::Taxonomy], true)) {
@@ -45,6 +46,7 @@ final readonly class MainQueryBridge
         return $page;
     }
 
+    /** Posts per page. */
     public function perPage(): int
     {
         return $this->perPage;

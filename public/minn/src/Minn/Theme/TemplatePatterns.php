@@ -20,6 +20,7 @@ final readonly class TemplatePatterns
     private const TAG = '<!-- wp:pattern';
     private const DEPTH = 5;
 
+    /** Markup with its pattern blocks replaced by the patterns' content. */
     public static function expand(string $markup, Theme $theme, int $depth = 0): string
     {
         if ($depth >= self::DEPTH || !str_contains($markup, self::TAG)) {

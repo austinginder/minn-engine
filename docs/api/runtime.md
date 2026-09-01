@@ -4,54 +4,54 @@ the WordPress runtime plugins load against
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Abilities`](#abilities) | final class | 77 | The abilities registry behind the wp_*_ability facade: categories and |
-| [`Assets`](#assets) | final class | 267 | The registry behind wp_register_/wp_enqueue_ for scripts and styles: |
+| [`Abilities`](#abilities) | final class | 88 | The abilities registry behind the wp_*_ability facade: categories and |
+| [`Assets`](#assets) | final class | 292 | The registry behind wp_register_/wp_enqueue_ for scripts and styles: |
 | [`Avatar`](#avatar) | final class | 62 | Avatars the way get_avatar_data and get_avatar decide them: the argument |
-| [`BlockFilters`](#blockfilters) | final class | 75 | The block-level filters plugin code hooks (pre_render_block, |
-| [`BlockHooks`](#blockhooks) | final class | 68 | The Block Hooks API on the engine's own front end: a plugin asks for its |
-| [`BlockMetadata`](#blockmetadata) | final class | 93 | block.json to the settings a block type registers with: the property |
-| [`BlockTemplates`](#blocktemplates) | final class | 59 | Block templates plugins register at runtime, by their namespaced name |
-| [`BlockWidget`](#blockwidget) | final class | 26 | A block widget's legacy class name. Every widget the block editor saves |
-| [`CommentCloser`](#commentcloser) | final readonly class | 21 | The Discussion setting that closes comments on old posts. Observed on the |
-| [`CommentQuery`](#commentquery) | final readonly class | 112 | Comment reads in the get_comments() shape: arguments to rows or a count, and the approval breakdown wp_count_comments reports. |
-| [`Connectors`](#connectors) | final class | 201 | The connectors registry: the external services a site talks to (AI |
-| [`Constants`](#constants) | final class | 51 | The constants plugin code expects: the fixed set from data/constants.json |
-| [`CronTable`](#crontable) | final class | 99 | The cron option's shape, operated on as data: timestamp => hook => key => |
-| [`DbDelta`](#dbdelta) | final readonly class | 108 | dbDelta as the reference does it: a CREATE TABLE statement creates the |
-| [`Hooks`](#hooks) | final class | 228 | The hook registry plugin code registers into and the engine fires. |
-| [`Interactivity`](#interactivity) | final class | 484 | Server-side directive processing for the Interactivity API: the state and |
-| [`MainQuery`](#mainquery) | final class | 30 | The query variables the reference's main query would carry for a URL the |
-| [`Meta`](#meta) | final readonly class | 126 | The four meta tables behind get_metadata and friends: reads by object, and the row-level writes the update and delete rules need. |
-| [`NavMenu`](#navmenu) | final class | 301 | Nav-menu item decoration for wp_nav_menu(): the reference's class tokens |
-| [`OEmbed`](#oembed) | final class | 80 | oEmbed as data: provider matching against the wildcard table, response parsing, and the markup an oEmbed payload becomes. |
-| [`ObjectCache`](#objectcache) | final class | 46 | The per-request object cache behind wp_cache_*: groups of keys, nothing persistent. |
-| [`Options`](#options) | final class | 144 | Options as plugin code sees them: PHP values, decoded from the stored |
-| [`PageMenu`](#pagemenu) | final class | 38 | The page-list menu a classic theme falls back to when no menu is |
+| [`BlockFilters`](#blockfilters) | final class | 82 | The block-level filters plugin code hooks (pre_render_block, |
+| [`BlockHooks`](#blockhooks) | final class | 69 | The Block Hooks API on the engine's own front end: a plugin asks for its |
+| [`BlockMetadata`](#blockmetadata) | final class | 95 | block.json to the settings a block type registers with: the property |
+| [`BlockTemplates`](#blocktemplates) | final class | 66 | Block templates plugins register at runtime, by their namespaced name |
+| [`BlockWidget`](#blockwidget) | final class | 30 | A block widget's legacy class name. Every widget the block editor saves |
+| [`CommentCloser`](#commentcloser) | final readonly class | 22 | The Discussion setting that closes comments on old posts. Observed on the |
+| [`CommentQuery`](#commentquery) | final readonly class | 117 | Comment reads in the get_comments() shape: arguments to rows or a count, and the approval breakdown wp_count_comments reports. |
+| [`Connectors`](#connectors) | final class | 212 | The connectors registry: the external services a site talks to (AI |
+| [`Constants`](#constants) | final class | 52 | The constants plugin code expects: the fixed set from data/constants.json |
+| [`CronTable`](#crontable) | final class | 113 | The cron option's shape, operated on as data: timestamp => hook => key => |
+| [`DbDelta`](#dbdelta) | final readonly class | 125 | dbDelta as the reference does it: a CREATE TABLE statement creates the |
+| [`Hooks`](#hooks) | final class | 248 | The hook registry plugin code registers into and the engine fires. |
+| [`Interactivity`](#interactivity) | final class | 509 | Server-side directive processing for the Interactivity API: the state and |
+| [`MainQuery`](#mainquery) | final class | 34 | The query variables the reference's main query would carry for a URL the |
+| [`Meta`](#meta) | final readonly class | 133 | The four meta tables behind get_metadata and friends: reads by object, and the row-level writes the update and delete rules need. |
+| [`NavMenu`](#navmenu) | final class | 303 | Nav-menu item decoration for wp_nav_menu(): the reference's class tokens |
+| [`OEmbed`](#oembed) | final class | 92 | oEmbed as data: provider matching against the wildcard table, response parsing, and the markup an oEmbed payload becomes. |
+| [`ObjectCache`](#objectcache) | final class | 52 | The per-request object cache behind wp_cache_*: groups of keys, nothing persistent. |
+| [`Options`](#options) | final class | 150 | Options as plugin code sees them: PHP values, decoded from the stored |
+| [`PageMenu`](#pagemenu) | final class | 40 | The page-list menu a classic theme falls back to when no menu is |
 | [`Pages`](#pages) | final class | 113 | get_pages() as the reference shapes it: its arguments as a post query, and the tree order of the result. |
-| [`Patterns`](#patterns) | final class | 123 | The block pattern, pattern category, and block style registries as data. |
-| [`PlaceholderTrace`](#placeholdertrace) | final class | 26 | Records every call into a generated placeholder while a site opts in by |
-| [`Plugins`](#plugins) | final class | 157 | Loads the site's plugins into the runtime the way the reference does: |
+| [`Patterns`](#patterns) | final class | 147 | The block pattern, pattern category, and block style registries as data. |
+| [`PlaceholderTrace`](#placeholdertrace) | final class | 27 | Records every call into a generated placeholder while a site opts in by |
+| [`Plugins`](#plugins) | final class | 166 | Loads the site's plugins into the runtime the way the reference does: |
 | [`PostInsert`](#postinsert) | final readonly class | 160 | The decisions behind wp_insert_post: which columns a postarr fills, when |
-| [`PostLookup`](#postlookup) | final readonly class | 65 | The post reads plugin code asks for by shape: a page by title, revisions, counts. |
-| [`PostQuery`](#postquery) | final class | 644 | The query WP_Query runs: its variables become one SELECT over the posts |
-| [`QueriedObject`](#queriedobject) | final readonly class | 68 | Which object a query is "about", read from its flags and variables: a term |
-| [`QueryFlags`](#queryflags) | final readonly class | 99 | The conditional flags a set of query variables implies (is_single, is_archive, |
-| [`Recovery`](#recovery) | final readonly class | 116 | Recovery from a fatal in someone else's code. When a plugin or theme |
+| [`PostLookup`](#postlookup) | final readonly class | 85 | The post reads plugin code asks for by shape: a page by title, revisions, counts. |
+| [`PostQuery`](#postquery) | final class | 646 | The query WP_Query runs: its variables become one SELECT over the posts |
+| [`QueriedObject`](#queriedobject) | final readonly class | 70 | Which object a query is "about", read from its flags and variables: a term |
+| [`QueryFlags`](#queryflags) | final readonly class | 101 | The conditional flags a set of query variables implies (is_single, is_archive, |
+| [`Recovery`](#recovery) | final readonly class | 124 | Recovery from a fatal in someone else's code. When a plugin or theme |
 | [`Refusal`](#refusal) | final readonly class | 6 | A refused operation, the way plugin code expects to read it: a code, a message, optional data. The facade turns it into WP_Error. |
-| [`Registry`](#registry) | final class | 346 | Post types, taxonomies, and statuses as plugin code registers and reads |
-| [`Runtime`](#runtime) | final class | 195 | The WordPress runtime the engine offers plugin code: the procedural |
-| [`ScriptModules`](#scriptmodules) | final class | 274 | The script modules registry: registrations with typed dependencies, the |
-| [`ScriptPack`](#scriptpack) | final class | 144 | The site-supplied script pack: the `wp-*` JavaScript packages the engine |
-| [`Shortcodes`](#shortcodes) | final class | 109 | The shortcode registry plugin code fills with add_shortcode, and the |
-| [`SymbolGap`](#symbolgap) | final readonly class | 65 | The part of the reference's interface the runtime does not answer: names in |
-| [`SymbolTable`](#symboltable) | final class | 52 | What a folder's PHP names, collected while its tokens are read: the |
-| [`Symbols`](#symbols) | final class | 220 | A static read of what a plugin's PHP calls: global functions and classes |
-| [`TagEditor`](#tageditor) | final class | 128 | Edits one start tag's attributes in place the way the reference's tag |
+| [`Registry`](#registry) | final class | 382 | Post types, taxonomies, and statuses as plugin code registers and reads |
+| [`Runtime`](#runtime) | final class | 210 | The WordPress runtime the engine offers plugin code: the procedural |
+| [`ScriptModules`](#scriptmodules) | final class | 297 | The script modules registry: registrations with typed dependencies, the |
+| [`ScriptPack`](#scriptpack) | final class | 146 | The site-supplied script pack: the `wp-*` JavaScript packages the engine |
+| [`Shortcodes`](#shortcodes) | final class | 132 | The shortcode registry plugin code fills with add_shortcode, and the |
+| [`SymbolGap`](#symbolgap) | final readonly class | 69 | The part of the reference's interface the runtime does not answer: names in |
+| [`SymbolTable`](#symboltable) | final class | 60 | What a folder's PHP names, collected while its tokens are read: the |
+| [`Symbols`](#symbols) | final class | 222 | A static read of what a plugin's PHP calls: global functions and classes |
+| [`TagEditor`](#tageditor) | final class | 134 | Edits one start tag's attributes in place the way the reference's tag |
 | [`TermQuery`](#termquery) | final readonly class | 393 | Term reads in the shapes plugin code asks for: get_terms() arguments to |
-| [`TermWriter`](#termwriter) | final readonly class | 142 | The decisions behind wp_insert_term, wp_update_term, wp_delete_term, and |
-| [`TreeWalk`](#treewalk) | final class | 66 | The Walker contract's traversal: elements keyed by the walker's |
+| [`TermWriter`](#termwriter) | final readonly class | 146 | The decisions behind wp_insert_term, wp_update_term, wp_delete_term, and |
+| [`TreeWalk`](#treewalk) | final class | 74 | The Walker contract's traversal: elements keyed by the walker's |
 | [`UserInsert`](#userinsert) | final readonly class | 111 | The decisions behind wp_insert_user: what a new account needs, which email |
-| [`UserQuery`](#userquery) | final readonly class | 47 | The user listing behind WP_User_Query: role filtering through the |
+| [`UserQuery`](#userquery) | final readonly class | 49 | The user listing behind WP_User_Query: role filtering through the |
 
 ## Abilities
 
@@ -70,15 +70,25 @@ Fires the init action once, then answers every later call from the recorded stat
 
 ### static `registerCategory(string $slug, array $args): bool`
 
+Registers an ability category.
+
 ### static `register(string $name, array $args): ?array`
+
+Registers an ability, or null when the name is taken or malformed.
 
 ### static `unregister(string $name, bool $category = false): bool`
 
+Removes an ability or a category.
+
 ### static `find(string $name, bool $category = false): ?array`
+
+One ability or category, or null.
 
 - `@return array<string, mixed>|null`
 
 ### static `all(bool $categories = false): array`
+
+Every ability, or every category.
 
 - `@return array<string, array>`
 
@@ -109,17 +119,29 @@ The queue as a plugin left it after editing the view directly.
 
 ### `register(string $handle, string|false $src, array $deps, string|bool|null $ver, mixed $extra): bool`
 
+Registers an asset under a handle.
+
 ### `externalHosts(string $ownHost): array`
+
+The hosts the queued assets load from, other than the site's own.
 
 - `@return list<string> hosts of enqueued sources (dependencies first) away from the given host, for dns-prefetch hints`
 
 ### `deregister(string $handle): void`
 
+Forgets an asset.
+
 ### `enqueue(string $handle): void`
+
+Queues an asset for printing.
 
 ### `dequeue(string $handle): void`
 
+Removes an asset from the queue.
+
 ### `registered(string $handle): bool`
+
+Whether a handle is registered.
 
 ### `enqueued(string $handle): bool`
 
@@ -131,13 +153,23 @@ name, it only ever rides in as a dependency.
 
 ### `done(string $handle): bool`
 
+Whether a handle has been printed.
+
 ### `addInline(string $handle, string $code, string $position): bool`
+
+Attaches inline code to an asset.
 
 ### `addData(string $handle, string $key, mixed $value): bool`
 
+Attaches a data key to an asset.
+
 ### `data(string $handle, string $key): mixed`
 
+A data key of an asset, or false.
+
 ### `localize(string $handle, string $name, array $data): bool`
+
+Attaches a localized object to a script.
 
 ### `toPrint(?bool $footer = NULL): array`
 
@@ -157,17 +189,27 @@ Drops a handle's source so it prints as markup rather than a link.
 
 ### `markDone(string $handle): void`
 
+Records a handle as printed.
+
 ### `item(string $handle): ?array`
 
+One registered asset, or null.
+
 ### `items(): array`
+
+Every registered asset.
 
 - `@return array<string, array<string, mixed>>`
 
 ### `queue(): array`
 
+The handles queued.
+
 - `@return list<string>`
 
 ### `kind(): string`
+
+Whether these are scripts or styles.
 
 Internals: `changed()` (private, line 41)
 
@@ -223,11 +265,17 @@ Used by: `Minn\Blocks\Renderer`
 
 ### static `active(): bool`
 
+Whether any block filter is registered.
+
 ### static `toArray(Minn\Blocks\Block $block): array`
+
+A block as the parsed array plugins receive.
 
 - `@return array<string, mixed> the parsed-array shape plugin code reads`
 
 ### static `fromArray(array $parsed): Minn\Blocks\Block`
+
+A block from the parsed array plugins hand back.
 
 ### static `before(Minn\Blocks\Block $block): Minn\Blocks\Block|string`
 
@@ -235,7 +283,9 @@ A short-circuit from pre_render_block, or the block as render_block_data left it
 
 ### static `after(Minn\Blocks\Block $block, string $html): string`
 
-Internals: `context()` (private, line 81)
+A rendered block through render_block and its per-name filter.
+
+Internals: `context()` (private, line 88)
 
 
 ## BlockHooks
@@ -254,6 +304,8 @@ something, so a site without such a plugin parses nothing extra.
 Used by: `Minn\Blocks\Dynamic\Theme\Structure`
 
 ### static `active(): bool`
+
+Whether block hooks are registered and the runtime is up.
 
 ### static `forPart(string $markup, string $slug, string $area): string`
 
@@ -294,6 +346,8 @@ the render template as a callback. Behaviour pinned by contracts/fixtures/api/bl
 
 ### static `settings(array $metadata, Closure $scriptHandle, Closure $styleHandle, Closure $moduleId, Closure $render): array`
 
+Block settings from a block.json, the way the reference maps its properties.
+
 - `@param Closure(array, string, int): (string|false) $scriptHandle registers one script entry, answering its handle`
 - `@param Closure(array, string, int): (string|false) $styleHandle registers one style entry`
 - `@param Closure(array, string, int): (string|false) $moduleId registers one view script module entry`
@@ -304,7 +358,7 @@ the render template as a callback. Behaviour pinned by contracts/fixtures/api/bl
 
 The script or style handle a block.json field registers under; core blocks keep the `wp-block-` spelling.
 
-Internals: `handles()` (private, line 76)
+Internals: `handles()` (private, line 78)
 
 
 ## BlockTemplates
@@ -324,13 +378,21 @@ The registered row, or the refusal code the reference reports.
 
 ### `unregister(string $name): ?array`
 
+Forgets a registered template; the row, or null.
+
 ### `all(): array`
+
+Every registered template.
 
 - `@return array<string, array<string, mixed>> by registered name`
 
 ### `get(string $name): ?array`
 
+One registered template, or null.
+
 ### `bySlug(string $slug): ?array`
+
+A registered template by slug, or null.
 
 
 ## BlockWidget
@@ -347,6 +409,8 @@ no legacy equivalent adds nothing.
 - const `LEGACY_CLASSES` = `array (   'core/paragraph' => 'widget_text',   'core/search' => 'widget_search',   'core/html' => 'widget_custom_html',   'core/archives' => 'widget_archive',   'core/latest-posts' => 'widget_recent_entries',   'core/latest-comments' => 'widget_recent_comments',   'core/tag-cloud' => 'widget_tag_cloud',   'core/categories' => 'widget_categories',   'core/calendar' => 'widget_calendar',   'core/rss' => 'widget_rss', )` — First block name => the legacy widget class a theme styles.
 
 ### static `classNameFor(array $blocks): string`
+
+The legacy widget class a block widget maps to.
 
 - `@param list<array<string, mixed>> $blocks the parsed content`
 
@@ -368,6 +432,8 @@ __construct(bool $enabled, int $days)
 
 ### `open(bool $open, Minn\Content\PostRecord|array|null $post, int $now): bool`
 
+Whether comments stay open on a post under the close-after-days setting.
+
 
 ## CommentQuery
 
@@ -384,7 +450,11 @@ __construct(Minn\Db $db)
 
 ### `count(array $args): int`
 
+How many comments match the query args.
+
 ### `rows(array $args): array`
+
+The comment rows matching the query args, ordered as asked.
 
 - `@return list<array<string, mixed>>`
 
@@ -394,7 +464,7 @@ The counts wp_count_comments reports, for one post or the site. @return array<st
 
 - `@return array<string, int>`
 
-Internals: `where()` (private, line 48)
+Internals: `where()` (private, line 53)
 
 
 ## Connectors
@@ -413,17 +483,27 @@ the facade class hands them back to plugin code.
 
 ### `register(string $id, array $args): ?Minn\Runtime\Refusal`
 
+Registers a connector, or the refusal.
+
 ### `unregister(string $id): ?array`
+
+Forgets a connector; its row, or null.
 
 - `@return array<string, mixed>|null the row that was registered, null when there was none`
 
 ### `all(): array`
 
+Every connector.
+
 - `@return array<string, array<string, mixed>>`
 
 ### `get(string $id): ?array`
 
+One connector, or null.
+
 ### `has(string $id): bool`
+
+Whether a connector is registered.
 
 ### `registerDefaults(Closure $pluginActive): void`
 
@@ -463,7 +543,7 @@ sources as a key, plus where they came from.
 - `@param Closure(string): mixed $option`
 - `@param Closure(string): string $clean`
 
-Internals: `normalise()` (private, line 55)
+Internals: `normalise()` (private, line 56)
 
 
 ## Constants
@@ -478,6 +558,8 @@ Used by: `Minn\Runtime\Runtime`
 
 ### static `define(Minn\Runtime\Runtime $runtime): void`
 
+Defines the constants the reference defines at boot.
+
 
 ## CronTable
 
@@ -489,6 +571,8 @@ entry, kept in natural timestamp order. The key is the reference's own
 
 ### static `key(array $args): string`
 
+The key an event's arguments hash to.
+
 - `@param array<int, array<string, array<string, array<string, mixed>>>> $crons`
 
 ### static `hasNear(array $crons, int $timestamp, string $hook, string $key, int $window): bool`
@@ -497,13 +581,21 @@ Whether the same hook and arguments are already scheduled within the window arou
 
 ### static `insert(array $crons, int $timestamp, string $hook, string $key, array $entry): array`
 
+The table with an event added at a timestamp.
+
 ### static `remove(array $crons, int $timestamp, string $hook, string $key): array`
 
+The table with one event removed.
+
 ### static `removeHook(array $crons, string $hook): array`
+
+The table with every event of a hook removed.
 
 - `@return array{0: array, 1: int} the table without the hook, and how many entries went`
 
 ### static `timestampsFor(array $crons, string $hook, string $key): array`
+
+When a hook and key are scheduled.
 
 - `@return list<int> every timestamp the hook and arguments are scheduled at`
 
@@ -541,23 +633,33 @@ The CREATE TABLE statements in a batch, keyed by table name. @param list<string>
 
 ### `apply(array $creates, bool $execute): array`
 
+Applies CREATE TABLE statements as dbDelta does; the statements run.
+
 - `@param array<string, string> $creates @return array<string, string> what was (or would be) done, by table or table.column`
 
 ### `tables(): array`
+
+Every table in the database.
 
 - `@return list<string>`
 
 ### `columns(string $table): array`
 
+A table's columns with their definitions.
+
 - `@return array<string, array<string, mixed>> by column name`
 
 ### `indexNames(string $table): array`
+
+A table's index names.
 
 - `@return list<string> lowercase key names`
 
 ### `run(string $ddl): void`
 
-Internals: `definitions()` (private, line 76)
+Runs one DDL statement.
+
+Internals: `definitions()` (private, line 80)
 
 
 ## Hooks
@@ -585,11 +687,11 @@ The live registry, for a hook object to share by reference.
 
 ### `counters(bool $actions): array`
 
-- `@return array<string, int>`
+How often each action, or each filter, has run, by hook.
 
 ### `stackRef(): array`
 
-- `@return list<string>`
+The hooks running now, outermost first, by reference for the facade\'s globals.
 
 ### `currentPriority(string $hook): int|false`
 
@@ -597,7 +699,11 @@ The priority a running hook is at, or false when it is idle.
 
 ### `add(string $hook, callable|array|string $callback, string|int $priority = 10, int $accepted = 1): bool`
 
+Adds a callback to a hook at a priority.
+
 ### `remove(string $hook, callable|array|string $callback, string|int $priority = 10): bool`
+
+Removes a callback from a hook.
 
 ### `removeAll(string $hook, string|int|false $priority = false): bool`
 
@@ -609,25 +715,39 @@ With a callback: its lowest priority, or false; without: whether anything is reg
 
 ### `filter(string $hook, array $args): mixed`
 
+Runs a filter and returns the value.
+
 - `@param list<mixed> $args the value first`
 
 ### `action(string $hook, array $args): void`
+
+Runs an action.
 
 - `@param list<mixed> $args`
 
 ### `actionsDone(string $hook): int`
 
+How often an action has run.
+
 ### `filtersDone(string $hook): int`
+
+How often a filter has run.
 
 ### `current(): string|false`
 
+The hook running now, or false.
+
 ### `doing(?string $hook): bool`
+
+Whether a hook, or any hook, is running.
 
 ### `registered(): array`
 
+Every hook with callbacks, by name.
+
 - `@return array<string, array<int, list<callable>>> a read-only view for diagnostics`
 
-Internals: `run()` (private, line 172), `nextPriority()` (private, line 208), `fireAll()` (private, line 220), `id()` (private, line 234)
+Internals: `run()` (private, line 192), `nextPriority()` (private, line 228), `fireAll()` (private, line 240), `id()` (private, line 254)
 
 
 ## Interactivity
@@ -651,31 +771,45 @@ Used by: `Minn\Runtime\Runtime`
 
 ### `state(?string $namespace, array $state = array ( )): array`
 
+Reads or extends a namespace's state.
+
 - `@return array<string, mixed>`
 
 ### `allState(): array`
+
+Every namespace's state, for the client.
 
 - `@return array<string, array<string, mixed>> every namespace's state, for the client`
 
 ### `allConfig(): array`
 
+Every namespace's config, for the client.
+
 - `@return array<string, array<string, mixed>>`
 
 ### `config(string $namespace, array $config = array ( )): array`
+
+Reads or extends a namespace's config.
 
 - `@return array<string, mixed>`
 
 ### `context(?string $namespace = NULL): array`
 
+The current directive context of a namespace.
+
 - `@return array<string, mixed>`
 
 ### `element(): ?array`
+
+The element whose directives are being evaluated.
 
 - `@return array<string, mixed>|null`
 
 ### `process(string $html): string`
 
-Internals: `namespace()` (private, line 108), `tokenize()` (private, line 119), `walk()` (private, line 178), `applyDirectives()` (private, line 240), `bind()` (private, line 298), `interactiveNamespace()` (private, line 324), `pushContext()` (private, line 337), `evaluate()` (private, line 354), `expandEach()` (private, line 404), `markChildren()` (private, line 438), `attributeMap()` (private, line 470), `relative()` (private, line 483), `escape()` (private, line 488), `camel()` (private, line 493)
+HTML with its directives resolved on the server.
+
+Internals: `namespace()` (private, line 133), `tokenize()` (private, line 144), `walk()` (private, line 203), `applyDirectives()` (private, line 265), `bind()` (private, line 323), `interactiveNamespace()` (private, line 349), `pushContext()` (private, line 362), `evaluate()` (private, line 379), `expandEach()` (private, line 429), `markChildren()` (private, line 463), `attributeMap()` (private, line 495), `relative()` (private, line 508), `escape()` (private, line 513), `camel()` (private, line 518)
 
 
 ## MainQuery
@@ -689,6 +823,8 @@ or get_search_query() during a front-end render sees the same page.
 Used by: `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`
 
 ### static `vars(Minn\Front\Resolution $resolution): array`
+
+The query vars a resolution amounts to.
 
 - `@return array<string, mixed>`
 
@@ -708,6 +844,8 @@ __construct(Minn\Db $db)
 
 ### static `knows(string $type): bool`
 
+Whether an object type has a meta table.
+
 ### static `clausesFromQueryVars(array $queryVars): array`
 
 The meta clauses hidden in flat query vars (meta_key, meta_value, the
@@ -724,6 +862,8 @@ Every row of an object's meta, values as stored, grouped by key in id order. @re
 - `@return array<string, list<string>>`
 
 ### `add(string $type, int $objectId, string $key, string $stored): int`
+
+Inserts a meta row and returns its id.
 
 ### `matching(string $type, int $objectId, string $key): array`
 
@@ -742,6 +882,8 @@ previous value was named, otherwise only the rows holding it.
 
 ### `updateRows(string $type, array $ids, string $stored): void`
 
+Sets the value of the given meta rows.
+
 ### `find(string $type, ?int $objectId, string $key, ?string $stored): array`
 
 The rows a delete would take: by key, for one object or all, optionally only a stored value. @return list<array{meta_id: int, object_id: int}>
@@ -749,6 +891,8 @@ The rows a delete would take: by key, for one object or all, optionally only a s
 - `@return list<array{meta_id: int, object_id: int}>`
 
 ### `deleteRows(string $type, array $ids): void`
+
+Deletes the given meta rows.
 
 - `@param list<int> $ids`
 
@@ -772,10 +916,12 @@ runs); false when the items filtered away to nothing.
 
 ### static `decorate(array $items): array`
 
+Menu items with the classes and flags the reference adds for the current page.
+
 - `@param list<object> $items`
 - `@return list<object>`
 
-Internals: `menuForArgs()` (private, line 52), `wrapId()` (private, line 70), `container()` (private, line 85), `singularContext()` (private, line 154), `markQueriedAncestry()` (private, line 197), `isCurrent()` (private, line 220), `markAncestors()` (private, line 256), `currentUrl()` (private, line 306)
+Internals: `menuForArgs()` (private, line 52), `wrapId()` (private, line 70), `container()` (private, line 85), `singularContext()` (private, line 156), `markQueriedAncestry()` (private, line 199), `isCurrent()` (private, line 222), `markAncestors()` (private, line 258), `currentUrl()` (private, line 308)
 
 
 ## OEmbed
@@ -786,17 +932,25 @@ oEmbed as data: provider matching against the wildcard table, response parsing, 
 
 ### static `providerFor(array $providers, string $url): ?string`
 
+The endpoint of the provider whose mask matches a URL, or null.
+
 - `@param array<string, array{0: string, 1: bool}> $providers mask => [endpoint with {format}, mask is a regex]`
 
 ### static `parseJson(string $body): ?array`
+
+An oEmbed JSON body as an array, or null.
 
 - `@return array<string, mixed>|null`
 
 ### static `parseXml(string $body): ?array`
 
+An oEmbed XML body as an array, or null.
+
 - `@return array<string, mixed>|null`
 
 ### static `html(array $data, string $url, Closure $escUrl, Closure $escAttr, Closure $escHtml): ?string`
+
+The embed HTML for an oEmbed response, or null.
 
 - `@param array<string, mixed> $data the oEmbed payload`
 - `@param Closure(string): string $escUrl @param Closure(string): string $escAttr @param Closure(string): string $escHtml`
@@ -817,15 +971,27 @@ Used by: `Minn\Runtime\Runtime`
 
 ### `get(string $key, string $group, ?bool $found = NULL): mixed`
 
+A cached value, or false.
+
 ### `set(string $key, mixed $value, string $group): bool`
+
+Stores a value.
 
 ### `add(string $key, mixed $value, string $group): bool`
 
+Stores a value only when the key is empty.
+
 ### `delete(string $key, string $group): bool`
+
+Removes a key.
 
 ### `flush(): bool`
 
+Empties the cache.
+
 ### `flushGroup(string $group): bool`
+
+Empties one group.
 
 
 ## Options
@@ -852,9 +1018,15 @@ Every autoloaded option as stored. @return array<string, string>
 
 ### `get(string $name): mixed`
 
+An option's value, decoded, or null when unset.
+
 ### `exists(string $name): bool`
 
+Whether an option exists.
+
 ### `add(string $name, mixed $value, string $autoload = 'auto'): bool`
+
+Adds an option only when it is unset.
 
 ### `update(string $name, mixed $value, ?string $autoload = NULL): bool`
 
@@ -866,6 +1038,8 @@ Flips the autoload column; false when the option is missing or already so.
 
 ### `delete(string $name): bool`
 
+Removes an option.
+
 ### `expiredTransientNames(int $now, string $prefix = '_transient_timeout_'): array`
 
 The names of transients whose expiry has passed. The timeout row is the
@@ -875,11 +1049,15 @@ one that knows, so the sweep reads those and hands back the bare names.
 
 ### `forget(string $name): void`
 
+Drops an option from the cache.
+
 ### static `toStorage(mixed $value): string`
 
 What the reference stores: arrays serialized, scalars as their string form.
 
 ### static `fromStorage(string $raw): mixed`
+
+A stored option value decoded the way the reference reads it.
 
 
 ## PageMenu
@@ -896,6 +1074,8 @@ class (the attribute is written but left empty), a page item carries
 viewed, and the whole list is wrapped in the caller's before/after.
 
 ### static `items(array $pages, ?array $home, string $linkBefore = '', string $linkAfter = ''): string`
+
+The page menu's list items.
 
 - `@param list<array{id: int, title: string, url: string, current: bool}> $pages`
 - `@param array{label: string, url: string, current: bool}|null $home`
@@ -952,33 +1132,57 @@ editor asks for those on their own.
 
 ### `registerPattern(mixed $name, mixed $properties, bool $afterInit): ?Minn\Runtime\Refusal`
 
+Registers a block pattern, or the refusal.
+
 ### `unregisterPattern(string $name): bool`
+
+Forgets a pattern.
 
 ### `pattern(string $name, bool $afterInitOnly = false): ?array`
 
+One pattern, or null.
+
 ### `patterns(bool $afterInitOnly = false): array`
+
+Every pattern.
 
 - `@return list<array<string, mixed>>`
 
 ### `registerCategory(mixed $name, mixed $properties, bool $afterInit): ?Minn\Runtime\Refusal`
 
+Registers a pattern category, or the refusal.
+
 ### `unregisterCategory(string $name): bool`
+
+Forgets a category.
 
 ### `category(string $name): ?array`
 
+One category, or null.
+
 ### `categories(bool $afterInitOnly = false): array`
+
+Every category.
 
 - `@return list<array<string, mixed>>`
 
 ### `registerStyle(mixed $blocks, mixed $properties): ?Minn\Runtime\Refusal`
 
+Registers a block style, or the refusal.
+
 - `@param string|list<string> $blocks`
 
 ### `unregisterStyle(string $block, string $style): bool`
 
+Forgets a block style.
+
 ### `style(string $block, string $style): ?array`
 
+One block style, or null.
+
 ### `styles(?string $block = NULL): array`
+
+Every block style, or one block's.
 
 - `@return array<string, array<string, array<string, mixed>>>`
 
@@ -995,6 +1199,8 @@ stat per request.
 
 
 ### static `hit(string $symbol): void`
+
+Logs a placeholder symbol being called, when the trace file exists.
 
 
 ## Plugins
@@ -1019,11 +1225,17 @@ Used by: `Minn\Engine`, `Minn\Extension\Loader`, `Minn\Theme\ClassicRenderer`
 
 ### static `load(Minn\Runtime\Runtime $runtime): void`
 
+Loads the active plugins as code and fires the boot hooks.
+
 ### static `loaded(): array`
+
+The plugins that loaded.
 
 - `@return list<string>`
 
 ### static `skipped(): array`
+
+The plugins the symbol gate refused, with what they lacked.
 
 - `@return array<string, array<string, mixed>> plugin file => why it did not load`
 
@@ -1031,7 +1243,7 @@ Used by: `Minn\Engine`, `Minn\Extension\Loader`, `Minn\Theme\ClassicRenderer`
 
 True when the named plugin file is running as code this request.
 
-Internals: `loadThemeFunctions()` (private, line 96), `includeFile()` (private, line 129), `registerRealpath()` (private, line 153), `isolatedInclude()` (private, line 168)
+Internals: `loadThemeFunctions()` (private, line 97), `includeFile()` (private, line 138), `registerRealpath()` (private, line 162), `isolatedInclude()` (private, line 177)
 
 
 ## PostInsert
@@ -1105,6 +1317,8 @@ __construct(Minn\Db $db)
 
 ### `idByTitle(string $title, array $types): ?int`
 
+The id of a post with this title among the types, or null.
+
 - `@param list<string> $types`
 
 ### `revisionsOf(int $postId): array`
@@ -1115,17 +1329,25 @@ Revision rows newest first. @return list<array<string, mixed>>
 
 ### `countByStatus(string $type): array`
 
+How many posts of a type there are per status.
+
 - `@return array<string, int> status => count`
 
 ### `countAttachments(): array`
+
+How many attachments there are per mime type.
 
 - `@return array<string, int> mime type => count, plus 'trash'`
 
 ### `countByAuthor(int $userId, array $types, array $statuses): int`
 
+How many posts an author has among the types and statuses.
+
 - `@param list<string> $types @param list<string> $statuses`
 
 ### `idsByAuthor(int $userId): array`
+
+Every post id of an author.
 
 - `@return list<int>`
 
@@ -1151,10 +1373,12 @@ __construct(Minn\Db $db, Minn\Runtime\Registry $registry)
 
 ### `run(array $q, bool $isHome): array`
 
+Runs a WP_Query-shaped args array and returns its rows and totals.
+
 - `@param array<string, mixed> $q`
 - `@return array{rows: list<array>, found: int, sticky: list<array>}`
 
-Internals: `perPage()` (private, line 81), `types()` (private, line 93), `statuses()` (private, line 117), `singular()` (private, line 145), `authors()` (private, line 179), `parents()` (private, line 211), `ids()` (private, line 229), `search()` (private, line 262), `dates()` (private, line 277), `taxonomies()` (private, line 335), `taxonomyClauses()` (private, line 353), `taxonomySql()` (private, line 422), `termTaxonomyIds()` (private, line 462), `meta()` (private, line 498), `metaClauses()` (private, line 513), `metaSql()` (private, line 547), `order()` (private, line 603)
+Internals: `perPage()` (private, line 83), `types()` (private, line 95), `statuses()` (private, line 119), `singular()` (private, line 147), `authors()` (private, line 181), `parents()` (private, line 213), `ids()` (private, line 231), `search()` (private, line 264), `dates()` (private, line 279), `taxonomies()` (private, line 337), `taxonomyClauses()` (private, line 355), `taxonomySql()` (private, line 424), `termTaxonomyIds()` (private, line 464), `meta()` (private, line 500), `metaClauses()` (private, line 515), `metaSql()` (private, line 549), `order()` (private, line 605)
 
 
 ## QueriedObject
@@ -1172,11 +1396,13 @@ author. The caller materialises the record; this only decides where to look.
 
 ### static `locate(array $vars, array $flags, Minn\Runtime\Registry $registry, callable $option): self`
 
+The queried object the query vars and flags point at.
+
 - `@param array<string, mixed> $vars`
 - `@param array<string, bool> $flags the query's is_* flags`
 - `@param callable(string): mixed $option a filtered option read`
 
-Internals: `taxonomyTerm()` (private, line 60)
+Internals: `taxonomyTerm()` (private, line 62)
 
 
 ## QueryFlags
@@ -1196,6 +1422,8 @@ Used by: `Minn\Runtime\QueriedObject`
 
 ### static `derive(array $vars, Minn\Runtime\Registry $registry, callable $option): self`
 
+The is_* flags the query vars amount to.
+
 - `@param array<string, mixed> $vars the filled query variables`
 - `@param callable(string): mixed $option a filtered option read`
 
@@ -1206,7 +1434,7 @@ query variable carries a value, as [taxonomy name, query var].
 
 - `@return array{0: string, 1: string}|null`
 
-Internals: `archiveFlags()` (private, line 71)
+Internals: `archiveFlags()` (private, line 73)
 
 
 ## Recovery
@@ -1254,9 +1482,13 @@ notify once.
 
 ### `pausedPlugins(): array`
 
+The plugins recovery mode has paused.
+
 - `@return array<string, array<string, mixed>>`
 
 ### `pausedThemes(): array`
+
+The themes recovery mode has paused.
 
 - `@return array<string, array<string, mixed>>`
 
@@ -1268,7 +1500,7 @@ Lets an extension load again. Returns false when it was not paused.
 
 Lets everything load again. Returns how many were released.
 
-Internals: `read()` (private, line 120), `write()` (private, line 128)
+Internals: `read()` (private, line 128), `write()` (private, line 136)
 
 
 ## Refusal
@@ -1308,27 +1540,43 @@ __construct(string $engineDir)
 
 ### `postTypes(): array`
 
+Every post type.
+
 - `@return array<string, array<string, mixed>>`
 
 ### `postType(string $name): ?array`
 
+One post type, or null.
+
 ### `taxonomies(): array`
+
+Every taxonomy.
 
 - `@return array<string, array<string, mixed>>`
 
 ### `taxonomy(string $name): ?array`
 
+One taxonomy, or null.
+
 ### `statuses(): array`
+
+Every post status.
 
 - `@return array<string, array<string, mixed>>`
 
 ### `status(string $name): ?array`
 
+One post status, or null.
+
 ### `registerPostType(string $name, array $args): array`
+
+Registers a post type with the reference's defaults filled in.
 
 - `@param array<string, mixed> $args`
 
 ### `unregisterPostType(string $name): bool`
+
+Forgets a non-builtin post type.
 
 ### `addSupport(string $type, string $feature, array $args): void`
 
@@ -1338,25 +1586,39 @@ make the type exist) and merges in when register_post_type arrives.
 
 ### `removeSupport(string $type, string $feature): void`
 
+Removes a feature from a post type.
+
 ### `supports(string $type): array`
+
+The features a post type supports.
 
 - `@return array<string, mixed> the features a type supports, registered or declared ahead`
 
 ### `registerTaxonomy(string $name, array $objectTypes, array $args): array`
 
+Registers a taxonomy with the reference's defaults filled in.
+
 - `@param list<string> $objectTypes @param array<string, mixed> $args`
 
 ### `unregisterTaxonomy(string $name): bool`
 
+Forgets a non-builtin taxonomy.
+
 ### `addObjectType(string $taxonomy, string $type): bool`
+
+Attaches a taxonomy to a post type.
 
 ### `removeObjectType(string $taxonomy, string $type): bool`
 
+Detaches a taxonomy from a post type.
+
 ### `registerStatus(string $name, array $args): array`
+
+Registers a post status.
 
 - `@param array<string, mixed> $args`
 
-Internals: `supportsFrom()` (private, line 158), `capabilities()` (private, line 172)
+Internals: `supportsFrom()` (private, line 177), `capabilities()` (private, line 191)
 
 
 ## Runtime
@@ -1389,11 +1651,19 @@ Makes this request's runtime the one the facade sees and defines the facade.
 
 ### static `current(): self`
 
+The booted runtime; throws when there is none.
+
 ### static `booted(): bool`
+
+Whether the runtime is up.
 
 ### static `hooks(): Minn\Runtime\Hooks`
 
+The hook registry.
+
 ### static `options(): Minn\Runtime\Options`
+
+The options store.
 
 ### static `capture(string $action, array $args = array ( )): string`
 
@@ -1406,25 +1676,47 @@ capture, and a capture closed early lands in the sentinel.
 
 ### static `cache(): Minn\Runtime\ObjectCache`
 
+The object cache.
+
 ### static `shortcodes(): Minn\Runtime\Shortcodes`
+
+The shortcode registry.
 
 ### static `scriptModules(): Minn\Runtime\ScriptModules`
 
+The script modules registry.
+
 ### static `interactivity(): Minn\Runtime\Interactivity`
+
+The interactivity API.
 
 ### static `blockTemplates(): Minn\Runtime\BlockTemplates`
 
+The registered block templates.
+
 ### static `registry(): Minn\Runtime\Registry`
+
+The post types, taxonomies, and statuses.
 
 ### static `postQuery(): Minn\Runtime\PostQuery`
 
+A fresh post query over the runtime's registry.
+
 ### `get(string $key, mixed $default = NULL): mixed`
+
+A per-request state value.
 
 ### `set(string $key, mixed $value): void`
 
+Sets a per-request state value.
+
 ### `isSecure(): bool`
 
+Whether the request is over HTTPS.
+
 ### `contentDir(): string`
+
+wp-content under the site root.
 
 ### static `loadFacade(string $engineDir): void`
 
@@ -1457,39 +1749,67 @@ __construct(Closure $url, Closure $data)
 
 ### `register(string $id, string $src, array $deps, string|false|null $version, array $args): void`
 
+Registers a module by id.
+
 - `@param list<string|array{id: string, import?: string}> $deps`
 
 ### `enqueue(string $id, string $src, array $deps, string|false|null $version, array $args): void`
 
+Queues a module, registering it when a source is given.
+
 ### `dequeue(string $id): void`
+
+Removes a module from the queue.
 
 ### `deregister(string $id): void`
 
+Forgets a module.
+
 ### `setFetchpriority(string $id, string $priority): bool`
+
+Sets a module's fetch priority.
 
 ### `setInFooter(string $id, bool $inFooter): bool`
 
+Moves a module to the footer or the head.
+
 ### `queue(): array`
+
+The module ids queued.
 
 - `@return list<string>`
 
 ### `registered(string $id): ?array`
 
+One registered module, or null.
+
 - `@return array{src: string, version: string|false|null, dependencies: list<array{id: string, import: string}>, in_footer: bool, fetchpriority: string}|null`
 
 ### `printImportMap(): string`
 
+The import map script tag.
+
 ### `printPreloads(): string`
+
+The modulepreload links.
 
 ### `printHead(): string`
 
+The head's module tags.
+
 ### `printFooter(): string`
+
+The footer's module tags.
 
 ### `printData(): string`
 
+The script-module-data tags.
+
 ### `printA11y(): string`
 
-Internals: `printTags()` (private, line 192), `marked()` (private, line 222), `complete()` (private, line 234), `dependencies()` (private, line 256), `urlOf()` (private, line 274), `attr()` (private, line 279), `wrong()` (private, line 284)
+The a11y module's tag, once.
+
+Internals: `printTags()` (private, line 215), `marked()` (private, line 245), `complete()` (private, line 257), `dependencies()` (private, line 279), `urlOf()` (private, line 297), `attr()` (private, line 302), `wrong()` (private, line 307)
 
 
 ## ScriptPack
@@ -1521,7 +1841,11 @@ Used by: `Minn\Cli\MinnCommand`
 
 ### static `dir(string $contentDir): string`
 
+Where the script pack lives under wp-content.
+
 ### static `installed(string $contentDir): bool`
+
+Whether the script pack is on disk.
 
 ### static `handles(string $contentDir): array`
 
@@ -1545,7 +1869,7 @@ a wrong source folder copies nothing rather than something odd.
 
 Removes the pack; the engine's own packages keep working without it.
 
-Internals: `stamp()` (private, line 160)
+Internals: `stamp()` (private, line 162)
 
 
 ## Shortcodes
@@ -1562,31 +1886,53 @@ Used by: `Minn\Runtime\Runtime`
 
 ### `add(string $tag, callable $callback): void`
 
+Registers a shortcode.
+
 ### `remove(string $tag): void`
+
+Forgets a shortcode.
 
 ### `removeAll(): void`
 
+Forgets every shortcode.
+
 ### `has(string $tag): bool`
 
+Whether a shortcode is registered.
+
 ### `all(): array`
+
+Every shortcode with its callback.
 
 - `@return array<string, callable> every registered tag and its handler, to restore after a narrowed run`
 
 ### `restore(array $tags): void`
 
+Replaces the registry, after a save-and-restore.
+
 - `@param array<string, callable> $tags`
 
 ### `names(): array`
+
+Every shortcode name.
 
 - `@return list<string>`
 
 ### `pattern(?array $tags = NULL): ?string`
 
+The regex matching the registered shortcodes, or null for none.
+
 ### `apply(string $content): string`
+
+Content with the shortcodes run.
 
 ### `strip(string $content): string`
 
+Content with the shortcodes removed.
+
 ### static `parse(string $text): array`
+
+Shortcode attribute text as an array.
 
 - `@return array<int|string, string> named attributes; bare words and quoted values keyed by position`
 
@@ -1614,11 +1960,19 @@ loads; only the file read is cached.
 
 ### static `fromFile(string $path): self`
 
+The gap read from its JSON file.
+
 ### `lacksFunction(string $name): bool`
+
+Whether the runtime lacks a function.
 
 ### `lacksClass(string $name): bool`
 
+Whether the runtime lacks a class.
+
 ### `json(): string`
+
+The gap as JSON.
 
 
 ## SymbolTable
@@ -1634,17 +1988,27 @@ Used by: `Minn\Runtime\Symbols`
 
 ### `call(string $name): void`
 
+Notes a function called.
+
 ### `classRef(string $name): void`
+
+Notes a class referenced.
 
 ### `declare(string $function): void`
 
+Notes a function the folder declares.
+
 ### `declareClass(string $class): void`
+
+Notes a class the folder declares.
 
 ### `guard(string $name): void`
 
 A name an existence check protects: function_exists, class_exists, defined, and the rest.
 
 ### `toArray(bool $truncated): array`
+
+The table as the gate reads it.
 
 - `@return array{calls: list<string>, classes: list<string>, declared: array<string, true>, declaredClasses: array<string, true>, guarded: array<string, true>, truncated: bool}`
 
@@ -1667,6 +2031,8 @@ Used by: `Minn\Runtime\Plugins`
 
 ### static `missing(string $dir, Minn\Runtime\Options $options): array`
 
+What a plugin folder needs that the runtime lacks, cached by mtime.
+
 - `@return array{functions: list<string>, classes: list<string>, files: int, truncated: bool}`
 
 ### static `missingAgainst(string $dir, Minn\Runtime\SymbolGap $gap): array`
@@ -1676,7 +2042,7 @@ folder can be judged with no database, no options, and no facade loaded.
 
 - `@return array{functions: list<string>, classes: list<string>, files: int, truncated: bool}`
 
-Internals: `verdict()` (private, line 64), `phpFiles()` (private, line 86), `scan()` (private, line 120), `scanTokens()` (private, line 139), `noteName()` (private, line 184), `significant()` (private, line 222)
+Internals: `verdict()` (private, line 66), `phpFiles()` (private, line 88), `scan()` (private, line 122), `scanTokens()` (private, line 141), `noteName()` (private, line 186), `significant()` (private, line 224)
 
 
 ## TagEditor
@@ -1698,7 +2064,11 @@ __construct(string $tag, array $attrs)
 
 ### `get(string $name): ?string`
 
+An attribute's value, or null.
+
 ### `has(string $name): bool`
+
+Whether the tag has an attribute.
 
 ### `set(string $name, string|bool $value): void`
 
@@ -1706,13 +2076,21 @@ true sets a bare boolean attribute.
 
 ### `remove(string $name): void`
 
+Removes an attribute.
+
 ### `toggleClass(string $class, bool $on): void`
+
+Adds or removes a class.
 
 ### `setStyle(string $property, ?string $value): void`
 
+Sets or removes one inline style property.
+
 ### `html(): string`
 
-Internals: `splice()` (private, line 126)
+The tag as edited.
+
+Internals: `splice()` (private, line 132)
 
 
 ## TermQuery
@@ -1825,10 +2203,14 @@ __construct(Minn\Db $db, Minn\Content\Terms $terms, Minn\Runtime\TermQuery $quer
 
 ### `insert(string $name, string $taxonomy, array $args, bool $hierarchical): Minn\Runtime\Refusal|array`
 
+Inserts a term, or the refusal.
+
 - `@param array{slug?: string, description?: string, parent?: int|string, alias_of?: string} $args`
 - `@return array{term_id: int, term_taxonomy_id: int}|Refusal`
 
 ### `update(array $current, string $taxonomy, array $args): Minn\Runtime\Refusal|array`
+
+Updates a term, or the refusal.
 
 - `@param array<string, mixed> $current the term's row`
 - `@param array<string, mixed> $args`
@@ -1863,7 +2245,7 @@ Removes the given relationships; true when any row went. @param list<int> $ttIds
 
 - `@param list<int> $ttIds`
 
-Internals: `ttIdOf()` (private, line 157)
+Internals: `ttIdOf()` (private, line 161)
 
 
 ## TreeWalk
@@ -1878,9 +2260,13 @@ dispatch stays virtual.
 
 ### static `walk(object $walker, array $elements, int $maxDepth, array $args): string`
 
+Walks a tree with a Walker the way the reference does.
+
 - `@param list<object> $elements`
 
 ### static `element(object $walker, mixed $element, array $children, int $maxDepth, int $depth, array $args, string $output): void`
+
+Walks one element and its children.
 
 - `@param array<int|string, mixed> $children`
 
@@ -1949,6 +2335,8 @@ __construct(Minn\Db $db)
 
 
 ### `run(array $args): array`
+
+Runs a WP_User_Query-shaped args array and returns its rows and total.
 
 - `@param array<string, mixed> $args`
 - `@return array{rows: list<array>, total: int}`

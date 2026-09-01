@@ -4,8 +4,8 @@ the HTML tag processor
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Decoder`](#decoder) | final class | 84 | Character reference decoding for text and attribute values: numeric and |
-| [`Tags`](#tags) | final class | 905 | A streaming HTML tokenizer with in-place edits: tags, text, comments, |
+| [`Decoder`](#decoder) | final class | 86 | Character reference decoding for text and attribute values: numeric and |
+| [`Tags`](#tags) | final class | 938 | A streaming HTML tokenizer with in-place edits: tags, text, comments, |
 
 ## Decoder
 
@@ -20,9 +20,13 @@ Used by: `Minn\Html\Tags`
 
 ### static `text(string $raw): string`
 
+Text with its character references decoded.
+
 ### static `attribute(string $raw): string`
 
-Internals: `decode()` (private, line 27), `codePoint()` (private, line 67), `legacy()` (private, line 80)
+An attribute value with its character references decoded.
+
+Internals: `decode()` (private, line 29), `codePoint()` (private, line 69), `legacy()` (private, line 82)
 
 
 ## Tags
@@ -58,27 +62,49 @@ __construct(string $html)
 
 ### `nextToken(): bool`
 
+Advances to the next token; false at the end or at an incomplete one.
+
 ### `nextTag(array $query): bool`
+
+Advances to the next tag matching the query; false when none.
 
 - `@param array{tag_name?: ?string, class_name?: ?string, match_offset?: int, tag_closers?: string} $query`
 
 ### `pausedAtIncompleteToken(): bool`
 
+Whether the scan stopped inside an unfinished token.
+
 ### `tokenType(): ?string`
+
+The current token's kind.
 
 ### `tokenName(): ?string`
 
+The current token's name.
+
 ### `tag(): ?string`
+
+The current tag name, upper-cased.
 
 ### `isCloser(): bool`
 
+Whether the current tag is a closer.
+
 ### `selfClosing(): bool`
+
+Whether the current tag has the self-closing flag.
 
 ### `commentType(): ?string`
 
+The current comment's kind.
+
 ### `fullCommentText(): ?string`
 
+The current comment's whole text.
+
 ### `modifiableText(): string`
+
+The current token's text as a reader sees it.
 
 ### `doctype(): ?array`
 
@@ -92,33 +118,59 @@ The decoded value, true for a bare attribute, null when absent; a pending edit a
 
 ### `attributeNames(string $prefix): ?array`
 
+The current tag's attribute names with a prefix, lower-cased.
+
 - `@return list<string>|null lowercase names, in source order, null off a tag`
 
 ### `classes(): array`
+
+The current tag's classes.
 
 - `@return list<string> distinct class names after pending edits`
 
 ### `hasClass(string $class): bool`
 
+Whether the current tag has a class.
+
 ### `setAttribute(string $name, string|int|float|bool|null $value): bool`
+
+Sets an attribute on the current tag.
 
 ### `removeAttribute(string $name): bool`
 
+Removes an attribute from the current tag.
+
 ### `addClass(string $class): bool`
+
+Adds a class to the current tag.
 
 ### `removeClass(string $class): bool`
 
+Removes a class from the current tag.
+
 ### `setModifiableText(string $text): bool`
+
+Replaces the current token's text.
 
 ### `setBookmark(string $name): bool`
 
+Names the current token's position.
+
 ### `releaseBookmark(string $name): bool`
+
+Forgets a bookmark.
 
 ### `hasBookmark(string $name): bool`
 
+Whether a bookmark exists.
+
 ### `seek(string $name): bool`
+
+Moves to a bookmark.
 
 ### `html(): string`
 
-Internals: `scanTag()` (private, line 127), `scanAttribute()` (private, line 188), `enterRawText()` (private, line 241), `scanMarkupDeclaration()` (private, line 263), `scanQuestion()` (private, line 318), `setComment()` (private, line 346), `setToken()` (private, line 355), `resetToken()` (private, line 365), `isSpace()` (private, line 377), `baseClassList()` (private, line 568), `baseClassValue()` (private, line 578), `flush()` (private, line 742), `attributeReplacements()` (private, line 771), `applyReplacements()` (private, line 817), `rescanCurrent()` (private, line 843), `rescan()` (private, line 861), `existingName()` (private, line 875), `rebuiltClassValue()` (private, line 886), `escape()` (private, line 914)
+The document with every update written in.
+
+Internals: `scanTag()` (private, line 128), `scanAttribute()` (private, line 189), `enterRawText()` (private, line 242), `scanMarkupDeclaration()` (private, line 264), `scanQuestion()` (private, line 319), `setComment()` (private, line 347), `setToken()` (private, line 356), `resetToken()` (private, line 366), `isSpace()` (private, line 378), `baseClassList()` (private, line 591), `baseClassValue()` (private, line 601), `flush()` (private, line 775), `attributeReplacements()` (private, line 804), `applyReplacements()` (private, line 850), `rescanCurrent()` (private, line 876), `rescan()` (private, line 894), `existingName()` (private, line 908), `rebuiltClassValue()` (private, line 919), `escape()` (private, line 947)
 

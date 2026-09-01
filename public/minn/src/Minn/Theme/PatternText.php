@@ -30,6 +30,7 @@ final class PatternText
         $this->themeUri = $themeUri;
     }
 
+    /** A pattern file's HTML with its PHP interpreted, never executed. */
     public static function render(string $file, string $themeUri): string
     {
         // The header: the leading docblock inside its own PHP tags, dropped whole.

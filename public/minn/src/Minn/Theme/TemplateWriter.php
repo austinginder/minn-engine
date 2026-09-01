@@ -81,6 +81,7 @@ final readonly class TemplateWriter
         $this->writer->setStatus($record->wpId, 'trash');
     }
 
+    /** Deletes a saved template row. */
     public function destroy(TemplateRecord $record): void
     {
         $this->writer->destroy($record->wpId);

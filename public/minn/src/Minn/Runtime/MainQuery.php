@@ -14,7 +14,11 @@ use Minn\Front\Resolution;
  */
 final class MainQuery
 {
-    /** @return array<string, mixed> */
+    /**
+     * The query vars a resolution amounts to.
+     *
+     * @return array<string, mixed>
+     */
     public static function vars(Resolution $resolution): array
     {
         $record = $resolution->record ?? [];

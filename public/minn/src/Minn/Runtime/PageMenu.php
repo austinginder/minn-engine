@@ -19,6 +19,8 @@ use Minn\Support\Html;
 final class PageMenu
 {
     /**
+     * The page menu's list items.
+     *
      * @param list<array{id: int, title: string, url: string, current: bool}> $pages
      * @param array{label: string, url: string, current: bool}|null $home
      */

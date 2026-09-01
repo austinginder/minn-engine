@@ -11,6 +11,8 @@ use DOMDocument;
 final class OEmbed
 {
     /**
+     * The endpoint of the provider whose mask matches a URL, or null.
+     *
      * @param array<string, array{0: string, 1: bool}> $providers mask => [endpoint with {format}, mask is a regex]
      * @return string|null the JSON endpoint of the first matching provider
      */
@@ -28,14 +30,22 @@ final class OEmbed
         return null;
     }
 
-    /** @return array<string, mixed>|null */
+    /**
+     * An oEmbed JSON body as an array, or null.
+     *
+     * @return array<string, mixed>|null
+     */
     public static function parseJson(string $body): ?array
     {
         $data = json_decode(trim($body), true);
         return is_array($data) && $data !== [] && !array_is_list($data) ? $data : null;
     }
 
-    /** @return array<string, mixed>|null */
+    /**
+     * An oEmbed XML body as an array, or null.
+     *
+     * @return array<string, mixed>|null
+     */
     public static function parseXml(string $body): ?array
     {
         if (!function_exists('simplexml_import_dom') || !class_exists(DOMDocument::class, false)) {
@@ -53,6 +63,8 @@ final class OEmbed
     }
 
     /**
+     * The embed HTML for an oEmbed response, or null.
+     *
      * @param array<string, mixed> $data the oEmbed payload
      * @param Closure(string): string $escUrl @param Closure(string): string $escAttr @param Closure(string): string $escHtml
      */

@@ -43,6 +43,7 @@ final readonly class V1Controller
     ) {
     }
 
+    /** The overview payload. */
     #[Route(Method::Get, '/minn-admin/v1/overview')]
     public function overview(Request $request): Response
     {
@@ -50,6 +51,7 @@ final readonly class V1Controller
         return Reply::answer($request, $this->dashboard->overview($userId, $this->days($request)));
     }
 
+    /** The events behind one chart bar. */
     #[Route(Method::Get, '/minn-admin/v1/overview/activity')]
     public function overviewActivity(Request $request): Response
     {
@@ -58,6 +60,7 @@ final readonly class V1Controller
         return Reply::answer($request, $this->dashboard->activity($userId, $from, $to));
     }
 
+    /** The bell feed. */
     #[Route(Method::Get, '/minn-admin/v1/notifications')]
     public function notifications(Request $request): Response
     {
@@ -74,6 +77,7 @@ final readonly class V1Controller
         return Reply::answer($request, ['ok' => true]);
     }
 
+    /** The core status. */
     #[Route(Method::Get, '/minn-admin/v1/core')]
     public function core(Request $request): Response
     {
@@ -105,6 +109,7 @@ final readonly class V1Controller
         return Reply::answer($request, $out);
     }
 
+    /** Takes the edit lock on a post. */
     #[Route(Method::Post, '/minn-admin/v1/posts/{id:\d+}/lock')]
     public function lock(Request $request, string $id): Response
     {
@@ -116,6 +121,7 @@ final readonly class V1Controller
         return Reply::answer($request, ['acquired' => true]);
     }
 
+    /** Releases the edit lock on a post. */
     #[Route(Method::Post, '/minn-admin/v1/posts/{id:\d+}/unlock')]
     public function unlock(Request $request, string $id): Response
     {
@@ -143,6 +149,7 @@ final readonly class V1Controller
         return Reply::answer($request, ['patterns' => []]);
     }
 
+    /** The site logo attachment. */
     #[Route(Method::Get, '/minn-admin/v1/site-logo')]
     public function siteLogo(Request $request): Response
     {
@@ -160,6 +167,7 @@ final readonly class V1Controller
         return Reply::answer($request, ['supported' => $supported, 'id' => $id, 'url' => $id > 0 ? $this->logoUrl($id) : '']);
     }
 
+    /** Saves the caller's pick of overview cards. */
     #[Route(Method::Post, '/minn-admin/v1/overview/metrics')]
     public function setOverviewMetrics(Request $request): Response
     {
@@ -173,6 +181,7 @@ final readonly class V1Controller
         return Reply::answer($request, $this->storedMetricLayout($userId));
     }
 
+    /** Saves the site's default overview cards. */
     #[Route(Method::Post, '/minn-admin/v1/overview/metric-defaults')]
     public function setOverviewMetricDefaults(Request $request): Response
     {
@@ -232,6 +241,7 @@ final readonly class V1Controller
         return $this->permalinks->url('/wp-content/uploads/' . $rel);
     }
 
+    /** The permalink structure. */
     #[Route(Method::Get, '/minn-admin/v1/permalinks')]
     public function permalinks(Request $request): Response
     {
@@ -247,6 +257,7 @@ final readonly class V1Controller
         ]);
     }
 
+    /** The spam settings. */
     #[Route(Method::Get, '/minn-admin/v1/spam')]
     public function spam(Request $request): Response
     {
@@ -267,6 +278,7 @@ final readonly class V1Controller
         ]);
     }
 
+    /** The months the library has uploads in. */
     #[Route(Method::Get, '/minn-admin/v1/media/months')]
     public function mediaMonths(Request $request): Response
     {

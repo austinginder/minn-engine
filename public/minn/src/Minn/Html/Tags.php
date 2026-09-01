@@ -66,6 +66,7 @@ final class Tags
 
     // ---- Scanning.
 
+    /** Advances to the next token; false at the end or at an incomplete one. */
     public function nextToken(): bool
     {
         $this->flush();
@@ -379,7 +380,11 @@ final class Tags
         return $c === ' ' || $c === "\t" || $c === "\n" || $c === "\r" || $c === "\f";
     }
 
-    /** @param array{tag_name?: ?string, class_name?: ?string, match_offset?: int, tag_closers?: string} $query */
+    /**
+     * Advances to the next tag matching the query; false when none.
+     *
+     * @param array{tag_name?: ?string, class_name?: ?string, match_offset?: int, tag_closers?: string} $query
+     */
     public function nextTag(array $query): bool
     {
         $tagName = isset($query['tag_name']) ? strtoupper((string) $query['tag_name']) : null;
@@ -411,6 +416,7 @@ final class Tags
         return false;
     }
 
+    /** Whether the scan stopped inside an unfinished token. */
     public function pausedAtIncompleteToken(): bool
     {
         return $this->paused;
@@ -418,11 +424,13 @@ final class Tags
 
     // ---- Reads.
 
+    /** The current token's kind. */
     public function tokenType(): ?string
     {
         return $this->type;
     }
 
+    /** The current token's name. */
     public function tokenName(): ?string
     {
         return match ($this->type) {
@@ -433,6 +441,7 @@ final class Tags
         };
     }
 
+    /** The current tag name, upper-cased. */
     public function tag(): ?string
     {
         return match ($this->type) {
@@ -441,26 +450,31 @@ final class Tags
         };
     }
 
+    /** Whether the current tag is a closer. */
     public function isCloser(): bool
     {
         return $this->type === self::TAG && $this->closer;
     }
 
+    /** Whether the current tag has the self-closing flag. */
     public function selfClosing(): bool
     {
         return $this->type === self::TAG && $this->selfClosing;
     }
 
+    /** The current comment's kind. */
     public function commentType(): ?string
     {
         return $this->type === self::COMMENT ? $this->commentType : null;
     }
 
+    /** The current comment's whole text. */
     public function fullCommentText(): ?string
     {
         return $this->type === self::COMMENT ? substr($this->html, $this->fullTextStart, $this->fullTextLength) : null;
     }
 
+    /** The current token's text as a reader sees it. */
     public function modifiableText(): string
     {
         if ($this->type === null) {
@@ -520,7 +534,11 @@ final class Tags
         return null;
     }
 
-    /** @return list<string>|null lowercase names, in source order, null off a tag */
+    /**
+     * The current tag's attribute names with a prefix, lower-cased.
+     *
+     * @return list<string>|null lowercase names, in source order, null off a tag
+     */
     public function attributeNames(string $prefix): ?array
     {
         if ($this->type !== self::TAG || $this->closer) {
@@ -536,7 +554,11 @@ final class Tags
         return $names;
     }
 
-    /** @return list<string> distinct class names after pending edits */
+    /**
+     * The current tag's classes.
+     *
+     * @return list<string> distinct class names after pending edits
+     */
     public function classes(): array
     {
         if ($this->type !== self::TAG || $this->closer) {
@@ -559,6 +581,7 @@ final class Tags
         return $list;
     }
 
+    /** Whether the current tag has a class. */
     public function hasClass(string $class): bool
     {
         return in_array($class, $this->classes(), true);
@@ -591,6 +614,7 @@ final class Tags
 
     // ---- Edits.
 
+    /** Sets an attribute on the current tag. */
     public function setAttribute(string $name, string|bool|int|float|null $value): bool
     {
         if ($this->type !== self::TAG || $this->closer || $value === null) {
@@ -613,6 +637,7 @@ final class Tags
         return true;
     }
 
+    /** Removes an attribute from the current tag. */
     public function removeAttribute(string $name): bool
     {
         if ($this->type !== self::TAG || $this->closer) {
@@ -639,6 +664,7 @@ final class Tags
         return true;
     }
 
+    /** Adds a class to the current tag. */
     public function addClass(string $class): bool
     {
         if ($this->type !== self::TAG || $this->closer) {
@@ -649,6 +675,7 @@ final class Tags
         return true;
     }
 
+    /** Removes a class from the current tag. */
     public function removeClass(string $class): bool
     {
         if ($this->type !== self::TAG || $this->closer) {
@@ -659,6 +686,7 @@ final class Tags
         return true;
     }
 
+    /** Replaces the current token's text. */
     public function setModifiableText(string $text): bool
     {
         if ($this->type === self::TEXT) {
@@ -691,6 +719,7 @@ final class Tags
 
     // ---- Bookmarks.
 
+    /** Names the current token's position. */
     public function setBookmark(string $name): bool
     {
         if ($this->type === null || $this->paused) {
@@ -703,6 +732,7 @@ final class Tags
         return true;
     }
 
+    /** Forgets a bookmark. */
     public function releaseBookmark(string $name): bool
     {
         if (!isset($this->bookmarks[$name])) {
@@ -712,11 +742,13 @@ final class Tags
         return true;
     }
 
+    /** Whether a bookmark exists. */
     public function hasBookmark(string $name): bool
     {
         return isset($this->bookmarks[$name]);
     }
 
+    /** Moves to a bookmark. */
     public function seek(string $name): bool
     {
         if (!isset($this->bookmarks[$name])) {
@@ -731,6 +763,7 @@ final class Tags
 
     // ---- Output.
 
+    /** The document with every update written in. */
     public function html(): string
     {
         $this->flush();

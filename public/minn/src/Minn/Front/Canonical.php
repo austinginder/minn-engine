@@ -18,6 +18,7 @@ use Minn\Http\Request;
  */
 final class Canonical
 {
+    /** The canonical URL of a request, or null when it already is one. */
     public static function location(Db $db, Request $current, ?string $url): ?string
     {
         $request = $url === null ? $current : self::requestFor($url, $current);

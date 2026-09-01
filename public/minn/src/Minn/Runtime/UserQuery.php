@@ -21,6 +21,8 @@ final readonly class UserQuery
     }
 
     /**
+     * Runs a WP_User_Query-shaped args array and returns its rows and total.
+     *
      * @param array<string, mixed> $args
      * @return array{rows: list<array>, total: int}
      */

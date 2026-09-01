@@ -4,15 +4,15 @@ dynamic core blocks that render from data
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Archives`](#archives) | final readonly class | 27 | core/archives: the months that have published posts, newest first. |
-| [`Categories`](#categories) | final readonly class | 26 | core/categories: the non-empty categories as a list, by name. |
+| [`Archives`](#archives) | final readonly class | 28 | core/archives: the months that have published posts, newest first. |
+| [`Categories`](#categories) | final readonly class | 27 | core/categories: the non-empty categories as a list, by name. |
 | [`Dates`](#dates) | final class | 19 | Site-local dates the way the dynamic blocks print them. |
-| [`LatestComments`](#latestcomments) | final readonly class | 67 | core/latest-comments: the newest approved comments with avatar, meta, and a 20-word excerpt. |
-| [`LatestPosts`](#latestposts) | final readonly class | 33 | core/latest-posts: the newest published posts as a list, optionally dated. |
-| [`Search`](#search) | final readonly class | 47 | core/search: the site search form. The button sits outside or inside |
-| [`SocialLinks`](#sociallinks) | final class | 74 | core/social-links and core/social-link. The list keeps its stored |
-| [`SyncedPattern`](#syncedpattern) | final readonly class | 24 | core/block: a synced pattern, rendered from the wp_block post it references. |
-| [`TagCloud`](#tagcloud) | final readonly class | 35 | core/tag-cloud: non-empty tags by name, sized from 8pt to 22pt in |
+| [`LatestComments`](#latestcomments) | final readonly class | 68 | core/latest-comments: the newest approved comments with avatar, meta, and a 20-word excerpt. |
+| [`LatestPosts`](#latestposts) | final readonly class | 34 | core/latest-posts: the newest published posts as a list, optionally dated. |
+| [`Search`](#search) | final readonly class | 48 | core/search: the site search form. The button sits outside or inside |
+| [`SocialLinks`](#sociallinks) | final class | 75 | core/social-links and core/social-link. The list keeps its stored |
+| [`SyncedPattern`](#syncedpattern) | final readonly class | 25 | core/block: a synced pattern, rendered from the wp_block post it references. |
+| [`TagCloud`](#tagcloud) | final readonly class | 36 | core/tag-cloud: non-empty tags by name, sized from 8pt to 22pt in |
 
 ## Archives
 
@@ -29,6 +29,8 @@ __construct(Minn\Db $db, Minn\Front\Permalinks $permalinks)
 
 ### `render(Minn\Blocks\Block $block, Minn\Blocks\Renderer $renderer): string`
 
+The block's HTML.
+
 
 ## Categories
 
@@ -44,6 +46,8 @@ __construct(Minn\Db $db, Minn\Front\Permalinks $permalinks)
 
 
 ### `render(Minn\Blocks\Block $block, Minn\Blocks\Renderer $renderer): string`
+
+The block's HTML.
 
 
 ## Dates
@@ -78,7 +82,9 @@ __construct(Minn\Db $db, Minn\Content\Site $site, Minn\Content\Posts $posts, Min
 
 ### `render(Minn\Blocks\Block $block, Minn\Blocks\Renderer $renderer): string`
 
-Internals: `excerpt()` (private, line 76)
+The block's HTML.
+
+Internals: `excerpt()` (private, line 77)
 
 
 ## LatestPosts
@@ -95,6 +101,8 @@ __construct(Minn\Db $db, Minn\Content\Site $site, Minn\Front\Permalinks $permali
 
 
 ### `render(Minn\Blocks\Block $block): string`
+
+The block's HTML.
 
 
 ## Search
@@ -117,6 +125,8 @@ __construct(Minn\Front\Permalinks $permalinks)
 
 ### `render(Minn\Blocks\Block $block, Minn\Blocks\Renderer $renderer): string`
 
+The block's HTML.
+
 
 ## SocialLinks
 
@@ -137,7 +147,9 @@ __construct(string $iconsFile)
 
 ### `register(Minn\Blocks\Renderer $renderer): void`
 
-Internals: `list()` (private, line 36), `link()` (private, line 51), `icons()` (private, line 90)
+Registers the block and its links with the renderer.
+
+Internals: `list()` (private, line 37), `link()` (private, line 52), `icons()` (private, line 91)
 
 
 ## SyncedPattern
@@ -155,6 +167,8 @@ __construct(Minn\Db $db)
 
 ### `render(Minn\Blocks\Block $block, Minn\Blocks\Renderer $renderer): string`
 
+The block's HTML.
+
 
 ## TagCloud
 
@@ -171,4 +185,6 @@ __construct(Minn\Db $db, Minn\Front\Permalinks $permalinks)
 
 
 ### `render(Minn\Blocks\Block $block): string`
+
+The block's HTML.
 

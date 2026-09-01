@@ -14,7 +14,11 @@ final class Parser
 {
     private const TOKEN = '/<!--\s+(?P<closer>\/)?wp:(?P<namespace>[a-z][a-z0-9_-]*\/)?(?P<name>[a-z][a-z0-9_-]*)\s+(?P<attrs>\{(?:(?!\}\s+\/?-->).)*+\}\s+)?(?P<void>\/)?-->/s';
 
-    /** @return list<Block> */
+    /**
+     * Block markup as a tree of blocks.
+     *
+     * @return list<Block>
+     */
     public static function parse(string $markup): array
     {
         preg_match_all(self::TOKEN, $markup, $tokens, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);

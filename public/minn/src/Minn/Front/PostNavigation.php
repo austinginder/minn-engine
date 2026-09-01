@@ -16,6 +16,7 @@ use Minn\Support\Html;
  */
 final class PostNavigation
 {
+    /** A previous or next post link in the reference's format. */
     public static function link(string $url, string $title, string $format, string $linkFormat, bool $previous): string
     {
         $anchor = '<a href="' . Html::attr($url) . '" rel="' . ($previous ? 'prev' : 'next') . '">'

@@ -22,6 +22,7 @@ final class Patterns
     /** @var array<string, array<string, array<string, mixed>>> */
     private array $styles = [];
 
+    /** Registers a block pattern, or the refusal. */
     public function registerPattern(mixed $name, mixed $properties, bool $afterInit): ?Refusal
     {
         if (!is_string($name)) {
@@ -41,6 +42,7 @@ final class Patterns
         return null;
     }
 
+    /** Forgets a pattern. */
     public function unregisterPattern(string $name): bool
     {
         if (!isset($this->patterns[$name])) {
@@ -50,17 +52,23 @@ final class Patterns
         return true;
     }
 
+    /** One pattern, or null. */
     public function pattern(string $name, bool $afterInitOnly = false): ?array
     {
         return $afterInitOnly ? ($this->patternsAfterInit[$name] ?? null) : ($this->patterns[$name] ?? null);
     }
 
-    /** @return list<array<string, mixed>> */
+    /**
+     * Every pattern.
+     *
+     * @return list<array<string, mixed>>
+     */
     public function patterns(bool $afterInitOnly = false): array
     {
         return array_values($afterInitOnly ? $this->patternsAfterInit : $this->patterns);
     }
 
+    /** Registers a pattern category, or the refusal. */
     public function registerCategory(mixed $name, mixed $properties, bool $afterInit): ?Refusal
     {
         if (!is_string($name)) {
@@ -74,6 +82,7 @@ final class Patterns
         return null;
     }
 
+    /** Forgets a category. */
     public function unregisterCategory(string $name): bool
     {
         if (!isset($this->categories[$name])) {
@@ -83,18 +92,27 @@ final class Patterns
         return true;
     }
 
+    /** One category, or null. */
     public function category(string $name): ?array
     {
         return $this->categories[$name] ?? null;
     }
 
-    /** @return list<array<string, mixed>> */
+    /**
+     * Every category.
+     *
+     * @return list<array<string, mixed>>
+     */
     public function categories(bool $afterInitOnly = false): array
     {
         return array_values($afterInitOnly ? $this->categoriesAfterInit : $this->categories);
     }
 
-    /** @param string|list<string> $blocks */
+    /**
+     * Registers a block style, or the refusal.
+     *
+     * @param string|list<string> $blocks
+     */
     public function registerStyle(mixed $blocks, mixed $properties): ?Refusal
     {
         if (!is_string($blocks) && !is_array($blocks)) {
@@ -112,6 +130,7 @@ final class Patterns
         return null;
     }
 
+    /** Forgets a block style. */
     public function unregisterStyle(string $block, string $style): bool
     {
         if (!isset($this->styles[$block][$style])) {
@@ -121,12 +140,17 @@ final class Patterns
         return true;
     }
 
+    /** One block style, or null. */
     public function style(string $block, string $style): ?array
     {
         return $this->styles[$block][$style] ?? null;
     }
 
-    /** @return array<string, array<string, array<string, mixed>>> */
+    /**
+     * Every block style, or one block's.
+     *
+     * @return array<string, array<string, array<string, mixed>>>
+     */
     public function styles(?string $block = null): array
     {
         return $block === null ? $this->styles : ($this->styles[$block] ?? []);

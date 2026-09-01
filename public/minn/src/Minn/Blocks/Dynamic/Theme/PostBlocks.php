@@ -36,6 +36,7 @@ final readonly class PostBlocks
     ) {
     }
 
+    /** Registers this family's blocks with the renderer. */
     public function register(Renderer $renderer): void
     {
         $renderer->registerDynamic('core/post-title', $this->title(...));

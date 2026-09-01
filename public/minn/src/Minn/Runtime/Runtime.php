@@ -65,6 +65,7 @@ final class Runtime
         return $runtime;
     }
 
+    /** The booted runtime; throws when there is none. */
     public static function current(): self
     {
         if (self::$current === null) {
@@ -73,16 +74,19 @@ final class Runtime
         return self::$current;
     }
 
+    /** Whether the runtime is up. */
     public static function booted(): bool
     {
         return self::$current !== null;
     }
 
+    /** The hook registry. */
     public static function hooks(): Hooks
     {
         return self::$hooks ??= new Hooks();
     }
 
+    /** The options store. */
     public static function options(): Options
     {
         return self::$options ??= new Options(self::current()->db);
@@ -114,16 +118,19 @@ final class Runtime
         return $out;
     }
 
+    /** The object cache. */
     public static function cache(): ObjectCache
     {
         return self::$cache ??= new ObjectCache();
     }
 
+    /** The shortcode registry. */
     public static function shortcodes(): Shortcodes
     {
         return self::$shortcodes ??= new Shortcodes();
     }
 
+    /** The script modules registry. */
     public static function scriptModules(): ScriptModules
     {
         return self::$scriptModules ??= new ScriptModules(
@@ -132,41 +139,49 @@ final class Runtime
         );
     }
 
+    /** The interactivity API. */
     public static function interactivity(): Interactivity
     {
         return self::$interactivity ??= new Interactivity();
     }
 
+    /** The registered block templates. */
     public static function blockTemplates(): BlockTemplates
     {
         return self::$blockTemplates ??= new BlockTemplates();
     }
 
+    /** The post types, taxonomies, and statuses. */
     public static function registry(): Registry
     {
         return self::$registry ??= new Registry(self::current()->engineDir);
     }
 
+    /** A fresh post query over the runtime's registry. */
     public static function postQuery(): PostQuery
     {
         return new PostQuery(self::current()->db, self::registry());
     }
 
+    /** A per-request state value. */
     public function get(string $key, mixed $default = null): mixed
     {
         return $this->state[$key] ?? $default;
     }
 
+    /** Sets a per-request state value. */
     public function set(string $key, mixed $value): void
     {
         $this->state[$key] = $value;
     }
 
+    /** Whether the request is over HTTPS. */
     public function isSecure(): bool
     {
         return $this->request?->secure ?? false;
     }
 
+    /** wp-content under the site root. */
     public function contentDir(): string
     {
         return rtrim($this->absPath, '/') . '/wp-content';

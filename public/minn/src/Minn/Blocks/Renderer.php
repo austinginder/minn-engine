@@ -67,21 +67,25 @@ final class Renderer
         $this->context = Context::forRest();
     }
 
+    /** What is being rendered. */
     public function context(): Context
     {
         return $this->context;
     }
 
+    /** Sets what is being rendered. */
     public function withContext(Context $context): void
     {
         $this->context = $context;
     }
 
+    /** The image tag builder. */
     public function images(): ImageTags
     {
         return $this->images;
     }
 
+    /** A renderer with every dynamic block wired over the database door. */
     public static function forDb(Db $db): self
     {
         $site = new Site($db);
@@ -106,18 +110,27 @@ final class Renderer
         return $renderer;
     }
 
-    /** @param callable(Block, Renderer): string $render */
+    /**
+     * Registers a dynamic block's render callback.
+     *
+     * @param callable(Block, Renderer): string $render
+     */
     public function registerDynamic(string $name, callable $render): void
     {
         $this->dynamic[$name] = $render;
     }
 
+    /** Block markup as HTML, texturized. */
     public function render(string $markup): string
     {
         return Texturize::html($this->renderBlocks(Parser::parse($markup)));
     }
 
-    /** @param list<Block> $blocks */
+    /**
+     * A tree of blocks as HTML.
+     *
+     * @param list<Block> $blocks
+     */
     public function renderBlocks(array $blocks): string
     {
         $out = '';
@@ -127,6 +140,7 @@ final class Renderer
         return $out;
     }
 
+    /** One block as HTML, with the filters around it. */
     public function renderBlock(Block $block): string
     {
         if ($block->name === null) {

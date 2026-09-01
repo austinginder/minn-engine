@@ -13,6 +13,8 @@ use Closure;
 final class Pagination
 {
     /**
+     * The page links the reference's paginate_links builds, or null for one page.
+     *
      * @param Closure(int): string $link the URL for a page number
      * @return list<string>|null the link elements, null with fewer than two pages
      */
@@ -56,7 +58,11 @@ final class Pagination
         return $out;
     }
 
-    /** @param list<string> $links */
+    /**
+     * The links in the requested shape.
+     *
+     * @param list<string> $links
+     */
     public static function format(array $links, string $type): array|string
     {
         return match ($type) {

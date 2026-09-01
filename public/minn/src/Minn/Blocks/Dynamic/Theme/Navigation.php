@@ -38,6 +38,7 @@ final readonly class Navigation
     ) {
     }
 
+    /** Registers this family's blocks with the renderer. */
     public function register(Renderer $renderer): void
     {
         $renderer->registerDynamic('core/navigation', $this->navigation(...));

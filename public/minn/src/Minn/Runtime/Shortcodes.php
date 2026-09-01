@@ -15,44 +15,61 @@ final class Shortcodes
     /** @var array<string, callable> */
     private array $tags = [];
 
+    /** Registers a shortcode. */
     public function add(string $tag, callable $callback): void
     {
         $this->tags[$tag] = $callback;
     }
 
+    /** Forgets a shortcode. */
     public function remove(string $tag): void
     {
         unset($this->tags[$tag]);
     }
 
+    /** Forgets every shortcode. */
     public function removeAll(): void
     {
         $this->tags = [];
     }
 
+    /** Whether a shortcode is registered. */
     public function has(string $tag): bool
     {
         return isset($this->tags[$tag]);
     }
 
-    /** @return array<string, callable> every registered tag and its handler, to restore after a narrowed run */
+    /**
+     * Every shortcode with its callback.
+     *
+     * @return array<string, callable> every registered tag and its handler, to restore after a narrowed run
+     */
     public function all(): array
     {
         return $this->tags;
     }
 
-    /** @param array<string, callable> $tags */
+    /**
+     * Replaces the registry, after a save-and-restore.
+     *
+     * @param array<string, callable> $tags
+     */
     public function restore(array $tags): void
     {
         $this->tags = $tags;
     }
 
-    /** @return list<string> */
+    /**
+     * Every shortcode name.
+     *
+     * @return list<string>
+     */
     public function names(): array
     {
         return array_keys($this->tags);
     }
 
+    /** The regex matching the registered shortcodes, or null for none. */
     public function pattern(?array $tags = null): ?string
     {
         $names = $tags ?? array_keys($this->tags);
@@ -63,6 +80,7 @@ final class Shortcodes
         return '/\[(\[?)(' . $alternatives . ')(?![\w-])([^\]\/]*(?:\/(?!\])[^\]\/]*)*?)(?:(\/)\]|\](?:([^\[]*+(?:\[(?!\/\2\])[^\[]*+)*+)\[\/\2\])?)(\]?)/s';
     }
 
+    /** Content with the shortcodes run. */
     public function apply(string $content): string
     {
         $pattern = $this->pattern();
@@ -79,6 +97,7 @@ final class Shortcodes
         }, $content);
     }
 
+    /** Content with the shortcodes removed. */
     public function strip(string $content): string
     {
         $pattern = $this->pattern();
@@ -93,7 +112,11 @@ final class Shortcodes
         }, $content);
     }
 
-    /** @return array<int|string, string> named attributes; bare words and quoted values keyed by position */
+    /**
+     * Shortcode attribute text as an array.
+     *
+     * @return array<int|string, string> named attributes; bare words and quoted values keyed by position
+     */
     public static function parse(string $text): array
     {
         $text = str_replace(['&#8220;', '&#8221;', '&#8243;'], '"', $text);

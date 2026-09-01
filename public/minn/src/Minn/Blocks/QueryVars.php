@@ -8,6 +8,8 @@ namespace Minn\Blocks;
 final class QueryVars
 {
     /**
+     * The query vars a query block's context amounts to.
+     *
      * @param array<string, mixed>|null $context the block's `query` context
      * @param list<int> $sticky the site's sticky post ids
      * @param callable(string): bool $postTypeExists

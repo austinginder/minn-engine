@@ -42,16 +42,19 @@ final readonly class App
         return !in_array('minn-admin/minn-admin.php', Serialized::stringList($site->option('active_plugins')), true);
     }
 
+    /** Where the bundle sits on disk. */
     public function dir(): string
     {
         return $this->dir;
     }
 
+    /** Whether the bundle is on disk. */
     public function installed(): bool
     {
         return is_dir($this->dir);
     }
 
+    /** The bundle's version from its plugin header. */
     public function version(): string
     {
         $main = "{$this->dir}/minn-admin.php";

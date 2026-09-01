@@ -16,6 +16,7 @@ use Minn\Support\Html;
  */
 final class Wrapper
 {
+    /** A dynamic block's opening tag with its classes in the reference's order. */
     public static function open(
         string $tag,
         string $blockClass,

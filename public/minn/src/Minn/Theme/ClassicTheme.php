@@ -22,6 +22,7 @@ final readonly class ClassicTheme
     ) {
     }
 
+    /** The active classic theme, or null under a block theme. */
     public static function active(Site $site, string $themesDir): ?self
     {
         $stylesheet = (string) ($site->option('stylesheet') ?? '');

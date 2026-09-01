@@ -9,6 +9,7 @@ use Minn\Runtime\Refusal;
 /** The block name rules: a string, lower-case, `namespace/name`. */
 final class BlockName
 {
+    /** Why a block name is invalid, or null when it is fine. */
     public static function refuse(mixed $name): ?Refusal
     {
         if (!is_string($name)) {

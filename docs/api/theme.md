@@ -4,25 +4,25 @@ the block-theme reader, templates, global styles and the page renderer
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`ArchiveTitle`](#archivetitle) | final class | 52 | The label and name an archive titles itself with: `Category:` around the |
-| [`BodyClasses`](#bodyclasses) | final class | 67 | The body-class list a classic theme's body_class() starts from, in the |
-| [`ClassicContent`](#classiccontent) | final class | 36 | What a classic theme's the_content() prints: the engine's block pipeline |
-| [`ClassicRenderer`](#classicrenderer) | final readonly class | 133 | A whole page from the active classic theme: the reference's PHP template |
-| [`ClassicTheme`](#classictheme) | final readonly class | 30 | The active classic (PHP-template) theme on disk. A theme is classic when |
-| [`Folder`](#folder) | final readonly class | 70 | A theme folder read from disk: its style.css headers, which folder its templates come from, its screenshot, whether it is a block theme. |
-| [`GlobalStyles`](#globalstyles) | final readonly class | 606 | theme.json to CSS. Presets become custom properties on :root and their |
-| [`HeadLinks`](#headlinks) | final readonly class | 123 | The links the reference puts in every head: the site and comments |
-| [`Hierarchy`](#hierarchy) | final class | 110 | The classic template hierarchy: the candidate file names each template |
-| [`MainQueryBridge`](#mainquerybridge) | final readonly class | 65 | Stands the main query for a themed page: a plugin's archive runs through |
-| [`PageRenderer`](#pagerenderer) | final readonly class | 204 | A whole page from the active block theme: the template the resolution |
-| [`PatternText`](#patterntext) | final class | 197 | Block-theme patterns are PHP files whose only code is a handful of |
-| [`TemplateIndex`](#templateindex) | final class | 240 | Every block template and template part the site offers, in the order the |
-| [`TemplatePartTheme`](#templateparttheme) | final readonly class | 44 | A template-part block inside a template says which theme's part it means. |
-| [`TemplatePatterns`](#templatepatterns) | final readonly class | 87 | A template can name a pattern instead of carrying its blocks, and the |
-| [`TemplateRecord`](#templaterecord) | final readonly class | 32 | One block template or template part, whatever it came from: a theme |
-| [`TemplateWriter`](#templatewriter) | final readonly class | 91 | Saving and removing block templates. A template the theme ships is never |
-| [`Templates`](#templates) | final readonly class | 140 | Which template renders a resolution, and where its markup comes from: |
-| [`Theme`](#theme) | final class | 314 | The active block theme on disk, read as data: theme.json, the templates |
+| [`ArchiveTitle`](#archivetitle) | final class | 54 | The label and name an archive titles itself with: `Category:` around the |
+| [`BodyClasses`](#bodyclasses) | final class | 69 | The body-class list a classic theme's body_class() starts from, in the |
+| [`ClassicContent`](#classiccontent) | final class | 37 | What a classic theme's the_content() prints: the engine's block pipeline |
+| [`ClassicRenderer`](#classicrenderer) | final readonly class | 135 | A whole page from the active classic theme: the reference's PHP template |
+| [`ClassicTheme`](#classictheme) | final readonly class | 31 | The active classic (PHP-template) theme on disk. A theme is classic when |
+| [`Folder`](#folder) | final readonly class | 77 | A theme folder read from disk: its style.css headers, which folder its templates come from, its screenshot, whether it is a block theme. |
+| [`GlobalStyles`](#globalstyles) | final readonly class | 611 | theme.json to CSS. Presets become custom properties on :root and their |
+| [`HeadLinks`](#headlinks) | final readonly class | 129 | The links the reference puts in every head: the site and comments |
+| [`Hierarchy`](#hierarchy) | final class | 146 | The classic template hierarchy: the candidate file names each template |
+| [`MainQueryBridge`](#mainquerybridge) | final readonly class | 67 | Stands the main query for a themed page: a plugin's archive runs through |
+| [`PageRenderer`](#pagerenderer) | final readonly class | 206 | A whole page from the active block theme: the template the resolution |
+| [`PatternText`](#patterntext) | final class | 198 | Block-theme patterns are PHP files whose only code is a handful of |
+| [`TemplateIndex`](#templateindex) | final class | 250 | Every block template and template part the site offers, in the order the |
+| [`TemplatePartTheme`](#templateparttheme) | final readonly class | 45 | A template-part block inside a template says which theme's part it means. |
+| [`TemplatePatterns`](#templatepatterns) | final readonly class | 88 | A template can name a pattern instead of carrying its blocks, and the |
+| [`TemplateRecord`](#templaterecord) | final readonly class | 34 | One block template or template part, whatever it came from: a theme |
+| [`TemplateWriter`](#templatewriter) | final readonly class | 92 | Saving and removing block templates. A template the theme ships is never |
+| [`Templates`](#templates) | final readonly class | 146 | Which template renders a resolution, and where its markup comes from: |
+| [`Theme`](#theme) | final class | 318 | The active block theme on disk, read as data: theme.json, the templates |
 
 ## ArchiveTitle
 
@@ -39,13 +39,15 @@ Used by: `Minn\Blocks\Dynamic\Theme\QueryBlocks`
 
 ### static `parts(Minn\Front\Resolution $resolution, ?string $dateFormat): array`
 
+The archive title's prefix and title for a resolution.
+
 - `@return array{string, string} the label (no colon) and the escaped bare name; both empty when the view has none`
 
 ### static `compose(string $label, string $name): string`
 
 The reference's prefixed shape: `Category: <span>Uncategorized</span>`.
 
-Internals: `dateParts()` (private, line 51), `taxonomyLabel()` (private, line 68)
+Internals: `dateParts()` (private, line 53), `taxonomyLabel()` (private, line 70)
 
 
 ## BodyClasses
@@ -62,10 +64,12 @@ Used by: `Minn\Theme\ClassicRenderer`
 
 ### static `classic(Minn\Front\Resolution $resolution, array $coreClasses, ?string $customTemplate, bool $privacyPage, bool $loggedIn, bool $customLogo, bool $embedResponsive, string $themeSlug, ?string $parentSlug, bool $bar): array`
 
+The body classes a classic theme's page carries.
+
 - `@param list<string> $coreClasses`
 - `@return list<string>`
 
-Internals: `withSingularTokens()` (private, line 69)
+Internals: `withSingularTokens()` (private, line 71)
 
 
 ## ClassicContent
@@ -78,6 +82,8 @@ embeds, then the runtime's shortcodes and the_content filters so plugin
 code sees the same hook order the reference runs.
 
 ### static `render(Minn\Content\PostRecord $post, ?string $moreLinkText): string`
+
+A post's content as the classic loop prints it, with the more link.
 
 
 ## ClassicRenderer
@@ -101,9 +107,13 @@ __construct(Minn\Content\Site $site, Minn\Content\Posts $posts, Minn\Front\Perma
 
 ### static `create(Minn\Db $db, Minn\Theme\ClassicTheme $theme, ?Minn\Theme\Theme $styleTheme, Minn\Front\Permalinks $permalinks, int $perPage, ?Minn\Front\AdminBar $bar = NULL): self`
 
+A classic renderer over the database door.
+
 ### `render(Minn\Front\Resolution $resolution, array $coreClasses, string $title): ?string`
 
-Internals: `template()` (private, line 75), `bodyClasses()` (private, line 108), `standTitle()` (private, line 130), `registerHead()` (private, line 140), `registerStyles()` (private, line 146)
+The page for a resolution through the theme's PHP templates.
+
+Internals: `template()` (private, line 77), `bodyClasses()` (private, line 110), `standTitle()` (private, line 132), `registerHead()` (private, line 142), `registerStyles()` (private, line 148)
 
 
 ## ClassicTheme
@@ -124,6 +134,8 @@ Used by: `Minn\Engine`, `Minn\Theme\ClassicRenderer`
 
 ### static `active(Minn\Content\Site $site, string $themesDir): ?self`
 
+The active classic theme, or null under a block theme.
+
 
 ## Folder
 
@@ -141,16 +153,22 @@ A theme folder read from disk: its style.css headers, which folder its templates
 
 ### static `read(string $root, string $slug, array $labels, ?Closure $reader = NULL): self`
 
+A theme folder with its style.css headers.
+
 - `@param array<string, string> $labels key => the style.css header label`
 - `@param Closure(string, array<string, string>): array<string, string>|null $reader the header reader (the facade's, so header filters apply); the engine's own by default`
 
 ### `dir(): string`
+
+The folder's path.
 
 ### `screenshot(): ?string`
 
 The screenshot file name, or null when the theme has none.
 
 ### static `isBlockTheme(array $dirs): bool`
+
+Whether any of the folders ships a block template index.
 
 - `@param list<string> $dirs the stylesheet and template directories`
 
@@ -200,6 +218,8 @@ data expects (the CSS writer resolves them on the way out instead).
 
 ### `css(): string`
 
+The global stylesheet from theme.json and the user's styles.
+
 ### static `presetList(mixed $presets): array`
 
 A preset list as theme.json writes it is a plain list; as the site
@@ -210,6 +230,8 @@ to one list here.
 - `@return list<array>`
 
 ### static `fontFamilies(array $settings): array`
+
+The font family presets in the settings.
 
 - `@return list<array>`
 
@@ -222,7 +244,7 @@ file:./ resolved against the theme that carries the file and the
 format named from the extension. Families without files print
 nothing.
 
-Internals: `presets()` (private, line 126), `defaultSlugsFirst()` (private, line 151), `spacingPresets()` (private, line 170), `fontUrl()` (private, line 253), `fontFormat()` (private, line 270), `fluidFontSize()` (private, line 288), `presetProperties()` (private, line 309), `presetClasses()` (private, line 320), `structuralRules()` (private, line 345), `gapRules()` (private, line 365), `rootStyles()` (private, line 381), `elementStyles()` (private, line 395), `blockStyles()` (private, line 424), `withoutEmpty()` (private, line 443), `scopedCss()` (private, line 456), `variationStyles()` (private, line 478), `containerStyles()` (private, line 509), `declarations()` (private, line 534), `ordered()` (private, line 605)
+Internals: `presets()` (private, line 127), `defaultSlugsFirst()` (private, line 152), `spacingPresets()` (private, line 171), `fontUrl()` (private, line 258), `fontFormat()` (private, line 275), `fluidFontSize()` (private, line 293), `presetProperties()` (private, line 314), `presetClasses()` (private, line 325), `structuralRules()` (private, line 350), `gapRules()` (private, line 370), `rootStyles()` (private, line 386), `elementStyles()` (private, line 400), `blockStyles()` (private, line 429), `withoutEmpty()` (private, line 448), `scopedCss()` (private, line 461), `variationStyles()` (private, line 483), `containerStyles()` (private, line 514), `declarations()` (private, line 539), `ordered()` (private, line 610)
 
 
 ## HeadLinks
@@ -244,9 +266,15 @@ __construct(Minn\Content\Site $site, Minn\Content\Posts $posts, Minn\Front\Perma
 
 ### `all(Minn\Front\Resolution $resolution): string`
 
+Every head link for a resolution.
+
 ### `feedLinks(): string`
 
+The site and comments feed links.
+
 ### `extraFeedLink(Minn\Front\Resolution $resolution): string`
+
+The feed link a single or an archive adds.
 
 ### `restLink(): string`
 
@@ -254,7 +282,11 @@ No trailing newline: the reference prints the JSON alternate and the RSD link on
 
 ### `jsonAlternate(Minn\Front\Resolution $resolution): string`
 
+The wp/v2 alternate link for the resolution.
+
 ### `rsdLink(): string`
+
+The RSD link.
 
 ### `shortlink(Minn\Front\Resolution $resolution): string`
 
@@ -262,7 +294,9 @@ Singular views only; posts and pages alike shortlink as ?p={id}, in the referenc
 
 ### `icons(): string`
 
-Internals: `iconFileAt()` (private, line 127)
+The site icon links.
+
+Internals: `iconFileAt()` (private, line 133)
 
 
 ## Hierarchy
@@ -276,37 +310,55 @@ which locates the first candidate the theme (child, then parent) ships.
 
 ### static `frontPage(): array`
 
+The front page templates.
+
 - `@return list<string>`
 
 ### static `home(): array`
+
+The home templates.
 
 - `@return list<string>`
 
 ### static `privacyPolicy(): array`
 
+The privacy policy templates.
+
 - `@return list<string>`
 
 ### static `page(string $custom, string $slug, int $id): array`
+
+The page templates, custom first.
 
 - `@return list<string>`
 
 ### static `single(string $type, string $slug, string $custom): array`
 
+The single templates, custom first.
+
 - `@return list<string>`
 
 ### static `attachment(string $mimeType): array`
+
+The attachment templates by mime type.
 
 - `@return list<string>`
 
 ### static `term(string $taxonomy, string $slug, int $id): array`
 
+The term archive templates.
+
 - `@return list<string>`
 
 ### static `author(string $nicename, int $id): array`
 
+The author archive templates.
+
 - `@return list<string>`
 
 ### static `archive(array $postTypes): array`
+
+The post type archive templates.
 
 - `@param list<string> $postTypes @return list<string>`
 
@@ -329,9 +381,13 @@ __construct(Minn\Content\Site $site, Minn\Content\Posts $posts, int $perPage)
 
 ### `stand(Minn\Front\Resolution $resolution): Minn\Content\Page`
 
+The page of posts a resolution shows, through the runtime's main query when it is up.
+
 ### `perPage(): int`
 
-Internals: `lifecycle()` (private, line 53), `objectTypes()` (private, line 60), `listing()` (private, line 67)
+Posts per page.
+
+Internals: `lifecycle()` (private, line 55), `objectTypes()` (private, line 62), `listing()` (private, line 69)
 
 
 ## PageRenderer
@@ -352,6 +408,8 @@ __construct(Minn\Db $db, Minn\Content\Site $site, Minn\Content\Posts $posts, Min
 
 ### static `create(Minn\Db $db, Minn\Theme\Theme $theme, Minn\Front\Permalinks $permalinks, int $perPage, ?Minn\Front\AdminBar $bar = NULL): self`
 
+A page renderer over the database door.
+
 ### `bodyClasses(Minn\Front\Resolution $resolution, array $coreClasses): array`
 
 The reference's body-class tokens: the singular and template tokens
@@ -363,7 +421,9 @@ those, and the theme (and child theme) tokens close the list.
 
 ### `render(Minn\Front\Resolution $resolution, array $coreClasses, string $title): ?string`
 
-Internals: `pluginTemplate()` (private, line 164), `skipLinkTarget()` (private, line 185), `documentTitle()` (private, line 194), `head()` (private, line 215), `headLinks()` (private, line 241)
+The page for a resolution, or null when the theme has no template for it.
+
+Internals: `pluginTemplate()` (private, line 166), `skipLinkTarget()` (private, line 187), `documentTitle()` (private, line 196), `head()` (private, line 217), `headLinks()` (private, line 243)
 
 
 ## PatternText
@@ -385,7 +445,9 @@ Used by: `Minn\Theme\Theme`
 
 ### static `render(string $file, string $themeUri): string`
 
-Internals: `statements()` (private, line 45), `printf()` (private, line 72), `expression()` (private, line 83), `term()` (private, line 99), `escape()` (private, line 127), `arguments()` (private, line 133), `stringLiteral()` (private, line 160), `identifier()` (private, line 183), `skipSpace()` (private, line 193)
+A pattern file's HTML with its PHP interpreted, never executed.
+
+Internals: `statements()` (private, line 46), `printf()` (private, line 73), `expression()` (private, line 84), `term()` (private, line 100), `escape()` (private, line 128), `arguments()` (private, line 134), `stringLiteral()` (private, line 161), `identifier()` (private, line 184), `skipSpace()` (private, line 194)
 
 
 ## TemplateIndex
@@ -411,6 +473,8 @@ __construct(Minn\Db $db, Minn\Theme\Theme $theme, Minn\Content\Site $site, ?Minn
 
 ### `all(string $type): array`
 
+Every template of a type: the theme's files with the saved rows over them.
+
 - `@return list<TemplateRecord>`
 
 ### `find(string $type, string $id): ?Minn\Theme\TemplateRecord`
@@ -419,7 +483,11 @@ Null when the id names another theme, or a slug nothing provides.
 
 ### `themeSlug(): string`
 
+The theme the index reads.
+
 ### `hasFile(string $type, string $slug): bool`
+
+Whether the theme ships a file for a slug.
 
 ### `authorText(Minn\Theme\TemplateRecord $record): string`
 
@@ -438,6 +506,8 @@ A slug the reference does not name in its default template types is a custom tem
 
 ### static `defaults(): array`
 
+The default template types.
+
 - `@return array<string, array{title: string, description: string}>`
 
 ### `markup(string $content): string`
@@ -447,7 +517,7 @@ where the template only named them, then every template-part block
 told which theme it belongs to. A record carries the markup as
 stored, because that is what get_block_templates() hands a plugin.
 
-Internals: `savedRows()` (private, line 141), `pluginRows()` (private, line 156), `fromRow()` (private, line 165), `fromFile()` (private, line 191), `fromPlugin()` (private, line 213), `fileTitle()` (private, line 238), `savedArea()` (private, line 247)
+Internals: `savedRows()` (private, line 151), `pluginRows()` (private, line 166), `fromRow()` (private, line 175), `fromFile()` (private, line 201), `fromPlugin()` (private, line 223), `fileTitle()` (private, line 248), `savedArea()` (private, line 257)
 
 
 ## TemplatePartTheme
@@ -465,7 +535,9 @@ Used by: `Minn\Theme\TemplateIndex`
 
 ### static `apply(string $markup, string $theme): string`
 
-Internals: `withTheme()` (private, line 39), `encode()` (private, line 49), `pair()` (private, line 54)
+Template part blocks with the theme attribute set.
+
+Internals: `withTheme()` (private, line 40), `encode()` (private, line 50), `pair()` (private, line 55)
 
 
 ## TemplatePatterns
@@ -485,7 +557,9 @@ Used by: `Minn\Theme\TemplateIndex`
 
 ### static `expand(string $markup, Minn\Theme\Theme $theme, int $depth = 0): string`
 
-Internals: `closerAt()` (private, line 48), `pattern()` (private, line 54), `stamped()` (private, line 78), `isOneBlock()` (private, line 96)
+Markup with its pattern blocks replaced by the patterns' content.
+
+Internals: `closerAt()` (private, line 49), `pattern()` (private, line 55), `stamped()` (private, line 79), `isOneBlock()` (private, line 97)
 
 
 ## TemplateRecord
@@ -521,7 +595,11 @@ __construct(string $theme, string $slug, string $type, string $content, string $
 
 ### `id(): string`
 
+The reference's template id: theme//slug.
+
 ### `isPart(): bool`
+
+Whether this is a template part.
 
 
 ## TemplateWriter
@@ -552,7 +630,9 @@ Moves a site copy to the trash, which hands the theme's file back.
 
 ### `destroy(Minn\Theme\TemplateRecord $record): void`
 
-Internals: `setArea()` (private, line 89), `themeTermId()` (private, line 99)
+Deletes a saved template row.
+
+Internals: `setArea()` (private, line 90), `themeTermId()` (private, line 100)
 
 
 ## Templates
@@ -573,11 +653,17 @@ __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Theme\Theme $theme, ?Mi
 
 ### `forResolution(Minn\Front\Resolution $resolution): ?array`
 
+The template that renders a resolution, or null.
+
 - `@return array{slug: string, markup: string}|null`
 
 ### `template(string $slug): ?string`
 
+A template's markup by slug, saved first.
+
 ### `part(string $slug): ?string`
+
+A template part's markup by slug, saved first.
 
 ### `candidates(Minn\Front\Resolution $resolution): array`
 
@@ -593,7 +679,7 @@ The site editor's saved global styles for the active theme, when any.
 
 A page's chosen custom template, from _wp_page_template meta.
 
-Internals: `filtered()` (private, line 71), `hierarchy()` (private, line 95), `saved()` (private, line 146)
+Internals: `filtered()` (private, line 77), `hierarchy()` (private, line 101), `saved()` (private, line 152)
 
 
 ## Theme
@@ -620,6 +706,8 @@ __construct(string $slug, string $dir, string $uri, ?Minn\Theme\Theme $parent = 
 
 ### static `active(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, string $themesDir): ?self`
 
+The active block theme, or null under a classic one.
+
 ### static `forStyles(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, string $themesDir): ?self`
 
 The active theme as styling data (theme.json present), whether or not
@@ -632,6 +720,8 @@ The theme's own name, and the parent's, for body classes.
 
 ### `json(): array`
 
+The theme.json with the parent's merged in.
+
 ### static `merge(array $base, array $over): array`
 
 Layered theme.json: maps merge key by key, lists (palettes, font
@@ -639,7 +729,11 @@ sizes, template parts) replace as a whole.
 
 ### `templateFile(string $slug): ?string`
 
+A template file's markup, or null.
+
 ### `partFile(string $slug): ?string`
+
+A template part file's markup, or null.
 
 ### `name(): string`
 
@@ -691,5 +785,5 @@ pattern into a template. A field the header omits is omitted here.
 
 The theme's stylesheet URL when it ships one; a child's own, else nothing (the parent's is not enqueued for it).
 
-Internals: `at()` (private, line 57), `withStylePartials()` (private, line 87), `partialFiles()` (private, line 114), `safe()` (private, line 145), `htmlFiles()` (private, line 206), `patternIndex()` (private, line 318)
+Internals: `at()` (private, line 58), `withStylePartials()` (private, line 89), `partialFiles()` (private, line 116), `safe()` (private, line 147), `htmlFiles()` (private, line 210), `patternIndex()` (private, line 322)
 

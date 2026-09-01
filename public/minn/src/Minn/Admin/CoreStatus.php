@@ -20,6 +20,7 @@ final readonly class CoreStatus
     {
     }
 
+    /** The core version and any offer from the update transient. */
     public function data(): array
     {
         $blob = $this->site->option('_site_transient_update_core');

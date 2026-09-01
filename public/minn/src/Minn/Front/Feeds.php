@@ -38,6 +38,7 @@ final readonly class Feeds
     ) {
     }
 
+    /** The content type of a feed kind. */
     public static function contentType(string $kind): string
     {
         return match ($kind) {
@@ -262,6 +263,7 @@ final readonly class Feeds
         return $content;
     }
 
+    /** How many items a feed carries. */
     public function perFeed(): int
     {
         return max(1, (int) ($this->site->option('posts_per_rss') ?? 10));
@@ -327,11 +329,13 @@ final readonly class Feeds
         return htmlspecialchars(Texturize::text($raw), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false);
     }
 
+    /** A GMT datetime in RFC 2822 form. */
     public static function rfc2822(string $gmt): string
     {
         return gmdate('D, d M Y H:i:s', (int) strtotime($gmt . ' UTC')) . ' +0000';
     }
 
+    /** A GMT datetime in ISO 8601 form. */
     public static function isoZ(string $gmt): string
     {
         return gmdate('Y-m-d\TH:i:s\Z', (int) strtotime($gmt . ' UTC'));

@@ -37,6 +37,7 @@ final readonly class ProbeController
     ) {
     }
 
+    /** robots.txt. */
     #[Route(Method::Get, '/robots.txt')]
     public function robots(Request $request): Response
     {
@@ -57,6 +58,7 @@ final readonly class ProbeController
         return new Response(405, ['Content-Type' => 'text/plain;charset=UTF-8', 'Allow' => 'POST'], 'XML-RPC server accepts POST requests only.');
     }
 
+    /** wp-cron.php: runs what is due. */
     #[Route(Method::Any, '/wp-cron.php')]
     public function cron(Request $request): Response
     {
@@ -74,6 +76,7 @@ final readonly class ProbeController
         return Response::redirect($this->permalinks->url('/minn-admin/'), 302);
     }
 
+    /** The site icon, or the reference's default. */
     #[Route(Method::Get, '/favicon.ico')]
     public function favicon(Request $request): Response
     {
@@ -85,12 +88,14 @@ final readonly class ProbeController
         return Response::redirect($this->permalinks->url('/wp-content/uploads/' . $file), 302);
     }
 
+    /** The sitemap index. */
     #[Route(Method::Get, '/wp-sitemap.xml')]
     public function sitemapIndex(Request $request): Response
     {
         return self::xml($this->sitemaps->index());
     }
 
+    /** One sitemap page. */
     #[Route(Method::Get, '/wp-sitemap-{type:posts|taxonomies|users}-{rest:[a-z_0-9-]+}.xml')]
     public function sitemap(Request $request, string $type, string $rest): Response
     {
@@ -101,18 +106,21 @@ final readonly class ProbeController
         return $body === null ? ($this->notFound)() : self::xml($body);
     }
 
+    /** The sitemap stylesheet. */
     #[Route(Method::Get, '/wp-sitemap.xsl')]
     public function sitemapStylesheet(Request $request): Response
     {
         return self::xml(Sitemaps::stylesheet(false));
     }
 
+    /** The sitemap index stylesheet. */
     #[Route(Method::Get, '/wp-sitemap-index.xsl')]
     public function sitemapIndexStylesheet(Request $request): Response
     {
         return self::xml(Sitemaps::stylesheet(true));
     }
 
+    /** The site feed in one of its kinds. */
     #[Route(Method::Get, '/feed')]
     #[Route(Method::Get, '/feed/')]
     #[Route(Method::Get, '/feed/{kind:rss2|rss|atom|rdf}')]
@@ -125,6 +133,7 @@ final readonly class ProbeController
         return $this->feed(Resolution::home(), $kind === 'rss' ? 'rss2' : $kind, $request);
     }
 
+    /** The comments feed. */
     #[Route(Method::Get, '/comments/feed')]
     #[Route(Method::Get, '/comments/feed/')]
     public function commentsFeed(Request $request): Response

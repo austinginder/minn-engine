@@ -42,6 +42,7 @@ final class Plugins
     /** @var array<string, array{functions: list<string>, classes: list<string>, files: int, truncated: bool, error?: string}> */
     private static array $skipped = [];
 
+    /** Loads the active plugins as code and fires the boot hooks. */
     public static function load(Runtime $runtime): void
     {
         $content = $runtime->contentDir();
@@ -108,13 +109,21 @@ final class Plugins
         }
     }
 
-    /** @return list<string> */
+    /**
+     * The plugins that loaded.
+     *
+     * @return list<string>
+     */
     public static function loaded(): array
     {
         return self::$loaded;
     }
 
-    /** @return array<string, array<string, mixed>> plugin file => why it did not load */
+    /**
+     * The plugins the symbol gate refused, with what they lacked.
+     *
+     * @return array<string, array<string, mixed>> plugin file => why it did not load
+     */
     public static function skipped(): array
     {
         return self::$skipped;

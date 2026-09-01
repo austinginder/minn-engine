@@ -32,7 +32,11 @@ final class TemplateIndex
     ) {
     }
 
-    /** @return list<TemplateRecord> */
+    /**
+     * Every template of a type: the theme's files with the saved rows over them.
+     *
+     * @return list<TemplateRecord>
+     */
     public function all(string $type): array
     {
         $records = [];
@@ -70,11 +74,13 @@ final class TemplateIndex
         return null;
     }
 
+    /** The theme the index reads. */
     public function themeSlug(): string
     {
         return $this->theme->slug;
     }
 
+    /** Whether the theme ships a file for a slug. */
     public function hasFile(string $type, string $slug): bool
     {
         return ($type === self::PART ? $this->theme->partFile($slug) : $this->theme->templateFile($slug)) !== null;
@@ -117,7 +123,11 @@ final class TemplateIndex
         return !isset(self::defaults()[$slug]);
     }
 
-    /** @return array<string, array{title: string, description: string}> */
+    /**
+     * The default template types.
+     *
+     * @return array<string, array{title: string, description: string}>
+     */
     public static function defaults(): array
     {
         return self::$defaults ??= (array) json_decode(

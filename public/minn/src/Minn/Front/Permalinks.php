@@ -58,6 +58,7 @@ final readonly class Permalinks
         return $this->isPretty() ? $this->url('/' . $slug . '/') : $this->url('/?post_type=' . rawurlencode((string) $type['name']));
     }
 
+    /** Link building from the site's own settings. */
     public static function fromDb(Db $db): self
     {
         return new self(
@@ -71,16 +72,19 @@ final readonly class Permalinks
         );
     }
 
+    /** Whether the site uses a permalink structure. */
     public function isPretty(): bool
     {
         return $this->structure !== '';
     }
 
+    /** A URL under the home. */
     public function url(string $path = ''): string
     {
         return $this->home . $path;
     }
 
+    /** A post's permalink. */
     public function forPost(PostRecord $post): string
     {
         $id = $post->id;
@@ -102,6 +106,7 @@ final readonly class Permalinks
         return $this->url('/' . ltrim($this->fill($post), '/'));
     }
 
+    /** A page's permalink, the home for the front page. */
     public function forPage(PostRecord $page): string
     {
         if ($this->frontPageId > 0 && $page->id === $this->frontPageId) {
@@ -137,6 +142,7 @@ final readonly class Permalinks
         return $this->url('/' . $attachment->slug . '/');
     }
 
+    /** A term's archive URL. */
     public function forTerm(TermRecord $term): string
     {
         $taxonomy = (string) $term['taxonomy'];
@@ -153,6 +159,7 @@ final readonly class Permalinks
         return $this->url("/{$base}/" . $this->terms->pathOf($term) . '/');
     }
 
+    /** An author's archive URL. */
     public function forAuthor(UserRecord $user): string
     {
         return $this->isPretty()
@@ -160,6 +167,7 @@ final readonly class Permalinks
             : $this->url('/?author=' . $user->id);
     }
 
+    /** A date archive's URL. */
     public function forDate(int $year, ?int $month = null, ?int $day = null): string
     {
         if (!$this->isPretty()) {
@@ -175,11 +183,13 @@ final readonly class Permalinks
         return $this->url($path);
     }
 
+    /** A search's URL. */
     public function forSearch(string $term): string
     {
         return $this->url('/?s=' . rawurlencode($term));
     }
 
+    /** A listing URL for a page number. */
     public function forPaged(string $baseUrl, int $page): string
     {
         return $page <= 1 ? $baseUrl : rtrim($baseUrl, '/') . "/page/{$page}/";

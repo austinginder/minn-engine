@@ -38,6 +38,7 @@ final class Abilities
         \do_action('wp_abilities_api_init');
     }
 
+    /** Registers an ability category. */
     public static function registerCategory(string $slug, array $args): bool
     {
         $state = self::state();
@@ -49,6 +50,7 @@ final class Abilities
         return true;
     }
 
+    /** Registers an ability, or null when the name is taken or malformed. */
     public static function register(string $name, array $args): ?array
     {
         $state = self::state();
@@ -60,6 +62,7 @@ final class Abilities
         return $state['abilities'][$name];
     }
 
+    /** Removes an ability or a category. */
     public static function unregister(string $name, bool $category = false): bool
     {
         $state = self::state();
@@ -72,7 +75,11 @@ final class Abilities
         return true;
     }
 
-    /** @return array<string, mixed>|null */
+    /**
+     * One ability or category, or null.
+     *
+     * @return array<string, mixed>|null
+     */
     public static function find(string $name, bool $category = false): ?array
     {
         self::initialize();
@@ -80,7 +87,11 @@ final class Abilities
         return $state[$category ? 'categories' : 'abilities'][$name] ?? null;
     }
 
-    /** @return array<string, array> */
+    /**
+     * Every ability, or every category.
+     *
+     * @return array<string, array>
+     */
     public static function all(bool $categories = false): array
     {
         self::initialize();

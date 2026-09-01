@@ -28,7 +28,11 @@ final readonly class Renderer
     ) {
     }
 
-    /** @return list<string> */
+    /**
+     * The body classes a resolution carries.
+     *
+     * @return list<string>
+     */
     public function bodyClasses(Resolution $resolution): array
     {
         $classes = match ($resolution->kind) {
@@ -74,6 +78,7 @@ final readonly class Renderer
         return DocumentTitle::compose(DocumentTitle::parts($resolution, (string) ($this->db->option('blogname') ?? ''), (string) ($this->db->option('blogdescription') ?? '')));
     }
 
+    /** The interim page for a resolution, without a theme. */
     public function render(Resolution $resolution): string
     {
         $site = $this->db->option('blogname') ?? '';

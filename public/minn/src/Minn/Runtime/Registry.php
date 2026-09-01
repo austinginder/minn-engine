@@ -42,40 +42,59 @@ final class Registry
         $this->publicQueryVars = $data['public_query_vars'] ?? [];
     }
 
-    /** @return array<string, array<string, mixed>> */
+    /**
+     * Every post type.
+     *
+     * @return array<string, array<string, mixed>>
+     */
     public function postTypes(): array
     {
         return $this->postTypes;
     }
 
+    /** One post type, or null. */
     public function postType(string $name): ?array
     {
         return $this->postTypes[$name] ?? null;
     }
 
-    /** @return array<string, array<string, mixed>> */
+    /**
+     * Every taxonomy.
+     *
+     * @return array<string, array<string, mixed>>
+     */
     public function taxonomies(): array
     {
         return $this->taxonomies;
     }
 
+    /** One taxonomy, or null. */
     public function taxonomy(string $name): ?array
     {
         return $this->taxonomies[$name] ?? null;
     }
 
-    /** @return array<string, array<string, mixed>> */
+    /**
+     * Every post status.
+     *
+     * @return array<string, array<string, mixed>>
+     */
     public function statuses(): array
     {
         return $this->statuses;
     }
 
+    /** One post status, or null. */
     public function status(string $name): ?array
     {
         return $this->statuses[$name] ?? null;
     }
 
-    /** @param array<string, mixed> $args */
+    /**
+     * Registers a post type with the reference's defaults filled in.
+     *
+     * @param array<string, mixed> $args
+     */
     public function registerPostType(string $name, array $args): array
     {
         $post = $this->postTypes['post'];
@@ -199,6 +218,7 @@ final class Registry
         return $caps;
     }
 
+    /** Forgets a non-builtin post type. */
     public function unregisterPostType(string $name): bool
     {
         if (!isset($this->postTypes[$name]) || !empty($this->postTypes[$name]['_builtin'])) {
@@ -226,18 +246,27 @@ final class Registry
         $this->postTypes[$type]['supports'][$feature] = $value;
     }
 
+    /** Removes a feature from a post type. */
     public function removeSupport(string $type, string $feature): void
     {
         unset($this->postTypes[$type]['supports'][$feature], $this->pendingSupports[$type][$feature]);
     }
 
-    /** @return array<string, mixed> the features a type supports, registered or declared ahead */
+    /**
+     * The features a post type supports.
+     *
+     * @return array<string, mixed> the features a type supports, registered or declared ahead
+     */
     public function supports(string $type): array
     {
         return ($this->postTypes[$type]['supports'] ?? []) + ($this->pendingSupports[$type] ?? []);
     }
 
-    /** @param list<string> $objectTypes @param array<string, mixed> $args */
+    /**
+     * Registers a taxonomy with the reference's defaults filled in.
+     *
+     * @param list<string> $objectTypes @param array<string, mixed> $args
+     */
     public function registerTaxonomy(string $name, array $objectTypes, array $args): array
     {
         $hierarchical = (bool) ($args['hierarchical'] ?? false);
@@ -302,6 +331,7 @@ final class Registry
         return $taxonomy;
     }
 
+    /** Forgets a non-builtin taxonomy. */
     public function unregisterTaxonomy(string $name): bool
     {
         if (!isset($this->taxonomies[$name]) || !empty($this->taxonomies[$name]['_builtin'])) {
@@ -311,6 +341,7 @@ final class Registry
         return true;
     }
 
+    /** Attaches a taxonomy to a post type. */
     public function addObjectType(string $taxonomy, string $type): bool
     {
         if (!isset($this->taxonomies[$taxonomy])) {
@@ -322,6 +353,7 @@ final class Registry
         return true;
     }
 
+    /** Detaches a taxonomy from a post type. */
     public function removeObjectType(string $taxonomy, string $type): bool
     {
         if (!isset($this->taxonomies[$taxonomy]) || !in_array($type, $this->taxonomies[$taxonomy]['object_type'], true)) {
@@ -331,7 +363,11 @@ final class Registry
         return true;
     }
 
-    /** @param array<string, mixed> $args */
+    /**
+     * Registers a post status.
+     *
+     * @param array<string, mixed> $args
+     */
     public function registerStatus(string $name, array $args): array
     {
         $label = (string) ($args['label'] ?? $name);

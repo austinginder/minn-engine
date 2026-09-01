@@ -29,6 +29,8 @@ final class PluginRules
     ];
 
     /**
+     * A plugin's rewrite rule that matches the path, or null.
+     *
      * @return array<string, string>|null the query vars of the first matching rule, null with no match
      */
     public static function match(string $path, bool $top): ?array
@@ -73,7 +75,11 @@ final class PluginRules
         return null;
     }
 
-    /** @return array<string, string> the vars the matched rule stashed for this request */
+    /**
+     * The query vars the matched rule stashed.
+     *
+     * @return array<string, string> the vars the matched rule stashed for this request
+     */
     public static function stashed(): array
     {
         $vars = Runtime::booted() ? Runtime::current()->get(self::STATE) : null;

@@ -78,11 +78,13 @@ final readonly class ActivityFeed
         return $this->capabilities->can($userId, 'read_post', $postId);
     }
 
+    /** A post's stored title, empty when the post is gone. */
     public function postTitle(int $postId): string
     {
         return (string) ($this->db->value("SELECT post_title FROM {$this->db->table('posts')} WHERE ID = ? LIMIT 1", [$postId]) ?? '');
     }
 
+    /** A user's display name, empty when the user is gone. */
     public function displayName(int $userId): string
     {
         return $this->users->find($userId)?->displayName ?? '';

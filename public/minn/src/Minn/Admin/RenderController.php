@@ -38,6 +38,7 @@ final readonly class RenderController
     ) {
     }
 
+    /** Renders blocks for the editor's preview. */
     #[Route(Method::Post, '/minn-admin/v1/render-blocks')]
     public function render(Request $request): Response
     {

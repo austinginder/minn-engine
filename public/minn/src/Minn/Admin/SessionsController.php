@@ -30,6 +30,7 @@ final readonly class SessionsController
     ) {
     }
 
+    /** A user's sessions, the caller's own marked. */
     #[Route(Method::Get, '/minn-admin/v1/users/{id:\d+}/sessions')]
     public function list(Request $request, string $id): Response
     {
@@ -68,6 +69,7 @@ final readonly class SessionsController
         return Reply::item(['ok' => true], null);
     }
 
+    /** Signs one session out. */
     #[Route(Method::Delete, '/minn-admin/v1/users/{id:\d+}/sessions/{verifier:[a-f0-9]{40,64}}')]
     public function destroy(Request $request, string $id, string $verifier): Response
     {

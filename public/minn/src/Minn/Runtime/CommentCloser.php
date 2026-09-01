@@ -19,6 +19,7 @@ final readonly class CommentCloser
     {
     }
 
+    /** Whether comments stay open on a post under the close-after-days setting. */
     public function open(bool $open, array|PostRecord|null $post, int $now): bool
     {
         if (!$open || !$this->enabled || $this->days <= 0 || $post === null) {

@@ -22,6 +22,7 @@ final class Connectors
     /** @var array<string, array<string, mixed>> */
     private array $rows = [];
 
+    /** Registers a connector, or the refusal. */
     public function register(string $id, array $args): ?Refusal
     {
         if ($id === '' || preg_match('/^[a-z0-9_-]+$/', $id) !== 1) {
@@ -76,7 +77,11 @@ final class Connectors
         return $row;
     }
 
-    /** @return array<string, mixed>|null the row that was registered, null when there was none */
+    /**
+     * Forgets a connector; its row, or null.
+     *
+     * @return array<string, mixed>|null the row that was registered, null when there was none
+     */
     public function unregister(string $id): ?array
     {
         $row = $this->rows[$id] ?? null;
@@ -84,17 +89,23 @@ final class Connectors
         return $row;
     }
 
-    /** @return array<string, array<string, mixed>> */
+    /**
+     * Every connector.
+     *
+     * @return array<string, array<string, mixed>>
+     */
     public function all(): array
     {
         return $this->rows;
     }
 
+    /** One connector, or null. */
     public function get(string $id): ?array
     {
         return $this->rows[$id] ?? null;
     }
 
+    /** Whether a connector is registered. */
     public function has(string $id): bool
     {
         return isset($this->rows[$id]);

@@ -100,6 +100,8 @@ final class NavMenu
     }
 
     /**
+     * Menu items with the classes and flags the reference adds for the current page.
+     *
      * @param list<object> $items
      * @return list<object>
      */

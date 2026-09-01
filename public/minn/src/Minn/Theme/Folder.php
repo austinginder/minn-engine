@@ -18,6 +18,8 @@ final readonly class Folder
     }
 
     /**
+     * A theme folder with its style.css headers.
+     *
      * @param array<string, string> $labels key => the style.css header label
      * @param Closure(string, array<string, string>): array<string, string>|null $reader the header reader (the facade's, so header filters apply); the engine's own by default
      */
@@ -41,6 +43,7 @@ final readonly class Folder
         return new self($root, $slug, true, $headers, ($headers['Template'] ?? '') !== '' ? $headers['Template'] : $slug);
     }
 
+    /** The folder's path. */
     public function dir(): string
     {
         return "{$this->root}/{$this->slug}";
@@ -57,7 +60,11 @@ final readonly class Folder
         return null;
     }
 
-    /** @param list<string> $dirs the stylesheet and template directories */
+    /**
+     * Whether any of the folders ships a block template index.
+     *
+     * @param list<string> $dirs the stylesheet and template directories
+     */
     public static function isBlockTheme(array $dirs): bool
     {
         foreach ($dirs as $dir) {

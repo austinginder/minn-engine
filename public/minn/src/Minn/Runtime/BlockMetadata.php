@@ -20,6 +20,8 @@ final class BlockMetadata
     private const POSITIONS = ['before' => 'before', 'after' => 'after', 'firstChild' => 'first_child', 'lastChild' => 'last_child'];
 
     /**
+     * Block settings from a block.json, the way the reference maps its properties.
+     *
      * @param Closure(array, string, int): (string|false) $scriptHandle registers one script entry, answering its handle
      * @param Closure(array, string, int): (string|false) $styleHandle registers one style entry
      * @param Closure(array, string, int): (string|false) $moduleId registers one view script module entry

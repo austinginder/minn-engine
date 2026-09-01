@@ -16,6 +16,7 @@ final class PlaceholderTrace
     private static ?string $file = null;
     private static bool $checked = false;
 
+    /** Logs a placeholder symbol being called, when the trace file exists. */
     public static function hit(string $symbol): void
     {
         if (!self::$checked) {

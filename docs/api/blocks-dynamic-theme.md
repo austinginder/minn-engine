@@ -4,11 +4,11 @@ the template blocks a block theme composes with
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Comments`](#comments) | final readonly class | 193 | comments, comments-title, comment-template, the comment-* blocks, and the comment form. |
-| [`Navigation`](#navigation) | final readonly class | 286 | navigation, navigation-link, page-list. A navigation block's items come |
-| [`PostBlocks`](#postblocks) | final readonly class | 247 | The post-* blocks: they render the context's current post. |
-| [`QueryBlocks`](#queryblocks) | final class | 251 | query, post-template, query-title, query-no-results, query-pagination, term-description. |
-| [`Structure`](#structure) | final readonly class | 85 | template-part, pattern, site-title, site-tagline, site-logo. |
+| [`Comments`](#comments) | final readonly class | 194 | comments, comments-title, comment-template, the comment-* blocks, and the comment form. |
+| [`Navigation`](#navigation) | final readonly class | 287 | navigation, navigation-link, page-list. A navigation block's items come |
+| [`PostBlocks`](#postblocks) | final readonly class | 248 | The post-* blocks: they render the context's current post. |
+| [`QueryBlocks`](#queryblocks) | final class | 252 | query, post-template, query-title, query-no-results, query-pagination, term-description. |
+| [`Structure`](#structure) | final readonly class | 86 | template-part, pattern, site-title, site-tagline, site-logo. |
 
 ## Comments
 
@@ -25,7 +25,9 @@ __construct(Minn\Db $db, Minn\Content\Comments $comments, Minn\Content\Site $sit
 
 ### `register(Minn\Blocks\Renderer $renderer): void`
 
-Internals: `comments()` (private, line 49), `title()` (private, line 63), `template()` (private, line 80), `list()` (private, line 95), `avatar()` (private, line 124), `date()` (private, line 136), `authorName()` (private, line 148), `content()` (private, line 162), `replyLink()` (private, line 171), `form()` (private, line 184), `approved()` (private, line 207)
+Registers this family's blocks with the renderer.
+
+Internals: `comments()` (private, line 50), `title()` (private, line 64), `template()` (private, line 81), `list()` (private, line 96), `avatar()` (private, line 125), `date()` (private, line 137), `authorName()` (private, line 149), `content()` (private, line 163), `replyLink()` (private, line 172), `form()` (private, line 185), `approved()` (private, line 208)
 
 
 ## Navigation
@@ -47,7 +49,9 @@ __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Front\Permalinks $perma
 
 ### `register(Minn\Blocks\Renderer $renderer): void`
 
-Internals: `navigation()` (private, line 48), `responsive()` (private, line 116), `items()` (private, line 150), `presetClasses()` (private, line 163), `overlayColors()` (private, line 185), `link()` (private, line 197), `classicItems()` (private, line 220), `pageList()` (private, line 226), `ancestorsOf()` (private, line 236), `pageItems()` (private, line 260), `navParent()` (private, line 291), `menuPost()` (private, line 300), `enqueueView()` (private, line 310)
+Registers this family's blocks with the renderer.
+
+Internals: `navigation()` (private, line 49), `responsive()` (private, line 117), `items()` (private, line 151), `presetClasses()` (private, line 164), `overlayColors()` (private, line 186), `link()` (private, line 198), `classicItems()` (private, line 221), `pageList()` (private, line 227), `ancestorsOf()` (private, line 237), `pageItems()` (private, line 261), `navParent()` (private, line 292), `menuPost()` (private, line 301), `enqueueView()` (private, line 311)
 
 
 ## PostBlocks
@@ -65,7 +69,9 @@ __construct(Minn\Content\Posts $posts, Minn\Content\Users $users, Minn\Content\S
 
 ### `register(Minn\Blocks\Renderer $renderer): void`
 
-Internals: `title()` (private, line 51), `content()` (private, line 67), `date()` (private, line 110), `authorName()` (private, line 124), `excerpt()` (private, line 138), `featuredImage()` (private, line 150), `terms()` (private, line 190), `navigationLink()` (private, line 214), `termRow()` (private, line 235), `previewSource()` (private, line 247), `target()` (private, line 256), `open()` (private, line 261)
+Registers this family's blocks with the renderer.
+
+Internals: `title()` (private, line 52), `content()` (private, line 68), `date()` (private, line 111), `authorName()` (private, line 125), `excerpt()` (private, line 139), `featuredImage()` (private, line 151), `terms()` (private, line 191), `navigationLink()` (private, line 215), `termRow()` (private, line 236), `previewSource()` (private, line 248), `target()` (private, line 257), `open()` (private, line 262)
 
 
 ## QueryBlocks
@@ -83,7 +89,9 @@ __construct(Minn\Content\Posts $posts, Minn\Content\Site $site, Minn\Front\Perma
 
 ### `register(Minn\Blocks\Renderer $renderer): void`
 
-Internals: `query()` (private, line 52), `current()` (private, line 80), `postTemplate()` (private, line 85), `postClasses()` (private, line 119), `queryTitle()` (private, line 149), `noResults()` (private, line 169), `pagination()` (private, line 183), `paginationBase()` (private, line 229), `numbers()` (private, line 244), `archiveTitle()` (private, line 256), `termDescription()` (private, line 262)
+Registers this family's blocks with the renderer.
+
+Internals: `query()` (private, line 53), `current()` (private, line 81), `postTemplate()` (private, line 86), `postClasses()` (private, line 120), `queryTitle()` (private, line 150), `noResults()` (private, line 170), `pagination()` (private, line 184), `paginationBase()` (private, line 230), `numbers()` (private, line 245), `archiveTitle()` (private, line 257), `termDescription()` (private, line 263)
 
 
 ## Structure
@@ -101,5 +109,7 @@ __construct(Minn\Theme\Theme $theme, Minn\Theme\Templates $templates, Minn\Conte
 
 ### `register(Minn\Blocks\Renderer $renderer): void`
 
-Internals: `templatePart()` (private, line 41), `pattern()` (private, line 60), `siteTitle()` (private, line 78), `siteTagline()` (private, line 94)
+Registers this family's blocks with the renderer.
+
+Internals: `templatePart()` (private, line 42), `pattern()` (private, line 61), `siteTitle()` (private, line 79), `siteTagline()` (private, line 95)
 

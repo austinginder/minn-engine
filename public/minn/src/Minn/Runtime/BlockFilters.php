@@ -14,6 +14,7 @@ use Minn\Blocks\Block;
  */
 final class BlockFilters
 {
+    /** Whether any block filter is registered. */
     public static function active(): bool
     {
         if (!Runtime::booted()) {
@@ -23,7 +24,11 @@ final class BlockFilters
         return $hooks->has('pre_render_block') || $hooks->has('render_block_data') || $hooks->has('render_block');
     }
 
-    /** @return array<string, mixed> the parsed-array shape plugin code reads */
+    /**
+     * A block as the parsed array plugins receive.
+     *
+     * @return array<string, mixed> the parsed-array shape plugin code reads
+     */
     public static function toArray(Block $block): array
     {
         return [
@@ -35,6 +40,7 @@ final class BlockFilters
         ];
     }
 
+    /** A block from the parsed array plugins hand back. */
     public static function fromArray(array $parsed): Block
     {
         return new Block(
@@ -67,6 +73,7 @@ final class BlockFilters
         return $block;
     }
 
+    /** A rendered block through render_block and its per-name filter. */
     public static function after(Block $block, string $html): string
     {
         $id = spl_object_id($block);

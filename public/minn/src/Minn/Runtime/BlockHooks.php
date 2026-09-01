@@ -16,6 +16,7 @@ namespace Minn\Runtime;
  */
 final class BlockHooks
 {
+    /** Whether block hooks are registered and the runtime is up. */
     public static function active(): bool
     {
         if (!Runtime::booted() || !function_exists('get_hooked_blocks')) {

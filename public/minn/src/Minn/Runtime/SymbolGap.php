@@ -48,6 +48,7 @@ final readonly class SymbolGap
         return new self($functions, $classes);
     }
 
+    /** The gap read from its JSON file. */
     public static function fromFile(string $path): self
     {
         $data = json_decode((string) file_get_contents($path), true);
@@ -58,16 +59,19 @@ final readonly class SymbolGap
         );
     }
 
+    /** Whether the runtime lacks a function. */
     public function lacksFunction(string $name): bool
     {
         return isset($this->functions[strtolower($name)]);
     }
 
+    /** Whether the runtime lacks a class. */
     public function lacksClass(string $name): bool
     {
         return isset($this->classes[strtolower($name)]);
     }
 
+    /** The gap as JSON. */
     public function json(): string
     {
         return (string) json_encode([

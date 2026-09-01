@@ -27,6 +27,7 @@ final readonly class Search
     {
     }
 
+    /** The block's HTML. */
     public function render(Block $block, Renderer $renderer): string
     {
         $id = 'wp-block-search__input-' . RenderState::nextId();

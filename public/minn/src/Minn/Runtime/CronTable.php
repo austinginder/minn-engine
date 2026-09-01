@@ -11,7 +11,11 @@ namespace Minn\Runtime;
  */
 final class CronTable
 {
-    /** @param array<int, array<string, array<string, array<string, mixed>>>> $crons */
+    /**
+     * The key an event's arguments hash to.
+     *
+     * @param array<int, array<string, array<string, array<string, mixed>>>> $crons
+     */
     public static function key(array $args): string
     {
         return md5(serialize(array_values($args)));
@@ -34,6 +38,7 @@ final class CronTable
         return false;
     }
 
+    /** The table with an event added at a timestamp. */
     public static function insert(array $crons, int $timestamp, string $hook, string $key, array $entry): array
     {
         $crons[$timestamp][$hook][$key] = $entry;
@@ -41,6 +46,7 @@ final class CronTable
         return $crons;
     }
 
+    /** The table with one event removed. */
     public static function remove(array $crons, int $timestamp, string $hook, string $key): array
     {
         unset($crons[$timestamp][$hook][$key]);
@@ -53,7 +59,11 @@ final class CronTable
         return $crons;
     }
 
-    /** @return array{0: array, 1: int} the table without the hook, and how many entries went */
+    /**
+     * The table with every event of a hook removed.
+     *
+     * @return array{0: array, 1: int} the table without the hook, and how many entries went
+     */
     public static function removeHook(array $crons, string $hook): array
     {
         $removed = 0;
@@ -67,7 +77,11 @@ final class CronTable
         return [$crons, $removed];
     }
 
-    /** @return list<int> every timestamp the hook and arguments are scheduled at */
+    /**
+     * When a hook and key are scheduled.
+     *
+     * @return list<int> every timestamp the hook and arguments are scheduled at
+     */
     public static function timestampsFor(array $crons, string $hook, string $key): array
     {
         $found = [];

@@ -36,6 +36,7 @@ final class RenderState
     /** @var list<string> element-style rules, in render order */
     private static array $elementRules = [];
 
+    /** The next per-request counter value. */
     public static function nextId(): int
     {
         return ++self::$counter;
@@ -74,7 +75,11 @@ final class RenderState
         self::$containers[$class] = $declarations;
     }
 
-    /** @return array<string, string> */
+    /**
+     * The layout containers rendering discovered.
+     *
+     * @return array<string, string>
+     */
     public static function containers(): array
     {
         return self::$containers;
@@ -86,18 +91,27 @@ final class RenderState
         self::$blocks[$blockName] = true;
     }
 
-    /** @return array<string, true> */
+    /**
+     * The block names rendering met.
+     *
+     * @return array<string, true>
+     */
     public static function blocks(): array
     {
         return self::$blocks;
     }
 
+    /** Notes a style variation instance for the stylesheet. */
     public static function recordVariation(string $blockName, string $style, int $instance): void
     {
         self::$variations[] = [$blockName, $style, $instance];
     }
 
-    /** @return list<array{0: string, 1: string, 2: int}> */
+    /**
+     * The style variations rendering met.
+     *
+     * @return list<array{0: string, 1: string, 2: int}>
+     */
     public static function variations(): array
     {
         return self::$variations;
@@ -126,11 +140,13 @@ final class RenderState
         self::$navigation++;
     }
 
+    /** Leaves a navigation block. */
     public static function leaveNavigation(): void
     {
         self::$navigation = max(0, self::$navigation - 1);
     }
 
+    /** Whether rendering is inside a navigation block. */
     public static function inNavigation(): bool
     {
         return self::$navigation > 0;
@@ -146,6 +162,7 @@ final class RenderState
         return true;
     }
 
+    /** Leaves a cycle-guarded key. */
     public static function leave(string $key): void
     {
         unset(self::$active[$key]);
@@ -161,6 +178,7 @@ final class RenderState
         return true;
     }
 
+    /** Leaves one nesting level. */
     public static function ascend(): void
     {
         self::$depth--;
@@ -180,6 +198,7 @@ final class RenderState
         return $previous;
     }
 
+    /** The pending elements class, cleared. */
     public static function takePendingElements(): ?string
     {
         $class = self::$pendingElements;
@@ -187,28 +206,39 @@ final class RenderState
         return $class;
     }
 
+    /** Adds a per-elements CSS rule. */
     public static function recordElementRule(string $css): void
     {
         self::$elementRules[] = $css;
     }
 
-    /** @return list<string> */
+    /**
+     * The per-elements CSS rules rendering produced.
+     *
+     * @return list<string>
+     */
     public static function elementRules(): array
     {
         return self::$elementRules;
     }
 
+    /** Notes a gallery instance. */
     public static function recordGallery(int $instance): void
     {
         self::$galleries[] = $instance;
     }
 
-    /** @return list<int> */
+    /**
+     * The gallery instances rendering met.
+     *
+     * @return list<int>
+     */
     public static function galleries(): array
     {
         return self::$galleries;
     }
 
+    /** Clears every per-request counter. */
     public static function reset(): void
     {
         self::$counter = 0;

@@ -30,6 +30,7 @@ final readonly class Comments
     ) {
     }
 
+    /** Registers this family's blocks with the renderer. */
     public function register(Renderer $renderer): void
     {
         $renderer->registerDynamic('core/comments', $this->comments(...));

@@ -47,6 +47,7 @@ final readonly class ManageController
     ) {
     }
 
+    /** The taxonomies of each public type, for the Structure view. */
     #[Route(Method::Get, '/minn-admin/v1/term-taxonomies')]
     public function termTaxonomies(Request $request): Response
     {
@@ -124,6 +125,7 @@ final readonly class ManageController
         return Reply::answer($request, ['types' => $out, 'backends' => [], 'taxCatalog' => $catalog]);
     }
 
+    /** Every taxonomy with its counts. */
     #[Route(Method::Get, '/minn-admin/v1/taxonomies')]
     public function taxonomies(Request $request): Response
     {
@@ -150,6 +152,7 @@ final readonly class ManageController
         return Reply::answer($request, ['taxonomies' => $out, 'backends' => []]);
     }
 
+    /** Every theme on disk with the active one marked. */
     #[Route(Method::Get, '/minn-admin/v1/themes')]
     public function themes(Request $request): Response
     {
@@ -181,6 +184,7 @@ final readonly class ManageController
         return Reply::answer($request, ['themes' => $items, 'auto_updates' => $this->caller->can('update_themes')]);
     }
 
+    /** Switches the active theme. */
     #[Route(Method::Post, '/minn-admin/v1/themes/activate')]
     public function activateTheme(Request $request): Response
     {
@@ -201,6 +205,7 @@ final readonly class ManageController
         return Reply::answer($request, ['active' => $stylesheet]);
     }
 
+    /** The translation offers; none on the engine. */
     #[Route(Method::Get, '/minn-admin/v1/translations')]
     public function translations(Request $request): Response
     {
@@ -208,6 +213,7 @@ final readonly class ManageController
         return Reply::answer($request, ['count' => 0, 'groups' => []]);
     }
 
+    /** The app's bundled changelog. */
     #[Route(Method::Get, '/minn-admin/v1/changelog')]
     public function changelog(Request $request): Response
     {
@@ -215,6 +221,7 @@ final readonly class ManageController
         return Reply::answer($request, $this->bundled('changelog.md'));
     }
 
+    /** The app's bundled user guide. */
     #[Route(Method::Get, '/minn-admin/v1/guide')]
     public function guide(Request $request): Response
     {
@@ -222,24 +229,28 @@ final readonly class ManageController
         return Reply::answer($request, $this->bundled('docs/user-guide.md'));
     }
 
+    /** The caller's appearance. */
     #[Route(Method::Get, '/minn-admin/v1/me/appearance')]
     public function myAppearance(Request $request): Response
     {
         return Reply::answer($request, $this->appearance->read($this->caller->requireFloor()));
     }
 
+    /** Saves the caller's appearance. */
     #[Route(Method::Post, '/minn-admin/v1/me/appearance')]
     public function saveMyAppearance(Request $request): Response
     {
         return Reply::answer($request, $this->appearance->save($this->caller->requireFloor(), $this->appearanceBody($request)));
     }
 
+    /** A user's appearance, for one who may edit them. */
     #[Route(Method::Get, '/minn-admin/v1/users/{id:\d+}/appearance')]
     public function userAppearance(Request $request, string $id): Response
     {
         return Reply::answer($request, $this->appearance->read($this->editableUser($id)));
     }
 
+    /** Saves a user's appearance. */
     #[Route(Method::Post, '/minn-admin/v1/users/{id:\d+}/appearance')]
     public function saveUserAppearance(Request $request, string $id): Response
     {
@@ -266,6 +277,7 @@ final readonly class ManageController
         return Reply::answer($request, ['ok' => true, 'hidden' => $this->hiddenIntegrations->listFor($userId)]);
     }
 
+    /** Hides a view for the caller. */
     #[Route(Method::Post, '/minn-admin/v1/integrations/hide')]
     public function hide(Request $request): Response
     {
@@ -276,6 +288,7 @@ final readonly class ManageController
         return Reply::answer($request, $this->integrationState($userId));
     }
 
+    /** Shows a view again for the caller. */
     #[Route(Method::Post, '/minn-admin/v1/integrations/unhide')]
     public function unhide(Request $request): Response
     {

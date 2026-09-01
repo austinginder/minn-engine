@@ -18,6 +18,7 @@ final readonly class AssetsController
     {
     }
 
+    /** One engine asset file. */
     #[Route(Method::Get, '/minn/assets/{path*}')]
     public function asset(Request $request, string $path): Response
     {

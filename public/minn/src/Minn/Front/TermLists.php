@@ -32,6 +32,8 @@ final class TermLists
     }
 
     /**
+     * The category list the reference prints.
+     *
      * @param list<array<string, mixed>> $terms rows with term_id, name, slug, count, parent
      * @param array<string, mixed> $args wp_list_categories arguments
      * @param Closure(array): string $link
@@ -53,7 +55,11 @@ final class TermLists
         return self::items($roots, $byParent, $args, $link, $current, $hierarchical, 0);
     }
 
-    /** @return list<string> the categories block wrapper, before and after the items */
+    /**
+     * The list's title item and its closer.
+     *
+     * @return list<string> the categories block wrapper, before and after the items
+     */
     public static function categoryWrapper(array $args): array
     {
         $title = (string) ($args['title_li'] ?? 'Categories');
@@ -64,6 +70,8 @@ final class TermLists
     }
 
     /**
+     * The tag cloud the reference prints, or null for none.
+     *
      * @param list<array<string, mixed>> $tags rows with term_id, name, count, plus "link"
      * @param array<string, mixed> $args wp_generate_tag_cloud arguments
      */

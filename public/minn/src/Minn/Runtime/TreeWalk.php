@@ -13,7 +13,11 @@ namespace Minn\Runtime;
  */
 final class TreeWalk
 {
-    /** @param list<object> $elements */
+    /**
+     * Walks a tree with a Walker the way the reference does.
+     *
+     * @param list<object> $elements
+     */
     public static function walk(object $walker, array $elements, int $maxDepth, array $args): string
     {
         $output = '';
@@ -54,7 +58,11 @@ final class TreeWalk
         return $output;
     }
 
-    /** @param array<int|string, mixed> $children */
+    /**
+     * Walks one element and its children.
+     *
+     * @param array<int|string, mixed> $children
+     */
     public static function element(object $walker, mixed $element, array &$children, int $maxDepth, int $depth, array $args, string &$output): void
     {
         if (!$element) {

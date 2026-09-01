@@ -38,6 +38,7 @@ final readonly class ClassicRenderer
     ) {
     }
 
+    /** A classic renderer over the database door. */
     public static function create(\Minn\Db $db, ClassicTheme $theme, ?Theme $styleTheme, Permalinks $permalinks, int $perPage, ?AdminBar $bar = null): self
     {
         $site = new Site($db);
@@ -45,6 +46,7 @@ final readonly class ClassicRenderer
         return new self($site, $posts, $permalinks, $theme, $styleTheme, new MainQueryBridge($site, $posts, $perPage), $bar);
     }
 
+    /** The page for a resolution through the theme's PHP templates. */
     public function render(Resolution $resolution, array $coreClasses, string $title): ?string
     {
         // Without the runtime (or with the theme's functions.php refused by

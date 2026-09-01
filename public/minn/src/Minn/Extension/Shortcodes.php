@@ -16,7 +16,11 @@ use Closure;
  */
 final class Shortcodes
 {
-    /** @param array<string, Closure> $registry */
+    /**
+     * Content with the registered shortcodes run.
+     *
+     * @param array<string, Closure> $registry
+     */
     public static function apply(string $html, array $registry, Seams $seams): string
     {
         if ($registry === [] || !str_contains($html, '[')) {
@@ -34,7 +38,11 @@ final class Shortcodes
         }, $html);
     }
 
-    /** @return array<string, string> named attributes; bare words keyed by position */
+    /**
+     * A shortcode's attributes parsed, curly quotes included.
+     *
+     * @return array<string, string> named attributes; bare words keyed by position
+     */
     public static function attributes(string $text): array
     {
         // Content is texturized before shortcodes run (as on the reference), so

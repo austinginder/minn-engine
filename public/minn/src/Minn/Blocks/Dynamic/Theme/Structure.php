@@ -28,6 +28,7 @@ final readonly class Structure
     ) {
     }
 
+    /** Registers this family's blocks with the renderer. */
     public function register(Renderer $renderer): void
     {
         $renderer->registerDynamic('core/template-part', $this->templatePart(...));

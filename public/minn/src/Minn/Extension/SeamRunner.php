@@ -19,6 +19,7 @@ final readonly class SeamRunner
     {
     }
 
+    /** Whether every block gate lets a block render. */
     public function allowsBlock(Block $block): bool
     {
         foreach ($this->registered->blockGates as $gate) {
@@ -29,6 +30,7 @@ final readonly class SeamRunner
         return true;
     }
 
+    /** A block's HTML through every block filter. */
     public function filterBlock(Block $block, string $html): string
     {
         foreach ($this->registered->blockFilters as $filter) {
@@ -52,28 +54,36 @@ final readonly class SeamRunner
         return $html;
     }
 
+    /** The document title through the title filter. */
     public function title(string $title): string
     {
         $filter = $this->registered->title;
         return $filter === null ? $title : $filter($title);
     }
 
+    /** What the extensions add to the head. */
     public function head(): string
     {
         return implode('', array_map(fn (Closure $render) => $render($this->seams), $this->registered->head));
     }
 
+    /** What the extensions add to the footer. */
     public function footer(): string
     {
         return implode('', array_map(fn (Closure $render) => $render($this->seams), $this->registered->footer));
     }
 
-    /** @return list<string> */
+    /**
+     * The body classes the extensions add.
+     *
+     * @return list<string>
+     */
     public function bodyClasses(): array
     {
         return $this->registered->bodyClasses;
     }
 
+    /** The whole document through every document filter. */
     public function filterDocument(string $html): string
     {
         foreach ($this->registered->documentFilters as $filter) {

@@ -25,6 +25,7 @@ final readonly class LatestComments
     ) {
     }
 
+    /** The block's HTML. */
     public function render(Block $block, \Minn\Blocks\Renderer $renderer): string
     {
         $count = max(1, (int) $block->attr('commentsToShow', 5));

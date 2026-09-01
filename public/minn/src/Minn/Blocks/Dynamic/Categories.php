@@ -19,6 +19,7 @@ final readonly class Categories
     ) {
     }
 
+    /** The block's HTML. */
     public function render(Block $block, \Minn\Blocks\Renderer $renderer): string
     {
         $resolution = $renderer->context()->resolution;

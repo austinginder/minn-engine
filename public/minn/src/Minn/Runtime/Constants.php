@@ -11,6 +11,7 @@ namespace Minn\Runtime;
  */
 final class Constants
 {
+    /** Defines the constants the reference defines at boot. */
     public static function define(Runtime $runtime): void
     {
         $abs = rtrim($runtime->absPath, '/') . '/';

@@ -35,6 +35,7 @@ final class QueryBlocks
     ) {
     }
 
+    /** Registers this family's blocks with the renderer. */
     public function register(Renderer $renderer): void
     {
         $renderer->registerDynamic('core/query', $this->query(...));

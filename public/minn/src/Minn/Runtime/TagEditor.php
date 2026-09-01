@@ -26,6 +26,7 @@ final class TagEditor
         $this->attrs = $attrs;
     }
 
+    /** An attribute's value, or null. */
     public function get(string $name): ?string
     {
         foreach ($this->attrs as $a) {
@@ -36,6 +37,7 @@ final class TagEditor
         return null;
     }
 
+    /** Whether the tag has an attribute. */
     public function has(string $name): bool
     {
         foreach ($this->attrs as $a) {
@@ -62,6 +64,7 @@ final class TagEditor
         $this->insertAt += 1 + strlen($text);
     }
 
+    /** Removes an attribute. */
     public function remove(string $name): void
     {
         foreach ($this->attrs as $i => $a) {
@@ -74,6 +77,7 @@ final class TagEditor
         }
     }
 
+    /** Adds or removes a class. */
     public function toggleClass(string $class, bool $on): void
     {
         $current = $this->get('class');
@@ -93,6 +97,7 @@ final class TagEditor
         }
     }
 
+    /** Sets or removes one inline style property. */
     public function setStyle(string $property, ?string $value): void
     {
         $current = $this->get('style');
@@ -118,6 +123,7 @@ final class TagEditor
         }
     }
 
+    /** The tag as edited. */
     public function html(): string
     {
         return $this->tag;

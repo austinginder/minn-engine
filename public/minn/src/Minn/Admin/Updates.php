@@ -144,6 +144,7 @@ final class Updates
         return $out;
     }
 
+    /** Whether wordpress.org knows this theme. */
     public function themeOnDirectory(string $stylesheet): bool
     {
         $state = $this->state();
@@ -164,6 +165,7 @@ final class Updates
         return $this->pluginVersions()[$file] ?? '';
     }
 
+    /** Updates one theme to its offer; the new version. */
     public function updateTheme(string $stylesheet): string
     {
         if (!isset($this->themeOffers()[$stylesheet])) {
@@ -184,7 +186,11 @@ final class Updates
         return array_values(array_intersect(Serialized::stringList($this->site->option("auto_update_{$type}s")), $known));
     }
 
-    /** @return list<string> the list after the change */
+    /**
+     * Turns auto-updates on or off for one plugin or theme.
+     *
+     * @return list<string> the list after the change
+     */
     public function setAuto(string $type, string $asset, bool $enabled): array
     {
         $known = $type === 'plugin' ? array_keys($this->pluginVersions()) : array_keys($this->themeHeaders());

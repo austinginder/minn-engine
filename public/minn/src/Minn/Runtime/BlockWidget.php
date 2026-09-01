@@ -29,7 +29,11 @@ final class BlockWidget
         'core/rss' => 'widget_rss',
     ];
 
-    /** @param list<array<string, mixed>> $blocks the parsed content */
+    /**
+     * The legacy widget class a block widget maps to.
+     *
+     * @param list<array<string, mixed>> $blocks the parsed content
+     */
     public static function classNameFor(array $blocks): string
     {
         $first = (string) ($blocks[0]['blockName'] ?? '');

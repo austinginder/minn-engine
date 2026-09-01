@@ -51,11 +51,13 @@ final class ScriptPack
         'wp-polyfill-url' => [],
     ];
 
+    /** Where the script pack lives under wp-content. */
     public static function dir(string $contentDir): string
     {
         return rtrim($contentDir, '/') . '/' . self::RELATIVE_DIR;
     }
 
+    /** Whether the script pack is on disk. */
     public static function installed(string $contentDir): bool
     {
         return is_file(self::dir($contentDir) . '/' . self::MANIFEST);

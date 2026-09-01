@@ -27,6 +27,8 @@ final class PostQuery
     }
 
     /**
+     * Runs a WP_Query-shaped args array and returns its rows and totals.
+     *
      * @param array<string, mixed> $q
      * @return array{rows: list<array>, found: int, sticky: list<array>}
      */

@@ -21,7 +21,11 @@ final readonly class ActivityChart
     ) {
     }
 
-    /** @return list<array{label: string, value: int, from: string, to: string}> */
+    /**
+     * The bars for a window of days, counted from the database.
+     *
+     * @return list<array{label: string, value: int, from: string, to: string}>
+     */
     public function bars(int $days, int $now): array
     {
         $since = gmdate('Y-m-d H:i:s', $now - $days * 86400);

@@ -29,6 +29,7 @@ final class Theme
     ) {
     }
 
+    /** The active block theme, or null under a classic one. */
     public static function active(Site $site, Permalinks $permalinks, string $themesDir): ?self
     {
         $child = self::forStyles($site, $permalinks, $themesDir);
@@ -68,6 +69,7 @@ final class Theme
         return $this->parent?->slug;
     }
 
+    /** The theme.json with the parent's merged in. */
     public function json(): array
     {
         if ($this->json === null) {
@@ -147,6 +149,7 @@ final class Theme
         return $slug !== '' && preg_match('/^[A-Za-z0-9._-]+$/', $slug) === 1 && !str_contains($slug, '..');
     }
 
+    /** A template file's markup, or null. */
     public function templateFile(string $slug): ?string
     {
         if (!self::safe($slug)) {
@@ -156,6 +159,7 @@ final class Theme
         return is_file($file) ? (string) file_get_contents($file) : $this->parent?->templateFile($slug);
     }
 
+    /** A template part file's markup, or null. */
     public function partFile(string $slug): ?string
     {
         if (!self::safe($slug)) {

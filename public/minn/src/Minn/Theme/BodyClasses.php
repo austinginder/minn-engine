@@ -17,6 +17,8 @@ use Minn\Front\Resolution;
 final class BodyClasses
 {
     /**
+     * The body classes a classic theme's page carries.
+     *
      * @param list<string> $coreClasses
      * @return list<string>
      */

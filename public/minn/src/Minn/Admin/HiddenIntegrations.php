@@ -55,7 +55,11 @@ final readonly class HiddenIntegrations
         return (string) preg_replace('/[^a-z0-9_:\-]/', '', strtolower($id));
     }
 
-    /** @return array<string, int> id => hidden-at */
+    /**
+     * The views a user has hidden, by id.
+     *
+     * @return array<string, int> id => hidden-at
+     */
     public function map(int $userId): array
     {
         $stored = Serialized::decode((string) ($this->users->meta($userId, self::META) ?? ''));
@@ -95,6 +99,7 @@ final readonly class HiddenIntegrations
         return true;
     }
 
+    /** Shows a hidden view again. */
     public function unhide(int $userId, string $id): void
     {
         $map = $this->map($userId);

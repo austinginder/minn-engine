@@ -12,25 +12,41 @@ namespace Minn\Theme;
  */
 final class Hierarchy
 {
-    /** @return list<string> */
+    /**
+     * The front page templates.
+     *
+     * @return list<string>
+     */
     public static function frontPage(): array
     {
         return ['front-page.php'];
     }
 
-    /** @return list<string> */
+    /**
+     * The home templates.
+     *
+     * @return list<string>
+     */
     public static function home(): array
     {
         return ['home.php', 'index.php'];
     }
 
-    /** @return list<string> */
+    /**
+     * The privacy policy templates.
+     *
+     * @return list<string>
+     */
     public static function privacyPolicy(): array
     {
         return ['privacy-policy.php'];
     }
 
-    /** @return list<string> */
+    /**
+     * The page templates, custom first.
+     *
+     * @return list<string>
+     */
     public static function page(string $custom, string $slug, int $id): array
     {
         $templates = [];
@@ -51,7 +67,11 @@ final class Hierarchy
         return $templates;
     }
 
-    /** @return list<string> */
+    /**
+     * The single templates, custom first.
+     *
+     * @return list<string>
+     */
     public static function single(string $type, string $slug, string $custom): array
     {
         $templates = [];
@@ -70,7 +90,11 @@ final class Hierarchy
         return $templates;
     }
 
-    /** @return list<string> */
+    /**
+     * The attachment templates by mime type.
+     *
+     * @return list<string>
+     */
     public static function attachment(string $mimeType): array
     {
         $templates = [];
@@ -82,7 +106,11 @@ final class Hierarchy
         return $templates;
     }
 
-    /** @return list<string> */
+    /**
+     * The term archive templates.
+     *
+     * @return list<string>
+     */
     public static function term(string $taxonomy, string $slug, int $id): array
     {
         $decoded = urldecode($slug);
@@ -95,7 +123,11 @@ final class Hierarchy
         return [...$templates, "taxonomy-{$taxonomy}-{$slug}.php", "taxonomy-{$taxonomy}.php", 'taxonomy.php'];
     }
 
-    /** @return list<string> */
+    /**
+     * The author archive templates.
+     *
+     * @return list<string>
+     */
     public static function author(string $nicename, int $id): array
     {
         $templates = [];
@@ -109,7 +141,11 @@ final class Hierarchy
         return $templates;
     }
 
-    /** @param list<string> $postTypes @return list<string> */
+    /**
+     * The post type archive templates.
+     *
+     * @param list<string> $postTypes @return list<string>
+     */
     public static function archive(array $postTypes): array
     {
         $templates = [];

@@ -13,7 +13,11 @@ final readonly class PostLookup
     {
     }
 
-    /** @param list<string> $types */
+    /**
+     * The id of a post with this title among the types, or null.
+     *
+     * @param list<string> $types
+     */
     public function idByTitle(string $title, array $types): ?int
     {
         if ($types === []) {
@@ -29,7 +33,11 @@ final readonly class PostLookup
         return $this->db->rows("SELECT * FROM {$this->db->table('posts')} WHERE post_parent = ? AND post_type = 'revision' AND post_status = 'inherit' ORDER BY post_date DESC, ID DESC", [$postId]);
     }
 
-    /** @return array<string, int> status => count */
+    /**
+     * How many posts of a type there are per status.
+     *
+     * @return array<string, int> status => count
+     */
     public function countByStatus(string $type): array
     {
         $counts = [];
@@ -39,7 +47,11 @@ final readonly class PostLookup
         return $counts;
     }
 
-    /** @return array<string, int> mime type => count, plus 'trash' */
+    /**
+     * How many attachments there are per mime type.
+     *
+     * @return array<string, int> mime type => count, plus 'trash'
+     */
     public function countAttachments(): array
     {
         $counts = [];
@@ -50,7 +62,11 @@ final readonly class PostLookup
         return $counts;
     }
 
-    /** @param list<string> $types @param list<string> $statuses */
+    /**
+     * How many posts an author has among the types and statuses.
+     *
+     * @param list<string> $types @param list<string> $statuses
+     */
     public function countByAuthor(int $userId, array $types, array $statuses): int
     {
         if ($types === [] || $statuses === []) {
@@ -59,7 +75,11 @@ final readonly class PostLookup
         return (int) $this->db->value("SELECT COUNT(*) FROM {$this->db->table('posts')} WHERE post_author = ? AND post_type IN (?) AND post_status IN (?)", [$userId, $types, $statuses]);
     }
 
-    /** @return list<int> */
+    /**
+     * Every post id of an author.
+     *
+     * @return list<int>
+     */
     public function idsByAuthor(int $userId): array
     {
         return array_map(static fn (array $r) => (int) $r['ID'], $this->db->rows("SELECT ID FROM {$this->db->table('posts')} WHERE post_author = ?", [$userId]));

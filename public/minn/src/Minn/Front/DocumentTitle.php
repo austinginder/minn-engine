@@ -12,6 +12,8 @@ namespace Minn\Front;
 final class DocumentTitle
 {
     /**
+     * The title parts for a resolution, the way the reference assembles them.
+     *
      * @param array<string, string> $record the resolved record, when there is one
      * @return array<string, string>
      */
@@ -44,7 +46,11 @@ final class DocumentTitle
         return ['title' => $title, 'site' => $site];
     }
 
-    /** @param array<string, string> $parts */
+    /**
+     * The parts joined with the reference's separator.
+     *
+     * @param array<string, string> $parts
+     */
     public static function compose(array $parts): string
     {
         return implode(' &#8211; ', array_filter($parts, static fn (string $p) => $p !== ''));

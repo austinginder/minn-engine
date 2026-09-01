@@ -15,13 +15,18 @@ final readonly class CommentQuery
     {
     }
 
+    /** How many comments match the query args. */
     public function count(array $args): int
     {
         [$clause, $params] = $this->where($args);
         return (int) $this->db->value("SELECT COUNT(*) FROM {$this->db->table('comments')} c WHERE {$clause}", $params);
     }
 
-    /** @return list<array<string, mixed>> */
+    /**
+     * The comment rows matching the query args, ordered as asked.
+     *
+     * @return list<array<string, mixed>>
+     */
     public function rows(array $args): array
     {
         [$clause, $params] = $this->where($args);

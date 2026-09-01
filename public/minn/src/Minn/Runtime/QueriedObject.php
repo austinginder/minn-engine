@@ -20,6 +20,8 @@ final readonly class QueriedObject
     }
 
     /**
+     * The queried object the query vars and flags point at.
+     *
      * @param array<string, mixed> $vars
      * @param array<string, bool> $flags the query's is_* flags
      * @param callable(string): mixed $option a filtered option read

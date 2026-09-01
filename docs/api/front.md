@@ -4,27 +4,27 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`AdminBar`](#adminbar) | final readonly class | 317 | The Minn bar on the public site: the same server-rendered chrome the |
-| [`AssetsController`](#assetscontroller) | final readonly class | 31 | The engine's own static assets, served under a reserved path. |
-| [`Canonical`](#canonical) | final class | 27 | Where a URL should redirect to, by the engine's own resolution: the |
-| [`CommentList`](#commentlist) | final class | 50 | The classic threaded comment walk: top-level comments in order (or |
-| [`CommentPostController`](#commentpostcontroller) | final readonly class | 138 | wp-comments-post.php: the comment form's target. The reference's |
-| [`DocumentTitle`](#documenttitle) | final class | 41 | The document title as parts (title, tagline, page, site) in the order the |
-| [`Feeds`](#feeds) | final readonly class | 312 | The syndication feeds, byte for byte in the reference's shape: RSS 2.0 |
-| [`FrontController`](#frontcontroller) | final readonly class | 44 | The public site. One catch-all route: resolve the URL, then either |
+| [`AdminBar`](#adminbar) | final readonly class | 318 | The Minn bar on the public site: the same server-rendered chrome the |
+| [`AssetsController`](#assetscontroller) | final readonly class | 32 | The engine's own static assets, served under a reserved path. |
+| [`Canonical`](#canonical) | final class | 28 | Where a URL should redirect to, by the engine's own resolution: the |
+| [`CommentList`](#commentlist) | final class | 52 | The classic threaded comment walk: top-level comments in order (or |
+| [`CommentPostController`](#commentpostcontroller) | final readonly class | 139 | wp-comments-post.php: the comment form's target. The reference's |
+| [`DocumentTitle`](#documenttitle) | final class | 47 | The document title as parts (title, tagline, page, site) in the order the |
+| [`Feeds`](#feeds) | final readonly class | 316 | The syndication feeds, byte for byte in the reference's shape: RSS 2.0 |
+| [`FrontController`](#frontcontroller) | final readonly class | 45 | The public site. One catch-all route: resolve the URL, then either |
 | [`Kind`](#kind) | enum | 17 | What a public URL resolved to. |
 | [`ListingLinks`](#listinglinks) | final class | 53 | The prev/next links a paged listing prints: which page sits either side of |
-| [`Pagination`](#pagination) | final class | 56 | Numbered page links in the reference's shape: previous, the end and |
-| [`Permalinks`](#permalinks) | final readonly class | 224 | Builds public URLs from the site's permalink structure. With an empty |
-| [`PluginRules`](#pluginrules) | final class | 65 | Rewrite rules a plugin registered through add_rewrite_rule(): the |
-| [`PostNavigation`](#postnavigation) | final class | 24 | The links to the posts either side of this one, and the nav block that |
-| [`ProbeController`](#probecontroller) | final readonly class | 175 | The surface monitors, crawlers, and hosting checks hit that is not a |
-| [`Renderer`](#renderer) | final readonly class | 151 | The interim public theme: one clean template until the block-theme |
-| [`Resolution`](#resolution) | final readonly class | 97 | The outcome of resolving a public URL: which kind of thing it names, |
-| [`Resolver`](#resolver) | final readonly class | 543 | Turns a public URL into a Resolution, following the reference's observed |
-| [`SitemapXml`](#sitemapxml) | final class | 35 | The two sitemap documents, index and URL set, from entry maps; one builder for the engine's routes and the facade's renderer. |
-| [`Sitemaps`](#sitemaps) | final readonly class | 138 | The sitemap index and its providers (posts, pages, categories, tags, |
-| [`TermLists`](#termlists) | final class | 169 | The two term listings themes print: the nested category list and the |
+| [`Pagination`](#pagination) | final class | 62 | Numbered page links in the reference's shape: previous, the end and |
+| [`Permalinks`](#permalinks) | final readonly class | 234 | Builds public URLs from the site's permalink structure. With an empty |
+| [`PluginRules`](#pluginrules) | final class | 71 | Rewrite rules a plugin registered through add_rewrite_rule(): the |
+| [`PostNavigation`](#postnavigation) | final class | 25 | The links to the posts either side of this one, and the nav block that |
+| [`ProbeController`](#probecontroller) | final readonly class | 184 | The surface monitors, crawlers, and hosting checks hit that is not a |
+| [`Renderer`](#renderer) | final readonly class | 156 | The interim public theme: one clean template until the block-theme |
+| [`Resolution`](#resolution) | final readonly class | 108 | The outcome of resolving a public URL: which kind of thing it names, |
+| [`Resolver`](#resolver) | final readonly class | 550 | Turns a public URL into a Resolution, following the reference's observed |
+| [`SitemapXml`](#sitemapxml) | final class | 43 | The two sitemap documents, index and URL set, from entry maps; one builder for the engine's routes and the facade's renderer. |
+| [`Sitemaps`](#sitemaps) | final readonly class | 139 | The sitemap index and its providers (posts, pages, categories, tags, |
+| [`TermLists`](#termlists) | final class | 177 | The two term listings themes print: the nested category list and the |
 
 ## AdminBar
 
@@ -45,6 +45,8 @@ __construct(Minn\Auth\Authenticated $session, Minn\Auth\Capabilities $capabiliti
 
 ### static `forReader(?Minn\Auth\Authenticated $session, Minn\Auth\Capabilities $capabilities, Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, Minn\Admin\App $app, Minn\Admin\Appearance $appearance, Minn\Admin\AdminTypes $types): ?self`
 
+The bar for a signed-in editor, or null for anyone else.
+
 ### `head(): string`
 
 The stylesheet link for the head.
@@ -53,7 +55,7 @@ The stylesheet link for the head.
 
 The bar markup, its config, and the script, for the end of the body.
 
-Internals: `markup()` (private, line 82), `siteMenu()` (private, line 135), `statusMenu()` (private, line 153), `newMenu()` (private, line 175), `notificationsMenu()` (private, line 189), `userMenu()` (private, line 202), `status()` (private, line 220), `editTarget()` (private, line 237), `commands()` (private, line 253), `searchTypes()` (private, line 278), `customSchemeStyle()` (private, line 287), `appUrl()` (private, line 306), `appPath()` (private, line 311), `assetUrl()` (private, line 316), `icon()` (private, line 321), `gridIcon()` (private, line 326), `menuItem()` (private, line 331)
+Internals: `markup()` (private, line 83), `siteMenu()` (private, line 136), `statusMenu()` (private, line 154), `newMenu()` (private, line 176), `notificationsMenu()` (private, line 190), `userMenu()` (private, line 203), `status()` (private, line 221), `editTarget()` (private, line 238), `commands()` (private, line 254), `searchTypes()` (private, line 279), `customSchemeStyle()` (private, line 288), `appUrl()` (private, line 307), `appPath()` (private, line 312), `assetUrl()` (private, line 317), `icon()` (private, line 322), `gridIcon()` (private, line 327), `menuItem()` (private, line 332)
 
 
 ## AssetsController
@@ -75,6 +77,8 @@ __construct(string $assetsDir)
 
 Route: `GET /minn/assets/{path*}`
 
+One engine asset file.
+
 ### `jquery(Minn\Http\Request $request, string $file): Minn\Http\Response`
 
 Route: `GET /wp-includes/js/jquery/{file:[a-z0-9.-]+\.js}`
@@ -94,7 +98,9 @@ plugin names.
 
 ### static `location(Minn\Db $db, Minn\Http\Request $current, ?string $url): ?string`
 
-Internals: `requestFor()` (private, line 29)
+The canonical URL of a request, or null when it already is one.
+
+Internals: `requestFor()` (private, line 30)
 
 
 ## CommentList
@@ -107,11 +113,13 @@ each item and its close rendered by the caller's closures.
 
 ### static `render(array $comments, array $args, Closure $item, Closure $close): string`
 
+A threaded comment list the way the reference walks it.
+
 - `@param list<array<string, mixed>> $comments rows with comment_ID and comment_parent`
 - `@param Closure(array, int): string $item the opening markup for a comment at a depth`
 - `@param Closure(array, int): string $close the closing markup`
 
-Internals: `level()` (private, line 45)
+Internals: `level()` (private, line 47)
 
 
 ## CommentPostController
@@ -137,7 +145,9 @@ __construct(Minn\Content\Site $site, Minn\Content\Posts $posts, Minn\Content\Com
 
 Route: `* /wp-comments-post.php`
 
-Internals: `approval()` (private, line 132), `rememberAuthor()` (private, line 139), `moderationHash()` (private, line 149), `notifyModerator()` (private, line 154), `refusal()` (private, line 161)
+The comment form's target.
+
+Internals: `approval()` (private, line 133), `rememberAuthor()` (private, line 140), `moderationHash()` (private, line 150), `notifyModerator()` (private, line 155), `refusal()` (private, line 162)
 
 
 ## DocumentTitle
@@ -152,10 +162,14 @@ Used by: `Minn\Front\Renderer`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\PageRe
 
 ### static `parts(Minn\Front\Resolution $resolution, string $site, string $tagline): array`
 
+The title parts for a resolution, the way the reference assembles them.
+
 - `@param array<string, string> $record the resolved record, when there is one`
 - `@return array<string, string>`
 
 ### static `compose(array $parts): string`
+
+The parts joined with the reference's separator.
 
 - `@param array<string, string> $parts`
 
@@ -178,6 +192,8 @@ __construct(Minn\Db $db, Minn\Content\Site $site, Minn\Content\Posts $posts, Min
 
 ### static `contentType(string $kind): string`
 
+The content type of a feed kind.
+
 ### `posts(array $posts, string $kind, string $selfUrl, string $title): string`
 
 The site feed, or an archive's, in the chosen kind. @param list<array> $posts
@@ -190,11 +206,17 @@ The site's or one post's comments as RSS 2.0.
 
 ### `perFeed(): int`
 
+How many items a feed carries.
+
 ### static `rfc2822(string $gmt): string`
+
+A GMT datetime in RFC 2822 form.
 
 ### static `isoZ(string $gmt): string`
 
-Internals: `rss2()` (private, line 60), `rssItem()` (private, line 85), `atom()` (private, line 112), `rdf()` (private, line 156), `content()` (private, line 248), `latestModified()` (private, line 270), `commentCount()` (private, line 279), `authorName()` (private, line 284), `termNames()` (private, line 290), `cdata()` (private, line 305), `plainExcerpt()` (private, line 310), `language()` (private, line 318), `title()` (private, line 325)
+A GMT datetime in ISO 8601 form.
+
+Internals: `rss2()` (private, line 61), `rssItem()` (private, line 86), `atom()` (private, line 113), `rdf()` (private, line 157), `content()` (private, line 249), `latestModified()` (private, line 272), `commentCount()` (private, line 281), `authorName()` (private, line 286), `termNames()` (private, line 292), `cdata()` (private, line 307), `plainExcerpt()` (private, line 312), `language()` (private, line 320), `title()` (private, line 327)
 
 
 ## FrontController
@@ -220,6 +242,8 @@ The themed (or interim) 404 page.
 ### `show(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `* /{path*}`
+
+The public page for any path.
 
 
 ## Kind
@@ -281,10 +305,14 @@ middle runs with one ellipsis per gap, the current page as a span, next.
 
 ### static `links(array $args, Closure $link): ?array`
 
+The page links the reference's paginate_links builds, or null for one page.
+
 - `@param Closure(int): string $link the URL for a page number`
 - `@return list<string>|null the link elements, null with fewer than two pages`
 
 ### static `format(array $links, string $type): array|string`
+
+The links in the requested shape.
 
 - `@param list<string> $links`
 
@@ -323,13 +351,23 @@ A post type archive's address: its has_archive slug, or the type's slug when has
 
 ### static `fromDb(Minn\Db $db): self`
 
+Link building from the site's own settings.
+
 ### `isPretty(): bool`
+
+Whether the site uses a permalink structure.
 
 ### `url(string $path = ''): string`
 
+A URL under the home.
+
 ### `forPost(Minn\Content\PostRecord $post): string`
 
+A post's permalink.
+
 ### `forPage(Minn\Content\PostRecord $page): string`
+
+A page's permalink, the home for the front page.
 
 ### `pagePath(Minn\Content\PostRecord $page): string`
 
@@ -343,13 +381,23 @@ permalinks.
 
 ### `forTerm(Minn\Content\TermRecord $term): string`
 
+A term's archive URL.
+
 ### `forAuthor(Minn\Content\UserRecord $user): string`
+
+An author's archive URL.
 
 ### `forDate(int $year, ?int $month = NULL, ?int $day = NULL): string`
 
+A date archive's URL.
+
 ### `forSearch(string $term): string`
 
+A search's URL.
+
 ### `forPaged(string $baseUrl, int $page): string`
+
+A listing URL for a page number.
 
 ### `structureRegex(): ?string`
 
@@ -357,7 +405,7 @@ A regex over the structure's tokens, so an incoming path can be
 matched back to the post it names. Null when the structure has no
 identifying token.
 
-Internals: `hasPrettyLink()` (private, line 214), `fill()` (private, line 219)
+Internals: `hasPrettyLink()` (private, line 224), `fill()` (private, line 229)
 
 
 ## PluginRules
@@ -379,9 +427,13 @@ Used by: `Minn\Front\Resolver`, `Minn\Runtime\MainQuery`
 
 ### static `match(string $path, bool $top): ?array`
 
+A plugin's rewrite rule that matches the path, or null.
+
 - `@return array<string, string>|null the query vars of the first matching rule, null with no match`
 
 ### static `stashed(): array`
+
+The query vars the matched rule stashed.
 
 - `@return array<string, string> the vars the matched rule stashed for this request`
 
@@ -398,6 +450,8 @@ or rel="next".
 Titles arrive already filtered; this only assembles.
 
 ### static `link(string $url, string $title, string $format, string $linkFormat, bool $previous): string`
+
+A previous or next post link in the reference's format.
 
 ### static `ariaLabel(array $args, string $default): string`
 
@@ -427,6 +481,8 @@ __construct(Minn\Content\Site $site, Minn\Content\Posts $posts, Minn\Front\Perma
 
 Route: `GET /robots.txt`
 
+robots.txt.
+
 ### `xmlrpc(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `* /xmlrpc.php`
@@ -436,6 +492,8 @@ XML-RPC is not served; GET answers the way the reference does, POST is refused o
 ### `cron(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `* /wp-cron.php`
+
+wp-cron.php: runs what is due.
 
 ### `admin(Minn\Http\Request $request): Minn\Http\Response`
 
@@ -449,21 +507,31 @@ The admin is Minn Admin; the reference's admin path lands there.
 
 Route: `GET /favicon.ico`
 
+The site icon, or the reference's default.
+
 ### `sitemapIndex(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `GET /wp-sitemap.xml`
+
+The sitemap index.
 
 ### `sitemap(Minn\Http\Request $request, string $type, string $rest): Minn\Http\Response`
 
 Route: `GET /wp-sitemap-{type:posts|taxonomies|users}-{rest:[a-z_0-9-]+}.xml`
 
+One sitemap page.
+
 ### `sitemapStylesheet(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `GET /wp-sitemap.xsl`
 
+The sitemap stylesheet.
+
 ### `sitemapIndexStylesheet(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `GET /wp-sitemap-index.xsl`
+
+The sitemap index stylesheet.
 
 ### `siteFeed(Minn\Http\Request $request, string $kind = 'rss2'): Minn\Http\Response`
 
@@ -475,11 +543,15 @@ Route: `GET /feed/{kind:rss2|rss|atom|rdf}`
 
 Route: `GET /feed/{kind:rss2|rss|atom|rdf}/`
 
+The site feed in one of its kinds.
+
 ### `commentsFeed(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `GET /comments/feed`
 
 Route: `GET /comments/feed/`
+
+The comments feed.
 
 ### `pathFeed(Minn\Http\Request $request, string $path, string $kind = 'rss2'): Minn\Http\Response`
 
@@ -497,7 +569,7 @@ A post's comment feed, or an archive's feed, by resolving the path in front of /
 
 The ?feed= query form on any resolvable path.
 
-Internals: `feed()` (private, line 158), `feedResponse()` (private, line 190), `xml()` (private, line 195)
+Internals: `feed()` (private, line 167), `feedResponse()` (private, line 199), `xml()` (private, line 204)
 
 
 ## Renderer
@@ -519,6 +591,8 @@ __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Front\Permalinks $perma
 
 ### `bodyClasses(Minn\Front\Resolution $resolution): array`
 
+The body classes a resolution carries.
+
 - `@return list<string>`
 
 ### `title(Minn\Front\Resolution $resolution): string`
@@ -527,7 +601,9 @@ The document title: the item's title with the site name, or the site name alone.
 
 ### `render(Minn\Front\Resolution $resolution): string`
 
-Internals: `pageClasses()` (private, line 98), `article()` (private, line 115), `archive()` (private, line 125)
+The interim page for a resolution, without a theme.
+
+Internals: `pageClasses()` (private, line 103), `article()` (private, line 120), `archive()` (private, line 130)
 
 
 ## Resolution
@@ -554,17 +630,27 @@ Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Fr
 
 ### `asPreview(): self`
 
+The same resolution marked as a preview.
+
 ### static `home(int $paged = 1): self`
+
+The home listing.
 
 ### static `single(Minn\Content\PostRecord $post, int $paged = 1): self`
 
+A single post or page.
+
 ### static `frontPage(Minn\Content\PostRecord $page, int $paged = 1): self`
+
+The static front page.
 
 ### static `postsPage(Minn\Content\PostRecord $page, int $paged = 1): self`
 
 The page that stands for the blog: a home listing whose record is the page.
 
 ### static `term(string $taxonomy, Minn\Content\TermRecord $term, int $paged = 1): self`
+
+A category or tag archive.
 
 ### static `taxonomy(Minn\Content\TermRecord $term, int $paged = 1): self`
 
@@ -576,15 +662,27 @@ A plugin post type's archive; the record is the registered type (name, label, ..
 
 ### static `author(string $name, ?Minn\Content\UserRecord $user, int $paged = 1): self`
 
+An author archive.
+
 ### static `date(int $year, ?int $month, ?int $day, int $paged = 1): self`
+
+A date archive.
 
 ### static `search(string $term, int $paged = 1): self`
 
+A search.
+
 ### static `notFound(): self`
+
+A 404.
 
 ### static `redirect(string $location, int $status = 301): self`
 
+A redirect.
+
 ### `id(): int`
+
+The record's id, post or term.
 
 
 ## Resolver
@@ -618,9 +716,15 @@ __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Content\Terms $terms, M
 
 ### static `fromDb(Minn\Db $db, Closure $canReadUnpublished): self`
 
+A resolver over the site's own settings.
+
 ### `permalinks(): Minn\Front\Permalinks`
 
+The link builder.
+
 ### `perPage(): int`
+
+Posts per page.
 
 ### `resolve(Minn\Http\Request $request, bool $canonical = true): Minn\Front\Resolution`
 
@@ -630,9 +734,11 @@ every other method renders what the query alone finds, as typed.
 
 ### static `dateRange(int $year, ?int $month, ?int $day): ?array`
 
+The site-local bounds of a date archive, or null when the date is invalid.
+
 - `@return array{0: string, 1: string}|null`
 
-Internals: `fromRuleVars()` (private, line 114), `resolvePath()` (private, line 139), `resolveQueryVars()` (private, line 199), `dateRedirect()` (private, line 281), `home()` (private, line 297), `pluginRoute()` (private, line 319), `segmentsOf()` (private, line 354), `taxonomyArchive()` (private, line 363), `termArchive()` (private, line 377), `termResolution()` (private, line 390), `authorArchive()` (private, line 399), `dateArchive()` (private, line 416), `resolveContent()` (private, line 459), `resolveSingle()` (private, line 495), `formerSlug()` (private, line 537), `singleOrRedirect()` (private, line 550), `readable()` (private, line 559), `pages()` (private, line 576)
+Internals: `fromRuleVars()` (private, line 117), `resolvePath()` (private, line 142), `resolveQueryVars()` (private, line 202), `dateRedirect()` (private, line 284), `home()` (private, line 300), `pluginRoute()` (private, line 322), `segmentsOf()` (private, line 357), `taxonomyArchive()` (private, line 366), `termArchive()` (private, line 380), `termResolution()` (private, line 393), `authorArchive()` (private, line 402), `dateArchive()` (private, line 419), `resolveContent()` (private, line 466), `resolveSingle()` (private, line 502), `formerSlug()` (private, line 544), `singleOrRedirect()` (private, line 557), `readable()` (private, line 566), `pages()` (private, line 583)
 
 
 ## SitemapXml
@@ -645,13 +751,17 @@ Used by: `Minn\Front\Sitemaps`
 
 ### static `index(array $entries, ?string $stylesheet): string`
 
+A sitemap index document.
+
 - `@param list<array<string, string|null>> $entries each a map of element name => text; null values are skipped`
 
 ### static `urlset(array $entries, ?string $stylesheet): string`
 
+A sitemap urlset document.
+
 - `@param list<array<string, string|null>> $entries`
 
-Internals: `elements()` (private, line 24), `document()` (private, line 39)
+Internals: `elements()` (private, line 32), `document()` (private, line 47)
 
 
 ## Sitemaps
@@ -673,6 +783,8 @@ __construct(Minn\Db $db, Minn\Content\Site $site, Minn\Front\Permalinks $permali
 
 ### `index(): string`
 
+The sitemap index's XML.
+
 ### `page(string $type, string $subtype, int $page): ?string`
 
 One provider page, or null when the name or page does not exist.
@@ -681,7 +793,7 @@ One provider page, or null when the name or page does not exist.
 
 The engine's own stylesheet for browsers that open a sitemap.
 
-Internals: `providers()` (private, line 56), `contentUrls()` (private, line 82), `termUrls()` (private, line 105), `userUrls()` (private, line 120), `authors()` (private, line 127), `iso()` (private, line 151)
+Internals: `providers()` (private, line 57), `contentUrls()` (private, line 83), `termUrls()` (private, line 106), `userUrls()` (private, line 121), `authors()` (private, line 128), `iso()` (private, line 152)
 
 
 ## TermLists
@@ -702,15 +814,21 @@ trails the last name too, so a breadcrumb reads "Root/Mid/Leaf/".
 
 ### static `categoryList(array $terms, array $args, Closure $link): string`
 
+The category list the reference prints.
+
 - `@param list<array<string, mixed>> $terms rows with term_id, name, slug, count, parent`
 - `@param array<string, mixed> $args wp_list_categories arguments`
 - `@param Closure(array): string $link`
 
 ### static `categoryWrapper(array $args): array`
 
+The list's title item and its closer.
+
 - `@return list<string> the categories block wrapper, before and after the items`
 
 ### static `tagCloud(array $tags, array $args): ?string`
+
+The tag cloud the reference prints, or null for none.
 
 - `@param list<array<string, mixed>> $tags rows with term_id, name, count, plus "link"`
 - `@param array<string, mixed> $args wp_generate_tag_cloud arguments`
@@ -722,5 +840,5 @@ caller asked for a hierarchy.
 
 - `@param list<array<string, mixed>> $terms`
 
-Internals: `options()` (private, line 118), `sorted()` (private, line 137), `orphans()` (private, line 150), `items()` (private, line 157)
+Internals: `options()` (private, line 126), `sorted()` (private, line 145), `orphans()` (private, line 158), `items()` (private, line 165)
 

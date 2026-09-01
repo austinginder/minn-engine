@@ -45,6 +45,7 @@ final class Assets
         }
     }
 
+    /** Registers an asset under a handle. */
     public function register(string $handle, string|false $src, array $deps, string|bool|null $ver, mixed $extra): bool
     {
         if (isset($this->items[$handle])) {
@@ -57,7 +58,11 @@ final class Assets
         $this->changed();
     }
 
-    /** @return list<string> hosts of enqueued sources (dependencies first) away from the given host, for dns-prefetch hints */
+    /**
+     * The hosts the queued assets load from, other than the site's own.
+     *
+     * @return list<string> hosts of enqueued sources (dependencies first) away from the given host, for dns-prefetch hints
+     */
     public function externalHosts(string $ownHost): array
     {
         $hosts = [];
@@ -81,6 +86,7 @@ final class Assets
         return $hosts;
     }
 
+    /** Forgets an asset. */
     public function deregister(string $handle): void
     {
         unset($this->items[$handle]);
@@ -88,6 +94,7 @@ final class Assets
         $this->changed();
     }
 
+    /** Queues an asset for printing. */
     public function enqueue(string $handle): void
     {
         if (!in_array($handle, $this->queue, true)) {
@@ -96,12 +103,14 @@ final class Assets
         $this->changed();
     }
 
+    /** Removes an asset from the queue. */
     public function dequeue(string $handle): void
     {
         $this->queue = array_values(array_diff($this->queue, [$handle]));
         $this->changed();
     }
 
+    /** Whether a handle is registered. */
     public function registered(string $handle): bool
     {
         return isset($this->items[$handle]);
@@ -140,11 +149,13 @@ final class Assets
         return false;
     }
 
+    /** Whether a handle has been printed. */
     public function done(string $handle): bool
     {
         return in_array($handle, $this->done, true);
     }
 
+    /** Attaches inline code to an asset. */
     public function addInline(string $handle, string $code, string $position): bool
     {
         if (!isset($this->items[$handle])) {
@@ -157,6 +168,7 @@ final class Assets
         $this->changed();
     }
 
+    /** Attaches a data key to an asset. */
     public function addData(string $handle, string $key, mixed $value): bool
     {
         if (!isset($this->items[$handle])) {
@@ -169,11 +181,13 @@ final class Assets
         $this->changed();
     }
 
+    /** A data key of an asset, or false. */
     public function data(string $handle, string $key): mixed
     {
         return $this->items[$handle]['data'][$key] ?? false;
     }
 
+    /** Attaches a localized object to a script. */
     public function localize(string $handle, string $name, array $data): bool
     {
         if (!isset($this->items[$handle])) {
@@ -249,29 +263,40 @@ final class Assets
         }
     }
 
+    /** Records a handle as printed. */
     public function markDone(string $handle): void
     {
         $this->done[] = $handle;
         $this->changed();
     }
 
+    /** One registered asset, or null. */
     public function item(string $handle): ?array
     {
         return $this->items[$handle] ?? null;
     }
 
-    /** @return array<string, array<string, mixed>> */
+    /**
+     * Every registered asset.
+     *
+     * @return array<string, array<string, mixed>>
+     */
     public function items(): array
     {
         return $this->items;
     }
 
-    /** @return list<string> */
+    /**
+     * The handles queued.
+     *
+     * @return list<string>
+     */
     public function queue(): array
     {
         return $this->queue;
     }
 
+    /** Whether these are scripts or styles. */
     public function kind(): string
     {
         return $this->kind;

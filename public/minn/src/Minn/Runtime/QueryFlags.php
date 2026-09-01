@@ -22,6 +22,8 @@ final readonly class QueryFlags
     }
 
     /**
+     * The is_* flags the query vars amount to.
+     *
      * @param array<string, mixed> $vars the filled query variables
      * @param callable(string): mixed $option a filtered option read
      */

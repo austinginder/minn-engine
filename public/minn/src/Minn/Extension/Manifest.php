@@ -54,6 +54,7 @@ final readonly class Manifest
     ) {
     }
 
+    /** A folder's minn.json, or null when there is none. */
     public static function read(string $dir): ?self
     {
         $file = $dir . '/minn.json';

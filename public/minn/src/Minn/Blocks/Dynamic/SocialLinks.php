@@ -27,6 +27,7 @@ final class SocialLinks
     {
     }
 
+    /** Registers the block and its links with the renderer. */
     public function register(Renderer $renderer): void
     {
         $renderer->registerDynamic('core/social-links', $this->list(...));

@@ -29,7 +29,11 @@ final readonly class DbDelta
         return $creates;
     }
 
-    /** @param array<string, string> $creates @return array<string, string> what was (or would be) done, by table or table.column */
+    /**
+     * Applies CREATE TABLE statements as dbDelta does; the statements run.
+     *
+     * @param array<string, string> $creates @return array<string, string> what was (or would be) done, by table or table.column
+     */
     public function apply(array $creates, bool $execute): array
     {
         $done = [];
@@ -92,13 +96,21 @@ final readonly class DbDelta
         return [$columns, $indices];
     }
 
-    /** @return list<string> */
+    /**
+     * Every table in the database.
+     *
+     * @return list<string>
+     */
     public function tables(): array
     {
         return array_map(static fn (array $r) => (string) reset($r), $this->db->rows('SHOW TABLES'));
     }
 
-    /** @return array<string, array<string, mixed>> by column name */
+    /**
+     * A table's columns with their definitions.
+     *
+     * @return array<string, array<string, mixed>> by column name
+     */
     public function columns(string $table): array
     {
         $out = [];
@@ -108,12 +120,17 @@ final readonly class DbDelta
         return $out;
     }
 
-    /** @return list<string> lowercase key names */
+    /**
+     * A table's index names.
+     *
+     * @return list<string> lowercase key names
+     */
     public function indexNames(string $table): array
     {
         return array_values(array_unique(array_map(static fn (array $r) => strtolower((string) $r['Key_name']), $this->db->rows("SHOW INDEX FROM {$table}"))));
     }
 
+    /** Runs one DDL statement. */
     public function run(string $ddl): void
     {
         $this->db->execute($ddl);

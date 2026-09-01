@@ -43,7 +43,11 @@ final readonly class Appearance
     {
     }
 
-    /** @return array{scheme: string, custom: array, defaultAdmin: bool, frontBar: bool} */
+    /**
+     * A user's saved appearance, normalised.
+     *
+     * @return array{scheme: string, custom: array, defaultAdmin: bool, frontBar: bool}
+     */
     public function read(int $userId): array
     {
         $stored = Serialized::decode((string) ($this->users->meta($userId, self::META) ?? ''));
@@ -62,6 +66,7 @@ final readonly class Appearance
         return $merged;
     }
 
+    /** The appearance with every field valid and every missing one defaulted. */
     public static function normalise(array $raw): array
     {
         $scheme = strtolower(trim((string) ($raw['scheme'] ?? 'minn')));

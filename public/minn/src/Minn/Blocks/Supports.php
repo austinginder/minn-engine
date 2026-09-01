@@ -12,6 +12,8 @@ namespace Minn\Blocks;
 final class Supports
 {
     /**
+     * The classes and inline styles a block's supports amount to.
+     *
      * @param array<string, mixed> $attributes the block's prepared attributes
      * @param array<string, mixed> $supports the block type's supports
      * @param callable(string): string $kebab the slug form of a preset name (filtered on the reference)

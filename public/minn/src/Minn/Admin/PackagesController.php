@@ -20,6 +20,7 @@ final readonly class PackagesController
     {
     }
 
+    /** Searches wordpress.org themes. */
     #[Route(Method::Get, '/minn-admin/v1/themes/search')]
     public function searchThemes(Request $request): Response
     {
@@ -27,6 +28,7 @@ final readonly class PackagesController
         return Reply::answer($request, ['themes' => $this->packages->searchThemes(trim((string) ($request->query('q') ?? '')))]);
     }
 
+    /** Installs a theme from wordpress.org by slug. */
     #[Route(Method::Post, '/minn-admin/v1/themes/install')]
     public function installTheme(Request $request): Response
     {
@@ -35,6 +37,7 @@ final readonly class PackagesController
         return Reply::answer($request, ['installed' => true, 'stylesheet' => $this->packages->installTheme($slug)]);
     }
 
+    /** Installs a theme from an uploaded zip. */
     #[Route(Method::Post, '/minn-admin/v1/themes/upload')]
     public function uploadTheme(Request $request): Response
     {
@@ -43,6 +46,7 @@ final readonly class PackagesController
         return Reply::answer($request, ['installed' => true, 'stylesheet' => $result['folder']]);
     }
 
+    /** Deletes an inactive theme. */
     #[Route(Method::Post, '/minn-admin/v1/themes/delete')]
     public function deleteTheme(Request $request): Response
     {
@@ -97,6 +101,7 @@ final readonly class PackagesController
         return Reply::answer($request, ['installed' => true, 'plugin' => $result['folder'] . '/' . $result['folder'], 'url' => $url]);
     }
 
+    /** Searches wordpress.org plugins. */
     #[Route(Method::Get, '/minn-admin/v1/plugins/search')]
     public function searchPlugins(Request $request): Response
     {
@@ -104,6 +109,7 @@ final readonly class PackagesController
         return Reply::answer($request, $this->packages->searchPlugins(trim((string) ($request->query('q') ?? '')), (int) ($request->query('page') ?? 1)));
     }
 
+    /** One wordpress.org plugin's details. */
     #[Route(Method::Get, '/minn-admin/v1/plugins/info')]
     public function pluginInfo(Request $request): Response
     {

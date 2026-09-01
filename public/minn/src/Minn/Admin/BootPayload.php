@@ -37,11 +37,13 @@ final readonly class BootPayload
     ) {
     }
 
+    /** The site's name, or Site when it has none. */
     public function siteName(): string
     {
         return (string) ($this->site->option('blogname') ?? 'Site');
     }
 
+    /** The window.MINN payload the app boots from, for one signed-in session. */
     public function build(Authenticated $session): array
     {
         $userId = $session->id();

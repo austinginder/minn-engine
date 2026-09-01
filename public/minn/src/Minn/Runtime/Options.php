@@ -35,6 +35,7 @@ final class Options
         return $out;
     }
 
+    /** An option's value, decoded, or null when unset. */
     public function get(string $name): mixed
     {
         if (array_key_exists($name, $this->cache)) {
@@ -51,11 +52,13 @@ final class Options
         return $this->cache[$name] = self::fromStorage($raw);
     }
 
+    /** Whether an option exists. */
     public function exists(string $name): bool
     {
         return $this->get($name) !== null || (!isset($this->missing[$name]) && array_key_exists($name, $this->cache));
     }
 
+    /** Adds an option only when it is unset. */
     public function add(string $name, mixed $value, string $autoload = 'auto'): bool
     {
         if (array_key_exists($name, $this->cache) || $this->db->option($name) !== null) {
@@ -96,6 +99,7 @@ final class Options
         return true;
     }
 
+    /** Removes an option. */
     public function delete(string $name): bool
     {
         $existed = $this->get($name) !== null;
@@ -129,6 +133,7 @@ final class Options
         return $out;
     }
 
+    /** Drops an option from the cache. */
     public function forget(string $name): void
     {
         unset($this->cache[$name], $this->missing[$name]);
@@ -146,6 +151,7 @@ final class Options
         return (string) $value;
     }
 
+    /** A stored option value decoded the way the reference reads it. */
     public static function fromStorage(string $raw): mixed
     {
         if ($raw !== '' && preg_match('/^[aObis]:|^N;/', $raw)) {

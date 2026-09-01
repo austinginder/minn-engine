@@ -8,6 +8,8 @@ namespace Minn\Blocks;
 final class Selector
 {
     /**
+     * The CSS selector a block's style targets, or null.
+     *
      * @param array<string, mixed> $selectors the block type's selectors map
      * @param array<string, mixed> $supports the block type's supports
      * @param string|list<string>|null $target 'root', a dotted feature path, or a path list

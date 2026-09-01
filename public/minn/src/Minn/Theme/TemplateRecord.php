@@ -31,11 +31,13 @@ final readonly class TemplateRecord
     ) {
     }
 
+    /** The reference's template id: theme//slug. */
     public function id(): string
     {
         return "{$this->theme}//{$this->slug}";
     }
 
+    /** Whether this is a template part. */
     public function isPart(): bool
     {
         return $this->type === 'wp_template_part';

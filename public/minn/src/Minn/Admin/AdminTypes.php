@@ -22,6 +22,7 @@ final class AdminTypes
     ) {
     }
 
+    /** The types beyond post and page the app may show, with their labels. */
     public function extra(): array
     {
         if ($this->extra !== null) {
@@ -65,11 +66,13 @@ final class AdminTypes
         return $out;
     }
 
+    /** The rest_base of a type slug. */
     public function restBaseOf(string $slug): string
     {
         return (string) ($this->types->all()[$slug]['rest_base'] ?? $slug);
     }
 
+    /** A type's singular label. */
     public function singularOf(string $slug): string
     {
         return (string) ($this->extra()[$slug]['labels']['singular_name'] ?? '');

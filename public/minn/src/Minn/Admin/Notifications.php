@@ -31,6 +31,7 @@ final readonly class Notifications
     ) {
     }
 
+    /** The bell feed for a user, newest first, grouped and marked read or unread. */
     public function items(int $userId): array
     {
         $now = time();

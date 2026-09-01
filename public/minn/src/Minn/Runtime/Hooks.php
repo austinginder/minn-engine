@@ -45,6 +45,7 @@ final class Hooks
     }
 
     /** @return array<string, int> */
+    /** How often each action, or each filter, has run, by hook. */
     public function &counters(bool $actions): array
     {
         if ($actions) {
@@ -54,6 +55,7 @@ final class Hooks
     }
 
     /** @return list<string> */
+    /** The hooks running now, outermost first, by reference for the facade\'s globals. */
     public function &stackRef(): array
     {
         return $this->stack;
@@ -66,6 +68,7 @@ final class Hooks
         return $levels === [] ? false : $levels[count($levels) - 1];
     }
 
+    /** Adds a callback to a hook at a priority. */
     public function add(string $hook, callable|array|string $callback, int|string $priority = 10, int $accepted = 1): bool
     {
         $new = !isset($this->hooks[$hook]);
@@ -77,6 +80,7 @@ final class Hooks
         return true;
     }
 
+    /** Removes a callback from a hook. */
     public function remove(string $hook, callable|array|string $callback, int|string $priority = 10): bool
     {
         $id = self::id($callback);
@@ -121,41 +125,57 @@ final class Hooks
         return false;
     }
 
-    /** @param list<mixed> $args the value first */
+    /**
+     * Runs a filter and returns the value.
+     *
+     * @param list<mixed> $args the value first
+     */
     public function filter(string $hook, array $args): mixed
     {
         $this->filtersDone[$hook] = ($this->filtersDone[$hook] ?? 0) + 1;
         return $this->run($hook, $args, true);
     }
 
-    /** @param list<mixed> $args */
+    /**
+     * Runs an action.
+     *
+     * @param list<mixed> $args
+     */
     public function action(string $hook, array $args): void
     {
         $this->actionsDone[$hook] = ($this->actionsDone[$hook] ?? 0) + 1;
         $this->run($hook, $args, false);
     }
 
+    /** How often an action has run. */
     public function actionsDone(string $hook): int
     {
         return $this->actionsDone[$hook] ?? 0;
     }
 
+    /** How often a filter has run. */
     public function filtersDone(string $hook): int
     {
         return $this->filtersDone[$hook] ?? 0;
     }
 
+    /** The hook running now, or false. */
     public function current(): string|false
     {
         return $this->stack === [] ? false : $this->stack[count($this->stack) - 1];
     }
 
+    /** Whether a hook, or any hook, is running. */
     public function doing(?string $hook): bool
     {
         return $hook === null ? $this->stack !== [] : in_array($hook, $this->stack, true);
     }
 
-    /** @return array<string, array<int, list<callable>>> a read-only view for diagnostics */
+    /**
+     * Every hook with callbacks, by name.
+     *
+     * @return array<string, array<int, list<callable>>> a read-only view for diagnostics
+     */
     public function registered(): array
     {
         $out = [];

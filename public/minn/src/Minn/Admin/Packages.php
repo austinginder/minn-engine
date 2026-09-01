@@ -389,6 +389,7 @@ final readonly class Packages
         return ['name' => '', 'version' => '', 'kind' => 'unknown'];
     }
 
+    /** A package over https, refusing anything else. */
     public function fetch(string $url): string
     {
         if (!str_starts_with($url, 'https://')) {

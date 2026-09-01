@@ -26,6 +26,7 @@ final readonly class Sitemaps
     ) {
     }
 
+    /** The sitemap index's XML. */
     public function index(): string
     {
         $entries = [];

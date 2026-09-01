@@ -11,5 +11,6 @@ namespace Minn\Extension;
  */
 interface Extension
 {
+    /** Registers the extension's seams. */
     public function register(Seams $minn): void;
 }

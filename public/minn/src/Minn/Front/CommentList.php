@@ -15,6 +15,8 @@ use Closure;
 final class CommentList
 {
     /**
+     * A threaded comment list the way the reference walks it.
+     *
      * @param list<array<string, mixed>> $comments rows with comment_ID and comment_parent
      * @param Closure(array, int): string $item the opening markup for a comment at a depth
      * @param Closure(array, int): string $close the closing markup

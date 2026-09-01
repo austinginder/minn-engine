@@ -22,6 +22,8 @@ use Minn\Support\Html;
 final class ArchiveTitle
 {
     /**
+     * The archive title's prefix and title for a resolution.
+     *
      * @param string|null $dateFormat the site's date_format option, for day archives
      * @return array{string, string} the label (no colon) and the escaped bare name; both empty when the view has none
      */

@@ -22,6 +22,7 @@ final readonly class LatestPosts
     ) {
     }
 
+    /** The block's HTML. */
     public function render(Block $block): string
     {
         $count = max(1, min(100, (int) $block->attr('postsToShow', 5)));

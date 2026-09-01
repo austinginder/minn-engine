@@ -40,6 +40,7 @@ final class BlockTemplates
         return $row;
     }
 
+    /** Forgets a registered template; the row, or null. */
     public function unregister(string $name): ?array
     {
         $row = $this->templates[$name] ?? null;
@@ -47,17 +48,23 @@ final class BlockTemplates
         return $row;
     }
 
-    /** @return array<string, array<string, mixed>> by registered name */
+    /**
+     * Every registered template.
+     *
+     * @return array<string, array<string, mixed>> by registered name
+     */
     public function all(): array
     {
         return $this->templates;
     }
 
+    /** One registered template, or null. */
     public function get(string $name): ?array
     {
         return $this->templates[$name] ?? null;
     }
 
+    /** A registered template by slug, or null. */
     public function bySlug(string $slug): ?array
     {
         foreach ($this->templates as $row) {

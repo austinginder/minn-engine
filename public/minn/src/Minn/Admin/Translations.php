@@ -40,12 +40,14 @@ final readonly class Translations
         return $this->siteLocale();
     }
 
+    /** The site's locale from WPLANG, en_US by default. */
     public function siteLocale(): string
     {
         $site = trim((string) ($this->site->option('WPLANG') ?? ''));
         return $site === '' ? 'en_US' : $site;
     }
 
+    /** Whether a locale reads right to left. */
     public static function isRtl(string $locale): bool
     {
         return in_array($locale, self::RTL, true);
@@ -86,7 +88,11 @@ final readonly class Translations
         return $locale === 'en_US' || in_array($locale, $this->installedCodes(), true);
     }
 
-    /** @return list<array{0: string, 1: string}> the site-default row, en_US, then every installed locale */
+    /**
+     * The locales with a pack on disk, the two defaults first.
+     *
+     * @return list<array{0: string, 1: string}> the site-default row, en_US, then every installed locale
+     */
     public function installed(): array
     {
         $names = $this->names();

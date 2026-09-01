@@ -20,7 +20,11 @@ final readonly class Logs
     {
     }
 
-    /** @return array<string, array{label: string, group: string, path: string}> */
+    /**
+     * Every log the engine knows about, with its path and group.
+     *
+     * @return array<string, array{label: string, group: string, path: string}>
+     */
     public function sources(): array
     {
         $sources = ['debug' => ['label' => 'Debug log', 'group' => 'Minn Engine', 'path' => $this->debugLogPath()]];
@@ -31,7 +35,11 @@ final readonly class Logs
         return $sources;
     }
 
-    /** @return list<array> the sources that exist, debug first */
+    /**
+     * The logs list as the System view shows it.
+     *
+     * @return list<array> the sources that exist, debug first
+     */
     public function listPayload(): array
     {
         $out = [];
@@ -53,6 +61,7 @@ final readonly class Logs
         return $out;
     }
 
+    /** One log's tail, by id. */
     public function read(string $id): array
     {
         $source = $this->sources()[$id] ?? null;
@@ -67,6 +76,7 @@ final readonly class Logs
         ];
     }
 
+    /** Empties one log. */
     public function clear(string $id): void
     {
         $source = $this->sources()[$id] ?? null;
@@ -85,6 +95,7 @@ final readonly class Logs
         }
     }
 
+    /** Where debug.log lives, from WP_DEBUG_LOG or the default. */
     public function debugLogPath(): string
     {
         $configured = defined('WP_DEBUG_LOG') && is_string(WP_DEBUG_LOG) ? WP_DEBUG_LOG : '';
@@ -136,6 +147,7 @@ final readonly class Logs
         return $real !== false && $root !== false && str_starts_with($real, rtrim($root, '/') . '/');
     }
 
+    /** A byte count in KB, MB, or GB. */
     public static function human(int $bytes): string
     {
         if ($bytes >= 1073741824) {

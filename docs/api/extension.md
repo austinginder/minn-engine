@@ -4,14 +4,14 @@ the extension contract and its seams
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Extension`](#extension) | interface | 4 | What a Minn extension is: a class the engine constructs once per request |
-| [`Extensions`](#extensions) | final class | 21 | The request's seams once the loader has filled them, and the runner the |
-| [`Loader`](#loader) | final class | 118 | Finds extensions under wp-content/plugins and wp-content/mu-plugins, |
-| [`Manifest`](#manifest) | final readonly class | 52 | minn.json, read as data. A folder under wp-content/plugins (or |
+| [`Extension`](#extension) | interface | 5 | What a Minn extension is: a class the engine constructs once per request |
+| [`Extensions`](#extensions) | final class | 24 | The request's seams once the loader has filled them, and the runner the |
+| [`Loader`](#loader) | final class | 127 | Finds extensions under wp-content/plugins and wp-content/mu-plugins, |
+| [`Manifest`](#manifest) | final readonly class | 53 | minn.json, read as data. A folder under wp-content/plugins (or |
 | [`Registrations`](#registrations) | final readonly class | 25 | Everything the extensions registered for this request, handed from Seams to the runner once. |
-| [`SeamRunner`](#seamrunner) | final readonly class | 69 | The engine's side of the seams: what the loader collected, called at the |
-| [`Seams`](#seams) | final class | 98 | Where an extension can take part in a request: eight typed registrations |
-| [`Shortcodes`](#shortcodes) | final class | 46 | The shortcode syntax in rendered content: [tag], [tag attr="v" flag], |
+| [`SeamRunner`](#seamrunner) | final readonly class | 79 | The engine's side of the seams: what the loader collected, called at the |
+| [`Seams`](#seams) | final class | 99 | Where an extension can take part in a request: eight typed registrations |
+| [`Shortcodes`](#shortcodes) | final class | 54 | The shortcode syntax in rendered content: [tag], [tag attr="v" flag], |
 
 ## Extension
 
@@ -24,6 +24,8 @@ Seams object; there is no global state to reach for.
 Used by: `Minn\Extension\Loader`
 
 ### `register(Minn\Extension\Seams $minn): void`
+
+Registers the extension's seams.
 
 
 ## Extensions
@@ -38,9 +40,15 @@ Used by: `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Renderer`, `Minn\E
 
 ### static `set(Minn\Extension\Seams $seams): void`
 
+Installs the seams for this request.
+
 ### static `seams(): ?Minn\Extension\Seams`
 
+The registered seams, if any.
+
 ### static `runner(): ?Minn\Extension\SeamRunner`
+
+The engine side of the seams, if any.
 
 
 ## Loader
@@ -60,6 +68,8 @@ __construct(string $contentDir, Minn\Content\Site $site)
 
 ### `found(): array`
 
+Every extension manifest on disk.
+
 - `@return list<Manifest> every extension on disk`
 
 ### `refresh(): void`
@@ -67,6 +77,8 @@ __construct(string $contentDir, Minn\Content\Site $site)
 Forgets the cached activation list after an option write.
 
 ### `active(): array`
+
+The manifests that are active.
 
 - `@return list<Manifest> the extensions this site has switched on`
 
@@ -84,7 +96,9 @@ Which active WordPress plugin files an extension stands in for. @return array<st
 
 ### `register(Minn\Extension\Seams $seams): void`
 
-Internals: `autoload()` (private, line 120)
+Registers every active extension's seams.
+
+Internals: `autoload()` (private, line 129)
 
 
 ## Manifest
@@ -140,6 +154,8 @@ __construct(string $slug, string $dir, string $name, string $version, string $li
 
 ### static `read(string $dir): ?self`
 
+A folder's minn.json, or null when there is none.
+
 
 ## Registrations
 
@@ -189,7 +205,11 @@ __construct(Minn\Extension\Seams $seams, Minn\Extension\Registrations $registere
 
 ### `allowsBlock(Minn\Blocks\Block $block): bool`
 
+Whether every block gate lets a block render.
+
 ### `filterBlock(Minn\Blocks\Block $block, string $html): string`
+
+A block's HTML through every block filter.
 
 ### `filterContent(string $html, Minn\Content\PostRecord $post): string`
 
@@ -199,15 +219,25 @@ so a record is handed over as one.
 
 ### `title(string $title): string`
 
+The document title through the title filter.
+
 ### `head(): string`
+
+What the extensions add to the head.
 
 ### `footer(): string`
 
+What the extensions add to the footer.
+
 ### `bodyClasses(): array`
+
+The body classes the extensions add.
 
 - `@return list<string>`
 
 ### `filterDocument(string $html): string`
+
+The whole document through every document filter.
 
 
 ## Seams
@@ -256,6 +286,8 @@ Markup before </body>.
 
 ### `bodyClass(string $class): void`
 
+Adds a body class.
+
 ### `title(Closure $filter): void`
 
 Replaces the document title; receives the engine's own.
@@ -282,9 +314,13 @@ Used by: `Minn\Extension\SeamRunner`
 
 ### static `apply(string $html, array $registry, Minn\Extension\Seams $seams): string`
 
+Content with the registered shortcodes run.
+
 - `@param array<string, Closure> $registry`
 
 ### static `attributes(string $text): array`
+
+A shortcode's attributes parsed, curly quotes included.
 
 - `@return array<string, string> named attributes; bare words keyed by position`
 

@@ -89,6 +89,7 @@ final readonly class GlobalStyles
         return $resolve($this->styles());
     }
 
+    /** The global stylesheet from theme.json and the user's styles. */
     public function css(): string
     {
         $json = $this->user === null ? $this->theme->json() : Theme::merge($this->theme->json(), $this->user);
@@ -206,7 +207,11 @@ final readonly class GlobalStyles
         return $out;
     }
 
-    /** @return list<array> */
+    /**
+     * The font family presets in the settings.
+     *
+     * @return list<array>
+     */
     public static function fontFamilies(array $settings): array
     {
         return self::presetList($settings['typography']['fontFamilies'] ?? []);

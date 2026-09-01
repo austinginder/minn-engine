@@ -19,6 +19,7 @@ final readonly class UpdatesController
     {
     }
 
+    /** The plugin update offers. */
     #[Route(Method::Get, '/minn-admin/v1/plugin-updates')]
     public function pluginUpdates(Request $request): Response
     {
@@ -34,6 +35,7 @@ final readonly class UpdatesController
         ]);
     }
 
+    /** Icons and details for the installed plugins. */
     #[Route(Method::Get, '/minn-admin/v1/plugin-meta')]
     public function pluginMeta(Request $request): Response
     {
@@ -42,6 +44,7 @@ final readonly class UpdatesController
         return Reply::answer($request, (object) $this->updates->pluginMeta());
     }
 
+    /** Asks wordpress.org again, now. */
     #[Route(Method::Post, '/minn-admin/v1/check-updates')]
     public function check(Request $request): Response
     {
@@ -63,6 +66,7 @@ final readonly class UpdatesController
         ]);
     }
 
+    /** Updates one plugin. */
     #[Route(Method::Post, '/minn-admin/v1/plugins/update')]
     public function updatePlugin(Request $request): Response
     {
@@ -78,6 +82,7 @@ final readonly class UpdatesController
         return Reply::answer($request, ['updated' => true, 'version' => $this->updates->updatePlugin($file)]);
     }
 
+    /** Updates every plugin with an offer. */
     #[Route(Method::Post, '/minn-admin/v1/plugins/update-all')]
     public function updateAll(Request $request): Response
     {
@@ -99,6 +104,7 @@ final readonly class UpdatesController
         return Reply::answer($request, $updated === [] && $failed === [] ? ['updated' => []] : ['updated' => $updated, 'failed' => $failed, 'errors' => $errors]);
     }
 
+    /** Updates one theme. */
     #[Route(Method::Post, '/minn-admin/v1/themes/update')]
     public function updateTheme(Request $request): Response
     {
@@ -111,6 +117,7 @@ final readonly class UpdatesController
         return Reply::answer($request, ['updated' => true, 'version' => $this->updates->updateTheme($stylesheet)]);
     }
 
+    /** Turns auto-updates on or off for one asset. */
     #[Route(Method::Post, '/minn-admin/v1/auto-updates')]
     public function autoUpdates(Request $request): Response
     {

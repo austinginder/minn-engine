@@ -17,6 +17,7 @@ final readonly class SyncedPattern
     {
     }
 
+    /** The block's HTML. */
     public function render(Block $block, Renderer $renderer): string
     {
         $ref = (int) $block->attr('ref', 0);

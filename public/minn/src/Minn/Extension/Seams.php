@@ -81,6 +81,7 @@ final class Seams
         $this->footer[] = $render;
     }
 
+    /** Adds a body class. */
     public function bodyClass(string $class): void
     {
         $this->bodyClasses[] = $class;

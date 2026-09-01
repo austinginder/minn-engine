@@ -21,6 +21,7 @@ use Minn\Support\Html;
  */
 final class ClassicContent
 {
+    /** A post's content as the classic loop prints it, with the more link. */
     public static function render(PostRecord $post, ?string $moreLinkText): string
     {
         $permalinks = Runtime::current()->get('permalinks');

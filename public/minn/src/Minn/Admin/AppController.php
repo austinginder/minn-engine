@@ -75,6 +75,7 @@ final readonly class AppController
         HTML;
     }
 
+    /** One file of the app bundle, with its content type and caching headers. */
     #[Route(Method::Get, '/minn/admin/assets/{path*}')]
     public function asset(Request $request, string $path): Response
     {
@@ -86,6 +87,7 @@ final readonly class AppController
         return new Response(200, ['Content-Type' => $type, 'Cache-Control' => 'public, max-age=300'], (string) file_get_contents($file));
     }
 
+    /** The one admin-ajax action the app needs: a fresh REST nonce. */
     #[Route(Method::Any, '/wp-admin/admin-ajax.php')]
     public function ajax(Request $request): Response
     {
