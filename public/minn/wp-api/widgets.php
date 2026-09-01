@@ -210,8 +210,15 @@ function wp_convert_widget_settings($base_name, $option_name, $settings)
     return $settings;
 }
 
+/**
+ * Registers the widgets the engine provides, then fires widgets_init for
+ * plugin and theme code. The block widget is the one every modern sidebar
+ * is made of, so it must be registered before the action runs or nothing
+ * a site saved in the block editor renders at all.
+ */
 function wp_widgets_init()
 {
+    register_widget('WP_Widget_Block');
     do_action('widgets_init');
 }
 

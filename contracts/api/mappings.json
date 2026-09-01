@@ -2,12 +2,12 @@
     "generated": "2026-09-01",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 322,
+        "minn": 324,
         "composes": 683,
-        "leaf": 342,
-        "noop": 1197,
-        "functions": 2538,
-        "minnMethods": 363,
+        "leaf": 344,
+        "noop": 1198,
+        "functions": 2543,
+        "minnMethods": 369,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -3024,7 +3024,9 @@
             "file": "classes/WP_Locale.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Support\\Locale::monthKey"
+            ],
             "composes": []
         },
         "WP_Locale::get_month_abbrev": {
@@ -3038,7 +3040,9 @@
             "file": "classes/WP_Locale.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Support\\Locale::monthKey"
+            ],
             "composes": []
         },
         "WP_Locale::get_weekday": {
@@ -3071,9 +3075,13 @@
         },
         "WP_Locale::init": {
             "file": "classes/WP_Locale.php",
-            "lines": 22,
-            "kind": "composes",
-            "minn": [],
+            "lines": 16,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Support\\Locale::abbreviation",
+                "Minn\\Support\\Locale::monthKey",
+                "Minn\\Support\\Locale::weekdayInitial"
+            ],
             "composes": [
                 "__"
             ]
@@ -6733,6 +6741,48 @@
             "kind": "noop",
             "minn": [],
             "composes": []
+        },
+        "WP_Widget_Block::__construct": {
+            "file": "classes/WP_Widget_Block.php",
+            "lines": 6,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Widget_Block::dynamic_classname": {
+            "file": "classes/WP_Widget_Block.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\BlockWidget::classNameFor"
+            ],
+            "composes": [
+                "parse_blocks"
+            ]
+        },
+        "WP_Widget_Block::form": {
+            "file": "classes/WP_Widget_Block.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Widget_Block::update": {
+            "file": "classes/WP_Widget_Block.php",
+            "lines": 3,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Widget_Block::widget": {
+            "file": "classes/WP_Widget_Block.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "wp_parse_args"
+            ]
         },
         "WP_Widget_Factory::__construct": {
             "file": "classes/WP_Widget.php",
@@ -21204,16 +21254,20 @@
         },
         "wp_page_menu": {
             "file": "nav-menu-template.php",
-            "lines": 18,
-            "kind": "composes",
-            "minn": [],
+            "lines": 29,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PageMenu::home",
+                "Minn\\Runtime\\PageMenu::items"
+            ],
             "composes": [
                 "apply_filters",
                 "esc_attr",
-                "esc_html",
-                "esc_url",
                 "get_pages",
                 "get_permalink",
+                "get_queried_object_id",
+                "home_url",
+                "is_front_page",
                 "is_page",
                 "wp_parse_args"
             ]
@@ -22988,11 +23042,12 @@
         },
         "wp_widgets_init": {
             "file": "widgets.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 2,
+            "kind": "composes",
             "minn": [],
             "composes": [
-                "do_action"
+                "do_action",
+                "register_widget"
             ]
         },
         "wpautop": {

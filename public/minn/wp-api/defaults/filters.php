@@ -21,6 +21,12 @@ add_filter('the_excerpt', 'convert_chars');
 add_filter('the_excerpt', 'wpautop');
 add_action('wp_head', 'wp_enqueue_scripts', 1);
 add_action('wp_enqueue_scripts', 'wp_common_block_scripts_and_styles', 10);
+// A block widget's content runs the block and shortcode pipelines. The
+// reference adds wp_filter_content_tags here to fit out images; the engine
+// renders them through Blocks\ImageTags on the way out instead, so adding
+// it would fit the same images twice.
+add_filter('widget_block_content', 'do_blocks', 9);
+add_filter('widget_block_content', 'do_shortcode', 11);
 // A classic theme gets the reference's wp_head defaults, registered before its own hooks.
 add_action('setup_theme', '_minn_classic_head_defaults', 1);
 add_action('wp_head', 'wp_print_styles', 8);
@@ -85,6 +91,9 @@ add_filter('the_content', [$GLOBALS['wp_embed'], 'autoembed'], 8);
 
 // Comments close on old posts when Discussion says so; the connectors registry fills at init 15.
 add_filter('comments_open', '_close_comments_for_old_post', 10, 2);
+// Widgets register at init 1, as the reference schedules them, so a theme's
+// sidebar has its widgets by the time it renders.
+add_action('init', 'wp_widgets_init', 1);
 add_action('init', '_wp_connectors_init', 15);
 add_action('init', '_wp_register_default_connector_settings', 20);
 add_action('init', '_wp_connectors_pass_default_keys_to_ai_client', 20);

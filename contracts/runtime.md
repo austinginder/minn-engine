@@ -1438,3 +1438,29 @@ Storefront gaps still open: `wp_page_menu` omits the Home item and the
 header nav is unstyled and the sidebar is absent. The product grid,
 breadcrumbs, sorting, result count, pagination, prices and sale badges all
 match the reference.
+
+## The page-list menu and block widgets (2026-09-01)
+
+- **`wp_page_menu`** builds the list a classic theme falls back to when no
+  menu is assigned. Captured rules: the optional home item writes an empty
+  class attribute (`<li >`), a page item carries `page_item page-item-{id}`
+  plus `current_page_item`, and current is decided by the QUERIED OBJECT,
+  not `is_page()` — a plugin can point an archive at its page, as
+  WooCommerce does for the shop. When the args carry a non-empty
+  `fallback_cb` (which is how `wp_nav_menu` invokes it) the list is wrapped
+  in a plain `<ul>` and the caller's `before`/`after` are IGNORED; without
+  it, before/after are used and no ul is added. Storefront's whole header
+  nav is this path, and the missing ul was why its CSS bound to nothing.
+- **`wp_widgets_init` runs on `init` at priority 1** and must register
+  `WP_Widget_Block` before firing the action. Every widget the block editor
+  saves is a block widget, so a sidebar filled in a modern WordPress has
+  nothing else in it: without that class the instances never register and
+  `dynamic_sidebar` renders an empty container.
+- A block widget's wrapper gains a second class named after the first
+  block in its content (`core/search` is `widget_search`, `core/paragraph`
+  is `widget_text`, `core/latest-posts` is `widget_recent_entries`; a block
+  with no legacy equivalent adds nothing). `widget_block_content` runs
+  `do_blocks` at 9 and `do_shortcode` at 11. The reference also runs
+  `wp_filter_content_tags` at 12 to fit out images; the engine renders
+  images through `Blocks\ImageTags` on the way out instead, so adding it
+  would fit the same images twice.

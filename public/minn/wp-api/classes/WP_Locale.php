@@ -1,5 +1,7 @@
 <?php
 
+use Minn\Support\Locale as MinnLocale;
+
 /**
  * The locale's date, time, and number names. Plugin code reads the
  * globals directly (WooCommerce's block settings read weekday_abbrev),
@@ -16,10 +18,10 @@ class WP_Locale
     public $month_genitive = [];
     public $month_abbrev = [];
     public $meridiem = [];
-    public $text_direction = 'ltr';
+    public $text_direction = MinnLocale::TEXT_DIRECTION;
     public $number_format = [];
-    public $list_item_separator = ', ';
-    public $word_count_type = 'words';
+    public $list_item_separator = MinnLocale::LIST_ITEM_SEPARATOR;
+    public $word_count_type = MinnLocale::WORD_COUNT_TYPE;
 
     public function __construct()
     {
@@ -28,28 +30,22 @@ class WP_Locale
 
     public function init()
     {
-        $days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-        foreach ($days as $index => $day) {
+        foreach (MinnLocale::WEEKDAYS as $index => $day) {
             $this->weekday[$index] = __($day);
-            $this->weekday_initial[__($day)] = __(substr($day, 0, 1));
-            $this->weekday_abbrev[__($day)] = __(substr($day, 0, 3));
+            $this->weekday_initial[__($day)] = __(MinnLocale::weekdayInitial($day));
+            $this->weekday_abbrev[__($day)] = __(MinnLocale::abbreviation($day));
         }
-        $months = [
-            'January', 'February', 'March', 'April', 'May', 'June',
-            'July', 'August', 'September', 'October', 'November', 'December',
-        ];
-        foreach ($months as $index => $month) {
-            $key = str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT);
+        foreach (MinnLocale::MONTHS as $index => $month) {
+            $key = MinnLocale::monthKey($index + 1);
             $this->month[$key] = __($month);
             $this->month_genitive[$key] = __($month);
-            $this->month_abbrev[__($month)] = __(substr($month, 0, 3));
+            $this->month_abbrev[__($month)] = __(MinnLocale::abbreviation($month));
         }
-        // May is its own abbreviation; every other month keeps three letters.
-        $this->meridiem = ['am' => 'am', 'pm' => 'pm', 'AM' => 'AM', 'PM' => 'PM'];
-        $this->number_format = ['thousands_sep' => ',', 'decimal_point' => '.'];
-        $this->text_direction = 'ltr';
-        $this->list_item_separator = ', ';
-        $this->word_count_type = 'words';
+        $this->meridiem = MinnLocale::MERIDIEM;
+        $this->number_format = MinnLocale::NUMBER_FORMAT;
+        $this->text_direction = MinnLocale::TEXT_DIRECTION;
+        $this->list_item_separator = MinnLocale::LIST_ITEM_SEPARATOR;
+        $this->word_count_type = MinnLocale::WORD_COUNT_TYPE;
     }
 
     public function get_weekday($weekday_number)
@@ -69,7 +65,7 @@ class WP_Locale
 
     public function get_month($month_number)
     {
-        return $this->month[str_pad((string) (int) $month_number, 2, '0', STR_PAD_LEFT)] ?? '';
+        return $this->month[MinnLocale::monthKey($month_number)] ?? '';
     }
 
     public function get_month_abbrev($month_name)
@@ -79,7 +75,7 @@ class WP_Locale
 
     public function get_month_genitive($month_number)
     {
-        return $this->month_genitive[str_pad((string) (int) $month_number, 2, '0', STR_PAD_LEFT)] ?? '';
+        return $this->month_genitive[MinnLocale::monthKey($month_number)] ?? '';
     }
 
     public function get_meridiem($meridiem)

@@ -1,4 +1,6 @@
 <?php
+
+use Minn\Runtime\PageMenu;
 /** Nav menu rendering: wp_nav_menu() over the reference's walker contract. Assembly lives in Minn\Runtime\NavMenu. */
 
 use Minn\Runtime\NavMenu;
@@ -37,14 +39,25 @@ function walk_nav_menu_tree($items, $depth, $args)
 /** The classic fallback when no menu is assigned: a page list. The engine renders the list shape without the reference's page-walker chrome. */
 function wp_page_menu($args = [])
 {
-    $args = wp_parse_args($args, ['sort_column' => 'menu_order, post_title', 'menu_id' => '', 'menu_class' => 'menu', 'container' => 'div', 'echo' => true, 'link_before' => '', 'link_after' => '', 'before' => '<ul>', 'after' => '</ul>', 'item_spacing' => 'discard', 'walker' => '']);
+    $args = wp_parse_args($args, ['sort_column' => 'menu_order, post_title', 'menu_id' => '', 'menu_class' => 'menu', 'container' => 'div', 'echo' => true, 'link_before' => '', 'link_after' => '', 'before' => '<ul>', 'after' => '</ul>', 'item_spacing' => 'discard', 'show_home' => false, 'walker' => '']);
     $args = apply_filters('wp_page_menu_args', $args);
-    $list = '';
+    $pages = [];
     foreach (get_pages(['sort_column' => $args['sort_column']]) ?: [] as $page) {
-        $current = is_page($page->ID) ? ' class="page_item page-item-' . (int) $page->ID . ' current_page_item"' : ' class="page_item page-item-' . (int) $page->ID . '"';
-        $list .= '<li' . $current . '><a href="' . esc_url((string) get_permalink($page->ID)) . '">' . $args['link_before'] . esc_html((string) $page->post_title) . $args['link_after'] . '</a></li>';
+        // The queried object, not is_page(): a plugin can point an archive
+        // at its page (WooCommerce marks the shop page current on a
+        // product archive), and the reference follows that.
+        $pages[] = ['id' => (int) $page->ID, 'title' => (string) $page->post_title, 'url' => (string) get_permalink($page->ID), 'current' => (int) $page->ID === (int) get_queried_object_id()];
     }
-    $menu = $list === '' ? '' : $args['before'] . $list . $args['after'];
+    $home = PageMenu::home($args['show_home'] ?? false, home_url('/'), is_front_page());
+    $list = PageMenu::items($pages, $home, (string) $args['link_before'], (string) $args['link_after']);
+    // Called as wp_nav_menu's fallback (which is what a non-empty
+    // fallback_cb marks), the list is wrapped in a plain ul and the
+    // caller's before/after are ignored.
+    $menu = match (true) {
+        $list === '' => '',
+        !empty($args['fallback_cb']) => '<ul>' . $list . '</ul>',
+        default => $args['before'] . $list . $args['after'],
+    };
     if ($menu !== '' && $args['container']) {
         $attrs = $args['menu_id'] ? ' id="' . esc_attr($args['menu_id']) . '"' : '';
         $menu = '<' . $args['container'] . $attrs . ' class="' . esc_attr($args['menu_class']) . '">' . $menu . '</' . $args['container'] . '>';
@@ -56,3 +69,4 @@ function wp_page_menu($args = [])
     }
     return $menu;
 }
+
