@@ -26,7 +26,8 @@ add_action('wp_head', 'wp_print_styles', 8);
 add_action('wp_head', '_minn_print_engine_styles', 8);
 add_action('wp_head', 'wp_print_head_scripts', 9);
 add_action('wp_footer', 'wp_print_speculation_rules', 10);
-add_action('wp_footer', '_wp_footer_scripts', 20);
+add_action('wp_footer', 'wp_print_footer_scripts', 20);
+add_action('wp_print_footer_scripts', '_wp_footer_scripts', 10);
 add_filter('option_blog_charset', '_wp_specialchars');
 // The robots meta directives, in the reference's registration order (it decides the directive order in the tag).
 add_filter('wp_robots', 'wp_robots_noindex');

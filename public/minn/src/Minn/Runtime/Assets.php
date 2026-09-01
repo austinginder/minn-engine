@@ -107,9 +107,37 @@ final class Assets
         return isset($this->items[$handle]);
     }
 
+    /**
+     * Queued directly, or pulled in as the dependency of something queued,
+     * however deep. The reference answers the same way, and plugin code
+     * leans on it: WooCommerce only attaches its settings blob when it
+     * finds `wc-settings` "enqueued", and nothing queues that handle by
+     * name, it only ever rides in as a dependency.
+     */
     public function enqueued(string $handle): bool
     {
-        return in_array($handle, $this->queue, true);
+        if (in_array($handle, $this->queue, true)) {
+            return true;
+        }
+        $seen = [];
+        $reaches = function (string $from) use (&$reaches, &$seen, $handle): bool {
+            if (isset($seen[$from])) {
+                return false;
+            }
+            $seen[$from] = true;
+            foreach ($this->items[$from]['deps'] ?? [] as $dep) {
+                if ($dep === $handle || $reaches($dep)) {
+                    return true;
+                }
+            }
+            return false;
+        };
+        foreach ($this->queue as $queued) {
+            if ($reaches($queued)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public function done(string $handle): bool

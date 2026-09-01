@@ -125,6 +125,45 @@ $say('esc_textarea', esc_textarea($in));
 $say('esc_js', esc_js("a'b\"c\nd\\e</script>"));
 $say('esc_html empty', esc_html(''));
 $say('esc_html entity normalization', array_map(static fn (string $c): array => [esc_html($c), esc_attr($c)], ['&#36;16', '&#0036;', '&#x24;', '&#X24;', '&hellip;', '&bogus;', '&#999999999;', 'a&#36;b&amp;c<d']));
+// A handle counts as enqueued when it only rides in as another handle's
+// dependency, however deep: plugin code gates inline data on exactly this
+// (WooCommerce attaches wcSettings only when it finds wc-settings enqueued,
+// and nothing ever queues that handle by name).
+$say('wp_script_is enqueued through deps', (static function (): array {
+    wp_register_script('minn-probe-leaf', '/leaf.js', [], '1');
+    wp_register_script('minn-probe-mid', '/mid.js', ['minn-probe-leaf'], '1');
+    wp_register_script('minn-probe-top', '/top.js', ['minn-probe-mid'], '1');
+    $before = wp_script_is('minn-probe-leaf', 'enqueued');
+    wp_enqueue_script('minn-probe-top');
+    $out = [$before, wp_script_is('minn-probe-leaf', 'enqueued'), wp_script_is('minn-probe-mid', 'enqueued'), wp_script_is('minn-probe-top', 'enqueued'), wp_script_is('minn-probe-nope', 'enqueued')];
+    wp_dequeue_script('minn-probe-top');
+    foreach (['minn-probe-leaf', 'minn-probe-mid', 'minn-probe-top'] as $h) {
+        wp_deregister_script($h);
+    }
+    return $out;
+})());
+// The footer printer hangs off the wp_print_footer_scripts ACTION, so a
+// plugin can hook that action ahead of it to add inline data. Printing
+// straight from wp_footer would run before every such callback.
+$say('footer script hook wiring', (static function (): array {
+    global $wp_filter;
+    $names = static function (string $hook) use ($wp_filter): array {
+        $out = [];
+        foreach (($wp_filter[$hook] ?? []) as $priority => $cbs) {
+            foreach ($cbs as $cb) {
+                if (is_string($cb['function'])) {
+                    $out[] = $priority . ':' . $cb['function'];
+                }
+            }
+        }
+        return $out;
+    };
+    return [
+        in_array('20:wp_print_footer_scripts', $names('wp_footer'), true),
+        in_array('10:_wp_footer_scripts', $names('wp_print_footer_scripts'), true),
+    ];
+})());
+$say('WP_Scripts::print_translations', [wp_scripts()->print_translations('wp-i18n', false), wp_scripts()->print_translations('minn-probe-nope', false)]);
 $say('esc_html number', esc_html(5));
 $say('esc_html null', esc_html(null));
 foreach (['http://x.com/?a=1&b=2', 'http://x.com/?a=1&amp;b=2', ' javascript:alert(1)', 'JaVaScRiPt:x', 'x.com', 'x.com/path', '/path?x=1&y=2', 'mailto:a@b.c', 'http://x.com/a b', '', 'data:text/html,x', 'http://x.com/"onclick="x', "http://x.com/\x00nul", '#anchor', '?q=1', 'ftp://x/y', 'tel:123', 'http://[::1]/x', '//cdn.example/x.js', 'http://x.com/%20a%2Fb', 'http://x.com/é', 'https://x.com/a?b=c&d=e#f', 'http://x.com/a\'b', 'http://x.com/a<b>', 'foo:bar', 'http://x.com:8080/y', 'http:/x'] as $u) {

@@ -1324,3 +1324,55 @@ NOTE for probe rows: the api suite compares transcripts with json_encode,
 so a row must not pin a key ORDER that is only a merge artifact (the
 styles maps are the case in point; their CSS emission order is pinned by
 the styles suite instead). Pin the value by name, or the sorted key set.
+
+## The site's script pack, and what the React cart needed (2026-09-01)
+
+WooCommerce's block cart and checkout are React. The `@wordpress/*` packages
+they import are **GPL-2.0-or-later** (audited on npm: element 8.6.0, data
+10.54.0, api-fetch; core's `license.txt` is plain GPL with no MPL clause and
+the built `js/dist` files carry no headers), so the engine never ships them.
+`vendor/react.min.js` is MIT, but the wrappers are not.
+
+Instead the SITE installs them into its own wp-content, the way it installs
+a language pack: `wp minn scripts install [--from=<WordPress tree>]`, which
+defaults to the WordPress the swap parked beside the webroot, so the
+packages match the site's own core version by construction.
+`Minn\Runtime\ScriptPack` reads the pack's own
+`script-loader-packages.php` manifest (65 packages, keyed `name.js` with
+dependencies and version) plus the fifteen vendor handles WordPress
+registers outside it, and registers only handles the engine has not already
+provided: the engine's nine MIT packages under `minn/assets/wp` always win.
+A site owner adding GPL files to a site that already runs GPL plugins is not
+the engine distributing GPL; nothing under `minn/` changes.
+
+Four engine facts the React cart exposed, each now pinned in the api probe:
+
+- **A handle is "enqueued" when it only rides in as a dependency**, however
+  deep. `wp_script_is($h, 'enqueued')` recurses the queue's dependency
+  trees. WooCommerce attaches its whole `wcSettings` blob only when it finds
+  `wc-settings` enqueued, and nothing ever queues that handle by name.
+- **The footer printer hangs off the `wp_print_footer_scripts` ACTION**, not
+  off `wp_footer`: `wp_footer` fires `wp_print_footer_scripts` at 20, which
+  fires the action, and `_wp_footer_scripts` is hooked to THAT at 10. The
+  indirection is the contract, because plugins hook the action ahead of the
+  printer to add inline data (WooCommerce at priority 1). Printing straight
+  from `wp_footer` runs before all of them and drops their data.
+- **apiFetch must be told where the REST API is.** The reference adds an
+  inline script after `wp-api-fetch` with the root-URL middleware, the
+  nonce middleware, the media-upload middleware, and the nonce endpoint.
+  Without the root middleware a caller resolves its namespace against the
+  site root, so the Store API is requested at `/wc/store/v1/cart` with no
+  `/wp-json/` in front of it.
+- **One unregistered handle anywhere in a dependency tree drops every script
+  above it.** A missing `moment` (a vendor handle outside the packages
+  manifest) silently cost the entire WooCommerce cart bundle.
+
+Also landed: `WP_REST_Server::serve_batch_request_v1()` (HTTP 207 with
+`responses`, one enveloped {body, status, headers} per entry in request
+order; which methods a batch accepts is the route's own schema) and
+`WP_Scripts::print_translations()` (false: the engine carries no core
+JavaScript translations yet, which is what the reference answers for an
+untranslated handle).
+
+Known gap: `print_translations` never prints `setLocaleData`, so a plugin's
+JavaScript strings stay English even where its PHP is translated.

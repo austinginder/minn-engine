@@ -125,6 +125,18 @@ class WP_Scripts extends WP_Dependencies
         $item = $this->assets?->item((string) $handle);
         return $item === null ? '' : implode("\n", $item['inline'][$position === 'before' ? 'before' : 'after']);
     }
+
+    /**
+     * The `wp.i18n.setLocaleData` call a handle's translations would need.
+     * The engine carries no core JavaScript translations yet, so there is
+     * nothing to print and this answers false the way the reference does
+     * for an untranslated handle. Plugin code calls it while rendering
+     * (WooCommerce's blocks do), so it must exist and stay quiet.
+     */
+    public function print_translations($handle, $display = true)
+    {
+        return false;
+    }
 }
 
 class WP_Styles extends WP_Dependencies

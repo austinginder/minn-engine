@@ -19,6 +19,36 @@ add_action('init', static function (): void {
     wp_register_script('wp-html-entities', $wp('html-entities'), [], MINN_ENGINE_VERSION);
     wp_register_script('wp-a11y', $wp('a11y'), ['wp-dom-ready', 'wp-i18n', 'wp-polyfill'], MINN_ENGINE_VERSION);
     wp_register_script('wp-api-fetch', $wp('api-fetch'), ['wp-i18n', 'wp-url'], MINN_ENGINE_VERSION);
+    // apiFetch reaches the REST API only once it is told where it is and
+    // which nonce to send. Without the root middleware a caller resolves
+    // its own path against the site root, so a namespace like
+    // /wc/store/v1/cart is requested with no /wp-json/ in front of it.
+    wp_add_inline_script(
+        'wp-api-fetch',
+        sprintf('wp.apiFetch.use( wp.apiFetch.createRootURLMiddleware( "%s" ) );', esc_url_raw(get_rest_url())) . "\n"
+        . sprintf('wp.apiFetch.nonceMiddleware = wp.apiFetch.createNonceMiddleware( "%s" );', wp_create_nonce('wp_rest')) . "\n"
+        . 'wp.apiFetch.use( wp.apiFetch.nonceMiddleware );' . "\n"
+        . 'wp.apiFetch.use( wp.apiFetch.mediaUploadMiddleware );' . "\n"
+        . sprintf('wp.apiFetch.nonceEndpoint = "%s";', admin_url('admin-ajax.php?action=rest-nonce')),
+        'after'
+    );
+
+    // The site's own script pack (wp-content/minn-packages/wp-scripts): the
+    // GPL packages the engine does not reimplement, installed by the site
+    // owner, never shipped in minn/. The engine's MIT packages above are
+    // already registered, so they win; the pack only fills the gaps.
+    $contentDir = defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : ABSPATH . 'wp-content';
+    foreach (Minn\Runtime\ScriptPack::handles($contentDir) as $handle => $row) {
+        if (wp_script_is($handle, 'registered')) {
+            continue;
+        }
+        wp_register_script(
+            $handle,
+            content_url(Minn\Runtime\ScriptPack::RELATIVE_DIR . '/' . $row['file']),
+            $row['deps'],
+            $row['ver']
+        );
+    }
 }, 0);
 
 // The $wp_scripts and $wp_styles globals plugins read directly exist from the start.

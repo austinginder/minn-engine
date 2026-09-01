@@ -5,8 +5,8 @@
         "minn": 322,
         "composes": 676,
         "leaf": 339,
-        "noop": 1191,
-        "functions": 2522,
+        "noop": 1193,
+        "functions": 2524,
         "minnMethods": 363,
         "leafLinesOver15": 13
     },
@@ -4655,6 +4655,15 @@
             "minn": [],
             "composes": []
         },
+        "WP_REST_Server::serve_batch_request_v1": {
+            "file": "classes/WP_REST_Server.php",
+            "lines": 19,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_parse_url"
+            ]
+        },
         "WP_REST_Server::serve_request": {
             "file": "classes/WP_REST_Server.php",
             "lines": 1,
@@ -5364,6 +5373,13 @@
             "composes": []
         },
         "WP_Scripts::localize": {
+            "file": "classes/WP_Scripts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Scripts::print_translations": {
             "file": "classes/WP_Scripts.php",
             "lines": 1,
             "kind": "noop",
@@ -21204,11 +21220,10 @@
         },
         "wp_print_footer_scripts": {
             "file": "script-loader.php",
-            "lines": 2,
-            "kind": "composes",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": [
-                "_minn_print_scripts",
                 "do_action"
             ]
         },

@@ -310,6 +310,36 @@ class WP_REST_Server
         return rest_ensure_response(apply_filters('rest_envelope_response', $envelope, $response));
     }
 
+    /**
+     * Runs several requests in one round trip. Captured shape: HTTP 207
+     * with `responses`, one enveloped {body, status, headers} per entry in
+     * request order. Which methods a batch accepts is the route's own
+     * schema (the Store API allows POST, PUT, PATCH and DELETE), so a bad
+     * method is refused by parameter validation before this runs.
+     */
+    public function serve_batch_request_v1($batch_request)
+    {
+        $responses = [];
+        foreach ((array) $batch_request['requests'] as $args) {
+            $path = (string) ($args['path'] ?? '');
+            $parsed = wp_parse_url($path);
+            $single = new WP_REST_Request((string) ($args['method'] ?? 'POST'), $parsed['path'] ?? $path);
+            if (!empty($parsed['query'])) {
+                $query = [];
+                parse_str($parsed['query'], $query);
+                $single->set_query_params($query);
+            }
+            if (isset($args['body'])) {
+                $single->set_body_params((array) $args['body']);
+            }
+            if (isset($args['headers'])) {
+                $single->set_headers((array) $args['headers']);
+            }
+            $responses[] = $this->envelope_response($this->dispatch($single), false)->get_data();
+        }
+        return new WP_REST_Response(['responses' => $responses], 207);
+    }
+
     public function get_index($request)
     {
         $available = [

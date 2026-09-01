@@ -404,6 +404,30 @@
         ]
     ],
     [
+        "wp_script_is enqueued through deps",
+        [
+            false,
+            true,
+            true,
+            true,
+            false
+        ]
+    ],
+    [
+        "footer script hook wiring",
+        [
+            true,
+            true
+        ]
+    ],
+    [
+        "WP_Scripts::print_translations",
+        [
+            false,
+            false
+        ]
+    ],
+    [
         "esc_html number",
         "5"
     ],

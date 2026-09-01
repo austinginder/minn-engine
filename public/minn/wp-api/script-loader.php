@@ -227,10 +227,17 @@ function wp_print_scripts($handles = false)
     return _minn_print_scripts(false);
 }
 
+/**
+ * Fires the action only; `_wp_footer_scripts` is hooked to it and does the
+ * printing. That indirection is the contract, not an accident: a plugin
+ * hooks this action ahead of the printer to add inline data to a handle it
+ * already enqueued (WooCommerce adds the whole `wcSettings` blob at
+ * priority 1 this way). Printing here directly would run before every one
+ * of those callbacks and drop their data.
+ */
 function wp_print_footer_scripts()
 {
     do_action('wp_print_footer_scripts');
-    return _minn_print_scripts(true);
 }
 
 function _wp_footer_scripts()

@@ -13,6 +13,7 @@ use Minn\Extension\Loader;
 use Minn\Mail\MailSettings;
 use Minn\Mail\Mailer;
 use Minn\Mail\Message;
+use Minn\Runtime\ScriptPack;
 
 /**
  * Identifies the engine.
@@ -203,6 +204,69 @@ final class MinnCommand
         if ($code !== 0) {
             WP_CLI::halt($code);
         }
+    }
+
+    /**
+     * The site's script pack: the GPL `wp-*` JavaScript packages the engine
+     * does not reimplement, which a few plugin front ends need (the
+     * WooCommerce block cart and checkout). The engine never ships them;
+     * this installs them into the site's own wp-content, from the
+     * WordPress the swap parked beside the webroot, or from any WordPress
+     * tree named with --from.
+     *
+     * ## OPTIONS
+     *
+     * [<action>]
+     * : status (the default), install, or remove.
+     *
+     * [--from=<path>]
+     * : A WordPress tree to take the packages from. Defaults to the parked
+     * copy the install recorded.
+     *
+     * @when before_wp_load
+     */
+    public function scripts(array $args, array $assocArgs): void
+    {
+        $runtime = Runtime::boot();
+        $contentDir = ABSPATH . 'wp-content';
+        $action = (string) ($args[0] ?? 'status');
+        if ($action === 'status') {
+            $handles = ScriptPack::handles($contentDir);
+            WP_CLI::log(ScriptPack::installed($contentDir)
+                ? count($handles) . ' handles from ' . ScriptPack::dir($contentDir)
+                : 'not installed (the engine serves its own packages only)');
+            return;
+        }
+        if ($action === 'remove') {
+            WP_CLI::log(ScriptPack::remove($contentDir) ? 'removed' : 'nothing to remove');
+            return;
+        }
+        if ($action !== 'install') {
+            WP_CLI::error("Usage: wp minn scripts <status|install|remove> [--from=<path>]");
+        }
+        $from = is_string($assocArgs['from'] ?? null) ? $assocArgs['from'] : self::parkedTree();
+        if ($from === null) {
+            WP_CLI::error('No parked WordPress recorded for this site; pass --from=<path to a WordPress tree>.');
+        }
+        try {
+            $result = ScriptPack::installFromTree($contentDir, $from);
+        } catch (\RuntimeException $e) {
+            WP_CLI::error($e->getMessage());
+        }
+        WP_CLI::log("installed {$result['files']} files into {$result['dir']}");
+        WP_CLI::log(count(ScriptPack::handles($contentDir)) . ' handles now available');
+    }
+
+    /** The WordPress the swap parked beside this webroot, when the manifest names one. */
+    private static function parkedTree(): ?string
+    {
+        $manifest = (defined('MINN_ENGINE_DIR') ? MINN_ENGINE_DIR : dirname(__DIR__, 3)) . '/.install.json';
+        if (!is_file($manifest)) {
+            return null;
+        }
+        $park = (array) json_decode((string) file_get_contents($manifest), true);
+        $dir = is_string($park['park'] ?? null) ? $park['park'] : null;
+        return $dir !== null && is_dir($dir) ? $dir : null;
     }
 
     private static function engineVersion(): string
