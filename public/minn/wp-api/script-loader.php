@@ -184,7 +184,10 @@ function wp_print_styles($handles = false)
             echo apply_filters('style_loader_tag', $tag, $handle, $href, (string) $item['extra']);
         }
         foreach ($item['inline']['after'] as $css) {
-            echo '<style id="' . esc_attr($handle) . '-inline-css">' . "\n" . $css . (defined('WP_DEBUG') && WP_DEBUG ? "\n/*# sourceURL=" . esc_attr($handle) . '-inline-css */' : '') . "\n</style>\n";
+            // A style inlined from a file names that file as its source, so a
+            // browser's devtools still point at the stylesheet on disk.
+            $source = _minn_inline_style_sources()[$handle] ?? ($handle . '-inline-css');
+            echo '<style id="' . esc_attr($handle) . '-inline-css">' . "\n" . $css . (defined('WP_DEBUG') && WP_DEBUG ? "\n/*# sourceURL=" . esc_attr($source) . ' */' : '') . "\n</style>\n";
         }
         $assets->markDone($handle);
     }
@@ -419,4 +422,35 @@ function wp_default_script_modules()
 function wp_should_load_separate_core_block_assets()
 {
     return (bool) apply_filters('should_load_separate_core_block_assets', (bool) Runtime::current()->get('block_theme', false));
+}
+
+/** @internal handle => the file URL a style was inlined from */
+function _minn_inline_style_sources(): array
+{
+    $sources = Runtime::current()->get('inline_style_sources', []);
+    return is_array($sources) ? $sources : [];
+}
+
+function wp_maybe_inline_styles()
+{
+    $styles = _minn_assets('style');
+    $limit = (int) apply_filters('styles_inline_size_limit', 40000);
+    $sources = _minn_inline_style_sources();
+    foreach ($styles->withPath() as $handle => $path) {
+        $size = is_file($path) ? (int) filesize($path) : 0;
+        if ($size < 1 || $size > $limit) {
+            continue;
+        }
+        $css = (string) file_get_contents($path);
+        if ($css === '') {
+            continue;
+        }
+        // The style stops being a link and becomes its own markup, but it
+        // keeps the address it came from for the sourceURL trailer.
+        $item = $styles->item($handle);
+        $sources[$handle] = _minn_asset_url((string) ($item['src'] ?? ''), null);
+        $styles->unsource($handle);
+        wp_add_inline_style($handle, $css);
+    }
+    Runtime::current()->set('inline_style_sources', $sources);
 }

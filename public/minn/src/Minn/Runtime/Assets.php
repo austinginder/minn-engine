@@ -221,6 +221,34 @@ final class Assets
         return array_values(array_filter($order, fn (string $h) => (bool) ($this->items[$h]['data']['group'] ?? false) === $footer));
     }
 
+    /**
+     * Enqueued handles that name a file on disk, mapped to that path. A style
+     * registered with a `path` datum is saying it can be inlined; whether it
+     * is small enough to be worth inlining is the caller's decision.
+     *
+     * @return array<string, string> handle => path
+     */
+    public function withPath(): array
+    {
+        $out = [];
+        foreach ($this->toPrint() as $handle) {
+            $path = $this->items[$handle]['data']['path'] ?? null;
+            if (is_string($path) && $path !== '') {
+                $out[$handle] = $path;
+            }
+        }
+        return $out;
+    }
+
+    /** Drops a handle's source so it prints as markup rather than a link. */
+    public function unsource(string $handle): void
+    {
+        if (isset($this->items[$handle])) {
+            $this->items[$handle]['src'] = false;
+            $this->changed();
+        }
+    }
+
     public function markDone(string $handle): void
     {
         $this->done[] = $handle;

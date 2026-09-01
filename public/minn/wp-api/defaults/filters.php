@@ -29,6 +29,7 @@ add_filter('widget_block_content', 'do_blocks', 9);
 add_filter('widget_block_content', 'do_shortcode', 11);
 // A classic theme gets the reference's wp_head defaults, registered before its own hooks.
 add_action('setup_theme', '_minn_classic_head_defaults', 1);
+add_action('wp_head', 'wp_maybe_inline_styles', 1);
 add_action('wp_head', 'wp_print_styles', 8);
 add_action('wp_head', '_minn_print_engine_styles', 8);
 add_action('wp_head', 'wp_print_head_scripts', 9);

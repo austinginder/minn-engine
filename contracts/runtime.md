@@ -1627,3 +1627,31 @@ stood at commit 80363f4) and is not the 50,000-pixel rule, which is
 right. What is missing is the rule for **which calls count** against the
 budget. Deriving it needs a probe that renders a page on the reference
 with a hook counting every call, not a guess.
+
+### Inlining a small stylesheet
+
+A style registered with a `path` datum is saying it may be inlined.
+`wp_maybe_inline_styles()` runs on `wp_head` at priority 1, and for each
+enqueued style whose file is small enough it reads the file, drops the
+style's `src`, and adds the CSS as an `after` inline block, so the page
+carries `<style id="{handle}-inline-css">` instead of a `<link>`.
+
+The rule, derived by bisecting on the reference:
+
+- The cap is **per file, never cumulative**. Three 9,000-byte stylesheets
+  all inline, 27,000 bytes in total; one 50,000-byte stylesheet does not.
+- The default cap is **40,000 bytes**, and 40,001 is already too big. The
+  number is only visible by watching what the caller passes into
+  `styles_inline_size_limit`: asking `apply_filters()` with a default of
+  your own tells you nothing, which is a trap worth remembering for any
+  filtered constant.
+- An inlined style keeps the **file's own URL** as its `sourceURL` trailer
+  (under `WP_DEBUG`), not the handle, so the engine carries the resolved
+  src across the unsourcing step.
+
+This was found by implementing `get_parent_theme_file_uri()`: Twenty
+Twenty-Five's `functions.php` calls it, so until then the whole theme file
+was gate-skipped and never ran. The moment it loaded, the theme enqueued
+its stylesheet and the missing inliner showed as a `<link>` the reference
+does not print. Every symbol added lets more real code run, and that code
+names the next gap.

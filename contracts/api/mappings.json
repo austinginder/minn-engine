@@ -2,11 +2,11 @@
     "generated": "2026-09-01",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 351,
+        "minn": 353,
         "composes": 707,
         "leaf": 352,
         "noop": 1239,
-        "functions": 2643,
+        "functions": 2645,
         "minnMethods": 394,
         "leafLinesOver15": 13
     },
@@ -7941,6 +7941,16 @@
             "composes": [
                 "get_option"
             ]
+        },
+        "_minn_inline_style_sources": {
+            "file": "script-loader.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Runtime::current",
+                "Minn\\Runtime\\Runtime::get"
+            ],
+            "composes": []
         },
         "_minn_join_list": {
             "file": "taxonomy.php",
@@ -21963,6 +21973,22 @@
                 "apply_filters"
             ]
         },
+        "wp_maybe_inline_styles": {
+            "file": "script-loader.php",
+            "lines": 20,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Runtime::current",
+                "Minn\\Runtime\\Runtime::set"
+            ],
+            "composes": [
+                "_minn_asset_url",
+                "_minn_assets",
+                "_minn_inline_style_sources",
+                "apply_filters",
+                "wp_add_inline_style"
+            ]
+        },
         "wp_meta": {
             "file": "pluggable.php",
             "lines": 1,
@@ -22441,12 +22467,13 @@
         },
         "wp_print_styles": {
             "file": "script-loader.php",
-            "lines": 20,
+            "lines": 23,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "_minn_asset_url",
                 "_minn_assets",
+                "_minn_inline_style_sources",
                 "apply_filters",
                 "do_action",
                 "esc_attr",

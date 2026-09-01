@@ -127,6 +127,49 @@ foreach (['thumbnail', 'medium', 'large', 'full', [64, 64], [200, 200], [1, 1]] 
 }
 $say('fetchpriority by size', $priority);
 
+// --- Inlining a small stylesheet. A style that carries a path and is under
+// the size limit is printed as a <style>, not linked, and its src is dropped.
+$uploads = wp_upload_dir();
+$cssDir = trailingslashit($uploads['basedir']) . 'minn-probe-css';
+if (!is_dir($cssDir)) {
+    mkdir($cssDir, 0777, true);
+}
+file_put_contents($cssDir . '/small.css', '.minn-small{color:red}');
+file_put_contents($cssDir . '/big.css', '.minn-big{color:blue}' . str_repeat('/*x*/', 12000));
+$cssUrl = trailingslashit($uploads['baseurl']) . 'minn-probe-css';
+foreach (['small', 'big'] as $which) {
+    wp_register_style('minn-probe-' . $which, $cssUrl . '/' . $which . '.css', [], '1.0');
+    wp_style_add_data('minn-probe-' . $which, 'path', $cssDir . '/' . $which . '.css');
+    wp_enqueue_style('minn-probe-' . $which);
+}
+wp_register_style('minn-probe-nopath', $cssUrl . '/small.css', [], '1.0');
+wp_enqueue_style('minn-probe-nopath');
+$seenLimit = null;
+add_filter('styles_inline_size_limit', static function ($limit) use (&$seenLimit) {
+    $seenLimit = $limit;
+    return $limit;
+});
+wp_maybe_inline_styles();
+$say('styles_inline_size_limit default', $seenLimit);
+remove_all_filters('styles_inline_size_limit');
+$srcAfter = [];
+foreach (['minn-probe-small', 'minn-probe-big', 'minn-probe-nopath'] as $handle) {
+    $registered = $GLOBALS['wp_styles']->registered[$handle] ?? null;
+    $srcAfter[$handle] = $registered === null ? 'gone' : [$registered->src, (array) ($registered->extra['after'] ?? []) !== []];
+}
+$say('wp_maybe_inline_styles src', $deep($srcAfter));
+ob_start();
+wp_print_styles(['minn-probe-small', 'minn-probe-big', 'minn-probe-nopath']);
+$printed = $deep(ob_get_clean());
+$say('wp_maybe_inline_styles markup', preg_replace('/\?ver=[^\'"\s]+/', '?ver=X', $printed));
+foreach (['minn-probe-small', 'minn-probe-big', 'minn-probe-nopath'] as $handle) {
+    wp_dequeue_style($handle);
+    wp_deregister_style($handle);
+}
+@unlink($cssDir . '/small.css');
+@unlink($cssDir . '/big.css');
+@rmdir($cssDir);
+
 // --- Small classes.
 $proxy = new WP_HTTP_Proxy();
 $say('WP_HTTP_Proxy', [
