@@ -105,6 +105,17 @@ $check($jsh['status'] === 200, 'theme /code-size.json answers 200', (string) $js
 $check($llh['status'] === 200, 'theme /looks-like/ answers 200', (string) $llh['status']);
 $check(str_contains($ll, '<title>What a host inspects · Minn'), 'looks-like title');
 $check(str_contains($ll, 'href="/looks-like/" aria-current="page"'), 'looks-like nav is current');
+[$ah, $api] = minn_test_fetch($ENGINE . '/api/');
+$check($ah['status'] === 200, 'theme /api/ answers 200', (string) $ah['status']);
+$check(str_contains($api, '<title>API · Minn'), 'api page title');
+$check(substr_count($api, 'minn-api-namespace"') >= 20, 'api index lists every namespace');
+$check(str_contains($api, '/api/content/#postrecord"'), 'api index links a class to its namespace page');
+[$nh, $ns] = minn_test_fetch($ENGINE . '/api/content/');
+$check($nh['status'] === 200 && str_contains($ns, '<h2>PostRecord <span'), 'api namespace page lists PostRecord');
+[$rh, $rest] = minn_test_fetch($ENGINE . '/api/rest/');
+$check(str_contains($rest, 'GET /wp/v2/templates'), 'api namespace page shows a controller route');
+[$jh] = minn_test_fetch($ENGINE . '/api.json');
+$check($jh['status'] === 200 && str_starts_with((string) ($jh['content-type'] ?? ''), 'application/json'), 'theme /api.json answers 200 as JSON');
 [$ph, $php] = minn_test_fetch($ENGINE . '/php/');
 $check($ph['status'] === 200, 'theme /php/ answers 200', (string) $ph['status']);
 $check(str_contains($php, '<title>How the PHP reads · Minn'), 'php page title');

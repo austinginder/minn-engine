@@ -183,6 +183,7 @@ must match the same page on the reference with the plugin active.
 with its docblock, constructor, public properties and methods, read from the
 code by `php tests/tools/api-docs.php`. `contracts/api/minn.json` is the same
 model for tooling. Grep it before you write: `grep -n "function forPost" docs/api/front.md`.
+The same model is browsable, with a filter, at `/api/` on the Minn site.
 
 ## Where things live
 

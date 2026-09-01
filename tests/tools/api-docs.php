@@ -307,6 +307,9 @@ foreach (glob("{$out}/*.md") ?: [] as $existing) {
 if (!is_file("{$root}/contracts/api/minn.json") || file_get_contents("{$root}/contracts/api/minn.json") !== $json) {
     $stale = true;
 }
+if (is_dir("{$root}/site/minn-site/content") && (!is_file("{$root}/site/minn-site/content/api.json") || file_get_contents("{$root}/site/minn-site/content/api.json") !== $json)) {
+    $stale = true;
+}
 
 $summary = ['classes' => count($model), 'namespaces' => count($byNamespace), 'methods' => array_sum(array_map(static fn (array $e) => count($e['methods']), $model)), 'stale' => $stale];
 if ($checkOnly) {
@@ -325,4 +328,8 @@ foreach ($files as $name => $content) {
     file_put_contents("{$out}/{$name}", $content);
 }
 file_put_contents("{$root}/contracts/api/minn.json", $json);
+// The marketing site paints /api/ from its own copy, the way it paints /code-size/.
+if (is_dir("{$root}/site/minn-site/content")) {
+    file_put_contents("{$root}/site/minn-site/content/api.json", $json);
+}
 echo "docs/api: {$summary['classes']} classes, {$summary['methods']} public methods, {$summary['namespaces']} namespaces\n";
