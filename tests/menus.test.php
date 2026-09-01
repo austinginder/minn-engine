@@ -7,7 +7,7 @@
  * cleanly when down.
  */
 
-$ENGINE = 'https://minn-engine.localhost';
+$ENGINE = 'https://minn.localhost';
 $REF    = 'http://127.0.0.1:8123';
 $ROOT   = dirname( __DIR__ );
 
@@ -36,7 +36,7 @@ function check( bool $ok, string $label, string $detail = '' ): void {
 function mn_mint( int $uid ): array {
 	global $ROOT;
 	$mint = json_decode( (string) shell_exec(
-		'wp --path=' . escapeshellarg( "$ROOT/wp-reference" ) . ' eval-file ' . escapeshellarg( "$ROOT/tests/tools/mint-session.php" ) . " $uid 2>/dev/null"
+		'wp --path=' . escapeshellarg( minn_test_site_root() . '/wp-reference' ) . ' eval-file ' . escapeshellarg( "$ROOT/tests/tools/mint-session.php" ) . " $uid 2>/dev/null"
 	), true );
 	if ( ! $mint || empty( $mint['cookie'] ) ) {
 		echo "SKIP: could not mint a reference session (wp-cli unavailable?)\n";
@@ -103,7 +103,7 @@ function mn_parity( string $label, string $query, ?array $mint ): void {
 
 function mn_wp( string $command ): string {
 	global $ROOT;
-	return trim( (string) shell_exec( 'wp --path=' . escapeshellarg( "$ROOT/wp-reference" ) . " $command 2>/dev/null" ) );
+	return trim( (string) shell_exec( 'wp --path=' . escapeshellarg( minn_test_site_root() . '/wp-reference' ) . " $command 2>/dev/null" ) );
 }
 
 register_shutdown_function( static function (): void {

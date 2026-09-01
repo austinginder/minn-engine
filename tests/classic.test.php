@@ -10,10 +10,10 @@
  */
 require_once __DIR__ . '/lib.php';
 
-$ENGINE = rtrim(getenv('MINN_TEST_URL') ?: 'https://minn-engine.localhost', '/');
+$ENGINE = rtrim(getenv('MINN_TEST_URL') ?: 'https://minn.localhost', '/');
 $REF = 'http://127.0.0.1:8123';
 $ROOT = dirname(__DIR__);
-$THEMES = $ROOT . '/wp-reference/wp-content/themes';
+$THEMES = minn_test_site_root() . '/wp-reference/wp-content/themes';
 $SLUG = 'minn-classic-fixture';
 
 $live = @file_get_contents("$REF/wp-json/", false, stream_context_create(['http' => ['timeout' => 2, 'ignore_errors' => true]])) !== false;
@@ -22,8 +22,8 @@ if (!$live) {
     exit(0);
 }
 
-$wp = static function (string $args) use ($ROOT): string {
-    return trim((string) shell_exec('cd ' . escapeshellarg($ROOT . '/wp-reference') . ' && /opt/homebrew/bin/wp ' . $args . ' 2>/dev/null'));
+$wp = static function (string $args): string {
+    return trim((string) shell_exec('cd ' . escapeshellarg(minn_test_site_root() . '/wp-reference') . ' && /opt/homebrew/bin/wp ' . $args . ' 2>/dev/null'));
 };
 
 // Install the theme into the shared themes directory (public/wp-content/themes symlinks here).
@@ -158,7 +158,7 @@ foreach (['menu-item-type-custom', 'menu-item-type-post_type', 'menu-item-type-t
 // item pointed at ITS host (2026-08-30): current + current_page_item +
 // menu-item-home on the front, menu-item-home alone everywhere else.
 if ($homeItem > 0) {
-    $engineHome = rtrim((string) shell_exec('cd ' . escapeshellarg($ROOT . '/public') . ' && /opt/homebrew/bin/wp option get home 2>/dev/null'));
+    $engineHome = rtrim((string) shell_exec('cd ' . escapeshellarg(minn_test_site_root() . '/public') . ' && /opt/homebrew/bin/wp option get home 2>/dev/null'));
     $wp('post meta update ' . $homeItem . ' _menu_item_url ' . escapeshellarg(trim($engineHome) . '/'));
     $homeChecks = [
         '/' => 'menu-item-object-custom current-menu-item current_page_item menu-item-home menu-item-' . $homeItem,

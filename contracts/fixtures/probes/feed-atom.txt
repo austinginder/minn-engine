@@ -8,9 +8,9 @@
 
 	<updated>2026-08-28T11:30:13Z</updated>
 
-	<link rel="alternate" type="text/html" href="https://minn-engine.localhost" />
-	<id>https://minn-engine.localhost/feed/atom/</id>
-	<link rel="self" type="application/atom+xml" href="https://minn-engine.localhost/feed/atom/" />
+	<link rel="alternate" type="text/html" href="https://minn.localhost" />
+	<id>https://minn.localhost/feed/atom/</id>
+	<link rel="self" type="application/atom+xml" href="https://minn.localhost/feed/atom/" />
 
 	<generator uri="https://wordpress.org/" version="X">WordPress</generator>
 	<entry>
@@ -19,37 +19,37 @@
 					</author>
 
 		<title type="html"><![CDATA[Block battery: dynamic]]></title>
-		<link rel="alternate" type="text/html" href="https://minn-engine.localhost/zz-block-battery-dynamic/" />
+		<link rel="alternate" type="text/html" href="https://minn.localhost/zz-block-battery-dynamic/" />
 
-		<id>https://minn-engine.localhost/block-battery-dynamic/</id>
+		<id>https://minn.localhost/block-battery-dynamic/</id>
 		<updated>2026-08-28T11:30:13Z</updated>
 		<published>2026-08-28T10:59:38Z</published>
-		<category scheme="https://minn-engine.localhost" term="Uncategorized" />
+		<category scheme="https://minn.localhost" term="Uncategorized" />
 		<summary type="html"><![CDATA[]]></summary>
 
-					<content type="html" xml:base="https://minn-engine.localhost/zz-block-battery-dynamic/"><![CDATA[<ul class="wp-block-latest-posts__list has-dates wp-block-latest-posts is-layout-flow wp-block-latest-posts-is-layout-flow"><li><a class="wp-block-latest-posts__post-title" href="https://minn-engine.localhost/zz-block-battery-dynamic/">Block battery: dynamic</a><time datetime="2026-08-28T10:03:00+00:00" class="wp-block-latest-posts__post-date">August 28, 2026</time></li>
-<li><a class="wp-block-latest-posts__post-title" href="https://minn-engine.localhost/zz-block-battery-layout/">Block battery: layout</a><time datetime="2026-08-28T10:02:00+00:00" class="wp-block-latest-posts__post-date">August 28, 2026</time></li>
-<li><a class="wp-block-latest-posts__post-title" href="https://minn-engine.localhost/zz-block-battery-media/">Block battery: media</a><time datetime="2026-08-28T10:01:00+00:00" class="wp-block-latest-posts__post-date">August 28, 2026</time></li>
+					<content type="html" xml:base="https://minn.localhost/zz-block-battery-dynamic/"><![CDATA[<ul class="wp-block-latest-posts__list has-dates wp-block-latest-posts is-layout-flow wp-block-latest-posts-is-layout-flow"><li><a class="wp-block-latest-posts__post-title" href="https://minn.localhost/zz-block-battery-dynamic/">Block battery: dynamic</a><time datetime="2026-08-28T10:03:00+00:00" class="wp-block-latest-posts__post-date">August 28, 2026</time></li>
+<li><a class="wp-block-latest-posts__post-title" href="https://minn.localhost/zz-block-battery-layout/">Block battery: layout</a><time datetime="2026-08-28T10:02:00+00:00" class="wp-block-latest-posts__post-date">August 28, 2026</time></li>
+<li><a class="wp-block-latest-posts__post-title" href="https://minn.localhost/zz-block-battery-media/">Block battery: media</a><time datetime="2026-08-28T10:01:00+00:00" class="wp-block-latest-posts__post-date">August 28, 2026</time></li>
 </ul>
 
-<ul class="wp-block-categories-list wp-block-categories-taxonomy-category wp-block-categories">	<li class="cat-item cat-item-1"><a href="https://minn-engine.localhost/category/uncategorized/">Uncategorized</a>
+<ul class="wp-block-categories-list wp-block-categories-taxonomy-category wp-block-categories">	<li class="cat-item cat-item-1"><a href="https://minn.localhost/category/uncategorized/">Uncategorized</a>
 </li>
 </ul>
 
-<ul class="wp-block-archives-list wp-block-archives">	<li><a href='https://minn-engine.localhost/2026/08/'>August 2026</a></li>
+<ul class="wp-block-archives-list wp-block-archives">	<li><a href='https://minn.localhost/2026/08/'>August 2026</a></li>
 </ul>
 
-<form role="search" method="get" action="https://minn-engine.localhost/" class="wp-block-search__button-outside wp-block-search__text-button wp-block-search" ><label class="wp-block-search__label" for="wp-block-search__input-N" >Search</label><div class="wp-block-search__inside-wrapper" ><input class="wp-block-search__input" id="wp-block-search__input-N" placeholder="" value="" type="search" name="s" required /><button aria-label="Search" class="wp-block-search__button wp-element-button" type="submit" >Search</button></div></form>
+<form role="search" method="get" action="https://minn.localhost/" class="wp-block-search__button-outside wp-block-search__text-button wp-block-search" ><label class="wp-block-search__label" for="wp-block-search__input-N" >Search</label><div class="wp-block-search__inside-wrapper" ><input class="wp-block-search__input" id="wp-block-search__input-N" placeholder="" value="" type="search" name="s" required /><button aria-label="Search" class="wp-block-search__button wp-element-button" type="submit" >Search</button></div></form>
 
-<p class="wp-block-tag-cloud"><a href="https://minn-engine.localhost/tag/engine/" class="tag-cloud-link tag-link-2 tag-link-position-1" style="font-size: 8pt;" aria-label="engine (1 item)">engine</a>
-<a href="https://minn-engine.localhost/tag/parity/" class="tag-cloud-link tag-link-3 tag-link-position-2" style="font-size: 8pt;" aria-label="parity (1 item)">parity</a></p>
+<p class="wp-block-tag-cloud"><a href="https://minn.localhost/tag/engine/" class="tag-cloud-link tag-link-2 tag-link-position-1" style="font-size: 8pt;" aria-label="engine (1 item)">engine</a>
+<a href="https://minn.localhost/tag/parity/" class="tag-cloud-link tag-link-3 tag-link-position-2" style="font-size: 8pt;" aria-label="parity (1 item)">parity</a></p>
 
-<ol class="has-avatars has-dates has-excerpts wp-block-latest-comments"><li class="wp-block-latest-comments__comment"><img alt='' src='https://secure.gravatar.com/avatar/8e1606e6fba450a9362af43874c1b2dfad34c782e33d0a51e1b46c18a2a567dd?s=48&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/8e1606e6fba450a9362af43874c1b2dfad34c782e33d0a51e1b46c18a2a567dd?s=96&#038;d=mm&#038;r=g 2x' class='avatar avatar-48 photo wp-block-latest-comments__comment-avatar' height='48' width='48' /><article><footer class="wp-block-latest-comments__comment-meta"><a class="wp-block-latest-comments__comment-author" href="https://wordpress.org/">A WordPress Commenter</a> on <a class="wp-block-latest-comments__comment-link" href="https://minn-engine.localhost/hello-world/#comment-1">Hello world!</a><time datetime="2026-08-28T02:21:33+00:00" class="wp-block-latest-comments__comment-date">August 28, 2026</time></footer><div class="wp-block-latest-comments__comment-excerpt"><p>Hi, this is a comment. To get started with moderating, editing, and deleting comments, please visit the Comments screen in&hellip;</p>
+<ol class="has-avatars has-dates has-excerpts wp-block-latest-comments"><li class="wp-block-latest-comments__comment"><img alt='' src='https://secure.gravatar.com/avatar/8e1606e6fba450a9362af43874c1b2dfad34c782e33d0a51e1b46c18a2a567dd?s=48&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/8e1606e6fba450a9362af43874c1b2dfad34c782e33d0a51e1b46c18a2a567dd?s=96&#038;d=mm&#038;r=g 2x' class='avatar avatar-48 photo wp-block-latest-comments__comment-avatar' height='48' width='48' /><article><footer class="wp-block-latest-comments__comment-meta"><a class="wp-block-latest-comments__comment-author" href="https://wordpress.org/">A WordPress Commenter</a> on <a class="wp-block-latest-comments__comment-link" href="https://minn.localhost/hello-world/#comment-1">Hello world!</a><time datetime="2026-08-28T02:21:33+00:00" class="wp-block-latest-comments__comment-date">August 28, 2026</time></footer><div class="wp-block-latest-comments__comment-excerpt"><p>Hi, this is a comment. To get started with moderating, editing, and deleting comments, please visit the Comments screen in&hellip;</p>
 </div></article></li></ol>
 ]]></content>
 		
-					<link rel="replies" type="text/html" href="https://minn-engine.localhost/zz-block-battery-dynamic/#comments" thr:count="0" />
-			<link rel="replies" type="application/atom+xml" href="https://minn-engine.localhost/zz-block-battery-dynamic/feed/atom/" thr:count="0" />
+					<link rel="replies" type="text/html" href="https://minn.localhost/zz-block-battery-dynamic/#comments" thr:count="0" />
+			<link rel="replies" type="application/atom+xml" href="https://minn.localhost/zz-block-battery-dynamic/feed/atom/" thr:count="0" />
 			<thr:total>0</thr:total>
 			</entry>
 		<entry>
@@ -58,15 +58,15 @@
 					</author>
 
 		<title type="html"><![CDATA[Block battery: layout]]></title>
-		<link rel="alternate" type="text/html" href="https://minn-engine.localhost/zz-block-battery-layout/" />
+		<link rel="alternate" type="text/html" href="https://minn.localhost/zz-block-battery-layout/" />
 
-		<id>https://minn-engine.localhost/block-battery-layout/</id>
+		<id>https://minn.localhost/block-battery-layout/</id>
 		<updated>2026-08-28T11:30:12Z</updated>
 		<published>2026-08-28T10:59:38Z</published>
-		<category scheme="https://minn-engine.localhost" term="Uncategorized" />
+		<category scheme="https://minn.localhost" term="Uncategorized" />
 		<summary type="html"><![CDATA[Inside a constrained group. Row one Row two Stacked Grid cell Left column Right column Name Value One 1 Two 2 Before the more tag. After the more tag.]]></summary>
 
-					<content type="html" xml:base="https://minn-engine.localhost/zz-block-battery-layout/"><![CDATA[
+					<content type="html" xml:base="https://minn.localhost/zz-block-battery-layout/"><![CDATA[
 <div class="wp-block-group has-global-padding is-layout-constrained wp-block-group-is-layout-constrained">
 <p class="wp-block-paragraph">Inside a constrained group.</p>
 </div>
@@ -122,7 +122,7 @@
 
 
 <div class="wp-block-buttons is-layout-flex wp-block-buttons-is-layout-flex">
-<div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="https://minn-engine.localhost/">Primary</a></div>
+<div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="https://minn.localhost/">Primary</a></div>
 
 
 
@@ -147,8 +147,8 @@
 
 ]]></content>
 		
-					<link rel="replies" type="text/html" href="https://minn-engine.localhost/zz-block-battery-layout/#comments" thr:count="0" />
-			<link rel="replies" type="application/atom+xml" href="https://minn-engine.localhost/zz-block-battery-layout/feed/atom/" thr:count="0" />
+					<link rel="replies" type="text/html" href="https://minn.localhost/zz-block-battery-layout/#comments" thr:count="0" />
+			<link rel="replies" type="application/atom+xml" href="https://minn.localhost/zz-block-battery-layout/feed/atom/" thr:count="0" />
 			<thr:total>0</thr:total>
 			</entry>
 		<entry>
@@ -157,51 +157,51 @@
 					</author>
 
 		<title type="html"><![CDATA[Block battery: media]]></title>
-		<link rel="alternate" type="text/html" href="https://minn-engine.localhost/zz-block-battery-media/" />
+		<link rel="alternate" type="text/html" href="https://minn.localhost/zz-block-battery-media/" />
 
-		<id>https://minn-engine.localhost/block-battery-media/</id>
+		<id>https://minn.localhost/block-battery-media/</id>
 		<updated>2026-08-28T11:30:12Z</updated>
 		<published>2026-08-28T10:59:37Z</published>
-		<category scheme="https://minn-engine.localhost" term="Uncategorized" />
+		<category scheme="https://minn.localhost" term="Uncategorized" />
 		<summary type="html"><![CDATA[Beside the media.]]></summary>
 
-					<content type="html" xml:base="https://minn-engine.localhost/zz-block-battery-media/"><![CDATA[
-<figure class="wp-block-image size-large"><img fetchpriority="high" decoding="async" width="1024" height="683" src="https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png" alt="Battery alt" class="wp-image-607" srcset="https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-768x512.png 768w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery.png 1200w" sizes="(max-width: 1024px) 100vw, 1024px" /></figure>
+					<content type="html" xml:base="https://minn.localhost/zz-block-battery-media/"><![CDATA[
+<figure class="wp-block-image size-large"><img fetchpriority="high" decoding="async" width="1024" height="683" src="https://minn.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png" alt="Battery alt" class="wp-image-607" srcset="https://minn.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery-768x512.png 768w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery.png 1200w" sizes="(max-width: 1024px) 100vw, 1024px" /></figure>
 
 
 
-<figure class="wp-block-image aligncenter size-medium"><a href="https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery.png"><img decoding="async" width="300" height="200" src="https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-300x200.png" alt="" class="wp-image-607" srcset="https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-768x512.png 768w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery.png 1200w" sizes="(max-width: 300px) 100vw, 300px" /></a><figcaption class="wp-element-caption">A caption</figcaption></figure>
+<figure class="wp-block-image aligncenter size-medium"><a href="https://minn.localhost/wp-content/uploads/2026/08/minn-battery.png"><img decoding="async" width="300" height="200" src="https://minn.localhost/wp-content/uploads/2026/08/minn-battery-300x200.png" alt="" class="wp-image-607" srcset="https://minn.localhost/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery-768x512.png 768w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery.png 1200w" sizes="(max-width: 300px) 100vw, 300px" /></a><figcaption class="wp-element-caption">A caption</figcaption></figure>
 
 
 
-<figure class="wp-block-image size-full is-resized"><img loading="lazy" decoding="async" width="1200" height="800" src="https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery.png" alt="" class="wp-image-607" style="width:400px" srcset="https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery.png 1200w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-768x512.png 768w" sizes="auto, (max-width: 1200px) 100vw, 1200px" /></figure>
+<figure class="wp-block-image size-full is-resized"><img loading="lazy" decoding="async" width="1200" height="800" src="https://minn.localhost/wp-content/uploads/2026/08/minn-battery.png" alt="" class="wp-image-607" style="width:400px" srcset="https://minn.localhost/wp-content/uploads/2026/08/minn-battery.png 1200w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery-768x512.png 768w" sizes="auto, (max-width: 1200px) 100vw, 1200px" /></figure>
 
 
 
 <figure class="wp-block-gallery has-nested-images columns-default is-cropped wp-block-gallery-N is-layout-flex wp-block-gallery-is-layout-flex">
-<figure class="wp-block-image size-large"><img loading="lazy" decoding="async" width="1024" height="683" data-id="607" src="https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png" alt="" class="wp-image-607" srcset="https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-768x512.png 768w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery.png 1200w" sizes="auto, (max-width: 1024px) 100vw, 1024px" /></figure>
+<figure class="wp-block-image size-large"><img loading="lazy" decoding="async" width="1024" height="683" data-id="607" src="https://minn.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png" alt="" class="wp-image-607" srcset="https://minn.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery-768x512.png 768w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery.png 1200w" sizes="auto, (max-width: 1024px) 100vw, 1024px" /></figure>
 
 
 
-<figure class="wp-block-image size-large"><img loading="lazy" decoding="async" width="1024" height="683" data-id="607" src="https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png" alt="" class="wp-image-607" srcset="https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-768x512.png 768w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery.png 1200w" sizes="auto, (max-width: 1024px) 100vw, 1024px" /><figcaption class="wp-element-caption">Second</figcaption></figure>
+<figure class="wp-block-image size-large"><img loading="lazy" decoding="async" width="1024" height="683" data-id="607" src="https://minn.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png" alt="" class="wp-image-607" srcset="https://minn.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery-768x512.png 768w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery.png 1200w" sizes="auto, (max-width: 1024px) 100vw, 1024px" /><figcaption class="wp-element-caption">Second</figcaption></figure>
 </figure>
 
 
 
-<div class="wp-block-cover"><span aria-hidden="true" class="wp-block-cover__background has-background-dim" style="background-color:#123456"></span><img loading="lazy" decoding="async" width="1200" height="800" class="wp-block-cover__image-background wp-image-607" alt="" src="https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery.png" data-object-fit="cover" srcset="https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery.png 1200w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-768x512.png 768w" sizes="auto, (max-width: 1200px) 100vw, 1200px" /><div class="wp-block-cover__inner-container has-global-padding is-layout-constrained wp-block-cover-is-layout-constrained">
+<div class="wp-block-cover"><span aria-hidden="true" class="wp-block-cover__background has-background-dim" style="background-color:#123456"></span><img loading="lazy" decoding="async" width="1200" height="800" class="wp-block-cover__image-background wp-image-607" alt="" src="https://minn.localhost/wp-content/uploads/2026/08/minn-battery.png" data-object-fit="cover" srcset="https://minn.localhost/wp-content/uploads/2026/08/minn-battery.png 1200w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery-768x512.png 768w" sizes="auto, (max-width: 1200px) 100vw, 1200px" /><div class="wp-block-cover__inner-container has-global-padding is-layout-constrained wp-block-cover-is-layout-constrained">
 <p class="has-text-align-center has-large-font-size wp-block-paragraph">Cover title</p>
 </div></div>
 
 
 
-<div class="wp-block-media-text is-stacked-on-mobile"><figure class="wp-block-media-text__media"><img loading="lazy" decoding="async" width="1024" height="683" src="https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png" alt="" class="wp-image-607 size-full" srcset="https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-768x512.png 768w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery.png 1200w" sizes="auto, (max-width: 1024px) 100vw, 1024px" /></figure><div class="wp-block-media-text__content">
+<div class="wp-block-media-text is-stacked-on-mobile"><figure class="wp-block-media-text__media"><img loading="lazy" decoding="async" width="1024" height="683" src="https://minn.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png" alt="" class="wp-image-607 size-full" srcset="https://minn.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery-768x512.png 768w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery.png 1200w" sizes="auto, (max-width: 1024px) 100vw, 1024px" /></figure><div class="wp-block-media-text__content">
 <p class="wp-block-paragraph">Beside the media.</p>
 </div></div>
 
 ]]></content>
 		
-					<link rel="replies" type="text/html" href="https://minn-engine.localhost/zz-block-battery-media/#comments" thr:count="0" />
-			<link rel="replies" type="application/atom+xml" href="https://minn-engine.localhost/zz-block-battery-media/feed/atom/" thr:count="0" />
+					<link rel="replies" type="text/html" href="https://minn.localhost/zz-block-battery-media/#comments" thr:count="0" />
+			<link rel="replies" type="application/atom+xml" href="https://minn.localhost/zz-block-battery-media/feed/atom/" thr:count="0" />
 			<thr:total>0</thr:total>
 			</entry>
 		<entry>
@@ -210,16 +210,16 @@
 					</author>
 
 		<title type="html"><![CDATA[Block battery: text]]></title>
-		<link rel="alternate" type="text/html" href="https://minn-engine.localhost/zz-block-battery-text/" />
+		<link rel="alternate" type="text/html" href="https://minn.localhost/zz-block-battery-text/" />
 
-		<id>https://minn-engine.localhost/block-battery-text/</id>
+		<id>https://minn.localhost/block-battery-text/</id>
 		<updated>2026-08-28T11:30:11Z</updated>
 		<published>2026-08-28T10:59:37Z</published>
-		<category scheme="https://minn-engine.localhost" term="Uncategorized" />
+		<category scheme="https://minn.localhost" term="Uncategorized" />
 		<summary type="html"><![CDATA[A plain paragraph with bold, italic, and a link. &#8220;Quoted&#8221; and it&#8217;s texturized&#8230; Centered, drop cap, large. Heading two Heading three, centered Quoted paragraph. Someone Pulled quote. A citation Roses are red, violets are blue. Preformatted text keeps spacing.]]></summary>
 
-					<content type="html" xml:base="https://minn-engine.localhost/zz-block-battery-text/"><![CDATA[
-<p class="wp-block-paragraph">A plain paragraph with <strong>bold</strong>, <em>italic</em>, and a <a href="https://minn-engine.localhost/hello-world/">link</a>. &#8220;Quoted&#8221; and it&#8217;s texturized&#8230;</p>
+					<content type="html" xml:base="https://minn.localhost/zz-block-battery-text/"><![CDATA[
+<p class="wp-block-paragraph">A plain paragraph with <strong>bold</strong>, <em>italic</em>, and a <a href="https://minn.localhost/hello-world/">link</a>. &#8220;Quoted&#8221; and it&#8217;s texturized&#8230;</p>
 
 
 
@@ -291,8 +291,8 @@ keeps    spacing.</pre>
 
 ]]></content>
 		
-					<link rel="replies" type="text/html" href="https://minn-engine.localhost/zz-block-battery-text/#comments" thr:count="0" />
-			<link rel="replies" type="application/atom+xml" href="https://minn-engine.localhost/zz-block-battery-text/feed/atom/" thr:count="0" />
+					<link rel="replies" type="text/html" href="https://minn.localhost/zz-block-battery-text/#comments" thr:count="0" />
+			<link rel="replies" type="application/atom+xml" href="https://minn.localhost/zz-block-battery-text/feed/atom/" thr:count="0" />
 			<thr:total>0</thr:total>
 			</entry>
 		<entry>
@@ -301,18 +301,18 @@ keeps    spacing.</pre>
 					</author>
 
 		<title type="html"><![CDATA[Scribe published]]></title>
-		<link rel="alternate" type="text/html" href="https://minn-engine.localhost/scribe-published/" />
+		<link rel="alternate" type="text/html" href="https://minn.localhost/scribe-published/" />
 
-		<id>https://minn-engine.localhost/?p=11</id>
+		<id>https://minn.localhost/?p=11</id>
 		<updated>2026-08-28T02:58:06Z</updated>
 		<published>2026-08-28T02:58:06Z</published>
-		<category scheme="https://minn-engine.localhost" term="Uncategorized" />
+		<category scheme="https://minn.localhost" term="Uncategorized" />
 		<summary type="html"><![CDATA[]]></summary>
 
-					<content type="html" xml:base="https://minn-engine.localhost/scribe-published/"><![CDATA[]]></content>
+					<content type="html" xml:base="https://minn.localhost/scribe-published/"><![CDATA[]]></content>
 		
-					<link rel="replies" type="text/html" href="https://minn-engine.localhost/scribe-published/#comments" thr:count="0" />
-			<link rel="replies" type="application/atom+xml" href="https://minn-engine.localhost/scribe-published/feed/atom/" thr:count="0" />
+					<link rel="replies" type="text/html" href="https://minn.localhost/scribe-published/#comments" thr:count="0" />
+			<link rel="replies" type="application/atom+xml" href="https://minn.localhost/scribe-published/feed/atom/" thr:count="0" />
 			<thr:total>0</thr:total>
 			</entry>
 		<entry>
@@ -321,20 +321,20 @@ keeps    spacing.</pre>
 					</author>
 
 		<title type="html"><![CDATA[Editor authored post]]></title>
-		<link rel="alternate" type="text/html" href="https://minn-engine.localhost/editor-authored-post/" />
+		<link rel="alternate" type="text/html" href="https://minn.localhost/editor-authored-post/" />
 
-		<id>https://minn-engine.localhost/?p=9</id>
+		<id>https://minn.localhost/?p=9</id>
 		<updated>2026-08-28T02:53:48Z</updated>
 		<published>2026-08-28T02:53:48Z</published>
-		<category scheme="https://minn-engine.localhost" term="Uncategorized" />
+		<category scheme="https://minn.localhost" term="Uncategorized" />
 		<summary type="html"><![CDATA[Second author for the users contract.]]></summary>
 
-					<content type="html" xml:base="https://minn-engine.localhost/editor-authored-post/"><![CDATA[
+					<content type="html" xml:base="https://minn.localhost/editor-authored-post/"><![CDATA[
 <p class="wp-block-paragraph">Second author for the users contract.</p>
 ]]></content>
 		
-					<link rel="replies" type="text/html" href="https://minn-engine.localhost/editor-authored-post/#comments" thr:count="0" />
-			<link rel="replies" type="application/atom+xml" href="https://minn-engine.localhost/editor-authored-post/feed/atom/" thr:count="0" />
+					<link rel="replies" type="text/html" href="https://minn.localhost/editor-authored-post/#comments" thr:count="0" />
+			<link rel="replies" type="application/atom+xml" href="https://minn.localhost/editor-authored-post/feed/atom/" thr:count="0" />
 			<thr:total>0</thr:total>
 			</entry>
 		<entry>
@@ -343,15 +343,15 @@ keeps    spacing.</pre>
 					</author>
 
 		<title type="html"><![CDATA[Excerpt block filter probe]]></title>
-		<link rel="alternate" type="text/html" href="https://minn-engine.localhost/excerpt-block-filter-probe/" />
+		<link rel="alternate" type="text/html" href="https://minn.localhost/excerpt-block-filter-probe/" />
 
-		<id>https://minn-engine.localhost/?p=8</id>
+		<id>https://minn.localhost/?p=8</id>
 		<updated>2026-08-28T02:42:28Z</updated>
 		<published>2026-08-28T02:42:28Z</published>
-		<category scheme="https://minn-engine.localhost" term="Uncategorized" />
+		<category scheme="https://minn.localhost" term="Uncategorized" />
 		<summary type="html"><![CDATA[Heading text Para one. item alpha item beta Quoted line. pre body text Para two.]]></summary>
 
-					<content type="html" xml:base="https://minn-engine.localhost/excerpt-block-filter-probe/"><![CDATA[
+					<content type="html" xml:base="https://minn.localhost/excerpt-block-filter-probe/"><![CDATA[
 <h2 class="wp-block-heading">Heading text</h2>
 
 
@@ -385,8 +385,8 @@ keeps    spacing.</pre>
 <p class="wp-block-paragraph">Para two.</p>
 ]]></content>
 		
-					<link rel="replies" type="text/html" href="https://minn-engine.localhost/excerpt-block-filter-probe/#comments" thr:count="0" />
-			<link rel="replies" type="application/atom+xml" href="https://minn-engine.localhost/excerpt-block-filter-probe/feed/atom/" thr:count="0" />
+					<link rel="replies" type="text/html" href="https://minn.localhost/excerpt-block-filter-probe/#comments" thr:count="0" />
+			<link rel="replies" type="application/atom+xml" href="https://minn.localhost/excerpt-block-filter-probe/feed/atom/" thr:count="0" />
 			<thr:total>0</thr:total>
 			</entry>
 		<entry>
@@ -395,15 +395,15 @@ keeps    spacing.</pre>
 					</author>
 
 		<title type="html"><![CDATA[Texturize battery: it&#8217;s &#8220;quoted&#8221; &#8212; fine]]></title>
-		<link rel="alternate" type="text/html" href="https://minn-engine.localhost/texturize-battery-its-quoted-fine/" />
+		<link rel="alternate" type="text/html" href="https://minn.localhost/texturize-battery-its-quoted-fine/" />
 
-		<id>https://minn-engine.localhost/?p=7</id>
+		<id>https://minn.localhost/?p=7</id>
 		<updated>2026-08-28T02:41:31Z</updated>
 		<published>2026-08-28T02:41:31Z</published>
-		<category scheme="https://minn-engine.localhost" term="Uncategorized" />
+		<category scheme="https://minn.localhost" term="Uncategorized" />
 		<summary type="html"><![CDATA[He said &#8220;hello there&#8221; and it&#8217;s fine. She replied &#8216;sure thing&#8217; at 6&#8217;2&#8243; tall. Back in &#8217;99 we used dashes&#8212;like this&#8211;and spaced ones &#8212; too. Waiting&#8230; done. Inline it's "kept" raw... but outside it&#8217;s curly again.]]></summary>
 
-					<content type="html" xml:base="https://minn-engine.localhost/texturize-battery-its-quoted-fine/"><![CDATA[
+					<content type="html" xml:base="https://minn.localhost/texturize-battery-its-quoted-fine/"><![CDATA[
 <p class="wp-block-paragraph">He said &#8220;hello there&#8221; and it&#8217;s fine. She replied &#8216;sure thing&#8217; at 6&#8217;2&#8243; tall.</p>
 
 
@@ -419,8 +419,8 @@ keeps    spacing.</pre>
 <p class="wp-block-paragraph">Inline <code>it's "kept" raw...</code> but outside it&#8217;s curly again.</p>
 ]]></content>
 		
-					<link rel="replies" type="text/html" href="https://minn-engine.localhost/texturize-battery-its-quoted-fine/#comments" thr:count="0" />
-			<link rel="replies" type="application/atom+xml" href="https://minn-engine.localhost/texturize-battery-its-quoted-fine/feed/atom/" thr:count="0" />
+					<link rel="replies" type="text/html" href="https://minn.localhost/texturize-battery-its-quoted-fine/#comments" thr:count="0" />
+			<link rel="replies" type="application/atom+xml" href="https://minn.localhost/texturize-battery-its-quoted-fine/feed/atom/" thr:count="0" />
 			<thr:total>0</thr:total>
 			</entry>
 		<entry>
@@ -429,15 +429,15 @@ keeps    spacing.</pre>
 					</author>
 
 		<title type="html"><![CDATA[Building in the open]]></title>
-		<link rel="alternate" type="text/html" href="https://minn-engine.localhost/building-in-the-open/" />
+		<link rel="alternate" type="text/html" href="https://minn.localhost/building-in-the-open/" />
 
-		<id>https://minn-engine.localhost/?p=5</id>
+		<id>https://minn.localhost/?p=5</id>
 		<updated>2026-08-28T02:32:13Z</updated>
 		<published>2026-08-28T02:32:13Z</published>
-		<category scheme="https://minn-engine.localhost" term="Uncategorized" /><category scheme="https://minn-engine.localhost" term="engine" /><category scheme="https://minn-engine.localhost" term="parity" />
+		<category scheme="https://minn.localhost" term="Uncategorized" /><category scheme="https://minn.localhost" term="engine" /><category scheme="https://minn.localhost" term="parity" />
 		<summary type="html"><![CDATA[A hand-written excerpt for the parity suite.]]></summary>
 
-					<content type="html" xml:base="https://minn-engine.localhost/building-in-the-open/"><![CDATA[
+					<content type="html" xml:base="https://minn.localhost/building-in-the-open/"><![CDATA[
 <h2 class="wp-block-heading">Why contracts first</h2>
 
 
@@ -449,31 +449,31 @@ keeps    spacing.</pre>
 <ul class="wp-block-list"><li>schema</li><li>rest</li><li>cli</li></ul>
 ]]></content>
 		
-					<link rel="replies" type="text/html" href="https://minn-engine.localhost/building-in-the-open/#comments" thr:count="0" />
-			<link rel="replies" type="application/atom+xml" href="https://minn-engine.localhost/building-in-the-open/feed/atom/" thr:count="0" />
+					<link rel="replies" type="text/html" href="https://minn.localhost/building-in-the-open/#comments" thr:count="0" />
+			<link rel="replies" type="application/atom+xml" href="https://minn.localhost/building-in-the-open/feed/atom/" thr:count="0" />
 			<thr:total>0</thr:total>
 			</entry>
 		<entry>
 		<author>
 			<name>admin</name>
-							<uri>https://minn-engine.localhost</uri>
+							<uri>https://minn.localhost</uri>
 						</author>
 
 		<title type="html"><![CDATA[Hello world!]]></title>
-		<link rel="alternate" type="text/html" href="https://minn-engine.localhost/hello-world/" />
+		<link rel="alternate" type="text/html" href="https://minn.localhost/hello-world/" />
 
-		<id>https://minn-engine.localhost/?p=1</id>
+		<id>https://minn.localhost/?p=1</id>
 		<updated>2026-08-28T02:21:33Z</updated>
 		<published>2026-08-28T02:21:33Z</published>
-		<category scheme="https://minn-engine.localhost" term="Uncategorized" />
+		<category scheme="https://minn.localhost" term="Uncategorized" />
 		<summary type="html"><![CDATA[Welcome to WordPress. This is your first post. Edit or delete it, then start writing!]]></summary>
 
-					<content type="html" xml:base="https://minn-engine.localhost/hello-world/"><![CDATA[
+					<content type="html" xml:base="https://minn.localhost/hello-world/"><![CDATA[
 <p class="wp-block-paragraph">Welcome to WordPress. This is your first post. Edit or delete it, then start writing!</p>
 ]]></content>
 		
-					<link rel="replies" type="text/html" href="https://minn-engine.localhost/hello-world/#comments" thr:count="1" />
-			<link rel="replies" type="application/atom+xml" href="https://minn-engine.localhost/hello-world/feed/atom/" thr:count="1" />
+					<link rel="replies" type="text/html" href="https://minn.localhost/hello-world/#comments" thr:count="1" />
+			<link rel="replies" type="application/atom+xml" href="https://minn.localhost/hello-world/feed/atom/" thr:count="1" />
 			<thr:total>1</thr:total>
 			</entry>
 	</feed>

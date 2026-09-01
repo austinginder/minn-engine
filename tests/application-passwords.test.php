@@ -12,7 +12,7 @@
 require __DIR__ . '/lib.php';
 
 $ROOT   = dirname( __DIR__ );
-$ENGINE = getenv( 'MINN_ENGINE' ) ?: 'https://minn-engine.localhost';
+$ENGINE = getenv( 'MINN_ENGINE' ) ?: 'https://minn.localhost';
 $REF    = getenv( 'MINN_REF' ) ?: 'http://127.0.0.1:8123';
 
 [ $ph ] = minn_test_fetch( "$REF/?rest_route=/wp/v2/posts", 3 );
@@ -20,7 +20,7 @@ if ( 200 !== $ph['status'] ) {
 	echo "SKIP: reference WordPress not running at $REF\n";
 	exit( 0 );
 }
-$enabler = "$ROOT/wp-reference/wp-content/mu-plugins/zz-application-passwords.php";
+$enabler = minn_test_site_root() . '/wp-reference/wp-content/mu-plugins/zz-application-passwords.php';
 if ( ! is_file( $enabler ) ) {
 	@mkdir( dirname( $enabler ), 0755, true );
 	file_put_contents( $enabler, "<?php\n// The oracle runs on plain HTTP, where the reference refuses application passwords; the suites need them on.\nadd_filter(\"wp_is_application_passwords_available\", \"__return_true\");\n" );
@@ -33,7 +33,7 @@ function check( bool $ok, string $label, string $detail = '' ): void {
 	if ( $ok ) { $pass++; echo "  ok  $label\n"; } else { $fail++; echo "FAIL  $label" . ( $detail ? "\n      $detail" : '' ) . "\n"; }
 }
 
-$mint = json_decode( (string) shell_exec( 'wp --path=' . escapeshellarg( "$ROOT/wp-reference" ) . ' eval-file ' . escapeshellarg( "$ROOT/tests/tools/mint-session.php" ) . ' 1 2>/dev/null' ), true );
+$mint = json_decode( (string) shell_exec( 'wp --path=' . escapeshellarg( minn_test_site_root() . '/wp-reference' ) . ' eval-file ' . escapeshellarg( "$ROOT/tests/tools/mint-session.php" ) . ' 1 2>/dev/null' ), true );
 if ( ! $mint || empty( $mint['cookie'] ) ) {
 	echo "SKIP: could not mint a reference session\n";
 	exit( 0 );
@@ -137,7 +137,7 @@ foreach ( $oracleSteps as $label => $expected ) {
 	check( $got === $expected, $label, 'engine ' . json_encode( $got ) . "\n      oracle " . json_encode( $expected ) );
 }
 check( 1 === preg_match( '/^[A-Za-z0-9]{4}( [A-Za-z0-9]{4}){5}$/', $enginePlain ), 'the plaintext is six groups of four letters and digits', $enginePlain );
-$meta = json_decode( (string) shell_exec( 'wp --path=' . escapeshellarg( "$ROOT/wp-reference" ) . ' user meta get 1 _application_passwords --format=json 2>/dev/null' ), true );
+$meta = json_decode( (string) shell_exec( 'wp --path=' . escapeshellarg( minn_test_site_root() . '/wp-reference' ) . ' user meta get 1 _application_passwords --format=json 2>/dev/null' ), true );
 check( array() === $meta || null === $meta, 'nothing is left in the user meta afterwards', json_encode( $meta ) );
 
 echo "\n$pass passed, $fail failed\n";

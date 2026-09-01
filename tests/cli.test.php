@@ -14,9 +14,9 @@ declare(strict_types=1);
 require_once __DIR__ . '/lib.php';
 
 $ROOT = dirname(__DIR__);
-$ENGINE_DIR = "$ROOT/public";
-$REF_DIR = "$ROOT/wp-reference";
-$ENGINE = 'https://minn-engine.localhost';
+$ENGINE_DIR = minn_test_site_root() . '/public';
+$REF_DIR = minn_test_site_root() . '/wp-reference';
+$ENGINE = 'https://minn.localhost';
 
 $pass = 0;
 $fail = 0;
@@ -214,7 +214,7 @@ $head = static function (string $url): array {
 
 // The one-time login link (engine only).
 [$url, $code] = $run($ENGINE_DIR, 'user login admin');
-$check('user login prints a wp-login.php link', $code === 0 && preg_match('#^https://minn-engine\.localhost/wp-login\.php\?user_id=1&cove_login_token=[0-9a-f]{7}$#', $url) === 1, $url);
+$check('user login prints a wp-login.php link', $code === 0 && preg_match('#^https://minn\.localhost/wp-login\.php\?user_id=1&cove_login_token=[0-9a-f]{7}$#', $url) === 1, $url);
 $headers = $head($url);
 $check('the link signs in: 302 into the admin', $headers['status'] === '302' && str_contains($headers['location'] ?? '', '/minn-admin/'), json_encode($headers));
 $check('the link sets the logged_in cookie', str_contains($headers['set-cookie'] ?? '', 'wordpress_logged_in_'), json_encode($headers['set-cookie'] ?? null));

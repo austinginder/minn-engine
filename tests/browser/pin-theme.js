@@ -1,10 +1,10 @@
-// The dev site runs the Minn site theme; the browser parity suites compare
-// twentytwentyfive. Pin it for the process and restore on exit, unless
-// run-all.sh already pinned it (MINN_TEST_KEEP_THEME).
+// The test site already runs twentytwentyfive, so this is normally a no-op;
+// it stays so a suite pointed at another site still gets the theme the
+// fixtures were captured under.
 const { execSync } = require( 'child_process' );
 const path = require( 'path' );
 
-const PUBLIC = path.resolve( __dirname, '..', '..', 'public' );
+const PUBLIC = ( process.env.MINN_TEST_ROOT || '~/Cove/Sites/minn.localhost' ) + '/public';
 const wp = ( args ) => execSync( `/opt/homebrew/bin/wp ${ args }`, { cwd: PUBLIC, stdio: [ 'ignore', 'pipe', 'ignore' ] } ).toString().trim();
 
 function pinTheme( slug = 'twentytwentyfive' ) {

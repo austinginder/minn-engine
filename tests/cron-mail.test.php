@@ -9,7 +9,7 @@ declare(strict_types=1);
  * is created and removed again.
  */
 
-$ENGINE = 'https://minn-engine.localhost';
+$ENGINE = 'https://minn.localhost';
 $REF = 'http://127.0.0.1:8123';
 $ROOT = dirname(__DIR__);
 $MAILPIT = 'http://localhost:8025/api/v1';
@@ -37,12 +37,12 @@ function check(bool $ok, string $label, string $detail = ''): void
 function wp(string $command): string
 {
     global $ROOT;
-    return trim((string) shell_exec('cd ' . escapeshellarg("$ROOT/wp-reference") . " && wp $command 2>/dev/null"));
+    return trim((string) shell_exec('cd ' . escapeshellarg(minn_test_site_root() . '/wp-reference') . " && wp $command 2>/dev/null"));
 }
 function engineWp(string $command): string
 {
     global $ROOT;
-    return trim((string) shell_exec('cd ' . escapeshellarg("$ROOT/public") . " && wp $command 2>&1"));
+    return trim((string) shell_exec('cd ' . escapeshellarg(minn_test_site_root() . '/public') . " && wp $command 2>&1"));
 }
 /** @return array{status: string, headers: array<string, string>, body: string} */
 function page(string $url, string $post = '', array $headers = []): array
@@ -123,7 +123,7 @@ $latest = json_decode((string) file_get_contents("$MAILPIT/messages?limit=1"), t
 $message = $latest['messages'][0] ?? [];
 check(($latest['total'] ?? 0) === $before + 1 && str_contains($message['Subject'] ?? '', 'Password Reset') && ($message['To'][0]['Address'] ?? '') === 'editor@minn-engine.localhost', 'the reset email reaches the mailbox', json_encode([$message['Subject'] ?? null, $message['To'] ?? null]));
 $text = (string) (json_decode((string) file_get_contents("$MAILPIT/message/" . ($message['ID'] ?? '')), true)['Text'] ?? '');
-check(preg_match('#(https://minn-engine\.localhost/wp-login\.php\?action=rp&key=([A-Za-z0-9]{20})&login=editor)#', $text, $m) === 1, 'the email carries the reset link in the reference\'s shape', $text);
+check(preg_match('#(https://minn\.localhost/wp-login\.php\?action=rp&key=([A-Za-z0-9]{20})&login=editor)#', $text, $m) === 1, 'the email carries the reset link in the reference\'s shape', $text);
 $link = $m[1] ?? '';
 $key = $m[2] ?? '';
 $stored = wp("db query \"SELECT user_activation_key FROM wp_users WHERE ID=2\" --skip-column-names");
@@ -159,7 +159,7 @@ check($refTry['status'] === '302' && str_contains($refTry['headers']['location']
 // 3. The mail transport switch and the test command.
 check(str_contains(engineWp('minn mail cron-mail-suite@example.com'), 'Sent through the mail transport'), 'wp minn mail sends through the default transport');
 engineWp("option update minn_mail '{\"transport\":\"log\"}' --format=json");
-$log = "$ROOT/public/wp-content/minn-mail.log";
+$log = minn_test_site_root() . '/public/wp-content/minn-mail.log';
 @unlink($log);
 engineWp('minn mail log-transport@example.com');
 $line = trim((string) @file_get_contents($log));

@@ -4,7 +4,7 @@
         "date": "2026-08-28T10:03:00",
         "date_gmt": "2026-08-28T10:59:38",
         "guid": {
-            "rendered": "https://minn-engine.localhost/block-battery-dynamic/"
+            "rendered": "https://minn.localhost/block-battery-dynamic/"
         },
         "modified": "2026-08-28T11:30:13",
         "modified_gmt": "2026-08-28T11:30:13",
@@ -110,7 +110,7 @@
         "date": "2026-08-28T10:02:00",
         "date_gmt": "2026-08-28T10:59:38",
         "guid": {
-            "rendered": "https://minn-engine.localhost/block-battery-layout/"
+            "rendered": "https://minn.localhost/block-battery-layout/"
         },
         "modified": "2026-08-28T11:30:12",
         "modified_gmt": "2026-08-28T11:30:12",
@@ -122,7 +122,7 @@
             "rendered": "Block battery: layout"
         },
         "content": {
-            "rendered": "\n<div class=\"wp-block-group has-global-padding is-layout-constrained wp-block-group-is-layout-constrained\">\n<p class=\"wp-block-paragraph\">Inside a constrained group.</p>\n</div>\n\n\n\n<div class=\"wp-block-group is-nowrap is-layout-flex wp-container-core-group-is-layout-3a88641f wp-block-group-is-layout-flex\">\n<p class=\"wp-block-paragraph\">Row one</p>\n\n\n\n<p class=\"wp-block-paragraph\">Row two</p>\n</div>\n\n\n\n<div class=\"wp-block-group is-vertical is-layout-flex wp-container-core-group-is-layout-831b2db5 wp-block-group-is-layout-flex\">\n<p class=\"wp-block-paragraph\">Stacked</p>\n</div>\n\n\n\n<div class=\"wp-block-group is-layout-grid wp-container-core-group-is-layout-715b57f2 wp-block-group-is-layout-grid\">\n<p class=\"wp-block-paragraph\">Grid cell</p>\n</div>\n\n\n\n<div class=\"wp-block-columns is-layout-flex wp-container-core-columns-is-layout-794e3cfa wp-block-columns-is-layout-flex\">\n<div class=\"wp-block-column is-layout-flow wp-block-column-is-layout-flow\">\n<p class=\"wp-block-paragraph\">Left column</p>\n</div>\n\n\n\n<div class=\"wp-block-column is-layout-flow wp-block-column-is-layout-flow\" style=\"flex-basis:66.66%\">\n<p class=\"wp-block-paragraph\">Right column</p>\n</div>\n</div>\n\n\n\n<hr class=\"wp-block-separator has-alpha-channel-opacity\"/>\n\n\n\n<hr class=\"wp-block-separator has-alpha-channel-opacity is-style-wide is-style-wide--2\"/>\n\n\n\n<div style=\"height:60px\" aria-hidden=\"true\" class=\"wp-block-spacer\"></div>\n\n\n\n<div class=\"wp-block-buttons is-layout-flex wp-block-buttons-is-layout-flex\">\n<div class=\"wp-block-button\"><a class=\"wp-block-button__link wp-element-button\" href=\"https://minn-engine.localhost/\">Primary</a></div>\n\n\n\n<div class=\"wp-block-button is-style-outline is-style-outline--3\"><a class=\"wp-block-button__link wp-element-button\">Outline</a></div>\n</div>\n\n\n\n<figure class=\"wp-block-table\"><table class=\"has-fixed-layout\"><thead><tr><th>Name</th><th>Value</th></tr></thead><tbody><tr><td>One</td><td>1</td></tr><tr><td>Two</td><td>2</td></tr></tbody></table></figure>\n\n\n\n<p class=\"wp-block-paragraph\">Before the more tag.</p>\n\n\n\n<!--more-->\n\n\n\n<p class=\"wp-block-paragraph\">After the more tag.</p>\n\n",
+            "rendered": "\n<div class=\"wp-block-group has-global-padding is-layout-constrained wp-block-group-is-layout-constrained\">\n<p class=\"wp-block-paragraph\">Inside a constrained group.</p>\n</div>\n\n\n\n<div class=\"wp-block-group is-nowrap is-layout-flex wp-container-core-group-is-layout-3a88641f wp-block-group-is-layout-flex\">\n<p class=\"wp-block-paragraph\">Row one</p>\n\n\n\n<p class=\"wp-block-paragraph\">Row two</p>\n</div>\n\n\n\n<div class=\"wp-block-group is-vertical is-layout-flex wp-container-core-group-is-layout-831b2db5 wp-block-group-is-layout-flex\">\n<p class=\"wp-block-paragraph\">Stacked</p>\n</div>\n\n\n\n<div class=\"wp-block-group is-layout-grid wp-container-core-group-is-layout-715b57f2 wp-block-group-is-layout-grid\">\n<p class=\"wp-block-paragraph\">Grid cell</p>\n</div>\n\n\n\n<div class=\"wp-block-columns is-layout-flex wp-container-core-columns-is-layout-794e3cfa wp-block-columns-is-layout-flex\">\n<div class=\"wp-block-column is-layout-flow wp-block-column-is-layout-flow\">\n<p class=\"wp-block-paragraph\">Left column</p>\n</div>\n\n\n\n<div class=\"wp-block-column is-layout-flow wp-block-column-is-layout-flow\" style=\"flex-basis:66.66%\">\n<p class=\"wp-block-paragraph\">Right column</p>\n</div>\n</div>\n\n\n\n<hr class=\"wp-block-separator has-alpha-channel-opacity\"/>\n\n\n\n<hr class=\"wp-block-separator has-alpha-channel-opacity is-style-wide is-style-wide--2\"/>\n\n\n\n<div style=\"height:60px\" aria-hidden=\"true\" class=\"wp-block-spacer\"></div>\n\n\n\n<div class=\"wp-block-buttons is-layout-flex wp-block-buttons-is-layout-flex\">\n<div class=\"wp-block-button\"><a class=\"wp-block-button__link wp-element-button\" href=\"https://minn.localhost/\">Primary</a></div>\n\n\n\n<div class=\"wp-block-button is-style-outline is-style-outline--3\"><a class=\"wp-block-button__link wp-element-button\">Outline</a></div>\n</div>\n\n\n\n<figure class=\"wp-block-table\"><table class=\"has-fixed-layout\"><thead><tr><th>Name</th><th>Value</th></tr></thead><tbody><tr><td>One</td><td>1</td></tr><tr><td>Two</td><td>2</td></tr></tbody></table></figure>\n\n\n\n<p class=\"wp-block-paragraph\">Before the more tag.</p>\n\n\n\n<!--more-->\n\n\n\n<p class=\"wp-block-paragraph\">After the more tag.</p>\n\n",
             "protected": false
         },
         "excerpt": {
@@ -216,7 +216,7 @@
         "date": "2026-08-28T10:01:00",
         "date_gmt": "2026-08-28T10:59:37",
         "guid": {
-            "rendered": "https://minn-engine.localhost/block-battery-media/"
+            "rendered": "https://minn.localhost/block-battery-media/"
         },
         "modified": "2026-08-28T11:30:12",
         "modified_gmt": "2026-08-28T11:30:12",
@@ -228,7 +228,7 @@
             "rendered": "Block battery: media"
         },
         "content": {
-            "rendered": "\n<figure class=\"wp-block-image size-large\"><img loading=\"lazy\" decoding=\"async\" width=\"1024\" height=\"683\" src=\"https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png\" alt=\"Battery alt\" class=\"wp-image-607\" srcset=\"https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-768x512.png 768w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery.png 1200w\" sizes=\"auto, (max-width: 1024px) 100vw, 1024px\" /></figure>\n\n\n\n<figure class=\"wp-block-image aligncenter size-medium\"><a href=\"https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery.png\"><img loading=\"lazy\" decoding=\"async\" width=\"300\" height=\"200\" src=\"https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-300x200.png\" alt=\"\" class=\"wp-image-607\" srcset=\"https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-768x512.png 768w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery.png 1200w\" sizes=\"auto, (max-width: 300px) 100vw, 300px\" /></a><figcaption class=\"wp-element-caption\">A caption</figcaption></figure>\n\n\n\n<figure class=\"wp-block-image size-full is-resized\"><img loading=\"lazy\" decoding=\"async\" width=\"1200\" height=\"800\" src=\"https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery.png\" alt=\"\" class=\"wp-image-607\" style=\"width:400px\" srcset=\"https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery.png 1200w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-768x512.png 768w\" sizes=\"auto, (max-width: 1200px) 100vw, 1200px\" /></figure>\n\n\n\n<figure class=\"wp-block-gallery has-nested-images columns-default is-cropped wp-block-gallery-4 is-layout-flex wp-block-gallery-is-layout-flex\">\n<figure class=\"wp-block-image size-large\"><img loading=\"lazy\" decoding=\"async\" width=\"1024\" height=\"683\" data-id=\"607\" src=\"https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png\" alt=\"\" class=\"wp-image-607\" srcset=\"https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-768x512.png 768w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery.png 1200w\" sizes=\"auto, (max-width: 1024px) 100vw, 1024px\" /></figure>\n\n\n\n<figure class=\"wp-block-image size-large\"><img loading=\"lazy\" decoding=\"async\" width=\"1024\" height=\"683\" data-id=\"607\" src=\"https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png\" alt=\"\" class=\"wp-image-607\" srcset=\"https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-768x512.png 768w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery.png 1200w\" sizes=\"auto, (max-width: 1024px) 100vw, 1024px\" /><figcaption class=\"wp-element-caption\">Second</figcaption></figure>\n</figure>\n\n\n\n<div class=\"wp-block-cover\"><span aria-hidden=\"true\" class=\"wp-block-cover__background has-background-dim\" style=\"background-color:#123456\"></span><img loading=\"lazy\" decoding=\"async\" width=\"1200\" height=\"800\" class=\"wp-block-cover__image-background wp-image-607\" alt=\"\" src=\"https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery.png\" data-object-fit=\"cover\" srcset=\"https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery.png 1200w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-768x512.png 768w\" sizes=\"auto, (max-width: 1200px) 100vw, 1200px\" /><div class=\"wp-block-cover__inner-container has-global-padding is-layout-constrained wp-block-cover-is-layout-constrained\">\n<p class=\"has-text-align-center has-large-font-size wp-block-paragraph\">Cover title</p>\n</div></div>\n\n\n\n<div class=\"wp-block-media-text is-stacked-on-mobile\"><figure class=\"wp-block-media-text__media\"><img loading=\"lazy\" decoding=\"async\" width=\"1024\" height=\"683\" src=\"https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png\" alt=\"\" class=\"wp-image-607 size-full\" srcset=\"https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery-768x512.png 768w, https://minn-engine.localhost/wp-content/uploads/2026/08/minn-battery.png 1200w\" sizes=\"auto, (max-width: 1024px) 100vw, 1024px\" /></figure><div class=\"wp-block-media-text__content\">\n<p class=\"wp-block-paragraph\">Beside the media.</p>\n</div></div>\n\n",
+            "rendered": "\n<figure class=\"wp-block-image size-large\"><img loading=\"lazy\" decoding=\"async\" width=\"1024\" height=\"683\" src=\"https://minn.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png\" alt=\"Battery alt\" class=\"wp-image-607\" srcset=\"https://minn.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery-768x512.png 768w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery.png 1200w\" sizes=\"auto, (max-width: 1024px) 100vw, 1024px\" /></figure>\n\n\n\n<figure class=\"wp-block-image aligncenter size-medium\"><a href=\"https://minn.localhost/wp-content/uploads/2026/08/minn-battery.png\"><img loading=\"lazy\" decoding=\"async\" width=\"300\" height=\"200\" src=\"https://minn.localhost/wp-content/uploads/2026/08/minn-battery-300x200.png\" alt=\"\" class=\"wp-image-607\" srcset=\"https://minn.localhost/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery-768x512.png 768w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery.png 1200w\" sizes=\"auto, (max-width: 300px) 100vw, 300px\" /></a><figcaption class=\"wp-element-caption\">A caption</figcaption></figure>\n\n\n\n<figure class=\"wp-block-image size-full is-resized\"><img loading=\"lazy\" decoding=\"async\" width=\"1200\" height=\"800\" src=\"https://minn.localhost/wp-content/uploads/2026/08/minn-battery.png\" alt=\"\" class=\"wp-image-607\" style=\"width:400px\" srcset=\"https://minn.localhost/wp-content/uploads/2026/08/minn-battery.png 1200w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery-768x512.png 768w\" sizes=\"auto, (max-width: 1200px) 100vw, 1200px\" /></figure>\n\n\n\n<figure class=\"wp-block-gallery has-nested-images columns-default is-cropped wp-block-gallery-4 is-layout-flex wp-block-gallery-is-layout-flex\">\n<figure class=\"wp-block-image size-large\"><img loading=\"lazy\" decoding=\"async\" width=\"1024\" height=\"683\" data-id=\"607\" src=\"https://minn.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png\" alt=\"\" class=\"wp-image-607\" srcset=\"https://minn.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery-768x512.png 768w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery.png 1200w\" sizes=\"auto, (max-width: 1024px) 100vw, 1024px\" /></figure>\n\n\n\n<figure class=\"wp-block-image size-large\"><img loading=\"lazy\" decoding=\"async\" width=\"1024\" height=\"683\" data-id=\"607\" src=\"https://minn.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png\" alt=\"\" class=\"wp-image-607\" srcset=\"https://minn.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery-768x512.png 768w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery.png 1200w\" sizes=\"auto, (max-width: 1024px) 100vw, 1024px\" /><figcaption class=\"wp-element-caption\">Second</figcaption></figure>\n</figure>\n\n\n\n<div class=\"wp-block-cover\"><span aria-hidden=\"true\" class=\"wp-block-cover__background has-background-dim\" style=\"background-color:#123456\"></span><img loading=\"lazy\" decoding=\"async\" width=\"1200\" height=\"800\" class=\"wp-block-cover__image-background wp-image-607\" alt=\"\" src=\"https://minn.localhost/wp-content/uploads/2026/08/minn-battery.png\" data-object-fit=\"cover\" srcset=\"https://minn.localhost/wp-content/uploads/2026/08/minn-battery.png 1200w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery-768x512.png 768w\" sizes=\"auto, (max-width: 1200px) 100vw, 1200px\" /><div class=\"wp-block-cover__inner-container has-global-padding is-layout-constrained wp-block-cover-is-layout-constrained\">\n<p class=\"has-text-align-center has-large-font-size wp-block-paragraph\">Cover title</p>\n</div></div>\n\n\n\n<div class=\"wp-block-media-text is-stacked-on-mobile\"><figure class=\"wp-block-media-text__media\"><img loading=\"lazy\" decoding=\"async\" width=\"1024\" height=\"683\" src=\"https://minn.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png\" alt=\"\" class=\"wp-image-607 size-full\" srcset=\"https://minn.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery-768x512.png 768w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery.png 1200w\" sizes=\"auto, (max-width: 1024px) 100vw, 1024px\" /></figure><div class=\"wp-block-media-text__content\">\n<p class=\"wp-block-paragraph\">Beside the media.</p>\n</div></div>\n\n",
             "protected": false
         },
         "excerpt": {
@@ -322,7 +322,7 @@
         "date": "2026-08-28T10:00:00",
         "date_gmt": "2026-08-28T10:59:37",
         "guid": {
-            "rendered": "https://minn-engine.localhost/block-battery-text/"
+            "rendered": "https://minn.localhost/block-battery-text/"
         },
         "modified": "2026-08-28T11:30:11",
         "modified_gmt": "2026-08-28T11:30:11",
@@ -334,7 +334,7 @@
             "rendered": "Block battery: text"
         },
         "content": {
-            "rendered": "\n<p class=\"wp-block-paragraph\">A plain paragraph with <strong>bold</strong>, <em>italic</em>, and a <a href=\"https://minn-engine.localhost/hello-world/\">link</a>. &#8220;Quoted&#8221; and it&#8217;s texturized&#8230;</p>\n\n\n\n<p class=\"has-text-align-center has-drop-cap has-large-font-size wp-block-paragraph\">Centered, drop cap, large.</p>\n\n\n\n<h2 class=\"wp-block-heading\">Heading two</h2>\n\n\n\n<h3 class=\"wp-block-heading has-text-align-center\">Heading three, centered</h3>\n\n\n\n<ul class=\"wp-block-list\">\n<li>First item</li>\n\n\n\n<li>Second item\n<ul class=\"wp-block-list\">\n<li>Nested item</li>\n</ul>\n</li>\n</ul>\n\n\n\n<ol start=\"3\" class=\"wp-block-list\">\n<li>Third</li>\n\n\n\n<li>Fourth</li>\n</ol>\n\n\n\n<blockquote class=\"wp-block-quote is-layout-flow wp-block-quote-is-layout-flow\">\n<p class=\"wp-block-paragraph\">Quoted paragraph.</p>\n<cite>Someone</cite></blockquote>\n\n\n\n<figure class=\"wp-block-pullquote\"><blockquote><p>Pulled quote.</p><cite>A citation</cite></blockquote></figure>\n\n\n\n<pre class=\"wp-block-verse\">Roses are red,\n  violets are blue.</pre>\n\n\n\n<pre class=\"wp-block-preformatted\">Preformatted   text\nkeeps    spacing.</pre>\n\n\n\n<pre class=\"wp-block-code\"><code>function hi() {\n    return \"quotes stay straight\";\n}</code></pre>\n\n\n\n<details class=\"wp-block-details is-layout-flow wp-block-details-is-layout-flow\"><summary>Summary line</summary>\n<p class=\"wp-block-paragraph\">Hidden detail.</p>\n</details>\n\n",
+            "rendered": "\n<p class=\"wp-block-paragraph\">A plain paragraph with <strong>bold</strong>, <em>italic</em>, and a <a href=\"https://minn.localhost/hello-world/\">link</a>. &#8220;Quoted&#8221; and it&#8217;s texturized&#8230;</p>\n\n\n\n<p class=\"has-text-align-center has-drop-cap has-large-font-size wp-block-paragraph\">Centered, drop cap, large.</p>\n\n\n\n<h2 class=\"wp-block-heading\">Heading two</h2>\n\n\n\n<h3 class=\"wp-block-heading has-text-align-center\">Heading three, centered</h3>\n\n\n\n<ul class=\"wp-block-list\">\n<li>First item</li>\n\n\n\n<li>Second item\n<ul class=\"wp-block-list\">\n<li>Nested item</li>\n</ul>\n</li>\n</ul>\n\n\n\n<ol start=\"3\" class=\"wp-block-list\">\n<li>Third</li>\n\n\n\n<li>Fourth</li>\n</ol>\n\n\n\n<blockquote class=\"wp-block-quote is-layout-flow wp-block-quote-is-layout-flow\">\n<p class=\"wp-block-paragraph\">Quoted paragraph.</p>\n<cite>Someone</cite></blockquote>\n\n\n\n<figure class=\"wp-block-pullquote\"><blockquote><p>Pulled quote.</p><cite>A citation</cite></blockquote></figure>\n\n\n\n<pre class=\"wp-block-verse\">Roses are red,\n  violets are blue.</pre>\n\n\n\n<pre class=\"wp-block-preformatted\">Preformatted   text\nkeeps    spacing.</pre>\n\n\n\n<pre class=\"wp-block-code\"><code>function hi() {\n    return \"quotes stay straight\";\n}</code></pre>\n\n\n\n<details class=\"wp-block-details is-layout-flow wp-block-details-is-layout-flow\"><summary>Summary line</summary>\n<p class=\"wp-block-paragraph\">Hidden detail.</p>\n</details>\n\n",
             "protected": false
         },
         "excerpt": {
@@ -428,7 +428,7 @@
         "date": "2026-08-28T02:58:06",
         "date_gmt": "2026-08-28T02:58:06",
         "guid": {
-            "rendered": "https://minn-engine.localhost/?p=11"
+            "rendered": "https://minn.localhost/?p=11"
         },
         "modified": "2026-08-28T02:58:06",
         "modified_gmt": "2026-08-28T02:58:06",
@@ -540,7 +540,7 @@
         "date": "2026-08-28T02:53:48",
         "date_gmt": "2026-08-28T02:53:48",
         "guid": {
-            "rendered": "https://minn-engine.localhost/?p=9"
+            "rendered": "https://minn.localhost/?p=9"
         },
         "modified": "2026-08-28T02:53:48",
         "modified_gmt": "2026-08-28T02:53:48",
@@ -652,7 +652,7 @@
         "date": "2026-08-28T02:42:28",
         "date_gmt": "2026-08-28T02:42:28",
         "guid": {
-            "rendered": "https://minn-engine.localhost/?p=8"
+            "rendered": "https://minn.localhost/?p=8"
         },
         "modified": "2026-08-28T02:42:28",
         "modified_gmt": "2026-08-28T02:42:28",
@@ -758,7 +758,7 @@
         "date": "2026-08-28T02:41:31",
         "date_gmt": "2026-08-28T02:41:31",
         "guid": {
-            "rendered": "https://minn-engine.localhost/?p=7"
+            "rendered": "https://minn.localhost/?p=7"
         },
         "modified": "2026-08-28T02:41:31",
         "modified_gmt": "2026-08-28T02:41:31",
@@ -864,7 +864,7 @@
         "date": "2026-08-28T02:32:13",
         "date_gmt": "2026-08-28T02:32:13",
         "guid": {
-            "rendered": "https://minn-engine.localhost/?p=5"
+            "rendered": "https://minn.localhost/?p=5"
         },
         "modified": "2026-08-28T02:32:13",
         "modified_gmt": "2026-08-28T02:32:13",
@@ -975,7 +975,7 @@
         "date": "2026-08-28T02:21:33",
         "date_gmt": "2026-08-28T02:21:33",
         "guid": {
-            "rendered": "https://minn-engine.localhost/?p=1"
+            "rendered": "https://minn.localhost/?p=1"
         },
         "modified": "2026-08-28T02:21:33",
         "modified_gmt": "2026-08-28T02:21:33",

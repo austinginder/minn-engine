@@ -10,7 +10,7 @@
  * into public/wp-content/uploads), mirroring the shared database.
  */
 
-$ENGINE = 'https://minn-engine.localhost';
+$ENGINE = 'https://minn.localhost';
 $REF    = 'http://127.0.0.1:8123';
 $ROOT   = dirname( __DIR__ );
 
@@ -39,7 +39,7 @@ function check( bool $ok, string $label, string $detail = '' ): void {
 function md_mint( int $uid ): array {
 	global $ROOT;
 	$mint = json_decode( (string) shell_exec(
-		'wp --path=' . escapeshellarg( "$ROOT/wp-reference" ) . ' eval-file ' . escapeshellarg( "$ROOT/tests/tools/mint-session.php" ) . " $uid 2>/dev/null"
+		'wp --path=' . escapeshellarg( minn_test_site_root() . '/wp-reference' ) . ' eval-file ' . escapeshellarg( "$ROOT/tests/tools/mint-session.php" ) . " $uid 2>/dev/null"
 	), true );
 	if ( ! $mint || empty( $mint['cookie'] ) ) {
 		echo "SKIP: could not mint a reference session (wp-cli unavailable?)\n";
@@ -127,7 +127,7 @@ $battery = (array) json_decode((string) @file_get_contents($GLOBALS['ROOT'] . "/
 $keep    = implode(',', array_merge(array_values((array) ($battery['posts'] ?? [])), [(int) ($battery['image'] ?? 0)]));
 	global $ROOT;
 	shell_exec(
-		'cd ' . escapeshellarg( "$ROOT/wp-reference" ) .
+		'cd ' . escapeshellarg( minn_test_site_root() . '/wp-reference' ) .
 		' && ids=$(wp post list --post_type=attachment --format=ids --post__not_in=' . $keep . ' 2>/dev/null); [ -n "$ids" ] && wp post delete $ids --force 2>/dev/null; true'
 	);
 }
@@ -177,7 +177,7 @@ check(
 	'sub-size ladder matches core (constrain math included)',
 	json_encode( array_map( static fn( $s ) => array( $s['width'], $s['height'] ), $sizes ) )
 );
-$updir = dirname( __DIR__ ) . '/public/wp-content/uploads/' . ( $bin_up['media_details']['file'] ?? '' );
+$updir = minn_test_site_root() . '/public/wp-content/uploads/' . ( $bin_up['media_details']['file'] ?? '' );
 check( is_file( dirname( $updir ) . '/' . ( $sizes['medium']['file'] ?? '' ) ), 'generated files land in the shared uploads root' );
 
 // A multipart upload rides the same path the Minn Admin app uses.

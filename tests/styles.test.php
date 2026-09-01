@@ -7,7 +7,7 @@
  */
 require_once __DIR__ . '/lib.php';
 
-$ENGINE = rtrim(getenv('MINN_TEST_URL') ?: 'https://minn-engine.localhost', '/');
+$ENGINE = rtrim(getenv('MINN_TEST_URL') ?: 'https://minn.localhost', '/');
 $REF = 'http://127.0.0.1:8123';
 $fetch = static function (string $url): string {
     $context = stream_context_create(['ssl' => ['verify_peer' => false, 'verify_peer_name' => false], 'http' => ['ignore_errors' => true, 'timeout' => 20]]);

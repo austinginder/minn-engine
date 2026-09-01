@@ -374,11 +374,11 @@
     ],
     [
         "wp_print_head_scripts",
-        "<script id=\"minn-s-js-extra\">\nvar minnObj = {\"a\":\"1\",\"b\":{\"c\":\"d&e\"},\"n\":\"5\"};\n//# sourceURL=minn-s-js-extra\n</script>\n<script id=\"minn-s-js\" src=\"https://x/a.js?ver=7.1\"></script>\n<script id=\"minn-s-js-after\">\nconsole.log(1);\n//# sourceURL=minn-s-js-after\n</script>\n<script data-wp-strategy=\"defer\" defer id=\"minn-d-js\" src=\"https://minn-engine.localhost/rel/d.js?ver=3\"></script>\n"
+        "<script id=\"minn-s-js-extra\">\nvar minnObj = {\"a\":\"1\",\"b\":{\"c\":\"d&e\"},\"n\":\"5\"};\n//# sourceURL=minn-s-js-extra\n</script>\n<script id=\"minn-s-js\" src=\"https://x/a.js?ver=7.1\"></script>\n<script id=\"minn-s-js-after\">\nconsole.log(1);\n//# sourceURL=minn-s-js-after\n</script>\n<script data-wp-strategy=\"defer\" defer id=\"minn-d-js\" src=\"https://minn.localhost/rel/d.js?ver=3\"></script>\n"
     ],
     [
         "wp_print_footer_scripts",
-        "<script id=\"minn-f-js\" src=\"https://x/f.js\"></script>\n<script async data-wp-strategy=\"async\" id=\"minn-a-js\" src=\"https://minn-engine.localhostrel/a.js?ver=7.1\"></script>\n"
+        "<script id=\"minn-f-js\" src=\"https://x/f.js\"></script>\n<script async data-wp-strategy=\"async\" id=\"minn-a-js\" src=\"https://minn.localhostrel/a.js?ver=7.1\"></script>\n"
     ],
     [
         "_wp_footer_scripts",

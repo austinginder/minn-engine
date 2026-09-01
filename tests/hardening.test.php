@@ -12,8 +12,8 @@ declare(strict_types=1);
 require_once __DIR__ . '/lib.php';
 
 $ROOT = dirname(__DIR__);
-$ENGINE = 'https://minn-engine.localhost';
-$REF_DIR = "$ROOT/wp-reference";
+$ENGINE = 'https://minn.localhost';
+$REF_DIR = minn_test_site_root() . '/wp-reference';
 
 $pass = 0;
 $fail = 0;

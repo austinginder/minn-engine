@@ -864,7 +864,7 @@
     [
         "is_allowed_http_origin",
         [
-            "https://minn-engine.localhost",
+            "https://minn.localhost",
             ""
         ]
     ],

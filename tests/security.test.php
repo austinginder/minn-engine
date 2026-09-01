@@ -9,7 +9,7 @@ declare(strict_types=1);
  * plugin or a server. Everything written here is removed again.
  */
 
-$ENGINE = 'https://minn-engine.localhost';
+$ENGINE = 'https://minn.localhost';
 $REF = 'http://127.0.0.1:8123';
 $ROOT = dirname(__DIR__);
 require_once __DIR__ . '/lib.php';
@@ -38,7 +38,7 @@ function check(bool $ok, string $label, string $detail = ''): void
 function mint(int $uid): array
 {
     global $ROOT;
-    $json = shell_exec('wp --path=' . escapeshellarg("$ROOT/wp-reference") . ' eval-file ' . escapeshellarg("$ROOT/tests/tools/mint-session.php") . " $uid 2>/dev/null");
+    $json = shell_exec('wp --path=' . escapeshellarg(minn_test_site_root() . '/wp-reference') . ' eval-file ' . escapeshellarg("$ROOT/tests/tools/mint-session.php") . " $uid 2>/dev/null");
     return (array) json_decode((string) $json, true);
 }
 
@@ -88,7 +88,7 @@ function parity(string $label, string $route, ?array $mint, string $method = 'GE
 function wp(string $command): string
 {
     global $ROOT;
-    return trim((string) shell_exec('cd ' . escapeshellarg("$ROOT/wp-reference") . " && wp $command 2>/dev/null"));
+    return trim((string) shell_exec('cd ' . escapeshellarg(minn_test_site_root() . '/wp-reference') . " && wp $command 2>/dev/null"));
 }
 
 /** @return array{status: string, headers: array<string, string>, body: string} a raw page fetch without following redirects */

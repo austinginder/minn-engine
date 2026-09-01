@@ -14,7 +14,7 @@
  * read fixtures never drift.
  */
 
-$ENGINE = rtrim( getenv( 'MINN_TEST_URL' ) ?: 'https://minn-engine.localhost', '/' );
+$ENGINE = rtrim( getenv( 'MINN_TEST_URL' ) ?: 'https://minn.localhost', '/' );
 $REF    = 'http://127.0.0.1:8123';
 $ROOT   = dirname( __DIR__ );
 
@@ -39,7 +39,7 @@ function check( bool $ok, string $label, string $detail = '' ): void {
 function mint( int $uid ): array {
 	global $ROOT;
 	return json_decode( (string) shell_exec(
-		'wp --path=' . escapeshellarg( "$ROOT/wp-reference" ) . ' eval-file '
+		'wp --path=' . escapeshellarg( minn_test_site_root() . '/wp-reference' ) . ' eval-file '
 		. escapeshellarg( "$ROOT/tests/tools/mint-session.php" ) . ' ' . $uid . ' 2>/dev/null'
 	), true );
 }

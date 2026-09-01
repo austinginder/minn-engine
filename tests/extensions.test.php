@@ -9,7 +9,7 @@ declare(strict_types=1);
  * output showed for each device, reader, and screen size.
  */
 
-$ENGINE = 'https://minn-engine.localhost';
+$ENGINE = 'https://minn.localhost';
 $ROOT = dirname(__DIR__);
 require_once __DIR__ . '/lib.php';
 
@@ -29,7 +29,7 @@ function check(bool $ok, string $label, string $detail = ''): void
 function wp(string $command): string
 {
     global $ROOT;
-    return trim((string) shell_exec('cd ' . escapeshellarg("$ROOT/wp-reference") . " && wp $command 2>/dev/null"));
+    return trim((string) shell_exec('cd ' . escapeshellarg(minn_test_site_root() . '/wp-reference') . " && wp $command 2>/dev/null"));
 }
 function fetch(string $url, array $headers = []): string
 {
@@ -74,7 +74,7 @@ wp("option update minn_active_extensions '[\"minn-block-visibility\"]'");
 check(!str_contains(fetch("$ENGINE/$slug/"), 'seam-probe'), 'an extension not activated does nothing');
 
 // 2. Manifest discovery and status.
-$status = trim((string) shell_exec('cd ' . escapeshellarg("$ROOT/public") . ' && wp minn info 2>&1'));
+$status = trim((string) shell_exec('cd ' . escapeshellarg(minn_test_site_root() . '/public') . ' && wp minn info 2>&1'));
 check(str_contains($status, 'Extensions: minn-block-visibility'), 'wp minn info lists the active extensions', $status);
 
 // 3. Block visibility, decided as the plugin's output showed.
@@ -103,7 +103,7 @@ check(!str_contains($onDesktop, 'show-when-mobile') && str_contains($onPhone, 's
 check(preg_match('/<p class="[^"]*block-visibility-hide-large-screen block-visibility-hide-small-screen[^"]*">screen-sized/', $onDesktop) === 1, 'screen sizes become the hide classes', $onDesktop);
 check(str_contains($onDesktop, 'id="block-visibility-screen-size-styles-inline-css"') && str_contains($onDesktop, '.block-visibility-hide-medium-screen'), 'the breakpoint stylesheet is in the head');
 check(!str_contains($onDesktop, 'members-only') && str_contains($onDesktop, 'guests-only'), 'role rules for a signed-out reader');
-$mint = (array) json_decode((string) shell_exec('wp --path=' . escapeshellarg("$ROOT/wp-reference") . ' eval-file ' . escapeshellarg("$ROOT/tests/tools/mint-session.php") . ' 2 2>/dev/null'), true);
+$mint = (array) json_decode((string) shell_exec('wp --path=' . escapeshellarg(minn_test_site_root() . '/wp-reference') . ' eval-file ' . escapeshellarg("$ROOT/tests/tools/mint-session.php") . ' 2 2>/dev/null'), true);
 $signedIn = fetch("$ENGINE/$slug/", ['Cookie: ' . $mint['cookie_name'] . '=' . $mint['cookie'] . '; wordpress_logged_in_' . md5($ENGINE) . '=' . $mint['cookie']]);
 check(str_contains($signedIn, 'members-only') && !str_contains($signedIn, 'guests-only'), 'role rules for a signed-in reader');
 check(!str_contains($onDesktop, 'expired-schedule'), 'a schedule that has ended hides the block');
@@ -115,7 +115,7 @@ wp("option update sccss_settings '{\"sccss-content\":\"body.zz-sccss { color: re
 wp("option update gap_options '{\"gap_id\":\"G-ZZTEST1234\",\"gap_location\":\"header\",\"gap_anonymize\":1}' --format=json");
 $image = (int) wp("db query \"SELECT ID FROM wp_posts WHERE post_type='attachment' AND post_mime_type LIKE 'image/%' ORDER BY ID ASC LIMIT 1\" --skip-column-names");
 $file = wp("post meta get $image _wp_attached_file");
-$uploads = "$ROOT/public/wp-content/uploads";
+$uploads = minn_test_site_root() . '/public/wp-content/uploads';
 $retina = preg_replace('/\.([a-z0-9]+)$/i', '@2x.$1', $file);
 copy("$uploads/$file", "$uploads/$retina");
 wp("post meta update $image _gallery_link_url https://example.test/linked");

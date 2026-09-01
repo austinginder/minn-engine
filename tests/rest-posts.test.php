@@ -11,7 +11,7 @@
  * the reference stack rewrites URLs per request host.
  */
 
-$ENGINE  = rtrim( getenv( 'MINN_TEST_URL' ) ?: 'https://minn-engine.localhost', '/' );
+$ENGINE  = rtrim( getenv( 'MINN_TEST_URL' ) ?: 'https://minn.localhost', '/' );
 $FIXDIR  = __DIR__ . '/../contracts/fixtures/rest';
 $CAPTURE = 'http://127.0.0.1:8123';
 

@@ -1,6 +1,27 @@
 <?php
 /** Shared helpers for the engine suites. */
 
+/**
+ * The site the suites drive. It is NOT the marketing site: that one lives at
+ * minn-engine.localhost, keeps the Minn site theme, and is never pinned or
+ * written to by a run. The test site is a copy of it that exists to be pushed
+ * around, so a crashed run can no longer strand the marketing page on
+ * twentytwentyfive.
+ */
+function minn_test_site_root(): string {
+	return rtrim( getenv( 'MINN_TEST_ROOT' ) ?: '~/Cove/Sites/minn.localhost', '/' );
+}
+
+/** The test site over HTTPS. */
+function minn_test_url(): string {
+	return rtrim( getenv( 'MINN_TEST_URL' ) ?: 'https://minn.localhost', '/' );
+}
+
+/** The parked WordPress the test site is diffed against. */
+function minn_test_reference_url(): string {
+	return rtrim( getenv( 'MINN_TEST_REF' ) ?: 'http://127.0.0.1:8123', '/' );
+}
+
 function minn_test_fetch( string $url, int $timeout = 10 ): array {
 	$ctx  = stream_context_create(
 		array(
@@ -72,7 +93,7 @@ function minn_test_pin_theme( string $slug = 'twentytwentyfive' ): void {
 	// pin's restore would otherwise win and strand the site on the first
 	// pin's theme (a classic-suite run used to leave twentytwentyfive up).
 	static $pinned = false;
-	$public = dirname( __DIR__ ) . '/public';
+	$public = minn_test_site_root() . '/public';
 	$wp     = static function ( string $args ) use ( $public ): string {
 		return trim( (string) shell_exec( 'cd ' . escapeshellarg( $public ) . ' && /opt/homebrew/bin/wp ' . $args . ' 2>/dev/null' ) );
 	};
@@ -105,7 +126,7 @@ function minn_test_pin_theme( string $slug = 'twentytwentyfive' ): void {
  * pins once and sets MINN_TEST_KEEP_LOCALE so the suites skip their own.
  */
 function minn_test_pin_locale(): void {
-	$public = dirname( __DIR__ ) . '/public';
+	$public = minn_test_site_root() . '/public';
 	$wp     = static function ( string $args ) use ( $public ): string {
 		return trim( (string) shell_exec( 'cd ' . escapeshellarg( $public ) . ' && /opt/homebrew/bin/wp ' . $args . ' 2>/dev/null' ) );
 	};

@@ -13,7 +13,7 @@
  * Ref:  (cd wp-reference && php -S 127.0.0.1:8123) — SKIPs when down.
  */
 
-$ENGINE = rtrim( getenv( 'MINN_TEST_URL' ) ?: 'https://minn-engine.localhost', '/' );
+$ENGINE = rtrim( getenv( 'MINN_TEST_URL' ) ?: 'https://minn.localhost', '/' );
 $REF    = 'http://127.0.0.1:8123';
 $ROOT   = dirname( __DIR__ );
 
@@ -42,7 +42,7 @@ function ref_can( int $uid, string $cap, ?int $post ): string {
 	$arg  = null === $post ? 'null' : (int) $post;
 	$code = "echo user_can($uid,'" . addslashes( $cap ) . "'," . $arg . ")?'Y':'n';";
 	return trim( (string) shell_exec(
-		'wp --path=' . escapeshellarg( "$ROOT/wp-reference" ) . ' eval ' . escapeshellarg( $code ) . ' 2>/dev/null'
+		'wp --path=' . escapeshellarg( minn_test_site_root() . '/wp-reference' ) . ' eval ' . escapeshellarg( $code ) . ' 2>/dev/null'
 	) );
 }
 
@@ -51,7 +51,7 @@ function eng_can( int $uid, string $cap, ?int $post ): string {
 	static $loaded = false;
 	global $ROOT;
 	if ( ! $loaded ) {
-		$config = file_get_contents( "$ROOT/public/wp-config.php" );
+		$config = file_get_contents( minn_test_site_root() . '/public/wp-config.php' );
 		$config = str_replace( "require_once ABSPATH . 'wp-settings.php';", '', $config );
 		eval( '?>' . $config );
 		// wp-config sets $table_prefix at file scope; here it is function-local,
@@ -125,7 +125,7 @@ if ( ! empty( $login['ok'] ) ) {
 
 // 4. Edit-context user object matches the reference byte for byte.
 $mint = json_decode( (string) shell_exec(
-	'wp --path=' . escapeshellarg( "$ROOT/wp-reference" ) . ' eval-file ' . escapeshellarg( "$ROOT/tests/tools/mint-session.php" ) . ' 1 2>/dev/null'
+	'wp --path=' . escapeshellarg( minn_test_site_root() . '/wp-reference' ) . ' eval-file ' . escapeshellarg( "$ROOT/tests/tools/mint-session.php" ) . ' 1 2>/dev/null'
 ), true );
 if ( ! empty( $mint['cookie'] ) ) {
 	$cn      = $mint['cookie_name'];

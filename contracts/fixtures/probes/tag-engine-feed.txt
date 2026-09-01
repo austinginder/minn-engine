@@ -9,8 +9,8 @@
 
 <channel>
 	<title>engine &#8211; Minn</title>
-	<atom:link href="https://minn-engine.localhost/tag/engine/feed/" rel="self" type="application/rss+xml" />
-	<link>https://minn-engine.localhost</link>
+	<atom:link href="https://minn.localhost/tag/engine/feed/" rel="self" type="application/rss+xml" />
+	<link>https://minn.localhost</link>
 	<description>Indistinguishable at the seams. Radically simpler inside.</description>
 	<lastBuildDate>Fri, 28 Aug 2026 02:32:13 +0000</lastBuildDate>
 	<language>en-US</language>
@@ -21,15 +21,15 @@
 	<generator>https://wordpress.org/?v=X</generator>
 	<item>
 		<title>Building in the open</title>
-		<link>https://minn-engine.localhost/building-in-the-open/</link>
-					<comments>https://minn-engine.localhost/building-in-the-open/#respond</comments>
+		<link>https://minn.localhost/building-in-the-open/</link>
+					<comments>https://minn.localhost/building-in-the-open/#respond</comments>
 		
 		<dc:creator><![CDATA[]]></dc:creator>
 		<pubDate>Fri, 28 Aug 2026 02:32:13 +0000</pubDate>
 				<category><![CDATA[Uncategorized]]></category>
 		<category><![CDATA[engine]]></category>
 		<category><![CDATA[parity]]></category>
-		<guid isPermaLink="false">https://minn-engine.localhost/?p=5</guid>
+		<guid isPermaLink="false">https://minn.localhost/?p=5</guid>
 
 					<description><![CDATA[A hand-written excerpt for the parity suite.]]></description>
 										<content:encoded><![CDATA[
@@ -44,7 +44,7 @@
 <ul class="wp-block-list"><li>schema</li><li>rest</li><li>cli</li></ul>
 ]]></content:encoded>
 					
-					<wfw:commentRss>https://minn-engine.localhost/building-in-the-open/feed/</wfw:commentRss>
+					<wfw:commentRss>https://minn.localhost/building-in-the-open/feed/</wfw:commentRss>
 			<slash:comments>0</slash:comments>
 		
 		

@@ -10,9 +10,10 @@ declare(strict_types=1);
  * engine's own message, not a fatal.
  */
 
+require_once __DIR__ . '/lib.php';
 $ROOT = dirname(__DIR__);
-$PUBLIC = "$ROOT/public";
-$REF_DIR = "$ROOT/wp-reference";
+$PUBLIC = minn_test_site_root() . '/public';
+$REF_DIR = minn_test_site_root() . '/wp-reference';
 
 $pass = 0;
 $fail = 0;

@@ -5,8 +5,10 @@
  * probe can run on the facade. Include it, then run the probe.
  */
 
+// The engine code is this repo's; the site it runs against is the test site,
+// never the marketing site that shares this directory.
 $root = dirname(__DIR__, 2);
-$siteRoot = getenv('MINN_SITE_ROOT') ?: $root;
+$siteRoot = getenv('MINN_SITE_ROOT') ?: '~/Cove/Sites/minn.localhost';
 $config = file_get_contents($siteRoot . '/public/wp-config.php');
 $config = str_replace("require_once ABSPATH . 'wp-settings.php';", '', $config);
 define('ABSPATH', $siteRoot . '/public/');

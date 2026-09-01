@@ -1,14 +1,24 @@
 #!/usr/bin/env bash
-# Run every engine suite. The parity suites need the reference WordPress on
-# 127.0.0.1:8123 (wp-reference/) and the dogfood suites need the dogfood
-# site's own reference on 127.0.0.1:8124; both are started below when they
-# are not already running. A suite whose reference is unreachable skips
-# and says so, which is why the servers are started here.
+# Run every engine suite.
+#
+# The suites drive the TEST site (minn.localhost by default, MINN_TEST_ROOT),
+# never the marketing site. minn-engine.localhost holds this repository and
+# serves the Minn site theme; only tests/site.test.php reads it, against its
+# own parked WordPress on 127.0.0.1:8128. Nothing here writes to it, so a run
+# that dies half way can no longer strand the marketing page on another theme.
+#
+# References: 8123 the test site's, 8124 the dogfood site's, 8128 the
+# marketing site's. Each is started below when its port is quiet. A suite
+# whose reference is unreachable skips and says so.
 set -u
 cd "$( dirname "$0" )"
 
+TEST_ROOT="${MINN_TEST_ROOT:-~/Cove/Sites/minn.localhost}"
+SITE_ROOT="$( cd .. && pwd )"
+
 # The reference's file layout as placeholders, so plugins that require wp-admin/includes files load.
-php tools/site-skeleton.php .. >/dev/null
+php tools/site-skeleton.php "$TEST_ROOT" >/dev/null
+php tools/site-skeleton.php "$SITE_ROOT" >/dev/null
 [ -d ~/Cove/Sites/dogfood.localhost/public ] && php tools/site-skeleton.php ~/Cove/Sites/dogfood.localhost >/dev/null
 
 # Start a reference server when its port is quiet, so no suite skips on the
@@ -29,47 +39,38 @@ start_reference() {
 stop_references() {
 	for pid in "${started[@]:-}"; do [ -n "$pid" ] && pkill -P "$pid" 2>/dev/null; kill "$pid" 2>/dev/null; done
 }
-# The dev site runs the Minn site theme; the fixtures were captured under
-# twentytwentyfive. Pin it once for the whole run (the suites' own pin in
-# tests/lib.php is skipped through MINN_TEST_KEEP_THEME) and restore on exit.
+# The test site runs twentytwentyfive, the theme the fixtures were captured
+# under, and is left on it. The suites' own pin (tests/lib.php) sees the theme
+# already in place and does nothing.
 WP=/opt/homebrew/bin/wp
-saved_template="$( cd ../public && $WP option get template 2>/dev/null )"
-saved_stylesheet="$( cd ../public && $WP option get stylesheet 2>/dev/null )"
-pin_theme() {
-	( cd ../public && $WP option update template twentytwentyfive >/dev/null 2>&1 && $WP option update stylesheet twentytwentyfive >/dev/null 2>&1 )
-	export MINN_TEST_KEEP_THEME=1
-}
+export MINN_TEST_KEEP_THEME=1
 # A language switched on for testing (WPLANG or a user's locale meta) would
 # change what the reference renders; pin en_US for the run, restore on exit.
-prefix="$( cd ../public && $WP config get table_prefix 2>/dev/null )"; prefix="${prefix:-wp_}"
-saved_wplang="$( cd ../public && $WP option get WPLANG 2>/dev/null )"
-saved_locales="$( cd ../public && $WP db query "SELECT user_id, meta_value FROM ${prefix}usermeta WHERE meta_key = 'locale' AND meta_value <> ''" --skip-column-names 2>/dev/null )"
+prefix="$( cd "$TEST_ROOT/public" && $WP config get table_prefix 2>/dev/null )"; prefix="${prefix:-wp_}"
+saved_wplang="$( cd "$TEST_ROOT/public" && $WP option get WPLANG 2>/dev/null )"
+saved_locales="$( cd "$TEST_ROOT/public" && $WP db query "SELECT user_id, meta_value FROM ${prefix}usermeta WHERE meta_key = 'locale' AND meta_value <> ''" --skip-column-names 2>/dev/null )"
 pin_locale() {
-	( cd ../public && $WP db query "UPDATE ${prefix}usermeta SET meta_value = '' WHERE meta_key = 'locale'" >/dev/null 2>&1; [ -n "$saved_wplang" ] && $WP option update WPLANG "" >/dev/null 2>&1 )
+	( cd "$TEST_ROOT/public" && $WP db query "UPDATE ${prefix}usermeta SET meta_value = '' WHERE meta_key = 'locale'" >/dev/null 2>&1; [ -n "$saved_wplang" ] && $WP option update WPLANG "" >/dev/null 2>&1 )
 	export MINN_TEST_KEEP_LOCALE=1
 }
 restore_locale() {
-	[ -n "$saved_wplang" ] && ( cd ../public && $WP option update WPLANG "$saved_wplang" >/dev/null 2>&1 )
+	[ -n "$saved_wplang" ] && ( cd "$TEST_ROOT/public" && $WP option update WPLANG "$saved_wplang" >/dev/null 2>&1 )
 	printf '%s\n' "$saved_locales" | while IFS=$'\t' read -r id locale; do
-		[ -n "$id" ] && ( cd ../public && $WP db query "UPDATE ${prefix}usermeta SET meta_value = '$locale' WHERE meta_key = 'locale' AND user_id = $id" >/dev/null 2>&1 )
+		[ -n "$id" ] && ( cd "$TEST_ROOT/public" && $WP db query "UPDATE ${prefix}usermeta SET meta_value = '$locale' WHERE meta_key = 'locale' AND user_id = $id" >/dev/null 2>&1 )
 	done
 	return 0
 }
-restore_theme() {
-	[ -n "$saved_template" ] && ( cd ../public && $WP option update template "$saved_template" >/dev/null 2>&1 && $WP option update stylesheet "$saved_stylesheet" >/dev/null 2>&1 )
-}
-cleanup() { stop_references; restore_theme; restore_locale; }
+cleanup() { stop_references; restore_locale; }
 # EXIT alone does not fire when the run is signalled (a killed background
-# job, a Ctrl-C, a harness timeout), and a run that dies mid-way leaves the
-# dev site stranded on twentytwentyfive with the marketing theme switched
-# off. Catch the signals too, then exit through the same path.
+# job, a Ctrl-C, a harness timeout), so catch the signals too and exit through
+# the same path, or a run that dies mid-way leaves a locale pinned.
 trap cleanup EXIT
 trap 'cleanup; trap - EXIT; exit 130' INT
 trap 'cleanup; trap - EXIT; exit 143' TERM HUP
-pin_theme
 pin_locale
-start_reference "$PWD/../wp-reference" 8123
+start_reference "$TEST_ROOT/wp-reference" 8123
 start_reference "$DOGFOOD_REF" 8124
+start_reference "$SITE_ROOT/wp-reference" 8128
 
 failed=0
 for suite in style hooks api runtime rest-posts auth application-passwords caps writes login-endpoint rest-parity embed minn-v1 comments media settings users terms write-fields editor permalinks blocks theme classic styles probes dogfood cli layout hardening security install cron-mail reader extensions front-method recovery front-page menus declared-types admin-surfaces updates site code-size; do

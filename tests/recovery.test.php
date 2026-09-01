@@ -14,8 +14,8 @@ declare(strict_types=1);
 require __DIR__ . '/lib.php';
 
 $root = dirname(__DIR__);
-$ENGINE = rtrim(getenv('MINN_TEST_URL') ?: 'https://minn-engine.localhost', '/');
-$public = $root . '/public';
+$ENGINE = rtrim(getenv('MINN_TEST_URL') ?: 'https://minn.localhost', '/');
+$public = minn_test_site_root() . '/public';
 $wp = static fn (string $args): string => trim((string) shell_exec('cd ' . escapeshellarg($public) . ' && /opt/homebrew/bin/wp --require=minn/cli.php ' . $args . ' 2>&1'));
 
 $pass = 0;

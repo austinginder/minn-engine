@@ -91,7 +91,7 @@ if ($referenceUp) {
 // registered rules live; the reference matches from its flushed option, so
 // flush around the battery and again after the plugin switches back off.
 $flush = static function (): void {
-    shell_exec('cd ' . escapeshellarg(dirname(__DIR__) . '/wp-reference') . ' && /opt/homebrew/bin/wp rewrite flush 2>/dev/null');
+    shell_exec('cd ' . escapeshellarg(minn_test_site_root() . '/wp-reference') . ' && /opt/homebrew/bin/wp rewrite flush 2>/dev/null');
 };
 [$h, $appHtml] = minn_test_fetch($base . '/minn-test-app/orders/');
 $check('rewrite rule routes to the plugin template', ($h['status'] ?? 0) === 200 && str_contains($appHtml, '<body class="minn-test-app">') && str_contains($appHtml, '<p id="route">orders</p>'), substr((string) strstr((string) $appHtml, '<body'), 0, 160));

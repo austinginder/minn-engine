@@ -8,7 +8,7 @@
  * Ref: (cd wp-reference && php -S 127.0.0.1:8123) — SKIPs cleanly when down.
  */
 
-$ENGINE = 'https://minn-engine.localhost';
+$ENGINE = 'https://minn.localhost';
 $REF    = 'http://127.0.0.1:8123';
 $ROOT   = dirname( __DIR__ );
 
@@ -37,7 +37,7 @@ function check( bool $ok, string $label, string $detail = '' ): void {
 function cm_mint( int $uid ): array {
 	global $ROOT;
 	$mint = json_decode( (string) shell_exec(
-		'wp --path=' . escapeshellarg( "$ROOT/wp-reference" ) . ' eval-file ' . escapeshellarg( "$ROOT/tests/tools/mint-session.php" ) . " $uid 2>/dev/null"
+		'wp --path=' . escapeshellarg( minn_test_site_root() . '/wp-reference' ) . ' eval-file ' . escapeshellarg( "$ROOT/tests/tools/mint-session.php" ) . " $uid 2>/dev/null"
 	), true );
 	if ( ! $mint || empty( $mint['cookie'] ) ) {
 		echo "SKIP: could not mint a reference session (wp-cli unavailable?)\n";
@@ -112,7 +112,7 @@ function cm_parity( string $label, string $query, ?array $mint, string $method =
 function cm_cleanup(): void {
 	global $ROOT;
 	shell_exec(
-		'wp --path=' . escapeshellarg( "$ROOT/wp-reference" ) . ' db query ' .
+		'wp --path=' . escapeshellarg( minn_test_site_root() . '/wp-reference' ) . ' db query ' .
 		escapeshellarg( 'DELETE FROM wp_comments WHERE comment_ID > 1; DELETE FROM wp_commentmeta WHERE comment_id > 1; UPDATE wp_posts SET comment_count = (SELECT COUNT(*) FROM wp_comments WHERE comment_post_ID = wp_posts.ID AND comment_approved = "1") WHERE ID > 0;' ) . ' 2>/dev/null'
 	);
 }
@@ -198,7 +198,7 @@ check( 200 === $st && 'trash' === ( $b['status'] ?? '' ), 'engine trashes withou
 [ , $b ] = cm_fetch( $REF, $Q . '%2F' . $cid . '&context=edit', $admin );
 check( 'trash' === ( $b['status'] ?? '' ), 'WordPress sees the trash' );
 $meta = shell_exec(
-	'wp --path=' . escapeshellarg( "$ROOT/wp-reference" ) . ' db query ' .
+	'wp --path=' . escapeshellarg( minn_test_site_root() . '/wp-reference' ) . ' db query ' .
 	escapeshellarg( "SELECT meta_key FROM wp_commentmeta WHERE comment_id = $cid ORDER BY meta_key" ) . ' 2>/dev/null'
 );
 check(

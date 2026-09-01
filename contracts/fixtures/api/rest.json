@@ -817,7 +817,7 @@
             "links": {
                 "up": [
                     {
-                        "href": "https://minn-engine.localhost/wp-json/",
+                        "href": "https://minn.localhost/wp-json/",
                         "attributes": []
                     }
                 ]

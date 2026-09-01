@@ -10,7 +10,7 @@
  */
 require_once __DIR__ . '/lib.php';
 
-$ENGINE = rtrim(getenv('MINN_TEST_URL') ?: 'https://minn-engine.localhost', '/');
+$ENGINE = rtrim(getenv('MINN_TEST_URL') ?: 'https://minn.localhost', '/');
 $REF = 'http://127.0.0.1:8123';
 $DIR = dirname(__DIR__) . '/contracts/fixtures/blocks';
 $manifest = json_decode((string) file_get_contents("$DIR/manifest.json"), true);

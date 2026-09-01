@@ -19,10 +19,11 @@ if (!is_file(dirname(__DIR__) . '/site/minn-site/style.css')) {
     echo "skip: marketing theme not checked out at site/minn-site (own git repo)\n";
     exit(0);
 }
-minn_test_pin_theme('minn-site');
-
-$ENGINE = rtrim(getenv('MINN_TEST_URL') ?: 'https://minn-engine.localhost', '/');
-$REF = 'http://127.0.0.1:8123';
+// The marketing site is the one place the suites read rather than drive: it
+// serves the Minn site theme permanently, so there is nothing to pin and
+// nothing to restore. Its own parked WordPress answers on 8128.
+$ENGINE = rtrim(getenv('MINN_SITE_URL') ?: 'https://minn-engine.localhost', '/');
+$REF = rtrim(getenv('MINN_SITE_REF') ?: 'http://127.0.0.1:8128', '/');
 
 $src = (string) file_get_contents(__DIR__ . '/theme.test.php');
 preg_match('/function theme_body.*?\n}\n/s', $src, $m);

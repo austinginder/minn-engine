@@ -11,15 +11,15 @@ declare(strict_types=1);
  * canonical redirect for doubled slashes, which is unrelated to the
  * settings but lives in the same resolver.
  *
- *   MINN_TEST_URL=https://minn-engine.localhost php tests/front-page.test.php
+ *   MINN_TEST_URL=https://minn.localhost php tests/front-page.test.php
  */
 
 require __DIR__ . '/lib.php';
 
-$ENGINE = rtrim(getenv('MINN_TEST_URL') ?: 'https://minn-engine.localhost', '/');
+$ENGINE = rtrim(getenv('MINN_TEST_URL') ?: 'https://minn.localhost', '/');
 $REF = 'http://127.0.0.1:8123';
 $WP = '/opt/homebrew/bin/wp';
-$PUBLIC = dirname(__DIR__) . '/public';
+$PUBLIC = minn_test_site_root() . '/public';
 
 $src = (string) file_get_contents(__DIR__ . '/theme.test.php');
 preg_match('/function theme_body.*?\n}\n/s', $src, $m);

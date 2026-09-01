@@ -10,7 +10,7 @@
  * engine answers for itself (System, the bar). SKIPs when the reference is down.
  */
 
-$ENGINE = 'https://minn-engine.localhost';
+$ENGINE = 'https://minn.localhost';
 $REF    = 'http://127.0.0.1:8123';
 $ROOT   = dirname( __DIR__ );
 
@@ -74,7 +74,7 @@ function as_norm( $x ) {
 		return array_map( 'as_norm', $x );
 	}
 	if ( is_string( $x ) ) {
-		$x = str_replace( array( $REF, 'http://minn-engine.localhost', $ENGINE ), 'HOST', $x );
+		$x = str_replace( array( $REF, 'http://minn.localhost', $ENGINE ), 'HOST', $x );
 		return preg_replace( '/(\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}):\d{2}/', '$1', $x );
 	}
 	return $x;
@@ -104,7 +104,7 @@ function as_parity( string $label, string $route, ?array $mint, array $drop = ar
 
 function as_mint( int $uid ): array {
 	global $ROOT;
-	$mint = json_decode( (string) shell_exec( 'wp --path=' . escapeshellarg( "$ROOT/wp-reference" ) . ' eval-file ' . escapeshellarg( "$ROOT/tests/tools/mint-session.php" ) . " $uid 2>/dev/null" ), true );
+	$mint = json_decode( (string) shell_exec( 'wp --path=' . escapeshellarg( minn_test_site_root() . '/wp-reference' ) . ' eval-file ' . escapeshellarg( "$ROOT/tests/tools/mint-session.php" ) . " $uid 2>/dev/null" ), true );
 	if ( ! $mint || empty( $mint['cookie'] ) ) {
 		echo "SKIP: could not mint a reference session\n";
 		exit( 0 );
@@ -194,11 +194,11 @@ check( 'minn' === ( $b['scheme'] ?? '' ), 'engine reads the WordPress-written ap
 // 5b. Languages: the person's locale is the reference's `locale` meta; a pack installs on first use.
 [ $s, $b ] = as_fetch( $ENGINE, '/minn-admin/v1/languages', $admin );
 check( 200 === $s && array( 'installed', 'available', 'canInstall', 'current', 'site' ) === array_keys( $b ) && array( '', 'Site default' ) === $b['installed'][0], 'languages carries the plugin\'s shape', json_encode( array_keys( $b ) ) );
-$hasPack = array() !== glob( "$ROOT/public/wp-content/languages/plugins/minn-admin-es_ES-*.json" );
+$hasPack = array() !== glob( minn_test_site_root() . '/public/wp-content/languages/plugins/minn-admin-es_ES-*.json' );
 if ( ! $hasPack ) {
 	// A pack this suite installs is removed again, so the editor suite's languages parity keeps its ground truth.
 	register_shutdown_function( static function () use ( $ROOT ) {
-		foreach ( glob( "$ROOT/public/wp-content/languages/plugins/minn-admin-es_ES*" ) ?: array() as $file ) {
+		foreach ( glob( minn_test_site_root() . '/public/wp-content/languages/plugins/minn-admin-es_ES*' ) ?: array() as $file ) {
 			@unlink( $file );
 		}
 	} );
@@ -281,7 +281,7 @@ $upload = static function ( string $route, string $zip, array $extra = array() )
 	return array( $status, json_decode( (string) $raw, true ) );
 };
 [ $s, $b ] = $upload( '/minn-admin/v1/themes/upload', $zipOf( "$pk/minn-zip-theme", 'minn-zip-theme' ) );
-check( 200 === $s && 'minn-zip-theme' === ( $b['stylesheet'] ?? '' ) && is_file( "$ROOT/public/wp-content/themes/minn-zip-theme/style.css" ), 'a theme zip unpacks into wp-content/themes', json_encode( $b ) );
+check( 200 === $s && 'minn-zip-theme' === ( $b['stylesheet'] ?? '' ) && is_file( minn_test_site_root() . '/public/wp-content/themes/minn-zip-theme/style.css' ), 'a theme zip unpacks into wp-content/themes', json_encode( $b ) );
 [ $s, $b ] = $upload( '/minn-admin/v1/themes/upload', "$pk/minn-zip-theme.zip" );
 check( 409 === $s && 'folder_exists' === ( $b['code'] ?? '' ) && 'Minn Zip Theme' === ( $b['data']['current_name'] ?? '' ), 'uploading it again offers the replace flow', json_encode( $b ) );
 [ $s ] = $upload( '/minn-admin/v1/themes/upload', "$pk/minn-zip-theme.zip", array( 'overwrite' => '1' ) );
@@ -289,29 +289,29 @@ check( 200 === $s, 'overwrite replaces it', "status $s" );
 [ , $b ] = as_fetch( $ENGINE, '/minn-admin/v1/themes', $admin );
 check( in_array( 'minn-zip-theme', array_column( $b['themes'] ?? array(), 'stylesheet' ), true ), 'the themes list sees the upload' );
 [ $s, $b ] = as_fetch( $ENGINE, '/minn-admin/v1/themes/delete', $admin, 'POST', '{"stylesheet":"minn-zip-theme"}' );
-check( 200 === $s && ! is_dir( "$ROOT/public/wp-content/themes/minn-zip-theme" ), 'themes/delete removes the folder', json_encode( $b ) );
+check( 200 === $s && ! is_dir( minn_test_site_root() . '/public/wp-content/themes/minn-zip-theme' ), 'themes/delete removes the folder', json_encode( $b ) );
 [ $s, $b ] = as_fetch( $ENGINE, '/minn-admin/v1/themes/delete', $admin, 'POST', '{"stylesheet":"twentytwentyfive"}' );
 check( 400 === $s, 'the active theme cannot be deleted', "status $s" );
-shell_exec( 'rm -rf ' . escapeshellarg( "$ROOT/public/wp-content/plugins/wp-plugin-x" ) );
+shell_exec( 'rm -rf ' . escapeshellarg( minn_test_site_root() . '/public/wp-content/plugins/wp-plugin-x' ) );
 [ $s, $b ] = $upload( '/minn-admin/v1/plugins/upload', $zipOf( "$pk/wp-plugin-x", 'wp-plugin-x' ) );
-check( 200 === $s && is_dir( "$ROOT/public/wp-content/plugins/wp-plugin-x" ), 'a WordPress plugin zip installs (plugins run on the engine)', json_encode( $b ) );
+check( 200 === $s && is_dir( minn_test_site_root() . '/public/wp-content/plugins/wp-plugin-x' ), 'a WordPress plugin zip installs (plugins run on the engine)', json_encode( $b ) );
 [ $s, $b ] = as_fetch( $ENGINE, '/wp/v2/plugins/wp-plugin-x/wp-plugin-x', $admin, 'DELETE' );
 clearstatcache();
-check( 200 === $s && ! is_dir( "$ROOT/public/wp-content/plugins/wp-plugin-x" ), 'and deletes again', json_encode( $b ) );
+check( 200 === $s && ! is_dir( minn_test_site_root() . '/public/wp-content/plugins/wp-plugin-x' ), 'and deletes again', json_encode( $b ) );
 [ $s, $b ] = as_fetch( $ENGINE, '/minn-admin/v1/plugins/search?q=seo', $admin );
 check( 200 === $s && count( $b['plugins'] ?? array() ) > 0 && isset( $b['plugins'][0]['slug'], $b['plugins'][0]['icon'] ), 'the plugin directory search answers from wordpress.org', substr( json_encode( $b ), 0, 200 ) );
 as_parity( 'plugin directory card matches', '/minn-admin/v1/plugins/info?slug=hello-dolly', $admin );
 as_parity( 'plugin directory search matches', '/minn-admin/v1/plugins/search?q=hello%20dolly&page=1', $admin );
-shell_exec( 'rm -rf ' . escapeshellarg( "$ROOT/public/wp-content/plugins/hello-dolly" ) );
+shell_exec( 'rm -rf ' . escapeshellarg( minn_test_site_root() . '/public/wp-content/plugins/hello-dolly' ) );
 [ $s, $b ] = as_fetch( $ENGINE, '/wp/v2/plugins', $admin, 'POST', '{"slug":"hello-dolly"}' );
 clearstatcache();
-check( 201 === $s && 'hello-dolly/hello' === ( $b['plugin'] ?? '' ) && 'inactive' === ( $b['status'] ?? '' ) && is_dir( "$ROOT/public/wp-content/plugins/hello-dolly" ), 'POST wp/v2/plugins installs a directory plugin', "status $s " . substr( json_encode( $b ), 0, 200 ) );
+check( 201 === $s && 'hello-dolly/hello' === ( $b['plugin'] ?? '' ) && 'inactive' === ( $b['status'] ?? '' ) && is_dir( minn_test_site_root() . '/public/wp-content/plugins/hello-dolly' ), 'POST wp/v2/plugins installs a directory plugin', "status $s " . substr( json_encode( $b ), 0, 200 ) );
 // The dev reference keeps its own wp-content, so the fresh folder is the engine's to read.
 [ $s, $b ] = as_fetch( $ENGINE, '/wp/v2/plugins/hello-dolly/hello', $admin );
 check( 200 === $s && 'Hello Dolly' === ( $b['name'] ?? '' ) && 'hello-dolly' === ( $b['textdomain'] ?? '' ), 'the installed plugin lists with its headers', json_encode( $b ) );
 [ $s, $b ] = as_fetch( $ENGINE, '/wp/v2/plugins/hello-dolly/hello', $admin, 'DELETE' );
 clearstatcache();
-check( 200 === $s && ! is_dir( "$ROOT/public/wp-content/plugins/hello-dolly" ), 'and deletes it again', "status $s" );
+check( 200 === $s && ! is_dir( minn_test_site_root() . '/public/wp-content/plugins/hello-dolly' ), 'and deletes it again', "status $s" );
 as_parity( 'installing without a slug is a parameter error', '/wp/v2/plugins', $admin, array(), 'POST', '{}' );
 [ $s ] = as_fetch( $ENGINE, '/minn-admin/v1/themes/search?q=twenty', $author );
 check( 403 === $s, 'theme search needs install_themes', "status $s" );

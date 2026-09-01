@@ -7,7 +7,7 @@
  * Ref: (cd wp-reference && php -S 127.0.0.1:8123) — SKIPs cleanly when down.
  */
 
-$ENGINE = 'https://minn-engine.localhost';
+$ENGINE = 'https://minn.localhost';
 $REF    = 'http://127.0.0.1:8123';
 $ROOT   = dirname( __DIR__ );
 
@@ -36,7 +36,7 @@ function check( bool $ok, string $label, string $detail = '' ): void {
 function tm_mint( int $uid ): array {
 	global $ROOT;
 	$mint = json_decode( (string) shell_exec(
-		'wp --path=' . escapeshellarg( "$ROOT/wp-reference" ) . ' eval-file ' . escapeshellarg( "$ROOT/tests/tools/mint-session.php" ) . " $uid 2>/dev/null"
+		'wp --path=' . escapeshellarg( minn_test_site_root() . '/wp-reference' ) . ' eval-file ' . escapeshellarg( "$ROOT/tests/tools/mint-session.php" ) . " $uid 2>/dev/null"
 	), true );
 	if ( ! $mint || empty( $mint['cookie'] ) ) {
 		echo "SKIP: could not mint a reference session (wp-cli unavailable?)\n";
@@ -105,7 +105,7 @@ function tm_parity( string $label, string $query, ?array $mint, string $method =
 function tm_cleanup(): void {
 	global $ROOT;
 	shell_exec(
-		'cd ' . escapeshellarg( "$ROOT/wp-reference" ) .
+		'cd ' . escapeshellarg( minn_test_site_root() . '/wp-reference' ) .
 		' && for tax in post_tag category; do for id in $(wp term list "$tax" --field=term_id 2>/dev/null); do [ "$id" -gt 3 ] && wp term delete "$tax" "$id" 2>/dev/null; done; done; true'
 	);
 }

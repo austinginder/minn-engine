@@ -9,7 +9,8 @@
  */
 
 $root   = dirname( __DIR__, 2 );
-$config = file_get_contents( $root . '/public/wp-config.php' );
+$site   = getenv( 'MINN_TEST_ROOT' ) ?: '~/Cove/Sites/minn.localhost';
+$config = file_get_contents( $site . '/public/wp-config.php' );
 $config = str_replace( "require_once ABSPATH . 'wp-settings.php';", '', $config );
 eval( '?>' . $config );
 

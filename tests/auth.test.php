@@ -11,7 +11,7 @@
  * Ref:  (cd wp-reference && php -S 127.0.0.1:8123) — SKIPs cleanly when down.
  */
 
-$ENGINE = rtrim( getenv( 'MINN_TEST_URL' ) ?: 'https://minn-engine.localhost', '/' );
+$ENGINE = rtrim( getenv( 'MINN_TEST_URL' ) ?: 'https://minn.localhost', '/' );
 $REF    = 'http://127.0.0.1:8123';
 $ROOT   = dirname( __DIR__ );
 
@@ -70,7 +70,7 @@ echo "auth suite: $ENGINE (engine) / $REF (oracle)\n";
 
 // A real WordPress session, minted by WordPress.
 $mint = json_decode( (string) shell_exec(
-	'wp --path=' . escapeshellarg( "$ROOT/wp-reference" ) . ' eval-file ' . escapeshellarg( "$ROOT/tests/tools/mint-session.php" ) . ' 1 2>/dev/null'
+	'wp --path=' . escapeshellarg( minn_test_site_root() . '/wp-reference' ) . ' eval-file ' . escapeshellarg( "$ROOT/tests/tools/mint-session.php" ) . ' 1 2>/dev/null'
 ), true );
 if ( ! $mint || empty( $mint['cookie'] ) ) {
 	echo "SKIP: could not mint a reference session (wp-cli unavailable?)\n";

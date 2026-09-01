@@ -740,14 +740,14 @@
             ],
             "",
             [
-                "http://minn-engine.localhost/wp-content/plugins/private/var/folders/1m/sgtjt_5s2y5dgmlhptlh1tf40000gn/T/minn-probe-block/build/index.js",
+                "http://minn.localhost/wp-content/plugins/private/var/folders/1m/sgtjt_5s2y5dgmlhptlh1tf40000gn/T/minn-probe-block/build/index.js",
                 [
                     "wp-blocks"
                 ],
                 "abc",
-                "http://minn-engine.localhost/wp-content/plugins/private/var/folders/1m/sgtjt_5s2y5dgmlhptlh1tf40000gn/T/minn-probe-block/build/view.js",
-                "http://minn-engine.localhost/wp-content/plugins/private/var/folders/1m/sgtjt_5s2y5dgmlhptlh1tf40000gn/T/minn-probe-block/build/style-index.css",
-                "http://minn-engine.localhost/wp-content/plugins/private/var/folders/1m/sgtjt_5s2y5dgmlhptlh1tf40000gn/T/minn-probe-block/build/index.css",
+                "http://minn.localhost/wp-content/plugins/private/var/folders/1m/sgtjt_5s2y5dgmlhptlh1tf40000gn/T/minn-probe-block/build/view.js",
+                "http://minn.localhost/wp-content/plugins/private/var/folders/1m/sgtjt_5s2y5dgmlhptlh1tf40000gn/T/minn-probe-block/build/style-index.css",
+                "http://minn.localhost/wp-content/plugins/private/var/folders/1m/sgtjt_5s2y5dgmlhptlh1tf40000gn/T/minn-probe-block/build/index.css",
                 "1.2.3"
             ],
             [
@@ -1046,8 +1046,8 @@
     [
         "get_preview_post_link",
         [
-            "http://minn-engine.localhost/hello-world/?preview=true",
-            "http://minn-engine.localhost/?page_id=3&preview=true",
+            "http://minn.localhost/hello-world/?preview=true",
+            "http://minn.localhost/?page_id=3&preview=true",
             null
         ]
     ],

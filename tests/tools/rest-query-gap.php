@@ -18,7 +18,7 @@
 
 declare(strict_types=1);
 
-$ENGINE = rtrim((string) (getenv('MINN_TEST_URL') ?: 'https://minn-engine.localhost'), '/');
+$ENGINE = rtrim((string) (getenv('MINN_TEST_URL') ?: 'https://minn.localhost'), '/');
 $REF = rtrim((string) (getenv('MINN_REF_URL') ?: 'http://127.0.0.1:8123'), '/');
 foreach ($argv ?? [] as $arg) {
     if (str_starts_with($arg, '--engine=')) {

@@ -8,7 +8,7 @@
  * Ref: (cd wp-reference && php -S 127.0.0.1:8123) — SKIPs cleanly when down.
  */
 
-$ENGINE = 'https://minn-engine.localhost';
+$ENGINE = 'https://minn.localhost';
 $REF    = 'http://127.0.0.1:8123';
 $ROOT   = dirname( __DIR__ );
 
@@ -37,7 +37,7 @@ function check( bool $ok, string $label, string $detail = '' ): void {
 function us_mint( int $uid ): array {
 	global $ROOT;
 	$mint = json_decode( (string) shell_exec(
-		'wp --path=' . escapeshellarg( "$ROOT/wp-reference" ) . ' eval-file ' . escapeshellarg( "$ROOT/tests/tools/mint-session.php" ) . " $uid 2>/dev/null"
+		'wp --path=' . escapeshellarg( minn_test_site_root() . '/wp-reference' ) . ' eval-file ' . escapeshellarg( "$ROOT/tests/tools/mint-session.php" ) . " $uid 2>/dev/null"
 	), true );
 	if ( ! $mint || empty( $mint['cookie'] ) ) {
 		echo "SKIP: could not mint a reference session (wp-cli unavailable?)\n";
@@ -106,7 +106,7 @@ function us_parity( string $label, string $query, ?array $mint, string $method =
 function us_cleanup(): void {
 	global $ROOT;
 	shell_exec(
-		'cd ' . escapeshellarg( "$ROOT/wp-reference" ) .
+		'cd ' . escapeshellarg( minn_test_site_root() . '/wp-reference' ) .
 		' && for id in $(wp user list --field=ID 2>/dev/null); do [ "$id" -gt 3 ] && wp user delete "$id" --reassign=1 --yes 2>/dev/null; done; true'
 	);
 }
@@ -180,18 +180,18 @@ us_parity( 'delete without reassign rejected', $Q . '%2F' . $nid, $admin, 'DELET
 us_parity( 'delete without force rejected', $Q . '%2F' . $nid . '&reassign=1', $admin, 'DELETE' );
 global $ROOT;
 $pid = (int) trim( (string) shell_exec(
-	'cd ' . escapeshellarg( "$ROOT/wp-reference" ) . ' && wp post create --post_title="Reassign probe" --post_status=draft --post_author=' . $nid . ' --porcelain 2>/dev/null'
+	'cd ' . escapeshellarg( minn_test_site_root() . '/wp-reference' ) . ' && wp post create --post_title="Reassign probe" --post_status=draft --post_author=' . $nid . ' --porcelain 2>/dev/null'
 ) );
 check( $pid > 0, 'probe post created for reassignment' );
 [ $st, $b ] = us_fetch( $ENGINE, $Q . '%2F' . $nid . '&force=true&reassign=3', $admin, 'DELETE' );
 check( 200 === $st && true === ( $b['deleted'] ?? null ) && 'engine-user' === ( $b['previous']['username'] ?? '' ), 'engine deletes with previous' );
 $owner = (int) trim( (string) shell_exec(
-	'cd ' . escapeshellarg( "$ROOT/wp-reference" ) . ' && wp post get ' . $pid . ' --field=post_author 2>/dev/null'
+	'cd ' . escapeshellarg( minn_test_site_root() . '/wp-reference' ) . ' && wp post get ' . $pid . ' --field=post_author 2>/dev/null'
 ) );
 check( 3 === $owner, 'authorship reassigned to user 3' );
 [ $st ] = us_fetch( $REF, $Q . '%2F' . $nid . '&context=edit', $admin );
 check( 404 === $st, 'WordPress confirms the user is gone' );
-shell_exec( 'cd ' . escapeshellarg( "$ROOT/wp-reference" ) . ' && wp post delete ' . $pid . ' --force 2>/dev/null' );
+shell_exec( 'cd ' . escapeshellarg( minn_test_site_root() . '/wp-reference' ) . ' && wp post delete ' . $pid . ' --force 2>/dev/null' );
 
 // 5. Creation refusals agree.
 us_parity( 'editor cannot create users', $Q, $editor, 'POST', '{"username":"x","email":"x@x.test","password":"pw"}' );

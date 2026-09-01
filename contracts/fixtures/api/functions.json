@@ -100,11 +100,11 @@
     ],
     [
         "siteurl trailing",
-        "https://minn-engine.localhost"
+        "https://minn.localhost"
     ],
     [
         "home",
-        "https://minn-engine.localhost"
+        "https://minn.localhost"
     ],
     [
         "transient missing",
@@ -204,8 +204,8 @@
             "wp-content",
             "plugins",
             "mu-plugins",
-            "https://minn-engine.localhost/wp-content",
-            "https://minn-engine.localhost/wp-content/plugins",
+            "https://minn.localhost/wp-content",
+            "https://minn.localhost/wp-content/plugins",
             "languages",
             true,
             60,
@@ -244,39 +244,39 @@
     ],
     [
         "plugin_dir_url",
-        "http://minn-engine.localhost/wp-content/plugins/foo/"
+        "http://minn.localhost/wp-content/plugins/foo/"
     ],
     [
         "plugins_url empty",
-        "http://minn-engine.localhost/wp-content/plugins"
+        "http://minn.localhost/wp-content/plugins"
     ],
     [
         "plugins_url rel",
-        "http://minn-engine.localhost/wp-content/plugins/foo/x.css"
+        "http://minn.localhost/wp-content/plugins/foo/x.css"
     ],
     [
         "plugins_url slash",
-        "http://minn-engine.localhost/wp-content/plugins/foo/x.css"
+        "http://minn.localhost/wp-content/plugins/foo/x.css"
     ],
     [
         "plugins_url with plugin",
-        "http://minn-engine.localhost/wp-content/plugins/foo/x.css"
+        "http://minn.localhost/wp-content/plugins/foo/x.css"
     ],
     [
         "plugins_url with plugin slash",
-        "http://minn-engine.localhost/wp-content/plugins/foo/css/x.css"
+        "http://minn.localhost/wp-content/plugins/foo/css/x.css"
     ],
     [
         "plugins_url absolute",
-        "http://minn-engine.localhost/wp-content/plugins/https://cdn.example/x.js"
+        "http://minn.localhost/wp-content/plugins/https://cdn.example/x.js"
     ],
     [
         "plugins_url mu",
-        "http://minn-engine.localhost/wp-content/mu-plugins/y.js"
+        "http://minn.localhost/wp-content/mu-plugins/y.js"
     ],
     [
         "plugins_url mu dir",
-        "http://minn-engine.localhost/wp-content/mu-plugins"
+        "http://minn.localhost/wp-content/mu-plugins"
     ],
     [
         "__",
@@ -1239,74 +1239,74 @@
     [
         "home_url",
         [
-            "https://minn-engine.localhost",
-            "https://minn-engine.localhost/x",
-            "https://minn-engine.localhost/x",
-            "https://minn-engine.localhost/x/?a=1",
-            "https://minn-engine.localhost/x",
-            "http://minn-engine.localhost/x",
+            "https://minn.localhost",
+            "https://minn.localhost/x",
+            "https://minn.localhost/x",
+            "https://minn.localhost/x/?a=1",
+            "https://minn.localhost/x",
+            "http://minn.localhost/x",
             "/x",
-            "https://minn-engine.localhost"
+            "https://minn.localhost"
         ]
     ],
     [
         "site_url",
         [
-            "http://minn-engine.localhost",
-            "http://minn-engine.localhost/x",
+            "http://minn.localhost",
+            "http://minn.localhost/x",
             "/x"
         ]
     ],
     [
         "admin_url",
         [
-            "https://minn-engine.localhost/wp-admin/",
-            "https://minn-engine.localhost/wp-admin/options.php",
-            "https://minn-engine.localhost/wp-admin/edit.php?post_type=page",
+            "https://minn.localhost/wp-admin/",
+            "https://minn.localhost/wp-admin/options.php",
+            "https://minn.localhost/wp-admin/edit.php?post_type=page",
             "/wp-admin/"
         ]
     ],
     [
         "content_url",
         [
-            "http://minn-engine.localhost/wp-content",
-            "http://minn-engine.localhost/wp-content/x",
-            "http://minn-engine.localhost/wp-content/x"
+            "http://minn.localhost/wp-content",
+            "http://minn.localhost/wp-content/x",
+            "http://minn.localhost/wp-content/x"
         ]
     ],
     [
         "includes_url",
         [
-            "http://minn-engine.localhost/wp-includes/",
-            "http://minn-engine.localhost/wp-includes/js/x.js"
+            "http://minn.localhost/wp-includes/",
+            "http://minn.localhost/wp-includes/js/x.js"
         ]
     ],
     [
         "wp_login_url",
         [
-            "https://minn-engine.localhost/wp-login.php",
-            "https://minn-engine.localhost/wp-login.php?redirect_to=https%3A%2F%2Fx%2Fback"
+            "https://minn.localhost/wp-login.php",
+            "https://minn.localhost/wp-login.php?redirect_to=https%3A%2F%2Fx%2Fback"
         ]
     ],
     [
         "wp_logout_url shape",
-        "https://minn-engine.localhost/wp-login.php?action=logout&amp;_wpnonce=N"
+        "https://minn.localhost/wp-login.php?action=logout&amp;_wpnonce=N"
     ],
     [
         "get_rest_url",
         [
-            "https://minn-engine.localhost/wp-json/",
-            "https://minn-engine.localhost/wp-json/wp/v2/posts",
-            "https://minn-engine.localhost/wp-json/wp/v2/posts"
+            "https://minn.localhost/wp-json/",
+            "https://minn.localhost/wp-json/wp/v2/posts",
+            "https://minn.localhost/wp-json/wp/v2/posts"
         ]
     ],
     [
         "get_stylesheet_directory_uri",
-        "http://minn-engine.localhost/wp-content/themes/twentytwentyfive"
+        "http://minn.localhost/wp-content/themes/twentytwentyfive"
     ],
     [
         "get_template_directory_uri",
-        "http://minn-engine.localhost/wp-content/themes/twentytwentyfive"
+        "http://minn.localhost/wp-content/themes/twentytwentyfive"
     ],
     [
         "get_stylesheet_directory",
@@ -1314,7 +1314,7 @@
     ],
     [
         "get_theme_root_uri",
-        "http://minn-engine.localhost/wp-content/themes"
+        "http://minn.localhost/wp-content/themes"
     ],
     [
         "get_stylesheet",
@@ -1334,11 +1334,11 @@
     ],
     [
         "get_bloginfo url",
-        "https://minn-engine.localhost"
+        "https://minn.localhost"
     ],
     [
         "get_bloginfo wpurl",
-        "http://minn-engine.localhost"
+        "http://minn.localhost"
     ],
     [
         "get_bloginfo version",
@@ -1354,19 +1354,19 @@
     ],
     [
         "get_bloginfo stylesheet_url",
-        "http://minn-engine.localhost/wp-content/themes/twentytwentyfive/style.css"
+        "http://minn.localhost/wp-content/themes/twentytwentyfive/style.css"
     ],
     [
         "get_bloginfo stylesheet_directory",
-        "http://minn-engine.localhost/wp-content/themes/twentytwentyfive"
+        "http://minn.localhost/wp-content/themes/twentytwentyfive"
     ],
     [
         "get_bloginfo template_url",
-        "http://minn-engine.localhost/wp-content/themes/twentytwentyfive"
+        "http://minn.localhost/wp-content/themes/twentytwentyfive"
     ],
     [
         "get_bloginfo template_directory",
-        "http://minn-engine.localhost/wp-content/themes/twentytwentyfive"
+        "http://minn.localhost/wp-content/themes/twentytwentyfive"
     ],
     [
         "get_bloginfo admin_email",
@@ -1378,27 +1378,27 @@
     ],
     [
         "get_bloginfo pingback_url",
-        "http://minn-engine.localhost/xmlrpc.php"
+        "http://minn.localhost/xmlrpc.php"
     ],
     [
         "get_bloginfo rss2_url",
-        "https://minn-engine.localhost/feed/"
+        "https://minn.localhost/feed/"
     ],
     [
         "get_bloginfo rss_url",
-        "https://minn-engine.localhost/feed/rss/"
+        "https://minn.localhost/feed/rss/"
     ],
     [
         "get_bloginfo atom_url",
-        "https://minn-engine.localhost/feed/atom/"
+        "https://minn.localhost/feed/atom/"
     ],
     [
         "get_bloginfo comments_rss2_url",
-        "https://minn-engine.localhost/comments/feed/"
+        "https://minn.localhost/comments/feed/"
     ],
     [
         "get_bloginfo comments_atom_url",
-        "https://minn-engine.localhost/comments/feed/atom/"
+        "https://minn.localhost/comments/feed/atom/"
     ],
     [
         "get_bloginfo text_direction",
@@ -1406,11 +1406,11 @@
     ],
     [
         "get_bloginfo siteurl",
-        "https://minn-engine.localhost"
+        "https://minn.localhost"
     ],
     [
         "get_bloginfo home",
-        "https://minn-engine.localhost"
+        "https://minn.localhost"
     ],
     [
         "get_bloginfo bogus",
@@ -1430,7 +1430,7 @@
     ],
     [
         "wp_customize_url",
-        "https://minn-engine.localhost/wp-admin/customize.php"
+        "https://minn.localhost/wp-admin/customize.php"
     ],
     [
         "wp_upload_dir keys",
@@ -1447,26 +1447,26 @@
         "wp_upload_dir",
         [
             "uploads",
-            "https://minn-engine.localhost/wp-content/uploads",
+            "https://minn.localhost/wp-content/uploads",
             true,
             false
         ]
     ],
     [
         "wp_get_upload_dir",
-        "https://minn-engine.localhost/wp-content/uploads"
+        "https://minn.localhost/wp-content/uploads"
     ],
     [
         "get_admin_url",
-        "https://minn-engine.localhost/wp-admin/x.php"
+        "https://minn.localhost/wp-admin/x.php"
     ],
     [
         "network_home_url",
-        "https://minn-engine.localhost"
+        "https://minn.localhost"
     ],
     [
         "self_admin_url",
-        "https://minn-engine.localhost/wp-admin/a.php"
+        "https://minn.localhost/wp-admin/a.php"
     ],
     [
         "set_url_scheme",
@@ -2083,6 +2083,6 @@
     ],
     [
         "apply_filters plugins_url filter",
-        "http://minn-engine.localhost/wp-content/plugins/x/a#f"
+        "http://minn.localhost/wp-content/plugins/x/a#f"
     ]
 ]

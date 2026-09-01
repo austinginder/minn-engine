@@ -17,7 +17,7 @@ require( './pin-theme' ).pinTheme();
 // `--dev` measures the engine's own site against its 8123 oracle (the theme suite's pages plus
 // the block battery); the default is the dogfood site against 8124.
 const DEV = process.argv.includes( '--dev' );
-const ENGINE = ( process.env.MINN_GEOMETRY_ENGINE || ( DEV ? 'https://minn-engine.localhost' : 'https://dogfood.localhost' ) ).replace( /\/$/, '' );
+const ENGINE = ( process.env.MINN_GEOMETRY_ENGINE || ( DEV ? 'https://minn.localhost' : 'https://dogfood.localhost' ) ).replace( /\/$/, '' );
 const REF = ( process.env.MINN_GEOMETRY_REF || ( DEV ? 'http://127.0.0.1:8123' : 'http://127.0.0.1:8124' ) ).replace( /\/$/, '' );
 const DEV_PATHS = '/,/hello-world/,/building-in-the-open/,/sample-page/,/sample-page/docs/,/category/uncategorized/,/tag/engine/,/author/admin/,/2026/08/,/?s=open,/nonexistent/,/zz-block-battery-media/,/zz-block-battery-layout/,/page/2/,/docs/';
 const DOGFOOD_PATHS = '/,/page/2/,/about/,/contact/,/case-studies/,/corporate/,/residential/11-fifth-3/,/news/,/news/title-here-like-this/,/nonexistent-page/,/?s=design';

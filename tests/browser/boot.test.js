@@ -7,13 +7,13 @@
 // engine's REST surface, not just painting a shell.
 //
 // Run:  node tests/browser/boot.test.js
-// Env:  MINN_ENGINE_URL (default https://minn-engine.localhost),
+// Env:  MINN_ENGINE_URL (default https://minn.localhost),
 //       MINN_ADMIN_USER / MINN_ADMIN_PASS (default admin / the dev password).
 
 const { chromium } = require( 'playwright-core' );
 require( './pin-theme' ).pinTheme();
 
-const BASE = ( process.env.MINN_ENGINE_URL || 'https://minn-engine.localhost' ).replace( /\/$/, '' );
+const BASE = ( process.env.MINN_ENGINE_URL || 'https://minn.localhost' ).replace( /\/$/, '' );
 const USER = process.env.MINN_ADMIN_USER || 'admin';
 const PASS = process.env.MINN_ADMIN_PASS || 'password';
 const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';

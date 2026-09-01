@@ -7,7 +7,7 @@
  * Ref: (cd wp-reference && php -S 127.0.0.1:8123) — SKIPs cleanly when down.
  */
 
-$ENGINE = 'https://minn-engine.localhost';
+$ENGINE = 'https://minn.localhost';
 $REF    = 'http://127.0.0.1:8123';
 $ROOT   = dirname( __DIR__ );
 
@@ -36,7 +36,7 @@ function check( bool $ok, string $label, string $detail = '' ): void {
 function ed_mint( int $uid ): array {
 	global $ROOT;
 	$mint = json_decode( (string) shell_exec(
-		'wp --path=' . escapeshellarg( "$ROOT/wp-reference" ) . ' eval-file ' . escapeshellarg( "$ROOT/tests/tools/mint-session.php" ) . " $uid 2>/dev/null"
+		'wp --path=' . escapeshellarg( minn_test_site_root() . '/wp-reference' ) . ' eval-file ' . escapeshellarg( "$ROOT/tests/tools/mint-session.php" ) . " $uid 2>/dev/null"
 	), true );
 	if ( ! $mint || empty( $mint['cookie'] ) ) {
 		echo "SKIP: could not mint a reference session (wp-cli unavailable?)\n";
@@ -107,7 +107,7 @@ $battery = (array) json_decode((string) @file_get_contents($GLOBALS['ROOT'] . "/
 $keep    = implode(',', array_merge(array_values((array) ($battery['posts'] ?? [])), [(int) ($battery['image'] ?? 0)]));
 	global $ROOT;
 	shell_exec(
-		'cd ' . escapeshellarg( "$ROOT/wp-reference" ) .
+		'cd ' . escapeshellarg( minn_test_site_root() . '/wp-reference' ) .
 		' && wp db query "DELETE FROM wp_posts WHERE post_type = \'revision\'; DELETE FROM wp_postmeta WHERE meta_key = \'_edit_lock\'" 2>/dev/null'
 		. ' && for id in $(wp post list --post_type=post,page --post_status=any --field=ID --post__not_in=' . $keep . ' 2>/dev/null); do [ "$id" -gt 29 ] && wp post delete "$id" --force 2>/dev/null; done; true'
 	);

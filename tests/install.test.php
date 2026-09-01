@@ -9,6 +9,7 @@ declare(strict_types=1);
  * eject restores the tree byte for byte and leaves nothing behind.
  */
 
+require_once __DIR__ . '/lib.php';
 $ROOT = dirname(__DIR__);
 $ENGINE_DIR = "$ROOT/public/minn";
 $SCRATCH = sys_get_temp_dir() . '/minn-install-' . getmypid();
@@ -61,9 +62,9 @@ echo "install suite: $WEBROOT\n";
 mkdir("$WEBROOT/wp-admin", 0755, true);
 mkdir("$WEBROOT/wp-includes/js", 0755, true);
 mkdir("$WEBROOT/wp-content/uploads", 0755, true);
-symlink(realpath("$ROOT/public/wp-content/themes"), "$WEBROOT/wp-content/themes");
+symlink(realpath(minn_test_site_root() . '/public/wp-content/themes'), "$WEBROOT/wp-content/themes");
 mkdir("$WEBROOT/wp-content/plugins");
-copy("$ROOT/public/wp-config.php", "$WEBROOT/wp-config.php");
+copy(minn_test_site_root() . '/public/wp-config.php', "$WEBROOT/wp-config.php");
 $stubs = [
     'index.php' => "<?php\nrequire __DIR__ . '/wp-blog-header.php';\n",
     'wp-blog-header.php' => "<?php\n// stub\n",
@@ -125,7 +126,7 @@ $check('a second install is refused', $code === 1, $out);
 
 // The installed webroot answers wp-cli through the engine.
 exec('cd ' . escapeshellarg($WEBROOT) . ' && wp option get home 2>&1', $home, $c1);
-$check('wp option get home works in the installed webroot', $c1 === 0 && implode('', $home) === 'https://minn-engine.localhost', implode("\n", $home));
+$check('wp option get home works in the installed webroot', $c1 === 0 && implode('', $home) === 'https://minn.localhost', implode("\n", $home));
 exec('cd ' . escapeshellarg($WEBROOT) . ' && wp core version 2>&1', $version, $c2);
 $check('wp core version reads the shape file', $c2 === 0 && implode('', $version) === '7.1', implode("\n", $version));
 exec('cd ' . escapeshellarg($WEBROOT) . ' && wp minn info 2>&1', $info, $c3);
@@ -142,7 +143,7 @@ $check('status reads WordPress again', $code === 0 && str_contains($out, ': word
 
 // Docker-style wp-config: getenv_docker('ENV', 'fallback') resolved from the
 // environment, still as text, nothing in the file runs.
-$realConfig = (string) file_get_contents("$ROOT/public/wp-config.php");
+$realConfig = (string) file_get_contents(minn_test_site_root() . '/public/wp-config.php');
 preg_match_all('/define\s*\(\s*[\'"](DB_[A-Z_]+)[\'"]\s*,\s*[\'"](.*?)[\'"]\s*\)/', $realConfig, $dm, PREG_SET_ORDER);
 $real = [];
 foreach ($dm as $pair) {

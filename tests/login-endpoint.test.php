@@ -11,7 +11,7 @@
  * Ref:  (cd wp-reference && php -S 127.0.0.1:8123) — SKIPs when down.
  */
 
-$ENGINE = rtrim( getenv( 'MINN_TEST_URL' ) ?: 'https://minn-engine.localhost', '/' );
+$ENGINE = rtrim( getenv( 'MINN_TEST_URL' ) ?: 'https://minn.localhost', '/' );
 $REF    = 'http://127.0.0.1:8123';
 $ROOT   = dirname( __DIR__ );
 $PASS   = getenv( 'MINN_ADMIN_PASS' ) ?: 'password';
@@ -20,7 +20,7 @@ require_once __DIR__ . '/lib.php';
 
 // Load the engine in-process so the suite can mint the nonce that pairs with
 // the session the login endpoint creates (a boot payload would supply it).
-$config = file_get_contents( "$ROOT/public/wp-config.php" );
+$config = file_get_contents( minn_test_site_root() . '/public/wp-config.php' );
 $config = str_replace( "require_once ABSPATH . 'wp-settings.php';", '', $config );
 eval( '?>' . $config );
 $GLOBALS['table_prefix'] = $table_prefix;
@@ -115,7 +115,7 @@ check( 200 === $ws && str_contains( $wbody, 'incorrect' ), 'wrong password re-re
 );
 check( 302 === $ls, 'correct password redirects (302)', "status $ls" );
 check( str_contains( (string) $lh['location'], '/minn-admin/' ), 'redirects to the admin by default', (string) $lh['location'] );
-$hash      = md5( 'https://minn-engine.localhost' );
+$hash      = md5( 'https://minn.localhost' );
 $logged_in = cookie_value( $lh['set-cookie'], 'wordpress_logged_in_' . $hash );
 $auth      = cookie_value( $lh['set-cookie'], 'wordpress_sec_' . $hash );
 check( is_string( $logged_in ) && substr_count( $logged_in, '|' ) === 3, 'sets a well-formed logged_in cookie' );
