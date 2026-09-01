@@ -38,7 +38,8 @@ the wp/v2 surface: shapes and controllers
 | [`RouteMatch`](#routematch) | final class | 40 | Finds the registered handler for a method and path among the runtime's route table. |
 | [`RouteTable`](#routetable) | final class | 36 | The registered endpoints in dispatch shape: one handler list per route, methods as a set, non-numeric keys lifted into the route's options. |
 | [`RuntimeRoutes`](#runtimeroutes) | final class | 56 | Routes plugin code registered with register_rest_route(), answered |
-| [`Schema`](#schema) | final readonly class | 619 | JSON-schema handling the way the REST API's argument validation does it: |
+| [`Schema`](#schema) | final readonly class | 465 | JSON-schema handling the way the REST API's argument validation does it: |
+| [`SchemaValues`](#schemavalues) | final class | 186 | The value side of JSON Schema, as the reference applies it: what counts |
 | [`SearchController`](#searchcontroller) | final readonly class | 135 | wp/v2 search over published content: id, title, url, type, and the |
 | [`Settings`](#settings) | final readonly class | 75 | The registered settings the Settings views read and write, mapped to |
 | [`SettingsController`](#settingscontroller) | final readonly class | 24 | wp/v2/settings: read and write, both behind manage_options. |
@@ -1127,7 +1128,7 @@ tests the schema vocabulary needs. Behaviour pinned by contracts/fixtures/api/re
 - const `TYPES` = `array (   0 => 'array',   1 => 'object',   2 => 'string',   3 => 'number',   4 => 'integer',   5 => 'boolean',   6 => 'null', )`
 - const `ENDPOINT_KEYWORDS` = `array (   0 => 'type',   1 => 'format',   2 => 'enum',   3 => 'items',   4 => 'properties',   5 => 'additionalProperties',   6 => 'patternProperties',   7 => 'minProperties',   8 => 'maxProperties',   9 => 'minimum',   10 => 'maximum',   11 => 'exclusiveMinimum',   12 => 'exclusiveMaximum',   13 => 'multipleOf',   14 => 'minLength',   15 => 'maxLength',   16 => 'pattern',   17 => 'minItems',   18 => 'maxItems',   19 => 'uniqueItems',   20 => 'anyOf',   21 => 'oneOf', )` — An object schema that names its properties forbids the others unless it says otherwise, all the way down.
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`
+Used by: `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\SchemaValues`
 
 ```php
 __construct(Closure $email, Closure $number, Closure $format)
@@ -1156,6 +1157,21 @@ property with the default validators, its keywords, defaults and
 required flags on the create route only, and any arg_options overrides.
 
 ### static `closeObjects(array $schema): array`
+
+Internals: `validateComposite()` (private, line 101), `validateString()` (private, line 127), `validateNumber()` (private, line 145), `validateArray()` (private, line 157), `validateObject()` (private, line 183), `validateFormat()` (private, line 220), `validateBounds()` (private, line 232), `enum()` (private, line 269), `wrongType()` (private, line 284)
+
+
+## SchemaValues
+
+`final class Minn\Rest\SchemaValues` · `public/minn/src/Minn/Rest/SchemaValues.php`
+
+The value side of JSON Schema, as the reference applies it: what counts
+as a boolean, integer, array, or object, the coercions to each, the
+comparisons and date, colour, and uuid parsers the formats use, and the
+combining walk anyOf and oneOf share. Schema holds the rules; this holds
+what they are applied to.
+
+Used by: `Minn\Rest\Schema`
 
 ### static `isBoolean(mixed $value): bool`
 
@@ -1191,6 +1207,10 @@ A timestamp for an RFC3339-shaped date, false otherwise; $forceUtc reads the off
 
 ### static `isUuid(mixed $uuid): bool`
 
+### static `list(mixed $value): array`
+
+- `@return list<string>`
+
 ### static `combining(mixed $value, array $args, bool $stopAfterFirst, Closure $validate): array`
 
 Which of a combining schema's branches a value matches: the branch on
@@ -1199,8 +1219,6 @@ every match with its index, else the errors the branches raised.
 
 - `@param Closure(mixed, array): (true|Refusal) $validate a branch validator`
 - `@return array{schema?: array, matches?: array<int, array>, errors?: list<array{error: Refusal, schema: array, index: int}>}`
-
-Internals: `validateArray()` (private, line 127), `validateObject()` (private, line 153), `validateFormat()` (private, line 190), `validateBounds()` (private, line 202), `enum()` (private, line 239), `wrongType()` (private, line 254), `list()` (private, line 603)
 
 
 ## SearchController

@@ -18686,7 +18686,7 @@
             "namespace": "Minn\\Cli",
             "kind": "final class",
             "file": "public/minn/src/Minn/Cli/Installer.php",
-            "lines": 577,
+            "lines": 631,
             "doc": "The swap, both ways. Install parks WordPress's own files beside the\nwebroot, lays the engine and its shape files down, and leaves\nwp-config.php and wp-content untouched; eject puts every parked file\nback and removes what install wrote. A manifest in minn/.install.json\nis the record eject works from. Preflight says what the site will and\nwill not get before anything moves.",
             "implements": [],
             "extends": null,
@@ -18878,7 +18878,7 @@
                         }
                     ],
                     "line": 117,
-                    "end": 227
+                    "end": 147
                 },
                 {
                     "routes": [],
@@ -18906,8 +18906,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 337,
-                    "end": 391
+                    "line": 391,
+                    "end": 445
                 },
                 {
                     "routes": [],
@@ -18926,8 +18926,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 393,
-                    "end": 436
+                    "line": 447,
+                    "end": 490
                 },
                 {
                     "routes": [],
@@ -18943,15 +18943,103 @@
                 },
                 {
                     "routes": [],
+                    "name": "optionReader",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "optionReader(mysqli $db, string $prefix): Closure",
+                    "doc": "A reader for one option's raw value, on the site's own connection. @return \\Closure(string): ?string",
+                    "shapes": [
+                        "@return \\Closure(string): ?string"
+                    ],
+                    "params": [
+                        {
+                            "name": "db",
+                            "type": "mysqli",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "prefix",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 150,
+                    "end": 159
+                },
+                {
+                    "routes": [],
+                    "name": "preflightTheme",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "preflightTheme(string $root, Closure $option): void",
+                    "doc": "The active theme: present, and block or classic. @param \\Closure(string): ?string $option",
+                    "shapes": [
+                        "@param \\Closure(string): ?string $option"
+                    ],
+                    "params": [
+                        {
+                            "name": "root",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "option",
+                            "type": "Closure",
+                            "shape": "\\Closure(string): ?string",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 162,
+                    "end": 191
+                },
+                {
+                    "routes": [],
+                    "name": "preflightPlugins",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "preflightPlugins(string $root, Closure $option): array",
+                    "doc": "The active plugins against the extensions on disk: what each provides,\nwhat will not run, and the shortcodes, blocks, and types the active\nextensions cover, for the content survey.",
+                    "shapes": [
+                        "@param \\Closure(string): ?string $option",
+                        "@return array{array<string, string>, array<string, string>, array<string, string>}"
+                    ],
+                    "params": [
+                        {
+                            "name": "root",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "option",
+                            "type": "Closure",
+                            "shape": "\\Closure(string): ?string",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 201,
+                    "end": 253
+                },
+                {
+                    "routes": [],
                     "name": "surveyContent",
                     "static": false,
                     "visibility": "private",
                     "signature": "surveyContent(mysqli $db, string $prefix, array $coveredShortcodes, array $coveredBlocks, array $coveredTypes): void",
-                    "doc": "Shortcodes, third-party blocks, menu storage, extra tables, extra\npost types. The prefix is the identifier read from wp-config as text.",
+                    "doc": "What the content holds that the engine must serve: shortcodes and\nthird-party blocks against the extensions covering them, menus, extra\ntables, and extra post types.",
                     "shapes": [
-                        "@param array<string, string> $coveredShortcodes tag => extension slug",
-                        "@param array<string, string> $coveredBlocks block name => extension slug",
-                        "@param array<string, string> $coveredTypes post type slug => extension slug"
+                        "@param array<string, string> $coveredShortcodes",
+                        "@param array<string, string> $coveredBlocks",
+                        "@param array<string, string> $coveredTypes"
                     ],
                     "params": [
                         {
@@ -18973,25 +19061,158 @@
                             "type": "array",
                             "shape": "array<string, string>",
                             "default": null,
-                            "doc": "tag => extension slug"
+                            "doc": ""
                         },
                         {
                             "name": "coveredBlocks",
                             "type": "array",
                             "shape": "array<string, string>",
                             "default": null,
-                            "doc": "block name => extension slug"
+                            "doc": ""
                         },
                         {
                             "name": "coveredTypes",
                             "type": "array",
                             "shape": "array<string, string>",
                             "default": null,
-                            "doc": "post type slug => extension slug"
+                            "doc": ""
                         }
                     ],
-                    "line": 237,
-                    "end": 334
+                    "line": 272,
+                    "end": 278
+                },
+                {
+                    "routes": [],
+                    "name": "surveyMarkup",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "surveyMarkup(mysqli $db, string $prefix, array $coveredShortcodes, array $coveredBlocks): void",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, string> $coveredShortcodes @param array<string, string> $coveredBlocks"
+                    ],
+                    "params": [
+                        {
+                            "name": "db",
+                            "type": "mysqli",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "prefix",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "coveredShortcodes",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": null,
+                            "doc": "@param array<string, string> $coveredBlocks"
+                        },
+                        {
+                            "name": "coveredBlocks",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 281,
+                    "end": 320
+                },
+                {
+                    "routes": [],
+                    "name": "surveyMenus",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "surveyMenus(mysqli $db, string $prefix): void",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "db",
+                            "type": "mysqli",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "prefix",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 322,
+                    "end": 347
+                },
+                {
+                    "routes": [],
+                    "name": "surveyTables",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "surveyTables(mysqli $db, string $prefix): void",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "db",
+                            "type": "mysqli",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "prefix",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 349,
+                    "end": 365
+                },
+                {
+                    "routes": [],
+                    "name": "surveyTypes",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "surveyTypes(mysqli $db, string $prefix, array $coveredTypes): void",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, string> $coveredTypes"
+                    ],
+                    "params": [
+                        {
+                            "name": "db",
+                            "type": "mysqli",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "prefix",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "coveredTypes",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 368,
+                    "end": 388
                 },
                 {
                     "routes": [],
@@ -19010,8 +19231,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 438,
-                    "end": 447
+                    "line": 492,
+                    "end": 501
                 },
                 {
                     "routes": [],
@@ -19030,8 +19251,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 449,
-                    "end": 453
+                    "line": 503,
+                    "end": 507
                 },
                 {
                     "routes": [],
@@ -19050,8 +19271,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 460,
-                    "end": 478
+                    "line": 514,
+                    "end": 532
                 },
                 {
                     "routes": [],
@@ -19070,8 +19291,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 481,
-                    "end": 509
+                    "line": 535,
+                    "end": 563
                 },
                 {
                     "routes": [],
@@ -19097,8 +19318,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 515,
-                    "end": 523
+                    "line": 569,
+                    "end": 577
                 },
                 {
                     "routes": [],
@@ -19124,8 +19345,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 526,
-                    "end": 540
+                    "line": 580,
+                    "end": 594
                 },
                 {
                     "routes": [],
@@ -19151,8 +19372,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 542,
-                    "end": 559
+                    "line": 596,
+                    "end": 613
                 },
                 {
                     "routes": [],
@@ -19171,8 +19392,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 561,
-                    "end": 576
+                    "line": 615,
+                    "end": 630
                 },
                 {
                     "routes": [],
@@ -19183,8 +19404,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 578,
-                    "end": 582
+                    "line": 632,
+                    "end": 636
                 },
                 {
                     "routes": [],
@@ -19210,8 +19431,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 584,
-                    "end": 591
+                    "line": 638,
+                    "end": 645
                 },
                 {
                     "routes": [],
@@ -19230,8 +19451,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 593,
-                    "end": 596
+                    "line": 647,
+                    "end": 650
                 }
             ]
         },
@@ -55710,16 +55931,18 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Schema.php",
-            "lines": 619,
+            "lines": 465,
             "doc": "JSON-schema handling the way the REST API's argument validation does it:\nvalidate a value against a schema (a Refusal names what failed), sanitise\nit into the schema's type, filter a response by context, and the type\ntests the schema vocabulary needs. Behaviour pinned by contracts/fixtures/api/rest.json.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Rest\\SchemaValues",
                 "Minn\\Runtime\\Refusal"
             ],
             "usedBy": [
                 "Minn\\Rest\\Api",
-                "Minn\\Rest\\ApplicationPasswordsController"
+                "Minn\\Rest\\ApplicationPasswordsController",
+                "Minn\\Rest\\SchemaValues"
             ],
             "constructor": {
                 "signature": "__construct(Closure $email, Closure $number, Closure $format)",
@@ -55833,7 +56056,7 @@
                         }
                     ],
                     "line": 31,
-                    "end": 125
+                    "end": 98
                 },
                 {
                     "routes": [],
@@ -55866,8 +56089,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 259,
-                    "end": 327
+                    "line": 289,
+                    "end": 357
                 },
                 {
                     "routes": [],
@@ -55900,8 +56123,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 330,
-                    "end": 384
+                    "line": 360,
+                    "end": 414
                 },
                 {
                     "routes": [],
@@ -55934,8 +56157,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 387,
-                    "end": 395
+                    "line": 417,
+                    "end": 425
                 },
                 {
                     "routes": [],
@@ -55961,8 +56184,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 405,
-                    "end": 434
+                    "line": 435,
+                    "end": 464
                 },
                 {
                     "routes": [],
@@ -55981,9 +56204,331 @@
                             "doc": ""
                         }
                     ],
-                    "line": 436,
-                    "end": 449
+                    "line": 466,
+                    "end": 479
                 },
+                {
+                    "routes": [],
+                    "name": "validateComposite",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "validateComposite(mixed $value, array $args, string $param): Minn\\Runtime\\Refusal|true|null",
+                    "doc": "anyOf and oneOf: the verdict when the schema is a choice, null when it is not.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "param",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 101,
+                    "end": 124
+                },
+                {
+                    "routes": [],
+                    "name": "validateString",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "validateString(mixed $value, array $args, string $param): ?Minn\\Runtime\\Refusal",
+                    "doc": "Length and pattern; null when the string passes.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "param",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 127,
+                    "end": 142
+                },
+                {
+                    "routes": [],
+                    "name": "validateNumber",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "validateNumber(mixed $value, array $args, string $param): ?Minn\\Runtime\\Refusal",
+                    "doc": "Bounds and multipleOf; null when the number passes.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "param",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 145,
+                    "end": 155
+                },
+                {
+                    "routes": [],
+                    "name": "validateArray",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "validateArray(mixed $value, array $args, string $param): ?Minn\\Runtime\\Refusal",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "param",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 157,
+                    "end": 181
+                },
+                {
+                    "routes": [],
+                    "name": "validateObject",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "validateObject(mixed $value, array $args, string $param): ?Minn\\Runtime\\Refusal",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "param",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 183,
+                    "end": 218
+                },
+                {
+                    "routes": [],
+                    "name": "validateFormat",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "validateFormat(mixed $value, string $format, string $param): ?Minn\\Runtime\\Refusal",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "format",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "param",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 220,
+                    "end": 230
+                },
+                {
+                    "routes": [],
+                    "name": "validateBounds",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "validateBounds(mixed $value, array $args, string $param): ?Minn\\Runtime\\Refusal",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "param",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 232,
+                    "end": 267
+                },
+                {
+                    "routes": [],
+                    "name": "enum",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "enum(mixed $value, array $enum, string $param): Minn\\Runtime\\Refusal|true",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "enum",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "param",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 269,
+                    "end": 282
+                },
+                {
+                    "routes": [],
+                    "name": "wrongType",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "wrongType(string $param, string $type): Minn\\Runtime\\Refusal",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "param",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 284,
+                    "end": 287
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Rest\\SchemaValues",
+            "short": "SchemaValues",
+            "namespace": "Minn\\Rest",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Rest/SchemaValues.php",
+            "lines": 186,
+            "doc": "The value side of JSON Schema, as the reference applies it: what counts\nas a boolean, integer, array, or object, the coercions to each, the\ncomparisons and date, colour, and uuid parsers the formats use, and the\ncombining walk anyOf and oneOf share. Schema holds the rules; this holds\nwhat they are applied to.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Rest\\Schema"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\Schema"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
                 {
                     "routes": [],
                     "name": "isBoolean",
@@ -56001,8 +56546,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 453,
-                    "end": 462
+                    "line": 20,
+                    "end": 29
                 },
                 {
                     "routes": [],
@@ -56021,8 +56566,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 464,
-                    "end": 473
+                    "line": 31,
+                    "end": 40
                 },
                 {
                     "routes": [],
@@ -56041,8 +56586,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 475,
-                    "end": 478
+                    "line": 42,
+                    "end": 45
                 },
                 {
                     "routes": [],
@@ -56061,8 +56606,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 480,
-                    "end": 486
+                    "line": 47,
+                    "end": 53
                 },
                 {
                     "routes": [],
@@ -56081,8 +56626,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 488,
-                    "end": 494
+                    "line": 55,
+                    "end": 61
                 },
                 {
                     "routes": [],
@@ -56101,8 +56646,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 496,
-                    "end": 505
+                    "line": 63,
+                    "end": 72
                 },
                 {
                     "routes": [],
@@ -56121,8 +56666,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 507,
-                    "end": 519
+                    "line": 74,
+                    "end": 86
                 },
                 {
                     "routes": [],
@@ -56148,8 +56693,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 522,
-                    "end": 535
+                    "line": 89,
+                    "end": 102
                 },
                 {
                     "routes": [],
@@ -56175,8 +56720,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 537,
-                    "end": 554
+                    "line": 104,
+                    "end": 121
                 },
                 {
                     "routes": [],
@@ -56202,8 +56747,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 556,
-                    "end": 564
+                    "line": 123,
+                    "end": 131
                 },
                 {
                     "routes": [],
@@ -56222,8 +56767,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 567,
-                    "end": 577
+                    "line": 134,
+                    "end": 144
                 },
                 {
                     "routes": [],
@@ -56249,8 +56794,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 580,
-                    "end": 590
+                    "line": 147,
+                    "end": 157
                 },
                 {
                     "routes": [],
@@ -56269,8 +56814,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 592,
-                    "end": 595
+                    "line": 159,
+                    "end": 162
                 },
                 {
                     "routes": [],
@@ -56289,8 +56834,30 @@
                             "doc": ""
                         }
                     ],
-                    "line": 597,
-                    "end": 600
+                    "line": 164,
+                    "end": 167
+                },
+                {
+                    "routes": [],
+                    "name": "list",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "list(mixed $value): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 170,
+                    "end": 173
                 },
                 {
                     "routes": [],
@@ -56333,227 +56900,8 @@
                             "doc": "a branch validator"
                         }
                     ],
-                    "line": 616,
-                    "end": 635
-                },
-                {
-                    "routes": [],
-                    "name": "validateArray",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "validateArray(mixed $value, array $args, string $param): ?Minn\\Runtime\\Refusal",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "value",
-                            "type": "mixed",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "args",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "param",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 127,
-                    "end": 151
-                },
-                {
-                    "routes": [],
-                    "name": "validateObject",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "validateObject(mixed $value, array $args, string $param): ?Minn\\Runtime\\Refusal",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "value",
-                            "type": "mixed",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "args",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "param",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 153,
-                    "end": 188
-                },
-                {
-                    "routes": [],
-                    "name": "validateFormat",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "validateFormat(mixed $value, string $format, string $param): ?Minn\\Runtime\\Refusal",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "value",
-                            "type": "mixed",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "format",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "param",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 190,
-                    "end": 200
-                },
-                {
-                    "routes": [],
-                    "name": "validateBounds",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "validateBounds(mixed $value, array $args, string $param): ?Minn\\Runtime\\Refusal",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "value",
-                            "type": "mixed",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "args",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "param",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 202,
-                    "end": 237
-                },
-                {
-                    "routes": [],
-                    "name": "enum",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "enum(mixed $value, array $enum, string $param): Minn\\Runtime\\Refusal|true",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "value",
-                            "type": "mixed",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "enum",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "param",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 239,
-                    "end": 252
-                },
-                {
-                    "routes": [],
-                    "name": "wrongType",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "wrongType(string $param, string $type): Minn\\Runtime\\Refusal",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "param",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "type",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 254,
-                    "end": 257
-                },
-                {
-                    "routes": [],
-                    "name": "list",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "list(mixed $value): array",
-                    "doc": "",
-                    "shapes": [
-                        "@return list<string>"
-                    ],
-                    "params": [
-                        {
-                            "name": "value",
-                            "type": "mixed",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 603,
-                    "end": 606
+                    "line": 183,
+                    "end": 202
                 }
             ]
         },

@@ -8,7 +8,7 @@ the wp verbs the engine answers itself
 | [`CacheCommand`](#cachecommand) | final class | 15 | `wp cache flush`: the engine has no object cache, so this is a no-op success. |
 | [`Commands`](#commands) | final class | 86 | The verbs the engine answers to. Every one is registered for the |
 | [`DirectorySearch`](#directorysearch) | final class | 33 | Shared wording for `wp theme search` and `wp plugin search`. The |
-| [`Installer`](#installer) | final class | 577 | The swap, both ways. Install parks WordPress's own files beside the |
+| [`Installer`](#installer) | final class | 631 | The swap, both ways. Install parks WordPress's own files beside the |
 | [`MaintenanceCommand`](#maintenancecommand) | final class | 65 | `wp maintenance-mode`: the `.maintenance` marker in the webroot. The |
 | [`MinnCommand`](#minncommand) | final class | 302 | Identifies the engine. |
 | [`OptionCommand`](#optioncommand) | final class | 191 | Options, read and written straight to the options table. Serialized |
@@ -136,7 +136,7 @@ What the site will and will not get; the worst light decides install.
 
 ### `eject(string $root): int`
 
-Internals: `help()` (private, line 99), `surveyContent()` (private, line 237), `state()` (private, line 438), `manifest()` (private, line 449), `writePlaceholders()` (private, line 460), `readConfig()` (private, line 481), `env()` (private, line 515), `move()` (private, line 526), `copyTree()` (private, line 542), `removeTree()` (private, line 561), `version()` (private, line 578), `light()` (private, line 584), `say()` (private, line 593)
+Internals: `help()` (private, line 99), `optionReader()` (private, line 150), `preflightTheme()` (private, line 162), `preflightPlugins()` (private, line 201), `surveyContent()` (private, line 272), `surveyMarkup()` (private, line 281), `surveyMenus()` (private, line 322), `surveyTables()` (private, line 349), `surveyTypes()` (private, line 368), `state()` (private, line 492), `manifest()` (private, line 503), `writePlaceholders()` (private, line 514), `readConfig()` (private, line 535), `env()` (private, line 569), `move()` (private, line 580), `copyTree()` (private, line 596), `removeTree()` (private, line 615), `version()` (private, line 632), `light()` (private, line 638), `say()` (private, line 647)
 
 
 ## MaintenanceCommand

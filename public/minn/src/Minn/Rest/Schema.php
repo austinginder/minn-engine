@@ -30,32 +30,16 @@ final readonly class Schema
 
     public function validate(mixed $value, array $args, string $param = ''): true|Refusal
     {
-        if (isset($args['anyOf'])) {
-            foreach ($args['anyOf'] as $schema) {
-                if ($this->validate($value, $schema, $param) === true) {
-                    return true;
-                }
-            }
-            return new Refusal('rest_no_matching_schema', sprintf('%s does not match any of the expected formats.', $param));
-        }
-        if (isset($args['oneOf'])) {
-            $matches = 0;
-            foreach ($args['oneOf'] as $schema) {
-                if ($this->validate($value, $schema, $param) === true) {
-                    $matches++;
-                }
-            }
-            if ($matches === 0) {
-                return new Refusal('rest_no_matching_schema', sprintf('%s does not match any of the expected formats.', $param));
-            }
-            return $matches === 1 ? true : new Refusal('rest_one_of_multiple_matches', sprintf('%s matches more than one of the expected formats.', $param));
+        $composite = $this->validateComposite($value, $args, $param);
+        if ($composite !== null) {
+            return $composite;
         }
         if (!isset($args['type'])) {
             // An enum alone is still checked; nothing else is without a type.
             return empty($args['enum']) ? true : $this->enum($value, $args['enum'], $param);
         }
         if (is_array($args['type'])) {
-            $best = self::bestType($value, $args['type']);
+            $best = SchemaValues::bestType($value, $args['type']);
             if ($best === '') {
                 return $this->wrongType($param, implode(',', $args['type']));
             }
@@ -86,24 +70,16 @@ final readonly class Schema
         if (in_array($type, ['integer', 'number'], true) && !is_numeric($value)) {
             return $this->wrongType($param, $type);
         }
-        if ($type === 'integer' && !self::isInteger($value)) {
+        if ($type === 'integer' && !SchemaValues::isInteger($value)) {
             return $this->wrongType($param, 'integer');
         }
-        if ($type === 'boolean' && !self::isBoolean($value)) {
+        if ($type === 'boolean' && !SchemaValues::isBoolean($value)) {
             return $this->wrongType($param, 'boolean');
         }
         if ($type === 'string') {
-            if (!is_string($value)) {
-                return $this->wrongType($param, 'string');
-            }
-            if (isset($args['minLength']) && mb_strlen($value) < $args['minLength']) {
-                return new Refusal('rest_too_short', sprintf('%1$s must be at least %2$s %3$s long.', $param, ($this->number)($args['minLength']), (int) $args['minLength'] === 1 ? 'character' : 'characters'));
-            }
-            if (isset($args['maxLength']) && mb_strlen($value) > $args['maxLength']) {
-                return new Refusal('rest_too_long', sprintf('%1$s must be at most %2$s %3$s long.', $param, ($this->number)($args['maxLength']), (int) $args['maxLength'] === 1 ? 'character' : 'characters'));
-            }
-            if (isset($args['pattern']) && !preg_match('#' . str_replace('#', '\\#', $args['pattern']) . '#u', $value)) {
-                return new Refusal('rest_invalid_pattern', sprintf('%1$s does not match pattern %2$s.', $param, $args['pattern']));
+            $refused = $this->validateString($value, $args, $param);
+            if ($refused !== null) {
+                return $refused;
             }
         }
         if (isset($args['format']) && ($type === 'string' || !in_array($type, self::TYPES, true))) {
@@ -113,23 +89,77 @@ final readonly class Schema
             }
         }
         if (in_array($type, ['number', 'integer'], true)) {
-            $refused = $this->validateBounds($value, $args, $param);
+            $refused = $this->validateNumber($value, $args, $param);
             if ($refused !== null) {
                 return $refused;
-            }
-            if (isset($args['multipleOf']) && fmod((float) $value, (float) $args['multipleOf']) != 0) {
-                return new Refusal('rest_invalid_multiple', sprintf('%1$s must be a multiple of %2$s.', $param, $args['multipleOf']));
             }
         }
         return true;
     }
 
+    /** anyOf and oneOf: the verdict when the schema is a choice, null when it is not. */
+    private function validateComposite(mixed $value, array $args, string $param): true|Refusal|null
+    {
+        if (isset($args['anyOf'])) {
+            foreach ($args['anyOf'] as $schema) {
+                if ($this->validate($value, $schema, $param) === true) {
+                    return true;
+                }
+            }
+            return new Refusal('rest_no_matching_schema', sprintf('%s does not match any of the expected formats.', $param));
+        }
+        if (isset($args['oneOf'])) {
+            $matches = 0;
+            foreach ($args['oneOf'] as $schema) {
+                if ($this->validate($value, $schema, $param) === true) {
+                    $matches++;
+                }
+            }
+            if ($matches === 0) {
+                return new Refusal('rest_no_matching_schema', sprintf('%s does not match any of the expected formats.', $param));
+            }
+            return $matches === 1 ? true : new Refusal('rest_one_of_multiple_matches', sprintf('%s matches more than one of the expected formats.', $param));
+        }
+        return null;
+    }
+
+    /** Length and pattern; null when the string passes. */
+    private function validateString(mixed $value, array $args, string $param): ?Refusal
+    {
+        if (!is_string($value)) {
+            return $this->wrongType($param, 'string');
+        }
+        if (isset($args['minLength']) && mb_strlen($value) < $args['minLength']) {
+            return new Refusal('rest_too_short', sprintf('%1$s must be at least %2$s %3$s long.', $param, ($this->number)($args['minLength']), (int) $args['minLength'] === 1 ? 'character' : 'characters'));
+        }
+        if (isset($args['maxLength']) && mb_strlen($value) > $args['maxLength']) {
+            return new Refusal('rest_too_long', sprintf('%1$s must be at most %2$s %3$s long.', $param, ($this->number)($args['maxLength']), (int) $args['maxLength'] === 1 ? 'character' : 'characters'));
+        }
+        if (isset($args['pattern']) && !preg_match('#' . str_replace('#', '\\#', $args['pattern']) . '#u', $value)) {
+            return new Refusal('rest_invalid_pattern', sprintf('%1$s does not match pattern %2$s.', $param, $args['pattern']));
+        }
+        return null;
+    }
+
+    /** Bounds and multipleOf; null when the number passes. */
+    private function validateNumber(mixed $value, array $args, string $param): ?Refusal
+    {
+        $refused = $this->validateBounds($value, $args, $param);
+        if ($refused !== null) {
+            return $refused;
+        }
+        if (isset($args['multipleOf']) && fmod((float) $value, (float) $args['multipleOf']) != 0) {
+            return new Refusal('rest_invalid_multiple', sprintf('%1$s must be a multiple of %2$s.', $param, $args['multipleOf']));
+        }
+        return null;
+    }
+
     private function validateArray(mixed $value, array $args, string $param): ?Refusal
     {
-        if (!self::isArray($value)) {
+        if (!SchemaValues::isArray($value)) {
             return $this->wrongType($param, 'array');
         }
-        $value = self::toArray($value);
+        $value = SchemaValues::toArray($value);
         if (isset($args['items'])) {
             foreach ($value as $index => $v) {
                 $valid = $this->validate($v, $args['items'], $param . '[' . $index . ']');
@@ -152,10 +182,10 @@ final readonly class Schema
 
     private function validateObject(mixed $value, array $args, string $param): ?Refusal
     {
-        if (!self::isObject($value)) {
+        if (!SchemaValues::isObject($value)) {
             return $this->wrongType($param, 'object');
         }
-        $value = self::toObject($value);
+        $value = SchemaValues::toObject($value);
         if (isset($args['required']) && is_array($args['required'])) {
             foreach ($args['required'] as $name) {
                 if (!array_key_exists($name, $value)) {
@@ -170,7 +200,7 @@ final readonly class Schema
             }
         }
         foreach ($value as $property => $v) {
-            $schema = $args['properties'][$property] ?? self::patternProperty((string) $property, $args);
+            $schema = $args['properties'][$property] ?? SchemaValues::patternProperty((string) $property, $args);
             if ($schema === null && isset($args['additionalProperties'])) {
                 if ($args['additionalProperties'] === false) {
                     return new Refusal('rest_additional_properties_forbidden', sprintf('%1$s is not a valid property of Object.', $property));
@@ -190,11 +220,11 @@ final readonly class Schema
     private function validateFormat(mixed $value, string $format, string $param): ?Refusal
     {
         return match ($format) {
-            'hex-color' => self::parseHexColor($value) === false ? new Refusal('rest_invalid_hex_color', 'Invalid hex color.') : null,
-            'date-time' => self::parseDate($value) === false ? new Refusal('rest_invalid_date', 'Invalid date.') : null,
+            'hex-color' => SchemaValues::parseHexColor($value) === false ? new Refusal('rest_invalid_hex_color', 'Invalid hex color.') : null,
+            'date-time' => SchemaValues::parseDate($value) === false ? new Refusal('rest_invalid_date', 'Invalid date.') : null,
             'email' => ($this->email)((string) $value) ? null : new Refusal('rest_invalid_email', 'Invalid email address.'),
             'ip' => filter_var($value, FILTER_VALIDATE_IP) ? null : new Refusal('rest_invalid_ip', sprintf('%s is not a valid IP address.', $param)),
-            'uuid' => self::isUuid($value) ? null : new Refusal('rest_invalid_uuid', sprintf('%s is not a valid UUID.', $param)),
+            'uuid' => SchemaValues::isUuid($value) ? null : new Refusal('rest_invalid_uuid', sprintf('%s is not a valid UUID.', $param)),
             default => null,
         };
     }
@@ -239,7 +269,7 @@ final readonly class Schema
     private function enum(mixed $value, array $enum, string $param): true|Refusal
     {
         foreach ($enum as $option) {
-            if (self::valuesEqual($value, $option)) {
+            if (SchemaValues::valuesEqual($value, $option)) {
                 return true;
             }
         }
@@ -272,7 +302,7 @@ final readonly class Schema
             return $value;
         }
         if (is_array($args['type'])) {
-            $best = self::bestType($value, $args['type']);
+            $best = SchemaValues::bestType($value, $args['type']);
             if ($best === '') {
                 return null;
             }
@@ -280,7 +310,7 @@ final readonly class Schema
         }
         $type = (string) $args['type'];
         if ($type === 'array') {
-            $value = self::toArray($value);
+            $value = SchemaValues::toArray($value);
             if (!empty($args['items'])) {
                 foreach ($value as $index => $v) {
                     $value[$index] = $this->sanitize($v, $args['items'], $param . '[' . $index . ']');
@@ -292,9 +322,9 @@ final readonly class Schema
             return $value;
         }
         if ($type === 'object') {
-            $value = self::toObject($value);
+            $value = SchemaValues::toObject($value);
             foreach ($value as $property => $v) {
-                $schema = $args['properties'][$property] ?? self::patternProperty((string) $property, $args);
+                $schema = $args['properties'][$property] ?? SchemaValues::patternProperty((string) $property, $args);
                 if ($schema === null && isset($args['additionalProperties'])) {
                     if ($args['additionalProperties'] === false) {
                         unset($value[$property]);
@@ -318,7 +348,7 @@ final readonly class Schema
             return (float) $value;
         }
         if ($type === 'boolean') {
-            return self::toBoolean($value);
+            return SchemaValues::toBoolean($value);
         }
         if (isset($args['format']) && $type === 'string' && in_array($args['format'], ['hex-color', 'date-time', 'email', 'uri', 'ip', 'uuid', 'text-field', 'textarea-field'], true)) {
             return ($this->format)((string) $args['format'], $value);
@@ -343,7 +373,7 @@ final readonly class Schema
         $isArray = in_array('array', $types, true);
         $isObject = in_array('object', $types, true);
         if ($isArray && $isObject) {
-            if (self::isArray($data)) {
+            if (SchemaValues::isArray($data)) {
                 $isObject = false;
             } else {
                 $isArray = false;
@@ -355,7 +385,7 @@ final readonly class Schema
             if ($isArray) {
                 $check = $schema['items'] ?? [];
             } elseif ($isObject) {
-                $check = $schema['properties'][$key] ?? self::patternProperty((string) $key, $schema) ?? $additional ?? [];
+                $check = $schema['properties'][$key] ?? SchemaValues::patternProperty((string) $key, $schema) ?? $additional ?? [];
             }
             if (!isset($check['context'])) {
                 continue;
@@ -449,188 +479,4 @@ final readonly class Schema
     }
 
     // ---- The type vocabulary.
-
-    public static function isBoolean(mixed $value): bool
-    {
-        if (is_bool($value)) {
-            return true;
-        }
-        if (is_string($value)) {
-            return in_array(strtolower($value), ['false', 'true', '0', '1'], true);
-        }
-        return is_int($value) && in_array($value, [0, 1], true);
-    }
-
-    public static function toBoolean(mixed $value): mixed
-    {
-        if (is_string($value)) {
-            $value = strtolower($value);
-            if (in_array($value, ['false', '0'], true)) {
-                $value = false;
-            }
-        }
-        return (bool) $value;
-    }
-
-    public static function isInteger(mixed $value): bool
-    {
-        return is_numeric($value) && round((float) $value) === (float) $value;
-    }
-
-    public static function isArray(mixed $value): bool
-    {
-        if (is_scalar($value)) {
-            $value = self::list($value);
-        }
-        return is_array($value) && ($value === [] || array_keys($value) === range(0, count($value) - 1));
-    }
-
-    public static function toArray(mixed $value): array
-    {
-        if (is_scalar($value)) {
-            return self::list($value);
-        }
-        return is_array($value) ? array_values($value) : [];
-    }
-
-    public static function isObject(mixed $value): bool
-    {
-        if ($value === '' || $value instanceof stdClass) {
-            return true;
-        }
-        if ($value instanceof JsonSerializable) {
-            $value = $value->jsonSerialize();
-        }
-        return is_array($value);
-    }
-
-    public static function toObject(mixed $value): array
-    {
-        if ($value === '') {
-            return [];
-        }
-        if ($value instanceof stdClass) {
-            return (array) $value;
-        }
-        if ($value instanceof JsonSerializable) {
-            $value = $value->jsonSerialize();
-        }
-        return is_array($value) ? $value : [];
-    }
-
-    /** The one type among the candidates the value reads as, in the reference's order of preference; '' when none. */
-    public static function bestType(mixed $value, array|string $types): string
-    {
-        $checks = ['array' => self::isArray(...), 'object' => self::isObject(...), 'null' => static fn ($v) => $v === null, 'boolean' => self::isBoolean(...), 'integer' => self::isInteger(...), 'number' => static fn ($v) => is_numeric($v), 'string' => static fn ($v) => is_string($v)];
-        $types = array_values(array_intersect(array_keys($checks), (array) $types));
-        if (count($types) === 1) {
-            return $types[0];
-        }
-        foreach ($checks as $type => $check) {
-            if (in_array($type, $types, true) && $check($value)) {
-                return $type;
-            }
-        }
-        return '';
-    }
-
-    public static function valuesEqual(mixed $a, mixed $b): bool
-    {
-        if (is_array($a) && is_array($b)) {
-            if (count($a) !== count($b)) {
-                return false;
-            }
-            foreach ($a as $index => $value) {
-                if (!isset($b[$index]) || !self::valuesEqual($value, $b[$index])) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        if ((is_int($a) && is_float($b)) || (is_float($a) && is_int($b))) {
-            return (float) $a === (float) $b;
-        }
-        return $a === $b;
-    }
-
-    public static function patternProperty(string $property, array $args): ?array
-    {
-        foreach ($args['patternProperties'] ?? [] as $pattern => $schema) {
-            if (preg_match('#' . str_replace('#', '\\#', (string) $pattern) . '#u', $property)) {
-                return $schema;
-            }
-        }
-        return null;
-    }
-
-    /** Keys sorted at every level, so two equal structures serialise the same. */
-    public static function stabilize(mixed $value): mixed
-    {
-        if (!is_array($value)) {
-            return $value;
-        }
-        ksort($value);
-        foreach ($value as $k => $v) {
-            $value[$k] = self::stabilize($v);
-        }
-        return $value;
-    }
-
-    /** A timestamp for an RFC3339-shaped date, false otherwise; $forceUtc reads the offset as Z. */
-    public static function parseDate(mixed $date, bool $forceUtc = false): int|false
-    {
-        $date = (string) $date;
-        if ($forceUtc) {
-            $date = (string) preg_replace('#^(.*?)[+-]\d{2}:?\d{2}$#', '$1Z', $date);
-        }
-        if (!preg_match('#^\d{4}-\d{2}-\d{2}[Tt ]\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}(?::\d{2})?)?$#', $date)) {
-            return false;
-        }
-        return strtotime($date);
-    }
-
-    public static function parseHexColor(mixed $color): mixed
-    {
-        return preg_match('|^#([A-Fa-f0-9]{3}){1,2}$|', (string) $color) ? $color : false;
-    }
-
-    public static function isUuid(mixed $uuid): bool
-    {
-        return is_string($uuid) && preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $uuid) === 1;
-    }
-
-    /** @return list<string> */
-    private static function list(mixed $value): array
-    {
-        return preg_split('/[\s,]+/', (string) $value, -1, PREG_SPLIT_NO_EMPTY) ?: [];
-    }
-
-    /**
-     * Which of a combining schema's branches a value matches: the branch on
-     * a single match (or the first, for anyOf or when asked to stop), else
-     * every match with its index, else the errors the branches raised.
-     *
-     * @param Closure(mixed, array): (true|Refusal) $validate a branch validator
-     * @return array{schema?: array, matches?: array<int, array>, errors?: list<array{error: Refusal, schema: array, index: int}>}
-     */
-    public static function combining(mixed $value, array $args, bool $stopAfterFirst, Closure $validate): array
-    {
-        $matches = [];
-        $errors = [];
-        foreach ($args['anyOf'] ?? $args['oneOf'] ?? [] as $index => $schema) {
-            $result = $validate($value, $schema);
-            if ($result === true) {
-                if ($stopAfterFirst || isset($args['anyOf'])) {
-                    return ['schema' => $schema];
-                }
-                $matches[$index] = $schema;
-                continue;
-            }
-            $errors[] = ['error' => $result, 'schema' => $schema, 'index' => $index];
-        }
-        if (count($matches) === 1) {
-            return ['schema' => reset($matches)];
-        }
-        return $matches === [] ? ['errors' => $errors] : ['matches' => $matches];
-    }
 }

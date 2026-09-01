@@ -16539,7 +16539,7 @@
             "lines": 1,
             "kind": "noop",
             "minn": [
-                "Minn\\Rest\\Schema::valuesEqual"
+                "Minn\\Rest\\SchemaValues::valuesEqual"
             ],
             "composes": []
         },
@@ -16633,7 +16633,7 @@
             "lines": 1,
             "kind": "noop",
             "minn": [
-                "Minn\\Rest\\Schema::patternProperty"
+                "Minn\\Rest\\SchemaValues::patternProperty"
             ],
             "composes": []
         },
@@ -16642,7 +16642,7 @@
             "lines": 15,
             "kind": "minn",
             "minn": [
-                "Minn\\Rest\\Schema::combining",
+                "Minn\\Rest\\SchemaValues::combining",
                 "Minn\\Runtime\\Refusal::__construct"
             ],
             "composes": [
@@ -16674,7 +16674,7 @@
             "lines": 1,
             "kind": "noop",
             "minn": [
-                "Minn\\Rest\\Schema::bestType"
+                "Minn\\Rest\\SchemaValues::bestType"
             ],
             "composes": []
         },
@@ -16807,7 +16807,7 @@
             "lines": 1,
             "kind": "noop",
             "minn": [
-                "Minn\\Rest\\Schema::isArray"
+                "Minn\\Rest\\SchemaValues::isArray"
             ],
             "composes": []
         },
@@ -16816,7 +16816,7 @@
             "lines": 1,
             "kind": "noop",
             "minn": [
-                "Minn\\Rest\\Schema::isBoolean"
+                "Minn\\Rest\\SchemaValues::isBoolean"
             ],
             "composes": []
         },
@@ -16832,7 +16832,7 @@
             "lines": 1,
             "kind": "noop",
             "minn": [
-                "Minn\\Rest\\Schema::isInteger"
+                "Minn\\Rest\\SchemaValues::isInteger"
             ],
             "composes": []
         },
@@ -16848,7 +16848,7 @@
             "lines": 1,
             "kind": "noop",
             "minn": [
-                "Minn\\Rest\\Schema::isObject"
+                "Minn\\Rest\\SchemaValues::isObject"
             ],
             "composes": []
         },
@@ -16876,7 +16876,7 @@
             "lines": 1,
             "kind": "noop",
             "minn": [
-                "Minn\\Rest\\Schema::parseDate"
+                "Minn\\Rest\\SchemaValues::parseDate"
             ],
             "composes": []
         },
@@ -16885,7 +16885,7 @@
             "lines": 1,
             "kind": "noop",
             "minn": [
-                "Minn\\Rest\\Schema::parseHexColor"
+                "Minn\\Rest\\SchemaValues::parseHexColor"
             ],
             "composes": []
         },
@@ -16912,7 +16912,7 @@
             "lines": 1,
             "kind": "noop",
             "minn": [
-                "Minn\\Rest\\Schema::toArray"
+                "Minn\\Rest\\SchemaValues::toArray"
             ],
             "composes": []
         },
@@ -16921,7 +16921,7 @@
             "lines": 1,
             "kind": "noop",
             "minn": [
-                "Minn\\Rest\\Schema::toBoolean"
+                "Minn\\Rest\\SchemaValues::toBoolean"
             ],
             "composes": []
         },
@@ -16930,7 +16930,7 @@
             "lines": 1,
             "kind": "noop",
             "minn": [
-                "Minn\\Rest\\Schema::toObject"
+                "Minn\\Rest\\SchemaValues::toObject"
             ],
             "composes": []
         },
@@ -16964,7 +16964,7 @@
             "lines": 1,
             "kind": "noop",
             "minn": [
-                "Minn\\Rest\\Schema::stabilize"
+                "Minn\\Rest\\SchemaValues::stabilize"
             ],
             "composes": []
         },

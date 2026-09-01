@@ -2,6 +2,7 @@
 /** The REST route API over WP_REST_Server. Behaviour from contracts/fixtures/api/rest.json. */
 
 use Minn\Rest\Schema;
+use Minn\Rest\SchemaValues;
 use Minn\Runtime\Refusal;
 use Minn\Runtime\Runtime;
 use Minn\Rest\RouteArgs;
@@ -148,12 +149,12 @@ function rest_get_avatar_sizes()
 
 function rest_parse_date($date, $force_utc = false)
 {
-    return Schema::parseDate($date, (bool) $force_utc);
+    return SchemaValues::parseDate($date, (bool) $force_utc);
 }
 
 function rest_parse_hex_color($color)
 {
-    return Schema::parseHexColor($color);
+    return SchemaValues::parseHexColor($color);
 }
 
 function rest_get_date_with_gmt($date, $is_utc = false)
@@ -202,42 +203,42 @@ function _minn_schema_result(true|Refusal $result): bool|WP_Error
 
 function rest_is_boolean($maybe_bool)
 {
-    return Schema::isBoolean($maybe_bool);
+    return SchemaValues::isBoolean($maybe_bool);
 }
 
 function rest_is_integer($maybe_integer)
 {
-    return Schema::isInteger($maybe_integer);
+    return SchemaValues::isInteger($maybe_integer);
 }
 
 function rest_is_array($maybe_array)
 {
-    return Schema::isArray($maybe_array);
+    return SchemaValues::isArray($maybe_array);
 }
 
 function rest_sanitize_array($maybe_array)
 {
-    return Schema::toArray($maybe_array);
+    return SchemaValues::toArray($maybe_array);
 }
 
 function rest_is_object($maybe_object)
 {
-    return Schema::isObject($maybe_object);
+    return SchemaValues::isObject($maybe_object);
 }
 
 function rest_sanitize_object($maybe_object)
 {
-    return Schema::toObject($maybe_object);
+    return SchemaValues::toObject($maybe_object);
 }
 
 function rest_stabilize_value($value)
 {
-    return Schema::stabilize($value);
+    return SchemaValues::stabilize($value);
 }
 
 function rest_get_best_type_for_value($value, $types)
 {
-    return Schema::bestType($value, $types);
+    return SchemaValues::bestType($value, $types);
 }
 
 function rest_handle_multi_type_schema($value, $args, $param = '')
@@ -252,12 +253,12 @@ function rest_validate_value_from_schema($value, $args, $param = '')
 
 function rest_are_values_equal($value1, $value2)
 {
-    return Schema::valuesEqual($value1, $value2);
+    return SchemaValues::valuesEqual($value1, $value2);
 }
 
 function rest_find_matching_pattern_property_schema($property, $args)
 {
-    return Schema::patternProperty((string) $property, (array) $args);
+    return SchemaValues::patternProperty((string) $property, (array) $args);
 }
 
 function rest_sanitize_value_from_schema($value, $args, $param = '')
@@ -429,7 +430,7 @@ function rest_add_application_passwords_to_index($response)
 
 function rest_sanitize_boolean($value)
 {
-    return Schema::toBoolean($value);
+    return SchemaValues::toBoolean($value);
 }
 
 function rest_authorization_required_code()
@@ -445,7 +446,7 @@ function rest_is_ip_address($ip)
 /** The first (anyOf) or only (oneOf) schema the value satisfies, else the reference's refusal. */
 function rest_find_one_matching_schema($value, $args, $param, $stop_after_first_match = false)
 {
-    $found = Schema::combining($value, (array) $args, (bool) $stop_after_first_match, static function ($value, array $schema) use ($param) {
+    $found = SchemaValues::combining($value, (array) $args, (bool) $stop_after_first_match, static function ($value, array $schema) use ($param) {
         $result = rest_validate_value_from_schema($value, $schema, $param);
         return is_wp_error($result) ? new Refusal($result->get_error_code(), $result->get_error_message(), $result) : true;
     });

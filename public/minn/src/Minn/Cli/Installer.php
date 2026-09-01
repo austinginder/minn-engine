@@ -135,15 +135,32 @@ final class Installer
             return $this->worst;
         }
         $this->light('GREEN', "database {$config['DB_NAME']} reachable, prefix {$config['prefix']}");
-        $option = static function (string $name) use ($db, $config): ?string {
-            $stmt = $db->prepare("SELECT option_value FROM {$config['prefix']}options WHERE option_name = ? LIMIT 1");
+        $option = self::optionReader($db, $config['prefix']);
+        $this->say('  home ' . ($option('home') ?? '?') . ', permalinks ' . ($option('permalink_structure') ?: '(plain)'));
+
+        $this->preflightTheme($root, $option);
+        [$coveredShortcodes, $coveredBlocks, $coveredTypes] = $this->preflightPlugins($root, $option);
+        $this->surveyContent($db, $config['prefix'], $coveredShortcodes, $coveredBlocks, $coveredTypes);
+        $db->close();
+        $this->say("Result: {$this->worst}");
+        return $this->worst;
+    }
+
+    /** A reader for one option's raw value, on the site's own connection. @return \Closure(string): ?string */
+    private static function optionReader(mysqli $db, string $prefix): \Closure
+    {
+        return static function (string $name) use ($db, $prefix): ?string {
+            $stmt = $db->prepare("SELECT option_value FROM {$prefix}options WHERE option_name = ? LIMIT 1");
             $stmt->bind_param('s', $name);
             $stmt->execute();
             $row = $stmt->get_result()->fetch_row();
             return $row === null ? null : (string) $row[0];
         };
-        $this->say('  home ' . ($option('home') ?? '?') . ', permalinks ' . ($option('permalink_structure') ?: '(plain)'));
+    }
 
+    /** The active theme: present, and block or classic. @param \Closure(string): ?string $option */
+    private function preflightTheme(string $root, \Closure $option): void
+    {
         $stylesheet = (string) ($option('stylesheet') ?? '');
         $template = (string) ($option('template') ?? $stylesheet);
         if ($template === '') {
@@ -171,6 +188,18 @@ final class Installer
                 $this->light('RED', "theme {$label} has no templates/index.html and no index.php");
             }
         }
+    }
+
+    /**
+     * The active plugins against the extensions on disk: what each provides,
+     * what will not run, and the shortcodes, blocks, and types the active
+     * extensions cover, for the content survey.
+     *
+     * @param \Closure(string): ?string $option
+     * @return array{array<string, string>, array<string, string>, array<string, string>}
+     */
+    private function preflightPlugins(string $root, \Closure $option): array
+    {
         $plugins = Serialized::stringList($option('active_plugins'));
         $own = json_decode((string) ($option('minn_active_extensions') ?? '[]'), true);
         $own = is_array($own) ? array_map('strval', $own) : [];
@@ -220,10 +249,7 @@ final class Installer
         if ($mu !== []) {
             $this->light('AMBER', 'mu-plugins will not run: ' . implode(', ', $mu));
         }
-        $this->surveyContent($db, $config['prefix'], $coveredShortcodes, $coveredBlocks, $coveredTypes);
-        $db->close();
-        $this->say("Result: {$this->worst}");
-        return $this->worst;
+        return [$coveredShortcodes, $coveredBlocks, $coveredTypes];
     }
 
     /**
@@ -234,7 +260,25 @@ final class Installer
      * @param array<string, string> $coveredBlocks block name => extension slug
      * @param array<string, string> $coveredTypes post type slug => extension slug
      */
+    /**
+     * What the content holds that the engine must serve: shortcodes and
+     * third-party blocks against the extensions covering them, menus, extra
+     * tables, and extra post types.
+     *
+     * @param array<string, string> $coveredShortcodes
+     * @param array<string, string> $coveredBlocks
+     * @param array<string, string> $coveredTypes
+     */
     private function surveyContent(mysqli $db, string $prefix, array $coveredShortcodes, array $coveredBlocks, array $coveredTypes): void
+    {
+        $this->surveyMarkup($db, $prefix, $coveredShortcodes, $coveredBlocks);
+        $this->surveyMenus($db, $prefix);
+        $this->surveyTables($db, $prefix);
+        $this->surveyTypes($db, $prefix, $coveredTypes);
+    }
+
+    /** @param array<string, string> $coveredShortcodes @param array<string, string> $coveredBlocks */
+    private function surveyMarkup(mysqli $db, string $prefix, array $coveredShortcodes, array $coveredBlocks): void
     {
         $typesIn = "'" . implode("','", ContentScan::CONTENT_TYPES) . "'";
         $shortcodes = [];
@@ -273,7 +317,10 @@ final class Installer
         } elseif ($thirdParty === []) {
             $this->light('GREEN', 'no third-party blocks in content');
         }
+    }
 
+    private function surveyMenus(mysqli $db, string $prefix): void
+    {
         $nav = 0;
         $classic = 0;
         $items = 0;
@@ -297,7 +344,10 @@ final class Installer
         } elseif ($nav === 0) {
             $this->light('GREEN', 'no menus');
         }
+    }
 
+    private function surveyTables(mysqli $db, string $prefix): void
+    {
         $shown = $db->query('SHOW TABLES');
         $tables = [];
         if ($shown) {
@@ -312,7 +362,11 @@ final class Installer
             $families = ContentScan::tableFamilies($extra);
             $this->light('AMBER', count($extra) . ' extra tables in ' . count($families) . ' famil' . (count($families) === 1 ? 'y' : 'ies') . ' the engine does not read: ' . ContentScan::listed($families));
         }
+    }
 
+    /** @param array<string, string> $coveredTypes */
+    private function surveyTypes(mysqli $db, string $prefix, array $coveredTypes): void
+    {
         $typeRows = $db->query("SELECT DISTINCT post_type FROM {$prefix}posts WHERE post_status NOT IN ('trash','auto-draft','inherit')");
         $types = [];
         if ($typeRows) {
@@ -330,7 +384,7 @@ final class Installer
             $this->light('AMBER', count($unknownTypes) . ' extra post types the engine does not serve: ' . ContentScan::listed($unknownTypes));
         } elseif ($extraTypes === []) {
             $this->light('GREEN', 'no extra post types');
-        }
+    }
     }
 
     /** @param array<string, string|true> $options */
