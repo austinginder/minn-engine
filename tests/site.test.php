@@ -129,6 +129,10 @@ $check($ph['status'] === 200, 'theme /php/ answers 200', (string) $ph['status'])
 $check(str_contains($php, '<title>How the PHP reads · Minn'), 'php page title');
 $check(str_contains($php, 'href="/php/" aria-current="page"'), 'php nav is current');
 $check(substr_count($php, 'class="minn-php-pair"') === 6, 'six WordPress / Minn comparisons');
+$check(substr_count($php, 'class="minn-php-caption"') === 6, 'each comparison carries its caption');
+$check(substr_count($php, 'class="minn-php-copy"') === 12, 'a copy button on every pane');
+$check(str_contains($php, 'minn-php-pane-count">') && str_contains($php, 'fewer lines</div>'), 'panes count their lines and the Minn pane says the difference');
+$check(str_contains($php, '/api/http/client/"'), 'the Minn pane links a class to its API page');
 $check(str_contains($php, '<code>PostFilter</code>') && str_contains($php, '<code>Client::get</code>'), 'php page names the post filter and HTTP client');
 [$pmd] = minn_test_fetch($ENGINE . '/php.md');
 $check($pmd['status'] === 200, 'theme /php.md answers 200', (string) $pmd['status']);
