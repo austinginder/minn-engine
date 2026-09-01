@@ -124,6 +124,7 @@ $say('esc_attr', esc_attr($in));
 $say('esc_textarea', esc_textarea($in));
 $say('esc_js', esc_js("a'b\"c\nd\\e</script>"));
 $say('esc_html empty', esc_html(''));
+$say('esc_html entity normalization', array_map(static fn (string $c): array => [esc_html($c), esc_attr($c)], ['&#36;16', '&#0036;', '&#x24;', '&#X24;', '&hellip;', '&bogus;', '&#999999999;', 'a&#36;b&amp;c<d']));
 $say('esc_html number', esc_html(5));
 $say('esc_html null', esc_html(null));
 foreach (['http://x.com/?a=1&b=2', 'http://x.com/?a=1&amp;b=2', ' javascript:alert(1)', 'JaVaScRiPt:x', 'x.com', 'x.com/path', '/path?x=1&y=2', 'mailto:a@b.c', 'http://x.com/a b', '', 'data:text/html,x', 'http://x.com/"onclick="x', "http://x.com/\x00nul", '#anchor', '?q=1', 'ftp://x/y', 'tel:123', 'http://[::1]/x', '//cdn.example/x.js', 'http://x.com/%20a%2Fb', 'http://x.com/é', 'https://x.com/a?b=c&d=e#f', 'http://x.com/a\'b', 'http://x.com/a<b>', 'foo:bar', 'http://x.com:8080/y', 'http:/x'] as $u) {

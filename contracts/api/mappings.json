@@ -2,10 +2,10 @@
     "generated": "2026-09-01",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 320,
+        "minn": 321,
         "composes": 671,
         "leaf": 337,
-        "noop": 1181,
+        "noop": 1180,
         "functions": 2503,
         "minnMethods": 358,
         "leafLinesOver15": 13
@@ -8344,13 +8344,14 @@
         },
         "_wp_specialchars": {
             "file": "formatting.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 9,
+            "kind": "minn",
             "minn": [
                 "Minn\\Support\\Entities::specialchars"
             ],
             "composes": [
-                "_minn_known_entity"
+                "_minn_known_entity",
+                "wp_kses_normalize_entities"
             ]
         },
         "_wp_to_kebab_case": {

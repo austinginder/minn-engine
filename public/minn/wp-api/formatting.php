@@ -37,7 +37,15 @@ function _minn_known_entity(string $name): bool
 
 function _wp_specialchars($text, $quote_style = ENT_NOQUOTES, $charset = false, $double_encode = false)
 {
-    return Entities::specialchars((string) $text, $quote_style, (bool) $double_encode, static fn (string $name) => _minn_known_entity($name));
+    $text = (string) $text;
+    if (!$double_encode && str_contains($text, '&')) {
+        // Pre-existing entities normalize the kses way before the encode
+        // pass: decimal zero-padded to three digits, hex lowercased,
+        // invalid code points and unknown names amp-escaped (&#36; becomes
+        // &#036; the way the reference's screen-reader prices read).
+        $text = wp_kses_normalize_entities($text);
+    }
+    return Entities::specialchars($text, $quote_style, (bool) $double_encode, static fn (string $name) => _minn_known_entity($name));
 }
 
 function esc_html($text)
