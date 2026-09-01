@@ -143,9 +143,9 @@ final readonly class UsersController
         }
         $key = (new PasswordReset($this->users))->issue($user);
         $home = rtrim((string) ($this->site->option('home') ?? ''), '/');
-        $link = $home . '/wp-login.php?action=rp&key=' . rawurlencode($key) . '&login=' . rawurlencode((string) $user['user_login']);
+        $link = $home . '/wp-login.php?action=rp&key=' . rawurlencode($key) . '&login=' . rawurlencode($user->login);
         Mailer::forSite($this->site)->send(
-            Mailer::noticesFor($this->site)->loginDetails((string) $user['user_login'], (string) $user['user_email'], $link),
+            Mailer::noticesFor($this->site)->loginDetails($user->login, $user->email, $link),
         );
     }
 

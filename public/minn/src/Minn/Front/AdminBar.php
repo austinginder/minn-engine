@@ -84,7 +84,7 @@ final readonly class AdminBar
         $appearance = $this->appearance->read($this->session->id());
         $scheme = $appearance['scheme'];
         $siteName = html_entity_decode((string) ($this->site->option('blogname') ?? ''), ENT_QUOTES | ENT_HTML5, 'UTF-8');
-        $avatar = 'https://secure.gravatar.com/avatar/' . hash('sha256', strtolower(trim((string) $user['user_email']))) . '?s=104&d=mm&r=g';
+        $avatar = 'https://secure.gravatar.com/avatar/' . hash('sha256', strtolower(trim($user->email))) . '?s=104&d=mm&r=g';
         $can = fn (string $cap): bool => $this->capabilities->can($this->session->id(), $cap);
 
         $out = '<div id="minn-cornerbar"' . ($status === null ? ' class="minn-bar-ghost"' : '') . '>'
@@ -169,7 +169,7 @@ final readonly class AdminBar
             . '</div>';
 
         $out .= '<div class="minn-bar-menu" id="minn-bar-menu-user" role="menu" hidden>'
-            . '<div class="minn-bar-menu-label">' . Html::esc(html_entity_decode((string) $user['display_name'], ENT_QUOTES | ENT_HTML5, 'UTF-8')) . '</div>'
+            . '<div class="minn-bar-menu-label">' . Html::esc(html_entity_decode($user->displayName, ENT_QUOTES | ENT_HTML5, 'UTF-8')) . '</div>'
             . self::menuItem($this->appPath('profile'), '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>', 'Your profile')
             . '<div class="minn-bar-menu-rule"></div>'
             . self::menuItem($this->permalinks->url('/minn-admin/login/logout'), '<path d="M10 4H5v16h5M14 8l4 4-4 4M8 12h10"/>', 'Sign out')

@@ -98,12 +98,12 @@ final class UserCommand
         $user = self::find($args[0]) ?? WP_CLI::error("Invalid user ID, email or login: '{$args[0]}'");
         // A single user reads in the reference's record order, its id as the stored string.
         $data = [
-            'ID' => (string) $user['ID'],
-            'user_login' => (string) $user['user_login'],
-            'user_email' => (string) $user['user_email'],
-            'user_registered' => (string) $user['user_registered'],
-            'display_name' => (string) $user['display_name'],
-            'roles' => implode(', ', $runtime->capabilities->rolesOf((int) $user['ID'])),
+            'ID' => (string) $user->id,
+            'user_login' => $user->login,
+            'user_email' => $user->email,
+            'user_registered' => $user->registered,
+            'display_name' => $user->displayName,
+            'roles' => implode(', ', $runtime->capabilities->rolesOf($user->id)),
         ];
         (new Formatter($assocArgs, array_keys($data)))->display_item($data);
     }
@@ -131,9 +131,9 @@ final class UserCommand
         // itself, and it compares the stored value to the link verbatim. The
         // trade-off (a database read yields the link) is bounded by the
         // 15-minute single-use window and matches every real Cove site.
-        $runtime->users->setMeta((int) $user['ID'], 'cove_login_token', $token);
-        $runtime->users->setMeta((int) $user['ID'], 'cove_login_token_time', (string) time());
-        WP_CLI::log($runtime->permalinks->url('/wp-login.php') . '?user_id=' . (int) $user['ID'] . '&cove_login_token=' . $token);
+        $runtime->users->setMeta($user->id, 'cove_login_token', $token);
+        $runtime->users->setMeta($user->id, 'cove_login_token_time', (string) time());
+        WP_CLI::log($runtime->permalinks->url('/wp-login.php') . '?user_id=' . $user->id . '&cove_login_token=' . $token);
     }
 
     /**
@@ -275,7 +275,7 @@ final class UserCommand
             WP_CLI::warning("Invalid user ID, email or login: '{$args[0]}'");
             WP_CLI::error('No valid users found.');
         }
-        $id = (int) $user['ID'];
+        $id = $user->id;
         $columns = [];
         if (isset($assocArgs['user_pass'])) {
             $columns['user_pass'] = \Minn\Auth\Password::hash((string) $assocArgs['user_pass']);
@@ -329,7 +329,7 @@ final class UserCommand
     {
         $runtime = Runtime::boot();
         $user = self::find($args[0]) ?? WP_CLI::error("Invalid user ID, email or login: '{$args[0]}'");
-        $id = (int) $user['ID'];
+        $id = $user->id;
         if (!isset($assocArgs['yes'])) {
             WP_CLI::confirm("Are you sure you want to delete this user?");
         }

@@ -67,10 +67,10 @@ final readonly class BootPayload
             'engine' => 'Minn Engine/' . $this->engineVersion,
             'user' => [
                 'id' => $userId,
-                'login' => $user['user_login'],
-                'name' => $user['display_name'],
+                'login' => $user->login,
+                'name' => $user->displayName,
                 'role' => $role,
-                'avatar' => 'https://secure.gravatar.com/avatar/' . hash('sha256', strtolower(trim((string) $user['user_email']))) . '?s=64&d=mm&r=g',
+                'avatar' => 'https://secure.gravatar.com/avatar/' . hash('sha256', strtolower(trim($user->email))) . '?s=64&d=mm&r=g',
                 'appearance' => $this->appearance->read($userId),
                 'policy' => ['signin' => 'minn', 'toolbar' => 'minn'],
             ],

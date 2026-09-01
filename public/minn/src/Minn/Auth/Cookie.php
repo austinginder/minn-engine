@@ -31,8 +31,8 @@ final readonly class Cookie
 
     public function mint(UserRecord $user, int $expiration, string $token): string
     {
-        $username = (string) $user['user_login'];
-        $hmac = self::signature($username, Password::fragment((string) $user['user_pass']), $expiration, $token);
+        $username = $user->login;
+        $hmac = self::signature($username, Password::fragment($user->passwordHash), $expiration, $token);
         return "{$username}|{$expiration}|{$token}|{$hmac}";
     }
 
@@ -50,11 +50,11 @@ final readonly class Cookie
         if ($user === null) {
             return null;
         }
-        $expected = self::signature($username, Password::fragment((string) $user['user_pass']), (int) $expiration, $token);
+        $expected = self::signature($username, Password::fragment($user->passwordHash), (int) $expiration, $token);
         if (!hash_equals($expected, $hmac)) {
             return null;
         }
-        if (!$this->sessions->isLive((int) $user['ID'], $token)) {
+        if (!$this->sessions->isLive($user->id, $token)) {
             return null;
         }
         return new Authenticated($user, $token);

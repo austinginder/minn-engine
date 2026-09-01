@@ -61,8 +61,8 @@ final readonly class AuthCookies
     /** A cookie value under any scheme's salt (auth, secure_auth, logged_in). */
     public static function mint(UserRecord $user, int $expiration, string $token, string $scheme): string
     {
-        $username = (string) $user['user_login'];
-        $fragment = Password::fragment((string) $user['user_pass']);
+        $username = $user->login;
+        $fragment = Password::fragment($user->passwordHash);
         $key = Salts::hash("{$username}|{$fragment}|{$expiration}|{$token}", $scheme);
         $hmac = hash_hmac('sha256', "{$username}|{$expiration}|{$token}", $key);
         return "{$username}|{$expiration}|{$token}|{$hmac}";

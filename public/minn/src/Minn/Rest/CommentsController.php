@@ -112,9 +112,9 @@ final readonly class CommentsController
         $approved = $this->caller->can('moderate_comments') ? '1' : '0';
         $id = $this->comments->insert([
             'comment_post_ID' => $postId,
-            'comment_author' => $user['display_name'],
-            'comment_author_email' => $user['user_email'],
-            'comment_author_url' => $user['user_url'],
+            'comment_author' => $user->displayName,
+            'comment_author_email' => $user->email,
+            'comment_author_url' => $user->url,
             'comment_author_IP' => $request->remoteAddress,
             'comment_date' => $this->site->localNow(),
             'comment_date_gmt' => gmdate('Y-m-d H:i:s'),
@@ -129,7 +129,7 @@ final readonly class CommentsController
         if ($approved === '1') {
             $this->comments->recount($postId);
         } elseif (($this->site->option('moderation_notify') ?? '1') === '1') {
-            $this->notifyModerator($post, $content, (string) $user['display_name']);
+            $this->notifyModerator($post, $content, $user->displayName);
         }
         return Reply::item($this->object->build($this->comments->find($id), true), Fields::fromQuery($request->query), 201)
             ->withHeader('Location', $this->object->url()->to('/wp/v2/comments/' . $id));

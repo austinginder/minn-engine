@@ -85,11 +85,11 @@ final readonly class Authenticator
             return null;
         }
         $passwords = new ApplicationPasswords($this->users);
-        $record = $passwords->verify((int) $user['ID'], $password);
+        $record = $passwords->verify($user->id, $password);
         if ($record === null) {
             return null;
         }
-        $record = $passwords->touch((int) $user['ID'], (string) $record['uuid'], $request->remoteAddress) ?? $record;
+        $record = $passwords->touch($user->id, (string) $record['uuid'], $request->remoteAddress) ?? $record;
         return new Authenticated($user, '', $record);
     }
 
@@ -116,7 +116,7 @@ final readonly class Authenticator
     public function login(string $username, string $password): ?UserRecord
     {
         $user = $this->users->findByLogin($username) ?? (str_contains($username, '@') ? $this->users->findByEmail($username) : null);
-        if ($user === null || !Password::verify($password, (string) $user['user_pass'])) {
+        if ($user === null || !Password::verify($password, $user->passwordHash)) {
             return null;
         }
         return $user;

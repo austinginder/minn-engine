@@ -41,7 +41,7 @@ final readonly class ApplicationPasswordsController
     public function list(Request $request, string $id): Response
     {
         $user = $this->subject($request, $id, 'list');
-        $items = array_map(fn (array $r) => $this->item($user, $r), $this->passwords->all((int) $user['ID']));
+        $items = array_map(fn (array $r) => $this->item($user, $r), $this->passwords->all($user->id));
         return Reply::item($items, Fields::fromQuery($request->query));
     }
 
@@ -58,7 +58,7 @@ final readonly class ApplicationPasswordsController
             $this->validate('app_id', $body['app_id'], self::APP_ID_SCHEMA);
         }
         $user = $this->subject($request, $id, 'create');
-        [$record, $plain] = $this->passwords->create((int) $user['ID'], (string) $body['name'], $appId);
+        [$record, $plain] = $this->passwords->create($user->id, (string) $body['name'], $appId);
         $item = $this->item($user, $record);
         $item = ['uuid' => $item['uuid'], 'app_id' => $item['app_id'], 'name' => $item['name'], 'created' => $item['created'], 'last_used' => $item['last_used'], 'last_ip' => $item['last_ip'], 'password' => $plain, '_links' => $item['_links']];
         return Reply::item($item, Fields::fromQuery($request->query), 201);
@@ -68,7 +68,7 @@ final readonly class ApplicationPasswordsController
     public function deleteAll(Request $request, string $id): Response
     {
         $user = $this->subject($request, $id, 'delete');
-        return Reply::item(['deleted' => true, 'count' => $this->passwords->deleteAll((int) $user['ID'])], null);
+        return Reply::item(['deleted' => true, 'count' => $this->passwords->deleteAll($user->id)], null);
     }
 
     #[Route(Method::Get, '/wp/v2/users/{id:\d+|me}/application-passwords/introspect')]
@@ -79,7 +79,7 @@ final readonly class ApplicationPasswordsController
         if ($record === null) {
             throw new RestError('rest_no_authenticated_app_password', 'Cannot introspect application password.', 404);
         }
-        $fresh = $this->passwords->find((int) $user['ID'], (string) $record['uuid']) ?? $record;
+        $fresh = $this->passwords->find($user->id, (string) $record['uuid']) ?? $record;
         return Reply::item($this->item($user, $fresh), Fields::fromQuery($request->query));
     }
 
@@ -102,7 +102,7 @@ final readonly class ApplicationPasswordsController
         $user = $this->subject($request, $id, 'edit');
         $record = $this->existing($user, $uuid);
         if (array_key_exists('name', $body)) {
-            $record = $this->passwords->rename((int) $user['ID'], $uuid, (string) $body['name']) ?? $record;
+            $record = $this->passwords->rename($user->id, $uuid, (string) $body['name']) ?? $record;
         }
         return Reply::item($this->item($user, $record), Fields::fromQuery($request->query));
     }
@@ -112,7 +112,7 @@ final readonly class ApplicationPasswordsController
     {
         $user = $this->subject($request, $id, 'delete');
         $this->existing($user, $uuid);
-        $previous = $this->passwords->delete((int) $user['ID'], $uuid) ?? [];
+        $previous = $this->passwords->delete($user->id, $uuid) ?? [];
         $item = $this->item($user, $previous);
         unset($item['_links']);
         return Reply::item(['deleted' => true, 'previous' => $item], null);
@@ -133,7 +133,7 @@ final readonly class ApplicationPasswordsController
                 throw new RestError('rest_user_invalid_id', 'Invalid user ID.', 404);
             }
         }
-        if ((int) $user['ID'] !== $caller->id() && !$this->caller->can('edit_user', (int) $user['ID'])) {
+        if ($user->id !== $caller->id() && !$this->caller->can('edit_user', $user->id)) {
             $noun = $action === 'read' ? 'application_password' : 'application_passwords';
             throw new RestError("rest_cannot_{$action}_{$noun}", 'Sorry, you are not allowed to ' . $action . ' application passwords for this user.', 403);
         }
@@ -146,7 +146,7 @@ final readonly class ApplicationPasswordsController
     /** @param array<string, mixed> $user @return array<string, mixed> */
     private function existing(UserRecord $user, string $uuid): array
     {
-        $record = $this->passwords->find((int) $user['ID'], strtolower($uuid));
+        $record = $this->passwords->find($user->id, strtolower($uuid));
         if ($record === null) {
             throw new RestError('rest_application_password_not_found', 'Application password not found.', 404);
         }
@@ -172,7 +172,7 @@ final readonly class ApplicationPasswordsController
             'created' => $this->when($record['created'] ?? null),
             'last_used' => $this->when($record['last_used'] ?? null),
             'last_ip' => isset($record['last_ip']) ? (string) $record['last_ip'] : null,
-            '_links' => ['self' => [['href' => $this->url->to('/wp/v2/users/' . (int) $user['ID'] . '/application-passwords/' . (string) ($record['uuid'] ?? '')), 'targetHints' => ['allow' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']]]]],
+            '_links' => ['self' => [['href' => $this->url->to('/wp/v2/users/' . $user->id . '/application-passwords/' . (string) ($record['uuid'] ?? '')), 'targetHints' => ['allow' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']]]]],
         ];
     }
 

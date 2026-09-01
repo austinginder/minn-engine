@@ -26,7 +26,7 @@ final readonly class PasswordReset
     public function issue(UserRecord $user): string
     {
         $key = substr(str_replace(['+', '/', '='], '', base64_encode(random_bytes(24))), 0, 20);
-        $this->users->update((int) $user['ID'], ['user_activation_key' => time() . ':' . self::hash($key)]);
+        $this->users->update($user->id, ['user_activation_key' => time() . ':' . self::hash($key)]);
         return $key;
     }
 
@@ -39,7 +39,7 @@ final readonly class PasswordReset
     /** "valid", "expired" (a matching key past its day), or "invalid". */
     public function status(UserRecord $user, string $key): string
     {
-        $stored = (string) ($user['user_activation_key'] ?? '');
+        $stored = $user->activationKey;
         if ($key === '' || !preg_match('/^(\d+):(.+)$/', $stored, $m)) {
             return 'invalid';
         }
@@ -51,7 +51,7 @@ final readonly class PasswordReset
 
     public function clear(UserRecord $user): void
     {
-        $this->users->update((int) $user['ID'], ['user_activation_key' => '']);
+        $this->users->update($user->id, ['user_activation_key' => '']);
     }
 
     private static function hash(string $key): string

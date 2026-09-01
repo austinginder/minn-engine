@@ -63,9 +63,9 @@ final readonly class CommentPostController
         $user = $session instanceof Authenticated ? $session->user : null;
         $content = trim((string) ($request->form['comment'] ?? ''));
         if ($user !== null) {
-            $author = (string) $user['display_name'];
-            $email = (string) $user['user_email'];
-            $url = (string) $user['user_url'];
+            $author = $user->displayName;
+            $email = $user->email;
+            $url = $user->url;
         } else {
             if (($this->site->option('comment_registration') ?? '0') === '1') {
                 return self::refusal('You must be logged in to post a comment.', 403);
@@ -83,7 +83,7 @@ final readonly class CommentPostController
         if ($content === '') {
             return self::refusal('<strong>Error:</strong> Please type your comment text.', 200);
         }
-        if ($this->comments->duplicate($post->id, $author, $email, $content, $user === null ? 0 : (int) $user['ID'])) {
+        if ($this->comments->duplicate($post->id, $author, $email, $content, $user === null ? 0 : $user->id)) {
             return self::refusal('Duplicate comment detected; it looks as though you&#8217;ve already said that!', 409);
         }
         if ($this->comments->flooding($email, $request->remoteAddress, self::FLOOD_SECONDS)) {
@@ -109,7 +109,7 @@ final readonly class CommentPostController
             'comment_agent' => substr((string) ($request->header('user-agent') ?? ''), 0, 254),
             'comment_type' => 'comment',
             'comment_parent' => max(0, (int) ($request->form['comment_parent'] ?? 0)),
-            'user_id' => $user === null ? 0 : (int) $user['ID'],
+            'user_id' => $user === null ? 0 : $user->id,
         ]);
         $permalink = $this->permalinks->forPost($post);
         $remember = $user === null && ((string) ($request->form['wp-comment-cookies-consent'] ?? '') !== '' || ($this->site->option('show_comments_cookies_opt_in') ?? '1') !== '1');
@@ -131,7 +131,7 @@ final readonly class CommentPostController
     /** A moderator's own comment is approved; otherwise the moderation settings decide. */
     private function approval(?UserRecord $user, string $author, string $email): string
     {
-        $moderator = $user !== null && $this->capabilities->can((int) $user['ID'], 'moderate_comments');
+        $moderator = $user !== null && $this->capabilities->can($user->id, 'moderate_comments');
         return (new CommentModeration($this->comments))->approval($moderator, $author, $email, fn (string $name): ?string => $this->site->option($name));
     }
 

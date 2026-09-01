@@ -84,7 +84,7 @@ final readonly class LoginController
                 if ($user === null) {
                     return Response::redirect($this->actionUrl($request, 'lostpassword', 'error=invalidkey'), 302);
                 }
-                return Response::html(LoginForm::resetPassword($siteName, $this->actionUrl($request, 'resetpass'), $key, (string) $user['user_login'], ''));
+                return Response::html(LoginForm::resetPassword($siteName, $this->actionUrl($request, 'resetpass'), $key, $user->login, ''));
         }
         $message = match ((string) $request->query('checkemail', '')) {
             'confirm' => 'Check your email for the confirmation link, then visit the login page.',
@@ -127,9 +127,9 @@ final readonly class LoginController
             return Response::html(LoginForm::lostPassword($siteName, $this->actionUrl($request, 'lostpassword'), 'Error: There is no account with that username or email address.', ''));
         }
         $key = $this->reset->issue($user);
-        $link = $this->actionUrl($request, 'rp', 'key=' . rawurlencode($key) . '&login=' . rawurlencode((string) $user['user_login']));
+        $link = $this->actionUrl($request, 'rp', 'key=' . rawurlencode($key) . '&login=' . rawurlencode($user->login));
         $this->mailer->send(
-            Mailer::noticesFor($this->site)->passwordReset((string) $user['user_login'], (string) $user['user_email'], $link, $request->remoteAddress),
+            Mailer::noticesFor($this->site)->passwordReset($user->login, $user->email, $link, $request->remoteAddress),
         );
         return Response::redirect($this->permalinks->url($this->base($request) . '?checkemail=confirm'), 302);
     }
@@ -152,7 +152,7 @@ final readonly class LoginController
             return Response::redirect($this->actionUrl($request, 'lostpassword', 'error=invalidkey'), 302);
         }
         $siteName = (string) ($this->site->option('blogname') ?? 'Site');
-        return Response::html(LoginForm::resetPassword($siteName, $this->actionUrl($request, 'resetpass'), $cookieKey, (string) $user['user_login'], ''));
+        return Response::html(LoginForm::resetPassword($siteName, $this->actionUrl($request, 'resetpass'), $cookieKey, $user->login, ''));
     }
 
     /** The user and key from the reset cookie, when the key is still good. @return array{0: ?array, 1: string} */
@@ -187,14 +187,14 @@ final readonly class LoginController
         $pass2 = (string) ($request->form['pass2'] ?? '');
         $action = $this->actionUrl($request, 'resetpass');
         if ($pass1 === '') {
-            return Response::html(LoginForm::resetPassword($siteName, $action, $key, (string) $user['user_login'], 'Error: The password cannot be empty.'));
+            return Response::html(LoginForm::resetPassword($siteName, $action, $key, $user->login, 'Error: The password cannot be empty.'));
         }
         if ($pass1 !== $pass2) {
-            return Response::html(LoginForm::resetPassword($siteName, $action, $key, (string) $user['user_login'], 'Error: The passwords do not match.'));
+            return Response::html(LoginForm::resetPassword($siteName, $action, $key, $user->login, 'Error: The passwords do not match.'));
         }
-        $this->users->update((int) $user['ID'], ['user_pass' => Password::hash($pass1)]);
+        $this->users->update($user->id, ['user_pass' => Password::hash($pass1)]);
         $this->reset->clear($user);
-        $this->sessions->destroyAll((int) $user['ID']);
+        $this->sessions->destroyAll($user->id);
         return $this->cookies->clear(Response::html(LoginForm::notice($siteName, 'Password Reset', 'Your password has been reset.', $this->permalinks->url($this->base($request)))))
             ->withCookie('wp-resetpass-' . $this->cookies->hash(), ' ', ['expires' => time() - 31536000, 'path' => $this->base($request), 'httponly' => true, 'secure' => $request->secure, 'samesite' => 'Lax']);
     }
@@ -217,7 +217,7 @@ final readonly class LoginController
             $this->throttle->recordFailure($request->remoteAddress);
             return Response::html($error, 403);
         }
-        $id = (int) $user['ID'];
+        $id = $user->id;
         $token = (string) ($this->users->meta($id, 'cove_login_token') ?? '');
         $minted = (int) ($this->users->meta($id, 'cove_login_token_time') ?? 0);
         if ($token === '' || time() - $minted > 15 * 60) {
@@ -266,7 +266,7 @@ final readonly class LoginController
         // lapse, so a sign-in to one account cannot reset guesses at another.
         $remember = !empty($request->form['rememberme']);
         $expiration = time() + ($remember ? 14 : 2) * self::DAY;
-        $token = $this->sessions->create((int) $user['ID'], $expiration, $request->remoteAddress, (string) ($request->header('user-agent') ?? ''));
+        $token = $this->sessions->create($user->id, $expiration, $request->remoteAddress, (string) ($request->header('user-agent') ?? ''));
         $redirect = $this->safeRedirect((string) ($request->form['redirect_to'] ?? ''));
         return $this->cookies->attach(Response::redirect($redirect, 302), $user, $expiration, $token, $request->secure, $remember);
     }

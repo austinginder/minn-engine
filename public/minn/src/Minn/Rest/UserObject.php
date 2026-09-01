@@ -34,15 +34,15 @@ final readonly class UserObject
 
     public function view(UserRecord $u, bool $isSelf = false): array
     {
-        $id = (int) $u['ID'];
+        $id = $u->id;
         return [
             'id' => $id,
-            'name' => $u['display_name'],
-            'url' => $u['user_url'],
+            'name' => $u->displayName,
+            'url' => $u->url,
             'description' => $this->users->meta($id, 'description') ?? '',
             'link' => $this->permalinks->forAuthor($u),
-            'slug' => $u['user_nicename'],
-            'avatar_urls' => self::avatarUrls((string) $u['user_email']),
+            'slug' => $u->nicename,
+            'avatar_urls' => self::avatarUrls($u->email),
             'meta' => ['show_admin_bar_front' => $this->users->meta($id, 'show_admin_bar_front') ?? 'true'],
             '_links' => [
                 'self' => [[
@@ -62,7 +62,7 @@ final readonly class UserObject
      */
     public function edit(UserRecord $u): array
     {
-        $id = (int) $u['ID'];
+        $id = $u->id;
         $view = $this->view($u, true);
         $capabilities = $this->caller->capabilities();
         $roles = $capabilities->rolesOf($id);
@@ -77,19 +77,19 @@ final readonly class UserObject
         }
         return [
             'id' => $id,
-            'username' => $u['user_login'],
-            'name' => $u['display_name'],
+            'username' => $u->login,
+            'name' => $u->displayName,
             'first_name' => $this->users->meta($id, 'first_name') ?? '',
             'last_name' => $this->users->meta($id, 'last_name') ?? '',
-            'email' => $u['user_email'],
-            'url' => $u['user_url'],
+            'email' => $u->email,
+            'url' => $u->url,
             'description' => $this->users->meta($id, 'description') ?? '',
             'link' => $view['link'],
             'locale' => ($locale === null || $locale === '') ? ($this->db->option('WPLANG') ?: 'en_US') : $locale,
-            'nickname' => $this->users->meta($id, 'nickname') ?? $u['user_login'],
-            'slug' => $u['user_nicename'],
+            'nickname' => $this->users->meta($id, 'nickname') ?? $u->login,
+            'slug' => $u->nicename,
             'roles' => array_values($roles),
-            'registered_date' => PostObject::date((string) $u['user_registered']) . '+00:00',
+            'registered_date' => PostObject::date($u->registered) . '+00:00',
             'capabilities' => (object) $all,
             'extra_capabilities' => (object) array_fill_keys($roles, true),
             'avatar_urls' => $view['avatar_urls'],

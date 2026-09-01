@@ -155,8 +155,8 @@ final readonly class Permalinks
     public function forAuthor(UserRecord $user): string
     {
         return $this->isPretty()
-            ? $this->url('/author/' . $user['user_nicename'] . '/')
-            : $this->url('/?author=' . (int) $user['ID']);
+            ? $this->url('/author/' . $user->nicename . '/')
+            : $this->url('/?author=' . $user->id);
     }
 
     public function forDate(int $year, ?int $month = null, ?int $day = null): string

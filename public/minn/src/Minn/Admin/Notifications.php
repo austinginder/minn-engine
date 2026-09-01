@@ -136,11 +136,11 @@ final readonly class Notifications
             $since = gmdate('Y-m-d H:i:s', $now + $offset - 7 * 86400);
             foreach ($this->users->registeredAfter($since, 2) as $user) {
                 $items[] = [
-                    'id' => 'user-' . $user['ID'],
+                    'id' => 'user-' . $user->id,
                     'kind' => 'system',
                     'icon' => '👤',
-                    'title' => sprintf('New user registered: %s', $user['display_name']),
-                    'time' => (int) strtotime($user['user_registered'] . ' UTC'),
+                    'title' => sprintf('New user registered: %s', $user->displayName),
+                    'time' => (int) strtotime($user->registered . ' UTC'),
                 ];
             }
         }
