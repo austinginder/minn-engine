@@ -74,6 +74,28 @@ final class Installer
         return $code;
     }
 
+    /**
+     * Same line Theme::active / ClassicTheme::active draw: a block template
+     * index (child or parent) is a block theme; otherwise a parent index.php
+     * is a classic theme.
+     *
+     * @return 'missing'|'block'|'classic'|'none'
+     */
+    public static function themeKind(string $dir, string $parentDir): string
+    {
+        if (!is_dir($dir)) {
+            return 'missing';
+        }
+        $parent = is_dir($parentDir) ? $parentDir : $dir;
+        if (is_file($dir . '/templates/index.html') || is_file($parent . '/templates/index.html')) {
+            return 'block';
+        }
+        if (is_file($parent . '/index.php')) {
+            return 'classic';
+        }
+        return 'none';
+    }
+
     private function help(): int
     {
         $this->say("Usage: minn <preflight|install|eject|status> <webroot> [--park=<dir>] [--force]");
@@ -124,18 +146,29 @@ final class Installer
 
         $stylesheet = (string) ($option('stylesheet') ?? '');
         $template = (string) ($option('template') ?? $stylesheet);
-        foreach (array_unique([$stylesheet, $template]) as $slug) {
-            $dir = "{$root}/wp-content/themes/{$slug}";
-            if (!is_dir($dir)) {
-                $this->light('RED', "theme {$slug} is not in wp-content/themes");
-            } elseif (!is_file("{$dir}/theme.json") || !(is_dir("{$dir}/templates") || ($slug !== $template && is_dir("{$root}/wp-content/themes/{$template}/templates")))) {
-                $this->light('RED', "theme {$slug} is a classic (PHP) theme; the engine renders block themes only");
-            } else {
-                $this->light('GREEN', "theme {$slug} is a block theme");
-                $classic = array_filter(glob("{$dir}/*.php") ?: [], static fn (string $f) => basename($f) !== 'functions.php');
-                if ($classic !== []) {
-                    $this->light('AMBER', "theme {$slug} carries PHP templates that will not run: " . implode(', ', array_map('basename', $classic)));
+        if ($template === '') {
+            $template = $stylesheet;
+        }
+        $themes = "{$root}/wp-content/themes";
+        $childDir = "{$themes}/{$stylesheet}";
+        $parentDir = "{$themes}/{$template}";
+        if ($stylesheet === '' || !is_dir($childDir)) {
+            $this->light('RED', "theme {$stylesheet} is not in wp-content/themes");
+        } elseif ($template !== $stylesheet && !is_dir($parentDir)) {
+            $this->light('RED', "theme {$template} is not in wp-content/themes");
+        } else {
+            $kind = self::themeKind($childDir, $parentDir);
+            $label = $stylesheet === $template ? $stylesheet : "{$stylesheet} (parent {$template})";
+            if ($kind === 'block') {
+                $this->light('GREEN', "theme {$label} is a block theme");
+                $leftover = array_filter(glob("{$childDir}/*.php") ?: [], static fn (string $f) => basename($f) !== 'functions.php');
+                if ($leftover !== []) {
+                    $this->light('AMBER', "theme {$stylesheet} carries PHP templates the block renderer will not run: " . implode(', ', array_map('basename', $leftover)));
                 }
+            } elseif ($kind === 'classic') {
+                $this->light('GREEN', "theme {$label} is a classic PHP theme");
+            } else {
+                $this->light('RED', "theme {$label} has no templates/index.html and no index.php");
             }
         }
         $plugins = Serialized::stringList($option('active_plugins'));

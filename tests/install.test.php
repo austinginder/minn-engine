@@ -89,6 +89,7 @@ $configBefore = md5_file("$WEBROOT/wp-config.php");
 $check('status reads a WordPress webroot', $code === 0 && str_contains($out, ': wordpress'), $out);
 [$out, $code] = $minn('preflight ' . escapeshellarg($WEBROOT));
 $check('preflight passes a block-theme site (GREEN or AMBER)', $code === 0 && preg_match('/Result: (GREEN|AMBER)/', $out) === 1 && str_contains($out, 'is a block theme'), $out);
+$check('preflight no longer treats classic themes as unrenderable', !str_contains($out, 'renders block themes only'), $out);
 $check('preflight reports wp_navigation menus', str_contains($out, 'wp_navigation menu'), $out);
 $check('preflight treats classic nav_menu as readable', !str_contains($out, 'the engine reads wp_navigation posts only'), $out);
 $check('preflight reports no shortcodes on the engine site', str_contains($out, 'no shortcodes in content'), $out);
@@ -190,6 +191,25 @@ $families = Minn\Content\ContentScan::tableFamilies(['actionscheduler_actions', 
 $check('content scan groups extra tables into families', $families === ['actionscheduler', 'itsec', 'wordfence'], json_encode($families));
 $check('content scan extra types drop built-in ones', Minn\Content\ContentScan::extraTypes(['post', 'page', 'product', 'foogallery']) === ['foogallery', 'product']);
 $check('content scan lists a long set with a cap', Minn\Content\ContentScan::listed(['d', 'b', 'c', 'a'], 3) === 'a, b, c and 1 more');
+
+$kinds = "$SCRATCH/theme-kinds";
+mkdir("$kinds/block/templates", 0755, true);
+file_put_contents("$kinds/block/templates/index.html", '');
+mkdir("$kinds/classic", 0755, true);
+file_put_contents("$kinds/classic/index.php", "<?php\n");
+mkdir("$kinds/hybrid", 0755, true);
+file_put_contents("$kinds/hybrid/theme.json", "{}\n");
+file_put_contents("$kinds/hybrid/index.php", "<?php\n");
+mkdir("$kinds/child", 0755, true);
+mkdir("$kinds/parent-block/templates", 0755, true);
+file_put_contents("$kinds/parent-block/templates/index.html", '');
+mkdir("$kinds/empty", 0755, true);
+$check('themeKind: block', Minn\Cli\Installer::themeKind("$kinds/block", "$kinds/block") === 'block');
+$check('themeKind: classic', Minn\Cli\Installer::themeKind("$kinds/classic", "$kinds/classic") === 'classic');
+$check('themeKind: hybrid with theme.json is classic', Minn\Cli\Installer::themeKind("$kinds/hybrid", "$kinds/hybrid") === 'classic');
+$check('themeKind: child of a block parent is block', Minn\Cli\Installer::themeKind("$kinds/child", "$kinds/parent-block") === 'block');
+$check('themeKind: empty is none', Minn\Cli\Installer::themeKind("$kinds/empty", "$kinds/empty") === 'none');
+$check('themeKind: missing dir', Minn\Cli\Installer::themeKind("$kinds/missing", "$kinds/missing") === 'missing');
 
 $manifestDir = "$SCRATCH/manifest-plugin";
 mkdir($manifestDir, 0755, true);

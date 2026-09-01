@@ -35,9 +35,10 @@ Reads `wp-config.php` as text (nothing in it runs), connects to the database, an
 reports, each line GREEN, AMBER, or RED:
 
 - the webroot's state (WordPress, engine, or neither) and the database it names;
-- the active theme, and its parent: a block theme (`theme.json` plus `templates/`)
-  is GREEN, a classic theme is RED (the engine renders block themes only), PHP
-  templates inside a block theme are AMBER;
+- the active theme, and its parent: a block theme (`templates/index.html` in
+  the child or parent) is GREEN, a classic PHP theme (`index.php` in the parent)
+  is GREEN, a theme with neither is RED. Leftover PHP templates on a block
+  theme are AMBER (those files do not run);
 - active plugins and mu-plugins: AMBER, each named, because none of them will run;
 - shortcodes in `post`, `page`, `wp_block`, `wp_template`, `wp_template_part`,
   and `wp_navigation` content: GREEN when a `minn.json` lists the tag under
