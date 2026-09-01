@@ -74,6 +74,7 @@ $check(str_contains($home, 'Minn Admin is the only UI'), 'the visual draws the n
 $check(str_contains($home, 'Audience 3'), 'the three-audience visual is on the page');
 $check(str_contains($home, 'href="/lexicon/"'), 'the homepage links to the lexicon');
 $check(str_contains($home, 'href="/looks-like/"'), 'the homepage links to looks-like');
+$check(str_contains($home, 'href="/php/"'), 'the homepage links to how the PHP reads');
 $check(str_contains($home, 'Browse the lexicon'), 'the visual points at the glossary page');
 $check(str_contains($home, 'Classic PHP themes run'), 'classic PHP themes are on the working list');
 $check(!str_contains($home, 'are out of scope; preflight flags them'), 'classic PHP themes are not on the not-yet list');
@@ -104,6 +105,14 @@ $check($jsh['status'] === 200, 'theme /code-size.json answers 200', (string) $js
 $check($llh['status'] === 200, 'theme /looks-like/ answers 200', (string) $llh['status']);
 $check(str_contains($ll, '<title>What a host inspects · Minn'), 'looks-like title');
 $check(str_contains($ll, 'href="/looks-like/" aria-current="page"'), 'looks-like nav is current');
+[$ph, $php] = minn_test_fetch($ENGINE . '/php/');
+$check($ph['status'] === 200, 'theme /php/ answers 200', (string) $ph['status']);
+$check(str_contains($php, '<title>How the PHP reads · Minn'), 'php page title');
+$check(str_contains($php, 'href="/php/" aria-current="page"'), 'php nav is current');
+$check(substr_count($php, 'class="minn-php-pair"') === 6, 'six WordPress / Minn comparisons');
+$check(str_contains($php, 'forSite') && str_contains($php, 'Outbound'), 'php page names the mailer and HTTP client');
+[$pmd] = minn_test_fetch($ENGINE . '/php.md');
+$check($pmd['status'] === 200, 'theme /php.md answers 200', (string) $pmd['status']);
 foreach (['/wp-content/themes/minn-site/style.css', '/wp-content/themes/minn-site/assets/fonts/hanken-grotesk.woff2', '/wp-content/themes/minn-site/assets/fonts/jetbrains-mono.woff2', '/wp-content/themes/minn-site/assets/img/favicon.webp'] as $asset) {
     [$ah] = minn_test_fetch($ENGINE . $asset);
     $check($ah['status'] === 200, "asset served: $asset");

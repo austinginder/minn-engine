@@ -39,12 +39,15 @@ WordPress users are pointed at Minn Admin first, because it is the shipped
 phase and it is the interface the engine boots. The glossary behind the
 visual is `contracts/lexicon.md` (the Speak / Hear / Mute policy). The
 **minn-site theme** serves that glossary as a filterable page at `/lexicon/`
-(raw at `/lexicon.md`) from its own `content/lexicon.md`. `/code-size/` is
-the same: a theme page. The engine does not register these routes.
+(raw at `/lexicon.md`) from its own `content/lexicon.md`. `/code-size/` and
+`/php/` are the same: theme pages. The engine does not register these routes.
 
-`functions.php` enqueues `style.css` and owns those two pages (it answers
+`functions.php` enqueues `style.css` and owns those pages (it answers
 on `init`, so WordPress and the engine both serve them). The theme toggle
-and the scroll reveal stay inline in the parts.
+and the scroll reveal stay inline in the parts. `/php/` is the vanity
+side-by-side: WordPress plugin idiom next to the Minn shape of the same
+job (`Mailer`, `Posts`, `Db`, `Client`, `#[Route]`). Content lives in
+the theme at `content/php.md`.
 
 ## The code-size page
 
