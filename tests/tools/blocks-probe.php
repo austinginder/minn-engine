@@ -147,4 +147,42 @@ $say('wp_sprintf_l', [wp_sprintf_l('%l', ['a', 'b', 'c']), wp_sprintf_l('%l', ['
 $say('oembed', (static function () { $r = [wp_oembed_add_provider('#https?://probe\.test/.*#i', 'https://probe.test/oembed', true), wp_embed_register_handler('minn-probe', '#https?://probe-handler\.test/(\d+)#i', static fn ($m) => '<b>H' . $m[1] . '</b>'), wp_oembed_get('https://probe-handler.test/5'), wp_oembed_remove_provider('#https?://probe\.test/.*#i'), wp_embed_unregister_handler('minn-probe')]; return $r; })());
 $say('fetch_feed', (static function () use ($kind) { $f = fetch_feed('http://nonexistent.invalid/feed'); return [$kind($f), $f instanceof WP_Error ? $f->get_error_code() : null]; })());
 
+// Context cascade: rendering a WP_Block's inner blocks passes each one's
+// context through render_block_context at every nesting level (how a query
+// loop hands postId down), and the filtered context reaches a dynamic
+// child's $block->context and a core block like post-title.
+register_block_type('minn-probe/ctx-child', [
+    'uses_context' => ['postId', 'postType'],
+    'render_callback' => static fn ($attrs, $content, $block) => '[child ' . json_encode($block->context) . ']',
+]);
+register_block_type('minn-probe/ctx-loop', [
+    'render_callback' => static function ($attrs, $content, $block) {
+        $out = '';
+        foreach ([1, 5] as $id) {
+            $GLOBALS['post'] = get_post($id);
+            setup_postdata($GLOBALS['post']);
+            $inject = static fn ($context) => array_merge($context, ['postId' => $id, 'postType' => 'post']);
+            add_filter('render_block_context', $inject, 1);
+            $instance = $block->parsed_block;
+            $instance['blockName'] = 'core/null';
+            $out .= (new WP_Block($instance, []))->render(['dynamic' => false]);
+            remove_filter('render_block_context', $inject, 1);
+        }
+        wp_reset_postdata();
+        return $out;
+    },
+]);
+$ctxTrace = [];
+$ctxTraceFilter = static function ($context, $parsed) use (&$ctxTrace) {
+    $ctxTrace[] = [$parsed['blockName'] ?? '-', array_intersect_key((array) $context, ['postId' => 1, 'postType' => 1])];
+    return $context;
+};
+add_filter('render_block_context', $ctxTraceFilter, 20, 2);
+$say('context cascade child', do_blocks('<!-- wp:minn-probe/ctx-loop --><!-- wp:minn-probe/ctx-child /--><!-- /wp:minn-probe/ctx-loop -->'));
+$say('context cascade post-title', do_blocks('<!-- wp:minn-probe/ctx-loop --><!-- wp:post-title /--><!-- /wp:minn-probe/ctx-loop -->'));
+remove_filter('render_block_context', $ctxTraceFilter, 20);
+$say('context cascade trace', $ctxTrace);
+WP_Block_Type_Registry::get_instance()->unregister('minn-probe/ctx-child');
+WP_Block_Type_Registry::get_instance()->unregister('minn-probe/ctx-loop');
+
 echo json_encode($log, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_PARTIAL_OUTPUT_ON_ERROR | JSON_UNESCAPED_UNICODE), "\n";

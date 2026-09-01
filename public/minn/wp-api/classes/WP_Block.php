@@ -108,13 +108,28 @@ class WP_Block
         return apply_filters("render_block_{$this->name}", $block_content, $this->parsed_block, $this);
     }
 
-    /** Inner content is a list of HTML chunks with null slots where the inner blocks go, in order. */
+    /**
+     * Inner content is a list of HTML chunks with null slots where the inner
+     * blocks go, in order. Each inner block's context passes through the
+     * render_block_context filter before it renders (the reference does this
+     * for every nesting level; it is how a query loop hands postId down),
+     * and a changed context rebuilds the inner block so it cascades.
+     */
     private function render_inner_blocks(): string
     {
         $content = '';
         $index = 0;
         foreach ($this->inner_content as $chunk) {
-            $content .= is_string($chunk) ? $chunk : $this->inner_blocks[$index++]->render();
+            if (is_string($chunk)) {
+                $content .= $chunk;
+                continue;
+            }
+            $inner = $this->inner_blocks[$index++];
+            $context = apply_filters('render_block_context', $inner->available_context, $inner->parsed_block, $this);
+            if (is_array($context) && $context !== $inner->available_context) {
+                $inner = new self($inner->parsed_block, $context, $this->registry);
+            }
+            $content .= $inner->render();
         }
         return $content;
     }

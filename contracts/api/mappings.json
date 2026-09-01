@@ -1,13 +1,13 @@
 {
-    "generated": "2026-08-31",
+    "generated": "2026-09-01",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 319,
-        "composes": 669,
-        "leaf": 338,
-        "noop": 1181,
-        "functions": 2501,
-        "minnMethods": 356,
+        "minn": 320,
+        "composes": 671,
+        "leaf": 337,
+        "noop": 1180,
+        "functions": 2502,
+        "minnMethods": 358,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -555,10 +555,12 @@
         },
         "WP_Block::render_inner_blocks": {
             "file": "classes/WP_Block.php",
-            "lines": 6,
-            "kind": "leaf",
+            "lines": 15,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "apply_filters"
+            ]
         },
         "WP_Block_List::__construct": {
             "file": "classes/WP_Block.php",
@@ -6148,6 +6150,18 @@
             "minn": [],
             "composes": []
         },
+        "WP_Theme_JSON_Resolver::get_user_global_styles_post_id": {
+            "file": "classes/WP_Theme_JSON_Resolver.php",
+            "lines": 25,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_posts",
+                "get_stylesheet",
+                "wp_insert_post",
+                "wp_set_post_terms"
+            ]
+        },
         "WP_User::__construct": {
             "file": "classes/WP_User.php",
             "lines": 18,
@@ -7763,13 +7777,17 @@
         },
         "_minn_render_core_block": {
             "file": "blocks.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 17,
+            "kind": "minn",
             "minn": [
-                "Minn\\Content\\Blocks::renderer"
+                "Minn\\Content\\Blocks::context",
+                "Minn\\Content\\Blocks::renderBlock",
+                "Minn\\Content\\Blocks::renderer",
+                "Minn\\Content\\Posts::find"
             ],
             "composes": [
-                "_minn_array_to_block"
+                "_minn_array_to_block",
+                "_minn_posts"
             ]
         },
         "_minn_request_uri": {

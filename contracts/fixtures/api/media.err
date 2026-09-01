@@ -3,6 +3,6 @@ Warning: file_get_contents(/nope.png): Failed to open stream: No such file or di
 Warning: getimagesize(/nope): Failed to open stream: No such file or directory in ~/Cove/Sites/minn-engine.localhost/wp-reference/wp-includes/media.php on line 5905
 Warning: exif_imagetype(/nope): Failed to open stream: No such file or directory in ~/Cove/Sites/minn-engine.localhost/wp-reference/wp-includes/functions.php on line 3376
 Warning: file_get_contents(/nope): Failed to open stream: No such file or directory in ~/Cove/Sites/minn-engine.localhost/wp-reference/wp-includes/functions.php on line 3396
-Warning: Array to string conversion in phar:///opt/homebrew/Cellar/wp-cli/2.12.0/bin/wp/vendor/wp-cli/eval-command/src/EvalFile_Command.php(85) : eval()'d code on line 100
+Warning: Array to string conversion in phar:///opt/homebrew/Cellar/wp-cli/2.12.0/bin/wp/vendor/wp-cli/eval-command/src/EvalFile_Command.php(85) : eval()'d code on line 101
 Deprecated: Hook minn_probe_old is <strong>deprecated</strong> since version 1.0! Use minn_probe_new instead. in ~/Cove/Sites/minn-engine.localhost/wp-reference/wp-includes/functions.php on line 6260
 Deprecated: Hook minn_probe_old_action is <strong>deprecated</strong> since version 1.0 with no alternative available. in ~/Cove/Sites/minn-engine.localhost/wp-reference/wp-includes/functions.php on line 6260

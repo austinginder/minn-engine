@@ -36,7 +36,23 @@ function _minn_array_to_block(array $block): MinnBlock
 /** @internal a core block rendered by the engine, with the wrapper classes the engine gives it */
 function _minn_render_core_block(WP_Block $block, string $content = ''): string
 {
-    return MinnBlocks::renderer()->renderBlock(_minn_array_to_block($block->parsed_block));
+    // A plugin's query loop hands the engine its per-item post through the
+    // block context; the engine's own renderer reads its post stack.
+    $renderer = MinnBlocks::renderer();
+    $contextPost = null;
+    if (!empty($block->context['postId'])) {
+        $contextPost = _minn_posts()->find((int) $block->context['postId']);
+    }
+    if ($contextPost !== null) {
+        $renderer->context()->pushPost($contextPost);
+    }
+    try {
+        return $renderer->renderBlock(_minn_array_to_block($block->parsed_block));
+    } finally {
+        if ($contextPost !== null) {
+            $renderer->context()->popPost();
+        }
+    }
 }
 
 /** @internal a dynamic block a plugin registered renders through its callback on the engine's front end too */

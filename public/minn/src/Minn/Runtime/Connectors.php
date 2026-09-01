@@ -101,8 +101,9 @@ final class Connectors
     }
 
     /**
-     * The reference's four AI and spam connectors. Activation is checked
-     * through the caller's closure, so the plugin list is read when asked.
+     * The reference's three AI providers and Akismet. Activation is
+     * checked through the caller's closure, so the plugin list is read
+     * when asked.
      * @param Closure(string): bool $pluginActive
      */
     public function registerDefaults(Closure $pluginActive): void

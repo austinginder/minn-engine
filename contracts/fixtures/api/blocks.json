@@ -1126,5 +1126,74 @@
             "error:simplepie-error",
             "simplepie-error"
         ]
+    ],
+    [
+        "context cascade child",
+        "[child {\"postId\":1,\"postType\":\"post\"}][child {\"postId\":5,\"postType\":\"post\"}]"
+    ],
+    [
+        "context cascade post-title",
+        "<h2 class=\"wp-block-post-title\">Hello world!</h2><h2 class=\"wp-block-post-title\">Building in the open</h2>"
+    ],
+    [
+        "context cascade trace",
+        [
+            [
+                "minn-probe/ctx-loop",
+                {
+                    "postId": 1,
+                    "postType": "post"
+                }
+            ],
+            [
+                "minn-probe/ctx-child",
+                {
+                    "postId": 1,
+                    "postType": "post"
+                }
+            ],
+            [
+                "minn-probe/ctx-child",
+                {
+                    "postId": 1,
+                    "postType": "post"
+                }
+            ],
+            [
+                "minn-probe/ctx-child",
+                {
+                    "postId": 5,
+                    "postType": "post"
+                }
+            ],
+            [
+                "minn-probe/ctx-loop",
+                {
+                    "postId": 1,
+                    "postType": "post"
+                }
+            ],
+            [
+                "core/post-title",
+                {
+                    "postId": 1,
+                    "postType": "post"
+                }
+            ],
+            [
+                "core/post-title",
+                {
+                    "postId": 1,
+                    "postType": "post"
+                }
+            ],
+            [
+                "core/post-title",
+                {
+                    "postId": 5,
+                    "postType": "post"
+                }
+            ]
+        ]
     ]
 ]

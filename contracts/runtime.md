@@ -1232,3 +1232,32 @@ html5 format; `logged_in_as` markup is unverified; pretty URLs for a
 plugin's post types and taxonomies (`/product/hoodie/`,
 `/product-category/clothing/`) do not resolve yet, which is the next step
 on the WooCommerce lab.
+
+## Block context in a plugin's query loop (2026-08-31)
+
+- Rendering a `WP_Block`'s inner blocks passes each inner block's context
+  through the `render_block_context` filter at every nesting level, and the
+  filtered context cascades to that block's children. This is how a query
+  loop (core post-template, WooCommerce product-template) hands `postId`
+  down; the engine rebuilds the inner block when the filter changed its
+  context. Probe rows: blocks fixture, "context cascade *".
+- A core block rendered through the bridge inside a runtime `WP_Block`
+  pushes the context's `postId` onto the engine renderer's post stack, so
+  core/post-title and friends resolve the loop's per-item post.
+- `WP_Theme_JSON_Resolver::get_user_global_styles_post_id()` finds the
+  active stylesheet's `wp_global_styles` post by its wp_theme term and
+  creates it with the captured shape when missing (publish, author 0,
+  title "Custom Styles", name `wp-global-styles-{stylesheet}`, closed
+  discussion, `{"version": 3, "isGlobalStylesUserThemeJSON": true }`),
+  attaching the theme term so the next call finds it. Under `wp eval-file`
+  the REFERENCE orphans a new post per process because the term attach
+  fails there; do not pin cross-process ids against eval-file.
+- The cleantalk connector is registered by the minn-admin plugin on the
+  `wp_connectors_init` action, not by the engine's defaults. It appears
+  exactly when the plugin loads, and re-firing the action duplicates it
+  (the probe's doing_it_wrong row).
+- CAPTURE RULE for the api-family fixtures: flush rewrite rules FROM THE
+  REFERENCE and boot it once before capturing. An engine-side flush writes
+  a rules option without the minn-admin rule, minn-admin's guard re-flushes
+  on the next reference boot, and `extra_rules_top` balloons with taxonomy
+  rules for that one boot (the bistable "blocks: rewrite" row).
