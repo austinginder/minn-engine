@@ -84,6 +84,33 @@ prose, is the rule.
 - Suites clean up what they create, in a shutdown handler, so read fixtures never
   drift.
 
+## How it reads
+
+The rules above say what a file looks like. These say how a reader gets
+through it, and each one is a ratchet in the style suite: the count only
+falls.
+
+- **Rows become records.** A repository returns `PostRecord`, `UserRecord`,
+  `TermRecord`, or `CommentRecord`; a body reads `$post->title`, never
+  `$row['post_title']`. A raw row is only ever a partial `SELECT` on its way
+  to a shape.
+- **A request's shape is an object.** What a list is narrowed to
+  (`Rest\ListQuery`, `Content\CommentFilter`, `Content\PostFilter`) is read
+  once into typed fields with named-argument construction, then handed on.
+- **Objects are made once.** `Rest\Services` has one memoised getter per
+  shared object; a controller takes the two or three it calls. No autowiring;
+  `get()` by name fails loudly.
+- **No method past eighty lines, no class past six hundred.** Split along the
+  seam that is already there and name both halves.
+- **Every public method has a sentence.** The docblock is what `/api/` and an
+  agent read first; the signature is what they read second.
+- **A boolean parameter is two methods.** Name the branch
+  (`install()` / `replace()`), or pass the caller, so the call site says what
+  it does.
+- **Regenerate after every change**: `php tests/tools/api-docs.php` for
+  `src/Minn/`, `php tests/tools/facade-map.php` for `wp-api/`. The style suite
+  fails while either is stale.
+
 ## The lint
 
 `tests/style.test.php` asserts, for every file under `public/minn/src/Minn/`:
