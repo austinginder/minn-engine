@@ -111,6 +111,11 @@ function wp_theme_has_theme_json()
     return is_file(get_stylesheet_directory() . '/theme.json') || is_file(get_template_directory() . '/theme.json');
 }
 
+function wp_theme_get_element_class_name($element)
+{
+    return in_array($element, ['button', 'caption'], true) ? 'wp-element-' . $element : '';
+}
+
 function get_theme_roots()
 {
     return '/themes';

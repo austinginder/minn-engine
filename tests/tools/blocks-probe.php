@@ -147,6 +147,8 @@ $say('wp_sprintf_l', [wp_sprintf_l('%l', ['a', 'b', 'c']), wp_sprintf_l('%l', ['
 $say('oembed', (static function () { $r = [wp_oembed_add_provider('#https?://probe\.test/.*#i', 'https://probe.test/oembed', true), wp_embed_register_handler('minn-probe', '#https?://probe-handler\.test/(\d+)#i', static fn ($m) => '<b>H' . $m[1] . '</b>'), wp_oembed_get('https://probe-handler.test/5'), wp_oembed_remove_provider('#https?://probe\.test/.*#i'), wp_embed_unregister_handler('minn-probe')]; return $r; })());
 $say('fetch_feed', (static function () use ($kind) { $f = fetch_feed('http://nonexistent.invalid/feed'); return [$kind($f), $f instanceof WP_Error ? $f->get_error_code() : null]; })());
 
+$say('wp_theme_get_element_class_name', [wp_theme_get_element_class_name('button'), wp_theme_get_element_class_name('caption'), wp_theme_get_element_class_name('heading'), wp_theme_get_element_class_name(''), wp_theme_get_element_class_name('nope')]);
+
 // Context cascade: rendering a WP_Block's inner blocks passes each one's
 // context through render_block_context at every nesting level (how a query
 // loop hands postId down), and the filtered context reaches a dynamic

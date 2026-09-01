@@ -5,8 +5,8 @@
         "minn": 320,
         "composes": 671,
         "leaf": 337,
-        "noop": 1180,
-        "functions": 2502,
+        "noop": 1181,
+        "functions": 2503,
         "minnMethods": 358,
         "leafLinesOver15": 13
     },
@@ -22177,6 +22177,13 @@
         },
         "wp_text_diff": {
             "file": "pluggable.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "wp_theme_get_element_class_name": {
+            "file": "theme.php",
             "lines": 1,
             "kind": "noop",
             "minn": [],
