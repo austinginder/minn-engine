@@ -69,11 +69,11 @@ final readonly class CommentsController
     {
         $comment = $this->plainComment((int) $id);
         $moderator = $this->caller->can('moderate_comments');
-        if ($comment['comment_approved'] !== '1' && !$moderator) {
+        if ($comment->approved !== '1' && !$moderator) {
             throw $this->caller->refuse('rest_cannot_read', 'Sorry, you are not allowed to read this comment.');
         }
-        $post = $this->posts->find((int) $comment['comment_post_ID']);
-        if (!$moderator && ($post === null || !$post->isPublished() || $post->isProtected()) && !$this->caller->can('edit_post', (int) $comment['comment_post_ID'])) {
+        $post = $this->posts->find($comment->postId);
+        if (!$moderator && ($post === null || !$post->isPublished() || $post->isProtected()) && !$this->caller->can('edit_post', $comment->postId)) {
             throw $this->caller->refuse('rest_cannot_read', 'Sorry, you are not allowed to read this comment.');
         }
         $edit = Context::of($request)->isEdit();
@@ -162,7 +162,7 @@ final readonly class CommentsController
                 throw new RestError('rest_invalid_param', 'Invalid parameter(s): status', 400);
             }
             $this->comments->update($commentId, ['comment_approved' => $tokens[0]]);
-            $this->comments->recount((int) $comment['comment_post_ID']);
+            $this->comments->recount($comment->postId);
         }
         if (isset($body['content'])) {
             $content = is_array($body['content']) ? (string) ($body['content']['raw'] ?? '') : (string) $body['content'];
@@ -187,7 +187,7 @@ final readonly class CommentsController
         if (!$this->caller->can('moderate_comments')) {
             throw $this->caller->refuse('rest_cannot_delete', 'Sorry, you are not allowed to delete this comment.');
         }
-        $postId = (int) $comment['comment_post_ID'];
+        $postId = $comment->postId;
         $fields = Fields::fromQuery($request->query);
         if (filter_var($request->query('force', ''), FILTER_VALIDATE_BOOLEAN)) {
             $previous = $this->object->build($comment, true);
@@ -195,10 +195,10 @@ final readonly class CommentsController
             $this->comments->recount($postId);
             return Reply::item(['deleted' => true, 'previous' => $previous], $fields);
         }
-        if ($comment['comment_approved'] === 'trash') {
+        if ($comment->approved === 'trash') {
             throw new RestError('rest_already_trashed', 'The comment has already been trashed.', 410);
         }
-        $this->comments->addMeta($commentId, '_wp_trash_meta_status', (string) $comment['comment_approved']);
+        $this->comments->addMeta($commentId, '_wp_trash_meta_status', $comment->approved);
         $this->comments->addMeta($commentId, '_wp_trash_meta_time', (string) time());
         $this->comments->update($commentId, ['comment_approved' => 'trash']);
         $this->comments->recount($postId);

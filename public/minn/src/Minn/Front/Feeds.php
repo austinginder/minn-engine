@@ -128,9 +128,9 @@ final readonly class Feeds
             $link = $this->permalinks->forPost($post);
             $count = $this->commentCount($post->id);
             $user = $this->users->find($post->authorId);
-            $out .= "\t<entry>\n\t\t<author>\n\t\t\t<name>" . Html::esc((string) ($user['display_name'] ?? '')) . "</name>\n";
-            $out .= ($user !== null && (string) $user['user_url'] !== '')
-                ? "\t\t\t\t\t\t\t<uri>" . Html::esc((string) $user['user_url']) . "</uri>\n\t\t\t\t\t\t</author>\n\n"
+            $out .= "\t<entry>\n\t\t<author>\n\t\t\t<name>" . Html::esc($user?->displayName ?? '') . "</name>\n";
+            $out .= ($user !== null && $user->url !== '')
+                ? "\t\t\t\t\t\t\t<uri>" . Html::esc($user->url) . "</uri>\n\t\t\t\t\t\t</author>\n\n"
                 : "\t\t\t\t\t</author>\n\n";
             $out .= "\t\t" . '<title type="html"><![CDATA[' . Texturize::text($post->title) . "]]></title>\n"
                 . "\t\t" . '<link rel="alternate" type="text/html" href="' . $link . '" />' . "\n\n"
@@ -283,7 +283,7 @@ final readonly class Feeds
 
     private function authorName(PostRecord $post): string
     {
-        return (string) ($this->users->find($post->authorId)['display_name'] ?? '');
+        return $this->users->find($post->authorId)?->displayName ?? '';
     }
 
     /** Category names then tag names. @return list<string> */

@@ -59,7 +59,10 @@ final readonly class ItemsController
 }
 ```
 
-Wire it in `Rest\Api::forRequest()` beside the others, then prove it. A
+Wire it into the route table in `Rest\Api::controllers()` beside the others,
+taking what it needs from `Rest\Services` (one memoised getter per shared object;
+add a getter, and a line in `NAMED`, when a controller needs something new), then
+prove it. A
 parity suite is a PHP file in `tests/`, named for the surface, that fetches the
 same route from both stacks and diffs. Copy the shape of
 `tests/navigation.test.php`: it is forty lines of helpers and then one

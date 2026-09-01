@@ -98,7 +98,7 @@ final readonly class Comments
         $items = '';
         $position = 0;
         foreach ($all as $comment) {
-            if ((int) $comment['comment_parent'] !== $parent) {
+            if ($comment->parentId !== $parent) {
                 continue;
             }
             $position++;
@@ -115,8 +115,8 @@ final readonly class Comments
                 $classes[] = 'thread-' . $parity;
             }
             $classes[] = 'depth-' . $depth;
-            $children = $this->list($all, (int) $comment['comment_ID'], $depth + 1, $block, $renderer);
-            $items .= '<li id="comment-' . (int) $comment['comment_ID'] . '" class="' . implode(' ', $classes) . '">' . $inner . $children . '</li>';
+            $children = $this->list($all, $comment->id, $depth + 1, $block, $renderer);
+            $items .= '<li id="comment-' . $comment->id . '" class="' . implode(' ', $classes) . '">' . $inner . $children . '</li>';
         }
         return $items === '' ? '' : '<ol class="wp-block-comment-template">' . $items . '</ol>';
     }
@@ -128,8 +128,8 @@ final readonly class Comments
             return '';
         }
         $size = (int) $block->attr('size', 96);
-        $hash = hash('sha256', strtolower(trim((string) $comment['comment_author_email'])));
-        $author = Html::attr((string) $comment['comment_author']);
+        $hash = hash('sha256', strtolower(trim($comment->authorEmail)));
+        $author = Html::attr($comment->author);
         return '<div class="wp-block-avatar"><img alt=\'' . $author . ' Avatar\' src=\'https://secure.gravatar.com/avatar/' . $hash . '?s=' . $size . '&#038;d=mm&#038;r=g\' srcset=\'https://secure.gravatar.com/avatar/' . $hash . '?s=' . ($size * 2) . '&#038;d=mm&#038;r=g 2x\' class=\'avatar avatar-' . $size . ' photo wp-block-avatar__image\' height=\'' . $size . '\' width=\'' . $size . '\' decoding=\'async\'/></div>';
     }
 
@@ -140,8 +140,8 @@ final readonly class Comments
         if ($comment === null || $post === null) {
             return '';
         }
-        $local = (string) $comment['comment_date'];
-        $link = $this->permalinks->forPost($post) . '#comment-' . (int) $comment['comment_ID'];
+        $local = $comment->date;
+        $link = $this->permalinks->forPost($post) . '#comment-' . $comment->id;
         return '<div class="wp-block-comment-date"><time datetime="' . Dates::iso($this->site, $local) . '"><a href="' . Html::attr($link) . '">' . Dates::format($this->site, $local) . '</a></time></div>';
     }
 
@@ -151,8 +151,8 @@ final readonly class Comments
         if ($comment === null) {
             return '';
         }
-        $name = Html::esc((string) $comment['comment_author']);
-        $url = Kses::url((string) $comment['comment_author_url']);
+        $name = Html::esc($comment->author);
+        $url = Kses::url($comment->authorUrl);
         if ($url !== '') {
             $name = '<a rel="external nofollow ugc" href="' . Html::attr($url) . '" target="_self" >' . $name . '</a>';
         }
@@ -165,7 +165,7 @@ final readonly class Comments
         if ($comment === null) {
             return '';
         }
-        return '<div class="wp-block-comment-content">' . Blocks::paragraphs((string) $comment['comment_content']) . '</div>';
+        return '<div class="wp-block-comment-content">' . Blocks::paragraphs($comment->content) . '</div>';
     }
 
     private function replyLink(Block $block, Renderer $renderer): string
@@ -175,8 +175,8 @@ final readonly class Comments
         if ($comment === null || $post === null || $post->commentStatus !== 'open') {
             return '';
         }
-        $id = (int) $comment['comment_ID'];
-        $author = Html::attr((string) $comment['comment_author']);
+        $id = $comment->id;
+        $author = Html::attr($comment->author);
         $href = $this->permalinks->forPost($post) . '?replytocom=' . $id . '#respond';
         return '<div class="wp-block-comment-reply-link"><a rel="nofollow" class="comment-reply-link" href="' . Html::attr($href) . '" data-commentid="' . $id . '" data-postid="' . $post->id . '" data-belowelement="comment-' . $id . '" data-respondelement="respond" data-replyto="Reply to ' . $author . '" aria-label="Reply to ' . $author . '">Reply</a></div>';
     }

@@ -29,33 +29,33 @@ final readonly class CommentObject
 
     public function build(CommentRecord $c, bool $edit): array
     {
-        $id = (int) $c['comment_ID'];
-        $postId = (int) $c['comment_post_ID'];
+        $id = $c->id;
+        $postId = $c->postId;
         $post = $this->posts->find($postId);
-        $rendered = Blocks::paragraphs((string) $c['comment_content']);
+        $rendered = Blocks::paragraphs($c->content);
 
         $object = [
             'id' => $id,
             'post' => $postId,
-            'parent' => (int) $c['comment_parent'],
-            'author' => (int) $c['user_id'],
-            'author_name' => $c['comment_author'],
+            'parent' => $c->parentId,
+            'author' => $c->userId,
+            'author_name' => $c->author,
         ];
         if ($edit) {
-            $object['author_email'] = $c['comment_author_email'];
-            $object['author_url'] = $c['comment_author_url'];
-            $object['author_ip'] = $c['comment_author_IP'];
-            $object['author_user_agent'] = $c['comment_agent'];
+            $object['author_email'] = $c->authorEmail;
+            $object['author_url'] = $c->authorUrl;
+            $object['author_ip'] = $c->authorIp;
+            $object['author_user_agent'] = $c->agent;
         } else {
-            $object['author_url'] = $c['comment_author_url'];
+            $object['author_url'] = $c->authorUrl;
         }
-        $object['date'] = PostObject::date((string) $c['comment_date']);
-        $object['date_gmt'] = PostObject::date((string) $c['comment_date_gmt']);
-        $object['content'] = $edit ? ['rendered' => $rendered, 'raw' => $c['comment_content']] : ['rendered' => $rendered];
+        $object['date'] = PostObject::date($c->date);
+        $object['date_gmt'] = PostObject::date($c->dateGmt);
+        $object['content'] = $edit ? ['rendered' => $rendered, 'raw' => $c->content] : ['rendered' => $rendered];
         $object['link'] = ($post === null ? $this->url->home('/?p=' . $postId) : $this->permalinks->forPost($post)) . '#comment-' . $id;
-        $object['status'] = Comments::statusOf((string) $c['comment_approved']);
-        $object['type'] = $c['comment_type'] === '' ? 'comment' : $c['comment_type'];
-        $object['author_avatar_urls'] = UserObject::avatarUrls((string) $c['comment_author_email']);
+        $object['status'] = Comments::statusOf($c->approved);
+        $object['type'] = $c->type === '' ? 'comment' : $c->type;
+        $object['author_avatar_urls'] = UserObject::avatarUrls($c->authorEmail);
         $object['meta'] = ['_wp_note_status' => $this->comments->meta($id, '_wp_note_status')];
 
         $links = [
@@ -65,8 +65,8 @@ final readonly class CommentObject
             ]],
             'collection' => [['href' => $this->url->to('/wp/v2/comments')]],
         ];
-        if ((int) $c['user_id'] > 0) {
-            $links['author'] = [['embeddable' => true, 'href' => $this->url->to('/wp/v2/users/' . (int) $c['user_id'])]];
+        if ($c->userId > 0) {
+            $links['author'] = [['embeddable' => true, 'href' => $this->url->to('/wp/v2/users/' . $c->userId)]];
         }
         if ($postId > 0) {
             $type = $post->type ?? 'post';
@@ -76,8 +76,8 @@ final readonly class CommentObject
                 'href' => $this->url->to('/wp/v2/' . PostObject::restBase((string) $type) . '/' . $postId),
             ]];
         }
-        if ((int) $c['comment_parent'] > 0) {
-            $links['in-reply-to'] = [['embeddable' => true, 'href' => $this->url->to('/wp/v2/comments/' . (int) $c['comment_parent'])]];
+        if ($c->parentId > 0) {
+            $links['in-reply-to'] = [['embeddable' => true, 'href' => $this->url->to('/wp/v2/comments/' . $c->parentId)]];
         }
         $object['_links'] = $links;
         return $object;
