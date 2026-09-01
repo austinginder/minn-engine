@@ -104,7 +104,7 @@ final readonly class Api
         $router = new Router();
         $router->register(
             new IndexController($site, $permalinks, $url, $router),
-            new V1Controller($db, $site, $posts, $writer, $permalinks, $dashboard, $notifications, new CoreStatus($site), new AdminTypes($types, $capabilities), $caller),
+            new V1Controller($db, $site, $posts, $writer, $permalinks, $dashboard, $notifications, new CoreStatus($site), new AdminTypes($types, $capabilities), $caller, $users),
             new TermsController($db, $terms, $site, $termObject, $caller),
             new UsersController($db, $users, $site, $userObject, $url, $caller, $capabilities->roles()),
             new ApplicationPasswordsController($users, $site, new ApplicationPasswords($users), $url, $caller, new Schema(static fn (string $e): bool => (bool) filter_var($e, FILTER_VALIDATE_EMAIL), static fn (int|float $n): string => number_format((float) $n), static fn (string $f, mixed $v): mixed => $v)),

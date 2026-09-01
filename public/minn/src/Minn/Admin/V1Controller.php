@@ -7,16 +7,20 @@ namespace Minn\Admin;
 use Minn\Content\Posts;
 use Minn\Content\PostWriter;
 use Minn\Content\Site;
+use Minn\Content\Users;
 use Minn\Db;
 use Minn\Front\Permalinks;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
+use Minn\Media\Metadata;
 use Minn\Rest\Caller;
 use Minn\Rest\Fields;
 use Minn\Rest\Reply;
 use Minn\RestError;
+use Minn\Support\Serialized;
+use Minn\Theme\Theme;
 
 /**
  * The minn-admin/v1 namespace: the dashboard burst, the editor helpers,
@@ -36,6 +40,7 @@ final readonly class V1Controller
         private CoreStatus $core,
         private AdminTypes $types,
         private Caller $caller,
+        private Users $users,
     ) {
     }
 
@@ -143,7 +148,89 @@ final readonly class V1Controller
     public function siteLogo(Request $request): Response
     {
         $this->requireFloor();
-        return $this->reply($request, ['supported' => false, 'id' => 0, 'url' => '']);
+        // The app treats every block theme as logo-capable (its Site Logo
+        // block manages one whether or not the theme declares support);
+        // a classic theme needs the declared custom-logo support.
+        $supported = Theme::active($this->site, $this->permalinks, ABSPATH . 'wp-content/themes') !== null
+            || (\function_exists('current_theme_supports') && \current_theme_supports('custom-logo'));
+        $id = 0;
+        if ($supported) {
+            $mods = Serialized::decode((string) ($this->db->option('theme_mods_' . (string) ($this->db->option('stylesheet') ?? '')) ?? ''));
+            $id = (int) ($mods['custom_logo'] ?? 0);
+        }
+        return $this->reply($request, ['supported' => $supported, 'id' => $id, 'url' => $id > 0 ? $this->logoUrl($id) : '']);
+    }
+
+    #[Route(Method::Post, '/minn-admin/v1/overview/metrics')]
+    public function setOverviewMetrics(Request $request): Response
+    {
+        $userId = $this->requireFloor();
+        $keys = $this->metricKeysFrom($request);
+        if ($keys === null || $keys === []) {
+            $this->users->deleteMeta($userId, 'minn_admin_overview_metrics');
+        } else {
+            $this->users->setMeta($userId, 'minn_admin_overview_metrics', Serialized::encode($keys));
+        }
+        return $this->reply($request, $this->storedMetricLayout($userId));
+    }
+
+    #[Route(Method::Post, '/minn-admin/v1/overview/metric-defaults')]
+    public function setOverviewMetricDefaults(Request $request): Response
+    {
+        $userId = $this->requireFloor();
+        $this->requireCap('manage_options');
+        $keys = $this->metricKeysFrom($request);
+        if ($keys === null || $keys === []) {
+            $this->site->deleteOption('minn_admin_overview_metric_defaults');
+        } else {
+            $this->site->setOption('minn_admin_overview_metric_defaults', Serialized::encode($keys));
+        }
+        return $this->reply($request, $this->storedMetricLayout($userId));
+    }
+
+    /** The cleaned keys, null when the caller asked for a clear; a missing or non-list keys member refuses. */
+    private function metricKeysFrom(Request $request): ?array
+    {
+        $json = $request->json();
+        if (!array_key_exists('keys', $json)) {
+            throw new RestError('minn_admin_bad_metrics', 'No metrics provided.', 400);
+        }
+        $keys = $json['keys'];
+        if ($keys === null || $keys === []) {
+            return null;
+        }
+        if (!is_array($keys)) {
+            throw new RestError('minn_admin_bad_metrics', 'No metrics provided.', 400);
+        }
+        return Dashboard::cleanMetricKeys($keys);
+    }
+
+    /** The stored layout, unfiltered by the catalog, so a save answers without a second Overview round trip. */
+    private function storedMetricLayout(int $userId): array
+    {
+        $site = Dashboard::cleanMetricKeys(Serialized::decode((string) ($this->db->option('minn_admin_overview_metric_defaults') ?? '')));
+        $raw = $this->users->meta($userId, 'minn_admin_overview_metrics');
+        $saved = $raw === null ? null : Serialized::decode($raw);
+        $custom = is_array($saved);
+        return [
+            'keys' => $custom ? Dashboard::cleanMetricKeys($saved) : $site,
+            'defaults' => $site,
+            'custom' => $custom,
+            'canSetMetricDefaults' => $this->caller->can('manage_options'),
+        ];
+    }
+
+    /** The custom logo's medium rendition, the size the app's card shows. */
+    private function logoUrl(int $id): string
+    {
+        $meta = Metadata::parse((string) ($this->posts->meta($id, '_wp_attachment_metadata') ?? ''));
+        $file = (string) ($meta['file'] ?? '');
+        if ($file === '') {
+            return '';
+        }
+        $sized = $meta['sizes']['medium']['file'] ?? null;
+        $rel = $sized !== null ? (str_contains($file, '/') ? dirname($file) . '/' : '') . $sized : $file;
+        return $this->permalinks->url('/wp-content/uploads/' . $rel);
     }
 
     #[Route(Method::Get, '/minn-admin/v1/permalinks')]

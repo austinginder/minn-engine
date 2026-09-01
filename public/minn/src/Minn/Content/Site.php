@@ -29,6 +29,11 @@ final readonly class Site
         $this->db->execute("UPDATE {$table} SET option_value = ? WHERE option_name = ?", [$value, $name]);
     }
 
+    public function deleteOption(string $name): void
+    {
+        $this->db->execute("DELETE FROM {$this->db->table('options')} WHERE option_name = ?", [$name]);
+    }
+
     /** The gmt_offset option in seconds. */
     public function gmtOffset(): int
     {

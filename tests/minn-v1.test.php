@@ -276,5 +276,24 @@ foreach ( array( 'admin' => $admin, 'editor' => $editor, 'author' => $author ) a
 	check( ! $problems, "boot-status sections match ($who)", implode( '; ', $problems ) );
 }
 
+// Overview metric picks: a save answers the stored layout, the overview
+// reflects it, a null keys member clears it, and the site-defaults route
+// stays behind manage_options. Both stacks run the same sequence from the
+// resting state; the clears at the end restore it.
+v1_parity( 'metric picks save', '/minn-admin/v1/overview/metrics', $admin, 'POST', '{"keys":["users","drafts","comments","media"]}' );
+foreach ( array( 'ref' => $REF, 'engine' => $ENGINE ) as $tag => $base ) {
+	[ , $ov ] = v1_fetch( $base, '/minn-admin/v1/overview', $admin );
+	check(
+		array( 'users', 'drafts', 'comments', 'media' ) === ( $ov['metricKeys'] ?? null ) && true === ( $ov['metricCustom'] ?? null ),
+		"saved picks show on the $tag overview"
+	);
+}
+v1_parity( 'metric picks rejected without keys', '/minn-admin/v1/overview/metrics', $admin, 'POST', '{}' );
+v1_parity( 'metric defaults below manage_options', '/minn-admin/v1/overview/metric-defaults', $editor, 'POST', '{"keys":["users"]}' );
+v1_parity( 'metric defaults save', '/minn-admin/v1/overview/metric-defaults', $admin, 'POST', '{"keys":["media","posts"]}' );
+v1_parity( 'metric picks clear', '/minn-admin/v1/overview/metrics', $admin, 'POST', '{"keys":null}' );
+v1_parity( 'metric defaults clear', '/minn-admin/v1/overview/metric-defaults', $admin, 'POST', '{"keys":null}' );
+v1_parity( 'overview back at the built-in layout', '/minn-admin/v1/overview', $admin );
+
 echo "\n$pass passed, $fail failed\n";
 exit( $fail > 0 ? 1 : 0 );

@@ -389,3 +389,29 @@ plugin's own slices when it is loaded: `surfaces`, `editorPanels`, `designs`,
 (Stream's Activity Log), the Licenses tab, Settings → Design (custom CSS, gated on
 `edit_css`, which the engine maps to `unfiltered_html`) and Connectors. The site icon in
 the sidebar is the `site_icon` attachment's file URL.
+
+## Overview metrics (2026-08-31)
+
+The overview payload carries the metric-card system beside `stats`:
+`metrics` (the full catalog: the default layout first, then cap-gated
+cards — drafts behind edit_others_posts, comments_pending behind
+moderate_comments, users behind list_users; the store group needs the
+WooCommerce runtime and is honestly absent), `metricKeys` (what shows),
+`metricDefaults` (the site default from option
+minn_admin_overview_metric_defaults), `metricCustom` (whether the caller
+saved a personal pick in user meta minn_admin_overview_metrics), and
+`canSetMetricDefaults` (manage_options). Stats deltas are cap-gated the
+same way: the draft count needs edit_others_posts, the pending count
+moderate_comments; every card carries `group` and `goto`.
+
+Saves: POST `/overview/metrics` {keys} stores at most six cleaned
+sanitize_key ids for the caller (null or [] clears); POST
+`/overview/metric-defaults` (manage_options) does the same for the site
+option. Both answer the STORED layout, unfiltered by the catalog. The
+overlay rule: saved keys land on the fallback layout slot by slot,
+unknown keys drop and the slot refills from the fallback left to right.
+
+The site-logo route now answers the app's contract: `supported` is true
+for any block theme (its Site Logo block manages one without declared
+support) or a classic theme with custom-logo support; `id` from the
+theme mods, `url` the medium rendition.
