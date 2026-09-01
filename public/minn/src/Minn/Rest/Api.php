@@ -21,6 +21,8 @@ use Minn\Admin\PackagesController;
 use Minn\Admin\RenderController;
 use Minn\Admin\SessionsController;
 use Minn\Admin\CoreStatus;
+use Minn\Admin\ActivityChart;
+use Minn\Admin\ActivityFeed;
 use Minn\Admin\Dashboard;
 use Minn\Admin\Notifications;
 use Minn\Admin\V1Controller;
@@ -100,9 +102,10 @@ final readonly class Api
         $mediaObject = new MediaObject($posts, $uploads, $permalinks, $url, $caller);
         $commentObject = new CommentObject(new Comments($db), $posts, $permalinks, $url, $caller);
 
-        $dashboard = new Dashboard($db, $site, $users, $capabilities, ABSPATH . 'wp-content/uploads');
+        $feed = new ActivityFeed($db, $users, $capabilities);
+        $dashboard = new Dashboard($db, $site, $users, $capabilities, new ActivityChart($db, $site), $feed, ABSPATH . 'wp-content/uploads');
         $updates = new Updates($site, new Inventory($contentDir, $site), new Packages($site, $contentDir), $contentDir, $permalinks->url('/'), \Minn\Engine::WP_VERSION);
-        $notifications = new Notifications($db, $site, $users, $capabilities, $dashboard, $updates);
+        $notifications = new Notifications($db, $site, $users, $capabilities, $feed, $updates);
         $menus = new Menus($db, $posts, $terms, $permalinks, $writer, $site);
         // A classic theme has no block templates; the index stays null and
         // the routes answer the way the reference does when it never

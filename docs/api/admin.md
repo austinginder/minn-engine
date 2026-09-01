@@ -4,13 +4,15 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
+| [`ActivityChart`](#activitychart) | final readonly class | 61 | The overview's activity chart: published posts and pages plus every |
+| [`ActivityFeed`](#activityfeed) | final readonly class | 210 | What happened lately, as the overview and the bell tell it: the caller's |
 | [`AdminTypes`](#admintypes) | final class | 82 | Admin-facing type facts (viewable, labels, supports, the edit gate) live |
 | [`App`](#app) | final readonly class | 95 | The Minn Admin app on disk: the symlinked dev copy the engine serves the |
 | [`AppController`](#appcontroller) | final readonly class | 129 | Serves Minn Admin from the engine: the path-routed shell (every |
 | [`Appearance`](#appearance) | final readonly class | 74 | A person's Minn Admin appearance: the colour scheme and its custom |
 | [`BootPayload`](#bootpayload) | final readonly class | 202 | The window.MINN boot payload, assembled from the engine: the keys app.js |
 | [`CoreStatus`](#corestatus) | final readonly class | 23 | The installed version comes from the update_core transient's |
-| [`Dashboard`](#dashboard) | final readonly class | 481 | The overview payload: stat cards, the activity chart, and the recent |
+| [`Dashboard`](#dashboard) | final readonly class | 289 | The overview payload: stat cards, the activity chart, and the recent |
 | [`Diagnostics`](#diagnostics) | final readonly class | 370 | The System view's facts about this install: the engine, PHP, the |
 | [`Format`](#format) | final class | 51 | The dashboard's number, size, age, and title formatting. |
 | [`HiddenIntegrations`](#hiddenintegrations) | final readonly class | 89 | What a person hid from their own Minn Admin: the app's per-user map |
@@ -18,7 +20,7 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`LanguageController`](#languagecontroller) | final readonly class | 114 | Languages: what is installed, what a person reads in, what the site defaults to. |
 | [`Logs`](#logs) | final readonly class | 138 | The log files the System view can read and clear: the debug log the |
 | [`ManageController`](#managecontroller) | final readonly class | 377 | The Manage half of minn-admin/v1: the Structure view (post types, |
-| [`Notifications`](#notifications) | final readonly class | 182 | The bell feed: pending and recent comments, translation and core update |
+| [`Notifications`](#notifications) | final readonly class | 201 | The bell feed: pending and recent comments, translation and core update |
 | [`Packages`](#packages) | final readonly class | 392 | Putting themes and extensions on disk. Themes come from wordpress.org |
 | [`PackagesController`](#packagescontroller) | final readonly class | 122 | Adding and removing themes and extensions from the Extensions view. |
 | [`RenderController`](#rendercontroller) | final readonly class | 65 | The editor's island previews: block markup rendered by the same |
@@ -28,6 +30,73 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`Updates`](#updates) | final class | 297 | Update offers from wordpress.org for the site's plugins and themes: the |
 | [`UpdatesController`](#updatescontroller) | final readonly class | 122 | The minn-admin/v1 update routes: offers, directory meta, the check, the installs, the auto-update lists. |
 | [`V1Controller`](#v1controller) | final readonly class | 324 | The minn-admin/v1 namespace: the dashboard burst, the editor helpers, |
+
+## ActivityChart
+
+`final readonly class Minn\Admin\ActivityChart` · `public/minn/src/Minn/Admin/ActivityChart.php`
+
+The overview's activity chart: published posts and pages plus every
+comment, counted per bar. A window over 45 days is drawn in weeks,
+anything shorter in days; each bar carries the (from, to] GMT bounds
+the drill-down asks for.
+
+```php
+__construct(Minn\Db $db, Minn\Content\Site $site)
+```
+
+### `bars(int $days, int $now): array`
+
+- `@return list<array{label: string, value: int, from: string, to: string}>`
+
+### static `bucket(array $dates, int $days, int $now, int $offset): array`
+
+GMT stamps into bars, oldest first. Labels are site-local: the day
+for daily bars, "Week of" the bar's first day for weekly ones.
+
+- `@param list<string> $dates "Y-m-d H:i:s" in GMT`
+- `@return list<array{label: string, value: int, from: string, to: string}>`
+
+
+## ActivityFeed
+
+`final readonly class Minn\Admin\ActivityFeed` · `public/minn/src/Minn/Admin/ActivityFeed.php`
+
+What happened lately, as the overview and the bell tell it: the caller's
+own recent posts and the latest comments, and the events behind one
+chart bar. Also the visibility rule every comment row is put through.
+
+```php
+__construct(Minn\Db $db, Minn\Content\Users $users, Minn\Auth\Capabilities $capabilities)
+```
+
+### `recent(int $userId, int $now, int $offset): array`
+
+The overview's four most recent items, times already worded ("2 hours ago").
+
+Oracle-caught quirk: the reference's recent-activity query runs with a
+multi-type post_type plus perm=editable, and on that combination it
+restricts EVERY status to post_author = caller, admins included,
+published posts included. Authorless posts appear for nobody. The
+engine reproduces the observed behavior, not the intent.
+
+- `@return list<array>`
+
+### `between(int $userId, string $from, string $to, int $now): array`
+
+The events behind one chart bar, (from, to] GMT, newest first. Post
+rows decode the RAW stored title; comment rows decode the texturized
+one (the reference's asymmetry, kept).
+
+- `@return list<array>`
+
+### `commentVisible(int $userId, int $postId): bool`
+
+May this caller see a comment row that names its post?
+
+### `postTitle(int $postId): string`
+
+### `displayName(int $userId): string`
+
 
 ## AdminTypes
 
@@ -209,16 +278,12 @@ The overview payload: stat cards, the activity chart, and the recent
 activity feed, plus the per-bar activity drill-down.
 
 ```php
-__construct(Minn\Db $db, Minn\Content\Site $site, Minn\Content\Users $users, Minn\Auth\Capabilities $capabilities, string $uploadsDir)
+__construct(Minn\Db $db, Minn\Content\Site $site, Minn\Content\Users $users, Minn\Auth\Capabilities $capabilities, Minn\Admin\ActivityChart $chart, Minn\Admin\ActivityFeed $feed, string $uploadsDir)
 ```
 
 ### `overview(int $userId, int $days): array`
 
-Oracle-caught quirk: the reference's recent-activity query runs with a
-multi-type post_type plus perm=editable, and on that combination it
-restricts EVERY status to post_author = caller, admins included,
-published posts included. Authorless posts appear for nobody. The
-engine reproduces the observed behavior, not the intent.
+The stat cards, the metric catalog and layout, the chart, and the feed.
 
 ### `metricLayout(int $userId, array $catalog, array $stats): array`
 
@@ -235,17 +300,7 @@ At most six unique sanitize_key metric ids; anything else drops.
 
 ### `activity(int $userId, string $from, string $to): array`
 
-The events behind one chart bar, (from, to] GMT. Post rows decode the
-RAW stored title; comment rows decode the texturized one (the
-reference's asymmetry, kept).
-
-### `commentVisible(int $userId, int $postId): bool`
-
-May this caller see a comment row that names its post?
-
-### `postTitle(int $postId): string`
-
-### `displayName(int $userId): string`
+The events behind one chart bar, (from, to] GMT.
 
 
 ## Diagnostics
@@ -525,7 +580,7 @@ theme update rows need an extension inventory the engine does not have
 so parity holds by construction.
 
 ```php
-__construct(Minn\Db $db, Minn\Content\Site $site, Minn\Content\Users $users, Minn\Auth\Capabilities $capabilities, Minn\Admin\Dashboard $dashboard, Minn\Admin\Updates $updates)
+__construct(Minn\Db $db, Minn\Content\Site $site, Minn\Content\Users $users, Minn\Auth\Capabilities $capabilities, Minn\Admin\ActivityFeed $feed, Minn\Admin\Updates $updates)
 ```
 
 ### `items(int $userId): array`

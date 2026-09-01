@@ -5,7 +5,7 @@ the wp/v2 surface: shapes and controllers
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`AdditionalFields`](#additionalfields) | final class | 40 | Which object type a wp/v2 route serves, so fields registered for that type can ride on the engine's own responses. |
-| [`Api`](#api) | final readonly class | 144 | The REST API: wires the controllers for one request and dispatches a |
+| [`Api`](#api) | final readonly class | 145 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 164 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`BatchRequest`](#batchrequest) | final class | 30 | The requests a batch payload names, normalised into descriptors the |
 | [`Caller`](#caller) | final class | 59 | Who is making this REST call. Resolved once from the cookie and nonce; |

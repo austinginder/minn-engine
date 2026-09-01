@@ -5,7 +5,7 @@ The engine's own classes under `public/minn/src/Minn/`, one page per namespace, 
 | Namespace | Classes | What lives there |
 |---|---|---|
 | [`Minn`](minn.md) | 4 | the front door, the autoloader, the one database door, the REST error |
-| [`Minn\Admin`](admin.md) | 24 | the minn-admin/v1 namespace and serving the Minn Admin app |
+| [`Minn\Admin`](admin.md) | 26 | the minn-admin/v1 namespace and serving the Minn Admin app |
 | [`Minn\Auth`](auth.md) | 17 | passwords, sessions, cookies, nonces, roles and capabilities |
 | [`Minn\Blocks`](blocks.md) | 15 | the block parser and renderer |
 | [`Minn\Blocks\Dynamic`](blocks-dynamic.md) | 9 | dynamic core blocks that render from data |

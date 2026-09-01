@@ -2,6 +2,118 @@
     "generated": "php tests/tools/api-docs.php",
     "classes": [
         {
+            "name": "Minn\\Admin\\ActivityChart",
+            "short": "ActivityChart",
+            "namespace": "Minn\\Admin",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Admin/ActivityChart.php",
+            "lines": 61,
+            "doc": "The overview's activity chart: published posts and pages plus every\ncomment, counted per bar. A window over 45 days is drawn in weeks,\nanything shorter in days; each bar carries the (from, to] GMT bounds\nthe drill-down asks for.",
+            "implements": [],
+            "constructor": {
+                "signature": "__construct(Minn\\Db $db, Minn\\Content\\Site $site)",
+                "doc": "",
+                "shapes": []
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "bars",
+                    "static": false,
+                    "signature": "bars(int $days, int $now): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return list<array{label: string, value: int, from: string, to: string}>"
+                    ],
+                    "line": 25
+                },
+                {
+                    "routes": [],
+                    "name": "bucket",
+                    "static": true,
+                    "signature": "bucket(array $dates, int $days, int $now, int $offset): array",
+                    "doc": "GMT stamps into bars, oldest first. Labels are site-local: the day\nfor daily bars, \"Week of\" the bar's first day for weekly ones.",
+                    "shapes": [
+                        "@param list<string> $dates \"Y-m-d H:i:s\" in GMT",
+                        "@return list<array{label: string, value: int, from: string, to: string}>"
+                    ],
+                    "line": 49
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Admin\\ActivityFeed",
+            "short": "ActivityFeed",
+            "namespace": "Minn\\Admin",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Admin/ActivityFeed.php",
+            "lines": 210,
+            "doc": "What happened lately, as the overview and the bell tell it: the caller's\nown recent posts and the latest comments, and the events behind one\nchart bar. Also the visibility rule every comment row is put through.",
+            "implements": [],
+            "constructor": {
+                "signature": "__construct(Minn\\Db $db, Minn\\Content\\Users $users, Minn\\Auth\\Capabilities $capabilities)",
+                "doc": "",
+                "shapes": []
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "recent",
+                    "static": false,
+                    "signature": "recent(int $userId, int $now, int $offset): array",
+                    "doc": "The overview's four most recent items, times already worded (\"2 hours ago\").\n\nOracle-caught quirk: the reference's recent-activity query runs with a\nmulti-type post_type plus perm=editable, and on that combination it\nrestricts EVERY status to post_author = caller, admins included,\npublished posts included. Authorless posts appear for nobody. The\nengine reproduces the observed behavior, not the intent.",
+                    "shapes": [
+                        "@return list<array>"
+                    ],
+                    "line": 37
+                },
+                {
+                    "routes": [],
+                    "name": "between",
+                    "static": false,
+                    "signature": "between(int $userId, string $from, string $to, int $now): array",
+                    "doc": "The events behind one chart bar, (from, to] GMT, newest first. Post\nrows decode the RAW stored title; comment rows decode the texturized\none (the reference's asymmetry, kept).",
+                    "shapes": [
+                        "@return list<array>"
+                    ],
+                    "line": 56
+                },
+                {
+                    "routes": [],
+                    "name": "commentVisible",
+                    "static": false,
+                    "signature": "commentVisible(int $userId, int $postId): bool",
+                    "doc": "May this caller see a comment row that names its post?",
+                    "shapes": [],
+                    "line": 69
+                },
+                {
+                    "routes": [],
+                    "name": "postTitle",
+                    "static": false,
+                    "signature": "postTitle(int $postId): string",
+                    "doc": "",
+                    "shapes": [],
+                    "line": 81
+                },
+                {
+                    "routes": [],
+                    "name": "displayName",
+                    "static": false,
+                    "signature": "displayName(int $userId): string",
+                    "doc": "",
+                    "shapes": [],
+                    "line": 86
+                }
+            ]
+        },
+        {
             "name": "Minn\\Admin\\AdminTypes",
             "short": "AdminTypes",
             "namespace": "Minn\\Admin",
@@ -368,11 +480,11 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/Dashboard.php",
-            "lines": 481,
+            "lines": 289,
             "doc": "The overview payload: stat cards, the activity chart, and the recent\nactivity feed, plus the per-bar activity drill-down.",
             "implements": [],
             "constructor": {
-                "signature": "__construct(Minn\\Db $db, Minn\\Content\\Site $site, Minn\\Content\\Users $users, Minn\\Auth\\Capabilities $capabilities, string $uploadsDir)",
+                "signature": "__construct(Minn\\Db $db, Minn\\Content\\Site $site, Minn\\Content\\Users $users, Minn\\Auth\\Capabilities $capabilities, Minn\\Admin\\ActivityChart $chart, Minn\\Admin\\ActivityFeed $feed, string $uploadsDir)",
                 "doc": "",
                 "shapes": []
             },
@@ -385,9 +497,9 @@
                     "name": "overview",
                     "static": false,
                     "signature": "overview(int $userId, int $days): array",
-                    "doc": "Oracle-caught quirk: the reference's recent-activity query runs with a\nmulti-type post_type plus perm=editable, and on that combination it\nrestricts EVERY status to post_author = caller, admins included,\npublished posts included. Authorless posts appear for nobody. The\nengine reproduces the observed behavior, not the intent.",
+                    "doc": "The stat cards, the metric catalog and layout, the chart, and the feed.",
                     "shapes": [],
-                    "line": 36
+                    "line": 31
                 },
                 {
                     "routes": [],
@@ -400,7 +512,7 @@
                         "@param list<array> $stats",
                         "@return array{keys: list<string>, defaults: list<string>, custom: bool}"
                     ],
-                    "line": 283
+                    "line": 170
                 },
                 {
                     "routes": [],
@@ -409,43 +521,16 @@
                     "signature": "cleanMetricKeys(mixed $keys): array",
                     "doc": "At most six unique sanitize_key metric ids; anything else drops.",
                     "shapes": [],
-                    "line": 304
+                    "line": 191
                 },
                 {
                     "routes": [],
                     "name": "activity",
                     "static": false,
                     "signature": "activity(int $userId, string $from, string $to): array",
-                    "doc": "The events behind one chart bar, (from, to] GMT. Post rows decode the\nRAW stored title; comment rows decode the texturized one (the\nreference's asymmetry, kept).",
+                    "doc": "The events behind one chart bar, (from, to] GMT.",
                     "shapes": [],
-                    "line": 375
-                },
-                {
-                    "routes": [],
-                    "name": "commentVisible",
-                    "static": false,
-                    "signature": "commentVisible(int $userId, int $postId): bool",
-                    "doc": "May this caller see a comment row that names its post?",
-                    "shapes": [],
-                    "line": 434
-                },
-                {
-                    "routes": [],
-                    "name": "postTitle",
-                    "static": false,
-                    "signature": "postTitle(int $postId): string",
-                    "doc": "",
-                    "shapes": [],
-                    "line": 446
-                },
-                {
-                    "routes": [],
-                    "name": "displayName",
-                    "static": false,
-                    "signature": "displayName(int $userId): string",
-                    "doc": "",
-                    "shapes": [],
-                    "line": 451
+                    "line": 258
                 }
             ]
         },
@@ -1038,11 +1123,11 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/Notifications.php",
-            "lines": 182,
+            "lines": 201,
             "doc": "The bell feed: pending and recent comments, translation and core update\noffers, the core auto-update notice, and new registrations. Plugin and\ntheme update rows need an extension inventory the engine does not have\n(a recorded gap); on the reference database those sections are empty,\nso parity holds by construction.",
             "implements": [],
             "constructor": {
-                "signature": "__construct(Minn\\Db $db, Minn\\Content\\Site $site, Minn\\Content\\Users $users, Minn\\Auth\\Capabilities $capabilities, Minn\\Admin\\Dashboard $dashboard, Minn\\Admin\\Updates $updates)",
+                "signature": "__construct(Minn\\Db $db, Minn\\Content\\Site $site, Minn\\Content\\Users $users, Minn\\Auth\\Capabilities $capabilities, Minn\\Admin\\ActivityFeed $feed, Minn\\Admin\\Updates $updates)",
                 "doc": "",
                 "shapes": []
             },
@@ -1066,7 +1151,7 @@
                     "signature": "markRead(int $userId, string $id): void",
                     "doc": "An id marks one item read; an empty id marks everything read.",
                     "shapes": [],
-                    "line": 163
+                    "line": 182
                 }
             ]
         },
@@ -13578,7 +13663,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Api.php",
-            "lines": 144,
+            "lines": 145,
             "doc": "The REST API: wires the controllers for one request and dispatches a\nroute. Errors thrown anywhere underneath become the reference's error\npayload under the reference's headers.",
             "implements": [],
             "constructor": {
@@ -13599,7 +13684,7 @@
                     "shapes": [
                         "@return array<string, list<string>> the engine's routes in the reference's form, route => methods"
                     ],
-                    "line": 76
+                    "line": 78
                 },
                 {
                     "routes": [],
@@ -13608,7 +13693,7 @@
                     "signature": "forRequest(Minn\\Db $db, Minn\\Http\\Request $request): self",
                     "doc": "",
                     "shapes": [],
-                    "line": 81
+                    "line": 83
                 },
                 {
                     "routes": [],
@@ -13617,7 +13702,7 @@
                     "signature": "caller(): Minn\\Rest\\Caller",
                     "doc": "",
                     "shapes": [],
-                    "line": 158
+                    "line": 161
                 },
                 {
                     "routes": [],
@@ -13626,7 +13711,7 @@
                     "signature": "postObject(): Minn\\Rest\\PostObject",
                     "doc": "",
                     "shapes": [],
-                    "line": 163
+                    "line": 166
                 },
                 {
                     "routes": [],
@@ -13635,7 +13720,7 @@
                     "signature": "termObject(): Minn\\Rest\\TermObject",
                     "doc": "",
                     "shapes": [],
-                    "line": 168
+                    "line": 171
                 },
                 {
                     "routes": [],
@@ -13644,7 +13729,7 @@
                     "signature": "userObject(): Minn\\Rest\\UserObject",
                     "doc": "",
                     "shapes": [],
-                    "line": 173
+                    "line": 176
                 },
                 {
                     "routes": [],
@@ -13653,7 +13738,7 @@
                     "signature": "types(): Minn\\Rest\\Types",
                     "doc": "",
                     "shapes": [],
-                    "line": 178
+                    "line": 181
                 },
                 {
                     "routes": [],
@@ -13662,7 +13747,7 @@
                     "signature": "handle(string $route): Minn\\Http\\Response",
                     "doc": "Resolves a REST route (from the path or from ?rest_route=) to a response.",
                     "shapes": [],
-                    "line": 184
+                    "line": 187
                 }
             ]
         },
