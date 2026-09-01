@@ -4,6 +4,7 @@ use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Rest\AdditionalFields;
 use Minn\Rest\Api;
+use Minn\Rest\BatchRequest;
 use Minn\Rest\Links;
 use Minn\Rest\RouteIndex;
 use Minn\Rest\RouteMatch;
@@ -320,20 +321,16 @@ class WP_REST_Server
     public function serve_batch_request_v1($batch_request)
     {
         $responses = [];
-        foreach ((array) $batch_request['requests'] as $args) {
-            $path = (string) ($args['path'] ?? '');
-            $parsed = wp_parse_url($path);
-            $single = new WP_REST_Request((string) ($args['method'] ?? 'POST'), $parsed['path'] ?? $path);
-            if (!empty($parsed['query'])) {
-                $query = [];
-                parse_str($parsed['query'], $query);
-                $single->set_query_params($query);
+        foreach (BatchRequest::describe($batch_request['requests'] ?? []) as $described) {
+            $single = new WP_REST_Request($described['method'], $described['path']);
+            if ($described['query'] !== []) {
+                $single->set_query_params($described['query']);
             }
-            if (isset($args['body'])) {
-                $single->set_body_params((array) $args['body']);
+            if ($described['body'] !== null) {
+                $single->set_body_params($described['body']);
             }
-            if (isset($args['headers'])) {
-                $single->set_headers((array) $args['headers']);
+            if ($described['headers'] !== null) {
+                $single->set_headers($described['headers']);
             }
             $responses[] = $this->envelope_response($this->dispatch($single), false)->get_data();
         }

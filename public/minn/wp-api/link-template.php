@@ -2,6 +2,7 @@
 /** URLs of the site and its pieces. */
 
 use Minn\Front\Pagination;
+use Minn\Front\PostNavigation;
 use Minn\Media\Uploads;
 use Minn\Runtime\Runtime;
 
@@ -543,17 +544,11 @@ function get_adjacent_post_link($format, $link, $in_same_term = false, $excluded
 {
     $post = get_adjacent_post($in_same_term, $excluded_terms, $previous, $taxonomy);
     $adjacent = $previous ? 'previous' : 'next';
-    if (!$post instanceof WP_Post) {
-        $output = '';
-    } else {
-        $title = get_the_title($post);
-        if ($title === '') {
-            $title = $previous ? 'Previous Post' : 'Next Post';
-        }
+    $output = '';
+    if ($post instanceof WP_Post) {
+        $title = get_the_title($post) ?: ($previous ? 'Previous Post' : 'Next Post');
         $title = apply_filters('the_title', $title, $post->ID);
-        $rel = $previous ? 'prev' : 'next';
-        $anchor = '<a href="' . esc_url((string) get_permalink($post)) . '" rel="' . $rel . '">' . str_replace('%title', $title, $link) . '</a>';
-        $output = str_replace('%link', $anchor, $format);
+        $output = PostNavigation::link((string) get_permalink($post), $title, $format, $link, $previous);
     }
     return apply_filters("{$adjacent}_post_link", $output, $format, $link, $post, $adjacent);
 }
@@ -581,12 +576,7 @@ function next_post_link($format = '%link &raquo;', $link = '%title', $in_same_te
 /** The nav block wrapping both adjacent links; empty when neither exists. */
 function get_the_post_navigation($args = [])
 {
-    // Captured precedence: an explicit aria_label wins; otherwise a
-    // caller-supplied screen_reader_text drives the label, and only with
-    // neither does the default stand.
-    if (is_array($args) && !empty($args['screen_reader_text']) && empty($args['aria_label'])) {
-        $args['aria_label'] = $args['screen_reader_text'];
-    }
+    $ariaLabel = PostNavigation::ariaLabel(is_array($args) ? $args : [], 'Posts');
     $args = wp_parse_args($args, [
         'prev_text' => '%title',
         'next_text' => '%title',
@@ -602,7 +592,7 @@ function get_the_post_navigation($args = [])
     if ($previous === '' && $next === '') {
         return '';
     }
-    return _navigation_markup($previous . $next, (string) $args['class'], (string) $args['screen_reader_text'], (string) $args['aria_label']);
+    return _navigation_markup($previous . $next, (string) $args['class'], (string) $args['screen_reader_text'], $ariaLabel);
 }
 
 function the_post_navigation($args = [])

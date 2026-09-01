@@ -2,12 +2,12 @@
     "generated": "2026-09-01",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 324,
-        "composes": 683,
+        "minn": 329,
+        "composes": 678,
         "leaf": 344,
         "noop": 1198,
         "functions": 2543,
-        "minnMethods": 369,
+        "minnMethods": 374,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -4665,12 +4665,12 @@
         },
         "WP_REST_Server::serve_batch_request_v1": {
             "file": "classes/WP_REST_Server.php",
-            "lines": 19,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "wp_parse_url"
-            ]
+            "lines": 15,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Rest\\BatchRequest::describe"
+            ],
+            "composes": []
         },
         "WP_REST_Server::serve_request": {
             "file": "classes/WP_REST_Server.php",
@@ -10458,12 +10458,13 @@
         },
         "get_adjacent_post_link": {
             "file": "link-template.php",
-            "lines": 15,
-            "kind": "composes",
-            "minn": [],
+            "lines": 9,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Front\\PostNavigation::link"
+            ],
             "composes": [
                 "apply_filters",
-                "esc_url",
                 "get_adjacent_post",
                 "get_permalink",
                 "get_the_title"
@@ -13033,12 +13034,13 @@
         },
         "get_the_category_list": {
             "file": "taxonomy.php",
-            "lines": 19,
-            "kind": "composes",
-            "minn": [],
+            "lines": 9,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Content\\TermLinks::categories"
+            ],
             "composes": [
                 "apply_filters",
-                "esc_url",
                 "get_category_link",
                 "get_the_category"
             ]
@@ -13161,9 +13163,11 @@
         },
         "get_the_post_navigation": {
             "file": "link-template.php",
-            "lines": 22,
-            "kind": "composes",
-            "minn": [],
+            "lines": 17,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Front\\PostNavigation::ariaLabel"
+            ],
             "composes": [
                 "_navigation_markup",
                 "wp_parse_args"
@@ -13227,11 +13231,12 @@
         "get_the_term_list": {
             "file": "taxonomy.php",
             "lines": 17,
-            "kind": "composes",
-            "minn": [],
+            "kind": "minn",
+            "minn": [
+                "Minn\\Content\\TermLinks::joined"
+            ],
             "composes": [
                 "apply_filters",
-                "esc_url",
                 "get_term_link",
                 "get_the_terms",
                 "is_wp_error"

@@ -1,4 +1,6 @@
 <?php
+
+use Minn\Content\TermLinks;
 /** Terms and taxonomies. Behaviour from contracts/fixtures/api/content.json. */
 
 use Minn\Content\Terms;
@@ -1019,15 +1021,15 @@ function get_the_term_list($post_id, $taxonomy, $before = '', $sep = '', $after 
     if (empty($terms)) {
         return false;
     }
-    $links = [];
+    $rows = [];
     foreach ($terms as $term) {
         $link = get_term_link($term, $taxonomy);
         if (is_wp_error($link)) {
             return $link;
         }
-        $links[] = '<a href="' . esc_url((string) $link) . '" rel="tag">' . $term->name . '</a>';
+        $rows[] = ['name' => $term->name, 'url' => (string) $link];
     }
-    $links = apply_filters("term_links-{$taxonomy}", $links); // phpcs:ignore
+    $links = apply_filters("term_links-{$taxonomy}", array_map(static fn (array $row): string => TermLinks::joined([$row], 'tag', ''), $rows)); // phpcs:ignore
     return $before . implode($sep, $links) . $after;
 }
 
@@ -1047,19 +1049,9 @@ function get_the_category_list($separator = '', $parents = '', $post_id = false)
     if (empty($categories)) {
         return apply_filters('the_category', '', $separator, $parents);
     }
-    $list = '';
-    if ($separator === '') {
-        $list .= '<ul class="post-categories">';
-        foreach ($categories as $category) {
-            $list .= "\n\t<li><a href=\"" . esc_url((string) get_category_link($category->term_id)) . '" rel="category tag">' . $category->name . '</a></li>';
-        }
-        $list .= '</ul>';
-    } else {
-        $links = [];
-        foreach ($categories as $category) {
-            $links[] = '<a href="' . esc_url((string) get_category_link($category->term_id)) . '" rel="category tag">' . $category->name . '</a>';
-        }
-        $list = implode($separator, $links);
+    $rows = [];
+    foreach ($categories as $category) {
+        $rows[] = ['name' => $category->name, 'url' => (string) get_category_link($category->term_id)];
     }
-    return apply_filters('the_category', $list, $separator, $parents);
+    return apply_filters('the_category', TermLinks::categories($rows, $separator), $separator, $parents);
 }
