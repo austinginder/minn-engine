@@ -59,7 +59,13 @@ restore_theme() {
 	[ -n "$saved_template" ] && ( cd ../public && $WP option update template "$saved_template" >/dev/null 2>&1 && $WP option update stylesheet "$saved_stylesheet" >/dev/null 2>&1 )
 }
 cleanup() { stop_references; restore_theme; restore_locale; }
+# EXIT alone does not fire when the run is signalled (a killed background
+# job, a Ctrl-C, a harness timeout), and a run that dies mid-way leaves the
+# dev site stranded on twentytwentyfive with the marketing theme switched
+# off. Catch the signals too, then exit through the same path.
 trap cleanup EXIT
+trap 'cleanup; trap - EXIT; exit 130' INT
+trap 'cleanup; trap - EXIT; exit 143' TERM HUP
 pin_theme
 pin_locale
 start_reference "$PWD/../wp-reference" 8123

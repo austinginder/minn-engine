@@ -1464,3 +1464,40 @@ match the reference.
   `wp_filter_content_tags` at 12 to fit out images; the engine renders
   images through `Blocks\ImageTags` on the way out instead, so adding it
   would fit the same images twice.
+
+## What a failure looks like (2026-09-01)
+
+`Minn\Http\Failure` is the whole public face of an error, and the engine's
+boundary is `Engine::serve()`: a database connection failure answers 503
+"Error establishing a database connection", missing salts and any uncaught
+Throwable answer 500 "Something went wrong", and a PHP fatal that never
+becomes a Throwable is caught by a shutdown handler that sends the same
+500. Detail never reaches the page; it goes to the log as one line,
+`Minn Engine: {class}: {message} in {file}:{line}`.
+
+Observed, with WP_DEBUG_LOG on and WP_DEBUG_DISPLAY off:
+
+| Case | Response | Log |
+|---|---|---|
+| Undefined function in a plugin | 500 page | `Error: Call to undefined function …` |
+| Uncaught exception | 500 page | `RuntimeException: …` |
+| TypeError from bad arguments | 500 page | `TypeError: …` |
+| Fatal after output began | 500 page | `Error: …` |
+| `E_USER_WARNING` | page renders normally | PHP's own warning line |
+| Undefined array key | page renders normally | PHP's own notice line |
+| Exception in a REST handler | 500 HTML page | `RuntimeException: …` |
+| A plugin that will not parse | site keeps serving, plugin skipped | `plugin X failed while loading: syntax error …` |
+
+Two facts worth keeping: a REST failure answers HTML, not JSON, and the
+reference does the same (its own "WordPress › Error" page), so that is
+parity rather than a gap. And a plugin with a syntax error is skipped by
+the symbol gate instead of taking the site down, which is better than the
+reference's behaviour.
+
+GAP: WordPress has recovery mode (it emails the administrator a link that
+loads the site with the broken plugin paused). The engine has no
+equivalent; a fatal is invisible until someone reads the log.
+
+`public/wp-content/mu-plugins/minn-error-lab.php` on the dev site triggers
+each case on demand (`/?minn-error=fatal|exception|error|warning|notice|late`,
+plus `/wp-json/minn-error-lab/v1/boom`). It is inert without the parameter.
