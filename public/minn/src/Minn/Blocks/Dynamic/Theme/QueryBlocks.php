@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Blocks\Dynamic\Theme;
 
+use Minn\Content\PostRecord;
 use Minn\Blocks\Block;
 use Minn\Content\Page;
 use Minn\Content\PostFilter;
@@ -114,7 +115,7 @@ final class QueryBlocks
     }
 
     /** @return list<string> */
-    private function postClasses(array $post, bool $sticky): array
+    private function postClasses(array|PostRecord $post, bool $sticky): array
     {
         $id = (int) $post['ID'];
         $type = (string) $post['post_type'];

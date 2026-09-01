@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
+use Minn\Content\PostRecord;
 use Minn\Content\Blocks;
 use Minn\Content\PostFilter;
 use Minn\Content\Excerpt;
@@ -94,7 +95,7 @@ final readonly class Renderer
             . '</body></html>';
     }
 
-    private function pageClasses(array $page): array
+    private function pageClasses(array|PostRecord $page): array
     {
         $classes = ['page', 'page-id-' . (int) $page['ID']];
         $hasChildren = (int) $this->db->value(
@@ -111,7 +112,7 @@ final readonly class Renderer
         return $classes;
     }
 
-    private function article(array $post): string
+    private function article(array|PostRecord $post): string
     {
         $body = PasswordGate::is($post)
             ? PasswordGate::form($post, $this->permalinks->url(''), $this->permalinks->forPost($post))

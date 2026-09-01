@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Content\PostRecord;
 use Minn\Content\Posts;
 use Minn\Content\PostWriter;
 use Minn\Content\Site;
@@ -338,13 +339,13 @@ final readonly class MediaController
         return Reply::item(['deleted' => true, 'previous' => $previous], Fields::fromQuery($request->query));
     }
 
-    private function attachment(int $id): array
+    private function attachment(int $id): PostRecord
     {
-        $row = $this->posts->find($id);
-        if ($row === null || $row['post_type'] !== 'attachment') {
+        $post = $this->posts->find($id);
+        if ($post === null || !$post->isAttachment()) {
             throw new RestError('rest_post_invalid_id', 'Invalid post ID.', 404);
         }
-        return $row;
+        return $post;
     }
 
     private function setMetaValue(int $id, string $key, string $value): void

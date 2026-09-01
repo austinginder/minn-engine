@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Content\PostRecord;
+
 /**
  * The Discussion setting that closes comments on old posts. Observed on the
  * reference: only the "post" type closes (the types filter changes nothing),
@@ -17,7 +19,7 @@ final readonly class CommentCloser
     {
     }
 
-    public function open(bool $open, ?array $post, int $now): bool
+    public function open(bool $open, array|PostRecord|null $post, int $now): bool
     {
         if (!$open || !$this->enabled || $this->days <= 0 || $post === null) {
             return $open;

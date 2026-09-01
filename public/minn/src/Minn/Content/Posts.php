@@ -8,8 +8,8 @@ use Minn\Db;
 use Minn\Content\Reader;
 
 /**
- * Reads over the posts table for the public front end. Every method
- * returns raw rows; rendering and escaping happen elsewhere.
+ * Reads over the posts table. A single post comes back as a PostRecord and
+ * a listing as a Page of them; rendering and escaping happen elsewhere.
  */
 final readonly class Posts
 {
@@ -17,21 +17,27 @@ final readonly class Posts
     {
     }
 
-    public function find(int $id): ?array
+    /** @param array<string, mixed>|null $row */
+    private static function record(?array $row): ?PostRecord
     {
-        return $this->db->row("SELECT * FROM {$this->db->table('posts')} WHERE ID = ? LIMIT 1", [$id]);
+        return $row === null ? null : PostRecord::fromRow($row);
+    }
+
+    public function find(int $id): ?PostRecord
+    {
+        return self::record($this->db->row("SELECT * FROM {$this->db->table('posts')} WHERE ID = ? LIMIT 1", [$id]));
     }
 
     /** @param list<string> $types */
-    public function findByName(string $name, array $types, bool $publishedOnly = true): ?array
+    public function findByName(string $name, array $types, bool $publishedOnly = true): ?PostRecord
     {
         $status = $publishedOnly ? "AND post_status = 'publish'" : "AND post_status <> 'trash'";
-        return $this->db->row(
+        return self::record($this->db->row(
             "SELECT * FROM {$this->db->table('posts')}
              WHERE post_name = ? AND post_type IN (?) {$status}
              ORDER BY post_date DESC LIMIT 1",
             [$name, $types],
-        );
+        ));
     }
 
     /**
@@ -42,15 +48,15 @@ final readonly class Posts
      *
      * @param list<string> $types
      */
-    public function byOldSlug(string $slug, array $types): ?array
+    public function byOldSlug(string $slug, array $types): ?PostRecord
     {
-        return $this->db->row(
+        return self::record($this->db->row(
             "SELECT p.* FROM {$this->db->table('posts')} p
              INNER JOIN {$this->db->table('postmeta')} m ON m.post_id = p.ID
              WHERE m.meta_key = '_wp_old_slug' AND m.meta_value = ? AND p.post_type IN (?)
              ORDER BY p.ID LIMIT 1",
             [$slug, $types],
-        );
+        ));
     }
 
     /**
@@ -59,7 +65,7 @@ final readonly class Posts
      *
      * @param list<string> $segments
      */
-    public function pageByPath(array $segments, bool $publishedOnly = true): ?array
+    public function pageByPath(array $segments, bool $publishedOnly = true): ?PostRecord
     {
         $parent = 0;
         $page = null;
@@ -75,11 +81,11 @@ final readonly class Posts
             }
             $parent = (int) $page['ID'];
         }
-        return $page;
+        return self::record($page);
     }
 
     /** The slash-joined ancestry of a page: "sample-page/docs". */
-    public function pathOf(array $page): string
+    public function pathOf(array|PostRecord $page): string
     {
         $parts = [$page['post_name']];
         $parentId = (int) $page['post_parent'];
@@ -103,7 +109,7 @@ final readonly class Posts
      * order the reference follows when it guesses a destination for a
      * missing URL.
      */
-    public function guess(string $prefix): ?array
+    public function guess(string $prefix): ?PostRecord
     {
         foreach (['page', 'post'] as $type) {
             $exact = $this->findByName($prefix, [$type]);
@@ -117,7 +123,7 @@ final readonly class Posts
                 [addcslashes($prefix, '%_\\') . '%', $type],
             );
             if ($like !== null) {
-                return $like;
+                return self::record($like);
             }
         }
         return null;
@@ -127,7 +133,7 @@ final readonly class Posts
      * A page of published posts for an archive.
      *
      * @param array{term?: int, author?: int, from?: string, to?: string, search?: string, types?: list<string>} $filter
-     * @return array{posts: list<array>, total: int}
+     * The sticky posts first, then the page, as the reference fills page one.
      */
     /** The published posts of one type, newest first: the everyday listing. */
     public function published(string $type = 'post', int $page = 1, int $perPage = 10): Page
@@ -156,7 +162,7 @@ final readonly class Posts
             "SELECT DISTINCT p.* {$from} ORDER BY {$order} LIMIT ? OFFSET ?",
             [...$params, $perPage, ($page - 1) * $perPage],
         );
-        return new Page($rows, $total);
+        return new Page(PostRecord::fromRows($rows), $total);
     }
 
     /**
@@ -249,17 +255,17 @@ final readonly class Posts
     }
 
     /** The adjacent published post by date; previous = older, next = newer. */
-    public function adjacent(array $post, bool $next): ?array
+    public function adjacent(array|PostRecord $post, bool $next): ?PostRecord
     {
         $operator = $next ? '>' : '<';
         $order = $next ? 'ASC' : 'DESC';
-        return $this->db->row(
+        return self::record($this->db->row(
             "SELECT * FROM {$this->db->table('posts')}
              WHERE post_type = ? AND post_status = 'publish'
                AND (post_date {$operator} ? OR (post_date = ? AND ID {$operator} ?))
              ORDER BY post_date {$order}, ID {$order} LIMIT 1",
             [$post['post_type'], $post['post_date'], $post['post_date'], (int) $post['ID']],
-        );
+        ));
     }
 
     /** Published pages as a parent => children map, ordered by menu_order then title. */
@@ -289,16 +295,16 @@ final readonly class Posts
         if ($stickyIds === []) {
             return $this->archive($filter, $page, $perPage);
         }
-        $sticky = $this->db->rows(
+        $sticky = PostRecord::fromRows($this->db->rows(
             "SELECT * FROM {$this->db->table('posts')} WHERE ID IN (?) AND post_status = 'publish' AND post_type = 'post' ORDER BY post_date DESC",
             [$stickyIds],
-        );
+        ));
         $result = $this->archive($filter, $page, $perPage);
         if ($page > 1) {
             return $result;
         }
-        $stickySet = array_flip(array_map(static fn (array $p) => (int) $p['ID'], $sticky));
-        $notSticky = static fn (array $p): bool => !isset($stickySet[(int) $p['ID']]);
+        $stickySet = array_flip(array_map(static fn (PostRecord $p) => $p->id, $sticky));
+        $notSticky = static fn (PostRecord $p): bool => !isset($stickySet[$p->id]);
         if ($stickyExtra) {
             // A query block keeps its full page of posts and adds the sticky ones on top.
             $others = $this->archive($filter, 1, $perPage + count($sticky));
@@ -329,13 +335,13 @@ final readonly class Posts
     }
 
     /** The newest autosave of a post by one author, or null. */
-    public function newestAutosave(int $postId, int $userId): ?array
+    public function newestAutosave(int $postId, int $userId): ?PostRecord
     {
-        return $this->db->row(
+        return self::record($this->db->row(
             "SELECT * FROM {$this->db->table('posts')} WHERE post_parent = ? AND post_type = 'revision' AND post_name LIKE ? AND post_author = ?
              ORDER BY post_modified DESC, ID DESC LIMIT 1",
             [$postId, $postId . '-autosave%', $userId],
-        );
+        ));
     }
 
     /** Reusable blocks (wp_block rows) in one status, newest first, capped at 100. */

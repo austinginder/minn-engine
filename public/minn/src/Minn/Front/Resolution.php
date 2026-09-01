@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
+use Minn\Content\PostRecord;
+
 /**
  * The outcome of resolving a public URL: which kind of thing it names,
  * the record behind it, and the page number for paginated views. Redirects
@@ -12,12 +14,12 @@ namespace Minn\Front;
 final readonly class Resolution
 {
     /**
-     * @param array<string, mixed>|null $record the post, term, or user row
+     * @param array<string, mixed>|PostRecord|null $record the post, term, or user row
      * @param array{0: int, 1: ?int, 2: ?int}|null $date year, month, day
      */
     private function __construct(
         public Kind $kind,
-        public ?array $record = null,
+        public array|PostRecord|null $record = null,
         public int $paged = 1,
         public ?string $location = null,
         public int $status = 200,
@@ -43,18 +45,18 @@ final readonly class Resolution
         return new self(Kind::Home, paged: $paged);
     }
 
-    public static function single(array $post, int $paged = 1): self
+    public static function single(array|PostRecord $post, int $paged = 1): self
     {
         return new self($post['post_type'] === 'page' ? Kind::Page : Kind::Single, $post, $paged);
     }
 
-    public static function frontPage(array $page, int $paged = 1): self
+    public static function frontPage(array|PostRecord $page, int $paged = 1): self
     {
         return new self(Kind::Page, $page, $paged, front: true);
     }
 
     /** The page that stands for the blog: a home listing whose record is the page. */
-    public static function postsPage(array $page, int $paged = 1): self
+    public static function postsPage(array|PostRecord $page, int $paged = 1): self
     {
         return new self(Kind::Home, $page, $paged, postsPage: true);
     }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
+use Minn\Content\PostRecord;
 use Closure;
 use Minn\Runtime\Registry;
 use Minn\Runtime\Runtime;
@@ -78,7 +79,7 @@ final readonly class Permalinks
         return $this->home . $path;
     }
 
-    public function forPost(array $post): string
+    public function forPost(array|PostRecord $post): string
     {
         $id = (int) $post['ID'];
         if ($post['post_type'] === 'page') {
@@ -99,7 +100,7 @@ final readonly class Permalinks
         return $this->url('/' . ltrim($this->fill($post), '/'));
     }
 
-    public function forPage(array $page): string
+    public function forPage(array|PostRecord $page): string
     {
         if ($this->frontPageId > 0 && (int) $page['ID'] === $this->frontPageId) {
             return $this->url('/');
@@ -108,7 +109,7 @@ final readonly class Permalinks
     }
 
     /** A page's own pretty path, even for the static front page (its comments feed lives there). */
-    public function pagePath(array $page): string
+    public function pagePath(array|PostRecord $page): string
     {
         if (!$this->isPretty() || !$this->hasPrettyLink($page)) {
             return $this->url('/?page_id=' . (int) $page['ID']);
@@ -121,7 +122,7 @@ final readonly class Permalinks
      * when attached, at the root when not, or the query form under plain
      * permalinks.
      */
-    public function forAttachment(array $attachment): string
+    public function forAttachment(array|PostRecord $attachment): string
     {
         $id = (int) $attachment['ID'];
         if (!$this->isPretty() || $attachment['post_name'] === '') {
@@ -208,12 +209,12 @@ final readonly class Permalinks
         return "#^{$regex}$#";
     }
 
-    private function hasPrettyLink(array $post): bool
+    private function hasPrettyLink(array|PostRecord $post): bool
     {
         return in_array($post['post_status'], ['publish', 'private'], true) && $post['post_name'] !== '';
     }
 
-    private function fill(array $post): string
+    private function fill(array|PostRecord $post): string
     {
         $time = strtotime((string) $post['post_date']) ?: 0;
         $author = null;

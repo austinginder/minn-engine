@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Content\PostRecord;
 use Minn\Content\Blocks;
 use Minn\Content\Posts;
 use Minn\Content\Revisions;
@@ -93,7 +94,7 @@ final readonly class RevisionsController
     }
 
     /** One revision row as wp/v2 serves it (autosaves and revisions alike). */
-    public function object(array $r, bool $withPreview = false): array
+    public function object(array|PostRecord $r, bool $withPreview = false): array
     {
         $id = (int) $r['ID'];
         $parent = (int) $r['post_parent'];

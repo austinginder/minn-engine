@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
+use Minn\Content\PostRecord;
 use Closure;
 use Minn\Content\Posts;
 use Minn\Content\PostFilter;
@@ -542,7 +543,7 @@ final readonly class Resolver
         return Resolution::redirect($link);
     }
 
-    private function singleOrRedirect(array $post, int $paged, bool $forceRedirect): Resolution
+    private function singleOrRedirect(array|PostRecord $post, int $paged, bool $forceRedirect): Resolution
     {
         if (!$this->readable($post)) {
             return Resolution::notFound();
@@ -551,7 +552,7 @@ final readonly class Resolver
         return $forceRedirect && !str_contains($link, '?') ? Resolution::redirect($link) : Resolution::single($post, $paged);
     }
 
-    private function readable(array $post): bool
+    private function readable(array|PostRecord $post): bool
     {
         if ($post['post_status'] === 'publish') {
             return true;

@@ -155,6 +155,24 @@ foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root, Fil
         }
     }
 }
+// The record ratchet: rows are becoming PostRecord. Two counts only fall: the
+// array|PostRecord unions that bridge callers still holding rows, and the
+// bracket reads of post columns that the record's properties replace.
+$unionCeiling = 58;
+$bracketCeiling = 572;
+$unions = 0;
+$brackets = 0;
+foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root, FilesystemIterator::SKIP_DOTS)) as $file) {
+    if ($file->getExtension() !== 'php') {
+        continue;
+    }
+    $src = (string) file_get_contents($file->getPathname());
+    $unions += preg_match_all('/array\|PostRecord|PostRecord\|array/', $src);
+    $brackets += preg_match_all("/\['(?:post_[a-z_]+|ID|guid|menu_order|comment_count|comment_status|ping_status)'\]/", $src);
+}
+$check("engine: array|PostRecord bridges stay at or under {$unionCeiling}", $unions <= $unionCeiling, (string) $unions);
+$check("engine: bracket reads of post columns stay at or under {$bracketCeiling}", $brackets <= $bracketCeiling, (string) $brackets);
+
 $check("engine: methods over eighty lines stay at or under {$longMethodCeiling}", count($longMethods) <= $longMethodCeiling, count($longMethods) . ': ' . implode(', ', $longMethods));
 $check("engine: classes over six hundred lines stay at or under {$bigClassCeiling}", count($bigClasses) <= $bigClassCeiling, count($bigClasses) . ': ' . implode(', ', $bigClasses));
 

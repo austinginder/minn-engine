@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Content\PostRecord;
 use Minn\Content\Comments;
 use Minn\Content\Posts;
 use Minn\Content\Site;
@@ -136,7 +137,7 @@ final readonly class CommentsController
     }
 
     /** A comment in the queue is announced to the site's address when moderation_notify is on. */
-    private function notifyModerator(array $post, string $content, string $author): void
+    private function notifyModerator(array|PostRecord $post, string $content, string $author): void
     {
         $siteName = (string) ($this->site->option('blogname') ?? 'Site');
         $home = rtrim((string) ($this->site->option('home') ?? ''), '/');

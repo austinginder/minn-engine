@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
+use Minn\Content\PostRecord;
 use Minn\Auth\AuthCookies;
 use Minn\Auth\Authenticated;
 use Minn\Auth\Authenticator;
@@ -150,7 +151,7 @@ final readonly class CommentPostController
         return substr(hash_hmac('md5', 'comment-' . $commentId, \Minn\Auth\Salts::for('nonce')), 0, 32);
     }
 
-    private function notifyModerator(array $post, string $content, string $author): void
+    private function notifyModerator(array|PostRecord $post, string $content, string $author): void
     {
         $siteName = (string) ($this->site->option('blogname') ?? 'Site');
         $home = rtrim((string) ($this->site->option('home') ?? ''), '/');

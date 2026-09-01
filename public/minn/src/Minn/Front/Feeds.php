@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
+use Minn\Content\PostRecord;
 use Minn\Content\Blocks;
 use Minn\Content\Comments;
 use Minn\Content\Excerpt;
@@ -80,7 +81,7 @@ final readonly class Feeds
         return $out . "</channel>\n</rss>\n";
     }
 
-    private function rssItem(array $post): string
+    private function rssItem(array|PostRecord $post): string
     {
         $link = $this->permalinks->forPost($post);
         $count = $this->commentCount((int) $post['ID']);
@@ -196,7 +197,7 @@ final readonly class Feeds
     }
 
     /** The site's or one post's comments as RSS 2.0. */
-    public function comments(?array $post, string $selfUrl): string
+    public function comments(array|PostRecord|null $post, string $selfUrl): string
     {
         $comments = $post === null
             ? $this->db->rows("SELECT c.* FROM {$this->db->table('comments')} c INNER JOIN {$this->db->table('posts')} p ON p.ID = c.comment_post_ID AND p.post_status = 'publish' AND p.post_password = '' WHERE c.comment_approved = '1' AND c.comment_type IN ('', 'comment') ORDER BY c.comment_date_gmt DESC LIMIT ?", [$this->perFeed()])
@@ -243,7 +244,7 @@ final readonly class Feeds
     }
 
     /** Post content as a feed carries it: whole, with the more tag as its anchor. */
-    private function content(array $post): string
+    private function content(array|PostRecord $post): string
     {
         if (PasswordGate::is($post)) {
             return PasswordGate::form($post, $this->permalinks->url(''), $this->permalinks->forPost($post));
@@ -279,13 +280,13 @@ final readonly class Feeds
         return (int) $this->db->value("SELECT COUNT(*) FROM {$this->db->table('comments')} WHERE comment_post_ID = ? AND comment_approved = '1'", [$postId]);
     }
 
-    private function authorName(array $post): string
+    private function authorName(array|PostRecord $post): string
     {
         return (string) ($this->users->find((int) $post['post_author'])['display_name'] ?? '');
     }
 
     /** Category names then tag names. @return list<string> */
-    private function termNames(array $post): array
+    private function termNames(array|PostRecord $post): array
     {
         $names = [];
         foreach (['category', 'post_tag'] as $taxonomy) {
@@ -305,7 +306,7 @@ final readonly class Feeds
         return str_replace(']]>', ']]]]><![CDATA[>', $text);
     }
 
-    private function plainExcerpt(array $post): string
+    private function plainExcerpt(array|PostRecord $post): string
     {
         if (PasswordGate::is($post)) {
             return PasswordGate::EXCERPT;

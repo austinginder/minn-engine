@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Blocks;
 
+use Minn\Content\PostRecord;
 use Minn\Front\Kind;
 use Minn\Front\Resolution;
 
@@ -14,12 +15,12 @@ use Minn\Front\Resolution;
  */
 final class Context
 {
-    /** @var list<array> */
+    /** @var list<array|PostRecord> */
     private array $postStack = [];
     private ?array $comment = null;
 
     /**
-     * @param list<array> $posts the main query's page of posts
+     * @param list<PostRecord> $posts the main query's page of posts
      */
     public function __construct(
         public readonly Resolution $resolution,
@@ -35,7 +36,7 @@ final class Context
         return new self(Resolution::home(), [], 0, 10, false);
     }
 
-    public function post(): ?array
+    public function post(): array|PostRecord|null
     {
         if ($this->postStack !== []) {
             return $this->postStack[count($this->postStack) - 1];
@@ -43,7 +44,7 @@ final class Context
         return in_array($this->resolution->kind, [Kind::Single, Kind::Page], true) ? $this->resolution->record : null;
     }
 
-    public function pushPost(array $post): void
+    public function pushPost(array|PostRecord $post): void
     {
         $this->postStack[] = $post;
     }

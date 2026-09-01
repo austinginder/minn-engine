@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Blocks\Dynamic\Theme;
 
+use Minn\Content\PostRecord;
 use Minn\Blocks\Block;
 use Minn\Blocks\Dynamic\Dates;
 use Minn\Blocks\Layout;
@@ -242,13 +243,14 @@ final readonly class PostBlocks
      * @param list<string> $classes
      */
     /** On a preview, the reader's newest autosave of this post stands in for its stored fields. */
-    private function previewSource(array $post, \Minn\Front\Resolution $resolution): ?array
+    private function previewSource(array|PostRecord $post, \Minn\Front\Resolution $resolution): ?array
     {
         if (!$resolution->preview || $resolution->id() !== (int) $post['ID']) {
             return null;
         }
         $autosave = $this->posts->newestAutosave((int) $post['ID'], Reader::current()->userId);
-        return $autosave === null ? null : ['post_content' => $autosave['post_content'], 'post_title' => $autosave['post_title'], 'post_password' => $post['post_password'], 'post_status' => $post['post_status']] + $post;
+        $row = $post instanceof PostRecord ? $post->row() : $post;
+        return $autosave === null ? null : ['post_content' => $autosave->content, 'post_title' => $autosave->title, 'post_password' => $row['post_password'], 'post_status' => $row['post_status']] + $row;
     }
 
     private static function target(Block $block): string

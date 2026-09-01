@@ -53,6 +53,8 @@ function get_post($post = null, $output = OBJECT, $filter = 'raw')
     }
     if ($post instanceof WP_Post) {
         $object = $post;
+    } elseif ($post instanceof Minn\Content\PostRecord) {
+        $object = new WP_Post((object) $post->row());
     } elseif (is_object($post) && isset($post->ID)) {
         $object = new WP_Post($post);
     } elseif (is_array($post) && isset($post['ID'])) {
@@ -66,7 +68,7 @@ function get_post($post = null, $output = OBJECT, $filter = 'raw')
             if ($row === null) {
                 return null;
             }
-            $object = new WP_Post((object) $row);
+            $object = new WP_Post((object) $row->row());
             wp_cache_set((int) $post, $object, 'posts');
         }
     }

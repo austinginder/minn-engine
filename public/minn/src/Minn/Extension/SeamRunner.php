@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Extension;
 
+use Minn\Content\PostRecord;
 use Closure;
 use Minn\Blocks\Block;
 
@@ -36,12 +37,17 @@ final readonly class SeamRunner
         return $html;
     }
 
-    /** Shortcodes, then the content filters, over rendered post content. */
-    public function filterContent(string $html, array $post): string
+    /**
+     * Shortcodes, then the content filters, over rendered post content. An
+     * extension's filter is promised the post as a row (contracts/extensions.md),
+     * so a record is handed over as one.
+     */
+    public function filterContent(string $html, array|PostRecord $post): string
     {
+        $row = $post instanceof PostRecord ? $post->row() : $post;
         $html = Shortcodes::apply($html, $this->registered->shortcodes, $this->seams);
         foreach ($this->registered->contentFilters as $filter) {
-            $html = $filter($html, $post);
+            $html = $filter($html, $row);
         }
         return $html;
     }

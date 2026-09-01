@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Content\PostRecord;
 use Minn\Content\Blocks;
 use Minn\Content\Posts;
 use Minn\Content\Slug;
@@ -30,7 +31,7 @@ final readonly class MediaObject
         return $this->url;
     }
 
-    public function build(array $p, bool $edit): array
+    public function build(array|PostRecord $p, bool $edit): array
     {
         $id = (int) $p['ID'];
         $meta = Metadata::parse($this->posts->meta($id, '_wp_attachment_metadata'));

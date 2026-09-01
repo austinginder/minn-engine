@@ -10,7 +10,7 @@ namespace Minn\Content;
  */
 final readonly class Page
 {
-    /** @param list<array<string, mixed>> $posts */
+    /** @param list<PostRecord> $posts */
     public function __construct(
         public array $posts,
         public int $total,
@@ -35,7 +35,7 @@ final readonly class Page
     /** @return list<int> */
     public function ids(): array
     {
-        return array_map(static fn (array $post) => (int) $post['ID'], $this->posts);
+        return array_map(static fn (PostRecord $post) => $post->id, $this->posts);
     }
 
     public function totalPages(int $perPage): int

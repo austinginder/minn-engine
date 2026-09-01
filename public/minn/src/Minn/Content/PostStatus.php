@@ -17,7 +17,7 @@ enum PostStatus: string
     case AutoDraft = 'auto-draft';
 
     /** A row's status, or null for a value no enum case spells (a plugin's own status). */
-    public static function of(array $row): ?self
+    public static function of(array|PostRecord $row): ?self
     {
         return self::tryFrom((string) ($row['post_status'] ?? ''));
     }

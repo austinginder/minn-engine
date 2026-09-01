@@ -39,7 +39,7 @@ final class Excerpt
      * texturizes before the tags go (so inline code keeps straight quotes)
      * where a listing texturizes the finished text.
      */
-    public static function render(array $post, bool $stopAtMore = true, bool $forFeed = false): string
+    public static function render(array|PostRecord $post, bool $stopAtMore = true, bool $forFeed = false): string
     {
         $source = (string) $post['post_excerpt'];
         if ($source === '') {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Theme;
 
+use Minn\Content\PostRecord;
 use Minn\Content\Blocks;
 use Minn\Content\PasswordGate;
 use Minn\Content\Texturize;
@@ -20,7 +21,7 @@ use Minn\Support\Html;
  */
 final class ClassicContent
 {
-    public static function render(array $post, ?string $moreLinkText): string
+    public static function render(array|PostRecord $post, ?string $moreLinkText): string
     {
         $permalinks = Runtime::current()->get('permalinks');
         if (!$permalinks instanceof Permalinks) {

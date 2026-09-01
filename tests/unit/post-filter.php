@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Minn\Content\Page;
 use Minn\Content\PostFilter;
+use Minn\Content\PostRecord;
 
 return [
     'the default filter is published posts of type post' => static fn () => PostFilter::all()->types === ['post'] && PostFilter::all()->term === null,
@@ -17,13 +18,14 @@ return [
             && $narrow->hasDates() && !$base->hasDates();
     },
     'a page counts its rows and knows its ids' => static function () {
-        $page = new Page([['ID' => '4', 'post_title' => 'a'], ['ID' => 9]], 23);
+        $page = new Page(PostRecord::fromRows([['ID' => '4', 'post_title' => 'a'], ['ID' => 9]]), 23);
         return $page->count() === 2 && $page->ids() === [4, 9] && $page->total === 23 && !$page->isEmpty();
     },
     'total pages rounds up and survives a zero page size' => static fn () => (new Page([], 23))->totalPages(10) === 3 && (new Page([], 23))->totalPages(0) === 0,
     'withPosts keeps the total and reindexes' => static function () {
-        $page = (new Page([['ID' => 1], ['ID' => 2]], 9))->withPosts([5 => ['ID' => 2]]);
-        return $page->posts === [['ID' => 2]] && $page->total === 9;
+        [$one, $two] = PostRecord::fromRows([['ID' => 1], ['ID' => 2]]);
+        $page = (new Page([$one, $two], 9))->withPosts([5 => $two]);
+        return $page->posts === [$two] && $page->total === 9;
     },
     'an empty page is empty' => static fn () => Page::empty()->isEmpty() && Page::empty()->total === 0,
 ];

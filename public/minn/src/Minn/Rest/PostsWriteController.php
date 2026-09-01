@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Content\PostRecord;
 use Minn\Auth\TypeCapabilities;
 use Minn\Content\PostStatus;
 use Minn\Content\Posts;
@@ -257,7 +258,7 @@ final readonly class PostsWriteController
     }
 
     /** The reference refuses a sticky and password combination outright. */
-    private function checkStickyPasswordConflict(array $body, ?array $post): void
+    private function checkStickyPasswordConflict(array $body, array|PostRecord|null $post): void
     {
         $wantsSticky = !empty($body['sticky'])
             || (!isset($body['sticky']) && $post !== null && $this->writer->isSticky((int) $post['ID']));

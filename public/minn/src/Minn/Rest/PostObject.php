@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Content\PostRecord;
 use Minn\Auth\TypeCapabilities;
 use Minn\Content\Blocks;
 use Minn\Content\Excerpt;
@@ -52,7 +53,7 @@ final readonly class PostObject
      * class list either. What it does carry is a template field and the
      * rendered menu.
      */
-    private function navigationView(array $p): array
+    private function navigationView(array|PostRecord $p): array
     {
         $protected = $p['post_password'] !== '';
         return [
@@ -76,7 +77,7 @@ final readonly class PostObject
         ];
     }
 
-    public function view(array $p): array
+    public function view(array|PostRecord $p): array
     {
         $id = (int) $p['ID'];
         $type = (string) $p['post_type'];
@@ -166,7 +167,7 @@ final readonly class PostObject
         return $object;
     }
 
-    public function links(array $p): array
+    public function links(array|PostRecord $p): array
     {
         $id = (int) $p['ID'];
         $type = (string) $p['post_type'];
@@ -211,7 +212,7 @@ final readonly class PostObject
      * password, permalink_template, generated_slug, block_version, Minn
      * Admin's registered list fields, and the cap-gated action links.
      */
-    public function edit(array $p, int $userId): array
+    public function edit(array|PostRecord $p, int $userId): array
     {
         $id = (int) $p['ID'];
         $view = $this->view($p);
@@ -260,7 +261,7 @@ final readonly class PostObject
      * in place (pages: the parent path plus %pagename%), or the query form
      * when permalinks are plain.
      */
-    public function permalinkTemplate(array $p): string
+    public function permalinkTemplate(array|PostRecord $p): string
     {
         $id = (int) $p['ID'];
         if (!$this->permalinks->isPretty()) {
@@ -278,7 +279,7 @@ final readonly class PostObject
     }
 
     /** Whether a live post carries an autosave newer than its saved revision. */
-    public function modifiedUnsaved(array $p, int $userId): bool
+    public function modifiedUnsaved(array|PostRecord $p, int $userId): bool
     {
         $id = (int) $p['ID'];
         if (!$this->caller->capabilities()->can($userId, 'edit_post', $id)) {
@@ -310,7 +311,7 @@ final readonly class PostObject
     }
 
     /** The view links plus the caller's verbs and cap-gated wp:action-* entries. */
-    public function editLinks(array $p, int $userId): array
+    public function editLinks(array|PostRecord $p, int $userId): array
     {
         $id = (int) $p['ID'];
         $type = (string) $p['post_type'];
