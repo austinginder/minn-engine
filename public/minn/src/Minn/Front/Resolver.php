@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
+use Minn\Content\UserRecord;
 use Minn\Content\PostRecord;
 use Closure;
 use Minn\Content\Posts;
@@ -255,9 +256,10 @@ final readonly class Resolver
             return $term === null || !$pretty ? Resolution::notFound() : Resolution::redirect($this->permalinks->forTerm($term));
         }
         if ($request->has('author')) {
-            $user = $this->db->row("SELECT ID, user_nicename, display_name FROM {$this->db->table('users')} WHERE ID = ? LIMIT 1", [(int) $request->query('author', '0')]);
+            $row = $this->db->row("SELECT ID, user_nicename, display_name FROM {$this->db->table('users')} WHERE ID = ? LIMIT 1", [(int) $request->query('author', '0')]);
+            $user = $row === null ? null : UserRecord::fromRow($row);
             if ($user !== null && !$canonical) {
-                return $this->authorArchive((string) $user['user_nicename'], 1);
+                return $this->authorArchive($user->nicename, 1);
             }
             return $user === null || !$pretty ? Resolution::notFound() : Resolution::redirect($this->permalinks->forAuthor($user));
         }
@@ -395,12 +397,13 @@ final readonly class Resolver
 
     private function authorArchive(string $name, int $paged): Resolution
     {
-        $user = $this->db->row(
+        $row = $this->db->row(
             "SELECT ID, user_nicename, display_name FROM {$this->db->table('users')} WHERE user_nicename = ? LIMIT 1",
             [$name],
         );
+        $user = $row === null ? null : UserRecord::fromRow($row);
         if ($user !== null) {
-            $total = $this->posts->count(PostFilter::all()->byAuthor((int) $user['ID']));
+            $total = $this->posts->count(PostFilter::all()->byAuthor($user->id));
             if ($paged > 1 && $paged > $this->pages($total)) {
                 return Resolution::notFound();
             }

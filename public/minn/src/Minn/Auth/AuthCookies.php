@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Auth;
 
+use Minn\Content\UserRecord;
 use Minn\Db;
 use Minn\Http\Response;
 
@@ -28,7 +29,7 @@ final readonly class AuthCookies
     }
 
     /** A non-persistent sign-in keeps the server expiry but sends session cookies the browser drops on close. */
-    public function attach(Response $response, array $user, int $expiration, string $token, bool $secure, bool $persistent = false): Response
+    public function attach(Response $response, UserRecord $user, int $expiration, string $token, bool $secure, bool $persistent = false): Response
     {
         $hash = $this->hash();
         $authName = ($secure ? 'wordpress_sec_' : 'wordpress_') . $hash;
@@ -58,7 +59,7 @@ final readonly class AuthCookies
     }
 
     /** A cookie value under any scheme's salt (auth, secure_auth, logged_in). */
-    public static function mint(array $user, int $expiration, string $token, string $scheme): string
+    public static function mint(UserRecord $user, int $expiration, string $token, string $scheme): string
     {
         $username = (string) $user['user_login'];
         $fragment = Password::fragment((string) $user['user_pass']);

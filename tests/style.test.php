@@ -159,6 +159,8 @@ foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root, Fil
 // array|PostRecord unions that bridge callers still holding rows, and the
 // bracket reads of post columns that the record's properties replace.
 $unionCeiling = 4;
+$userBracketCeiling = 132;
+$userBrackets = 0;
 $bracketCeiling = 260;
 $unions = 0;
 $brackets = 0;
@@ -168,10 +170,12 @@ foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root, Fil
     }
     $src = (string) file_get_contents($file->getPathname());
     $unions += preg_match_all('/array\|PostRecord|PostRecord\|array/', $src);
+    $userBrackets += preg_match_all("/\\['(?:user_[a-z_]+|display_name)'\\]/", $src);
     $brackets += preg_match_all("/\['(?:post_[a-z_]+|guid|menu_order|comment_count|comment_status|ping_status)'\]/", $src);
 }
 $check("engine: array|PostRecord bridges stay at or under {$unionCeiling}", $unions <= $unionCeiling, (string) $unions);
 $check("engine: bracket reads of post columns stay at or under {$bracketCeiling}", $brackets <= $bracketCeiling, (string) $brackets);
+$check("engine: bracket reads of user columns stay at or under {$userBracketCeiling}", $userBrackets <= $userBracketCeiling, (string) $userBrackets);
 
 $check("engine: methods over eighty lines stay at or under {$longMethodCeiling}", count($longMethods) <= $longMethodCeiling, count($longMethods) . ': ' . implode(', ', $longMethods));
 $check("engine: classes over six hundred lines stay at or under {$bigClassCeiling}", count($bigClasses) <= $bigClassCeiling, count($bigClasses) . ': ' . implode(', ', $bigClasses));

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Auth;
 
+use Minn\Content\UserRecord;
 use Minn\Content\Users;
 
 /**
@@ -22,7 +23,7 @@ final readonly class PasswordReset
     }
 
     /** Mints a key, stores its hash, returns the key for the link. */
-    public function issue(array $user): string
+    public function issue(UserRecord $user): string
     {
         $key = substr(str_replace(['+', '/', '='], '', base64_encode(random_bytes(24))), 0, 20);
         $this->users->update((int) $user['ID'], ['user_activation_key' => time() . ':' . self::hash($key)]);
@@ -30,13 +31,13 @@ final readonly class PasswordReset
     }
 
     /** True when the key matches the stored hash and has not expired. */
-    public function verify(array $user, string $key): bool
+    public function verify(UserRecord $user, string $key): bool
     {
         return $this->status($user, $key) === 'valid';
     }
 
     /** "valid", "expired" (a matching key past its day), or "invalid". */
-    public function status(array $user, string $key): string
+    public function status(UserRecord $user, string $key): string
     {
         $stored = (string) ($user['user_activation_key'] ?? '');
         if ($key === '' || !preg_match('/^(\d+):(.+)$/', $stored, $m)) {
@@ -48,7 +49,7 @@ final readonly class PasswordReset
         return (int) $m[1] + self::LIFETIME < time() ? 'expired' : 'valid';
     }
 
-    public function clear(array $user): void
+    public function clear(UserRecord $user): void
     {
         $this->users->update((int) $user['ID'], ['user_activation_key' => '']);
     }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
+use Minn\Content\UserRecord;
 use Minn\Content\PostRecord;
 use Minn\Auth\AuthCookies;
 use Minn\Auth\Authenticated;
@@ -128,7 +129,7 @@ final readonly class CommentPostController
     }
 
     /** A moderator's own comment is approved; otherwise the moderation settings decide. */
-    private function approval(?array $user, string $author, string $email): string
+    private function approval(?UserRecord $user, string $author, string $email): string
     {
         $moderator = $user !== null && $this->capabilities->can((int) $user['ID'], 'moderate_comments');
         return (new CommentModeration($this->comments))->approval($moderator, $author, $email, fn (string $name): ?string => $this->site->option($name));

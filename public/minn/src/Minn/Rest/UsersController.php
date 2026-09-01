@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Content\UserRecord;
 use Minn\Auth\Password;
 use Minn\Auth\Roles;
 use Minn\Content\Site;
@@ -106,8 +107,8 @@ final readonly class UsersController
             [...$params, ($page - 1) * $perPage, $perPage],
         );
         $objects = $context->isEdit()
-            ? array_map(fn (array $u) => $this->object->edit($u), $rows)
-            : array_map(fn (array $u) => $this->object->view($u, (int) $u['ID'] === $self), $rows);
+            ? array_map(fn (UserRecord $u) => $this->object->edit($u), UserRecord::fromRows($rows))
+            : array_map(fn (UserRecord $u) => $this->object->view($u, $u->id === $self), UserRecord::fromRows($rows));
         return Reply::list($objects, $total, (int) ceil($total / $perPage), Fields::fromQuery($request->query));
     }
 
@@ -135,7 +136,7 @@ final readonly class UsersController
     }
 
     /** A new account hears about itself with a link to choose a password. */
-    private function welcome(?array $user): void
+    private function welcome(?UserRecord $user): void
     {
         if ($user === null) {
             return;

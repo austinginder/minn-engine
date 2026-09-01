@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Content\UserRecord;
 use Minn\Content\Users;
 use Minn\Db;
 use Minn\Front\Permalinks;
@@ -31,7 +32,7 @@ final readonly class UserObject
         return $urls;
     }
 
-    public function view(array $u, bool $isSelf = false): array
+    public function view(UserRecord $u, bool $isSelf = false): array
     {
         $id = (int) $u['ID'];
         return [
@@ -59,7 +60,7 @@ final readonly class UserObject
      * capabilities map is the union of role primitives plus each role name
      * as a pseudo-capability, exactly as the reference emits.
      */
-    public function edit(array $u): array
+    public function edit(UserRecord $u): array
     {
         $id = (int) $u['ID'];
         $view = $this->view($u, true);

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Content\UserRecord;
 use Minn\Auth\ApplicationPasswords;
 use Minn\Auth\Authenticator;
 use Minn\Content\Site;
@@ -118,7 +119,7 @@ final readonly class ApplicationPasswordsController
     }
 
     /** The user the route names, after the availability, identity, and permission checks the reference makes. @return array<string, mixed> */
-    private function subject(Request $request, string $id, string $action): array
+    private function subject(Request $request, string $id, string $action): UserRecord
     {
         if (!Authenticator::applicationPasswordsAvailable($request)) {
             throw new RestError('application_passwords_disabled', 'Application passwords are not available.', 501);
@@ -143,7 +144,7 @@ final readonly class ApplicationPasswordsController
     }
 
     /** @param array<string, mixed> $user @return array<string, mixed> */
-    private function existing(array $user, string $uuid): array
+    private function existing(UserRecord $user, string $uuid): array
     {
         $record = $this->passwords->find((int) $user['ID'], strtolower($uuid));
         if ($record === null) {
@@ -162,7 +163,7 @@ final readonly class ApplicationPasswordsController
     }
 
     /** @param array<string, mixed> $user @param array<string, mixed> $record @return array<string, mixed> */
-    private function item(array $user, array $record): array
+    private function item(UserRecord $user, array $record): array
     {
         return [
             'uuid' => (string) ($record['uuid'] ?? ''),

@@ -244,7 +244,7 @@ function get_password_reset_key($user)
 }
 
 /** @internal a user row from an id, a login, a WP_User, or an object with an ID */
-function _minn_user_row($user): ?array
+function _minn_user_row($user): ?Minn\Content\UserRecord
 {
     $users = new Users(Runtime::current()->db);
     if (is_object($user) && isset($user->ID)) {

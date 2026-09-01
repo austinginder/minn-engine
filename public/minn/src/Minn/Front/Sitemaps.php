@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
+use Minn\Content\UserRecord;
 use Minn\Content\PostRecord;
 use Minn\Content\Site;
 use Minn\Db;
@@ -118,7 +119,7 @@ final readonly class Sitemaps
     private function userUrls(int $page): array
     {
         $authors = array_slice($this->authors(), ($page - 1) * self::PER_PAGE, self::PER_PAGE);
-        return array_map(fn (array $user) => [$this->permalinks->forAuthor($user), null], $authors);
+        return array_map(fn (UserRecord $user) => [$this->permalinks->forAuthor($user), null], UserRecord::fromRows($authors));
     }
 
     /** Users with published posts, by id. @return list<array> */

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
+use Minn\Content\UserRecord;
 use Minn\Content\PostRecord;
 use Closure;
 use Minn\Runtime\Registry;
@@ -151,7 +152,7 @@ final readonly class Permalinks
         return $this->url("/{$base}/" . $this->terms->pathOf($term) . '/');
     }
 
-    public function forAuthor(array $user): string
+    public function forAuthor(UserRecord $user): string
     {
         return $this->isPretty()
             ? $this->url('/author/' . $user['user_nicename'] . '/')

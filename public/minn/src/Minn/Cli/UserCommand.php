@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Cli;
 
+use Minn\Content\UserRecord;
 use Minn\Auth\PasswordReset;
 use Minn\Auth\Roles;
 use Minn\Mail\Mailer;
@@ -354,7 +355,7 @@ final class UserCommand
         return $out;
     }
 
-    private static function find(string $identifier): ?array
+    private static function find(string $identifier): ?UserRecord
     {
         $users = Runtime::boot()->users;
         return match (true) {
@@ -365,7 +366,7 @@ final class UserCommand
     }
 
     /** @param list<string> $roles */
-    private static function item(array $row, array $roles, string $glue): array
+    private static function item(array|UserRecord $row, array $roles, string $glue): array
     {
         return [
             'ID' => (int) $row['ID'],

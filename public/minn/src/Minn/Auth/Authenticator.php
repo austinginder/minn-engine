@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Auth;
 
+use Minn\Content\UserRecord;
 use Minn\Content\Users;
 use Minn\Db;
 use Minn\Http\Request;
@@ -103,7 +104,7 @@ final readonly class Authenticator
     }
 
     /** @param array<string, mixed> $user */
-    public static function applicationPasswordsAvailableFor(array $user): bool
+    public static function applicationPasswordsAvailableFor(UserRecord $user): bool
     {
         if (!Runtime::booted()) {
             return true;
@@ -112,7 +113,7 @@ final readonly class Authenticator
     }
 
     /** Username and password to a user row; no session is created here. */
-    public function login(string $username, string $password): ?array
+    public function login(string $username, string $password): ?UserRecord
     {
         $user = $this->users->findByLogin($username) ?? (str_contains($username, '@') ? $this->users->findByEmail($username) : null);
         if ($user === null || !Password::verify($password, (string) $user['user_pass'])) {

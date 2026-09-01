@@ -15,24 +15,30 @@ final readonly class Users
     {
     }
 
-    public function find(int $id): ?array
+    /** @param array<string, mixed>|null $row */
+    private static function record(?array $row): ?UserRecord
     {
-        return $this->db->row("SELECT * FROM {$this->db->table('users')} WHERE ID = ? LIMIT 1", [$id]);
+        return $row === null ? null : UserRecord::fromRow($row);
     }
 
-    public function findByLogin(string $login): ?array
+    public function find(int $id): ?UserRecord
     {
-        return $this->db->row("SELECT * FROM {$this->db->table('users')} WHERE user_login = ? LIMIT 1", [$login]);
+        return self::record($this->db->row("SELECT * FROM {$this->db->table('users')} WHERE ID = ? LIMIT 1", [$id]));
     }
 
-    public function findByEmail(string $email): ?array
+    public function findByLogin(string $login): ?UserRecord
     {
-        return $this->db->row("SELECT * FROM {$this->db->table('users')} WHERE user_email = ? LIMIT 1", [$email]);
+        return self::record($this->db->row("SELECT * FROM {$this->db->table('users')} WHERE user_login = ? LIMIT 1", [$login]));
     }
 
-    public function findBySlug(string $nicename): ?array
+    public function findByEmail(string $email): ?UserRecord
     {
-        return $this->db->row("SELECT * FROM {$this->db->table('users')} WHERE user_nicename = ? LIMIT 1", [$nicename]);
+        return self::record($this->db->row("SELECT * FROM {$this->db->table('users')} WHERE user_email = ? LIMIT 1", [$email]));
+    }
+
+    public function findBySlug(string $nicename): ?UserRecord
+    {
+        return self::record($this->db->row("SELECT * FROM {$this->db->table('users')} WHERE user_nicename = ? LIMIT 1", [$nicename]));
     }
 
     /** The unique-nicename rule: sanitized login, -2, -3 on collision. */
@@ -152,11 +158,11 @@ final readonly class Users
     /** @return list<array> the newest registrations after a site-local timestamp */
     public function registeredAfter(string $since, int $limit): array
     {
-        return $this->db->rows(
+        return UserRecord::fromRows($this->db->rows(
             "SELECT ID, display_name, user_registered FROM {$this->db->table('users')}
              WHERE user_registered > ? ORDER BY user_registered DESC LIMIT ?",
             [$since, $limit],
-        );
+        ));
     }
 
     public function deleteMeta(int $userId, string $key): void

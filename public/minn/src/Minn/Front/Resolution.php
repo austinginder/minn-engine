@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
+use Minn\Content\UserRecord;
 use Minn\Content\PostRecord;
 
 /**
@@ -14,12 +15,12 @@ use Minn\Content\PostRecord;
 final readonly class Resolution
 {
     /**
-     * @param array<string, mixed>|PostRecord|null $record the post, term, or user row
+     * @param array<string, mixed>|PostRecord|UserRecord|null $record the post, term, or user row
      * @param array{0: int, 1: ?int, 2: ?int}|null $date year, month, day
      */
     private function __construct(
         public Kind $kind,
-        public array|PostRecord|null $record = null,
+        public array|PostRecord|UserRecord|null $record = null,
         public int $paged = 1,
         public ?string $location = null,
         public int $status = 200,
@@ -78,7 +79,7 @@ final readonly class Resolution
         return new self(Kind::PostTypeArchive, $type, $paged);
     }
 
-    public static function author(string $name, ?array $user, int $paged = 1): self
+    public static function author(string $name, ?UserRecord $user, int $paged = 1): self
     {
         return new self(Kind::Author, $user, $paged, authorName: $name);
     }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Auth;
 
+use Minn\Content\UserRecord;
 use Minn\Content\Users;
 use Minn\Db;
 
@@ -28,7 +29,7 @@ final readonly class Cookie
         return 'wordpress_logged_in_' . md5($this->db->option('siteurl') ?? '');
     }
 
-    public function mint(array $user, int $expiration, string $token): string
+    public function mint(UserRecord $user, int $expiration, string $token): string
     {
         $username = (string) $user['user_login'];
         $hmac = self::signature($username, Password::fragment((string) $user['user_pass']), $expiration, $token);
