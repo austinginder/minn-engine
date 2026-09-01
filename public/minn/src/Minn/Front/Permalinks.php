@@ -84,7 +84,10 @@ final readonly class Permalinks
         if ($post['post_type'] === 'page') {
             return $this->forPage($post);
         }
-        if ($post['post_type'] !== 'post') {
+        // A navigation menu is not publicly queryable and gets no type
+        // prefix: the reference fills the plain post structure for it,
+        // category token and all.
+        if ($post['post_type'] !== 'post' && $post['post_type'] !== 'wp_navigation') {
             if ($this->isPretty() && $this->hasPrettyLink($post)) {
                 return $this->url('/' . $this->typeSlug((string) $post['post_type']) . '/' . $post['post_name'] . '/');
             }

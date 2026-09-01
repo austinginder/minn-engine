@@ -116,11 +116,12 @@ final readonly class Capabilities
             // A trashed post keeps the rules of the status it was trashed from.
             $status = $this->trashedFrom($postId);
         }
-        $plural = ($post['post_type'] === 'page' ? 'page' : 'post') . 's';
+        $type = (string) $post['post_type'];
+        $plural = TypeCapabilities::plural($type);
         $published = in_array($status, ['publish', 'future', 'private'], true);
 
         if ($capability === 'read_post') {
-            return $status === 'publish' || $isAuthor ? ['read'] : ["read_private_{$plural}"];
+            return $status === 'publish' || $isAuthor ? ['read'] : [TypeCapabilities::of($type, "read_private_{$plural}")];
         }
 
         $verb = $capability === 'edit_post' ? 'edit' : 'delete';
@@ -132,7 +133,7 @@ final readonly class Capabilities
             } elseif ($status === 'private') {
                 $required[] = "{$verb}_private_{$plural}";
             }
-            return $required;
+            return self::fold($type, $required);
         }
         $required[] = "{$verb}_others_{$plural}";
         if ($published) {
@@ -141,7 +142,16 @@ final readonly class Capabilities
         if ($status === 'private') {
             $required[] = "{$verb}_private_{$plural}";
         }
-        return $required;
+        return self::fold($type, $required);
+    }
+
+    /**
+     * @param list<string> $required
+     * @return list<string>
+     */
+    private static function fold(string $type, array $required): array
+    {
+        return array_map(static fn (string $cap) => TypeCapabilities::of($type, $cap), $required);
     }
 
     private function trashedFrom(int $postId): string

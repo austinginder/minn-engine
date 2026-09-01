@@ -27,6 +27,7 @@ final class RenderState
     /** @var array<string, true> parts, patterns, menus, and synced blocks being rendered right now */
     private static array $active = [];
     private static int $depth = 0;
+    private static int $navigation = 0;
     public const MAX_DEPTH = 64;
     /** the element class claimed for the dynamic block being rendered, until its wrapper takes it */
     private static ?string $pendingElements = null;
@@ -115,6 +116,26 @@ final class RenderState
         return $count === 1 ? $label : $label . ' ' . $count;
     }
 
+    /**
+     * A page list renders plain on its own and takes the navigation block's
+     * item classes, submenu toggles, and interactivity only while it sits
+     * inside one, so the navigation block marks the span it owns.
+     */
+    public static function enterNavigation(): void
+    {
+        self::$navigation++;
+    }
+
+    public static function leaveNavigation(): void
+    {
+        self::$navigation = max(0, self::$navigation - 1);
+    }
+
+    public static function inNavigation(): bool
+    {
+        return self::$navigation > 0;
+    }
+
     /** Marks a nested source as being rendered; false when it is already open (a cycle). */
     public static function enter(string $key): bool
     {
@@ -200,6 +221,7 @@ final class RenderState
         self::$elements = 0;
         self::$active = [];
         self::$depth = 0;
+        self::$navigation = 0;
         self::$pendingElements = null;
         self::$elementRules = [];
         self::$labels = [];

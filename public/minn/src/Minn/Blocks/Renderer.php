@@ -98,6 +98,10 @@ final class Renderer
         $renderer->registerDynamic('core/tag-cloud', (new TagCloud($db, $permalinks))->render(...));
         $renderer->registerDynamic('core/latest-comments', (new LatestComments($db, $site, $posts, $permalinks))->render(...));
         $renderer->registerDynamic('core/block', (new SyncedPattern($db))->render(...));
+        // Navigation renders wherever block content does, not only inside a
+        // theme's templates: wp/v2/navigation serves a menu's rendered
+        // markup, and a post may hold a navigation block of its own.
+        (new Dynamic\Theme\Navigation($db, $posts, $permalinks))->register($renderer);
         (new SocialLinks(MINN_ENGINE_DIR . '/data/social-icons.json'))->register($renderer);
         return $renderer;
     }

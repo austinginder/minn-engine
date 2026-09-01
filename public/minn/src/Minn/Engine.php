@@ -116,9 +116,15 @@ final readonly class Engine
             $api->caller()->session()?->token ?? '',
             $readerId > 0 ? $capabilities->rolesOf($readerId) : [],
         ));
+        $permalinks = \Minn\Front\Permalinks::fromDb($db);
+        $theme = Theme::active($site, $permalinks, ABSPATH . 'wp-content/themes');
         $runtime = Runtime::boot(new Runtime($db, $site, $request, Reader::current(), $capabilities, $this->engineDir, ABSPATH, self::WP_VERSION));
-        $runtime->set('permalinks', \Minn\Front\Permalinks::fromDb($db));
-        $runtime->set('block_theme', Theme::active($site, \Minn\Front\Permalinks::fromDb($db), ABSPATH . 'wp-content/themes') !== null);
+        $runtime->set('permalinks', $permalinks);
+        // The active theme belongs in the container on this path too: a
+        // plugin asking for the site's templates over REST gets nothing
+        // without it, and the front end had it all along.
+        $runtime->set('block_theme', $theme !== null);
+        $runtime->set('theme', $theme);
         $runtime->set('engine_routes', static fn (): array => $api->routes());
         Plugins::load($runtime);
         // Creating the server fires rest_api_init once; the plugins' routes register there.

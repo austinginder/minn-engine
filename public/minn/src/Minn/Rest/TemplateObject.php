@@ -27,12 +27,13 @@ final readonly class TemplateObject
     public function view(TemplateRecord $record, bool $edit): array
     {
         $id = $record->id();
-        $content = ['raw' => $record->content];
+        $markup = $this->index->markup($record->content);
+        $content = ['raw' => $markup];
         if ($edit) {
             // The reference reports the block grammar version it found in
             // the markup: 1 once a block delimiter appears, 0 for markup
             // that is only HTML.
-            $content['block_version'] = str_contains($record->content, '<!-- wp:') ? 1 : 0;
+            $content['block_version'] = str_contains($markup, '<!-- wp:') ? 1 : 0;
         }
         $out = [
             'id' => $id,

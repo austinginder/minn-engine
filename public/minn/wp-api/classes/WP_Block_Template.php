@@ -22,6 +22,8 @@ class WP_Block_Template
     public $area;
     public $modified;
     public $date;
+    public $author_text;
+    public $original_source;
 }
 
 /** The registry of templates plugins register; storage in Minn\Runtime\BlockTemplates. */

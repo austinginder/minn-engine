@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Auth\TypeCapabilities;
 use Minn\Content\Posts;
 use Minn\Content\PostWriter;
 use Minn\Content\Site;
@@ -42,7 +43,7 @@ final readonly class PostsWriteController
     public function serveCreate(Request $request, string $type, string $base): Response
     {
         $userId = $this->caller->require('rest_cannot_create', 'Sorry, you are not allowed to create posts as this user.')->id();
-        if (!$this->caller->can($type === 'page' ? 'edit_pages' : 'edit_posts')) {
+        if (!$this->caller->can(TypeCapabilities::edit($type))) {
             throw new RestError('rest_cannot_create', 'Sorry, you are not allowed to create posts as this user.', 403);
         }
 
@@ -51,12 +52,12 @@ final readonly class PostsWriteController
         $this->checkStickyPasswordConflict($body, null);
         $author = $userId;
         if (isset($body['author']) && (int) $body['author'] !== $userId) {
-            if (!$this->caller->can($type === 'page' ? 'edit_others_pages' : 'edit_others_posts')) {
+            if (!$this->caller->can(TypeCapabilities::editOthers($type))) {
                 throw new RestError('rest_cannot_edit_others', 'Sorry, you are not allowed to update posts as this user.', 403);
             }
             $author = (int) $body['author'];
         }
-        if (in_array($status, self::LIVE, true) && !$this->caller->can($type === 'page' ? 'publish_pages' : 'publish_posts')) {
+        if (in_array($status, self::LIVE, true) && !$this->caller->can(TypeCapabilities::publish($type))) {
             throw new RestError('rest_cannot_publish', 'Sorry, you are not allowed to create private posts in this post type.', 403);
         }
 
@@ -144,7 +145,7 @@ final readonly class PostsWriteController
         $columns = [];
 
         if (isset($body['author']) && (int) $body['author'] !== (int) $post['post_author']) {
-            if (!$this->caller->can($type === 'page' ? 'edit_others_pages' : 'edit_others_posts')) {
+            if (!$this->caller->can(TypeCapabilities::editOthers($type))) {
                 throw new RestError('rest_cannot_edit_others', 'Sorry, you are not allowed to update posts as this user.', 403);
             }
             $columns['post_author'] = (int) $body['author'];
@@ -186,7 +187,7 @@ final readonly class PostsWriteController
         }
         if (array_key_exists('status', $body)) {
             $newStatus = self::validStatus((string) $body['status']);
-            if (in_array($newStatus, self::LIVE, true) && !$this->caller->can($type === 'page' ? 'publish_pages' : 'publish_posts')) {
+            if (in_array($newStatus, self::LIVE, true) && !$this->caller->can(TypeCapabilities::publish($type))) {
                 throw new RestError('rest_cannot_publish', 'Sorry, you are not allowed to publish posts in this post type.', 403);
             }
             $columns['post_status'] = $newStatus;

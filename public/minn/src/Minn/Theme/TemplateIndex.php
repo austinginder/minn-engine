@@ -129,9 +129,10 @@ final class TemplateIndex
     /**
      * Markup as a caller of the REST route sees it: patterns spliced in
      * where the template only named them, then every template-part block
-     * told which theme it belongs to.
+     * told which theme it belongs to. A record carries the markup as
+     * stored, because that is what get_block_templates() hands a plugin.
      */
-    private function markup(string $content): string
+    public function markup(string $content): string
     {
         return TemplatePartTheme::apply(TemplatePatterns::expand($content, $this->theme), $this->theme->slug);
     }
@@ -172,7 +173,7 @@ final class TemplateIndex
             theme: $this->theme->slug,
             slug: $slug,
             type: $type,
-            content: $this->markup((string) $row['post_content']),
+            content: (string) $row['post_content'],
             title: (string) $row['post_title'],
             description: (string) $row['post_excerpt'],
             source: 'custom',
@@ -194,7 +195,7 @@ final class TemplateIndex
             theme: $this->theme->slug,
             slug: $slug,
             type: $type,
-            content: $this->markup((string) $content),
+            content: (string) $content,
             title: $this->fileTitle($slug, $type),
             description: $type === self::PART ? '' : (string) (self::defaults()[$slug]['description'] ?? ''),
             source: 'theme',
@@ -215,7 +216,7 @@ final class TemplateIndex
             theme: $this->theme->slug,
             slug: (string) $row['slug'],
             type: $type,
-            content: $this->markup((string) $row['content']),
+            content: (string) $row['content'],
             title: (string) $row['title'],
             description: (string) $row['description'],
             source: 'plugin',

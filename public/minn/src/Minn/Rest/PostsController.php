@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Rest;
 
 use Minn\Content\Posts;
+use Minn\Auth\TypeCapabilities;
 use Minn\Db;
 use Minn\Http\Method;
 use Minn\Http\Request;
@@ -53,7 +54,7 @@ final readonly class PostsController
             ? array_values(array_filter(array_map(trim(...), explode(',', (string) $request->query('status')))))
             : $publicOnly;
         $needsAuth = $context === 'edit' || array_diff($requested, $publicOnly) !== [];
-        $editCap = $type === 'page' ? 'edit_pages' : 'edit_posts';
+        $editCap = TypeCapabilities::edit($type);
         // A status beyond publish is a parameter error for a caller without the type's edit cap.
         if (array_diff($requested, $publicOnly) !== [] && !$this->caller->can($editCap)) {
             $inner = ['code' => 'rest_forbidden_status', 'message' => 'Status is forbidden.', 'data' => ['status' => $this->caller->id() > 0 ? 403 : 401]];
@@ -72,12 +73,12 @@ final readonly class PostsController
         $placeholders = implode(',', array_fill(0, count($statuses), '?'));
         $params = [$type, ...$statuses];
         $where = "post_type = ? AND post_status IN ({$placeholders})";
-        $others = $this->caller->can($type === 'page' ? 'edit_others_pages' : 'edit_others_posts');
+        $others = $this->caller->can(TypeCapabilities::editOthers($type));
         if ($needsAuth && !$others) {
             // Another author's unpublished posts need edit_others_*; private ones read_private_*.
             $where .= " AND (post_status = 'publish' OR post_author = ?)";
             $params[] = $userId;
-        } elseif ($needsAuth && in_array('private', $statuses, true) && !$this->caller->can($type === 'page' ? 'read_private_pages' : 'read_private_posts')) {
+        } elseif ($needsAuth && in_array('private', $statuses, true) && !$this->caller->can(TypeCapabilities::readPrivate($type))) {
             $where .= " AND (post_status <> 'private' OR post_author = ?)";
             $params[] = $userId;
         }

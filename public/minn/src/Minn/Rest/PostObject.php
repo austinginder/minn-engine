@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Auth\TypeCapabilities;
 use Minn\Content\Blocks;
 use Minn\Content\Excerpt;
 use Minn\Content\Posts;
@@ -21,6 +22,9 @@ use Minn\Support\Serialized;
  */
 final readonly class PostObject
 {
+    /** The one post type whose REST shape is not post-shaped. */
+    private const NAVIGATION = 'wp_navigation';
+
     public function __construct(
         private Db $db,
         private Posts $posts,
@@ -36,8 +40,39 @@ final readonly class PostObject
         return match ($type) {
             'page' => 'pages',
             'post' => 'posts',
+            'wp_navigation' => 'navigation',
             default => str_replace('_', '-', $type),
         };
+    }
+
+    /**
+     * A navigation menu is a post with almost nothing on it: no author, no
+     * excerpt, no featured image, no comments, no taxonomies, and so no
+     * class list either. What it does carry is a template field and the
+     * rendered menu.
+     */
+    private function navigationView(array $p): array
+    {
+        $protected = $p['post_password'] !== '';
+        return [
+            'id' => (int) $p['ID'],
+            'date' => self::date($p['post_date']),
+            'date_gmt' => self::date($p['post_date_gmt']),
+            'guid' => ['rendered' => $p['guid']],
+            'modified' => self::date($p['post_modified']),
+            'modified_gmt' => self::date($p['post_modified_gmt']),
+            'slug' => $p['post_name'],
+            'status' => $p['post_status'],
+            'type' => $p['post_type'],
+            'link' => $this->permalinks->forPost($p),
+            'title' => ['rendered' => Texturize::html((string) $p['post_title'])],
+            'content' => [
+                'rendered' => $protected ? '' : Blocks::render((string) $p['post_content']),
+                'protected' => $protected,
+            ],
+            'template' => '',
+            '_links' => $this->links($p),
+        ];
     }
 
     public function view(array $p): array
@@ -47,6 +82,9 @@ final readonly class PostObject
         $protected = $p['post_password'] !== '';
         $featured = (int) ($this->posts->meta($id, '_thumbnail_id') ?? 0);
 
+        if ($type === self::NAVIGATION) {
+            return $this->navigationView($p);
+        }
         $object = [
             'id' => $id,
             'date' => self::date($p['post_date']),
@@ -137,12 +175,16 @@ final readonly class PostObject
         $featured = (int) ($this->posts->meta($id, '_thumbnail_id') ?? 0);
 
         $links = [
-            'self' => [['href' => $this->url->to("{$base}/{$id}"), 'targetHints' => ['allow' => ['GET']]]],
+            'self' => [['href' => $this->url->to("{$base}/{$id}"), 'targetHints' => ['allow' => $this->allow($id)]]],
             'collection' => [['href' => $this->url->to($base)]],
             'about' => [['href' => $this->url->to('/wp/v2/types/' . $type)]],
-            // An authorless post (post_author 0) carries no author link at all.
-            'author' => $author > 0 ? [['embeddable' => true, 'href' => $this->url->to('/wp/v2/users/' . $author)]] : null,
-            'replies' => [['embeddable' => true, 'href' => $this->url->to('/wp/v2/comments', ['post' => $id])]],
+            // An authorless post (post_author 0) carries no author link at
+            // all, and a navigation menu never carries one: it has no author
+            // field to link from.
+            'author' => $author > 0 && $type !== self::NAVIGATION ? [['embeddable' => true, 'href' => $this->url->to('/wp/v2/users/' . $author)]] : null,
+            'replies' => $type === self::NAVIGATION
+                ? null
+                : [['embeddable' => true, 'href' => $this->url->to('/wp/v2/comments', ['post' => $id])]],
             'version-history' => [['count' => $this->posts->revisionCount($id), 'href' => $this->url->to("{$base}/{$id}/revisions")]],
             'predecessor-version' => $predecessor > 0
                 ? [['id' => $predecessor, 'href' => $this->url->to("{$base}/{$id}/revisions/{$predecessor}")]]
@@ -154,7 +196,7 @@ final readonly class PostObject
                 ? [['embeddable' => true, 'href' => $this->url->to('/wp/v2/media/' . $featured)]]
                 : null,
             'wp:attachment' => [['href' => $this->url->to('/wp/v2/media', ['parent' => $id])]],
-            'wp:term' => $type !== 'page' ? [
+            'wp:term' => $type !== 'page' && $type !== self::NAVIGATION ? [
                 ['taxonomy' => 'category', 'embeddable' => true, 'href' => $this->url->to('/wp/v2/categories', ['post' => $id])],
                 ['taxonomy' => 'post_tag', 'embeddable' => true, 'href' => $this->url->to('/wp/v2/tags', ['post' => $id])],
             ] : null,
@@ -182,11 +224,13 @@ final readonly class PostObject
             'protected' => $protected,
             'block_version' => str_contains((string) $p['post_content'], '<!-- wp:') ? 1 : 0,
         ];
-        $view['excerpt'] = [
-            'raw' => $p['post_excerpt'],
-            'rendered' => Excerpt::render($p),
-            'protected' => $protected,
-        ];
+        if (isset($view['excerpt'])) {
+            $view['excerpt'] = [
+                'raw' => $p['post_excerpt'],
+                'rendered' => Excerpt::render($p),
+                'protected' => $protected,
+            ];
+        }
 
         // The reference's edit-context key order: password before slug,
         // permalink_template and generated_slug just before class_list.
@@ -201,6 +245,9 @@ final readonly class PostObject
             }
             $ordered[$key] = $value;
         }
+        // _links stays last: re-assigning a key it already holds would keep
+        // the place the view object gave it.
+        unset($ordered['_links']);
         $ordered['minn_modified'] = $this->modifiedUnsaved($p, $userId);
         $ordered['minn_lock'] = $this->lockHolder($id, $userId);
         $ordered['_links'] = $this->editLinks($p, $userId);
@@ -269,18 +316,11 @@ final readonly class PostObject
         $can = fn (string $cap, ?int $postId = null): bool => $this->caller->capabilities()->can($userId, $cap, $postId);
         $links = $this->links($p);
 
-        $allow = ['GET'];
-        if ($can('edit_post', $id)) {
-            $allow = ['GET', 'POST', 'PUT', 'PATCH'];
-            if ($can('delete_post', $id)) {
-                $allow[] = 'DELETE';
-            }
-        }
-        $links['self'][0]['targetHints']['allow'] = $allow;
+        $links['self'][0]['targetHints']['allow'] = $this->allow($id, $userId);
 
         $self = '/wp/v2/' . self::restBase($type) . '/' . $id;
-        $others = $type === 'page' ? 'edit_others_pages' : 'edit_others_posts';
-        $publish = $type === 'page' ? 'publish_pages' : 'publish_posts';
+        $others = TypeCapabilities::editOthers($type);
+        $publish = TypeCapabilities::publish($type);
 
         $actions = [];
         if ($can($publish)) {
@@ -289,7 +329,7 @@ final readonly class PostObject
         if ($can('unfiltered_html')) {
             $actions['wp:action-unfiltered-html'] = true;
         }
-        if ($can($others)) {
+        if ($can($others) && $type !== self::NAVIGATION) {
             if ($type === 'post') {
                 $actions['wp:action-sticky'] = true;
             }
@@ -297,7 +337,7 @@ final readonly class PostObject
         }
         // Taxonomy actions belong to types with taxonomies (posts, not pages);
         // assign is broadly held, create is gated per taxonomy.
-        if ($type !== 'page') {
+        if ($type !== 'page' && $type !== self::NAVIGATION) {
             if ($can('manage_categories')) {
                 $actions['wp:action-create-categories'] = true;
             }
@@ -313,12 +353,37 @@ final readonly class PostObject
             'wp:action-create-categories', 'wp:action-create-tags', 'wp:action-publish',
             'wp:action-sticky', 'wp:action-unfiltered-html',
         ];
+        $curies = $links['curies'];
+        unset($links['curies']);
         foreach ($order as $rel) {
             if (!empty($actions[$rel])) {
                 $links[$rel] = [['href' => $this->url->to($self)]];
             }
         }
+        // The reference closes the set with curies, after the actions.
+        $links['curies'] = $curies;
         return $links;
+    }
+
+    /**
+     * What the caller may do to this post, which the reference reports in
+     * every context: a reader sees GET, an editor of the post sees the
+     * write verbs, and DELETE only when they may delete it too.
+     *
+     * @return list<string>
+     */
+    private function allow(int $id, ?int $userId = null): array
+    {
+        $userId ??= $this->caller->id();
+        $can = fn (string $cap): bool => $this->caller->capabilities()->can($userId, $cap, $id);
+        if (!$can('edit_post')) {
+            return ['GET'];
+        }
+        $allow = ['GET', 'POST', 'PUT', 'PATCH'];
+        if ($can('delete_post')) {
+            $allow[] = 'DELETE';
+        }
+        return $allow;
     }
 
     public static function date(string $mysql): string

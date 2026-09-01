@@ -866,56 +866,42 @@ function _minn_registered_block_template(array $row): WP_Block_Template
     return $template;
 }
 
-/** @internal a WP_Block_Template for a theme's file, or null when the theme has none for the slug */
-function _minn_theme_block_template(string $slug, string $type): ?WP_Block_Template
+/** @internal the site's templates and parts, theme files and saved rows alike */
+function _minn_template_index(): ?Minn\Theme\TemplateIndex
 {
     $theme = Runtime::current()->get('theme');
-    if ($theme === null) {
-        return null;
-    }
-    $content = $type === 'wp_template_part' ? $theme->partFile($slug) : $theme->templateFile($slug);
-    if ($content === null) {
-        return null;
-    }
+    $db = Minn\Db::shared();
+    return $theme === null
+        ? null
+        : new Minn\Theme\TemplateIndex($db, $theme, new Minn\Content\Site($db), Runtime::blockTemplates());
+}
+
+/** @internal */
+function _minn_block_template_from(Minn\Theme\TemplateRecord $record, Minn\Theme\TemplateIndex $index): WP_Block_Template
+{
     $template = new WP_Block_Template();
-    $template->type = $type;
-    $template->theme = get_stylesheet();
-    $template->slug = $slug;
-    $template->id = get_stylesheet() . '//' . $slug;
-    $template->content = $content;
-    $template->source = 'theme';
-    $template->status = 'publish';
-    $template->has_theme_file = true;
-    $template->is_custom = false;
-    $template->title = _minn_block_template_title($slug, $type, $theme);
-    $template->area = $type === 'wp_template_part' ? $theme->partArea($slug) : null;
+    $template->type = $record->type;
+    $template->theme = $record->theme;
+    $template->slug = $record->slug;
+    $template->id = $record->id();
+    // The markup as stored: a caller that wants patterns spliced in resolves
+    // them itself, the way the reference's own callers do.
+    $template->content = $record->content;
+    $template->source = $record->source;
+    $template->origin = $record->origin;
+    $template->status = $record->status;
+    $template->has_theme_file = $record->hasThemeFile;
+    $template->wp_id = $record->wpId > 0 ? $record->wpId : null;
+    $template->author = $record->author > 0 ? $record->author : null;
+    $template->modified = $record->modified;
+    $template->description = $record->description;
+    $template->title = $record->title;
+    $template->is_custom = $record->isPart() ? false : Minn\Theme\TemplateIndex::isCustom($record->slug);
+    $template->area = $record->area;
+    $template->plugin = $record->plugin;
+    $template->author_text = $index->authorText($record);
+    $template->original_source = $index->originalSource($record);
     return $template;
-}
-
-/** @internal the theme.json title for a part or custom template, else the reference's name for the slug */
-function _minn_block_template_title(string $slug, string $type, $theme): string
-{
-    $json = $theme->json();
-    foreach ((array) ($json[$type === 'wp_template_part' ? 'templateParts' : 'customTemplates'] ?? []) as $entry) {
-        if (($entry['name'] ?? '') === $slug && !empty($entry['title'])) {
-            return (string) $entry['title'];
-        }
-    }
-    $titles = ['index' => 'Index', 'home' => 'Blog Home', 'front-page' => 'Front Page', 'singular' => 'Single Entries', 'single' => 'Single Posts', 'page' => 'Pages', 'archive' => 'All Archives', 'author' => 'Author Archives', 'category' => 'Category Archives', 'taxonomy' => 'Taxonomy', 'date' => 'Date Archives', 'tag' => 'Tag Archives', 'attachment' => 'Attachment Pages', 'search' => 'Search Results', 'privacy-policy' => 'Privacy Policy', '404' => 'Page: 404', 'header' => 'Header', 'footer' => 'Footer', 'sidebar' => 'Sidebar', 'comments' => 'Comments'];
-    return $titles[$slug] ?? ucwords(str_replace(['-', '_'], ' ', $slug));
-}
-
-/** @internal the slugs the theme (and its parent) ship files for */
-function _minn_theme_block_template_slugs(string $type): array
-{
-    $folder = $type === 'wp_template_part' ? 'parts' : 'templates';
-    $slugs = [];
-    foreach (array_unique([get_stylesheet_directory(), get_template_directory()]) as $dir) {
-        foreach (glob("{$dir}/{$folder}/*.html") ?: [] as $file) {
-            $slugs[] = basename($file, '.html');
-        }
-    }
-    return array_values(array_unique($slugs));
 }
 
 /** Registers a plugin's template; a WP_Error names the reference's refusal. */
@@ -933,9 +919,15 @@ function unregister_block_template($template_name)
 function get_block_templates($query = [], $template_type = 'wp_template')
 {
     $templates = [];
-    foreach (_minn_theme_block_template_slugs($template_type) as $slug) {
-        $template = _minn_theme_block_template($slug, $template_type);
-        if ($template !== null && _minn_block_template_matches($template, $query)) {
+    $index = _minn_template_index();
+    foreach ($index === null ? [] : $index->all($template_type) as $record) {
+        // Plugin registrations come back through the registry below, where
+        // the post_type query still applies to them.
+        if ($record->source === 'plugin') {
+            continue;
+        }
+        $template = _minn_block_template_from($record, $index);
+        if (_minn_block_template_matches($template, $query)) {
             $templates[] = $template;
         }
     }
@@ -978,7 +970,11 @@ function get_block_template($id, $template_type = 'wp_template')
     [$theme, $slug] = $parts;
     $template = null;
     if ($theme === get_stylesheet()) {
-        $template = _minn_theme_block_template($slug, $template_type);
+        $index = _minn_template_index();
+        $record = $index?->find($template_type, (string) $id);
+        $template = $record === null || $record->source === 'plugin' || $index === null
+            ? null
+            : _minn_block_template_from($record, $index);
         if ($template === null && $template_type === 'wp_template') {
             $template = WP_Block_Templates_Registry::get_instance()->get_by_slug($slug);
         }

@@ -149,7 +149,7 @@ final readonly class Api
         }
         $postsController = new PostsController($db, $posts, $postObject, $caller);
         $postsWrite = new PostsWriteController($posts, $writer, $site, $postObject, $url, $caller);
-        $router->register($postsController, $postsWrite);
+        $router->register($postsController, $postsWrite, new NavigationController($postsController, $postsWrite));
         $router->register(new DeclaredPostsController($types, $postsController, $postsWrite));
         return new self($db, $request, $caller, $router, $postObject, $termObject, $userObject, $types, new Embed($router, $types, $taxonomies));
     }

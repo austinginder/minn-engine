@@ -2,11 +2,11 @@
     "generated": "2026-09-01",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 353,
-        "composes": 707,
-        "leaf": 352,
+        "minn": 354,
+        "composes": 706,
+        "leaf": 351,
         "noop": 1239,
-        "functions": 2645,
+        "functions": 2644,
         "minnMethods": 394,
         "leafLinesOver15": 13
     },
@@ -7656,16 +7656,18 @@
                 "get_template_directory"
             ]
         },
+        "_minn_block_template_from": {
+            "file": "blocks.php",
+            "lines": 23,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Theme\\TemplateIndex::isCustom"
+            ],
+            "composes": []
+        },
         "_minn_block_template_matches": {
             "file": "blocks.php",
             "lines": 13,
-            "kind": "leaf",
-            "minn": [],
-            "composes": []
-        },
-        "_minn_block_template_title": {
-            "file": "blocks.php",
-            "lines": 8,
             "kind": "leaf",
             "minn": [],
             "composes": []
@@ -8332,6 +8334,20 @@
             "minn": [],
             "composes": []
         },
+        "_minn_template_index": {
+            "file": "blocks.php",
+            "lines": 5,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Content\\Site::__construct",
+                "Minn\\Db::shared",
+                "Minn\\Runtime\\Runtime::blockTemplates",
+                "Minn\\Runtime\\Runtime::current",
+                "Minn\\Runtime\\Runtime::get",
+                "Minn\\Theme\\TemplateIndex::__construct"
+            ],
+            "composes": []
+        },
         "_minn_term_fields": {
             "file": "taxonomy.php",
             "lines": 1,
@@ -8403,32 +8419,6 @@
                 "Minn\\Runtime\\Runtime::db"
             ],
             "composes": []
-        },
-        "_minn_theme_block_template": {
-            "file": "blocks.php",
-            "lines": 21,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::get",
-                "Minn\\Runtime\\Runtime::partArea",
-                "Minn\\Runtime\\Runtime::partFile",
-                "Minn\\Runtime\\Runtime::templateFile"
-            ],
-            "composes": [
-                "_minn_block_template_title",
-                "get_stylesheet"
-            ]
-        },
-        "_minn_theme_block_template_slugs": {
-            "file": "blocks.php",
-            "lines": 8,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "get_stylesheet_directory",
-                "get_template_directory"
-            ]
         },
         "_minn_traverse_block": {
             "file": "blocks.php",
@@ -11083,12 +11073,13 @@
         },
         "get_block_template": {
             "file": "blocks.php",
-            "lines": 19,
+            "lines": 23,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "_minn_apply_hooks_to_template_part",
-                "_minn_theme_block_template",
+                "_minn_block_template_from",
+                "_minn_template_index",
                 "apply_filters",
                 "count",
                 "get_stylesheet"
@@ -11096,13 +11087,13 @@
         },
         "get_block_templates": {
             "file": "blocks.php",
-            "lines": 16,
+            "lines": 22,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "_minn_block_template_from",
                 "_minn_block_template_matches",
-                "_minn_theme_block_template",
-                "_minn_theme_block_template_slugs",
+                "_minn_template_index",
                 "apply_filters"
             ]
         },

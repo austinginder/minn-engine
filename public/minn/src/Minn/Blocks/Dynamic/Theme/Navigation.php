@@ -84,7 +84,9 @@ final readonly class Navigation
             'wp-block-navigation',
             ...$family,
         ])));
+        RenderState::enterNavigation();
         $list = '<ul ' . $style . 'class="' . Html::attr($listClasses) . '">' . $this->items($items, $renderer) . '</ul>';
+        RenderState::leaveNavigation();
         if ($menuKey !== null) {
             RenderState::leave($menuKey);
         }
@@ -238,8 +240,16 @@ final readonly class Navigation
         return $ancestors;
     }
 
+    /**
+     * A page list dresses its items as navigation items only while it is
+     * rendering inside a navigation block: submenu toggles, the item
+     * classes, and the interactivity directives all belong to the nav. On
+     * its own (wp/v2/navigation serves one that way) the reference emits
+     * plain list items and a bare submenu list.
+     */
     private function pageItems(array $tree, int $parent, int $currentId, array $ancestors, string $submenuColors = ' has-text-color has-contrast-color has-background has-base-background-color'): string
     {
+        $inNav = RenderState::inNavigation();
         $out = '';
         foreach ($tree[$parent] ?? [] as $page) {
             $id = (int) $page['ID'];
@@ -247,19 +257,34 @@ final readonly class Navigation
             $marker = $isCurrent ? ' current-menu-item' : (in_array($id, $ancestors, true) ? ' current-menu-ancestor' : '');
             // The static front page's item carries menu-item-home, last among its classes.
             $home = $id === $this->permalinks->frontPageId ? ' menu-item-home' : '';
-            $link = '<a class="wp-block-pages-list__item__link wp-block-navigation-item__content" href="' . Html::attr($this->permalinks->forPage($page + ['post_type' => 'page', 'post_status' => 'publish'])) . '"' . ($isCurrent ? ' aria-current="page"' : '') . '>' . Html::esc((string) $page['post_title']) . '</a>';
+            $linkClasses = 'wp-block-pages-list__item__link' . ($inNav ? ' wp-block-navigation-item__content' : '');
+            $link = '<a class="' . $linkClasses . '" href="' . Html::attr($this->permalinks->forPage($page + ['post_type' => 'page', 'post_status' => 'publish'])) . '"' . ($isCurrent ? ' aria-current="page"' : '') . '>' . Html::esc((string) $page['post_title']) . '</a>';
             if (isset($tree[$id])) {
-                $this->enqueueView();
-                $out .= '<li data-wp-context="{ &quot;submenuOpenedBy&quot;: { &quot;click&quot;: false, &quot;hover&quot;: false, &quot;focus&quot;: false }, &quot;type&quot;: &quot;submenu&quot;, &quot;modal&quot;: null, &quot;previousFocus&quot;: null }" data-wp-interactive="core/navigation" data-wp-on--focusout="actions.handleMenuFocusout" data-wp-on--keydown="actions.handleMenuKeydown" data-wp-on--pointerenter="actions.openMenuOnHover" data-wp-on--pointerleave="actions.closeMenuOnHover" data-wp-watch="callbacks.initMenu" tabindex="-1" class="wp-block-pages-list__item' . $marker . ' has-child wp-block-navigation-item open-on-hover-click' . $home . '">'
-                    . $link
-                    . '<button data-wp-bind--aria-expanded="state.isSubmenuOpen" data-wp-on--click="actions.toggleMenuOnClick" aria-label="' . Html::attr((string) $page['post_title']) . ' submenu" class="wp-block-navigation__submenu-icon wp-block-navigation-submenu__toggle" ><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true" focusable="false"><path d="M1.50002 4L6.00002 8L10.5 4" stroke-width="1.5"></path></svg></button>'
-                    . '<ul data-wp-on--focus="actions.openMenuOnFocus" class="wp-block-navigation__submenu-container">' . $this->pageItems($tree, $id, $currentId, $ancestors, $submenuColors) . '</ul></li>';
+                $out .= $inNav
+                    ? $this->navParent($page, $marker, $home, $link, $this->pageItems($tree, $id, $currentId, $ancestors, $submenuColors))
+                    : '<li class="wp-block-pages-list__item' . $marker . ' has-child' . $home . '">' . $link
+                        . '<ul class="wp-block-navigation__submenu-container">' . $this->pageItems($tree, $id, $currentId, $ancestors, $submenuColors) . '</ul></li>';
                 continue;
             }
-            $itemClasses = 'wp-block-pages-list__item' . $marker . ' wp-block-navigation-item open-on-hover-click' . ($parent > 0 ? $submenuColors : '') . $home;
+            // The trailing separator stays even when nothing follows it: the
+            // reference joins the item class to a nav-class list that is
+            // empty outside a navigation and colourless above a submenu.
+            $navClasses = $inNav ? ' wp-block-navigation-item open-on-hover-click' : '';
+            $colours = $inNav && $parent > 0 ? $submenuColors : '';
+            $itemClasses = 'wp-block-pages-list__item' . $marker . $navClasses . ' ' . ltrim($colours . $home);
             $out .= '<li class="' . $itemClasses . '">' . $link . '</li>';
         }
         return $out;
+    }
+
+    /** @param array<string, mixed> $page */
+    private function navParent(array $page, string $marker, string $home, string $link, string $children): string
+    {
+        $this->enqueueView();
+        return '<li data-wp-context="{ &quot;submenuOpenedBy&quot;: { &quot;click&quot;: false, &quot;hover&quot;: false, &quot;focus&quot;: false }, &quot;type&quot;: &quot;submenu&quot;, &quot;modal&quot;: null, &quot;previousFocus&quot;: null }" data-wp-interactive="core/navigation" data-wp-on--focusout="actions.handleMenuFocusout" data-wp-on--keydown="actions.handleMenuKeydown" data-wp-on--pointerenter="actions.openMenuOnHover" data-wp-on--pointerleave="actions.closeMenuOnHover" data-wp-watch="callbacks.initMenu" tabindex="-1" class="wp-block-pages-list__item' . $marker . ' has-child wp-block-navigation-item open-on-hover-click' . $home . '">'
+            . $link
+            . '<button data-wp-bind--aria-expanded="state.isSubmenuOpen" data-wp-on--click="actions.toggleMenuOnClick" aria-label="' . Html::attr((string) $page['post_title']) . ' submenu" class="wp-block-navigation__submenu-icon wp-block-navigation-submenu__toggle" ><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true" focusable="false"><path d="M1.50002 4L6.00002 8L10.5 4" stroke-width="1.5"></path></svg></button>'
+            . '<ul data-wp-on--focus="actions.openMenuOnFocus" class="wp-block-navigation__submenu-container">' . $children . '</ul></li>';
     }
 
     private function menuPost(int $ref): ?array
