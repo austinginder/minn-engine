@@ -898,3 +898,26 @@ function wp_trim_excerpt($text = '', $post = null)
     $generated = $post ? trim(wp_strip_all_tags(Minn\Content\Excerpt::render((array) $post->to_array()))) : '';
     return apply_filters('wp_trim_excerpt', $generated, '');
 }
+
+function format_for_editor($text, $default_editor = null)
+{
+    $text = (string) $text;
+    if ($text !== '') {
+        $text = htmlspecialchars($text, ENT_NOQUOTES, get_option('blog_charset'));
+    }
+    return apply_filters('format_for_editor', $text, $default_editor);
+}
+
+function wp_privacy_anonymize_data($type, $data = '')
+{
+    $anonymous = match ($type) {
+        'email' => 'deleted@site.invalid',
+        'url' => 'https://site.invalid',
+        'ip' => wp_privacy_anonymize_ip($data),
+        'date' => '0000-00-00 00:00:00',
+        'text' => '[deleted]',
+        'longtext' => 'This content was deleted by the author.',
+        default => '',
+    };
+    return apply_filters('wp_privacy_anonymize_data', $anonymous, $type, $data);
+}

@@ -363,9 +363,13 @@ function wp_get_loading_optimization_attributes($tag_name, $attr, $context)
             $runtime->set('high_priority_used', true);
         }
     } elseif ($tag_name === 'img' && (RenderState::depth() > 0 || (in_the_loop() && is_main_query())) && !(defined('REST_REQUEST') && REST_REQUEST) && RenderState::nextImage() <= 3) {
-        // Inside a page render the plugin's image shares the engine's budget: three eager images, the first with high priority.
-        if (RenderState::claimPriority()) {
-            $optimization = ['fetchpriority' => 'high'] + $optimization;
+        // Inside a page render the plugin's image shares the engine's budget:
+        // three eager images, and the first one large enough to be worth the
+        // network's attention takes high priority. A thumbnail or an avatar is
+        // not, so the flag can fall to a later image.
+        $pixels = (int) ($attr['width'] ?? 0) * (int) ($attr['height'] ?? 0);
+        if ($pixels >= (int) apply_filters('wp_min_priority_img_pixels', 50000) && RenderState::claimPriority()) {
+            $optimization['fetchpriority'] = 'high';
             $runtime->set('high_priority_used', true);
         }
     } elseif (wp_lazy_loading_enabled($tag_name, $context)) {
@@ -1185,4 +1189,125 @@ function get_the_post_thumbnail_caption($post = null)
 function the_post_thumbnail_caption($post = null)
 {
     echo apply_filters('the_post_thumbnail_caption', get_the_post_thumbnail_caption($post));
+}
+
+function gallery_shortcode($attr)
+{
+    $post = get_post();
+    $postId = $post ? (int) $post->ID : 0;
+    $instance = _minn_av_instance('gallery');
+    // A caller's ids ARE the include list, and they set the order unless the
+    // caller asked for another one.
+    $attr = (array) $attr;
+    if (!empty($attr['ids'])) {
+        if (empty($attr['orderby'])) {
+            $attr['orderby'] = 'post__in';
+        }
+        $attr['include'] = $attr['ids'];
+    }
+    $atts = shortcode_atts([
+        'order' => 'ASC',
+        'orderby' => 'menu_order ID',
+        'id' => $postId,
+        'itemtag' => 'figure',
+        'icontag' => 'div',
+        'captiontag' => 'figcaption',
+        'columns' => 3,
+        'size' => 'thumbnail',
+        'include' => '',
+        'exclude' => '',
+        'link' => '',
+    ], $attr, 'gallery');
+    $short = apply_filters('post_gallery', '', $attr, $instance);
+    if ($short !== '') {
+        return $short;
+    }
+    $items = [];
+    foreach (_minn_gallery_attachments($atts) as $attachment) {
+        $items[] = _minn_gallery_item($attachment, $atts);
+    }
+    return Minn\Media\Gallery::render($items, [
+        'itemtag' => (string) $atts['itemtag'],
+        'icontag' => (string) $atts['icontag'],
+        'captiontag' => (string) $atts['captiontag'],
+        'columns' => (int) $atts['columns'],
+        'size' => (string) $atts['size'],
+    ], $instance, (int) $atts['id']);
+}
+
+/** @internal the attachments a gallery names, in the order it asked for */
+function _minn_gallery_attachments(array $atts): array
+{
+    $shared = ['post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'image', 'order' => $atts['order'], 'orderby' => $atts['orderby']];
+    if ((string) ($atts['include'] ?? '') !== '') {
+        return get_posts(['include' => $atts['include']] + $shared);
+    }
+    $query = ['post_parent' => (int) $atts['id']] + $shared;
+    if ((string) ($atts['exclude'] ?? '') !== '') {
+        $query['exclude'] = $atts['exclude'];
+    }
+    return get_children($query) ?: [];
+}
+
+/** @internal one gallery cell: the image, how it is linked, and its caption */
+function _minn_gallery_item($attachment, array $atts): array
+{
+    $id = (int) $attachment->ID;
+    $size = (string) $atts['size'];
+    $link = (string) $atts['link'];
+    $icon = match ($link) {
+        'none' => wp_get_attachment_image($id, $size, false, ['aria-describedby' => null]),
+        'file' => wp_get_attachment_link($id, $size, false, false),
+        default => wp_get_attachment_link($id, $size, true, false),
+    };
+    $meta = wp_get_attachment_metadata($id);
+    $width = (int) ($meta['width'] ?? 0);
+    $height = (int) ($meta['height'] ?? 0);
+    $caption = trim((string) $attachment->post_excerpt);
+    return [
+        'icon' => $icon,
+        'orientation' => $height > $width ? 'portrait' : 'landscape',
+        'caption' => $caption === '' ? '' : wptexturize($caption),
+        'caption_id' => 'gallery-' . _minn_av_instance('gallery_caption') . '-' . $id,
+    ];
+}
+
+function get_post_gallery($post = 0, $html = true)
+{
+    // An empty result stays false: the reference hands that back untouched.
+    $galleries = (array) get_post_galleries($post, $html);
+    return apply_filters('get_post_gallery', reset($galleries), $post, $galleries);
+}
+
+function get_adjacent_image_link($prev = true, $size = 'thumbnail', $text = false)
+{
+    $post = get_post();
+    $attachments = $post ? array_values((array) get_children(['post_parent' => (int) $post->post_parent, 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'image', 'order' => 'ASC', 'orderby' => 'menu_order ID'])) : [];
+    $at = null;
+    foreach ($attachments as $index => $attachment) {
+        if ((int) $attachment->ID === (int) ($post->ID ?? 0)) {
+            $at = $index;
+            break;
+        }
+    }
+    $neighbour = $at === null ? null : ($attachments[$prev ? $at - 1 : $at + 1] ?? null);
+    $output = $neighbour === null
+        ? ''
+        : wp_get_attachment_link((int) $neighbour->ID, $size, true, false, $text);
+    return apply_filters($prev ? 'previous_image_link' : 'next_image_link', $output);
+}
+
+function previous_image_link($size = 'thumbnail', $text = false)
+{
+    echo get_adjacent_image_link(true, $size, $text);
+}
+
+function next_image_link($size = 'thumbnail', $text = false)
+{
+    echo get_adjacent_image_link(false, $size, $text);
+}
+
+function adjacent_image_link($prev = true, $size = 'thumbnail', $text = false)
+{
+    echo get_adjacent_image_link($prev, $size, $text);
 }

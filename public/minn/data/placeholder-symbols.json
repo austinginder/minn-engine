@@ -10,6 +10,7 @@
         "_prime_post_caches",
         "_wp_admin_bar_init",
         "_wp_get_iframed_editor_assets",
+        "_wp_post_thumbnail_html",
         "add_contextual_help",
         "add_magic_quotes",
         "addslashes_gpc",
@@ -29,6 +30,7 @@
         "enqueue_comment_hotkeys_js",
         "find_core_auto_update",
         "find_core_update",
+        "form_option",
         "generate_postdata",
         "get_all_page_ids",
         "get_attached_media",
@@ -41,6 +43,7 @@
         "get_comment_to_edit",
         "get_default_block_editor_settings",
         "get_default_block_template_types",
+        "get_default_post_to_edit",
         "get_dirsize",
         "get_hidden_meta_boxes",
         "get_importers",
@@ -59,6 +62,7 @@
         "get_the_block_template_html",
         "get_the_privacy_policy_link",
         "get_the_term_list",
+        "get_theme_data",
         "get_theme_update_available",
         "get_user_setting",
         "get_user_to_edit",
@@ -68,6 +72,7 @@
         "is_protected_meta",
         "is_uninstallable_plugin",
         "list_meta",
+        "load_script_textdomain",
         "media_send_to_editor",
         "media_upload_header",
         "populate_roles",
@@ -137,7 +142,9 @@
         "wp_paused_plugins",
         "wp_paused_themes",
         "wp_prepare_themes_for_js",
+        "wp_print_admin_notice_templates",
         "wp_print_font_faces",
+        "wp_print_request_filesystem_credentials_modal",
         "wp_read_video_metadata",
         "wp_removable_query_args",
         "wp_scripts_get_suffix",
@@ -157,7 +164,8 @@
         "wp_update_plugins",
         "wp_update_themes",
         "wp_version_check",
-        "wp_widget_rss_output"
+        "wp_widget_rss_output",
+        "wpmu_delete_user"
     ],
     "classes": [
         "File_Upload_Upgrader",
@@ -183,6 +191,7 @@
         "WP_HTML_Processor",
         "WP_Importer",
         "WP_List_Table",
+        "WP_PHPMailer",
         "WP_Plugin_Install_List_Table",
         "WP_REST_Attachments_Controller",
         "WP_REST_Blocks_Controller",
@@ -200,10 +209,12 @@
         "WP_Site_Health",
         "WP_Style_Engine",
         "WP_Theme_JSON",
+        "WP_Translation_File",
         "WP_Upgrader",
         "WP_Upgrader_Skin",
         "WP_User_Query",
         "Walker_Category_Checklist",
-        "Walker_Nav_Menu_Edit"
+        "Walker_Nav_Menu_Edit",
+        "_WP_Editors"
     ]
 }

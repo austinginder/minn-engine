@@ -681,3 +681,18 @@ function wp_get_mu_plugins()
     sort($files);
     return $files;
 }
+
+function wp_opcache_invalidate($filepath, $force = false)
+{
+    if (!file_exists($filepath) || !function_exists('opcache_invalidate')) {
+        return false;
+    }
+    if (!apply_filters('wp_opcache_invalidate_file', true, $filepath)) {
+        return false;
+    }
+    $enabled = ini_get('opcache.enable');
+    if (!$enabled || (php_sapi_name() === 'cli' && !ini_get('opcache.enable_cli'))) {
+        return false;
+    }
+    return opcache_invalidate($filepath, (bool) $force);
+}

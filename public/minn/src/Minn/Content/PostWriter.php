@@ -46,6 +46,17 @@ final readonly class PostWriter
     }
 
     /** One row per key: an existing value is replaced, not shadowed. */
+    /** Moves a post to another type, leaving it alone when it is already there. */
+    public function setType(int $id, string $type): bool
+    {
+        $current = $this->db->value("SELECT post_type FROM {$this->db->table('posts')} WHERE ID = ?", [$id]);
+        if ($current === null || (string) $current === $type) {
+            return false;
+        }
+        $this->db->execute("UPDATE {$this->db->table('posts')} SET post_type = ? WHERE ID = ?", [$type, $id]);
+        return true;
+    }
+
     public function setMeta(int $id, string $key, string $value): void
     {
         $table = $this->db->table('postmeta');

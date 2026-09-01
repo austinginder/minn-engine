@@ -1925,6 +1925,22 @@ class WP_List_Table
     }
 }
 
+class WP_PHPMailer extends PHPMailer\PHPMailer\PHPMailer
+{
+
+    public function __construct($exceptions = false)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_PHPMailer::__construct');
+        return null;
+    }
+
+    public static function setLanguage($langcode = 'en', $lang_path = '')
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_PHPMailer::setLanguage');
+        return null;
+    }
+}
+
 class WP_Plugin_Install_List_Table extends WP_List_Table
 {
     public $order = 'ASC';
@@ -3916,6 +3932,100 @@ class WP_Theme_JSON
     }
 }
 
+abstract class WP_Translation_File
+{
+    protected $headers = [];
+    protected $parsed = false;
+    protected $error = NULL;
+    protected $file = '';
+    protected $entries = [];
+    protected $plural_forms = NULL;
+
+    protected function __construct($file)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Translation_File::__construct');
+        return null;
+    }
+
+    public static function create($file, $filetype = NULL)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Translation_File::create');
+        return null;
+    }
+
+    public static function transform($file, $filetype)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Translation_File::transform');
+        return null;
+    }
+
+    public function headers()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Translation_File::headers');
+        return [];
+    }
+
+    public function entries()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Translation_File::entries');
+        return [];
+    }
+
+    public function error()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Translation_File::error');
+        return null;
+    }
+
+    public function get_file()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Translation_File::get_file');
+        return '';
+    }
+
+    public function translate($text)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Translation_File::translate');
+        return null;
+    }
+
+    public function get_plural_form($number)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Translation_File::get_plural_form');
+        return 0;
+    }
+
+    protected function get_plural_expression_from_header($header)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Translation_File::get_plural_expression_from_header');
+        return '';
+    }
+
+    protected function make_plural_form_function($expression)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Translation_File::make_plural_form_function');
+        return null;
+    }
+
+    protected function import($source)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Translation_File::import');
+        return false;
+    }
+
+    protected function parse_file()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Translation_File::parse_file');
+        return null;
+    }
+
+    public function export()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Translation_File::export');
+        return null;
+    }
+}
+
 class WP_Upgrader
 {
     public $strings = [];
@@ -4136,4 +4246,138 @@ class Walker_Category_Checklist extends Walker
 
 class Walker_Nav_Menu_Edit extends Walker_Nav_Menu
 {
+}
+
+class _WP_Editors
+{
+    public static $mce_locale = NULL;
+    private static $mce_settings = [];
+    private static $qt_settings = [];
+    private static $plugins = [];
+    private static $qt_buttons = [];
+    private static $ext_plugins = NULL;
+    private static $baseurl = NULL;
+    private static $first_init = NULL;
+    private static $this_tinymce = false;
+    private static $this_quicktags = false;
+    private static $has_tinymce = false;
+    private static $has_quicktags = false;
+    private static $has_medialib = false;
+    private static $editor_buttons_css = true;
+    private static $drag_drop_upload = false;
+    private static $translation = NULL;
+    private static $tinymce_scripts_printed = false;
+    private static $link_dialog_printed = false;
+
+    private function __construct()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('_WP_Editors::__construct');
+        return null;
+    }
+
+    public static function parse_settings($editor_id, $settings)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('_WP_Editors::parse_settings');
+        return null;
+    }
+
+    public static function editor($content, $editor_id, $settings = [])
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('_WP_Editors::editor');
+        return null;
+    }
+
+    public static function editor_settings($editor_id, $set)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('_WP_Editors::editor_settings');
+        return null;
+    }
+
+    private static function _parse_init($init)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('_WP_Editors::_parse_init');
+        return null;
+    }
+
+    public static function enqueue_scripts($default_scripts = false)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('_WP_Editors::enqueue_scripts');
+        return null;
+    }
+
+    public static function enqueue_default_editor()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('_WP_Editors::enqueue_default_editor');
+        return null;
+    }
+
+    public static function print_default_editor_scripts()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('_WP_Editors::print_default_editor_scripts');
+    }
+
+    public static function get_mce_locale()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('_WP_Editors::get_mce_locale');
+        return null;
+    }
+
+    public static function get_baseurl()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('_WP_Editors::get_baseurl');
+        return null;
+    }
+
+    private static function default_settings()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('_WP_Editors::default_settings');
+        return null;
+    }
+
+    private static function get_translation()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('_WP_Editors::get_translation');
+        return null;
+    }
+
+    public static function wp_mce_translation($mce_locale = '', $json_only = false)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('_WP_Editors::wp_mce_translation');
+        return null;
+    }
+
+    public static function force_uncompressed_tinymce()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('_WP_Editors::force_uncompressed_tinymce');
+        return null;
+    }
+
+    public static function print_tinymce_scripts()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('_WP_Editors::print_tinymce_scripts');
+    }
+
+    public static function editor_js()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('_WP_Editors::editor_js');
+        return null;
+    }
+
+    public static function wp_fullscreen_html()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('_WP_Editors::wp_fullscreen_html');
+        return null;
+    }
+
+    public static function wp_link_query($args = [])
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('_WP_Editors::wp_link_query');
+        return null;
+    }
+
+    public static function wp_link_dialog()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('_WP_Editors::wp_link_dialog');
+        return null;
+    }
 }

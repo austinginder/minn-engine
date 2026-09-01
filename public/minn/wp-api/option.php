@@ -439,3 +439,16 @@ function wp_set_option_autoload_values($options)
     }
     return $results;
 }
+
+function delete_expired_transients($force_db = false)
+{
+    $now = time();
+    foreach (Runtime::current()->options()->expiredTransientNames($now) as $name) {
+        delete_option('_transient_timeout_' . $name);
+        delete_option('_transient_' . $name);
+    }
+    foreach (Runtime::current()->options()->expiredTransientNames($now, '_site_transient_timeout_') as $name) {
+        delete_option('_site_transient_timeout_' . $name);
+        delete_option('_site_transient_' . $name);
+    }
+}

@@ -1639,3 +1639,34 @@ function update_user_caches($user)
 {
     // Users are read straight from the database; there is nothing to cache.
 }
+
+function set_post_type($post_id = 0, $post_type = 'post')
+{
+    $type = sanitize_post_field('post_type', (string) $post_type, (int) $post_id, 'db');
+    $changed = _minn_post_writer()->setType((int) $post_id, $type);
+    if ($changed) {
+        clean_post_cache((int) $post_id);
+    }
+    return $changed ? 1 : 0;
+}
+
+function the_modified_date($format = '', $before = '', $after = '', $display = true)
+{
+    $date = $before . get_the_modified_date($format) . $after;
+    $date = apply_filters('the_modified_date', $date, $format, $before, $after);
+    if (!$display) {
+        return $date;
+    }
+    echo $date;
+}
+
+function the_modified_time($format = '')
+{
+    echo apply_filters('the_modified_time', get_the_modified_time($format), $format);
+}
+
+function walk_page_tree($pages, $depth, $current_page, $args)
+{
+    $walker = empty($args['walker']) ? new Walker_Page() : $args['walker'];
+    return $walker->walk($pages, $depth, $args, $current_page);
+}

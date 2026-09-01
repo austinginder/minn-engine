@@ -37,22 +37,33 @@ final readonly class ImageTags
     }
 
     /**
-     * On a page the first content image is fetched eagerly with high
-     * priority, the next is eager, and the rest lazy; only lazy images
-     * carry the "auto" sizes hint. In a REST response every image is lazy.
+     * On a page the first big-enough content image is fetched eagerly with
+     * high priority, the next few are eager, and the rest lazy; only lazy
+     * images carry the "auto" sizes hint. In a REST response every image is
+     * lazy.
      */
-    private static function loadingPrefix(bool $front): array
+    private static function loadingPrefix(bool $front, int $width = 0, int $height = 0): array
     {
         if (!$front) {
             return ['loading="lazy" decoding="async"', true];
         }
         // Three eager images per page, every <img> on the page counting toward
-        // the budget; the first eager content image is fetched with high priority.
+        // the budget; the first eager image large enough to be worth the
+        // network's attention is fetched with high priority, and a thumbnail
+        // or an avatar is not, so the flag can fall to a later image.
         $seen = RenderState::nextImage();
         if ($seen > 3) {
             return ['loading="lazy" decoding="async"', true];
         }
-        return RenderState::claimPriority() ? ['fetchpriority="high" decoding="async"', false] : ['decoding="async"', false];
+        $large = $width * $height >= self::minimumPriorityPixels();
+        return $large && RenderState::claimPriority() ? ['fetchpriority="high" decoding="async"', false] : ['decoding="async"', false];
+    }
+
+    /** The area an image must cover before it is worth fetching first. */
+    private static function minimumPriorityPixels(): int
+    {
+        $minimum = 50000;
+        return Runtime::booted() ? (int) Runtime::hooks()->filter('wp_min_priority_img_pixels', [$minimum]) : $minimum;
     }
 
     private function enrichTag(string $tag, int $attachmentId, bool $withDataId, bool $front, bool $autoSizes = true): string
@@ -100,7 +111,7 @@ final readonly class ImageTags
             $candidates[$meta['width']] = $fullUrl;
         }
         [$width, $height] = $shown;
-        [$loading, $auto] = self::loadingPrefix($front);
+        [$loading, $auto] = self::loadingPrefix($front, $width, $height);
         $prefix = $loading . ' width="' . $width . '" height="' . $height . '"' . ($withDataId ? ' data-id="' . $attachmentId . '"' : '');
         $tag = preg_replace('/^<img\s/', '<img ' . $prefix . ' ', $tag, 1);
         $srcset = self::srcsetAttributes($candidates, $width, $auto && $autoSizes, $attachmentId, $meta, $src, $height);
@@ -163,7 +174,7 @@ final readonly class ImageTags
                 $candidates[$size['width']] = $baseUrl . '/' . $size['file'];
             }
         }
-        [$loading, $auto] = self::loadingPrefix($front);
+        [$loading, $auto] = self::loadingPrefix($front, (int) $meta['width'], (int) $meta['height']);
         $loading = match ($loading) {
             'fetchpriority="high" decoding="async"' => 'decoding="async" fetchpriority="high"',
             'loading="lazy" decoding="async"' => 'decoding="async" loading="lazy"',

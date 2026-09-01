@@ -1158,3 +1158,59 @@ function _prime_term_caches($term_ids, $update_meta_cache = true)
 {
     // Terms are read straight from the database; there is nothing to prime.
 }
+
+function get_object_term_cache($id, $taxonomy)
+{
+    $cached = wp_cache_get((int) $id, 'minn_object_terms');
+    if (!is_array($cached) || !array_key_exists((string) $taxonomy, $cached)) {
+        return false;
+    }
+    return $cached[(string) $taxonomy];
+}
+
+function update_object_term_cache($object_ids, $object_type)
+{
+    $types = get_object_taxonomies((string) $object_type);
+    foreach ((array) $object_ids as $id) {
+        $terms = [];
+        foreach ($types as $taxonomy) {
+            $found = wp_get_object_terms((int) $id, $taxonomy);
+            $terms[$taxonomy] = is_wp_error($found) ? [] : $found;
+        }
+        wp_cache_set((int) $id, $terms, 'minn_object_terms');
+    }
+}
+
+function get_the_taxonomies($post = 0, $args = [])
+{
+    $post = get_post($post);
+    if (!$post) {
+        return [];
+    }
+    $args = wp_parse_args($args, ['template' => '%s: %l.', 'term_template' => '<a href="%1$s">%2$s</a>']);
+    $out = [];
+    foreach (get_object_taxonomies((string) $post->post_type) as $taxonomy) {
+        $terms = get_object_term_cache((int) $post->ID, $taxonomy);
+        $terms = $terms === false ? wp_get_object_terms((int) $post->ID, $taxonomy) : $terms;
+        if (is_wp_error($terms) || $terms === []) {
+            continue;
+        }
+        $object = get_taxonomy($taxonomy);
+        $links = [];
+        foreach ($terms as $term) {
+            $links[] = sprintf($args['term_template'], esc_attr((string) get_term_link($term)), $term->name);
+        }
+        $out[$taxonomy] = str_replace(['%s', '%l'], [$object->labels->name ?? $taxonomy, _minn_join_list($links)], $args['template']);
+    }
+    return $out;
+}
+
+/** @internal a list read the way a sentence reads it */
+function _minn_join_list(array $items): string
+{
+    if (count($items) < 2) {
+        return (string) ($items[0] ?? '');
+    }
+    $last = array_pop($items);
+    return implode(', ', $items) . ' and ' . $last;
+}

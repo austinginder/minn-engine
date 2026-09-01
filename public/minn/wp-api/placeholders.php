@@ -61,6 +61,12 @@ function _wp_get_iframed_editor_assets()
     return null;
 }
 
+function _wp_post_thumbnail_html($thumbnail_id = NULL, $post = NULL)
+{
+    \Minn\Runtime\PlaceholderTrace::hit('_wp_post_thumbnail_html');
+    return null;
+}
+
 function add_contextual_help($screen, $help)
 {
     \Minn\Runtime\PlaceholderTrace::hit('add_contextual_help');
@@ -175,6 +181,12 @@ function find_core_update($version, $locale)
     return null;
 }
 
+function form_option($option)
+{
+    \Minn\Runtime\PlaceholderTrace::hit('form_option');
+    return null;
+}
+
 function generate_postdata($post)
 {
     \Minn\Runtime\PlaceholderTrace::hit('generate_postdata');
@@ -244,6 +256,12 @@ function get_default_block_editor_settings()
 function get_default_block_template_types()
 {
     \Minn\Runtime\PlaceholderTrace::hit('get_default_block_template_types');
+    return null;
+}
+
+function get_default_post_to_edit($post_type = 'post', $create_in_db = false)
+{
+    \Minn\Runtime\PlaceholderTrace::hit('get_default_post_to_edit');
     return null;
 }
 
@@ -349,6 +367,12 @@ function get_the_privacy_policy_link($before = '', $after = '')
     return null;
 }
 
+function get_theme_data($theme_file)
+{
+    \Minn\Runtime\PlaceholderTrace::hit('get_theme_data');
+    return null;
+}
+
 function get_theme_update_available($theme)
 {
     \Minn\Runtime\PlaceholderTrace::hit('get_theme_update_available');
@@ -400,6 +424,12 @@ function is_uninstallable_plugin($plugin)
 function list_meta($meta)
 {
     \Minn\Runtime\PlaceholderTrace::hit('list_meta');
+    return null;
+}
+
+function load_script_textdomain($handle, $domain = 'default', $path = '')
+{
+    \Minn\Runtime\PlaceholderTrace::hit('load_script_textdomain');
     return null;
 }
 
@@ -787,9 +817,21 @@ function wp_prepare_themes_for_js($themes = NULL)
     return null;
 }
 
+function wp_print_admin_notice_templates()
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_print_admin_notice_templates');
+    return null;
+}
+
 function wp_print_font_faces($fonts = [])
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_print_font_faces');
+    return null;
+}
+
+function wp_print_request_filesystem_credentials_modal()
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_print_request_filesystem_credentials_modal');
     return null;
 }
 
@@ -910,5 +952,11 @@ function wp_version_check($extra_stats = [], $force_check = false)
 function wp_widget_rss_output($rss, $args = [])
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_widget_rss_output');
+    return null;
+}
+
+function wpmu_delete_user($id)
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wpmu_delete_user');
     return null;
 }

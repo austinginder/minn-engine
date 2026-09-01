@@ -108,6 +108,27 @@ final class Options
         return true;
     }
 
+    /**
+     * The names of transients whose expiry has passed. The timeout row is the
+     * one that knows, so the sweep reads those and hands back the bare names.
+     *
+     * @return list<string>
+     */
+    public function expiredTransientNames(int $now, string $prefix = '_transient_timeout_'): array
+    {
+        $rows = $this->db->rows(
+            "SELECT option_name, option_value FROM {$this->db->table('options')} WHERE option_name LIKE ?",
+            [$prefix . '%'],
+        );
+        $out = [];
+        foreach ($rows as $row) {
+            if ((int) $row['option_value'] < $now) {
+                $out[] = substr((string) $row['option_name'], strlen($prefix));
+            }
+        }
+        return $out;
+    }
+
     public function forget(string $name): void
     {
         unset($this->cache[$name], $this->missing[$name]);
