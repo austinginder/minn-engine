@@ -38,14 +38,39 @@ final readonly class Diagnostics
     {
         $autoload = $this->autoloadSummary();
         $cron = $this->cronSummary();
+        $mail = MailSettings::fromSite($this->site);
+        [$database, $tables] = $this->databaseGroup();
+        return [
+            'generated' => gmdate('c'),
+            'checks' => $this->checks($request, $autoload, $cron, $mail),
+            'config' => $this->config(),
+            'logs' => $this->logs->listPayload(),
+            'licenses' => null,
+            'extensions' => $this->extensionsManifest(),
+            'integrations' => null,
+            'groups' => [
+                ['title' => 'Minn Engine', 'icon' => 'server', 'rows' => self::rows($this->engineGroup($cron, $mail))],
+                ['title' => 'PHP', 'icon' => 'php', 'rows' => self::rows(self::phpGroup())],
+                ['title' => 'Database', 'icon' => 'database', 'rows' => self::rows($database), 'tables' => $tables, 'autoload' => $autoload],
+                ['title' => 'Server', 'icon' => 'server', 'rows' => self::rows($this->serverGroup($request))],
+            ],
+        ];
+    }
+
+    /**
+     * The pass / warn / fail rows the System view leads with.
+     *
+     * @param array<string, mixed> $autoload
+     * @param array<string, mixed> $cron
+     * @return list<array<string, string>>
+     */
+    private function checks(Request $request, array $autoload, array $cron, MailSettings $mail): array
+    {
         $memory = self::bytes((string) ini_get('memory_limit'));
-        $opcache = function_exists('opcache_get_status') ? @opcache_get_status(false) : false;
-        $opcacheOn = is_array($opcache) && !empty($opcache['opcache_enabled']);
+        $opcacheOn = self::opcacheOn();
         $uploadsWritable = is_writable("{$this->webroot}/wp-content/uploads");
         $debugOn = defined('WP_DEBUG') && WP_DEBUG;
-        $mail = MailSettings::fromSite($this->site);
-
-        $checks = [
+        return [
             self::check('engine', 'Minn Engine', 'pass', "{$this->engineVersion} is running; there is no WordPress on this site"),
             self::check('php', 'PHP version', version_compare(PHP_VERSION, '8.3', '>=') ? 'pass' : 'fail', version_compare(PHP_VERSION, '8.3', '>=') ? PHP_VERSION . ' is current' : PHP_VERSION . ' is below the engine floor of 8.3'),
             self::check('https', 'HTTPS', $request->secure ? 'pass' : 'warn', $request->secure ? 'Served over TLS' : 'This request is not over HTTPS'),
@@ -73,9 +98,13 @@ final readonly class Diagnostics
                 default => "Sent through PHP's mail()",
             }),
         ];
+    }
 
-        $theme = $this->activeThemeLabel();
-        $engine = [
+    /** @param array<string, mixed> $cron @return array<string, string> */
+    private function engineGroup(array $cron, MailSettings $mail): array
+    {
+        $debugOn = defined('WP_DEBUG') && WP_DEBUG;
+        return [
             'Version' => $this->engineVersion,
             'Speaks' => 'the WordPress 7.1 operational contracts',
             'Site URL' => rtrim((string) ($this->site->option('siteurl') ?? ''), '/'),
@@ -86,15 +115,21 @@ final readonly class Diagnostics
             'Permalinks' => (string) ($this->site->option('permalink_structure') ?: 'Plain'),
             'Debug mode' => $debugOn ? ((defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) ? 'On + log' : 'On') : 'Off',
             'Mail transport' => $mail->transport,
-            'Active theme' => $theme,
+            'Active theme' => $this->activeThemeLabel(),
             'Active extensions' => (string) count($this->extensions->active()),
             'Cron' => $cron['events'] === 0 ? 'nothing scheduled' : "{$cron['events']} scheduled post" . ($cron['events'] === 1 ? '' : 's') . ($cron['next'] !== null ? ', next ' . self::relative($cron['next']) : ''),
         ];
+    }
+
+    /** @return array<string, string> */
+    private static function phpGroup(): array
+    {
+        $opcacheOn = self::opcacheOn();
         $loaded = array_values(array_filter(
             ['curl', 'gd', 'imagick', 'mbstring', 'xml', 'zip', 'intl', 'openssl', 'opcache', 'redis', 'memcached', 'apcu', 'exif', 'fileinfo', 'sodium'],
             static fn (string $ext) => extension_loaded($ext),
         ));
-        $php = [
+        return [
             'Version' => PHP_VERSION,
             'Interface (SAPI)' => PHP_SAPI,
             'memory_limit' => (string) ini_get('memory_limit'),
@@ -107,11 +142,16 @@ final readonly class Diagnostics
             'Extensions' => implode(', ', $loaded),
             'cURL' => function_exists('curl_version') ? (string) (curl_version()['version'] ?? 'yes') : 'no',
         ];
-        [$database, $tables] = $this->databaseGroup();
+    }
+
+    /** @return array<string, string> */
+    private function serverGroup(Request $request): array
+    {
+        $uploadsWritable = is_writable("{$this->webroot}/wp-content/uploads");
         $hasUname = function_exists('php_uname');
         $free = function_exists('disk_free_space') ? @disk_free_space($this->webroot) : false;
         $total = function_exists('disk_total_space') ? @disk_total_space($this->webroot) : false;
-        $server = [
+        return [
             'Web server' => $request->server['software'] !== '' ? $request->server['software'] : 'Unknown',
             'Protocol' => $request->server['protocol'],
             'HTTPS' => $request->secure ? 'Yes' : 'No',
@@ -121,22 +161,12 @@ final readonly class Diagnostics
             'Uploads writable' => $uploadsWritable ? 'Yes' : 'No',
             'Disk free' => ($free && $total) ? Logs::human((int) $free) . ' free of ' . Logs::human((int) $total) : 'Unknown',
         ];
+    }
 
-        return [
-            'generated' => gmdate('c'),
-            'checks' => $checks,
-            'config' => $this->config(),
-            'logs' => $this->logs->listPayload(),
-            'licenses' => null,
-            'extensions' => $this->extensionsManifest(),
-            'integrations' => null,
-            'groups' => [
-                ['title' => 'Minn Engine', 'icon' => 'server', 'rows' => self::rows($engine)],
-                ['title' => 'PHP', 'icon' => 'php', 'rows' => self::rows($php)],
-                ['title' => 'Database', 'icon' => 'database', 'rows' => self::rows($database), 'tables' => $tables, 'autoload' => $autoload],
-                ['title' => 'Server', 'icon' => 'server', 'rows' => self::rows($server)],
-            ],
-        ];
+    private static function opcacheOn(): bool
+    {
+        $opcache = function_exists('opcache_get_status') ? @opcache_get_status(false) : false;
+        return is_array($opcache) && !empty($opcache['opcache_enabled']);
     }
 
     /** The wp-config debug constants as they stand; the engine never rewrites the file. */

@@ -1291,7 +1291,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/BootPayload.php",
-            "lines": 202,
+            "lines": 228,
             "doc": "The window.MINN boot payload, assembled from the engine: the keys app.js\nneeds to boot and drive the wp/v2 surface, with capabilities from the\nengine's own model.",
             "implements": [],
             "extends": null,
@@ -1524,7 +1524,79 @@
                         }
                     ],
                     "line": 45,
-                    "end": 145
+                    "end": 86
+                },
+                {
+                    "routes": [],
+                    "name": "userSlice",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "userSlice(Minn\\Auth\\Authenticated $session, string $role): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "session",
+                            "type": "Minn\\Auth\\Authenticated",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "role",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 89,
+                    "end": 103
+                },
+                {
+                    "routes": [],
+                    "name": "siteSlice",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "siteSlice(): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [],
+                    "line": 106,
+                    "end": 124
+                },
+                {
+                    "routes": [],
+                    "name": "caps",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "caps(int $userId, bool $wc): array",
+                    "doc": "What the app may show, each key a capability the reference gates the\nsame view on. The commerce caps mirror the plugin's own conditions:\nWC loaded, the WC capability, and for coupons the store having them enabled.",
+                    "shapes": [
+                        "@return array<string, bool>"
+                    ],
+                    "params": [
+                        {
+                            "name": "userId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "wc",
+                            "type": "bool",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 133,
+                    "end": 171
                 },
                 {
                     "routes": [],
@@ -1535,8 +1607,8 @@
                     "doc": "What Minn Admin's own boot_payload() computes when the plugin runs as\ncode on the runtime, so the app boots with the same keys on both\nstacks (connectors, discussion defaults, roles, post formats, the\nadapter flags). Engine-owned keys win; the withheld ones would send\nthe app to a wp-admin page the engine does not have.",
                     "shapes": [],
                     "params": [],
-                    "line": 154,
-                    "end": 167
+                    "line": 180,
+                    "end": 193
                 },
                 {
                     "routes": [],
@@ -1547,8 +1619,8 @@
                     "doc": "The reference serves the app shell from the home query, so the global\npost is the newest post while the payload is built; the comments\nfeature check reads it through the comments_open filter (a site that\ncloses comments on old posts reports the feature off when its newest\npost is old).",
                     "shapes": [],
                     "params": [],
-                    "line": 176,
-                    "end": 187
+                    "line": 202,
+                    "end": 213
                 },
                 {
                     "routes": [],
@@ -1559,8 +1631,8 @@
                     "doc": "The site icon as the app shows it in the sidebar: the attachment file behind the site_icon option.",
                     "shapes": [],
                     "params": [],
-                    "line": 190,
-                    "end": 195
+                    "line": 216,
+                    "end": 221
                 },
                 {
                     "routes": [],
@@ -1571,8 +1643,8 @@
                     "doc": "What Minn Admin's own adapters contribute when the plugin runs as code\non the runtime: plugin surfaces (Tools), editor panels, design\nsources, editor commands, block forms. Absent, the app's fallbacks apply.",
                     "shapes": [],
                     "params": [],
-                    "line": 202,
-                    "end": 221
+                    "line": 228,
+                    "end": 247
                 }
             ]
         },
@@ -2194,7 +2266,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/Diagnostics.php",
-            "lines": 370,
+            "lines": 400,
             "doc": "The System view's facts about this install: the engine, PHP, the\ndatabase, and the server, with the health checks a site owner acts on.\nEvery number is read live; nothing is cached or fetched from outside.",
             "implements": [],
             "extends": null,
@@ -2381,7 +2453,7 @@
                         }
                     ],
                     "line": 37,
-                    "end": 140
+                    "end": 58
                 },
                 {
                     "routes": [],
@@ -2392,8 +2464,8 @@
                     "doc": "The wp-config debug constants as they stand; the engine never rewrites the file.",
                     "shapes": [],
                     "params": [],
-                    "line": 143,
-                    "end": 176
+                    "line": 173,
+                    "end": 206
                 },
                 {
                     "routes": [],
@@ -2404,8 +2476,8 @@
                     "doc": "Every scheduled post as a one-off event, soonest first.",
                     "shapes": [],
                     "params": [],
-                    "line": 179,
-                    "end": 195
+                    "line": 209,
+                    "end": 225
                 },
                 {
                     "routes": [],
@@ -2416,8 +2488,130 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 197,
-                    "end": 216
+                    "line": 227,
+                    "end": 246
+                },
+                {
+                    "routes": [],
+                    "name": "checks",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "checks(Minn\\Http\\Request $request, array $autoload, array $cron, Minn\\Mail\\MailSettings $mail): array",
+                    "doc": "The pass / warn / fail rows the System view leads with.",
+                    "shapes": [
+                        "@param array<string, mixed> $autoload",
+                        "@param array<string, mixed> $cron",
+                        "@return list<array<string, string>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "autoload",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "cron",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "mail",
+                            "type": "Minn\\Mail\\MailSettings",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 67,
+                    "end": 101
+                },
+                {
+                    "routes": [],
+                    "name": "engineGroup",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "engineGroup(array $cron, Minn\\Mail\\MailSettings $mail): array",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, mixed> $cron @return array<string, string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "cron",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "@return array<string, string>"
+                        },
+                        {
+                            "name": "mail",
+                            "type": "Minn\\Mail\\MailSettings",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 104,
+                    "end": 122
+                },
+                {
+                    "routes": [],
+                    "name": "phpGroup",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "phpGroup(): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array<string, string>"
+                    ],
+                    "params": [],
+                    "line": 125,
+                    "end": 145
+                },
+                {
+                    "routes": [],
+                    "name": "serverGroup",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "serverGroup(Minn\\Http\\Request $request): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array<string, string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 148,
+                    "end": 164
+                },
+                {
+                    "routes": [],
+                    "name": "opcacheOn",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "opcacheOn(): bool",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 166,
+                    "end": 170
                 },
                 {
                     "routes": [],
@@ -2428,8 +2622,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 218,
-                    "end": 230
+                    "line": 248,
+                    "end": 260
                 },
                 {
                     "routes": [],
@@ -2442,8 +2636,8 @@
                         "@return array{events: int, overdue: int, next: ?int}"
                     ],
                     "params": [],
-                    "line": 233,
-                    "end": 248
+                    "line": 263,
+                    "end": 278
                 },
                 {
                     "routes": [],
@@ -2456,8 +2650,8 @@
                         "@return list<array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 251,
-                    "end": 256
+                    "line": 281,
+                    "end": 286
                 },
                 {
                     "routes": [],
@@ -2470,8 +2664,8 @@
                         "@return array{0: array<string, string>, 1: list<array>}"
                     ],
                     "params": [],
-                    "line": 259,
-                    "end": 295
+                    "line": 289,
+                    "end": 325
                 },
                 {
                     "routes": [],
@@ -2482,8 +2676,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 297,
-                    "end": 321
+                    "line": 327,
+                    "end": 351
                 },
                 {
                     "routes": [],
@@ -2494,8 +2688,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 323,
-                    "end": 336
+                    "line": 353,
+                    "end": 366
                 },
                 {
                     "routes": [],
@@ -2535,8 +2729,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 338,
-                    "end": 341
+                    "line": 368,
+                    "end": 371
                 },
                 {
                     "routes": [],
@@ -2557,8 +2751,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 344,
-                    "end": 351
+                    "line": 374,
+                    "end": 381
                 },
                 {
                     "routes": [],
@@ -2577,8 +2771,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 353,
-                    "end": 366
+                    "line": 383,
+                    "end": 396
                 },
                 {
                     "routes": [],
@@ -2597,8 +2791,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 368,
-                    "end": 374
+                    "line": 398,
+                    "end": 404
                 },
                 {
                     "routes": [],
@@ -2617,8 +2811,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 376,
-                    "end": 389
+                    "line": 406,
+                    "end": 419
                 }
             ]
         },
@@ -29369,6 +29563,7 @@
                 "Minn\\Auth\\PasswordReset",
                 "Minn\\Cli\\UserCommand",
                 "Minn\\Content\\Users",
+                "Minn\\Front\\AdminBar",
                 "Minn\\Front\\CommentPostController",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Front\\Resolution",
@@ -32677,7 +32872,7 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/AdminBar.php",
-            "lines": 285,
+            "lines": 317,
             "doc": "The Minn bar on the public site: the same server-rendered chrome the\napp ships (assets/js/bar.js and assets/css/bar.css from the bundle),\nbuilt here for a signed-in reader who can edit. There is no other bar\nand no other admin on the engine, so it is on for everyone who passes\nthe edit_posts gate; the app's per-person opt-in does not apply.",
             "implements": [],
             "extends": null,
@@ -32689,6 +32884,7 @@
                 "Minn\\Auth\\Capabilities",
                 "Minn\\Auth\\Nonce",
                 "Minn\\Content\\Site",
+                "Minn\\Content\\UserRecord",
                 "Minn\\Front\\Kind",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Front\\Resolution",
@@ -32755,8 +32951,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 25,
-                "end": 34
+                "line": 26,
+                "end": 35
             },
             "cases": [],
             "constants": [],
@@ -32885,8 +33081,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 36,
-                    "end": 42
+                    "line": 37,
+                    "end": 43
                 },
                 {
                     "routes": [],
@@ -32897,8 +33093,8 @@
                     "doc": "The stylesheet link for the head.",
                     "shapes": [],
                     "params": [],
-                    "line": 45,
-                    "end": 48
+                    "line": 46,
+                    "end": 49
                 },
                 {
                     "routes": [],
@@ -32917,8 +33113,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 51,
-                    "end": 79
+                    "line": 52,
+                    "end": 80
                 },
                 {
                     "routes": [],
@@ -32951,8 +33147,109 @@
                             "doc": ""
                         }
                     ],
-                    "line": 81,
-                    "end": 179
+                    "line": 82,
+                    "end": 132
+                },
+                {
+                    "routes": [],
+                    "name": "siteMenu",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "siteMenu(Closure $can): string",
+                    "doc": "The site menu: the app's main views this user may open.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "can",
+                            "type": "Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 135,
+                    "end": 150
+                },
+                {
+                    "routes": [],
+                    "name": "statusMenu",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "statusMenu(?array $status, Closure $can): string",
+                    "doc": "The status menu, only when the page carries a site status. @param array<string, mixed>|null $status",
+                    "shapes": [
+                        "@param array<string, mixed>|null $status"
+                    ],
+                    "params": [
+                        {
+                            "name": "status",
+                            "type": "?array",
+                            "shape": "array<string, mixed>|null",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "can",
+                            "type": "Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 153,
+                    "end": 172
+                },
+                {
+                    "routes": [],
+                    "name": "newMenu",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "newMenu(Closure $can): string",
+                    "doc": "The create menu: a post, and a page for those who may edit them.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "can",
+                            "type": "Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 175,
+                    "end": 186
+                },
+                {
+                    "routes": [],
+                    "name": "notificationsMenu",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "notificationsMenu(): string",
+                    "doc": "The notifications menu; bar.js fills the items.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 189,
+                    "end": 199
+                },
+                {
+                    "routes": [],
+                    "name": "userMenu",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "userMenu(Minn\\Content\\UserRecord $user): string",
+                    "doc": "The account menu: profile and sign out.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "user",
+                            "type": "Minn\\Content\\UserRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 202,
+                    "end": 212
                 },
                 {
                     "routes": [],
@@ -32965,8 +33262,8 @@
                         "@return array{tone: string, label: string, title: string, sub: string, fix: ?array}|null"
                     ],
                     "params": [],
-                    "line": 187,
-                    "end": 201
+                    "line": 220,
+                    "end": 234
                 },
                 {
                     "routes": [],
@@ -32987,8 +33284,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 204,
-                    "end": 218
+                    "line": 237,
+                    "end": 251
                 },
                 {
                     "routes": [],
@@ -33021,8 +33318,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 220,
-                    "end": 242
+                    "line": 253,
+                    "end": 275
                 },
                 {
                     "routes": [],
@@ -33033,8 +33330,8 @@
                     "doc": "post type slug => editor route base, for the palette's content results.",
                     "shapes": [],
                     "params": [],
-                    "line": 245,
-                    "end": 252
+                    "line": 278,
+                    "end": 285
                 },
                 {
                     "routes": [],
@@ -33053,8 +33350,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 254,
-                    "end": 271
+                    "line": 287,
+                    "end": 304
                 },
                 {
                     "routes": [],
@@ -33065,8 +33362,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 273,
-                    "end": 276
+                    "line": 306,
+                    "end": 309
                 },
                 {
                     "routes": [],
@@ -33085,8 +33382,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 278,
-                    "end": 281
+                    "line": 311,
+                    "end": 314
                 },
                 {
                     "routes": [],
@@ -33105,8 +33402,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 283,
-                    "end": 286
+                    "line": 316,
+                    "end": 319
                 },
                 {
                     "routes": [],
@@ -33125,8 +33422,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 288,
-                    "end": 291
+                    "line": 321,
+                    "end": 324
                 },
                 {
                     "routes": [],
@@ -33137,8 +33434,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 293,
-                    "end": 296
+                    "line": 326,
+                    "end": 329
                 },
                 {
                     "routes": [],
@@ -33185,8 +33482,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 298,
-                    "end": 306
+                    "line": 331,
+                    "end": 339
                 }
             ]
         },

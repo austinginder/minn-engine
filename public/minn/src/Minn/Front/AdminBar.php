@@ -11,6 +11,7 @@ use Minn\Auth\Authenticated;
 use Minn\Auth\Capabilities;
 use Minn\Auth\Nonce;
 use Minn\Content\Site;
+use Minn\Content\UserRecord;
 use Minn\Support\Html;
 
 /**
@@ -125,6 +126,15 @@ final readonly class AdminBar
         $out .= '<a class="minn-bar-mobile-admin" href="' . Html::attr($this->appUrl()) . '">' . self::gridIcon() . '<span>Open Minn Admin</span></a>';
         $out .= '</header>';
 
+        $out .= $this->siteMenu($can) . $this->statusMenu($status, $can) . $this->newMenu($can) . self::notificationsMenu() . $this->userMenu($user);
+
+        return $out . '</div></div>' . "\n";
+    }
+
+    /** The site menu: the app's main views this user may open. */
+    private function siteMenu(\Closure $can): string
+    {
+        $out = '';
         $out .= '<div class="minn-bar-menu" id="minn-bar-menu-site" role="menu" hidden>'
             . '<div class="minn-bar-menu-label">Minn Admin</div>'
             . self::menuItem($this->appUrl(), '<rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/>', 'Overview')
@@ -136,7 +146,13 @@ final readonly class AdminBar
             $out .= self::menuItem($this->appPath('settings'), '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.01a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.01a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.01a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>', 'Settings');
         }
         $out .= '</div>';
+        return $out;
+    }
 
+    /** The status menu, only when the page carries a site status. @param array<string, mixed>|null $status */
+    private function statusMenu(?array $status, \Closure $can): string
+    {
+        $out = '';
         if ($status !== null) {
             $out .= '<div class="minn-bar-menu" id="minn-bar-menu-status" role="menu" hidden>'
                 . '<div class="minn-bar-menu-label">Site status</div>'
@@ -152,7 +168,13 @@ final readonly class AdminBar
             }
             $out .= '</div>';
         }
+        return $out;
+    }
 
+    /** The create menu: a post, and a page for those who may edit them. */
+    private function newMenu(\Closure $can): string
+    {
+        $out = '';
         $out .= '<div class="minn-bar-menu" id="minn-bar-menu-new" role="menu" hidden>'
             . '<div class="minn-bar-menu-label">Create</div>'
             . '<button type="button" class="minn-bar-menu-item" role="menuitem" data-barintent="new:posts">' . self::icon('<path d="M6 3h9l3 3v15H6z"/><path d="M9 11h6M9 15h6"/>') . '<span class="minn-bar-menu-copy"><span class="minn-bar-menu-title">Post</span></span></button>';
@@ -160,22 +182,33 @@ final readonly class AdminBar
             $out .= '<button type="button" class="minn-bar-menu-item" role="menuitem" data-barintent="new:pages">' . self::icon('<path d="M6 3h9l3 3v15H6z"/><path d="M15 3v4h4"/>') . '<span class="minn-bar-menu-copy"><span class="minn-bar-menu-title">Page</span></span></button>';
         }
         $out .= '</div>';
+        return $out;
+    }
 
+    /** The notifications menu; bar.js fills the items. */
+    private static function notificationsMenu(): string
+    {
+        $out = '';
         $out .= '<div class="minn-bar-menu" id="minn-bar-menu-notif" role="menu" hidden>'
             . '<div class="minn-bar-menu-label">Notifications</div>'
             . '<div id="minn-bar-notif-items"><div class="minn-bar-menu-item minn-bar-menu-static"><span class="minn-bar-menu-copy"><span class="minn-bar-menu-sub">Loading…</span></span></div></div>'
             . '<div class="minn-bar-menu-rule"></div>'
             . '<button type="button" class="minn-bar-menu-item" role="menuitem" data-barintent="notifications">' . self::icon('<path d="M5 12h14M13 6l6 6-6 6"/>') . '<span class="minn-bar-menu-copy"><span class="minn-bar-menu-title">Open notifications</span></span></button>'
             . '</div>';
+        return $out;
+    }
 
+    /** The account menu: profile and sign out. */
+    private function userMenu(UserRecord $user): string
+    {
+        $out = '';
         $out .= '<div class="minn-bar-menu" id="minn-bar-menu-user" role="menu" hidden>'
             . '<div class="minn-bar-menu-label">' . Html::esc(html_entity_decode($user->displayName, ENT_QUOTES | ENT_HTML5, 'UTF-8')) . '</div>'
             . self::menuItem($this->appPath('profile'), '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>', 'Your profile')
             . '<div class="minn-bar-menu-rule"></div>'
             . self::menuItem($this->permalinks->url('/minn-admin/login/logout'), '<path d="M10 4H5v16h5M14 8l4 4-4 4M8 12h10"/>', 'Sign out')
             . '</div>';
-
-        return $out . '</div></div>' . "\n";
+        return $out;
     }
 
     /**

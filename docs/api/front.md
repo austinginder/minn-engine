@@ -4,7 +4,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`AdminBar`](#adminbar) | final readonly class | 285 | The Minn bar on the public site: the same server-rendered chrome the |
+| [`AdminBar`](#adminbar) | final readonly class | 317 | The Minn bar on the public site: the same server-rendered chrome the |
 | [`AssetsController`](#assetscontroller) | final readonly class | 31 | The engine's own static assets, served under a reserved path. |
 | [`Canonical`](#canonical) | final class | 27 | Where a URL should redirect to, by the engine's own resolution: the |
 | [`CommentList`](#commentlist) | final class | 50 | The classic threaded comment walk: top-level comments in order (or |
@@ -53,7 +53,7 @@ The stylesheet link for the head.
 
 The bar markup, its config, and the script, for the end of the body.
 
-Internals: `markup()` (private, line 81), `status()` (private, line 187), `editTarget()` (private, line 204), `commands()` (private, line 220), `searchTypes()` (private, line 245), `customSchemeStyle()` (private, line 254), `appUrl()` (private, line 273), `appPath()` (private, line 278), `assetUrl()` (private, line 283), `icon()` (private, line 288), `gridIcon()` (private, line 293), `menuItem()` (private, line 298)
+Internals: `markup()` (private, line 82), `siteMenu()` (private, line 135), `statusMenu()` (private, line 153), `newMenu()` (private, line 175), `notificationsMenu()` (private, line 189), `userMenu()` (private, line 202), `status()` (private, line 220), `editTarget()` (private, line 237), `commands()` (private, line 253), `searchTypes()` (private, line 278), `customSchemeStyle()` (private, line 287), `appUrl()` (private, line 306), `appPath()` (private, line 311), `assetUrl()` (private, line 316), `icon()` (private, line 321), `gridIcon()` (private, line 326), `menuItem()` (private, line 331)
 
 
 ## AssetsController

@@ -10,10 +10,10 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`App`](#app) | final readonly class | 95 | The Minn Admin app on disk: the symlinked dev copy the engine serves the |
 | [`AppController`](#appcontroller) | final readonly class | 129 | Serves Minn Admin from the engine: the path-routed shell (every |
 | [`Appearance`](#appearance) | final readonly class | 74 | A person's Minn Admin appearance: the colour scheme and its custom |
-| [`BootPayload`](#bootpayload) | final readonly class | 202 | The window.MINN boot payload, assembled from the engine: the keys app.js |
+| [`BootPayload`](#bootpayload) | final readonly class | 228 | The window.MINN boot payload, assembled from the engine: the keys app.js |
 | [`CoreStatus`](#corestatus) | final readonly class | 23 | The installed version comes from the update_core transient's |
 | [`Dashboard`](#dashboard) | final readonly class | 289 | The overview payload: stat cards, the activity chart, and the recent |
-| [`Diagnostics`](#diagnostics) | final readonly class | 370 | The System view's facts about this install: the engine, PHP, the |
+| [`Diagnostics`](#diagnostics) | final readonly class | 400 | The System view's facts about this install: the engine, PHP, the |
 | [`Format`](#format) | final class | 51 | The dashboard's number, size, age, and title formatting. |
 | [`HiddenIntegrations`](#hiddenintegrations) | final readonly class | 89 | What a person hid from their own Minn Admin: the app's per-user map |
 | [`LanguageChoices`](#languagechoices) | final class | 40 | The language picker's markup. English always leads the list and carries the |
@@ -281,7 +281,7 @@ __construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, Minn\Aut
 
 ### `build(Minn\Auth\Authenticated $session): array`
 
-Internals: `pluginPayload()` (private, line 154), `standHomeQuery()` (private, line 176), `siteIcon()` (private, line 190), `adapterSlices()` (private, line 202)
+Internals: `userSlice()` (private, line 89), `siteSlice()` (private, line 106), `caps()` (private, line 133), `pluginPayload()` (private, line 180), `standHomeQuery()` (private, line 202), `siteIcon()` (private, line 216), `adapterSlices()` (private, line 228)
 
 
 ## CoreStatus
@@ -371,7 +371,7 @@ Every scheduled post as a one-off event, soonest first.
 
 ### `autoload(): array`
 
-Internals: `autoloadSummary()` (private, line 218), `cronSummary()` (private, line 233), `futurePosts()` (private, line 251), `databaseGroup()` (private, line 259), `extensionsManifest()` (private, line 297), `activeThemeLabel()` (private, line 323), `check()` (private, line 338), `rows()` (private, line 344), `bytes()` (private, line 353), `offsetLabel()` (private, line 368), `relative()` (private, line 376)
+Internals: `checks()` (private, line 67), `engineGroup()` (private, line 104), `phpGroup()` (private, line 125), `serverGroup()` (private, line 148), `opcacheOn()` (private, line 166), `autoloadSummary()` (private, line 248), `cronSummary()` (private, line 263), `futurePosts()` (private, line 281), `databaseGroup()` (private, line 289), `extensionsManifest()` (private, line 327), `activeThemeLabel()` (private, line 353), `check()` (private, line 368), `rows()` (private, line 374), `bytes()` (private, line 383), `offsetLabel()` (private, line 398), `relative()` (private, line 406)
 
 
 ## Format

@@ -44,11 +44,9 @@ final readonly class BootPayload
 
     public function build(Authenticated $session): array
     {
-        $user = $session->user;
         $userId = $session->id();
         $roles = $this->capabilities->rolesOf($userId);
         $role = $roles === [] ? '' : ($this->capabilities->roles()->all()[$roles[0]]['name'] ?? $roles[0]);
-        $can = fn (string $capability): bool => $this->capabilities->can($userId, $capability);
         $locale = $this->translations?->localeOf($userId) ?? ($this->site->option('WPLANG') ?: 'en_US');
         [$i18n, $plural] = $this->translations?->catalog($locale) ?? [[], ''];
         $plugin = $this->pluginPayload();
@@ -65,72 +63,15 @@ final readonly class BootPayload
             'appUrl' => $this->permalinks->url('/minn-admin/'),
             'version' => $this->app->version(),
             'engine' => 'Minn Engine/' . $this->engineVersion,
-            'user' => [
-                'id' => $userId,
-                'login' => $user->login,
-                'name' => $user->displayName,
-                'role' => $role,
-                'avatar' => 'https://secure.gravatar.com/avatar/' . hash('sha256', strtolower(trim($user->email))) . '?s=64&d=mm&r=g',
-                'appearance' => $this->appearance->read($userId),
-                'policy' => ['signin' => 'minn', 'toolbar' => 'minn'],
-            ],
-            'site' => [
-                'name' => $this->site->option('blogname') ?? 'Site',
-                'icon' => $this->siteIcon(),
-                'url' => $this->permalinks->url('/'),
-                'adminUrl' => $this->permalinks->url('/minn-admin/'),
-                'logout' => $this->permalinks->url('/minn-admin/login/logout'),
-                'blockTheme' => $this->blockTheme,
-                'hasSidebars' => false,
-                // A template id is "<owner>//<slug>". Comparing the owner
-                // against these two is how the app tells the theme's own
-                // templates from ones a plugin contributed, so both must be
-                // here or every customized template reads as a plugin's.
-                'stylesheet' => (string) ($this->site->option('stylesheet') ?? ''),
-                'template' => (string) ($this->site->option('template') ?? ''),
-            ],
+            'user' => $this->userSlice($session, $role),
+            'site' => $this->siteSlice(),
             'gmtOffset' => (float) ($this->site->option('gmt_offset') ?? 0),
             'locale' => $locale,
             'rtl' => Translations::isRtl($locale),
             'i18n' => $i18n === [] ? new stdClass() : $i18n,
             'i18nPlural' => $plural,
             'languages' => $this->translations?->installed() ?? [['', 'Site default'], ['en_US', 'English (United States)']],
-            'caps' => [
-                'plugins' => $can('activate_plugins'),
-                'update' => $can('update_plugins'),
-                'delete' => $can('delete_plugins'),
-                'install' => $can('install_plugins'),
-                'themes' => $can('switch_themes'),
-                'deleteThemes' => $can('delete_themes'),
-                'updateThemes' => $can('update_themes'),
-                'updateLanguages' => false,
-                'installThemes' => $can('install_themes'),
-                'licenses' => function_exists('minn_admin_licenses_can_manage') ? (bool) \minn_admin_licenses_can_manage() : false,
-                'deleteUsers' => $can('delete_users'),
-                'removeUsers' => false,
-                'networkPlugins' => false,
-                'networkThemes' => false,
-                // The commerce caps mirror the plugin's own conditions: WC loaded,
-                // the WC capability, and for coupons the store having them enabled.
-                'orders' => $wc && $can('edit_shop_orders'),
-                'products' => $wc && $can('edit_products'),
-                'coupons' => $wc && (!function_exists('wc_coupons_enabled') || \wc_coupons_enabled()) && $can('edit_shop_coupons'),
-                'customers' => $wc && ($can('manage_woocommerce') || $can('edit_shop_orders')),
-                'subscriptions' => $wc && class_exists('WC_Subscriptions', false) && $can('edit_shop_orders'),
-                'settings' => $can('manage_options'),
-                'moderate' => $can('moderate_comments'),
-                'terms' => $can('manage_categories'),
-                'upload' => $can('upload_files'),
-                'users' => $can('list_users'),
-                'readPrivate' => $can('read_private_posts'),
-                'editPages' => $can('edit_pages'),
-                'core' => $can('update_core'),
-                'editUsers' => $can('edit_users'),
-                'createUsers' => $can('create_users'),
-                'promoteUsers' => $can('promote_users'),
-                'themeOptions' => $can('edit_theme_options'),
-                'editCss' => $can('edit_css'),
-            ],
+            'caps' => $this->caps($userId, $wc),
             'ownOnly' => [],
             'multisite' => false,
             'wc' => $wc,
@@ -142,6 +83,91 @@ final readonly class BootPayload
             'pretty' => $this->permalinks->isPretty(),
         ] + ($plugin === null ? $this->adapterSlices() : array_diff_key($plugin, array_flip(self::PLUGIN_KEYS_WITHHELD)));
         return $payload;
+    }
+
+    /** @return array<string, mixed> */
+    private function userSlice(Authenticated $session, string $role): array
+    {
+        $user = $session->user;
+        $userId = $session->id();
+        return [
+
+            'id' => $userId,
+            'login' => $user->login,
+            'name' => $user->displayName,
+            'role' => $role,
+            'avatar' => 'https://secure.gravatar.com/avatar/' . hash('sha256', strtolower(trim($user->email))) . '?s=64&d=mm&r=g',
+            'appearance' => $this->appearance->read($userId),
+            'policy' => ['signin' => 'minn', 'toolbar' => 'minn'],
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    private function siteSlice(): array
+    {
+        return [
+
+            'name' => $this->site->option('blogname') ?? 'Site',
+            'icon' => $this->siteIcon(),
+            'url' => $this->permalinks->url('/'),
+            'adminUrl' => $this->permalinks->url('/minn-admin/'),
+            'logout' => $this->permalinks->url('/minn-admin/login/logout'),
+            'blockTheme' => $this->blockTheme,
+            'hasSidebars' => false,
+            // A template id is "<owner>//<slug>". Comparing the owner
+            // against these two is how the app tells the theme's own
+            // templates from ones a plugin contributed, so both must be
+            // here or every customized template reads as a plugin's.
+            'stylesheet' => (string) ($this->site->option('stylesheet') ?? ''),
+            'template' => (string) ($this->site->option('template') ?? ''),
+        ];
+    }
+
+    /**
+     * What the app may show, each key a capability the reference gates the
+     * same view on. The commerce caps mirror the plugin's own conditions:
+     * WC loaded, the WC capability, and for coupons the store having them enabled.
+     *
+     * @return array<string, bool>
+     */
+    private function caps(int $userId, bool $wc): array
+    {
+        $can = fn (string $capability): bool => $this->capabilities->can($userId, $capability);
+        return [
+
+            'plugins' => $can('activate_plugins'),
+            'update' => $can('update_plugins'),
+            'delete' => $can('delete_plugins'),
+            'install' => $can('install_plugins'),
+            'themes' => $can('switch_themes'),
+            'deleteThemes' => $can('delete_themes'),
+            'updateThemes' => $can('update_themes'),
+            'updateLanguages' => false,
+            'installThemes' => $can('install_themes'),
+            'licenses' => function_exists('minn_admin_licenses_can_manage') ? (bool) \minn_admin_licenses_can_manage() : false,
+            'deleteUsers' => $can('delete_users'),
+            'removeUsers' => false,
+            'networkPlugins' => false,
+            'networkThemes' => false,
+            'orders' => $wc && $can('edit_shop_orders'),
+            'products' => $wc && $can('edit_products'),
+            'coupons' => $wc && (!function_exists('wc_coupons_enabled') || \wc_coupons_enabled()) && $can('edit_shop_coupons'),
+            'customers' => $wc && ($can('manage_woocommerce') || $can('edit_shop_orders')),
+            'subscriptions' => $wc && class_exists('WC_Subscriptions', false) && $can('edit_shop_orders'),
+            'settings' => $can('manage_options'),
+            'moderate' => $can('moderate_comments'),
+            'terms' => $can('manage_categories'),
+            'upload' => $can('upload_files'),
+            'users' => $can('list_users'),
+            'readPrivate' => $can('read_private_posts'),
+            'editPages' => $can('edit_pages'),
+            'core' => $can('update_core'),
+            'editUsers' => $can('edit_users'),
+            'createUsers' => $can('create_users'),
+            'promoteUsers' => $can('promote_users'),
+            'themeOptions' => $can('edit_theme_options'),
+            'editCss' => $can('edit_css'),
+        ];
     }
 
     /**
