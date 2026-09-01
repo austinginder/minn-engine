@@ -7,7 +7,7 @@
         "leaf": 351,
         "noop": 1239,
         "functions": 2644,
-        "minnMethods": 395,
+        "minnMethods": 396,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -13387,6 +13387,7 @@
             "lines": 19,
             "kind": "minn",
             "minn": [
+                "Minn\\Content\\TermRecord::fromRow",
                 "Minn\\Runtime\\Runtime::current",
                 "Minn\\Runtime\\Runtime::forTerm",
                 "Minn\\Runtime\\Runtime::get"

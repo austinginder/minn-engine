@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Blocks\Dynamic;
 
+use Minn\Content\TermRecord;
 use Minn\Blocks\Block;
 use Minn\Db;
 use Minn\Front\Permalinks;
@@ -23,16 +24,16 @@ final readonly class TagCloud
 
     public function render(Block $block): string
     {
-        $tags = $this->db->rows(
+        $tags = TermRecord::fromRows($this->db->rows(
             "SELECT t.term_id, t.name, t.slug, tt.taxonomy, tt.parent, tt.count
              FROM {$this->db->table('terms')} t
              JOIN {$this->db->table('term_taxonomy')} tt ON tt.term_id = t.term_id
              WHERE tt.taxonomy = 'post_tag' AND tt.count > 0 ORDER BY t.name ASC",
-        );
+        ));
         if ($tags === []) {
             return '';
         }
-        $counts = array_map(static fn (array $t) => (int) $t['count'], $tags);
+        $counts = array_map(static fn (TermRecord $t) => $t->count, $tags);
         $min = min($counts);
         $max = max($counts);
         $spread = max($max - $min, 1);

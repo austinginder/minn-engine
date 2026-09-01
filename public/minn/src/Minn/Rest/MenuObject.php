@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Content\TermRecord;
 use Minn\Content\Menus;
 
 /** The wp/v2/menus resource: a nav_menu term plus locations and auto_add. */
@@ -17,7 +18,7 @@ final readonly class MenuObject
     }
 
     /** @param array<string, mixed> $term */
-    public function view(array $term): array
+    public function view(TermRecord $term): array
     {
         $id = (int) $term['term_id'];
         $canWrite = $this->caller->can('edit_theme_options');

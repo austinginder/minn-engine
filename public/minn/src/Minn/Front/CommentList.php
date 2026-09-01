@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
+use Minn\Content\CommentRecord;
 use Closure;
 
 /**
@@ -25,7 +26,8 @@ final class CommentList
         foreach ($comments as $comment) {
             $byParent[$maxDepth === -1 ? 0 : (int) ($comment['comment_parent'] ?? 0)][] = $comment;
         }
-        $ids = array_map(static fn (array $c) => (int) $c['comment_ID'], $comments);
+        // Rows from the engine's readers are records; the facade's wp_list_comments hands the runtime's arrays. Both read the same way here.
+        $ids = array_map(static fn (array|CommentRecord $c) => (int) $c['comment_ID'], $comments);
         $roots = $byParent[0] ?? [];
         // A reply whose parent is not in the list stands at the top.
         foreach ($byParent as $parent => $rows) {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
+use Minn\Content\TermRecord;
 use Minn\Content\UserRecord;
 use Minn\Content\PostRecord;
 use Minn\Content\Site;
@@ -112,7 +113,7 @@ final readonly class Sitemaps
              WHERE tt.taxonomy = ? AND tt.count > 0 ORDER BY t.term_id ASC LIMIT ? OFFSET ?",
             [$taxonomy, self::PER_PAGE, ($page - 1) * self::PER_PAGE],
         );
-        return array_map(fn (array $term) => [$this->permalinks->forTerm($term), null], $rows);
+        return array_map(fn (TermRecord $term) => [$this->permalinks->forTerm($term), null], TermRecord::fromRows($rows));
     }
 
     /** @return list<array{0: string, 1: ?string}> */

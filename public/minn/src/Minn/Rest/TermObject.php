@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Content\TermRecord;
 use Minn\Db;
 use Minn\Front\Permalinks;
 
@@ -34,7 +35,7 @@ final readonly class TermObject
         return self::TAXONOMIES[$restBase];
     }
 
-    public function view(array $term, string $restBase): array
+    public function view(TermRecord $term, string $restBase): array
     {
         $config = self::config($restBase);
         $id = (int) $term['term_id'];
@@ -42,7 +43,7 @@ final readonly class TermObject
             'id' => $id,
             'count' => (int) $term['count'],
             'description' => $term['description'],
-            'link' => $this->permalinks->forTerm($term + ['taxonomy' => $config['taxonomy']]),
+            'link' => $this->permalinks->forTerm(TermRecord::fromRow($term->row() + ['taxonomy' => $config['taxonomy']])),
             'name' => $term['name'],
             'slug' => $term['slug'],
             'taxonomy' => $config['taxonomy'],
@@ -67,7 +68,7 @@ final readonly class TermObject
     }
 
     /** Managers may write; nobody may delete the default category. */
-    private function allowedVerbs(array $term, array $config): array
+    private function allowedVerbs(TermRecord $term, array $config): array
     {
         if (!$this->caller->can('manage_categories')) {
             return ['GET'];

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
+use Minn\Content\TermRecord;
 use Minn\Content\UserRecord;
 use Minn\Content\PostRecord;
 use Closure;
@@ -136,7 +137,7 @@ final readonly class Permalinks
         return $this->url('/' . $attachment->slug . '/');
     }
 
-    public function forTerm(array $term): string
+    public function forTerm(TermRecord $term): string
     {
         $taxonomy = (string) $term['taxonomy'];
         if (!$this->isPretty()) {

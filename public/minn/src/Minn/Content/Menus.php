@@ -29,18 +29,18 @@ final readonly class Menus
     }
 
     /** @return list<array<string, mixed>> term rows keyed as Terms::row */
+    /** @return list<TermRecord> */
     public function all(): array
     {
-        return $this->db->rows(
+        return TermRecord::fromRows($this->db->rows(
             "SELECT t.term_id, t.name, t.slug, tt.term_taxonomy_id, tt.description, tt.count, tt.parent
              FROM {$this->db->table('terms')} t
              JOIN {$this->db->table('term_taxonomy')} tt ON tt.term_id = t.term_id
              WHERE tt.taxonomy = 'nav_menu' ORDER BY t.name ASC, t.term_id ASC",
-        );
+        ));
     }
 
-    /** @return array<string, mixed>|null */
-    public function find(int $id): ?array
+    public function find(int $id): ?TermRecord
     {
         return $this->terms->row($id, 'nav_menu');
     }
@@ -333,7 +333,7 @@ final readonly class Menus
         }
         $row = $this->find($id);
         if ($row !== null) {
-            $this->terms->delete($row + ['taxonomy' => 'nav_menu'], false);
+            $this->terms->delete(TermRecord::fromRow($row->row() + ['taxonomy' => 'nav_menu']), false);
         }
     }
 

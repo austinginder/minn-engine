@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
+use Minn\Content\CommentRecord;
 use Minn\Content\PostRecord;
 use Minn\Content\Blocks;
 use Minn\Content\Comments;
@@ -199,9 +200,9 @@ final readonly class Feeds
     /** The site's or one post's comments as RSS 2.0. */
     public function comments(?PostRecord $post, string $selfUrl): string
     {
-        $comments = $post === null
+        $comments = CommentRecord::fromRows($post === null
             ? $this->db->rows("SELECT c.* FROM {$this->db->table('comments')} c INNER JOIN {$this->db->table('posts')} p ON p.ID = c.comment_post_ID AND p.post_status = 'publish' AND p.post_password = '' WHERE c.comment_approved = '1' AND c.comment_type IN ('', 'comment') ORDER BY c.comment_date_gmt DESC LIMIT ?", [$this->perFeed()])
-            : $this->db->rows("SELECT * FROM {$this->db->table('comments')} WHERE comment_post_ID = ? AND comment_approved = '1' AND comment_type IN ('', 'comment') ORDER BY comment_date_gmt ASC", [$post->id]);
+            : $this->db->rows("SELECT * FROM {$this->db->table('comments')} WHERE comment_post_ID = ? AND comment_approved = '1' AND comment_type IN ('', 'comment') ORDER BY comment_date_gmt ASC", [$post->id]));
         $siteName = Html::esc((string) ($this->site->option('blogname') ?? ''));
         $title = $post === null ? 'Comments for ' . $siteName : 'Comments on: ' . self::title(PasswordGate::title($post));
         $latest = '';

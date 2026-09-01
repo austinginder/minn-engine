@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Blocks\Dynamic\Theme;
 
+use Minn\Content\CommentRecord;
 use Minn\Blocks\Block;
 use Minn\Blocks\Dynamic\Dates;
 use Minn\Blocks\Renderer;
@@ -202,13 +203,13 @@ final readonly class Comments
             . '</p></form>' . "\t" . '</div><!-- #respond -->';
     }
 
-    /** @return list<array> approved plain comments, oldest first */
+    /** @return list<CommentRecord> approved plain comments, oldest first */
     private function approved(int $postId): array
     {
-        return $this->db->rows(
+        return CommentRecord::fromRows($this->db->rows(
             "SELECT * FROM {$this->db->table('comments')} WHERE comment_post_ID = ? AND comment_approved = '1' AND comment_type IN ('', 'comment')
              ORDER BY comment_date_gmt ASC, comment_ID ASC",
             [$postId],
-        );
+        ));
     }
 }

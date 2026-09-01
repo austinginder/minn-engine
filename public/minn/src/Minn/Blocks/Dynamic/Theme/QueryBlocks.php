@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Blocks\Dynamic\Theme;
 
+use Minn\Content\TermRecord;
 use Minn\Content\PostRecord;
 use Minn\Blocks\Block;
 use Minn\Content\Page;
@@ -230,7 +231,7 @@ final class QueryBlocks
         $resolution = $renderer->context()->resolution;
         $record = $resolution->record ?? [];
         return match ($resolution->kind) {
-            Kind::Category, Kind::Tag, Kind::Taxonomy => $this->permalinks->forTerm($record),
+            Kind::Category, Kind::Tag, Kind::Taxonomy => $this->permalinks->forTerm($record instanceof TermRecord ? $record : TermRecord::fromRow((array) $record)),
             Kind::PostTypeArchive => $this->permalinks->forPostTypeArchive($record),
             Kind::Author => $record === [] ? $this->permalinks->url('/author/' . $resolution->authorName . '/') : $this->permalinks->forAuthor($record),
             Kind::Date => $this->permalinks->forDate(...$resolution->date),

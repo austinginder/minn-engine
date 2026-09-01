@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Content\TermRecord;
 use Minn\Content\Site;
 use Minn\Content\Terms;
 use Minn\Db;
@@ -84,7 +85,7 @@ final readonly class TermsController
             [...$params, ($page - 1) * $perPage, $perPage],
         );
         return Reply::list(
-            array_map(fn (array $term) => $this->object->view($term, $base), $rows),
+            array_map(fn (TermRecord $term) => $this->object->view($term, $base), TermRecord::fromRows($rows)),
             $total,
             (int) ceil($total / $perPage),
             Fields::fromQuery($request->query),
@@ -105,7 +106,7 @@ final readonly class TermsController
         if ($row === null) {
             throw new RestError('rest_term_invalid', 'Term does not exist.', 404);
         }
-        return Reply::item($this->object->view($row, $base), Fields::fromQuery($request->query));
+        return Reply::item($this->object->view(TermRecord::fromRow($row), $base), Fields::fromQuery($request->query));
     }
 
     /** Tags are open to edit_posts holders; categories need manage_categories. */
@@ -203,7 +204,7 @@ final readonly class TermsController
             throw new RestError('rest_trash_not_supported', "Terms do not support trashing. Set 'force=true' to delete.", 501);
         }
         $previous = $this->object->view($term, $base);
-        $this->terms->delete($term + ['taxonomy' => $taxonomy], $config['has_parent']);
+        $this->terms->delete(TermRecord::fromRow($term->row() + ['taxonomy' => $taxonomy]), $config['has_parent']);
         return Reply::item(['deleted' => true, 'previous' => $previous], Fields::fromQuery($request->query));
     }
 }

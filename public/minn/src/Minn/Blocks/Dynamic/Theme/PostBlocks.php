@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Blocks\Dynamic\Theme;
 
+use Minn\Content\TermRecord;
 use Minn\Content\PostRecord;
 use Minn\Blocks\Block;
 use Minn\Blocks\Dynamic\Dates;
@@ -231,7 +232,7 @@ final readonly class PostBlocks
         return '<div class="post-navigation-link-' . $direction . ' wp-block-post-navigation-link">' . $inner . '</div>';
     }
 
-    private function termRow(string $taxonomy, int $termId): ?array
+    private function termRow(string $taxonomy, int $termId): ?TermRecord
     {
         return (new \Minn\Content\Terms(\Minn\Db::shared()))->find($taxonomy, $termId);
     }

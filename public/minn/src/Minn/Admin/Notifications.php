@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Admin;
 
+use Minn\Content\CommentRecord;
 use Minn\Auth\Capabilities;
 use Minn\Content\Site;
 use Minn\Content\Texturize;
@@ -172,7 +173,7 @@ final readonly class Notifications
         $this->users->deleteMeta($userId, 'minn_admin_notif_read_ids');
     }
 
-    private function commentItem(array $comment, string $template): array
+    private function commentItem(array|CommentRecord $comment, string $template): array
     {
         return [
             'id' => 'comment-' . $comment['comment_ID'],

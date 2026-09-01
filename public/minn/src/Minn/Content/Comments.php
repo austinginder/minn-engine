@@ -15,9 +15,10 @@ final readonly class Comments
     {
     }
 
-    public function find(int $id): ?array
+    public function find(int $id): ?CommentRecord
     {
-        return $this->db->row("SELECT * FROM {$this->db->table('comments')} WHERE comment_ID = ? LIMIT 1", [$id]);
+        $row = $this->db->row("SELECT * FROM {$this->db->table('comments')} WHERE comment_ID = ? LIMIT 1", [$id]);
+        return $row === null ? null : CommentRecord::fromRow($row);
     }
 
     public function meta(int $id, string $key): ?string
@@ -88,7 +89,7 @@ final readonly class Comments
             "SELECT c.* {$from} ORDER BY c.comment_date_gmt DESC LIMIT ? OFFSET ?",
             [...$params, $perPage, ($page - 1) * $perPage],
         );
-        return ['comments' => $rows, 'total' => $total];
+        return ['comments' => CommentRecord::fromRows($rows), 'total' => $total];
     }
 
     /** @param list<int> $ids */

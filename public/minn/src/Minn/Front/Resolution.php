@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
+use Minn\Content\TermRecord;
 use Minn\Content\UserRecord;
 use Minn\Content\PostRecord;
 
@@ -20,7 +21,7 @@ final readonly class Resolution
      */
     private function __construct(
         public Kind $kind,
-        public array|PostRecord|UserRecord|null $record = null,
+        public array|PostRecord|UserRecord|TermRecord|null $record = null,
         public int $paged = 1,
         public ?string $location = null,
         public int $status = 200,
@@ -62,13 +63,13 @@ final readonly class Resolution
         return new self(Kind::Home, $page, $paged, postsPage: true);
     }
 
-    public static function term(string $taxonomy, array $term, int $paged = 1): self
+    public static function term(string $taxonomy, TermRecord $term, int $paged = 1): self
     {
         return new self($taxonomy === 'category' ? Kind::Category : Kind::Tag, $term, $paged);
     }
 
     /** A plugin taxonomy's term archive; the record is the term row (with its taxonomy). */
-    public static function taxonomy(array $term, int $paged = 1): self
+    public static function taxonomy(TermRecord $term, int $paged = 1): self
     {
         return new self(Kind::Taxonomy, $term, $paged);
     }

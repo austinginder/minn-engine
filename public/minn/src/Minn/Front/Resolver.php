@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
+use Minn\Content\TermRecord;
 use Minn\Content\UserRecord;
 use Minn\Content\PostRecord;
 use Closure;
@@ -386,7 +387,7 @@ final readonly class Resolver
     }
 
     /** The archive a found term stands for, 404 when it is empty or overpaged. */
-    private function termResolution(string $taxonomy, array $term, int $paged): Resolution
+    private function termResolution(string $taxonomy, TermRecord $term, int $paged): Resolution
     {
         $total = $this->posts->count(PostFilter::all()->inTerm((int) $term['term_taxonomy_id']));
         if ($total === 0 || $paged > $this->pages($total)) {

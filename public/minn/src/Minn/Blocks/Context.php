@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Blocks;
 
+use Minn\Content\CommentRecord;
 use Minn\Content\PostRecord;
 use Minn\Front\Kind;
 use Minn\Front\Resolution;
@@ -17,7 +18,7 @@ final class Context
 {
     /** @var list<PostRecord> */
     private array $postStack = [];
-    private ?array $comment = null;
+    private ?CommentRecord $comment = null;
 
     /**
      * @param list<PostRecord> $posts the main query's page of posts
@@ -61,12 +62,12 @@ final class Context
         return $this->postStack !== [];
     }
 
-    public function comment(): ?array
+    public function comment(): ?CommentRecord
     {
         return $this->comment;
     }
 
-    public function withComment(?array $comment): void
+    public function withComment(?CommentRecord $comment): void
     {
         $this->comment = $comment;
     }

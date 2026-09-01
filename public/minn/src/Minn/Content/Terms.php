@@ -12,39 +12,45 @@ final readonly class Terms
     {
     }
 
-    /** A term joined with its taxonomy row: term_id, name, slug, term_taxonomy_id, parent, count. */
-    public function findBySlug(string $taxonomy, string $slug): ?array
+    /** @param array<string, mixed>|null $row */
+    private static function record(?array $row): ?TermRecord
     {
-        return $this->db->row(
+        return $row === null ? null : TermRecord::fromRow($row);
+    }
+
+    /** A term joined with its taxonomy row: term_id, name, slug, term_taxonomy_id, parent, count. */
+    public function findBySlug(string $taxonomy, string $slug): ?TermRecord
+    {
+        return self::record($this->db->row(
             "SELECT t.term_id, t.name, t.slug, tt.term_taxonomy_id, tt.taxonomy, tt.parent, tt.count
              FROM {$this->db->table('terms')} t
              INNER JOIN {$this->db->table('term_taxonomy')} tt ON tt.term_id = t.term_id
              WHERE tt.taxonomy = ? AND t.slug = ? LIMIT 1",
             [$taxonomy, $slug],
-        );
+        ));
     }
 
-    public function find(string $taxonomy, int $termId): ?array
+    public function find(string $taxonomy, int $termId): ?TermRecord
     {
-        return $this->db->row(
+        return self::record($this->db->row(
             "SELECT t.term_id, t.name, t.slug, tt.term_taxonomy_id, tt.taxonomy, tt.parent, tt.count
              FROM {$this->db->table('terms')} t
              INNER JOIN {$this->db->table('term_taxonomy')} tt ON tt.term_id = t.term_id
              WHERE tt.taxonomy = ? AND t.term_id = ? LIMIT 1",
             [$taxonomy, $termId],
-        );
+        ));
     }
 
     /** The row shape the term controllers work with, including term_taxonomy_id. */
-    public function row(int $termId, string $taxonomy): ?array
+    public function row(int $termId, string $taxonomy): ?TermRecord
     {
-        return $this->db->row(
+        return self::record($this->db->row(
             "SELECT t.term_id, t.name, t.slug, tt.term_taxonomy_id, tt.description, tt.count, tt.parent
              FROM {$this->db->table('terms')} t
              JOIN {$this->db->table('term_taxonomy')} tt ON tt.term_id = t.term_id
              WHERE t.term_id = ? AND tt.taxonomy = ? LIMIT 1",
             [$termId, $taxonomy],
-        );
+        ));
     }
 
     public function idByName(string $name, string $taxonomy): ?int
@@ -101,7 +107,7 @@ final readonly class Terms
     }
 
     /** Reparents children to the grandparent, detaches relationships, drops the rows. */
-    public function delete(array $term, bool $hierarchical): void
+    public function delete(TermRecord $term, bool $hierarchical): void
     {
         $termId = (int) $term['term_id'];
         $ttid = (int) $term['term_taxonomy_id'];
@@ -117,7 +123,7 @@ final readonly class Terms
     }
 
     /** "parent/child" for hierarchical taxonomies, the bare slug otherwise. */
-    public function pathOf(array $term): string
+    public function pathOf(TermRecord $term): string
     {
         $parts = [$term['slug']];
         $parentId = (int) ($term['parent'] ?? 0);

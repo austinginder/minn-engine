@@ -29,7 +29,7 @@ function get_comment($comment = null, $output = OBJECT)
         if ($row === null) {
             return null;
         }
-        $object = new WP_Comment((object) $row);
+        $object = new WP_Comment((object) $row->row());
     }
     $object = apply_filters('get_comment', $object);
     if ($output === ARRAY_A) {

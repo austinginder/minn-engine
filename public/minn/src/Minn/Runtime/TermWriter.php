@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Content\TermRecord;
 use Closure;
 use Minn\Content\PostWriter;
 use Minn\Content\Terms;
@@ -102,7 +103,7 @@ final readonly class TermWriter
     {
         $objects = $this->query->objectsIn([(int) $row['term_id']], [$taxonomy], 'ASC');
         Runtime::hooks()->action('delete_term_taxonomy', [(int) $row['term_taxonomy_id']]);
-        $this->terms->delete($row, $hierarchical);
+        $this->terms->delete(TermRecord::fromRow($row), $hierarchical);
         if ($default > 0 && $taxonomy === 'category') {
             foreach ($objects as $objectId) {
                 $left = $this->query->rows($this->query->normalise(['object_ids' => [$objectId], 'hide_empty' => false]), ['category']);

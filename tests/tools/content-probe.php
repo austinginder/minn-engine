@@ -307,7 +307,8 @@ $say('set_query_var', (static function () { set_query_var('minn_probe', 'v'); re
 $say('get_search_query', get_search_query());
 $say('queried object', [get_queried_object(), get_queried_object_id()]);
 $say('conditionals', [is_singular(), is_single(), is_page(), is_home(), is_front_page(), is_archive(), is_search(), is_404(), is_author(), is_category(), is_tag(), is_tax(), is_date(), is_feed(), is_attachment(), is_post_type_archive(), is_paged(), is_preview(), is_embed(), in_the_loop(), have_posts(), is_main_query()]);
-$say('wp_get_nav_menus', array_map(static fn ($m) => [$m->term_id, $m->name, $m->slug, $m->taxonomy], wp_get_nav_menus()));
+// The menu's id is an auto-increment and depends on what ran before; the row pins what the menu is, not where it landed.
+$say('wp_get_nav_menus', array_map(static fn ($m) => [$m->name, $m->slug, $m->taxonomy], wp_get_nav_menus()));
 $say('wp_get_nav_menu_items missing', wp_get_nav_menu_items('nope'));
 
 echo json_encode($log, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_PARTIAL_OUTPUT_ON_ERROR | JSON_UNESCAPED_UNICODE), "\n";

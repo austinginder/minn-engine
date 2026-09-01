@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Content\CommentRecord;
 use Minn\Content\Blocks;
 use Minn\Content\Comments;
 use Minn\Content\Posts;
@@ -26,7 +27,7 @@ final readonly class CommentObject
         return $this->url;
     }
 
-    public function build(array $c, bool $edit): array
+    public function build(CommentRecord $c, bool $edit): array
     {
         $id = (int) $c['comment_ID'];
         $postId = (int) $c['comment_post_ID'];

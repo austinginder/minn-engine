@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Blocks\Dynamic;
 
+use Minn\Content\CommentRecord;
 use Minn\Blocks\Block;
 use Minn\Content\Posts;
 use Minn\Content\Site;
@@ -30,13 +31,13 @@ final readonly class LatestComments
         $avatars = (bool) $block->attr('displayAvatar', true);
         $dates = (bool) $block->attr('displayDate', true);
         $excerpts = (bool) $block->attr('displayExcerpt', true);
-        $comments = $this->db->rows(
+        $comments = CommentRecord::fromRows($this->db->rows(
             "SELECT c.* FROM {$this->db->table('comments')} c
              INNER JOIN {$this->db->table('posts')} p ON p.ID = c.comment_post_ID AND p.post_status = 'publish' AND p.post_password = ''
              WHERE c.comment_approved = '1' AND c.comment_type IN ('', 'comment')
              ORDER BY c.comment_date_gmt DESC LIMIT ?",
             [min(100, $count)],
-        );
+        ));
         $classes = ($avatars ? 'has-avatars ' : '') . ($dates ? 'has-dates ' : '') . ($excerpts ? 'has-excerpts ' : '') . 'wp-block-latest-comments';
         if ($comments === []) {
             return '<div class="' . $classes . ' no-comments">No comments to show.</div>';

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Content\TermRecord;
 use Minn\Content\Menus;
 use Minn\Http\Method;
 use Minn\Http\Request;
@@ -41,14 +42,14 @@ final readonly class MenusController
                     $owned[$item->menuId] = true;
                 }
             }
-            $rows = array_values(array_filter($rows, static fn (array $row) => isset($owned[(int) $row['term_id']])));
+            $rows = array_values(array_filter($rows, static fn (TermRecord $row) => isset($owned[$row->id])));
         }
         $perPage = max(1, min(100, (int) $request->query('per_page', '10')));
         $page = max(1, (int) $request->query('page', '1'));
         $total = count($rows);
         $slice = array_slice($rows, ($page - 1) * $perPage, $perPage);
         return Reply::list(
-            array_map(fn (array $row) => $this->menuObject->view($row), $slice),
+            array_map(fn (TermRecord $row) => $this->menuObject->view($row), $slice),
             $total,
             (int) ceil($total / $perPage),
             Fields::fromQuery($request->query),

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Content\CommentRecord;
 use Minn\Content\PostRecord;
 use Minn\Content\Comments;
 use Minn\Content\Posts;
@@ -55,7 +56,7 @@ final readonly class CommentsController
             filters: $this->listFilters($request),
         );
         return Reply::list(
-            array_map(fn (array $c) => $this->object->build($c, $context->isEdit()), $result['comments']),
+            array_map(fn (CommentRecord $c) => $this->object->build($c, $context->isEdit()), $result['comments']),
             $result['total'],
             (int) ceil($result['total'] / $perPage),
             Fields::fromQuery($request->query),
@@ -328,10 +329,10 @@ final readonly class CommentsController
     }
 
     /** A comment row of the plain kind, or the reference's invalid-id error. */
-    private function plainComment(int $id): array
+    private function plainComment(int $id): CommentRecord
     {
         $comment = $this->comments->find($id);
-        if ($comment === null || !in_array($comment['comment_type'], ['', 'comment'], true)) {
+        if ($comment === null || !$comment->isComment()) {
             throw new RestError('rest_comment_invalid_id', 'Invalid comment ID.', 404);
         }
         return $comment;

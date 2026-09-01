@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Blocks\Dynamic;
 
+use Minn\Content\TermRecord;
 use Minn\Blocks\Block;
 use Minn\Db;
 use Minn\Front\Permalinks;
@@ -22,12 +23,12 @@ final readonly class Categories
     {
         $resolution = $renderer->context()->resolution;
         $viewing = $resolution->kind === \Minn\Front\Kind::Category ? $resolution->id() : 0;
-        $terms = $this->db->rows(
+        $terms = TermRecord::fromRows($this->db->rows(
             "SELECT t.term_id, t.name, t.slug, tt.taxonomy, tt.parent, tt.count
              FROM {$this->db->table('terms')} t
              JOIN {$this->db->table('term_taxonomy')} tt ON tt.term_id = t.term_id
              WHERE tt.taxonomy = 'category' AND tt.count > 0 ORDER BY t.name ASC",
-        );
+        ));
         $items = '';
         foreach ($terms as $term) {
             $current = (int) $term['term_id'] === $viewing;

@@ -322,7 +322,7 @@ function get_term_link($term, $taxonomy = '')
         return new WP_Error('invalid_term', 'Empty Term.');
     }
     $permalinks = Runtime::current()->get('permalinks');
-    $row = _minn_term_row($term->term_id, $term->taxonomy) ?? $term->to_array();
+    $row = Minn\Content\TermRecord::fromRow(_minn_term_row($term->term_id, $term->taxonomy) ?? $term->to_array());
     $link = $permalinks === null ? home_url('/?' . $term->taxonomy . '=' . $term->slug) : $permalinks->forTerm($row);
     if ($term->taxonomy === 'post_tag') {
         $link = apply_filters('tag_link', $link, $term->term_id);
