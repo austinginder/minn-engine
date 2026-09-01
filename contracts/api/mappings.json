@@ -3,10 +3,10 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
         "minn": 321,
-        "composes": 671,
-        "leaf": 337,
-        "noop": 1180,
-        "functions": 2503,
+        "composes": 675,
+        "leaf": 339,
+        "noop": 1192,
+        "functions": 2521,
         "minnMethods": 358,
         "leafLinesOver15": 13
     },
@@ -751,10 +751,12 @@
         },
         "WP_Block_Patterns_Registry::with_content": {
             "file": "classes/WP_Block_Patterns_Registry.php",
-            "lines": 7,
-            "kind": "leaf",
+            "lines": 10,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "apply_block_hooks_to_content"
+            ]
         },
         "WP_Block_Styles_Registry::get_all_registered": {
             "file": "classes/WP_Block_Patterns_Registry.php",
@@ -2988,6 +2990,106 @@
             "minn": [
                 "Minn\\Runtime\\Runtime::interactivity"
             ],
+            "composes": []
+        },
+        "WP_Locale::__construct": {
+            "file": "classes/WP_Locale.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Locale::_strings_for_pot": {
+            "file": "classes/WP_Locale.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Locale::get_list_item_separator": {
+            "file": "classes/WP_Locale.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Locale::get_meridiem": {
+            "file": "classes/WP_Locale.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Locale::get_month": {
+            "file": "classes/WP_Locale.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Locale::get_month_abbrev": {
+            "file": "classes/WP_Locale.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Locale::get_month_genitive": {
+            "file": "classes/WP_Locale.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Locale::get_weekday": {
+            "file": "classes/WP_Locale.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Locale::get_weekday_abbrev": {
+            "file": "classes/WP_Locale.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Locale::get_weekday_initial": {
+            "file": "classes/WP_Locale.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Locale::get_word_count_type": {
+            "file": "classes/WP_Locale.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Locale::init": {
+            "file": "classes/WP_Locale.php",
+            "lines": 22,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__"
+            ]
+        },
+        "WP_Locale::is_rtl": {
+            "file": "classes/WP_Locale.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Locale::register_globals": {
+            "file": "classes/WP_Locale.php",
+            "lines": 5,
+            "kind": "leaf",
+            "minn": [],
             "composes": []
         },
         "WP_MatchesMapRegex::__construct": {
@@ -7179,6 +7281,19 @@
             "minn": [],
             "composes": []
         },
+        "_minn_apply_hooks_to_template_part": {
+            "file": "blocks.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_block_hooks_to_content",
+                "get_comment_delimited_block_content",
+                "get_hooked_blocks",
+                "has_filter",
+                "remove_serialized_parent_block"
+            ]
+        },
         "_minn_archive_title_parts": {
             "file": "query.php",
             "lines": 10,
@@ -7984,7 +8099,7 @@
         },
         "_minn_traverse_block": {
             "file": "blocks.php",
-            "lines": 22,
+            "lines": 18,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -10007,6 +10122,13 @@
             "minn": [],
             "composes": []
         },
+        "extract_serialized_parent_block": {
+            "file": "blocks.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "feed_content_type": {
             "file": "feed.php",
             "lines": 5,
@@ -10450,10 +10572,11 @@
         },
         "get_block_template": {
             "file": "blocks.php",
-            "lines": 16,
+            "lines": 19,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "_minn_apply_hooks_to_template_part",
                 "_minn_theme_block_template",
                 "apply_filters",
                 "count",
@@ -13525,6 +13648,16 @@
                 "serialize_block"
             ]
         },
+        "insert_hooked_blocks_and_set_ignored_hooked_blocks_metadata": {
+            "file": "blocks.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "insert_hooked_blocks",
+                "set_ignored_hooked_blocks_metadata"
+            ]
+        },
         "insert_with_markers": {
             "file": "misc.php",
             "lines": 1,
@@ -15374,6 +15507,13 @@
                 "wp_roles"
             ]
         },
+        "remove_serialized_parent_block": {
+            "file": "blocks.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "remove_shortcode": {
             "file": "shortcodes.php",
             "lines": 1,
@@ -17054,7 +17194,7 @@
         },
         "traverse_and_serialize_blocks": {
             "file": "blocks.php",
-            "lines": 17,
+            "lines": 14,
             "kind": "composes",
             "minn": [],
             "composes": [

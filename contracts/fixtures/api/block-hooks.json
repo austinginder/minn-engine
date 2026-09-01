@@ -1,0 +1,221 @@
+[
+    [
+        "get_hooked_blocks",
+        {
+            "core/paragraph": {
+                "after": [
+                    "minn-probe/hooked-reg"
+                ]
+            }
+        }
+    ],
+    [
+        "apply_block_hooks_to_content",
+        "<!-- wp:group -->\n<div class=\"wp-block-group\"><!-- wp:navigation /--><!-- wp:minn-probe/hooked-flt /--><!-- wp:paragraph -->\n<p>Hi</p>\n<!-- /wp:paragraph --><!-- wp:minn-probe/hooked-reg /--></div>\n<!-- /wp:group -->"
+    ],
+    [
+        "apply trace",
+        [
+            [
+                "before",
+                "core/group",
+                "NULL"
+            ],
+            [
+                "after",
+                "core/group",
+                "NULL"
+            ],
+            [
+                "first_child",
+                "core/group",
+                "NULL"
+            ],
+            [
+                "before",
+                "core/navigation",
+                "NULL"
+            ],
+            [
+                "after",
+                "core/navigation",
+                "NULL"
+            ],
+            [
+                "before",
+                "core/paragraph",
+                "NULL"
+            ],
+            [
+                "after",
+                "core/paragraph",
+                "NULL"
+            ],
+            [
+                "last_child",
+                "core/group",
+                "NULL"
+            ]
+        ]
+    ],
+    [
+        "ignoredHookedBlocks suppresses",
+        "<!-- wp:group -->\n<div class=\"wp-block-group\"><!-- wp:navigation {\"metadata\":{\"ignoredHookedBlocks\":[\"minn-probe/hooked-flt\"]}} /--><!-- wp:paragraph -->\n<p>Hi</p>\n<!-- /wp:paragraph --><!-- wp:minn-probe/hooked-reg /--></div>\n<!-- /wp:group -->"
+    ],
+    [
+        "set_ignored_hooked_blocks_metadata",
+        "<!-- wp:group -->\n<div class=\"wp-block-group\"><!-- wp:navigation {\"metadata\":{\"ignoredHookedBlocks\":[\"minn-probe/hooked-flt\"]}} /--><!-- wp:paragraph {\"metadata\":{\"ignoredHookedBlocks\":[\"minn-probe/hooked-reg\"]}} -->\n<p>Hi</p>\n<!-- /wp:paragraph --></div>\n<!-- /wp:group -->"
+    ],
+    [
+        "hooked_block filters",
+        "<!-- wp:group -->\n<div class=\"wp-block-group\"><!-- wp:navigation /--><!-- wp:minn-probe/hooked-flt {\"tuned\":true} /--><!-- wp:paragraph -->\n<p>Hi</p>\n<!-- /wp:paragraph --><!-- wp:minn-probe/hooked-reg /--></div>\n<!-- /wp:group -->"
+    ],
+    [
+        "hooked_block shapes",
+        [
+            [
+                "minn-probe/hooked-flt",
+                "after",
+                "core/navigation",
+                {
+                    "blockName": "minn-probe/hooked-flt",
+                    "attrs": [],
+                    "innerBlocks": [],
+                    "innerHTML": "",
+                    "innerContent": []
+                }
+            ],
+            [
+                "minn-probe/hooked-reg",
+                "after",
+                "core/paragraph",
+                {
+                    "blockName": "minn-probe/hooked-reg",
+                    "attrs": [],
+                    "innerBlocks": [],
+                    "innerHTML": "",
+                    "innerContent": []
+                }
+            ]
+        ]
+    ],
+    [
+        "hooked_block null suppresses",
+        "<!-- wp:group -->\n<div class=\"wp-block-group\"><!-- wp:navigation /--><!-- wp:paragraph -->\n<p>Hi</p>\n<!-- /wp:paragraph --><!-- wp:minn-probe/hooked-reg /--></div>\n<!-- /wp:group -->"
+    ],
+    [
+        "block_hooks registration inserts",
+        "<!-- wp:paragraph -->\n<p>anchor</p>\n<!-- /wp:paragraph --><!-- wp:minn-probe/hooked-reg /-->"
+    ],
+    [
+        "pattern retrieval content",
+        "<!-- wp:group -->\n<div class=\"wp-block-group\"><!-- wp:navigation {\"metadata\":{\"ignoredHookedBlocks\":[\"minn-probe/hooked-flt\"]}} /--><!-- wp:minn-probe/hooked-flt /--><!-- wp:paragraph {\"metadata\":{\"ignoredHookedBlocks\":[\"minn-probe/hooked-reg\"]}} -->\n<p>Hi</p>\n<!-- /wp:paragraph --><!-- wp:minn-probe/hooked-reg /--></div>\n<!-- /wp:group -->"
+    ],
+    [
+        "pattern retrieval trace",
+        [
+            [
+                "before",
+                "core/group",
+                "array[title,blockTypes,content,name]"
+            ],
+            [
+                "before",
+                "core/group",
+                "array[title,blockTypes,content,name]"
+            ],
+            [
+                "after",
+                "core/group",
+                "array[title,blockTypes,content,name]"
+            ],
+            [
+                "after",
+                "core/group",
+                "array[title,blockTypes,content,name]"
+            ],
+            [
+                "first_child",
+                "core/group",
+                "array[title,blockTypes,content,name]"
+            ],
+            [
+                "first_child",
+                "core/group",
+                "array[title,blockTypes,content,name]"
+            ],
+            [
+                "before",
+                "core/navigation",
+                "array[title,blockTypes,content,name]"
+            ],
+            [
+                "before",
+                "core/navigation",
+                "array[title,blockTypes,content,name]"
+            ],
+            [
+                "after",
+                "core/navigation",
+                "array[title,blockTypes,content,name]"
+            ],
+            [
+                "after",
+                "core/navigation",
+                "array[title,blockTypes,content,name]"
+            ],
+            [
+                "before",
+                "core/paragraph",
+                "array[title,blockTypes,content,name]"
+            ],
+            [
+                "before",
+                "core/paragraph",
+                "array[title,blockTypes,content,name]"
+            ],
+            [
+                "after",
+                "core/paragraph",
+                "array[title,blockTypes,content,name]"
+            ],
+            [
+                "after",
+                "core/paragraph",
+                "array[title,blockTypes,content,name]"
+            ],
+            [
+                "last_child",
+                "core/group",
+                "array[title,blockTypes,content,name]"
+            ],
+            [
+                "last_child",
+                "core/group",
+                "array[title,blockTypes,content,name]"
+            ]
+        ]
+    ],
+    [
+        "pattern render carries",
+        [
+            true,
+            true,
+            true
+        ]
+    ],
+    [
+        "template part content",
+        "<!-- wp:pattern {\"slug\":\"twentytwentyfive/header\",\"metadata\":{\"ignoredHookedBlocks\":[\"minn-probe/hooked-flt\"]}} /--><!-- wp:minn-probe/hooked-flt /-->\n"
+    ],
+    [
+        "template part context",
+        [
+            "WP_Block_Template"
+        ]
+    ],
+    [
+        "template part trace count",
+        12
+    ]
+]

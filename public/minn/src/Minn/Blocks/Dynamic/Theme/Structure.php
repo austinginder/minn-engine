@@ -11,6 +11,7 @@ use Minn\Blocks\Renderer;
 use Minn\Content\Site;
 use Minn\Front\Kind;
 use Minn\Front\Permalinks;
+use Minn\Runtime\BlockHooks;
 use Minn\Support\Html;
 use Minn\Theme\Templates;
 use Minn\Theme\Theme;
@@ -49,6 +50,7 @@ final readonly class Structure
         if (!in_array($tag, ['header', 'footer', 'div', 'main', 'section', 'article', 'aside', 'nav'], true)) {
             $tag = 'div';
         }
+        $markup = BlockHooks::forPart($markup, $slug, $area);
         $inner = $renderer->renderBlocks(Parser::parse($markup));
         RenderState::leave('part:' . $slug);
         $classes = trim($block->className() . ' wp-block-template-part');
@@ -58,10 +60,16 @@ final readonly class Structure
     private function pattern(Block $block, Renderer $renderer): string
     {
         $slug = (string) $block->attr('slug', '');
+        // A theme pattern first; a plugin's registered pattern is the
+        // fallback, and the registry has already applied its hooks.
         $markup = $this->theme->pattern($slug);
+        $registered = $markup === null ? BlockHooks::registeredPattern($slug) : null;
+        $markup ??= $registered;
         if ($markup === null || !RenderState::enter('pattern:' . $slug)) {
             return '';
         }
+        $meta = $this->theme->patternMeta($slug);
+        $markup = $registered !== null ? $markup : BlockHooks::forPattern($markup, $slug, $meta['blockTypes'], $meta['categories']);
         $out = $renderer->renderBlocks(Parser::parse($markup));
         RenderState::leave('pattern:' . $slug);
         return $out;

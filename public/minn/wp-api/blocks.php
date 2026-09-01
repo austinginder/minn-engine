@@ -648,6 +648,59 @@ function set_ignored_hooked_blocks_metadata(&$parsed_anchor_block, $relative_pos
     return '';
 }
 
+/**
+ * The inside of a serialized block: everything between the first opening
+ * delimiter and the last closing one. Offsets only, no parse, so a string
+ * that is not a block comes back sliced the same way the reference slices
+ * it (both offsets fall back to 0/3).
+ */
+function remove_serialized_parent_block($serialized_block)
+{
+    $serialized_block = (string) $serialized_block;
+    $start = (int) strpos($serialized_block, '-->') + 3;
+    $end = (int) strrpos($serialized_block, '<!--');
+    return substr($serialized_block, $start, $end - $start);
+}
+
+/** The reverse slice: the opening delimiter plus everything from the last one. */
+function extract_serialized_parent_block($serialized_block)
+{
+    $serialized_block = (string) $serialized_block;
+    $start = (int) strpos($serialized_block, '-->') + 3;
+    $end = (int) strrpos($serialized_block, '<!--');
+    return substr($serialized_block, 0, $start) . substr($serialized_block, $end);
+}
+
+/**
+ * A template part's content with its hooked blocks applied. The content is
+ * wrapped in a virtual core/template-part block first so the part's own
+ * first_child and last_child positions have an anchor, then unwrapped:
+ * that wrapper is why a part fires six positions, not two.
+ */
+function _minn_apply_hooks_to_template_part(string $content, $context): string
+{
+    $hooked = get_hooked_blocks();
+    if ($hooked === [] && !has_filter('hooked_block_types')) {
+        return $content;
+    }
+    $wrapped = get_comment_delimited_block_content('core/template-part', [], $content);
+    $wrapped = apply_block_hooks_to_content($wrapped, $context, 'insert_hooked_blocks_and_set_ignored_hooked_blocks_metadata');
+    return remove_serialized_parent_block($wrapped);
+}
+
+/**
+ * Inserts the hooked blocks AND stamps the anchor's ignoredHookedBlocks in
+ * one pass: the insert runs first (so it still sees the anchor's own
+ * ignores), then the metadata records what was inserted. Each position
+ * therefore fires hooked_block_types twice, consecutively.
+ */
+function insert_hooked_blocks_and_set_ignored_hooked_blocks_metadata(&$parsed_anchor_block, $relative_position, $hooked_blocks, $context)
+{
+    $markup = insert_hooked_blocks($parsed_anchor_block, $relative_position, $hooked_blocks, $context);
+    set_ignored_hooked_blocks_metadata($parsed_anchor_block, $relative_position, $hooked_blocks, $context);
+    return $markup;
+}
+
 function make_before_block_visitor($hooked_blocks, $context, $callback = 'insert_hooked_blocks')
 {
     return static function (&$block, &$parent_block = null, $prev = null) use ($hooked_blocks, $context, $callback) {
@@ -678,7 +731,13 @@ function traverse_and_serialize_block($block, $pre_callback = null, $post_callba
     return _minn_traverse_block($block, $pre_callback, $post_callback, $parent);
 }
 
-/** @internal */
+/**
+ * @internal
+ * BOTH visitors run before the block is serialized: a visitor at the
+ * `after` position still mutates the anchor's attributes (the metadata
+ * pass stamps ignoredHookedBlocks there), and serializing in between
+ * would freeze the block before that mutation landed.
+ */
 function _minn_traverse_block(array &$block, $pre, $post, ?array &$parent): string
 {
     $content = '';
@@ -692,13 +751,9 @@ function _minn_traverse_block(array &$block, $pre, $post, ?array &$parent): stri
         $inner = &$block['innerBlocks'][$index];
         $prev = $index > 0 ? $block['innerBlocks'][$index - 1] : null;
         $next = $index + 1 < $count ? $block['innerBlocks'][$index + 1] : null;
-        if ($pre !== null) {
-            $content .= (string) $pre($inner, $block, $prev);
-        }
-        $content .= _minn_traverse_block($inner, $pre, $post, $block);
-        if ($post !== null) {
-            $content .= (string) $post($inner, $block, $next);
-        }
+        $before = $pre !== null ? (string) $pre($inner, $block, $prev) : '';
+        $after = $post !== null ? (string) $post($inner, $block, $next) : '';
+        $content .= $before . _minn_traverse_block($inner, $pre, $post, $block) . $after;
         unset($inner);
         $index++;
     }
@@ -715,13 +770,10 @@ function traverse_and_serialize_blocks($blocks, $pre_callback = null, $post_call
         $block = &$blocks[$i];
         $prev = $i > 0 ? $blocks[$i - 1] : null;
         $next = $i + 1 < $count ? $blocks[$i + 1] : null;
-        if ($pre_callback !== null) {
-            $result .= (string) $pre_callback($block, $parent, $prev);
-        }
-        $result .= _minn_traverse_block($block, $pre_callback, $post_callback, $parent);
-        if ($post_callback !== null) {
-            $result .= (string) $post_callback($block, $parent, $next);
-        }
+        // Both visitors first, then serialize (see _minn_traverse_block).
+        $before = $pre_callback !== null ? (string) $pre_callback($block, $parent, $prev) : '';
+        $after = $post_callback !== null ? (string) $post_callback($block, $parent, $next) : '';
+        $result .= $before . _minn_traverse_block($block, $pre_callback, $post_callback, $parent) . $after;
         unset($block);
     }
     return $result;
@@ -933,6 +985,9 @@ function get_block_template($id, $template_type = 'wp_template')
     } elseif ($template_type === 'wp_template') {
         // A plugin's own "plugin//slug" name resolves to its registration.
         $template = WP_Block_Templates_Registry::get_instance()->get_registered((string) $id);
+    }
+    if ($template instanceof WP_Block_Template && $template_type === 'wp_template_part' && is_string($template->content)) {
+        $template->content = _minn_apply_hooks_to_template_part($template->content, $template);
     }
     return apply_filters('get_block_template', $template, $id, $template_type);
 }

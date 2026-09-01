@@ -186,6 +186,28 @@ final class Theme
         return PatternText::render((string) file_get_contents($file), $this->uri);
     }
 
+    /**
+     * A pattern's declared Block Types and Categories, the header fields a
+     * plugin reads to tell (say) a header pattern from any other.
+     *
+     * @return array{blockTypes: list<string>, categories: list<string>}
+     */
+    public function patternMeta(string $slug): array
+    {
+        $file = $this->patternIndex()[$slug] ?? null;
+        if ($file === null) {
+            return $this->parent?->patternMeta($slug) ?? ['blockTypes' => [], 'categories' => []];
+        }
+        $head = (string) file_get_contents($file, false, null, 0, 2000);
+        $list = static function (string $field) use ($head): array {
+            if (preg_match('/^\s*\*\s*' . $field . ':\s*(.+)$/m', $head, $m) !== 1) {
+                return [];
+            }
+            return array_values(array_filter(array_map('trim', explode(',', $m[1]))));
+        };
+        return ['blockTypes' => $list('Block Types'), 'categories' => $list('Categories')];
+    }
+
     /** The theme's stylesheet URL when it ships one; a child's own, else nothing (the parent's is not enqueued for it). */
     public function styleUri(): ?string
     {

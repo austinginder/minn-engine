@@ -38,6 +38,12 @@ final class WP_Block_Patterns_Registry
     }
 
     /** A file-backed pattern's content is the file's output, produced only when asked for. */
+    /**
+     * A retrieved pattern carries its hooked blocks: one pass that both
+     * inserts the markup and stamps ignoredHookedBlocks on the anchor,
+     * with the pattern array as the context (which is how a plugin's
+     * callback tells a header pattern from any other).
+     */
     private function with_content(array $pattern): array
     {
         if (isset($pattern['filePath']) && !isset($pattern['content'])) {
@@ -46,6 +52,9 @@ final class WP_Block_Patterns_Registry
             $pattern['content'] = (string) ob_get_clean();
         }
         $pattern['content'] = (string) ($pattern['content'] ?? '');
+        if ($pattern['content'] !== '') {
+            $pattern['content'] = apply_block_hooks_to_content($pattern['content'], $pattern, 'insert_hooked_blocks_and_set_ignored_hooked_blocks_metadata');
+        }
         return $pattern;
     }
 

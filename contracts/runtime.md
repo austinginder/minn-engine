@@ -1261,3 +1261,48 @@ on the WooCommerce lab.
   a rules option without the minn-admin rule, minn-admin's guard re-flushes
   on the next reference boot, and `extra_rules_top` balloons with taxonomy
   rules for that one boot (the bistable "blocks: rewrite" row).
+
+## The Block Hooks API (2026-09-01)
+
+Probe `block-hooks-probe.php`, fixture `contracts/fixtures/api/block-hooks.json` (15 rows).
+A plugin asks for its block next to an anchor; WooCommerce puts the
+mini-cart and the customer account after `core/navigation` in a header.
+
+- **Both visitors run before a block is serialized.** The traversal calls
+  the before-visitor and the after-visitor, THEN serializes between their
+  markup. Serializing in between freezes the anchor before an
+  `after`-position visitor has mutated its attributes, which is what
+  silently broke the metadata pass. The fire order for a group holding two
+  children is: before(group), after(group), first_child(group),
+  before(child1), after(child1), before(child2), after(child2),
+  last_child(group).
+- **`insert_hooked_blocks_and_set_ignored_hooked_blocks_metadata`** is one
+  pass that inserts AND records: the insert runs first (so it still reads
+  the anchor's own ignores), then the metadata records what went in. Each
+  position therefore fires `hooked_block_types` twice, consecutively. This
+  is the callback pattern retrieval and template parts use.
+- **`ignoredHookedBlocks`** on the anchor's `metadata` attribute suppresses
+  a block that would otherwise be inserted there.
+- **`hooked_block` and `hooked_block_{name}`** receive the parsed block
+  (`blockName`, empty `attrs`, empty inner), the position, and the parsed
+  anchor; returning null suppresses the insertion.
+- **A pattern retrieved from the registry** carries its hooked blocks, with
+  the pattern ARRAY as the context (`blockTypes`, `categories` are how a
+  plugin recognises a header pattern).
+- **A template part** wraps its content in a virtual `core/template-part`
+  block before applying hooks, then unwraps with
+  `remove_serialized_parent_block`: that wrapper is why a part fires six
+  positions (before/after/first_child/last_child of the part plus its
+  child's own), not two, and its context is the `WP_Block_Template`.
+  `remove_serialized_parent_block` / `extract_serialized_parent_block` are
+  pure offset slices (`strpos('-->')+3`, `strrpos('<!--')`), so a string
+  that is not a block still comes back sliced.
+- **On the engine's own front end** the seam is `Minn\Runtime\BlockHooks`,
+  called by the template-part and pattern theme blocks; it stays inert
+  until a plugin actually hooks something. `Theme::patternMeta()` reads the
+  pattern file's `Block Types` and `Categories` headers for the context.
+- **`$wp_locale` is bound with the runtime**, not built on first use:
+  plugin code reads the names off the global (WooCommerce's block settings
+  read `weekday_abbrev`, and a null global fatals the whole page). English
+  strings through the translation filters; the engine renders no core
+  translations yet.
