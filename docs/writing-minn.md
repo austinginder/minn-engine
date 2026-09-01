@@ -177,6 +177,13 @@ the footer line is there, deactivate in a shutdown handler. If the extension
 replaces a real plugin, the dogfood suite is the judge: a page on the engine
 must match the same page on the reference with the plugin active.
 
+## The API, generated
+
+`docs/api/README.md` indexes every namespace; each page lists every class
+with its docblock, constructor, public properties and methods, read from the
+code by `php tests/tools/api-docs.php`. `contracts/api/minn.json` is the same
+model for tooling. Grep it before you write: `grep -n "function forPost" docs/api/front.md`.
+
 ## Where things live
 
 | You want to | Look in |

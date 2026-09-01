@@ -37,8 +37,14 @@ change; they are short.
 ```bash
 php tests/unit.test.php          # pure classes, under a second
 php tests/style.test.php         # the shape and the ratchets
+php tests/tools/api-docs.php     # regenerate docs/api/ after touching src/Minn/
 ./tests/run-all.sh               # everything, with the oracles it starts itself
 ```
+
+`docs/api/` is the engine's own API, one page per namespace, read from the
+classes by reflection. Regenerate it after any change to `src/Minn/`; the
+style suite fails while it is stale. Read it before adding a class, so the
+one you need does not already exist under another name.
 
 A behavioural change ships with a suite. Where WordPress can observe the
 behaviour, the suite diffs the engine against it request by request; where it

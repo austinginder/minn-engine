@@ -185,6 +185,12 @@ $check("engine: bracket reads of comment columns stay at or under {$commentBrack
 $check("engine: methods over eighty lines stay at or under {$longMethodCeiling}", count($longMethods) <= $longMethodCeiling, count($longMethods) . ': ' . implode(', ', $longMethods));
 $check("engine: classes over six hundred lines stay at or under {$bigClassCeiling}", count($bigClasses) <= $bigClassCeiling, count($bigClasses) . ': ' . implode(', ', $bigClasses));
 
+// The API docs are generated from the classes (tests/tools/api-docs.php) and
+// must be current: an agent or a person reading docs/api/ is reading the code.
+$docs = json_decode((string) shell_exec('php ' . escapeshellarg(dirname(__DIR__) . '/tests/tools/api-docs.php') . ' --check 2>/dev/null'), true);
+$check('api docs: tests/tools/api-docs.php runs', is_array($docs));
+$check('api docs: docs/api/ is current', is_array($docs) && ($docs['stale'] ?? true) === false, 'run php tests/tools/api-docs.php');
+
 $legacy = array_map('basename', glob("{$root}/*.php"));
 echo "\n  legacy procedural files remaining: " . count($legacy) . ' (' . implode(', ', $legacy) . ")\n";
 echo "\n{$pass} passed, {$fail} failed\n";
