@@ -136,7 +136,7 @@ final readonly class PostsWriteController
         $postId = (int) $id;
         $userId = $this->caller->require('rest_cannot_edit', 'Sorry, you are not allowed to edit this post.')->id();
         $post = $this->posts->find($postId);
-        if ($post === null || $post['post_type'] !== $type) {
+        if ($post === null || $post->type !== $type) {
             throw new RestError('rest_post_invalid_id', 'Invalid post ID.', 404);
         }
         if (!$this->caller->can('edit_post', $postId)) {
@@ -147,7 +147,7 @@ final readonly class PostsWriteController
         $this->checkStickyPasswordConflict($body, $post);
         $columns = [];
 
-        if (isset($body['author']) && (int) $body['author'] !== (int) $post['post_author']) {
+        if (isset($body['author']) && (int) $body['author'] !== $post->authorId) {
             if (!$this->caller->can(TypeCapabilities::editOthers($type))) {
                 throw new RestError('rest_cannot_edit_others', 'Sorry, you are not allowed to update posts as this user.', 403);
             }
@@ -169,7 +169,7 @@ final readonly class PostsWriteController
         }
         if (isset($body['date']) && (string) $body['date'] !== '') {
             [$columns['post_date'], $columns['post_date_gmt'], $stamp] = $this->site->localDate((string) $body['date']);
-            $effective = (string) ($body['status'] ?? $post['post_status']);
+            $effective = (string) ($body['status'] ?? $post->status);
             if ($effective === 'publish' && $stamp > time() && !isset($body['status'])) {
                 $body['status'] = 'future';
             } elseif (($body['status'] ?? '') === 'publish' && $stamp > time()) {
@@ -194,14 +194,14 @@ final readonly class PostsWriteController
                 throw new RestError('rest_cannot_publish', 'Sorry, you are not allowed to publish posts in this post type.', 403);
             }
             $columns['post_status'] = $newStatus;
-            if (in_array($newStatus, self::LIVE, true) && $post['post_name'] === '' && !array_key_exists('slug', $body)) {
-                $titleForSlug = array_key_exists('title', $body) ? self::field($body['title']) : (string) $post['post_title'];
+            if (in_array($newStatus, self::LIVE, true) && $post->slug === '' && !array_key_exists('slug', $body)) {
+                $titleForSlug = array_key_exists('title', $body) ? self::field($body['title']) : $post->title;
                 if ($titleForSlug !== '') {
                     $columns['post_name'] = $this->writer->uniqueSlug($titleForSlug, $postId);
                 }
             }
             // Moving to publish for the first time stamps the publish date.
-            if ($newStatus === 'publish' && !in_array($post['post_status'], ['publish', 'private', 'future'], true)) {
+            if ($newStatus === 'publish' && !in_array($post->status, ['publish', 'private', 'future'], true)) {
                 $columns['post_date'] = $this->site->localNow();
                 $columns['post_date_gmt'] = gmdate('Y-m-d H:i:s');
             }
@@ -213,7 +213,7 @@ final readonly class PostsWriteController
         $this->writer->applyTerms($postId, $body);
         $this->writer->applyExtendedFields($postId, $body, $type);
         // A publish/unpublish transition changes the terms' published counts.
-        if (array_key_exists('status', $body) && $body['status'] !== $post['post_status']) {
+        if (array_key_exists('status', $body) && $body['status'] !== $post->status) {
             $this->writer->recountTaxonomiesOf($postId);
         }
         $this->writer->maybeSaveRevision($postId, $userId);
@@ -232,7 +232,7 @@ final readonly class PostsWriteController
         $postId = (int) $id;
         $userId = $this->caller->require('rest_cannot_edit', 'Sorry, you are not allowed to edit this post.')->id();
         $post = $this->posts->find($postId);
-        if ($post === null || $post['post_type'] !== $type) {
+        if ($post === null || $post->type !== $type) {
             throw new RestError('rest_post_invalid_id', 'Invalid post ID.', 404);
         }
         if (!$this->caller->can('delete_post', $postId)) {
@@ -241,12 +241,12 @@ final readonly class PostsWriteController
         $fields = Fields::fromQuery($request->query);
 
         if (!filter_var($request->query('force', ''), FILTER_VALIDATE_BOOLEAN)) {
-            if ($post['post_status'] === 'trash') {
+            if ($post->isTrashed()) {
                 throw new RestError('rest_already_trashed', 'The post has already been deleted.', 410);
             }
             $this->writer->setStatus($postId, 'trash');
             // The pre-trash status is kept the way the reference stores it.
-            $this->writer->setMeta($postId, '_wp_trash_meta_status', (string) $post['post_status']);
+            $this->writer->setMeta($postId, '_wp_trash_meta_status', $post->status);
             $this->writer->setMeta($postId, '_wp_trash_meta_time', (string) time());
             $this->writer->recountTaxonomiesOf($postId);
             return Reply::item($this->object->edit($this->posts->find($postId), $userId), $fields);
@@ -261,9 +261,9 @@ final readonly class PostsWriteController
     private function checkStickyPasswordConflict(array $body, ?PostRecord $post): void
     {
         $wantsSticky = !empty($body['sticky'])
-            || (!isset($body['sticky']) && $post !== null && $this->writer->isSticky((int) $post['ID']));
+            || (!isset($body['sticky']) && $post !== null && $this->writer->isSticky($post->id));
         $wantsPassword = (string) ($body['password'] ?? '') !== ''
-            || (!array_key_exists('password', $body) && $post !== null && $post['post_password'] !== '');
+            || (!array_key_exists('password', $body) && $post !== null && $post->isProtected());
         if ($wantsSticky && $wantsPassword && (isset($body['sticky']) || array_key_exists('password', $body))) {
             throw new RestError('rest_invalid_field', 'A post can not be sticky and have a password.', 400);
         }

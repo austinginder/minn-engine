@@ -202,7 +202,7 @@ final readonly class Resolver
                 continue;
             }
             $post = $this->posts->find((int) $request->query($key, '0'));
-            if ($post === null || !in_array($post['post_type'], ['post', 'page'], true)) {
+            if ($post === null || !in_array($post->type, ['post', 'page'], true)) {
                 return Resolution::notFound();
             }
             if (!$this->readable($post)) {
@@ -211,7 +211,7 @@ final readonly class Resolver
             if (!$canonical) {
                 // Without the canonical pass each var is strict about type:
                 // ?p= finds only posts, ?page_id= only pages.
-                return $post['post_type'] === ($key === 'p' ? 'post' : 'page')
+                return $post->type === ($key === 'p' ? 'post' : 'page')
                     ? Resolution::single($post)
                     : Resolution::notFound();
             }
@@ -232,7 +232,7 @@ final readonly class Resolver
             $segments = array_values(array_filter(explode('/', (string) $request->query('pagename')), static fn (string $s) => $s !== ''));
             $page = $this->posts->pageByPath($segments);
             if ($page !== null) {
-                if ((int) $page['ID'] === $this->permalinks->frontPageId) {
+                if ($page->id === $this->permalinks->frontPageId) {
                     return $canonical ? Resolution::redirect($this->permalinks->url('/')) : Resolution::frontPage($page, 1);
                 }
                 return Resolution::single($page);
@@ -295,7 +295,7 @@ final readonly class Resolver
     {
         if ($this->permalinks->frontPageId > 0) {
             $page = $this->posts->find($this->permalinks->frontPageId);
-            if ($page !== null && $page['post_type'] === 'page' && $this->readable($page)) {
+            if ($page !== null && $page->isPage() && $this->readable($page)) {
                 return Resolution::frontPage($page, $paged);
             }
         }
@@ -496,12 +496,12 @@ final readonly class Resolver
         $page = $this->posts->pageByPath($segments, publishedOnly: false);
         if ($page !== null && $this->readable($page)) {
             // The static front page answers only at the site root.
-            if ((int) $page['ID'] === $this->permalinks->frontPageId) {
+            if ($page->id === $this->permalinks->frontPageId) {
                 return $canonical ? Resolution::redirect($this->permalinks->url('/')) : Resolution::frontPage($page, $paged);
             }
             // The posts page paginates like the home listing: page/N serves
             // the blog's page N, and past the last page it is a 404.
-            if ((int) $page['ID'] === $this->permalinks->postsPageId) {
+            if ($page->id === $this->permalinks->postsPageId) {
                 $total = (int) $this->db->value(
                     "SELECT COUNT(*) FROM {$this->db->table('posts')} WHERE post_type = 'post' AND post_status = 'publish'",
                 );
@@ -514,7 +514,7 @@ final readonly class Resolver
             $post = isset($m['post_id'])
                 ? $this->posts->find((int) $m['post_id'])
                 : $this->posts->findByName($m['postname'], ['post'], publishedOnly: false);
-            if ($post !== null && $post['post_type'] === 'post' && $this->readable($post)) {
+            if ($post !== null && $post->type === 'post' && $this->readable($post)) {
                 return Resolution::single($post, $paged);
             }
             if ($post === null && isset($m['postname'])) {
@@ -554,15 +554,15 @@ final readonly class Resolver
 
     private function readable(PostRecord $post): bool
     {
-        if ($post['post_status'] === 'publish') {
+        if ($post->isPublished()) {
             return true;
         }
-        if (in_array($post['post_status'], ['trash', 'auto-draft', 'inherit'], true)) {
+        if (in_array($post->status, ['trash', 'auto-draft', 'inherit'], true)) {
             return false;
         }
-        if ($post['post_status'] === 'private') {
+        if ($post->status === 'private') {
             $reader = Reader::current();
-            if ($post['post_type'] === 'page' ? $reader->readsPrivatePages : $reader->readsPrivatePosts) {
+            if ($post->isPage() ? $reader->readsPrivatePages : $reader->readsPrivatePosts) {
                 return true;
             }
         }

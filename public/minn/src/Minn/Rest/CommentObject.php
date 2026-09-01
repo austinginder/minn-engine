@@ -68,7 +68,7 @@ final readonly class CommentObject
             $links['author'] = [['embeddable' => true, 'href' => $this->url->to('/wp/v2/users/' . (int) $c['user_id'])]];
         }
         if ($postId > 0) {
-            $type = $post['post_type'] ?? 'post';
+            $type = $post->type ?? 'post';
             $links['up'] = [[
                 'embeddable' => true,
                 'post_type' => $type,

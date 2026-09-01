@@ -81,16 +81,16 @@ final readonly class Permalinks
 
     public function forPost(PostRecord $post): string
     {
-        $id = (int) $post['ID'];
-        if ($post['post_type'] === 'page') {
+        $id = $post->id;
+        if ($post->isPage()) {
             return $this->forPage($post);
         }
         // A navigation menu is not publicly queryable and gets no type
         // prefix: the reference fills the plain post structure for it,
         // category token and all.
-        if ($post['post_type'] !== 'post' && $post['post_type'] !== 'wp_navigation') {
+        if ($post->type !== 'post' && $post->type !== 'wp_navigation') {
             if ($this->isPretty() && $this->hasPrettyLink($post)) {
-                return $this->url('/' . $this->typeSlug((string) $post['post_type']) . '/' . $post['post_name'] . '/');
+                return $this->url('/' . $this->typeSlug($post->type) . '/' . $post->slug . '/');
             }
             return $this->url('/?p=' . $id);
         }
@@ -102,7 +102,7 @@ final readonly class Permalinks
 
     public function forPage(PostRecord $page): string
     {
-        if ($this->frontPageId > 0 && (int) $page['ID'] === $this->frontPageId) {
+        if ($this->frontPageId > 0 && $page->id === $this->frontPageId) {
             return $this->url('/');
         }
         return $this->pagePath($page);
@@ -112,7 +112,7 @@ final readonly class Permalinks
     public function pagePath(PostRecord $page): string
     {
         if (!$this->isPretty() || !$this->hasPrettyLink($page)) {
-            return $this->url('/?page_id=' . (int) $page['ID']);
+            return $this->url('/?page_id=' . $page->id);
         }
         return $this->url('/' . $this->posts->pathOf($page) . '/');
     }
@@ -124,15 +124,15 @@ final readonly class Permalinks
      */
     public function forAttachment(PostRecord $attachment): string
     {
-        $id = (int) $attachment['ID'];
-        if (!$this->isPretty() || $attachment['post_name'] === '') {
+        $id = $attachment->id;
+        if (!$this->isPretty() || $attachment->slug === '') {
             return $this->url('/?attachment_id=' . $id);
         }
-        $parent = (int) $attachment['post_parent'] > 0 ? $this->posts->find((int) $attachment['post_parent']) : null;
+        $parent = $attachment->parentId > 0 ? $this->posts->find($attachment->parentId) : null;
         if ($parent !== null) {
-            return rtrim($this->forPost($parent), '/') . '/' . $attachment['post_name'] . '/';
+            return rtrim($this->forPost($parent), '/') . '/' . $attachment->slug . '/';
         }
-        return $this->url('/' . $attachment['post_name'] . '/');
+        return $this->url('/' . $attachment->slug . '/');
     }
 
     public function forTerm(array $term): string
@@ -211,22 +211,22 @@ final readonly class Permalinks
 
     private function hasPrettyLink(PostRecord $post): bool
     {
-        return in_array($post['post_status'], ['publish', 'private'], true) && $post['post_name'] !== '';
+        return in_array($post->status, ['publish', 'private'], true) && $post->slug !== '';
     }
 
     private function fill(PostRecord $post): string
     {
-        $time = strtotime((string) $post['post_date']) ?: 0;
+        $time = strtotime($post->date) ?: 0;
         $author = null;
         $category = null;
         if (str_contains($this->structure, '%author%')) {
             $author = (string) (Db::shared()->value(
                 "SELECT user_nicename FROM " . Db::shared()->table('users') . " WHERE ID = ? LIMIT 1",
-                [(int) $post['post_author']],
+                [$post->authorId],
             ) ?? '');
         }
         if (str_contains($this->structure, '%category%')) {
-            $category = $this->posts->firstCategorySlug((int) $post['ID']) ?? 'uncategorized';
+            $category = $this->posts->firstCategorySlug($post->id) ?? 'uncategorized';
         }
         return strtr($this->structure, [
             '%year%' => date('Y', $time),
@@ -235,8 +235,8 @@ final readonly class Permalinks
             '%hour%' => date('H', $time),
             '%minute%' => date('i', $time),
             '%second%' => date('s', $time),
-            '%post_id%' => (string) $post['ID'],
-            '%postname%' => (string) $post['post_name'],
+            '%post_id%' => $post->id,
+            '%postname%' => $post->slug,
             '%category%' => (string) $category,
             '%author%' => (string) $author,
         ]);

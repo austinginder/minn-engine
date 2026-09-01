@@ -33,47 +33,47 @@ final readonly class MediaObject
 
     public function build(PostRecord $p, bool $edit): array
     {
-        $id = (int) $p['ID'];
+        $id = $p->id;
         $meta = Metadata::parse($this->posts->meta($id, '_wp_attachment_metadata'));
         $file = $this->posts->meta($id, '_wp_attached_file') ?? '';
         $alt = $this->posts->meta($id, '_wp_attachment_image_alt') ?? '';
         $fullUrl = $file === '' ? '' : $this->uploads->urlFor($file);
-        $isImage = str_starts_with((string) $p['post_mime_type'], 'image/');
+        $isImage = str_starts_with($p->mimeType, 'image/');
         $dual = static fn (string $raw, string $rendered) => $edit ? ['raw' => $raw, 'rendered' => $rendered] : ['rendered' => $rendered];
-        $caption = $p['post_excerpt'] === '' ? '' : Blocks::paragraphs((string) $p['post_excerpt']);
+        $caption = $p->excerpt === '' ? '' : Blocks::paragraphs($p->excerpt);
 
         $object = [
             'id' => $id,
-            'date' => PostObject::date((string) $p['post_date']),
-            'date_gmt' => PostObject::date((string) $p['post_date_gmt']),
-            'guid' => $edit ? ['rendered' => $p['guid'], 'raw' => $p['guid']] : ['rendered' => $p['guid']],
-            'modified' => PostObject::date((string) $p['post_modified']),
-            'modified_gmt' => PostObject::date((string) $p['post_modified_gmt']),
-            'slug' => $p['post_name'],
-            'status' => $p['post_status'],
+            'date' => PostObject::date($p->date),
+            'date_gmt' => PostObject::date($p->dateGmt),
+            'guid' => $edit ? ['rendered' => $p->guid, 'raw' => $p->guid] : ['rendered' => $p->guid],
+            'modified' => PostObject::date($p->modified),
+            'modified_gmt' => PostObject::date($p->modifiedGmt),
+            'slug' => $p->slug,
+            'status' => $p->status,
             'type' => 'attachment',
             'link' => $this->permalinks->forAttachment($p),
-            'title' => $dual((string) $p['post_title'], Texturize::html((string) $p['post_title'])),
-            'author' => (int) $p['post_author'],
+            'title' => $dual($p->title, Texturize::html($p->title)),
+            'author' => $p->authorId,
             'featured_media' => 0,
-            'comment_status' => $p['comment_status'],
-            'ping_status' => $p['ping_status'],
+            'comment_status' => $p->commentStatus,
+            'ping_status' => $p->pingStatus,
             'template' => '',
             'meta' => [],
         ];
         if ($edit) {
             $object['permalink_template'] = $this->url->home('/?attachment_id=' . $id);
-            $object['generated_slug'] = Slug::sanitize((string) $p['post_title']);
+            $object['generated_slug'] = Slug::sanitize($p->title);
         }
-        $object['class_list'] = ['post-' . $id, 'attachment', 'type-attachment', 'status-' . $p['post_status'], 'hentry'];
+        $object['class_list'] = ['post-' . $id, 'attachment', 'type-attachment', 'status-' . $p->status, 'hentry'];
         $object['minn_attached_to'] = null;
-        $object['description'] = $dual((string) $p['post_content'], $isImage ? $this->descriptionHtml($meta, $fullUrl, $alt) : '');
-        $object['caption'] = $dual((string) $p['post_excerpt'], $caption);
+        $object['description'] = $dual($p->content, $isImage ? $this->descriptionHtml($meta, $fullUrl, $alt) : '');
+        $object['caption'] = $dual($p->excerpt, $caption);
         $object['alt_text'] = $alt;
         $object['media_type'] = $isImage ? 'image' : 'file';
-        $object['mime_type'] = $p['post_mime_type'];
-        $object['media_details'] = $this->details($meta, (string) $p['post_mime_type']);
-        $object['post'] = (int) $p['post_parent'] > 0 ? (int) $p['post_parent'] : null;
+        $object['mime_type'] = $p->mimeType;
+        $object['media_details'] = $this->details($meta, $p->mimeType);
+        $object['post'] = $p->parentId > 0 ? $p->parentId : null;
         $object['source_url'] = $fullUrl;
         $object['filename'] = basename($file);
         $path = $this->uploads->pathFor($file);
@@ -96,8 +96,8 @@ final readonly class MediaObject
             'collection' => [['href' => $this->url->to('/wp/v2/media')]],
             'about' => [['href' => $this->url->to('/wp/v2/types/attachment')]],
         ];
-        if ((int) $p['post_author'] > 0) {
-            $links['author'] = [['embeddable' => true, 'href' => $this->url->to('/wp/v2/users/' . (int) $p['post_author'])]];
+        if ($p->authorId > 0) {
+            $links['author'] = [['embeddable' => true, 'href' => $this->url->to('/wp/v2/users/' . $p->authorId)]];
         }
         $links['replies'] = [['embeddable' => true, 'href' => $this->url->to('/wp/v2/comments', ['post' => $id])]];
         if ($edit && $canEdit) {

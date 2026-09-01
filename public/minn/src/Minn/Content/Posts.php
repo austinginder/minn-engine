@@ -71,24 +71,24 @@ final readonly class Posts
         $page = null;
         $status = $publishedOnly ? "AND post_status = 'publish'" : "AND post_status <> 'trash'";
         foreach ($segments as $segment) {
-            $page = $this->db->row(
+            $page = self::record($this->db->row(
                 "SELECT * FROM {$this->db->table('posts')}
                  WHERE post_name = ? AND post_type = 'page' AND post_parent = ? {$status} LIMIT 1",
                 [$segment, $parent],
-            );
+            ));
             if ($page === null) {
                 return null;
             }
-            $parent = (int) $page['ID'];
+            $parent = $page->id;
         }
-        return self::record($page);
+        return $page;
     }
 
     /** The slash-joined ancestry of a page: "sample-page/docs". */
     public function pathOf(PostRecord $page): string
     {
-        $parts = [$page['post_name']];
-        $parentId = (int) $page['post_parent'];
+        $parts = [$page->slug];
+        $parentId = $page->parentId;
         while ($parentId > 0) {
             $parent = $this->db->row(
                 "SELECT ID, post_name, post_parent FROM {$this->db->table('posts')} WHERE ID = ? LIMIT 1",
@@ -264,7 +264,7 @@ final readonly class Posts
              WHERE post_type = ? AND post_status = 'publish'
                AND (post_date {$operator} ? OR (post_date = ? AND ID {$operator} ?))
              ORDER BY post_date {$order}, ID {$order} LIMIT 1",
-            [$post['post_type'], $post['post_date'], $post['post_date'], (int) $post['ID']],
+            [$post->type, $post->date, $post->date, $post->id],
         ));
     }
 

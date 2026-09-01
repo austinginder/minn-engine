@@ -99,7 +99,7 @@ final class QueryBlocks
                 $inner .= $chunk ?? $renderer->renderBlock($block->innerBlocks[$index++]);
             }
             $context->popPost();
-            $isSticky = $onFrontPage && in_array((int) $post['ID'], $sticky, true);
+            $isSticky = $onFrontPage && in_array($post->id, $sticky, true);
             $items .= '<li class="' . implode(' ', $this->postClasses($post, $isSticky)) . '">' . $inner . '</li>';
         }
         $columns = (int) ($block->attrs['layout']['columnCount'] ?? 0);
@@ -117,9 +117,9 @@ final class QueryBlocks
     /** @return list<string> */
     private function postClasses(PostRecord $post, bool $sticky): array
     {
-        $id = (int) $post['ID'];
-        $type = (string) $post['post_type'];
-        $classes = ['wp-block-post', 'post-' . $id, $type, 'type-' . $type, 'status-' . $post['post_status']];
+        $id = $post->id;
+        $type = $post->type;
+        $classes = ['wp-block-post', 'post-' . $id, $type, 'type-' . $type, 'status-' . $post->status];
         if ($type === 'post') {
             $formats = $this->posts->terms($id, 'post_format');
             $classes[] = 'format-' . ($formats === [] ? 'standard' : str_replace('post-format-', '', $formats[0][1]));
@@ -127,7 +127,7 @@ final class QueryBlocks
         if ($sticky) {
             $classes[] = 'sticky';
         }
-        if ($post['post_password'] !== '') {
+        if ($post->isProtected()) {
             $classes[] = 'post-password-required';
         }
         if ((int) ($this->posts->meta($id, '_thumbnail_id') ?? 0) > 0) {

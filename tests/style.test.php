@@ -159,7 +159,7 @@ foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root, Fil
 // array|PostRecord unions that bridge callers still holding rows, and the
 // bracket reads of post columns that the record's properties replace.
 $unionCeiling = 4;
-$bracketCeiling = 565;
+$bracketCeiling = 339;
 $unions = 0;
 $brackets = 0;
 foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root, FilesystemIterator::SKIP_DOTS)) as $file) {

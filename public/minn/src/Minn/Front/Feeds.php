@@ -84,21 +84,21 @@ final readonly class Feeds
     private function rssItem(PostRecord $post): string
     {
         $link = $this->permalinks->forPost($post);
-        $count = $this->commentCount((int) $post['ID']);
+        $count = $this->commentCount($post->id);
         $lines = "\t\t<title>" . self::title(PasswordGate::title($post)) . "</title>\n"
             . "\t\t<link>" . $link . "</link>\n";
-        if ($post['comment_status'] === 'open' || $count > 0) {
+        if ($post->commentStatus === 'open' || $count > 0) {
             $lines .= "\t\t\t\t\t<comments>" . $link . ($count > 0 ? '#comments' : '#respond') . "</comments>\n";
         }
         $lines .= "\t\t\n"
             . "\t\t<dc:creator><![CDATA[" . self::cdata($this->authorName($post)) . "]]></dc:creator>\n"
-            . "\t\t<pubDate>" . self::rfc2822((string) $post['post_date_gmt']) . "</pubDate>\n";
+            . "\t\t<pubDate>" . self::rfc2822($post->dateGmt) . "</pubDate>\n";
         $first = true;
         foreach ($this->termNames($post) as $name) {
             $lines .= ($first ? "\t\t\t\t" : "\t\t") . '<category><![CDATA[' . self::cdata($name) . "]]></category>\n";
             $first = false;
         }
-        $lines .= "\t\t" . '<guid isPermaLink="false">' . $post['guid'] . "</guid>\n\n"
+        $lines .= "\t\t" . '<guid isPermaLink="false">' . $post->guid . "</guid>\n\n"
             . "\t\t\t\t\t<description><![CDATA[" . self::cdata($this->plainExcerpt($post)) . "]]></description>\n"
             . "\t\t\t\t\t\t\t\t\t\t<content:encoded><![CDATA[" . self::cdata($this->content($post)) . "]]></content:encoded>\n"
             . "\t\t\t\t\t\n"
@@ -125,17 +125,17 @@ final readonly class Feeds
             . "\t" . '<generator uri="https://wordpress.org/" version="' . $this->generatorVersion . '">WordPress</generator>' . "\n";
         foreach ($posts as $post) {
             $link = $this->permalinks->forPost($post);
-            $count = $this->commentCount((int) $post['ID']);
-            $user = $this->users->find((int) $post['post_author']);
+            $count = $this->commentCount($post->id);
+            $user = $this->users->find($post->authorId);
             $out .= "\t<entry>\n\t\t<author>\n\t\t\t<name>" . Html::esc((string) ($user['display_name'] ?? '')) . "</name>\n";
             $out .= ($user !== null && (string) $user['user_url'] !== '')
                 ? "\t\t\t\t\t\t\t<uri>" . Html::esc((string) $user['user_url']) . "</uri>\n\t\t\t\t\t\t</author>\n\n"
                 : "\t\t\t\t\t</author>\n\n";
-            $out .= "\t\t" . '<title type="html"><![CDATA[' . Texturize::text((string) $post['post_title']) . "]]></title>\n"
+            $out .= "\t\t" . '<title type="html"><![CDATA[' . Texturize::text($post->title) . "]]></title>\n"
                 . "\t\t" . '<link rel="alternate" type="text/html" href="' . $link . '" />' . "\n\n"
-                . "\t\t<id>" . $post['guid'] . "</id>\n"
-                . "\t\t<updated>" . self::isoZ((string) $post['post_modified_gmt']) . "</updated>\n"
-                . "\t\t<published>" . self::isoZ((string) $post['post_date_gmt']) . "</published>\n";
+                . "\t\t<id>" . $post->guid . "</id>\n"
+                . "\t\t<updated>" . self::isoZ($post->modifiedGmt) . "</updated>\n"
+                . "\t\t<published>" . self::isoZ($post->dateGmt) . "</published>\n";
             $terms = $this->termNames($post);
             if ($terms !== []) {
                 // Atom categories share one line.
@@ -183,7 +183,7 @@ final readonly class Feeds
                 . "\t<title>" . self::title(PasswordGate::title($post)) . "</title>\n"
                 . "\t<link>" . $link . "</link>\n\n"
                 . "\t<dc:creator><![CDATA[" . self::cdata($this->authorName($post)) . "]]></dc:creator>\n"
-                . "\t<dc:date>" . self::isoZ((string) $post['post_date_gmt']) . "</dc:date>\n";
+                . "\t<dc:date>" . self::isoZ($post->dateGmt) . "</dc:date>\n";
             $first = true;
             foreach ($this->termNames($post) as $name) {
                 $out .= ($first ? "\t\t\t" : "\t\t") . '<dc:subject><![CDATA[' . self::cdata($name) . "]]></dc:subject>\n";
@@ -201,7 +201,7 @@ final readonly class Feeds
     {
         $comments = $post === null
             ? $this->db->rows("SELECT c.* FROM {$this->db->table('comments')} c INNER JOIN {$this->db->table('posts')} p ON p.ID = c.comment_post_ID AND p.post_status = 'publish' AND p.post_password = '' WHERE c.comment_approved = '1' AND c.comment_type IN ('', 'comment') ORDER BY c.comment_date_gmt DESC LIMIT ?", [$this->perFeed()])
-            : $this->db->rows("SELECT * FROM {$this->db->table('comments')} WHERE comment_post_ID = ? AND comment_approved = '1' AND comment_type IN ('', 'comment') ORDER BY comment_date_gmt ASC", [(int) $post['ID']]);
+            : $this->db->rows("SELECT * FROM {$this->db->table('comments')} WHERE comment_post_ID = ? AND comment_approved = '1' AND comment_type IN ('', 'comment') ORDER BY comment_date_gmt ASC", [$post->id]);
         $siteName = Html::esc((string) ($this->site->option('blogname') ?? ''));
         $title = $post === null ? 'Comments for ' . $siteName : 'Comments on: ' . self::title(PasswordGate::title($post));
         $latest = '';
@@ -249,7 +249,7 @@ final readonly class Feeds
         if (PasswordGate::is($post)) {
             return PasswordGate::form($post, $this->permalinks->url(''), $this->permalinks->forPost($post));
         }
-        $content = Blocks::render(str_replace('<!--more-->', '<span id="more-' . (int) $post['ID'] . '"></span>', (string) $post['post_content']));
+        $content = Blocks::render(str_replace('<!--more-->', '<span id="more-' . $post->id . '"></span>', $post->content));
         $seams = Extensions::runner();
         if ($seams !== null) {
             $content = $seams->filterContent($content, $post);
@@ -270,7 +270,7 @@ final readonly class Feeds
     {
         $latest = '';
         foreach ($posts as $post) {
-            $latest = max($latest, (string) $post['post_modified_gmt']);
+            $latest = max($latest, $post->modifiedGmt);
         }
         return $latest !== '' ? $latest : gmdate('Y-m-d H:i:s');
     }
@@ -282,7 +282,7 @@ final readonly class Feeds
 
     private function authorName(PostRecord $post): string
     {
-        return (string) ($this->users->find((int) $post['post_author'])['display_name'] ?? '');
+        return (string) ($this->users->find($post->authorId)['display_name'] ?? '');
     }
 
     /** Category names then tag names. @return list<string> */
@@ -290,7 +290,7 @@ final readonly class Feeds
     {
         $names = [];
         foreach (['category', 'post_tag'] as $taxonomy) {
-            foreach ($this->posts->terms((int) $post['ID'], $taxonomy) as [$termId]) {
+            foreach ($this->posts->terms($post->id, $taxonomy) as [$termId]) {
                 $name = $this->db->value("SELECT name FROM {$this->db->table('terms')} WHERE term_id = ? LIMIT 1", [$termId]);
                 if ($name !== null) {
                     $names[] = (string) $name;

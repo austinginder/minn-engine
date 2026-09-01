@@ -34,10 +34,10 @@ final readonly class LatestPosts
         $items = [];
         foreach ($posts as $post) {
             $item = '<li><a class="wp-block-latest-posts__post-title" href="' . Html::attr($this->permalinks->forPost($post)) . '">'
-                . ($post['post_title'] === '' ? '(no title)' : Html::esc(PasswordGate::title($post))) . '</a>';
+                . ($post->title === '' ? '(no title)' : Html::esc(PasswordGate::title($post))) . '</a>';
             if ($withDates) {
-                $item .= '<time datetime="' . Dates::iso($this->site, (string) $post['post_date']) . '" class="wp-block-latest-posts__post-date">'
-                    . Dates::format($this->site, (string) $post['post_date']) . '</time>';
+                $item .= '<time datetime="' . Dates::iso($this->site, $post->date) . '" class="wp-block-latest-posts__post-date">'
+                    . Dates::format($this->site, $post->date) . '</time>';
             }
             $items[] = $item . '</li>';
         }

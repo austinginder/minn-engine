@@ -81,10 +81,10 @@ final readonly class PostBlocks
         $suffix = '';
         if ($context->inLoop() && $more !== false) {
             $raw = substr($raw, 0, $more);
-            $suffix = "\n" . ' <a href="' . Html::attr($this->permalinks->forPost($post) . '#more-' . (int) $post['ID']) . '" class="more-link"><span aria-label="Continue reading ' . Html::attr(Texturize::text((string) $post['post_title'])) . '">(more&hellip;)</span></a>';
+            $suffix = "\n" . ' <a href="' . Html::attr($this->permalinks->forPost($post) . '#more-' . $post->id) . '" class="more-link"><span aria-label="Continue reading ' . Html::attr(Texturize::text($post->title)) . '">(more&hellip;)</span></a>';
             $content = rtrim(Blocks::render($raw)) . $suffix;
         } else {
-            $content = Blocks::render(str_replace('<!--more-->', '<span id="more-' . (int) $post['ID'] . '"></span>', $raw));
+            $content = Blocks::render(str_replace('<!--more-->', '<span id="more-' . $post->id . '"></span>', $raw));
         }
         $seams = Extensions::runner();
         if ($seams !== null) {
@@ -112,7 +112,7 @@ final readonly class PostBlocks
         if ($post === null) {
             return '';
         }
-        $local = (string) $post['post_date'];
+        $local = $post->date;
         $time = '<time datetime="' . Dates::iso($this->site, $local) . '">' . Dates::format($this->site, $local) . '</time>';
         if ((bool) $block->attr('isLink', false)) {
             $time = '<a href="' . Html::attr($this->permalinks->forPost($post)) . '">' . $time . '</a>';
@@ -123,7 +123,7 @@ final readonly class PostBlocks
     private function authorName(Block $block, Renderer $renderer): string
     {
         $post = $renderer->context()->post();
-        $user = $post === null ? null : $this->users->find((int) $post['post_author']);
+        $user = $post === null ? null : $this->users->find($post->authorId);
         if ($user === null) {
             return '';
         }
@@ -149,7 +149,7 @@ final readonly class PostBlocks
     private function featuredImage(Block $block, Renderer $renderer): string
     {
         $post = $renderer->context()->post();
-        $thumbnail = $post === null ? 0 : (int) ($this->posts->meta((int) $post['ID'], '_thumbnail_id') ?? 0);
+        $thumbnail = $post === null ? 0 : (int) ($this->posts->meta($post->id, '_thumbnail_id') ?? 0);
         if ($thumbnail === 0) {
             return '';
         }
@@ -161,7 +161,7 @@ final readonly class PostBlocks
         $isLink = (bool) $block->attr('isLink', false);
         if ($isLink && $alt === '') {
             // A linked image without alt text borrows the post title so the link has a name.
-            $alt = trim(strip_tags((string) $post['post_title']));
+            $alt = trim(strip_tags($post->title));
         }
         // Declared in the reference's fixed order: ratio, height, width, then the fit.
         $style = '';
@@ -193,7 +193,7 @@ final readonly class PostBlocks
             return '';
         }
         $taxonomy = (string) $block->attr('term', 'category');
-        $terms = $this->posts->terms((int) $post['ID'], $taxonomy);
+        $terms = $this->posts->terms($post->id, $taxonomy);
         if ($terms === []) {
             return '';
         }
@@ -223,7 +223,7 @@ final readonly class PostBlocks
                 $arrow = 'none';
             }
             $glyph = $arrow === 'chevron' ? ($next ? '›' : '‹') : ($next ? '→' : '←');
-            $label = (bool) $block->attr('showTitle', false) ? Texturize::text((string) $target['post_title']) : ucfirst($direction);
+            $label = (bool) $block->attr('showTitle', false) ? Texturize::text($target->title) : ucfirst($direction);
             $link = '<a href="' . Html::attr($this->permalinks->forPost($target)) . '" rel="' . ($next ? 'next' : 'prev') . '">' . $label . '</a>';
             $span = $arrow === 'none' ? '' : '<span class="wp-block-post-navigation-link__arrow-' . $direction . ' is-arrow-' . $arrow . '" aria-hidden="true">' . $glyph . '</span>';
             $inner = $next ? $link . $span : $span . $link;
@@ -245,10 +245,10 @@ final readonly class PostBlocks
     /** On a preview, the reader's newest autosave of this post stands in for its stored fields. */
     private function previewSource(PostRecord $post, \Minn\Front\Resolution $resolution): ?PostRecord
     {
-        if (!$resolution->preview || $resolution->id() !== (int) $post['ID']) {
+        if (!$resolution->preview || $resolution->id() !== $post->id) {
             return null;
         }
-        $autosave = $this->posts->newestAutosave((int) $post['ID'], Reader::current()->userId);
+        $autosave = $this->posts->newestAutosave($post->id, Reader::current()->userId);
         return $autosave === null ? null : PostRecord::fromRow(['post_content' => $autosave->content, 'post_title' => $autosave->title] + $post->row());
     }
 

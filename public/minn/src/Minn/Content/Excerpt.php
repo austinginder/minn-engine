@@ -41,9 +41,9 @@ final class Excerpt
      */
     public static function render(PostRecord $post, bool $stopAtMore = true, bool $forFeed = false): string
     {
-        $source = (string) $post['post_excerpt'];
+        $source = $post->excerpt;
         if ($source === '') {
-            $blocks = Parser::parse((string) $post['post_content']);
+            $blocks = Parser::parse($post->content);
             self::recordRendered($blocks);
             $source = self::allowedMarkup($blocks);
             $more = strpos($source, '<!--more-->');

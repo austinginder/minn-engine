@@ -47,7 +47,7 @@ final readonly class Resolution
 
     public static function single(PostRecord $post, int $paged = 1): self
     {
-        return new self($post['post_type'] === 'page' ? Kind::Page : Kind::Single, $post, $paged);
+        return new self($post->isPage() ? Kind::Page : Kind::Single, $post, $paged);
     }
 
     public static function frontPage(PostRecord $page, int $paged = 1): self

@@ -27,7 +27,7 @@ final class ClassicContent
         if (!$permalinks instanceof Permalinks) {
             return '';
         }
-        $raw = (string) ($post['post_content'] ?? '');
+        $raw = (string) ($post->content);
         if (PasswordGate::is($post)) {
             $raw = PasswordGate::form($post, $permalinks->url(''), $permalinks->forPost($post));
         }
@@ -37,14 +37,14 @@ final class ClassicContent
         $more = strpos($raw, '<!--more-->');
         if (!\is_singular() && $more !== false) {
             $label = $moreLinkText ?? '(more&hellip;)';
-            $suffix = "\n" . ' <a href="' . Html::attr($permalinks->forPost($post) . '#more-' . (int) $post['ID']) . '" class="more-link"><span aria-label="Continue reading ' . Html::attr(Texturize::text((string) $post['post_title'])) . '">' . $label . '</span></a>';
+            $suffix = "\n" . ' <a href="' . Html::attr($permalinks->forPost($post) . '#more-' . $post->id) . '" class="more-link"><span aria-label="Continue reading ' . Html::attr(Texturize::text($post->title)) . '">' . $label . '</span></a>';
             $content = rtrim(Blocks::render(substr($raw, 0, $more))) . $suffix;
         } else {
-            $content = Blocks::render(str_replace('<!--more-->', '<span id="more-' . (int) $post['ID'] . '"></span>', $raw));
+            $content = Blocks::render(str_replace('<!--more-->', '<span id="more-' . $post->id . '"></span>', $raw));
         }
         $embed = $GLOBALS['wp_embed'] ?? null;
         if (is_object($embed) && method_exists($embed, 'autoembed')) {
-            $embed->post_ID = (int) $post['ID'];
+            $embed->post_ID = $post->id;
             $content = (string) $embed->autoembed($content);
         }
         $seams = Extensions::runner();

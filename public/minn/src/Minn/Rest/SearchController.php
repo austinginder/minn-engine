@@ -73,16 +73,16 @@ final readonly class SearchController
         $type = $row->type;
         $base = $this->types->restBase($type);
         return [
-            'id' => (int) $row['ID'],
-            'title' => Texturize::text((string) $row['post_title']),
+            'id' => $row->id,
+            'title' => Texturize::text($row->title),
             'url' => $type === 'page' ? $this->permalinks->forPage($row) : $this->permalinks->forPost($row),
             'type' => 'post',
             'subtype' => $type,
             '_links' => [
                 'self' => [[
                     'embeddable' => true,
-                    'href' => $this->url->to("/wp/v2/{$base}/{$row['ID']}"),
-                    'targetHints' => ['allow' => $this->caller->can('edit_post', (int) $row['ID']) ? ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'] : ['GET']],
+                    'href' => $this->url->to("/wp/v2/{$base}/{$row->id}"),
+                    'targetHints' => ['allow' => $this->caller->can('edit_post', $row->id) ? ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'] : ['GET']],
                 ]],
                 'about' => [['href' => $this->url->to("/wp/v2/types/{$type}")]],
                 'collection' => [['href' => $this->url->to('/wp/v2/search')]],

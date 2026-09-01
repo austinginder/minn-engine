@@ -48,7 +48,7 @@ final readonly class Comments
     private function comments(Block $block, Renderer $renderer): string
     {
         $post = $renderer->context()->post();
-        if ($post === null || PasswordGate::is($post) || ($post['comment_status'] !== 'open' && $this->approved((int) $post['ID']) === [])) {
+        if ($post === null || PasswordGate::is($post) || ($post->commentStatus !== 'open' && $this->approved($post->id) === [])) {
             return '';
         }
         $out = '';
@@ -65,11 +65,11 @@ final readonly class Comments
         if ($post === null) {
             return '';
         }
-        $count = count($this->approved((int) $post['ID']));
+        $count = count($this->approved($post->id));
         if ($count === 0) {
             return '';
         }
-        $title = Texturize::text('"' . Html::esc((string) $post['post_title']) . '"');
+        $title = Texturize::text('"' . Html::esc($post->title) . '"');
         $text = $count === 1 ? 'One response to ' . $title : $count . ' responses to ' . $title;
         $level = (int) $block->attr('level', 2);
         $classes = implode(' ', ['wp-block-comments-title', ...Styles::classes($block->attrs)]);
@@ -83,7 +83,7 @@ final readonly class Comments
         if ($post === null) {
             return '';
         }
-        $all = $this->approved((int) $post['ID']);
+        $all = $this->approved($post->id);
         if ($all === []) {
             return '';
         }
@@ -171,19 +171,19 @@ final readonly class Comments
     {
         $comment = $renderer->context()->comment();
         $post = $renderer->context()->post();
-        if ($comment === null || $post === null || $post['comment_status'] !== 'open') {
+        if ($comment === null || $post === null || $post->commentStatus !== 'open') {
             return '';
         }
         $id = (int) $comment['comment_ID'];
         $author = Html::attr((string) $comment['comment_author']);
         $href = $this->permalinks->forPost($post) . '?replytocom=' . $id . '#respond';
-        return '<div class="wp-block-comment-reply-link"><a rel="nofollow" class="comment-reply-link" href="' . Html::attr($href) . '" data-commentid="' . $id . '" data-postid="' . (int) $post['ID'] . '" data-belowelement="comment-' . $id . '" data-respondelement="respond" data-replyto="Reply to ' . $author . '" aria-label="Reply to ' . $author . '">Reply</a></div>';
+        return '<div class="wp-block-comment-reply-link"><a rel="nofollow" class="comment-reply-link" href="' . Html::attr($href) . '" data-commentid="' . $id . '" data-postid="' . $post->id . '" data-belowelement="comment-' . $id . '" data-respondelement="respond" data-replyto="Reply to ' . $author . '" aria-label="Reply to ' . $author . '">Reply</a></div>';
     }
 
     private function form(Block $block, Renderer $renderer): string
     {
         $post = $renderer->context()->post();
-        if ($post === null || $post['comment_status'] !== 'open' || PasswordGate::is($post)) {
+        if ($post === null || $post->commentStatus !== 'open' || PasswordGate::is($post)) {
             return '';
         }
         $path = (string) parse_url($this->permalinks->forPost($post), PHP_URL_PATH);
@@ -197,7 +197,7 @@ final readonly class Comments
             . '<p class="comment-form-email"><label for="email">Email <span class="required">*</span></label> <input id="email" name="email" type="email" value="" size="30" maxlength="100" aria-describedby="email-notes" autocomplete="email" required /></p>' . "\n"
             . '<p class="comment-form-url"><label for="url">Website</label> <input id="url" name="url" type="url" value="" size="30" maxlength="200" autocomplete="url" /></p>' . "\n"
             . '<p class="comment-form-cookies-consent"><input id="wp-comment-cookies-consent" name="wp-comment-cookies-consent" type="checkbox" value="yes" /> <label for="wp-comment-cookies-consent">Save my name, email, and website in this browser for the next time I comment.</label></p>' . "\n"
-            . '<p class="form-submit wp-block-button"><input name="submit" type="submit" id="submit" class="wp-block-button__link wp-element-button" value="Post Comment" /> <input type=\'hidden\' name=\'comment_post_ID\' value=\'' . (int) $post['ID'] . '\' id=\'comment_post_ID\' />' . "\n"
+            . '<p class="form-submit wp-block-button"><input name="submit" type="submit" id="submit" class="wp-block-button__link wp-element-button" value="Post Comment" /> <input type=\'hidden\' name=\'comment_post_ID\' value=\'' . $post->id . '\' id=\'comment_post_ID\' />' . "\n"
             . '<input type=\'hidden\' name=\'comment_parent\' id=\'comment_parent\' value=\'0\' />' . "\n"
             . '</p></form>' . "\t" . '</div><!-- #respond -->';
     }

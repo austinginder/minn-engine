@@ -55,7 +55,7 @@ final readonly class CommentPostController
             return self::refusal('Invalid post.', 404);
         }
         $reader = Reader::current();
-        if ($post['comment_status'] !== 'open' || !in_array($post['post_status'], ['publish', 'private'], true) || ($post['post_status'] === 'private' && !$reader->canEdit((int) $post['ID']) && !$reader->readsPrivatePosts)) {
+        if ($post->commentStatus !== 'open' || !in_array($post->status, ['publish', 'private'], true) || ($post->status === 'private' && !$reader->canEdit($post->id) && !$reader->readsPrivatePosts)) {
             return self::refusal('Sorry, comments are closed for this item.', 403);
         }
         $session = $this->authenticator->session($request->cookies);
@@ -82,7 +82,7 @@ final readonly class CommentPostController
         if ($content === '') {
             return self::refusal('<strong>Error:</strong> Please type your comment text.', 200);
         }
-        if ($this->comments->duplicate((int) $post['ID'], $author, $email, $content, $user === null ? 0 : (int) $user['ID'])) {
+        if ($this->comments->duplicate($post->id, $author, $email, $content, $user === null ? 0 : (int) $user['ID'])) {
             return self::refusal('Duplicate comment detected; it looks as though you&#8217;ve already said that!', 409);
         }
         if ($this->comments->flooding($email, $request->remoteAddress, self::FLOOD_SECONDS)) {
@@ -95,7 +95,7 @@ final readonly class CommentPostController
         }, $content);
         $approved = $this->approval($user, $author, $email);
         $id = $this->comments->insert([
-            'comment_post_ID' => (int) $post['ID'],
+            'comment_post_ID' => $post->id,
             'comment_author' => $author,
             'comment_author_email' => $email,
             'comment_author_url' => $url,
@@ -113,7 +113,7 @@ final readonly class CommentPostController
         $permalink = $this->permalinks->forPost($post);
         $remember = $user === null && ((string) ($request->form['wp-comment-cookies-consent'] ?? '') !== '' || ($this->site->option('show_comments_cookies_opt_in') ?? '1') !== '1');
         if ($approved === '1') {
-            $this->comments->recount((int) $post['ID']);
+            $this->comments->recount($post->id);
             $location = $permalink . '#comment-' . $id;
         } else {
             // A held comment is found again through the author cookies when they are set;
@@ -152,7 +152,7 @@ final readonly class CommentPostController
 
     private function notifyModerator(PostRecord $post, string $content, string $author): void
     {
-        $notice = Mailer::noticesFor($this->site)->moderation((string) ($this->site->option('admin_email') ?? ''), (string) $post['post_title'], $author, $content);
+        $notice = Mailer::noticesFor($this->site)->moderation((string) ($this->site->option('admin_email') ?? ''), $post->title, $author, $content);
         Mailer::forSite($this->site)->send($notice);
     }
 

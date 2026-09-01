@@ -55,21 +55,21 @@ final readonly class PostObject
      */
     private function navigationView(PostRecord $p): array
     {
-        $protected = $p['post_password'] !== '';
+        $protected = $p->isProtected();
         return [
-            'id' => (int) $p['ID'],
-            'date' => self::date($p['post_date']),
-            'date_gmt' => self::date($p['post_date_gmt']),
-            'guid' => ['rendered' => $p['guid']],
-            'modified' => self::date($p['post_modified']),
-            'modified_gmt' => self::date($p['post_modified_gmt']),
-            'slug' => $p['post_name'],
-            'status' => $p['post_status'],
-            'type' => $p['post_type'],
+            'id' => $p->id,
+            'date' => self::date($p->date),
+            'date_gmt' => self::date($p->dateGmt),
+            'guid' => ['rendered' => $p->guid],
+            'modified' => self::date($p->modified),
+            'modified_gmt' => self::date($p->modifiedGmt),
+            'slug' => $p->slug,
+            'status' => $p->status,
+            'type' => $p->type,
             'link' => $this->permalinks->forPost($p),
-            'title' => ['rendered' => Texturize::html((string) $p['post_title'])],
+            'title' => ['rendered' => Texturize::html($p->title)],
             'content' => [
-                'rendered' => $protected ? '' : Blocks::render((string) $p['post_content']),
+                'rendered' => $protected ? '' : Blocks::render($p->content),
                 'protected' => $protected,
             ],
             'template' => '',
@@ -79,9 +79,9 @@ final readonly class PostObject
 
     public function view(PostRecord $p): array
     {
-        $id = (int) $p['ID'];
-        $type = (string) $p['post_type'];
-        $protected = $p['post_password'] !== '';
+        $id = $p->id;
+        $type = $p->type;
+        $protected = $p->isProtected();
         $featured = (int) ($this->posts->meta($id, '_thumbnail_id') ?? 0);
 
         if ($type === self::NAVIGATION) {
@@ -89,34 +89,34 @@ final readonly class PostObject
         }
         $object = [
             'id' => $id,
-            'date' => self::date($p['post_date']),
-            'date_gmt' => self::date($p['post_date_gmt']),
-            'guid' => ['rendered' => $p['guid']],
-            'modified' => self::date($p['post_modified']),
-            'modified_gmt' => self::date($p['post_modified_gmt']),
-            'slug' => $p['post_name'],
-            'status' => $p['post_status'],
+            'date' => self::date($p->date),
+            'date_gmt' => self::date($p->dateGmt),
+            'guid' => ['rendered' => $p->guid],
+            'modified' => self::date($p->modified),
+            'modified_gmt' => self::date($p->modifiedGmt),
+            'slug' => $p->slug,
+            'status' => $p->status,
             'type' => $type,
             'link' => $this->permalinks->forPost($p),
-            'title' => ['rendered' => Texturize::html((string) $p['post_title'])],
+            'title' => ['rendered' => Texturize::html($p->title)],
             'content' => [
-                'rendered' => $protected ? '' : Blocks::render((string) $p['post_content']),
+                'rendered' => $protected ? '' : Blocks::render($p->content),
                 'protected' => $protected,
             ],
             'excerpt' => [
                 'rendered' => $protected ? '' : Excerpt::render($p),
                 'protected' => $protected,
             ],
-            'author' => (int) $p['post_author'],
+            'author' => $p->authorId,
             'featured_media' => $featured,
         ];
-        $classes = ['post-' . $id, $type, 'type-' . $type, 'status-' . $p['post_status']];
+        $classes = ['post-' . $id, $type, 'type-' . $type, 'status-' . $p->status];
 
         if ($type === 'page') {
-            $object['parent'] = (int) $p['post_parent'];
-            $object['menu_order'] = (int) $p['menu_order'];
-            $object['comment_status'] = $p['comment_status'];
-            $object['ping_status'] = $p['ping_status'];
+            $object['parent'] = $p->parentId;
+            $object['menu_order'] = $p->menuOrder;
+            $object['comment_status'] = $p->commentStatus;
+            $object['ping_status'] = $p->pingStatus;
             $object['template'] = '';
             $object['meta'] = ['footnotes' => $this->posts->meta($id, 'footnotes') ?? ''];
             if ($protected) {
@@ -129,8 +129,8 @@ final readonly class PostObject
         } else {
             $categories = $this->posts->terms($id, 'category');
             $tags = $this->posts->terms($id, 'post_tag');
-            $object['comment_status'] = $p['comment_status'];
-            $object['ping_status'] = $p['ping_status'];
+            $object['comment_status'] = $p->commentStatus;
+            $object['ping_status'] = $p->pingStatus;
             $object['template'] = '';
             $object['meta'] = ['footnotes' => $this->posts->meta($id, 'footnotes') ?? ''];
             $object['categories'] = array_map(static fn (array $t) => $t[0], $categories);
@@ -169,10 +169,10 @@ final readonly class PostObject
 
     public function links(PostRecord $p): array
     {
-        $id = (int) $p['ID'];
-        $type = (string) $p['post_type'];
+        $id = $p->id;
+        $type = $p->type;
         $base = '/wp/v2/' . self::restBase($type);
-        $author = (int) $p['post_author'];
+        $author = $p->authorId;
         $predecessor = $this->posts->latestRevisionId($id);
         $featured = (int) ($this->posts->meta($id, '_thumbnail_id') ?? 0);
 
@@ -191,8 +191,8 @@ final readonly class PostObject
             'predecessor-version' => $predecessor > 0
                 ? [['id' => $predecessor, 'href' => $this->url->to("{$base}/{$id}/revisions/{$predecessor}")]]
                 : null,
-            'up' => $type === 'page' && (int) $p['post_parent'] > 0
-                ? [['embeddable' => true, 'href' => $this->url->to($base . '/' . (int) $p['post_parent'])]]
+            'up' => $type === 'page' && $p->parentId > 0
+                ? [['embeddable' => true, 'href' => $this->url->to($base . '/' . $p->parentId)]]
                 : null,
             'wp:featuredmedia' => $featured > 0
                 ? [['embeddable' => true, 'href' => $this->url->to('/wp/v2/media/' . $featured)]]
@@ -214,21 +214,21 @@ final readonly class PostObject
      */
     public function edit(PostRecord $p, int $userId): array
     {
-        $id = (int) $p['ID'];
+        $id = $p->id;
         $view = $this->view($p);
-        $protected = $p['post_password'] !== '';
+        $protected = $p->isProtected();
 
-        $view['guid'] = ['rendered' => $p['guid'], 'raw' => $p['guid']];
-        $view['title'] = ['raw' => $p['post_title'], 'rendered' => Texturize::html((string) $p['post_title'])];
+        $view['guid'] = ['rendered' => $p->guid, 'raw' => $p->guid];
+        $view['title'] = ['raw' => $p->title, 'rendered' => Texturize::html($p->title)];
         $view['content'] = [
-            'raw' => $p['post_content'],
-            'rendered' => PostStatus::of($p) === PostStatus::Trash ? '' : Blocks::render((string) $p['post_content']),
+            'raw' => $p->content,
+            'rendered' => PostStatus::of($p) === PostStatus::Trash ? '' : Blocks::render($p->content),
             'protected' => $protected,
-            'block_version' => str_contains((string) $p['post_content'], '<!-- wp:') ? 1 : 0,
+            'block_version' => str_contains($p->content, '<!-- wp:') ? 1 : 0,
         ];
         if (isset($view['excerpt'])) {
             $view['excerpt'] = [
-                'raw' => $p['post_excerpt'],
+                'raw' => $p->excerpt,
                 'rendered' => Excerpt::render($p),
                 'protected' => $protected,
             ];
@@ -239,11 +239,11 @@ final readonly class PostObject
         $ordered = [];
         foreach ($view as $key => $value) {
             if ($key === 'slug') {
-                $ordered['password'] = $p['post_password'];
+                $ordered['password'] = $p->password;
             }
             if ($key === 'class_list') {
                 $ordered['permalink_template'] = $this->permalinkTemplate($p);
-                $ordered['generated_slug'] = Slug::sanitize((string) $p['post_title']);
+                $ordered['generated_slug'] = Slug::sanitize($p->title);
             }
             $ordered[$key] = $value;
         }
@@ -263,17 +263,17 @@ final readonly class PostObject
      */
     public function permalinkTemplate(PostRecord $p): string
     {
-        $id = (int) $p['ID'];
+        $id = $p->id;
         if (!$this->permalinks->isPretty()) {
-            return $this->url->home('/?' . ($p['post_type'] === 'page' ? 'page_id' : 'p') . '=' . $id);
+            return $this->url->home('/?' . ($p->isPage() ? 'page_id' : 'p') . '=' . $id);
         }
-        if ($p['post_type'] === 'page') {
-            $parent = (int) $p['post_parent'] > 0 ? $this->posts->find((int) $p['post_parent']) : null;
+        if ($p->isPage()) {
+            $parent = $p->parentId > 0 ? $this->posts->find($p->parentId) : null;
             $prefix = $parent === null ? '' : '/' . $this->posts->pathOf($parent);
             return $this->url->home($prefix . '/%pagename%/');
         }
-        if ($p['post_type'] !== 'post') {
-            return $this->url->home('/' . $p['post_type'] . '/%pagename%/');
+        if ($p->type !== 'post') {
+            return $this->url->home('/' . $p->type . '/%pagename%/');
         }
         return $this->url->home('/' . trim($this->permalinks->structure, '/') . '/');
     }
@@ -281,14 +281,14 @@ final readonly class PostObject
     /** Whether a live post carries an autosave newer than its saved revision. */
     public function modifiedUnsaved(PostRecord $p, int $userId): bool
     {
-        $id = (int) $p['ID'];
+        $id = $p->id;
         if (!$this->caller->capabilities()->can($userId, 'edit_post', $id)) {
             return false;
         }
-        if (!in_array($p['post_status'], ['publish', 'future', 'private'], true)) {
+        if (!in_array($p->status, ['publish', 'future', 'private'], true)) {
             return false;
         }
-        return $this->posts->hasNewerAutosave($id, (string) $p['post_modified_gmt']);
+        return $this->posts->hasNewerAutosave($id, $p->modifiedGmt);
     }
 
     /** The OTHER user holding a live _edit_lock (150 second window), or null. */
@@ -313,8 +313,8 @@ final readonly class PostObject
     /** The view links plus the caller's verbs and cap-gated wp:action-* entries. */
     public function editLinks(PostRecord $p, int $userId): array
     {
-        $id = (int) $p['ID'];
-        $type = (string) $p['post_type'];
+        $id = $p->id;
+        $type = $p->type;
         $can = fn (string $cap, ?int $postId = null): bool => $this->caller->capabilities()->can($userId, $cap, $postId);
         $links = $this->links($p);
 

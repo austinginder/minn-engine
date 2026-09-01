@@ -183,11 +183,11 @@ final readonly class Menus
         $invalid = false;
         if ($type === 'post_type') {
             $post = $this->posts->find($objectId);
-            $invalid = $post === null || $post['post_status'] === 'trash';
+            $invalid = $post === null || $post->isTrashed();
             if ($post !== null) {
                 $url = $this->permalinks->forPost($post);
                 if ($title === '') {
-                    $title = (string) $post['post_title'];
+                    $title = $post->title;
                 }
             }
         } elseif ($type === 'taxonomy') {

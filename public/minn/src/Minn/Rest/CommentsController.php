@@ -71,7 +71,7 @@ final readonly class CommentsController
             throw $this->caller->refuse('rest_cannot_read', 'Sorry, you are not allowed to read this comment.');
         }
         $post = $this->posts->find((int) $comment['comment_post_ID']);
-        if (!$moderator && ($post === null || $post['post_status'] !== 'publish' || $post['post_password'] !== '') && !$this->caller->can('edit_post', (int) $comment['comment_post_ID'])) {
+        if (!$moderator && ($post === null || !$post->isPublished() || $post->isProtected()) && !$this->caller->can('edit_post', (int) $comment['comment_post_ID'])) {
             throw $this->caller->refuse('rest_cannot_read', 'Sorry, you are not allowed to read this comment.');
         }
         $edit = Context::of($request)->isEdit();
@@ -94,13 +94,13 @@ final readonly class CommentsController
         if ($post === null) {
             throw new RestError('rest_comment_invalid_post_id', 'Sorry, you are not allowed to create this comment without a post.', 403);
         }
-        if ($post['post_status'] === 'trash') {
+        if ($post->isTrashed()) {
             throw new RestError('rest_comment_trash_post', 'Sorry, you are not allowed to create a comment on this post.', 403);
         }
-        if ($post['post_status'] !== 'publish' && !$this->caller->can('edit_post', $postId)) {
+        if (!$post->isPublished() && !$this->caller->can('edit_post', $postId)) {
             throw new RestError('rest_comment_draft_post', 'Sorry, you are not allowed to create a comment on this post.', 403);
         }
-        if ($post['comment_status'] !== 'open') {
+        if ($post->commentStatus !== 'open') {
             throw new RestError('rest_comment_closed', 'Sorry, comments are closed for this item.', 403);
         }
         if (trim($content) === '') {
@@ -138,7 +138,7 @@ final readonly class CommentsController
     /** A comment in the queue is announced to the site's address when moderation_notify is on. */
     private function notifyModerator(PostRecord $post, string $content, string $author): void
     {
-        $notice = Mailer::noticesFor($this->site)->moderation((string) ($this->site->option('admin_email') ?? ''), (string) $post['post_title'], $author, $content);
+        $notice = Mailer::noticesFor($this->site)->moderation((string) ($this->site->option('admin_email') ?? ''), $post->title, $author, $content);
         Mailer::forSite($this->site)->send($notice);
     }
 

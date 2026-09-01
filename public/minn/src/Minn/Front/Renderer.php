@@ -97,17 +97,17 @@ final readonly class Renderer
 
     private function pageClasses(PostRecord $page): array
     {
-        $classes = ['page', 'page-id-' . (int) $page['ID']];
+        $classes = ['page', 'page-id-' . $page->id];
         $hasChildren = (int) $this->db->value(
             "SELECT COUNT(*) FROM {$this->db->table('posts')} WHERE post_parent = ? AND post_type = 'page' AND post_status = 'publish'",
-            [(int) $page['ID']],
+            [$page->id],
         );
         if ($hasChildren > 0) {
             $classes[] = 'page-parent';
         }
-        if ((int) $page['post_parent'] > 0) {
+        if ($page->parentId > 0) {
             $classes[] = 'page-child';
-            $classes[] = 'parent-pageid-' . (int) $page['post_parent'];
+            $classes[] = 'parent-pageid-' . $page->parentId;
         }
         return $classes;
     }
@@ -116,7 +116,7 @@ final readonly class Renderer
     {
         $body = PasswordGate::is($post)
             ? PasswordGate::form($post, $this->permalinks->url(''), $this->permalinks->forPost($post))
-            : Blocks::render((string) $post['post_content']);
+            : Blocks::render($post->content);
         return '<article class="entry"><h1 class="entry-title">' . Html::esc(PasswordGate::title($post)) . '</h1>'
             . '<div class="entry-content">' . $body . '</div></article>';
     }
@@ -142,8 +142,8 @@ final readonly class Renderer
         $page = $this->posts->archive($filter, $resolution->paged, $this->perPage);
         $items = '';
         foreach ($page->posts as $post) {
-            $items .= '<li><a href="' . Html::attr($this->permalinks->forPost($post)) . '">' . Html::esc($post['post_title']) . '</a>'
-                . '<time>' . Html::esc(substr((string) $post['post_date'], 0, 10)) . '</time>'
+            $items .= '<li><a href="' . Html::attr($this->permalinks->forPost($post)) . '">' . Html::esc($post->title) . '</a>'
+                . '<time>' . Html::esc(substr($post->date, 0, 10)) . '</time>'
                 . '<p>' . Excerpt::render($post) . '</p></li>';
         }
         $markup = ($title !== '' ? '<h1 class="archive-title">' . Html::esc($title) . '</h1>' : '')

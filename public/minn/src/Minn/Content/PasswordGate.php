@@ -19,7 +19,7 @@ final class PasswordGate
     /** True while the post has a password the reader's cookie does not match. */
     public static function is(PostRecord $post): bool
     {
-        $password = (string) ($post['post_password'] ?? '');
+        $password = (string) ($post->password);
         if ($password === '') {
             return false;
         }
@@ -30,14 +30,14 @@ final class PasswordGate
     /** "Protected: " for a password, "Private: " for a private post, as the reference prefixes titles. */
     public static function title(PostRecord $post): string
     {
-        $prefix = (string) ($post['post_password'] ?? '') !== '' ? 'Protected: ' : (($post['post_status'] ?? '') === 'private' ? 'Private: ' : '');
-        return $prefix . (string) $post['post_title'];
+        $prefix = (string) ($post->password) !== '' ? 'Protected: ' : (($post->status) === 'private' ? 'Private: ' : '');
+        return $prefix . $post->title;
     }
 
     /** The form, with the reference's stray closing p after the hidden field. */
     public static function form(PostRecord $post, string $siteUrl, string $permalink): string
     {
-        $id = (int) $post['ID'];
+        $id = $post->id;
         return '<form action="' . Html::attr($siteUrl . '/wp-login.php?action=postpass') . '" class="post-password-form" method="post">'
             . '<input type="hidden" name="redirect_to" value="' . Html::attr($permalink) . '" /></p>' . "\n"
             . '<p>This content is password-protected. To view it, please enter the password below.</p>' . "\n"
