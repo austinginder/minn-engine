@@ -10,7 +10,7 @@ uploads, image sizes and attachment metadata
 | [`Kind`](#kind) | final class | 52 | Whether an attachment is an image, audio, video, or a given extension, judged by its MIME type first and its file extension second. |
 | [`Metadata`](#metadata) | final class | 106 | The _wp_attachment_metadata blob: parsed by scanning for the shapes it |
 | [`Sizing`](#sizing) | final class | 207 | The image size arithmetic the media functions share: the crop or scale a |
-| [`Upload`](#upload) | final readonly class | 50 | One file arriving for the library, on either transport: a multipart |
+| [`Upload`](#upload) | final readonly class | 51 | One file arriving for the library, on either transport: a multipart |
 | [`Uploads`](#uploads) | final readonly class | 165 | The uploads directory: paths, URLs, the allowed types, and landing a file. |
 | [`Writer`](#writer) | final readonly class | 66 | Turns an Upload into an attachment: the file lands in the dated uploads |
 
@@ -209,6 +209,10 @@ Null when the request carries no file.
 The mime type the extension maps to, or null for one the library refuses.
 
 ### `isImage(): bool`
+
+### static `parentOf(Minn\Http\Request $request): int`
+
+The post the client wants the file attached to: form field, query, or JSON body.
 
 
 ## Uploads

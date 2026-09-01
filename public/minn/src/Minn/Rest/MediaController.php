@@ -133,12 +133,13 @@ final readonly class MediaController
         if (!$this->caller->can('upload_files')) {
             throw new RestError('rest_cannot_create', 'Sorry, you are not allowed to upload media on this site.', 403);
         }
+        $parent = Upload::parentOf($request);
+        if ($parent > 0 && !$this->caller->can('edit_post', $parent)) {
+            throw new RestError('rest_cannot_edit', 'Sorry, you are not allowed to upload media to this post.', 403);
+        }
         $upload = Upload::fromRequest($request);
         if ($upload === null) {
             throw new RestError('rest_upload_no_data', 'No data supplied.', 400);
-        }
-        if ($upload->parent > 0 && !$this->caller->can('edit_post', $upload->parent)) {
-            throw new RestError('rest_cannot_edit', 'Sorry, you are not allowed to upload media to this post.', 403);
         }
         if ($upload->mime() === null) {
             throw new RestError('rest_upload_unknown_error', 'Sorry, you are not allowed to upload this file type.', 500);

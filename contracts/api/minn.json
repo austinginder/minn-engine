@@ -5549,6 +5549,137 @@
             ]
         },
         {
+            "name": "Minn\\Content\\CommentFilter",
+            "short": "CommentFilter",
+            "namespace": "Minn\\Content",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Content/CommentFilter.php",
+            "lines": 38,
+            "doc": "What a comment listing is narrowed to. Every field is optional; the id\nlists keep zero, because post=0 means \"comments without a post\". Dates\nare site-local \"Y-m-d H:i:s\", after and before both exclusive.",
+            "implements": [],
+            "constructor": {
+                "signature": "__construct(array $post = array ( ), array $include = array ( ), array $exclude = array ( ), array $parent = array ( ), array $parentExclude = array ( ), array $author = array ( ), array $authorExclude = array ( ), string $authorEmail = '', string $type = 'comment', string $search = '', string $after = '', string $before = '')",
+                "doc": "",
+                "shapes": [
+                    "@param list<int> $post",
+                    "@param list<int> $include",
+                    "@param list<int> $exclude",
+                    "@param list<int> $parent",
+                    "@param list<int> $parentExclude",
+                    "@param list<int> $author",
+                    "@param list<int> $authorExclude"
+                ]
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "post",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": ""
+                },
+                {
+                    "name": "include",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": ""
+                },
+                {
+                    "name": "exclude",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": ""
+                },
+                {
+                    "name": "parent",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": ""
+                },
+                {
+                    "name": "parentExclude",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": ""
+                },
+                {
+                    "name": "author",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": ""
+                },
+                {
+                    "name": "authorExclude",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": ""
+                },
+                {
+                    "name": "authorEmail",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": ""
+                },
+                {
+                    "name": "type",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": ""
+                },
+                {
+                    "name": "search",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": ""
+                },
+                {
+                    "name": "after",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": ""
+                },
+                {
+                    "name": "before",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": ""
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "all",
+                    "static": true,
+                    "signature": "all(): self",
+                    "doc": "",
+                    "shapes": [],
+                    "line": 39
+                },
+                {
+                    "routes": [],
+                    "name": "isPlainType",
+                    "static": false,
+                    "signature": "isPlainType(): bool",
+                    "doc": "The plain kind: an empty type or \"comment\".",
+                    "shapes": [],
+                    "line": 45
+                }
+            ]
+        },
+        {
             "name": "Minn\\Content\\CommentModeration",
             "short": "CommentModeration",
             "namespace": "Minn\\Content",
@@ -5827,7 +5958,7 @@
             "namespace": "Minn\\Content",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Content/Comments.php",
-            "lines": 246,
+            "lines": 243,
             "doc": "Reads and writes over the comments table.",
             "implements": [],
             "constructor": {
@@ -5870,14 +6001,13 @@
                     "routes": [],
                     "name": "page",
                     "static": false,
-                    "signature": "page(array $approvedTokens, int $page, int $perPage, bool $publicPostsOnly = false, array $filters = array ( )): array",
-                    "doc": "A page of plain comments in the given approval states, newest first.\n\n$filters keys, all optional: post, include, exclude, parent,\nparentExclude, author, authorExclude (id lists; 0 is kept),\nauthorEmail, search, after, before, type.",
+                    "signature": "page(array $approvedTokens, int $page, int $perPage, bool $publicPostsOnly = false, ?Minn\\Content\\CommentFilter $filter = NULL): array",
+                    "doc": "One page of comments carrying the given approval tokens, newest first,\nnarrowed by the filter; with $publicPostsOnly the comments of unpublished\nor password-protected posts are left out.",
                     "shapes": [
                         "@param list<string> $approvedTokens",
-                        "@param array<string, mixed> $filters",
-                        "@return array{comments: list<array>, total: int}"
+                        "@return array{comments: list<CommentRecord>, total: int}"
                     ],
-                    "line": 49
+                    "line": 46
                 },
                 {
                     "routes": [],
@@ -5886,7 +6016,7 @@
                     "signature": "duplicate(int $postId, string $author, string $email, string $content, int $userId): bool",
                     "doc": "The same words on the same post from the same person, in any status but trash or spam.",
                     "shapes": [],
-                    "line": 106
+                    "line": 103
                 },
                 {
                     "routes": [],
@@ -5895,7 +6025,7 @@
                     "signature": "hasApprovedByEmail(string $email): bool",
                     "doc": "Whether this author email has any approved comment, the previously-approved gate check_comment applies.",
                     "shapes": [],
-                    "line": 119
+                    "line": 116
                 },
                 {
                     "routes": [],
@@ -5904,7 +6034,7 @@
                     "signature": "flooding(string $email, string $address, int $seconds): bool",
                     "doc": "",
                     "shapes": [],
-                    "line": 130
+                    "line": 127
                 },
                 {
                     "routes": [],
@@ -5913,7 +6043,7 @@
                     "signature": "pendingCounts(array $postIds): array",
                     "doc": "Held comments per post, for the ids given (a post without any reads 0).",
                     "shapes": [],
-                    "line": 140
+                    "line": 137
                 },
                 {
                     "routes": [],
@@ -5922,7 +6052,7 @@
                     "signature": "previouslyApproved(string $author, string $email): bool",
                     "doc": "True when this name and email already have an approved comment.",
                     "shapes": [],
-                    "line": 154
+                    "line": 151
                 },
                 {
                     "routes": [],
@@ -5933,7 +6063,7 @@
                     "shapes": [
                         "@param array<string, mixed> $columns"
                     ],
-                    "line": 166
+                    "line": 163
                 },
                 {
                     "routes": [],
@@ -5944,7 +6074,7 @@
                     "shapes": [
                         "@param array<string, mixed> $columns"
                     ],
-                    "line": 174
+                    "line": 171
                 },
                 {
                     "routes": [],
@@ -5953,7 +6083,7 @@
                     "signature": "orphanReplies(int $id, int $parent): void",
                     "doc": "A deleted comment's replies move up to its parent.",
                     "shapes": [],
-                    "line": 182
+                    "line": 179
                 },
                 {
                     "routes": [],
@@ -5962,7 +6092,7 @@
                     "signature": "delete(int $id): void",
                     "doc": "",
                     "shapes": [],
-                    "line": 187
+                    "line": 184
                 },
                 {
                     "routes": [],
@@ -5971,7 +6101,7 @@
                     "signature": "recount(int $postId): void",
                     "doc": "Recomputes a post's stored comment_count (approved comments only).",
                     "shapes": [],
-                    "line": 194
+                    "line": 191
                 },
                 {
                     "routes": [],
@@ -5980,7 +6110,7 @@
                     "signature": "statusOf(string $approved): string",
                     "doc": "DB approval token to the wp/v2 status string.",
                     "shapes": [],
-                    "line": 205
+                    "line": 202
                 },
                 {
                     "routes": [],
@@ -5991,7 +6121,7 @@
                     "shapes": [
                         "@return list<string>|null"
                     ],
-                    "line": 219
+                    "line": 216
                 },
                 {
                     "routes": [],
@@ -6004,7 +6134,7 @@
                         "@param array<string, mixed> $current",
                         "@return array<string, mixed>"
                     ],
-                    "line": 238
+                    "line": 235
                 }
             ]
         },
@@ -13061,7 +13191,7 @@
             "namespace": "Minn\\Media",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Media/Upload.php",
-            "lines": 50,
+            "lines": 51,
             "doc": "One file arriving for the library, on either transport: a multipart\nfield named \"file\" (a temporary upload to move) or a raw body whose\nContent-Disposition names the file. The parent is read from the same\nrequest, wherever the client put it.",
             "implements": [],
             "constructor": {
@@ -13128,6 +13258,15 @@
                     "doc": "",
                     "shapes": [],
                     "line": 48
+                },
+                {
+                    "routes": [],
+                    "name": "parentOf",
+                    "static": true,
+                    "signature": "parentOf(Minn\\Http\\Request $request): int",
+                    "doc": "The post the client wants the file attached to: form field, query, or JSON body.",
+                    "shapes": [],
+                    "line": 55
                 }
             ]
         },
@@ -13995,7 +14134,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/CommentsController.php",
-            "lines": 332,
+            "lines": 277,
             "doc": "wp/v2/comments: the status tabs with pagination headers, single,\nsigned-in replies, moderation updates, trash, and force delete.",
             "implements": [],
             "constructor": {
@@ -14016,7 +14155,7 @@
                     "signature": "list(Minn\\Http\\Request $request): Minn\\Http\\Response",
                     "doc": "",
                     "shapes": [],
-                    "line": 37
+                    "line": 38
                 },
                 {
                     "routes": [
@@ -14027,7 +14166,7 @@
                     "signature": "single(Minn\\Http\\Request $request, string $id): Minn\\Http\\Response",
                     "doc": "",
                     "shapes": [],
-                    "line": 67
+                    "line": 68
                 },
                 {
                     "routes": [
@@ -14038,7 +14177,7 @@
                     "signature": "create(Minn\\Http\\Request $request): Minn\\Http\\Response",
                     "doc": "A signed-in reply; the author fields come from the user.",
                     "shapes": [],
-                    "line": 87
+                    "line": 88
                 },
                 {
                     "routes": [
@@ -14051,7 +14190,7 @@
                     "signature": "update(Minn\\Http\\Request $request, string $id): Minn\\Http\\Response",
                     "doc": "Status flips and content or author edits, for moderators.",
                     "shapes": [],
-                    "line": 150
+                    "line": 151
                 },
                 {
                     "routes": [
@@ -14062,7 +14201,7 @@
                     "signature": "delete(Minn\\Http\\Request $request, string $id): Minn\\Http\\Response",
                     "doc": "Trash remembers where the comment came from; force removes it outright.",
                     "shapes": [],
-                    "line": 182
+                    "line": 183
                 }
             ]
         },
@@ -14598,7 +14737,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/MediaController.php",
-            "lines": 203,
+            "lines": 204,
             "doc": "wp/v2/media: list, single, upload on both transports (multipart field\n\"file\", or a raw body with Content-Disposition), field edits, and force\ndelete with the files.",
             "implements": [],
             "constructor": {
@@ -14654,7 +14793,7 @@
                     "signature": "update(Minn\\Http\\Request $request, string $id): Minn\\Http\\Response",
                     "doc": "The editable fields the app uses.",
                     "shapes": [],
-                    "line": 155
+                    "line": 156
                 },
                 {
                     "routes": [
@@ -14665,7 +14804,7 @@
                     "signature": "delete(Minn\\Http\\Request $request, string $id): Minn\\Http\\Response",
                     "doc": "Attachments cannot be trashed; force removes the row, its meta, and its files.",
                     "shapes": [],
-                    "line": 190
+                    "line": 191
                 }
             ]
         },
@@ -15115,7 +15254,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/PostObject.php",
-            "lines": 371,
+            "lines": 391,
             "doc": "Builds the wp/v2 post and page objects in the reference's shape: the\nview context, the edit context (raw+rendered dual fields, editor-only\nfields, and cap-gated wp:action-* links), and their _links blocks.",
             "implements": [],
             "constructor": {
@@ -15141,9 +15280,9 @@
                     "name": "view",
                     "static": false,
                     "signature": "view(Minn\\Content\\PostRecord $p): array",
-                    "doc": "",
+                    "doc": "The view-context object: the shared fields, then the type's own, then class_list and _links.",
                     "shapes": [],
-                    "line": 80
+                    "line": 81
                 },
                 {
                     "routes": [],
@@ -15152,7 +15291,7 @@
                     "signature": "links(Minn\\Content\\PostRecord $p): array",
                     "doc": "",
                     "shapes": [],
-                    "line": 170
+                    "line": 190
                 },
                 {
                     "routes": [],
@@ -15161,7 +15300,7 @@
                     "signature": "edit(Minn\\Content\\PostRecord $p, int $userId): array",
                     "doc": "The edit-context object for a given caller: raw+rendered dual fields,\npassword, permalink_template, generated_slug, block_version, Minn\nAdmin's registered list fields, and the cap-gated action links.",
                     "shapes": [],
-                    "line": 215
+                    "line": 235
                 },
                 {
                     "routes": [],
@@ -15170,7 +15309,7 @@
                     "signature": "permalinkTemplate(Minn\\Content\\PostRecord $p): string",
                     "doc": "The editor's sample permalink: the structure with the name token left\nin place (pages: the parent path plus %pagename%), or the query form\nwhen permalinks are plain.",
                     "shapes": [],
-                    "line": 264
+                    "line": 284
                 },
                 {
                     "routes": [],
@@ -15179,7 +15318,7 @@
                     "signature": "modifiedUnsaved(Minn\\Content\\PostRecord $p, int $userId): bool",
                     "doc": "Whether a live post carries an autosave newer than its saved revision.",
                     "shapes": [],
-                    "line": 282
+                    "line": 302
                 },
                 {
                     "routes": [],
@@ -15188,7 +15327,7 @@
                     "signature": "lockHolder(int $id, int $userId): ?array",
                     "doc": "The OTHER user holding a live _edit_lock (150 second window), or null.",
                     "shapes": [],
-                    "line": 295
+                    "line": 315
                 },
                 {
                     "routes": [],
@@ -15197,7 +15336,7 @@
                     "signature": "editLinks(Minn\\Content\\PostRecord $p, int $userId): array",
                     "doc": "The view links plus the caller's verbs and cap-gated wp:action-* entries.",
                     "shapes": [],
-                    "line": 314
+                    "line": 334
                 },
                 {
                     "routes": [],
@@ -15206,7 +15345,7 @@
                     "signature": "date(string $mysql): string",
                     "doc": "",
                     "shapes": [],
-                    "line": 391
+                    "line": 411
                 }
             ]
         },
@@ -15276,7 +15415,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/PostsWriteController.php",
-            "lines": 271,
+            "lines": 300,
             "doc": "wp/v2 posts and pages, write side: create, update, trash, and force\ndelete, each gated by the capability engine and answering with the\nedit-context object the reference returns.",
             "implements": [],
             "constructor": {
@@ -15339,7 +15478,7 @@
                     "signature": "delete(Minn\\Http\\Request $request, string $base, string $id): Minn\\Http\\Response",
                     "doc": "",
                     "shapes": [],
-                    "line": 225
+                    "line": 165
                 },
                 {
                     "routes": [],
@@ -15348,7 +15487,7 @@
                     "signature": "serveDelete(Minn\\Http\\Request $request, string $type, string $id): Minn\\Http\\Response",
                     "doc": "",
                     "shapes": [],
-                    "line": 230
+                    "line": 170
                 },
                 {
                     "routes": [],
@@ -15357,7 +15496,7 @@
                     "signature": "field(mixed $value): string",
                     "doc": "A field that may arrive as a scalar or as {raw: ...}.",
                     "shapes": [],
-                    "line": 288
+                    "line": 317
                 }
             ]
         },

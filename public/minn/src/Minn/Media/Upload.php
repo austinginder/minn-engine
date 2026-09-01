@@ -51,7 +51,8 @@ final readonly class Upload
         return $mime !== null && str_starts_with($mime, 'image/') && $mime !== 'image/svg+xml';
     }
 
-    private static function parentOf(Request $request): int
+    /** The post the client wants the file attached to: form field, query, or JSON body. */
+    public static function parentOf(Request $request): int
     {
         if (isset($request->form['post'])) {
             return (int) $request->form['post'];

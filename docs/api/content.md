@@ -7,9 +7,10 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`Autop`](#autop) | final class | 33 | Classic-content paragraphing: blank lines become paragraphs, single |
 | [`Blocks`](#blocks) | final class | 38 | The content pipeline's front door: block markup goes through the block |
 | [`CommentClasses`](#commentclasses) | final class | 24 | The class tokens a rendered comment carries: its type, its author, odd/even and thread alternation, depth, then the caller's extras. |
+| [`CommentFilter`](#commentfilter) | final readonly class | 38 | What a comment listing is narrowed to. Every field is optional; the id |
 | [`CommentModeration`](#commentmoderation) | final readonly class | 43 | Whether a comment may be stored and in what state: the duplicate and |
 | [`CommentRecord`](#commentrecord) | final readonly class | 98 | One row of the comments table, read by name: $comment->author, ->content, |
-| [`Comments`](#comments) | final readonly class | 246 | Reads and writes over the comments table. |
+| [`Comments`](#comments) | final readonly class | 243 | Reads and writes over the comments table. |
 | [`ContentScan`](#contentscan) | final class | 186 | What a site's stored content asks of the engine: shortcodes, block |
 | [`Excerpt`](#excerpt) | final class | 83 | The reference's generated excerpt, as captured from probe posts: |
 | [`Inventory`](#inventory) | final readonly class | 231 | Plugins, themes, must-use plugins, and drop-ins as they sit on disk. |
@@ -74,6 +75,45 @@ The class tokens a rendered comment carries: its type, its author, odd/even and 
 
 - `@param list<string> $extra`
 - `@return list<string>`
+
+
+## CommentFilter
+
+`final readonly class Minn\Content\CommentFilter` · `public/minn/src/Minn/Content/CommentFilter.php`
+
+What a comment listing is narrowed to. Every field is optional; the id
+lists keep zero, because post=0 means "comments without a post". Dates
+are site-local "Y-m-d H:i:s", after and before both exclusive.
+
+```php
+__construct(array $post = array ( ), array $include = array ( ), array $exclude = array ( ), array $parent = array ( ), array $parentExclude = array ( ), array $author = array ( ), array $authorExclude = array ( ), string $authorEmail = '', string $type = 'comment', string $search = '', string $after = '', string $before = '')
+```
+- `@param list<int> $post`
+- `@param list<int> $include`
+- `@param list<int> $exclude`
+- `@param list<int> $parent`
+- `@param list<int> $parentExclude`
+- `@param list<int> $author`
+- `@param list<int> $authorExclude`
+
+- readonly `array $post`
+- readonly `array $include`
+- readonly `array $exclude`
+- readonly `array $parent`
+- readonly `array $parentExclude`
+- readonly `array $author`
+- readonly `array $authorExclude`
+- readonly `string $authorEmail`
+- readonly `string $type`
+- readonly `string $search`
+- readonly `string $after`
+- readonly `string $before`
+
+### static `all(): self`
+
+### `isPlainType(): bool`
+
+The plain kind: an empty type or "comment".
 
 
 ## CommentModeration
@@ -170,17 +210,14 @@ __construct(Minn\Db $db)
 
 ### `addMeta(int $id, string $key, string $value): void`
 
-### `page(array $approvedTokens, int $page, int $perPage, bool $publicPostsOnly = false, array $filters = array ( )): array`
+### `page(array $approvedTokens, int $page, int $perPage, bool $publicPostsOnly = false, ?Minn\Content\CommentFilter $filter = NULL): array`
 
-A page of plain comments in the given approval states, newest first.
-
-$filters keys, all optional: post, include, exclude, parent,
-parentExclude, author, authorExclude (id lists; 0 is kept),
-authorEmail, search, after, before, type.
+One page of comments carrying the given approval tokens, newest first,
+narrowed by the filter; with $publicPostsOnly the comments of unpublished
+or password-protected posts are left out.
 
 - `@param list<string> $approvedTokens`
-- `@param array<string, mixed> $filters`
-- `@return array{comments: list<array>, total: int}`
+- `@return array{comments: list<CommentRecord>, total: int}`
 
 ### `duplicate(int $postId, string $author, string $email, string $content, int $userId): bool`
 

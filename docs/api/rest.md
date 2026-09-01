@@ -10,7 +10,7 @@ the wp/v2 surface: shapes and controllers
 | [`BatchRequest`](#batchrequest) | final class | 30 | The requests a batch payload names, normalised into descriptors the |
 | [`Caller`](#caller) | final class | 59 | Who is making this REST call. Resolved once from the cookie and nonce; |
 | [`CommentObject`](#commentobject) | final readonly class | 72 | The wp/v2 comment object; edit context adds the moderation-desk fields. |
-| [`CommentsController`](#commentscontroller) | final readonly class | 332 | wp/v2/comments: the status tabs with pagination headers, single, |
+| [`CommentsController`](#commentscontroller) | final readonly class | 277 | wp/v2/comments: the status tabs with pagination headers, single, |
 | [`Context`](#context) | enum | 17 | The view a REST caller asked for. View is the public shape, edit adds the |
 | [`DeclaredPostsController`](#declaredpostscontroller) | final readonly class | 51 | wp/v2/{rest_base} for extra post types declared by an active extension. |
 | [`Embed`](#embed) | final class | 180 | The _embed decoration and the embed context. Every embeddable link in an |
@@ -19,7 +19,7 @@ the wp/v2 surface: shapes and controllers
 | [`IndexController`](#indexcontroller) | final readonly class | 52 | The API index at /wp-json/: the site facts monitors read (name, url, |
 | [`Links`](#links) | final class | 33 | Response link relations compacted through CURIEs: a rel that matches a CURIE's template becomes `name:suffix`, and the used CURIEs ride along. |
 | [`ListQuery`](#listquery) | final readonly class | 137 | The collection parameters a wp/v2 list accepts, read once from the |
-| [`MediaController`](#mediacontroller) | final readonly class | 203 | wp/v2/media: list, single, upload on both transports (multipart field |
+| [`MediaController`](#mediacontroller) | final readonly class | 204 | wp/v2/media: list, single, upload on both transports (multipart field |
 | [`MediaObject`](#mediaobject) | final readonly class | 155 | The wp/v2 media object, view and edit context. |
 | [`MenuItemObject`](#menuitemobject) | final readonly class | 72 | The wp/v2/menu-items resource. |
 | [`MenuObject`](#menuobject) | final readonly class | 33 | The wp/v2/menus resource: a nav_menu term plus locations and auto_add. |
@@ -27,9 +27,9 @@ the wp/v2 surface: shapes and controllers
 | [`NavigationController`](#navigationcontroller) | final readonly class | 43 | wp/v2/navigation: the block theme's navigation menus, stored as |
 | [`ParamCheck`](#paramcheck) | final class | 71 | The required / validate / sanitize pass over a request's declared arguments. |
 | [`PluginsController`](#pluginscontroller) | final readonly class | 243 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
-| [`PostObject`](#postobject) | final readonly class | 371 | Builds the wp/v2 post and page objects in the reference's shape: the |
+| [`PostObject`](#postobject) | final readonly class | 391 | Builds the wp/v2 post and page objects in the reference's shape: the |
 | [`PostsController`](#postscontroller) | final readonly class | 163 | wp/v2 posts and pages, read side. |
-| [`PostsWriteController`](#postswritecontroller) | final readonly class | 271 | wp/v2 posts and pages, write side: create, update, trash, and force |
+| [`PostsWriteController`](#postswritecontroller) | final readonly class | 300 | wp/v2 posts and pages, write side: create, update, trash, and force |
 | [`Reply`](#reply) | final class | 36 | JSON responses in the reference's shape: its header set, its json_encode |
 | [`RestUrl`](#resturl) | final readonly class | 33 | REST URLs in the form the reference emits for the site's permalink mode: |
 | [`RevisionsController`](#revisionscontroller) | final readonly class | 128 | wp/v2 revisions and autosaves under posts and pages, plus wp/v2/blocks. |
@@ -747,6 +747,8 @@ __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Content\Users $users, M
 ### static `restBase(string $type): string`
 
 ### `view(Minn\Content\PostRecord $p): array`
+
+The view-context object: the shared fields, then the type's own, then class_list and _links.
 
 ### `links(Minn\Content\PostRecord $p): array`
 

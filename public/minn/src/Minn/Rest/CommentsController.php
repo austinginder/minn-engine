@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Content\CommentFilter;
 use Minn\Content\CommentRecord;
 use Minn\Content\PostRecord;
 use Minn\Content\Comments;
@@ -53,7 +54,7 @@ final readonly class CommentsController
             $page,
             $perPage,
             publicPostsOnly: !$this->caller->can('moderate_comments'),
-            filters: $this->listFilters($request),
+            filter: $this->guarded($this->filter($request)),
         );
         return Reply::list(
             array_map(fn (CommentRecord $c) => $this->object->build($c, $context->isEdit()), $result['comments']),
@@ -204,80 +205,48 @@ final readonly class CommentsController
         return Reply::item($this->object->build($this->comments->find($commentId), true), $fields);
     }
 
-    /**
-     * Collection filters captured from the oracle: include/exclude/parent
-     * as id lists (0 is kept), search as a substring across content/author
-     * /email, after/before exclusive on site-local comment_date.
-     * author / author_exclude / author_email / a non-comment type need
-     * edit_posts; post=0 without moderate_comments is rest_cannot_read.
-     *
-     * @return array<string, mixed>
-     */
-    private function listFilters(Request $request): array
+    /** The collection parameters as the reference reads them; the caps are checked by guarded(). */
+    private static function filter(Request $request): CommentFilter
     {
-        $filters = [];
-        $post = self::ids((string) $request->query('post', ''));
-        if (in_array(0, $post, true) && !$this->caller->can('moderate_comments')) {
+        return new CommentFilter(
+            post: ListQuery::ids((string) $request->query('post', ''), true),
+            include: ListQuery::ids((string) $request->query('include', ''), true),
+            exclude: ListQuery::ids((string) $request->query('exclude', ''), true),
+            parent: ListQuery::ids((string) $request->query('parent', ''), true),
+            parentExclude: ListQuery::ids((string) $request->query('parent_exclude', ''), true),
+            author: ListQuery::ids((string) $request->query('author', ''), true),
+            authorExclude: ListQuery::ids((string) $request->query('author_exclude', ''), true),
+            authorEmail: (string) $request->query('author_email', ''),
+            type: (string) $request->query('type', 'comment') ?: 'comment',
+            search: (string) $request->query('search', ''),
+            after: self::date($request->query('after'), 'after'),
+            before: self::date($request->query('before'), 'before'),
+        );
+    }
+
+    /**
+     * The filter, once this caller may use it: comments without a post
+     * belong to moderators, an unreadable post's comments to its editors,
+     * and type, author, and author_email to anyone who can edit posts.
+     */
+    private function guarded(CommentFilter $filter): CommentFilter
+    {
+        if (in_array(0, $filter->post, true) && !$this->caller->can('moderate_comments')) {
             throw $this->caller->refuse('rest_cannot_read', 'Sorry, you are not allowed to read comments without a post.');
         }
-        foreach ($post as $postId) {
-            if ($postId === 0) {
-                continue;
-            }
-            $row = $this->posts->find($postId);
-            if ($row !== null && ($row['post_status'] !== 'publish' || $row['post_password'] !== '') && !$this->caller->can('read_post', $postId)) {
+        foreach ($filter->post as $postId) {
+            $post = $postId === 0 ? null : $this->posts->find($postId);
+            if ($post !== null && (!$post->isPublished() || $post->isProtected()) && !$this->caller->can('read_post', $postId)) {
                 throw $this->caller->refuse('rest_cannot_read_post', 'Sorry, you are not allowed to read the post for this comment.');
             }
         }
-        if ($post !== []) {
-            $filters['post'] = $post;
-        }
-        $include = self::ids((string) $request->query('include', ''));
-        if ($include !== []) {
-            $filters['include'] = $include;
-        }
-        $exclude = self::ids((string) $request->query('exclude', ''));
-        if ($exclude !== []) {
-            $filters['exclude'] = $exclude;
-        }
-        $parent = self::ids((string) $request->query('parent', ''));
-        if ($parent !== []) {
-            $filters['parent'] = $parent;
-        }
-        $parentExclude = self::ids((string) $request->query('parent_exclude', ''));
-        if ($parentExclude !== []) {
-            $filters['parentExclude'] = $parentExclude;
-        }
-        $type = $request->query('type');
-        if ($type !== null && $type !== '' && $type !== 'comment' && !$this->caller->can('edit_posts')) {
-            throw $this->caller->refuse('rest_forbidden_param', 'Query parameter not permitted: type');
-        }
-        if ($type !== null && $type !== '') {
-            $filters['type'] = $type;
-        }
-        $author = $request->query('author');
-        if ($author !== null && $author !== '') {
-            if (!$this->caller->can('edit_posts')) {
-                throw $this->caller->refuse('rest_forbidden_param', 'Query parameter not permitted: author');
-            }
-            $ids = self::ids($author);
-            if ($ids !== []) {
-                $filters['author'] = $ids;
+        foreach (['type' => !$filter->isPlainType(), 'author' => $filter->author !== [], 'author_exclude' => $filter->authorExclude !== []] as $param => $used) {
+            if ($used && !$this->caller->can('edit_posts')) {
+                throw $this->caller->refuse('rest_forbidden_param', "Query parameter not permitted: {$param}");
             }
         }
-        $authorExclude = $request->query('author_exclude');
-        if ($authorExclude !== null && $authorExclude !== '') {
-            if (!$this->caller->can('edit_posts')) {
-                throw $this->caller->refuse('rest_forbidden_param', 'Query parameter not permitted: author_exclude');
-            }
-            $ids = self::ids($authorExclude);
-            if ($ids !== []) {
-                $filters['authorExclude'] = $ids;
-            }
-        }
-        $email = $request->query('author_email');
-        if ($email !== null && $email !== '') {
-            if (Email::check($email) !== null) {
+        if ($filter->authorEmail !== '') {
+            if (Email::check($filter->authorEmail) !== null) {
                 throw new RestError('rest_invalid_param', 'Invalid parameter(s): author_email', 400, [
                     'params' => ['author_email' => 'Invalid email address.'],
                     'details' => ['author_email' => ['code' => 'rest_invalid_email', 'message' => 'Invalid email address.', 'data' => null]],
@@ -286,39 +255,16 @@ final readonly class CommentsController
             if (!$this->caller->can('edit_posts')) {
                 throw $this->caller->refuse('rest_forbidden_param', 'Query parameter not permitted: author_email');
             }
-            $filters['authorEmail'] = $email;
         }
-        $search = $request->query('search');
-        if ($search !== null && $search !== '') {
-            $filters['search'] = $search;
-        }
-        $after = $request->query('after');
-        if ($after !== null && $after !== '') {
-            $filters['after'] = self::restDate($after, 'after');
-        }
-        $before = $request->query('before');
-        if ($before !== null && $before !== '') {
-            $filters['before'] = self::restDate($before, 'before');
-        }
-        return $filters;
+        return $filter;
     }
 
-    /** @return list<int> */
-    private static function ids(string $csv): array
+    /** A REST date-time as site-local "Y-m-d H:i:s", or the reference's parameter error. */
+    private static function date(?string $value, string $param): string
     {
-        $out = [];
-        foreach (explode(',', $csv) as $part) {
-            $part = trim($part);
-            if ($part === '' || !ctype_digit($part)) {
-                continue;
-            }
-            $out[] = (int) $part;
+        if ($value === null || $value === '') {
+            return '';
         }
-        return array_values(array_unique($out));
-    }
-
-    private static function restDate(string $value, string $param): string
-    {
         if (preg_match('/^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}(?:Z|[+-]\d{2}:\d{2})?$/', $value) !== 1) {
             throw new RestError('rest_invalid_param', "Invalid parameter(s): {$param}", 400, [
                 'params' => [$param => 'Invalid date.'],

@@ -36,53 +36,50 @@ final readonly class Comments
     }
 
     /**
-     * A page of plain comments in the given approval states, newest first.
-     *
-     * $filters keys, all optional: post, include, exclude, parent,
-     * parentExclude, author, authorExclude (id lists; 0 is kept),
-     * authorEmail, search, after, before, type.
+     * One page of comments carrying the given approval tokens, newest first,
+     * narrowed by the filter; with $publicPostsOnly the comments of unpublished
+     * or password-protected posts are left out.
      *
      * @param list<string> $approvedTokens
-     * @param array<string, mixed> $filters
-     * @return array{comments: list<array>, total: int}
+     * @return array{comments: list<CommentRecord>, total: int}
      */
-    public function page(array $approvedTokens, int $page, int $perPage, bool $publicPostsOnly = false, array $filters = []): array
+    public function page(array $approvedTokens, int $page, int $perPage, bool $publicPostsOnly = false, ?CommentFilter $filter = null): array
     {
+        $filter ??= CommentFilter::all();
         $params = [$approvedTokens];
         $from = "FROM {$this->db->table('comments')} c"
             . ($publicPostsOnly ? " INNER JOIN {$this->db->table('posts')} p ON p.ID = c.comment_post_ID AND p.post_status = 'publish' AND p.post_password = ''" : '')
             . ' WHERE c.comment_approved IN (?)';
-        $type = (string) ($filters['type'] ?? 'comment');
-        if ($type === '' || $type === 'comment') {
+        if ($filter->isPlainType()) {
             $from .= " AND c.comment_type IN ('', 'comment')";
         } else {
             $from .= ' AND c.comment_type = ?';
-            $params[] = $type;
+            $params[] = $filter->type;
         }
-        $this->idFilter($from, $params, 'c.comment_post_ID', $filters['post'] ?? []);
-        $this->idFilter($from, $params, 'c.comment_ID', $filters['include'] ?? []);
-        $this->idFilter($from, $params, 'c.comment_ID', $filters['exclude'] ?? [], true);
-        $this->idFilter($from, $params, 'c.comment_parent', $filters['parent'] ?? []);
-        $this->idFilter($from, $params, 'c.comment_parent', $filters['parentExclude'] ?? [], true);
-        $this->idFilter($from, $params, 'c.user_id', $filters['author'] ?? []);
-        $this->idFilter($from, $params, 'c.user_id', $filters['authorExclude'] ?? [], true);
-        if (($filters['authorEmail'] ?? '') !== '') {
+        $this->idFilter($from, $params, 'c.comment_post_ID', $filter->post);
+        $this->idFilter($from, $params, 'c.comment_ID', $filter->include);
+        $this->idFilter($from, $params, 'c.comment_ID', $filter->exclude, true);
+        $this->idFilter($from, $params, 'c.comment_parent', $filter->parent);
+        $this->idFilter($from, $params, 'c.comment_parent', $filter->parentExclude, true);
+        $this->idFilter($from, $params, 'c.user_id', $filter->author);
+        $this->idFilter($from, $params, 'c.user_id', $filter->authorExclude, true);
+        if ($filter->authorEmail !== '') {
             $from .= ' AND LOWER(c.comment_author_email) = ?';
-            $params[] = strtolower((string) $filters['authorEmail']);
+            $params[] = strtolower($filter->authorEmail);
         }
-        $search = trim((string) ($filters['search'] ?? ''));
+        $search = trim($filter->search);
         if ($search !== '') {
             $like = '%' . addcslashes($search, '%_\\') . '%';
             $from .= ' AND (c.comment_content LIKE ? OR c.comment_author LIKE ? OR c.comment_author_email LIKE ?)';
             $params = [...$params, $like, $like, $like];
         }
-        if (($filters['after'] ?? '') !== '') {
+        if ($filter->after !== '') {
             $from .= ' AND c.comment_date > ?';
-            $params[] = $filters['after'];
+            $params[] = $filter->after;
         }
-        if (($filters['before'] ?? '') !== '') {
+        if ($filter->before !== '') {
             $from .= ' AND c.comment_date < ?';
-            $params[] = $filters['before'];
+            $params[] = $filter->before;
         }
         $total = (int) $this->db->value("SELECT COUNT(*) {$from}", $params);
         $rows = $this->db->rows(

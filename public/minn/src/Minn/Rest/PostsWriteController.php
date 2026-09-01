@@ -143,69 +143,9 @@ final readonly class PostsWriteController
             throw new RestError('rest_cannot_edit', 'Sorry, you are not allowed to edit this post.', 403);
         }
 
-        $body = $request->json();
+        $body = $this->scheduledIfFuture($request->json(), $post);
         $this->checkStickyPasswordConflict($body, $post);
-        $columns = [];
-
-        if (isset($body['author']) && (int) $body['author'] !== $post->authorId) {
-            if (!$this->caller->can(TypeCapabilities::editOthers($type))) {
-                throw new RestError('rest_cannot_edit_others', 'Sorry, you are not allowed to update posts as this user.', 403);
-            }
-            $columns['post_author'] = (int) $body['author'];
-        }
-        foreach (['comment_status', 'ping_status'] as $flag) {
-            if (isset($body[$flag]) && in_array($body[$flag], ['open', 'closed'], true)) {
-                $columns[$flag] = (string) $body[$flag];
-            }
-        }
-        if (array_key_exists('password', $body)) {
-            $columns['post_password'] = (string) $body['password'];
-        }
-        if ($type === 'page' && isset($body['parent'])) {
-            $columns['post_parent'] = (int) $body['parent'];
-        }
-        if ($type === 'page' && isset($body['menu_order'])) {
-            $columns['menu_order'] = (int) $body['menu_order'];
-        }
-        if (isset($body['date']) && (string) $body['date'] !== '') {
-            [$columns['post_date'], $columns['post_date_gmt'], $stamp] = $this->site->localDate((string) $body['date']);
-            $effective = (string) ($body['status'] ?? $post->status);
-            if ($effective === 'publish' && $stamp > time() && !isset($body['status'])) {
-                $body['status'] = 'future';
-            } elseif (($body['status'] ?? '') === 'publish' && $stamp > time()) {
-                $body['status'] = 'future';
-            }
-        }
-        if (array_key_exists('title', $body)) {
-            $columns['post_title'] = $this->clean(self::field($body['title']));
-        }
-        if (array_key_exists('content', $body)) {
-            $columns['post_content'] = $this->clean(self::field($body['content']));
-        }
-        if (array_key_exists('excerpt', $body)) {
-            $columns['post_excerpt'] = $this->clean(self::field($body['excerpt']));
-        }
-        if (array_key_exists('slug', $body)) {
-            $columns['post_name'] = $this->writer->uniqueSlug((string) $body['slug'], $postId);
-        }
-        if (array_key_exists('status', $body)) {
-            $newStatus = self::validStatus((string) $body['status']);
-            if (in_array($newStatus, self::LIVE, true) && !$this->caller->can(TypeCapabilities::publish($type))) {
-                throw new RestError('rest_cannot_publish', 'Sorry, you are not allowed to publish posts in this post type.', 403);
-            }
-            $columns['post_status'] = $newStatus;
-            if (in_array($newStatus, self::LIVE, true) && $post->slug === '' && !array_key_exists('slug', $body)) {
-                $titleForSlug = array_key_exists('title', $body) ? self::field($body['title']) : $post->title;
-                if ($titleForSlug !== '') {
-                    $columns['post_name'] = $this->writer->uniqueSlug($titleForSlug, $postId);
-                }
-            }
-            // Moving to publish for the first time stamps the publish date.
-            if ($newStatus === 'publish' && !in_array($post->status, ['publish', 'private', 'future'], true)) {
-                $columns['post_date'] = $this->site->localNow();
-                $columns['post_date_gmt'] = gmdate('Y-m-d H:i:s');
-            }
-        }
+        $columns = [...$this->fieldColumns($body, $post, $type), ...$this->statusColumns($body, $post, $type)];
         $columns['post_modified'] = $this->site->localNow();
         $columns['post_modified_gmt'] = gmdate('Y-m-d H:i:s');
         $this->writer->update($postId, $columns);
@@ -255,6 +195,95 @@ final readonly class PostsWriteController
         $previous = $this->object->edit($post, $userId);
         $this->writer->destroy($postId);
         return Reply::item(['deleted' => true, 'previous' => $previous], $fields);
+    }
+
+    /** A date in the future turns a publish into a schedule, whether the status was sent or kept. */
+    private function scheduledIfFuture(array $body, PostRecord $post): array
+    {
+        if (!isset($body['date']) || (string) $body['date'] === '') {
+            return $body;
+        }
+        [, , $stamp] = $this->site->localDate((string) $body['date']);
+        if ($stamp > time() && (string) ($body['status'] ?? $post->status) === 'publish') {
+            $body['status'] = 'future';
+        }
+        return $body;
+    }
+
+    /**
+     * The columns the body's fields change, minus the status: author (gated
+     * by edit_others_*), the two flags, password, the page attributes, the
+     * date, the three markup fields through the caller's filter, the slug.
+     *
+     * @return array<string, mixed>
+     */
+    private function fieldColumns(array $body, PostRecord $post, string $type): array
+    {
+        $columns = [];
+        if (isset($body['author']) && (int) $body['author'] !== $post->authorId) {
+            if (!$this->caller->can(TypeCapabilities::editOthers($type))) {
+                throw new RestError('rest_cannot_edit_others', 'Sorry, you are not allowed to update posts as this user.', 403);
+            }
+            $columns['post_author'] = (int) $body['author'];
+        }
+        foreach (['comment_status', 'ping_status'] as $flag) {
+            if (isset($body[$flag]) && in_array($body[$flag], ['open', 'closed'], true)) {
+                $columns[$flag] = (string) $body[$flag];
+            }
+        }
+        if (array_key_exists('password', $body)) {
+            $columns['post_password'] = (string) $body['password'];
+        }
+        if ($type === 'page') {
+            foreach (['parent' => 'post_parent', 'menu_order' => 'menu_order'] as $field => $column) {
+                if (isset($body[$field])) {
+                    $columns[$column] = (int) $body[$field];
+                }
+            }
+        }
+        if (isset($body['date']) && (string) $body['date'] !== '') {
+            [$columns['post_date'], $columns['post_date_gmt']] = $this->site->localDate((string) $body['date']);
+        }
+        foreach (['title' => 'post_title', 'content' => 'post_content', 'excerpt' => 'post_excerpt'] as $field => $column) {
+            if (array_key_exists($field, $body)) {
+                $columns[$column] = $this->clean(self::field($body[$field]));
+            }
+        }
+        if (array_key_exists('slug', $body)) {
+            $columns['post_name'] = $this->writer->uniqueSlug((string) $body['slug'], $post->id);
+        }
+        return $columns;
+    }
+
+    /**
+     * The status change and what rides with it: going live needs the
+     * publish cap and gives a slugless post one from its title; the first
+     * move to publish stamps the publish date.
+     *
+     * @return array<string, mixed>
+     */
+    private function statusColumns(array $body, PostRecord $post, string $type): array
+    {
+        if (!array_key_exists('status', $body)) {
+            return [];
+        }
+        $status = self::validStatus((string) $body['status']);
+        $live = in_array($status, self::LIVE, true);
+        if ($live && !$this->caller->can(TypeCapabilities::publish($type))) {
+            throw new RestError('rest_cannot_publish', 'Sorry, you are not allowed to publish posts in this post type.', 403);
+        }
+        $columns = ['post_status' => $status];
+        if ($live && $post->slug === '' && !array_key_exists('slug', $body)) {
+            $title = array_key_exists('title', $body) ? self::field($body['title']) : $post->title;
+            if ($title !== '') {
+                $columns['post_name'] = $this->writer->uniqueSlug($title, $post->id);
+            }
+        }
+        if ($status === 'publish' && !in_array($post->status, ['publish', 'private', 'future'], true)) {
+            $columns['post_date'] = $this->site->localNow();
+            $columns['post_date_gmt'] = gmdate('Y-m-d H:i:s');
+        }
+        return $columns;
     }
 
     /** The reference refuses a sticky and password combination outright. */

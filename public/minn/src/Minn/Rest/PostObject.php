@@ -77,18 +77,15 @@ final readonly class PostObject
         ];
     }
 
+    /** The view-context object: the shared fields, then the type's own, then class_list and _links. */
     public function view(PostRecord $p): array
     {
-        $id = $p->id;
-        $type = $p->type;
-        $protected = $p->isProtected();
-        $featured = (int) ($this->posts->meta($id, '_thumbnail_id') ?? 0);
-
-        if ($type === self::NAVIGATION) {
+        if ($p->type === self::NAVIGATION) {
             return $this->navigationView($p);
         }
+        $protected = $p->isProtected();
         $object = [
-            'id' => $id,
+            'id' => $p->id,
             'date' => self::date($p->date),
             'date_gmt' => self::date($p->dateGmt),
             'guid' => ['rendered' => $p->guid],
@@ -96,75 +93,98 @@ final readonly class PostObject
             'modified_gmt' => self::date($p->modifiedGmt),
             'slug' => $p->slug,
             'status' => $p->status,
-            'type' => $type,
+            'type' => $p->type,
             'link' => $this->permalinks->forPost($p),
             'title' => ['rendered' => Texturize::html($p->title)],
-            'content' => [
-                'rendered' => $protected ? '' : Blocks::render($p->content),
-                'protected' => $protected,
-            ],
-            'excerpt' => [
-                'rendered' => $protected ? '' : Excerpt::render($p),
-                'protected' => $protected,
-            ],
+            'content' => ['rendered' => $protected ? '' : Blocks::render($p->content), 'protected' => $protected],
+            'excerpt' => ['rendered' => $protected ? '' : Excerpt::render($p), 'protected' => $protected],
             'author' => $p->authorId,
-            'featured_media' => $featured,
+            'featured_media' => (int) ($this->posts->meta($p->id, '_thumbnail_id') ?? 0),
         ];
-        $classes = ['post-' . $id, $type, 'type-' . $type, 'status-' . $p->status];
-
-        if ($type === 'page') {
-            $object['parent'] = $p->parentId;
-            $object['menu_order'] = $p->menuOrder;
-            $object['comment_status'] = $p->commentStatus;
-            $object['ping_status'] = $p->pingStatus;
-            $object['template'] = '';
-            $object['meta'] = ['footnotes' => $this->posts->meta($id, 'footnotes') ?? ''];
-            if ($protected) {
-                $classes[] = 'post-password-required';
-            }
-            if ($featured > 0) {
-                $classes[] = 'has-post-thumbnail';
-            }
-            $classes[] = 'hentry';
-        } else {
-            $categories = $this->posts->terms($id, 'category');
-            $tags = $this->posts->terms($id, 'post_tag');
-            $object['comment_status'] = $p->commentStatus;
-            $object['ping_status'] = $p->pingStatus;
-            $object['template'] = '';
-            $object['meta'] = ['footnotes' => $this->posts->meta($id, 'footnotes') ?? ''];
-            $object['categories'] = array_map(static fn (array $t) => $t[0], $categories);
-            $object['tags'] = array_map(static fn (array $t) => $t[0], $tags);
-            $formats = [];
-            if ($type === 'post') {
-                $formats = $this->posts->terms($id, 'post_format');
-                $format = $formats === [] ? 'standard' : str_replace('post-format-', '', $formats[0][1]);
-                $sticky = Serialized::intList($this->db->option('sticky_posts'));
-                $object['sticky'] = in_array($id, $sticky, true);
-                $object['format'] = $format;
-                $classes[] = 'format-' . $format;
-            }
-            if ($protected) {
-                $classes[] = 'post-password-required';
-            }
-            if ($featured > 0) {
-                $classes[] = 'has-post-thumbnail';
-            }
-            $classes[] = 'hentry';
-            foreach ($categories as $term) {
-                $classes[] = 'category-' . $term[1];
-            }
-            foreach ($tags as $term) {
-                $classes[] = 'tag-' . $term[1];
-            }
-            foreach ($formats as $term) {
-                $classes[] = 'post_format-' . $term[1];
-            }
-        }
-
-        $object['class_list'] = $classes;
+        $terms = $p->type === 'page' ? [] : $this->viewTerms($p);
+        $object = [...$object, ...$this->typeFields($p, $terms)];
+        $object['class_list'] = $this->classList($p, $object['featured_media'] > 0, $terms);
         $object['_links'] = $this->links($p);
         return $object;
+    }
+
+    /**
+     * The taxonomies a non-page carries, each as [term_id, slug] pairs; the
+     * format terms only for posts.
+     *
+     * @return array<string, list<array{0: int, 1: string}>>
+     */
+    private function viewTerms(PostRecord $p): array
+    {
+        return [
+            'category' => $this->posts->terms($p->id, 'category'),
+            'post_tag' => $this->posts->terms($p->id, 'post_tag'),
+            'post_format' => $p->type === 'post' ? $this->posts->terms($p->id, 'post_format') : [],
+        ];
+    }
+
+    /**
+     * Pages carry parent and menu_order first; posts carry their term ids,
+     * and only the post type has sticky and format.
+     *
+     * @param array<string, list<array{0: int, 1: string}>> $terms
+     * @return array<string, mixed>
+     */
+    private function typeFields(PostRecord $p, array $terms): array
+    {
+        $shared = [
+            'comment_status' => $p->commentStatus,
+            'ping_status' => $p->pingStatus,
+            'template' => '',
+            'meta' => ['footnotes' => $this->posts->meta($p->id, 'footnotes') ?? ''],
+        ];
+        if ($p->type === 'page') {
+            return ['parent' => $p->parentId, 'menu_order' => $p->menuOrder, ...$shared];
+        }
+        $fields = [
+            ...$shared,
+            'categories' => array_map(static fn (array $t) => $t[0], $terms['category']),
+            'tags' => array_map(static fn (array $t) => $t[0], $terms['post_tag']),
+        ];
+        if ($p->type === 'post') {
+            $fields['sticky'] = in_array($p->id, Serialized::intList($this->db->option('sticky_posts')), true);
+            $fields['format'] = self::format($terms['post_format']);
+        }
+        return $fields;
+    }
+
+    /**
+     * The reference's class_list order: identity, type, status, format (posts
+     * only), password, thumbnail, hentry, then one class per term.
+     *
+     * @param array<string, list<array{0: int, 1: string}>> $terms
+     * @return list<string>
+     */
+    private static function classList(PostRecord $p, bool $thumbnail, array $terms): array
+    {
+        $classes = ['post-' . $p->id, $p->type, 'type-' . $p->type, 'status-' . $p->status];
+        if ($p->type === 'post') {
+            $classes[] = 'format-' . self::format($terms['post_format']);
+        }
+        if ($p->isProtected()) {
+            $classes[] = 'post-password-required';
+        }
+        if ($thumbnail) {
+            $classes[] = 'has-post-thumbnail';
+        }
+        $classes[] = 'hentry';
+        foreach (['category' => 'category-', 'post_tag' => 'tag-', 'post_format' => 'post_format-'] as $taxonomy => $prefix) {
+            foreach ($terms[$taxonomy] ?? [] as $term) {
+                $classes[] = $prefix . $term[1];
+            }
+        }
+        return $classes;
+    }
+
+    /** @param list<array{0: int, 1: string}> $formatTerms */
+    private static function format(array $formatTerms): string
+    {
+        return $formatTerms === [] ? 'standard' : str_replace('post-format-', '', $formatTerms[0][1]);
     }
 
     public function links(PostRecord $p): array
