@@ -155,11 +155,11 @@ foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root, Fil
         }
     }
 }
-// The record ratchet: rows are becoming PostRecord. Two counts only fall: the
+// The record ratchet (post columns only; a bare ['ID'] is also a user's or a comment's): rows are becoming PostRecord. Two counts only fall: the
 // array|PostRecord unions that bridge callers still holding rows, and the
 // bracket reads of post columns that the record's properties replace.
 $unionCeiling = 4;
-$bracketCeiling = 339;
+$bracketCeiling = 260;
 $unions = 0;
 $brackets = 0;
 foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root, FilesystemIterator::SKIP_DOTS)) as $file) {
@@ -168,7 +168,7 @@ foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root, Fil
     }
     $src = (string) file_get_contents($file->getPathname());
     $unions += preg_match_all('/array\|PostRecord|PostRecord\|array/', $src);
-    $brackets += preg_match_all("/\['(?:post_[a-z_]+|ID|guid|menu_order|comment_count|comment_status|ping_status)'\]/", $src);
+    $brackets += preg_match_all("/\['(?:post_[a-z_]+|guid|menu_order|comment_count|comment_status|ping_status)'\]/", $src);
 }
 $check("engine: array|PostRecord bridges stay at or under {$unionCeiling}", $unions <= $unionCeiling, (string) $unions);
 $check("engine: bracket reads of post columns stay at or under {$bracketCeiling}", $brackets <= $bracketCeiling, (string) $brackets);
