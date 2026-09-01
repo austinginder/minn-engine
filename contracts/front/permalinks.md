@@ -113,3 +113,28 @@ Page in front and Docs as the posts page, then restores it. What the reference d
   front page; the engine has no oEmbed endpoint and prints none (the suite skips
   them).
 
+
+## Non-GET methods (POST and the rest)
+
+Captured 2026-08-31; suite `tests/front-method.test.php`, fixture
+`contracts/fixtures/front/methods.json`.
+
+- The reference runs `redirect_canonical` only for GET and HEAD. Every other
+  method renders what the query alone finds, at the URL as typed: no
+  trailing-slash redirect (`POST /sample-page` is 200 with the same body),
+  no pretty-URL mapping (`POST /?page_id=2`, `/?cat=1`, `/?author=1`,
+  `/?m=YYYYMM`, `/?name=` all render in place), and no 404 guessing
+  (`POST /hello` is 404 where GET redirects to `/hello-world/`).
+- Without the canonical pass each query var is strict about type: `?p=` finds
+  only posts and `?page_id=` only pages, so `POST /?p=<page id>` is 404 while
+  `GET /?p=<page id>` redirects to the page.
+- A bare page slug in `?pagename=` (a nested page addressed without its path)
+  404s on POST; the trailing-number form (`/sample-page/2`) 404s too.
+- The old-slug redirect is not canonical: it fires for every method
+  (`POST /<former slug>/` still 301s to the current permalink).
+- The engine maps this with `Resolver::resolve($request, bool $canonical)`,
+  `$canonical = $request->method->canonicalRedirects()` (GET/HEAD only), and
+  the front catch-all route accepts every method. This is what makes
+  WooCommerce's classic add-to-cart POST and `/?wc-ajax=*` endpoints answer.
+- Known gap: `POST /feed` renders the feed on the reference; the engine's feed
+  routes stay GET and the front resolver 404s a `feed` segment.

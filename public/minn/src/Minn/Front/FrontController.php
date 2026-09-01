@@ -40,14 +40,14 @@ final readonly class FrontController
         return Response::html($html, 404);
     }
 
-    #[Route(Method::Get, '/{path*}')]
+    #[Route(Method::Any, '/{path*}')]
     public function show(Request $request): Response
     {
         // A scheduled post whose time has come goes live before the page is built.
         if ($this->cron !== null && !(defined('DISABLE_WP_CRON') && DISABLE_WP_CRON) && $this->cron->due()) {
             $this->cron->run();
         }
-        $resolution = $this->resolver->resolve($request);
+        $resolution = $this->resolver->resolve($request, $request->method->canonicalRedirects());
         if ($resolution->kind === Kind::Redirect) {
             return Response::redirect((string) $resolution->location, $resolution->status);
         }

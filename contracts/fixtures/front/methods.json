@@ -1,0 +1,116 @@
+[
+    {
+        "method": "POST",
+        "path": "/sample-page/",
+        "status": 200,
+        "location": ""
+    },
+    {
+        "method": "POST",
+        "path": "/sample-page",
+        "status": 200,
+        "location": ""
+    },
+    {
+        "method": "POST",
+        "path": "/hello-world",
+        "status": 200,
+        "location": ""
+    },
+    {
+        "method": "POST",
+        "path": "/nonexistent/",
+        "status": 404,
+        "location": ""
+    },
+    {
+        "method": "POST",
+        "path": "/hello",
+        "status": 404,
+        "location": ""
+    },
+    {
+        "method": "POST",
+        "path": "/sample-page/2",
+        "status": 404,
+        "location": ""
+    },
+    {
+        "method": "POST",
+        "path": "/?p=1",
+        "status": 200,
+        "location": ""
+    },
+    {
+        "method": "POST",
+        "path": "/?p=2",
+        "status": 404,
+        "location": ""
+    },
+    {
+        "method": "POST",
+        "path": "/?page_id=2",
+        "status": 200,
+        "location": ""
+    },
+    {
+        "method": "POST",
+        "path": "/?name=hello-world",
+        "status": 200,
+        "location": ""
+    },
+    {
+        "method": "POST",
+        "path": "/?pagename=docs",
+        "status": 404,
+        "location": ""
+    },
+    {
+        "method": "POST",
+        "path": "/?cat=1",
+        "status": 200,
+        "location": ""
+    },
+    {
+        "method": "POST",
+        "path": "/?author=1",
+        "status": 200,
+        "location": ""
+    },
+    {
+        "method": "POST",
+        "path": "/?m=202608",
+        "status": 200,
+        "location": ""
+    },
+    {
+        "method": "POST",
+        "path": "/category/uncategorized",
+        "status": 200,
+        "location": ""
+    },
+    {
+        "method": "POST",
+        "path": "/2026/08",
+        "status": 200,
+        "location": ""
+    },
+    {
+        "method": "POST",
+        "path": "/block-battery-text/",
+        "status": 301,
+        "location": "/zz-block-battery-text/"
+    },
+    {
+        "method": "PUT",
+        "path": "/sample-page/",
+        "status": 200,
+        "location": ""
+    },
+    {
+        "method": "DELETE",
+        "path": "/nonexistent/",
+        "status": 404,
+        "location": ""
+    }
+]

@@ -66,7 +66,12 @@ final readonly class Resolver
         return $this->perPage;
     }
 
-    public function resolve(Request $request): Resolution
+    /**
+     * $canonical mirrors the reference's redirect_canonical rule: only GET
+     * and HEAD get trailing-slash, pretty-URL, and 404-guess redirects;
+     * every other method renders what the query alone finds, as typed.
+     */
+    public function resolve(Request $request, bool $canonical = true): Resolution
     {
         // A plugin's own rewrite rules: 'top' rules outrank everything the
         // engine would resolve, 'bottom' rules catch what it could not.
@@ -74,7 +79,7 @@ final readonly class Resolver
         if ($ruleVars !== null) {
             return $this->fromRuleVars($ruleVars);
         }
-        $resolution = $this->resolvePath($request);
+        $resolution = $this->resolvePath($request, $canonical);
         if ($resolution->kind === Kind::NotFound) {
             $ruleVars = PluginRules::match($request->path, top: false);
             if ($ruleVars !== null) {
@@ -127,21 +132,24 @@ final readonly class Resolver
         return Resolution::home($paged);
     }
 
-    private function resolvePath(Request $request): Resolution
+    private function resolvePath(Request $request, bool $canonical = true): Resolution
     {
         $path = $request->path;
         if (str_starts_with($path, '/index.php')) {
             $path = substr($path, strlen('/index.php')) ?: '/';
-            if ($path !== '/') {
+            if ($path !== '/' && $canonical) {
                 return Resolution::redirect($this->permalinks->url(rtrim($path, '/') . '/') . $request->queryStringWithout());
             }
         }
         if (str_contains($path, '//')) {
             // Doubled slashes collapse to the canonical path.
-            return Resolution::redirect($this->permalinks->url((string) preg_replace('#/{2,}#', '/', $path)) . $request->queryStringWithout());
+            if ($canonical) {
+                return Resolution::redirect($this->permalinks->url((string) preg_replace('#/{2,}#', '/', $path)) . $request->queryStringWithout());
+            }
+            $path = (string) preg_replace('#/{2,}#', '/', $path);
         }
         if ($path === '/') {
-            return $this->resolveQueryVars($request);
+            return $this->resolveQueryVars($request, $canonical);
         }
         if (!$this->permalinks->isPretty()) {
             return Resolution::notFound();
@@ -159,7 +167,7 @@ final readonly class Resolver
             if ($suffix === 'trackback' && $single !== null) {
                 return Resolution::redirect($this->permalinks->forPost($single->record), 302);
             }
-            if ($single !== null && !str_ends_with($path, '/')) {
+            if ($single !== null && !str_ends_with($path, '/') && $canonical) {
                 return Resolution::redirect($this->permalinks->url($path . '/') . $request->queryStringWithout());
             }
             return $single ?? Resolution::notFound();
@@ -173,18 +181,18 @@ final readonly class Resolver
             $segments[0] === 'search' => count($segments) === 2 ? Resolution::search(rawurldecode($segments[1]), $paged) : Resolution::notFound(),
             $segments[0] === 'feed' => Resolution::notFound(),
             preg_match('/^\d{4}$/', $segments[0]) === 1 => $this->dateArchive($segments, $paged),
-            default => $this->resolveContent($segments, $paged),
+            default => $this->resolveContent($segments, $paged, $canonical),
         };
         // The reference adds the trailing slash only for unpaged content
         // and archives; paged views, search, and 404s answer as typed.
         $slashable = in_array($resolution->kind, [Kind::Single, Kind::Page, Kind::Category, Kind::Tag, Kind::Author, Kind::Date], true);
-        if ($slashable && $paged === 1 && !str_ends_with($path, '/')) {
+        if ($canonical && $slashable && $paged === 1 && !str_ends_with($path, '/')) {
             return Resolution::redirect($this->permalinks->url($path . '/') . $request->queryStringWithout());
         }
         return $resolution;
     }
 
-    private function resolveQueryVars(Request $request): Resolution
+    private function resolveQueryVars(Request $request, bool $canonical = true): Resolution
     {
         $pretty = $this->permalinks->isPretty();
         foreach (['p', 'page_id'] as $key) {
@@ -198,6 +206,13 @@ final readonly class Resolver
             if (!$this->readable($post)) {
                 return Resolution::notFound();
             }
+            if (!$canonical) {
+                // Without the canonical pass each var is strict about type:
+                // ?p= finds only posts, ?page_id= only pages.
+                return $post['post_type'] === ($key === 'p' ? 'post' : 'page')
+                    ? Resolution::single($post)
+                    : Resolution::notFound();
+            }
             $link = $this->permalinks->forPost($post);
             if ($pretty && !str_contains($link, '?')) {
                 return Resolution::redirect($link);
@@ -209,36 +224,48 @@ final readonly class Resolver
             if ($post === null) {
                 return $this->formerSlug((string) $request->query('name')) ?? Resolution::notFound();
             }
-            return $this->singleOrRedirect($post, 1, forceRedirect: $pretty);
+            return $this->singleOrRedirect($post, 1, forceRedirect: $pretty && $canonical);
         }
         if ($request->has('pagename')) {
             $segments = array_values(array_filter(explode('/', (string) $request->query('pagename')), static fn (string $s) => $s !== ''));
             $page = $this->posts->pageByPath($segments);
             if ($page !== null) {
-                return (int) $page['ID'] === $this->permalinks->frontPageId ? Resolution::redirect($this->permalinks->url('/')) : Resolution::single($page);
+                if ((int) $page['ID'] === $this->permalinks->frontPageId) {
+                    return $canonical ? Resolution::redirect($this->permalinks->url('/')) : Resolution::frontPage($page, 1);
+                }
+                return Resolution::single($page);
             }
-            $bySlug = $segments === [] ? null : $this->posts->findByName(end($segments), ['page']);
+            $bySlug = $segments === [] || !$canonical ? null : $this->posts->findByName(end($segments), ['page']);
             return $bySlug === null ? Resolution::notFound() : Resolution::redirect($this->permalinks->forPost($bySlug));
         }
         if ($request->has('cat')) {
             $term = $this->terms->find('category', (int) $request->query('cat', '0'));
+            if ($term !== null && !$canonical) {
+                return $this->termResolution('category', $term, 1);
+            }
             return $term === null || !$pretty ? Resolution::notFound() : Resolution::redirect($this->permalinks->forTerm($term));
         }
         if ($request->has('tag')) {
             $term = $this->terms->findBySlug('post_tag', (string) $request->query('tag'));
+            if ($term !== null && !$canonical) {
+                return $this->termResolution('post_tag', $term, 1);
+            }
             return $term === null || !$pretty ? Resolution::notFound() : Resolution::redirect($this->permalinks->forTerm($term));
         }
         if ($request->has('author')) {
             $user = $this->db->row("SELECT ID, user_nicename, display_name FROM {$this->db->table('users')} WHERE ID = ? LIMIT 1", [(int) $request->query('author', '0')]);
+            if ($user !== null && !$canonical) {
+                return $this->authorArchive((string) $user['user_nicename'], 1);
+            }
             return $user === null || !$pretty ? Resolution::notFound() : Resolution::redirect($this->permalinks->forAuthor($user));
         }
         if ($request->has('m') && preg_match('/^(\d{4})(\d{2})?(\d{2})?$/', (string) $request->query('m'), $m)) {
-            return $this->dateRedirect((int) $m[1], isset($m[2]) ? (int) $m[2] : null, isset($m[3]) ? (int) $m[3] : null);
+            return $this->dateRedirect((int) $m[1], isset($m[2]) ? (int) $m[2] : null, isset($m[3]) ? (int) $m[3] : null, $canonical);
         }
         if ($request->has('year')) {
             $month = $request->has('monthnum') ? (int) $request->query('monthnum') : null;
             $day = $request->has('day') ? (int) $request->query('day') : null;
-            return $this->dateRedirect((int) $request->query('year', '0'), $month, $day);
+            return $this->dateRedirect((int) $request->query('year', '0'), $month, $day, $canonical);
         }
         if ($request->has('s')) {
             return Resolution::search((string) $request->query('s'), max(1, (int) $request->query('paged', '1')));
@@ -246,8 +273,16 @@ final readonly class Resolver
         return $this->home(max(1, (int) $request->query('paged', '1')));
     }
 
-    private function dateRedirect(int $year, ?int $month, ?int $day): Resolution
+    private function dateRedirect(int $year, ?int $month, ?int $day, bool $canonical = true): Resolution
     {
+        if (!$canonical) {
+            $range = self::dateRange($year, $month, $day);
+            if ($range === null) {
+                return Resolution::notFound();
+            }
+            $total = $this->posts->archive(['from' => $range[0], 'to' => $range[1]], 1, 1)['total'];
+            return $total === 0 ? Resolution::notFound() : Resolution::date($year, $month, $day, 1);
+        }
         if (!$this->permalinks->isPretty()) {
             return Resolution::notFound();
         }
@@ -343,6 +378,12 @@ final readonly class Resolver
         if ($term === null || strcasecmp($this->terms->pathOf($term), implode('/', $slugs)) !== 0) {
             return Resolution::notFound();
         }
+        return $this->termResolution($taxonomy, $term, $paged);
+    }
+
+    /** The archive a found term stands for, 404 when it is empty or overpaged. */
+    private function termResolution(string $taxonomy, array $term, int $paged): Resolution
+    {
         $total = $this->posts->archive(['term' => (int) $term['term_taxonomy_id']], 1, 1)['total'];
         if ($total === 0 || $paged > $this->pages($total)) {
             return Resolution::notFound();
@@ -409,9 +450,9 @@ final readonly class Resolver
     }
 
     /** @param list<string> $segments */
-    private function resolveContent(array $segments, int $paged): Resolution
+    private function resolveContent(array $segments, int $paged, bool $canonical = true): Resolution
     {
-        $single = $this->resolveSingle($segments, $paged);
+        $single = $this->resolveSingle($segments, $paged, $canonical);
         if ($single !== null) {
             return $single;
         }
@@ -419,9 +460,9 @@ final readonly class Resolver
         // reference no longer honours; it redirects to the plain permalink.
         $number = '';
         if (count($segments) >= 2 && ctype_digit(end($segments))) {
-            $parent = $this->resolveSingle(array_slice($segments, 0, -1));
+            $parent = $this->resolveSingle(array_slice($segments, 0, -1), 1, $canonical);
             if ($parent !== null) {
-                return Resolution::redirect($this->permalinks->forPost($parent->record));
+                return $canonical ? Resolution::redirect($this->permalinks->forPost($parent->record)) : Resolution::notFound();
             }
             // A guessed destination keeps the number the reader typed.
             $number = array_pop($segments) . '/';
@@ -440,12 +481,12 @@ final readonly class Resolver
         if (str_starts_with($this->permalinks->structure, '/%category%')) {
             return Resolution::notFound();
         }
-        $guess = $this->posts->guess(end($segments));
+        $guess = $canonical ? $this->posts->guess(end($segments)) : null;
         return $guess === null ? Resolution::notFound() : Resolution::redirect($this->permalinks->forPost($guess) . $number);
     }
 
     /** @param list<string> $segments */
-    private function resolveSingle(array $segments, int $paged = 1): ?Resolution
+    private function resolveSingle(array $segments, int $paged = 1, bool $canonical = true): ?Resolution
     {
         if ($segments === []) {
             return null;
@@ -454,7 +495,7 @@ final readonly class Resolver
         if ($page !== null && $this->readable($page)) {
             // The static front page answers only at the site root.
             if ((int) $page['ID'] === $this->permalinks->frontPageId) {
-                return Resolution::redirect($this->permalinks->url('/'));
+                return $canonical ? Resolution::redirect($this->permalinks->url('/')) : Resolution::frontPage($page, $paged);
             }
             // The posts page paginates like the home listing: page/N serves
             // the blog's page N, and past the last page it is a 404.

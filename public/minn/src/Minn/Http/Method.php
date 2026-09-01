@@ -26,4 +26,13 @@ enum Method: string
     {
         return $declared === self::Any || $this === $declared || ($this === self::Head && $declared === self::Get);
     }
+
+    /**
+     * Canonical redirects (trailing slash, pretty-URL mapping, 404 guessing)
+     * run only for reads; every other method renders the URL as typed.
+     */
+    public function canonicalRedirects(): bool
+    {
+        return $this === self::Get || $this === self::Head;
+    }
 }
