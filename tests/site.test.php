@@ -71,6 +71,7 @@ $check(str_contains($home, 'Built from') && str_contains($home, 'scratch'), 'the
 $check(str_contains($home, 'Minn Admin is the only UI'), 'the visual draws the no-wp-admin line');
 $check(str_contains($home, 'Audience 3'), 'the three-audience visual is on the page');
 $check(str_contains($home, 'href="/lexicon/"'), 'the homepage links to the lexicon');
+$check(str_contains($home, 'href="/looks-like/"'), 'the homepage links to looks-like');
 $check(str_contains($home, 'Browse the lexicon'), 'the visual points at the glossary page');
 
 [$lh, $lex] = minn_test_fetch($ENGINE . '/lexicon/');
@@ -86,6 +87,10 @@ $check($csh['status'] === 200, 'theme /code-size/ answers 200', (string) $csh['s
 $check(str_contains($cs, '<title>Code size · Minn</title>'), 'code-size title');
 [$jsh] = minn_test_fetch($ENGINE . '/code-size.json');
 $check($jsh['status'] === 200, 'theme /code-size.json answers 200', (string) $jsh['status']);
+[$llh, $ll] = minn_test_fetch($ENGINE . '/looks-like/');
+$check($llh['status'] === 200, 'theme /looks-like/ answers 200', (string) $llh['status']);
+$check(str_contains($ll, '<title>What a host inspects · Minn'), 'looks-like title');
+$check(str_contains($ll, 'href="/looks-like/" aria-current="page"'), 'looks-like nav is current');
 foreach (['/wp-content/themes/minn-site/style.css', '/wp-content/themes/minn-site/assets/fonts/hanken-grotesk.woff2', '/wp-content/themes/minn-site/assets/fonts/jetbrains-mono.woff2', '/wp-content/themes/minn-site/assets/img/favicon.webp'] as $asset) {
     [$ah] = minn_test_fetch($ENGINE . $asset);
     $check($ah['status'] === 200, "asset served: $asset");
