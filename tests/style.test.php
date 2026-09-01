@@ -162,9 +162,9 @@ $check("facade map: leaf functions over fifteen lines stay at or under {$leafCei
 
 // The engine ratchet: src/Minn/ is the code this project points at, so two
 // counts may only fall here too. Methods whose body runs past eighty lines
-// (the twenty-two named in docs/writing-minn.md) and classes past six hundred
+// (none now: the twenty-two the pass started with are split) and classes past six hundred
 // lines. Lower a ceiling when a file loses its last offender; never raise one.
-$longMethodCeiling = 7;
+$longMethodCeiling = 0;
 $bigClassCeiling = 4;
 $longMethods = [];
 $bigClasses = [];

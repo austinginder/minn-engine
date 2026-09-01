@@ -109,14 +109,17 @@ final class Symbols
      * @param list<string> $files
      * @return array{calls: list<string>, classes: list<string>, declared: array<string, true>, declaredClasses: array<string, true>, guarded: array<string, true>, truncated: bool}
      */
+    /**
+     * Every file's tokens into one table: the functions called, the classes
+     * referenced, both minus what the folder declares itself or guards with
+     * an existence check.
+     *
+     * @param list<string> $files
+     * @return array{calls: list<string>, classes: list<string>, declared: array<string, true>, declaredClasses: array<string, true>, guarded: array<string, true>, truncated: bool}
+     */
     private static function scan(array $files): array
     {
-        $calls = [];
-        $classes = [];
-        $declared = [];
-        $declaredClasses = [];
-        $guarded = [];
-        $truncated = count($files) > self::MAX_FILES;
+        $table = new SymbolTable();
         foreach (array_slice($files, 0, self::MAX_FILES) as $file) {
             $source = (string) @file_get_contents($file);
             if ($source === '') {
@@ -127,90 +130,105 @@ final class Symbols
             } catch (\Throwable) {
                 continue;
             }
-            $namespaced = false;
-            $count = count($tokens);
-            $significant = static function (int $from, int $step) use ($tokens, $count): ?array {
-                for ($j = $from + $step; $j >= 0 && $j < $count; $j += $step) {
-                    $t = $tokens[$j];
-                    if (is_array($t) && in_array($t[0], [T_WHITESPACE, T_COMMENT, T_DOC_COMMENT], true)) {
-                        continue;
-                    }
-                    return is_array($t) ? $t : [null, $t];
+            self::scanTokens($tokens, $table);
+        }
+        return $table->toArray(count($files) > self::MAX_FILES);
+    }
+
+    /** @param list<array{0: int, 1: string, 2: int}|string> $tokens */
+    private static function scanTokens(array $tokens, SymbolTable $table): void
+    {
+        $namespaced = false;
+        $count = count($tokens);
+        for ($i = 0; $i < $count; $i++) {
+            $token = $tokens[$i];
+            if (!is_array($token)) {
+                continue;
+            }
+            [$id, $text] = $token;
+            if ($id === T_NAMESPACE) {
+                $namespaced = true;
+                continue;
+            }
+            if ($id === T_FUNCTION) {
+                $next = self::significant($tokens, $i, 1);
+                if ($next !== null && $next[0] === T_STRING) {
+                    $table->declare($next[1]);
                 }
-                return null;
-            };
-            for ($i = 0; $i < $count; $i++) {
-                $token = $tokens[$i];
-                if (!is_array($token)) {
+                continue;
+            }
+            if (in_array($id, [T_CLASS, T_INTERFACE, T_TRAIT, T_ENUM], true)) {
+                $prev = self::significant($tokens, $i, -1);
+                if ($prev !== null && ($prev[0] === T_DOUBLE_COLON || $prev[0] === T_NEW)) {
                     continue;
                 }
-                [$id, $text] = $token;
-                if ($id === T_NAMESPACE) {
-                    $namespaced = true;
-                    continue;
+                $next = self::significant($tokens, $i, 1);
+                if ($next !== null && $next[0] === T_STRING) {
+                    $table->declareClass($next[1]);
                 }
-                if ($id === T_FUNCTION) {
-                    $next = $significant($i, 1);
-                    if ($next !== null && $next[0] === T_STRING) {
-                        $declared[strtolower($next[1])] = true;
-                    }
-                    continue;
-                }
-                if (in_array($id, [T_CLASS, T_INTERFACE, T_TRAIT, T_ENUM], true)) {
-                    $prev = $significant($i, -1);
-                    if ($prev !== null && ($prev[0] === T_DOUBLE_COLON || $prev[0] === T_NEW)) {
-                        continue;
-                    }
-                    $next = $significant($i, 1);
-                    if ($next !== null && $next[0] === T_STRING) {
-                        $declaredClasses[strtolower($next[1])] = true;
-                        if ($namespaced) {
-                            $declaredClasses['*ns*' . strtolower($next[1])] = true;
-                        }
-                    }
-                    continue;
-                }
-                if ($id === T_STRING || $id === T_NAME_FULLY_QUALIFIED) {
-                    $name = ltrim($text, '\\');
-                    $prev = $significant($i, -1);
-                    $next = $significant($i, 1);
-                    $prevId = $prev[0] ?? null;
-                    $prevText = $prev[1] ?? '';
-                    if ($prevId === T_NEW || $prevId === T_EXTENDS || $prevId === T_IMPLEMENTS || $prevId === T_INSTANCEOF || ($next !== null && $next[0] === T_DOUBLE_COLON)) {
-                        if (in_array(strtolower($name), ['self', 'static', 'parent', 'class'], true)) {
-                            continue;
-                        }
-                        if ($namespaced && $id === T_STRING && !str_contains($text, '\\')) {
-                            continue; // resolves inside the plugin's own namespace or a use statement
-                        }
-                        if ($prevId === T_IMPLEMENTS || ($prevText === ',' && $significant($i - 1, -1) !== null)) {
-                            // an implements list may hold several names; each is a class reference
-                        }
-                        $classes[$name] = true;
-                        continue;
-                    }
-                    if ($next !== null && $next[1] === '(' && $prevId !== T_OBJECT_OPERATOR && $prevId !== T_NULLSAFE_OBJECT_OPERATOR && $prevId !== T_DOUBLE_COLON && $prevId !== T_FUNCTION && $prevId !== T_NEW && $prevText !== '&') {
-                        if (str_contains($text, '\\') && $id === T_STRING) {
-                            continue;
-                        }
-                        $lower = strtolower($name);
-                        if (in_array($lower, ['function_exists', 'class_exists', 'interface_exists', 'method_exists', 'is_callable', 'defined', 'trait_exists', 'enum_exists'], true)) {
-                            $arg = $significant($i + 1, 1);
-                            if ($arg !== null && $arg[0] === T_CONSTANT_ENCAPSED_STRING) {
-                                $guarded[strtolower(trim($arg[1], '\'"'))] = true;
-                            }
-                            continue;
-                        }
-                        $calls[$name] = true;
-                    }
-                }
+                continue;
+            }
+            if ($id === T_STRING || $id === T_NAME_FULLY_QUALIFIED) {
+                self::noteName($tokens, $i, $namespaced, $table);
             }
         }
-        foreach (array_keys($declaredClasses) as $k) {
-            if (str_starts_with($k, '*ns*')) {
-                unset($declaredClasses[$k]);
+    }
+
+    /**
+     * A name token: a class reference when it follows new / extends /
+     * implements / instanceof or precedes ::, a call when it precedes "(",
+     * and a guard when the call is an existence check on a literal.
+     *
+     * @param list<array{0: int, 1: string, 2: int}|string> $tokens
+     */
+    private static function noteName(array $tokens, int $i, bool $namespaced, SymbolTable $table): void
+    {
+        [$id, $text] = $tokens[$i];
+            $name = ltrim($text, '\\');
+            $prev = self::significant($tokens, $i, -1);
+            $next = self::significant($tokens, $i, 1);
+            $prevId = $prev[0] ?? null;
+            $prevText = $prev[1] ?? '';
+            if ($prevId === T_NEW || $prevId === T_EXTENDS || $prevId === T_IMPLEMENTS || $prevId === T_INSTANCEOF || ($next !== null && $next[0] === T_DOUBLE_COLON)) {
+                if (in_array(strtolower($name), ['self', 'static', 'parent', 'class'], true)) {
+                    return;
+                }
+                if ($namespaced && $id === T_STRING && !str_contains($text, '\\')) {
+                    return; // resolves inside the plugin's own namespace or a use statement
+                }
+                if ($prevId === T_IMPLEMENTS || ($prevText === ',' && self::significant($tokens, $i - 1, -1) !== null)) {
+                    // an implements list may hold several names; each is a class reference
+                }
+                $classes[$name] = true;
+                return;
             }
+            if ($next !== null && $next[1] === '(' && $prevId !== T_OBJECT_OPERATOR && $prevId !== T_NULLSAFE_OBJECT_OPERATOR && $prevId !== T_DOUBLE_COLON && $prevId !== T_FUNCTION && $prevId !== T_NEW && $prevText !== '&') {
+                if (str_contains($text, '\\') && $id === T_STRING) {
+                    return;
+                }
+                $lower = strtolower($name);
+                if (in_array($lower, ['function_exists', 'class_exists', 'interface_exists', 'method_exists', 'is_callable', 'defined', 'trait_exists', 'enum_exists'], true)) {
+                    $arg = self::significant($tokens, $i + 1, 1);
+                    if ($arg !== null && $arg[0] === T_CONSTANT_ENCAPSED_STRING) {
+                        $table->guard(trim($arg[1], '\'"'));
+                    }
+                    return;
+                }
+                $table->call($name);
+            }
+    }
+
+    /** The nearest token in either direction that is not whitespace or a comment, as [id, text]. @param list<array|string> $tokens @return array{0: ?int, 1: string}|null */
+    private static function significant(array $tokens, int $from, int $step): ?array
+    {
+        $count = count($tokens);
+        for ($j = $from + $step; $j >= 0 && $j < $count; $j += $step) {
+            $t = $tokens[$j];
+            if (is_array($t) && in_array($t[0], [T_WHITESPACE, T_COMMENT, T_DOC_COMMENT], true)) {
+                continue;
+            }
+            return is_array($t) ? $t : [null, $t];
         }
-        return ['calls' => array_keys($calls), 'classes' => array_keys($classes), 'declared' => $declared, 'declaredClasses' => $declaredClasses, 'guarded' => $guarded, 'truncated' => $truncated];
+        return null;
     }
 }

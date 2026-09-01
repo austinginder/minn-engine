@@ -154,51 +154,11 @@ final class Tags
                 $i++;
                 break;
             }
-            // Attribute name: runs to whitespace, "/", ">" or "=" (a leading "=" is part of the name).
-            $attrStart = $i;
-            if ($html[$i] === '=') {
-                $i++;
+            $attribute = $this->scanAttribute($i);
+            if ($attribute === null) {
+                return false;
             }
-            while ($i < $length && !self::isSpace($html[$i]) && $html[$i] !== '/' && $html[$i] !== '>' && $html[$i] !== '=') {
-                $i++;
-            }
-            $attrName = substr($html, $attrStart, $i - $attrStart);
-            $j = $i;
-            while ($j < $length && self::isSpace($html[$j])) {
-                $j++;
-            }
-            $value = null;
-            $quoted = false;
-            $attrEnd = $i;
-            if ($j < $length && $html[$j] === '=') {
-                $j++;
-                while ($j < $length && self::isSpace($html[$j])) {
-                    $j++;
-                }
-                if ($j >= $length) {
-                    $this->paused = true;
-                    return false;
-                }
-                $quote = $html[$j];
-                if ($quote === '"' || $quote === "'") {
-                    $close = strpos($html, $quote, $j + 1);
-                    if ($close === false) {
-                        $this->paused = true;
-                        return false;
-                    }
-                    $value = substr($html, $j + 1, $close - $j - 1);
-                    $quoted = true;
-                    $attrEnd = $close + 1;
-                } else {
-                    $k = $j;
-                    while ($k < $length && !self::isSpace($html[$k]) && $html[$k] !== '>') {
-                        $k++;
-                    }
-                    $value = substr($html, $j, $k - $j);
-                    $attrEnd = $k;
-                }
-                $i = $attrEnd;
-            }
+            [$i, $attrName, $attrStart, $attrEnd, $value, $quoted] = $attribute;
             if ($attrName === '') {
                 // A stray character such as a quote before "=": consume it as a name.
                 $i = max($i, $attrStart + 1);
@@ -213,23 +173,90 @@ final class Tags
         $this->attributes = $closer ? [] : $attributes;
         $this->cursor = $i;
         if (!$closer && in_array($name, self::RAW_TEXT, true)) {
-            $closeAt = stripos($html, '</' . $name, $i);
-            if ($closeAt === false) {
-                $this->paused = true;
-                $this->resetToken();
-                return false;
-            }
-            $gt = strpos($html, '>', $closeAt);
-            if ($gt === false) {
-                $this->paused = true;
-                $this->resetToken();
-                return false;
-            }
-            $this->textStart = $i;
-            $this->textLength = $closeAt - $i;
-            $this->end = $gt + 1;
-            $this->cursor = $gt + 1;
+            return $this->enterRawText($name, $i);
         }
+        return true;
+    }
+
+    /**
+     * One attribute from the cursor: its name (a leading "=" is part of it),
+     * then an optional quoted or bare value. Null pauses the scan at the end
+     * of the input.
+     *
+     * @return array{int, string, int, int, ?string, bool}|null cursor after, name, start, end, value, quoted
+     */
+    private function scanAttribute(int $i): ?array
+    {
+        $html = $this->html;
+        $length = strlen($html);
+        // Attribute name: runs to whitespace, "/", ">" or "=" (a leading "=" is part of the name).
+        $attrStart = $i;
+        if ($html[$i] === '=') {
+            $i++;
+        }
+        while ($i < $length && !self::isSpace($html[$i]) && $html[$i] !== '/' && $html[$i] !== '>' && $html[$i] !== '=') {
+            $i++;
+        }
+        $attrName = substr($html, $attrStart, $i - $attrStart);
+        $j = $i;
+        while ($j < $length && self::isSpace($html[$j])) {
+            $j++;
+        }
+        $value = null;
+        $quoted = false;
+        $attrEnd = $i;
+        if ($j < $length && $html[$j] === '=') {
+            $j++;
+            while ($j < $length && self::isSpace($html[$j])) {
+                $j++;
+            }
+            if ($j >= $length) {
+                $this->paused = true;
+                return null;
+            }
+            $quote = $html[$j];
+            if ($quote === '"' || $quote === "'") {
+                $close = strpos($html, $quote, $j + 1);
+                if ($close === false) {
+                    $this->paused = true;
+                    return null;
+                }
+                $value = substr($html, $j + 1, $close - $j - 1);
+                $quoted = true;
+                $attrEnd = $close + 1;
+            } else {
+                $k = $j;
+                while ($k < $length && !self::isSpace($html[$k]) && $html[$k] !== '>') {
+                    $k++;
+                }
+                $value = substr($html, $j, $k - $j);
+                $attrEnd = $k;
+            }
+            $i = $attrEnd;
+        }
+        return [$i, $attrName, $attrStart, $attrEnd, $value, $quoted];
+    }
+
+    /** A raw-text element (script, style, ...): the token runs to its closer, or the scan pauses. */
+    private function enterRawText(string $name, int $i): bool
+    {
+        $html = $this->html;
+        $closeAt = stripos($html, '</' . $name, $i);
+        if ($closeAt === false) {
+            $this->paused = true;
+            $this->resetToken();
+            return false;
+        }
+        $gt = strpos($html, '>', $closeAt);
+        if ($gt === false) {
+            $this->paused = true;
+            $this->resetToken();
+            return false;
+        }
+        $this->textStart = $i;
+        $this->textLength = $closeAt - $i;
+        $this->end = $gt + 1;
+        $this->cursor = $gt + 1;
         return true;
     }
 
@@ -711,6 +738,7 @@ final class Tags
     }
 
     /** Applies the pending edits to the source and re-reads the current token at its (possibly shifted) place. */
+    /** Writes every pending update into the source, keeping bookmarks and the current token aligned. */
     private function flush(): void
     {
         if ($this->type === null) {
@@ -722,46 +750,72 @@ final class Tags
             $this->textUpdate = null;
         }
         if ($this->type === self::TAG && !$this->closer && ($this->attributeUpdates !== [] || $this->classUpdates !== [])) {
-            $inserts = [];
-            $updates = $this->attributeUpdates;
-            if ($this->classUpdates !== []) {
-                $classValue = $this->rebuiltClassValue();
-                unset($updates['class']);
-                $updates['class'] = ['name' => $this->existingName('class') ?? 'class', 'value' => $classValue === '' ? null : $classValue];
-                if ($classValue === '' && $this->existingName('class') === null) {
-                    unset($updates['class']);
-                }
-            }
-            foreach ($updates as $lower => $update) {
-                $lower = (string) $lower;
-                $text = $update['value'] === true ? $update['name'] : $update['name'] . '="' . self::escape((string) $update['value']) . '"';
-                $matched = false;
-                foreach ($this->attributes as $attr) {
-                    if ($attr['lower'] !== $lower) {
-                        continue;
-                    }
-                    if ($update['value'] === null) {
-                        $replacements[] = [$attr['start'], $attr['end'], ''];
-                        continue;
-                    }
-                    if (!$matched) {
-                        $replacements[] = [$attr['start'], $attr['end'], $text];
-                    }
-                    $matched = true;
-                }
-                if (!$matched && $update['value'] !== null) {
-                    $inserts[] = ' ' . $text;
-                }
-            }
-            if ($inserts !== []) {
-                $replacements[] = [$this->nameEnd, $this->nameEnd, implode('', array_reverse($inserts))];
-            }
+            $replacements = [...$replacements, ...$this->attributeReplacements()];
             $this->attributeUpdates = [];
             $this->classUpdates = [];
         }
         if ($replacements === []) {
             return;
         }
+        $this->applyReplacements($replacements);
+        $this->rescanCurrent();
+    }
+
+    /**
+     * The edits the attribute and class updates amount to: a changed
+     * attribute is rewritten in place (its duplicates removed), a removed
+     * one is cut, a new one is inserted after the tag name.
+     *
+     * @return list<array{int, int, string}> start, end, text
+     */
+    private function attributeReplacements(): array
+    {
+        $replacements = [];
+        $inserts = [];
+        $updates = $this->attributeUpdates;
+        if ($this->classUpdates !== []) {
+            $classValue = $this->rebuiltClassValue();
+            unset($updates['class']);
+            $updates['class'] = ['name' => $this->existingName('class') ?? 'class', 'value' => $classValue === '' ? null : $classValue];
+            if ($classValue === '' && $this->existingName('class') === null) {
+                unset($updates['class']);
+            }
+        }
+        foreach ($updates as $lower => $update) {
+            $lower = (string) $lower;
+            $text = $update['value'] === true ? $update['name'] : $update['name'] . '="' . self::escape((string) $update['value']) . '"';
+            $matched = false;
+            foreach ($this->attributes as $attr) {
+                if ($attr['lower'] !== $lower) {
+                    continue;
+                }
+                if ($update['value'] === null) {
+                    $replacements[] = [$attr['start'], $attr['end'], ''];
+                    continue;
+                }
+                if (!$matched) {
+                    $replacements[] = [$attr['start'], $attr['end'], $text];
+                }
+                $matched = true;
+            }
+            if (!$matched && $update['value'] !== null) {
+                $inserts[] = ' ' . $text;
+            }
+        }
+        if ($inserts !== []) {
+            $replacements[] = [$this->nameEnd, $this->nameEnd, implode('', array_reverse($inserts))];
+        }
+        return $replacements;
+    }
+
+    /**
+     * Splices the edits into the source, ascending, and moves the bookmarks
+     * and the cursor by what the token gained or lost.
+     *
+     * @param list<array{int, int, string}> $replacements
+     */
+    private function applyReplacements(array $replacements): void
+    {
         usort($replacements, static fn (array $a, array $b) => $a[0] <=> $b[0] ?: $a[1] <=> $b[1]);
         $out = '';
         $cursor = 0;
@@ -783,7 +837,12 @@ final class Tags
         }
         $this->html = $out;
         $this->cursor = $tokenEnd + $delta;
-        // Re-read the token so attribute offsets match the new source.
+    }
+
+    /** Re-reads the current token so attribute offsets match the new source. */
+    private function rescanCurrent(): void
+    {
+        $tokenStart = $this->start;
         $wasEnded = $this->ended;
         $wasPaused = $this->paused;
         $resume = $this->cursor;

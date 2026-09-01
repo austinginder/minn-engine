@@ -331,7 +331,26 @@ final class PostQuery
         }
     }
 
+    /** The taxonomy narrowing: every query var the reference reads, then tax_query, joined by its relation. */
     private function taxonomies(array $q): void
+    {
+        [$relation, $clauses] = self::taxonomyClauses($q, $this->registry->taxonomies());
+        if ($clauses === []) {
+            return;
+        }
+        $parts = array_map(fn (array $clause) => $this->taxonomySql($clause), $clauses);
+        $this->where[] = '(' . implode(" {$relation} ", $parts) . ')';
+    }
+
+    /**
+     * The tax_query the query vars amount to: cat, category_name, the __in /
+     * __not_in / __and pairs, tag and its slug forms, every registered
+     * taxonomy's own query var, and finally an explicit tax_query.
+     *
+     * @param array<string, array<string, mixed>> $taxonomies the registry's taxonomies
+     * @return array{string, list<array<string, mixed>>} relation, clauses
+     */
+    private static function taxonomyClauses(array $q, array $taxonomies): array
     {
         $clauses = [];
         $add = static function (string $taxonomy, string $field, array $terms, string $operator = 'IN', bool $children = true) use (&$clauses): void {
@@ -377,7 +396,7 @@ final class PostQuery
         if (!empty($q['tag_id'])) {
             $add('post_tag', 'term_id', [(int) $q['tag_id']]);
         }
-        foreach ($this->registry->taxonomies() as $name => $taxonomy) {
+        foreach ($taxonomies as $name => $taxonomy) {
             $var = $taxonomy['query_var'] ?? false;
             if (is_string($var) && $var !== '' && !in_array($var, ['category_name', 'tag'], true) && !empty($q[$var])) {
                 $add($name, 'slug', array_map('trim', explode(',', (string) $q[$var])));
@@ -396,11 +415,13 @@ final class PostQuery
                 }
             }
         }
-        if ($clauses === []) {
-            return;
-        }
+        return [$relation, $clauses];
+    }
+
+    /** One clause as SQL on p.ID, its parameters pushed. @param array<string, mixed> $clause */
+    private function taxonomySql(array $clause): string
+    {
         $parts = [];
-        foreach ($clauses as $clause) {
             $ttids = $this->termTaxonomyIds($clause);
             $relationships = $this->db->table('term_relationships');
             switch ($clause['operator']) {
@@ -434,8 +455,7 @@ final class PostQuery
                     $parts[] = 'p.ID IN (SELECT object_id FROM ' . $relationships . ' WHERE term_taxonomy_id IN (?))';
                     $this->params[] = $ttids;
             }
-        }
-        $this->where[] = '(' . implode(" {$relation} ", $parts) . ')';
+        return $parts[0];
     }
 
     /** @return list<int> */
@@ -474,7 +494,23 @@ final class PostQuery
         return $ids;
     }
 
+    /** The meta narrowing: meta_key and friends as one clause, then meta_query, joined by its relation. */
     private function meta(array $q): void
+    {
+        [$relation, $clauses] = self::metaClauses($q);
+        if ($clauses === []) {
+            return;
+        }
+        $parts = array_map(fn (array $clause) => $this->metaSql($clause), $clauses);
+        $this->where[] = '(' . implode(" {$relation} ", $parts) . ')';
+    }
+
+    /**
+     * The meta_query the query vars amount to.
+     *
+     * @return array{string, list<array<string, mixed>>} relation, clauses
+     */
+    private static function metaClauses(array $q): array
     {
         $clauses = [];
         if (!empty($q['meta_key'])) {
@@ -504,12 +540,14 @@ final class PostQuery
                 }
             }
         }
-        if ($clauses === []) {
-            return;
-        }
+        return [$relation, $clauses];
+    }
+
+    /** One clause as an EXISTS on postmeta, its parameters pushed. @param array<string, mixed> $clause */
+    private function metaSql(array $clause): string
+    {
         $parts = [];
         $meta = $this->db->table('postmeta');
-        foreach ($clauses as $clause) {
             $key = (string) ($clause['key'] ?? '');
             $compare = strtoupper((string) ($clause['compare'] ?? (isset($clause['value']) && is_array($clause['value']) ? 'IN' : '=')));
             $type = strtoupper((string) ($clause['type'] ?? 'CHAR'));
@@ -519,12 +557,12 @@ final class PostQuery
             if ($compare === 'NOT EXISTS') {
                 $parts[] = "NOT EXISTS (SELECT 1 FROM {$meta} WHERE post_id = p.ID AND {$keyClause})";
                 array_push($this->params, ...$keyParams);
-                continue;
+                return $parts[0];
             }
             if ($compare === 'EXISTS' || !array_key_exists('value', $clause)) {
                 $parts[] = "EXISTS (SELECT 1 FROM {$meta} WHERE post_id = p.ID AND {$keyClause})";
                 array_push($this->params, ...$keyParams);
-                continue;
+                return $parts[0];
             }
             $value = $clause['value'];
             switch ($compare) {
@@ -558,8 +596,7 @@ final class PostQuery
             }
             $parts[] = "EXISTS (SELECT 1 FROM {$meta} WHERE post_id = p.ID AND {$keyClause} AND {$valueClause})";
             array_push($this->params, ...$keyParams, ...$valueParams);
-        }
-        $this->where[] = '(' . implode(" {$relation} ", $parts) . ')';
+        return $parts[0];
     }
 
     /** @return array{0: string, 1: list<mixed>} */

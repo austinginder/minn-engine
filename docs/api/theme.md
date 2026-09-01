@@ -14,7 +14,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`HeadLinks`](#headlinks) | final readonly class | 123 | The links the reference puts in every head: the site and comments |
 | [`Hierarchy`](#hierarchy) | final class | 110 | The classic template hierarchy: the candidate file names each template |
 | [`MainQueryBridge`](#mainquerybridge) | final readonly class | 65 | Stands the main query for a themed page: a plugin's archive runs through |
-| [`PageRenderer`](#pagerenderer) | final readonly class | 172 | A whole page from the active block theme: the template the resolution |
+| [`PageRenderer`](#pagerenderer) | final readonly class | 204 | A whole page from the active block theme: the template the resolution |
 | [`PatternText`](#patterntext) | final class | 197 | Block-theme patterns are PHP files whose only code is a handful of |
 | [`TemplateIndex`](#templateindex) | final class | 240 | Every block template and template part the site offers, in the order the |
 | [`TemplatePartTheme`](#templateparttheme) | final readonly class | 44 | A template-part block inside a template says which theme's part it means. |
@@ -363,7 +363,7 @@ those, and the theme (and child theme) tokens close the list.
 
 ### `render(Minn\Front\Resolution $resolution, array $coreClasses, string $title): ?string`
 
-Internals: `headLinks()` (private, line 209)
+Internals: `pluginTemplate()` (private, line 164), `skipLinkTarget()` (private, line 185), `documentTitle()` (private, line 194), `head()` (private, line 215), `headLinks()` (private, line 241)
 
 
 ## PatternText

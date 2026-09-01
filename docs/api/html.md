@@ -5,7 +5,7 @@ the HTML tag processor
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`Decoder`](#decoder) | final class | 84 | Character reference decoding for text and attribute values: numeric and |
-| [`Tags`](#tags) | final class | 846 | A streaming HTML tokenizer with in-place edits: tags, text, comments, |
+| [`Tags`](#tags) | final class | 905 | A streaming HTML tokenizer with in-place edits: tags, text, comments, |
 
 ## Decoder
 
@@ -120,5 +120,5 @@ The decoded value, true for a bare attribute, null when absent; a pending edit a
 
 ### `html(): string`
 
-Internals: `scanTag()` (private, line 127), `scanMarkupDeclaration()` (private, line 236), `scanQuestion()` (private, line 291), `setComment()` (private, line 319), `setToken()` (private, line 328), `resetToken()` (private, line 338), `isSpace()` (private, line 350), `baseClassList()` (private, line 541), `baseClassValue()` (private, line 551), `flush()` (private, line 714), `rescan()` (private, line 802), `existingName()` (private, line 816), `rebuiltClassValue()` (private, line 827), `escape()` (private, line 855)
+Internals: `scanTag()` (private, line 127), `scanAttribute()` (private, line 188), `enterRawText()` (private, line 241), `scanMarkupDeclaration()` (private, line 263), `scanQuestion()` (private, line 318), `setComment()` (private, line 346), `setToken()` (private, line 355), `resetToken()` (private, line 365), `isSpace()` (private, line 377), `baseClassList()` (private, line 568), `baseClassValue()` (private, line 578), `flush()` (private, line 742), `attributeReplacements()` (private, line 771), `applyReplacements()` (private, line 817), `rescanCurrent()` (private, line 843), `rescan()` (private, line 861), `existingName()` (private, line 875), `rebuiltClassValue()` (private, line 886), `escape()` (private, line 914)
 

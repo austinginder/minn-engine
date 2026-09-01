@@ -127,40 +127,72 @@ final readonly class PageRenderer
         }
         $bridge = $this->bridge ?? new MainQueryBridge($this->site, $this->posts, $this->perPage);
         $query = $bridge->stand($resolution);
-        // The reference filters template_include under block themes too (the
-        // canvas is the incoming value); a plugin swapping in its own PHP file
-        // takes the whole response over, the CaptainCore Manager shape.
-        if (Runtime::booted()) {
-            $canvas = MINN_ENGINE_DIR . '/wp-api/template-canvas.php';
-            $swapped = (string) \apply_filters('template_include', $canvas);
-            if ($swapped !== $canvas && $swapped !== '' && is_file($swapped)) {
-                ob_start();
-                \load_template($swapped, false);
-                return (string) ob_get_clean();
-            }
+        $takeover = $this->pluginTemplate();
+        if ($takeover !== null) {
+            return $takeover;
         }
-        $perPage = $bridge->perPage();
         RenderState::reset();
-        $this->renderer->withContext(new Context($resolution, $query->posts, $query->total, $perPage, true));
+        $this->renderer->withContext(new Context($resolution, $query->posts, $query->total, $bridge->perPage(), true));
         // The reference texturizes the rendered template as a whole, after the
         // blocks: straight quotes in a theme's own markup curl, content that was
         // texturized on its way in is left alone.
         $body = Texturize::html($this->renderer->renderBlocks(Parser::parse($template['markup'])));
-        // The skip link points at the first <main>: at its own id when the
-        // template gave it one, otherwise at the id the reference injects.
-        $skipTarget = 'wp--skip-link--target';
-        if (preg_match('/<main\b[^>]*\sid="([^"]+)"/', $body, $m)) {
-            $skipTarget = $m[1];
-        } else {
-            $body = preg_replace('/<main(\s|>)/', '<main id="wp--skip-link--target"$1', $body, 1);
-        }
+        [$body, $skipTarget] = self::skipLinkTarget($body);
         $bodyClass = implode(' ', $this->bodyClasses($resolution, $coreClasses));
         // The stylesheet comes after the body: it lists the containers and
         // variations that rendering discovered.
         $styles = new GlobalStyles($this->theme, $this->templates->userStyles());
-        $globalStyles = $styles->css();
-        $fontFaces = $styles->fontFaces();
+        $title = $this->documentTitle($resolution, $title);
+        $bar = $resolution->preview ? null : $this->bar;
+        $document = '<!DOCTYPE html>' . "\n" . '<html lang="en">' . "\n"
+            . $this->head($resolution, $title, $styles, $bar)
+            . '<body class="' . Html::attr($bodyClass) . '">' . "\n"
+            . '<a class="skip-link screen-reader-text" id="wp-skip-link" href="#' . Html::attr($skipTarget) . '">Skip to content</a>'
+            . '<div class="wp-site-blocks">' . $body . '</div>' . "\n"
+            . (Extensions::runner()?->footer() ?? '')
+            . (Runtime::booted() ? Runtime::capture('wp_footer') : '')
+            . ($bar === null ? '' : $bar->render($resolution))
+            . '</body>' . "\n" . '</html>' . "\n";
+        return Extensions::runner()?->filterDocument($document) ?? $document;
+    }
 
+    /**
+     * The reference filters template_include under block themes too (the
+     * canvas is the incoming value); a plugin swapping in its own PHP file
+     * takes the whole response over, the CaptainCore Manager shape.
+     */
+    private function pluginTemplate(): ?string
+    {
+        if (!Runtime::booted()) {
+            return null;
+        }
+        $canvas = MINN_ENGINE_DIR . '/wp-api/template-canvas.php';
+        $swapped = (string) \apply_filters('template_include', $canvas);
+        if ($swapped === $canvas || $swapped === '' || !is_file($swapped)) {
+            return null;
+        }
+        ob_start();
+        \load_template($swapped, false);
+        return (string) ob_get_clean();
+    }
+
+    /**
+     * The skip link points at the first <main>: at its own id when the
+     * template gave it one, otherwise at the id the reference injects.
+     *
+     * @return array{string, string} the body, the target id
+     */
+    private static function skipLinkTarget(string $body): array
+    {
+        if (preg_match('/<main\b[^>]*\sid="([^"]+)"/', $body, $m)) {
+            return [$body, $m[1]];
+        }
+        return [(string) preg_replace('/<main(\s|>)/', '<main id="wp--skip-link--target"$1', $body, 1), 'wp--skip-link--target'];
+    }
+
+    /** The title after the extensions and, with the runtime up, the reference's document_title filters. */
+    private function documentTitle(Resolution $resolution, string $title): string
+    {
         $title = Extensions::runner()?->title($title) ?? $title;
         if (Runtime::booted()) {
             // Plugin code rewrites the title through the reference's filters; the engine's parts feed them.
@@ -172,20 +204,28 @@ final readonly class PageRenderer
             Runtime::current()->set('document_title_parts', $parts);
             $title = \_minn_document_title($parts);
         }
-        $bar = $resolution->preview ? null : $this->bar;
+        return $title;
+    }
+
+    /**
+     * The head: title, the discovery links, the engine's stylesheets (inside
+     * wp_head when the runtime is up, where the reference prints a theme's,
+     * after plugin styles), the extension head, the fonts, the bar's own.
+     */
+    private function head(Resolution $resolution, string $title, GlobalStyles $styles, ?AdminBar $bar): string
+    {
         // The theme's own style.css is the theme's to enqueue from its
         // functions.php, which the runtime loads; the reference links it no other way.
         $stylesheets = '<link rel="stylesheet" id="minn-blocks-css" href="' . Html::attr($this->permalinks->url('/minn/assets/blocks.css')) . '" />' . "\n"
-            . '<style id="global-styles-inline-css">' . "\n" . $globalStyles . "\n" . '</style>' . "\n";
-        // With the runtime up, the engine's stylesheets print where the
-        // reference prints a theme's: inside wp_head, after plugin styles.
+            . '<style id="global-styles-inline-css">' . "\n" . $styles->css() . "\n" . '</style>' . "\n";
         $runtimeHead = '';
         if (Runtime::booted()) {
             Runtime::current()->set('engine_head_styles', $stylesheets);
             $runtimeHead = Runtime::capture('wp_head');
             $stylesheets = '';
         }
-        $document = '<!DOCTYPE html>' . "\n" . '<html lang="en">' . "\n" . '<head>' . "\n"
+        $fontFaces = $styles->fontFaces();
+        return '<head>' . "\n"
             . '<meta charset="UTF-8" />' . "\n"
             . '<meta name="viewport" content="width=device-width, initial-scale=1" />' . "\n"
             . '<title>' . htmlspecialchars($title, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false) . '</title>' . "\n"
@@ -195,15 +235,7 @@ final readonly class PageRenderer
             . $runtimeHead
             . ($fontFaces === '' ? '' : '<style class="wp-fonts-local">' . "\n" . $fontFaces . '</style>' . "\n")
             . ($bar === null ? '' : $bar->head())
-            . '</head>' . "\n"
-            . '<body class="' . Html::attr($bodyClass) . '">' . "\n"
-            . '<a class="skip-link screen-reader-text" id="wp-skip-link" href="#' . Html::attr($skipTarget) . '">Skip to content</a>'
-            . '<div class="wp-site-blocks">' . $body . '</div>' . "\n"
-            . (Extensions::runner()?->footer() ?? '')
-            . (Runtime::booted() ? Runtime::capture('wp_footer') : '')
-            . ($bar === null ? '' : $bar->render($resolution))
-            . '</body>' . "\n" . '</html>' . "\n";
-        return Extensions::runner()?->filterDocument($document) ?? $document;
+            . '</head>' . "\n";
     }
 
     private function headLinks(Resolution $resolution): string

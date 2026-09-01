@@ -13987,7 +13987,7 @@
             "namespace": "Minn\\Blocks\\Dynamic\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Blocks/Dynamic/Theme/Navigation.php",
-            "lines": 277,
+            "lines": 286,
             "doc": "navigation, navigation-link, page-list. A navigation block's items come\nfrom its inner blocks, the wp_navigation post it references, the newest\npublished wp_navigation post, or (when none of those exist) the first\nclassic nav_menu; a responsive menu wraps them in the overlay markup\nthe reference emits.",
             "implements": [],
             "extends": null,
@@ -14136,7 +14136,62 @@
                         }
                     ],
                     "line": 48,
-                    "end": 133
+                    "end": 109
+                },
+                {
+                    "routes": [],
+                    "name": "responsive",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "responsive(string $nav, string $label, string $list, int $id, bool $hasIcon, string $colors): string",
+                    "doc": "The overlay form of the menu: the open button, the modal container the\ninteractivity runtime drives, the close button, and the list inside.\nWhitespace matches the reference's template byte for byte.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "nav",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "label",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "list",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "hasIcon",
+                            "type": "bool",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "colors",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 116,
+                    "end": 142
                 },
                 {
                     "routes": [],
@@ -14164,8 +14219,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 141,
-                    "end": 151
+                    "line": 150,
+                    "end": 160
                 },
                 {
                     "routes": [],
@@ -14186,8 +14241,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 154,
-                    "end": 173
+                    "line": 163,
+                    "end": 182
                 },
                 {
                     "routes": [],
@@ -14206,8 +14261,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 176,
-                    "end": 186
+                    "line": 185,
+                    "end": 195
                 },
                 {
                     "routes": [],
@@ -14233,8 +14288,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 188,
-                    "end": 208
+                    "line": 197,
+                    "end": 217
                 },
                 {
                     "routes": [],
@@ -14247,8 +14302,8 @@
                         "@return list<Block>"
                     ],
                     "params": [],
-                    "line": 211,
-                    "end": 215
+                    "line": 220,
+                    "end": 224
                 },
                 {
                     "routes": [],
@@ -14274,8 +14329,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 217,
-                    "end": 224
+                    "line": 226,
+                    "end": 233
                 },
                 {
                     "routes": [],
@@ -14303,8 +14358,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 227,
-                    "end": 242
+                    "line": 236,
+                    "end": 251
                 },
                 {
                     "routes": [],
@@ -14351,8 +14406,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 251,
-                    "end": 279
+                    "line": 260,
+                    "end": 288
                 },
                 {
                     "routes": [],
@@ -14401,8 +14456,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 282,
-                    "end": 289
+                    "line": 291,
+                    "end": 298
                 },
                 {
                     "routes": [],
@@ -14421,8 +14476,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 291,
-                    "end": 298
+                    "line": 300,
+                    "end": 307
                 },
                 {
                     "routes": [],
@@ -14433,8 +14488,8 @@
                     "doc": "Interactive navigation markup brings the block's view module with it, as on the reference.",
                     "shapes": [],
                     "params": [],
-                    "line": 301,
-                    "end": 306
+                    "line": 310,
+                    "end": 315
                 }
             ]
         },
@@ -39440,7 +39495,7 @@
             "namespace": "Minn\\Html",
             "kind": "final class",
             "file": "public/minn/src/Minn/Html/Tags.php",
-            "lines": 846,
+            "lines": 905,
             "doc": "A streaming HTML tokenizer with in-place edits: tags, text, comments,\ndoctypes, and processing instructions in document order, attribute reads\nwith character references decoded, attribute and class edits applied to\nthe source without reserialising anything else, bookmarks to seek back to.\nBehaviour pinned by the html-tag-processor probe fixture.",
             "implements": [],
             "extends": null,
@@ -39781,8 +39836,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 356,
-                    "end": 385
+                    "line": 383,
+                    "end": 412
                 },
                 {
                     "routes": [],
@@ -39793,8 +39848,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 387,
-                    "end": 390
+                    "line": 414,
+                    "end": 417
                 },
                 {
                     "routes": [],
@@ -39805,8 +39860,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 394,
-                    "end": 397
+                    "line": 421,
+                    "end": 424
                 },
                 {
                     "routes": [],
@@ -39817,8 +39872,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 399,
-                    "end": 407
+                    "line": 426,
+                    "end": 434
                 },
                 {
                     "routes": [],
@@ -39829,8 +39884,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 409,
-                    "end": 415
+                    "line": 436,
+                    "end": 442
                 },
                 {
                     "routes": [],
@@ -39841,8 +39896,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 417,
-                    "end": 420
+                    "line": 444,
+                    "end": 447
                 },
                 {
                     "routes": [],
@@ -39853,8 +39908,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 422,
-                    "end": 425
+                    "line": 449,
+                    "end": 452
                 },
                 {
                     "routes": [],
@@ -39865,8 +39920,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 427,
-                    "end": 430
+                    "line": 454,
+                    "end": 457
                 },
                 {
                     "routes": [],
@@ -39877,8 +39932,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 432,
-                    "end": 435
+                    "line": 459,
+                    "end": 462
                 },
                 {
                     "routes": [],
@@ -39889,8 +39944,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 437,
-                    "end": 447
+                    "line": 464,
+                    "end": 474
                 },
                 {
                     "routes": [],
@@ -39903,8 +39958,8 @@
                         "@return array{name: ?string, public: ?string, system: ?string}|null"
                     ],
                     "params": [],
-                    "line": 450,
-                    "end": 471
+                    "line": 477,
+                    "end": 498
                 },
                 {
                     "routes": [],
@@ -39923,8 +39978,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 474,
-                    "end": 494
+                    "line": 501,
+                    "end": 521
                 },
                 {
                     "routes": [],
@@ -39945,8 +40000,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 497,
-                    "end": 510
+                    "line": 524,
+                    "end": 537
                 },
                 {
                     "routes": [],
@@ -39959,8 +40014,8 @@
                         "@return list<string> distinct class names after pending edits"
                     ],
                     "params": [],
-                    "line": 513,
-                    "end": 533
+                    "line": 540,
+                    "end": 560
                 },
                 {
                     "routes": [],
@@ -39979,8 +40034,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 535,
-                    "end": 538
+                    "line": 562,
+                    "end": 565
                 },
                 {
                     "routes": [],
@@ -40006,8 +40061,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 567,
-                    "end": 587
+                    "line": 594,
+                    "end": 614
                 },
                 {
                     "routes": [],
@@ -40026,8 +40081,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 589,
-                    "end": 613
+                    "line": 616,
+                    "end": 640
                 },
                 {
                     "routes": [],
@@ -40046,8 +40101,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 615,
-                    "end": 623
+                    "line": 642,
+                    "end": 650
                 },
                 {
                     "routes": [],
@@ -40066,8 +40121,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 625,
-                    "end": 633
+                    "line": 652,
+                    "end": 660
                 },
                 {
                     "routes": [],
@@ -40086,8 +40141,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 635,
-                    "end": 663
+                    "line": 662,
+                    "end": 690
                 },
                 {
                     "routes": [],
@@ -40106,8 +40161,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 667,
-                    "end": 677
+                    "line": 694,
+                    "end": 704
                 },
                 {
                     "routes": [],
@@ -40126,8 +40181,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 679,
-                    "end": 686
+                    "line": 706,
+                    "end": 713
                 },
                 {
                     "routes": [],
@@ -40146,8 +40201,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 688,
-                    "end": 691
+                    "line": 715,
+                    "end": 718
                 },
                 {
                     "routes": [],
@@ -40166,8 +40221,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 693,
-                    "end": 703
+                    "line": 720,
+                    "end": 730
                 },
                 {
                     "routes": [],
@@ -40178,8 +40233,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 707,
-                    "end": 711
+                    "line": 734,
+                    "end": 738
                 },
                 {
                     "routes": [],
@@ -40206,7 +40261,56 @@
                         }
                     ],
                     "line": 127,
-                    "end": 234
+                    "end": 179
+                },
+                {
+                    "routes": [],
+                    "name": "scanAttribute",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "scanAttribute(int $i): ?array",
+                    "doc": "One attribute from the cursor: its name (a leading \"=\" is part of it),\nthen an optional quoted or bare value. Null pauses the scan at the end\nof the input.",
+                    "shapes": [
+                        "@return array{int, string, int, int, ?string, bool}|null cursor after, name, start, end, value, quoted"
+                    ],
+                    "params": [
+                        {
+                            "name": "i",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 188,
+                    "end": 238
+                },
+                {
+                    "routes": [],
+                    "name": "enterRawText",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "enterRawText(string $name, int $i): bool",
+                    "doc": "A raw-text element (script, style, ...): the token runs to its closer, or the scan pauses.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "i",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 241,
+                    "end": 261
                 },
                 {
                     "routes": [],
@@ -40225,8 +40329,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 236,
-                    "end": 289
+                    "line": 263,
+                    "end": 316
                 },
                 {
                     "routes": [],
@@ -40245,8 +40349,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 291,
-                    "end": 317
+                    "line": 318,
+                    "end": 344
                 },
                 {
                     "routes": [],
@@ -40307,8 +40411,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 319,
-                    "end": 326
+                    "line": 346,
+                    "end": 353
                 },
                 {
                     "routes": [],
@@ -40362,8 +40466,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 328,
-                    "end": 336
+                    "line": 355,
+                    "end": 363
                 },
                 {
                     "routes": [],
@@ -40374,8 +40478,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 338,
-                    "end": 348
+                    "line": 365,
+                    "end": 375
                 },
                 {
                     "routes": [],
@@ -40394,8 +40498,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 350,
-                    "end": 353
+                    "line": 377,
+                    "end": 380
                 },
                 {
                     "routes": [],
@@ -40408,8 +40512,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 541,
-                    "end": 548
+                    "line": 568,
+                    "end": 575
                 },
                 {
                     "routes": [],
@@ -40420,8 +40524,8 @@
                     "doc": "The class attribute's decoded value before class edits: a pending set, else the source.",
                     "shapes": [],
                     "params": [],
-                    "line": 551,
-                    "end": 563
+                    "line": 578,
+                    "end": 590
                 },
                 {
                     "routes": [],
@@ -40429,11 +40533,59 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "flush(): void",
-                    "doc": "Applies the pending edits to the source and re-reads the current token at its (possibly shifted) place.",
+                    "doc": "Writes every pending update into the source, keeping bookmarks and the current token aligned.",
                     "shapes": [],
                     "params": [],
-                    "line": 714,
-                    "end": 800
+                    "line": 742,
+                    "end": 762
+                },
+                {
+                    "routes": [],
+                    "name": "attributeReplacements",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "attributeReplacements(): array",
+                    "doc": "The edits the attribute and class updates amount to: a changed\nattribute is rewritten in place (its duplicates removed), a removed\none is cut, a new one is inserted after the tag name.",
+                    "shapes": [
+                        "@return list<array{int, int, string}> start, end, text"
+                    ],
+                    "params": [],
+                    "line": 771,
+                    "end": 809
+                },
+                {
+                    "routes": [],
+                    "name": "applyReplacements",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "applyReplacements(array $replacements): void",
+                    "doc": "Splices the edits into the source, ascending, and moves the bookmarks\nand the cursor by what the token gained or lost.",
+                    "shapes": [
+                        "@param list<array{int, int, string}> $replacements"
+                    ],
+                    "params": [
+                        {
+                            "name": "replacements",
+                            "type": "array",
+                            "shape": "list<array{int, int, string}>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 817,
+                    "end": 840
+                },
+                {
+                    "routes": [],
+                    "name": "rescanCurrent",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "rescanCurrent(): void",
+                    "doc": "Re-reads the current token so attribute offsets match the new source.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 843,
+                    "end": 859
                 },
                 {
                     "routes": [],
@@ -40444,8 +40596,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 802,
-                    "end": 814
+                    "line": 861,
+                    "end": 873
                 },
                 {
                     "routes": [],
@@ -40464,8 +40616,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 816,
-                    "end": 824
+                    "line": 875,
+                    "end": 883
                 },
                 {
                     "routes": [],
@@ -40476,8 +40628,8 @@
                     "doc": "The class attribute after edits: source order and inner whitespace kept, removed classes gone with the space before them, additions appended.",
                     "shapes": [],
                     "params": [],
-                    "line": 827,
-                    "end": 853
+                    "line": 886,
+                    "end": 912
                 },
                 {
                     "routes": [],
@@ -40496,8 +40648,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 855,
-                    "end": 858
+                    "line": 914,
+                    "end": 917
                 }
             ]
         },
@@ -66676,7 +66828,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/PostQuery.php",
-            "lines": 607,
+            "lines": 644,
             "doc": "The query WP_Query runs: its variables become one SELECT over the posts\ntable with the joins the taxonomy, meta, and author conditions need.\nShapes and defaults follow contracts/fixtures/api/content.json.",
             "implements": [],
             "extends": null,
@@ -66989,7 +67141,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "taxonomies(array $q): void",
-                    "doc": "",
+                    "doc": "The taxonomy narrowing: every query var the reference reads, then tax_query, joined by its relation.",
                     "shapes": [],
                     "params": [
                         {
@@ -67000,8 +67152,60 @@
                             "doc": ""
                         }
                     ],
-                    "line": 334,
-                    "end": 439
+                    "line": 335,
+                    "end": 343
+                },
+                {
+                    "routes": [],
+                    "name": "taxonomyClauses",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "taxonomyClauses(array $q, array $taxonomies): array",
+                    "doc": "The tax_query the query vars amount to: cat, category_name, the __in /\n__not_in / __and pairs, tag and its slug forms, every registered\ntaxonomy's own query var, and finally an explicit tax_query.",
+                    "shapes": [
+                        "@param array<string, array<string, mixed>> $taxonomies the registry's taxonomies",
+                        "@return array{string, list<array<string, mixed>>} relation, clauses"
+                    ],
+                    "params": [
+                        {
+                            "name": "q",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomies",
+                            "type": "array",
+                            "shape": "array<string, array<string, mixed>>",
+                            "default": null,
+                            "doc": "the registry's taxonomies"
+                        }
+                    ],
+                    "line": 353,
+                    "end": 419
+                },
+                {
+                    "routes": [],
+                    "name": "taxonomySql",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "taxonomySql(array $clause): string",
+                    "doc": "One clause as SQL on p.ID, its parameters pushed. @param array<string, mixed> $clause",
+                    "shapes": [
+                        "@param array<string, mixed> $clause"
+                    ],
+                    "params": [
+                        {
+                            "name": "clause",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 422,
+                    "end": 459
                 },
                 {
                     "routes": [],
@@ -67022,8 +67226,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 442,
-                    "end": 475
+                    "line": 462,
+                    "end": 495
                 },
                 {
                     "routes": [],
@@ -67031,7 +67235,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "meta(array $q): void",
-                    "doc": "",
+                    "doc": "The meta narrowing: meta_key and friends as one clause, then meta_query, joined by its relation.",
                     "shapes": [],
                     "params": [
                         {
@@ -67042,8 +67246,52 @@
                             "doc": ""
                         }
                     ],
-                    "line": 477,
-                    "end": 563
+                    "line": 498,
+                    "end": 506
+                },
+                {
+                    "routes": [],
+                    "name": "metaClauses",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "metaClauses(array $q): array",
+                    "doc": "The meta_query the query vars amount to.",
+                    "shapes": [
+                        "@return array{string, list<array<string, mixed>>} relation, clauses"
+                    ],
+                    "params": [
+                        {
+                            "name": "q",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 513,
+                    "end": 544
+                },
+                {
+                    "routes": [],
+                    "name": "metaSql",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "metaSql(array $clause): string",
+                    "doc": "One clause as an EXISTS on postmeta, its parameters pushed. @param array<string, mixed> $clause",
+                    "shapes": [
+                        "@param array<string, mixed> $clause"
+                    ],
+                    "params": [
+                        {
+                            "name": "clause",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 547,
+                    "end": 600
                 },
                 {
                     "routes": [],
@@ -67064,8 +67312,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 566,
-                    "end": 620
+                    "line": 603,
+                    "end": 657
                 }
             ]
         },
@@ -70038,18 +70286,208 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\SymbolTable",
+            "short": "SymbolTable",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/SymbolTable.php",
+            "lines": 52,
+            "doc": "What a folder's PHP names, collected while its tokens are read: the\nfunctions it calls, the classes it references, and what it declares or\nguards itself, so the gate can subtract those before judging it.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Runtime\\Symbols"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "calls",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "classes",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "declared",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "declaredClasses",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "guarded",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "call",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "call(string $name): void",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 25,
+                    "end": 28
+                },
+                {
+                    "routes": [],
+                    "name": "classRef",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "classRef(string $name): void",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 30,
+                    "end": 33
+                },
+                {
+                    "routes": [],
+                    "name": "declare",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "declare(string $function): void",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "function",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 35,
+                    "end": 38
+                },
+                {
+                    "routes": [],
+                    "name": "declareClass",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "declareClass(string $class): void",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "class",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 40,
+                    "end": 43
+                },
+                {
+                    "routes": [],
+                    "name": "guard",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "guard(string $name): void",
+                    "doc": "A name an existence check protects: function_exists, class_exists, defined, and the rest.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 46,
+                    "end": 49
+                },
+                {
+                    "routes": [],
+                    "name": "toArray",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "toArray(bool $truncated): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array{calls: list<string>, classes: list<string>, declared: array<string, true>, declaredClasses: array<string, true>, guarded: array<string, true>, truncated: bool}"
+                    ],
+                    "params": [
+                        {
+                            "name": "truncated",
+                            "type": "bool",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 52,
+                    "end": 62
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\Symbols",
             "short": "Symbols",
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Symbols.php",
-            "lines": 202,
+            "lines": 220,
             "doc": "A static read of what a plugin's PHP calls: global functions and classes\nit uses but does not itself declare, minus the ones it guards with\nfunction_exists() or class_exists(). Checked against what the runtime\nprovides, this decides whether a plugin loads at all. The read is cached\nin the minn_runtime_symbols option keyed by the plugin folder's newest\nmodification time.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Runtime\\Options",
-                "Minn\\Runtime\\SymbolGap"
+                "Minn\\Runtime\\SymbolGap",
+                "Minn\\Runtime\\SymbolTable"
             ],
             "usedBy": [
                 "Minn\\Runtime\\Plugins"
@@ -70195,7 +70633,7 @@
                     "static": true,
                     "visibility": "private",
                     "signature": "scan(array $files): array",
-                    "doc": "",
+                    "doc": "Every file's tokens into one table: the functions called, the classes\nreferenced, both minus what the folder declares itself or guards with\nan existence check.",
                     "shapes": [
                         "@param list<string> $files",
                         "@return array{calls: list<string>, classes: list<string>, declared: array<string, true>, declaredClasses: array<string, true>, guarded: array<string, true>, truncated: bool}"
@@ -70209,8 +70647,116 @@
                             "doc": ""
                         }
                     ],
-                    "line": 112,
-                    "end": 215
+                    "line": 120,
+                    "end": 136
+                },
+                {
+                    "routes": [],
+                    "name": "scanTokens",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "scanTokens(array $tokens, Minn\\Runtime\\SymbolTable $table): void",
+                    "doc": "",
+                    "shapes": [
+                        "@param list<array{0: int, 1: string, 2: int}|string> $tokens"
+                    ],
+                    "params": [
+                        {
+                            "name": "tokens",
+                            "type": "array",
+                            "shape": "list<array{0: int, 1: string, 2: int}|string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "table",
+                            "type": "Minn\\Runtime\\SymbolTable",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 139,
+                    "end": 175
+                },
+                {
+                    "routes": [],
+                    "name": "noteName",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "noteName(array $tokens, int $i, bool $namespaced, Minn\\Runtime\\SymbolTable $table): void",
+                    "doc": "A name token: a class reference when it follows new / extends /\nimplements / instanceof or precedes ::, a call when it precedes \"(\",\nand a guard when the call is an existence check on a literal.",
+                    "shapes": [
+                        "@param list<array{0: int, 1: string, 2: int}|string> $tokens"
+                    ],
+                    "params": [
+                        {
+                            "name": "tokens",
+                            "type": "array",
+                            "shape": "list<array{0: int, 1: string, 2: int}|string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "i",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "namespaced",
+                            "type": "bool",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "table",
+                            "type": "Minn\\Runtime\\SymbolTable",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 184,
+                    "end": 219
+                },
+                {
+                    "routes": [],
+                    "name": "significant",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "significant(array $tokens, int $from, int $step): ?array",
+                    "doc": "The nearest token in either direction that is not whitespace or a comment, as [id, text]. @param list<array|string> $tokens @return array{0: ?int, 1: string}|null",
+                    "shapes": [
+                        "@param list<array|string> $tokens @return array{0: ?int, 1: string}|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "tokens",
+                            "type": "array",
+                            "shape": "list<array|string>",
+                            "default": null,
+                            "doc": "@return array{0: ?int, 1: string}|null"
+                        },
+                        {
+                            "name": "from",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "step",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 222,
+                    "end": 233
                 }
             ]
         },
@@ -76472,7 +77018,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/PageRenderer.php",
-            "lines": 172,
+            "lines": 204,
             "doc": "A whole page from the active block theme: the template the resolution\nmaps to, rendered against the main query, inside the document shell the\nreference emits (skip link, wp-site-blocks, the skip-link target on the\nfirst main element).",
             "implements": [],
             "extends": null,
@@ -76815,7 +77361,109 @@
                         }
                     ],
                     "line": 122,
-                    "end": 207
+                    "end": 157
+                },
+                {
+                    "routes": [],
+                    "name": "pluginTemplate",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "pluginTemplate(): ?string",
+                    "doc": "The reference filters template_include under block themes too (the\ncanvas is the incoming value); a plugin swapping in its own PHP file\ntakes the whole response over, the CaptainCore Manager shape.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 164,
+                    "end": 177
+                },
+                {
+                    "routes": [],
+                    "name": "skipLinkTarget",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "skipLinkTarget(string $body): array",
+                    "doc": "The skip link points at the first <main>: at its own id when the\ntemplate gave it one, otherwise at the id the reference injects.",
+                    "shapes": [
+                        "@return array{string, string} the body, the target id"
+                    ],
+                    "params": [
+                        {
+                            "name": "body",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 185,
+                    "end": 191
+                },
+                {
+                    "routes": [],
+                    "name": "documentTitle",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "documentTitle(Minn\\Front\\Resolution $resolution, string $title): string",
+                    "doc": "The title after the extensions and, with the runtime up, the reference's document_title filters.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "resolution",
+                            "type": "Minn\\Front\\Resolution",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "title",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 194,
+                    "end": 208
+                },
+                {
+                    "routes": [],
+                    "name": "head",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "head(Minn\\Front\\Resolution $resolution, string $title, Minn\\Theme\\GlobalStyles $styles, ?Minn\\Front\\AdminBar $bar): string",
+                    "doc": "The head: title, the discovery links, the engine's stylesheets (inside\nwp_head when the runtime is up, where the reference prints a theme's,\nafter plugin styles), the extension head, the fonts, the bar's own.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "resolution",
+                            "type": "Minn\\Front\\Resolution",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "title",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "styles",
+                            "type": "Minn\\Theme\\GlobalStyles",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "bar",
+                            "type": "?Minn\\Front\\AdminBar",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 215,
+                    "end": 239
                 },
                 {
                     "routes": [],
@@ -76834,8 +77482,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 209,
-                    "end": 212
+                    "line": 241,
+                    "end": 244
                 }
             ]
         },

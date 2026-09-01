@@ -105,9 +105,18 @@ final readonly class Navigation
         if (!$responsive) {
             return $nav . ' aria-label="' . Html::attr($label) . '">' . $list . '</nav>';
         }
+        return $this->responsive($nav, $label, $list, $id, (bool) $block->attr('hasIcon', true), $colors);
+    }
+
+    /**
+     * The overlay form of the menu: the open button, the modal container the
+     * interactivity runtime drives, the close button, and the list inside.
+     * Whitespace matches the reference's template byte for byte.
+     */
+    private function responsive(string $nav, string $label, string $list, int $id, bool $hasIcon, string $colors): string
+    {
         $ariaLabel = 'Menu';
         $this->enqueueView();
-        $hasIcon = (bool) $block->attr('hasIcon', true);
         $open = $hasIcon
             ? 'aria-label="Open menu"'
             : '';

@@ -5,7 +5,7 @@ the template blocks a block theme composes with
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`Comments`](#comments) | final readonly class | 193 | comments, comments-title, comment-template, the comment-* blocks, and the comment form. |
-| [`Navigation`](#navigation) | final readonly class | 277 | navigation, navigation-link, page-list. A navigation block's items come |
+| [`Navigation`](#navigation) | final readonly class | 286 | navigation, navigation-link, page-list. A navigation block's items come |
 | [`PostBlocks`](#postblocks) | final readonly class | 247 | The post-* blocks: they render the context's current post. |
 | [`QueryBlocks`](#queryblocks) | final class | 251 | query, post-template, query-title, query-no-results, query-pagination, term-description. |
 | [`Structure`](#structure) | final readonly class | 85 | template-part, pattern, site-title, site-tagline, site-logo. |
@@ -47,7 +47,7 @@ __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Front\Permalinks $perma
 
 ### `register(Minn\Blocks\Renderer $renderer): void`
 
-Internals: `navigation()` (private, line 48), `items()` (private, line 141), `presetClasses()` (private, line 154), `overlayColors()` (private, line 176), `link()` (private, line 188), `classicItems()` (private, line 211), `pageList()` (private, line 217), `ancestorsOf()` (private, line 227), `pageItems()` (private, line 251), `navParent()` (private, line 282), `menuPost()` (private, line 291), `enqueueView()` (private, line 301)
+Internals: `navigation()` (private, line 48), `responsive()` (private, line 116), `items()` (private, line 150), `presetClasses()` (private, line 163), `overlayColors()` (private, line 185), `link()` (private, line 197), `classicItems()` (private, line 220), `pageList()` (private, line 226), `ancestorsOf()` (private, line 236), `pageItems()` (private, line 260), `navParent()` (private, line 291), `menuPost()` (private, line 300), `enqueueView()` (private, line 310)
 
 
 ## PostBlocks

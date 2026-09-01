@@ -33,7 +33,7 @@ the WordPress runtime plugins load against
 | [`Plugins`](#plugins) | final class | 157 | Loads the site's plugins into the runtime the way the reference does: |
 | [`PostInsert`](#postinsert) | final readonly class | 160 | The decisions behind wp_insert_post: which columns a postarr fills, when |
 | [`PostLookup`](#postlookup) | final readonly class | 65 | The post reads plugin code asks for by shape: a page by title, revisions, counts. |
-| [`PostQuery`](#postquery) | final class | 607 | The query WP_Query runs: its variables become one SELECT over the posts |
+| [`PostQuery`](#postquery) | final class | 644 | The query WP_Query runs: its variables become one SELECT over the posts |
 | [`QueriedObject`](#queriedobject) | final readonly class | 68 | Which object a query is "about", read from its flags and variables: a term |
 | [`QueryFlags`](#queryflags) | final readonly class | 99 | The conditional flags a set of query variables implies (is_single, is_archive, |
 | [`Recovery`](#recovery) | final readonly class | 116 | Recovery from a fatal in someone else's code. When a plugin or theme |
@@ -44,7 +44,8 @@ the WordPress runtime plugins load against
 | [`ScriptPack`](#scriptpack) | final class | 144 | The site-supplied script pack: the `wp-*` JavaScript packages the engine |
 | [`Shortcodes`](#shortcodes) | final class | 109 | The shortcode registry plugin code fills with add_shortcode, and the |
 | [`SymbolGap`](#symbolgap) | final readonly class | 65 | The part of the reference's interface the runtime does not answer: names in |
-| [`Symbols`](#symbols) | final class | 202 | A static read of what a plugin's PHP calls: global functions and classes |
+| [`SymbolTable`](#symboltable) | final class | 52 | What a folder's PHP names, collected while its tokens are read: the |
+| [`Symbols`](#symbols) | final class | 220 | A static read of what a plugin's PHP calls: global functions and classes |
 | [`TagEditor`](#tageditor) | final class | 128 | Edits one start tag's attributes in place the way the reference's tag |
 | [`TermQuery`](#termquery) | final readonly class | 393 | Term reads in the shapes plugin code asks for: get_terms() arguments to |
 | [`TermWriter`](#termwriter) | final readonly class | 142 | The decisions behind wp_insert_term, wp_update_term, wp_delete_term, and |
@@ -1153,7 +1154,7 @@ __construct(Minn\Db $db, Minn\Runtime\Registry $registry)
 - `@param array<string, mixed> $q`
 - `@return array{rows: list<array>, found: int, sticky: list<array>}`
 
-Internals: `perPage()` (private, line 81), `types()` (private, line 93), `statuses()` (private, line 117), `singular()` (private, line 145), `authors()` (private, line 179), `parents()` (private, line 211), `ids()` (private, line 229), `search()` (private, line 262), `dates()` (private, line 277), `taxonomies()` (private, line 334), `termTaxonomyIds()` (private, line 442), `meta()` (private, line 477), `order()` (private, line 566)
+Internals: `perPage()` (private, line 81), `types()` (private, line 93), `statuses()` (private, line 117), `singular()` (private, line 145), `authors()` (private, line 179), `parents()` (private, line 211), `ids()` (private, line 229), `search()` (private, line 262), `dates()` (private, line 277), `taxonomies()` (private, line 335), `taxonomyClauses()` (private, line 353), `taxonomySql()` (private, line 422), `termTaxonomyIds()` (private, line 462), `meta()` (private, line 498), `metaClauses()` (private, line 513), `metaSql()` (private, line 547), `order()` (private, line 603)
 
 
 ## QueriedObject
@@ -1620,6 +1621,34 @@ loads; only the file read is cached.
 ### `json(): string`
 
 
+## SymbolTable
+
+`final class Minn\Runtime\SymbolTable` · `public/minn/src/Minn/Runtime/SymbolTable.php`
+
+What a folder's PHP names, collected while its tokens are read: the
+functions it calls, the classes it references, and what it declares or
+guards itself, so the gate can subtract those before judging it.
+
+Used by: `Minn\Runtime\Symbols`
+
+
+### `call(string $name): void`
+
+### `classRef(string $name): void`
+
+### `declare(string $function): void`
+
+### `declareClass(string $class): void`
+
+### `guard(string $name): void`
+
+A name an existence check protects: function_exists, class_exists, defined, and the rest.
+
+### `toArray(bool $truncated): array`
+
+- `@return array{calls: list<string>, classes: list<string>, declared: array<string, true>, declaredClasses: array<string, true>, guarded: array<string, true>, truncated: bool}`
+
+
 ## Symbols
 
 `final class Minn\Runtime\Symbols` · `public/minn/src/Minn/Runtime/Symbols.php`
@@ -1647,7 +1676,7 @@ folder can be judged with no database, no options, and no facade loaded.
 
 - `@return array{functions: list<string>, classes: list<string>, files: int, truncated: bool}`
 
-Internals: `verdict()` (private, line 64), `phpFiles()` (private, line 86), `scan()` (private, line 112)
+Internals: `verdict()` (private, line 64), `phpFiles()` (private, line 86), `scan()` (private, line 120), `scanTokens()` (private, line 139), `noteName()` (private, line 184), `significant()` (private, line 222)
 
 
 ## TagEditor
