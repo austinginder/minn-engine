@@ -74,7 +74,7 @@ final readonly class RevisionsController
     #[Route(Method::Get, '/wp/v2/blocks')]
     public function blocks(Request $request): Response
     {
-        if ($request->query('context') === 'edit' && !$this->caller->can('edit_posts')) {
+        if (Context::of($request)->isEdit() && !$this->caller->can('edit_posts')) {
             throw $this->caller->refuse('rest_forbidden_context', 'Sorry, you are not allowed to edit posts in this post type.');
         }
         // Reusable blocks are not public: without edit_posts the list is empty, as on the reference.

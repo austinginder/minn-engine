@@ -47,7 +47,7 @@ final readonly class UsersController
         $user = $this->caller->require()->user;
         $fields = Fields::fromQuery($request->query);
         return Reply::item(
-            $request->query('context') === 'edit' ? $this->object->edit($user) : $this->object->view($user, true),
+            Context::of($request)->isEdit() ? $this->object->edit($user) : $this->object->view($user, true),
             $fields,
         );
     }
@@ -57,8 +57,8 @@ final readonly class UsersController
     public function list(Request $request): Response
     {
         $self = $this->caller->id();
-        $context = $request->query('context') === 'edit' ? 'edit' : 'view';
-        if ($context === 'edit' && !$this->caller->can('list_users')) {
+        $context = Context::of($request);
+        if ($context->isEdit() && !$this->caller->can('list_users')) {
             throw $this->caller->refuse('rest_forbidden_context', 'Sorry, you are not allowed to edit users.');
         }
         $perPage = max(1, min(100, (int) $request->query('per_page', '10')));
@@ -69,7 +69,7 @@ final readonly class UsersController
             throw $this->caller->refuse('rest_forbidden_orderby', 'Sorry, you are not allowed to order users by this parameter.');
         }
 
-        $where = $context === 'edit'
+        $where = $context->isEdit()
             ? '1 = 1'
             : "u.ID IN ( SELECT post_author FROM {$this->db->table('posts')}
                WHERE post_status = 'publish' AND post_type IN ('post','page') )";
@@ -106,7 +106,7 @@ final readonly class UsersController
             "SELECT u.* FROM {$table} u WHERE {$where} ORDER BY {$orderBy} {$order} LIMIT ?, ?",
             [...$params, ($page - 1) * $perPage, $perPage],
         );
-        $objects = $context === 'edit'
+        $objects = $context->isEdit()
             ? array_map(fn (array $u) => $this->object->edit($u), $rows)
             : array_map(fn (array $u) => $this->object->view($u, (int) $u['ID'] === $self), $rows);
         return Reply::list($objects, $total, (int) ceil($total / $perPage), Fields::fromQuery($request->query));
@@ -122,7 +122,7 @@ final readonly class UsersController
         }
         $self = $this->caller->id();
         $fields = Fields::fromQuery($request->query);
-        if ($request->query('context') === 'edit') {
+        if (Context::of($request)->isEdit()) {
             if ($self !== $userId && !$this->caller->can('list_users')) {
                 throw $this->caller->refuse('rest_forbidden_context', 'Sorry, you are not allowed to edit this user.');
             }

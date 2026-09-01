@@ -25,8 +25,9 @@ prose, is the rule.
 - **Immutable values.** Data that crosses a boundary (a request, a response, a
   resolved route, a post record) is a `final readonly class` with promoted properties.
   Mutation is a method that returns a new instance (`$response->withHeader(...)`).
-- **Enums for closed sets.** `PostStatus`, `PostType`, `Method`, `Context`. A string
-  that can only be one of five values is an enum, not a string.
+- **Enums for closed sets.** `Method`, `Kind`, `PostStatus`, `Context`. A string that
+  can only be one of five values is an enum, not a string. A post type is not one:
+  the set is open to every plugin, so it stays a string.
 
 ## Boundaries
 
@@ -74,6 +75,9 @@ prose, is the rule.
 
 - Every behavioural unit ships with a suite, and the suite is named for the surface,
   not the file (`permalinks.test.php`, not `resolver.test.php`).
+- A pure class (no database, no request) is proven in `tests/unit/` first: a file
+  returning cases, each a label and a closure, run by `php tests/unit.test.php` in
+  under a second. Write the case while writing the class.
 - Suites prove two ways where an oracle exists: pinned fixtures (run without the
   oracle) and a live diff (run against it). A behaviour the oracle cannot observe is
   documented as engine-defined in the matching contract.
@@ -93,3 +97,8 @@ prose, is the rule.
 
 and reports any procedural `public/minn/src/*.php` file that appears (there are none; the count
 is expected to stay at zero).
+
+Two ratchets ride in the same suite and only ever tighten: in `wp-api/`, query calls
+and functions over forty lines (both at zero); in `src/Minn/`, methods over eighty
+lines and classes over six hundred. Lower a ceiling when a file loses its last
+offender; never raise one.

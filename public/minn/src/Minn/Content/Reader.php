@@ -58,6 +58,6 @@ final class Reader
     public function listableStatuses(string $type = 'post'): array
     {
         $private = $type === 'page' ? $this->readsPrivatePages : $this->readsPrivatePosts;
-        return $private ? ['publish', 'private'] : ['publish'];
+        return PostStatus::values($private ? [PostStatus::Publish, PostStatus::Private] : [PostStatus::Publish]);
     }
 }

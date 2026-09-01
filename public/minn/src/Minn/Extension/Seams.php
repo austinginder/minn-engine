@@ -5,17 +5,16 @@ declare(strict_types=1);
 namespace Minn\Extension;
 
 use Closure;
-use Minn\Blocks\Block;
-use Minn\Blocks\Renderer;
 use Minn\Content\Reader;
 use Minn\Content\Site;
 use Minn\Db;
 use Minn\Http\Request;
 
 /**
- * Where an extension can take part in a request. Each seam is a typed
- * registration; the engine calls them at the right moment and in the
- * order they were registered.
+ * Where an extension can take part in a request: eight typed registrations
+ * and the request they run in. This is the whole surface an extension sees.
+ * The engine calls what was registered through SeamRunner, at the right
+ * moment and in registration order.
  */
 final class Seams
 {
@@ -93,76 +92,25 @@ final class Seams
         $this->title = $filter;
     }
 
-    public function applyTitle(string $title): string
-    {
-        return $this->title === null ? $title : ($this->title)($title);
-    }
-
     /** Rewrites the whole themed document before it is sent (what an output buffer did on the reference). */
     public function filterDocument(Closure $filter): void
     {
         $this->documentFilters[] = $filter;
     }
 
-    public function applyDocumentFilters(string $html): string
+    /** What was registered, for the engine's runner. Extensions have no reason to call this. */
+    public function registrations(): Registrations
     {
-        foreach ($this->documentFilters as $filter) {
-            $html = $filter($html);
-        }
-        return $html;
-    }
-
-    /** The engine's side. */
-    public function allowsBlock(Block $block): bool
-    {
-        foreach ($this->blockGates as $gate) {
-            if ($gate($block, $this) === false) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public function applyBlockFilters(Block $block, string $html): string
-    {
-        foreach ($this->blockFilters as $filter) {
-            $html = $filter($block, $html, $this);
-        }
-        return $html;
-    }
-
-    /** @return array<string, Closure> */
-    public function shortcodes(): array
-    {
-        return $this->shortcodes;
-    }
-
-    public function applyContentFilters(string $html, array $post): string
-    {
-        foreach ($this->contentFilters as $filter) {
-            $html = $filter($html, $post);
-        }
-        return $html;
-    }
-
-    public function renderHead(): string
-    {
-        return implode('', array_map(fn (Closure $r) => $r($this), $this->head));
-    }
-
-    public function renderFooter(): string
-    {
-        return implode('', array_map(fn (Closure $r) => $r($this), $this->footer));
-    }
-
-    /** @return list<string> */
-    public function bodyClasses(): array
-    {
-        return $this->bodyClasses;
-    }
-
-    public function hasShortcodes(): bool
-    {
-        return $this->shortcodes !== [];
+        return new Registrations(
+            $this->blockGates,
+            $this->blockFilters,
+            $this->shortcodes,
+            $this->contentFilters,
+            $this->head,
+            $this->footer,
+            $this->bodyClasses,
+            $this->documentFilters,
+            $this->title,
+        );
     }
 }

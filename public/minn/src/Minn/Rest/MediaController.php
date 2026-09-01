@@ -41,7 +41,7 @@ final readonly class MediaController
     #[Route(Method::Get, '/wp/v2/media')]
     public function list(Request $request): Response
     {
-        $edit = $request->query('context') === 'edit';
+        $edit = Context::of($request)->isEdit();
         if ($edit && !$this->caller->can('edit_posts')) {
             throw $this->caller->refuse('rest_forbidden_context', 'Sorry, you are not allowed to edit posts in this post type.');
         }
@@ -190,7 +190,7 @@ final readonly class MediaController
     public function single(Request $request, string $id): Response
     {
         $attachment = $this->attachment((int) $id);
-        $edit = $request->query('context') === 'edit';
+        $edit = Context::of($request)->isEdit();
         if ($edit && !$this->caller->can('edit_post', (int) $id)) {
             throw $this->caller->refuse('rest_forbidden_context', 'Sorry, you are not allowed to edit this post.');
         }

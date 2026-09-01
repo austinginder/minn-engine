@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Rest;
 
 use Minn\Auth\TypeCapabilities;
+use Minn\Content\PostStatus;
 use Minn\Content\Posts;
 use Minn\Content\PostWriter;
 use Minn\Content\Site;
@@ -22,7 +23,8 @@ use Minn\Support\Kses;
  */
 final readonly class PostsWriteController
 {
-    private const LIVE = ['publish', 'future', 'private'];
+    /** The statuses that make a post live: they need the publish capability and give the post its slug. */
+    private const LIVE = [PostStatus::Publish->value, PostStatus::Future->value, PostStatus::Private->value];
 
     public function __construct(
         private Posts $posts,

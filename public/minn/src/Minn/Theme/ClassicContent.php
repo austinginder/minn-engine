@@ -8,7 +8,6 @@ use Minn\Content\Blocks;
 use Minn\Content\PasswordGate;
 use Minn\Content\Texturize;
 use Minn\Extension\Extensions;
-use Minn\Extension\Shortcodes;
 use Minn\Front\Permalinks;
 use Minn\Runtime\Runtime;
 use Minn\Support\Html;
@@ -47,10 +46,9 @@ final class ClassicContent
             $embed->post_ID = (int) $post['ID'];
             $content = (string) $embed->autoembed($content);
         }
-        $seams = Extensions::seams();
+        $seams = Extensions::runner();
         if ($seams !== null) {
-            $content = Shortcodes::apply($content, $seams->shortcodes(), $seams);
-            $content = $seams->applyContentFilters($content, $post);
+            $content = $seams->filterContent($content, $post);
         }
         $content = Runtime::shortcodes()->apply($content);
         return (string) Runtime::hooks()->filter('the_content', [$content]);

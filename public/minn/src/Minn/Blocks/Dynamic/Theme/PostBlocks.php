@@ -22,7 +22,6 @@ use Minn\Content\PasswordGate;
 use Minn\Content\Reader;
 use Minn\Extension\Extensions;
 use Minn\Runtime\Runtime;
-use Minn\Extension\Shortcodes;
 
 /** The post-* blocks: they render the context's current post. */
 final readonly class PostBlocks
@@ -86,10 +85,9 @@ final readonly class PostBlocks
         } else {
             $content = Blocks::render(str_replace('<!--more-->', '<span id="more-' . (int) $post['ID'] . '"></span>', $raw));
         }
-        $seams = Extensions::seams();
+        $seams = Extensions::runner();
         if ($seams !== null) {
-            $content = Shortcodes::apply($content, $seams->shortcodes(), $seams);
-            $content = $seams->applyContentFilters($content, $post);
+            $content = $seams->filterContent($content, $post);
         }
         if (Runtime::booted()) {
             $content = Runtime::shortcodes()->apply($content);

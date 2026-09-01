@@ -90,7 +90,7 @@ final class Db
      * @param list<mixed> $params
      * @return array{0: string, 1: list<mixed>}
      */
-    private static function expandLists(string $sql, array $params): array
+    public static function expand(string $sql, array $params): array
     {
         if (array_filter($params, is_array(...)) === []) {
             return [$sql, array_values($params)];
@@ -172,7 +172,7 @@ final class Db
 
     private function run(string $sql, array $params): mysqli_stmt
     {
-        [$sql, $params] = self::expandLists($sql, $params);
+        [$sql, $params] = self::expand($sql, $params);
         $statement = $this->connection->prepare($sql);
         if ($params !== []) {
             $types = '';

@@ -108,7 +108,7 @@ final readonly class PageRenderer
         if ($parent !== null) {
             $classes[] = 'wp-child-theme-' . $this->theme->slug;
         }
-        array_push($classes, ...(Extensions::seams()?->bodyClasses() ?? []));
+        array_push($classes, ...(Extensions::runner()?->bodyClasses() ?? []));
         if ($this->bar !== null && !$resolution->preview) {
             $classes[] = 'minn-front-bar';
         }
@@ -161,7 +161,7 @@ final readonly class PageRenderer
         $globalStyles = $styles->css();
         $fontFaces = $styles->fontFaces();
 
-        $title = Extensions::seams()?->applyTitle($title) ?? $title;
+        $title = Extensions::runner()?->title($title) ?? $title;
         if (Runtime::booted()) {
             // Plugin code rewrites the title through the reference's filters; the engine's parts feed them.
             $parts = DocumentTitle::parts($resolution, (string) ($this->site->option('blogname') ?? ''), (string) ($this->site->option('blogdescription') ?? ''));
@@ -191,7 +191,7 @@ final readonly class PageRenderer
             . '<title>' . htmlspecialchars($title, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false) . '</title>' . "\n"
             . $this->headLinks($resolution)
             . $stylesheets
-            . (Extensions::seams()?->renderHead() ?? '')
+            . (Extensions::runner()?->head() ?? '')
             . $runtimeHead
             . ($fontFaces === '' ? '' : '<style class="wp-fonts-local">' . "\n" . $fontFaces . '</style>' . "\n")
             . ($bar === null ? '' : $bar->head())
@@ -199,11 +199,11 @@ final readonly class PageRenderer
             . '<body class="' . Html::attr($bodyClass) . '">' . "\n"
             . '<a class="skip-link screen-reader-text" id="wp-skip-link" href="#' . Html::attr($skipTarget) . '">Skip to content</a>'
             . '<div class="wp-site-blocks">' . $body . '</div>' . "\n"
-            . (Extensions::seams()?->renderFooter() ?? '')
+            . (Extensions::runner()?->footer() ?? '')
             . (Runtime::booted() ? Runtime::capture('wp_footer') : '')
             . ($bar === null ? '' : $bar->render($resolution))
             . '</body>' . "\n" . '</html>' . "\n";
-        return Extensions::seams()?->applyDocumentFilters($document) ?? $document;
+        return Extensions::runner()?->filterDocument($document) ?? $document;
     }
 
     private function headLinks(Resolution $resolution): string

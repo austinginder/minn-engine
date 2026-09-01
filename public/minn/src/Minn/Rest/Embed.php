@@ -63,7 +63,7 @@ final class Embed
     public function decorate(Request $request, Response $response): Response
     {
         $rels = self::requested($request->query);
-        $embedContext = $request->query('context') === 'embed';
+        $embedContext = Context::of($request) === Context::Embed;
         if (($rels === null && !$embedContext) || $response->status >= 300 || $response->body === '') {
             return $response;
         }

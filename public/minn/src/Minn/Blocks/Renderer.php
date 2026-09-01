@@ -135,7 +135,7 @@ final class Renderer
         if (!RenderState::descend()) {
             return '';
         }
-        $seams = Extensions::seams();
+        $seams = Extensions::runner();
         if ($seams !== null && !$seams->allowsBlock($block)) {
             RenderState::ascend();
             return '';
@@ -153,7 +153,7 @@ final class Renderer
             if ($html !== '') {
                 RenderState::recordBlock($block->name);
             }
-            $html = $seams === null ? $html : $seams->applyBlockFilters($block, $html);
+            $html = $seams === null ? $html : $seams->filterBlock($block, $html);
             if (!$filtered) {
                 return $html;
             }

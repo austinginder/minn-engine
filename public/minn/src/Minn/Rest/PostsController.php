@@ -45,7 +45,7 @@ final readonly class PostsController
     {
         $perPage = max(1, min(100, (int) $request->query('per_page', '10')));
         $page = max(1, (int) $request->query('page', '1'));
-        $context = $request->query('context') === 'edit' ? 'edit' : 'view';
+        $context = Context::of($request);
 
         // Public callers see only 'publish'; any other status and the edit
         // context need a caller who can edit this type.
@@ -53,7 +53,7 @@ final readonly class PostsController
         $requested = $request->has('status')
             ? array_values(array_filter(array_map(trim(...), explode(',', (string) $request->query('status')))))
             : $publicOnly;
-        $needsAuth = $context === 'edit' || array_diff($requested, $publicOnly) !== [];
+        $needsAuth = $context->isEdit() || array_diff($requested, $publicOnly) !== [];
         $editCap = TypeCapabilities::edit($type);
         // A status beyond publish is a parameter error for a caller without the type's edit cap.
         if (array_diff($requested, $publicOnly) !== [] && !$this->caller->can($editCap)) {
@@ -168,12 +168,12 @@ final readonly class PostsController
             "SELECT * FROM {$table} WHERE {$where} ORDER BY {$orderBy} {$order} LIMIT ?, ?",
             [...$params, ($page - 1) * $perPage, $perPage],
         );
-        if ($context === 'edit' && !$others) {
+        if ($context->isEdit() && !$others) {
             // Edit context drops the rows the caller cannot edit AFTER the page was cut: a
             // page of five may come back with one item while the totals still count them all.
             $rows = array_values(array_filter($rows, fn (array $row) => $this->caller->can('edit_post', (int) $row['ID'])));
         }
-        $objects = $context === 'edit'
+        $objects = $context->isEdit()
             ? array_map(fn (array $row) => $this->object->edit($row, $userId), $rows)
             : array_map(fn (array $row) => $this->object->view($row), $rows);
         return Reply::list($objects, $total, $totalPages, Fields::fromQuery($request->query));
@@ -213,7 +213,7 @@ final readonly class PostsController
             throw new RestError('rest_post_invalid_id', 'Invalid post ID.', 404);
         }
         $fields = Fields::fromQuery($request->query);
-        if ($request->query('context') === 'edit') {
+        if (Context::of($request)->isEdit()) {
             if (!$this->caller->can('edit_post', $postId)) {
                 throw $this->caller->refuse('rest_forbidden_context', 'Sorry, you are not allowed to edit this post.');
             }

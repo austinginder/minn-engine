@@ -16,7 +16,6 @@ use Minn\Support\Html;
 use Minn\Content\PasswordGate;
 use Minn\Extension\Extensions;
 use Minn\Runtime\Runtime;
-use Minn\Extension\Shortcodes;
 
 /**
  * The syndication feeds, byte for byte in the reference's shape: RSS 2.0
@@ -250,9 +249,9 @@ final readonly class Feeds
             return PasswordGate::form($post, $this->permalinks->url(''), $this->permalinks->forPost($post));
         }
         $content = Blocks::render(str_replace('<!--more-->', '<span id="more-' . (int) $post['ID'] . '"></span>', (string) $post['post_content']));
-        $seams = Extensions::seams();
+        $seams = Extensions::runner();
         if ($seams !== null) {
-            $content = $seams->applyContentFilters(Shortcodes::apply($content, $seams->shortcodes(), $seams), $post);
+            $content = $seams->filterContent($content, $post);
         }
         if (Runtime::booted()) {
             $content = Runtime::shortcodes()->apply($content);

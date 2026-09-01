@@ -132,7 +132,7 @@ final readonly class MenusController
         $page = max(1, (int) $request->query('page', '1'));
         $total = count($items);
         $slice = array_slice($items, ($page - 1) * $perPage, $perPage);
-        $edit = $request->query('context') === 'edit';
+        $edit = Context::of($request)->isEdit();
         return Reply::list(
             array_map(fn ($item) => $this->itemObject->view($item, $edit), $slice),
             $total,
@@ -149,7 +149,7 @@ final readonly class MenusController
         if ($item === null) {
             throw new RestError('rest_post_invalid_id', 'Invalid post ID.', 404);
         }
-        $edit = $request->query('context') === 'edit';
+        $edit = Context::of($request)->isEdit();
         return Reply::item($this->itemObject->view($item, $edit), Fields::fromQuery($request->query));
     }
 

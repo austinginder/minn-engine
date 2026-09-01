@@ -7,6 +7,7 @@ namespace Minn\Rest;
 use Minn\Auth\TypeCapabilities;
 use Minn\Content\Blocks;
 use Minn\Content\Excerpt;
+use Minn\Content\PostStatus;
 use Minn\Content\Posts;
 use Minn\Content\Slug;
 use Minn\Content\Texturize;
@@ -220,7 +221,7 @@ final readonly class PostObject
         $view['title'] = ['raw' => $p['post_title'], 'rendered' => Texturize::html((string) $p['post_title'])];
         $view['content'] = [
             'raw' => $p['post_content'],
-            'rendered' => $p['post_status'] === 'trash' ? '' : Blocks::render((string) $p['post_content']),
+            'rendered' => PostStatus::of($p) === PostStatus::Trash ? '' : Blocks::render((string) $p['post_content']),
             'protected' => $protected,
             'block_version' => str_contains((string) $p['post_content'], '<!-- wp:') ? 1 : 0,
         ];

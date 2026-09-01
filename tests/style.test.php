@@ -132,6 +132,32 @@ $leafCeiling = 13;
 $check("facade map: leaf functions over fifteen lines stay at or under {$leafCeiling}", is_array($mapping) && ($mapping['leafLinesOver15'] ?? PHP_INT_MAX) <= $leafCeiling, (string) ($mapping['leafLinesOver15'] ?? '?'));
 
 
+// The engine ratchet: src/Minn/ is the code this project points at, so two
+// counts may only fall here too. Methods whose body runs past eighty lines
+// (the twenty-two named in docs/writing-minn.md) and classes past six hundred
+// lines. Lower a ceiling when a file loses its last offender; never raise one.
+$longMethodCeiling = 22;
+$bigClassCeiling = 4;
+$longMethods = [];
+$bigClasses = [];
+foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root, FilesystemIterator::SKIP_DOTS)) as $file) {
+    if ($file->getExtension() !== 'php') {
+        continue;
+    }
+    $src = (string) file_get_contents($file->getPathname());
+    $name = str_replace("{$root}/", '', $file->getPathname());
+    if (substr_count($src, "\n") > 600) {
+        $bigClasses[] = $name;
+    }
+    foreach ($facadeBodies($src) as [$fn, $lines]) {
+        if ($lines > 80) {
+            $longMethods[] = "{$name}::{$fn} ({$lines})";
+        }
+    }
+}
+$check("engine: methods over eighty lines stay at or under {$longMethodCeiling}", count($longMethods) <= $longMethodCeiling, count($longMethods) . ': ' . implode(', ', $longMethods));
+$check("engine: classes over six hundred lines stay at or under {$bigClassCeiling}", count($bigClasses) <= $bigClassCeiling, count($bigClasses) . ': ' . implode(', ', $bigClasses));
+
 $legacy = array_map('basename', glob("{$root}/*.php"));
 echo "\n  legacy procedural files remaining: " . count($legacy) . ' (' . implode(', ', $legacy) . ")\n";
 echo "\n{$pass} passed, {$fail} failed\n";

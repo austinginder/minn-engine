@@ -89,7 +89,7 @@ final readonly class TemplatesController
     private function listing(Request $request, string $type): Response
     {
         $index = $this->readable();
-        $edit = $request->query('context') === 'edit';
+        $edit = Context::of($request)->isEdit();
         $fields = Fields::fromQuery($request->query);
         $rows = array_map(
             function (TemplateRecord $record) use ($edit, $fields): array {
@@ -107,7 +107,7 @@ final readonly class TemplatesController
     {
         $record = $this->record($type, $id);
         return Reply::item(
-            $this->object->view($record, $request->query('context') === 'edit'),
+            $this->object->view($record, Context::of($request)->isEdit()),
             Fields::fromQuery($request->query),
         );
     }

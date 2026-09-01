@@ -35,9 +35,9 @@ final readonly class CommentsController
     #[Route(Method::Get, '/wp/v2/comments')]
     public function list(Request $request): Response
     {
-        $context = $request->query('context') === 'edit' ? 'edit' : 'view';
+        $context = Context::of($request);
         $status = (string) $request->query('status', 'approve');
-        if ($context === 'edit' && !$this->caller->can('moderate_comments')) {
+        if ($context->isEdit() && !$this->caller->can('moderate_comments')) {
             throw $this->caller->refuse('rest_forbidden_context', 'Sorry, you are not allowed to edit comments.');
         }
         if ($status !== 'approve' && !$this->caller->can('edit_posts')) {
@@ -55,7 +55,7 @@ final readonly class CommentsController
             filters: $this->listFilters($request),
         );
         return Reply::list(
-            array_map(fn (array $c) => $this->object->build($c, $context === 'edit'), $result['comments']),
+            array_map(fn (array $c) => $this->object->build($c, $context->isEdit()), $result['comments']),
             $result['total'],
             (int) ceil($result['total'] / $perPage),
             Fields::fromQuery($request->query),
@@ -74,7 +74,7 @@ final readonly class CommentsController
         if (!$moderator && ($post === null || $post['post_status'] !== 'publish' || $post['post_password'] !== '') && !$this->caller->can('edit_post', (int) $comment['comment_post_ID'])) {
             throw $this->caller->refuse('rest_cannot_read', 'Sorry, you are not allowed to read this comment.');
         }
-        $edit = $request->query('context') === 'edit';
+        $edit = Context::of($request)->isEdit();
         if ($edit && !$moderator) {
             throw $this->caller->refuse('rest_forbidden_context', 'Sorry, you are not allowed to edit comments.');
         }

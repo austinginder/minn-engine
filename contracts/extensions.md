@@ -21,7 +21,10 @@ A folder under `wp-content/plugins/` (or `mu-plugins/`) with a `minn.json`:
 
 The class implements `Minn\Extension\Extension` (one method, `register(Seams $minn)`)
 in plain modern PHP: PSR-4 from the manifest, typed seams, no globals, no hook
-names to remember. The same folder may also be a WordPress plugin; nothing in the
+names to remember. `Seams` is the whole surface an extension sees: the eight
+registrations below plus the request it runs in (`db`, `site`, `request`,
+`reader`). What the engine does with the registrations lives in
+`Minn\Extension\SeamRunner`, which an extension never touches. The same folder may also be a WordPress plugin; nothing in the
 manifest is read by WordPress and nothing in the plugin's PHP is read by the engine.
 
 **Activation** follows the levers the site already has: the extension is active when
