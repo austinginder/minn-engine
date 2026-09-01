@@ -123,7 +123,7 @@ final class MinnCommand
     {
         $runtime = Runtime::boot();
         $settings = MailSettings::fromSite($runtime->site);
-        $sent = Mailer::forSite($runtime->site)->send(new Message([$args[0]], '[' . ($runtime->site->option('blogname') ?? 'Site') . '] Test email', "This is a test email from Minn Engine, sent through the {$settings->transport} transport.\n"));
+        $sent = Mailer::mail($args[0], '[' . ($runtime->site->option('blogname') ?? 'Site') . '] Test email', "This is a test email from Minn Engine, sent through the {$settings->transport} transport.\n");
         if (!$sent) {
             WP_CLI::error("Mail failed through the {$settings->transport} transport; see the error log.");
         }

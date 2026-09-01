@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Mail;
 
 use Minn\Content\Site;
+use Minn\Db;
 use Throwable;
 
 /**
@@ -22,10 +23,13 @@ final readonly class Mailer
         return new self(MailSettings::fromSite($site), ABSPATH . 'wp-content/minn-mail.log');
     }
 
-    /** The one-line send: a recipient, a subject, a body, through the site's transport and sender. */
-    public function mail(string|array $to, string $subject, string $body): bool
+    /**
+     * The one-line send: a recipient, a subject, a body, through the site's
+     * transport and sender, with nothing to construct at the call site.
+     */
+    public static function mail(string|array $to, string $subject, string $body): bool
     {
-        return $this->send(Message::to($to, $subject, $body));
+        return self::forSite(new Site(Db::shared()))->send(Message::to($to, $subject, $body));
     }
 
     /** The engine's own notices, worded once, from this site's name and address. */
