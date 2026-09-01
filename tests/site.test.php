@@ -109,8 +109,8 @@ $check(str_contains($ll, 'href="/looks-like/" aria-current="page"'), 'looks-like
 $check($ph['status'] === 200, 'theme /php/ answers 200', (string) $ph['status']);
 $check(str_contains($php, '<title>How the PHP reads · Minn'), 'php page title');
 $check(str_contains($php, 'href="/php/" aria-current="page"'), 'php nav is current');
-$check(substr_count($php, 'class="minn-php-pair"') === 6, 'six WordPress / Minn comparisons');
-$check(str_contains($php, 'forSite') && str_contains($php, 'Outbound'), 'php page names the mailer and HTTP client');
+$check(substr_count($php, 'class="minn-php-pair"') === 5, 'five WordPress / Minn comparisons');
+$check(str_contains($php, 'PostFilter::types') && str_contains($php, 'Client::get'), 'php page names the post filter and HTTP client');
 [$pmd] = minn_test_fetch($ENGINE . '/php.md');
 $check($pmd['status'] === 200, 'theme /php.md answers 200', (string) $pmd['status']);
 foreach (['/wp-content/themes/minn-site/style.css', '/wp-content/themes/minn-site/assets/fonts/hanken-grotesk.woff2', '/wp-content/themes/minn-site/assets/fonts/jetbrains-mono.woff2', '/wp-content/themes/minn-site/assets/img/favicon.webp'] as $asset) {
