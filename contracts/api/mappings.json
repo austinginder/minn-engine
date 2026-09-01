@@ -7,7 +7,7 @@
         "leaf": 351,
         "noop": 1239,
         "functions": 2644,
-        "minnMethods": 394,
+        "minnMethods": 395,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -10782,6 +10782,7 @@
             "lines": 6,
             "kind": "minn",
             "minn": [
+                "Minn\\Content\\PostRecord::fromRow",
                 "Minn\\Content\\Posts::adjacent"
             ],
             "composes": [
@@ -12375,6 +12376,7 @@
             "lines": 16,
             "kind": "minn",
             "minn": [
+                "Minn\\Content\\PostRecord::fromRow",
                 "Minn\\Runtime\\Runtime::current",
                 "Minn\\Runtime\\Runtime::forAttachment",
                 "Minn\\Runtime\\Runtime::forPost",
@@ -13597,6 +13599,7 @@
             "lines": 10,
             "kind": "minn",
             "minn": [
+                "Minn\\Content\\PostRecord::fromRow",
                 "Minn\\Theme\\ClassicContent::render"
             ],
             "composes": [
@@ -13621,7 +13624,8 @@
             "lines": 14,
             "kind": "minn",
             "minn": [
-                "Minn\\Content\\Excerpt::render"
+                "Minn\\Content\\Excerpt::render",
+                "Minn\\Content\\PostRecord::fromRow"
             ],
             "composes": [
                 "apply_filters",
@@ -17878,6 +17882,7 @@
             "lines": 9,
             "kind": "minn",
             "minn": [
+                "Minn\\Content\\PostRecord::fromRow",
                 "Minn\\Runtime\\Runtime::current",
                 "Minn\\Runtime\\Runtime::get",
                 "Minn\\Theme\\ClassicContent::render"
@@ -23666,7 +23671,8 @@
             "lines": 7,
             "kind": "minn",
             "minn": [
-                "Minn\\Content\\Excerpt::render"
+                "Minn\\Content\\Excerpt::render",
+                "Minn\\Content\\PostRecord::fromRow"
             ],
             "composes": [
                 "apply_filters",

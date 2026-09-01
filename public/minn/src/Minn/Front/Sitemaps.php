@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
+use Minn\Content\PostRecord;
 use Minn\Content\Site;
 use Minn\Db;
 
@@ -92,8 +93,8 @@ final readonly class Sitemaps
             $latest = (string) ($this->db->value("SELECT MAX(post_modified_gmt) FROM {$this->db->table('posts')} WHERE post_type = 'post' AND post_status = 'publish'") ?? '');
             $urls[] = [$this->permalinks->url('/'), $latest === '' ? null : self::iso($latest)];
         }
-        foreach ($rows as $post) {
-            $urls[] = [$this->permalinks->forPost($post), self::iso((string) $post['post_modified_gmt'])];
+        foreach (PostRecord::fromRows($rows) as $post) {
+            $urls[] = [$this->permalinks->forPost($post), self::iso($post->modifiedGmt)];
         }
         return $urls;
     }

@@ -158,8 +158,8 @@ foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root, Fil
 // The record ratchet: rows are becoming PostRecord. Two counts only fall: the
 // array|PostRecord unions that bridge callers still holding rows, and the
 // bracket reads of post columns that the record's properties replace.
-$unionCeiling = 58;
-$bracketCeiling = 572;
+$unionCeiling = 4;
+$bracketCeiling = 565;
 $unions = 0;
 $brackets = 0;
 foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root, FilesystemIterator::SKIP_DOTS)) as $file) {

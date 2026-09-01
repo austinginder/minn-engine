@@ -197,7 +197,7 @@ function the_content($more_link_text = null, $strip_teaser = false)
     // a bare apply_filters('the_content', ...) elsewhere stays a plain filter run.
     if (Runtime::current()->get('classic_theme')) {
         $post = get_post();
-        $content = $post === null ? '' : \Minn\Theme\ClassicContent::render($post->to_array(), $more_link_text);
+        $content = $post === null ? '' : \Minn\Theme\ClassicContent::render(Minn\Content\PostRecord::fromRow($post->to_array()), $more_link_text);
     } else {
         $content = apply_filters('the_content', get_the_content($more_link_text, $strip_teaser));
     }
@@ -217,7 +217,7 @@ function get_the_excerpt($post = null)
     if ($excerpt === '') {
         // Texturized entities stay entities: the reference's generated excerpt
         // keeps &#8217; from the content pipeline, and the theme prints it as-is.
-        $excerpt = trim(wp_strip_all_tags(Excerpt::render($post->to_array())));
+        $excerpt = trim(wp_strip_all_tags(Excerpt::render(Minn\Content\PostRecord::fromRow($post->to_array()))));
     }
     return apply_filters('get_the_excerpt', $excerpt, $post);
 }
@@ -525,7 +525,7 @@ function get_permalink($post = 0, $leavename = false)
         return false;
     }
     $permalinks = Runtime::current()->get('permalinks');
-    $link = $permalinks === null ? home_url('/?p=' . $post->ID) : ($post->post_type === 'attachment' ? $permalinks->forAttachment($post->to_array()) : $permalinks->forPost($post->to_array()));
+    $link = $permalinks === null ? home_url('/?p=' . $post->ID) : ($post->post_type === 'attachment' ? $permalinks->forAttachment(Minn\Content\PostRecord::fromRow($post->to_array())) : $permalinks->forPost(Minn\Content\PostRecord::fromRow($post->to_array())));
     if ($post->post_type === 'page') {
         return apply_filters('page_link', $link, $post->ID, $post->post_status !== 'publish' || $leavename);
     }
@@ -586,7 +586,7 @@ function get_adjacent_post($in_same_term = false, $excluded_terms = '', $previou
     if ($post === null) {
         return null;
     }
-    $row = _minn_posts()->adjacent($post->to_array(), !$previous);
+    $row = _minn_posts()->adjacent(Minn\Content\PostRecord::fromRow($post->to_array()), !$previous);
     return $row === null ? null : get_post((int) $row['ID']);
 }
 

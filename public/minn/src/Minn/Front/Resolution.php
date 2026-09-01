@@ -45,18 +45,18 @@ final readonly class Resolution
         return new self(Kind::Home, paged: $paged);
     }
 
-    public static function single(array|PostRecord $post, int $paged = 1): self
+    public static function single(PostRecord $post, int $paged = 1): self
     {
         return new self($post['post_type'] === 'page' ? Kind::Page : Kind::Single, $post, $paged);
     }
 
-    public static function frontPage(array|PostRecord $page, int $paged = 1): self
+    public static function frontPage(PostRecord $page, int $paged = 1): self
     {
         return new self(Kind::Page, $page, $paged, front: true);
     }
 
     /** The page that stands for the blog: a home listing whose record is the page. */
-    public static function postsPage(array|PostRecord $page, int $paged = 1): self
+    public static function postsPage(PostRecord $page, int $paged = 1): self
     {
         return new self(Kind::Home, $page, $paged, postsPage: true);
     }

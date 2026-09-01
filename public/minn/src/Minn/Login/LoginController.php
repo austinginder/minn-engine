@@ -21,7 +21,6 @@ use Minn\Support\Html;
 use Minn\Auth\Password;
 use Minn\Auth\PasswordReset;
 use Minn\Mail\Mailer;
-use Minn\Mail\Message;
 use Minn\Auth\PortableHash;
 
 /**
@@ -129,15 +128,9 @@ final readonly class LoginController
         }
         $key = $this->reset->issue($user);
         $link = $this->actionUrl($request, 'rp', 'key=' . rawurlencode($key) . '&login=' . rawurlencode((string) $user['user_login']));
-        $this->mailer->send(new Message(
-            [(string) $user['user_email']],
-            '[' . $siteName . '] Password Reset',
-            "Someone has requested a password reset for the following account:\n\n"
-            . "Site Name: {$siteName}\n\nUsername: {$user['user_login']}\n\n"
-            . "If this was a mistake, ignore this email and nothing will happen.\n\n"
-            . "To reset your password, visit the following address:\n\n{$link}\n\n"
-            . "This password reset request originated from the IP address {$request->remoteAddress}.\n",
-        ));
+        $this->mailer->send(
+            Mailer::noticesFor($this->site)->passwordReset((string) $user['user_login'], (string) $user['user_email'], $link, $request->remoteAddress),
+        );
         return Response::redirect($this->permalinks->url($this->base($request) . '?checkemail=confirm'), 302);
     }
 

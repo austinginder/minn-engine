@@ -42,9 +42,9 @@ final readonly class SeamRunner
      * extension's filter is promised the post as a row (contracts/extensions.md),
      * so a record is handed over as one.
      */
-    public function filterContent(string $html, array|PostRecord $post): string
+    public function filterContent(string $html, PostRecord $post): string
     {
-        $row = $post instanceof PostRecord ? $post->row() : $post;
+        $row = $post->row();
         $html = Shortcodes::apply($html, $this->registered->shortcodes, $this->seams);
         foreach ($this->registered->contentFilters as $filter) {
             $html = $filter($html, $row);

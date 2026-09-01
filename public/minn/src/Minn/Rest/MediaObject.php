@@ -31,7 +31,7 @@ final readonly class MediaObject
         return $this->url;
     }
 
-    public function build(array|PostRecord $p, bool $edit): array
+    public function build(PostRecord $p, bool $edit): array
     {
         $id = (int) $p['ID'];
         $meta = Metadata::parse($this->posts->meta($id, '_wp_attachment_metadata'));

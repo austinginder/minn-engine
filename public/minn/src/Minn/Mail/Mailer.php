@@ -22,6 +22,21 @@ final readonly class Mailer
         return new self(MailSettings::fromSite($site), ABSPATH . 'wp-content/minn-mail.log');
     }
 
+    /** The one-line send: a recipient, a subject, a body, through the site's transport and sender. */
+    public function mail(string|array $to, string $subject, string $body): bool
+    {
+        return $this->send(Message::to($to, $subject, $body));
+    }
+
+    /** The engine's own notices, worded once, from this site's name and address. */
+    public static function noticesFor(Site $site): Notices
+    {
+        return new Notices(
+            (string) ($site->option('blogname') ?? 'Site'),
+            rtrim((string) ($site->option('home') ?? ''), '/'),
+        );
+    }
+
     public function send(Message $message): bool
     {
         $from = $message->fromEmail !== '' ? $message->fromEmail : $this->settings->fromEmail;

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Content\PostRecord;
 use Minn\Content\Texturize;
 use Minn\Db;
 use Minn\Front\Permalinks;
@@ -63,13 +64,13 @@ final readonly class SearchController
              WHERE {$where} ORDER BY {$rank}, post_date DESC, ID DESC LIMIT ? OFFSET ?",
             [...$params, ...$rankParams, $perPage, ($page - 1) * $perPage],
         );
-        $items = array_map(fn (array $row) => $this->item($row), $rows);
+        $items = array_map(fn (PostRecord $post) => $this->item($post), PostRecord::fromRows($rows));
         return Reply::list($items, $total, $total === 0 ? 0 : (int) ceil($total / $perPage), Fields::fromQuery($request->query));
     }
 
-    private function item(array $row): array
+    private function item(PostRecord $row): array
     {
-        $type = (string) $row['post_type'];
+        $type = $row->type;
         $base = $this->types->restBase($type);
         return [
             'id' => (int) $row['ID'],

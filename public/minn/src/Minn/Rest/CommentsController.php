@@ -16,7 +16,6 @@ use Minn\RestError;
 use Minn\Support\Email;
 use Minn\Support\Kses;
 use Minn\Mail\Mailer;
-use Minn\Mail\Message;
 
 /**
  * wp/v2/comments: the status tabs with pagination headers, single,
@@ -137,17 +136,10 @@ final readonly class CommentsController
     }
 
     /** A comment in the queue is announced to the site's address when moderation_notify is on. */
-    private function notifyModerator(array|PostRecord $post, string $content, string $author): void
+    private function notifyModerator(PostRecord $post, string $content, string $author): void
     {
-        $siteName = (string) ($this->site->option('blogname') ?? 'Site');
-        $home = rtrim((string) ($this->site->option('home') ?? ''), '/');
-        Mailer::forSite($this->site)->send(new Message(
-            [(string) ($this->site->option('admin_email') ?? '')],
-            '[' . $siteName . '] Please moderate: "' . $post['post_title'] . '"',
-            "A new comment on the post \"{$post['post_title']}\" is waiting for your approval.\n\n"
-            . "Author: {$author}\nComment:\n" . strip_tags($content) . "\n\n"
-            . "Moderate it in the admin:\n{$home}/minn-admin/\n",
-        ));
+        $notice = Mailer::noticesFor($this->site)->moderation((string) ($this->site->option('admin_email') ?? ''), (string) $post['post_title'], $author, $content);
+        Mailer::forSite($this->site)->send($notice);
     }
 
     /** Status flips and content or author edits, for moderators. */

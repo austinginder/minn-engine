@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Theme;
 
+use Minn\Content\PostRecord;
 use Minn\Content\Posts;
 use Minn\Content\Site;
 use Minn\Front\Kind;
@@ -56,6 +57,9 @@ final readonly class HeadLinks
                 // pings are open on it (even with none yet), or once it has comments:
                 // the reference prints it for a page with closed comments, open pings,
                 // and a zero count.
+                if (!$record instanceof PostRecord) {
+                    return '';
+                }
                 $open = ($record['comment_status'] ?? '') === 'open' || ($record['ping_status'] ?? '') === 'open';
                 if ((int) ($record['comment_count'] ?? 0) > 0 || $open) {
                     $own = $record['post_type'] === 'page' ? $this->permalinks->pagePath($record) : $this->permalinks->forPost($record);

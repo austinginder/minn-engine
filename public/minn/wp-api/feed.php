@@ -48,7 +48,7 @@ function get_the_content_feed($feed_type = null)
     if ($post === null) {
         return '';
     }
-    $content = \Minn\Theme\ClassicContent::render($post->to_array(), null);
+    $content = \Minn\Theme\ClassicContent::render(Minn\Content\PostRecord::fromRow($post->to_array()), null);
     $content = str_replace(']]>', ']]&gt;', $content);
     return apply_filters('the_content_feed', $content, $feed_type);
 }

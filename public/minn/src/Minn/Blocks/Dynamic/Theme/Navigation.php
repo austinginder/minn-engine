@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Blocks\Dynamic\Theme;
 
+use Minn\Content\PostRecord;
 use Minn\Blocks\Block;
 use Minn\Blocks\Layout;
 use Minn\Blocks\Parser;
@@ -258,7 +259,7 @@ final readonly class Navigation
             // The static front page's item carries menu-item-home, last among its classes.
             $home = $id === $this->permalinks->frontPageId ? ' menu-item-home' : '';
             $linkClasses = 'wp-block-pages-list__item__link' . ($inNav ? ' wp-block-navigation-item__content' : '');
-            $link = '<a class="' . $linkClasses . '" href="' . Html::attr($this->permalinks->forPage($page + ['post_type' => 'page', 'post_status' => 'publish'])) . '"' . ($isCurrent ? ' aria-current="page"' : '') . '>' . Html::esc((string) $page['post_title']) . '</a>';
+            $link = '<a class="' . $linkClasses . '" href="' . Html::attr($this->permalinks->forPage(PostRecord::fromRow($page + ['post_type' => 'page', 'post_status' => 'publish']))) . '"' . ($isCurrent ? ' aria-current="page"' : '') . '>' . Html::esc((string) $page['post_title']) . '</a>';
             if (isset($tree[$id])) {
                 $out .= $inNav
                     ? $this->navParent($page, $marker, $home, $link, $this->pageItems($tree, $id, $currentId, $ancestors, $submenuColors))

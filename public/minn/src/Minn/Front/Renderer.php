@@ -95,7 +95,7 @@ final readonly class Renderer
             . '</body></html>';
     }
 
-    private function pageClasses(array|PostRecord $page): array
+    private function pageClasses(PostRecord $page): array
     {
         $classes = ['page', 'page-id-' . (int) $page['ID']];
         $hasChildren = (int) $this->db->value(
@@ -112,7 +112,7 @@ final readonly class Renderer
         return $classes;
     }
 
-    private function article(array|PostRecord $post): string
+    private function article(PostRecord $post): string
     {
         $body = PasswordGate::is($post)
             ? PasswordGate::form($post, $this->permalinks->url(''), $this->permalinks->forPost($post))

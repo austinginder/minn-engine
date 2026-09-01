@@ -176,7 +176,7 @@ final readonly class Engine
             $session instanceof Authenticated ? $session->token : '',
             $readerId > 0 ? $capabilities->rolesOf($readerId) : [],
         ));
-        $canReadUnpublished = static fn (array|PostRecord $post): bool => Reader::current()->canEdit((int) $post['ID']);
+        $canReadUnpublished = static fn (PostRecord $post): bool => Reader::current()->canEdit((int) $post['ID']);
         $resolver = Resolver::fromDb($db, $canReadUnpublished);
         $permalinks = $resolver->permalinks();
         $theme = Theme::active($site, $permalinks, ABSPATH . 'wp-content/themes');

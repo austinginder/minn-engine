@@ -543,7 +543,7 @@ final readonly class Resolver
         return Resolution::redirect($link);
     }
 
-    private function singleOrRedirect(array|PostRecord $post, int $paged, bool $forceRedirect): Resolution
+    private function singleOrRedirect(PostRecord $post, int $paged, bool $forceRedirect): Resolution
     {
         if (!$this->readable($post)) {
             return Resolution::notFound();
@@ -552,7 +552,7 @@ final readonly class Resolver
         return $forceRedirect && !str_contains($link, '?') ? Resolution::redirect($link) : Resolution::single($post, $paged);
     }
 
-    private function readable(array|PostRecord $post): bool
+    private function readable(PostRecord $post): bool
     {
         if ($post['post_status'] === 'publish') {
             return true;

@@ -7,7 +7,6 @@ namespace Minn\Cli;
 use Minn\Auth\PasswordReset;
 use Minn\Auth\Roles;
 use Minn\Mail\Mailer;
-use Minn\Mail\Message;
 use WP_CLI;
 use WP_CLI\Formatter;
 
@@ -223,15 +222,10 @@ final class UserCommand
         if (isset($assocArgs['send-email'])) {
             $user = $runtime->users->find($id);
             if ($user !== null) {
-                $siteName = (string) ($runtime->site->option('blogname') ?? 'Site');
                 $key = (new PasswordReset($runtime->users))->issue($user);
                 $home = rtrim((string) ($runtime->site->option('home') ?? ''), '/');
                 $link = $home . '/wp-login.php?action=rp&key=' . rawurlencode($key) . '&login=' . rawurlencode($login);
-                Mailer::forSite($runtime->site)->send(new Message(
-                    [$email],
-                    '[' . $siteName . '] Login Details',
-                    "Username: {$login}\n\nTo set your password, visit the following address:\n\n{$link}\n\n{$home}/wp-login.php\n",
-                ));
+                Mailer::forSite($runtime->site)->send(Mailer::noticesFor($runtime->site)->loginDetails($login, $email, $link));
             }
         }
         if (isset($assocArgs['porcelain'])) {

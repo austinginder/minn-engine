@@ -85,7 +85,7 @@ final readonly class Posts
     }
 
     /** The slash-joined ancestry of a page: "sample-page/docs". */
-    public function pathOf(array|PostRecord $page): string
+    public function pathOf(PostRecord $page): string
     {
         $parts = [$page['post_name']];
         $parentId = (int) $page['post_parent'];
@@ -255,7 +255,7 @@ final readonly class Posts
     }
 
     /** The adjacent published post by date; previous = older, next = newer. */
-    public function adjacent(array|PostRecord $post, bool $next): ?PostRecord
+    public function adjacent(PostRecord $post, bool $next): ?PostRecord
     {
         $operator = $next ? '>' : '<';
         $order = $next ? 'ASC' : 'DESC';

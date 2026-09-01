@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Content\PostRecord;
 use Minn\Content\Posts;
 use Minn\Auth\TypeCapabilities;
 use Minn\Db;
@@ -164,18 +165,18 @@ final readonly class PostsController
         if ($page > 1 && $page > $totalPages) {
             throw new RestError('rest_post_invalid_page_number', 'The page number requested is larger than the number of pages available.', 400);
         }
-        $rows = $this->db->rows(
+        $rows = PostRecord::fromRows($this->db->rows(
             "SELECT * FROM {$table} WHERE {$where} ORDER BY {$orderBy} {$order} LIMIT ?, ?",
             [...$params, ($page - 1) * $perPage, $perPage],
-        );
+        ));
         if ($context->isEdit() && !$others) {
             // Edit context drops the rows the caller cannot edit AFTER the page was cut: a
             // page of five may come back with one item while the totals still count them all.
-            $rows = array_values(array_filter($rows, fn (array $row) => $this->caller->can('edit_post', (int) $row['ID'])));
+            $rows = array_values(array_filter($rows, fn (PostRecord $post) => $this->caller->can('edit_post', $post->id)));
         }
         $objects = $context->isEdit()
-            ? array_map(fn (array $row) => $this->object->edit($row, $userId), $rows)
-            : array_map(fn (array $row) => $this->object->view($row), $rows);
+            ? array_map(fn (PostRecord $post) => $this->object->edit($post, $userId), $rows)
+            : array_map(fn (PostRecord $post) => $this->object->view($post), $rows);
         return Reply::list($objects, $total, $totalPages, Fields::fromQuery($request->query));
     }
 
@@ -212,6 +213,7 @@ final readonly class PostsController
         if ($row === null) {
             throw new RestError('rest_post_invalid_id', 'Invalid post ID.', 404);
         }
+        $row = PostRecord::fromRow($row);
         $fields = Fields::fromQuery($request->query);
         if (Context::of($request)->isEdit()) {
             if (!$this->caller->can('edit_post', $postId)) {

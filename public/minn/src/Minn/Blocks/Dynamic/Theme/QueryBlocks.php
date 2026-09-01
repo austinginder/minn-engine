@@ -115,7 +115,7 @@ final class QueryBlocks
     }
 
     /** @return list<string> */
-    private function postClasses(array|PostRecord $post, bool $sticky): array
+    private function postClasses(PostRecord $post, bool $sticky): array
     {
         $id = (int) $post['ID'];
         $type = (string) $post['post_type'];

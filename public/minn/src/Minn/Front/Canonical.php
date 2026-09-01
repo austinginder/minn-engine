@@ -21,7 +21,7 @@ final class Canonical
     public static function location(Db $db, Request $current, ?string $url): ?string
     {
         $request = $url === null ? $current : self::requestFor($url, $current);
-        $resolver = Resolver::fromDb($db, static fn (array|PostRecord $post): bool => Reader::current()->canEdit((int) $post['ID']));
+        $resolver = Resolver::fromDb($db, static fn (PostRecord $post): bool => Reader::current()->canEdit((int) $post['ID']));
         $resolution = $resolver->resolve($request);
         return $resolution->kind === Kind::Redirect ? $resolution->location : null;
     }

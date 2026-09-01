@@ -895,7 +895,7 @@ function wp_trim_excerpt($text = '', $post = null)
     }
     $post = get_post($post);
     // The trimmed excerpt is plain text: the rendered markup is stripped back.
-    $generated = $post ? trim(wp_strip_all_tags(Minn\Content\Excerpt::render((array) $post->to_array()))) : '';
+    $generated = $post ? trim(wp_strip_all_tags(Minn\Content\Excerpt::render(Minn\Content\PostRecord::fromRow($post->to_array())))) : '';
     return apply_filters('wp_trim_excerpt', $generated, '');
 }
 

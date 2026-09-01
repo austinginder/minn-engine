@@ -21,7 +21,7 @@ use Minn\Support\Html;
  */
 final class ClassicContent
 {
-    public static function render(array|PostRecord $post, ?string $moreLinkText): string
+    public static function render(PostRecord $post, ?string $moreLinkText): string
     {
         $permalinks = Runtime::current()->get('permalinks');
         if (!$permalinks instanceof Permalinks) {

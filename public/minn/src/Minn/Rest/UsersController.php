@@ -17,7 +17,6 @@ use Minn\RestError;
 use Minn\Support\Kses;
 use Minn\Auth\PasswordReset;
 use Minn\Mail\Mailer;
-use Minn\Mail\Message;
 
 /** wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives. */
 final readonly class UsersController
@@ -141,15 +140,12 @@ final readonly class UsersController
         if ($user === null) {
             return;
         }
-        $siteName = (string) ($this->site->option('blogname') ?? 'Site');
         $key = (new PasswordReset($this->users))->issue($user);
         $home = rtrim((string) ($this->site->option('home') ?? ''), '/');
         $link = $home . '/wp-login.php?action=rp&key=' . rawurlencode($key) . '&login=' . rawurlencode((string) $user['user_login']);
-        Mailer::forSite($this->site)->send(new Message(
-            [(string) $user['user_email']],
-            '[' . $siteName . '] Login Details',
-            "Username: {$user['user_login']}\n\nTo set your password, visit the following address:\n\n{$link}\n\n{$home}/wp-login.php\n",
-        ));
+        Mailer::forSite($this->site)->send(
+            Mailer::noticesFor($this->site)->loginDetails((string) $user['user_login'], (string) $user['user_email'], $link),
+        );
     }
 
     private function hasPublishedContent(int $userId): bool

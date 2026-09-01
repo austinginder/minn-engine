@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Blocks\Dynamic;
 
+use Minn\Content\PostRecord;
 use Minn\Blocks\Block;
 use Minn\Content\Site;
 use Minn\Db;
@@ -25,11 +26,11 @@ final readonly class LatestPosts
     {
         $count = max(1, min(100, (int) $block->attr('postsToShow', 5)));
         $withDates = (bool) $block->attr('displayPostDate', false);
-        $posts = $this->db->rows(
+        $posts = PostRecord::fromRows($this->db->rows(
             "SELECT * FROM {$this->db->table('posts')} WHERE post_type = 'post' AND post_status = 'publish'
              ORDER BY post_date DESC LIMIT ?",
             [$count],
-        );
+        ));
         $items = [];
         foreach ($posts as $post) {
             $item = '<li><a class="wp-block-latest-posts__post-title" href="' . Html::attr($this->permalinks->forPost($post)) . '">'

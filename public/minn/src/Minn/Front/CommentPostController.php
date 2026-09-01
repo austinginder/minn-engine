@@ -19,7 +19,6 @@ use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\Mail\Mailer;
-use Minn\Mail\Message;
 use Minn\Support\Html;
 use Minn\Support\Kses;
 
@@ -151,16 +150,10 @@ final readonly class CommentPostController
         return substr(hash_hmac('md5', 'comment-' . $commentId, \Minn\Auth\Salts::for('nonce')), 0, 32);
     }
 
-    private function notifyModerator(array|PostRecord $post, string $content, string $author): void
+    private function notifyModerator(PostRecord $post, string $content, string $author): void
     {
-        $siteName = (string) ($this->site->option('blogname') ?? 'Site');
-        $home = rtrim((string) ($this->site->option('home') ?? ''), '/');
-        Mailer::forSite($this->site)->send(new Message(
-            [(string) ($this->site->option('admin_email') ?? '')],
-            '[' . $siteName . '] Please moderate: "' . $post['post_title'] . '"',
-            "A new comment on the post \"{$post['post_title']}\" is waiting for your approval.\n\n"
-            . "Author: {$author}\nComment:\n" . strip_tags($content) . "\n\nModerate it in the admin:\n{$home}/minn-admin/\n",
-        ));
+        $notice = Mailer::noticesFor($this->site)->moderation((string) ($this->site->option('admin_email') ?? ''), (string) $post['post_title'], $author, $content);
+        Mailer::forSite($this->site)->send($notice);
     }
 
     /** The reference's plain refusal page: the message and a way back. */

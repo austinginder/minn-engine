@@ -15,7 +15,7 @@ use Minn\Front\Resolution;
  */
 final class Context
 {
-    /** @var list<array|PostRecord> */
+    /** @var list<PostRecord> */
     private array $postStack = [];
     private ?array $comment = null;
 
@@ -36,15 +36,16 @@ final class Context
         return new self(Resolution::home(), [], 0, 10, false);
     }
 
-    public function post(): array|PostRecord|null
+    public function post(): ?PostRecord
     {
         if ($this->postStack !== []) {
             return $this->postStack[count($this->postStack) - 1];
         }
-        return in_array($this->resolution->kind, [Kind::Single, Kind::Page], true) ? $this->resolution->record : null;
+        $record = in_array($this->resolution->kind, [Kind::Single, Kind::Page], true) ? $this->resolution->record : null;
+        return $record instanceof PostRecord ? $record : null;
     }
 
-    public function pushPost(array|PostRecord $post): void
+    public function pushPost(PostRecord $post): void
     {
         $this->postStack[] = $post;
     }

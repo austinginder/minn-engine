@@ -243,14 +243,13 @@ final readonly class PostBlocks
      * @param list<string> $classes
      */
     /** On a preview, the reader's newest autosave of this post stands in for its stored fields. */
-    private function previewSource(array|PostRecord $post, \Minn\Front\Resolution $resolution): ?array
+    private function previewSource(PostRecord $post, \Minn\Front\Resolution $resolution): ?PostRecord
     {
         if (!$resolution->preview || $resolution->id() !== (int) $post['ID']) {
             return null;
         }
         $autosave = $this->posts->newestAutosave((int) $post['ID'], Reader::current()->userId);
-        $row = $post instanceof PostRecord ? $post->row() : $post;
-        return $autosave === null ? null : ['post_content' => $autosave->content, 'post_title' => $autosave->title, 'post_password' => $row['post_password'], 'post_status' => $row['post_status']] + $row;
+        return $autosave === null ? null : PostRecord::fromRow(['post_content' => $autosave->content, 'post_title' => $autosave->title] + $post->row());
     }
 
     private static function target(Block $block): string

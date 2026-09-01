@@ -258,7 +258,7 @@ final readonly class PostsWriteController
     }
 
     /** The reference refuses a sticky and password combination outright. */
-    private function checkStickyPasswordConflict(array $body, array|PostRecord|null $post): void
+    private function checkStickyPasswordConflict(array $body, ?PostRecord $post): void
     {
         $wantsSticky = !empty($body['sticky'])
             || (!isset($body['sticky']) && $post !== null && $this->writer->isSticky((int) $post['ID']));

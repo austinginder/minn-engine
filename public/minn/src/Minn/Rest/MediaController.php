@@ -59,7 +59,7 @@ final readonly class MediaController
             [...$params, $perPage, ($page - 1) * $perPage],
         );
         return Reply::list(
-            array_map(fn (array $p) => $this->object->build($p, $edit), $rows),
+            array_map(fn (PostRecord $p) => $this->object->build($p, $edit), PostRecord::fromRows($rows)),
             $total,
             (int) ceil($total / $perPage),
             Fields::fromQuery($request->query),
