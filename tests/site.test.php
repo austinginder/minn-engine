@@ -59,6 +59,7 @@ $check(str_contains($home, 'class="minn-wordmark">minn</span>'), 'the header wor
 $check(!str_contains($home, 'minn<small>engine</small>'), 'the header does not say engine');
 $check(str_contains($home, 'What is Minn, and what is Minn Engine?'), 'the FAQ names the product vs the engine');
 $check(str_contains($home, '/wp-content/themes/minn-site/style.css'), 'the theme stylesheet is linked');
+$check(str_contains($home, 'rel="icon"') && str_contains($home, '/assets/img/favicon.webp'), 'the homepage links the theme favicon');
 $check(!str_contains($home, 'CHECKS_COUNT'), 'no unfilled placeholders on the page');
 $check(str_contains($home, 'href="#content">Skip to content'), 'skip link targets the template\'s own main id');
 $check(!preg_match('/class="[^"]*has-global-padding/', $home), 'no global padding class without useRootPaddingAwareAlignments');
@@ -75,6 +76,7 @@ $check(str_contains($home, 'Browse the lexicon'), 'the visual points at the glos
 [$lh, $lex] = minn_test_fetch($ENGINE . '/lexicon/');
 $check($lh['status'] === 200, 'theme /lexicon/ answers 200', (string) $lh['status']);
 $check(str_contains($lex, '<title>The lexicon · Minn'), 'lexicon title');
+$check(str_contains($lex, '/assets/img/favicon.webp'), 'lexicon links the theme favicon');
 $check(str_contains($lex, 'data-lex-filter="speak"'), 'lexicon Speak chip');
 $check(str_contains($lex, 'aria-current="page"'), 'lexicon nav is current');
 [$mdh] = minn_test_fetch($ENGINE . '/lexicon.md');
@@ -84,7 +86,7 @@ $check($csh['status'] === 200, 'theme /code-size/ answers 200', (string) $csh['s
 $check(str_contains($cs, '<title>Code size · Minn</title>'), 'code-size title');
 [$jsh] = minn_test_fetch($ENGINE . '/code-size.json');
 $check($jsh['status'] === 200, 'theme /code-size.json answers 200', (string) $jsh['status']);
-foreach (['/wp-content/themes/minn-site/style.css', '/wp-content/themes/minn-site/assets/fonts/hanken-grotesk.woff2', '/wp-content/themes/minn-site/assets/fonts/jetbrains-mono.woff2'] as $asset) {
+foreach (['/wp-content/themes/minn-site/style.css', '/wp-content/themes/minn-site/assets/fonts/hanken-grotesk.woff2', '/wp-content/themes/minn-site/assets/fonts/jetbrains-mono.woff2', '/wp-content/themes/minn-site/assets/img/favicon.webp'] as $asset) {
     [$ah] = minn_test_fetch($ENGINE . $asset);
     $check($ah['status'] === 200, "asset served: $asset");
 }
