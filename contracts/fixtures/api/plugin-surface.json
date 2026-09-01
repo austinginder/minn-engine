@@ -283,6 +283,42 @@
         null
     ],
     [
+        "get_the_category_list",
+        [
+            "<ul class=\"post-categories\">\n\t<li><a href=\"https://minn-engine.localhost/category/uncategorized/\" rel=\"category tag\">Uncategorized</a></li></ul>",
+            "<a href=\"https://minn-engine.localhost/category/uncategorized/\" rel=\"category tag\">Uncategorized</a>",
+            ""
+        ]
+    ],
+    [
+        "get_the_tag_list",
+        [
+            "<span><a href=\"https://minn-engine.localhost/tag/engine/\" rel=\"tag\">engine</a>, <a href=\"https://minn-engine.localhost/tag/parity/\" rel=\"tag\">parity</a></span>",
+            false
+        ]
+    ],
+    [
+        "adjacent post links",
+        [
+            "&laquo; <a href=\"https://minn-engine.localhost/hello-world/\" rel=\"prev\">Hello world!</a>",
+            "<a href=\"https://minn-engine.localhost/texturize-battery-its-quoted-fine/\" rel=\"next\">Texturize battery: it&#8217;s &#8220;quoted&#8221; &#8212; fine</a> &raquo;",
+            "\n\t<nav class=\"navigation post-navigation\" aria-label=\"Posts\">\n\t\t<h2 class=\"screen-reader-text\">Post navigation</h2>\n\t\t<div class=\"nav-links\"><div class=\"nav-previous\"><a href=\"https://minn-engine.localhost/hello-world/\" rel=\"prev\">Hello world!</a></div><div class=\"nav-next\"><a href=\"https://minn-engine.localhost/texturize-battery-its-quoted-fine/\" rel=\"next\">Texturize battery: it&#8217;s &#8220;quoted&#8221; &#8212; fine</a></div></div>\n\t</nav>",
+            "\n\t<nav class=\"navigation nav-x\" aria-label=\"More\">\n\t\t<h2 class=\"screen-reader-text\">More</h2>\n\t\t<div class=\"nav-links\"><div class=\"nav-previous\"><a href=\"https://minn-engine.localhost/hello-world/\" rel=\"prev\">P: Hello world!</a></div><div class=\"nav-next\"><a href=\"https://minn-engine.localhost/texturize-battery-its-quoted-fine/\" rel=\"next\">N: Texturize battery: it&#8217;s &#8220;quoted&#8221; &#8212; fine</a></div></div>\n\t</nav>"
+        ]
+    ],
+    [
+        "WP_Theme array access",
+        [
+            true,
+            "Twenty Twenty-Five",
+            "1.5",
+            "twentytwentyfive",
+            "twentytwentyfive",
+            false,
+            null
+        ]
+    ],
+    [
         "get_post_class post",
         [
             "post-1",

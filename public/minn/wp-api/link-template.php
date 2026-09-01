@@ -532,3 +532,80 @@ function wp_shortlink_wp_head()
         echo $head->shortlink($resolution);
     }
 }
+
+/**
+ * The link to the post before or after this one, in the reference's
+ * captured shape: the format wraps the link, `%link` is the anchor and
+ * `%title` the post title, and the anchor carries rel="prev"/"next".
+ * Empty when there is no such post.
+ */
+function get_adjacent_post_link($format, $link, $in_same_term = false, $excluded_terms = '', $previous = true, $taxonomy = 'category')
+{
+    $post = get_adjacent_post($in_same_term, $excluded_terms, $previous, $taxonomy);
+    $adjacent = $previous ? 'previous' : 'next';
+    if (!$post instanceof WP_Post) {
+        $output = '';
+    } else {
+        $title = get_the_title($post);
+        if ($title === '') {
+            $title = $previous ? 'Previous Post' : 'Next Post';
+        }
+        $title = apply_filters('the_title', $title, $post->ID);
+        $rel = $previous ? 'prev' : 'next';
+        $anchor = '<a href="' . esc_url((string) get_permalink($post)) . '" rel="' . $rel . '">' . str_replace('%title', $title, $link) . '</a>';
+        $output = str_replace('%link', $anchor, $format);
+    }
+    return apply_filters("{$adjacent}_post_link", $output, $format, $link, $post, $adjacent);
+}
+
+function get_previous_post_link($format = '&laquo; %link', $link = '%title', $in_same_term = false, $excluded_terms = '', $taxonomy = 'category')
+{
+    return get_adjacent_post_link($format, $link, $in_same_term, $excluded_terms, true, $taxonomy);
+}
+
+function get_next_post_link($format = '%link &raquo;', $link = '%title', $in_same_term = false, $excluded_terms = '', $taxonomy = 'category')
+{
+    return get_adjacent_post_link($format, $link, $in_same_term, $excluded_terms, false, $taxonomy);
+}
+
+function previous_post_link($format = '&laquo; %link', $link = '%title', $in_same_term = false, $excluded_terms = '', $taxonomy = 'category')
+{
+    echo get_previous_post_link($format, $link, $in_same_term, $excluded_terms, $taxonomy);
+}
+
+function next_post_link($format = '%link &raquo;', $link = '%title', $in_same_term = false, $excluded_terms = '', $taxonomy = 'category')
+{
+    echo get_next_post_link($format, $link, $in_same_term, $excluded_terms, $taxonomy);
+}
+
+/** The nav block wrapping both adjacent links; empty when neither exists. */
+function get_the_post_navigation($args = [])
+{
+    // Captured precedence: an explicit aria_label wins; otherwise a
+    // caller-supplied screen_reader_text drives the label, and only with
+    // neither does the default stand.
+    if (is_array($args) && !empty($args['screen_reader_text']) && empty($args['aria_label'])) {
+        $args['aria_label'] = $args['screen_reader_text'];
+    }
+    $args = wp_parse_args($args, [
+        'prev_text' => '%title',
+        'next_text' => '%title',
+        'in_same_term' => false,
+        'excluded_terms' => '',
+        'taxonomy' => 'category',
+        'screen_reader_text' => 'Post navigation',
+        'aria_label' => 'Posts',
+        'class' => 'post-navigation',
+    ]);
+    $previous = get_previous_post_link('<div class="nav-previous">%link</div>', $args['prev_text'], $args['in_same_term'], $args['excluded_terms'], $args['taxonomy']);
+    $next = get_next_post_link('<div class="nav-next">%link</div>', $args['next_text'], $args['in_same_term'], $args['excluded_terms'], $args['taxonomy']);
+    if ($previous === '' && $next === '') {
+        return '';
+    }
+    return _navigation_markup($previous . $next, (string) $args['class'], (string) $args['screen_reader_text'], (string) $args['aria_label']);
+}
+
+function the_post_navigation($args = [])
+{
+    echo get_the_post_navigation($args);
+}

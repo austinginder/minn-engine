@@ -1004,3 +1004,62 @@ function the_tags($before = null, $sep = ', ', $after = '')
     $links = array_map(static fn ($t) => '<a href="' . esc_url((string) get_term_link($t)) . '" rel="tag">' . esc_html($t->name) . '</a>', $tags);
     echo ($before ?? 'Tags: ') . implode((string) $sep, $links) . $after;
 }
+
+/**
+ * A post's terms in one taxonomy as links, or false when it has none.
+ * Shapes captured from the reference: each link carries rel="tag", the
+ * list is joined with $sep between $before and $after.
+ */
+function get_the_term_list($post_id, $taxonomy, $before = '', $sep = '', $after = '')
+{
+    $terms = get_the_terms($post_id, $taxonomy);
+    if (is_wp_error($terms)) {
+        return $terms;
+    }
+    if (empty($terms)) {
+        return false;
+    }
+    $links = [];
+    foreach ($terms as $term) {
+        $link = get_term_link($term, $taxonomy);
+        if (is_wp_error($link)) {
+            return $link;
+        }
+        $links[] = '<a href="' . esc_url((string) $link) . '" rel="tag">' . $term->name . '</a>';
+    }
+    $links = apply_filters("term_links-{$taxonomy}", $links); // phpcs:ignore
+    return $before . implode($sep, $links) . $after;
+}
+
+function get_the_tag_list($before = '', $sep = '', $after = '', $post_id = 0)
+{
+    return apply_filters('the_tags', get_the_term_list($post_id, 'post_tag', $before, $sep, $after), $before, $sep, $after, $post_id);
+}
+
+/**
+ * A post's categories as links. With no separator the reference emits a
+ * `post-categories` list; with one it joins bare links. Both carry
+ * rel="category tag".
+ */
+function get_the_category_list($separator = '', $parents = '', $post_id = false)
+{
+    $categories = get_the_category($post_id);
+    if (empty($categories)) {
+        return apply_filters('the_category', '', $separator, $parents);
+    }
+    $list = '';
+    if ($separator === '') {
+        $list .= '<ul class="post-categories">';
+        foreach ($categories as $category) {
+            $list .= "\n\t<li><a href=\"" . esc_url((string) get_category_link($category->term_id)) . '" rel="category tag">' . $category->name . '</a></li>';
+        }
+        $list .= '</ul>';
+    } else {
+        $links = [];
+        foreach ($categories as $category) {
+            $links[] = '<a href="' . esc_url((string) get_category_link($category->term_id)) . '" rel="category tag">' . $category->name . '</a>';
+        }
+        $list = implode($separator, $links);
+    }
+    return apply_filters('the_category', $list, $separator, $parents);
+}

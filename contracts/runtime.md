@@ -1403,3 +1403,38 @@ Open: on a singular render the engine does not set the global `$product`
 believes it is a descendant of the single-product block. Visible as the
 form action losing its trailing slash and a missing `product` wrapper
 class; behaviour is otherwise correct.
+
+## What a classic commerce theme needed (Storefront, 2026-09-01)
+
+WooCommerce's own Storefront theme (classic PHP, 4.6.2) runs on the engine.
+Two things blocked it, and the symbol report named neither clearly:
+
+- **Four template tags**: `get_the_category_list`, `get_the_tag_list` (over
+  `get_the_term_list`, which was a placeholder), `the_post_navigation` /
+  `get_the_post_navigation` with the adjacent-post link family, and
+  `edit_comment_link` / `get_edit_comment_link`. Shapes captured: category
+  lists emit a `post-categories` UL when the separator is empty and bare
+  `rel="category tag"` links when it is not; term links carry `rel="tag"`;
+  adjacent links carry `rel="prev"`/`rel="next"` inside the caller's format,
+  with `%link` the anchor and `%title` the title. In the navigation block an
+  explicit `aria_label` wins, otherwise a caller-supplied
+  `screen_reader_text` drives it, and only with neither does the default
+  stand.
+- **`WP_Theme` implements `ArrayAccess`.** Storefront reads its own headers
+  as array offsets, and without it the theme fatals with "Cannot use object
+  of type WP_Theme as array" — which the symbol gate reports as a skipped
+  THEME with no missing functions, not as a missing symbol. The offsets are
+  display names (`Name`, `Title`, `Author Name`, `Theme Root URI`, …), not
+  the internal header keys; writes are ignored.
+
+GOTCHA: the symbol gate's cache (`minn_runtime_symbols`) is keyed on the
+plugin or theme's mtime, so it does NOT notice the ENGINE gaining the
+functions a skipped component wanted. After adding runtime symbols, delete
+that option (from the REFERENCE's wp-cli on a swapped site) or the
+component stays skipped and the interim template keeps standing in.
+
+Storefront gaps still open: `wp_page_menu` omits the Home item and the
+`current_page_item` class, and the widget sidebars do not render, so the
+header nav is unstyled and the sidebar is absent. The product grid,
+breadcrumbs, sorting, result count, pagination, prices and sale badges all
+match the reference.

@@ -1018,3 +1018,31 @@ function wp_new_comment_notify_postauthor($comment_id)
         . 'See all comments on this post here: ' . get_permalink($post) . "#comments\n";
     return (bool) wp_mail((string) $author->user_email, $subject, $message);
 }
+
+/**
+ * The admin URL for editing one comment. Display context escapes the
+ * ampersand, as the reference's captured value does; there is no
+ * /wp-admin/ on the engine, but a theme still prints the link for an
+ * editor and the URL has to be the one tooling expects.
+ */
+function get_edit_comment_link($comment_id = 0, $context = 'display')
+{
+    $comment = get_comment($comment_id);
+    if (!$comment instanceof WP_Comment || !current_user_can('edit_comment', $comment->comment_ID)) {
+        return null;
+    }
+    $sep = $context === 'display' ? '&amp;' : '&';
+    $location = admin_url('comment.php?action=editcomment') . $sep . 'c=' . $comment->comment_ID;
+    return apply_filters('get_edit_comment_link', $location, (int) $comment->comment_ID, $context);
+}
+
+function edit_comment_link($text = null, $before = '', $after = '')
+{
+    $comment = get_comment();
+    if (!$comment instanceof WP_Comment || !current_user_can('edit_comment', $comment->comment_ID)) {
+        return;
+    }
+    $text ??= 'Edit This';
+    $link = '<a class="comment-edit-link" href="' . esc_url((string) get_edit_comment_link($comment)) . '">' . $text . '</a>';
+    echo $before . apply_filters('edit_comment_link', $link, (int) $comment->comment_ID, $text) . $after;
+}

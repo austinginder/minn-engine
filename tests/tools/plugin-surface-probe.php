@@ -79,6 +79,37 @@ $say('wp_tag_cloud', wp_tag_cloud(['echo' => false]));
 $say('wp_tag_cloud args', wp_tag_cloud(['echo' => false, 'taxonomy' => 'category', 'hide_empty' => false, 'format' => 'list', 'number' => 3, 'orderby' => 'count', 'order' => 'DESC']));
 $say('wp_tag_cloud none', wp_tag_cloud(['echo' => false, 'include' => '999999']));
 
+// Template tags a classic commerce theme needs (Storefront's functions.php
+// is gated on all of these existing).
+$say('get_the_category_list', [get_the_category_list('', '', 1), get_the_category_list(' | ', '', 1), get_the_category_list(', ', '', 999999)]);
+$say('get_the_tag_list', [get_the_tag_list('<span>', ', ', '</span>', 5), get_the_tag_list('', ', ', '', 2)]);
+$say('adjacent post links', (static function (): array {
+    $GLOBALS['post'] = get_post(5);
+    setup_postdata($GLOBALS['post']);
+    $out = [
+        get_previous_post_link(),
+        get_next_post_link(),
+        get_the_post_navigation(),
+        get_the_post_navigation(['prev_text' => 'P: %title', 'next_text' => 'N: %title', 'screen_reader_text' => 'More', 'class' => 'nav-x']),
+    ];
+    wp_reset_postdata();
+    return $out;
+})());
+// A theme reads its own headers as array offsets (Storefront does), so
+// WP_Theme is ArrayAccess as well as an object.
+$say('WP_Theme array access', (static function (): array {
+    $theme = wp_get_theme();
+    return [
+        $theme instanceof ArrayAccess,
+        (string) $theme['Name'],
+        (string) $theme['Version'],
+        (string) $theme['Stylesheet'],
+        (string) $theme['Template'],
+        isset($theme['Nope']),
+        $theme['Nope'] ?? null,
+    ];
+})());
+
 // Post helpers.
 $say('get_post_class post', get_post_class('', 1));
 $say('get_post_class page', get_post_class(['extra', 'two'], 2));

@@ -3,7 +3,7 @@
 use Minn\Theme\Folder;
 
 /** A theme by its style.css headers and folder. */
-class WP_Theme
+class WP_Theme implements ArrayAccess
 {
     private static $headers = ['Name' => 'Theme Name', 'ThemeURI' => 'Theme URI', 'Description' => 'Description', 'Author' => 'Author', 'AuthorURI' => 'Author URI', 'Version' => 'Version', 'Template' => 'Template', 'Status' => 'Status', 'Tags' => 'Tags', 'TextDomain' => 'Text Domain', 'DomainPath' => 'Domain Path', 'RequiresWP' => 'Requires at least', 'RequiresPHP' => 'Requires PHP', 'UpdateURI' => 'Update URI'];
     public $update = false;
@@ -177,11 +177,6 @@ class WP_Theme
         return Folder::filePath($this->get_stylesheet_directory(), $this->get_template_directory(), (string) $file);
     }
 
-    public function offsetGet($offset)
-    {
-        return $this->__get($offset);
-    }
-
     public static function get_allowed($blog_id = null)
     {
         return [];
@@ -191,4 +186,60 @@ class WP_Theme
     {
         uasort($themes, static fn (WP_Theme $a, WP_Theme $b) => strnatcasecmp($a->get('Name'), $b->get('Name')));
     }
+
+    /**
+     * Theme headers by their display names. Themes read these as array
+     * offsets (Storefront's functions.php does `wp_get_theme()['Version']`),
+     * so the class is ArrayAccess as well as an object; captured offsets
+     * are the display forms, not the internal header keys. Writes are
+     * ignored, as the reference ignores them.
+     */
+    public function offsetExists($offset): bool
+    {
+        return in_array($offset, [
+            'Name', 'Version', 'Title', 'Author', 'Author Name', 'Author URI', 'Description',
+            'Template', 'Stylesheet', 'Screenshot', 'Tags', 'Theme Root', 'Theme Root URI',
+            'Parent Theme', 'Status',
+        ], true);
+    }
+
+    /** Offsets that are simply a header under another name. */
+    private const OFFSET_HEADERS = ['Name' => 'Name', 'Title' => 'Name', 'Version' => 'Version', 'Author URI' => 'AuthorURI', 'Tags' => 'Tags', 'Status' => 'Status'];
+
+    #[\ReturnTypeWillChange]
+    public function offsetGet($offset)
+    {
+        $header = self::OFFSET_HEADERS[$offset] ?? null;
+        if ($header === null) {
+            return $this->offsetComputed((string) $offset);
+        }
+        $value = $this->get($header);
+        return $offset === 'Status' ? ($value ?: 'publish') : $value;
+    }
+
+    /** The offsets that are built rather than read straight off a header. */
+    private function offsetComputed(string $offset)
+    {
+        return match ($offset) {
+            'Author' => $this->display('Author', false),
+            'Author Name' => $this->display('Author', false, false),
+            'Description' => $this->display('Description', false),
+            'Template' => $this->get_template(),
+            'Stylesheet' => $this->get_stylesheet(),
+            'Screenshot' => $this->get_screenshot('relative'),
+            'Theme Root' => $this->get_theme_root(),
+            'Theme Root URI' => $this->get_theme_root_uri(),
+            'Parent Theme' => $this->parent() ? $this->parent()->get('Name') : '',
+            default => null,
+        };
+    }
+
+    public function offsetSet($offset, $value): void
+    {
+    }
+
+    public function offsetUnset($offset): void
+    {
+    }
+
 }

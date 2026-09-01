@@ -349,12 +349,6 @@ function get_the_privacy_policy_link($before = '', $after = '')
     return null;
 }
 
-function get_the_term_list($post_id, $taxonomy, $before = '', $sep = '', $after = '')
-{
-    \Minn\Runtime\PlaceholderTrace::hit('get_the_term_list');
-    return null;
-}
-
 function get_theme_update_available($theme)
 {
     \Minn\Runtime\PlaceholderTrace::hit('get_theme_update_available');
