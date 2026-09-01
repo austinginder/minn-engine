@@ -45,6 +45,8 @@ Classic-content paragraphing: blank lines become paragraphs, single
 newlines become line breaks, and block-level tags are never wrapped.
 The behaviour is pinned by the api suite row for row.
 
+- const `BLOCKS` = `'(?:table|thead|tfoot|caption|col|colgroup|tbody|tr|td|th|div|dl|dd|dt|ul|ol|li|pre|form|map|area|blockquote|address|style|p|h[1-6]|hr|fieldset|legend|section|article|aside|hgroup|header|footer|nav|figure|figcaption|details|menu|summary)'`
+
 ### static `apply(string $text, bool $lineBreaks = true): string`
 
 
@@ -54,6 +56,9 @@ The behaviour is pinned by the api suite row for row.
 
 The content pipeline's front door: block markup goes through the block
 renderer (Minn\Blocks), classic content rides the paragraph pipeline.
+
+Used by: `Minn\Admin\RenderController`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Front\Feeds`, `Minn\Front\ProbeController`, `Minn\Front\Renderer`, `Minn\Rest\CommentObject`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\RevisionsController`, `Minn\Theme\ClassicContent`, `Minn\Theme\PageRenderer`
+
 
 ### static `render(string $raw): string`
 
@@ -84,6 +89,8 @@ The class tokens a rendered comment carries: its type, its author, odd/even and 
 What a comment listing is narrowed to. Every field is optional; the id
 lists keep zero, because post=0 means "comments without a post". Dates
 are site-local "Y-m-d H:i:s", after and before both exclusive.
+
+Used by: `Minn\Content\Comments`, `Minn\Rest\CommentsController`
 
 ```php
 __construct(array $post = array ( ), array $include = array ( ), array $exclude = array ( ), array $parent = array ( ), array $parentExclude = array ( ), array $author = array ( ), array $authorExclude = array ( ), string $authorEmail = '', string $type = 'comment', string $search = '', string $after = '', string $before = '')
@@ -126,9 +133,12 @@ moderator's own comment always approved.
 
 - const `FLOOD_SECONDS` = `15`
 
+Used by: `Minn\Front\CommentPostController`
+
 ```php
 __construct(Minn\Content\Comments $comments)
 ```
+
 
 ### `refusal(array $data, bool $moderator): ?string`
 
@@ -148,6 +158,8 @@ __construct(Minn\Content\Comments $comments)
 One row of the comments table, read by name: $comment->author, ->content,
 ->postId, ->parentId, and isApproved() for the status the reference
 stores as '1'. Array access is the migration bridge, read-only.
+
+Used by: `Minn\Admin\Notifications`, `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Content\Comments`, `Minn\Front\CommentList`, `Minn\Front\Feeds`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`
 
 - readonly `int $id`
 - readonly `int $postId`
@@ -200,9 +212,14 @@ A plain comment: the type column is '' on old rows and 'comment' on new ones.
 
 Reads and writes over the comments table.
 
+- const `UPDATABLE` = `array (   0 => 'comment_post_ID',   1 => 'comment_author',   2 => 'comment_author_email',   3 => 'comment_author_url',   4 => 'comment_author_IP',   5 => 'comment_date',   6 => 'comment_date_gmt',   7 => 'comment_content',   8 => 'comment_karma',   9 => 'comment_approved',   10 => 'comment_agent',   11 => 'comment_type',   12 => 'comment_parent',   13 => 'user_id', )`
+
+Used by: `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Content\CommentModeration`, `Minn\Engine`, `Minn\Front\CommentPostController`, `Minn\Front\Feeds`, `Minn\Rest\Api`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Theme\PageRenderer`
+
 ```php
 __construct(Minn\Db $db)
 ```
+
 
 ### `find(int $id): ?Minn\Content\CommentRecord`
 
@@ -274,6 +291,8 @@ stored row; the approval shorthands hold/approve become the stored 0/1.
 - `@param array<string, mixed> $current`
 - `@return array<string, mixed>`
 
+Internals: `idFilter()` (private, line 93)
+
 
 ## ContentScan
 
@@ -288,6 +307,8 @@ without a database.
 - const `CORE_TYPES` = `array (   0 => 'post',   1 => 'page',   2 => 'attachment',   3 => 'revision',   4 => 'nav_menu_item',   5 => 'custom_css',   6 => 'customize_changeset',   7 => 'oembed_cache',   8 => 'user_request',   9 => 'wp_block',   10 => 'wp_template',   11 => 'wp_template_part',   12 => 'wp_global_styles',   13 => 'wp_navigation',   14 => 'wp_font_family',   15 => 'wp_font_face', )` — Built-in types the engine stores. Public ones are in data/types.json;
 the rest are silent core types that still occupy the posts table.
 - const `CONTENT_TYPES` = `array (   0 => 'post',   1 => 'page',   2 => 'wp_block',   3 => 'wp_template',   4 => 'wp_template_part',   5 => 'wp_navigation', )` — post_content that a visitor (or a theme template) can actually see.
+
+Used by: `Minn\Cli\Installer`
 
 ### static `shortcodes(string $content): array`
 
@@ -331,6 +352,8 @@ those two stems collapse to one family.
 
 - `@param list<string> $names`
 
+Internals: `walk()` (private, line 190)
+
 
 ## Excerpt
 
@@ -348,11 +371,18 @@ so a modern list contributes nothing while a classic one does).
 - Whitespace collapses, 55 words, an ellipsis when cut, wrapped in <p>,
 texturized (a feed texturizes first, so its inline code stays raw). A hand-written excerpt skips the block filter.
 
+- const `ALLOWED` = `array (   0 => 'core/paragraph',   1 => 'core/heading',   2 => 'core/list',   3 => 'core/quote',   4 => 'core/pullquote',   5 => 'core/verse',   6 => 'core/preformatted',   7 => 'core/table',   8 => 'core/group',   9 => 'core/columns',   10 => 'core/column',   11 => 'core/media-text',   12 => 'core/html',   13 => 'core/more',   14 => 'core/freeform', )`
+- const `INLINE` = `array (   0 => 'a',   1 => 'abbr',   2 => 'b',   3 => 'bdi',   4 => 'bdo',   5 => 'br',   6 => 'cite',   7 => 'code',   8 => 'data',   9 => 'dfn',   10 => 'em',   11 => 'i',   12 => 'kbd',   13 => 'mark',   14 => 'q',   15 => 's',   16 => 'samp',   17 => 'small',   18 => 'span',   19 => 'strong',   20 => 'sub',   21 => 'sup',   22 => 'time',   23 => 'u',   24 => 'var',   25 => 'wbr',   26 => 'del',   27 => 'ins', )`
+
+Used by: `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Front\Feeds`, `Minn\Front\Renderer`, `Minn\Rest\PostObject`
+
 ### static `render(Minn\Content\PostRecord $post, bool $stopAtMore = true, bool $forFeed = false): string`
 
 The more tag ends a listing's excerpt but not a feed's, and a feed
 texturizes before the tags go (so inline code keeps straight quotes)
 where a listing texturizes the finished text.
+
+Internals: `recordRendered()` (private, line 78), `allowedMarkup()` (private, line 88)
 
 
 ## Inventory
@@ -364,9 +394,14 @@ The shapes match `wp plugin list` / `wp theme list` captured from the
 reference: name is the directory (or the drop-in filename), title and
 version come from the file headers, status from the options.
 
+- const `DROPINS` = `array (   0 => 'advanced-cache.php',   1 => 'db.php',   2 => 'db-error.php',   3 => 'fatal-error-handler.php',   4 => 'install.php',   5 => 'maintenance.php',   6 => 'object-cache.php',   7 => 'php-error.php',   8 => 'sunrise.php', )` — Drop-in filenames at wp-content/ that hosting tools treat as WordPress drop-ins.
+
+Used by: `Minn\Admin\Diagnostics`, `Minn\Admin\ManageController`, `Minn\Admin\Packages`, `Minn\Admin\Updates`, `Minn\Cli\AssetUpdate`, `Minn\Cli\MinnCommand`, `Minn\Cli\PluginCommand`, `Minn\Cli\ThemeCommand`, `Minn\Content\PluginState`, `Minn\Engine`, `Minn\Rest\Api`, `Minn\Rest\PluginsController`
+
 ```php
 __construct(string $contentDir, Minn\Content\Site $site)
 ```
+
 
 ### `plugins(): array`
 
@@ -393,6 +428,8 @@ Every regular plugin's main file: relative "dir/file.php" (or
 
 - `@return array<string, string>`
 
+Internals: `regularPlugins()` (private, line 139), `mainPluginFile()` (private, line 214), `item()` (private, line 234)
+
 
 ## MenuItem
 
@@ -400,6 +437,8 @@ Every regular plugin's main file: relative "dir/file.php" (or
 
 One classic nav_menu_item, fields resolved from the post, its
 `_menu_item_*` meta, and the object it points at.
+
+Used by: `Minn\Content\Menus`, `Minn\Rest\MenuItemObject`
 
 ```php
 __construct(int $id, string $title, string $url, string $type, string $object, int $objectId, int $parent, int $menuOrder, string $target, array $classes, array $xfn, string $attrTitle, string $description, string $status, int $menuId, bool $invalid)
@@ -431,9 +470,12 @@ Classic nav_menu terms and nav_menu_item posts. The front uses these
 when a navigation block has no inner blocks and no wp_navigation post;
 REST serves the same rows as wp/v2/menus and menu-items.
 
+Used by: `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Rest\Api`, `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`
+
 ```php
 __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Content\Terms $terms, Minn\Front\Permalinks $permalinks, ?Minn\Content\PostWriter $writer = NULL, ?Minn\Content\Site $site = NULL)
 ```
+
 
 ### `all(): array`
 
@@ -507,6 +549,8 @@ authorId: int
 
 ### `deleteItem(int $id): void`
 
+Internals: `hydrate()` (private, line 173), `meta()` (private, line 230), `menuIdOf()` (private, line 243), `classList()` (private, line 255), `xfnList()` (private, line 265), `writeMeta()` (private, line 453), `writer()` (private, line 467), `site()` (private, line 475)
+
 
 ## MoreTag
 
@@ -528,6 +572,8 @@ is, as does the `<!--noteaser-->` flag that follows some of them.
 
 One page of a listing: the rows on it and how many rows the whole
 listing has, which is what pagination is counted from.
+
+Used by: `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\Posts`, `Minn\Theme\MainQueryBridge`
 
 ```php
 __construct(array $posts, int $total)
@@ -564,6 +610,8 @@ reference shows them to a reader who has not entered the password.
 
 - const `EXCERPT` = `'There is no excerpt because this is a protected post.'`
 
+Used by: `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Front\Feeds`, `Minn\Front\Renderer`, `Minn\Theme\ClassicContent`
+
 ### static `is(Minn\Content\PostRecord $post): bool`
 
 True while the post has a password the reader's cookie does not match.
@@ -587,9 +635,12 @@ Minn extension joins or leaves minn_active_extensions, and deactivating
 one also releases the plugin files it stood in for. The REST toggle and
 the CLI verbs share this so they cannot drift.
 
+Used by: `Minn\Cli\PluginCommand`, `Minn\Rest\PluginsController`
+
 ```php
 __construct(Minn\Content\Site $site, Minn\Content\Inventory $inventory, Minn\Extension\Loader $extensions)
 ```
+
 
 ### `find(string $slug): Minn\Extension\Manifest|string|null`
 
@@ -601,6 +652,8 @@ folder there as active); only a pure extension uses the engine's list.
 ### `isActive(Minn\Extension\Manifest|string $plugin): bool`
 
 ### `setActive(Minn\Extension\Manifest|string $plugin, bool $active): void`
+
+Internals: `setFileActive()` (private, line 72)
 
 
 ## PostClasses
@@ -630,6 +683,8 @@ The reference keeps letters, digits, hyphens and underscores in a class name.
 What a listing is narrowed to. Every field is optional and the object is
 immutable, so a filter reads as a sentence: types('post')->inTerm(12).
 Dates are site-local "Y-m-d H:i:s" bounds, from inclusive, to exclusive.
+
+Used by: `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\Posts`, `Minn\Front\ProbeController`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Theme\MainQueryBridge`
 
 ```php
 __construct(array $types = array (   0 => 'post', ), ?int $term = NULL, ?int $author = NULL, ?string $from = NULL, ?string $to = NULL, ?string $search = NULL)
@@ -673,6 +728,8 @@ works in columns is not disturbed.
 Array access is the migration bridge: code that still reads
 $post['post_title'] keeps working while it is moved over. New code
 reads the properties. The style suite counts the bracket reads down.
+
+Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\Excerpt`, `Minn\Content\Page`, `Minn\Content\PasswordGate`, `Minn\Content\PostStatus`, `Minn\Content\Posts`, `Minn\Engine`, `Minn\Extension\SeamRunner`, `Minn\Front\Canonical`, `Minn\Front\CommentPostController`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\Renderer`, `Minn\Front\Resolution`, `Minn\Front\Resolver`, `Minn\Front\Sitemaps`, `Minn\Rest\CommentsController`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Runtime\CommentCloser`, `Minn\Theme\ClassicContent`, `Minn\Theme\HeadLinks`
 
 - readonly `int $id`
 - readonly `int $authorId`
@@ -746,6 +803,8 @@ The statuses a post row can hold; the value is the column's own spelling.
 
 Cases: `Publish` = `'publish'`, `Draft` = `'draft'`, `Pending` = `'pending'`, `Private` = `'private'`, `Future` = `'future'`, `Trash` = `'trash'`, `Inherit` = `'inherit'`, `AutoDraft` = `'auto-draft'`
 
+Used by: `Minn\Content\PostRecord`, `Minn\Content\Reader`, `Minn\Rest\PostObject`, `Minn\Rest\PostsWriteController`
+
 ### static `of(Minn\Content\PostRecord|array $row): ?self`
 
 A row's status, or null for a value no enum case spells (a plugin's own status).
@@ -769,9 +828,12 @@ Every write to the posts table and its satellites: rows, meta, term
 links with the published counts the reference trusts on read, sticky
 and format side effects, and revision snapshots.
 
+Used by: `Minn\Admin\V1Controller`, `Minn\Cli\MinnCommand`, `Minn\Content\Menus`, `Minn\Content\Revisions`, `Minn\Cron\Cron`, `Minn\Engine`, `Minn\Media\Writer`, `Minn\Rest\Api`, `Minn\Rest\MediaController`, `Minn\Rest\PostsWriteController`, `Minn\Runtime\PostInsert`, `Minn\Runtime\TermWriter`, `Minn\Theme\TemplateWriter`
+
 ```php
 __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Content\Site $site)
 ```
+
 
 ### `insert(array $columns): int`
 
@@ -850,9 +912,12 @@ A deleted post's children (pages, and every attachment) move up to its parent.
 Reads over the posts table. A single post comes back as a PostRecord and
 a listing as a Page of them; rendering and escaping happen elsewhere.
 
+Used by: `Minn\Admin\BootPayload`, `Minn\Admin\RenderController`, `Minn\Admin\V1Controller`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Renderer`, `Minn\Cli\MinnCommand`, `Minn\Content\Menus`, `Minn\Content\PostWriter`, `Minn\Engine`, `Minn\Front\CommentPostController`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\ProbeController`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Rest\Api`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TemplateObject`, `Minn\Runtime\PostQuery`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
+
 ```php
 __construct(Minn\Db $db)
 ```
+
 
 ### `find(int $id): ?Minn\Content\PostRecord`
 
@@ -945,6 +1010,8 @@ Reusable blocks (wp_block rows) in one status, newest first, capped at 100.
 
 ### `firstCategorySlug(int $postId): ?string`
 
+Internals: `record()` (private, line 21), `scope()` (private, line 174), `like()` (private, line 200)
+
 
 ## Reader
 
@@ -954,6 +1021,8 @@ Who is reading this request: their user id, whether they may read
 private content, whether they may edit a given post, and the
 post-password cookie they carry. Set once per request by the engine
 and consulted by the resolver, the queries, and the renderers.
+
+Used by: `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Content\PasswordGate`, `Minn\Content\Posts`, `Minn\Engine`, `Minn\Extension\Seams`, `Minn\Front\CommentPostController`, `Minn\Front\Resolver`, `Minn\Runtime\PostQuery`, `Minn\Runtime\Runtime`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\PageRenderer`
 
 ```php
 __construct(int $userId, bool $readsPrivatePosts, bool $readsPrivatePages, Closure $canEditPost, string $postPassword, string $sessionToken = '', array $roles = array ( ))
@@ -990,9 +1059,12 @@ The statuses a listing may show this reader: published, plus private when they m
 
 Revision rows: the plain snapshots and the per-author autosave slots.
 
+Used by: `Minn\Rest\Api`, `Minn\Rest\RevisionsController`
+
 ```php
 __construct(Minn\Db $db, Minn\Content\PostWriter $writer, Minn\Content\Site $site)
 ```
+
 
 ### `of(int $parentId, bool $autosaves): array`
 
@@ -1009,9 +1081,12 @@ One autosave slot per author: updated in place when it exists.
 
 Site-wide options and the site's clock.
 
+Used by: `Minn\Admin\ActivityChart`, `Minn\Admin\App`, `Minn\Admin\BootPayload`, `Minn\Admin\CoreStatus`, `Minn\Admin\Dashboard`, `Minn\Admin\Diagnostics`, `Minn\Admin\LanguageController`, `Minn\Admin\ManageController`, `Minn\Admin\Notifications`, `Minn\Admin\Packages`, `Minn\Admin\PackagesController`, `Minn\Admin\RenderController`, `Minn\Admin\Translations`, `Minn\Admin\Updates`, `Minn\Admin\V1Controller`, `Minn\Blocks\Dynamic\Dates`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Cli\MinnCommand`, `Minn\Cli\Runtime`, `Minn\Content\Inventory`, `Minn\Content\Menus`, `Minn\Content\PluginState`, `Minn\Content\PostWriter`, `Minn\Content\Revisions`, `Minn\Cron\Cron`, `Minn\Engine`, `Minn\Extension\Loader`, `Minn\Extension\Seams`, `Minn\Front\AdminBar`, `Minn\Front\CommentPostController`, `Minn\Front\Feeds`, `Minn\Front\ProbeController`, `Minn\Front\Sitemaps`, `Minn\Login\LoginController`, `Minn\Mail\MailSettings`, `Minn\Mail\Mailer`, `Minn\Media\Images`, `Minn\Media\Uploads`, `Minn\Media\Writer`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\CommentsController`, `Minn\Rest\IndexController`, `Minn\Rest\MediaController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Settings`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Runtime\Plugins`, `Minn\Runtime\Recovery`, `Minn\Runtime\Runtime`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\ClassicTheme`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\TemplateIndex`, `Minn\Theme\TemplateWriter`, `Minn\Theme\Theme`
+
 ```php
 __construct(Minn\Db $db)
 ```
+
 
 ### `option(string $name): ?string`
 
@@ -1040,6 +1115,11 @@ the pair of columns it fills, plus its timestamp.
 ## Slug
 
 `final class Minn\Content\Slug` · `public/minn/src/Minn/Content/Slug.php`
+
+- const `SAVE_DASHES` = `array (   0 => '%c2%a0',   1 => '%e2%80%93',   2 => '%e2%80%94',   3 => '&nbsp;',   4 => '&#160;',   5 => '&ndash;',   6 => '&#8211;',   7 => '&mdash;',   8 => '&#8212;',   9 => '/',   10 => '×',   11 => '%c3%97', )`
+- const `SAVE_DROPPED` = `array (   0 => '%c2%ad',   1 => '%c2%a1',   2 => '%c2%bf',   3 => '%c2%ab',   4 => '%c2%bb',   5 => '%e2%80%b9',   6 => '%e2%80%ba',   7 => '%e2%80%98',   8 => '%e2%80%99',   9 => '%e2%80%9c',   10 => '%e2%80%9d',   11 => '%e2%80%9a',   12 => '%e2%80%9b',   13 => '%e2%80%9e',   14 => '%e2%80%9f',   15 => '%e2%80%a2',   16 => '%c2%a9',   17 => '%c2%ae',   18 => '%c2%b0',   19 => '%e2%80%a6',   20 => '%e2%84%a2',   21 => '%c2%b4',   22 => '%cb%8a',   23 => '%cc%81',   24 => '%cd%81',   25 => '%cc%80',   26 => '%cc%84',   27 => '%cc%8c',   28 => '%e2%82%ac',   29 => '%c2%a3',   30 => '%e2%80%80',   31 => '%e2%80%81',   32 => '%e2%80%82',   33 => '%e2%80%83',   34 => '%e2%80%84',   35 => '%e2%80%85',   36 => '%e2%80%86',   37 => '%e2%80%87',   38 => '%e2%80%88',   39 => '%e2%80%89',   40 => '%e2%80%8a',   41 => '%e2%80%8b',   42 => '%e2%80%8c',   43 => '%e2%80%8d',   44 => '%e2%80%8e',   45 => '%e2%80%8f',   46 => '%e2%80%aa',   47 => '%e2%80%ab',   48 => '%e2%80%ac',   49 => '%e2%80%ad',   50 => '%e2%80%ae',   51 => '%e2%80%af',   52 => '%e2%81%9f',   53 => '%e3%80%80',   54 => '%ef%bb%bf', )`
+
+Used by: `Minn\Content\PostWriter`, `Minn\Content\Terms`, `Minn\Content\Users`, `Minn\Media\Writer`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Runtime\PostInsert`
 
 ### static `sanitize(string $text): string`
 
@@ -1076,6 +1156,8 @@ a joined run otherwise. Both carry rel="category tag".
 
 - `@param list<array{name: string, url: string}> $categories`
 
+Internals: `anchor()` (private, line 50)
+
 
 ## TermRecord
 
@@ -1085,6 +1167,8 @@ One term with its taxonomy row, read by name: $term->name, ->slug,
 ->taxonomy, ->parentId, ->count. The taxonomy and description are empty
 when the query that built the record did not select them. Array access
 is the migration bridge, read-only.
+
+Used by: `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\Menus`, `Minn\Content\Terms`, `Minn\Front\Permalinks`, `Minn\Front\Resolution`, `Minn\Front\Resolver`, `Minn\Front\Sitemaps`, `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`, `Minn\Rest\TermObject`, `Minn\Rest\TermsController`, `Minn\Runtime\TermWriter`
 
 - readonly `int $id`
 - readonly `string $name`
@@ -1122,9 +1206,12 @@ is the migration bridge, read-only.
 
 `final readonly class Minn\Content\Terms` · `public/minn/src/Minn/Content/Terms.php`
 
+Used by: `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\Menus`, `Minn\Front\Permalinks`, `Minn\Front\Resolver`, `Minn\Rest\Api`, `Minn\Rest\TermsController`, `Minn\Runtime\TermWriter`, `Minn\Theme\TemplateWriter`
+
 ```php
 __construct(Minn\Db $db)
 ```
+
 
 ### `findBySlug(string $taxonomy, string $slug): ?Minn\Content\TermRecord`
 
@@ -1156,6 +1243,8 @@ Reparents children to the grandparent, detaches relationships, drops the rows.
 
 "parent/child" for hierarchical taxonomies, the bare slug otherwise.
 
+Internals: `record()` (private, line 16)
+
 
 ## Texturize
 
@@ -1165,6 +1254,10 @@ The texturize subset the reference applies to rendered text: straight
 quotes, apostrophes, ellipses, dashes, and primes become numeric
 entities, outside the skip elements only. Coverage is pinned by the
 texturize battery post; anything beyond it is a documented gap.
+
+- const `SKIP` = `'pre|code|kbd|style|script|tt|textarea'`
+
+Used by: `Minn\Admin\ActivityFeed`, `Minn\Admin\Format`, `Minn\Admin\Notifications`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Renderer`, `Minn\Content\Blocks`, `Minn\Content\Excerpt`, `Minn\Front\Feeds`, `Minn\Rest\MediaObject`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Theme\ClassicContent`, `Minn\Theme\PageRenderer`
 
 ### static `html(string $html): string`
 
@@ -1179,6 +1272,8 @@ One row of the users table, read by name. Columns keep their WordPress
 spelling in row(); here they are $user->login, ->email, ->displayName.
 Array access is the migration bridge, read-only; new code reads the
 properties.
+
+Used by: `Minn\Auth\AuthCookies`, `Minn\Auth\Authenticated`, `Minn\Auth\Authenticator`, `Minn\Auth\Cookie`, `Minn\Auth\PasswordReset`, `Minn\Cli\UserCommand`, `Minn\Content\Users`, `Minn\Front\CommentPostController`, `Minn\Front\Permalinks`, `Minn\Front\Resolution`, `Minn\Front\Resolver`, `Minn\Front\Sitemaps`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`
 
 - readonly `int $id`
 - readonly `string $login`
@@ -1222,9 +1317,12 @@ The name shown for this person: the display name, or the login when none was set
 
 `final readonly class Minn\Content\Users` · `public/minn/src/Minn/Content/Users.php`
 
+Used by: `Minn\Admin\ActivityFeed`, `Minn\Admin\Appearance`, `Minn\Admin\Dashboard`, `Minn\Admin\HiddenIntegrations`, `Minn\Admin\LanguageController`, `Minn\Admin\Notifications`, `Minn\Admin\SessionsController`, `Minn\Admin\Translations`, `Minn\Admin\V1Controller`, `Minn\Auth\ApplicationPasswords`, `Minn\Auth\Authenticator`, `Minn\Auth\Capabilities`, `Minn\Auth\Cookie`, `Minn\Auth\PasswordReset`, `Minn\Auth\Sessions`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Cli\Runtime`, `Minn\Engine`, `Minn\Front\Feeds`, `Minn\Login\LoginController`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\PostObject`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Theme\PageRenderer`
+
 ```php
 __construct(Minn\Db $db)
 ```
+
 
 ### `find(int $id): ?Minn\Content\UserRecord`
 
@@ -1299,4 +1397,6 @@ One usermeta value, raw. Serialized blobs come back as stored.
 Replaces one usermeta row. The (user_id, meta_key) pair carries no
 unique index on the stock schema, so this is a delete plus insert
 rather than an upsert.
+
+Internals: `record()` (private, line 19)
 

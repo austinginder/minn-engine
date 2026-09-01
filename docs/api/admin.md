@@ -40,9 +40,12 @@ comment, counted per bar. A window over 45 days is drawn in weeks,
 anything shorter in days; each bar carries the (from, to] GMT bounds
 the drill-down asks for.
 
+Used by: `Minn\Admin\Dashboard`, `Minn\Rest\Api`
+
 ```php
 __construct(Minn\Db $db, Minn\Content\Site $site)
 ```
+
 
 ### `bars(int $days, int $now): array`
 
@@ -65,9 +68,12 @@ What happened lately, as the overview and the bell tell it: the caller's
 own recent posts and the latest comments, and the events behind one
 chart bar. Also the visibility rule every comment row is put through.
 
+Used by: `Minn\Admin\Dashboard`, `Minn\Admin\Notifications`, `Minn\Rest\Api`
+
 ```php
 __construct(Minn\Db $db, Minn\Content\Users $users, Minn\Auth\Capabilities $capabilities)
 ```
+
 
 ### `recent(int $userId, int $now, int $offset): array`
 
@@ -97,6 +103,8 @@ May this caller see a comment row that names its post?
 
 ### `displayName(int $userId): string`
 
+Internals: `ownPosts()` (private, line 96), `latestComments()` (private, line 141), `publishedBetween()` (private, line 169), `commentsBetween()` (private, line 194)
+
 
 ## AdminTypes
 
@@ -106,9 +114,12 @@ Admin-facing type facts (viewable, labels, supports, the edit gate) live
 beside, not inside, the wp/v2 registry, so the types route's payload
 stays byte-faithful.
 
+Used by: `Minn\Admin\V1Controller`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Rest\Api`
+
 ```php
 __construct(Minn\Rest\Types $types, Minn\Auth\Capabilities $capabilities)
 ```
+
 
 ### `extra(): array`
 
@@ -138,9 +149,14 @@ Whether a UI post type still supports comments.
 The Minn Admin app on disk: the symlinked dev copy the engine serves the
 shell and assets from. Minn Admin is MIT, so reading its files is fine.
 
+- const `ASSET_TYPES` = `array (   'css' => 'text/css',   'js' => 'application/javascript',   'woff2' => 'font/woff2',   'woff' => 'font/woff',   'svg' => 'image/svg+xml',   'png' => 'image/png',   'json' => 'application/json', )`
+
+Used by: `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Admin\ManageController`, `Minn\Admin\Translations`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Rest\Api`
+
 ```php
 __construct(string $dir)
 ```
+
 
 ### static `switchedOff(string $contentDir, Minn\Content\Site $site): bool`
 
@@ -179,9 +195,12 @@ Serves Minn Admin from the engine: the path-routed shell (every
 sub-path renders the same page), the app's assets, and the one
 admin-ajax action app.js uses to refresh its nonce.
 
+Used by: `Minn\Engine`
+
 ```php
 __construct(Minn\Admin\App $app, Minn\Admin\BootPayload $payload, Minn\Auth\Authenticator $authenticator, Minn\Auth\Capabilities $capabilities, Minn\Front\Permalinks $permalinks, string $engineVersion, bool $off = false)
 ```
+
 
 ### `shell(Minn\Http\Request $request): Minn\Http\Response`
 
@@ -198,6 +217,8 @@ Route: `GET /minn/admin/assets/{path*}`
 ### `ajax(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `* /wp-admin/admin-ajax.php`
+
+Internals: `offPage()` (private, line 61), `render()` (private, line 105)
 
 
 ## Appearance
@@ -217,9 +238,12 @@ writes to them.
 - const `SLOTS` = `array (   0 => 'bg',   1 => 'bg2',   2 => 'panel',   3 => 'panel2',   4 => 'hover',   5 => 'border',   6 => 'border2',   7 => 'text',   8 => 'text2',   9 => 'text3',   10 => 'accent',   11 => 'accent2',   12 => 'accentFg', )` — Scheme slots in the order the app lists them.
 - const `BASE` = `array (   'dark' =>    array (     'bg' => '#0b0b0d',     'bg2' => '#101013',     'panel' => '#151518',     'panel2' => '#1b1b1f',     'hover' => '#202027',     'border' => '#242429',     'border2' => '#31313a',     'text' => '#ececed',     'text2' => '#9d9da7',     'text3' => '#63636d',     'accent' => '#6e62f5',     'accent2' => '#8a80f8',     'accentFg' => '#ffffff',   ),   'light' =>    array (     'bg' => '#f6f6f7',     'bg2' => '#ffffff',     'panel' => '#ffffff',     'panel2' => '#f4f4f6',     'hover' => '#eeeef1',     'border' => '#e7e7ea',     'border2' => '#dadade',     'text' => '#1a1a1f',     'text2' => '#5e5e69',     'text3' => '#9696a0',     'accent' => '#6a5ef2',     'accent2' => '#5a4ef0',     'accentFg' => '#ffffff',   ), )` — The app's own Minn tokens, the fill for incomplete custom maps.
 
+Used by: `Minn\Admin\BootPayload`, `Minn\Admin\ManageController`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Rest\Api`
+
 ```php
 __construct(Minn\Content\Users $users)
 ```
+
 
 ### `read(int $userId): array`
 
@@ -244,13 +268,20 @@ The window.MINN boot payload, assembled from the engine: the keys app.js
 needs to boot and drive the wp/v2 surface, with capabilities from the
 engine's own model.
 
+- const `PLUGIN_KEYS_WITHHELD` = `array (   0 => 'notices', )` — Boot keys the plugin computes that point the app at wp-admin pages the engine does not serve.
+
+Used by: `Minn\Admin\AppController`, `Minn\Engine`
+
 ```php
 __construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, Minn\Auth\Capabilities $capabilities, Minn\Admin\App $app, string $engineVersion, Minn\Admin\Appearance $appearance, Minn\Admin\HiddenIntegrations $hidden, Minn\Content\Posts $posts, bool $blockTheme = false, ?Minn\Admin\Translations $translations = NULL)
 ```
 
+
 ### `siteName(): string`
 
 ### `build(Minn\Auth\Authenticated $session): array`
+
+Internals: `pluginPayload()` (private, line 154), `standHomeQuery()` (private, line 176), `siteIcon()` (private, line 190), `adapterSlices()` (private, line 202)
 
 
 ## CoreStatus
@@ -263,9 +294,12 @@ the engine never reads WordPress code files and never phones home
 itself. dbUpgrade is false by definition: there is no newer core code
 on disk for the database to lag behind.
 
+Used by: `Minn\Admin\V1Controller`, `Minn\Rest\Api`
+
 ```php
 __construct(Minn\Content\Site $site)
 ```
+
 
 ### `data(): array`
 
@@ -277,9 +311,12 @@ __construct(Minn\Content\Site $site)
 The overview payload: stat cards, the activity chart, and the recent
 activity feed, plus the per-bar activity drill-down.
 
+Used by: `Minn\Admin\V1Controller`, `Minn\Rest\Api`
+
 ```php
 __construct(Minn\Db $db, Minn\Content\Site $site, Minn\Content\Users $users, Minn\Auth\Capabilities $capabilities, Minn\Admin\ActivityChart $chart, Minn\Admin\ActivityFeed $feed, string $uploadsDir)
 ```
+
 
 ### `overview(int $userId, int $days): array`
 
@@ -302,6 +339,8 @@ At most six unique sanitize_key metric ids; anything else drops.
 
 The events behind one chart bar, (from, to] GMT.
 
+Internals: `postsCard()` (private, line 73), `pagesCard()` (private, line 88), `usersCard()` (private, line 93), `commentsCard()` (private, line 99), `mediaCard()` (private, line 113), `metricCatalog()` (private, line 130), `overlayMetricKeys()` (private, line 222), `statusCounts()` (private, line 264), `commentCounts()` (private, line 275), `uploadsSize()` (private, line 289)
+
 
 ## Diagnostics
 
@@ -311,9 +350,14 @@ The System view's facts about this install: the engine, PHP, the
 database, and the server, with the health checks a site owner acts on.
 Every number is read live; nothing is cached or fetched from outside.
 
+- const `AUTOLOAD_VALUES` = `array (   0 => 'yes',   1 => 'on',   2 => 'auto',   3 => 'auto-on', )`
+
+Used by: `Minn\Admin\SystemController`, `Minn\Rest\Api`
+
 ```php
 __construct(Minn\Db $db, Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, Minn\Content\Inventory $inventory, Minn\Extension\Loader $extensions, Minn\Admin\Logs $logs, string $engineVersion, string $webroot)
 ```
+
 
 ### `payload(Minn\Http\Request $request): array`
 
@@ -327,12 +371,16 @@ Every scheduled post as a one-off event, soonest first.
 
 ### `autoload(): array`
 
+Internals: `autoloadSummary()` (private, line 218), `cronSummary()` (private, line 233), `futurePosts()` (private, line 251), `databaseGroup()` (private, line 259), `extensionsManifest()` (private, line 297), `activeThemeLabel()` (private, line 323), `check()` (private, line 338), `rows()` (private, line 344), `bytes()` (private, line 353), `offsetLabel()` (private, line 368), `relative()` (private, line 376)
+
 
 ## Format
 
 `final class Minn\Admin\Format` · `public/minn/src/Minn/Admin/Format.php`
 
 The dashboard's number, size, age, and title formatting.
+
+Used by: `Minn\Admin\ActivityFeed`, `Minn\Admin\Dashboard`, `Minn\Admin\Notifications`
 
 ### static `number(int|float $value, int $decimals = 0): string`
 
@@ -366,10 +414,14 @@ unregistered and a stored hide of one is simply not listed.
 
 - const `META` = `'minn_admin_hidden_integrations'`
 - const `CORE` = `array (   'content' =>    array (     0 => 'Content',     1 => 'edit_posts',   ),   'media' =>    array (     0 => 'Media',     1 => 'upload_files',   ),   'comments' =>    array (     0 => 'Comments',     1 => 'moderate_comments',   ),   'orders' =>    array (     0 => 'Orders',     1 => 'edit_shop_orders',   ),   'subscriptions' =>    array (     0 => 'Subscriptions',     1 => 'edit_shop_orders',   ),   'products' =>    array (     0 => 'Products',     1 => 'edit_products',   ),   'coupons' =>    array (     0 => 'Coupons',     1 => 'edit_shop_coupons',   ),   'customers' =>    array (     0 => 'Customers',     1 => 'list_users',   ),   'users' =>    array (     0 => 'Users',     1 => 'list_users',   ),   'terms' =>    array (     0 => 'Terms',     1 => 'manage_categories',   ),   'menus' =>    array (     0 => 'Menus',     1 => 'edit_theme_options',   ),   'widgets' =>    array (     0 => 'Widgets',     1 => 'edit_theme_options',   ),   'posttypes' =>    array (     0 => 'Structure',     1 => 'manage_options',   ),   'extensions' =>    array (     0 => 'Extensions',     1 => 'activate_plugins',   ),   'database' =>    array (     0 => 'Database',     1 => 'manage_options',   ),   'system' =>    array (     0 => 'System',     1 => 'manage_options',   ),   'settings' =>    array (     0 => 'Settings',     1 => 'manage_options',   ), )` — Core view id => [label, the capability that shows the view].
+- const `CAP` = `100` — Newest hides kept when the map is capped.
+
+Used by: `Minn\Admin\BootPayload`, `Minn\Admin\ManageController`, `Minn\Engine`, `Minn\Rest\Api`
 
 ```php
 __construct(Minn\Content\Users $users, Minn\Auth\Capabilities $capabilities)
 ```
+
 
 ### static `sanitize(string $id): string`
 
@@ -406,10 +458,14 @@ carries `data-installed` before `selected`, an installed translation carries
 it after, and themes and plugins have been matching on that markup for
 years.
 
+- const `ENGLISH` = `'English (United States)'`
+
 ### static `dropdown(string $name, string $id, array $installed, array $available, string $selected, bool $offerAvailable): string`
 
 - `@param list<string> $installed locale codes the site already holds`
 - `@param array<string, array{language: string, native_name: string, iso: array<int|string, string>}> $available every translation the directory offers, keyed by locale`
+
+Internals: `option()` (private, line 50)
 
 
 ## LanguageController
@@ -418,9 +474,12 @@ years.
 
 Languages: what is installed, what a person reads in, what the site defaults to.
 
+Used by: `Minn\Rest\Api`
+
 ```php
 __construct(Minn\Admin\Translations $translations, Minn\Content\Users $users, Minn\Content\Site $site, Minn\Auth\Capabilities $capabilities, Minn\Rest\Caller $caller)
 ```
+
 
 ### `languages(Minn\Http\Request $request): Minn\Http\Response`
 
@@ -444,6 +503,8 @@ Route: `POST /minn-admin/v1/users/{id:\d+}/language`
 
 Route: `POST /minn-admin/v1/site/language`
 
+Internals: `setUserLocale()` (private, line 88), `ensure()` (private, line 100), `reply()` (private, line 115), `requireFloor()` (private, line 120), `requireCap()` (private, line 127)
+
 
 ## Logs
 
@@ -454,9 +515,14 @@ engine's failure handler writes, and PHP's own error log when it is a
 separate file inside the site. Anything outside the site is named but
 never read; it may be another tenant's.
 
+- const `TAIL_BYTES` = `262144`
+
+Used by: `Minn\Admin\Diagnostics`, `Minn\Admin\SystemController`, `Minn\Rest\Api`
+
 ```php
 __construct(string $webroot)
 ```
+
 
 ### `sources(): array`
 
@@ -494,9 +560,12 @@ channel to poll), the bundled changelog and guide, and the person's
 appearance. Everything answers from the registries, the theme folders,
 and the app bundle on disk; nothing calls out.
 
+Used by: `Minn\Rest\Api`
+
 ```php
 __construct(Minn\Db $db, Minn\Content\Site $site, Minn\Rest\Types $types, Minn\Rest\Taxonomies $taxonomies, Minn\Extension\Loader $extensions, Minn\Content\Inventory $inventory, Minn\Front\Permalinks $permalinks, Minn\Admin\App $app, Minn\Admin\Appearance $appearance, Minn\Admin\HiddenIntegrations $hiddenIntegrations, Minn\Admin\Updates $updates, Minn\Rest\Caller $caller, string $contentDir)
 ```
+
 
 ### `termTaxonomies(Minn\Http\Request $request): Minn\Http\Response`
 
@@ -568,6 +637,8 @@ Route: `POST /minn-admin/v1/integrations/hide`
 
 Route: `POST /minn-admin/v1/integrations/unhide`
 
+Internals: `integrationId()` (private, line 288), `integrationState()` (private, line 301), `bundled()` (private, line 316), `appearanceBody()` (private, line 322), `editableUser()` (private, line 328), `themeText()` (private, line 339), `themeFolders()` (private, line 345), `screenshot()` (private, line 361), `publicTypes()` (private, line 372), `termCount()` (private, line 377), `postCount()` (private, line 382), `reply()` (private, line 390), `requireFloor()` (private, line 395), `requireCap()` (private, line 402)
+
 
 ## Notifications
 
@@ -579,15 +650,20 @@ theme update rows need an extension inventory the engine does not have
 (a recorded gap); on the reference database those sections are empty,
 so parity holds by construction.
 
+Used by: `Minn\Admin\V1Controller`, `Minn\Rest\Api`
+
 ```php
 __construct(Minn\Db $db, Minn\Content\Site $site, Minn\Content\Users $users, Minn\Auth\Capabilities $capabilities, Minn\Admin\ActivityFeed $feed, Minn\Admin\Updates $updates)
 ```
+
 
 ### `items(int $userId): array`
 
 ### `markRead(int $userId, string $id): void`
 
 An id marks one item read; an empty id marks everything read.
+
+Internals: `commentItems()` (private, line 64), `updateItems()` (private, line 92), `updateItem()` (private, line 123), `coreItems()` (private, line 134), `registrationItems()` (private, line 168), `commentItem()` (private, line 195), `translationCount()` (private, line 211)
 
 
 ## Packages
@@ -602,9 +678,17 @@ Every archive is unpacked through one guarded routine: exactly one
 top-level folder, no absolute or dotted paths, the folder's identity
 checked before it is moved into place.
 
+- const `WPORG_THEMES` = `'https://api.wordpress.org/themes/info/1.2/'`
+- const `WPORG_PLUGINS` = `'https://api.wordpress.org/plugins/info/1.2/'`
+- const `INFO_OPTION` = `'minn_plugin_info'`
+- const `INFO_TTL` = `43200`
+
+Used by: `Minn\Admin\PackagesController`, `Minn\Admin\Updates`, `Minn\Cli\AssetUpdate`, `Minn\Cli\DirectorySearch`, `Minn\Cli\PluginCommand`, `Minn\Cli\ThemeCommand`, `Minn\Engine`, `Minn\Rest\Api`, `Minn\Rest\PluginsController`
+
 ```php
 __construct(Minn\Content\Site $site, string $contentDir)
 ```
+
 
 ### `searchThemes(string $query): array`
 
@@ -669,6 +753,8 @@ Removes a theme or plugin folder that is not in use.
 
 ### `fetch(string $url): string`
 
+Internals: `plain()` (private, line 179), `identify()` (private, line 367), `removeTree()` (private, line 405)
+
 
 ## PackagesController
 
@@ -676,9 +762,12 @@ Removes a theme or plugin folder that is not in use.
 
 Adding and removing themes and extensions from the Extensions view.
 
+Used by: `Minn\Rest\Api`
+
 ```php
 __construct(Minn\Admin\Packages $packages, Minn\Content\Site $site, Minn\Rest\Caller $caller)
 ```
+
 
 ### `searchThemes(Minn\Http\Request $request): Minn\Http\Response`
 
@@ -716,6 +805,8 @@ Route: `GET /minn-admin/v1/plugins/search`
 
 Route: `GET /minn-admin/v1/plugins/info`
 
+Internals: `uploaded()` (private, line 115), `requireCap()` (private, line 127), `reply()` (private, line 135)
+
 
 ## RenderController
 
@@ -726,9 +817,12 @@ renderer the public site uses, with the stylesheets that site loads
 (the engine's block stylesheet, the theme's, and the theme.json rules)
 so a preview looks like the page will.
 
+Used by: `Minn\Rest\Api`
+
 ```php
 __construct(Minn\Db $db, Minn\Content\Site $site, Minn\Content\Posts $posts, Minn\Front\Permalinks $permalinks, Minn\Rest\Caller $caller, string $themesDir)
 ```
+
 
 ### `render(Minn\Http\Request $request): Minn\Http\Response`
 
@@ -740,6 +834,8 @@ Route: `GET /minn-admin/v1/editor-styles`
 
 The stylesheets previews are scoped under: the engine's own, the theme's, and theme.json inline.
 
+Internals: `styles()` (private, line 66), `requireFloor()` (private, line 82), `reply()` (private, line 90)
+
 
 ## SessionsController
 
@@ -750,9 +846,12 @@ the login endpoint writes. Verifiers are the store's keys (the sha256
 of each cookie token), so the app can name one without ever seeing
 the token. Expired rows are skipped, not garbage-collected here.
 
+Used by: `Minn\Rest\Api`
+
 ```php
 __construct(Minn\Content\Users $users, Minn\Auth\Sessions $sessions, Minn\Rest\Caller $caller)
 ```
+
 
 ### `list(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
@@ -768,6 +867,8 @@ Signs the person out everywhere; a caller acting on themselves keeps the session
 
 Route: `DELETE /minn-admin/v1/users/{id:\d+}/sessions/{verifier:[a-f0-9]{40,64}}`
 
+Internals: `target()` (private, line 82)
+
 
 ## SystemController
 
@@ -775,9 +876,12 @@ Route: `DELETE /minn-admin/v1/users/{id:\d+}/sessions/{verifier:[a-f0-9]{40,64}}
 
 The System view: diagnostics, the scheduled-post list, autoloaded options, and the logs.
 
+Used by: `Minn\Rest\Api`
+
 ```php
 __construct(Minn\Admin\Diagnostics $diagnostics, Minn\Admin\Logs $logs, Minn\Rest\Caller $caller)
 ```
+
 
 ### `system(Minn\Http\Request $request): Minn\Http\Response`
 
@@ -817,6 +921,8 @@ Route: `GET /minn-admin/v1/system/debug-log`
 
 Route: `DELETE /minn-admin/v1/system/debug-log`
 
+Internals: `requireOwner()` (private, line 89), `reply()` (private, line 97)
+
 
 ## Translations
 
@@ -831,9 +937,14 @@ fallback). Installing a pack fetches the release asset the bundle's
 manifest names for that locale, checks its hash, and unpacks only that
 locale's files, so an eject leaves the files WordPress would have written.
 
+- const `RTL` = `array (   0 => 'ar',   1 => 'ary',   2 => 'azb',   3 => 'ckb',   4 => 'dv',   5 => 'fa_AF',   6 => 'fa_IR',   7 => 'haz',   8 => 'he_IL',   9 => 'ps',   10 => 'skr',   11 => 'ug_CN',   12 => 'ur', )`
+
+Used by: `Minn\Admin\BootPayload`, `Minn\Admin\LanguageController`, `Minn\Engine`, `Minn\Rest\Api`
+
 ```php
 __construct(Minn\Content\Users $users, Minn\Content\Site $site, Minn\Admin\App $app, string $contentDir)
 ```
+
 
 ### `localeOf(int $userId): string`
 
@@ -869,6 +980,8 @@ Fetches and unpacks Minn Admin's language pack for a locale from the
 release the bundle's manifest names. True when files were written;
 false when the manifest offers no pack for the locale.
 
+Internals: `catalogFiles()` (private, line 183), `installedCodes()` (private, line 195), `names()` (private, line 216), `download()` (private, line 228)
+
 
 ## Updates
 
@@ -885,10 +998,16 @@ auto_update_themes options, in the shape the app already reads.
 
 - const `OPTION` = `'minn_updates'`
 - const `TTL` = `43200`
+- const `PLUGINS_API` = `'https://api.wordpress.org/plugins/update-check/1.1/'`
+- const `THEMES_API` = `'https://api.wordpress.org/themes/update-check/1.1/'`
+- const `PACKAGE_HOST` = `'https://downloads.wordpress.org/'`
+
+Used by: `Minn\Admin\ManageController`, `Minn\Admin\Notifications`, `Minn\Admin\UpdatesController`, `Minn\Cli\AssetUpdate`, `Minn\Cron\Cron`, `Minn\Engine`, `Minn\Rest\Api`
 
 ```php
 __construct(Minn\Content\Site $site, Minn\Content\Inventory $inventory, Minn\Admin\Packages $packages, string $contentDir, string $home, string $wpVersion)
 ```
+
 
 ### `state(bool $fresh = false): array`
 
@@ -958,6 +1077,8 @@ Stylesheet => style.css headers. @return array<string, array<string, string>>
 
 - `@return array<string, array<string, string>>`
 
+Internals: `install()` (private, line 259), `consume()` (private, line 271), `post()` (private, line 283), `map()` (private, line 307), `safeUrl()` (private, line 315)
+
 
 ## UpdatesController
 
@@ -965,9 +1086,12 @@ Stylesheet => style.css headers. @return array<string, array<string, string>>
 
 The minn-admin/v1 update routes: offers, directory meta, the check, the installs, the auto-update lists.
 
+Used by: `Minn\Rest\Api`
+
 ```php
 __construct(Minn\Admin\Updates $updates, Minn\Rest\Caller $caller)
 ```
+
 
 ### `pluginUpdates(Minn\Http\Request $request): Minn\Http\Response`
 
@@ -997,6 +1121,8 @@ Route: `POST /minn-admin/v1/themes/update`
 
 Route: `POST /minn-admin/v1/auto-updates`
 
+Internals: `requireCap()` (private, line 126), `reply()` (private, line 134)
+
 
 ## V1Controller
 
@@ -1006,9 +1132,12 @@ The minn-admin/v1 namespace: the dashboard burst, the editor helpers,
 and the small Settings-view routes. Every route sits behind the same
 capability floor (edit_posts) the plugin declares.
 
+Used by: `Minn\Rest\Api`
+
 ```php
 __construct(Minn\Db $db, Minn\Content\Site $site, Minn\Content\Posts $posts, Minn\Content\PostWriter $writer, Minn\Front\Permalinks $permalinks, Minn\Admin\Dashboard $dashboard, Minn\Admin\Notifications $notifications, Minn\Admin\CoreStatus $core, Minn\Admin\AdminTypes $types, Minn\Rest\Caller $caller, Minn\Content\Users $users)
 ```
+
 
 ### `overview(Minn\Http\Request $request): Minn\Http\Response`
 
@@ -1084,4 +1213,6 @@ Route: `GET /minn-admin/v1/spam`
 ### `mediaMonths(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `GET /minn-admin/v1/media/months`
+
+Internals: `metricKeysFrom()` (private, line 192), `storedMetricLayout()` (private, line 209), `logoUrl()` (private, line 224), `reply()` (private, line 282), `requireFloor()` (private, line 288), `requireCap()` (private, line 295), `days()` (private, line 303), `window()` (private, line 320), `parameterError()` (private, line 346)
 

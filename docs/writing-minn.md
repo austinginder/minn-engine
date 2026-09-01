@@ -180,10 +180,16 @@ must match the same page on the reference with the plugin active.
 ## The API, generated
 
 `docs/api/README.md` indexes every namespace; each page lists every class
-with its docblock, constructor, public properties and methods, read from the
-code by `php tests/tools/api-docs.php`. `contracts/api/minn.json` is the same
-model for tooling. Grep it before you write: `grep -n "function forPost" docs/api/front.md`.
-The same model is browsable, with a filter, at `/api/` on the Minn site.
+with its docblock, constructor, public properties and methods, the classes
+that use it, and a one-line list of its internals, read from the code by
+`php tests/tools/api-docs.php`. `contracts/api/minn.json` is the same model
+for tooling, with more in it: every private and protected method, each
+parameter's docblock note, the source line range of every method, and the
+uses / used-by graph. Grep the Markdown before you write:
+`grep -n "function forPost" docs/api/front.md`. The same model is browsable
+at `/api/` on the Minn site: the index and the namespace pages show the
+public surface, and each class has its own page with the internals, the
+parameter notes, the relations, and the source of every method.
 
 ## Where things live
 

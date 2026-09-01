@@ -28,6 +28,8 @@ The JSON object a block delimiter carries, read in place. Rewriting one
 block's attributes must not disturb the rest of the markup, so callers
 take the object's exact substring rather than reserializing the document.
 
+Used by: `Minn\Theme\TemplatePartTheme`, `Minn\Theme\TemplatePatterns`
+
 ### static `objectAt(string $markup, int $at): ?string`
 
 The JSON object starting at $at, brace-matched through any strings; null when there is none.
@@ -40,6 +42,8 @@ The JSON object starting at $at, brace-matched through any strings; null when th
 One parsed block. A null name is freeform HTML between blocks. The
 innerContent list holds the block's own HTML chunks in order, with a
 null placeholder wherever an inner block sits.
+
+Used by: `Minn\Blocks\Dynamic\Archives`, `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Parser`, `Minn\Blocks\Renderer`, `Minn\Blocks\Wrapper`, `Minn\Content\ContentScan`, `Minn\Content\Excerpt`, `Minn\Content\Menus`, `Minn\Extension\SeamRunner`, `Minn\Runtime\BlockFilters`, `Minn\Theme\TemplatePatterns`
 
 ```php
 __construct(?string $name, array $attrs, array $innerBlocks, string $innerHtml, array $innerContent)
@@ -76,6 +80,8 @@ The block name rules: a string, lower-case, `namespace/name`.
 What the template blocks render against: the resolution, the main
 query's posts, and a stack of "current post" frames pushed by post
 templates and comment templates as they loop.
+
+Used by: `Minn\Blocks\Renderer`, `Minn\Front\ProbeController`, `Minn\Theme\PageRenderer`
 
 ```php
 __construct(Minn\Front\Resolution $resolution, array $posts, int $total, int $perPage, bool $front)
@@ -118,9 +124,17 @@ link colour most often). The reference gives each such block a
 numbered wp-elements-N class and a rule per element state, emitted with
 the page's support styles in render order.
 
+- const `SELECTORS` = `array (   'link' => 'a:where(:not(.wp-element-button))',   'heading' => 'h1, h2, h3, h4, h5, h6',   'h1' => 'h1',   'h2' => 'h2',   'h3' => 'h3',   'h4' => 'h4',   'h5' => 'h5',   'h6' => 'h6',   'button' => '.wp-element-button, .wp-block-button__link', )`
+- const `WITHOUT_ELEMENTS` = `array (   0 => 'core/search',   1 => 'core/navigation',   2 => 'core/social-links',   3 => 'core/buttons',   4 => 'core/button', )` — Blocks whose colour support has no element slots: their stored
+element styles are ignored and do not take a number.
+
+Used by: `Minn\Blocks\Renderer`
+
 ### static `className(array $attrs, ?string $blockName = NULL): ?string`
 
 The block's wp-elements-N class, recording its rules; null when the block styles no element.
+
+Internals: `declarations()` (private, line 67)
 
 
 ## ImageTags
@@ -133,9 +147,12 @@ that order), and srcset plus sizes (appended). The srcset lists the
 displayed size first, then every same-ratio size in stored order, then
 the original.
 
+Used by: `Minn\Blocks\Renderer`
+
 ```php
 __construct(Minn\Content\Posts $posts, Minn\Media\Uploads $uploads)
 ```
+
 
 ### `enrich(string $html, bool $withDataId = false, bool $front = false, bool $autoSizes = true): string`
 
@@ -146,6 +163,8 @@ Rewrites every wp-image-* <img> in a fragment; other images pass through.
 A post's featured image at full size, in the reference's attribute
 order (dimensions, source, class, alt, style, then the loading
 attributes and the srcset). Empty when the attachment has no file.
+
+Internals: `loadingPrefix()` (private, line 45), `minimumPriorityPixels()` (private, line 63), `enrichTag()` (private, line 69), `srcsetAttributes()` (private, line 127)
 
 
 ## Layout
@@ -162,6 +181,9 @@ observable), so the engine derives its own deterministic suffix from the
 layout attributes. Same shape, different value: recorded in the contract,
 and the parity suites normalise it.
 
+Used by: `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Renderer`
+
+
 ### static `rootPaddingAware(bool $aware): void`
 
 ### static `classes(string $blockSlug, array $attrs, string $defaultType = 'flow', bool $alwaysContainer = false): array`
@@ -172,6 +194,8 @@ and the parity suites normalise it.
 
 The declarations behind a container class, in the reference's order.
 
+Internals: `hasRules()` (private, line 66), `suffix()` (private, line 134)
+
 
 ## Parser
 
@@ -181,6 +205,10 @@ Parses block markup into a tree. The grammar is the delimiter comment:
 an opener with optional JSON attributes, a closer, or a self-closing
 void block; a name without a namespace is core/. Anything outside a
 block is a freeform block that renders as-is.
+
+- const `TOKEN` = `'/<!--\\s+(?P<closer>\\/)?wp:(?P<namespace>[a-z][a-z0-9_-]*\\/)?(?P<name>[a-z][a-z0-9_-]*)\\s+(?P<attrs>\\{(?:(?!\\}\\s+\\/?-->).)*+\\}\\s+)?(?P<void>\\/)?-->/s'`
+
+Used by: `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Content\ContentScan`, `Minn\Content\Excerpt`, `Minn\Theme\PageRenderer`, `Minn\Theme\TemplatePatterns`
 
 ### static `parse(string $markup): array`
 
@@ -204,6 +232,8 @@ The query variables a Query Loop block's context asks for, the way the reference
 - `@param callable(string): bool $postTypeExists`
 - `@param callable(string): bool $taxonomyViewable`
 
+Internals: `taxQuery()` (private, line 60)
+
 
 ## RenderState
 
@@ -215,6 +245,9 @@ block rendered in the request (a list response keeps counting from post
 to post), so the counter lives here, not on any block.
 
 - const `MAX_DEPTH` = `64`
+
+Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Elements`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Layout`, `Minn\Blocks\Renderer`, `Minn\Blocks\Wrapper`, `Minn\Content\Excerpt`, `Minn\Front\ProbeController`, `Minn\Theme\GlobalStyles`, `Minn\Theme\PageRenderer`
+
 
 ### static `nextId(): int`
 
@@ -318,9 +351,16 @@ in place, then the per-block render-time additions (layout classes, the
 paragraph class, image attributes, gallery ids, style-variation
 counters), and finally texturize over the whole.
 
+- const `NUMBERED_STYLES` = `array (   'core/separator' =>    array (     0 => 'wide',   ),   'core/button' =>    array (     0 => 'outline',   ),   'core/post-terms' =>    array (     0 => 'post-terms-1',   ), )` — Style variations that carry a numbered companion class at render.
+These come from the active theme's registered block styles; the set
+mirrors the reference's theme until the engine reads theme data.
+
+Used by: `Minn\Blocks\Dynamic\Archives`, `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Wrapper`, `Minn\Content\Blocks`, `Minn\Theme\PageRenderer`
+
 ```php
 __construct(Minn\Blocks\ImageTags $images)
 ```
+
 
 ### static `numberedStyle(string $blockName, string $className): ?string`
 
@@ -346,6 +386,8 @@ The numbered companion of a registered style variation, consuming a counter; nul
 
 ### `renderBlock(Minn\Blocks\Block $block): string`
 
+Internals: `renderNamed()` (private, line 171), `decorate()` (private, line 192), `gallery()` (private, line 224), `flexWithoutContainer()` (private, line 232)
+
 
 ## Selector
 
@@ -359,6 +401,8 @@ The CSS selector a block type declares for its root or for one feature, from its
 - `@param array<string, mixed> $supports the block type's supports`
 - `@param string|list<string>|null $target 'root', a dotted feature path, or a path list`
 
+Internals: `at()` (private, line 37)
+
 
 ## Styles
 
@@ -367,6 +411,10 @@ The CSS selector a block type declares for its root or for one feature, from its
 The inline style and class names a block's "style" and preset
 attributes produce at render time, for the dynamic blocks that build
 their own wrapper (static blocks already carry them in stored markup).
+
+- const `SIDES` = `array (   0 => 'top',   1 => 'right',   2 => 'bottom',   3 => 'left', )`
+
+Used by: `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Elements`, `Minn\Blocks\Layout`, `Minn\Blocks\Wrapper`, `Minn\Theme\GlobalStyles`
 
 ### static `value(string $value): string`
 
@@ -393,6 +441,8 @@ The preset classes (font size, text alignment, custom class names) a block's att
 
 The align class an "align" attribute declares.
 
+Internals: `borderDeclarations()` (private, line 64), `colorDeclarations()` (private, line 85), `spacingDeclarations()` (private, line 95), `typographyDeclarations()` (private, line 112), `dimensionDeclarations()` (private, line 133)
+
 
 ## Supports
 
@@ -409,6 +459,8 @@ inline values, the font-size preset, the anchor id.
 - `@param callable(string): string $kebab the slug form of a preset name (filtered on the reference)`
 - `@return array<string, string> class, style, id, only those that apply`
 
+Internals: `color()` (private, line 57)
+
 
 ## Wrapper
 
@@ -420,6 +472,8 @@ carry it), the block's own extra classes (a taxonomy, an alignment),
 the custom class and its numbered style companion, the element-style
 class, the block's class, colour presets, font size and family, and
 the layout classes last; the style attribute inline.
+
+Used by: `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`
 
 ### static `open(string $tag, string $blockClass, Minn\Blocks\Block $block, bool $styleFirst = false, string $blockName = '', bool $linkColorClass = false, array $extraClasses = array ( ), array $trailingClasses = array ( )): string`
 

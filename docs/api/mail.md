@@ -22,6 +22,8 @@ The sender defaults to the site name at a no-reply address on the home host.
 
 - const `OPTION` = `'minn_mail'`
 
+Used by: `Minn\Admin\Diagnostics`, `Minn\Cli\MinnCommand`, `Minn\Mail\Mailer`, `Minn\Mail\Smtp`
+
 ```php
 __construct(string $transport = 'mail', string $host = '', int $port = 587, string $encryption = 'tls', string $username = '', string $password = '', string $fromEmail = '', string $fromName = '')
 ```
@@ -49,9 +51,12 @@ The option's JSON, secrets included, for the settings surface.
 Sends a Message through the configured transport. Failures are logged
 and reported as false; nothing here throws into a request.
 
+Used by: `Minn\Cli\MinnCommand`, `Minn\Cli\UserCommand`, `Minn\Engine`, `Minn\Front\CommentPostController`, `Minn\Login\LoginController`, `Minn\Mail\Mime`, `Minn\Mail\Smtp`, `Minn\Rest\CommentsController`, `Minn\Rest\UsersController`
+
 ```php
 __construct(Minn\Mail\MailSettings $settings, string $logFile)
 ```
+
 
 ### static `forSite(Minn\Content\Site $site): self`
 
@@ -72,12 +77,16 @@ The engine's own notices, worded once, from this site's name and address.
 
 A header value: no line breaks, encoded when not plain ASCII.
 
+Internals: `viaMail()` (private, line 65), `log()` (private, line 74)
+
 
 ## Message
 
 `final readonly class Minn\Mail\Message` · `public/minn/src/Minn/Mail/Message.php`
 
 One outgoing plain-text email.
+
+Used by: `Minn\Cli\MinnCommand`, `Minn\Mail\Mailer`, `Minn\Mail\Notices`
 
 ```php
 __construct(array $to, string $subject, string $body, string $fromEmail = '', string $fromName = '')
@@ -112,6 +121,8 @@ multipart/mixed wrap with base64 attachments when files ride along.
 - `@param list<array{0: string, 1: string}> $customHeaders [name, value]`
 - `@param list<array{0: string, 1: string}> $attachments [path, name]`
 
+Internals: `payload()` (private, line 62), `addressList()` (private, line 88)
+
 
 ## Notices
 
@@ -121,9 +132,12 @@ The messages the engine itself sends, worded as the reference words them
 and built in one place, so a controller and a CLI verb that announce the
 same thing say the same thing.
 
+Used by: `Minn\Mail\Mailer`
+
 ```php
 __construct(string $siteName, string $home)
 ```
+
 
 ### `loginDetails(string $login, string $email, string $resetLink): Minn\Mail\Message`
 
@@ -137,6 +151,8 @@ The password reset link, with the requester's address as the reference prints it
 
 A comment waiting in the queue, announced to the site's address.
 
+Internals: `subject()` (private, line 72)
+
 
 ## Smtp
 
@@ -144,9 +160,12 @@ A comment waiting in the queue, announced to the site's address.
 
 A small SMTP client: SSL or STARTTLS, AUTH LOGIN or PLAIN, one message per connection.
 
+Used by: `Minn\Mail\Mailer`
+
 ```php
 __construct(Minn\Mail\MailSettings $settings)
 ```
+
 
 ### `send(string $from, string $fromName, array $to, string $subject, string $body): bool`
 
@@ -157,4 +176,6 @@ __construct(Minn\Mail\MailSettings $settings)
 One raw MIME message (headers and body) to the listed envelope recipients. @param list<string> $recipients
 
 - `@param list<string> $recipients`
+
+Internals: `command()` (private, line 69), `expect()` (private, line 76)
 

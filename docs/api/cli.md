@@ -29,9 +29,12 @@ theme is a fatal Error and stops. json/csv print only the rows (empty
 stdout when nothing changed). `--exclude` always prints the skipped
 line in table/summary, even when the list is empty.
 
+Used by: `Minn\Cli\PluginCommand`, `Minn\Cli\ThemeCommand`
+
 ```php
 __construct(string $kind, Minn\Admin\Updates $updates, Minn\Content\Inventory $inventory)
 ```
+
 
 ### static `boot(string $kind): self`
 
@@ -39,12 +42,16 @@ __construct(string $kind, Minn\Admin\Updates $updates, Minn\Content\Inventory $i
 
 - `@param list<string> $names`
 
+Internals: `offers()` (private, line 96), `previewRow()` (private, line 144), `apply()` (private, line 156), `render()` (private, line 189), `emit()` (private, line 239), `skipped()` (private, line 260), `missing()` (private, line 268), `installed()` (private, line 277), `titleFor()` (private, line 290), `statusByName()` (private, line 304), `channel()` (private, line 315), `samePrefix()` (private, line 326), `pluginSlug()` (private, line 338)
+
 
 ## CacheCommand
 
 `final class Minn\Cli\CacheCommand` · `public/minn/src/Minn/Cli/CacheCommand.php`
 
 `wp cache flush`: the engine has no object cache, so this is a no-op success.
+
+Used by: `Minn\Cli\Commands`
 
 ### `flush(array $args, array $assocArgs): void`
 
@@ -65,6 +72,8 @@ addition lands after the bundle and overrides its leaf).
 
 ### static `register(): void`
 
+Internals: `leaf()` (private, line 70), `replace()` (private, line 86)
+
 
 ## DirectorySearch
 
@@ -73,6 +82,10 @@ addition lands after the bundle and overrides its leaf).
 Shared wording for `wp theme search` and `wp plugin search`. The
 default table is name/slug/rating; Success prints before the rows and
 only for table/yaml. json/csv/count print the Formatter output alone.
+
+- const `FIELDS` = `array (   0 => 'name',   1 => 'slug',   2 => 'rating', )`
+
+Used by: `Minn\Cli\PluginCommand`, `Minn\Cli\ThemeCommand`
 
 ### static `run(string $kind, array $args, array $assocArgs): void`
 
@@ -89,6 +102,17 @@ wp-config.php and wp-content untouched; eject puts every parked file
 back and removes what install wrote. A manifest in minn/.install.json
 is the record eject works from. Preflight says what the site will and
 will not get before anything moves.
+
+- const `MANIFEST` = `'.install.json'`
+- const `CORE_ENTRIES` = `array (   0 => 'wp-admin',   1 => 'wp-includes',   2 => 'index.php',   3 => 'wp-activate.php',   4 => 'wp-blog-header.php',   5 => 'wp-comments-post.php',   6 => 'wp-config-sample.php',   7 => 'wp-cron.php',   8 => 'wp-links-opml.php',   9 => 'wp-load.php',   10 => 'wp-login.php',   11 => 'wp-mail.php',   12 => 'wp-settings.php',   13 => 'wp-signup.php',   14 => 'wp-trackback.php',   15 => 'xmlrpc.php',   16 => 'license.txt',   17 => 'readme.html', )` — The files WordPress keeps at the webroot, moved aside as a set.
+- const `LAYOUT` = `array (   0 => 'index.php',   1 => 'wp-login.php',   2 => 'wp-settings.php',   3 => 'wp-cli.yml',   4 => 'wp-includes/version.php',   5 => 'wp-admin/index.php', )`
+- const `WRITTEN_TREES` = `array (   0 => 'wp-includes',   1 => 'wp-admin', )` — Webroot trees install writes (shape files + require placeholders) and eject deletes before restoring the park.
+- const `LEGACY_PUBLISHED` = `array (   0 => 'minn-admin-asset',   1 => 'minn-engine',   2 => 'wp-includes/js/jquery', )` — Leftover webroot copies from an earlier installer that published
+assets outside minn/. Eject still deletes them.
+- const `SKIP` = `array (   0 => '.git',   1 => 'node_modules',   2 => 'tests',   3 => 'docs',   4 => '.DS_Store',   5 => '.install.json', )` — Development-only trees inside the engine or the admin bundle that never ship.
+
+Used by: `Minn\Cli\MinnCommand`
+
 
 ### static `main(array $argv, string $engineDir): int`
 
@@ -112,6 +136,8 @@ What the site will and will not get; the worst light decides install.
 
 ### `eject(string $root): int`
 
+Internals: `help()` (private, line 99), `surveyContent()` (private, line 237), `state()` (private, line 438), `manifest()` (private, line 449), `writePlaceholders()` (private, line 460), `readConfig()` (private, line 481), `env()` (private, line 515), `move()` (private, line 526), `copyTree()` (private, line 542), `removeTree()` (private, line 561), `version()` (private, line 578), `light()` (private, line 584), `say()` (private, line 593)
+
 
 ## MaintenanceCommand
 
@@ -121,6 +147,8 @@ What the site will and will not get; the worst light decides install.
 engine does not take the public site down while the file is present;
 fleet scripts still need the verb to succeed so an update can bookend
 itself with activate/deactivate.
+
+Used by: `Minn\Cli\Commands`
 
 ### `activate(array $args, array $assocArgs): void`
 
@@ -138,6 +166,8 @@ Displays maintenance mode status.
 
 Detects maintenance mode status. Exit 0 when active, 1 when not.
 
+Internals: `file()` (private, line 75)
+
 
 ## MinnCommand
 
@@ -150,6 +180,8 @@ Identifies the engine.
 wp minn version
 wp minn info
 wp minn probe
+
+Used by: `Minn\Cli\Commands`
 
 ### `version(array $args, array $assocArgs): void`
 
@@ -257,6 +289,8 @@ resumed here.
 [--theme]
 : Treat the name as a theme rather than a plugin.
 
+Internals: `installer()` (private, line 199), `parkedTree()` (private, line 315), `engineVersion()` (private, line 326)
+
 
 ## OptionCommand
 
@@ -265,6 +299,8 @@ resumed here.
 Options, read and written straight to the options table. Serialized
 values are decoded by the engine's own reader, and arrays written back
 in the stored form.
+
+Used by: `Minn\Cli\Commands`
 
 ### `get(array $args, array $assocArgs): void`
 
@@ -352,12 +388,18 @@ Deletes an option.
 <key>...
 : Key for the option.
 
+Internals: `readValue()` (private, line 176), `decode()` (private, line 193), `encode()` (private, line 199)
+
 
 ## PluginCommand
 
 `final class Minn\Cli\PluginCommand` · `public/minn/src/Minn/Cli/PluginCommand.php`
 
 `wp plugin list|install|update|activate|deactivate|delete`: the inventory and the fleet's install/update/delete.
+
+- const `FIELDS` = `array (   0 => 'name',   1 => 'status',   2 => 'update',   3 => 'version',   4 => 'update_version',   5 => 'auto_update', )`
+
+Used by: `Minn\Cli\Commands`
 
 ### `list(array $args, array $assocArgs): void`
 
@@ -531,6 +573,8 @@ options:
 - yaml
 ---
 
+Internals: `switch()` (private, line 328), `installOne()` (private, line 360), `installArchive()` (private, line 420), `pinVersion()` (private, line 449), `activateFolder()` (private, line 473)
+
 
 ## RewriteCommand
 
@@ -538,6 +582,8 @@ options:
 
 `wp rewrite flush|structure`: permalink_structure is the engine's
 resolver input; there is no .htaccess rewrite file to regenerate.
+
+Used by: `Minn\Cli\Commands`
 
 ### `flush(array $args, array $assocArgs): void`
 
@@ -576,6 +622,8 @@ The engine, booted for a command: reads the site's wp-config.php (which
 ends in wp-settings.php, whose engine boot stops short of serving under
 WP-CLI) so the database constants and table prefix are known.
 
+Used by: `Minn\Cli\AssetUpdate`, `Minn\Cli\DirectorySearch`, `Minn\Cli\MaintenanceCommand`, `Minn\Cli\MinnCommand`, `Minn\Cli\OptionCommand`, `Minn\Cli\PluginCommand`, `Minn\Cli\RewriteCommand`, `Minn\Cli\SearchReplaceCommand`, `Minn\Cli\ThemeCommand`, `Minn\Cli\UserCommand`
+
 - readonly `Minn\Db $db`
 - readonly `Minn\Content\Site $site`
 - readonly `Minn\Content\Users $users`
@@ -584,6 +632,8 @@ WP-CLI) so the database constants and table prefix are known.
 
 ### static `boot(): self`
 
+Internals: `loadConfig()` (private, line 47)
+
 
 ## SearchReplaceCommand
 
@@ -591,6 +641,10 @@ WP-CLI) so the database constants and table prefix are known.
 
 `wp search-replace`: walks every string column, including serialized
 PHP arrays, and reports replacements the way the reference does.
+
+- const `SKIP_TYPES` = `'/^(tinyint|smallint|mediumint|int|bigint|float|double|decimal|bit|date|time|datetime|timestamp|year)/i'`
+
+Used by: `Minn\Cli\Commands`
 
 ### `__invoke(array $args, array $assocArgs): void`
 
@@ -625,6 +679,8 @@ options:
 - json
 ---
 
+Internals: `listTables()` (private, line 91), `stringColumns()` (private, line 105), `replaceColumn()` (private, line 119)
+
 
 ## ThemeCommand
 
@@ -632,6 +688,10 @@ options:
 
 `wp theme list|install|update|activate|delete`: the inventory CaptainCore
 reads, and the install/update the fleet's `wp theme` verbs run.
+
+- const `FIELDS` = `array (   0 => 'name',   1 => 'status',   2 => 'update',   3 => 'version',   4 => 'update_version',   5 => 'auto_update', )`
+
+Used by: `Minn\Cli\Commands`
 
 ### `list(array $args, array $assocArgs): void`
 
@@ -791,12 +851,18 @@ options:
 - yaml
 ---
 
+Internals: `pinVersion()` (private, line 229), `installOne()` (private, line 255), `installArchive()` (private, line 315), `switchTo()` (private, line 343)
+
 
 ## UserCommand
 
 `final class Minn\Cli\UserCommand` · `public/minn/src/Minn/Cli/UserCommand.php`
 
 Users: the list and get views, and the one-time login link.
+
+- const `FIELDS` = `array (   0 => 'ID',   1 => 'user_login',   2 => 'display_name',   3 => 'user_email',   4 => 'user_registered',   5 => 'roles', )`
+
+Used by: `Minn\Cli\Commands`
 
 ### `list(array $args, array $assocArgs): void`
 
@@ -950,4 +1016,6 @@ Deletes a user.
 
 [--yes]
 : Answer yes to the confirmation.
+
+Internals: `randomPassword()` (private, line 347), `find()` (private, line 358), `item()` (private, line 369)
 

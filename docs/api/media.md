@@ -22,6 +22,8 @@ One GD bitmap and the operations the media layer needs on it. Every
 operation returns a new canvas; alpha is preserved throughout, which is
 what makes PNG and WebP sub-sizes match the reference's.
 
+Used by: `Minn\Media\Images`
+
 - readonly `int $width`
 - readonly `int $height`
 
@@ -45,6 +47,8 @@ Writes the bitmap in the given format; the directory is created when missing.
 
 ### `stream(string $mime, int $quality): bool`
 
+Internals: `encode()` (private, line 85)
+
 
 ## Gallery
 
@@ -64,6 +68,8 @@ enough that they are contract rather than formatting.
 - `@param list<array{icon: string, orientation: string, caption: string, caption_id: string}> $items`
 - `@param array{itemtag: string, icontag: string, captiontag: string, columns: int, size: string} $args`
 
+Internals: `caption()` (private, line 47), `tag()` (private, line 57), `token()` (private, line 64)
+
 
 ## Images
 
@@ -71,9 +77,12 @@ enough that they are contract rather than formatting.
 
 GD sub-size generation from the size options the site stores.
 
+Used by: `Minn\Media\Writer`, `Minn\Rest\Api`
+
 ```php
 __construct(Minn\Content\Site $site)
 ```
+
 
 ### `ladder(): array`
 
@@ -93,6 +102,8 @@ Generates the sub-sizes for one image; returns the sizes metadata map.
 `final class Minn\Media\Kind` · `public/minn/src/Minn/Media/Kind.php`
 
 Whether an attachment is an image, audio, video, or a given extension, judged by its MIME type first and its file extension second.
+
+- const `IMAGE_EXTENSIONS` = `array (   0 => 'jpg',   1 => 'jpeg',   2 => 'jpe',   3 => 'gif',   4 => 'png',   5 => 'webp',   6 => 'avif',   7 => 'heic', )`
 
 ### static `matchWildcards(array $patterns, array $reals): array`
 
@@ -115,6 +126,10 @@ holds (top-level dims and file, the sizes map, the image_meta scalars)
 and written back in the reference's stored form: a:6 at the top,
 image_meta as a:13 with alt last.
 
+- const `IMAGE_META_KEYS` = `array (   0 => 'aperture',   1 => 'credit',   2 => 'camera',   3 => 'caption',   4 => 'created_timestamp',   5 => 'copyright',   6 => 'focal_length',   7 => 'iso',   8 => 'shutter_speed',   9 => 'title',   10 => 'orientation', )`
+
+Used by: `Minn\Admin\V1Controller`, `Minn\Blocks\ImageTags`, `Minn\Media\Writer`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Theme\HeadLinks`
+
 ### static `parse(?string $blob): array`
 
 - `@return array{width: int, height: int, file: string, filesize: int, sizes: array<string, array>, image_meta: ?array}`
@@ -133,6 +148,8 @@ The image_meta block a fresh upload carries.
 The image size arithmetic the media functions share: the crop or scale a
 resize needs, the registered size a requested box picks, and the srcset
 candidates an image's sizes yield. Behaviour pinned by contracts/fixtures/api/media.json.
+
+Used by: `Minn\Media\Images`
 
 ### static `constrain(int $width, int $height, int $maxWidth, int $maxHeight): array`
 
@@ -181,6 +198,8 @@ The image sizes an attachment offers the editor, each with orientation. @param C
 
 - `@param Closure(string): (array|false) $downsize`
 
+Internals: `join()` (private, line 216)
+
 
 ## Upload
 
@@ -190,6 +209,8 @@ One file arriving for the library, on either transport: a multipart
 field named "file" (a temporary upload to move) or a raw body whose
 Content-Disposition names the file. The parent is read from the same
 request, wherever the client put it.
+
+Used by: `Minn\Media\Writer`, `Minn\Rest\MediaController`
 
 ```php
 __construct(string $filename, ?string $movedFrom, ?string $raw, int $parent = 0)
@@ -223,9 +244,12 @@ The uploads directory: paths, URLs, the allowed types, and landing a file.
 
 - const `MIMES` = `array (   'png' => 'image/png',   'jpg' => 'image/jpeg',   'jpeg' => 'image/jpeg',   'gif' => 'image/gif',   'webp' => 'image/webp',   'pdf' => 'application/pdf',   'txt' => 'text/plain',   'mp4' => 'video/mp4',   'mp3' => 'audio/mpeg',   'zip' => 'application/zip', )` — extension => canonical mime
 
+Used by: `Minn\Blocks\ImageTags`, `Minn\Blocks\Renderer`, `Minn\Media\Upload`, `Minn\Media\Writer`, `Minn\Rest\Api`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`
+
 ```php
 __construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, string $baseDir)
 ```
+
 
 ### `baseDir(): string`
 
@@ -278,11 +302,16 @@ directory under a unique name, the row is inserted with the stored
 name as its title and slug, and an image gets its sub-sizes and the
 serialized metadata blob.
 
+Used by: `Minn\Rest\Api`, `Minn\Rest\MediaController`
+
 ```php
 __construct(Minn\Content\PostWriter $posts, Minn\Content\Site $site, Minn\Media\Uploads $uploads, Minn\Media\Images $images)
 ```
 
+
 ### `attach(Minn\Media\Upload $upload, int $authorId): int`
 
 The new attachment's id. The mime is the caller's to check first.
+
+Internals: `imageMetadata()` (private, line 69)
 

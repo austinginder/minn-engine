@@ -21,6 +21,8 @@ What a Minn extension is: a class the engine constructs once per request
 and asks to register what it provides. Everything it can touch is on the
 Seams object; there is no global state to reach for.
 
+Used by: `Minn\Extension\Loader`
+
 ### `register(Minn\Extension\Seams $minn): void`
 
 
@@ -30,6 +32,9 @@ Seams object; there is no global state to reach for.
 
 The request's seams once the loader has filled them, and the runner the
 engine calls them through; nothing before that (REST and CLI).
+
+Used by: `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Renderer`, `Minn\Engine`, `Minn\Front\Feeds`, `Minn\Theme\ClassicContent`, `Minn\Theme\PageRenderer`
+
 
 ### static `set(Minn\Extension\Seams $seams): void`
 
@@ -46,9 +51,12 @@ Finds extensions under wp-content/plugins and wp-content/mu-plugins,
 decides which are active, autoloads them, and asks each to register.
 An extension that throws is logged and skipped; the page still renders.
 
+Used by: `Minn\Admin\Diagnostics`, `Minn\Admin\ManageController`, `Minn\Cli\MinnCommand`, `Minn\Cli\PluginCommand`, `Minn\Content\PluginState`, `Minn\Engine`, `Minn\Rest\Api`, `Minn\Rest\PluginsController`
+
 ```php
 __construct(string $contentDir, Minn\Content\Site $site)
 ```
+
 
 ### `found(): array`
 
@@ -75,6 +83,8 @@ Which active WordPress plugin files an extension stands in for. @return array<st
 - `@return array<string, string> plugin file => extension slug`
 
 ### `register(Minn\Extension\Seams $seams): void`
+
+Internals: `autoload()` (private, line 120)
 
 
 ## Manifest
@@ -103,6 +113,8 @@ in active_plugins, or when its own folder is listed there, or when it is
 named in the minn_active_extensions option. "shortcodes" and "blocks"
 are the content tokens preflight treats as provided instead of missing.
 "types" are extra post types the engine should serve on wp/v2.
+
+Used by: `Minn\Admin\Packages`, `Minn\Cli\Installer`, `Minn\Content\PluginState`, `Minn\Extension\Loader`, `Minn\Rest\PluginsController`
 
 ```php
 __construct(string $slug, string $dir, string $name, string $version, string $license, array $replaces, array $autoload, string $extension, string $covers = '', array $shortcodes = array ( ), array $blocks = array ( ), array $types = array ( ))
@@ -135,6 +147,8 @@ __construct(string $slug, string $dir, string $name, string $version, string $li
 
 Everything the extensions registered for this request, handed from Seams to the runner once.
 
+Used by: `Minn\Extension\SeamRunner`, `Minn\Extension\Seams`
+
 ```php
 __construct(array $blockGates, array $blockFilters, array $shortcodes, array $contentFilters, array $head, array $footer, array $bodyClasses, array $documentFilters, ?Closure $title)
 ```
@@ -166,9 +180,12 @@ The engine's side of the seams: what the loader collected, called at the
 right moment and in registration order. An extension never sees this
 class; it sees Seams, which is only the eight registrations.
 
+Used by: `Minn\Extension\Extensions`, `Minn\Extension\Seams`
+
 ```php
 __construct(Minn\Extension\Seams $seams, Minn\Extension\Registrations $registered)
 ```
+
 
 ### `allowsBlock(Minn\Blocks\Block $block): bool`
 
@@ -201,6 +218,8 @@ Where an extension can take part in a request: eight typed registrations
 and the request they run in. This is the whole surface an extension sees.
 The engine calls what was registered through SeamRunner, at the right
 moment and in registration order.
+
+Used by: `Minn\Engine`, `Minn\Extension\Extension`, `Minn\Extension\Extensions`, `Minn\Extension\Loader`, `Minn\Extension\SeamRunner`, `Minn\Extension\Shortcodes`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Site $site, Minn\Http\Request $request, Minn\Content\Reader $reader)
@@ -258,6 +277,8 @@ The shortcode syntax in rendered content: [tag], [tag attr="v" flag],
 [tag]inner[/tag], and [[tag]] as the escaped literal. Unregistered tags
 stay as written, which is what the reference shows for a plugin that is
 not installed.
+
+Used by: `Minn\Extension\SeamRunner`
 
 ### static `apply(string $html, array $registry, Minn\Extension\Seams $seams): string`
 

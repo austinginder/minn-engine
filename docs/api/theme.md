@@ -35,6 +35,8 @@ the classic path's get_the_archive_title(), which used to compute the
 same labels separately. Search and post-type archives stay with their
 callers: their captured shapes differ between the two paths.
 
+Used by: `Minn\Blocks\Dynamic\Theme\QueryBlocks`
+
 ### static `parts(Minn\Front\Resolution $resolution, ?string $dateFormat): array`
 
 - `@return array{string, string} the label (no colon) and the escaped bare name; both empty when the view has none`
@@ -42,6 +44,8 @@ callers: their captured shapes differ between the two paths.
 ### static `compose(string $label, string $name): string`
 
 The reference's prefixed shape: `Category: <span>Uncategorized</span>`.
+
+Internals: `dateParts()` (private, line 51), `taxonomyLabel()` (private, line 68)
 
 
 ## BodyClasses
@@ -54,10 +58,14 @@ tokens spliced in front of the type token), logged-in, the embed and
 theme tokens, with the numbered paging tokens re-seated after the embed
 token. The body_class filter runs over this list in the facade.
 
+Used by: `Minn\Theme\ClassicRenderer`
+
 ### static `classic(Minn\Front\Resolution $resolution, array $coreClasses, ?string $customTemplate, bool $privacyPage, bool $loggedIn, bool $customLogo, bool $embedResponsive, string $themeSlug, ?string $parentSlug, bool $bar): array`
 
 - `@param list<string> $coreClasses`
 - `@return list<string>`
+
+Internals: `withSingularTokens()` (private, line 69)
 
 
 ## ClassicContent
@@ -84,13 +92,18 @@ contributes the reference's wp_head defaults (title tag, robots, feed
 links, REST and oEmbed discovery, canonical, site icon) as hooks the
 theme's wp_head() call fires.
 
+Used by: `Minn\Engine`, `Minn\Front\FrontController`
+
 ```php
 __construct(Minn\Content\Site $site, Minn\Content\Posts $posts, Minn\Front\Permalinks $permalinks, Minn\Theme\ClassicTheme $theme, ?Minn\Theme\Theme $styleTheme, Minn\Theme\MainQueryBridge $bridge, ?Minn\Front\AdminBar $bar = NULL)
 ```
 
+
 ### static `create(Minn\Db $db, Minn\Theme\ClassicTheme $theme, ?Minn\Theme\Theme $styleTheme, Minn\Front\Permalinks $permalinks, int $perPage, ?Minn\Front\AdminBar $bar = NULL): self`
 
 ### `render(Minn\Front\Resolution $resolution, array $coreClasses, string $title): ?string`
+
+Internals: `template()` (private, line 75), `bodyClasses()` (private, line 108), `standTitle()` (private, line 130), `registerHead()` (private, line 140), `registerStyles()` (private, line 146)
 
 
 ## ClassicTheme
@@ -101,6 +114,8 @@ The active classic (PHP-template) theme on disk. A theme is classic when
 it ships no block template index; its templates are PHP files the engine
 dispatches through the reference's hierarchy and runs via load_template().
 The theme's own functions.php loads through the runtime's symbol gate.
+
+Used by: `Minn\Engine`, `Minn\Theme\ClassicRenderer`
 
 - readonly `string $stylesheet`
 - readonly `string $template`
@@ -115,6 +130,8 @@ The theme's own functions.php loads through the runtime's symbol gate.
 `final readonly class Minn\Theme\Folder` · `public/minn/src/Minn/Theme/Folder.php`
 
 A theme folder read from disk: its style.css headers, which folder its templates come from, its screenshot, whether it is a block theme.
+
+- const `SCREENSHOTS` = `array (   0 => 'png',   1 => 'gif',   2 => 'jpg',   3 => 'jpeg',   4 => 'webp',   5 => 'avif', )`
 
 - readonly `string $root`
 - readonly `string $slug`
@@ -153,9 +170,23 @@ variations the page actually rendered get their own stylesheets. The
 layout rules themselves (flow, constrained, flex, grid, alignments) are
 the engine's own, written to the same class hooks.
 
+- const `ELEMENT_SELECTORS` = `array (   'link' => 'a:where(:not(.wp-element-button))',   'heading' => 'h1, h2, h3, h4, h5, h6',   'h1' => 'h1',   'h2' => 'h2',   'h3' => 'h3',   'h4' => 'h4',   'h5' => 'h5',   'h6' => 'h6',   'button' => '.wp-element-button, .wp-block-button__link',   'caption' => '.wp-element-caption, .wp-block-audio figcaption, .wp-block-embed figcaption, .wp-block-gallery figcaption, .wp-block-image figcaption, .wp-block-table figcaption, .wp-block-video figcaption',   'cite' => 'cite', )` — Element selectors in the order the reference prints them, whatever
+order theme.json or the saved styles list them in: the heading group
+lands before the individual levels, so an h1 line-height beats the
+group's. Themes list h1..h6 before heading and would otherwise win.
+- const `BLOCK_SELECTORS` = `array (   'core/paragraph' => 'p',   'core/list-item' => '.wp-block-list > li',   'core/button' => '.wp-block-button .wp-block-button__link',   'core/table' => '.wp-block-table > table',   'core/icon' => '.wp-block-icon svg', )` — Blocks whose metadata names a root selector other than .wp-block-{slug}.
+- const `STYLESHEET_LESS` = `array (   0 => 'core/block',   1 => 'core/column',   2 => 'core/comments-pagination-next',   3 => 'core/comments-pagination-numbers',   4 => 'core/comments-pagination-previous',   5 => 'core/comments-title',   6 => 'core/freeform',   7 => 'core/home-link',   8 => 'core/html',   9 => 'core/legacy-widget',   10 => 'core/list-item',   11 => 'core/missing',   12 => 'core/more',   13 => 'core/navigation-submenu',   14 => 'core/nextpage',   15 => 'core/page-list-item',   16 => 'core/pattern',   17 => 'core/query-no-results',   18 => 'core/query-pagination-next',   19 => 'core/query-pagination-numbers',   20 => 'core/query-pagination-previous',   21 => 'core/query',   22 => 'core/shortcode',   23 => 'core/social-link',   24 => 'core/tab-panels',   25 => 'core/template-part',   26 => 'core/terms-query',   27 => 'core/widget-group', )` — The reference prints a core block's theme.json styles only when the
+page rendered the block with output (a generated excerpt counts), and
+attaches them to the block's own stylesheet; these core blocks have
+none, so their styles never reach a page. A block from outside core
+has no such stylesheet to wait for, so its styles always print.
+
+Used by: `Minn\Admin\RenderController`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\PageRenderer`
+
 ```php
 __construct(Minn\Theme\Theme $theme, ?array $user = NULL)
 ```
+
 
 ### `styles(): array`
 
@@ -191,6 +222,8 @@ file:./ resolved against the theme that carries the file and the
 format named from the extension. Families without files print
 nothing.
 
+Internals: `presets()` (private, line 126), `defaultSlugsFirst()` (private, line 151), `spacingPresets()` (private, line 170), `fontUrl()` (private, line 253), `fontFormat()` (private, line 270), `fluidFontSize()` (private, line 288), `presetProperties()` (private, line 309), `presetClasses()` (private, line 320), `structuralRules()` (private, line 345), `gapRules()` (private, line 365), `rootStyles()` (private, line 381), `elementStyles()` (private, line 395), `blockStyles()` (private, line 424), `withoutEmpty()` (private, line 443), `scopedCss()` (private, line 456), `variationStyles()` (private, line 478), `containerStyles()` (private, line 509), `declarations()` (private, line 534), `ordered()` (private, line 605)
+
 
 ## HeadLinks
 
@@ -202,9 +235,12 @@ JSON alternate for the queried object, and the site icon set. The
 block path prints them as one run; the classic path prints the same
 pieces from the reference's wp_head hooks.
 
+Used by: `Minn\Theme\ClassicRenderer`, `Minn\Theme\PageRenderer`
+
 ```php
 __construct(Minn\Content\Site $site, Minn\Content\Posts $posts, Minn\Front\Permalinks $permalinks)
 ```
+
 
 ### `all(Minn\Front\Resolution $resolution): string`
 
@@ -225,6 +261,8 @@ No trailing newline: the reference prints the JSON alternate and the RSD link on
 Singular views only; posts and pages alike shortlink as ?p={id}, in the reference's single quotes.
 
 ### `icons(): string`
+
+Internals: `iconFileAt()` (private, line 127)
 
 
 ## Hierarchy
@@ -282,13 +320,18 @@ WP_Query (pre_get_posts shapes it), everything else is the engine's own
 listing seeded into the query globals. Then the front-end lifecycle
 fires: "wp" with the request object, then template_redirect.
 
+Used by: `Minn\Theme\ClassicRenderer`, `Minn\Theme\PageRenderer`
+
 ```php
 __construct(Minn\Content\Site $site, Minn\Content\Posts $posts, int $perPage)
 ```
 
+
 ### `stand(Minn\Front\Resolution $resolution): Minn\Content\Page`
 
 ### `perPage(): int`
+
+Internals: `lifecycle()` (private, line 53), `objectTypes()` (private, line 60), `listing()` (private, line 67)
 
 
 ## PageRenderer
@@ -300,9 +343,12 @@ maps to, rendered against the main query, inside the document shell the
 reference emits (skip link, wp-site-blocks, the skip-link target on the
 first main element).
 
+Used by: `Minn\Engine`, `Minn\Front\FrontController`
+
 ```php
 __construct(Minn\Db $db, Minn\Content\Site $site, Minn\Content\Posts $posts, Minn\Front\Permalinks $permalinks, Minn\Theme\Theme $theme, Minn\Theme\Templates $templates, Minn\Blocks\Renderer $renderer, int $perPage, ?Minn\Front\AdminBar $bar = NULL, ?Minn\Theme\MainQueryBridge $bridge = NULL, ?Minn\Theme\HeadLinks $headLinks = NULL)
 ```
+
 
 ### static `create(Minn\Db $db, Minn\Theme\Theme $theme, Minn\Front\Permalinks $permalinks, int $perPage, ?Minn\Front\AdminBar $bar = NULL): self`
 
@@ -317,6 +363,8 @@ those, and the theme (and child theme) tokens close the list.
 
 ### `render(Minn\Front\Resolution $resolution, array $coreClasses, string $title): ?string`
 
+Internals: `headLinks()` (private, line 209)
+
 
 ## PatternText
 
@@ -329,7 +377,15 @@ concatenation, the i18n and escaping wrappers, the theme URI helper, and
 printf with %s) and leaves anything else out. The header comment block
 is dropped, and every byte outside the PHP tags is kept as-is.
 
+- const `PASSTHROUGH` = `array (   0 => '__',   1 => '_x',   2 => 'esc_url',   3 => 'wp_kses_post',   4 => 'esc_url_raw', )` — Wrappers whose value is their first argument, unchanged.
+- const `ESCAPING` = `array (   0 => 'esc_html__',   1 => 'esc_html_x',   2 => 'esc_attr__',   3 => 'esc_attr_x',   4 => 'esc_html',   5 => 'esc_attr', )` — Wrappers whose value is their first argument with HTML special characters encoded.
+
+Used by: `Minn\Theme\Theme`
+
+
 ### static `render(string $file, string $themeUri): string`
+
+Internals: `statements()` (private, line 45), `printf()` (private, line 72), `expression()` (private, line 83), `term()` (private, line 99), `escape()` (private, line 127), `arguments()` (private, line 133), `stringLiteral()` (private, line 160), `identifier()` (private, line 183), `skipSpace()` (private, line 193)
 
 
 ## TemplateIndex
@@ -346,9 +402,12 @@ be restored by deleting the row.
 - const `TEMPLATE` = `'wp_template'`
 - const `PART` = `'wp_template_part'`
 
+Used by: `Minn\Rest\Api`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplatesController`, `Minn\Theme\TemplateWriter`
+
 ```php
 __construct(Minn\Db $db, Minn\Theme\Theme $theme, Minn\Content\Site $site, ?Minn\Runtime\BlockTemplates $registered = NULL)
 ```
+
 
 ### `all(string $type): array`
 
@@ -388,6 +447,8 @@ where the template only named them, then every template-part block
 told which theme it belongs to. A record carries the markup as
 stored, because that is what get_block_templates() hands a plugin.
 
+Internals: `savedRows()` (private, line 141), `pluginRows()` (private, line 156), `fromRow()` (private, line 165), `fromFile()` (private, line 191), `fromPlugin()` (private, line 213), `fileTitle()` (private, line 238), `savedArea()` (private, line 247)
+
 
 ## TemplatePartTheme
 
@@ -398,7 +459,13 @@ The theme's own files usually leave that out, and the reference fills the
 active theme in on the way out, for saved rows as much as for files. It
 appends the attribute and leaves every other byte of the markup alone.
 
+- const `TAG` = `'<!-- wp:template-part'`
+
+Used by: `Minn\Theme\TemplateIndex`
+
 ### static `apply(string $markup, string $theme): string`
+
+Internals: `withTheme()` (private, line 39), `encode()` (private, line 49), `pair()` (private, line 54)
 
 
 ## TemplatePatterns
@@ -411,7 +478,14 @@ replaced by the pattern's own markup before a template or part is
 served. A slug the theme does not know stays exactly as it is, which is
 what tells an editor the pattern went missing rather than the block.
 
+- const `TAG` = `'<!-- wp:pattern'`
+- const `DEPTH` = `5`
+
+Used by: `Minn\Theme\TemplateIndex`
+
 ### static `expand(string $markup, Minn\Theme\Theme $theme, int $depth = 0): string`
+
+Internals: `closerAt()` (private, line 48), `pattern()` (private, line 54), `stamped()` (private, line 78), `isOneBlock()` (private, line 96)
 
 
 ## TemplateRecord
@@ -421,6 +495,8 @@ what tells an editor the pattern went missing rather than the block.
 One block template or template part, whatever it came from: a theme
 file, a row the site editor saved, or a template a plugin registered.
 The id every caller uses is "<theme>//<slug>" in all three cases.
+
+Used by: `Minn\Rest\TemplateObject`, `Minn\Rest\TemplatesController`, `Minn\Theme\TemplateIndex`, `Minn\Theme\TemplateWriter`
 
 ```php
 __construct(string $theme, string $slug, string $type, string $content, string $title, string $description, string $source, ?string $origin, bool $hasThemeFile, int $author, ?string $modified, ?string $date, int $wpId, string $status = 'publish', ?string $area = NULL, ?string $plugin = NULL)
@@ -456,9 +532,12 @@ Saving and removing block templates. A template the theme ships is never
 touched on disk: editing one writes a wp_template row that shadows the
 file, and deleting that row is what "reset to the theme version" means.
 
+Used by: `Minn\Rest\Api`, `Minn\Rest\TemplatesController`
+
 ```php
 __construct(Minn\Db $db, Minn\Content\PostWriter $writer, Minn\Content\Terms $terms, Minn\Content\Site $site, Minn\Theme\TemplateIndex $index)
 ```
+
 
 ### `save(Minn\Theme\TemplateRecord $record, array $fields, int $authorId): int`
 
@@ -473,6 +552,8 @@ Moves a site copy to the trash, which hands the theme's file back.
 
 ### `destroy(Minn\Theme\TemplateRecord $record): void`
 
+Internals: `setArea()` (private, line 89), `themeTermId()` (private, line 99)
+
 
 ## Templates
 
@@ -483,9 +564,12 @@ a wp_template post saved from the site editor (matched by slug and the
 theme term) wins over the theme's file. Parts resolve the same way
 through wp_template_part.
 
+Used by: `Minn\Admin\RenderController`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Theme\PageRenderer`
+
 ```php
 __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Theme\Theme $theme, ?Minn\Runtime\BlockTemplates $registered = NULL)
 ```
+
 
 ### `forResolution(Minn\Front\Resolution $resolution): ?array`
 
@@ -509,6 +593,8 @@ The site editor's saved global styles for the active theme, when any.
 
 A page's chosen custom template, from _wp_page_template meta.
 
+Internals: `filtered()` (private, line 71), `hierarchy()` (private, line 95), `saved()` (private, line 146)
+
 
 ## Theme
 
@@ -520,6 +606,8 @@ win and its parent fills in what the child does not define; theme.json
 merges the same way, with the child's preset lists replacing the
 parent's whole. The engine reads the site's installed theme the way it
 reads the site's database; it never runs the theme's PHP.
+
+Used by: `Minn\Admin\RenderController`, `Minn\Admin\V1Controller`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Engine`, `Minn\Rest\Api`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\GlobalStyles`, `Minn\Theme\PageRenderer`, `Minn\Theme\TemplateIndex`, `Minn\Theme\TemplatePatterns`, `Minn\Theme\Templates`
 
 ```php
 __construct(string $slug, string $dir, string $uri, ?Minn\Theme\Theme $parent = NULL)
@@ -602,4 +690,6 @@ pattern into a template. A field the header omits is omitted here.
 ### `styleUri(): ?string`
 
 The theme's stylesheet URL when it ships one; a child's own, else nothing (the parent's is not enqueued for it).
+
+Internals: `at()` (private, line 57), `withStylePartials()` (private, line 87), `partialFiles()` (private, line 114), `safe()` (private, line 145), `htmlFiles()` (private, line 206), `patternIndex()` (private, line 318)
 

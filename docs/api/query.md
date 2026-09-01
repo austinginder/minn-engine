@@ -18,10 +18,15 @@ after bounds as full datetimes (inclusive bounds close the day), the
 date parts as MySQL functions compared or listed, groups joined by
 their relation, columns validated against the known date columns.
 
+- const `COLUMNS` = `array (   'posts' =>    array (     0 => 'post_date',     1 => 'post_date_gmt',     2 => 'post_modified',     3 => 'post_modified_gmt',   ),   'comments' =>    array (     0 => 'comment_date',     1 => 'comment_date_gmt',   ),   'users' =>    array (     0 => 'user_registered',   ),   'blogs' =>    array (     0 => 'registered',     1 => 'last_updated',   ), )`
+- const `PARTS` = `array (   'year' => 'YEAR',   'month' => 'MONTH',   'monthnum' => 'MONTH',   'week' => 'WEEK',   'w' => 'WEEK',   'dayofyear' => 'DAYOFYEAR',   'day' => 'DAYOFMONTH',   'dayofweek' => 'DAYOFWEEK',   'dayofweek_iso' => 'WEEKDAY',   'hour' => 'HOUR',   'minute' => 'MINUTE',   'second' => 'SECOND', )`
+- const `PART_ORDER` = `array (   0 => 'year',   1 => 'month',   2 => 'monthnum',   3 => 'week',   4 => 'w',   5 => 'dayofyear',   6 => 'day',   7 => 'dayofweek',   8 => 'dayofweek_iso',   9 => 'hour',   10 => 'minute',   11 => 'second', )`
+
 ```php
 __construct(array $tables, string $defaultColumn = 'post_date')
 ```
 - `@param array<string, string> $tables table key to prefixed table name`
+
 
 ### `sanitize(array $queries, array $defaults): array`
 
@@ -39,6 +44,8 @@ A column name as "table.column", the default for anything unknown.
 
 A full datetime from a string or a parts array; a parts array rounds up to the end of its unit when asked.
 
+Internals: `group()` (private, line 91), `clause()` (private, line 109), `part()` (private, line 133), `compare()` (private, line 162)
+
 
 ## MetaSql
 
@@ -50,10 +57,14 @@ then mt1, mt2, ...), INNER joins unless an OR relation or a NOT EXISTS
 clause needs LEFT ones, and casts by the clause's declared type. Under
 an OR relation a clause shares an equality-shaped sibling's join.
 
+- const `COMPATIBLE` = `array (   0 => '=',   1 => 'IN',   2 => 'BETWEEN',   3 => 'LIKE',   4 => 'REGEXP',   5 => 'RLIKE',   6 => '>',   7 => '>=',   8 => '<',   9 => '<=', )`
+- const `OPERATORS` = `array (   0 => '=',   1 => '!=',   2 => '>',   3 => '>=',   4 => '<',   5 => '<=',   6 => 'LIKE',   7 => 'NOT LIKE',   8 => 'IN',   9 => 'NOT IN',   10 => 'BETWEEN',   11 => 'NOT BETWEEN',   12 => 'EXISTS',   13 => 'NOT EXISTS',   14 => 'REGEXP',   15 => 'NOT REGEXP',   16 => 'RLIKE', )`
+
 ```php
 __construct(string $metaTable, string $objectColumn, string $primaryTable, string $primaryId)
 ```
 - `@param array<string, array{0: string, 1: string}> $tables meta type to [table, object column]`
+
 
 ### static `sanitize(array $queries): array`
 
@@ -79,6 +90,8 @@ A clause rather than a group: it names a key or a value.
 
 The CAST target for a clause type; CHAR means no cast.
 
+Internals: `hasOrWithNotExists()` (private, line 99), `group()` (private, line 130), `clause()` (private, line 157), `keyClause()` (private, line 178), `valueClause()` (private, line 190), `values()` (private, line 202), `alias()` (private, line 211)
+
 
 ## Sql
 
@@ -86,6 +99,8 @@ The CAST target for a clause type; CHAR means no cast.
 
 Literal quoting for the SQL fragments the query classes hand to plugins,
 which embed them verbatim in their own statements.
+
+Used by: `Minn\Query\DateSql`, `Minn\Query\MetaSql`, `Minn\Query\TaxSql`
 
 ### static `quote(string $value): string`
 
@@ -119,6 +134,7 @@ __construct(string $relationships, string $termTaxonomy, string $primaryTable, s
 ```
 - `@param Closure(string, string, list<mixed>, bool): list<int> $termTaxonomyIds taxonomy, field, terms, include children`
 
+
 ### static `sanitize(array $queries): array`
 
 ### `build(array $queries): array`
@@ -128,4 +144,6 @@ __construct(string $relationships, string $termTaxonomy, string $primaryTable, s
 ### `queriedTerms(): array`
 
 - `@return array<string, array{terms: list<mixed>, field: string}> the terms asked for, by taxonomy`
+
+Internals: `group()` (private, line 85), `clause()` (private, line 111), `inClause()` (private, line 135)
 

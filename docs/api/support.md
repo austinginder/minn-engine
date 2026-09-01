@@ -30,6 +30,8 @@ escaping, serialized readers, small helpers
 
 Accented and special Latin characters to their plain ASCII spelling; a character with no ASCII form stays as it is.
 
+- const `SPELLINGS` = `array (   'ß' => 'ss',   'Æ' => 'AE',   'æ' => 'ae',   'Œ' => 'OE',   'œ' => 'oe',   'Ø' => 'O',   'ø' => 'o',   'Đ' => 'D',   'đ' => 'd',   'Ł' => 'L',   'ł' => 'l',   'Þ' => 'TH',   'þ' => 'th',   'Ð' => 'D',   'ð' => 'd',   '€' => 'E',   '£' => '',   '“' => '',   '”' => '',   '‘' => '',   '’' => '',   '–' => '-',   '—' => '-',   '…' => '', )`
+
 ### static `strip(string $text): string`
 
 
@@ -54,6 +56,10 @@ character class, a dotted domain of hyphen-trimmed labels. `check` names
 the first rule an address breaks; `sanitize` strips what it can and names
 why it gave up.
 
+- const `LOCAL_CHARACTER` = `'a-zA-Z0-9!#$%&\'*+\\/=?^_`{|}~\\.-'`
+
+Used by: `Minn\Rest\CommentsController`
+
 ### static `check(string $email): ?string`
 
 ### static `sanitize(string $raw): array`
@@ -69,6 +75,10 @@ HTML special-character encoding with the reference's quote styles and its
 "do not double encode" rule: an ampersand that already starts a known
 named or numeric entity stays as it is.
 
+- const `DECODE` = `array (   '&amp;' => '&',   '&#038;' => '&',   '&#x26;' => '&',   '&lt;' => '<',   '&#060;' => '<',   '&#x3C;' => '<',   '&gt;' => '>',   '&#062;' => '>',   '&#x3E;' => '>', )`
+- const `DOUBLE_QUOTES` = `array (   '&quot;' => '"',   '&#034;' => '"',   '&#x22;' => '"', )`
+- const `SINGLE_QUOTES` = `array (   '&#039;' => '\'',   '&#x27;' => '\'',   '&#39;' => '\'',   '&apos;' => '\'', )`
+
 ### static `specialchars(string $text, string|int|false $quoteStyle, bool $doubleEncode, callable $knownEntity): string`
 
 - `@param callable(string): bool $knownEntity whether a named entity is in the allowed table`
@@ -76,6 +86,8 @@ named or numeric entity stays as it is.
 ### static `decode(string $text, string|int $quoteStyle): string`
 
 The reverse of specialchars: the five characters back, with the quote pairs the style asks for.
+
+Internals: `encodeStrayAmpersands()` (private, line 38)
 
 
 ## FileHeaders
@@ -85,6 +97,8 @@ The reverse of specialchars: the five characters back, with the quote pairs the 
 Header values from a plugin or theme file. The labels (Plugin Name,
 Theme Name, Version) are the published file-header contract; the
 reader is a line scan of the first 8 KB, never PHP execution.
+
+Used by: `Minn\Admin\App`, `Minn\Admin\Diagnostics`, `Minn\Admin\ManageController`, `Minn\Admin\Packages`, `Minn\Admin\Updates`, `Minn\Cli\ThemeCommand`, `Minn\Content\Inventory`, `Minn\Rest\PluginsController`, `Minn\Theme\Folder`
 
 ### static `values(string $file, array $labels): array`
 
@@ -148,6 +162,8 @@ Apply a mode to every FILE under a directory (the directories themselves keep th
 
 `final class Minn\Support\Html` · `public/minn/src/Minn/Support/Html.php`
 
+Used by: `Minn\Admin\AppController`, `Minn\Admin\LanguageChoices`, `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Renderer`, `Minn\Blocks\Wrapper`, `Minn\Content\Menus`, `Minn\Content\PasswordGate`, `Minn\Content\TermLinks`, `Minn\Front\AdminBar`, `Minn\Front\CommentPostController`, `Minn\Front\Feeds`, `Minn\Front\PostNavigation`, `Minn\Front\Renderer`, `Minn\Front\SitemapXml`, `Minn\Front\TermLists`, `Minn\Http\Failure`, `Minn\Login\LoginController`, `Minn\Login\LoginForm`, `Minn\Rest\MediaObject`, `Minn\Rest\PluginsController`, `Minn\Runtime\PageMenu`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\PageRenderer`
+
 ### static `esc(?string $value): string`
 
 ### static `attr(?string $value): string`
@@ -183,6 +199,8 @@ octet, an IPv6 address its last four groups. Anything that is not an
 address at all reads as the unspecified IPv4 address rather than as itself,
 so a malformed value can never leak through unchanged.
 
+- const `UNSPECIFIED` = `'0.0.0.0'`
+
 ### static `anonymize(string $address): string`
 
 
@@ -207,6 +225,12 @@ Comments (the block delimiters) pass through untouched.
 
 - const `POST` = `array (   'a' =>    array (     0 => 'href',     1 => 'rel',     2 => 'rev',     3 => 'name',     4 => 'target',     5 => 'download',   ),   'abbr' =>    array (   ),   'acronym' =>    array (   ),   'address' =>    array (   ),   'article' =>    array (   ),   'aside' =>    array (   ),   'audio' =>    array (     0 => 'autoplay',     1 => 'controls',     2 => 'loop',     3 => 'muted',     4 => 'preload',     5 => 'src',   ),   'b' =>    array (   ),   'bdi' =>    array (   ),   'bdo' =>    array (   ),   'big' =>    array (   ),   'blockquote' =>    array (     0 => 'cite',   ),   'br' =>    array (   ),   'button' =>    array (     0 => 'disabled',     1 => 'name',     2 => 'type',     3 => 'value',   ),   'caption' =>    array (     0 => 'align',   ),   'cite' =>    array (   ),   'code' =>    array (   ),   'col' =>    array (     0 => 'align',     1 => 'span',     2 => 'valign',     3 => 'width',   ),   'colgroup' =>    array (     0 => 'align',     1 => 'span',     2 => 'valign',     3 => 'width',   ),   'dd' =>    array (   ),   'del' =>    array (     0 => 'datetime',   ),   'details' =>    array (     0 => 'open',   ),   'dfn' =>    array (   ),   'div' =>    array (     0 => 'align',   ),   'dl' =>    array (   ),   'dt' =>    array (   ),   'em' =>    array (   ),   'fieldset' =>    array (   ),   'figcaption' =>    array (   ),   'figure' =>    array (     0 => 'align',   ),   'font' =>    array (     0 => 'color',     1 => 'face',     2 => 'size',   ),   'footer' =>    array (   ),   'h1' =>    array (     0 => 'align',   ),   'h2' =>    array (     0 => 'align',   ),   'h3' =>    array (     0 => 'align',   ),   'h4' =>    array (     0 => 'align',   ),   'h5' =>    array (     0 => 'align',   ),   'h6' =>    array (     0 => 'align',   ),   'header' =>    array (   ),   'hgroup' =>    array (   ),   'hr' =>    array (     0 => 'align',     1 => 'noshade',     2 => 'size',     3 => 'width',   ),   'i' =>    array (   ),   'img' =>    array (     0 => 'alt',     1 => 'align',     2 => 'border',     3 => 'decoding',     4 => 'fetchpriority',     5 => 'height',     6 => 'hspace',     7 => 'loading',     8 => 'longdesc',     9 => 'sizes',     10 => 'src',     11 => 'srcset',     12 => 'usemap',     13 => 'vspace',     14 => 'width',   ),   'ins' =>    array (     0 => 'cite',     1 => 'datetime',   ),   'kbd' =>    array (   ),   'label' =>    array (     0 => 'for',   ),   'legend' =>    array (     0 => 'align',   ),   'li' =>    array (     0 => 'align',     1 => 'value',   ),   'main' =>    array (     0 => 'align',   ),   'map' =>    array (     0 => 'name',   ),   'mark' =>    array (   ),   'menu' =>    array (     0 => 'type',   ),   'nav' =>    array (     0 => 'align',   ),   'object' =>    array (   ),   'ol' =>    array (     0 => 'reversed',     1 => 'start',     2 => 'type',   ),   'p' =>    array (     0 => 'align',   ),   'picture' =>    array (   ),   'pre' =>    array (     0 => 'width',   ),   'q' =>    array (     0 => 'cite',   ),   'rb' =>    array (   ),   'rp' =>    array (   ),   'rt' =>    array (   ),   'rtc' =>    array (   ),   'ruby' =>    array (   ),   's' =>    array (   ),   'samp' =>    array (   ),   'section' =>    array (     0 => 'align',   ),   'small' =>    array (   ),   'source' =>    array (     0 => 'height',     1 => 'media',     2 => 'sizes',     3 => 'src',     4 => 'srcset',     5 => 'type',     6 => 'width',   ),   'span' =>    array (     0 => 'align',   ),   'strike' =>    array (   ),   'strong' =>    array (   ),   'sub' =>    array (   ),   'summary' =>    array (     0 => 'align',   ),   'sup' =>    array (   ),   'table' =>    array (     0 => 'align',     1 => 'bgcolor',     2 => 'border',     3 => 'cellpadding',     4 => 'cellspacing',     5 => 'rules',     6 => 'summary',     7 => 'width',   ),   'tbody' =>    array (     0 => 'align',     1 => 'valign',   ),   'td' =>    array (     0 => 'abbr',     1 => 'align',     2 => 'axis',     3 => 'bgcolor',     4 => 'colspan',     5 => 'headers',     6 => 'height',     7 => 'nowrap',     8 => 'rowspan',     9 => 'scope',     10 => 'valign',     11 => 'width',   ),   'textarea' =>    array (     0 => 'cols',     1 => 'disabled',     2 => 'name',     3 => 'readonly',     4 => 'rows',   ),   'tfoot' =>    array (     0 => 'align',     1 => 'valign',   ),   'th' =>    array (     0 => 'abbr',     1 => 'align',     2 => 'axis',     3 => 'bgcolor',     4 => 'colspan',     5 => 'headers',     6 => 'height',     7 => 'nowrap',     8 => 'rowspan',     9 => 'scope',     10 => 'valign',     11 => 'width',   ),   'thead' =>    array (     0 => 'align',     1 => 'valign',   ),   'title' =>    array (   ),   'tr' =>    array (     0 => 'align',     1 => 'bgcolor',     2 => 'valign',   ),   'track' =>    array (     0 => 'default',     1 => 'kind',     2 => 'label',     3 => 'src',     4 => 'srclang',   ),   'tt' =>    array (   ),   'u' =>    array (   ),   'ul' =>    array (     0 => 'type',   ),   'var' =>    array (   ),   'video' =>    array (     0 => 'autoplay',     1 => 'controls',     2 => 'height',     3 => 'loop',     4 => 'muted',     5 => 'playsinline',     6 => 'poster',     7 => 'preload',     8 => 'src',     9 => 'width',   ), )`
 - const `COMMENT` = `array (   'a' =>    array (     0 => 'href',     1 => 'title',     2 => 'rel',   ),   'abbr' =>    array (     0 => 'title',   ),   'acronym' =>    array (     0 => 'title',   ),   'b' =>    array (   ),   'blockquote' =>    array (     0 => 'cite',   ),   'cite' =>    array (   ),   'code' =>    array (   ),   'del' =>    array (     0 => 'datetime',   ),   'em' =>    array (   ),   'i' =>    array (   ),   'q' =>    array (     0 => 'cite',   ),   's' =>    array (   ),   'strike' =>    array (   ),   'strong' =>    array (   ), )`
+- const `GLOBAL_ATTRIBUTES` = `array (   0 => 'class',   1 => 'id',   2 => 'style',   3 => 'title',   4 => 'role',   5 => 'dir',   6 => 'lang',   7 => 'xml:lang',   8 => 'hidden',   9 => 'tabindex', )`
+- const `URL_ATTRIBUTES` = `array (   0 => 'href',   1 => 'src',   2 => 'cite',   3 => 'poster',   4 => 'longdesc',   5 => 'usemap', )`
+- const `SCHEMES` = `array (   0 => 'http',   1 => 'https',   2 => 'ftp',   3 => 'ftps',   4 => 'mailto',   5 => 'news',   6 => 'irc',   7 => 'gopher',   8 => 'nntp',   9 => 'feed',   10 => 'telnet',   11 => 'mms',   12 => 'rtsp',   13 => 'sms',   14 => 'svn',   15 => 'tel',   16 => 'fax',   17 => 'xmpp',   18 => 'webcal',   19 => 'urn', )`
+- const `CSS_PROPERTIES` = `array (   0 => 'background',   1 => 'background-color',   2 => 'background-image',   3 => 'background-position',   4 => 'background-repeat',   5 => 'background-size',   6 => 'background-attachment',   7 => 'background-blend-mode',   8 => 'border',   9 => 'border-radius',   10 => 'border-width',   11 => 'border-color',   12 => 'border-style',   13 => 'border-spacing',   14 => 'border-collapse',   15 => 'border-top',   16 => 'border-right',   17 => 'border-bottom',   18 => 'border-left',   19 => 'border-top-color',   20 => 'border-right-color',   21 => 'border-bottom-color',   22 => 'border-left-color',   23 => 'border-top-width',   24 => 'border-right-width',   25 => 'border-bottom-width',   26 => 'border-left-width',   27 => 'border-top-style',   28 => 'border-right-style',   29 => 'border-bottom-style',   30 => 'border-left-style',   31 => 'border-top-left-radius',   32 => 'border-top-right-radius',   33 => 'border-bottom-right-radius',   34 => 'border-bottom-left-radius',   35 => 'caption-side',   36 => 'clear',   37 => 'color',   38 => 'columns',   39 => 'column-count',   40 => 'column-gap',   41 => 'column-width',   42 => 'column-span',   43 => 'column-rule',   44 => 'cursor',   45 => 'direction',   46 => 'display',   47 => 'filter',   48 => 'float',   49 => 'flex',   50 => 'flex-basis',   51 => 'flex-direction',   52 => 'flex-flow',   53 => 'flex-grow',   54 => 'flex-shrink',   55 => 'flex-wrap',   56 => 'font',   57 => 'font-family',   58 => 'font-size',   59 => 'font-style',   60 => 'font-variant',   61 => 'font-weight',   62 => 'font-display',   63 => 'gap',   64 => 'row-gap',   65 => 'column-gap',   66 => 'grid',   67 => 'grid-area',   68 => 'grid-auto-columns',   69 => 'grid-auto-flow',   70 => 'grid-auto-rows',   71 => 'grid-column',   72 => 'grid-column-end',   73 => 'grid-column-gap',   74 => 'grid-column-start',   75 => 'grid-gap',   76 => 'grid-row',   77 => 'grid-row-end',   78 => 'grid-row-gap',   79 => 'grid-row-start',   80 => 'grid-template',   81 => 'grid-template-areas',   82 => 'grid-template-columns',   83 => 'grid-template-rows',   84 => 'height',   85 => 'min-height',   86 => 'max-height',   87 => 'width',   88 => 'min-width',   89 => 'max-width',   90 => 'justify-content',   91 => 'justify-items',   92 => 'justify-self',   93 => 'align-content',   94 => 'align-items',   95 => 'align-self',   96 => 'letter-spacing',   97 => 'line-height',   98 => 'list-style',   99 => 'list-style-image',   100 => 'list-style-position',   101 => 'list-style-type',   102 => 'margin',   103 => 'margin-top',   104 => 'margin-right',   105 => 'margin-bottom',   106 => 'margin-left',   107 => 'margin-block',   108 => 'margin-block-start',   109 => 'margin-block-end',   110 => 'margin-inline',   111 => 'margin-inline-start',   112 => 'margin-inline-end',   113 => 'object-fit',   114 => 'object-position',   115 => 'opacity',   116 => 'order',   117 => 'overflow',   118 => 'overflow-wrap',   119 => 'overflow-x',   120 => 'overflow-y',   121 => 'padding',   122 => 'padding-top',   123 => 'padding-right',   124 => 'padding-bottom',   125 => 'padding-left',   126 => 'padding-block',   127 => 'padding-block-start',   128 => 'padding-block-end',   129 => 'padding-inline',   130 => 'padding-inline-start',   131 => 'padding-inline-end',   132 => 'position',   133 => 'resize',   134 => 'table-layout',   135 => 'text-align',   136 => 'text-decoration',   137 => 'text-indent',   138 => 'text-shadow',   139 => 'text-transform',   140 => 'text-wrap',   141 => 'vertical-align',   142 => 'visibility',   143 => 'white-space',   144 => 'word-break',   145 => 'word-spacing',   146 => 'word-wrap',   147 => 'writing-mode',   148 => 'aspect-ratio',   149 => 'box-shadow',   150 => 'box-sizing',   151 => 'z-index', )`
+
+Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Content\Users`, `Minn\Front\CommentPostController`, `Minn\Rest\CommentsController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`
 
 ### static `filter(string $html, array $allowed): string`
 
@@ -227,6 +251,8 @@ A URL inside markup: an unsafe scheme is cut off and the rest kept, as the refer
 ### static `style(string $style): string`
 
 A style attribute's value with only the listed properties kept.
+
+Internals: `attributes()` (private, line 138), `srcset()` (private, line 175), `css()` (private, line 198)
 
 
 ## Lists
@@ -263,6 +289,8 @@ get_page_children walk. Visited ids guard against a parent cycle.
 - `@param callable(mixed): int $parent`
 - `@param list<int> $visited`
 - `@return list<mixed>`
+
+Internals: `keyedByFirstColumn()` (private, line 88)
 
 
 ## Locale
@@ -341,9 +369,13 @@ The `ls -l` spelling of a mode: type letter, then rwx for owner, group and world
 String replace that walks serialized-PHP arrays of scalars without
 unserialize, so a domain change in an option blob keeps its lengths.
 
+Used by: `Minn\Cli\SearchReplaceCommand`
+
 ### static `in(string $value, string $old, string $new): array`
 
 - `@return array{0: string, 1: int} replacement and how many times $old occurred`
+
+Internals: `walk()` (private, line 31)
 
 
 ## Serialized
@@ -354,6 +386,8 @@ Tolerant readers for the serialized-PHP blobs WordPress stores. Nothing
 here executes the blob; each reader scans for the one shape it needs.
 
 - const `INVALID` = `'' . "\0" . 'minn:invalid' . "\0" . ''` — Returned by decode() when the blob is not a serialized value the reader accepts.
+
+Used by: `Minn\Admin\App`, `Minn\Admin\Appearance`, `Minn\Admin\CoreStatus`, `Minn\Admin\Dashboard`, `Minn\Admin\HiddenIntegrations`, `Minn\Admin\Notifications`, `Minn\Admin\Updates`, `Minn\Admin\V1Controller`, `Minn\Auth\ApplicationPasswords`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Cli\Installer`, `Minn\Cli\OptionCommand`, `Minn\Content\Inventory`, `Minn\Content\Menus`, `Minn\Content\PluginState`, `Minn\Content\PostWriter`, `Minn\Engine`, `Minn\Extension\Loader`, `Minn\Mail\MailSettings`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Runtime\Options`, `Minn\Runtime\Recovery`, `Minn\Support\SearchReplace`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`
 
 ### static `stringList(?string $blob): array`
 
@@ -383,12 +417,16 @@ float, string, and arrays of those. Objects are refused.
 
 The integer values of a serialized list such as sticky_posts.
 
+Internals: `read()` (private, line 70), `expect()` (private, line 140), `until()` (private, line 148)
+
 
 ## Time
 
 `final class Minn\Support\Time` · `public/minn/src/Minn/Support/Time.php`
 
 Human-scale spans: a number of seconds as the largest whole unit it fills, rounded, never below one.
+
+- const `UNITS` = `array (   0 =>    array (     0 => 'second',     1 => 1,   ),   1 =>    array (     0 => 'minute',     1 => 60,   ),   2 =>    array (     0 => 'hour',     1 => 3600,   ),   3 =>    array (     0 => 'day',     1 => 86400,   ),   4 =>    array (     0 => 'week',     1 => 604800,   ),   5 =>    array (     0 => 'month',     1 => 2592000,   ),   6 =>    array (     0 => 'year',     1 => 31536000,   ), )`
 
 ### static `span(int $seconds): array`
 
@@ -449,4 +487,6 @@ A redirect target the site may send a browser to: http(s) only, no
 credentials, and a host the caller allows (local paths always pass).
 
 - `@param Closure(string): list<string> $allowedHosts the hosts allowed for the target's host`
+
+Internals: `isPrivate()` (private, line 123)
 

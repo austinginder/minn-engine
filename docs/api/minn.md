@@ -28,9 +28,12 @@ arrays and never spell out "issd". A parameter that is a list stands for
 a list of values: its "?" becomes as many placeholders as the list is
 long, so "post_type IN (?)" takes the types themselves.
 
+Used by: `Minn\Admin\ActivityChart`, `Minn\Admin\ActivityFeed`, `Minn\Admin\Dashboard`, `Minn\Admin\Diagnostics`, `Minn\Admin\ManageController`, `Minn\Admin\Notifications`, `Minn\Admin\RenderController`, `Minn\Admin\V1Controller`, `Minn\Auth\AuthCookies`, `Minn\Auth\Authenticator`, `Minn\Auth\Capabilities`, `Minn\Auth\Cookie`, `Minn\Auth\LoginThrottle`, `Minn\Auth\Roles`, `Minn\Blocks\Dynamic\Archives`, `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Renderer`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\Comments`, `Minn\Content\Menus`, `Minn\Content\PostWriter`, `Minn\Content\Posts`, `Minn\Content\Revisions`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Content\Users`, `Minn\Cron\Cron`, `Minn\Engine`, `Minn\Extension\Seams`, `Minn\Front\Canonical`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Front\Sitemaps`, `Minn\Mail\Mailer`, `Minn\Rest\Api`, `Minn\Rest\MediaController`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\SearchController`, `Minn\Rest\TermObject`, `Minn\Rest\TermsController`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Runtime\CommentQuery`, `Minn\Runtime\DbDelta`, `Minn\Runtime\Meta`, `Minn\Runtime\Options`, `Minn\Runtime\PostLookup`, `Minn\Runtime\PostQuery`, `Minn\Runtime\Runtime`, `Minn\Runtime\TermQuery`, `Minn\Runtime\TermWriter`, `Minn\Runtime\UserQuery`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\PageRenderer`, `Minn\Theme\TemplateIndex`, `Minn\Theme\TemplateWriter`, `Minn\Theme\Templates`
+
 ```php
 __construct(mysqli $connection, string $prefix)
 ```
+
 
 ### static `shared(): self`
 
@@ -76,6 +79,8 @@ caller that means "everything" when the list is empty says so itself.
 
 ### `option(string $name): ?string`
 
+Internals: `placeholders()` (private, line 126), `run()` (private, line 173)
+
 
 ## Engine
 
@@ -88,11 +93,16 @@ admin, the login endpoint, and finally the public site.
 
 - const `WP_VERSION` = `'7.1'` — The WordPress release whose contracts the runtime speaks; wp-includes/version.php says the same.
 
+Used by: `Minn\Admin\Packages`, `Minn\Cli\AssetUpdate`, `Minn\Rest\Api`
+
 ```php
 __construct(string $version, string $engineDir)
 ```
 
+
 ### `serve(): never`
+
+Internals: `bootRuntimeForRest()` (private, line 106), `respond()` (private, line 135), `frontPipeline()` (private, line 206)
 
 
 ## RestError
@@ -101,6 +111,8 @@ __construct(string $version, string $engineDir)
 
 A WordPress-shaped error, thrown from anywhere and rendered once by the
 kernel: {"code": ..., "message": ..., "data": {"status": ...}}.
+
+Used by: `Minn\Admin\LanguageController`, `Minn\Admin\Logs`, `Minn\Admin\ManageController`, `Minn\Admin\Packages`, `Minn\Admin\PackagesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SystemController`, `Minn\Admin\Translations`, `Minn\Admin\Updates`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Cli\AssetUpdate`, `Minn\Cli\DirectorySearch`, `Minn\Cli\PluginCommand`, `Minn\Cli\ThemeCommand`, `Minn\Http\Kernel`, `Minn\Http\Router`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\Caller`, `Minn\Rest\CommentsController`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\Embed`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Reply`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\TypesController`, `Minn\Rest\UsersController`
 
 ```php
 __construct(string $errorCode, string $message, int $status, array $extra = array ( ), array $topLevel = array ( ), bool $bare = false)

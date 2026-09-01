@@ -61,6 +61,8 @@ abilities recorded per request. The reference initialises the API
 lazily, firing wp_abilities_api_init once on first access so plugin
 registrations land before any lookup.
 
+- const `STATE` = `'abilities'`
+
 ### static `initialize(): void`
 
 Fires the init action once, then answers every later call from the recorded state.
@@ -79,6 +81,8 @@ Fires the init action once, then answers every later call from the recorded stat
 
 - `@return array<string, array>`
 
+Internals: `state()` (private, line 18), `save()` (private, line 24)
+
 
 ## Assets
 
@@ -92,6 +96,7 @@ shapes as far as captured; see contracts/runtime.md.
 ```php
 __construct(string $kind)
 ```
+
 
 ### `watch(Closure $listener): void`
 
@@ -163,6 +168,8 @@ Drops a handle's source so it prints as markup rather than a link.
 
 ### `kind(): string`
 
+Internals: `changed()` (private, line 41)
+
 
 ## Avatar
 
@@ -210,6 +217,9 @@ render_block_data, render_block, render_block_{name}), applied around the
 engine's own renderer so a plugin sees every block the page renders, not
 only the ones it registered.
 
+Used by: `Minn\Blocks\Renderer`
+
+
 ### static `active(): bool`
 
 ### static `toArray(Minn\Blocks\Block $block): array`
@@ -224,6 +234,8 @@ A short-circuit from pre_render_block, or the block as render_block_data left it
 
 ### static `after(Minn\Blocks\Block $block, string $html): string`
 
+Internals: `context()` (private, line 81)
+
 
 ## BlockHooks
 
@@ -237,6 +249,8 @@ header), and the markup the renderer reads carries those insertions.
 The facade owns the traversal (wp-api/blocks.php); this is the seam the
 theme blocks call, and it stays inert until a plugin actually hooks
 something, so a site without such a plugin parses nothing extra.
+
+Used by: `Minn\Blocks\Dynamic\Theme\Structure`
 
 ### static `active(): bool`
 
@@ -271,6 +285,12 @@ renames, the script and style handles (registered through the closures,
 one per entry), the view script modules, the block hooks positions, and
 the render template as a callback. Behaviour pinned by contracts/fixtures/api/blocks.json.
 
+- const `PROPERTIES` = `array (   'apiVersion' => 'api_version',   'name' => 'name',   'title' => 'title',   'category' => 'category',   'parent' => 'parent',   'ancestor' => 'ancestor',   'icon' => 'icon',   'description' => 'description',   'keywords' => 'keywords',   'attributes' => 'attributes',   'providesContext' => 'provides_context',   'usesContext' => 'uses_context',   'selectors' => 'selectors',   'supports' => 'supports',   'styles' => 'styles',   'variations' => 'variations',   'example' => 'example',   'allowedBlocks' => 'allowed_blocks', )`
+- const `SCRIPTS` = `array (   'editorScript' => 'editor_script_handles',   'script' => 'script_handles',   'viewScript' => 'view_script_handles', )`
+- const `STYLES` = `array (   'editorStyle' => 'editor_style_handles',   'style' => 'style_handles',   'viewStyle' => 'view_style_handles', )`
+- const `POSITIONS` = `array (   'before' => 'before',   'after' => 'after',   'firstChild' => 'first_child',   'lastChild' => 'last_child', )`
+- const `FIELD_HANDLES` = `array (   'editorScript' => 'editor-script',   'editorStyle' => 'editor-style',   'script' => 'script',   'style' => 'style',   'viewScript' => 'view-script',   'viewScriptModule' => 'view-script-module',   'viewStyle' => 'view-style', )`
+
 ### static `settings(array $metadata, Closure $scriptHandle, Closure $styleHandle, Closure $moduleId, Closure $render): array`
 
 - `@param Closure(array, string, int): (string|false) $scriptHandle registers one script entry, answering its handle`
@@ -283,6 +303,8 @@ the render template as a callback. Behaviour pinned by contracts/fixtures/api/bl
 
 The script or style handle a block.json field registers under; core blocks keep the `wp-block-` spelling.
 
+Internals: `handles()` (private, line 76)
+
 
 ## BlockTemplates
 
@@ -291,6 +313,9 @@ The script or style handle a block.json field registers under; core blocks keep 
 Block templates plugins register at runtime, by their namespaced name
 ("plugin//slug"). A theme file or a saved template of the same slug
 wins; otherwise the registered content renders for that slug.
+
+Used by: `Minn\Runtime\Runtime`, `Minn\Theme\TemplateIndex`, `Minn\Theme\Templates`
+
 
 ### `register(string $name, array $args): array|string`
 
@@ -318,6 +343,7 @@ second class named after the FIRST block in the content. A block with
 no legacy equivalent adds nothing.
 
 - const `BASE_CLASS` = `'widget_block'`
+- const `LEGACY_CLASSES` = `array (   'core/paragraph' => 'widget_text',   'core/search' => 'widget_search',   'core/html' => 'widget_custom_html',   'core/archives' => 'widget_archive',   'core/latest-posts' => 'widget_recent_entries',   'core/latest-comments' => 'widget_recent_comments',   'core/tag-cloud' => 'widget_tag_cloud',   'core/categories' => 'widget_categories',   'core/calendar' => 'widget_calendar',   'core/rss' => 'widget_rss', )` — First block name => the legacy widget class a theme styles.
 
 ### static `classNameFor(array $blocks): string`
 
@@ -338,6 +364,7 @@ days switches the rule off.
 __construct(bool $enabled, int $days)
 ```
 
+
 ### `open(bool $open, Minn\Content\PostRecord|array|null $post, int $now): bool`
 
 
@@ -353,6 +380,7 @@ Comment reads in the get_comments() shape: arguments to rows or a count, and the
 __construct(Minn\Db $db)
 ```
 
+
 ### `count(array $args): int`
 
 ### `rows(array $args): array`
@@ -365,6 +393,8 @@ The counts wp_count_comments reports, for one post or the site. @return array<st
 
 - `@return array<string, int>`
 
+Internals: `where()` (private, line 48)
+
 
 ## Connectors
 
@@ -374,6 +404,11 @@ The connectors registry: the external services a site talks to (AI
 providers, spam filters, cloud services) and how each authenticates.
 Rows are normalised on the way in, the way the reference keeps them;
 the facade class hands them back to plugin code.
+
+- const `Methods` = `array (   0 => 'api_key',   1 => 'application_password',   2 => 'none', )`
+- const `AuthenticationKeys` = `array (   0 => 'method',   1 => 'credentials_url',   2 => 'setting_name',   3 => 'constant_name',   4 => 'env_var_name', )`
+- const `MaskCap` = `16` — The reference stops adding bullets after sixteen, whatever the key's length.
+
 
 ### `register(string $id, array $args): ?Minn\Runtime\Refusal`
 
@@ -427,6 +462,8 @@ sources as a key, plus where they came from.
 - `@param Closure(string): mixed $option`
 - `@param Closure(string): string $clean`
 
+Internals: `normalise()` (private, line 55)
+
 
 ## Constants
 
@@ -435,6 +472,8 @@ sources as a key, plus where they came from.
 The constants plugin code expects: the fixed set from data/constants.json
 (captured from the reference) and the per-site ones computed here. Nothing
 already defined is touched, so wp-config.php keeps the last word.
+
+Used by: `Minn\Runtime\Runtime`
 
 ### static `define(Minn\Runtime\Runtime $runtime): void`
 
@@ -492,6 +531,7 @@ has and the table lacks are added. Nothing is ever dropped or altered.
 __construct(Minn\Db $db)
 ```
 
+
 ### static `creates(array $queries): array`
 
 The CREATE TABLE statements in a batch, keyed by table name. @param list<string> $queries @return array<string, string>
@@ -516,6 +556,8 @@ The CREATE TABLE statements in a batch, keyed by table name. @param list<string>
 
 ### `run(string $ddl): void`
 
+Internals: `definitions()` (private, line 76)
+
 
 ## Hooks
 
@@ -528,6 +570,9 @@ higher priority during a run takes part in that run, one added at the
 current or a lower priority waits for the next; a callback removed
 before its turn is skipped; the "all" hook sees every firing with the
 hook name first and every argument regardless of its accepted count.
+
+Used by: `Minn\Runtime\Runtime`
+
 
 ### `onNew(Closure $observer): void`
 
@@ -581,6 +626,8 @@ With a callback: its lowest priority, or false; without: whether anything is reg
 
 - `@return array<string, array<int, list<callable>>> a read-only view for diagnostics`
 
+Internals: `run()` (private, line 172), `nextPriority()` (private, line 208), `fireAll()` (private, line 220), `id()` (private, line 234)
+
 
 ## Interactivity
 
@@ -591,6 +638,15 @@ config stores, and the pass that resolves data-wp-bind, data-wp-class,
 data-wp-style, data-wp-text, and data-wp-each against state and context
 before the markup leaves the server. Behaviour pinned by the interactivity
 probe fixture.
+
+- const `VOID` = `array (   0 => 'area',   1 => 'base',   2 => 'br',   3 => 'col',   4 => 'embed',   5 => 'hr',   6 => 'img',   7 => 'input',   8 => 'link',   9 => 'meta',   10 => 'source',   11 => 'track',   12 => 'wbr', )`
+- const `RAW` = `array (   0 => 'script',   1 => 'style',   2 => 'textarea',   3 => 'title', )`
+- const `TAG` = `'/<(\\/?)([a-zA-Z][^\\s\\/>]*)((?:\\s+[^\\s=\\/>]+(?:\\s*=\\s*(?:"[^"]*"|\'[^\']*\'|[^\\s"\'>]+))?)*)\\s*(\\/?)>/'`
+- const `UNRESOLVED` = `'' . "\0" . 'unresolved'`
+- const `ATTR` = `'/\\s+([^\\s=\\/>]+)(?:\\s*=\\s*("[^"]*"|\'[^\']*\'|[^\\s"\'>]+))?/'`
+
+Used by: `Minn\Runtime\Runtime`
+
 
 ### `state(?string $namespace, array $state = array ( )): array`
 
@@ -618,6 +674,8 @@ probe fixture.
 
 ### `process(string $html): string`
 
+Internals: `namespace()` (private, line 108), `tokenize()` (private, line 119), `walk()` (private, line 178), `applyDirectives()` (private, line 240), `bind()` (private, line 298), `interactiveNamespace()` (private, line 324), `pushContext()` (private, line 337), `evaluate()` (private, line 354), `expandEach()` (private, line 404), `markChildren()` (private, line 438), `attributeMap()` (private, line 470), `relative()` (private, line 483), `escape()` (private, line 488), `camel()` (private, line 493)
+
 
 ## MainQuery
 
@@ -626,6 +684,8 @@ probe fixture.
 The query variables the reference's main query would carry for a URL the
 engine has resolved, so plugin code reading is_page(), get_queried_object(),
 or get_search_query() during a front-end render sees the same page.
+
+Used by: `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`
 
 ### static `vars(Minn\Front\Resolution $resolution): array`
 
@@ -638,9 +698,12 @@ or get_search_query() during a front-end render sees the same page.
 
 The four meta tables behind get_metadata and friends: reads by object, and the row-level writes the update and delete rules need.
 
+- const `TABLES` = `array (   'post' =>    array (     0 => 'postmeta',     1 => 'post_id',     2 => 'meta_id',   ),   'user' =>    array (     0 => 'usermeta',     1 => 'user_id',     2 => 'umeta_id',   ),   'term' =>    array (     0 => 'termmeta',     1 => 'term_id',     2 => 'meta_id',   ),   'comment' =>    array (     0 => 'commentmeta',     1 => 'comment_id',     2 => 'meta_id',   ), )`
+
 ```php
 __construct(Minn\Db $db)
 ```
+
 
 ### static `knows(string $type): bool`
 
@@ -699,6 +762,7 @@ markers (current-menu-item with its page compat tokens, the parent and
 ancestor chain). The facade's wp_nav_menu() fetches and sorts the items;
 this marks them against the standing main query.
 
+
 ### static `build(object $args): string|false|null`
 
 The whole menu for wp_nav_menu(): resolve, fetch, decorate, walk,
@@ -709,6 +773,8 @@ runs); false when the items filtered away to nothing.
 
 - `@param list<object> $items`
 - `@return list<object>`
+
+Internals: `menuForArgs()` (private, line 52), `wrapId()` (private, line 70), `container()` (private, line 85), `singularContext()` (private, line 154), `markQueriedAncestry()` (private, line 197), `isCurrent()` (private, line 220), `markAncestors()` (private, line 256), `currentUrl()` (private, line 306)
 
 
 ## OEmbed
@@ -745,6 +811,9 @@ Drops newlines from embed markup while leaving the inside of <pre> blocks untouc
 
 The per-request object cache behind wp_cache_*: groups of keys, nothing persistent.
 
+Used by: `Minn\Runtime\Runtime`
+
+
 ### `get(string $key, string $group, ?bool $found = NULL): mixed`
 
 ### `set(string $key, mixed $value, string $group): bool`
@@ -767,9 +836,12 @@ blob by the engine's own reader, cached for the request so a value written
 and read again in one request keeps its PHP type (an int stays an int,
 false stays false) exactly as the reference shows.
 
+Used by: `Minn\Runtime\Runtime`, `Minn\Runtime\Symbols`
+
 ```php
 __construct(Minn\Db $db)
 ```
+
 
 ### `autoloaded(): array`
 
@@ -843,6 +915,7 @@ item at all.
 get_pages() as the reference shapes it: its arguments as a post query, and the tree order of the result.
 
 - const `DEFAULTS` = `array (   'child_of' => 0,   'sort_order' => 'ASC',   'sort_column' => 'post_title',   'hierarchical' => 1,   'exclude' =>    array (   ),   'include' =>    array (   ),   'meta_key' => '',   'meta_value' => '',   'authors' => '',   'parent' => -1,   'exclude_tree' =>    array (   ),   'number' => '',   'offset' => 0,   'post_type' => 'page',   'post_status' => 'publish', )`
+- const `COLUMNS` = `array (   'post_title' => 'title',   'menu_order' => 'menu_order',   'post_date' => 'date',   'post_modified' => 'modified',   'ID' => 'ID',   'post_author' => 'author',   'post_name' => 'name',   'post_parent' => 'parent', )`
 
 ### static `queryArgs(array $parsed, array $include, array $exclude): array`
 
@@ -864,6 +937,8 @@ Every page under one ancestor, in list order. @param list<object> $pages @return
 
 - `@param list<object> $pages @return list<object>`
 
+Internals: `treeOrder()` (private, line 74)
+
 
 ## Patterns
 
@@ -872,6 +947,7 @@ Every page under one ancestor, in list order. @param list<object> $pages @return
 The block pattern, pattern category, and block style registries as data.
 Entries registered after init are remembered separately, because the
 editor asks for those on their own.
+
 
 ### `registerPattern(mixed $name, mixed $properties, bool $afterInit): ?Minn\Runtime\Refusal`
 
@@ -916,6 +992,7 @@ with the symbol, the plugin file that called it, and the request. The
 log says which placeholders deserve behaviour; an absent file costs one
 stat per request.
 
+
 ### static `hit(string $symbol): void`
 
 
@@ -928,6 +1005,16 @@ mu-plugins first, then active_plugins in stored order, each file
 included once. A plugin loads only when the static symbol read finds
 nothing the runtime lacks; otherwise it is reported and skipped so the
 site keeps rendering. The lifecycle actions fire between the phases.
+
+- const `MINN_ADMIN` = `'minn-admin/minn-admin.php'` — Minn Admin loads as code for its adapters (surfaces, licenses,
+connectors, custom CSS, the plugin routes the engine has no
+controller for), but the engine owns the shell, the front bar, the
+sign-in flow, and maintenance: those hooks come off right after the
+include so the two never print twice or disagree.
+- const `MINN_ADMIN_HOOKS` = `array (   0 =>    array (     0 => 'template_redirect',     1 =>      array (       0 => 'Minn_Admin',       1 => 'maybe_render_app',     ),     2 => 0,   ),   1 =>    array (     0 => 'template_redirect',     1 =>      array (       0 => 'Minn_Admin',       1 => 'maybe_maintenance_mode',     ),     2 => 1,   ),   2 =>    array (     0 => 'rest_authentication_errors',     1 =>      array (       0 => 'Minn_Admin',       1 => 'maintenance_rest',     ),     2 => 20,   ),   3 =>    array (     0 => 'login_redirect',     1 =>      array (       0 => 'Minn_Admin',       1 => 'login_redirect',     ),     2 => 20,   ),   4 =>    array (     0 => 'show_admin_bar',     1 =>      array (       0 => 'Minn_Admin',       1 => 'enforce_toolbar_policy',     ),     2 => 99,   ),   5 =>    array (     0 => 'show_admin_bar',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'suppress_core_bar',     ),     2 => 100,   ),   6 =>    array (     0 => 'wp_enqueue_scripts',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'enqueue',     ),     2 => 10,   ),   7 =>    array (     0 => 'wp_footer',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'render',     ),     2 => 10,   ),   8 =>    array (     0 => 'body_class',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'body_class',     ),     2 => 10,   ), )`
+
+Used by: `Minn\Engine`, `Minn\Extension\Loader`, `Minn\Theme\ClassicRenderer`
+
 
 ### static `load(Minn\Runtime\Runtime $runtime): void`
 
@@ -943,6 +1030,8 @@ site keeps rendering. The lifecycle actions fire between the phases.
 
 True when the named plugin file is running as code this request.
 
+Internals: `loadThemeFunctions()` (private, line 96), `includeFile()` (private, line 129), `registerRealpath()` (private, line 153), `isolatedInclude()` (private, line 168)
+
 
 ## PostInsert
 
@@ -953,6 +1042,8 @@ the post counts as empty, the status a publish request lands in, the dates
 and the slug, the categories a new post gets. The rows are written by
 Content\PostWriter; the facade fires the hooks around each step.
 
+- const `COLUMNS` = `array (   0 => 'post_author',   1 => 'post_date',   2 => 'post_date_gmt',   3 => 'post_content',   4 => 'post_title',   5 => 'post_excerpt',   6 => 'post_status',   7 => 'comment_status',   8 => 'ping_status',   9 => 'post_password',   10 => 'post_name',   11 => 'to_ping',   12 => 'pinged',   13 => 'post_modified',   14 => 'post_modified_gmt',   15 => 'post_content_filtered',   16 => 'post_parent',   17 => 'guid',   18 => 'menu_order',   19 => 'post_type',   20 => 'post_mime_type', )`
+
 ```php
 __construct(Minn\Content\PostWriter $writer, int $userId, Closure $option, Closure $supports, Closure $canPublish, Closure $gmtFromDate, Closure $now)
 ```
@@ -961,6 +1052,7 @@ __construct(Minn\Content\PostWriter $writer, int $userId, Closure $option, Closu
 - `@param Closure(string): bool $canPublish whether the current user may publish the type`
 - `@param Closure(string): string $gmtFromDate the site-local date as GMT`
 - `@param Closure(bool): string $now the current local (or GMT) MySQL time`
+
 
 ### `columns(array $postarr, ?array $existing): array`
 
@@ -996,6 +1088,8 @@ nothing should change.
 - `@param list<string> $taxonomies the type's taxonomies`
 - `@return list<int>|null`
 
+Internals: `type()` (private, line 172)
+
 
 ## PostLookup
 
@@ -1006,6 +1100,7 @@ The post reads plugin code asks for by shape: a page by title, revisions, counts
 ```php
 __construct(Minn\Db $db)
 ```
+
 
 ### `idByTitle(string $title, array $types): ?int`
 
@@ -1046,14 +1141,19 @@ The query WP_Query runs: its variables become one SELECT over the posts
 table with the joins the taxonomy, meta, and author conditions need.
 Shapes and defaults follow contracts/fixtures/api/content.json.
 
+Used by: `Minn\Runtime\Runtime`
+
 ```php
 __construct(Minn\Db $db, Minn\Runtime\Registry $registry)
 ```
+
 
 ### `run(array $q, bool $isHome): array`
 
 - `@param array<string, mixed> $q`
 - `@return array{rows: list<array>, found: int, sticky: list<array>}`
+
+Internals: `perPage()` (private, line 81), `types()` (private, line 93), `statuses()` (private, line 117), `singular()` (private, line 145), `authors()` (private, line 179), `parents()` (private, line 211), `ids()` (private, line 229), `search()` (private, line 262), `dates()` (private, line 277), `taxonomies()` (private, line 334), `termTaxonomyIds()` (private, line 442), `meta()` (private, line 477), `order()` (private, line 566)
 
 
 ## QueriedObject
@@ -1075,6 +1175,8 @@ author. The caller materialises the record; this only decides where to look.
 - `@param array<string, bool> $flags the query's is_* flags`
 - `@param callable(string): mixed $option a filtered option read`
 
+Internals: `taxonomyTerm()` (private, line 60)
+
 
 ## QueryFlags
 
@@ -1083,6 +1185,10 @@ author. The caller materialises the record; this only decides where to look.
 The conditional flags a set of query variables implies (is_single, is_archive,
 is_home, ...), derived the way the reference's parse step derives them, plus
 the variables after the integer casts that step applies.
+
+- const `INTEGER_VARS` = `array (   0 => 'p',   1 => 'page_id',   2 => 'attachment_id',   3 => 'year',   4 => 'monthnum',   5 => 'day',   6 => 'w',   7 => 'paged', )`
+
+Used by: `Minn\Runtime\QueriedObject`
 
 - readonly `array $vars`
 - readonly `array $flags`
@@ -1098,6 +1204,8 @@ The first registered taxonomy (other than the two built-in ones) whose
 query variable carries a value, as [taxonomy name, query var].
 
 - `@return array{0: string, 1: string}|null`
+
+Internals: `archiveFlags()` (private, line 71)
 
 
 ## Recovery
@@ -1117,9 +1225,12 @@ to WordPress finds the pause it left with.
 - const `PLUGINS_OPTION` = `'paused_plugins'`
 - const `THEMES_OPTION` = `'paused_themes'`
 
+Used by: `Minn\Cli\MinnCommand`, `Minn\Engine`, `Minn\Runtime\Plugins`
+
 ```php
 __construct(Minn\Content\Site $site, string $contentDir)
 ```
+
 
 ### `blame(string $file): ?array`
 
@@ -1156,12 +1267,16 @@ Lets an extension load again. Returns false when it was not paused.
 
 Lets everything load again. Returns how many were released.
 
+Internals: `read()` (private, line 120), `write()` (private, line 128)
+
 
 ## Refusal
 
 `final readonly class Minn\Runtime\Refusal` · `public/minn/src/Minn/Runtime/Refusal.php`
 
 A refused operation, the way plugin code expects to read it: a code, a message, optional data. The facade turns it into WP_Error.
+
+Used by: `Minn\Blocks\BlockName`, `Minn\Content\Menus`, `Minn\Rest\MenusController`, `Minn\Rest\ParamCheck`, `Minn\Rest\RouteMatch`, `Minn\Rest\Schema`, `Minn\Runtime\Connectors`, `Minn\Runtime\Patterns`, `Minn\Runtime\TermWriter`, `Minn\Runtime\UserInsert`
 
 ```php
 __construct(string $code, string $message, mixed $data = NULL)
@@ -1180,6 +1295,8 @@ Post types, taxonomies, and statuses as plugin code registers and reads
 them. The built-in set is data/registry.json, captured from the
 reference; registrations derive their defaults the way the content
 probe observed (contracts/fixtures/api/content.json).
+
+Used by: `Minn\Front\Permalinks`, `Minn\Rest\AdditionalFields`, `Minn\Runtime\PostQuery`, `Minn\Runtime\QueriedObject`, `Minn\Runtime\QueryFlags`, `Minn\Runtime\Runtime`
 
 ```php
 __construct(string $engineDir)
@@ -1238,6 +1355,8 @@ make the type exist) and merges in when register_post_type arrives.
 
 - `@param array<string, mixed> $args`
 
+Internals: `supportsFrom()` (private, line 158), `capabilities()` (private, line 172)
+
 
 ## Runtime
 
@@ -1246,6 +1365,8 @@ make the type exist) and merges in when register_post_type arrives.
 The WordPress runtime the engine offers plugin code: the procedural
 facade under minn/wp-api/ plus the services it delegates to. One per
 request; the facade reaches it through these statics.
+
+Used by: `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Engine`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\PluginRules`, `Minn\Front\Resolver`, `Minn\Rest\Api`, `Minn\Runtime\Abilities`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\Constants`, `Minn\Runtime\Interactivity`, `Minn\Runtime\NavMenu`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostQuery`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\TermWriter`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Site $site, ?Minn\Http\Request $request, Minn\Content\Reader $reader, Minn\Auth\Capabilities $capabilities, string $engineDir, string $absPath, string $version, bool $isAdmin = false)
@@ -1322,11 +1443,16 @@ queue, and the four things a page prints from it (the import map, module
 preloads, the module tags split head/footer, and per-module JSON data).
 Behaviour pinned by the script-modules probe fixture.
 
+- const `PRIORITIES` = `array (   0 => 'high',   1 => 'low',   2 => 'auto', )`
+
+Used by: `Minn\Runtime\Runtime`
+
 ```php
 __construct(Closure $url, Closure $data)
 ```
 - `@param Closure(string, string|false|null): string $url turns a src and version into the printed URL`
 - `@param Closure(string, array<string, mixed>): array<string, mixed> $data applies the module data filter`
+
 
 ### `register(string $id, string $src, array $deps, string|false|null $version, array $args): void`
 
@@ -1362,6 +1488,8 @@ __construct(Closure $url, Closure $data)
 
 ### `printA11y(): string`
 
+Internals: `printTags()` (private, line 192), `marked()` (private, line 222), `complete()` (private, line 234), `dependencies()` (private, line 256), `urlOf()` (private, line 274), `attr()` (private, line 279), `wrong()` (private, line 284)
+
 
 ## ScriptPack
 
@@ -1382,6 +1510,13 @@ fills the gaps around them, it does not replace them.
 
 - const `RELATIVE_DIR` = `'minn-packages/wp-scripts'` — Under the site's wp-content, so backups and migrations carry it.
 - const `MANIFEST` = `'script-loader-packages.php'`
+- const `VENDOR` = `array (   'lodash' =>    array (   ),   'moment' =>    array (   ),   'react' =>    array (   ),   'react-dom' =>    array (     0 => 'react',   ),   'react-jsx-runtime' =>    array (     0 => 'react',   ),   'regenerator-runtime' =>    array (   ),   'wp-polyfill' =>    array (   ),   'wp-polyfill-dom-rect' =>    array (   ),   'wp-polyfill-element-closest' =>    array (   ),   'wp-polyfill-fetch' =>    array (   ),   'wp-polyfill-formdata' =>    array (   ),   'wp-polyfill-inert' =>    array (   ),   'wp-polyfill-node-contains' =>    array (   ),   'wp-polyfill-object-fit' =>    array (   ),   'wp-polyfill-url' =>    array (   ), )` — The vendor handles WordPress registers outside the packages manifest
+(captured from the reference). `moment` matters as much as `react`:
+one unregistered handle anywhere in a dependency tree drops every
+script above it, which is how a missing moment silently cost the
+whole WooCommerce cart bundle.
+
+Used by: `Minn\Cli\MinnCommand`
 
 ### static `dir(string $contentDir): string`
 
@@ -1409,6 +1544,8 @@ a wrong source folder copies nothing rather than something odd.
 
 Removes the pack; the engine's own packages keep working without it.
 
+Internals: `stamp()` (private, line 160)
+
 
 ## Shortcodes
 
@@ -1418,6 +1555,9 @@ The shortcode registry plugin code fills with add_shortcode, and the
 expansion do_shortcode performs: [tag attrs], [tag attrs/], [tag]…[/tag]
 (the first closing tag wins; content is not expanded again), [[tag]] as
 the literal, unregistered tags left as written.
+
+Used by: `Minn\Runtime\Runtime`
+
 
 ### `add(string $tag, callable $callback): void`
 
@@ -1460,6 +1600,8 @@ symbol gate needs, so it can be exported to JSON and carried to a machine
 that holds plugin source but no engine, which is how the catalogue-wide
 compatibility scan runs.
 
+Used by: `Minn\Runtime\Symbols`
+
 - readonly `array $functions`
 - readonly `array $classes`
 
@@ -1489,6 +1631,11 @@ provides, this decides whether a plugin loads at all. The read is cached
 in the minn_runtime_symbols option keyed by the plugin folder's newest
 modification time.
 
+- const `MAX_FILES` = `6000`
+- const `SKIP_DIRS` = `array (   0 => 'node_modules',   1 => 'tests',   2 => 'test',   3 => '.git', )`
+
+Used by: `Minn\Runtime\Plugins`
+
 ### static `missing(string $dir, Minn\Runtime\Options $options): array`
 
 - `@return array{functions: list<string>, classes: list<string>, files: int, truncated: bool}`
@@ -1500,6 +1647,8 @@ folder can be judged with no database, no options, and no facade loaded.
 
 - `@return array{functions: list<string>, classes: list<string>, files: int, truncated: bool}`
 
+Internals: `verdict()` (private, line 64), `phpFiles()` (private, line 86), `scan()` (private, line 112)
+
 
 ## TagEditor
 
@@ -1510,10 +1659,13 @@ processor does: a replaced value keeps its position, a new attribute goes
 right after the tag name (after any earlier insertion), and a removal takes
 only the attribute's own text.
 
+Used by: `Minn\Runtime\Interactivity`
+
 ```php
 __construct(string $tag, array $attrs)
 ```
 - `@param list<array{name: string, value: ?string, start: int, end: int}> $attrs offsets relative to the tag`
+
 
 ### `get(string $name): ?string`
 
@@ -1531,6 +1683,8 @@ true sets a bare boolean attribute.
 
 ### `html(): string`
 
+Internals: `splice()` (private, line 126)
+
 
 ## TermQuery
 
@@ -1541,11 +1695,15 @@ rows, the tree filters (child_of, exclude_tree), the fields shapes, and
 the single-term lookups. Behaviour pinned by contracts/fixtures/api/content.json.
 
 - const `DEFAULTS` = `array (   'taxonomy' => NULL,   'object_ids' => NULL,   'orderby' => 'name',   'order' => 'ASC',   'hide_empty' => true,   'include' =>    array (   ),   'exclude' =>    array (   ),   'exclude_tree' =>    array (   ),   'number' => '',   'offset' => '',   'fields' => 'all',   'count' => false,   'name' => '',   'slug' => '',   'term_taxonomy_id' => '',   'hierarchical' => true,   'search' => '',   'name__like' => '',   'description__like' => '',   'pad_counts' => false,   'get' => '',   'child_of' => 0,   'parent' => '',   'childless' => false,   'cache_domain' => 'core',   'update_term_meta_cache' => true,   'meta_query' => '',   'meta_key' => '',   'meta_value' => '', )`
+- const `COLUMNS` = `'t.term_id, t.name, t.slug, t.term_group, tt.term_taxonomy_id, tt.taxonomy, tt.description, tt.parent, tt.count'`
+
+Used by: `Minn\Runtime\TermWriter`
 
 ```php
 __construct(Minn\Db $db, Closure $slug)
 ```
 - `@param Closure(string): string $slug the slug sanitiser, so the reference's filters apply`
+
 
 ### `row(int $termId, ?string $taxonomy): ?array`
 
@@ -1617,6 +1775,8 @@ tolerated on the way in.
 
 - `@param Closure(mixed): list<int> $idList the caller's id-list parser`
 
+Internals: `idList()` (private, line 173), `descendants()` (private, line 180), `where()` (private, line 199), `metaClauses()` (private, line 273), `ids()` (private, line 358), `like()` (private, line 367)
+
 
 ## TermWriter
 
@@ -1632,6 +1792,7 @@ reference's order. Behaviour pinned by contracts/fixtures/api/content.json.
 __construct(Minn\Db $db, Minn\Content\Terms $terms, Minn\Runtime\TermQuery $query, Minn\Content\PostWriter $posts, Closure $slug)
 ```
 - `@param Closure(string): string $slug the slug sanitiser, so the reference's filters apply`
+
 
 ### `insert(string $name, string $taxonomy, array $args, bool $hierarchical): Minn\Runtime\Refusal|array`
 
@@ -1672,6 +1833,8 @@ reference does, and recounts.
 Removes the given relationships; true when any row went. @param list<int> $ttIds
 
 - `@param list<int> $ttIds`
+
+Internals: `ttIdOf()` (private, line 157)
 
 
 ## TreeWalk
@@ -1714,6 +1877,7 @@ __construct(Closure $sanitizeLogin, Closure $sanitizeSlug, Closure $isEmail, Clo
 - `@param Closure(string): int $emailOwner 0 when nobody has it`
 - `@param Closure(string): bool $roleExists`
 
+
 ### `resolve(array $userdata, ?array $existing): Minn\Runtime\Refusal|array`
 
 The validated, resolved fields, or the refusal the reference gives.
@@ -1748,9 +1912,12 @@ capabilities meta, include/exclude, column search with * wildcards,
 ordering and paging. Returns raw user rows; the facade shapes them into
 WP_User objects, string ids, or column records the reference's way.
 
+- const `COLUMNS` = `array (   0 => 'ID',   1 => 'user_login',   2 => 'user_nicename',   3 => 'user_email',   4 => 'user_url',   5 => 'user_registered',   6 => 'display_name', )`
+
 ```php
 __construct(Minn\Db $db)
 ```
+
 
 ### `run(array $args): array`
 

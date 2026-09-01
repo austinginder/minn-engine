@@ -15,9 +15,14 @@ Character reference decoding for text and attribute values: numeric and
 named references, the legacy names that work without a semicolon (not in
 an attribute when an "=" or alphanumeric follows), unknown ones left as is.
 
+Used by: `Minn\Html\Tags`
+
+
 ### static `text(string $raw): string`
 
 ### static `attribute(string $raw): string`
+
+Internals: `decode()` (private, line 27), `codePoint()` (private, line 67), `legacy()` (private, line 80)
 
 
 ## Tags
@@ -42,10 +47,14 @@ Behaviour pinned by the html-tag-processor probe fixture.
 - const `COMMENT_INVALID` = `'COMMENT_AS_INVALID_HTML'`
 - const `COMMENT_CDATA` = `'COMMENT_AS_CDATA_LOOKALIKE'`
 - const `COMMENT_PI` = `'COMMENT_AS_PI_NODE_LOOKALIKE'`
+- const `RAW_TEXT` = `array (   0 => 'script',   1 => 'style',   2 => 'textarea',   3 => 'title',   4 => 'xmp',   5 => 'iframe',   6 => 'noembed',   7 => 'noframes', )`
+- const `RAW_DECODED` = `array (   0 => 'textarea',   1 => 'title', )`
+- const `MAX_BOOKMARKS` = `10`
 
 ```php
 __construct(string $html)
 ```
+
 
 ### `nextToken(): bool`
 
@@ -110,4 +119,6 @@ The decoded value, true for a bare attribute, null when absent; a pending edit a
 ### `seek(string $name): bool`
 
 ### `html(): string`
+
+Internals: `scanTag()` (private, line 127), `scanMarkupDeclaration()` (private, line 236), `scanQuestion()` (private, line 291), `setComment()` (private, line 319), `setToken()` (private, line 328), `resetToken()` (private, line 338), `isSpace()` (private, line 350), `baseClassList()` (private, line 541), `baseClassValue()` (private, line 551), `flush()` (private, line 714), `rescan()` (private, line 802), `existingName()` (private, line 816), `rebuiltClassValue()` (private, line 827), `escape()` (private, line 855)
 

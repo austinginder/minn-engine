@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 /**
  * The engine's own API, read from the classes themselves: every namespace
- * under src/Minn/, every class with its docblock, constructor, public
- * properties, public methods and enum cases, as Markdown a person or an
- * agent can grep, plus one JSON file for tooling. Signatures come from
- * reflection, so the docs cannot drift from the code; the style suite
- * runs --check and fails when they have.
+ * under src/Minn/, every class with its docblock, constructor, properties,
+ * methods (public first, the internals marked by visibility), enum cases,
+ * parameter notes, source line ranges, and which classes use which, as
+ * Markdown a person or an agent can grep, plus one JSON file for tooling.
+ * Signatures come from reflection, so the docs cannot drift from the code;
+ * the style suite runs --check and fails when they have.
  *
  *   php tests/tools/api-docs.php            write docs/api/ and contracts/api/minn.json
  *   php tests/tools/api-docs.php --check    print a JSON summary and exit 1 when docs/api/ is stale
@@ -77,6 +78,86 @@ function shapes(string|false $doc): array
     return $out;
 }
 
+/**
+ * What the docblock says about each parameter: its documented type and the
+ * words after the name, keyed by parameter name.
+ *
+ * @return array<string, array{type: string, doc: string}>
+ */
+function paramNotes(string|false $doc): array
+{
+    if ($doc === false) {
+        return [];
+    }
+    preg_match_all('/@param\s+(.+?)\s+\$(\w+)[ \t]*([^\n]*)/', $doc, $matches, PREG_SET_ORDER);
+    $out = [];
+    foreach ($matches as [, $type, $name, $rest]) {
+        $out[$name] = ['type' => trim($type), 'doc' => trim(preg_replace('/\s*\*\/$/', '', $rest) ?? '')];
+    }
+    return $out;
+}
+
+/**
+ * The parameters as the page shows them: name, type, default, and the
+ * docblock's words for it.
+ *
+ * @return list<array{name: string, type: string, shape: string, default: ?string, doc: string}>
+ */
+function params(ReflectionMethod $method): array
+{
+    $notes = paramNotes($method->getDocComment());
+    $out = [];
+    foreach ($method->getParameters() as $p) {
+        $default = null;
+        if ($p->isDefaultValueAvailable()) {
+            $default = $p->isDefaultValueConstant() ? ($p->getDefaultValueConstantName() ?? 'null') : str_replace("\n", ' ', var_export($p->getDefaultValue(), true));
+        }
+        $note = $notes[$p->getName()] ?? ['type' => '', 'doc' => ''];
+        $type = typeOf($p->getType());
+        $out[] = [
+            'name' => $p->getName(),
+            'type' => $type,
+            // The docblock's richer type, only when it says more than the signature.
+            'shape' => $note['type'] !== '' && $note['type'] !== $type ? $note['type'] : '',
+            'default' => $default,
+            'doc' => $note['doc'],
+        ];
+    }
+    return $out;
+}
+
+function visibility(ReflectionMethod|ReflectionProperty|ReflectionClassConstant $member): string
+{
+    return $member->isPrivate() ? 'private' : ($member->isProtected() ? 'protected' : 'public');
+}
+
+/**
+ * The other Minn classes a file names: its use statements and any fully
+ * qualified Minn\ name in the code, minus itself.
+ *
+ * @param list<string> $known
+ * @return list<string>
+ */
+function usesOf(string $file, string $self, array $known): array
+{
+    $src = (string) file_get_contents($file);
+    preg_match_all('/^use\s+(Minn\\\\[\w\\\\]+)(?:\s+as\s+\w+)?;/m', $src, $uses);
+    preg_match_all('/\\\\?(Minn\\\\[A-Z][\w\\\\]+)/', $src, $inline);
+    $namespace = substr($self, 0, (int) strrpos($self, '\\'));
+    // Unqualified names resolve inside the file's own namespace.
+    preg_match_all('/(?<![\w\\\\$>])([A-Z]\w+)(?=::|\s*\(|\s+\$|\s*\||\s*[,)]|\s*\{)/', $src, $bare);
+    $found = [];
+    foreach ([...$uses[1], ...$inline[1], ...array_map(static fn (string $n) => "{$namespace}\\{$n}", $bare[1])] as $name) {
+        $name = ltrim($name, '\\');
+        if ($name !== $self && in_array($name, $known, true)) {
+            $found[$name] = true;
+        }
+    }
+    $out = array_keys($found);
+    sort($out);
+    return $out;
+}
+
 function typeOf(?ReflectionType $type): string
 {
     return $type === null ? 'mixed' : (string) $type;
@@ -134,6 +215,9 @@ foreach (classNames($src) as $name) {
         'lines' => $class->getEndLine() - $class->getStartLine() + 1,
         'doc' => prose($class->getDocComment()),
         'implements' => $class->isEnum() ? [] : $class->getInterfaceNames(),
+        'extends' => $class->getParentClass() !== false ? $class->getParentClass()->getName() : null,
+        'uses' => [],
+        'usedBy' => [],
         'constructor' => null,
         'cases' => [],
         'constants' => [],
@@ -145,17 +229,25 @@ foreach (classNames($src) as $name) {
             $entry['cases'][] = ['name' => $case->getName(), 'value' => $case instanceof ReflectionEnumBackedCase ? $case->getBackingValue() : null, 'doc' => prose($case->getDocComment())];
         }
     }
-    foreach ($class->getReflectionConstants(ReflectionClassConstant::IS_PUBLIC) as $constant) {
+    foreach ($class->getReflectionConstants() as $constant) {
         if ($constant->getDeclaringClass()->getName() !== $name || $constant->isEnumCase()) {
             continue;
         }
-        $entry['constants'][] = ['name' => $constant->getName(), 'value' => str_replace("\n", ' ', var_export($constant->getValue(), true)), 'doc' => prose($constant->getDocComment())];
+        $entry['constants'][] = ['name' => $constant->getName(), 'value' => str_replace("\n", ' ', var_export($constant->getValue(), true)), 'doc' => prose($constant->getDocComment()), 'visibility' => visibility($constant)];
     }
     $constructor = $class->getConstructor();
-    if ($constructor !== null && $constructor->getDeclaringClass()->getName() === $name && $constructor->isPublic()) {
-        $entry['constructor'] = ['signature' => signature($constructor), 'doc' => prose($constructor->getDocComment()), 'shapes' => shapes($constructor->getDocComment())];
+    if ($constructor !== null && $constructor->getDeclaringClass()->getName() === $name) {
+        $entry['constructor'] = [
+            'signature' => signature($constructor),
+            'doc' => prose($constructor->getDocComment()),
+            'shapes' => shapes($constructor->getDocComment()),
+            'params' => params($constructor),
+            'visibility' => visibility($constructor),
+            'line' => $constructor->getStartLine(),
+            'end' => $constructor->getEndLine(),
+        ];
     }
-    foreach ($class->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
+    foreach ($class->getProperties() as $property) {
         if ($property->getDeclaringClass()->getName() !== $name || ($class->isEnum() && in_array($property->getName(), ['name', 'value'], true))) {
             continue;
         }
@@ -165,9 +257,11 @@ foreach (classNames($src) as $name) {
             'readonly' => $property->isReadOnly(),
             'static' => $property->isStatic(),
             'doc' => prose($property->getDocComment()),
+            'visibility' => visibility($property),
+            'promoted' => $property->isPromoted(),
         ];
     }
-    foreach ($class->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
+    foreach ($class->getMethods() as $method) {
         if ($method->getDeclaringClass()->getName() !== $name || $method->isConstructor()) {
             continue;
         }
@@ -183,14 +277,37 @@ foreach (classNames($src) as $name) {
             'routes' => $routes,
             'name' => $method->getName(),
             'static' => $method->isStatic(),
+            'visibility' => visibility($method),
             'signature' => signature($method),
             'doc' => prose($method->getDocComment()),
             'shapes' => shapes($method->getDocComment()),
+            'params' => params($method),
             'line' => $method->getStartLine(),
+            'end' => $method->getEndLine(),
         ];
     }
+    // Public members first, in declaration order within each visibility.
+    usort($entry['methods'], static fn (array $a, array $b) => [$a['visibility'] !== 'public', $a['line']] <=> [$b['visibility'] !== 'public', $b['line']]);
     $model[] = $entry;
 }
+
+// The graph: which classes each file names, and the reverse.
+$known = array_column($model, 'name');
+$usedBy = [];
+foreach ($model as &$entry) {
+    $entry['uses'] = usesOf("{$root}/{$entry['file']}", $entry['name'], $known);
+    foreach ($entry['uses'] as $used) {
+        $usedBy[$used][] = $entry['name'];
+    }
+}
+unset($entry);
+foreach ($model as &$entry) {
+    $entry['usedBy'] = $usedBy[$entry['name']] ?? [];
+    sort($entry['usedBy']);
+}
+unset($entry);
+$publicMethods = static fn (array $e): array => array_values(array_filter($e['methods'], static fn (array $m) => $m['visibility'] === 'public'));
+$internals = static fn (array $e): array => array_values(array_filter($e['methods'], static fn (array $m) => $m['visibility'] !== 'public'));
 
 // ---- render
 $byNamespace = [];
@@ -255,7 +372,10 @@ foreach ($byNamespace as $namespace => $entries) {
             }
             $page .= "\n";
         }
-        if ($e['constructor'] !== null) {
+        if ($e['usedBy'] !== []) {
+            $page .= "Used by: " . implode(', ', array_map(static fn (string $n) => "`{$n}`", $e['usedBy'])) . "\n\n";
+        }
+        if ($e['constructor'] !== null && $e['constructor']['visibility'] === 'public') {
             $page .= "```php\n" . $e['constructor']['signature'] . "\n```\n";
             if ($e['constructor']['doc'] !== '') {
                 $page .= $md($e['constructor']['doc']) . "\n";
@@ -267,11 +387,14 @@ foreach ($byNamespace as $namespace => $entries) {
         }
         if ($e['properties'] !== []) {
             foreach ($e['properties'] as $p) {
+                if ($p['visibility'] !== 'public') {
+                    continue;
+                }
                 $page .= "- " . ($p['readonly'] ? 'readonly ' : '') . ($p['static'] ? 'static ' : '') . "`{$p['type']} \${$p['name']}`" . ($p['doc'] !== '' ? ' — ' . $md($p['doc']) : '') . "\n";
             }
             $page .= "\n";
         }
-        foreach ($e['methods'] as $m) {
+        foreach ($publicMethods($e) as $m) {
             $page .= "### " . ($m['static'] ? 'static ' : '') . "`{$m['signature']}`\n\n";
             foreach ($m['routes'] as $route) {
                 $page .= "Route: `{$route}`\n\n";
@@ -285,6 +408,9 @@ foreach ($byNamespace as $namespace => $entries) {
             if ($m['shapes'] !== []) {
                 $page .= "\n";
             }
+        }
+        if ($internals($e) !== []) {
+            $page .= "Internals: " . implode(', ', array_map(static fn (array $m) => "`{$m['name']}()` ({$m['visibility']}, line {$m['line']})", $internals($e))) . "\n\n";
         }
     }
     $files[$file] = $page;
@@ -311,7 +437,7 @@ if (is_dir("{$root}/site/minn-site/content") && (!is_file("{$root}/site/minn-sit
     $stale = true;
 }
 
-$summary = ['classes' => count($model), 'namespaces' => count($byNamespace), 'methods' => array_sum(array_map(static fn (array $e) => count($e['methods']), $model)), 'stale' => $stale];
+$summary = ['classes' => count($model), 'namespaces' => count($byNamespace), 'methods' => array_sum(array_map(static fn (array $e) => count($publicMethods($e)), $model)), 'internals' => array_sum(array_map(static fn (array $e) => count($internals($e)), $model)), 'stale' => $stale];
 if ($checkOnly) {
     echo json_encode($summary), "\n";
     exit($stale ? 1 : 0);
@@ -332,4 +458,4 @@ file_put_contents("{$root}/contracts/api/minn.json", $json);
 if (is_dir("{$root}/site/minn-site/content")) {
     file_put_contents("{$root}/site/minn-site/content/api.json", $json);
 }
-echo "docs/api: {$summary['classes']} classes, {$summary['methods']} public methods, {$summary['namespaces']} namespaces\n";
+echo "docs/api: {$summary['classes']} classes, {$summary['methods']} public methods, {$summary['internals']} internals, {$summary['namespaces']} namespaces\n";

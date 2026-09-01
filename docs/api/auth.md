@@ -35,9 +35,12 @@ A hash the reference made with its own fast scheme cannot be verified here.
 
 - const `META` = `'_application_passwords'`
 
+Used by: `Minn\Auth\Authenticator`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`
+
 ```php
 __construct(Minn\Content\Users $users)
 ```
+
 
 ### `all(int $userId): array`
 
@@ -73,6 +76,8 @@ Twenty-four letters and digits.
 
 The plaintext as shown once: groups of four, space separated.
 
+Internals: `change()` (private, line 125), `save()` (private, line 140), `uuid()` (private, line 145)
+
 
 ## AuthCookies
 
@@ -83,9 +88,12 @@ plugins paths (the secure variant over HTTPS, keyed off that scheme's
 salt) and the logged_in cookie on the site root, which is the one REST
 reads. Every value shares the username|expiration|token|hmac shape.
 
+Used by: `Minn\Engine`, `Minn\Front\CommentPostController`, `Minn\Login\LoginController`
+
 ```php
 __construct(Minn\Db $db, Minn\Auth\Cookie $cookie)
 ```
+
 
 ### `hash(): string`
 
@@ -110,6 +118,8 @@ Why a request is not authenticated, as the reference's error code: a
 missing or invalid cookie is rest_not_logged_in (the request is simply
 anonymous); a good cookie with a bad nonce is rest_cookie_invalid_nonce.
 
+Used by: `Minn\Auth\Authenticator`, `Minn\Rest\Caller`
+
 ```php
 __construct(string $code)
 ```
@@ -126,6 +136,8 @@ __construct(string $code)
 `final readonly class Minn\Auth\Authenticated` · `public/minn/src/Minn/Auth/Authenticated.php`
 
 A validated session: the user row and the raw session token behind it.
+
+Used by: `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Auth\Cookie`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Front\CommentPostController`, `Minn\Login\LoginController`, `Minn\Rest\Caller`
 
 ```php
 __construct(Minn\Content\UserRecord $user, string $token, ?array $applicationPassword = NULL)
@@ -146,9 +158,12 @@ __construct(Minn\Content\UserRecord $user, string $token, ?array $applicationPas
 Resolves the current user two ways. A page load carries the cookie alone;
 a REST call must also carry a nonce bound to the same session.
 
+Used by: `Minn\Admin\AppController`, `Minn\Engine`, `Minn\Front\CommentPostController`, `Minn\Login\LoginController`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\Caller`, `Minn\Rest\IndexController`
+
 ```php
 __construct(Minn\Auth\Cookie $cookie, Minn\Content\Users $users)
 ```
+
 
 ### static `fromDb(Minn\Db $db): self`
 
@@ -191,9 +206,12 @@ The capability engine: a user's roles from {prefix}capabilities usermeta,
 the primitives those roles grant, and the meta-capability mapping for
 edit_post, delete_post, and read_post.
 
+Used by: `Minn\Admin\ActivityFeed`, `Minn\Admin\AdminTypes`, `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Admin\Dashboard`, `Minn\Admin\HiddenIntegrations`, `Minn\Admin\LanguageController`, `Minn\Admin\Notifications`, `Minn\Cli\Runtime`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Front\CommentPostController`, `Minn\Rest\Api`, `Minn\Rest\Caller`, `Minn\Runtime\Runtime`
+
 ```php
 __construct(Minn\Db $db, Minn\Content\Users $users, Minn\Auth\Roles $roles)
 ```
+
 
 ### static `fromDb(Minn\Db $db): self`
 
@@ -217,6 +235,8 @@ The primitives a capability requires, all of which must be held.
 
 - `@return list<string>`
 
+Internals: `mapPostCapability()` (private, line 104), `fold()` (private, line 152), `trashedFrom()` (private, line 157)
+
 
 ## Cookie
 
@@ -227,9 +247,12 @@ key  = HMAC-md5(username|fragment|expiration|token, logged_in salt)
 hmac = HMAC-sha256(username|expiration|token, key)
 and the session live in the user's session_tokens store.
 
+Used by: `Minn\Auth\AuthCookies`, `Minn\Auth\Authenticator`, `Minn\Engine`
+
 ```php
 __construct(Minn\Db $db, Minn\Content\Users $users, Minn\Auth\Sessions $sessions)
 ```
+
 
 ### `name(): string`
 
@@ -247,6 +270,8 @@ derived from a different host.
 
 - `@param array<string, string> $cookies`
 
+Internals: `signature()` (private, line 84)
+
 
 ## LoginThrottle
 
@@ -259,10 +284,14 @@ as "window start:count"; a successful sign-in clears the row.
 
 - const `LIMIT` = `20`
 - const `WINDOW` = `900`
+- const `PREFIX` = `'minn_login_throttle_'`
+
+Used by: `Minn\Engine`, `Minn\Login\LoginController`
 
 ```php
 __construct(Minn\Db $db)
 ```
+
 
 ### `retryAfter(string $address, ?int $now = NULL): ?int`
 
@@ -272,6 +301,8 @@ Seconds the address must wait, or null when it may try.
 
 ### `clear(string $address): void`
 
+Internals: `read()` (private, line 55), `write()` (private, line 64), `prune()` (private, line 76), `key()` (private, line 86)
+
 
 ## Nonce
 
@@ -279,6 +310,10 @@ Seconds the address must wait, or null when it may try.
 
 The wp_rest nonce: ten characters of HMAC-md5(tick|wp_rest|uid|token)
 under the nonce salt, accepted for the current tick and the one before.
+
+- const `LIFETIME` = `86400`
+
+Used by: `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Front\AdminBar`, `Minn\Front\Resolver`, `Minn\Login\LoginController`, `Minn\Rest\RevisionsController`
 
 ### static `tick(): float`
 
@@ -296,6 +331,8 @@ under the nonce salt, accepted for the current tick and the one before.
 The stored password scheme. A modern "$wp$2y$..." value is bcrypt over
 base64(HMAC-sha384(password, "wp-sha384")); a bare "$2y$" value is plain
 bcrypt. Legacy phpass "$P$" hashes are not verified.
+
+Used by: `Minn\Auth\ApplicationPasswords`, `Minn\Auth\AuthCookies`, `Minn\Auth\Authenticator`, `Minn\Auth\Cookie`, `Minn\Cli\UserCommand`, `Minn\Content\Users`, `Minn\Login\LoginController`, `Minn\Rest\UsersController`
 
 ### static `verify(string $password, string $hash): bool`
 
@@ -323,9 +360,12 @@ refused and the reader asks for a fresh link.
 
 - const `LIFETIME` = `86400`
 
+Used by: `Minn\Cli\UserCommand`, `Minn\Engine`, `Minn\Login\LoginController`, `Minn\Rest\UsersController`
+
 ```php
 __construct(Minn\Content\Users $users)
 ```
+
 
 ### `issue(Minn\Content\UserRecord $user): string`
 
@@ -341,6 +381,8 @@ True when the key matches the stored hash and has not expired.
 
 ### `clear(Minn\Content\UserRecord $user): void`
 
+Internals: `hash()` (private, line 57)
+
 
 ## Phpass
 
@@ -351,9 +393,15 @@ scheme: a log2 iteration count, an eight-character salt, and an iterated
 MD5 in phpass's own base-64 alphabet. The reference still verifies these
 for application passwords, which makes them the portable choice.
 
+- const `ALPHABET` = `'./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'`
+
+Used by: `Minn\Auth\ApplicationPasswords`
+
 ### static `hash(string $password, int $log2Rounds = 11): string`
 
 ### static `verify(string $password, string $hash): bool`
+
+Internals: `crypt()` (private, line 31), `encode()` (private, line 47)
 
 
 ## PortableHash
@@ -366,11 +414,17 @@ character salt, and MD5 iterated over salt and password, encoded in
 phpass's own base64 alphabet. Implemented from the published algorithm
 so cookies are accepted in both directions.
 
+- const `ALPHABET` = `'./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'`
+
+Used by: `Minn\Content\PasswordGate`, `Minn\Login\LoginController`
+
 ### static `hash(string $password, int $countLog2 = 13): string`
 
 The reference's cookies carry 2^13 iterations; it accepts nothing weaker.
 
 ### static `verify(string $password, string $hash): bool`
+
+Internals: `crypt()` (private, line 33), `encode()` (private, line 48)
 
 
 ## Roles
@@ -381,9 +435,14 @@ Role definitions from the site's {prefix}user_roles option, parsed by a
 bounded scan of the serialized blob, with the seeded contract copy as the
 fallback for a fresh install.
 
+- const `LEVELS` = `array (   'administrator' => 10,   'editor' => 7,   'author' => 2,   'contributor' => 1,   'subscriber' => 0, )`
+
+Used by: `Minn\Auth\Capabilities`, `Minn\Cli\UserCommand`, `Minn\Content\Users`, `Minn\Rest\UsersController`
+
 ```php
 __construct(Minn\Db $db)
 ```
+
 
 ### static `level(string $role): int`
 
@@ -413,6 +472,10 @@ blob has another shape, so the caller can fall back.
 The site's own secret material, read from the constants wp-config.php
 defines, so the engine keys off exactly what the install used.
 
+- const `SCHEMES` = `array (   'logged_in' =>    array (     0 => 'LOGGED_IN_KEY',     1 => 'LOGGED_IN_SALT',   ),   'nonce' =>    array (     0 => 'NONCE_KEY',     1 => 'NONCE_SALT',   ),   'auth' =>    array (     0 => 'AUTH_KEY',     1 => 'AUTH_SALT',   ),   'secure_auth' =>    array (     0 => 'SECURE_AUTH_KEY',     1 => 'SECURE_AUTH_SALT',   ), )`
+
+Used by: `Minn\Auth\AuthCookies`, `Minn\Auth\Cookie`, `Minn\Auth\Nonce`, `Minn\Auth\PasswordReset`, `Minn\Engine`, `Minn\Front\CommentPostController`
+
 ### static `configured(): bool`
 
 True when every key and salt is defined and none is the installer's placeholder.
@@ -432,9 +495,12 @@ The session_tokens usermeta store: {sha256(token): {expiration, ip, ua,
 login}}. Read by a bounded scan of the serialized blob and written by
 serializing it ourselves, so stored data is never executed.
 
+Used by: `Minn\Admin\SessionsController`, `Minn\Auth\Authenticator`, `Minn\Auth\Cookie`, `Minn\Engine`, `Minn\Login\LoginController`, `Minn\Rest\Api`
+
 ```php
 __construct(Minn\Content\Users $users)
 ```
+
 
 ### static `generateToken(): string`
 
@@ -470,6 +536,8 @@ Ends every session of the user except the one stored under the given key.
 
 The map in PHP's serialized form, entry keys in the order given.
 
+Internals: `parseEntry()` (private, line 120), `prune()` (private, line 138), `write()` (private, line 144), `string()` (private, line 164)
+
 
 ## TypeCapabilities
 
@@ -480,6 +548,10 @@ pages own their families (edit_posts, edit_others_pages, ...). Navigation
 menus fold every one of them onto edit_theme_options, which is why an
 editor may read a menu and only an administrator may change one; the
 reference's own registration says the same thing.
+
+- const `FOLDED` = `array (   'wp_navigation' => 'edit_theme_options', )` — Types whose whole cap family collapses to a single name.
+
+Used by: `Minn\Auth\Capabilities`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`
 
 ### static `of(string $type, string $capability): string`
 

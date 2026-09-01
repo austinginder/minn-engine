@@ -36,9 +36,12 @@ built here for a signed-in reader who can edit. There is no other bar
 and no other admin on the engine, so it is on for everyone who passes
 the edit_posts gate; the app's per-person opt-in does not apply.
 
+Used by: `Minn\Engine`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\PageRenderer`
+
 ```php
 __construct(Minn\Auth\Authenticated $session, Minn\Auth\Capabilities $capabilities, Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, Minn\Admin\App $app, Minn\Admin\Appearance $appearance, Minn\Admin\AdminTypes $types)
 ```
+
 
 ### static `forReader(?Minn\Auth\Authenticated $session, Minn\Auth\Capabilities $capabilities, Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, Minn\Admin\App $app, Minn\Admin\Appearance $appearance, Minn\Admin\AdminTypes $types): ?self`
 
@@ -50,6 +53,8 @@ The stylesheet link for the head.
 
 The bar markup, its config, and the script, for the end of the body.
 
+Internals: `markup()` (private, line 81), `status()` (private, line 187), `editTarget()` (private, line 204), `commands()` (private, line 220), `searchTypes()` (private, line 245), `customSchemeStyle()` (private, line 254), `appUrl()` (private, line 273), `appPath()` (private, line 278), `assetUrl()` (private, line 283), `icon()` (private, line 288), `gridIcon()` (private, line 293), `menuItem()` (private, line 298)
+
 
 ## AssetsController
 
@@ -57,9 +62,14 @@ The bar markup, its config, and the script, for the end of the body.
 
 The engine's own static assets, served under a reserved path.
 
+- const `TYPES` = `array (   'css' => 'text/css',   'js' => 'application/javascript', )`
+
+Used by: `Minn\Engine`
+
 ```php
 __construct(string $assetsDir)
 ```
+
 
 ### `asset(Minn\Http\Request $request, string $path): Minn\Http\Response`
 
@@ -84,6 +94,8 @@ plugin names.
 
 ### static `location(Minn\Db $db, Minn\Http\Request $current, ?string $url): ?string`
 
+Internals: `requestFor()` (private, line 29)
+
 
 ## CommentList
 
@@ -99,6 +111,8 @@ each item and its close rendered by the caller's closures.
 - `@param Closure(array, int): string $item the opening markup for a comment at a depth`
 - `@param Closure(array, int): string $close the closing markup`
 
+Internals: `level()` (private, line 45)
+
 
 ## CommentPostController
 
@@ -110,13 +124,20 @@ moderation-hash when held), plain pages with 200 for a missing field,
 403 when comments are closed, 409 for a duplicate, 429 for posting too
 quickly, and 405 for anything but POST.
 
+- const `FLOOD_SECONDS` = `15`
+
+Used by: `Minn\Engine`
+
 ```php
 __construct(Minn\Content\Site $site, Minn\Content\Posts $posts, Minn\Content\Comments $comments, Minn\Front\Permalinks $permalinks, Minn\Auth\Authenticator $authenticator, Minn\Auth\Capabilities $capabilities, Minn\Auth\AuthCookies $cookies)
 ```
 
+
 ### `post(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `* /wp-comments-post.php`
+
+Internals: `approval()` (private, line 132), `rememberAuthor()` (private, line 139), `moderationHash()` (private, line 149), `notifyModerator()` (private, line 154), `refusal()` (private, line 161)
 
 
 ## DocumentTitle
@@ -126,6 +147,8 @@ Route: `* /wp-comments-post.php`
 The document title as parts (title, tagline, page, site) in the order the
 reference joins them, so plugin code filtering document_title_parts sees
 the same array, and the plain composition the engine prints without one.
+
+Used by: `Minn\Front\Renderer`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\PageRenderer`
 
 ### static `parts(Minn\Front\Resolution $resolution, string $site, string $tagline): array`
 
@@ -146,9 +169,12 @@ for the site, its archives, and comments; Atom and RDF for the site.
 The whitespace inside each item is part of the captured output and is
 reproduced as-is.
 
+Used by: `Minn\Engine`, `Minn\Front\ProbeController`
+
 ```php
 __construct(Minn\Db $db, Minn\Content\Site $site, Minn\Content\Posts $posts, Minn\Content\Comments $comments, Minn\Content\Users $users, Minn\Front\Permalinks $permalinks, string $generatorVersion)
 ```
+
 
 ### static `contentType(string $kind): string`
 
@@ -168,6 +194,8 @@ The site's or one post's comments as RSS 2.0.
 
 ### static `isoZ(string $gmt): string`
 
+Internals: `rss2()` (private, line 60), `rssItem()` (private, line 85), `atom()` (private, line 112), `rdf()` (private, line 156), `content()` (private, line 248), `latestModified()` (private, line 270), `commentCount()` (private, line 279), `authorName()` (private, line 284), `termNames()` (private, line 290), `cdata()` (private, line 305), `plainExcerpt()` (private, line 310), `language()` (private, line 318), `title()` (private, line 325)
+
 
 ## FrontController
 
@@ -178,9 +206,12 @@ redirect or render, through the active block theme when there is one,
 the classic PHP template runner when the theme is classic, and the
 interim template otherwise.
 
+Used by: `Minn\Engine`
+
 ```php
 __construct(Minn\Front\Resolver $resolver, Minn\Front\Renderer $renderer, ?Minn\Theme\PageRenderer $theme = NULL, ?Minn\Front\ProbeController $probes = NULL, ?Minn\Cron\Cron $cron = NULL, ?Minn\Theme\ClassicRenderer $classic = NULL)
 ```
+
 
 ### `notFound(): Minn\Http\Response`
 
@@ -198,6 +229,8 @@ Route: `* /{path*}`
 What a public URL resolved to.
 
 Cases: `Home`, `Single`, `Page`, `Category`, `Tag`, `Author`, `Date`, `Search`, `Taxonomy`, `PostTypeArchive`, `NotFound`, `Redirect`
+
+Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Front\AdminBar`, `Minn\Front\Canonical`, `Minn\Front\DocumentTitle`, `Minn\Front\FrontController`, `Minn\Front\ProbeController`, `Minn\Front\Renderer`, `Minn\Front\Resolution`, `Minn\Front\Resolver`, `Minn\Runtime\MainQuery`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\BodyClasses`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
 
 
 ## ListingLinks
@@ -265,6 +298,8 @@ structure every link is a query-string form (?p=, ?cat=); with a
 structure, published and private posts get their pretty form and every
 other status keeps the query form, which is what the reference emits.
 
+Used by: `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Admin\Diagnostics`, `Minn\Admin\ManageController`, `Minn\Admin\RenderController`, `Minn\Admin\V1Controller`, `Minn\Blocks\Dynamic\Archives`, `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Cli\Runtime`, `Minn\Content\Menus`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Front\CommentPostController`, `Minn\Front\Feeds`, `Minn\Front\ProbeController`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Front\Sitemaps`, `Minn\Login\LoginController`, `Minn\Media\Uploads`, `Minn\Rest\Api`, `Minn\Rest\CommentObject`, `Minn\Rest\IndexController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\RestUrl`, `Minn\Rest\SearchController`, `Minn\Rest\TermObject`, `Minn\Rest\UserObject`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\PageRenderer`, `Minn\Theme\Theme`
+
 ```php
 __construct(Minn\Content\Posts $posts, Minn\Content\Terms $terms, string $home, string $structure, int $frontPageId = 0, int $postsPageId = 0, ?Closure $registry = NULL)
 ```
@@ -322,6 +357,8 @@ A regex over the structure's tokens, so an incoming path can be
 matched back to the post it names. Null when the structure has no
 identifying token.
 
+Internals: `hasPrettyLink()` (private, line 214), `fill()` (private, line 219)
+
 
 ## PluginRules
 
@@ -336,6 +373,9 @@ vars plus whatever the query_vars filter admits, which is how a plugin
 registers its own).
 
 - const `STATE` = `'rule_query_vars'`
+- const `PUBLIC_VARS` = `array (   0 => 'm',   1 => 'p',   2 => 'posts',   3 => 'w',   4 => 'cat',   5 => 'withcomments',   6 => 'withoutcomments',   7 => 's',   8 => 'search',   9 => 'exact',   10 => 'sentence',   11 => 'calendar',   12 => 'page',   13 => 'paged',   14 => 'more',   15 => 'tb',   16 => 'pb',   17 => 'author',   18 => 'order',   19 => 'orderby',   20 => 'year',   21 => 'monthnum',   22 => 'day',   23 => 'hour',   24 => 'minute',   25 => 'second',   26 => 'name',   27 => 'category_name',   28 => 'tag',   29 => 'feed',   30 => 'author_name',   31 => 'pagename',   32 => 'page_id',   33 => 'error',   34 => 'attachment',   35 => 'attachment_id',   36 => 'subpost',   37 => 'subpost_id',   38 => 'preview',   39 => 'robots',   40 => 'favicon',   41 => 'taxonomy',   42 => 'term',   43 => 'cpage',   44 => 'post_type',   45 => 'embed', )` — The reference's public query vars a rule's query string may set.
+
+Used by: `Minn\Front\Resolver`, `Minn\Runtime\MainQuery`
 
 ### static `match(string $path, bool $top): ?array`
 
@@ -376,9 +416,12 @@ The surface monitors, crawlers, and hosting checks hit that is not a
 page: feeds, sitemaps, robots.txt, the XML-RPC and cron endpoints, and
 the admin entry point.
 
+Used by: `Minn\Engine`, `Minn\Front\FrontController`
+
 ```php
 __construct(Minn\Content\Site $site, Minn\Content\Posts $posts, Minn\Front\Permalinks $permalinks, Minn\Front\Resolver $resolver, Minn\Front\Feeds $feeds, Minn\Front\Sitemaps $sitemaps, Closure $notFound, ?Minn\Cron\Cron $cron = NULL)
 ```
+
 
 ### `robots(Minn\Http\Request $request): Minn\Http\Response`
 
@@ -454,6 +497,8 @@ A post's comment feed, or an archive's feed, by resolving the path in front of /
 
 The ?feed= query form on any resolvable path.
 
+Internals: `feed()` (private, line 158), `feedResponse()` (private, line 190), `xml()` (private, line 195)
+
 
 ## Renderer
 
@@ -463,9 +508,14 @@ The interim public theme: one clean template until the block-theme
 reader lands. The body-class tokens are the contract (stylesheets and
 crawlers key off them); the markup around them is engine-defined.
 
+- const `CSS` = `':root { color-scheme: light dark; } body { margin: 0; font: 17px/1.6 "Hanken Grotesk", "Helvetica Neue", sans-serif; background: #fbfbfc; color: #1a1a1f; } @media (prefers-color-scheme: dark) { body { background: #0b0b0d; color: #ececed; } } .site-header, main, .site-footer { max-width: 680px; margin: 0 auto; padding: 0 24px; } .site-header { padding-top: 32px; } .site-title { font-weight: 800; letter-spacing: -0.02em; text-decoration: none; color: inherit; font-size: 20px; } main { padding-top: 40px; padding-bottom: 40px; } h1 { font-size: 36px; letter-spacing: -0.02em; line-height: 1.15; margin: 0 0 24px; } .post-list { list-style: none; margin: 0; padding: 0; } .post-list li { padding: 18px 0; border-top: 1px solid rgba(128,128,140,0.25); } .post-list a { font-weight: 600; color: inherit; text-decoration: none; font-size: 20px; } .post-list time { display: block; font-size: 13px; opacity: 0.6; } .post-list p { margin: 6px 0 0; opacity: 0.85; } .entry-content img { max-width: 100%; height: auto; } .site-footer { padding-bottom: 32px; font: 12px/1.6 "JetBrains Mono", monospace; opacity: 0.6; }'`
+
+Used by: `Minn\Engine`, `Minn\Front\FrontController`
+
 ```php
 __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Front\Permalinks $permalinks, int $perPage)
 ```
+
 
 ### `bodyClasses(Minn\Front\Resolution $resolution): array`
 
@@ -477,6 +527,8 @@ The document title: the item's title with the site name, or the site name alone.
 
 ### `render(Minn\Front\Resolution $resolution): string`
 
+Internals: `pageClasses()` (private, line 98), `article()` (private, line 115), `archive()` (private, line 125)
+
 
 ## Resolution
 
@@ -485,6 +537,8 @@ The document title: the item's title with the site name, or the site name alone.
 The outcome of resolving a public URL: which kind of thing it names,
 the record behind it, and the page number for paginated views. Redirects
 carry their target instead.
+
+Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Front\AdminBar`, `Minn\Front\DocumentTitle`, `Minn\Front\FrontController`, `Minn\Front\ProbeController`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Runtime\MainQuery`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\BodyClasses`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
 
 - readonly `Minn\Front\Kind $kind`
 - readonly `Minn\Content\PostRecord|Minn\Content\UserRecord|Minn\Content\TermRecord|array|null $record`
@@ -554,10 +608,13 @@ name, even one that belongs to nobody.
 - Non-public posts are 404 to anonymous readers and served to a reader
 who can edit them.
 
+Used by: `Minn\Engine`, `Minn\Front\Canonical`, `Minn\Front\FrontController`, `Minn\Front\ProbeController`, `Minn\Front\Renderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`
+
 ```php
 __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Content\Terms $terms, Minn\Front\Permalinks $permalinks, Closure $canReadUnpublished, int $perPage)
 ```
 - `@param Closure(array $post): bool $canReadUnpublished`
+
 
 ### static `fromDb(Minn\Db $db, Closure $canReadUnpublished): self`
 
@@ -575,12 +632,16 @@ every other method renders what the query alone finds, as typed.
 
 - `@return array{0: string, 1: string}|null`
 
+Internals: `fromRuleVars()` (private, line 114), `resolvePath()` (private, line 139), `resolveQueryVars()` (private, line 199), `dateRedirect()` (private, line 281), `home()` (private, line 297), `pluginRoute()` (private, line 319), `segmentsOf()` (private, line 354), `taxonomyArchive()` (private, line 363), `termArchive()` (private, line 377), `termResolution()` (private, line 390), `authorArchive()` (private, line 399), `dateArchive()` (private, line 416), `resolveContent()` (private, line 459), `resolveSingle()` (private, line 495), `formerSlug()` (private, line 537), `singleOrRedirect()` (private, line 550), `readable()` (private, line 559), `pages()` (private, line 576)
+
 
 ## SitemapXml
 
 `final class Minn\Front\SitemapXml` · `public/minn/src/Minn/Front/SitemapXml.php`
 
 The two sitemap documents, index and URL set, from entry maps; one builder for the engine's routes and the facade's renderer.
+
+Used by: `Minn\Front\Sitemaps`
 
 ### static `index(array $entries, ?string $stylesheet): string`
 
@@ -589,6 +650,8 @@ The two sitemap documents, index and URL set, from entry maps; one builder for t
 ### static `urlset(array $entries, ?string $stylesheet): string`
 
 - `@param list<array<string, string|null>> $entries`
+
+Internals: `elements()` (private, line 24), `document()` (private, line 39)
 
 
 ## Sitemaps
@@ -599,9 +662,14 @@ The sitemap index and its providers (posts, pages, categories, tags,
 authors), in the reference's shape: one file per provider and page, 2000
 URLs a page, lastmod on content only.
 
+- const `PER_PAGE` = `2000`
+
+Used by: `Minn\Engine`, `Minn\Front\ProbeController`
+
 ```php
 __construct(Minn\Db $db, Minn\Content\Site $site, Minn\Front\Permalinks $permalinks)
 ```
+
 
 ### `index(): string`
 
@@ -612,6 +680,8 @@ One provider page, or null when the name or page does not exist.
 ### static `stylesheet(bool $index): string`
 
 The engine's own stylesheet for browsers that open a sitemap.
+
+Internals: `providers()` (private, line 56), `contentUrls()` (private, line 82), `termUrls()` (private, line 105), `userUrls()` (private, line 120), `authors()` (private, line 127), `iso()` (private, line 151)
 
 
 ## TermLists
@@ -651,4 +721,6 @@ The option elements of a category dropdown, nested by depth when the
 caller asked for a hierarchy.
 
 - `@param list<array<string, mixed>> $terms`
+
+Internals: `options()` (private, line 118), `sorted()` (private, line 137), `orphans()` (private, line 150), `items()` (private, line 157)
 

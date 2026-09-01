@@ -33,12 +33,16 @@ The common cases, so a one-off request needs no Outbound at the call site.
 
 ### static `send(Minn\Http\Outbound $request): Minn\Http\Exchange`
 
+Internals: `lastBlock()` (private, line 76)
+
 
 ## Exchange
 
 `final readonly class Minn\Http\Exchange` · `public/minn/src/Minn/Http/Exchange.php`
 
 What came back: the final response's status, headers (repeats as lists), Set-Cookie values, and body, or the transport error.
+
+Used by: `Minn\Http\Client`
 
 ```php
 __construct(int $code, array $headers, array $cookies, string $body, ?string $error = NULL)
@@ -72,6 +76,11 @@ detail, while the detail goes to the log. Installed once per request,
 it turns display_errors off (unless the site's own WP_DEBUG_DISPLAY asks
 for them) and catches the fatal errors PHP would otherwise print.
 
+- const `FATAL` = `4437`
+
+Used by: `Minn\Engine`
+
+
 ### static `onFatal(callable $recorder): void`
 
 What to do with a fatal beyond showing the page: the engine records
@@ -96,6 +105,8 @@ The same page with the cause on it, for a site that asked to see
 errors. Only ever reached when WP_DEBUG_DISPLAY (or WP_DEBUG) is on:
 a site that has not asked never learns this much from a response.
 
+Internals: `record()` (private, line 73), `page()` (private, line 113)
+
 
 ## Kernel
 
@@ -104,11 +115,16 @@ a site that has not asked never learns this much from a response.
 The edge. Turns a request into a response through the router and turns
 a RestError thrown anywhere underneath into the WordPress error shape.
 
+Used by: `Minn\Engine`
+
 ```php
 __construct(Minn\Http\Router $router)
 ```
 
+
 ### `handle(Minn\Http\Request $request): ?Minn\Http\Response`
+
+Internals: `harden()` (private, line 34)
 
 
 ## Method
@@ -116,6 +132,8 @@ __construct(Minn\Http\Router $router)
 `enum Minn\Http\Method` · `public/minn/src/Minn/Http/Method.php`
 
 Cases: `Get` = `'GET'`, `Head` = `'HEAD'`, `Post` = `'POST'`, `Put` = `'PUT'`, `Patch` = `'PATCH'`, `Delete` = `'DELETE'`, `Options` = `'OPTIONS'`, `Any` = `'*'`
+
+Used by: `Minn\Admin\AppController`, `Minn\Admin\LanguageController`, `Minn\Admin\ManageController`, `Minn\Admin\PackagesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SystemController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Engine`, `Minn\Front\AssetsController`, `Minn\Front\Canonical`, `Minn\Front\CommentPostController`, `Minn\Front\FrontController`, `Minn\Front\ProbeController`, `Minn\Http\Request`, `Minn\Http\Route`, `Minn\Http\Router`, `Minn\Login\LoginController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\CommentsController`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\Embed`, `Minn\Rest\IndexController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\NavigationController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\TypesController`, `Minn\Rest\UsersController`
 
 ### static `fromName(string $name): self`
 
@@ -134,6 +152,8 @@ run only for reads; every other method renders the URL as typed.
 `final readonly class Minn\Http\Outbound` · `public/minn/src/Minn/Http/Outbound.php`
 
 One outgoing HTTP request, normalised: the client below needs nothing else.
+
+Used by: `Minn\Http\Client`
 
 ```php
 __construct(string $method, string $url, array $headers = array ( ), ?string $body = NULL, float $timeout = 5.0, int $redirects = 5, bool $verifySsl = true, string $userAgent = '', ?string $caInfo = NULL, bool $blocking = true)
@@ -170,6 +190,8 @@ __construct(string $method, string $url, array $headers = array ( ), ?string $bo
 
 An immutable picture of the incoming request. Built once from the PHP
 globals at the edge; handlers only ever see this object.
+
+Used by: `Minn\Admin\AppController`, `Minn\Admin\Diagnostics`, `Minn\Admin\LanguageController`, `Minn\Admin\ManageController`, `Minn\Admin\PackagesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SystemController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Auth\Authenticator`, `Minn\Autoloader`, `Minn\Engine`, `Minn\Extension\Seams`, `Minn\Front\AssetsController`, `Minn\Front\Canonical`, `Minn\Front\CommentPostController`, `Minn\Front\FrontController`, `Minn\Front\ProbeController`, `Minn\Front\Resolver`, `Minn\Http\Kernel`, `Minn\Http\Router`, `Minn\Login\LoginController`, `Minn\Media\Upload`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\Caller`, `Minn\Rest\CommentsController`, `Minn\Rest\Context`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\Embed`, `Minn\Rest\IndexController`, `Minn\Rest\ListQuery`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\NavigationController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\TypesController`, `Minn\Rest\UsersController`, `Minn\Runtime\Runtime`
 
 ```php
 __construct(Minn\Http\Method $method, string $path, array $query, array $headers, array $cookies, string $body, bool $secure, string $host, array $form = array ( ), array $files = array ( ), string $remoteAddress = '', array $server = array ( ))
@@ -228,6 +250,8 @@ What a handler returns. Nothing is written to the client until the
 kernel calls send(), so a response can be inspected, wrapped, or
 replaced on the way out.
 
+Used by: `Minn\Admin\AppController`, `Minn\Admin\LanguageController`, `Minn\Admin\ManageController`, `Minn\Admin\PackagesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SystemController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Auth\AuthCookies`, `Minn\Engine`, `Minn\Front\AssetsController`, `Minn\Front\CommentPostController`, `Minn\Front\FrontController`, `Minn\Front\ProbeController`, `Minn\Http\Failure`, `Minn\Http\Kernel`, `Minn\Http\Router`, `Minn\Login\LoginController`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\CommentsController`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\Embed`, `Minn\Rest\IndexController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\NavigationController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Reply`, `Minn\Rest\RevisionsController`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\TypesController`, `Minn\Rest\UsersController`
+
 ```php
 __construct(int $status = 200, array $headers = array ( ), string $body = '', array $cookies = array ( ))
 ```
@@ -267,6 +291,8 @@ authorization surface of the engine is a grep away.
 Patterns: "/wp/v2/posts/{id}" captures one segment, "{id:\d+}" constrains
 it, and "/{path*}" captures the rest of the path (slashes included).
 
+Used by: `Minn\Admin\AppController`, `Minn\Admin\LanguageController`, `Minn\Admin\ManageController`, `Minn\Admin\PackagesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SystemController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Front\AssetsController`, `Minn\Front\CommentPostController`, `Minn\Front\FrontController`, `Minn\Front\ProbeController`, `Minn\Http\Router`, `Minn\Login\LoginController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\CommentsController`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\IndexController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\NavigationController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\TypesController`, `Minn\Rest\UsersController`
+
 ```php
 __construct(Minn\Http\Method $method, string $pattern, ?string $cap = NULL)
 ```
@@ -286,10 +312,13 @@ Matches a request to a #[Route] on one of the registered handler
 objects, enforces the declared capability, and invokes the method with
 the request plus the named pattern captures.
 
+Used by: `Minn\Engine`, `Minn\Http\Kernel`, `Minn\Rest\Api`, `Minn\Rest\Embed`, `Minn\Rest\EngineRoutes`, `Minn\Rest\IndexController`
+
 ```php
 __construct(?Closure $gate = NULL)
 ```
 - `@param Closure(string $cap, Request $request): void $gate throws RestError when the capability is missing`
+
 
 ### `register(object ...$handlers): self`
 
