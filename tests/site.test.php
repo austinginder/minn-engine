@@ -60,6 +60,7 @@ $check(!str_contains($home, 'minn<small>engine</small>'), 'the header does not s
 $check(str_contains($home, 'What is Minn, and what is Minn Engine?'), 'the FAQ names the product vs the engine');
 $check(str_contains($home, '/wp-content/themes/minn-site/style.css'), 'the theme stylesheet is linked');
 $check(str_contains($home, 'rel="icon"') && str_contains($home, '/assets/img/favicon.webp'), 'the homepage links the theme favicon');
+$check(str_contains($home, 'rel="preload"') && str_contains($home, '/assets/fonts/hanken-grotesk.woff2'), 'the homepage preloads the body font');
 $check(!str_contains($home, 'CHECKS_COUNT'), 'no unfilled placeholders on the page');
 $check(str_contains($home, 'href="#content">Skip to content'), 'skip link targets the template\'s own main id');
 $check(!preg_match('/class="[^"]*has-global-padding/', $home), 'no global padding class without useRootPaddingAwareAlignments');
