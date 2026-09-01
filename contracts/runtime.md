@@ -1494,9 +1494,37 @@ parity rather than a gap. And a plugin with a syntax error is skipped by
 the symbol gate instead of taking the site down, which is better than the
 reference's behaviour.
 
-GAP: WordPress has recovery mode (it emails the administrator a link that
-loads the site with the broken plugin paused). The engine has no
-equivalent; a fatal is invisible until someone reads the log.
+Recovery (2026-09-01): a fatal in a plugin or theme no longer keeps a site
+down. The file the failure came from names the extension it belongs to
+(`Minn\Runtime\Recovery::blame()`), the engine records that extension as
+paused and answers with the error page, and the NEXT request loads without
+it, so the site comes back on its own. `Minn\Http\Failure::onFatal()` is
+the seam; the engine installs the recorder once the database is in hand.
+
+- The paused list is stored where WordPress stores it, in the same shape:
+  `paused_plugins` keyed by plugin file, `paused_themes` by stylesheet,
+  each holding `type`, `file`, `line`, `message`. A site that ejects back
+  to WordPress finds the pause it left with.
+- Only `plugins/` and `themes/` are ever blamed: a fatal in the engine is
+  not a plugin's fault and pausing something would not fix it.
+- A fatal before the database is reachable cannot be recorded; the error
+  page still answers.
+- `wp minn recovery [status|resume <name> [--theme]|resume-all]`.
+- Recording never takes the request down: a failure inside recovery is
+  logged and the error page still goes out.
+- Suite `tests/recovery.test.php` (9) drives the whole loop against a
+  plugin that really fatals.
+
+DIFFERENCE from the reference, deliberate: WordPress emails the
+administrator a recovery-mode link and keeps the site broken until they
+use it. Minn pauses first and tells the log, so the site is already back
+by the time anyone reads it. There is no recovery-mode email and no
+recovery-mode session.
+
+With debug display on (`WP_DEBUG_DISPLAY`, else `WP_DEBUG`), an uncaught
+Throwable answers the same page with the cause on it: the class, the
+message, the file and the line (`Failure::detailed()`). A site that has
+not asked to see errors never learns that much from a response.
 
 `public/wp-content/mu-plugins/minn-error-lab.php` on the dev site triggers
 each case on demand (`/?minn-error=fatal|exception|error|warning|notice|late`,

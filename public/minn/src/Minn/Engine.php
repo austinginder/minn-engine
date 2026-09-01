@@ -54,6 +54,7 @@ use Minn\Content\Reader;
 use Minn\Front\CommentPostController;
 use Minn\Extension\Extensions;
 use Minn\Runtime\Plugins;
+use Minn\Runtime\Recovery;
 use Minn\Runtime\Runtime;
 use Minn\Extension\Loader;
 use Minn\Extension\Seams;
@@ -127,6 +128,17 @@ final readonly class Engine
     private function respond(Db $db): never
     {
         $request = Request::fromGlobals();
+        // With the database in hand, a fatal can now be blamed on the
+        // extension it came from and that extension paused, so the next
+        // request comes back without it.
+        Failure::onFatal(static function (array $error) use ($db): void {
+            $recovery = new Recovery(new Site($db), ABSPATH . 'wp-content');
+            $blamed = $recovery->blame($error['file']);
+            if ($blamed === null || !$recovery->pause($blamed, $error)) {
+                return;
+            }
+            error_log(sprintf('Minn Engine: paused %s %s after a fatal error; resume it with wp minn recovery resume', $blamed['kind'], $blamed['name']));
+        });
 
         $route = $request->query('rest_route');
         if ($route === null && str_starts_with($request->path, '/wp-json')) {

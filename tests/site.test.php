@@ -83,6 +83,15 @@ $check(str_contains($lex, '<title>The lexicon · Minn'), 'lexicon title');
 $check(str_contains($lex, '/assets/img/favicon.webp'), 'lexicon links the theme favicon');
 $check(str_contains($lex, 'data-lex-filter="speak"'), 'lexicon Speak chip');
 $check(str_contains($lex, 'aria-current="page"'), 'lexicon nav is current');
+[$eh, $errors] = minn_test_fetch($ENGINE . '/errors/');
+$check($eh['status'] === 200, 'theme /errors/ answers 200', (string) $eh['status']);
+$check(str_contains($errors, '<title>When something breaks'), 'errors page title');
+$check(substr_count($errors, 'class="minn-errframe"') === 3, 'the three failure pages are shown');
+$check(str_contains($errors, 'Error establishing a database connection'), 'the database page is one of them');
+$check(str_contains($errors, 'wp minn recovery'), 'the page names the recovery verb');
+[$emd] = minn_test_fetch($ENGINE . '/errors.md');
+$check($emd['status'] === 200, 'theme /errors.md answers 200', (string) $emd['status']);
+
 [$mdh] = minn_test_fetch($ENGINE . '/lexicon.md');
 $check($mdh['status'] === 200, 'theme /lexicon.md answers 200', (string) $mdh['status']);
 [$csh, $cs] = minn_test_fetch($ENGINE . '/code-size/');

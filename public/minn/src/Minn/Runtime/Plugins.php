@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Content\Site;
+
 use Throwable;
 
 /**
@@ -50,9 +52,16 @@ final class Plugins
         }
         $hooks->action('muplugins_loaded', []);
         $active = $runtime->options()->get('active_plugins');
+        // An extension that killed a request is paused until someone lets
+        // it back in; loading it again would only kill this one too.
+        $paused = (new Recovery(new Site($runtime->db), $content))->pausedPlugins();
         foreach (is_array($active) ? $active : [] as $plugin) {
             $plugin = (string) $plugin;
             if (!preg_match('#^[A-Za-z0-9_.-]+(/[A-Za-z0-9_.-]+)?\.php$#', $plugin)) {
+                continue;
+            }
+            if (isset($paused[$plugin])) {
+                self::$skipped[$plugin] = ['functions' => [], 'classes' => [], 'files' => 0, 'truncated' => false, 'error' => 'paused after a fatal error; resume it with wp minn recovery resume'];
                 continue;
             }
             $file = $content . '/plugins/' . $plugin;

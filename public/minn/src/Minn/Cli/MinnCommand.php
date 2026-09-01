@@ -13,6 +13,8 @@ use Minn\Extension\Loader;
 use Minn\Mail\MailSettings;
 use Minn\Mail\Mailer;
 use Minn\Mail\Message;
+use Minn\Content\Site;
+use Minn\Runtime\Recovery;
 use Minn\Runtime\ScriptPack;
 
 /**
@@ -255,6 +257,58 @@ final class MinnCommand
         }
         WP_CLI::log("installed {$result['files']} files into {$result['dir']}");
         WP_CLI::log(count(ScriptPack::handles($contentDir)) . ' handles now available');
+    }
+
+    /**
+     * The extensions recovery paused after they killed a request, and the
+     * way back. A plugin or theme that fatals is paused so the next
+     * request answers without it; nothing loads it again until it is
+     * resumed here.
+     *
+     * ## OPTIONS
+     *
+     * [<action>]
+     * : status (the default), resume, or resume-all.
+     *
+     * [<name>]
+     * : For resume: the plugin file or theme slug to let back in.
+     *
+     * [--theme]
+     * : Treat the name as a theme rather than a plugin.
+     *
+     * @when before_wp_load
+     */
+    public function recovery(array $args, array $assocArgs): void
+    {
+        $runtime = Runtime::boot();
+        $recovery = new Recovery(new Site($runtime->db), ABSPATH . 'wp-content');
+        $action = (string) ($args[0] ?? 'status');
+        if ($action === 'status') {
+            $rows = [];
+            foreach ($recovery->pausedPlugins() as $name => $error) {
+                $rows[] = ['kind' => 'plugin', 'name' => $name, 'message' => (string) ($error['message'] ?? '')];
+            }
+            foreach ($recovery->pausedThemes() as $name => $error) {
+                $rows[] = ['kind' => 'theme', 'name' => $name, 'message' => (string) ($error['message'] ?? '')];
+            }
+            if ($rows === []) {
+                WP_CLI::log('nothing paused');
+                return;
+            }
+            foreach ($rows as $row) {
+                WP_CLI::log(sprintf('%s %s: %s', $row['kind'], $row['name'], $row['message']));
+            }
+            return;
+        }
+        if ($action === 'resume-all') {
+            WP_CLI::log($recovery->resumeAll() . ' resumed');
+            return;
+        }
+        if ($action !== 'resume' || !isset($args[1])) {
+            WP_CLI::error('Usage: wp minn recovery <status|resume <name>|resume-all> [--theme]');
+        }
+        $kind = empty($assocArgs['theme']) ? 'plugin' : 'theme';
+        WP_CLI::log($recovery->resume($kind, (string) $args[1]) ? "resumed {$kind} {$args[1]}" : "{$kind} {$args[1]} was not paused");
     }
 
     /** The WordPress the swap parked beside this webroot, when the manifest names one. */

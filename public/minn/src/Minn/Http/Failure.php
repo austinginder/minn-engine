@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Http;
 
+use Minn\Support\Html;
 use Throwable;
 
 /**
@@ -16,9 +17,27 @@ final class Failure
 {
     private const FATAL = E_ERROR | E_PARSE | E_CORE_ERROR | E_COMPILE_ERROR | E_USER_ERROR | E_RECOVERABLE_ERROR;
 
+    /** @var null|callable(array{type:int,file:string,line:int,message:string}): void */
+    private static $recorder = null;
+    /** Whether this site asked to see errors (WP_DEBUG_DISPLAY, else WP_DEBUG). */
+    private static bool $display = false;
+
+    /**
+     * What to do with a fatal beyond showing the page: the engine records
+     * the extension it came from so the next request loads without it.
+     * Installed once the runtime is up, since it needs the database.
+     *
+     * @param callable(array{type:int,file:string,line:int,message:string}): void $recorder
+     */
+    public static function onFatal(callable $recorder): void
+    {
+        self::$recorder = $recorder;
+    }
+
     public static function install(): void
     {
         $display = defined('WP_DEBUG_DISPLAY') ? (bool) WP_DEBUG_DISPLAY : (defined('WP_DEBUG') && WP_DEBUG);
+        self::$display = $display;
         ini_set('display_errors', $display ? '1' : '0');
         if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
             ini_set('log_errors', '1');
@@ -26,10 +45,11 @@ final class Failure
         }
         register_shutdown_function(static function () use ($display): void {
             $error = error_get_last();
-            if ($error === null || ($error['type'] & self::FATAL) === 0 || headers_sent()) {
+            if ($error === null || ($error['type'] & self::FATAL) === 0) {
                 return;
             }
-            if (!$display) {
+            self::record($error);
+            if (!$display && !headers_sent()) {
                 self::internal()->send();
             }
         });
@@ -39,7 +59,29 @@ final class Failure
     public static function report(Throwable $error): Response
     {
         error_log(sprintf('Minn Engine: %s: %s in %s:%d', $error::class, $error->getMessage(), $error->getFile(), $error->getLine()));
-        return self::internal();
+        self::record(['type' => E_ERROR, 'file' => $error->getFile(), 'line' => $error->getLine(), 'message' => $error->getMessage()]);
+        return self::$display ? self::detailed($error::class, $error->getMessage(), $error->getFile(), $error->getLine()) : self::internal();
+    }
+
+    /**
+     * Hands the failure to the recorder, and never lets recovery itself
+     * take the request down: a site that cannot record a pause should
+     * still answer with the error page.
+     *
+     * @param array{type: int, file: string, line: int, message: string} $error
+     */
+    private static function record(array $error): void
+    {
+        if (self::$recorder === null) {
+            return;
+        }
+        $recorder = self::$recorder;
+        self::$recorder = null;
+        try {
+            $recorder($error);
+        } catch (Throwable $failed) {
+            error_log('Minn Engine: recovery could not record the failure: ' . $failed->getMessage());
+        }
     }
 
     public static function internal(): Response
@@ -55,14 +97,30 @@ final class Failure
             ->withHeader('Retry-After', '60');
     }
 
-    private static function page(int $status, string $title, string $text): Response
+    /**
+     * The same page with the cause on it, for a site that asked to see
+     * errors. Only ever reached when WP_DEBUG_DISPLAY (or WP_DEBUG) is on:
+     * a site that has not asked never learns this much from a response.
+     */
+    public static function detailed(string $class, string $message, string $file, int $line): Response
+    {
+        $detail = '<p class="minn-error-detail"><code>' . Html::esc($class) . '</code>: ' . Html::esc($message) . '</p>'
+            . '<p class="minn-error-where">' . Html::esc($file) . ' <b>line ' . $line . '</b></p>';
+        return self::page(500, 'Something went wrong', 'The site hit an error while answering this request. This detail shows because the site has debug display switched on.', $detail)
+            ->withHeader('Cache-Control', 'no-store');
+    }
+
+    private static function page(int $status, string $title, string $text, string $detail = ''): Response
     {
         return Response::html(
             '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">'
             . '<title>' . $title . '</title>'
             . '<style>body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0b0b0d;color:#ececed;font:16px/1.6 "Helvetica Neue",sans-serif}'
-            . 'main{max-width:34rem;padding:2rem}h1{font-size:1.4rem;margin:0 0 .6rem}p{margin:0;color:#9d9da7}</style></head>'
-            . '<body><main><h1>' . $title . '</h1><p>' . $text . '</p></main></body></html>',
+            . 'main{max-width:46rem;padding:2rem}h1{font-size:1.4rem;margin:0 0 .6rem}p{margin:0;color:#9d9da7}'
+            . '.minn-error-detail{margin:1.25rem 0 .35rem;color:#ececed}.minn-error-detail code{color:#f0a1a1}'
+            . '.minn-error-where{font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;color:#6f6f79;word-break:break-all}'
+            . '.minn-error-where b{color:#9d9da7;font-weight:600}</style></head>'
+            . '<body><main><h1>' . $title . '</h1><p>' . $text . '</p>' . $detail . '</main></body></html>',
             $status,
         );
     }
