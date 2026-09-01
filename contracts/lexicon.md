@@ -1,9 +1,10 @@
-# The WordPress lexicon
+# The lexicon
 
-Minn needs to speak WordPress. It does not need to implement every word
-WordPress speaks.
+Minn needs to speak the language WordPress software uses with hosts,
+plugins, and tools. It does not need to implement every word that
+software speaks.
 
-WordPress is a language with three audiences. The engine answers two of
+WordPress software is a language with three audiences. The engine answers two of
 them. The third belongs to Minn Admin. This file is the policy the
 inventory in `contracts/api/` does not have: which families Minn
 implements, which it recognizes so plugins can load, and which it will

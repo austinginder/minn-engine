@@ -62,8 +62,10 @@ report's arithmetic, not the page.
   on the dogfood site) are the real ones at the time of writing. Refresh them when
   they move: the check count is the `passed` total of a full `run-all.sh`.
 - No em dash inside a sentence (the repository's prose rule applies to the page).
-- "WordPress" appears only in truthful compatibility statements, and the footer
-  carries the trademark line. Never in a name, never implying endorsement.
+- "WordPress" appears only to identify the software and sites Minn is compatible
+  with. Never as part of a Minn product, feature, slogan, or domain. Never
+  "Managed WordPress". Never a claim that Minn is WordPress. The footer names
+  the marks and that Minn is independent, not affiliated or endorsed.
 - The source is not on GitHub yet; the page says so and points at Minn Admin's
   repository. Swap the GitHub links when the engine repository goes public.
 

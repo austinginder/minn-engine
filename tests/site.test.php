@@ -51,6 +51,10 @@ preg_match('#<title>(.*?)</title>#s', $refHome, $rt);
 $check(($et[1] ?? '') !== '' && ($et[1] ?? '') === ($rt[1] ?? null), 'document title matches the reference', ($et[1] ?? '') . ' vs ' . ($rt[1] ?? ''));
 $check(str_starts_with($et[1] ?? '', 'Minn') && !str_contains($et[1] ?? '', 'Minn Engine'), 'the tab uses the product name', $et[1] ?? '');
 $check(str_contains($home, 'served by Minn'), 'the footer says who served the page');
+$check(str_contains($home, 'not affiliated with, sponsored by, or endorsed'), 'the footer names independence from the marks');
+$check(!str_contains($home, 'Managed WordPress'), 'no Managed WordPress phrase');
+$check(!str_contains($home, 'Give WordPress a second engine'), 'the CTA does not use WordPress as a slogan object');
+$check(str_contains($home, 'A second engine for WordPress sites'), 'the CTA is nominative: WordPress sites');
 $check(str_contains($home, 'class="minn-wordmark">minn</span>'), 'the header wordmark is Minn');
 $check(!str_contains($home, 'minn<small>engine</small>'), 'the header does not say engine');
 $check(str_contains($home, 'What is Minn, and what is Minn Engine?'), 'the FAQ names the product vs the engine');
@@ -61,7 +65,7 @@ $check(!preg_match('/class="[^"]*has-global-padding/', $home), 'no global paddin
 [, $texturizePage] = minn_test_fetch($ENGINE . '/texturize-battery-its-quoted-fine/');
 $check(str_contains($texturizePage, '&#8220;quoted&#8221;'), 'template markup is texturized');
 $check(str_contains($home, 'A modern PHP engine'), 'the hero names what Minn is');
-$check(str_contains($home, 'fluently speaks WordPress'), 'the hero names the compatibility');
+$check(str_contains($home, 'Compatible with WordPress sites'), 'the hero names the compatibility');
 $check(str_contains($home, 'Built from') && str_contains($home, 'scratch'), 'the hero says built from scratch');
 $check(str_contains($home, 'Minn Admin is the only UI'), 'the visual draws the no-wp-admin line');
 $check(str_contains($home, 'Audience 3'), 'the three-audience visual is on the page');
@@ -70,7 +74,7 @@ $check(str_contains($home, 'Browse the lexicon'), 'the visual points at the glos
 
 [$lh, $lex] = minn_test_fetch($ENGINE . '/lexicon/');
 $check($lh['status'] === 200, 'theme /lexicon/ answers 200', (string) $lh['status']);
-$check(str_contains($lex, '<title>The WordPress lexicon'), 'lexicon title');
+$check(str_contains($lex, '<title>The lexicon · Minn'), 'lexicon title');
 $check(str_contains($lex, 'data-lex-filter="speak"'), 'lexicon Speak chip');
 $check(str_contains($lex, 'aria-current="page"'), 'lexicon nav is current');
 [$mdh] = minn_test_fetch($ENGINE . '/lexicon.md');
