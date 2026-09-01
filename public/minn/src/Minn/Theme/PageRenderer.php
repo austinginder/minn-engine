@@ -139,9 +139,9 @@ final readonly class PageRenderer
                 return (string) ob_get_clean();
             }
         }
-        $perPage = $query['perPage'];
+        $perPage = $bridge->perPage();
         RenderState::reset();
-        $this->renderer->withContext(new Context($resolution, $query['posts'], $query['total'], $perPage, true));
+        $this->renderer->withContext(new Context($resolution, $query->posts, $query->total, $perPage, true));
         // The reference texturizes the rendered template as a whole, after the
         // blocks: straight quotes in a theme's own markup curl, content that was
         // texturized on its way in is left alone.

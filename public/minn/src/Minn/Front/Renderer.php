@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Front;
 
 use Minn\Content\Blocks;
+use Minn\Content\PostFilter;
 use Minn\Content\Excerpt;
 use Minn\Content\Posts;
 use Minn\Db;
@@ -122,23 +123,24 @@ final readonly class Renderer
     /** @return array{0: string, 1: string} title and markup */
     private function archive(Resolution $resolution): array
     {
+        $all = PostFilter::all();
         [$title, $filter] = match ($resolution->kind) {
-            Kind::Home => ['', []],
-            Kind::Category, Kind::Tag => [$resolution->record['name'], ['term' => (int) $resolution->record['term_taxonomy_id']]],
+            Kind::Home => ['', $all],
+            Kind::Category, Kind::Tag => [$resolution->record['name'], $all->inTerm((int) $resolution->record['term_taxonomy_id'])],
             Kind::Author => [
                 $resolution->record['display_name'] ?? $resolution->authorName,
-                ['author' => (int) ($resolution->record['ID'] ?? -1)],
+                $all->byAuthor((int) ($resolution->record['ID'] ?? -1)),
             ],
             Kind::Date => [
                 implode('/', array_filter($resolution->date, static fn ($v) => $v !== null)),
-                array_combine(['from', 'to'], Resolver::dateRange(...$resolution->date) ?? ['1970-01-01', '1970-01-01']),
+                $all->between(...(Resolver::dateRange(...$resolution->date) ?? ['1970-01-01', '1970-01-01'])),
             ],
-            Kind::Search => ['Search: ' . $resolution->search, ['search' => $resolution->search]],
-            default => ['', []],
+            Kind::Search => ['Search: ' . $resolution->search, $all->matching((string) $resolution->search)],
+            default => ['', $all],
         };
         $page = $this->posts->archive($filter, $resolution->paged, $this->perPage);
         $items = '';
-        foreach ($page['posts'] as $post) {
+        foreach ($page->posts as $post) {
             $items .= '<li><a href="' . Html::attr($this->permalinks->forPost($post)) . '">' . Html::esc($post['post_title']) . '</a>'
                 . '<time>' . Html::esc(substr((string) $post['post_date'], 0, 10)) . '</time>'
                 . '<p>' . Excerpt::render($post) . '</p></li>';

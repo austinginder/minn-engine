@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Minn\Blocks\Dynamic\Theme;
 
 use Minn\Blocks\Block;
+use Minn\Content\Page;
+use Minn\Content\PostFilter;
 use Minn\Blocks\Layout;
 use Minn\Blocks\Renderer;
 use Minn\Blocks\Styles;
@@ -50,19 +52,19 @@ final class QueryBlocks
         $context = $renderer->context();
         $attrs = (array) $block->attr('query', []);
         if (!empty($attrs['inherit'])) {
-            $this->queries[] = ['posts' => $context->posts, 'total' => $context->total, 'inherit' => true];
+            $this->queries[] = ['page' => new Page($context->posts, $context->total), 'inherit' => true];
         } else {
             $perPage = max(1, min(100, (int) ($attrs['perPage'] ?? 10)));
             $sticky = ($attrs['sticky'] ?? '') === 'exclude' ? [] : Serialized::intList($this->site->option('sticky_posts'));
-            $filter = [];
+            $filter = PostFilter::all();
             if (!empty($attrs['author'])) {
-                $filter['author'] = (int) $attrs['author'];
+                $filter = $filter->byAuthor((int) $attrs['author']);
             }
             if (!empty($attrs['search'])) {
-                $filter['search'] = (string) $attrs['search'];
+                $filter = $filter->matching((string) $attrs['search']);
             }
-            $result = $this->posts->listing($filter, 1, $perPage, $sticky, stickyExtra: true);
-            $this->queries[] = ['posts' => $result['posts'], 'total' => $result['total'], 'inherit' => false];
+            $page = $this->posts->listing($filter, 1, $perPage, $sticky, stickyExtra: true);
+            $this->queries[] = ['page' => $page, 'inherit' => false];
         }
         $out = '';
         $inner = 0;
@@ -75,20 +77,20 @@ final class QueryBlocks
 
     private function current(): array
     {
-        return $this->queries[count($this->queries) - 1] ?? ['posts' => [], 'total' => 0, 'inherit' => false];
+        return $this->queries[count($this->queries) - 1] ?? ['page' => Page::empty(), 'inherit' => false];
     }
 
     private function postTemplate(Block $block, Renderer $renderer): string
     {
         $query = $this->current();
-        if ($query['posts'] === []) {
+        if ($query['page']->isEmpty()) {
             return '';
         }
         $context = $renderer->context();
         $sticky = Serialized::intList($this->site->option('sticky_posts'));
         $onFrontPage = $context->resolution->kind === Kind::Home && $context->resolution->paged === 1;
         $items = '';
-        foreach ($query['posts'] as $post) {
+        foreach ($query['page']->posts as $post) {
             $context->pushPost($post);
             $inner = '';
             $index = 0;
@@ -164,7 +166,7 @@ final class QueryBlocks
 
     private function noResults(Block $block, Renderer $renderer): string
     {
-        if ($this->current()['posts'] !== []) {
+        if (!$this->current()['page']->isEmpty()) {
             return '';
         }
         $out = '';

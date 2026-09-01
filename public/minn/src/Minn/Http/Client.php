@@ -11,6 +11,22 @@ namespace Minn\Http;
  */
 final class Client
 {
+    /** The common cases, so a one-off request needs no Outbound at the call site. */
+    public static function get(string $url, array $headers = [], float $timeout = 5.0): Exchange
+    {
+        return self::send(Outbound::get($url, $headers, $timeout));
+    }
+
+    public static function post(string $url, ?string $body = null, array $headers = [], float $timeout = 5.0): Exchange
+    {
+        return self::send(Outbound::post($url, $body, $headers, $timeout));
+    }
+
+    public static function head(string $url, array $headers = [], float $timeout = 5.0): Exchange
+    {
+        return self::send(Outbound::head($url, $headers, $timeout));
+    }
+
     public static function send(Outbound $request): Exchange
     {
         $handle = curl_init();

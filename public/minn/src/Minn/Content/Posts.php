@@ -129,48 +129,71 @@ final readonly class Posts
      * @param array{term?: int, author?: int, from?: string, to?: string, search?: string, types?: list<string>} $filter
      * @return array{posts: list<array>, total: int}
      */
-    public function archive(array $filter, int $page, int $perPage): array
+    /** The published posts of one type, newest first: the everyday listing. */
+    public function published(string $type = 'post', int $page = 1, int $perPage = 10): Page
     {
-        $posts = $this->db->table('posts');
-        $statuses = Reader::current()->listableStatuses('post');
-        $types = array_values(array_map('strval', $filter['types'] ?? ['post']));
+        return $this->archive(PostFilter::types($type), $page, $perPage);
+    }
+
+    /** How many posts a filter reaches, without fetching any. */
+    public function count(PostFilter $filter): int
+    {
+        [$from, $params] = $this->scope($filter);
+        return (int) $this->db->value("SELECT COUNT(DISTINCT p.ID) {$from}", $params);
+    }
+
+    public function archive(PostFilter $filter, int $page, int $perPage): Page
+    {
+        [$from, $params] = $this->scope($filter);
+        $total = (int) $this->db->value("SELECT COUNT(DISTINCT p.ID) {$from}", $params);
+        // Search results rank title matches first, as the reference does.
+        $order = 'p.post_date DESC, p.ID DESC';
+        if ($filter->search !== null) {
+            $order = '(p.post_title LIKE ?) DESC, ' . $order;
+            $params[] = self::like($filter->search);
+        }
+        $rows = $this->db->rows(
+            "SELECT DISTINCT p.* {$from} ORDER BY {$order} LIMIT ? OFFSET ?",
+            [...$params, $perPage, ($page - 1) * $perPage],
+        );
+        return new Page($rows, $total);
+    }
+
+    /**
+     * The FROM ... WHERE half of a listing query and its parameters: what
+     * the reader may see, narrowed by the filter.
+     *
+     * @return array{0: string, 1: list<mixed>}
+     */
+    private function scope(PostFilter $filter): array
+    {
         $where = ['p.post_type IN (?)', 'p.post_status IN (?)'];
-        $params = [$types, $statuses];
+        $params = [$filter->types, Reader::current()->listableStatuses('post')];
         $join = '';
-        if (isset($filter['term'])) {
+        if ($filter->term !== null) {
             $join = "INNER JOIN {$this->db->table('term_relationships')} tr ON tr.object_id = p.ID";
             $where[] = 'tr.term_taxonomy_id = ?';
-            $params[] = $filter['term'];
+            $params[] = $filter->term;
         }
-        if (isset($filter['author'])) {
+        if ($filter->author !== null) {
             $where[] = 'p.post_author = ?';
-            $params[] = $filter['author'];
+            $params[] = $filter->author;
         }
-        if (isset($filter['from'], $filter['to'])) {
+        if ($filter->hasDates()) {
             $where[] = 'p.post_date >= ? AND p.post_date < ?';
-            $params[] = $filter['from'];
-            $params[] = $filter['to'];
+            array_push($params, $filter->from, $filter->to);
         }
-        if (isset($filter['search'])) {
-            $needle = '%' . addcslashes($filter['search'], '%_\\') . '%';
+        if ($filter->search !== null) {
+            $needle = self::like($filter->search);
             $where[] = '(p.post_title LIKE ? OR p.post_content LIKE ? OR p.post_excerpt LIKE ?)';
             array_push($params, $needle, $needle, $needle);
         }
-        $clause = implode(' AND ', $where);
-        $total = (int) $this->db->value("SELECT COUNT(DISTINCT p.ID) FROM {$posts} p {$join} WHERE {$clause}", $params);
-        // Search results rank title matches first, as the reference does.
-        $order = 'p.post_date DESC, p.ID DESC';
-        $orderParams = [];
-        if (isset($filter['search'])) {
-            $order = '(p.post_title LIKE ?) DESC, ' . $order;
-            $orderParams[] = '%' . addcslashes($filter['search'], '%_\\') . '%';
-        }
-        $rows = $this->db->rows(
-            "SELECT DISTINCT p.* FROM {$posts} p {$join} WHERE {$clause}
-             ORDER BY {$order} LIMIT ? OFFSET ?",
-            [...$params, ...$orderParams, $perPage, ($page - 1) * $perPage],
-        );
-        return ['posts' => $rows, 'total' => $total];
+        return ["FROM {$this->db->table('posts')} p {$join} WHERE " . implode(' AND ', $where), $params];
+    }
+
+    private static function like(string $needle): string
+    {
+        return '%' . addcslashes($needle, '%_\\') . '%';
     }
 
     public function meta(int $postId, string $key): ?string
@@ -261,7 +284,7 @@ final readonly class Posts
      * @param list<int> $stickyIds
      * @return array{posts: list<array>, total: int}
      */
-    public function listing(array $filter, int $page, int $perPage, array $stickyIds = [], bool $stickyExtra = false): array
+    public function listing(PostFilter $filter, int $page, int $perPage, array $stickyIds = [], bool $stickyExtra = false): Page
     {
         if ($stickyIds === []) {
             return $this->archive($filter, $page, $perPage);
@@ -275,14 +298,15 @@ final readonly class Posts
             return $result;
         }
         $stickySet = array_flip(array_map(static fn (array $p) => (int) $p['ID'], $sticky));
+        $notSticky = static fn (array $p): bool => !isset($stickySet[(int) $p['ID']]);
         if ($stickyExtra) {
             // A query block keeps its full page of posts and adds the sticky ones on top.
             $others = $this->archive($filter, 1, $perPage + count($sticky));
-            $rest = array_slice(array_values(array_filter($others['posts'], static fn (array $p) => !isset($stickySet[(int) $p['ID']]))), 0, $perPage);
-            return ['posts' => [...$sticky, ...$rest], 'total' => $others['total']];
+            $rest = array_slice(array_values(array_filter($others->posts, $notSticky)), 0, $perPage);
+            return $others->withPosts([...$sticky, ...$rest]);
         }
-        $rest = array_values(array_filter($result['posts'], static fn (array $p) => !isset($stickySet[(int) $p['ID']])));
-        return ['posts' => array_slice([...$sticky, ...$rest], 0, $perPage), 'total' => $result['total']];
+        $rest = array_values(array_filter($result->posts, $notSticky));
+        return $result->withPosts(array_slice([...$sticky, ...$rest], 0, $perPage));
     }
 
     /**

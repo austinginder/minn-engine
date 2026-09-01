@@ -19,4 +19,17 @@ final readonly class Exchange
     {
         return $this->error !== null;
     }
+
+    /** A response arrived and it was a 2xx. */
+    public function ok(): bool
+    {
+        return $this->error === null && $this->code >= 200 && $this->code < 300;
+    }
+
+    /** The body decoded as JSON, or null when it is not JSON. */
+    public function json(): mixed
+    {
+        $decoded = json_decode($this->body, true);
+        return json_last_error() === JSON_ERROR_NONE ? $decoded : null;
+    }
 }

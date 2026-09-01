@@ -6,6 +6,7 @@ namespace Minn\Front;
 
 use Closure;
 use Minn\Content\Posts;
+use Minn\Content\PostFilter;
 use Minn\Content\Terms;
 use Minn\Db;
 use Minn\Http\Request;
@@ -280,7 +281,7 @@ final readonly class Resolver
             if ($range === null) {
                 return Resolution::notFound();
             }
-            $total = $this->posts->archive(['from' => $range[0], 'to' => $range[1]], 1, 1)['total'];
+            $total = $this->posts->count(PostFilter::all()->between($range[0], $range[1]));
             return $total === 0 ? Resolution::notFound() : Resolution::date($year, $month, $day, 1);
         }
         if (!$this->permalinks->isPretty()) {
@@ -324,7 +325,7 @@ final readonly class Resolver
             $archive = $type['has_archive'] ?? false;
             $archiveSlug = is_string($archive) && $archive !== '' ? $archive : ($archive === true ? $this->permalinks->typeSlug((string) $name) : null);
             if ($archiveSlug !== null && $segments === self::segmentsOf($archiveSlug)) {
-                $total = $this->posts->archive(['types' => [(string) $name]], 1, 1)['total'];
+                $total = $this->posts->count(PostFilter::types((string) $name));
                 return $paged > 1 && $paged > $this->pages($total) ? Resolution::notFound() : Resolution::postTypeArchive(['name' => (string) $name] + $type, $paged);
             }
             $prefix = self::segmentsOf($this->permalinks->typeSlug((string) $name));
@@ -361,7 +362,7 @@ final readonly class Resolver
         if ($term === null || strcasecmp($this->terms->pathOf($term), implode('/', $slugs)) !== 0) {
             return Resolution::notFound();
         }
-        $total = $this->posts->archive(['term' => (int) $term['term_taxonomy_id'], 'types' => $types === [] ? ['post'] : $types], 1, 1)['total'];
+        $total = $this->posts->count(PostFilter::types(...$types)->inTerm((int) $term['term_taxonomy_id']));
         if ($total === 0 || $paged > $this->pages($total)) {
             return Resolution::notFound();
         }
@@ -384,7 +385,7 @@ final readonly class Resolver
     /** The archive a found term stands for, 404 when it is empty or overpaged. */
     private function termResolution(string $taxonomy, array $term, int $paged): Resolution
     {
-        $total = $this->posts->archive(['term' => (int) $term['term_taxonomy_id']], 1, 1)['total'];
+        $total = $this->posts->count(PostFilter::all()->inTerm((int) $term['term_taxonomy_id']));
         if ($total === 0 || $paged > $this->pages($total)) {
             return Resolution::notFound();
         }
@@ -398,7 +399,7 @@ final readonly class Resolver
             [$name],
         );
         if ($user !== null) {
-            $total = $this->posts->archive(['author' => (int) $user['ID']], 1, 1)['total'];
+            $total = $this->posts->count(PostFilter::all()->byAuthor((int) $user['ID']));
             if ($paged > 1 && $paged > $this->pages($total)) {
                 return Resolution::notFound();
             }
@@ -424,7 +425,7 @@ final readonly class Resolver
         if ($range === null) {
             return Resolution::notFound();
         }
-        $total = $this->posts->archive(['from' => $range[0], 'to' => $range[1]], 1, 1)['total'];
+        $total = $this->posts->count(PostFilter::all()->between($range[0], $range[1]));
         if ($total === 0 || $paged > $this->pages($total)) {
             return Resolution::notFound();
         }

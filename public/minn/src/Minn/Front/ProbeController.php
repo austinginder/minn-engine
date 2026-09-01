@@ -6,6 +6,7 @@ namespace Minn\Front;
 
 use Closure;
 use Minn\Blocks\Context;
+use Minn\Content\PostFilter;
 use Minn\Blocks\RenderState;
 use Minn\Content\Blocks;
 use Minn\Content\Posts;
@@ -159,13 +160,14 @@ final readonly class ProbeController
         $self = $this->permalinks->url($request->path) . $request->queryStringWithout();
         $siteName = htmlspecialchars((string) ($this->site->option('blogname') ?? ''), ENT_QUOTES);
         $record = $resolution->record ?? [];
+        $all = PostFilter::all();
         [$filter, $title] = match ($resolution->kind) {
-            Kind::Home => [[], $resolution->postsPage ? htmlspecialchars((string) $record['post_title'], ENT_QUOTES) . ' &#8211; ' . $siteName : $siteName],
-            Kind::Category, Kind::Tag, Kind::Taxonomy => [['term' => (int) $record['term_taxonomy_id']], htmlspecialchars((string) $record['name'], ENT_QUOTES) . ' &#8211; ' . $siteName],
-            Kind::PostTypeArchive => [['types' => [(string) $record['name']]], htmlspecialchars((string) ($record['label'] ?? ''), ENT_QUOTES) . ' &#8211; ' . $siteName],
-            Kind::Author => [['author' => (int) ($record['ID'] ?? -1)], htmlspecialchars((string) ($record['display_name'] ?? $resolution->authorName), ENT_QUOTES) . ' &#8211; ' . $siteName],
-            Kind::Date => [array_combine(['from', 'to'], Resolver::dateRange(...$resolution->date) ?? ['1970-01-01', '1970-01-01']), $siteName],
-            Kind::Search => [['search' => (string) $resolution->search], $siteName],
+            Kind::Home => [$all, $resolution->postsPage ? htmlspecialchars((string) $record['post_title'], ENT_QUOTES) . ' &#8211; ' . $siteName : $siteName],
+            Kind::Category, Kind::Tag, Kind::Taxonomy => [$all->inTerm((int) $record['term_taxonomy_id']), htmlspecialchars((string) $record['name'], ENT_QUOTES) . ' &#8211; ' . $siteName],
+            Kind::PostTypeArchive => [PostFilter::types((string) $record['name']), htmlspecialchars((string) ($record['label'] ?? ''), ENT_QUOTES) . ' &#8211; ' . $siteName],
+            Kind::Author => [$all->byAuthor((int) ($record['ID'] ?? -1)), htmlspecialchars((string) ($record['display_name'] ?? $resolution->authorName), ENT_QUOTES) . ' &#8211; ' . $siteName],
+            Kind::Date => [$all->between(...(Resolver::dateRange(...$resolution->date) ?? ['1970-01-01', '1970-01-01'])), $siteName],
+            Kind::Search => [$all->matching((string) $resolution->search), $siteName],
             Kind::Single, Kind::Page => [null, ''],
             default => [null, null],
         };
@@ -178,7 +180,7 @@ final readonly class ProbeController
         // Feeds run in date order; sticky posts get no special place. Content
         // renders against the feed's own queried object (a category feed marks
         // its category current).
-        $posts = $this->posts->listing($filter, 1, $this->feeds->perFeed())['posts'];
+        $posts = $this->posts->listing($filter, 1, $this->feeds->perFeed())->posts;
         // Images in a feed follow the page rules (eager budget, high priority first).
         RenderState::reset();
         Blocks::renderer()->withContext(new Context($resolution, $posts, count($posts), $this->feeds->perFeed(), true));

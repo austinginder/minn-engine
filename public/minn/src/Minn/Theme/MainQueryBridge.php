@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Minn\Theme;
 
 use Minn\Content\Posts;
+use Minn\Content\Page;
+use Minn\Content\PostFilter;
 use Minn\Content\Site;
 use Minn\Front\Kind;
 use Minn\Front\Resolution;
@@ -28,20 +30,24 @@ final readonly class MainQueryBridge
     ) {
     }
 
-    /** @return array{posts: list<array>, total: int, perPage: int} */
-    public function stand(Resolution $resolution): array
+    public function stand(Resolution $resolution): Page
     {
         if (Runtime::booted() && in_array($resolution->kind, [Kind::PostTypeArchive, Kind::Taxonomy], true)) {
             $query = \_minn_run_main_query(MainQuery::vars($resolution), $resolution->paged, $this->perPage);
             $this->lifecycle();
-            return $query;
+            return new Page($query['posts'], (int) $query['total']);
         }
-        $query = $this->listing($resolution);
+        $page = $this->listing($resolution);
         if (Runtime::booted()) {
-            \_minn_seed_main_query(MainQuery::vars($resolution), array_map(static fn (array $p) => (int) $p['ID'], $query['posts']), $query['total'], $this->perPage, $resolution->postsPage);
+            \_minn_seed_main_query(MainQuery::vars($resolution), $page->ids(), $page->total, $this->perPage, $resolution->postsPage);
             $this->lifecycle();
         }
-        return $query + ['perPage' => $this->perPage];
+        return $page;
+    }
+
+    public function perPage(): int
+    {
+        return $this->perPage;
     }
 
     private function lifecycle(): void
@@ -58,22 +64,22 @@ final readonly class MainQueryBridge
         return $types === [] ? ['post'] : $types;
     }
 
-    /** @return array{posts: list<array>, total: int} */
-    private function listing(Resolution $resolution): array
+    private function listing(Resolution $resolution): Page
     {
         $record = $resolution->record ?? [];
+        $all = PostFilter::all();
         $filter = match ($resolution->kind) {
-            Kind::Category, Kind::Tag => ['term' => (int) $record['term_taxonomy_id']],
-            Kind::Taxonomy => ['term' => (int) $record['term_taxonomy_id'], 'types' => $this->objectTypes((string) $record['taxonomy'])],
-            Kind::PostTypeArchive => ['types' => [(string) $record['name']]],
-            Kind::Author => ['author' => (int) ($record['ID'] ?? -1)],
-            Kind::Date => array_combine(['from', 'to'], Resolver::dateRange(...$resolution->date) ?? ['1970-01-01', '1970-01-01']),
-            Kind::Search => ['search' => (string) $resolution->search],
-            Kind::Home => [],
+            Kind::Category, Kind::Tag => $all->inTerm((int) $record['term_taxonomy_id']),
+            Kind::Taxonomy => PostFilter::types(...$this->objectTypes((string) $record['taxonomy']))->inTerm((int) $record['term_taxonomy_id']),
+            Kind::PostTypeArchive => PostFilter::types((string) $record['name']),
+            Kind::Author => $all->byAuthor((int) ($record['ID'] ?? -1)),
+            Kind::Date => $all->between(...(Resolver::dateRange(...$resolution->date) ?? ['1970-01-01', '1970-01-01'])),
+            Kind::Search => $all->matching((string) $resolution->search),
+            Kind::Home => $all,
             default => null,
         };
         if ($filter === null) {
-            return ['posts' => [], 'total' => 0];
+            return Page::empty();
         }
         // Sticky posts ride on top of page 1 without consuming its slots, as the reference fills the page.
         $sticky = $resolution->kind === Kind::Home ? Serialized::intList($this->site->option('sticky_posts')) : [];

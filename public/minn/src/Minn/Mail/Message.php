@@ -16,4 +16,10 @@ final readonly class Message
         public string $fromName = '',
     ) {
     }
+
+    /** One recipient or several, and the two things every mail has. */
+    public static function to(string|array $to, string $subject, string $body): self
+    {
+        return new self(array_values((array) $to), $subject, $body);
+    }
 }
