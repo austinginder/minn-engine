@@ -70,9 +70,8 @@ final readonly class PostsController
         }
         $statuses = $needsAuth ? $requested : $publicOnly;
 
-        $placeholders = implode(',', array_fill(0, count($statuses), '?'));
-        $params = [$type, ...$statuses];
-        $where = "post_type = ? AND post_status IN ({$placeholders})";
+        $params = [$type, $statuses];
+        $where = 'post_type = ? AND post_status IN (?)';
         $others = $this->caller->can(TypeCapabilities::editOthers($type));
         if ($needsAuth && !$others) {
             // Another author's unpublished posts need edit_others_*; private ones read_private_*.
@@ -86,48 +85,48 @@ final readonly class PostsController
         if ($author !== null && $author !== '') {
             $ids = self::ids($author);
             if ($ids !== []) {
-                $where .= ' AND post_author IN (' . implode(',', array_fill(0, count($ids), '?')) . ')';
-                $params = [...$params, ...$ids];
+                $where .= ' AND post_author IN (?)';
+                $params[] = $ids;
             }
         }
         $authorExclude = $request->query('author_exclude');
         if ($authorExclude !== null && $authorExclude !== '') {
             $ids = self::ids($authorExclude);
             if ($ids !== []) {
-                $where .= ' AND post_author NOT IN (' . implode(',', array_fill(0, count($ids), '?')) . ')';
-                $params = [...$params, ...$ids];
+                $where .= ' AND post_author NOT IN (?)';
+                $params[] = $ids;
             }
         }
         $include = self::ids((string) $request->query('include', ''));
         if ($include !== []) {
-            $where .= ' AND ID IN (' . implode(',', array_fill(0, count($include), '?')) . ')';
-            $params = [...$params, ...$include];
+            $where .= ' AND ID IN (?)';
+            $params[] = $include;
         }
         $exclude = self::ids((string) $request->query('exclude', ''));
         if ($exclude !== []) {
-            $where .= ' AND ID NOT IN (' . implode(',', array_fill(0, count($exclude), '?')) . ')';
-            $params = [...$params, ...$exclude];
+            $where .= ' AND ID NOT IN (?)';
+            $params[] = $exclude;
         }
         $slug = (string) $request->query('slug', '');
         if ($slug !== '') {
             $slugs = array_values(array_filter(explode(',', $slug), static fn (string $s) => $s !== ''));
-            $where .= ' AND post_name IN (' . implode(',', array_fill(0, count($slugs), '?')) . ')';
-            $params = [...$params, ...$slugs];
+            $where .= ' AND post_name IN (?)';
+            $params[] = $slugs;
         }
         $parent = $request->query('parent');
         if ($parent !== null && $parent !== '') {
             $ids = self::ids($parent, true);
             if ($ids !== []) {
-                $where .= ' AND post_parent IN (' . implode(',', array_fill(0, count($ids), '?')) . ')';
-                $params = [...$params, ...$ids];
+                $where .= ' AND post_parent IN (?)';
+                $params[] = $ids;
             }
         }
         $parentExclude = $request->query('parent_exclude');
         if ($parentExclude !== null && $parentExclude !== '') {
             $ids = self::ids($parentExclude, true);
             if ($ids !== []) {
-                $where .= ' AND post_parent NOT IN (' . implode(',', array_fill(0, count($ids), '?')) . ')';
-                $params = [...$params, ...$ids];
+                $where .= ' AND post_parent NOT IN (?)';
+                $params[] = $ids;
             }
         }
         $menuOrder = $request->query('menu_order');

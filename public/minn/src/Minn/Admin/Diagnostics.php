@@ -197,10 +197,9 @@ final readonly class Diagnostics
     public function autoload(): array
     {
         $summary = $this->autoloadSummary();
-        $in = implode(',', array_fill(0, count(self::AUTOLOAD_VALUES), '?'));
         $rows = $this->db->rows(
-            "SELECT option_name AS name, LENGTH(option_value) AS len, autoload FROM {$this->db->table('options')} WHERE autoload IN ({$in}) ORDER BY len DESC LIMIT 200",
-            self::AUTOLOAD_VALUES,
+            "SELECT option_name AS name, LENGTH(option_value) AS len, autoload FROM {$this->db->table('options')} WHERE autoload IN (?) ORDER BY len DESC LIMIT 200",
+            [self::AUTOLOAD_VALUES],
         );
         return [
             'count' => $summary['count'],
@@ -218,10 +217,9 @@ final readonly class Diagnostics
 
     private function autoloadSummary(): array
     {
-        $in = implode(',', array_fill(0, count(self::AUTOLOAD_VALUES), '?'));
         $options = $this->db->table('options');
-        $totals = $this->db->row("SELECT COUNT(*) AS c, COALESCE(SUM(LENGTH(option_value)), 0) AS s FROM {$options} WHERE autoload IN ({$in})", self::AUTOLOAD_VALUES);
-        $top = $this->db->rows("SELECT option_name AS name, LENGTH(option_value) AS len FROM {$options} WHERE autoload IN ({$in}) ORDER BY len DESC LIMIT 8", self::AUTOLOAD_VALUES);
+        $totals = $this->db->row("SELECT COUNT(*) AS c, COALESCE(SUM(LENGTH(option_value)), 0) AS s FROM {$options} WHERE autoload IN (?)", [self::AUTOLOAD_VALUES]);
+        $top = $this->db->rows("SELECT option_name AS name, LENGTH(option_value) AS len FROM {$options} WHERE autoload IN (?) ORDER BY len DESC LIMIT 8", [self::AUTOLOAD_VALUES]);
         $size = (int) ($totals['s'] ?? 0);
         return [
             'count' => (int) ($totals['c'] ?? 0),

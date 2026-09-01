@@ -202,14 +202,14 @@ final readonly class TermQuery
         $params = [];
         $join = '';
         if ($taxonomies !== null) {
-            $where[] = 'tt.taxonomy IN (' . self::marks(count($taxonomies)) . ')';
-            array_push($params, ...$taxonomies);
+            $where[] = 'tt.taxonomy IN (?)';
+            $params[] = $taxonomies;
         }
         $objectIds = $args['object_ids'] === null ? [] : array_map('intval', (array) $args['object_ids']);
         if ($objectIds !== []) {
             $join = "JOIN {$this->db->table('term_relationships')} tr ON tr.term_taxonomy_id = tt.term_taxonomy_id";
-            $where[] = 'tr.object_id IN (' . self::marks(count($objectIds)) . ')';
-            array_push($params, ...$objectIds);
+            $where[] = 'tr.object_id IN (?)';
+            $params[] = $objectIds;
         }
         if ($args['hide_empty'] && $objectIds === []) {
             $where[] = 'tt.count > 0';
@@ -217,24 +217,24 @@ final readonly class TermQuery
         foreach (['include' => 't.term_id IN', 'exclude' => 't.term_id NOT IN'] as $key => $test) {
             $ids = self::ids($args[$key]);
             if ($ids !== []) {
-                $where[] = $test . ' (' . self::marks(count($ids)) . ')';
-                array_push($params, ...$ids);
+                $where[] = $test . ' (?)';
+                $params[] = $ids;
             }
         }
         if ($args['name'] !== '' && $args['name'] !== []) {
             $names = array_map('strval', (array) $args['name']);
-            $where[] = 't.name IN (' . self::marks(count($names)) . ')';
-            array_push($params, ...$names);
+            $where[] = 't.name IN (?)';
+            $params[] = $names;
         }
         if ($args['slug'] !== '' && $args['slug'] !== []) {
             $slugs = array_map(fn ($s) => ($this->slug)((string) $s), (array) $args['slug']);
-            $where[] = 't.slug IN (' . self::marks(count($slugs)) . ')';
-            array_push($params, ...$slugs);
+            $where[] = 't.slug IN (?)';
+            $params[] = $slugs;
         }
         if ($args['term_taxonomy_id'] !== '' && $args['term_taxonomy_id'] !== []) {
             $ids = array_map('intval', (array) $args['term_taxonomy_id']);
-            $where[] = 'tt.term_taxonomy_id IN (' . self::marks(count($ids)) . ')';
-            array_push($params, ...$ids);
+            $where[] = 'tt.term_taxonomy_id IN (?)';
+            $params[] = $ids;
         }
         if ($args['parent'] !== '' && $args['parent'] !== null) {
             $where[] = 'tt.parent = ?';
@@ -304,7 +304,7 @@ final readonly class TermQuery
         $out = [];
         $queue = [$termId];
         while ($queue !== []) {
-            $rows = $this->db->rows("SELECT term_id FROM {$this->db->table('term_taxonomy')} WHERE taxonomy = ? AND parent IN (" . self::marks(count($queue)) . ')', [$taxonomy, ...$queue]);
+            $rows = $this->db->rows("SELECT term_id FROM {$this->db->table('term_taxonomy')} WHERE taxonomy = ? AND parent IN (?)", [$taxonomy, $queue]);
             $queue = [];
             foreach ($rows as $row) {
                 if (!in_array((int) $row['term_id'], $out, true)) {
@@ -323,7 +323,7 @@ final readonly class TermQuery
             return [];
         }
         $direction = strtoupper($order) === 'DESC' ? 'DESC' : 'ASC';
-        $rows = $this->db->rows("SELECT DISTINCT tr.object_id FROM {$this->db->table('term_relationships')} tr JOIN {$this->db->table('term_taxonomy')} tt ON tt.term_taxonomy_id = tr.term_taxonomy_id WHERE tt.taxonomy IN (" . self::marks(count($taxonomies)) . ') AND tt.term_id IN (' . self::marks(count($termIds)) . ") ORDER BY tr.object_id {$direction}", [...$taxonomies, ...$termIds]);
+        $rows = $this->db->rows("SELECT DISTINCT tr.object_id FROM {$this->db->table('term_relationships')} tr JOIN {$this->db->table('term_taxonomy')} tt ON tt.term_taxonomy_id = tr.term_taxonomy_id WHERE tt.taxonomy IN (?) AND tt.term_id IN (?) ORDER BY tr.object_id {$direction}", [$taxonomies, $termIds]);
         return array_map(static fn (array $r) => (int) $r['object_id'], $rows);
     }
 
@@ -362,11 +362,6 @@ final readonly class TermQuery
         }
         $items = is_array($list) ? $list : preg_split('/[\s,]+/', (string) $list, -1, PREG_SPLIT_NO_EMPTY);
         return array_values(array_unique(array_map('intval', $items ?: [])));
-    }
-
-    private static function marks(int $count): string
-    {
-        return implode(',', array_fill(0, $count, '?'));
     }
 
     private static function like(string $needle): string

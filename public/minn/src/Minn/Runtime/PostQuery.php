@@ -72,8 +72,7 @@ final class PostQuery
         if ($isHome && empty($q['ignore_sticky_posts']) && (int) ($q['paged'] ?? 0) <= 1) {
             $ids = array_map('intval', array_filter((array) Runtime::options()->get('sticky_posts') ?: []));
             if ($ids !== []) {
-                $placeholders = implode(',', array_fill(0, count($ids), '?'));
-                $sticky = $this->db->rows("SELECT * FROM {$posts} WHERE ID IN ({$placeholders}) AND post_status = 'publish' ORDER BY post_date DESC", $ids);
+                $sticky = $this->db->rows("SELECT * FROM {$posts} WHERE ID IN (?) AND post_status = 'publish' ORDER BY post_date DESC", [$ids]);
             }
         }
         return ['rows' => $rows, 'found' => $found, 'sticky' => $sticky];
@@ -111,8 +110,8 @@ final class PostQuery
             $this->where[] = '1=0';
             return;
         }
-        $this->where[] = 'p.post_type IN (' . implode(',', array_fill(0, count($types), '?')) . ')';
-        array_push($this->params, ...$types);
+        $this->where[] = 'p.post_type IN (?)';
+        $this->params[] = $types;
     }
 
     private function statuses(array $q): void
@@ -139,8 +138,8 @@ final class PostQuery
         } else {
             $statuses = is_array($status) ? array_values(array_map('strval', $status)) : preg_split('/[\s,]+/', (string) $status, -1, PREG_SPLIT_NO_EMPTY);
         }
-        $this->where[] = 'p.post_status IN (' . implode(',', array_fill(0, count($statuses), '?')) . ')';
-        array_push($this->params, ...$statuses);
+        $this->where[] = 'p.post_status IN (?)';
+        $this->params[] = $statuses;
     }
 
     private function singular(array $q): void
@@ -184,23 +183,23 @@ final class PostQuery
             $in = array_values(array_filter($ids, static fn (int $id) => $id > 0));
             $out = array_map('abs', array_filter($ids, static fn (int $id) => $id < 0));
             if ($in !== []) {
-                $this->where[] = 'p.post_author IN (' . implode(',', array_fill(0, count($in), '?')) . ')';
-                array_push($this->params, ...$in);
+                $this->where[] = 'p.post_author IN (?)';
+                $this->params[] = $in;
             }
             if ($out !== []) {
-                $this->where[] = 'p.post_author NOT IN (' . implode(',', array_fill(0, count($out), '?')) . ')';
-                array_push($this->params, ...$out);
+                $this->where[] = 'p.post_author NOT IN (?)';
+                $this->params[] = $out;
             }
         }
         if (!empty($q['author__in'])) {
             $ids = array_map('intval', (array) $q['author__in']);
-            $this->where[] = 'p.post_author IN (' . implode(',', array_fill(0, count($ids), '?')) . ')';
-            array_push($this->params, ...$ids);
+            $this->where[] = 'p.post_author IN (?)';
+            $this->params[] = $ids;
         }
         if (!empty($q['author__not_in'])) {
             $ids = array_map('intval', (array) $q['author__not_in']);
-            $this->where[] = 'p.post_author NOT IN (' . implode(',', array_fill(0, count($ids), '?')) . ')';
-            array_push($this->params, ...$ids);
+            $this->where[] = 'p.post_author NOT IN (?)';
+            $this->params[] = $ids;
         }
         if (!empty($q['author_name'])) {
             $id = $this->db->value("SELECT ID FROM {$this->db->table('users')} WHERE user_nicename = ? LIMIT 1", [(string) $q['author_name']]);
@@ -217,13 +216,13 @@ final class PostQuery
         }
         if (!empty($q['post_parent__in'])) {
             $ids = array_map('intval', (array) $q['post_parent__in']);
-            $this->where[] = 'p.post_parent IN (' . implode(',', array_fill(0, count($ids), '?')) . ')';
-            array_push($this->params, ...$ids);
+            $this->where[] = 'p.post_parent IN (?)';
+            $this->params[] = $ids;
         }
         if (!empty($q['post_parent__not_in'])) {
             $ids = array_map('intval', (array) $q['post_parent__not_in']);
-            $this->where[] = 'p.post_parent NOT IN (' . implode(',', array_fill(0, count($ids), '?')) . ')';
-            array_push($this->params, ...$ids);
+            $this->where[] = 'p.post_parent NOT IN (?)';
+            $this->params[] = $ids;
         }
     }
 
@@ -231,18 +230,18 @@ final class PostQuery
     {
         if (!empty($q['post__in'])) {
             $ids = array_map('intval', (array) $q['post__in']);
-            $this->where[] = 'p.ID IN (' . implode(',', array_fill(0, count($ids), '?')) . ')';
-            array_push($this->params, ...$ids);
+            $this->where[] = 'p.ID IN (?)';
+            $this->params[] = $ids;
         }
         if (!empty($q['post__not_in'])) {
             $ids = array_map('intval', (array) $q['post__not_in']);
-            $this->where[] = 'p.ID NOT IN (' . implode(',', array_fill(0, count($ids), '?')) . ')';
-            array_push($this->params, ...$ids);
+            $this->where[] = 'p.ID NOT IN (?)';
+            $this->params[] = $ids;
         }
         if (!empty($q['post_name__in'])) {
             $names = array_map('strval', (array) $q['post_name__in']);
-            $this->where[] = 'p.post_name IN (' . implode(',', array_fill(0, count($names), '?')) . ')';
-            array_push($this->params, ...$names);
+            $this->where[] = 'p.post_name IN (?)';
+            $this->params[] = $names;
         }
         if (!empty($q['post_mime_type'])) {
             $parts = [];
@@ -410,16 +409,16 @@ final class PostQuery
                         $parts[] = '1=1';
                         break;
                     }
-                    $parts[] = 'p.ID NOT IN (SELECT object_id FROM ' . $relationships . ' WHERE term_taxonomy_id IN (' . implode(',', array_fill(0, count($ttids), '?')) . '))';
-                    array_push($this->params, ...$ttids);
+                    $parts[] = 'p.ID NOT IN (SELECT object_id FROM ' . $relationships . ' WHERE term_taxonomy_id IN (?))';
+                    $this->params[] = $ttids;
                     break;
                 case 'AND':
                     if ($ttids === []) {
                         $parts[] = '1=0';
                         break;
                     }
-                    $parts[] = '(SELECT COUNT(DISTINCT term_taxonomy_id) FROM ' . $relationships . ' WHERE object_id = p.ID AND term_taxonomy_id IN (' . implode(',', array_fill(0, count($ttids), '?')) . ')) = ' . count($ttids);
-                    array_push($this->params, ...$ttids);
+                    $parts[] = '(SELECT COUNT(DISTINCT term_taxonomy_id) FROM ' . $relationships . ' WHERE object_id = p.ID AND term_taxonomy_id IN (?)) = ' . count($ttids);
+                    $this->params[] = $ttids;
                     break;
                 case 'EXISTS':
                 case 'NOT EXISTS':
@@ -432,8 +431,8 @@ final class PostQuery
                         $parts[] = '1=0';
                         break;
                     }
-                    $parts[] = 'p.ID IN (SELECT object_id FROM ' . $relationships . ' WHERE term_taxonomy_id IN (' . implode(',', array_fill(0, count($ttids), '?')) . '))';
-                    array_push($this->params, ...$ttids);
+                    $parts[] = 'p.ID IN (SELECT object_id FROM ' . $relationships . ' WHERE term_taxonomy_id IN (?))';
+                    $this->params[] = $ttids;
             }
         }
         $this->where[] = '(' . implode(" {$relation} ", $parts) . ')';
@@ -453,18 +452,16 @@ final class PostQuery
             'term_taxonomy_id' => 'tt.term_taxonomy_id',
             default => 't.term_id',
         };
-        $placeholders = implode(',', array_fill(0, count($terms), '?'));
         $rows = $this->db->rows(
-            "SELECT tt.term_taxonomy_id, tt.term_id FROM {$this->db->table('term_taxonomy')} tt JOIN {$this->db->table('terms')} t ON t.term_id = tt.term_id WHERE tt.taxonomy = ? AND {$column} IN ({$placeholders})",
-            [$taxonomy, ...array_values($terms)],
+            "SELECT tt.term_taxonomy_id, tt.term_id FROM {$this->db->table('term_taxonomy')} tt JOIN {$this->db->table('terms')} t ON t.term_id = tt.term_id WHERE tt.taxonomy = ? AND {$column} IN (?)",
+            [$taxonomy, array_values($terms)],
         );
         $ids = array_map(static fn (array $r) => (int) $r['term_taxonomy_id'], $rows);
         $hierarchical = (bool) ($this->registry->taxonomy($taxonomy)['hierarchical'] ?? false);
         if ($hierarchical && $clause['include_children'] && $clause['operator'] !== 'AND') {
             $parents = array_map(static fn (array $r) => (int) $r['term_id'], $rows);
             while ($parents !== []) {
-                $placeholders = implode(',', array_fill(0, count($parents), '?'));
-                $children = $this->db->rows("SELECT term_taxonomy_id, term_id FROM {$this->db->table('term_taxonomy')} WHERE taxonomy = ? AND parent IN ({$placeholders})", [$taxonomy, ...$parents]);
+                $children = $this->db->rows("SELECT term_taxonomy_id, term_id FROM {$this->db->table('term_taxonomy')} WHERE taxonomy = ? AND parent IN (?)", [$taxonomy, $parents]);
                 $parents = [];
                 foreach ($children as $child) {
                     if (!in_array((int) $child['term_taxonomy_id'], $ids, true)) {
@@ -534,8 +531,8 @@ final class PostQuery
                 case 'IN':
                 case 'NOT IN':
                     $values = array_values((array) $value);
-                    $valueClause = "{$cast} {$compare} (" . implode(',', array_fill(0, count($values), '?')) . ')';
-                    $valueParams = $values;
+                    $valueClause = "{$cast} {$compare} (?)";
+                    $valueParams = [$values];
                     break;
                 case 'BETWEEN':
                 case 'NOT BETWEEN':

@@ -77,47 +77,47 @@ final readonly class MediaController
     {
         $include = self::intList((string) $request->query('include', ''));
         if ($include !== []) {
-            $where .= ' AND ID IN (' . implode(',', array_fill(0, count($include), '?')) . ')';
-            $params = [...$params, ...$include];
+            $where .= ' AND ID IN (?)';
+            $params[] = $include;
         }
         $author = $request->query('author');
         if ($author !== null && $author !== '') {
             $ids = self::intList($author);
             if ($ids !== []) {
-                $where .= ' AND post_author IN (' . implode(',', array_fill(0, count($ids), '?')) . ')';
-                $params = [...$params, ...$ids];
+                $where .= ' AND post_author IN (?)';
+                $params[] = $ids;
             }
         }
         $authorExclude = $request->query('author_exclude');
         if ($authorExclude !== null && $authorExclude !== '') {
             $ids = self::intList($authorExclude);
             if ($ids !== []) {
-                $where .= ' AND post_author NOT IN (' . implode(',', array_fill(0, count($ids), '?')) . ')';
-                $params = [...$params, ...$ids];
+                $where .= ' AND post_author NOT IN (?)';
+                $params[] = $ids;
             }
         }
         $parent = $request->query('parent');
         if ($parent !== null && $parent !== '') {
             $ids = self::intList($parent, true);
             if ($ids !== []) {
-                $where .= ' AND post_parent IN (' . implode(',', array_fill(0, count($ids), '?')) . ')';
-                $params = [...$params, ...$ids];
+                $where .= ' AND post_parent IN (?)';
+                $params[] = $ids;
             }
         }
         $parentExclude = $request->query('parent_exclude');
         if ($parentExclude !== null && $parentExclude !== '') {
             $ids = self::intList($parentExclude, true);
             if ($ids !== []) {
-                $where .= ' AND post_parent NOT IN (' . implode(',', array_fill(0, count($ids), '?')) . ')';
-                $params = [...$params, ...$ids];
+                $where .= ' AND post_parent NOT IN (?)';
+                $params[] = $ids;
             }
         }
         $slug = (string) $request->query('slug', '');
         if ($slug !== '') {
             $slugs = array_values(array_filter(explode(',', $slug), static fn (string $s) => $s !== ''));
             if ($slugs !== []) {
-                $where .= ' AND post_name IN (' . implode(',', array_fill(0, count($slugs), '?')) . ')';
-                $params = [...$params, ...$slugs];
+                $where .= ' AND post_name IN (?)';
+                $params[] = $slugs;
             }
         }
         $mediaType = $request->query('media_type');

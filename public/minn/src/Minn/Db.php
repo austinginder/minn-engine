@@ -10,7 +10,9 @@ use mysqli_stmt;
 /**
  * The one door to the database. Every query is a prepared statement; the
  * placeholder types are derived from the PHP values, so callers pass plain
- * arrays and never spell out "issd".
+ * arrays and never spell out "issd". A parameter that is a list stands for
+ * a list of values: its "?" becomes as many placeholders as the list is
+ * long, so "post_type IN (?)" takes the types themselves.
  */
 final class Db
 {
@@ -79,6 +81,81 @@ final class Db
         return (int) $this->run($sql, $params)->affected_rows;
     }
 
+    /**
+     * Rewrites every "?" whose parameter is a list into that many
+     * placeholders, and flattens the values to match, so "IN (?)" becomes
+     * "IN (?, ?, ?)". An empty list becomes NULL, which nothing is IN, so a
+     * caller that means "everything" when the list is empty says so itself.
+     *
+     * @param list<mixed> $params
+     * @return array{0: string, 1: list<mixed>}
+     */
+    private static function expandLists(string $sql, array $params): array
+    {
+        if (array_filter($params, is_array(...)) === []) {
+            return [$sql, array_values($params)];
+        }
+        $params = array_values($params);
+        $out = '';
+        $flat = [];
+        $index = 0;
+        foreach (self::placeholders($sql) as $piece) {
+            if ($piece !== '?') {
+                $out .= $piece;
+                continue;
+            }
+            $param = $params[$index] ?? null;
+            $index++;
+            if (!is_array($param)) {
+                $out .= '?';
+                $flat[] = $param;
+                continue;
+            }
+            $out .= $param === [] ? 'NULL' : implode(', ', array_fill(0, count($param), '?'));
+            $flat = [...$flat, ...array_values($param)];
+        }
+        return [$out, $flat];
+    }
+
+    /**
+     * The statement split into placeholders and everything between them. A
+     * "?" inside a quoted string is text, not a placeholder.
+     *
+     * @return list<string>
+     */
+    private static function placeholders(string $sql): array
+    {
+        $pieces = [];
+        $buffer = '';
+        $quote = '';
+        for ($i = 0, $length = strlen($sql); $i < $length; $i++) {
+            $char = $sql[$i];
+            if ($quote !== '') {
+                $buffer .= $char;
+                if ($char === '\\' && $i + 1 < $length) {
+                    $buffer .= $sql[++$i];
+                } elseif ($char === $quote) {
+                    $quote = '';
+                }
+                continue;
+            }
+            if ($char === "'" || $char === '"' || $char === '`') {
+                $quote = $char;
+                $buffer .= $char;
+                continue;
+            }
+            if ($char === '?') {
+                $pieces[] = $buffer;
+                $pieces[] = '?';
+                $buffer = '';
+                continue;
+            }
+            $buffer .= $char;
+        }
+        $pieces[] = $buffer;
+        return $pieces;
+    }
+
     public function insertId(): int
     {
         return (int) $this->connection->insert_id;
@@ -95,6 +172,7 @@ final class Db
 
     private function run(string $sql, array $params): mysqli_stmt
     {
+        [$sql, $params] = self::expandLists($sql, $params);
         $statement = $this->connection->prepare($sql);
         if ($params !== []) {
             $types = '';

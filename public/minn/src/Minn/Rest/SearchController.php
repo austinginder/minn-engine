@@ -45,9 +45,8 @@ final readonly class SearchController
         $terms = self::terms((string) ($request->query('search') ?? ''));
 
         $posts = $this->db->table('posts');
-        $typeList = implode(',', array_fill(0, count($subtypes), '?'));
-        $where = "post_status = 'publish' AND post_type IN ({$typeList})";
-        $params = $subtypes;
+        $where = "post_status = 'publish' AND post_type IN (?)";
+        $params = [$subtypes];
         $rank = '0';
         $rankParams = [];
         if ($terms !== []) {

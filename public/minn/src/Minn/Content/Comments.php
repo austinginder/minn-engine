@@ -47,11 +47,10 @@ final readonly class Comments
      */
     public function page(array $approvedTokens, int $page, int $perPage, bool $publicPostsOnly = false, array $filters = []): array
     {
-        $placeholders = implode(',', array_fill(0, count($approvedTokens), '?'));
-        $params = $approvedTokens;
+        $params = [$approvedTokens];
         $from = "FROM {$this->db->table('comments')} c"
             . ($publicPostsOnly ? " INNER JOIN {$this->db->table('posts')} p ON p.ID = c.comment_post_ID AND p.post_status = 'publish' AND p.post_password = ''" : '')
-            . " WHERE c.comment_approved IN ({$placeholders})";
+            . ' WHERE c.comment_approved IN (?)';
         $type = (string) ($filters['type'] ?? 'comment');
         if ($type === '' || $type === 'comment') {
             $from .= " AND c.comment_type IN ('', 'comment')";
@@ -98,9 +97,8 @@ final readonly class Comments
         if ($ids === []) {
             return;
         }
-        $placeholders = implode(',', array_fill(0, count($ids), '?'));
-        $from .= ' AND ' . $column . ($not ? ' NOT' : '') . ' IN (' . $placeholders . ')';
-        $params = [...$params, ...$ids];
+        $from .= ' AND ' . $column . ($not ? ' NOT' : '') . ' IN (?)';
+        $params[] = $ids;
     }
 
     /** The same words on the same post from the same person, in any status but trash or spam. */
@@ -145,8 +143,7 @@ final readonly class Comments
         if ($ids === []) {
             return $counts;
         }
-        $placeholders = implode(',', array_fill(0, count($ids), '?'));
-        foreach ($this->db->rows("SELECT comment_post_ID, COUNT(*) AS n FROM {$this->db->table('comments')} WHERE comment_approved = '0' AND comment_post_ID IN ({$placeholders}) GROUP BY comment_post_ID", $ids) as $row) {
+        foreach ($this->db->rows("SELECT comment_post_ID, COUNT(*) AS n FROM {$this->db->table('comments')} WHERE comment_approved = '0' AND comment_post_ID IN (?) GROUP BY comment_post_ID", [$ids]) as $row) {
             $counts[(int) $row['comment_post_ID']] = (int) $row['n'];
         }
         return $counts;
@@ -168,8 +165,7 @@ final readonly class Comments
     public function insert(array $columns): int
     {
         $names = implode(', ', array_keys($columns));
-        $placeholders = implode(', ', array_fill(0, count($columns), '?'));
-        $this->db->execute("INSERT INTO {$this->db->table('comments')} ({$names}) VALUES ({$placeholders})", array_values($columns));
+        $this->db->execute("INSERT INTO {$this->db->table('comments')} ({$names}) VALUES (?)", [array_values($columns)]);
         return $this->db->insertId();
     }
 

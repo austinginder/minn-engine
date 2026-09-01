@@ -76,20 +76,20 @@ final readonly class UsersController
         $params = [];
         $include = array_values(array_filter(array_map(intval(...), explode(',', (string) $request->query('include', ''))), static fn (int $id) => $id > 0));
         if ($include !== []) {
-            $where .= ' AND u.ID IN (' . implode(',', array_fill(0, count($include), '?')) . ')';
-            $params = [...$params, ...$include];
+            $where .= ' AND u.ID IN (?)';
+            $params[] = $include;
         }
         $exclude = array_values(array_filter(array_map(intval(...), explode(',', (string) $request->query('exclude', ''))), static fn (int $id) => $id > 0));
         if ($exclude !== []) {
-            $where .= ' AND u.ID NOT IN (' . implode(',', array_fill(0, count($exclude), '?')) . ')';
-            $params = [...$params, ...$exclude];
+            $where .= ' AND u.ID NOT IN (?)';
+            $params[] = $exclude;
         }
         $slug = (string) $request->query('slug', '');
         if ($slug !== '') {
             $slugs = array_values(array_filter(explode(',', $slug), static fn (string $s) => $s !== ''));
             if ($slugs !== []) {
-                $where .= ' AND u.user_nicename IN (' . implode(',', array_fill(0, count($slugs), '?')) . ')';
-                $params = [...$params, ...$slugs];
+                $where .= ' AND u.user_nicename IN (?)';
+                $params[] = $slugs;
             }
         }
         foreach (preg_split('/\s+/', trim((string) $request->query('search', ''))) ?: [] as $word) {

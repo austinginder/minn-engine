@@ -25,8 +25,7 @@ final readonly class PostWriter
     public function insert(array $columns): int
     {
         $names = implode(', ', array_keys($columns));
-        $placeholders = implode(', ', array_fill(0, count($columns), '?'));
-        $this->db->execute("INSERT INTO {$this->db->table('posts')} ({$names}) VALUES ({$placeholders})", array_values($columns));
+        $this->db->execute("INSERT INTO {$this->db->table('posts')} ({$names}) VALUES (?)", [array_values($columns)]);
         return $this->db->insertId();
     }
 

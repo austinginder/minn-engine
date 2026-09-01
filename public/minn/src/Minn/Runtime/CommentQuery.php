@@ -56,8 +56,8 @@ final readonly class CommentQuery
         foreach (['post__in' => 'c.comment_post_ID IN', 'comment__in' => 'c.comment_ID IN', 'comment__not_in' => 'c.comment_ID NOT IN'] as $key => $test) {
             if (!empty($args[$key])) {
                 $ids = array_map('intval', (array) $args[$key]);
-                $where[] = $test . ' (' . self::marks(count($ids)) . ')';
-                array_push($params, ...$ids);
+                $where[] = $test . ' (?)';
+                $params[] = $ids;
             }
         }
         $statuses = array_map(static fn ($one) => match ((string) $one) {
@@ -67,8 +67,8 @@ final readonly class CommentQuery
             default => (string) $one,
         }, (array) $args['status']);
         if (!in_array('all', $statuses, true) && !in_array('any', $statuses, true)) {
-            $where[] = 'c.comment_approved IN (' . self::marks(count($statuses)) . ')';
-            array_push($params, ...$statuses);
+            $where[] = 'c.comment_approved IN (?)';
+            $params[] = $statuses;
         } elseif (in_array('all', $statuses, true)) {
             $where[] = "c.comment_approved IN ('0', '1')";
         }
@@ -78,8 +78,8 @@ final readonly class CommentQuery
         }
         if ($args['type'] !== '') {
             $types = array_map('strval', (array) $args['type']);
-            $where[] = 'c.comment_type IN (' . self::marks(count($types)) . ')';
-            array_push($params, ...$types);
+            $where[] = 'c.comment_type IN (?)';
+            $params[] = $types;
         }
         if ($args['author_email'] !== '') {
             $where[] = 'c.comment_author_email = ?';
@@ -117,10 +117,5 @@ final readonly class CommentQuery
         $counts['all'] = $counts['approved'] + $counts['moderated'];
         $counts['total_comments'] = $counts['all'] + $counts['spam'];
         return $counts;
-    }
-
-    private static function marks(int $count): string
-    {
-        return implode(',', array_fill(0, $count, '?'));
     }
 }

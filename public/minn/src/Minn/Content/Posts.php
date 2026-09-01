@@ -25,13 +25,12 @@ final readonly class Posts
     /** @param list<string> $types */
     public function findByName(string $name, array $types, bool $publishedOnly = true): ?array
     {
-        $placeholders = implode(',', array_fill(0, count($types), '?'));
         $status = $publishedOnly ? "AND post_status = 'publish'" : "AND post_status <> 'trash'";
         return $this->db->row(
             "SELECT * FROM {$this->db->table('posts')}
-             WHERE post_name = ? AND post_type IN ({$placeholders}) {$status}
+             WHERE post_name = ? AND post_type IN (?) {$status}
              ORDER BY post_date DESC LIMIT 1",
-            [$name, ...$types],
+            [$name, $types],
         );
     }
 
@@ -45,13 +44,12 @@ final readonly class Posts
      */
     public function byOldSlug(string $slug, array $types): ?array
     {
-        $placeholders = implode(',', array_fill(0, count($types), '?'));
         return $this->db->row(
             "SELECT p.* FROM {$this->db->table('posts')} p
              INNER JOIN {$this->db->table('postmeta')} m ON m.post_id = p.ID
-             WHERE m.meta_key = '_wp_old_slug' AND m.meta_value = ? AND p.post_type IN ({$placeholders})
+             WHERE m.meta_key = '_wp_old_slug' AND m.meta_value = ? AND p.post_type IN (?)
              ORDER BY p.ID LIMIT 1",
-            [$slug, ...$types],
+            [$slug, $types],
         );
     }
 
@@ -136,8 +134,8 @@ final readonly class Posts
         $posts = $this->db->table('posts');
         $statuses = Reader::current()->listableStatuses('post');
         $types = array_values(array_map('strval', $filter['types'] ?? ['post']));
-        $where = ['p.post_type IN (' . implode(',', array_fill(0, count($types), '?')) . ')', 'p.post_status IN (' . implode(',', array_fill(0, count($statuses), '?')) . ')'];
-        $params = [...$types, ...$statuses];
+        $where = ['p.post_type IN (?)', 'p.post_status IN (?)'];
+        $params = [$types, $statuses];
         $join = '';
         if (isset($filter['term'])) {
             $join = "INNER JOIN {$this->db->table('term_relationships')} tr ON tr.object_id = p.ID";
@@ -268,10 +266,9 @@ final readonly class Posts
         if ($stickyIds === []) {
             return $this->archive($filter, $page, $perPage);
         }
-        $placeholders = implode(',', array_fill(0, count($stickyIds), '?'));
         $sticky = $this->db->rows(
-            "SELECT * FROM {$this->db->table('posts')} WHERE ID IN ({$placeholders}) AND post_status = 'publish' AND post_type = 'post' ORDER BY post_date DESC",
-            $stickyIds,
+            "SELECT * FROM {$this->db->table('posts')} WHERE ID IN (?) AND post_status = 'publish' AND post_type = 'post' ORDER BY post_date DESC",
+            [$stickyIds],
         );
         $result = $this->archive($filter, $page, $perPage);
         if ($page > 1) {

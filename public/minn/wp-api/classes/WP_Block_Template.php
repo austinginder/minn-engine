@@ -1,6 +1,11 @@
 <?php
 
-/** A block template or template part as the reference describes one. */
+/**
+ * A block template or template part as the reference describes one. The
+ * REST controller hangs author_text and original_source on an instance
+ * without the class declaring them, so the declared set stays as it is.
+ */
+#[\AllowDynamicProperties]
 class WP_Block_Template
 {
     public $type;
@@ -22,8 +27,6 @@ class WP_Block_Template
     public $area;
     public $modified;
     public $date;
-    public $author_text;
-    public $original_source;
 }
 
 /** The registry of templates plugins register; storage in Minn\Runtime\BlockTemplates. */

@@ -46,20 +46,20 @@ final readonly class TermsController
         }
         $include = array_values(array_filter(array_map(intval(...), explode(',', (string) $request->query('include', ''))), static fn (int $id) => $id > 0));
         if ($include !== []) {
-            $where .= ' AND t.term_id IN (' . implode(',', array_fill(0, count($include), '?')) . ')';
-            $params = [...$params, ...$include];
+            $where .= ' AND t.term_id IN (?)';
+            $params[] = $include;
         }
         $exclude = array_values(array_filter(array_map(intval(...), explode(',', (string) $request->query('exclude', ''))), static fn (int $id) => $id > 0));
         if ($exclude !== []) {
-            $where .= ' AND t.term_id NOT IN (' . implode(',', array_fill(0, count($exclude), '?')) . ')';
-            $params = [...$params, ...$exclude];
+            $where .= ' AND t.term_id NOT IN (?)';
+            $params[] = $exclude;
         }
         $slug = (string) $request->query('slug', '');
         if ($slug !== '') {
             $slugs = array_values(array_filter(explode(',', $slug), static fn (string $s) => $s !== ''));
             if ($slugs !== []) {
-                $where .= ' AND t.slug IN (' . implode(',', array_fill(0, count($slugs), '?')) . ')';
-                $params = [...$params, ...$slugs];
+                $where .= ' AND t.slug IN (?)';
+                $params[] = $slugs;
             }
         }
         $post = $request->query('post');
