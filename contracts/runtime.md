@@ -1529,3 +1529,84 @@ not asked to see errors never learns that much from a response.
 `public/wp-content/mu-plugins/minn-error-lab.php` on the dev site triggers
 each case on demand (`/?minn-error=fatal|exception|error|warning|notice|late`,
 plus `/wp-json/minn-error-lab/v1/boom`). It is inert without the parameter.
+
+## Reading the catalogue: what the popular themes and plugins ask for
+
+The symbol gate is a static read, so it can judge a plugin's source with
+no database and no facade loaded. That turns "which of WordPress's
+plugins would run on Minn" from a question you answer one site at a time
+into one you answer over the whole directory in a few minutes, and the
+answer is a work queue rather than an opinion.
+
+- `Minn\Runtime\SymbolGap` is the part of the reference's interface the
+  runtime does not answer: the names in `data/api-names.json` that no
+  facade file defines. `Symbols::missingAgainst()` judges a folder
+  against an exported gap; `Symbols::missing()` asks the running engine
+  the same question. The two agree row for row, checked against the 48
+  plugins on the anchor dogfood site.
+- `php tests/tools/symbol-gap.php` writes `contracts/api/symbol-gap.json`.
+  `tests/tools/compat-scan.php <gap> <list>` scans a directory of folders
+  with nothing but the tokeniser. It is built to run somewhere that holds
+  plugin source but no engine: the WP Beacon mirror box carries a git
+  repository per wp.org slug, ranked by installs in its own `state.sqlite`,
+  so a run extracts each ranked slug's HEAD tree through tmpfs, scans it,
+  and throws it away.
+- `tests/tools/compat-report.php <report> [installs]` turns the verdicts
+  into the queue. The order is a **greedy set cover, not a frequency
+  count**: the symbol that appears in the most plugins is usually not the
+  one that finishes any of them, so each step picks the symbol that turns
+  the most components green once everything above it exists. A symbol that
+  completes nothing on its own is still taken when it has the most installs
+  behind it, because it moves the most components closer to done.
+- What the first read said, and why the shape matters more than the number:
+  most of the catalogue was already one or two names short, not
+  fundamentally unsupported. Of the 697 skipped plugins in the first scan
+  of the top 2,000, **296 were exactly one symbol short**. The work is a
+  long tail of small, well-understood functions, and it pays out in steps.
+
+The queue is dominated by two kinds of name. Front-end template tags and
+helpers are real work and get written. Names that exist only to draw a
+wp-admin screen (list tables, the customizer's objects, the importer,
+TinyMCE, the core upgrader) are Mute by the rule in `lexicon.md`: they are
+recorded as placeholders so a plugin boots, and they never graduate just
+to shorten a list. The gate is whole-folder, so an admin-only symbol
+blocks front-end loading too; that is the reason placeholders exist at all.
+
+GOTCHA when adding a placeholder class: the generated file loads before
+`wp-api/*.php`, so a placeholder cannot extend a class declared there. The
+customizer's subclasses live in `wp-api/customize.php` beside their parent
+for exactly that reason.
+
+### Facts the three catalogue waves settled
+
+Each of these was wrong or missing in the engine and was found by running
+a probe against the reference, never by reading its source.
+
+- **A comment page link collapses to the bare permalink** for page one
+  when a site reads oldest comments first, and for the caller's *stated*
+  last page when it reads newest first. A caller that states no page count
+  gets no collapse at all, so `get_previous_comments_link()` never
+  collapses and `get_next_comments_link()` can. The engine used to write
+  `comment-page-N` for every page.
+- **A posts navigation puts the older posts in the previous slot.** A
+  reader moving back through an archive is moving forward through the page
+  numbers, so `nav-previous` holds the next page's link.
+- **`get_comment()` falls back to the comment being read for any empty
+  id**, not only for `null`. Every `the_*` comment tag passes `0`.
+- **The author posts link carries no title attribute.**
+- **`wp_logout_url()` puts the action ahead of the redirect** in its query
+  string.
+- **`wp_trim_excerpt()` is plain text**: the rendered excerpt's markup is
+  stripped back off.
+- **`fetchpriority="high"` goes to the first eager image that covers at
+  least 50,000 pixels**, filterable through `wp_min_priority_img_pixels`,
+  so a thumbnail or an avatar leaves the flag for a later image. The
+  engine gave it to the first eager image whatever its size. Derived by
+  bisecting on the reference: 273x182 does not qualify, 274x183 does.
+- **A proxy is skipped for the name `localhost` and for the site's own
+  host only**, never for a loopback address written out in full.
+- **The language picker's attribute order is not tidy**: the English
+  option carries `data-installed` before `selected`, an installed
+  translation carries it after.
+- **`[gallery]` treats `ids` as the include list** and orders by
+  `post__in` unless the caller asked for another order.
