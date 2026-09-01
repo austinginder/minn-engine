@@ -165,6 +165,77 @@ final class Theme
         return is_file($file) ? (string) file_get_contents($file) : $this->parent?->partFile($slug);
     }
 
+    /**
+     * The theme's display name, as the stylesheet header states it; a child
+     * theme answers with its own. Falls back to theme.json's title, then the
+     * folder name.
+     */
+    public function name(): string
+    {
+        $head = is_file("{$this->dir}/style.css")
+            ? (string) file_get_contents("{$this->dir}/style.css", false, null, 0, 8192)
+            : '';
+        if (preg_match('/^[ \t\/*#@]*Theme Name:\s*(.+)$/mi', $head, $match) === 1) {
+            return trim($match[1]);
+        }
+        return (string) ($this->json()['title'] ?? $this->slug);
+    }
+
+    /**
+     * Every template (or part) slug the theme offers, the child's files
+     * first and the parent's after, each in the order the directory hands
+     * them back: the reference walks these directories unsorted and its
+     * template list carries that order through.
+     *
+     * @return list<string>
+     */
+    public function fileSlugs(string $folder): array
+    {
+        $slugs = [];
+        for ($theme = $this; $theme !== null; $theme = $theme->parent) {
+            foreach (self::htmlFiles("{$theme->dir}/{$folder}") as $slug) {
+                if (!in_array($slug, $slugs, true)) {
+                    $slugs[] = $slug;
+                }
+            }
+        }
+        return $slugs;
+    }
+
+    /** @return list<string> */
+    private static function htmlFiles(string $dir): array
+    {
+        $slugs = [];
+        foreach (@scandir($dir, SCANDIR_SORT_NONE) ?: [] as $entry) {
+            if (str_ends_with($entry, '.html') && self::safe($entry)) {
+                $slugs[] = substr($entry, 0, -5);
+            }
+        }
+        return $slugs;
+    }
+
+    /** A template title and description the theme declares for a custom template slug. */
+    public function customTemplate(string $slug): ?array
+    {
+        foreach ((array) ($this->json()['customTemplates'] ?? []) as $template) {
+            if (($template['name'] ?? '') === $slug) {
+                return $template;
+            }
+        }
+        return null;
+    }
+
+    /** The title theme.json gives a template part, when it names one. */
+    public function partTitle(string $slug): ?string
+    {
+        foreach ((array) ($this->json()['templateParts'] ?? []) as $part) {
+            if (($part['name'] ?? '') === $slug) {
+                return isset($part['title']) ? (string) $part['title'] : null;
+            }
+        }
+        return null;
+    }
+
     /** The template-part area declared in theme.json (header, footer, or uncategorized). */
     public function partArea(string $slug): string
     {
@@ -206,6 +277,35 @@ final class Theme
             return array_values(array_filter(array_map('trim', explode(',', $m[1]))));
         };
         return ['blockTypes' => $list('Block Types'), 'categories' => $list('Categories')];
+    }
+
+    /**
+     * The header fields a pattern declares, as the metadata attribute the
+     * reference writes onto the pattern's first block when it splices the
+     * pattern into a template. A field the header omits is omitted here.
+     *
+     * @return array{patternName: string, name: string, description?: string, categories?: list<string>}|null
+     */
+    public function patternHeader(string $slug): ?array
+    {
+        $file = $this->patternIndex()[$slug] ?? null;
+        if ($file === null) {
+            return $this->parent?->patternHeader($slug);
+        }
+        $head = (string) file_get_contents($file, false, null, 0, 2000);
+        $field = static function (string $name) use ($head): ?string {
+            return preg_match('/^\s*\*\s*' . $name . ':\s*(.+)$/m', $head, $match) === 1 ? trim($match[1]) : null;
+        };
+        $header = ['patternName' => $slug, 'name' => (string) ($field('Title') ?? '')];
+        $description = $field('Description');
+        if ($description !== null) {
+            $header['description'] = $description;
+        }
+        $categories = $field('Categories');
+        if ($categories !== null) {
+            $header['categories'] = array_values(array_filter(array_map('trim', explode(',', $categories))));
+        }
+        return $header;
     }
 
     /** The theme's stylesheet URL when it ships one; a child's own, else nothing (the parent's is not enqueued for it). */

@@ -47,6 +47,9 @@ use Minn\Media\Images;
 use Minn\Media\Uploads;
 use Minn\RestError;
 use Minn\Runtime\Runtime;
+use Minn\Theme\TemplateIndex;
+use Minn\Theme\TemplateWriter;
+use Minn\Theme\Theme;
 
 /**
  * The REST API: wires the controllers for one request and dispatches a
@@ -100,6 +103,12 @@ final readonly class Api
         $updates = new Updates($site, new Inventory($contentDir, $site), new Packages($site, $contentDir), $contentDir, $permalinks->url('/'), \Minn\Engine::WP_VERSION);
         $notifications = new Notifications($db, $site, $users, $capabilities, $dashboard, $updates);
         $menus = new Menus($db, $posts, $terms, $permalinks, $writer, $site);
+        // A classic theme has no block templates; the index stays null and
+        // the routes answer the way the reference does when it never
+        // registered them.
+        $blockTheme = Theme::active($site, $permalinks, $contentDir . '/themes');
+        $templates = $blockTheme === null ? null : new TemplateIndex($db, $blockTheme, $site, Runtime::booted() ? Runtime::blockTemplates() : null);
+        $templateWriter = $templates === null ? null : new TemplateWriter($db, $writer, $terms, $site, $templates);
 
         $router = new Router();
         $router->register(
@@ -128,7 +137,16 @@ final readonly class Api
             new RevisionsController($posts, new Revisions($db, $writer, $site), $url, $caller),
             new MediaController($db, $posts, $writer, $site, $uploads, new Images($site), $mediaObject, $caller),
             new MenusController($menus, new MenuObject($menus, $url, $caller), new MenuItemObject($url, $caller), $caller, $url),
+
         );
+        if ($templates !== null && $templateWriter !== null) {
+            $router->register(new TemplatesController(
+                $templates,
+                $templateWriter,
+                new TemplateObject($templates, $posts, $url, $caller),
+                $caller,
+            ));
+        }
         $postsController = new PostsController($db, $posts, $postObject, $caller);
         $postsWrite = new PostsWriteController($posts, $writer, $site, $postObject, $url, $caller);
         $router->register($postsController, $postsWrite);

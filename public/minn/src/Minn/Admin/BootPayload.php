@@ -82,6 +82,12 @@ final readonly class BootPayload
                 'logout' => $this->permalinks->url('/minn-admin/login/logout'),
                 'blockTheme' => $this->blockTheme,
                 'hasSidebars' => false,
+                // A template id is "<owner>//<slug>". Comparing the owner
+                // against these two is how the app tells the theme's own
+                // templates from ones a plugin contributed, so both must be
+                // here or every customized template reads as a plugin's.
+                'stylesheet' => (string) ($this->site->option('stylesheet') ?? ''),
+                'template' => (string) ($this->site->option('template') ?? ''),
             ],
             'gmtOffset' => (float) ($this->site->option('gmt_offset') ?? 0),
             'locale' => $locale,
