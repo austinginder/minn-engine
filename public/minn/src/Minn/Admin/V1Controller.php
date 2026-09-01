@@ -16,7 +16,6 @@ use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\Media\Metadata;
 use Minn\Rest\Caller;
-use Minn\Rest\Fields;
 use Minn\Rest\Reply;
 use Minn\RestError;
 use Minn\Support\Serialized;
@@ -47,40 +46,40 @@ final readonly class V1Controller
     #[Route(Method::Get, '/minn-admin/v1/overview')]
     public function overview(Request $request): Response
     {
-        $userId = $this->requireFloor();
-        return $this->reply($request, $this->dashboard->overview($userId, $this->days($request)));
+        $userId = $this->caller->requireFloor();
+        return Reply::answer($request, $this->dashboard->overview($userId, $this->days($request)));
     }
 
     #[Route(Method::Get, '/minn-admin/v1/overview/activity')]
     public function overviewActivity(Request $request): Response
     {
-        $userId = $this->requireFloor();
+        $userId = $this->caller->requireFloor();
         [$from, $to] = $this->window($request);
-        return $this->reply($request, $this->dashboard->activity($userId, $from, $to));
+        return Reply::answer($request, $this->dashboard->activity($userId, $from, $to));
     }
 
     #[Route(Method::Get, '/minn-admin/v1/notifications')]
     public function notifications(Request $request): Response
     {
-        return $this->reply($request, $this->notifications->items($this->requireFloor()));
+        return Reply::answer($request, $this->notifications->items($this->caller->requireFloor()));
     }
 
     /** Body {id} marks one read; {} marks all read. */
     #[Route(Method::Post, '/minn-admin/v1/notifications/read')]
     public function notificationsRead(Request $request): Response
     {
-        $userId = $this->requireFloor();
+        $userId = $this->caller->requireFloor();
         $id = trim(preg_replace('/[\r\n\t ]+/', ' ', strip_tags((string) ($request->json()['id'] ?? ''))));
         $this->notifications->markRead($userId, $id);
-        return $this->reply($request, ['ok' => true]);
+        return Reply::answer($request, ['ok' => true]);
     }
 
     #[Route(Method::Get, '/minn-admin/v1/core')]
     public function core(Request $request): Response
     {
-        $this->requireFloor();
-        $this->requireCap('update_core');
-        return $this->reply($request, $this->core->data());
+        $this->caller->requireFloor();
+        $this->caller->requireCap('update_core');
+        return Reply::answer($request, $this->core->data());
     }
 
     /**
@@ -92,7 +91,7 @@ final readonly class V1Controller
     #[Route(Method::Get, '/minn-admin/v1/boot-status')]
     public function bootStatus(Request $request): Response
     {
-        $userId = $this->requireFloor();
+        $userId = $this->caller->requireFloor();
         $out = ['notifications' => $this->notifications->items($userId)];
         if ($this->caller->can('update_core')) {
             $out['core'] = $this->core->data();
@@ -103,51 +102,51 @@ final readonly class V1Controller
                 "SELECT COUNT(*) FROM {$this->db->table('comments')} WHERE comment_approved = '0' AND comment_type IN ( '', 'comment' )",
             );
         }
-        return $this->reply($request, $out);
+        return Reply::answer($request, $out);
     }
 
     #[Route(Method::Post, '/minn-admin/v1/posts/{id:\d+}/lock')]
     public function lock(Request $request, string $id): Response
     {
-        $userId = $this->requireFloor();
+        $userId = $this->caller->requireFloor();
         if (!$this->caller->can('edit_post', (int) $id)) {
             throw new RestError('rest_cannot_edit', 'Sorry, you are not allowed to edit this post.', 403);
         }
         $this->writer->setMeta((int) $id, '_edit_lock', time() . ':' . $userId);
-        return $this->reply($request, ['acquired' => true]);
+        return Reply::answer($request, ['acquired' => true]);
     }
 
     #[Route(Method::Post, '/minn-admin/v1/posts/{id:\d+}/unlock')]
     public function unlock(Request $request, string $id): Response
     {
-        $this->requireFloor();
+        $this->caller->requireFloor();
         if (!$this->caller->can('edit_post', (int) $id)) {
             throw new RestError('rest_cannot_edit', 'Sorry, you are not allowed to edit this post.', 403);
         }
         $this->writer->deleteMeta((int) $id, '_edit_lock');
-        return $this->reply($request, ['unlocked' => true]);
+        return Reply::answer($request, ['unlocked' => true]);
     }
 
     /** No theme, no page templates: an honest empty set. */
     #[Route(Method::Get, '/minn-admin/v1/templates')]
     public function templates(Request $request): Response
     {
-        $this->requireFloor();
-        return $this->reply($request, ['templates' => []]);
+        $this->caller->requireFloor();
+        return Reply::answer($request, ['templates' => []]);
     }
 
     /** Theme patterns are GPL theme content the engine does not carry. */
     #[Route(Method::Get, '/minn-admin/v1/patterns')]
     public function patterns(Request $request): Response
     {
-        $this->requireFloor();
-        return $this->reply($request, ['patterns' => []]);
+        $this->caller->requireFloor();
+        return Reply::answer($request, ['patterns' => []]);
     }
 
     #[Route(Method::Get, '/minn-admin/v1/site-logo')]
     public function siteLogo(Request $request): Response
     {
-        $this->requireFloor();
+        $this->caller->requireFloor();
         // The app treats every block theme as logo-capable (its Site Logo
         // block manages one whether or not the theme declares support);
         // a classic theme needs the declared custom-logo support.
@@ -158,34 +157,34 @@ final readonly class V1Controller
             $mods = Serialized::decode((string) ($this->db->option('theme_mods_' . (string) ($this->db->option('stylesheet') ?? '')) ?? ''));
             $id = (int) ($mods['custom_logo'] ?? 0);
         }
-        return $this->reply($request, ['supported' => $supported, 'id' => $id, 'url' => $id > 0 ? $this->logoUrl($id) : '']);
+        return Reply::answer($request, ['supported' => $supported, 'id' => $id, 'url' => $id > 0 ? $this->logoUrl($id) : '']);
     }
 
     #[Route(Method::Post, '/minn-admin/v1/overview/metrics')]
     public function setOverviewMetrics(Request $request): Response
     {
-        $userId = $this->requireFloor();
+        $userId = $this->caller->requireFloor();
         $keys = $this->metricKeysFrom($request);
         if ($keys === null || $keys === []) {
             $this->users->deleteMeta($userId, 'minn_admin_overview_metrics');
         } else {
             $this->users->setMeta($userId, 'minn_admin_overview_metrics', Serialized::encode($keys));
         }
-        return $this->reply($request, $this->storedMetricLayout($userId));
+        return Reply::answer($request, $this->storedMetricLayout($userId));
     }
 
     #[Route(Method::Post, '/minn-admin/v1/overview/metric-defaults')]
     public function setOverviewMetricDefaults(Request $request): Response
     {
-        $userId = $this->requireFloor();
-        $this->requireCap('manage_options');
+        $userId = $this->caller->requireFloor();
+        $this->caller->requireCap('manage_options');
         $keys = $this->metricKeysFrom($request);
         if ($keys === null || $keys === []) {
             $this->site->deleteOption('minn_admin_overview_metric_defaults');
         } else {
             $this->site->setOption('minn_admin_overview_metric_defaults', Serialized::encode($keys));
         }
-        return $this->reply($request, $this->storedMetricLayout($userId));
+        return Reply::answer($request, $this->storedMetricLayout($userId));
     }
 
     /** The cleaned keys, null when the caller asked for a clear; a missing or non-list keys member refuses. */
@@ -236,10 +235,10 @@ final readonly class V1Controller
     #[Route(Method::Get, '/minn-admin/v1/permalinks')]
     public function permalinks(Request $request): Response
     {
-        $this->requireFloor();
-        $this->requireCap('manage_options');
+        $this->caller->requireFloor();
+        $this->caller->requireCap('manage_options');
         $structure = $this->permalinks->structure;
-        return $this->reply($request, [
+        return Reply::answer($request, [
             'structure' => $structure,
             'category_base' => (string) ($this->site->option('category_base') ?? ''),
             'tag_base' => (string) ($this->site->option('tag_base') ?? ''),
@@ -251,8 +250,8 @@ final readonly class V1Controller
     #[Route(Method::Get, '/minn-admin/v1/spam')]
     public function spam(Request $request): Response
     {
-        $this->requireFloor();
-        $this->requireCap('moderate_comments');
+        $this->caller->requireFloor();
+        $this->caller->requireCap('moderate_comments');
         $counts = ['spam' => 0, 'pending' => 0];
         $rows = $this->db->rows(
             "SELECT comment_approved, COUNT(*) AS c FROM {$this->db->table('comments')}
@@ -261,7 +260,7 @@ final readonly class V1Controller
         foreach ($rows as $row) {
             $counts[$row['comment_approved'] === 'spam' ? 'spam' : 'pending'] = (int) $row['c'];
         }
-        return $this->reply($request, [
+        return Reply::answer($request, [
             'providers' => [],
             'queue' => $counts,
             'disallowed_keys' => (string) ($this->site->option('disallowed_keys') ?? ''),
@@ -271,32 +270,12 @@ final readonly class V1Controller
     #[Route(Method::Get, '/minn-admin/v1/media/months')]
     public function mediaMonths(Request $request): Response
     {
-        $this->requireFloor();
+        $this->caller->requireFloor();
         $rows = $this->db->rows(
             "SELECT DATE_FORMAT(post_date, '%Y-%m') AS ym, COUNT(*) AS c FROM {$this->db->table('posts')}
              WHERE post_type = 'attachment' AND post_status = 'inherit' GROUP BY ym ORDER BY ym DESC",
         );
-        return $this->reply($request, array_map(static fn (array $row) => ['value' => $row['ym'], 'count' => (int) $row['c']], $rows));
-    }
-
-    private function reply(Request $request, mixed $data): Response
-    {
-        return Reply::item($data, Fields::fromQuery($request->query));
-    }
-
-    /** Auth plus the edit_posts floor every dashboard route shares. */
-    private function requireFloor(): int
-    {
-        $userId = $this->caller->require('rest_forbidden', 'Sorry, you are not allowed to do that.')->id();
-        $this->requireCap('edit_posts');
-        return $userId;
-    }
-
-    private function requireCap(string $capability): void
-    {
-        if (!$this->caller->can($capability)) {
-            throw new RestError('rest_forbidden', 'Sorry, you are not allowed to do that.', 403);
-        }
+        return Reply::answer($request, array_map(static fn (array $row) => ['value' => $row['ym'], 'count' => (int) $row['c']], $rows));
     }
 
     /** ?days must be an in-range integer; the reference's parameter errors otherwise. */

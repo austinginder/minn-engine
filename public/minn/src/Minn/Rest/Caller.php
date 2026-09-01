@@ -63,6 +63,28 @@ final class Caller
         throw new RestError($code, $message, $status);
     }
 
+    /**
+     * The floor every Minn Admin route shares: a signed-in caller who can
+     * edit posts, plus any further capability named, all refused with the
+     * same rest_forbidden the reference uses. Returns the caller's id.
+     */
+    public function requireFloor(string ...$capabilities): int
+    {
+        $userId = $this->require('rest_forbidden', 'Sorry, you are not allowed to do that.')->id();
+        $this->requireCap('edit_posts', ...$capabilities);
+        return $userId;
+    }
+
+    /** 403 rest_forbidden unless the caller holds every capability named. */
+    public function requireCap(string ...$capabilities): void
+    {
+        foreach ($capabilities as $capability) {
+            if (!$this->can($capability)) {
+                throw new RestError('rest_forbidden', 'Sorry, you are not allowed to do that.', 403);
+            }
+        }
+    }
+
     /** 401 for an anonymous caller, 403 for one who is signed in but refused. */
     public function refuse(string $code, string $message): RestError
     {

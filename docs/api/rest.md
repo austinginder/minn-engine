@@ -8,7 +8,7 @@ the wp/v2 surface: shapes and controllers
 | [`Api`](#api) | final readonly class | 117 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 164 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`BatchRequest`](#batchrequest) | final class | 30 | The requests a batch payload names, normalised into descriptors the |
-| [`Caller`](#caller) | final class | 59 | Who is making this REST call. Resolved once from the cookie and nonce; |
+| [`Caller`](#caller) | final class | 81 | Who is making this REST call. Resolved once from the cookie and nonce; |
 | [`CommentObject`](#commentobject) | final readonly class | 72 | The wp/v2 comment object; edit context adds the moderation-desk fields. |
 | [`CommentsController`](#commentscontroller) | final readonly class | 277 | wp/v2/comments: the status tabs with pagination headers, single, |
 | [`Context`](#context) | enum | 17 | The view a REST caller asked for. View is the public shape, edit adds the |
@@ -30,7 +30,7 @@ the wp/v2 surface: shapes and controllers
 | [`PostObject`](#postobject) | final readonly class | 391 | Builds the wp/v2 post and page objects in the reference's shape: the |
 | [`PostsController`](#postscontroller) | final readonly class | 163 | wp/v2 posts and pages, read side. |
 | [`PostsWriteController`](#postswritecontroller) | final readonly class | 300 | wp/v2 posts and pages, write side: create, update, trash, and force |
-| [`Reply`](#reply) | final class | 36 | JSON responses in the reference's shape: its header set, its json_encode |
+| [`Reply`](#reply) | final class | 42 | JSON responses in the reference's shape: its header set, its json_encode |
 | [`RestUrl`](#resturl) | final readonly class | 33 | REST URLs in the form the reference emits for the site's permalink mode: |
 | [`RevisionsController`](#revisionscontroller) | final readonly class | 128 | wp/v2 revisions and autosaves under posts and pages, plus wp/v2/blocks. |
 | [`RouteArgs`](#routeargs) | final class | 34 | The argument groups a route registers with, filled the way register_rest_route fills them. |
@@ -205,11 +205,21 @@ __construct(Minn\Http\Request $request, Minn\Auth\Authenticator $authenticator, 
 The session, or the reference's refusal: a bad nonce is always 403
 rest_cookie_invalid_nonce; no identity is the caller-supplied error.
 
+### `requireFloor(string ...$capabilities): int`
+
+The floor every Minn Admin route shares: a signed-in caller who can
+edit posts, plus any further capability named, all refused with the
+same rest_forbidden the reference uses. Returns the caller's id.
+
+### `requireCap(string ...$capabilities): void`
+
+403 rest_forbidden unless the caller holds every capability named.
+
 ### `refuse(string $code, string $message): Minn\RestError`
 
 401 for an anonymous caller, 403 for one who is signed in but refused.
 
-Internals: `resolve()` (private, line 72)
+Internals: `resolve()` (private, line 94)
 
 
 ## CommentObject
@@ -409,7 +419,7 @@ the whole payload otherwise, which is why _fields on the associative
 types response strips every key and yields [] over HTTP, a reference
 quirk the engine reproduces by construction.
 
-Used by: `Minn\Admin\LanguageController`, `Minn\Admin\ManageController`, `Minn\Admin\PackagesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SystemController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\IndexController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Reply`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\TypesController`, `Minn\Rest\UsersController`
+Used by: `Minn\Admin\SessionsController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\IndexController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Reply`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\TypesController`, `Minn\Rest\UsersController`
 
 - readonly `array $paths`
 - readonly `bool $deferred`
@@ -964,6 +974,10 @@ on lists.
 - const `HEADERS` = `array (   'Content-Type' => 'application/json; charset=UTF-8',   'X-Content-Type-Options' => 'nosniff',   'Access-Control-Expose-Headers' => 'X-WP-Total, X-WP-TotalPages, Link',   'Access-Control-Allow-Headers' => 'Authorization, X-WP-Nonce, Content-Disposition, Content-MD5, Content-Type',   'Allow' => 'GET', )`
 
 Used by: `Minn\Admin\LanguageController`, `Minn\Admin\ManageController`, `Minn\Admin\PackagesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SystemController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\CommentsController`, `Minn\Rest\IndexController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\TypesController`, `Minn\Rest\UsersController`
+
+### static `answer(Minn\Http\Request $request, mixed $data, int $status = 200): Minn\Http\Response`
+
+One item, shaped by the request's own _fields: what nearly every handler ends with.
 
 ### static `item(mixed $data, ?Minn\Rest\Fields $fields, int $status = 200): Minn\Http\Response`
 

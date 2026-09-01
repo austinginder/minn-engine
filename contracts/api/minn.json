@@ -3277,7 +3277,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/LanguageController.php",
-            "lines": 114,
+            "lines": 96,
             "doc": "Languages: what is installed, what a person reads in, what the site defaults to.",
             "implements": [],
             "extends": null,
@@ -3292,7 +3292,6 @@
                 "Minn\\Http\\Route",
                 "Minn\\RestError",
                 "Minn\\Rest\\Caller",
-                "Minn\\Rest\\Fields",
                 "Minn\\Rest\\Reply"
             ],
             "usedBy": [
@@ -3340,8 +3339,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 22,
-                "end": 29
+                "line": 21,
+                "end": 28
             },
             "cases": [],
             "constants": [],
@@ -3412,8 +3411,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 32,
-                    "end": 40
+                    "line": 31,
+                    "end": 39
                 },
                 {
                     "routes": [
@@ -3434,8 +3433,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 44,
-                    "end": 57
+                    "line": 43,
+                    "end": 56
                 },
                 {
                     "routes": [
@@ -3456,8 +3455,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 60,
-                    "end": 63
+                    "line": 59,
+                    "end": 62
                 },
                 {
                     "routes": [
@@ -3485,8 +3484,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 66,
-                    "end": 76
+                    "line": 65,
+                    "end": 75
                 },
                 {
                     "routes": [
@@ -3507,8 +3506,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 79,
-                    "end": 86
+                    "line": 78,
+                    "end": 85
                 },
                 {
                     "routes": [],
@@ -3534,8 +3533,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 88,
-                    "end": 97
+                    "line": 87,
+                    "end": 96
                 },
                 {
                     "routes": [],
@@ -3556,67 +3555,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 100,
-                    "end": 113
-                },
-                {
-                    "routes": [],
-                    "name": "reply",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "reply(Minn\\Http\\Request $request, mixed $data): Minn\\Http\\Response",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "data",
-                            "type": "mixed",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 115,
-                    "end": 118
-                },
-                {
-                    "routes": [],
-                    "name": "requireFloor",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "requireFloor(): int",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [],
-                    "line": 120,
-                    "end": 125
-                },
-                {
-                    "routes": [],
-                    "name": "requireCap",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "requireCap(string $capability): void",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "capability",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 127,
-                    "end": 132
+                    "line": 99,
+                    "end": 112
                 }
             ]
         },
@@ -3824,7 +3764,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/ManageController.php",
-            "lines": 377,
+            "lines": 359,
             "doc": "The Manage half of minn-admin/v1: the Structure view (post types,\ntaxonomies, the terms switcher), the Extensions view's theme\ninventory, the update slots (always empty: the engine has no update\nchannel to poll), the bundled changelog and guide, and the person's\nappearance. Everything answers from the registries, the theme folders,\nand the app bundle on disk; nothing calls out.",
             "implements": [],
             "extends": null,
@@ -3844,7 +3784,6 @@
                 "Minn\\Http\\Route",
                 "Minn\\RestError",
                 "Minn\\Rest\\Caller",
-                "Minn\\Rest\\Fields",
                 "Minn\\Rest\\Reply",
                 "Minn\\Rest\\Taxonomies",
                 "Minn\\Rest\\Types",
@@ -3951,8 +3890,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 34,
-                "end": 49
+                "line": 33,
+                "end": 48
             },
             "cases": [],
             "constants": [],
@@ -4095,8 +4034,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 52,
-                    "end": 83
+                    "line": 51,
+                    "end": 82
                 },
                 {
                     "routes": [
@@ -4117,8 +4056,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 87,
-                    "end": 126
+                    "line": 86,
+                    "end": 125
                 },
                 {
                     "routes": [
@@ -4139,8 +4078,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 129,
-                    "end": 152
+                    "line": 128,
+                    "end": 151
                 },
                 {
                     "routes": [
@@ -4161,8 +4100,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 155,
-                    "end": 183
+                    "line": 154,
+                    "end": 182
                 },
                 {
                     "routes": [
@@ -4183,8 +4122,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 186,
-                    "end": 203
+                    "line": 185,
+                    "end": 202
                 },
                 {
                     "routes": [
@@ -4205,8 +4144,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 206,
-                    "end": 210
+                    "line": 205,
+                    "end": 209
                 },
                 {
                     "routes": [
@@ -4227,8 +4166,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 213,
-                    "end": 217
+                    "line": 212,
+                    "end": 216
                 },
                 {
                     "routes": [
@@ -4249,8 +4188,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 220,
-                    "end": 224
+                    "line": 219,
+                    "end": 223
                 },
                 {
                     "routes": [
@@ -4271,8 +4210,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 227,
-                    "end": 230
+                    "line": 226,
+                    "end": 229
                 },
                 {
                     "routes": [
@@ -4293,8 +4232,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 233,
-                    "end": 236
+                    "line": 232,
+                    "end": 235
                 },
                 {
                     "routes": [
@@ -4322,8 +4261,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 239,
-                    "end": 242
+                    "line": 238,
+                    "end": 241
                 },
                 {
                     "routes": [
@@ -4351,8 +4290,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 245,
-                    "end": 248
+                    "line": 244,
+                    "end": 247
                 },
                 {
                     "routes": [
@@ -4380,8 +4319,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 252,
-                    "end": 255
+                    "line": 251,
+                    "end": 254
                 },
                 {
                     "routes": [
@@ -4409,8 +4348,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 259,
-                    "end": 268
+                    "line": 258,
+                    "end": 267
                 },
                 {
                     "routes": [
@@ -4431,8 +4370,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 271,
-                    "end": 278
+                    "line": 270,
+                    "end": 277
                 },
                 {
                     "routes": [
@@ -4453,8 +4392,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 281,
-                    "end": 286
+                    "line": 280,
+                    "end": 285
                 },
                 {
                     "routes": [],
@@ -4473,8 +4412,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 288,
-                    "end": 295
+                    "line": 287,
+                    "end": 294
                 },
                 {
                     "routes": [],
@@ -4493,8 +4432,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 301,
-                    "end": 313
+                    "line": 300,
+                    "end": 312
                 },
                 {
                     "routes": [],
@@ -4515,8 +4454,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 316,
-                    "end": 320
+                    "line": 315,
+                    "end": 319
                 },
                 {
                     "routes": [],
@@ -4535,8 +4474,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 322,
-                    "end": 326
+                    "line": 321,
+                    "end": 325
                 },
                 {
                     "routes": [],
@@ -4555,8 +4494,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 328,
-                    "end": 336
+                    "line": 327,
+                    "end": 335
                 },
                 {
                     "routes": [],
@@ -4575,8 +4514,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 339,
-                    "end": 342
+                    "line": 338,
+                    "end": 341
                 },
                 {
                     "routes": [],
@@ -4589,8 +4528,8 @@
                         "@return array<string, array<string, string>> slug => style.css headers"
                     ],
                     "params": [],
-                    "line": 345,
-                    "end": 359
+                    "line": 344,
+                    "end": 358
                 },
                 {
                     "routes": [],
@@ -4609,8 +4548,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 361,
-                    "end": 369
+                    "line": 360,
+                    "end": 368
                 },
                 {
                     "routes": [],
@@ -4623,8 +4562,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 372,
-                    "end": 375
+                    "line": 371,
+                    "end": 374
                 },
                 {
                     "routes": [],
@@ -4643,8 +4582,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 377,
-                    "end": 380
+                    "line": 376,
+                    "end": 379
                 },
                 {
                     "routes": [],
@@ -4663,67 +4602,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 382,
-                    "end": 388
-                },
-                {
-                    "routes": [],
-                    "name": "reply",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "reply(Minn\\Http\\Request $request, mixed $data): Minn\\Http\\Response",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "data",
-                            "type": "mixed",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 390,
-                    "end": 393
-                },
-                {
-                    "routes": [],
-                    "name": "requireFloor",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "requireFloor(): int",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [],
-                    "line": 395,
-                    "end": 400
-                },
-                {
-                    "routes": [],
-                    "name": "requireCap",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "requireCap(string $capability): void",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "capability",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 402,
-                    "end": 407
+                    "line": 381,
+                    "end": 387
                 }
             ]
         },
@@ -5632,7 +5512,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/PackagesController.php",
-            "lines": 122,
+            "lines": 110,
             "doc": "Adding and removing themes and extensions from the Extensions view.",
             "implements": [],
             "extends": null,
@@ -5645,7 +5525,6 @@
                 "Minn\\Http\\Route",
                 "Minn\\RestError",
                 "Minn\\Rest\\Caller",
-                "Minn\\Rest\\Fields",
                 "Minn\\Rest\\Reply"
             ],
             "usedBy": [
@@ -5679,8 +5558,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 20,
-                "end": 22
+                "line": 19,
+                "end": 21
             },
             "cases": [],
             "constants": [],
@@ -5733,8 +5612,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 25,
-                    "end": 29
+                    "line": 24,
+                    "end": 28
                 },
                 {
                     "routes": [
@@ -5755,8 +5634,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 32,
-                    "end": 37
+                    "line": 31,
+                    "end": 36
                 },
                 {
                     "routes": [
@@ -5777,8 +5656,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 40,
-                    "end": 45
+                    "line": 39,
+                    "end": 44
                 },
                 {
                     "routes": [
@@ -5799,8 +5678,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 57
+                    "line": 47,
+                    "end": 56
                 },
                 {
                     "routes": [
@@ -5821,8 +5700,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 61,
-                    "end": 66
+                    "line": 60,
+                    "end": 65
                 },
                 {
                     "routes": [
@@ -5843,8 +5722,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 70,
-                    "end": 99
+                    "line": 69,
+                    "end": 98
                 },
                 {
                     "routes": [
@@ -5865,8 +5744,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 102,
-                    "end": 106
+                    "line": 101,
+                    "end": 105
                 },
                 {
                     "routes": [
@@ -5887,8 +5766,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 109,
-                    "end": 113
+                    "line": 108,
+                    "end": 112
                 },
                 {
                     "routes": [],
@@ -5914,55 +5793,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 115,
-                    "end": 125
-                },
-                {
-                    "routes": [],
-                    "name": "requireCap",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "requireCap(string $capability): void",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "capability",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 127,
-                    "end": 133
-                },
-                {
-                    "routes": [],
-                    "name": "reply",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "reply(Minn\\Http\\Request $request, mixed $data): Minn\\Http\\Response",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "data",
-                            "type": "mixed",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 135,
-                    "end": 138
+                    "line": 114,
+                    "end": 124
                 }
             ]
         },
@@ -5972,7 +5804,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/RenderController.php",
-            "lines": 65,
+            "lines": 53,
             "doc": "The editor's island previews: block markup rendered by the same\nrenderer the public site uses, with the stylesheets that site loads\n(the engine's block stylesheet, the theme's, and the theme.json rules)\nso a preview looks like the page will.",
             "implements": [],
             "extends": null,
@@ -5988,7 +5820,6 @@
                 "Minn\\Http\\Route",
                 "Minn\\RestError",
                 "Minn\\Rest\\Caller",
-                "Minn\\Rest\\Fields",
                 "Minn\\Rest\\Reply",
                 "Minn\\Theme\\GlobalStyles",
                 "Minn\\Theme\\Templates",
@@ -6046,8 +5877,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 32,
-                "end": 40
+                "line": 31,
+                "end": 39
             },
             "cases": [],
             "constants": [],
@@ -6127,8 +5958,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 43,
-                    "end": 55
+                    "line": 42,
+                    "end": 54
                 },
                 {
                     "routes": [
@@ -6149,8 +5980,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 59,
-                    "end": 63
+                    "line": 58,
+                    "end": 62
                 },
                 {
                     "routes": [],
@@ -6163,47 +5994,8 @@
                         "@return array{urls: list<string>, inline: string}"
                     ],
                     "params": [],
-                    "line": 66,
-                    "end": 80
-                },
-                {
-                    "routes": [],
-                    "name": "requireFloor",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "requireFloor(): void",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [],
-                    "line": 82,
-                    "end": 88
-                },
-                {
-                    "routes": [],
-                    "name": "reply",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "reply(Minn\\Http\\Request $request, mixed $data): Minn\\Http\\Response",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "data",
-                            "type": "mixed",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 90,
-                    "end": 93
+                    "line": 65,
+                    "end": 79
                 }
             ]
         },
@@ -6417,7 +6209,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/SystemController.php",
-            "lines": 85,
+            "lines": 81,
             "doc": "The System view: diagnostics, the scheduled-post list, autoloaded options, and the logs.",
             "implements": [],
             "extends": null,
@@ -6430,7 +6222,6 @@
                 "Minn\\Http\\Route",
                 "Minn\\RestError",
                 "Minn\\Rest\\Caller",
-                "Minn\\Rest\\Fields",
                 "Minn\\Rest\\Reply"
             ],
             "usedBy": [
@@ -6464,8 +6255,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 19,
-                "end": 21
+                "line": 18,
+                "end": 20
             },
             "cases": [],
             "constants": [],
@@ -6518,8 +6309,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 24,
-                    "end": 28
+                    "line": 23,
+                    "end": 27
                 },
                 {
                     "routes": [
@@ -6540,8 +6331,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 31,
-                    "end": 35
+                    "line": 30,
+                    "end": 34
                 },
                 {
                     "routes": [
@@ -6562,8 +6353,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 38,
-                    "end": 42
+                    "line": 37,
+                    "end": 41
                 },
                 {
                     "routes": [
@@ -6584,8 +6375,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 46,
-                    "end": 50
+                    "line": 45,
+                    "end": 49
                 },
                 {
                     "routes": [
@@ -6606,8 +6397,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 53,
-                    "end": 57
+                    "line": 52,
+                    "end": 56
                 },
                 {
                     "routes": [
@@ -6635,8 +6426,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 60,
-                    "end": 64
+                    "line": 59,
+                    "end": 63
                 },
                 {
                     "routes": [
@@ -6664,8 +6455,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 67,
-                    "end": 72
+                    "line": 66,
+                    "end": 71
                 },
                 {
                     "routes": [
@@ -6686,8 +6477,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 75,
-                    "end": 79
+                    "line": 74,
+                    "end": 78
                 },
                 {
                     "routes": [
@@ -6708,8 +6499,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 82,
-                    "end": 87
+                    "line": 81,
+                    "end": 86
                 },
                 {
                     "routes": [],
@@ -6720,35 +6511,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 89,
-                    "end": 95
-                },
-                {
-                    "routes": [],
-                    "name": "reply",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "reply(Minn\\Http\\Request $request, mixed $data): Minn\\Http\\Response",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "data",
-                            "type": "mixed",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 97,
-                    "end": 100
+                    "line": 88,
+                    "end": 94
                 }
             ]
         },
@@ -7658,7 +7422,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/UpdatesController.php",
-            "lines": 122,
+            "lines": 116,
             "doc": "The minn-admin/v1 update routes: offers, directory meta, the check, the installs, the auto-update lists.",
             "implements": [],
             "extends": null,
@@ -7670,7 +7434,6 @@
                 "Minn\\Http\\Route",
                 "Minn\\RestError",
                 "Minn\\Rest\\Caller",
-                "Minn\\Rest\\Fields",
                 "Minn\\Rest\\Reply"
             ],
             "usedBy": [
@@ -7697,8 +7460,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 19,
-                "end": 21
+                "line": 18,
+                "end": 20
             },
             "cases": [],
             "constants": [],
@@ -7742,7 +7505,7 @@
                             "doc": ""
                         }
                     ],
-                    "line": 24,
+                    "line": 23,
                     "end": 35
                 },
                 {
@@ -7765,7 +7528,7 @@
                         }
                     ],
                     "line": 38,
-                    "end": 42
+                    "end": 43
                 },
                 {
                     "routes": [
@@ -7786,8 +7549,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 45,
-                    "end": 63
+                    "line": 46,
+                    "end": 64
                 },
                 {
                     "routes": [
@@ -7808,8 +7571,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 66,
-                    "end": 77
+                    "line": 67,
+                    "end": 79
                 },
                 {
                     "routes": [
@@ -7830,8 +7593,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 80,
-                    "end": 97
+                    "line": 82,
+                    "end": 100
                 },
                 {
                     "routes": [
@@ -7852,8 +7615,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 100,
-                    "end": 108
+                    "line": 103,
+                    "end": 112
                 },
                 {
                     "routes": [
@@ -7874,55 +7637,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 111,
-                    "end": 124
-                },
-                {
-                    "routes": [],
-                    "name": "requireCap",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "requireCap(string $capability): void",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "capability",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 126,
-                    "end": 132
-                },
-                {
-                    "routes": [],
-                    "name": "reply",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "reply(Minn\\Http\\Request $request, mixed $data): Minn\\Http\\Response",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "data",
-                            "type": "mixed",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 134,
-                    "end": 137
+                    "line": 115,
+                    "end": 129
                 }
             ]
         },
@@ -7932,7 +7648,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/V1Controller.php",
-            "lines": 324,
+            "lines": 304,
             "doc": "The minn-admin/v1 namespace: the dashboard burst, the editor helpers,\nand the small Settings-view routes. Every route sits behind the same\ncapability floor (edit_posts) the plugin declares.",
             "implements": [],
             "extends": null,
@@ -7954,7 +7670,6 @@
                 "Minn\\Media\\Metadata",
                 "Minn\\RestError",
                 "Minn\\Rest\\Caller",
-                "Minn\\Rest\\Fields",
                 "Minn\\Rest\\Reply",
                 "Minn\\Support\\Serialized",
                 "Minn\\Theme\\Theme"
@@ -8046,8 +7761,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 32,
-                "end": 45
+                "line": 31,
+                "end": 44
             },
             "cases": [],
             "constants": [],
@@ -8172,8 +7887,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 52
+                    "line": 47,
+                    "end": 51
                 },
                 {
                     "routes": [
@@ -8194,8 +7909,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 55,
-                    "end": 60
+                    "line": 54,
+                    "end": 59
                 },
                 {
                     "routes": [
@@ -8216,8 +7931,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 63,
-                    "end": 66
+                    "line": 62,
+                    "end": 65
                 },
                 {
                     "routes": [
@@ -8238,8 +7953,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 70,
-                    "end": 76
+                    "line": 69,
+                    "end": 75
                 },
                 {
                     "routes": [
@@ -8260,8 +7975,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 79,
-                    "end": 84
+                    "line": 78,
+                    "end": 83
                 },
                 {
                     "routes": [
@@ -8282,8 +7997,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 93,
-                    "end": 107
+                    "line": 92,
+                    "end": 106
                 },
                 {
                     "routes": [
@@ -8311,8 +8026,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 110,
-                    "end": 118
+                    "line": 109,
+                    "end": 117
                 },
                 {
                     "routes": [
@@ -8340,8 +8055,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 121,
-                    "end": 129
+                    "line": 120,
+                    "end": 128
                 },
                 {
                     "routes": [
@@ -8362,8 +8077,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 133,
-                    "end": 137
+                    "line": 132,
+                    "end": 136
                 },
                 {
                     "routes": [
@@ -8384,8 +8099,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 141,
-                    "end": 145
+                    "line": 140,
+                    "end": 144
                 },
                 {
                     "routes": [
@@ -8406,8 +8121,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 148,
-                    "end": 162
+                    "line": 147,
+                    "end": 161
                 },
                 {
                     "routes": [
@@ -8428,8 +8143,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 165,
-                    "end": 175
+                    "line": 164,
+                    "end": 174
                 },
                 {
                     "routes": [
@@ -8450,8 +8165,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 178,
-                    "end": 189
+                    "line": 177,
+                    "end": 188
                 },
                 {
                     "routes": [
@@ -8472,8 +8187,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 237,
-                    "end": 249
+                    "line": 236,
+                    "end": 248
                 },
                 {
                     "routes": [
@@ -8494,8 +8209,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 252,
-                    "end": 269
+                    "line": 251,
+                    "end": 268
                 },
                 {
                     "routes": [
@@ -8516,8 +8231,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 272,
-                    "end": 280
+                    "line": 271,
+                    "end": 279
                 },
                 {
                     "routes": [],
@@ -8536,8 +8251,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 192,
-                    "end": 206
+                    "line": 191,
+                    "end": 205
                 },
                 {
                     "routes": [],
@@ -8556,8 +8271,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 209,
-                    "end": 221
+                    "line": 208,
+                    "end": 220
                 },
                 {
                     "routes": [],
@@ -8576,67 +8291,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 224,
-                    "end": 234
-                },
-                {
-                    "routes": [],
-                    "name": "reply",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "reply(Minn\\Http\\Request $request, mixed $data): Minn\\Http\\Response",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "data",
-                            "type": "mixed",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 282,
-                    "end": 285
-                },
-                {
-                    "routes": [],
-                    "name": "requireFloor",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "requireFloor(): int",
-                    "doc": "Auth plus the edit_posts floor every dashboard route shares.",
-                    "shapes": [],
-                    "params": [],
-                    "line": 288,
-                    "end": 293
-                },
-                {
-                    "routes": [],
-                    "name": "requireCap",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "requireCap(string $capability): void",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "capability",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 295,
-                    "end": 300
+                    "line": 223,
+                    "end": 233
                 },
                 {
                     "routes": [],
@@ -8655,8 +8311,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 303,
-                    "end": 317
+                    "line": 282,
+                    "end": 296
                 },
                 {
                     "routes": [],
@@ -8677,8 +8333,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 320,
-                    "end": 344
+                    "line": 299,
+                    "end": 323
                 },
                 {
                     "routes": [],
@@ -8718,8 +8374,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 346,
-                    "end": 352
+                    "line": 325,
+                    "end": 331
                 }
             ]
         },
@@ -41821,6 +41477,7 @@
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\PostsWriteController",
+                "Minn\\Rest\\Reply",
                 "Minn\\Rest\\RevisionsController",
                 "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Rest\\SearchController",
@@ -49099,7 +48756,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/Caller.php",
-            "lines": 59,
+            "lines": 81,
             "doc": "Who is making this REST call. Resolved once from the cookie and nonce;\nan anonymous or failed caller has id 0 and every capability check fails.",
             "implements": [],
             "extends": null,
@@ -49316,6 +48973,46 @@
                 },
                 {
                     "routes": [],
+                    "name": "requireFloor",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "requireFloor(string ...$capabilities): int",
+                    "doc": "The floor every Minn Admin route shares: a signed-in caller who can\nedit posts, plus any further capability named, all refused with the\nsame rest_forbidden the reference uses. Returns the caller's id.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "capabilities",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 71,
+                    "end": 76
+                },
+                {
+                    "routes": [],
+                    "name": "requireCap",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "requireCap(string ...$capabilities): void",
+                    "doc": "403 rest_forbidden unless the caller holds every capability named.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "capabilities",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 79,
+                    "end": 86
+                },
+                {
+                    "routes": [],
                     "name": "refuse",
                     "static": false,
                     "visibility": "public",
@@ -49338,8 +49035,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 67,
-                    "end": 70
+                    "line": 89,
+                    "end": 92
                 },
                 {
                     "routes": [],
@@ -49350,8 +49047,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 72,
-                    "end": 75
+                    "line": 94,
+                    "end": 97
                 }
             ]
         },
@@ -50669,14 +50366,7 @@
             "extends": null,
             "uses": [],
             "usedBy": [
-                "Minn\\Admin\\LanguageController",
-                "Minn\\Admin\\ManageController",
-                "Minn\\Admin\\PackagesController",
-                "Minn\\Admin\\RenderController",
                 "Minn\\Admin\\SessionsController",
-                "Minn\\Admin\\SystemController",
-                "Minn\\Admin\\UpdatesController",
-                "Minn\\Admin\\V1Controller",
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\Embed",
@@ -55155,11 +54845,12 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/Reply.php",
-            "lines": 36,
+            "lines": 42,
             "doc": "JSON responses in the reference's shape: its header set, its json_encode\nflags (slashes escaped), the _fields filter, and the pagination headers\non lists.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\RestError",
                 "Minn\\Rest\\Fields"
@@ -55206,6 +54897,40 @@
             "methods": [
                 {
                     "routes": [],
+                    "name": "answer",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "answer(Minn\\Http\\Request $request, mixed $data, int $status = 200): Minn\\Http\\Response",
+                    "doc": "One item, shaped by the request's own _fields: what nearly every handler ends with.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "data",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "status",
+                            "type": "int",
+                            "shape": "",
+                            "default": "200",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 27,
+                    "end": 30
+                },
+                {
+                    "routes": [],
                     "name": "item",
                     "static": true,
                     "visibility": "public",
@@ -55235,8 +54960,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 25,
-                    "end": 31
+                    "line": 32,
+                    "end": 38
                 },
                 {
                     "routes": [],
@@ -55278,8 +55003,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 34,
-                    "end": 44
+                    "line": 41,
+                    "end": 51
                 },
                 {
                     "routes": [],
@@ -55298,8 +55023,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 46,
-                    "end": 49
+                    "line": 53,
+                    "end": 56
                 }
             ]
         },

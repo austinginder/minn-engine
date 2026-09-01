@@ -17,19 +17,19 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`Format`](#format) | final class | 51 | The dashboard's number, size, age, and title formatting. |
 | [`HiddenIntegrations`](#hiddenintegrations) | final readonly class | 89 | What a person hid from their own Minn Admin: the app's per-user map |
 | [`LanguageChoices`](#languagechoices) | final class | 40 | The language picker's markup. English always leads the list and carries the |
-| [`LanguageController`](#languagecontroller) | final readonly class | 114 | Languages: what is installed, what a person reads in, what the site defaults to. |
+| [`LanguageController`](#languagecontroller) | final readonly class | 96 | Languages: what is installed, what a person reads in, what the site defaults to. |
 | [`Logs`](#logs) | final readonly class | 138 | The log files the System view can read and clear: the debug log the |
-| [`ManageController`](#managecontroller) | final readonly class | 377 | The Manage half of minn-admin/v1: the Structure view (post types, |
+| [`ManageController`](#managecontroller) | final readonly class | 359 | The Manage half of minn-admin/v1: the Structure view (post types, |
 | [`Notifications`](#notifications) | final readonly class | 201 | The bell feed: pending and recent comments, translation and core update |
 | [`Packages`](#packages) | final readonly class | 392 | Putting themes and extensions on disk. Themes come from wordpress.org |
-| [`PackagesController`](#packagescontroller) | final readonly class | 122 | Adding and removing themes and extensions from the Extensions view. |
-| [`RenderController`](#rendercontroller) | final readonly class | 65 | The editor's island previews: block markup rendered by the same |
+| [`PackagesController`](#packagescontroller) | final readonly class | 110 | Adding and removing themes and extensions from the Extensions view. |
+| [`RenderController`](#rendercontroller) | final readonly class | 53 | The editor's island previews: block markup rendered by the same |
 | [`SessionsController`](#sessionscontroller) | final readonly class | 71 | A person's sign-in sessions, read from the same session_tokens store |
-| [`SystemController`](#systemcontroller) | final readonly class | 85 | The System view: diagnostics, the scheduled-post list, autoloaded options, and the logs. |
+| [`SystemController`](#systemcontroller) | final readonly class | 81 | The System view: diagnostics, the scheduled-post list, autoloaded options, and the logs. |
 | [`Translations`](#translations) | final readonly class | 220 | Languages for the admin. A person's locale is their `locale` user meta, |
 | [`Updates`](#updates) | final class | 297 | Update offers from wordpress.org for the site's plugins and themes: the |
-| [`UpdatesController`](#updatescontroller) | final readonly class | 122 | The minn-admin/v1 update routes: offers, directory meta, the check, the installs, the auto-update lists. |
-| [`V1Controller`](#v1controller) | final readonly class | 324 | The minn-admin/v1 namespace: the dashboard burst, the editor helpers, |
+| [`UpdatesController`](#updatescontroller) | final readonly class | 116 | The minn-admin/v1 update routes: offers, directory meta, the check, the installs, the auto-update lists. |
+| [`V1Controller`](#v1controller) | final readonly class | 304 | The minn-admin/v1 namespace: the dashboard burst, the editor helpers, |
 
 ## ActivityChart
 
@@ -503,7 +503,7 @@ Route: `POST /minn-admin/v1/users/{id:\d+}/language`
 
 Route: `POST /minn-admin/v1/site/language`
 
-Internals: `setUserLocale()` (private, line 88), `ensure()` (private, line 100), `reply()` (private, line 115), `requireFloor()` (private, line 120), `requireCap()` (private, line 127)
+Internals: `setUserLocale()` (private, line 87), `ensure()` (private, line 99)
 
 
 ## Logs
@@ -637,7 +637,7 @@ Route: `POST /minn-admin/v1/integrations/hide`
 
 Route: `POST /minn-admin/v1/integrations/unhide`
 
-Internals: `integrationId()` (private, line 288), `integrationState()` (private, line 301), `bundled()` (private, line 316), `appearanceBody()` (private, line 322), `editableUser()` (private, line 328), `themeText()` (private, line 339), `themeFolders()` (private, line 345), `screenshot()` (private, line 361), `publicTypes()` (private, line 372), `termCount()` (private, line 377), `postCount()` (private, line 382), `reply()` (private, line 390), `requireFloor()` (private, line 395), `requireCap()` (private, line 402)
+Internals: `integrationId()` (private, line 287), `integrationState()` (private, line 300), `bundled()` (private, line 315), `appearanceBody()` (private, line 321), `editableUser()` (private, line 327), `themeText()` (private, line 338), `themeFolders()` (private, line 344), `screenshot()` (private, line 360), `publicTypes()` (private, line 371), `termCount()` (private, line 376), `postCount()` (private, line 381)
 
 
 ## Notifications
@@ -805,7 +805,7 @@ Route: `GET /minn-admin/v1/plugins/search`
 
 Route: `GET /minn-admin/v1/plugins/info`
 
-Internals: `uploaded()` (private, line 115), `requireCap()` (private, line 127), `reply()` (private, line 135)
+Internals: `uploaded()` (private, line 114)
 
 
 ## RenderController
@@ -834,7 +834,7 @@ Route: `GET /minn-admin/v1/editor-styles`
 
 The stylesheets previews are scoped under: the engine's own, the theme's, and theme.json inline.
 
-Internals: `styles()` (private, line 66), `requireFloor()` (private, line 82), `reply()` (private, line 90)
+Internals: `styles()` (private, line 65)
 
 
 ## SessionsController
@@ -921,7 +921,7 @@ Route: `GET /minn-admin/v1/system/debug-log`
 
 Route: `DELETE /minn-admin/v1/system/debug-log`
 
-Internals: `requireOwner()` (private, line 89), `reply()` (private, line 97)
+Internals: `requireOwner()` (private, line 88)
 
 
 ## Translations
@@ -1121,8 +1121,6 @@ Route: `POST /minn-admin/v1/themes/update`
 
 Route: `POST /minn-admin/v1/auto-updates`
 
-Internals: `requireCap()` (private, line 126), `reply()` (private, line 134)
-
 
 ## V1Controller
 
@@ -1214,5 +1212,5 @@ Route: `GET /minn-admin/v1/spam`
 
 Route: `GET /minn-admin/v1/media/months`
 
-Internals: `metricKeysFrom()` (private, line 192), `storedMetricLayout()` (private, line 209), `logoUrl()` (private, line 224), `reply()` (private, line 282), `requireFloor()` (private, line 288), `requireCap()` (private, line 295), `days()` (private, line 303), `window()` (private, line 320), `parameterError()` (private, line 346)
+Internals: `metricKeysFrom()` (private, line 191), `storedMetricLayout()` (private, line 208), `logoUrl()` (private, line 223), `days()` (private, line 282), `window()` (private, line 299), `parameterError()` (private, line 325)
 

@@ -14,7 +14,6 @@ use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\Rest\Caller;
-use Minn\Rest\Fields;
 use Minn\Rest\Reply;
 use Minn\Rest\Taxonomies;
 use Minn\Rest\Types;
@@ -51,7 +50,7 @@ final readonly class ManageController
     #[Route(Method::Get, '/minn-admin/v1/term-taxonomies')]
     public function termTaxonomies(Request $request): Response
     {
-        $this->requireFloor();
+        $this->caller->requireFloor();
         $public = $this->publicTypes();
         $out = [];
         foreach ($this->taxonomies->all() as $slug => $taxonomy) {
@@ -79,15 +78,15 @@ final readonly class ManageController
             $rb = $rank[$b['slug']] ?? 2;
             return $ra !== $rb ? $ra <=> $rb : strcasecmp($a['label'], $b['label']);
         });
-        return $this->reply($request, $out);
+        return Reply::answer($request, $out);
     }
 
     /** The Structure view's post types: core and site-declared, with their live counts. */
     #[Route(Method::Get, '/minn-admin/v1/post-types')]
     public function postTypes(Request $request): Response
     {
-        $this->requireFloor();
-        $this->requireCap('manage_options');
+        $this->caller->requireFloor();
+        $this->caller->requireCap('manage_options');
         $admin = (array) json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/types-admin.json'), true);
         $out = [];
         foreach ($this->types->all() as $slug => $type) {
@@ -122,14 +121,14 @@ final readonly class ManageController
                 $catalog[] = ['slug' => $slug, 'label' => html_entity_decode($taxonomy['labels']['name'], ENT_QUOTES | ENT_HTML5, 'UTF-8')];
             }
         }
-        return $this->reply($request, ['types' => $out, 'backends' => [], 'taxCatalog' => $catalog]);
+        return Reply::answer($request, ['types' => $out, 'backends' => [], 'taxCatalog' => $catalog]);
     }
 
     #[Route(Method::Get, '/minn-admin/v1/taxonomies')]
     public function taxonomies(Request $request): Response
     {
-        $this->requireFloor();
-        $this->requireCap('manage_options');
+        $this->caller->requireFloor();
+        $this->caller->requireCap('manage_options');
         $out = [];
         foreach ($this->taxonomies->all() as $slug => $taxonomy) {
             if (!$taxonomy['visibility']['show_ui'] || in_array($slug, ['nav_menu', 'wp_pattern_category', 'post_format'], true)) {
@@ -148,14 +147,14 @@ final readonly class ManageController
                 'editable' => false,
             ];
         }
-        return $this->reply($request, ['taxonomies' => $out, 'backends' => []]);
+        return Reply::answer($request, ['taxonomies' => $out, 'backends' => []]);
     }
 
     #[Route(Method::Get, '/minn-admin/v1/themes')]
     public function themes(Request $request): Response
     {
-        $this->requireFloor();
-        $this->requireCap('switch_themes');
+        $this->caller->requireFloor();
+        $this->caller->requireCap('switch_themes');
         $active = (string) ($this->site->option('stylesheet') ?? '');
         $offers = $this->caller->can('update_themes') ? $this->updates->themeOffers() : [];
         $auto = $this->updates->auto('theme');
@@ -179,14 +178,14 @@ final readonly class ManageController
             ];
         }
         usort($items, static fn (array $a, array $b): int => ($b['active'] <=> $a['active']) ?: strcasecmp($a['name'], $b['name']));
-        return $this->reply($request, ['themes' => $items, 'auto_updates' => $this->caller->can('update_themes')]);
+        return Reply::answer($request, ['themes' => $items, 'auto_updates' => $this->caller->can('update_themes')]);
     }
 
     #[Route(Method::Post, '/minn-admin/v1/themes/activate')]
     public function activateTheme(Request $request): Response
     {
-        $this->requireFloor();
-        $this->requireCap('switch_themes');
+        $this->caller->requireFloor();
+        $this->caller->requireCap('switch_themes');
         $stylesheet = trim((string) ($request->json()['stylesheet'] ?? $request->form['stylesheet'] ?? ''));
         $folders = $this->themeFolders();
         if ($stylesheet === '' || !isset($folders[$stylesheet])) {
@@ -199,59 +198,59 @@ final readonly class ManageController
         $this->site->setOption('stylesheet', $stylesheet);
         $this->site->setOption('template', $template === '' ? $stylesheet : $template);
         $this->site->setOption('current_theme', $folders[$stylesheet]['Theme Name']);
-        return $this->reply($request, ['active' => $stylesheet]);
+        return Reply::answer($request, ['active' => $stylesheet]);
     }
 
     #[Route(Method::Get, '/minn-admin/v1/translations')]
     public function translations(Request $request): Response
     {
-        $this->requireFloor();
-        return $this->reply($request, ['count' => 0, 'groups' => []]);
+        $this->caller->requireFloor();
+        return Reply::answer($request, ['count' => 0, 'groups' => []]);
     }
 
     #[Route(Method::Get, '/minn-admin/v1/changelog')]
     public function changelog(Request $request): Response
     {
-        $this->requireFloor();
-        return $this->reply($request, $this->bundled('changelog.md'));
+        $this->caller->requireFloor();
+        return Reply::answer($request, $this->bundled('changelog.md'));
     }
 
     #[Route(Method::Get, '/minn-admin/v1/guide')]
     public function guide(Request $request): Response
     {
-        $this->requireFloor();
-        return $this->reply($request, $this->bundled('docs/user-guide.md'));
+        $this->caller->requireFloor();
+        return Reply::answer($request, $this->bundled('docs/user-guide.md'));
     }
 
     #[Route(Method::Get, '/minn-admin/v1/me/appearance')]
     public function myAppearance(Request $request): Response
     {
-        return $this->reply($request, $this->appearance->read($this->requireFloor()));
+        return Reply::answer($request, $this->appearance->read($this->caller->requireFloor()));
     }
 
     #[Route(Method::Post, '/minn-admin/v1/me/appearance')]
     public function saveMyAppearance(Request $request): Response
     {
-        return $this->reply($request, $this->appearance->save($this->requireFloor(), $this->appearanceBody($request)));
+        return Reply::answer($request, $this->appearance->save($this->caller->requireFloor(), $this->appearanceBody($request)));
     }
 
     #[Route(Method::Get, '/minn-admin/v1/users/{id:\d+}/appearance')]
     public function userAppearance(Request $request, string $id): Response
     {
-        return $this->reply($request, $this->appearance->read($this->editableUser($id)));
+        return Reply::answer($request, $this->appearance->read($this->editableUser($id)));
     }
 
     #[Route(Method::Post, '/minn-admin/v1/users/{id:\d+}/appearance')]
     public function saveUserAppearance(Request $request, string $id): Response
     {
-        return $this->reply($request, $this->appearance->save($this->editableUser($id), $this->appearanceBody($request)));
+        return Reply::answer($request, $this->appearance->save($this->editableUser($id), $this->appearanceBody($request)));
     }
 
     /** The target user's restore list, for the user edit page. */
     #[Route(Method::Get, '/minn-admin/v1/users/{id:\d+}/hidden')]
     public function hidden(Request $request, string $id): Response
     {
-        return $this->reply($request, ['hidden' => $this->hiddenIntegrations->listFor($this->editableUser($id))]);
+        return Reply::answer($request, ['hidden' => $this->hiddenIntegrations->listFor($this->editableUser($id))]);
     }
 
     /** An administrator restores something another person hid; hiding stays that person's own choice. */
@@ -264,25 +263,25 @@ final readonly class ManageController
             throw RestError::missingParams(['integration']);
         }
         $this->hiddenIntegrations->unhide($userId, HiddenIntegrations::sanitize($integration));
-        return $this->reply($request, ['ok' => true, 'hidden' => $this->hiddenIntegrations->listFor($userId)]);
+        return Reply::answer($request, ['ok' => true, 'hidden' => $this->hiddenIntegrations->listFor($userId)]);
     }
 
     #[Route(Method::Post, '/minn-admin/v1/integrations/hide')]
     public function hide(Request $request): Response
     {
-        $userId = $this->requireFloor();
+        $userId = $this->caller->requireFloor();
         if (!$this->hiddenIntegrations->hide($userId, $this->integrationId($request))) {
             throw new RestError('minn_unknown_integration', 'That integration is not registered.', 400);
         }
-        return $this->reply($request, $this->integrationState($userId));
+        return Reply::answer($request, $this->integrationState($userId));
     }
 
     #[Route(Method::Post, '/minn-admin/v1/integrations/unhide')]
     public function unhide(Request $request): Response
     {
-        $userId = $this->requireFloor();
+        $userId = $this->caller->requireFloor();
         $this->hiddenIntegrations->unhide($userId, $this->integrationId($request));
-        return $this->reply($request, $this->integrationState($userId));
+        return Reply::answer($request, $this->integrationState($userId));
     }
 
     private function integrationId(Request $request): string
@@ -327,7 +326,7 @@ final readonly class ManageController
 
     private function editableUser(string $id): int
     {
-        $self = $this->requireFloor();
+        $self = $this->caller->requireFloor();
         $userId = (int) $id;
         if ($userId !== $self && !$this->caller->can('edit_users')) {
             throw new RestError('rest_forbidden', 'Sorry, you are not allowed to do that.', 403);
@@ -387,22 +386,4 @@ final readonly class ManageController
         );
     }
 
-    private function reply(Request $request, mixed $data): Response
-    {
-        return Reply::item($data, Fields::fromQuery($request->query));
-    }
-
-    private function requireFloor(): int
-    {
-        $userId = $this->caller->require('rest_forbidden', 'Sorry, you are not allowed to do that.')->id();
-        $this->requireCap('edit_posts');
-        return $userId;
-    }
-
-    private function requireCap(string $capability): void
-    {
-        if (!$this->caller->can($capability)) {
-            throw new RestError('rest_forbidden', 'Sorry, you are not allowed to do that.', 403);
-        }
-    }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\RestError;
 
@@ -21,6 +22,12 @@ final class Reply
         'Access-Control-Allow-Headers' => 'Authorization, X-WP-Nonce, Content-Disposition, Content-MD5, Content-Type',
         'Allow' => 'GET',
     ];
+
+    /** One item, shaped by the request's own _fields: what nearly every handler ends with. */
+    public static function answer(Request $request, mixed $data, int $status = 200): Response
+    {
+        return self::item($data, Fields::fromQuery($request->query), $status);
+    }
 
     public static function item(mixed $data, ?Fields $fields, int $status = 200): Response
     {

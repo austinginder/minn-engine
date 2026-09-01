@@ -12,7 +12,6 @@ use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\Rest\Caller;
-use Minn\Rest\Fields;
 use Minn\Rest\Reply;
 use Minn\RestError;
 
@@ -31,22 +30,22 @@ final readonly class LanguageController
     #[Route(Method::Get, '/minn-admin/v1/languages')]
     public function languages(Request $request): Response
     {
-        $self = $this->requireFloor();
+        $self = $this->caller->requireFloor();
         $for = (int) ($request->query('user') ?? 0);
         if ($for > 0 && ($for === $self || !$this->caller->can('edit_users'))) {
             $for = 0;
         }
-        return $this->reply($request, $this->translations->payload($for > 0 ? $for : $self, $this->caller->can('manage_options')));
+        return Reply::answer($request, $this->translations->payload($for > 0 ? $for : $self, $this->caller->can('manage_options')));
     }
 
     /** The slice of the boot payload a language switch repaints from. */
     #[Route(Method::Get, '/minn-admin/v1/boot-locale')]
     public function bootLocale(Request $request): Response
     {
-        $userId = $this->requireFloor();
+        $userId = $this->caller->requireFloor();
         $locale = $this->translations->localeOf($userId);
         [$i18n, $plural] = $this->translations->catalog($locale);
-        return $this->reply($request, [
+        return Reply::answer($request, [
             'i18n' => $i18n === [] ? new \stdClass() : $i18n,
             'i18nPlural' => $plural,
             'languages' => $this->translations->installed(),
@@ -59,13 +58,13 @@ final readonly class LanguageController
     #[Route(Method::Post, '/minn-admin/v1/me/language')]
     public function mine(Request $request): Response
     {
-        return $this->setUserLocale($request, $this->requireFloor());
+        return $this->setUserLocale($request, $this->caller->requireFloor());
     }
 
     #[Route(Method::Post, '/minn-admin/v1/users/{id:\d+}/language')]
     public function user(Request $request, string $id): Response
     {
-        $self = $this->requireFloor();
+        $self = $this->caller->requireFloor();
         if ((int) $id !== $self && !$this->caller->can('edit_users')) {
             throw new RestError('rest_forbidden', 'Sorry, you are not allowed to do that.', 403);
         }
@@ -78,11 +77,11 @@ final readonly class LanguageController
     #[Route(Method::Post, '/minn-admin/v1/site/language')]
     public function site(Request $request): Response
     {
-        $this->requireFloor();
-        $this->requireCap('manage_options');
+        $this->caller->requireFloor();
+        $this->caller->requireCap('manage_options');
         [$locale, $downloaded] = $this->ensure($request);
         $this->site->setOption('WPLANG', $locale === 'en_US' ? '' : $locale);
-        return $this->reply($request, ['ok' => true, 'locale' => $locale === 'en_US' ? '' : $locale, 'installed' => $downloaded]);
+        return Reply::answer($request, ['ok' => true, 'locale' => $locale === 'en_US' ? '' : $locale, 'installed' => $downloaded]);
     }
 
     private function setUserLocale(Request $request, int $userId): Response
@@ -93,7 +92,7 @@ final readonly class LanguageController
         } else {
             $this->users->setMeta($userId, 'locale', $locale);
         }
-        return $this->reply($request, ['ok' => true, 'locale' => $locale, 'installed' => $downloaded]);
+        return Reply::answer($request, ['ok' => true, 'locale' => $locale, 'installed' => $downloaded]);
     }
 
     /** The requested locale, installed if it was not; '' means the site default. @return array{0: string, 1: bool} */
@@ -112,22 +111,4 @@ final readonly class LanguageController
         return [$locale, true];
     }
 
-    private function reply(Request $request, mixed $data): Response
-    {
-        return Reply::item($data, Fields::fromQuery($request->query));
-    }
-
-    private function requireFloor(): int
-    {
-        $userId = $this->caller->require('rest_forbidden', 'Sorry, you are not allowed to do that.')->id();
-        $this->requireCap('edit_posts');
-        return $userId;
-    }
-
-    private function requireCap(string $capability): void
-    {
-        if (!$this->caller->can($capability)) {
-            throw new RestError('rest_forbidden', 'Sorry, you are not allowed to do that.', 403);
-        }
-    }
 }

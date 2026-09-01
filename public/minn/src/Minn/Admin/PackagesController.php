@@ -10,7 +10,6 @@ use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\Rest\Caller;
-use Minn\Rest\Fields;
 use Minn\Rest\Reply;
 use Minn\RestError;
 
@@ -24,52 +23,52 @@ final readonly class PackagesController
     #[Route(Method::Get, '/minn-admin/v1/themes/search')]
     public function searchThemes(Request $request): Response
     {
-        $this->requireCap('install_themes');
-        return $this->reply($request, ['themes' => $this->packages->searchThemes(trim((string) ($request->query('q') ?? '')))]);
+        $this->caller->requireFloor('install_themes');
+        return Reply::answer($request, ['themes' => $this->packages->searchThemes(trim((string) ($request->query('q') ?? '')))]);
     }
 
     #[Route(Method::Post, '/minn-admin/v1/themes/install')]
     public function installTheme(Request $request): Response
     {
-        $this->requireCap('install_themes');
+        $this->caller->requireFloor('install_themes');
         $slug = trim((string) ($request->json()['slug'] ?? ''));
-        return $this->reply($request, ['installed' => true, 'stylesheet' => $this->packages->installTheme($slug)]);
+        return Reply::answer($request, ['installed' => true, 'stylesheet' => $this->packages->installTheme($slug)]);
     }
 
     #[Route(Method::Post, '/minn-admin/v1/themes/upload')]
     public function uploadTheme(Request $request): Response
     {
-        $this->requireCap('install_themes');
+        $this->caller->requireFloor('install_themes');
         $result = $this->packages->unpack($this->uploaded($request, 'Theme'), 'theme', !empty($request->form['overwrite']));
-        return $this->reply($request, ['installed' => true, 'stylesheet' => $result['folder']]);
+        return Reply::answer($request, ['installed' => true, 'stylesheet' => $result['folder']]);
     }
 
     #[Route(Method::Post, '/minn-admin/v1/themes/delete')]
     public function deleteTheme(Request $request): Response
     {
-        $this->requireCap('delete_themes');
+        $this->caller->requireFloor('delete_themes');
         $stylesheet = trim((string) ($request->json()['stylesheet'] ?? ''));
         if ($stylesheet === (string) ($this->site->option('stylesheet') ?? '') || $stylesheet === (string) ($this->site->option('template') ?? '')) {
             throw new RestError('theme_in_use', 'The active theme (or its parent) cannot be deleted.', 400);
         }
         $this->packages->remove('theme', $stylesheet);
-        return $this->reply($request, ['deleted' => true]);
+        return Reply::answer($request, ['deleted' => true]);
     }
 
     /** A plugin zip: a WordPress plugin or a Minn extension. */
     #[Route(Method::Post, '/minn-admin/v1/plugins/upload')]
     public function uploadPlugin(Request $request): Response
     {
-        $this->requireCap('install_plugins');
+        $this->caller->requireFloor('install_plugins');
         $result = $this->packages->unpack($this->uploaded($request, 'Plugin'), 'extension', !empty($request->form['overwrite']));
-        return $this->reply($request, ['installed' => true, 'plugin' => $result['folder'] . '/' . $result['folder']]);
+        return Reply::answer($request, ['installed' => true, 'plugin' => $result['folder'] . '/' . $result['folder']]);
     }
 
     /** A zip URL, or a GitHub owner/repo whose latest release carries a zip asset. */
     #[Route(Method::Post, '/minn-admin/v1/plugins/install-url')]
     public function installFromUrl(Request $request): Response
     {
-        $this->requireCap('install_plugins');
+        $this->caller->requireFloor('install_plugins');
         $body = $request->json();
         $url = trim((string) ($body['url'] ?? ''));
         $github = trim((string) ($body['github'] ?? ''));
@@ -95,21 +94,21 @@ final readonly class PackagesController
             throw new RestError('no_source', 'Provide a zip URL or a github owner/repo.', 400);
         }
         $result = $this->packages->unpack($this->packages->fetch($url), 'extension', false);
-        return $this->reply($request, ['installed' => true, 'plugin' => $result['folder'] . '/' . $result['folder'], 'url' => $url]);
+        return Reply::answer($request, ['installed' => true, 'plugin' => $result['folder'] . '/' . $result['folder'], 'url' => $url]);
     }
 
     #[Route(Method::Get, '/minn-admin/v1/plugins/search')]
     public function searchPlugins(Request $request): Response
     {
-        $this->requireCap('install_plugins');
-        return $this->reply($request, $this->packages->searchPlugins(trim((string) ($request->query('q') ?? '')), (int) ($request->query('page') ?? 1)));
+        $this->caller->requireFloor('install_plugins');
+        return Reply::answer($request, $this->packages->searchPlugins(trim((string) ($request->query('q') ?? '')), (int) ($request->query('page') ?? 1)));
     }
 
     #[Route(Method::Get, '/minn-admin/v1/plugins/info')]
     public function pluginInfo(Request $request): Response
     {
-        $this->requireCap('install_plugins');
-        return $this->reply($request, $this->packages->pluginInfo(trim((string) ($request->query('slug') ?? ''))));
+        $this->caller->requireFloor('install_plugins');
+        return Reply::answer($request, $this->packages->pluginInfo(trim((string) ($request->query('slug') ?? ''))));
     }
 
     private function uploaded(Request $request, string $kind): string
@@ -124,16 +123,4 @@ final readonly class PackagesController
         return (string) file_get_contents((string) $file['tmp_name']);
     }
 
-    private function requireCap(string $capability): void
-    {
-        $this->caller->require('rest_forbidden', 'Sorry, you are not allowed to do that.');
-        if (!$this->caller->can('edit_posts') || !$this->caller->can($capability)) {
-            throw new RestError('rest_forbidden', 'Sorry, you are not allowed to do that.', 403);
-        }
-    }
-
-    private function reply(Request $request, mixed $data): Response
-    {
-        return Reply::item($data, Fields::fromQuery($request->query));
-    }
 }

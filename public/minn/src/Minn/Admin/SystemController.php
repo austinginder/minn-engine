@@ -9,7 +9,6 @@ use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\Rest\Caller;
-use Minn\Rest\Fields;
 use Minn\Rest\Reply;
 use Minn\RestError;
 
@@ -24,21 +23,21 @@ final readonly class SystemController
     public function system(Request $request): Response
     {
         $this->requireOwner();
-        return $this->reply($request, $this->diagnostics->payload($request));
+        return Reply::answer($request, $this->diagnostics->payload($request));
     }
 
     #[Route(Method::Get, '/minn-admin/v1/system/cron')]
     public function cron(Request $request): Response
     {
         $this->requireOwner();
-        return $this->reply($request, $this->diagnostics->cron());
+        return Reply::answer($request, $this->diagnostics->cron());
     }
 
     #[Route(Method::Get, '/minn-admin/v1/system/autoload')]
     public function autoload(Request $request): Response
     {
         $this->requireOwner();
-        return $this->reply($request, $this->diagnostics->autoload());
+        return Reply::answer($request, $this->diagnostics->autoload());
     }
 
     /** The engine never rewrites wp-config.php; the file is the site's, edited by hand. */
@@ -53,14 +52,14 @@ final readonly class SystemController
     public function logs(Request $request): Response
     {
         $this->requireOwner();
-        return $this->reply($request, ['sources' => $this->logs->listPayload()]);
+        return Reply::answer($request, ['sources' => $this->logs->listPayload()]);
     }
 
     #[Route(Method::Get, '/minn-admin/v1/system/logs/{id:[a-zA-Z0-9:_.-]+}')]
     public function log(Request $request, string $id): Response
     {
         $this->requireOwner();
-        return $this->reply($request, $this->logs->read($id));
+        return Reply::answer($request, $this->logs->read($id));
     }
 
     #[Route(Method::Delete, '/minn-admin/v1/system/logs/{id:[a-zA-Z0-9:_.-]+}')]
@@ -68,14 +67,14 @@ final readonly class SystemController
     {
         $this->requireOwner();
         $this->logs->clear($id);
-        return $this->reply($request, ['cleared' => true]);
+        return Reply::answer($request, ['cleared' => true]);
     }
 
     #[Route(Method::Get, '/minn-admin/v1/system/debug-log')]
     public function debugLog(Request $request): Response
     {
         $this->requireOwner();
-        return $this->reply($request, $this->logs->tail($this->logs->debugLogPath()));
+        return Reply::answer($request, $this->logs->tail($this->logs->debugLogPath()));
     }
 
     #[Route(Method::Delete, '/minn-admin/v1/system/debug-log')]
@@ -83,7 +82,7 @@ final readonly class SystemController
     {
         $this->requireOwner();
         $this->logs->clear('debug');
-        return $this->reply($request, ['cleared' => true]);
+        return Reply::answer($request, ['cleared' => true]);
     }
 
     private function requireOwner(): void
@@ -94,8 +93,4 @@ final readonly class SystemController
         }
     }
 
-    private function reply(Request $request, mixed $data): Response
-    {
-        return Reply::item($data, Fields::fromQuery($request->query));
-    }
 }

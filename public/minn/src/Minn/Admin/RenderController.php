@@ -14,7 +14,6 @@ use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\Rest\Caller;
-use Minn\Rest\Fields;
 use Minn\Rest\Reply;
 use Minn\RestError;
 use Minn\Theme\GlobalStyles;
@@ -42,7 +41,7 @@ final readonly class RenderController
     #[Route(Method::Post, '/minn-admin/v1/render-blocks')]
     public function render(Request $request): Response
     {
-        $this->requireFloor();
+        $this->caller->requireFloor();
         $blocks = $request->json()['blocks'] ?? null;
         if (!is_array($blocks)) {
             throw new RestError('invalid_blocks', 'Expected an array of block markup strings.', 400);
@@ -51,15 +50,15 @@ final readonly class RenderController
         foreach (array_slice($blocks, 0, 100) as $raw) {
             $rendered[] = Blocks::render((string) $raw);
         }
-        return $this->reply($request, ['rendered' => $rendered, 'styles' => $this->styles()]);
+        return Reply::answer($request, ['rendered' => $rendered, 'styles' => $this->styles()]);
     }
 
     /** The stylesheets previews are scoped under: the engine's own, the theme's, and theme.json inline. */
     #[Route(Method::Get, '/minn-admin/v1/editor-styles')]
     public function editorStyles(Request $request): Response
     {
-        $this->requireFloor();
-        return $this->reply($request, $this->styles());
+        $this->caller->requireFloor();
+        return Reply::answer($request, $this->styles());
     }
 
     /** @return array{urls: list<string>, inline: string} */
@@ -79,16 +78,4 @@ final readonly class RenderController
         return ['urls' => $urls, 'inline' => $inline];
     }
 
-    private function requireFloor(): void
-    {
-        $this->caller->require('rest_forbidden', 'Sorry, you are not allowed to do that.');
-        if (!$this->caller->can('edit_posts')) {
-            throw new RestError('rest_forbidden', 'Sorry, you are not allowed to do that.', 403);
-        }
-    }
-
-    private function reply(Request $request, mixed $data): Response
-    {
-        return Reply::item($data, Fields::fromQuery($request->query));
-    }
 }
