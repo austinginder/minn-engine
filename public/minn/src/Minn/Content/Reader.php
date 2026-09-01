@@ -29,26 +29,31 @@ final class Reader
     ) {
     }
 
+    /** The reader who is nobody: no session, no private posts, only the post password they typed. */
     public static function anonymous(string $postPassword = ''): self
     {
         return new self(0, false, false, static fn (int $id): bool => false, $postPassword);
     }
 
+    /** Makes this reader the current one for the request. */
     public static function set(self $reader): void
     {
         self::$current = $reader;
     }
 
+    /** The request's reader, anonymous until one is set. */
     public static function current(): self
     {
         return self::$current ??= self::anonymous();
     }
 
+    /** Whether the reader has a session. */
     public function loggedIn(): bool
     {
         return $this->userId > 0;
     }
 
+    /** Whether this reader may edit a given post. */
     public function canEdit(int $postId): bool
     {
         return ($this->canEditPost)($postId);

@@ -21,7 +21,11 @@ final readonly class PostWriter
     ) {
     }
 
-    /** @param array<string, mixed> $columns */
+    /**
+     * Inserts a posts row from column => value pairs and returns the new id.
+     *
+     * @param array<string, mixed> $columns
+     */
     public function insert(array $columns): int
     {
         $names = implode(', ', array_keys($columns));
@@ -29,7 +33,11 @@ final readonly class PostWriter
         return $this->db->insertId();
     }
 
-    /** @param array<string, mixed> $columns */
+    /**
+     * Sets the given columns on one post; nothing happens for none.
+     *
+     * @param array<string, mixed> $columns
+     */
     public function update(int $id, array $columns): void
     {
         if ($columns === []) {
@@ -39,6 +47,7 @@ final readonly class PostWriter
         $this->db->execute("UPDATE {$this->db->table('posts')} SET {$sets} WHERE ID = ?", [...array_values($columns), $id]);
     }
 
+    /** Changes one post's status. */
     public function setStatus(int $id, string $status): void
     {
         $this->update($id, ['post_status' => $status]);
@@ -56,6 +65,7 @@ final readonly class PostWriter
         return true;
     }
 
+    /** Sets one meta value, inserting the row when the key is new. */
     public function setMeta(int $id, string $key, string $value): void
     {
         $table = $this->db->table('postmeta');
@@ -65,6 +75,7 @@ final readonly class PostWriter
         }
     }
 
+    /** Removes every meta row with this key from a post. */
     public function deleteMeta(int $id, string $key): void
     {
         $this->db->execute("DELETE FROM {$this->db->table('postmeta')} WHERE post_id = ? AND meta_key = ?", [$id, $key]);
@@ -110,7 +121,11 @@ final readonly class PostWriter
         $this->recount($taxonomy);
     }
 
-    /** @return list<string> the distinct taxonomies a post has links in */
+    /**
+     * The taxonomies a post has terms in.
+     *
+     * @return list<string> the distinct taxonomies a post has links in
+     */
     public function taxonomiesOf(int $id): array
     {
         $rows = $this->db->rows(
@@ -122,6 +137,7 @@ final readonly class PostWriter
         return array_map(static fn (array $row) => (string) $row['taxonomy'], $rows);
     }
 
+    /** Recounts every term the post is in, after a status change. */
     public function recountTaxonomiesOf(int $id): void
     {
         foreach ($this->taxonomiesOf($id) as $taxonomy) {
@@ -142,6 +158,7 @@ final readonly class PostWriter
         );
     }
 
+    /** Whether the post is in the sticky_posts option. */
     public function isSticky(int $id): bool
     {
         return in_array($id, Serialized::intList($this->site->option('sticky_posts')), true);
@@ -281,11 +298,13 @@ final readonly class PostWriter
         $this->db->execute("UPDATE {$this->db->table('posts')} SET post_parent = ? WHERE post_parent = ? AND post_type = 'attachment'", [$parent, $id]);
     }
 
+    /** Moves every post of one author to another. */
     public function reassignAuthor(int $from, int $to): void
     {
         $this->db->execute("UPDATE {$this->db->table('posts')} SET post_author = ? WHERE post_author = ?", [$to, $from]);
     }
 
+    /** Hard-deletes a post with its revisions and its meta. */
     public function destroy(int $id): void
     {
         $posts = $this->db->table('posts');

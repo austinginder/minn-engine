@@ -42,6 +42,7 @@ final readonly class PluginState
         return null;
     }
 
+    /** Whether a plugin, by file, or a Minn extension is active. */
     public function isActive(Manifest|string $plugin): bool
     {
         if ($plugin instanceof Manifest) {
@@ -50,6 +51,7 @@ final readonly class PluginState
         return in_array($plugin, Serialized::stringList($this->site->option('active_plugins')), true);
     }
 
+    /** Records a plugin or an extension as active or not, in the option each kind uses. */
     public function setActive(Manifest|string $plugin, bool $active): void
     {
         if ($plugin instanceof Manifest) {

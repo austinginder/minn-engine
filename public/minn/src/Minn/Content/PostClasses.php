@@ -13,6 +13,8 @@ namespace Minn\Content;
 final class PostClasses
 {
     /**
+     * The class list a post carries on its article element, in the reference's order.
+     *
      * @param list<string> $extra
      * @param list<array{taxonomy: string, slug: string, term_id: int}> $terms
      * @return list<string>

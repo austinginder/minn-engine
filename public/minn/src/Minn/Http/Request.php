@@ -34,6 +34,7 @@ final readonly class Request
     ) {
     }
 
+    /** The request PHP received, read once from the superglobals. */
     public static function fromGlobals(): self
     {
         $uri = $_SERVER['REQUEST_URI'] ?? '/';
@@ -87,22 +88,26 @@ final readonly class Request
         return new self($this->method, $path, $this->query, $this->headers, $this->cookies, $this->body, $this->secure, $this->host, $this->form, $this->files, $this->remoteAddress, $this->server);
     }
 
+    /** One query value as a string, or the default when it is absent or not a string. */
     public function query(string $key, ?string $default = null): ?string
     {
         $value = $this->query[$key] ?? null;
         return is_string($value) ? $value : $default;
     }
 
+    /** Whether the query carries this key at all, even empty. */
     public function has(string $key): bool
     {
         return array_key_exists($key, $this->query);
     }
 
+    /** A request header by case-insensitive name, or null. */
     public function header(string $name): ?string
     {
         return $this->headers[strtolower($name)] ?? null;
     }
 
+    /** A cookie's value, or null. */
     public function cookie(string $name): ?string
     {
         return $this->cookies[$name] ?? null;

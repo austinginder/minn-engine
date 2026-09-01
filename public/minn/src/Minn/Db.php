@@ -24,6 +24,7 @@ final class Db
     ) {
     }
 
+    /** The one connection for this request, opened from wp-config's constants on first use. */
     public static function shared(): self
     {
         if (self::$shared === null) {
@@ -34,6 +35,7 @@ final class Db
         return self::$shared;
     }
 
+    /** The underlying mysqli handle, for the facade's wpdb. */
     public function connection(): mysqli
     {
         return $this->connection;
@@ -45,6 +47,7 @@ final class Db
         return $this->connection()->real_escape_string($value);
     }
 
+    /** The table prefix from wp-config. */
     public function prefix(): string
     {
         return $this->prefix;
@@ -56,13 +59,21 @@ final class Db
         return $this->prefix . $name;
     }
 
-    /** @return list<array<string, mixed>> */
+    /**
+     * Every row of a prepared query, as associative arrays.
+     *
+     * @return list<array<string, mixed>>
+     */
     public function rows(string $sql, array $params = []): array
     {
         return $this->run($sql, $params)->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
-    /** @return array<string, mixed>|null */
+    /**
+     * The first row of a prepared query, or null.
+     *
+     * @return array<string, mixed>|null
+     */
     public function row(string $sql, array $params = []): ?array
     {
         return $this->run($sql, $params)->get_result()->fetch_assoc();
@@ -156,11 +167,13 @@ final class Db
         return $pieces;
     }
 
+    /** The id the last INSERT produced. */
     public function insertId(): int
     {
         return (int) $this->connection->insert_id;
     }
 
+    /** One option's raw value, or null when it is unset. */
     public function option(string $name): ?string
     {
         $value = $this->value(

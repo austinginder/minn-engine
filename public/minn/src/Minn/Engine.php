@@ -78,6 +78,7 @@ final readonly class Engine
     ) {
     }
 
+    /** The front door: connect, check the salts, answer the request, and turn any failure into the right error page. */
     public function serve(): never
     {
         Failure::install();

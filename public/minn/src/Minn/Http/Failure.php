@@ -34,6 +34,7 @@ final class Failure
         self::$recorder = $recorder;
     }
 
+    /** Installs the error handlers; detail is shown only under WP_DEBUG_DISPLAY. */
     public static function install(): void
     {
         $display = defined('WP_DEBUG_DISPLAY') ? (bool) WP_DEBUG_DISPLAY : (defined('WP_DEBUG') && WP_DEBUG);
@@ -84,12 +85,14 @@ final class Failure
         }
     }
 
+    /** The 500 page. */
     public static function internal(): Response
     {
         return self::page(500, 'Something went wrong', 'The site hit an error while answering this request. The site owner has the details in the log.')
             ->withHeader('Cache-Control', 'no-store');
     }
 
+    /** The 503 page the reference shows when the database cannot be reached. */
     public static function databaseUnavailable(): Response
     {
         return self::page(503, 'Error establishing a database connection', 'The site could not reach its database. If you are the site owner, check the database server and the credentials in wp-config.php.')

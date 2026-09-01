@@ -4,16 +4,16 @@ request, response, routing, and the outgoing client
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Client`](#client) | final class | 98 | The engine's outgoing HTTP transport over curl. Redirects are followed by |
-| [`Exchange`](#exchange) | final readonly class | 28 | What came back: the final response's status, headers (repeats as lists), Set-Cookie values, and body, or the transport error. |
-| [`Failure`](#failure) | final class | 112 | What the public sees when the engine cannot answer: a plain page with no |
-| [`Kernel`](#kernel) | final readonly class | 35 | The edge. Turns a request into a response through the router and turns |
-| [`Method`](#method) | enum | 32 |  |
-| [`Outbound`](#outbound) | final readonly class | 35 | One outgoing HTTP request, normalised: the client below needs nothing else. |
-| [`Request`](#request) | final readonly class | 113 | An immutable picture of the incoming request. Built once from the PHP |
-| [`Response`](#response) | final readonly class | 62 | What a handler returns. Nothing is written to the client until the |
-| [`Route`](#route) | final readonly class | 30 | Declares a handler method as a route. The capability requirement lives |
-| [`Router`](#router) | final class | 62 | Matches a request to a #[Route] on one of the registered handler |
+| [`Client`](#client) | final class | 101 | The engine's outgoing HTTP transport over curl. Redirects are followed by |
+| [`Exchange`](#exchange) | final readonly class | 29 | What came back: the final response's status, headers (repeats as lists), Set-Cookie values, and body, or the transport error. |
+| [`Failure`](#failure) | final class | 115 | What the public sees when the engine cannot answer: a plain page with no |
+| [`Kernel`](#kernel) | final readonly class | 36 | The edge. Turns a request into a response through the router and turns |
+| [`Method`](#method) | enum | 33 |  |
+| [`Outbound`](#outbound) | final readonly class | 47 | One outgoing HTTP request, normalised: the client below needs nothing else. |
+| [`Request`](#request) | final readonly class | 118 | An immutable picture of the incoming request. Built once from the PHP |
+| [`Response`](#response) | final readonly class | 72 | What a handler returns. Nothing is written to the client until the |
+| [`Route`](#route) | final readonly class | 31 | Declares a handler method as a route. The capability requirement lives |
+| [`Router`](#router) | final class | 63 | Matches a request to a #[Route] on one of the registered handler |
 
 ## Client
 
@@ -29,11 +29,17 @@ The common cases, so a one-off request needs no Outbound at the call site.
 
 ### static `post(string $url, ?string $body = NULL, array $headers = array ( ), float $timeout = 5.0): Minn\Http\Exchange`
 
+A POST with an optional body, sent at once.
+
 ### static `head(string $url, array $headers = array ( ), float $timeout = 5.0): Minn\Http\Exchange`
+
+A HEAD request, sent at once.
 
 ### static `send(Minn\Http\Outbound $request): Minn\Http\Exchange`
 
-Internals: `lastBlock()` (private, line 76)
+Performs one outgoing request over curl and returns the exchange, a transport error included.
+
+Internals: `lastBlock()` (private, line 79)
 
 
 ## Exchange
@@ -57,6 +63,8 @@ __construct(int $code, array $headers, array $cookies, string $body, ?string $er
 - readonly `?string $error`
 
 ### `failed(): bool`
+
+Whether the transport failed before any status came back.
 
 ### `ok(): bool`
 
@@ -91,13 +99,19 @@ Installed once the runtime is up, since it needs the database.
 
 ### static `install(): void`
 
+Installs the error handlers; detail is shown only under WP_DEBUG_DISPLAY.
+
 ### static `report(Throwable $error): Minn\Http\Response`
 
 Logs the cause; the response says only that something went wrong.
 
 ### static `internal(): Minn\Http\Response`
 
+The 500 page.
+
 ### static `databaseUnavailable(): Minn\Http\Response`
+
+The 503 page the reference shows when the database cannot be reached.
 
 ### static `detailed(string $class, string $message, string $file, int $line): Minn\Http\Response`
 
@@ -105,7 +119,7 @@ The same page with the cause on it, for a site that asked to see
 errors. Only ever reached when WP_DEBUG_DISPLAY (or WP_DEBUG) is on:
 a site that has not asked never learns this much from a response.
 
-Internals: `record()` (private, line 73), `page()` (private, line 113)
+Internals: `record()` (private, line 74), `page()` (private, line 116)
 
 
 ## Kernel
@@ -124,7 +138,9 @@ __construct(Minn\Http\Router $router)
 
 ### `handle(Minn\Http\Request $request): ?Minn\Http\Response`
 
-Internals: `harden()` (private, line 34)
+Routes the request; a thrown failure becomes its response, and null means no route matched.
+
+Internals: `harden()` (private, line 35)
 
 
 ## Method
@@ -136,6 +152,8 @@ Cases: `Get` = `'GET'`, `Head` = `'HEAD'`, `Post` = `'POST'`, `Put` = `'PUT'`, `
 Used by: `Minn\Admin\AppController`, `Minn\Admin\LanguageController`, `Minn\Admin\ManageController`, `Minn\Admin\PackagesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SystemController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Engine`, `Minn\Front\AssetsController`, `Minn\Front\Canonical`, `Minn\Front\CommentPostController`, `Minn\Front\FrontController`, `Minn\Front\ProbeController`, `Minn\Http\Request`, `Minn\Http\Route`, `Minn\Http\Router`, `Minn\Login\LoginController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\CommentsController`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\Embed`, `Minn\Rest\IndexController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\NavigationController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\TypesController`, `Minn\Rest\UsersController`
 
 ### static `fromName(string $name): self`
+
+The verb for a name, GET when the name is unknown.
 
 ### `matches(self $declared): bool`
 
@@ -173,13 +191,19 @@ __construct(string $method, string $url, array $headers = array ( ), ?string $bo
 
 ### static `get(string $url, array $headers = array ( ), float $timeout = 5.0): self`
 
+A GET.
+
 - `@param list<string> $headers "Name: value" lines`
 
 ### static `post(string $url, ?string $body = NULL, array $headers = array ( ), float $timeout = 5.0): self`
 
+A POST with an optional body.
+
 - `@param list<string> $headers "Name: value" lines`
 
 ### static `head(string $url, array $headers = array ( ), float $timeout = 5.0): self`
+
+A HEAD.
 
 - `@param list<string> $headers "Name: value" lines`
 
@@ -217,6 +241,8 @@ __construct(Minn\Http\Method $method, string $path, array $query, array $headers
 
 ### static `fromGlobals(): self`
 
+The request PHP received, read once from the superglobals.
+
 ### `json(): array`
 
 The JSON body as an array, or the form fields when the body is empty.
@@ -227,11 +253,19 @@ The same request addressed to another path (a REST route carried in ?rest_route=
 
 ### `query(string $key, ?string $default = NULL): ?string`
 
+One query value as a string, or the default when it is absent or not a string.
+
 ### `has(string $key): bool`
+
+Whether the query carries this key at all, even empty.
 
 ### `header(string $name): ?string`
 
+A request header by case-insensitive name, or null.
+
 ### `cookie(string $name): ?string`
+
+A cookie's value, or null.
 
 ### `segments(): array`
 
@@ -265,19 +299,33 @@ __construct(int $status = 200, array $headers = array ( ), string $body = '', ar
 
 ### static `html(string $body, int $status = 200): self`
 
+An HTML response.
+
 ### static `json(mixed $payload, int $status = 200): self`
+
+A JSON response with the payload encoded.
 
 ### static `redirect(string $location, int $status = 301): self`
 
+A redirect to a location.
+
 ### `withHeader(string $name, string $value): self`
 
+The same response with one header set.
+
 ### `withCookie(string $name, string $value, array $options): self`
+
+The same response with a cookie to set.
 
 - `@param array<string, mixed> $options setcookie options: expires, path, secure, httponly, samesite`
 
 ### `withoutBody(): self`
 
+The same response with an empty body, the HEAD answer.
+
 ### `send(): never`
+
+Writes the status, the headers, the cookies, and the body, and ends the request.
 
 
 ## Route
@@ -303,6 +351,8 @@ __construct(Minn\Http\Method $method, string $pattern, ?string $cap = NULL)
 
 ### `regex(): string`
 
+The pattern as a regular expression with named captures.
+
 
 ## Router
 
@@ -321,6 +371,8 @@ __construct(?Closure $gate = NULL)
 
 
 ### `register(object ...$handlers): self`
+
+Registers every #[Route] method of the given handlers; returns the router for chaining.
 
 ### `routes(): array`
 

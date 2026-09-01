@@ -21,21 +21,25 @@ final readonly class Users
         return $row === null ? null : UserRecord::fromRow($row);
     }
 
+    /** The user with this id, or null. */
     public function find(int $id): ?UserRecord
     {
         return self::record($this->db->row("SELECT * FROM {$this->db->table('users')} WHERE ID = ? LIMIT 1", [$id]));
     }
 
+    /** The user with this login, or null. */
     public function findByLogin(string $login): ?UserRecord
     {
         return self::record($this->db->row("SELECT * FROM {$this->db->table('users')} WHERE user_login = ? LIMIT 1", [$login]));
     }
 
+    /** The user with this email, or null. */
     public function findByEmail(string $email): ?UserRecord
     {
         return self::record($this->db->row("SELECT * FROM {$this->db->table('users')} WHERE user_email = ? LIMIT 1", [$email]));
     }
 
+    /** The user with this nicename, or null. */
     public function findBySlug(string $nicename): ?UserRecord
     {
         return self::record($this->db->row("SELECT * FROM {$this->db->table('users')} WHERE user_nicename = ? LIMIT 1", [$nicename]));
@@ -110,7 +114,11 @@ final readonly class Users
         return $id;
     }
 
-    /** @param array<string, mixed> $columns */
+    /**
+     * Inserts a users row from column => value pairs and returns the new id.
+     *
+     * @param array<string, mixed> $columns
+     */
     public function insert(array $columns): int
     {
         $names = implode(', ', array_keys($columns));
@@ -118,7 +126,11 @@ final readonly class Users
         return $this->db->insertId();
     }
 
-    /** @param array<string, mixed> $columns */
+    /**
+     * Sets the given columns on one user.
+     *
+     * @param array<string, mixed> $columns
+     */
     public function update(int $id, array $columns): void
     {
         foreach ($columns as $column => $value) {
@@ -139,6 +151,7 @@ final readonly class Users
         return array_map(static fn (array $r) => (int) $r['ID'], $this->db->rows('SELECT ID FROM ' . $this->db->table('users') . ' ORDER BY user_login ASC' . ($limit > 0 ? ' LIMIT ' . $limit : '')));
     }
 
+    /** Removes every meta row of a user. */
     public function deleteAllMeta(int $userId): void
     {
         $this->db->execute("DELETE FROM {$this->db->table('usermeta')} WHERE user_id = ?", [$userId]);
@@ -150,12 +163,17 @@ final readonly class Users
         $this->db->execute("UPDATE {$this->db->table('users')} SET user_pass = ?, user_activation_key = '' WHERE ID = ?", [$hash, $userId]);
     }
 
+    /** How many users the site has. */
     public function count(): int
     {
         return (int) $this->db->value("SELECT COUNT(*) FROM {$this->db->table('users')}");
     }
 
-    /** @return list<array> the newest registrations after a site-local timestamp */
+    /**
+     * The newest users registered since a site-local time, up to the limit.
+     *
+     * @return list<array> the newest registrations after a site-local timestamp
+     */
     public function registeredAfter(string $since, int $limit): array
     {
         return UserRecord::fromRows($this->db->rows(
@@ -165,6 +183,7 @@ final readonly class Users
         ));
     }
 
+    /** Removes one meta key from a user. */
     public function deleteMeta(int $userId, string $key): void
     {
         $this->db->execute("DELETE FROM {$this->db->table('usermeta')} WHERE user_id = ? AND meta_key = ?", [$userId, $key]);

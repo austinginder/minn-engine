@@ -23,11 +23,13 @@ final readonly class Response
     ) {
     }
 
+    /** An HTML response. */
     public static function html(string $body, int $status = 200): self
     {
         return new self($status, ['Content-Type' => 'text/html; charset=utf-8'], $body);
     }
 
+    /** A JSON response with the payload encoded. */
     public static function json(mixed $payload, int $status = 200): self
     {
         return new self(
@@ -37,27 +39,35 @@ final readonly class Response
         );
     }
 
+    /** A redirect to a location. */
     public static function redirect(string $location, int $status = 301): self
     {
         return new self($status, ['Location' => $location], '');
     }
 
+    /** The same response with one header set. */
     public function withHeader(string $name, string $value): self
     {
         return new self($this->status, [$name => $value] + $this->headers, $this->body, $this->cookies);
     }
 
-    /** @param array<string, mixed> $options setcookie options: expires, path, secure, httponly, samesite */
+    /**
+     * The same response with a cookie to set.
+     *
+     * @param array<string, mixed> $options setcookie options: expires, path, secure, httponly, samesite
+     */
     public function withCookie(string $name, string $value, array $options): self
     {
         return new self($this->status, $this->headers, $this->body, [...$this->cookies, [$name, $value, $options]]);
     }
 
+    /** The same response with an empty body, the HEAD answer. */
     public function withoutBody(): self
     {
         return new self($this->status, $this->headers, '', $this->cookies);
     }
 
+    /** Writes the status, the headers, the cookies, and the body, and ends the request. */
     public function send(): never
     {
         http_response_code($this->status);

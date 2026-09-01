@@ -4,10 +4,10 @@ the front door, the autoloader, the one database door, the REST error
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Autoloader`](#autoloader) | final class | 15 | PSR-4 for the Minn namespace: Minn\Http\Request lives at src/Minn/Http/Request.php. |
-| [`Db`](#db) | final class | 175 | The one door to the database. Every query is a prepared statement; the |
-| [`Engine`](#engine) | final readonly class | 171 | The engine's front door. An unmodified wp-config.php ends by requiring |
-| [`RestError`](#resterror) | final class | 43 | A WordPress-shaped error, thrown from anywhere and rendered once by the |
+| [`Autoloader`](#autoloader) | final class | 16 | PSR-4 for the Minn namespace: Minn\Http\Request lives at src/Minn/Http/Request.php. |
+| [`Db`](#db) | final class | 188 | The one door to the database. Every query is a prepared statement; the |
+| [`Engine`](#engine) | final readonly class | 172 | The engine's front door. An unmodified wp-config.php ends by requiring |
+| [`RestError`](#resterror) | final class | 49 | A WordPress-shaped error, thrown from anywhere and rendered once by the |
 
 ## Autoloader
 
@@ -16,6 +16,8 @@ the front door, the autoloader, the one database door, the REST error
 PSR-4 for the Minn namespace: Minn\Http\Request lives at src/Minn/Http/Request.php.
 
 ### static `register(): void`
+
+Registers the PSR-4 loader for the Minn namespace.
 
 
 ## Db
@@ -37,7 +39,11 @@ __construct(mysqli $connection, string $prefix)
 
 ### static `shared(): self`
 
+The one connection for this request, opened from wp-config's constants on first use.
+
 ### `connection(): mysqli`
+
+The underlying mysqli handle, for the facade's wpdb.
 
 ### `escape(string $value): string`
 
@@ -45,15 +51,21 @@ A value escaped for direct interpolation into SQL, for callers that build their 
 
 ### `prefix(): string`
 
+The table prefix from wp-config.
+
 ### `table(string $name): string`
 
 `posts` becomes `wp_posts`; the prefix comes from wp-config.php.
 
 ### `rows(string $sql, array $params = array ( )): array`
 
+Every row of a prepared query, as associative arrays.
+
 - `@return list<array<string, mixed>>`
 
 ### `row(string $sql, array $params = array ( )): ?array`
+
+The first row of a prepared query, or null.
 
 - `@return array<string, mixed>|null`
 
@@ -77,9 +89,13 @@ caller that means "everything" when the list is empty says so itself.
 
 ### `insertId(): int`
 
+The id the last INSERT produced.
+
 ### `option(string $name): ?string`
 
-Internals: `placeholders()` (private, line 126), `run()` (private, line 173)
+One option's raw value, or null when it is unset.
+
+Internals: `placeholders()` (private, line 137), `run()` (private, line 186)
 
 
 ## Engine
@@ -102,7 +118,9 @@ __construct(string $version, string $engineDir)
 
 ### `serve(): never`
 
-Internals: `bootRuntimeForRest()` (private, line 106), `respond()` (private, line 135), `frontPipeline()` (private, line 206)
+The front door: connect, check the salts, answer the request, and turn any failure into the right error page.
+
+Internals: `bootRuntimeForRest()` (private, line 107), `respond()` (private, line 136), `frontPipeline()` (private, line 207)
 
 
 ## RestError
@@ -127,7 +145,11 @@ __construct(string $errorCode, string $message, int $status, array $extra = arra
 
 ### static `noRoute(): self`
 
+The reference's 404 for a route nothing answers.
+
 ### static `missingParams(array $params): self`
+
+The reference's 400 for required parameters that did not arrive.
 
 - `@param list<string> $params`
 
@@ -136,4 +158,6 @@ __construct(string $errorCode, string $message, int $status, array $extra = arra
 A statusless core error as REST serves it: HTTP 500 with data null.
 
 ### `payload(): array`
+
+The error as the reference's JSON body: code, message, data.
 

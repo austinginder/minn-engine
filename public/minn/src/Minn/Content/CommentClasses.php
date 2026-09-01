@@ -8,6 +8,8 @@ namespace Minn\Content;
 final class CommentClasses
 {
     /**
+     * The class list a comment's list item carries, in the reference's order.
+     *
      * @param list<string> $extra
      * @return list<string>
      */

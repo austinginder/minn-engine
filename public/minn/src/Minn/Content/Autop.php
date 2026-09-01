@@ -13,6 +13,7 @@ final class Autop
 {
     private const BLOCKS = '(?:table|thead|tfoot|caption|col|colgroup|tbody|tr|td|th|div|dl|dd|dt|ul|ol|li|pre|form|map|area|blockquote|address|style|p|h[1-6]|hr|fieldset|legend|section|article|aside|hgroup|header|footer|nav|figure|figcaption|details|menu|summary)';
 
+    /** The classic paragraph rules: a blank line makes a paragraph, a single newline a line break when asked. */
     public static function apply(string $text, bool $lineBreaks = true): string
     {
         if (trim($text) === '') {

@@ -30,6 +30,7 @@ final readonly class Terms
         ));
     }
 
+    /** One term in a taxonomy, or null. */
     public function find(string $taxonomy, int $termId): ?TermRecord
     {
         return self::record($this->db->row(
@@ -53,6 +54,7 @@ final readonly class Terms
         ));
     }
 
+    /** The id of the term with exactly this name in a taxonomy, or null. */
     public function idByName(string $name, string $taxonomy): ?int
     {
         $id = $this->db->value(
@@ -82,6 +84,7 @@ final readonly class Terms
         return $try;
     }
 
+    /** Inserts a term and its taxonomy row and returns the term id. */
     public function create(string $name, string $slug, string $taxonomy, string $description, int $parent): int
     {
         $this->db->execute("INSERT INTO {$this->db->table('terms')} (name, slug, term_group) VALUES (?, ?, 0)", [$name, $slug]);
@@ -93,11 +96,13 @@ final readonly class Terms
         return $termId;
     }
 
+    /** Changes a term's name and slug. */
     public function rename(int $termId, string $name, string $slug): void
     {
         $this->db->execute("UPDATE {$this->db->table('terms')} SET name = ?, slug = ? WHERE term_id = ?", [$name, $slug, $termId]);
     }
 
+    /** Changes a term's description and parent within one taxonomy. */
     public function describe(int $termId, string $taxonomy, string $description, int $parent): void
     {
         $this->db->execute(

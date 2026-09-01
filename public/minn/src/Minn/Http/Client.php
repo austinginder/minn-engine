@@ -17,16 +17,19 @@ final class Client
         return self::send(Outbound::get($url, $headers, $timeout));
     }
 
+    /** A POST with an optional body, sent at once. */
     public static function post(string $url, ?string $body = null, array $headers = [], float $timeout = 5.0): Exchange
     {
         return self::send(Outbound::post($url, $body, $headers, $timeout));
     }
 
+    /** A HEAD request, sent at once. */
     public static function head(string $url, array $headers = [], float $timeout = 5.0): Exchange
     {
         return self::send(Outbound::head($url, $headers, $timeout));
     }
 
+    /** Performs one outgoing request over curl and returns the exchange, a transport error included. */
     public static function send(Outbound $request): Exchange
     {
         $handle = curl_init();

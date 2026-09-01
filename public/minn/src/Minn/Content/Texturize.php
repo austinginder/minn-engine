@@ -14,6 +14,7 @@ final class Texturize
 {
     private const SKIP = 'pre|code|kbd|style|script|tt|textarea';
 
+    /** Curly quotes, dashes, and ellipses in the text of HTML, leaving tags and pre, code, kbd, style, and script alone. */
     public static function html(string $html): string
     {
         $parts = preg_split('/(<[^>]*>)/', $html, -1, PREG_SPLIT_DELIM_CAPTURE);
@@ -38,6 +39,7 @@ final class Texturize
         return implode('', $parts);
     }
 
+    /** The same substitutions on a plain string with no tags. */
     public static function text(string $text): string
     {
         $text = str_replace('...', '&#8230;', $text);

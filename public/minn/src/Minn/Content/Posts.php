@@ -23,12 +23,17 @@ final readonly class Posts
         return $row === null ? null : PostRecord::fromRow($row);
     }
 
+    /** The post with this id, or null. */
     public function find(int $id): ?PostRecord
     {
         return self::record($this->db->row("SELECT * FROM {$this->db->table('posts')} WHERE ID = ? LIMIT 1", [$id]));
     }
 
-    /** @param list<string> $types */
+    /**
+     * The post with this slug among the given types; published only unless asked otherwise.
+     *
+     * @param list<string> $types
+     */
     public function findByName(string $name, array $types, bool $publishedOnly = true): ?PostRecord
     {
         $status = $publishedOnly ? "AND post_status = 'publish'" : "AND post_status <> 'trash'";
@@ -148,6 +153,7 @@ final readonly class Posts
         return (int) $this->db->value("SELECT COUNT(DISTINCT p.ID) {$from}", $params);
     }
 
+    /** One page of the posts a filter reaches, newest first, title matches first for a search. */
     public function archive(PostFilter $filter, int $page, int $perPage): Page
     {
         [$from, $params] = $this->scope($filter);
@@ -202,6 +208,7 @@ final readonly class Posts
         return '%' . addcslashes($needle, '%_\\') . '%';
     }
 
+    /** One meta value of a post, or null when it has none. */
     public function meta(int $postId, string $key): ?string
     {
         $value = $this->db->value(
@@ -211,7 +218,11 @@ final readonly class Posts
         return $value === null ? null : (string) $value;
     }
 
-    /** @return list<array{0: int, 1: string}> term id and slug pairs, by name */
+    /**
+     * The post's terms in one taxonomy, as [term_id, slug] pairs.
+     *
+     * @return list<array{0: int, 1: string}> term id and slug pairs, by name
+     */
     public function terms(int $postId, string $taxonomy): array
     {
         $rows = $this->db->rows(
@@ -225,6 +236,7 @@ final readonly class Posts
         return array_map(static fn (array $row) => [(int) $row['term_id'], (string) $row['slug']], $rows);
     }
 
+    /** How many revisions the post has. */
     public function revisionCount(int $postId): int
     {
         return (int) $this->db->value(
@@ -354,6 +366,7 @@ final readonly class Posts
         );
     }
 
+    /** The slug of the post's first category, or null. */
     public function firstCategorySlug(int $postId): ?string
     {
         $slug = $this->db->value(

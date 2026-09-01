@@ -18,6 +18,8 @@ use Minn\Support\Html;
 final class TermLinks
 {
     /**
+     * Anchor tags for these terms joined by a separator, the way the reference prints a term list.
+     *
      * @param list<array{name: string, url: string}> $terms
      */
     public static function joined(array $terms, string $rel, string $sep): string

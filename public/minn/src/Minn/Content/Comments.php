@@ -15,12 +15,14 @@ final readonly class Comments
     {
     }
 
+    /** The comment with this id, or null. */
     public function find(int $id): ?CommentRecord
     {
         $row = $this->db->row("SELECT * FROM {$this->db->table('comments')} WHERE comment_ID = ? LIMIT 1", [$id]);
         return $row === null ? null : CommentRecord::fromRow($row);
     }
 
+    /** One meta value of a comment, or null when it has none. */
     public function meta(int $id, string $key): ?string
     {
         $value = $this->db->value(
@@ -30,6 +32,7 @@ final readonly class Comments
         return $value === null ? null : (string) $value;
     }
 
+    /** Adds a meta row; a second row with the same key is allowed, as the reference allows it. */
     public function addMeta(int $id, string $key, string $value): void
     {
         $this->db->execute("INSERT INTO {$this->db->table('commentmeta')} (comment_id, meta_key, meta_value) VALUES (?, ?, ?)", [$id, $key, $value]);
@@ -124,6 +127,7 @@ final readonly class Comments
         ) > 0;
     }
 
+    /** Whether this author, by email or by address, commented within the last so many seconds: the flood check. */
     public function flooding(string $email, string $address, int $seconds): bool
     {
         $since = gmdate('Y-m-d H:i:s', time() - $seconds);
@@ -159,7 +163,11 @@ final readonly class Comments
         ) !== null;
     }
 
-    /** @param array<string, mixed> $columns */
+    /**
+     * Inserts a row from column => value pairs and returns the new id.
+     *
+     * @param array<string, mixed> $columns
+     */
     public function insert(array $columns): int
     {
         $names = implode(', ', array_keys($columns));
@@ -167,7 +175,11 @@ final readonly class Comments
         return $this->db->insertId();
     }
 
-    /** @param array<string, mixed> $columns */
+    /**
+     * Sets the given columns on one comment.
+     *
+     * @param array<string, mixed> $columns
+     */
     public function update(int $id, array $columns): void
     {
         foreach ($columns as $column => $value) {
@@ -181,6 +193,7 @@ final readonly class Comments
         $this->db->execute("UPDATE {$this->db->table('comments')} SET comment_parent = ? WHERE comment_parent = ?", [$parent, $id]);
     }
 
+    /** Removes the comment and its meta; the post's count is the caller's to recount. */
     public function delete(int $id): void
     {
         $this->db->execute("DELETE FROM {$this->db->table('comments')} WHERE comment_ID = ?", [$id]);

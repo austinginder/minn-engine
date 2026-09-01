@@ -22,11 +22,13 @@ final readonly class PostFilter
     ) {
     }
 
+    /** Published posts of type post, nothing narrower. */
     public static function all(): self
     {
         return new self();
     }
 
+    /** A filter over these post types. */
     public static function types(string ...$types): self
     {
         return new self(types: $types === [] ? ['post'] : array_values($types));
@@ -38,21 +40,25 @@ final readonly class PostFilter
         return new self($this->types, $termTaxonomyId, $this->author, $this->from, $this->to, $this->search);
     }
 
+    /** The same filter narrowed to one author. */
     public function byAuthor(int $userId): self
     {
         return new self($this->types, $this->term, $userId, $this->from, $this->to, $this->search);
     }
 
+    /** The same filter narrowed to a date window. */
     public function between(string $from, string $to): self
     {
         return new self($this->types, $this->term, $this->author, $from, $to, $this->search);
     }
 
+    /** The same filter narrowed by a search string. */
     public function matching(string $search): self
     {
         return new self($this->types, $this->term, $this->author, $this->from, $this->to, $search);
     }
 
+    /** Whether both ends of the date window are set. */
     public function hasDates(): bool
     {
         return $this->from !== null && $this->to !== null;

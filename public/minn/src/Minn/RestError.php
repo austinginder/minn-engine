@@ -27,12 +27,17 @@ final class RestError extends RuntimeException
         parent::__construct($message);
     }
 
+    /** The reference's 404 for a route nothing answers. */
     public static function noRoute(): self
     {
         return new self('rest_no_route', 'No route was found matching the URL and request method.', 404);
     }
 
-    /** @param list<string> $params */
+    /**
+     * The reference's 400 for required parameters that did not arrive.
+     *
+     * @param list<string> $params
+     */
     public static function missingParams(array $params): self
     {
         return new self('rest_missing_callback_param', 'Missing parameter(s): ' . implode(', ', $params), 400, ['params' => $params]);
@@ -44,6 +49,7 @@ final class RestError extends RuntimeException
         return new self($code, $message, 500, bare: true);
     }
 
+    /** The error as the reference's JSON body: code, message, data. */
     public function payload(): array
     {
         return [

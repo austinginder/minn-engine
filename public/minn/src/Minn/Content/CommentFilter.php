@@ -36,6 +36,7 @@ final readonly class CommentFilter
     ) {
     }
 
+    /** No narrowing at all. */
     public static function all(): self
     {
         return new self();

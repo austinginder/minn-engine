@@ -224,7 +224,7 @@ $check('api docs: docs/api/ is current', is_array($docs) && ($docs['stale'] ?? t
 // one: name the branch, or pass the caller), and a constructor taking six
 // or more (take the two or three the class calls; Services makes the rest
 // cheap). Lower a ceiling when a class loses its last offender.
-$undocumentedCeiling = 933;
+$undocumentedCeiling = 723;
 $boolParamCeiling = 147;
 $wideConstructorCeiling = 47;
 $model = json_decode((string) file_get_contents(dirname(__DIR__) . '/contracts/api/minn.json'), true);

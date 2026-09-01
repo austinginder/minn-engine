@@ -13,6 +13,7 @@ final readonly class Site
     {
     }
 
+    /** One option's raw value, or null when it is unset. */
     public function option(string $name): ?string
     {
         return $this->db->option($name);
@@ -29,6 +30,7 @@ final readonly class Site
         $this->db->execute("UPDATE {$table} SET option_value = ? WHERE option_name = ?", [$value, $name]);
     }
 
+    /** Removes an option row. */
     public function deleteOption(string $name): void
     {
         $this->db->execute("DELETE FROM {$this->db->table('options')} WHERE option_name = ?", [$name]);

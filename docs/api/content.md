@@ -4,38 +4,38 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Autop`](#autop) | final class | 33 | Classic-content paragraphing: blank lines become paragraphs, single |
-| [`Blocks`](#blocks) | final class | 38 | The content pipeline's front door: block markup goes through the block |
-| [`CommentClasses`](#commentclasses) | final class | 24 | The class tokens a rendered comment carries: its type, its author, odd/even and thread alternation, depth, then the caller's extras. |
-| [`CommentFilter`](#commentfilter) | final readonly class | 38 | What a comment listing is narrowed to. Every field is optional; the id |
+| [`Autop`](#autop) | final class | 34 | Classic-content paragraphing: blank lines become paragraphs, single |
+| [`Blocks`](#blocks) | final class | 40 | The content pipeline's front door: block markup goes through the block |
+| [`CommentClasses`](#commentclasses) | final class | 26 | The class tokens a rendered comment carries: its type, its author, odd/even and thread alternation, depth, then the caller's extras. |
+| [`CommentFilter`](#commentfilter) | final readonly class | 39 | What a comment listing is narrowed to. Every field is optional; the id |
 | [`CommentModeration`](#commentmoderation) | final readonly class | 43 | Whether a comment may be stored and in what state: the duplicate and |
-| [`CommentRecord`](#commentrecord) | final readonly class | 98 | One row of the comments table, read by name: $comment->author, ->content, |
-| [`Comments`](#comments) | final readonly class | 243 | Reads and writes over the comments table. |
-| [`ContentScan`](#contentscan) | final class | 186 | What a site's stored content asks of the engine: shortcodes, block |
+| [`CommentRecord`](#commentrecord) | final readonly class | 114 | One row of the comments table, read by name: $comment->author, ->content, |
+| [`Comments`](#comments) | final readonly class | 256 | Reads and writes over the comments table. |
+| [`ContentScan`](#contentscan) | final class | 196 | What a site's stored content asks of the engine: shortcodes, block |
 | [`Excerpt`](#excerpt) | final class | 83 | The reference's generated excerpt, as captured from probe posts: |
-| [`Inventory`](#inventory) | final readonly class | 231 | Plugins, themes, must-use plugins, and drop-ins as they sit on disk. |
+| [`Inventory`](#inventory) | final readonly class | 237 | Plugins, themes, must-use plugins, and drop-ins as they sit on disk. |
 | [`MenuItem`](#menuitem) | final readonly class | 22 | One classic nav_menu_item, fields resolved from the post, its |
-| [`Menus`](#menus) | final readonly class | 464 | Classic nav_menu terms and nav_menu_item posts. The front uses these |
-| [`MoreTag`](#moretag) | final class | 18 | The `<!--more-->` marker that splits a post into the part a listing shows |
-| [`Page`](#page) | final readonly class | 41 | One page of a listing: the rows on it and how many rows the whole |
+| [`Menus`](#menus) | final readonly class | 485 | Classic nav_menu terms and nav_menu_item posts. The front uses these |
+| [`MoreTag`](#moretag) | final class | 20 | The `<!--more-->` marker that splits a post into the part a listing shows |
+| [`Page`](#page) | final readonly class | 49 | One page of a listing: the rows on it and how many rows the whole |
 | [`PasswordGate`](#passwordgate) | final class | 34 | A password-protected post on the front end: its body is the password |
-| [`PluginState`](#pluginstate) | final readonly class | 64 | Switching plugins on and off, the way the reference records it: a |
-| [`PostClasses`](#postclasses) | final class | 53 | The class list a post carries on its article element, in the reference's |
-| [`PostFilter`](#postfilter) | final readonly class | 49 | What a listing is narrowed to. Every field is optional and the object is |
-| [`PostRecord`](#postrecord) | final readonly class | 131 | One row of the posts table, read by name. The columns keep their |
-| [`PostStatus`](#poststatus) | enum | 37 | The statuses a post row can hold; the value is the column's own spelling. |
-| [`PostWriter`](#postwriter) | final readonly class | 287 | Every write to the posts table and its satellites: rows, meta, term |
-| [`Posts`](#posts) | final readonly class | 356 | Reads over the posts table. A single post comes back as a PostRecord and |
-| [`Reader`](#reader) | final class | 49 | Who is reading this request: their user id, whether they may read |
-| [`Revisions`](#revisions) | final readonly class | 72 | Revision rows: the plain snapshots and the per-author autosave slots. |
-| [`Site`](#site) | final readonly class | 52 | Site-wide options and the site's clock. |
-| [`Slug`](#slug) | final class | 55 |  |
-| [`TermLinks`](#termlinks) | final class | 37 | A post's terms rendered as links, in the two shapes the reference |
-| [`TermRecord`](#termrecord) | final readonly class | 73 | One term with its taxonomy row, read by name: $term->name, ->slug, |
-| [`Terms`](#terms) | final readonly class | 132 |  |
-| [`Texturize`](#texturize) | final class | 49 | The texturize subset the reference applies to rendered text: straight |
-| [`UserRecord`](#userrecord) | final readonly class | 79 | One row of the users table, read by name. Columns keep their WordPress |
-| [`Users`](#users) | final readonly class | 183 |  |
+| [`PluginState`](#pluginstate) | final readonly class | 66 | Switching plugins on and off, the way the reference records it: a |
+| [`PostClasses`](#postclasses) | final class | 55 | The class list a post carries on its article element, in the reference's |
+| [`PostFilter`](#postfilter) | final readonly class | 55 | What a listing is narrowed to. Every field is optional and the object is |
+| [`PostRecord`](#postrecord) | final readonly class | 156 | One row of the posts table, read by name. The columns keep their |
+| [`PostStatus`](#poststatus) | enum | 42 | The statuses a post row can hold; the value is the column's own spelling. |
+| [`PostWriter`](#postwriter) | final readonly class | 306 | Every write to the posts table and its satellites: rows, meta, term |
+| [`Posts`](#posts) | final readonly class | 369 | Reads over the posts table. A single post comes back as a PostRecord and |
+| [`Reader`](#reader) | final class | 54 | Who is reading this request: their user id, whether they may read |
+| [`Revisions`](#revisions) | final readonly class | 76 | Revision rows: the plain snapshots and the per-author autosave slots. |
+| [`Site`](#site) | final readonly class | 54 | Site-wide options and the site's clock. |
+| [`Slug`](#slug) | final class | 56 |  |
+| [`TermLinks`](#termlinks) | final class | 39 | A post's terms rendered as links, in the two shapes the reference |
+| [`TermRecord`](#termrecord) | final readonly class | 88 | One term with its taxonomy row, read by name: $term->name, ->slug, |
+| [`Terms`](#terms) | final readonly class | 137 |  |
+| [`Texturize`](#texturize) | final class | 51 | The texturize subset the reference applies to rendered text: straight |
+| [`UserRecord`](#userrecord) | final readonly class | 96 | One row of the users table, read by name. Columns keep their WordPress |
+| [`Users`](#users) | final readonly class | 202 |  |
 
 ## Autop
 
@@ -48,6 +48,8 @@ The behaviour is pinned by the api suite row for row.
 - const `BLOCKS` = `'(?:table|thead|tfoot|caption|col|colgroup|tbody|tr|td|th|div|dl|dd|dt|ul|ol|li|pre|form|map|area|blockquote|address|style|p|h[1-6]|hr|fieldset|legend|section|article|aside|hgroup|header|footer|nav|figure|figcaption|details|menu|summary)'`
 
 ### static `apply(string $text, bool $lineBreaks = true): string`
+
+The classic paragraph rules: a blank line makes a paragraph, a single newline a line break when asked.
 
 
 ## Blocks
@@ -62,7 +64,11 @@ Used by: `Minn\Admin\RenderController`, `Minn\Blocks\Dynamic\Theme\Comments`, `M
 
 ### static `render(string $raw): string`
 
+Post content as HTML: blocks through the renderer, classic content through the paragraph rules.
+
 ### static `renderer(): Minn\Blocks\Renderer`
+
+The shared block renderer, built once from the shared database door.
 
 ### static `paragraphs(string $raw): string`
 
@@ -77,6 +83,8 @@ single newlines. Shared by classic post content and comment text.
 The class tokens a rendered comment carries: its type, its author, odd/even and thread alternation, depth, then the caller's extras.
 
 ### static `build(string $type, ?string $authorClass, bool $byPostAuthor, int $alt, int $depth, int $threadAlt, array $extra): array`
+
+The class list a comment's list item carries, in the reference's order.
 
 - `@param list<string> $extra`
 - `@return list<string>`
@@ -117,6 +125,8 @@ __construct(array $post = array ( ), array $include = array ( ), array $exclude 
 - readonly `string $before`
 
 ### static `all(): self`
+
+No narrowing at all.
 
 ### `isPlainType(): bool`
 
@@ -179,17 +189,27 @@ Used by: `Minn\Admin\Notifications`, `Minn\Blocks\Context`, `Minn\Blocks\Dynamic
 
 ### static `fromRow(array $row): self`
 
+A record from a comments row; a missing column reads as empty.
+
 - `@param array<string, mixed> $row`
 
 ### static `fromRows(array $rows): array`
+
+A record for every row, in order.
 
 - `@param list<array<string, mixed>> $rows @return list<self>`
 
 ### `row(): array`
 
+The stored row, for the writers and shapers that still spell columns.
+
 ### `isApproved(): bool`
 
+Approved, and so public.
+
 ### `isPending(): bool`
+
+Held for moderation.
 
 ### `isComment(): bool`
 
@@ -197,13 +217,23 @@ A plain comment: the type column is '' on old rows and 'comment' on new ones.
 
 ### `column(string $name): mixed`
 
+One stored column by its database name, or null.
+
 ### `offsetExists(mixed $offset): bool`
+
+The migration bridge: the record answers to its column names the way the row did.
 
 ### `offsetGet(mixed $offset): mixed`
 
+The migration bridge: one column by its stored name, or null.
+
 ### `offsetSet(mixed $offset, mixed $value): never`
 
+Records are read-only; writes go through the repository.
+
 ### `offsetUnset(mixed $offset): never`
+
+Records are read-only; writes go through the repository.
 
 
 ## Comments
@@ -223,9 +253,15 @@ __construct(Minn\Db $db)
 
 ### `find(int $id): ?Minn\Content\CommentRecord`
 
+The comment with this id, or null.
+
 ### `meta(int $id, string $key): ?string`
 
+One meta value of a comment, or null when it has none.
+
 ### `addMeta(int $id, string $key, string $value): void`
+
+Adds a meta row; a second row with the same key is allowed, as the reference allows it.
 
 ### `page(array $approvedTokens, int $page, int $perPage, bool $publicPostsOnly = false, ?Minn\Content\CommentFilter $filter = NULL): array`
 
@@ -246,6 +282,8 @@ Whether this author email has any approved comment, the previously-approved gate
 
 ### `flooding(string $email, string $address, int $seconds): bool`
 
+Whether this author, by email or by address, commented within the last so many seconds: the flood check.
+
 ### `pendingCounts(array $postIds): array`
 
 Held comments per post, for the ids given (a post without any reads 0).
@@ -256,9 +294,13 @@ True when this name and email already have an approved comment.
 
 ### `insert(array $columns): int`
 
+Inserts a row from column => value pairs and returns the new id.
+
 - `@param array<string, mixed> $columns`
 
 ### `update(int $id, array $columns): void`
+
+Sets the given columns on one comment.
 
 - `@param array<string, mixed> $columns`
 
@@ -267,6 +309,8 @@ True when this name and email already have an approved comment.
 A deleted comment's replies move up to its parent.
 
 ### `delete(int $id): void`
+
+Removes the comment and its meta; the post's count is the caller's to recount.
 
 ### `recount(int $postId): void`
 
@@ -291,7 +335,7 @@ stored row; the approval shorthands hold/approve become the stored 0/1.
 - `@param array<string, mixed> $current`
 - `@return array<string, mixed>`
 
-Internals: `idFilter()` (private, line 93)
+Internals: `idFilter()` (private, line 96)
 
 
 ## ContentScan
@@ -326,6 +370,8 @@ namespace is core/, matching the parser.
 
 ### static `extraTables(array $tables, string $prefix): array`
 
+The tables under the prefix that are not the reference's own.
+
 - `@param list<string> $tables names from SHOW TABLES`
 - `@return list<string> bare names after stripping the prefix`
 
@@ -340,19 +386,25 @@ those two stems collapse to one family.
 
 ### static `extraTypes(array $types): array`
 
+The post types in use that the reference does not register itself.
+
 - `@param list<string> $types`
 - `@return list<string>`
 
 ### static `thirdParty(array $named): array`
+
+The block names that are not core/*, with their counts.
 
 - `@param array<string, int> $named`
 - `@return array<string, int>`
 
 ### static `listed(array $names, int $cap = 40): string`
 
+Names sorted and comma-separated, cut with a count past the cap.
+
 - `@param list<string> $names`
 
-Internals: `walk()` (private, line 190)
+Internals: `walk()` (private, line 200)
 
 
 ## Excerpt
@@ -411,13 +463,19 @@ Regular plugins, then must-use, then drop-ins, each group sorted by name.
 
 ### `mustUse(): array`
 
+The mu-plugins folder's PHP files, each with its header.
+
 - `@return list<array<string, mixed>>`
 
 ### `dropins(): array`
 
+The drop-in files present in wp-content.
+
 - `@return list<array<string, mixed>>`
 
 ### `themes(): array`
+
+Every theme folder with its style.css header.
 
 - `@return list<array<string, mixed>>`
 
@@ -428,7 +486,7 @@ Every regular plugin's main file: relative "dir/file.php" (or
 
 - `@return array<string, string>`
 
-Internals: `regularPlugins()` (private, line 139), `mainPluginFile()` (private, line 214), `item()` (private, line 234)
+Internals: `regularPlugins()` (private, line 145), `mainPluginFile()` (private, line 220), `item()` (private, line 240)
 
 
 ## MenuItem
@@ -479,13 +537,21 @@ __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Content\Terms $terms, M
 
 ### `all(): array`
 
+Every nav_menu term.
+
 - `@return list<TermRecord>`
 
 ### `find(int $id): ?Minn\Content\TermRecord`
 
+One menu by id, or null.
+
 ### `idByName(string $name): ?int`
 
+The id of the menu with exactly this name, or null.
+
 ### `items(?int $menuId = NULL): array`
+
+The items of one menu, or of every menu, in menu order.
 
 - `@return list<MenuItem>`
 
@@ -498,7 +564,11 @@ site has no nav_menu terms with items.
 
 ### `toBlock(Minn\Content\MenuItem $item): Minn\Blocks\Block`
 
+A menu item as the navigation block it renders through.
+
 ### `autoAdd(int $menuId): bool`
+
+Whether this menu auto-adds new top-level pages, from the nav_menu_options blob.
 
 ### `locationsFor(int $menuId): array`
 
@@ -508,9 +578,13 @@ Location slugs from the active theme's theme_mods that point at this menu.
 
 ### `themeLocations(): array`
 
+The theme's registered locations mapped to menu ids, from theme_mods.
+
 - `@return array<string, int> location => menu term id`
 
 ### `findItem(int $id): ?Minn\Content\MenuItem`
+
+One nav_menu_item by id, or null when it is missing or trashed.
 
 ### `refuseName(string $name, int $keeping = 0): ?Minn\Runtime\Refusal`
 
@@ -520,9 +594,15 @@ so a caller can point at the menu in the way.
 
 ### `createMenu(string $name, string $description = ''): int`
 
+Creates a nav_menu term and returns its id.
+
 ### `updateMenu(int $id, ?string $name, ?string $description): void`
 
+Renames or re-describes a menu; null keeps the current value.
+
 ### `deleteMenu(int $id): void`
+
+Deletes a menu and every item in it.
 
 ### `createItem(array $fields): int`
 
@@ -545,11 +625,15 @@ authorId: int
 
 ### `updateItem(int $id, array $fields): void`
 
+Applies the given fields to one item, stored the way the reference stores them.
+
 - `@param array<string, mixed> $fields`
 
 ### `deleteItem(int $id): void`
 
-Internals: `hydrate()` (private, line 173), `meta()` (private, line 230), `menuIdOf()` (private, line 243), `classList()` (private, line 255), `xfnList()` (private, line 265), `writeMeta()` (private, line 453), `writer()` (private, line 467), `site()` (private, line 475)
+Hard-deletes one item.
+
+Internals: `hydrate()` (private, line 185), `meta()` (private, line 242), `menuIdOf()` (private, line 255), `classList()` (private, line 267), `xfnList()` (private, line 277), `writeMeta()` (private, line 474), `writer()` (private, line 488), `site()` (private, line 496)
 
 
 ## MoreTag
@@ -562,6 +646,8 @@ text; a second marker further down is ordinary content and stays where it
 is, as does the `<!--noteaser-->` flag that follows some of them.
 
 ### static `split(string $content): array`
+
+The content on either side of a more tag, with the tag's own text.
 
 - `@return array{main: string, extended: string, more_text: string}`
 
@@ -585,15 +671,25 @@ __construct(array $posts, int $total)
 
 ### static `empty(): self`
 
+No rows and a total of zero.
+
 ### `isEmpty(): bool`
+
+Whether the page holds no rows.
 
 ### `count(): int`
 
+How many rows are on this page.
+
 ### `ids(): array`
+
+The ids of the rows on this page.
 
 - `@return list<int>`
 
 ### `totalPages(int $perPage): int`
+
+How many pages the whole listing makes at this page size.
 
 ### `withPosts(array $posts): self`
 
@@ -651,9 +747,13 @@ folder there as active); only a pure extension uses the engine's list.
 
 ### `isActive(Minn\Extension\Manifest|string $plugin): bool`
 
+Whether a plugin, by file, or a Minn extension is active.
+
 ### `setActive(Minn\Extension\Manifest|string $plugin, bool $active): void`
 
-Internals: `setFileActive()` (private, line 72)
+Records a plugin or an extension as active or not, in the option each kind uses.
+
+Internals: `setFileActive()` (private, line 74)
 
 
 ## PostClasses
@@ -666,6 +766,8 @@ thumbnail, sticky, hentry, then one class per term of every public
 taxonomy (post_tag reads as "tag-", post_format is the format above).
 
 ### static `build(array $post, array $extra, ?string $format, bool $thumbnail, bool $sticky, bool $passwordRequired, bool $hasPassword, array $terms): array`
+
+The class list a post carries on its article element, in the reference's order.
 
 - `@param list<string> $extra`
 - `@param list<array{taxonomy: string, slug: string, term_id: int}> $terms`
@@ -700,7 +802,11 @@ __construct(array $types = array (   0 => 'post', ), ?int $term = NULL, ?int $au
 
 ### static `all(): self`
 
+Published posts of type post, nothing narrower.
+
 ### static `types(string ...$types): self`
+
+A filter over these post types.
 
 ### `inTerm(int $termTaxonomyId): self`
 
@@ -708,11 +814,19 @@ Posts linked to a term, by its term_taxonomy_id.
 
 ### `byAuthor(int $userId): self`
 
+The same filter narrowed to one author.
+
 ### `between(string $from, string $to): self`
+
+The same filter narrowed to a date window.
 
 ### `matching(string $search): self`
 
+The same filter narrowed by a search string.
+
 ### `hasDates(): bool`
+
+Whether both ends of the date window are set.
 
 
 ## PostRecord
@@ -754,13 +868,19 @@ Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\
 
 ### static `fromRow(array $row): self`
 
+A record from a posts row; a missing column reads as empty.
+
 - `@param array<string, mixed> $row a posts-table row, joined columns welcome`
 
 ### static `fromRows(array $rows): array`
 
+A record for every row, in order.
+
 - `@param list<array<string, mixed>> $rows @return list<self>`
 
 ### `row(): array`
+
+The stored row, for the writers and shapers that still spell columns.
 
 The row as the table holds it, joined columns and all.
 
@@ -770,29 +890,49 @@ The status as an enum case, or null for a status only a plugin knows.
 
 ### `isPublished(): bool`
 
+Published, and so public.
+
 ### `isLive(): bool`
 
 Publish, future or private: it counts, it links, it is not a draft.
 
 ### `isTrashed(): bool`
 
+In the trash.
+
 ### `isProtected(): bool`
+
+Behind a password.
 
 ### `isPage(): bool`
 
+A page.
+
 ### `isAttachment(): bool`
 
+An attachment.
+
 ### `column(string $name): mixed`
+
+One stored column by its database name, or null.
 
 A joined column, or any column by its table name.
 
 ### `offsetExists(mixed $offset): bool`
 
+The migration bridge: the record answers to its column names the way the row did.
+
 ### `offsetGet(mixed $offset): mixed`
+
+The migration bridge: one column by its stored name, or null.
 
 ### `offsetSet(mixed $offset, mixed $value): never`
 
+Records are read-only; writes go through the repository.
+
 ### `offsetUnset(mixed $offset): never`
+
+Records are read-only; writes go through the repository.
 
 
 ## PostStatus
@@ -815,7 +955,11 @@ Publish, future and private are live: they count, they link, they are not drafts
 
 ### `isPublic(): bool`
 
+Whether the status shows the post to anonymous readers.
+
 ### static `values(array $statuses): array`
+
+The stored strings of these statuses.
 
 - `@param list<self> $statuses @return list<string> the column values, for a query`
 
@@ -837,13 +981,19 @@ __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Content\Site $site)
 
 ### `insert(array $columns): int`
 
+Inserts a posts row from column => value pairs and returns the new id.
+
 - `@param array<string, mixed> $columns`
 
 ### `update(int $id, array $columns): void`
 
+Sets the given columns on one post; nothing happens for none.
+
 - `@param array<string, mixed> $columns`
 
 ### `setStatus(int $id, string $status): void`
+
+Changes one post's status.
 
 ### `setType(int $id, string $type): bool`
 
@@ -851,7 +1001,11 @@ Moves a post to another type, leaving it alone when it is already there.
 
 ### `setMeta(int $id, string $key, string $value): void`
 
+Sets one meta value, inserting the row when the key is new.
+
 ### `deleteMeta(int $id, string $key): void`
+
+Removes every meta row with this key from a post.
 
 ### `uniqueSlug(string $desired, int $excludeId): string`
 
@@ -863,15 +1017,21 @@ Replaces a post's links in one taxonomy and refreshes that taxonomy's counts.
 
 ### `taxonomiesOf(int $id): array`
 
+The taxonomies a post has terms in.
+
 - `@return list<string> the distinct taxonomies a post has links in`
 
 ### `recountTaxonomiesOf(int $id): void`
+
+Recounts every term the post is in, after a status change.
 
 ### `recount(string $taxonomy): void`
 
 term_taxonomy.count is stored and trusted on read, so every status change refreshes it.
 
 ### `isSticky(int $id): bool`
+
+Whether the post is in the sticky_posts option.
 
 ### `setSticky(int $id, bool $on): void`
 
@@ -902,7 +1062,11 @@ A deleted post's children (pages, and every attachment) move up to its parent.
 
 ### `reassignAuthor(int $from, int $to): void`
 
+Moves every post of one author to another.
+
 ### `destroy(int $id): void`
+
+Hard-deletes a post with its revisions and its meta.
 
 
 ## Posts
@@ -921,7 +1085,11 @@ __construct(Minn\Db $db)
 
 ### `find(int $id): ?Minn\Content\PostRecord`
 
+The post with this id, or null.
+
 ### `findByName(string $name, array $types, bool $publishedOnly = true): ?Minn\Content\PostRecord`
+
+The post with this slug among the given types; published only unless asked otherwise.
 
 - `@param list<string> $types`
 
@@ -962,13 +1130,21 @@ How many posts a filter reaches, without fetching any.
 
 ### `archive(Minn\Content\PostFilter $filter, int $page, int $perPage): Minn\Content\Page`
 
+One page of the posts a filter reaches, newest first, title matches first for a search.
+
 ### `meta(int $postId, string $key): ?string`
 
+One meta value of a post, or null when it has none.
+
 ### `terms(int $postId, string $taxonomy): array`
+
+The post's terms in one taxonomy, as [term_id, slug] pairs.
 
 - `@return list<array{0: int, 1: string}> term id and slug pairs, by name`
 
 ### `revisionCount(int $postId): int`
+
+How many revisions the post has.
 
 ### `latestRevisionId(int $postId): int`
 
@@ -1010,7 +1186,9 @@ Reusable blocks (wp_block rows) in one status, newest first, capped at 100.
 
 ### `firstCategorySlug(int $postId): ?string`
 
-Internals: `record()` (private, line 21), `scope()` (private, line 174), `like()` (private, line 200)
+The slug of the post's first category, or null.
+
+Internals: `record()` (private, line 21), `scope()` (private, line 180), `like()` (private, line 206)
 
 
 ## Reader
@@ -1038,13 +1216,23 @@ __construct(int $userId, bool $readsPrivatePosts, bool $readsPrivatePages, Closu
 
 ### static `anonymous(string $postPassword = ''): self`
 
+The reader who is nobody: no session, no private posts, only the post password they typed.
+
 ### static `set(self $reader): void`
+
+Makes this reader the current one for the request.
 
 ### static `current(): self`
 
+The request's reader, anonymous until one is set.
+
 ### `loggedIn(): bool`
 
+Whether the reader has a session.
+
 ### `canEdit(int $postId): bool`
+
+Whether this reader may edit a given post.
 
 ### `listableStatuses(string $type = 'post'): array`
 
@@ -1068,6 +1256,8 @@ __construct(Minn\Db $db, Minn\Content\PostWriter $writer, Minn\Content\Site $sit
 
 ### `of(int $parentId, bool $autosaves): array`
 
+The revisions, or the autosaves, of a post, newest first, as rows.
+
 - `@return list<array> newest first`
 
 ### `saveAutosave(int $parentId, int $userId, string $title, string $content, string $excerpt): int`
@@ -1090,11 +1280,15 @@ __construct(Minn\Db $db)
 
 ### `option(string $name): ?string`
 
+One option's raw value, or null when it is unset.
+
 ### `setOption(string $name, string $value): void`
 
 Writes an option, inserting it as autoloaded when it does not exist.
 
 ### `deleteOption(string $name): void`
+
+Removes an option row.
 
 ### `gmtOffset(): int`
 
@@ -1132,6 +1326,8 @@ leaving a dash hanging off the end.
 
 ### static `dashes(string $title, bool $forSave, Closure $utf8Encode): string`
 
+The reference's dash form of a title: tags and marks stripped, spaces to dashes, and the save-time rules when saving.
+
 
 ## TermLinks
 
@@ -1147,6 +1343,8 @@ filters around the result.
 
 ### static `joined(array $terms, string $rel, string $sep): string`
 
+Anchor tags for these terms joined by a separator, the way the reference prints a term list.
+
 - `@param list<array{name: string, url: string}> $terms`
 
 ### static `categories(array $categories, string $separator): string`
@@ -1156,7 +1354,7 @@ a joined run otherwise. Both carry rel="category tag".
 
 - `@param list<array{name: string, url: string}> $categories`
 
-Internals: `anchor()` (private, line 50)
+Internals: `anchor()` (private, line 52)
 
 
 ## TermRecord
@@ -1181,25 +1379,43 @@ Used by: `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\TagCloud`, `Minn
 
 ### static `fromRow(array $row): self`
 
+A record from a joined terms row; a missing column reads as empty.
+
 - `@param array<string, mixed> $row a terms row joined with term_taxonomy, whatever columns it carries`
 
 ### static `fromRows(array $rows): array`
+
+A record for every row, in order.
 
 - `@param list<array<string, mixed>> $rows @return list<self>`
 
 ### `row(): array`
 
+The stored row, for the writers and shapers that still spell columns.
+
 ### `hasParent(): bool`
+
+Whether the term sits under another.
 
 ### `column(string $name): mixed`
 
+One stored column by its database name, or null.
+
 ### `offsetExists(mixed $offset): bool`
+
+The migration bridge: the record answers to its column names the way the row did.
 
 ### `offsetGet(mixed $offset): mixed`
 
+The migration bridge: one column by its stored name, or null.
+
 ### `offsetSet(mixed $offset, mixed $value): never`
 
+Records are read-only; writes go through the repository.
+
 ### `offsetUnset(mixed $offset): never`
+
+Records are read-only; writes go through the repository.
 
 
 ## Terms
@@ -1219,11 +1435,15 @@ A term joined with its taxonomy row: term_id, name, slug, term_taxonomy_id, pare
 
 ### `find(string $taxonomy, int $termId): ?Minn\Content\TermRecord`
 
+One term in a taxonomy, or null.
+
 ### `row(int $termId, string $taxonomy): ?Minn\Content\TermRecord`
 
 The row shape the term controllers work with, including term_taxonomy_id.
 
 ### `idByName(string $name, string $taxonomy): ?int`
+
+The id of the term with exactly this name in a taxonomy, or null.
 
 ### `uniqueSlug(string $base, string $taxonomy, int $skipId = 0): string`
 
@@ -1231,9 +1451,15 @@ A slug unique within the taxonomy: base, -2, -3 on collision.
 
 ### `create(string $name, string $slug, string $taxonomy, string $description, int $parent): int`
 
+Inserts a term and its taxonomy row and returns the term id.
+
 ### `rename(int $termId, string $name, string $slug): void`
 
+Changes a term's name and slug.
+
 ### `describe(int $termId, string $taxonomy, string $description, int $parent): void`
+
+Changes a term's description and parent within one taxonomy.
 
 ### `delete(Minn\Content\TermRecord $term, bool $hierarchical): void`
 
@@ -1261,7 +1487,11 @@ Used by: `Minn\Admin\ActivityFeed`, `Minn\Admin\Format`, `Minn\Admin\Notificatio
 
 ### static `html(string $html): string`
 
+Curly quotes, dashes, and ellipses in the text of HTML, leaving tags and pre, code, kbd, style, and script alone.
+
 ### static `text(string $text): string`
+
+The same substitutions on a plain string with no tags.
 
 
 ## UserRecord
@@ -1288,13 +1518,19 @@ Used by: `Minn\Auth\AuthCookies`, `Minn\Auth\Authenticated`, `Minn\Auth\Authenti
 
 ### static `fromRow(array $row): self`
 
+A record from a users row; a missing column reads as empty.
+
 - `@param array<string, mixed> $row a users-table row, joined columns welcome`
 
 ### static `fromRows(array $rows): array`
 
+A record for every row, in order.
+
 - `@param list<array<string, mixed>> $rows @return list<self>`
 
 ### `row(): array`
+
+The stored row, for the writers and shapers that still spell columns.
 
 The row as the table holds it.
 
@@ -1304,13 +1540,23 @@ The name shown for this person: the display name, or the login when none was set
 
 ### `column(string $name): mixed`
 
+One stored column by its database name, or null.
+
 ### `offsetExists(mixed $offset): bool`
+
+The migration bridge: the record answers to its column names the way the row did.
 
 ### `offsetGet(mixed $offset): mixed`
 
+The migration bridge: one column by its stored name, or null.
+
 ### `offsetSet(mixed $offset, mixed $value): never`
 
+Records are read-only; writes go through the repository.
+
 ### `offsetUnset(mixed $offset): never`
+
+Records are read-only; writes go through the repository.
 
 
 ## Users
@@ -1326,11 +1572,19 @@ __construct(Minn\Db $db)
 
 ### `find(int $id): ?Minn\Content\UserRecord`
 
+The user with this id, or null.
+
 ### `findByLogin(string $login): ?Minn\Content\UserRecord`
+
+The user with this login, or null.
 
 ### `findByEmail(string $email): ?Minn\Content\UserRecord`
 
+The user with this email, or null.
+
 ### `findBySlug(string $nicename): ?Minn\Content\UserRecord`
+
+The user with this nicename, or null.
 
 ### `uniqueNicename(string $base, int $skipId = 0): string`
 
@@ -1358,9 +1612,13 @@ locale?: string,
 
 ### `insert(array $columns): int`
 
+Inserts a users row from column => value pairs and returns the new id.
+
 - `@param array<string, mixed> $columns`
 
 ### `update(int $id, array $columns): void`
+
+Sets the given columns on one user.
 
 - `@param array<string, mixed> $columns`
 
@@ -1376,17 +1634,25 @@ User ids in login order, optionally the first N. @return list<int>
 
 ### `deleteAllMeta(int $userId): void`
 
+Removes every meta row of a user.
+
 ### `setPassword(int $userId, string $hash): void`
 
 Stores a new password hash and clears any pending reset key.
 
 ### `count(): int`
 
+How many users the site has.
+
 ### `registeredAfter(string $since, int $limit): array`
+
+The newest users registered since a site-local time, up to the limit.
 
 - `@return list<array> the newest registrations after a site-local timestamp`
 
 ### `deleteMeta(int $userId, string $key): void`
+
+Removes one meta key from a user.
 
 ### `meta(int $userId, string $key): ?string`
 

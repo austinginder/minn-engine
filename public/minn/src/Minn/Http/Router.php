@@ -24,6 +24,7 @@ final class Router
     {
     }
 
+    /** Registers every #[Route] method of the given handlers; returns the router for chaining. */
     public function register(object ...$handlers): self
     {
         foreach ($handlers as $handler) {

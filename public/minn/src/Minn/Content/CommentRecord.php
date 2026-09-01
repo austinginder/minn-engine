@@ -37,7 +37,11 @@ final readonly class CommentRecord implements ArrayAccess
     ) {
     }
 
-    /** @param array<string, mixed> $row */
+    /**
+     * A record from a comments row; a missing column reads as empty.
+     *
+     * @param array<string, mixed> $row
+     */
     public static function fromRow(array $row): self
     {
         return new self(
@@ -60,22 +64,29 @@ final readonly class CommentRecord implements ArrayAccess
         );
     }
 
-    /** @param list<array<string, mixed>> $rows @return list<self> */
+    /**
+     * A record for every row, in order.
+     *
+     * @param list<array<string, mixed>> $rows @return list<self>
+     */
     public static function fromRows(array $rows): array
     {
         return array_map(self::fromRow(...), $rows);
     }
 
+    /** The stored row, for the writers and shapers that still spell columns. */
     public function row(): array
     {
         return $this->row;
     }
 
+    /** Approved, and so public. */
     public function isApproved(): bool
     {
         return $this->approved === '1';
     }
 
+    /** Held for moderation. */
     public function isPending(): bool
     {
         return $this->approved === '0';
@@ -87,26 +98,31 @@ final readonly class CommentRecord implements ArrayAccess
         return $this->type === '' || $this->type === 'comment';
     }
 
+    /** One stored column by its database name, or null. */
     public function column(string $name): mixed
     {
         return $this->row[$name] ?? null;
     }
 
+    /** The migration bridge: the record answers to its column names the way the row did. */
     public function offsetExists(mixed $offset): bool
     {
         return isset($this->row[$offset]);
     }
 
+    /** The migration bridge: one column by its stored name, or null. */
     public function offsetGet(mixed $offset): mixed
     {
         return $this->row[$offset] ?? null;
     }
 
+    /** Records are read-only; writes go through the repository. */
     public function offsetSet(mixed $offset, mixed $value): never
     {
         throw new LogicException('A CommentRecord is read-only; write through Comments.');
     }
 
+    /** Records are read-only; writes go through the repository. */
     public function offsetUnset(mixed $offset): never
     {
         throw new LogicException('A CommentRecord is read-only; write through Comments.');

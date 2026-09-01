@@ -16,7 +16,11 @@ final readonly class Revisions
     ) {
     }
 
-    /** @return list<array> newest first */
+    /**
+     * The revisions, or the autosaves, of a post, newest first, as rows.
+     *
+     * @return list<array> newest first
+     */
     public function of(int $parentId, bool $autosaves): array
     {
         $comparison = $autosaves ? 'LIKE' : 'NOT LIKE';

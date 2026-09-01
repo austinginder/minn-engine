@@ -16,6 +16,7 @@ enum Method: string
     /** For a route that accepts every method and sorts them out itself. */
     case Any = '*';
 
+    /** The verb for a name, GET when the name is unknown. */
     public static function fromName(string $name): self
     {
         return self::tryFrom(strtoupper($name)) ?? self::Get;

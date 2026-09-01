@@ -15,6 +15,7 @@ final class Blocks
 {
     private static ?Renderer $renderer = null;
 
+    /** Post content as HTML: blocks through the renderer, classic content through the paragraph rules. */
     public static function render(string $raw): string
     {
         if (str_contains($raw, '<!-- wp:')) {
@@ -27,6 +28,7 @@ final class Blocks
         return (string) preg_replace('#</p>(?!\n)#', "</p>\n", self::renderer()->render($raw));
     }
 
+    /** The shared block renderer, built once from the shared database door. */
     public static function renderer(): Renderer
     {
         return self::$renderer ??= Renderer::forDb(Db::shared());

@@ -24,6 +24,7 @@ final readonly class Route
     ) {
     }
 
+    /** The pattern as a regular expression with named captures. */
     public function regex(): string
     {
         $parts = preg_split('/\{(\w+(?:\*|:[^}]+)?)\}/', $this->pattern, -1, PREG_SPLIT_DELIM_CAPTURE);

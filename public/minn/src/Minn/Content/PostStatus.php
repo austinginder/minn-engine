@@ -31,12 +31,17 @@ enum PostStatus: string
         };
     }
 
+    /** Whether the status shows the post to anonymous readers. */
     public function isPublic(): bool
     {
         return $this === self::Publish;
     }
 
-    /** @param list<self> $statuses @return list<string> the column values, for a query */
+    /**
+     * The stored strings of these statuses.
+     *
+     * @param list<self> $statuses @return list<string> the column values, for a query
+     */
     public static function values(array $statuses): array
     {
         return array_map(static fn (self $status) => $status->value, $statuses);

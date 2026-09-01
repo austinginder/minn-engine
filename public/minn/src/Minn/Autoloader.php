@@ -7,6 +7,7 @@ namespace Minn;
 /** PSR-4 for the Minn namespace: Minn\Http\Request lives at src/Minn/Http/Request.php. */
 final class Autoloader
 {
+    /** Registers the PSR-4 loader for the Minn namespace. */
     public static function register(): void
     {
         spl_autoload_register(static function (string $class): void {

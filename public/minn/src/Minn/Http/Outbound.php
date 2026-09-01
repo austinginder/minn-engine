@@ -22,19 +22,31 @@ final readonly class Outbound
     ) {
     }
 
-    /** @param list<string> $headers "Name: value" lines */
+    /**
+     * A GET.
+     *
+     * @param list<string> $headers "Name: value" lines
+     */
     public static function get(string $url, array $headers = [], float $timeout = 5.0): self
     {
         return new self('GET', $url, $headers, timeout: $timeout);
     }
 
-    /** @param list<string> $headers "Name: value" lines */
+    /**
+     * A POST with an optional body.
+     *
+     * @param list<string> $headers "Name: value" lines
+     */
     public static function post(string $url, ?string $body = null, array $headers = [], float $timeout = 5.0): self
     {
         return new self('POST', $url, $headers, $body, $timeout);
     }
 
-    /** @param list<string> $headers "Name: value" lines */
+    /**
+     * A HEAD.
+     *
+     * @param list<string> $headers "Name: value" lines
+     */
     public static function head(string $url, array $headers = [], float $timeout = 5.0): self
     {
         return new self('HEAD', $url, $headers, timeout: $timeout);

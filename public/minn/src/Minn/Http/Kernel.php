@@ -16,6 +16,7 @@ final readonly class Kernel
     {
     }
 
+    /** Routes the request; a thrown failure becomes its response, and null means no route matched. */
     public function handle(Request $request): ?Response
     {
         try {

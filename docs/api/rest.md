@@ -41,7 +41,7 @@ the wp/v2 surface: shapes and controllers
 | [`Schema`](#schema) | final readonly class | 465 | JSON-schema handling the way the REST API's argument validation does it: |
 | [`SchemaValues`](#schemavalues) | final class | 186 | The value side of JSON Schema, as the reference applies it: what counts |
 | [`SearchController`](#searchcontroller) | final readonly class | 135 | wp/v2 search over published content: id, title, url, type, and the |
-| [`Services`](#services) | final class | 324 | The objects one REST request shares, each made once, on first use, from |
+| [`Services`](#services) | final class | 366 | The objects one REST request shares, each made once, on first use, from |
 | [`Settings`](#settings) | final readonly class | 75 | The registered settings the Settings views read and write, mapped to |
 | [`SettingsController`](#settingscontroller) | final readonly class | 24 | wp/v2/settings: read and write, both behind manage_options. |
 | [`Taxonomies`](#taxonomies) | final class | 43 | The taxonomy registry the wp/v2 surface describes: the core set seeded |
@@ -1280,6 +1280,8 @@ Used by: `Minn\Rest\Api`
 
 ### static `forRequest(Minn\Db $db, Minn\Http\Request $request): self`
 
+The services for one request, none made yet.
+
 ### `get(string $class): object`
 
 The service registered under a class name. Only the names in NAMED
@@ -1287,7 +1289,11 @@ answer; anything else is a programming error and says so at once.
 
 ### `db(): Minn\Db`
 
+The database door.
+
 ### `request(): Minn\Http\Request`
+
+The request being answered.
 
 ### `root(): string`
 
@@ -1295,69 +1301,135 @@ The site root, no trailing slash.
 
 ### `contentDir(): string`
 
+wp-content under the site root.
+
 ### `users(): Minn\Content\Users`
+
+The users repository.
 
 ### `posts(): Minn\Content\Posts`
 
+The posts repository.
+
 ### `terms(): Minn\Content\Terms`
+
+The terms repository.
 
 ### `comments(): Minn\Content\Comments`
 
+The comments repository.
+
 ### `site(): Minn\Content\Site`
+
+The site's options.
 
 ### `writer(): Minn\Content\PostWriter`
 
+The post writer.
+
 ### `revisions(): Minn\Content\Revisions`
+
+Revisions and autosaves.
 
 ### `menus(): Minn\Content\Menus`
 
+Classic menus and their items.
+
 ### `inventory(): Minn\Content\Inventory`
+
+What wp-content holds: plugins, themes, drop-ins.
 
 ### `permalinks(): Minn\Front\Permalinks`
 
+Link building from the permalink structure.
+
 ### `url(): Minn\Rest\RestUrl`
+
+REST URL building.
 
 ### `capabilities(): Minn\Auth\Capabilities`
 
+The capability engine.
+
 ### `caller(): Minn\Rest\Caller`
+
+Who is making this call.
 
 ### `sessions(): Minn\Auth\Sessions`
 
+The session store.
+
 ### `applicationPasswords(): Minn\Auth\ApplicationPasswords`
+
+Application passwords for Basic auth.
 
 ### `loader(): Minn\Extension\Loader`
 
+The extension loader.
+
 ### `types(): Minn\Rest\Types`
+
+The post types the REST surface knows.
 
 ### `taxonomies(): Minn\Rest\Taxonomies`
 
+The taxonomies the REST surface knows.
+
 ### `uploads(): Minn\Media\Uploads`
+
+The uploads directory.
 
 ### `mediaWriter(): Minn\Media\Writer`
 
+Stores an upload as an attachment.
+
 ### `schema(): Minn\Rest\Schema`
+
+The JSON Schema validator, with the reference's filters passed in.
 
 ### `app(): Minn\Admin\App`
 
+The Minn Admin bundle on disk.
+
 ### `packages(): Minn\Admin\Packages`
+
+Installing and removing themes and extensions.
 
 ### `logs(): Minn\Admin\Logs`
 
+The debug log reader.
+
 ### `updates(): Minn\Admin\Updates`
+
+Update checks and offers.
 
 ### `translations(): Minn\Admin\Translations`
 
+Locales and the app's catalogs.
+
 ### `appearance(): Minn\Admin\Appearance`
+
+The app's per-user appearance.
 
 ### `hiddenIntegrations(): Minn\Admin\HiddenIntegrations`
 
+The app's per-user hidden views.
+
 ### `activityFeed(): Minn\Admin\ActivityFeed`
+
+What happened lately.
 
 ### `dashboard(): Minn\Admin\Dashboard`
 
+The overview payload.
+
 ### `notifications(): Minn\Admin\Notifications`
 
+The bell feed.
+
 ### `diagnostics(): Minn\Admin\Diagnostics`
+
+The System view's payload.
 
 ### `templates(): ?Minn\Theme\TemplateIndex`
 
@@ -1365,17 +1437,29 @@ The active block theme's templates; null under a classic theme, where the routes
 
 ### `templateWriter(): ?Minn\Theme\TemplateWriter`
 
+Writes block templates; null under a classic theme.
+
 ### `postObject(): Minn\Rest\PostObject`
+
+The wp/v2 post shape.
 
 ### `termObject(): Minn\Rest\TermObject`
 
+The wp/v2 term shape.
+
 ### `userObject(): Minn\Rest\UserObject`
+
+The wp/v2 user shape.
 
 ### `mediaObject(): Minn\Rest\MediaObject`
 
+The wp/v2 media shape.
+
 ### `commentObject(): Minn\Rest\CommentObject`
 
-Internals: `share()` (private, line 372)
+The wp/v2 comment shape.
+
+Internals: `share()` (private, line 414)
 
 
 ## Settings

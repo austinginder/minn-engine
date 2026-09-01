@@ -13,6 +13,8 @@ namespace Minn\Content;
 final class MoreTag
 {
     /**
+     * The content on either side of a more tag, with the tag's own text.
+     *
      * @return array{main: string, extended: string, more_text: string}
      */
     public static function split(string $content): array

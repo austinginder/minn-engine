@@ -29,7 +29,11 @@ final readonly class Menus
     }
 
     /** @return list<array<string, mixed>> term rows keyed as Terms::row */
-    /** @return list<TermRecord> */
+    /**
+     * Every nav_menu term.
+     *
+     * @return list<TermRecord>
+     */
     public function all(): array
     {
         return TermRecord::fromRows($this->db->rows(
@@ -40,17 +44,21 @@ final readonly class Menus
         ));
     }
 
+    /** One menu by id, or null. */
     public function find(int $id): ?TermRecord
     {
         return $this->terms->row($id, 'nav_menu');
     }
 
+    /** The id of the menu with exactly this name, or null. */
     public function idByName(string $name): ?int
     {
         return $this->terms->idByName($name, 'nav_menu');
     }
 
     /**
+     * The items of one menu, or of every menu, in menu order.
+     *
      * @return list<MenuItem>
      */
     public function items(?int $menuId = null): array
@@ -96,6 +104,7 @@ final readonly class Menus
         );
     }
 
+    /** A menu item as the navigation block it renders through. */
     public function toBlock(MenuItem $item): Block
     {
         $kind = match ($item->type) {
@@ -118,6 +127,7 @@ final readonly class Menus
         ], [], '', []);
     }
 
+    /** Whether this menu auto-adds new top-level pages, from the nav_menu_options blob. */
     public function autoAdd(int $menuId): bool
     {
         $blob = $this->db->option('nav_menu_options');
@@ -150,6 +160,8 @@ final readonly class Menus
     }
 
     /**
+     * The theme's registered locations mapped to menu ids, from theme_mods.
+     *
      * @return array<string, int> location => menu term id
      */
     public function themeLocations(): array
@@ -274,6 +286,7 @@ final readonly class Menus
         return explode(' ', $blob);
     }
 
+    /** One nav_menu_item by id, or null when it is missing or trashed. */
     public function findItem(int $id): ?MenuItem
     {
         $row = $this->db->row(
@@ -305,12 +318,14 @@ final readonly class Menus
         );
     }
 
+    /** Creates a nav_menu term and returns its id. */
     public function createMenu(string $name, string $description = ''): int
     {
         $slug = $this->terms->uniqueSlug($name, 'nav_menu');
         return $this->terms->create($name, $slug, 'nav_menu', $description, 0);
     }
 
+    /** Renames or re-describes a menu; null keeps the current value. */
     public function updateMenu(int $id, ?string $name, ?string $description): void
     {
         $row = $this->find($id);
@@ -326,6 +341,7 @@ final readonly class Menus
         }
     }
 
+    /** Deletes a menu and every item in it. */
     public function deleteMenu(int $id): void
     {
         foreach ($this->items($id) as $item) {
@@ -397,7 +413,11 @@ final readonly class Menus
         return $id;
     }
 
-    /** @param array<string, mixed> $fields */
+    /**
+     * Applies the given fields to one item, stored the way the reference stores them.
+     *
+     * @param array<string, mixed> $fields
+     */
     public function updateItem(int $id, array $fields): void
     {
         $writer = $this->writer();
@@ -445,6 +465,7 @@ final readonly class Menus
         }
     }
 
+    /** Hard-deletes one item. */
     public function deleteItem(int $id): void
     {
         $this->writer()->destroy($id);

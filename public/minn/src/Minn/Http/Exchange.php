@@ -15,6 +15,7 @@ final readonly class Exchange
     {
     }
 
+    /** Whether the transport failed before any status came back. */
     public function failed(): bool
     {
         return $this->error !== null;

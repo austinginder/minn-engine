@@ -105,6 +105,8 @@ final class ContentScan
     }
 
     /**
+     * The tables under the prefix that are not the reference's own.
+     *
      * @param list<string> $tables names from SHOW TABLES
      * @return list<string> bare names after stripping the prefix
      */
@@ -150,6 +152,8 @@ final class ContentScan
     }
 
     /**
+     * The post types in use that the reference does not register itself.
+     *
      * @param list<string> $types
      * @return list<string>
      */
@@ -164,6 +168,8 @@ final class ContentScan
     }
 
     /**
+     * The block names that are not core/*, with their counts.
+     *
      * @param array<string, int> $named
      * @return array<string, int>
      */
@@ -176,7 +182,11 @@ final class ContentScan
         );
     }
 
-    /** @param list<string> $names */
+    /**
+     * Names sorted and comma-separated, cut with a count past the cap.
+     *
+     * @param list<string> $names
+     */
     public static function listed(array $names, int $cap = 40): string
     {
         sort($names);

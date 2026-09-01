@@ -40,6 +40,7 @@ final class Slug
         return rtrim($cut, '-');
     }
 
+    /** The reference's dash form of a title: tags and marks stripped, spaces to dashes, and the save-time rules when saving. */
     public static function dashes(string $title, bool $forSave, Closure $utf8Encode): string
     {
         $title = strip_tags($title);

@@ -43,6 +43,8 @@ final readonly class Inventory
     }
 
     /**
+     * The mu-plugins folder's PHP files, each with its header.
+     *
      * @return list<array<string, mixed>>
      */
     public function mustUse(): array
@@ -76,6 +78,8 @@ final readonly class Inventory
     }
 
     /**
+     * The drop-in files present in wp-content.
+     *
      * @return list<array<string, mixed>>
      */
     public function dropins(): array
@@ -101,6 +105,8 @@ final readonly class Inventory
     }
 
     /**
+     * Every theme folder with its style.css header.
+     *
      * @return list<array<string, mixed>>
      */
     public function themes(): array

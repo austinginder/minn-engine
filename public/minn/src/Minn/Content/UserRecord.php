@@ -33,7 +33,11 @@ final readonly class UserRecord implements ArrayAccess
     ) {
     }
 
-    /** @param array<string, mixed> $row a users-table row, joined columns welcome */
+    /**
+     * A record from a users row; a missing column reads as empty.
+     *
+     * @param array<string, mixed> $row a users-table row, joined columns welcome
+     */
     public static function fromRow(array $row): self
     {
         return new self(
@@ -51,13 +55,21 @@ final readonly class UserRecord implements ArrayAccess
         );
     }
 
-    /** @param list<array<string, mixed>> $rows @return list<self> */
+    /**
+     * A record for every row, in order.
+     *
+     * @param list<array<string, mixed>> $rows @return list<self>
+     */
     public static function fromRows(array $rows): array
     {
         return array_map(self::fromRow(...), $rows);
     }
 
-    /** The row as the table holds it. */
+    /**
+     * The stored row, for the writers and shapers that still spell columns.
+     *
+     * The row as the table holds it.
+     */
     public function row(): array
     {
         return $this->row;
@@ -69,26 +81,31 @@ final readonly class UserRecord implements ArrayAccess
         return $this->displayName !== '' ? $this->displayName : $this->login;
     }
 
+    /** One stored column by its database name, or null. */
     public function column(string $name): mixed
     {
         return $this->row[$name] ?? null;
     }
 
+    /** The migration bridge: the record answers to its column names the way the row did. */
     public function offsetExists(mixed $offset): bool
     {
         return isset($this->row[$offset]);
     }
 
+    /** The migration bridge: one column by its stored name, or null. */
     public function offsetGet(mixed $offset): mixed
     {
         return $this->row[$offset] ?? null;
     }
 
+    /** Records are read-only; writes go through the repository. */
     public function offsetSet(mixed $offset, mixed $value): never
     {
         throw new LogicException('A UserRecord is read-only; write through Users.');
     }
 
+    /** Records are read-only; writes go through the repository. */
     public function offsetUnset(mixed $offset): never
     {
         throw new LogicException('A UserRecord is read-only; write through Users.');
