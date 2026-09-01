@@ -3,10 +3,10 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
         "minn": 322,
-        "composes": 676,
+        "composes": 677,
         "leaf": 339,
-        "noop": 1193,
-        "functions": 2524,
+        "noop": 1194,
+        "functions": 2526,
         "minnMethods": 363,
         "leafLinesOver15": 13
     },
@@ -7610,6 +7610,13 @@
             ],
             "composes": []
         },
+        "_minn_dep_list": {
+            "file": "script-loader.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "_minn_document_title": {
             "file": "query.php",
             "lines": 12,
@@ -8013,15 +8020,27 @@
         },
         "_minn_seed_main_query": {
             "file": "query.php",
-            "lines": 39,
+            "lines": 40,
             "kind": "minn",
             "minn": [
                 "Minn\\Content\\Posts::findByName"
             ],
             "composes": [
                 "_minn_posts",
+                "_minn_seed_wp_request",
                 "count",
                 "get_post"
+            ]
+        },
+        "_minn_seed_wp_request": {
+            "file": "query.php",
+            "lines": 9,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_rewrite",
+                "get_option",
+                "parse_url"
             ]
         },
         "_minn_source_url": {
@@ -18293,10 +18312,12 @@
         },
         "wp_common_block_scripts_and_styles": {
             "file": "script-loader.php",
-            "lines": 0,
+            "lines": 1,
             "kind": "noop",
             "minn": [],
-            "composes": []
+            "composes": [
+                "do_action"
+            ]
         },
         "wp_connectors_get_application_password_credentials": {
             "file": "connectors.php",
@@ -21425,7 +21446,8 @@
             "kind": "composes",
             "minn": [],
             "composes": [
-                "_minn_assets"
+                "_minn_assets",
+                "_minn_dep_list"
             ]
         },
         "wp_register_script_module": {
@@ -21454,7 +21476,8 @@
             "kind": "noop",
             "minn": [],
             "composes": [
-                "_minn_assets"
+                "_minn_assets",
+                "_minn_dep_list"
             ]
         },
         "wp_register_widget_control": {

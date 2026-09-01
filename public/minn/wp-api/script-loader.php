@@ -35,11 +35,25 @@ function _minn_asset_url(string $src, string|bool|null $ver): string
     return $src;
 }
 
+/**
+ * @internal A dependency list. The reference keeps an ARRAY of handles and
+ * discards anything else outright: a scalar handle, null and false all
+ * register as no dependencies at all. Casting instead turns `''` into a
+ * dependency on the empty string, which no handle satisfies, so the asset
+ * and everything above it silently stops printing (WooCommerce registers
+ * `woocommerce-general` with `deps => ''`, which cost the whole classic
+ * stylesheet set and left the My Account forms unstyled).
+ */
+function _minn_dep_list($deps): array
+{
+    return is_array($deps) ? array_values($deps) : [];
+}
+
 function wp_register_script($handle, $src, $deps = [], $ver = false, $args = [])
 {
     $args = is_array($args) ? $args : ['in_footer' => (bool) $args];
     $assets = _minn_assets('script');
-    $ok = $assets->register((string) $handle, $src === false ? false : (string) $src, (array) $deps, $ver, $args);
+    $ok = $assets->register((string) $handle, $src === false ? false : (string) $src, _minn_dep_list($deps), $ver, $args);
     if (!empty($args['in_footer'])) {
         $assets->addData((string) $handle, 'group', 1);
     }
@@ -99,7 +113,7 @@ function wp_script_add_data($handle, $key, $value)
 
 function wp_register_style($handle, $src, $deps = [], $ver = false, $media = 'all')
 {
-    return _minn_assets('style')->register((string) $handle, $src === false ? false : (string) $src, (array) $deps, $ver, (string) $media);
+    return _minn_assets('style')->register((string) $handle, $src === false ? false : (string) $src, _minn_dep_list($deps), $ver, (string) $media);
 }
 
 function wp_enqueue_style($handle, $src = '', $deps = [], $ver = false, $media = 'all')
@@ -310,8 +324,15 @@ function wp_styles()
     return $GLOBALS['wp_styles'];
 }
 
+/**
+ * Fires the block-assets action on the front end. Plugins hang their
+ * block-theme stylesheets off it (WooCommerce enqueues
+ * woocommerce-blocktheme.css there), so leaving it unfired costs them
+ * silently.
+ */
 function wp_common_block_scripts_and_styles()
 {
+    do_action('enqueue_block_assets');
 }
 
 function wp_enqueue_block_style($block_name, $args)

@@ -1376,3 +1376,30 @@ untranslated handle).
 
 Known gap: `print_translations` never prints `setLocaleData`, so a plugin's
 JavaScript strings stay English even where its PHP is translated.
+
+## Assets: dependency lists, and $wp->request (2026-09-01)
+
+- **A dependency list is an ARRAY of handles; anything else is discarded.**
+  `wp_register_script`/`wp_register_style` given `''`, `null`, `false`, or
+  even a bare handle string all register with NO dependencies. Casting
+  instead (`(array) ''`) registers a dependency on the empty string, which
+  no handle satisfies, so the asset and everything above it silently stops
+  printing. WooCommerce registers `woocommerce-general` with `deps => ''`;
+  that one cast cost `woocommerce.css`, `woocommerce-layout.css` and
+  `woocommerce-smallscreen.css`, and left the My Account forms unstyled.
+- **`wp_common_block_scripts_and_styles` fires `enqueue_block_assets`** from
+  `wp_enqueue_scripts`. Plugins hang block-theme stylesheets off that action
+  (WooCommerce enqueues `woocommerce-blocktheme.css` there), so leaving it
+  unfired costs them with no error.
+- **`$wp->request` is the request path alone**, no leading or trailing
+  slash and no query string, set when the main query is seeded. Plugin code
+  builds URLs from it: WooCommerce points its add-to-cart form at
+  `home_url( add_query_arg( $_GET, $wp->request ) )`, so an empty request
+  posted the form to the SITE ROOT — the item was added but the shopper
+  landed on the home page with no notice.
+
+Open: on a singular render the engine does not set the global `$product`
+(WooCommerce sets it from `the_post`), so WooCommerce's add-to-cart block
+believes it is a descendant of the single-product block. Visible as the
+form action losing its trailing slash and a missing `product` wrapper
+class; behaviour is otherwise correct.

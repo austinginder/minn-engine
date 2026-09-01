@@ -20,6 +20,7 @@ add_filter('the_excerpt', 'convert_smilies');
 add_filter('the_excerpt', 'convert_chars');
 add_filter('the_excerpt', 'wpautop');
 add_action('wp_head', 'wp_enqueue_scripts', 1);
+add_action('wp_enqueue_scripts', 'wp_common_block_scripts_and_styles', 10);
 // A classic theme gets the reference's wp_head defaults, registered before its own hooks.
 add_action('setup_theme', '_minn_classic_head_defaults', 1);
 add_action('wp_head', 'wp_print_styles', 8);

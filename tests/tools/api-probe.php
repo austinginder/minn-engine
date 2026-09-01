@@ -164,6 +164,48 @@ $say('footer script hook wiring', (static function (): array {
     ];
 })());
 $say('WP_Scripts::print_translations', [wp_scripts()->print_translations('wp-i18n', false), wp_scripts()->print_translations('minn-probe-nope', false)]);
+// A dependency list is an ARRAY of handles; anything else is discarded
+// rather than cast. Casting '' would register a dependency on the empty
+// string, which nothing satisfies, so the asset silently stops printing
+// (WooCommerce registers woocommerce-general with deps => '').
+$say('dependency list normalization', (static function (): array {
+    wp_register_style('minn-probe-dep-base', '/base.css', [], '1');
+    wp_register_style('minn-probe-dep-empty', '/e.css', '', '1');
+    wp_register_style('minn-probe-dep-scalar', '/s.css', 'minn-probe-dep-base', '1');
+    wp_register_style('minn-probe-dep-null', '/n.css', null, '1');
+    wp_register_style('minn-probe-dep-false', '/f.css', false, '1');
+    wp_register_style('minn-probe-dep-array', '/a.css', ['minn-probe-dep-base'], '1');
+    $styles = wp_styles();
+    $deps = static fn (string $h): array => (array) ($styles->registered[$h]->deps ?? ['MISSING']);
+    wp_enqueue_style('minn-probe-dep-empty');
+    ob_start();
+    wp_print_styles(['minn-probe-dep-empty']);
+    $printed = str_contains((string) ob_get_clean(), 'minn-probe-dep-empty');
+    $out = [
+        $deps('minn-probe-dep-empty'),
+        $deps('minn-probe-dep-scalar'),
+        $deps('minn-probe-dep-null'),
+        $deps('minn-probe-dep-false'),
+        $deps('minn-probe-dep-array'),
+        $printed,
+    ];
+    foreach (['base', 'empty', 'scalar', 'null', 'false', 'array'] as $suffix) {
+        wp_deregister_style('minn-probe-dep-' . $suffix);
+    }
+    return $out;
+})());
+// Plugins hang block-theme stylesheets off enqueue_block_assets, which
+// wp_common_block_scripts_and_styles fires from wp_enqueue_scripts.
+$say('enqueue_block_assets fires', (static function (): array {
+    $seen = 0;
+    $mark = static function () use (&$seen): void {
+        $seen++;
+    };
+    add_action('enqueue_block_assets', $mark);
+    wp_common_block_scripts_and_styles();
+    remove_action('enqueue_block_assets', $mark);
+    return [$seen, has_action('wp_enqueue_scripts', 'wp_common_block_scripts_and_styles') !== false];
+})());
 $say('esc_html number', esc_html(5));
 $say('esc_html null', esc_html(null));
 foreach (['http://x.com/?a=1&b=2', 'http://x.com/?a=1&amp;b=2', ' javascript:alert(1)', 'JaVaScRiPt:x', 'x.com', 'x.com/path', '/path?x=1&y=2', 'mailto:a@b.c', 'http://x.com/a b', '', 'data:text/html,x', 'http://x.com/"onclick="x', "http://x.com/\x00nul", '#anchor', '?q=1', 'ftp://x/y', 'tel:123', 'http://[::1]/x', '//cdn.example/x.js', 'http://x.com/%20a%2Fb', 'http://x.com/é', 'https://x.com/a?b=c&d=e#f', 'http://x.com/a\'b', 'http://x.com/a<b>', 'foo:bar', 'http://x.com:8080/y', 'http:/x'] as $u) {

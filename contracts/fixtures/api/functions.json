@@ -428,6 +428,26 @@
         ]
     ],
     [
+        "dependency list normalization",
+        [
+            [],
+            [],
+            [],
+            [],
+            [
+                "minn-probe-dep-base"
+            ],
+            true
+        ]
+    ],
+    [
+        "enqueue_block_assets fires",
+        [
+            1,
+            true
+        ]
+    ],
+    [
         "esc_html number",
         "5"
     ],

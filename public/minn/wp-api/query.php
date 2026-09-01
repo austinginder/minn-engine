@@ -373,6 +373,29 @@ function _minn_seed_main_query(array $vars, array $postIds, int $total, int $per
     if ($query->post !== null && $query->is_singular) {
         $GLOBALS['post'] = $query->post;
     }
+    _minn_seed_wp_request($vars);
+}
+
+/**
+ * The WP global's view of this request. `request` is the path alone, with
+ * no leading or trailing slash and no query string, and plugin code builds
+ * URLs from it: WooCommerce points its add-to-cart form at
+ * home_url( add_query_arg( $_GET, $wp->request ) ), so an empty request
+ * posts the form to the site root instead of back to the product.
+ *
+ * @param array<string, mixed> $vars
+ */
+function _minn_seed_wp_request(array $vars): void
+{
+    _minn_rewrite();
+    $wp = $GLOBALS['wp'] ?? null;
+    if (!$wp instanceof WP) {
+        return;
+    }
+    $path = (string) parse_url((string) ($_SERVER['REQUEST_URI'] ?? '/'), PHP_URL_PATH);
+    $wp->request = trim($path, '/');
+    $wp->query_vars = $vars;
+    $wp->did_permalink = get_option('permalink_structure') !== '';
 }
 
 /** The reference's title pipeline over the engine's parts; the result is ready to print inside <title>. */
