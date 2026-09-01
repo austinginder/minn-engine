@@ -84,23 +84,51 @@ $facadeQueries = [];
 $facadeLong = [];
 $facadeDir = dirname($root) . '/wp-api';
 // Functions and methods, by brace matching: a method's body ends at the brace that closes it.
+// Named functions and methods with the line count of their bodies, measured
+// on tokens so a brace inside a string or a comment does not count.
 $facadeBodies = static function (string $src): array {
-    preg_match_all('/^[ \t]*(?:(?:public|protected|private|static|final|abstract)\s+)*function\s+&?(\w+)\s*\(/m', $src, $heads, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
+    $tokens = token_get_all($src);
+    $count = count($tokens);
     $bodies = [];
-    foreach ($heads as $head) {
-        $open = strpos($src, '{', $head[0][1] + strlen($head[0][0]));
-        $close = strpos($src, ';', $head[0][1] + strlen($head[0][0]));
-        if ($open === false || ($close !== false && $close < $open)) {
+    for ($i = 0; $i < $count; $i++) {
+        if (!is_array($tokens[$i]) || $tokens[$i][0] !== T_FUNCTION) {
             continue;
         }
-        $depth = 0;
-        for ($pos = $open, $length = strlen($src); $pos < $length; $pos++) {
-            $depth += match ($src[$pos]) { '{' => 1, '}' => -1, default => 0 };
-            if ($depth === 0) {
+        $name = null;
+        for ($j = $i + 1; $j < $count; $j++) {
+            if (is_array($tokens[$j]) && $tokens[$j][0] === T_STRING) {
+                $name = $tokens[$j][1];
+                break;
+            }
+            if ($tokens[$j] === '(' || (is_array($tokens[$j]) && $tokens[$j][0] === T_FN)) {
                 break;
             }
         }
-        $bodies[] = [$head[1][0], substr_count(substr($src, $open, $pos - $open), "\n") - 1];
+        if ($name === null) {
+            continue;
+        }
+        $depth = 0;
+        $openLine = null;
+        $line = $tokens[$j][2] ?? 0;
+        for ($j = $j + 1; $j < $count; $j++) {
+            $token = $tokens[$j];
+            if (is_array($token)) {
+                $line = $token[2] + substr_count($token[1], "\n");
+            }
+            if ($depth === 0 && $token === ';') {
+                break;
+            }
+            if ($token === '{' || (is_array($token) && in_array($token[0], [T_CURLY_OPEN, T_DOLLAR_OPEN_CURLY_BRACES], true))) {
+                $openLine ??= is_array($token) ? $token[2] : $line;
+                $depth++;
+            } elseif ($token === '}') {
+                $depth--;
+                if ($depth === 0) {
+                    $bodies[] = [$name, max(0, $line - (int) $openLine - 1)];
+                    break;
+                }
+            }
+        }
     }
     return $bodies;
 };
@@ -136,7 +164,7 @@ $check("facade map: leaf functions over fifteen lines stay at or under {$leafCei
 // counts may only fall here too. Methods whose body runs past eighty lines
 // (the twenty-two named in docs/writing-minn.md) and classes past six hundred
 // lines. Lower a ceiling when a file loses its last offender; never raise one.
-$longMethodCeiling = 18;
+$longMethodCeiling = 16;
 $bigClassCeiling = 4;
 $longMethods = [];
 $bigClasses = [];
