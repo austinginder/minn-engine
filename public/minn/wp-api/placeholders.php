@@ -61,6 +61,12 @@ function _wp_get_iframed_editor_assets()
     return null;
 }
 
+function add_contextual_help($screen, $help)
+{
+    \Minn\Runtime\PlaceholderTrace::hit('add_contextual_help');
+    return null;
+}
+
 function add_magic_quotes($input_array)
 {
     \Minn\Runtime\PlaceholderTrace::hit('add_magic_quotes');
@@ -481,6 +487,12 @@ function set_user_setting($name, $value)
     return null;
 }
 
+function show_message($message)
+{
+    \Minn\Runtime\PlaceholderTrace::hit('show_message');
+    return null;
+}
+
 function single_month_title($prefix = '', $display = true)
 {
     \Minn\Runtime\PlaceholderTrace::hit('single_month_title');
@@ -517,6 +529,12 @@ function unzip_file($file, $to)
     return null;
 }
 
+function update_core($from, $to)
+{
+    \Minn\Runtime\PlaceholderTrace::hit('update_core');
+    return null;
+}
+
 function update_metadata_by_mid($meta_type, $meta_id, $meta_value, $meta_key = false)
 {
     \Minn\Runtime\PlaceholderTrace::hit('update_metadata_by_mid');
@@ -538,6 +556,12 @@ function wp($query_vars = '')
 function wp_add_post_tags($post_id = 0, $tags = '')
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_add_post_tags');
+    return null;
+}
+
+function wp_add_privacy_policy_content($plugin_name, $policy_text)
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_add_privacy_policy_content');
     return null;
 }
 
@@ -721,6 +745,12 @@ function wp_list_pages($args = '')
     return null;
 }
 
+function wp_load_translations_early()
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_load_translations_early');
+    return null;
+}
+
 function wp_maybe_auto_update()
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_maybe_auto_update');
@@ -805,9 +835,21 @@ function wp_templating_constants()
     return null;
 }
 
+function wp_terms_checklist($post_id = 0, $args = [])
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_terms_checklist');
+    return null;
+}
+
 function wp_timezone_choice($selected_zone, $locale = NULL)
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_timezone_choice');
+    return null;
+}
+
+function wp_tinymce_inline_scripts()
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_tinymce_inline_scripts');
     return null;
 }
 

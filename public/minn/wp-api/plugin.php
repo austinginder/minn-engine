@@ -224,3 +224,15 @@ function _minn_bind_hook_globals(): void
     $GLOBALS['wp_roles'] = wp_roles();
     $GLOBALS['wp_embed'] ??= new WP_Embed();
 }
+
+function get_plugin_updates()
+{
+    $offers = (array) (get_site_transient('update_plugins')->response ?? []);
+    $out = [];
+    foreach (get_plugins() as $file => $header) {
+        if (isset($offers[$file])) {
+            $out[$file] = (object) ($header + ['update' => $offers[$file]]);
+        }
+    }
+    return $out;
+}

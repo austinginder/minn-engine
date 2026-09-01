@@ -281,3 +281,17 @@ function wp_get_nav_menu_name($location)
     $name = $menu && !is_wp_error($menu) ? (string) $menu->name : '';
     return apply_filters('wp_get_nav_menu_name', $name, $location);
 }
+
+function get_theme_updates()
+{
+    $offers = (array) (get_site_transient('update_themes')->response ?? []);
+    $out = [];
+    foreach ($offers as $stylesheet => $offer) {
+        $theme = wp_get_theme((string) $stylesheet);
+        if ($theme->exists()) {
+            $theme->update = $offer;
+            $out[$stylesheet] = $theme;
+        }
+    }
+    return $out;
+}

@@ -15,6 +15,23 @@ use Minn\Support\Html;
 final class TermLists
 {
     /**
+     * The chain of names from the outermost ancestor down to the term itself,
+     * each one separated and optionally wrapped in its own link. The separator
+     * trails the last name too, so a breadcrumb reads "Root/Mid/Leaf/".
+     *
+     * @param list<array{name: string, slug: string, link: string}> $line outermost first, the term itself last
+     */
+    public static function parentChain(array $line, bool $link, string $separator, bool $bySlug): string
+    {
+        $out = '';
+        foreach ($line as $term) {
+            $name = $bySlug ? $term['slug'] : $term['name'];
+            $out .= ($link ? '<a href="' . Html::attr($term['link']) . '">' . $name . '</a>' : $name) . $separator;
+        }
+        return $out;
+    }
+
+    /**
      * @param list<array<string, mixed>> $terms rows with term_id, name, slug, count, parent
      * @param array<string, mixed> $args wp_list_categories arguments
      * @param Closure(array): string $link

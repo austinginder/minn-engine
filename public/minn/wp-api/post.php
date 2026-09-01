@@ -1586,3 +1586,56 @@ function the_author_posts_link($deprecated = '')
 {
     echo get_the_author_posts_link();
 }
+
+function get_extended($post)
+{
+    return Minn\Content\MoreTag::split((string) $post);
+}
+
+function get_page($page, $output = OBJECT, $filter = 'raw')
+{
+    return get_post($page, $output, $filter);
+}
+
+function get_post_datetime($post = null, $field = 'date', $source = 'local')
+{
+    $post = get_post($post);
+    if (!$post) {
+        return false;
+    }
+    $column = ($field === 'modified' ? 'post_modified' : 'post_date') . ($source === 'gmt' ? '_gmt' : '');
+    $time = (string) ($post->$column ?? '');
+    if ($time === '' || str_starts_with($time, '0000-00-00')) {
+        return false;
+    }
+    $zone = $source === 'gmt' ? new DateTimeZone('UTC') : wp_timezone();
+    return date_create_immutable_from_format('Y-m-d H:i:s', $time, $zone) ?: false;
+}
+
+function post_exists($title, $content = '', $date = '', $type = '', $status = '')
+{
+    $types = $type === '' ? array_values(get_post_types(['public' => true])) : [(string) $type];
+    return _minn_post_lookup()->idByTitle((string) $title, $types) ?? 0;
+}
+
+function _truncate_post_slug($slug, $length = 200)
+{
+    return Minn\Content\Slug::truncate((string) $slug, (int) $length);
+}
+
+function use_block_editor_for_post($post)
+{
+    $post = get_post($post);
+    $use = $post ? use_block_editor_for_post_type($post->post_type) : false;
+    return (bool) apply_filters('use_block_editor_for_post', $use, $post);
+}
+
+function update_postmeta_cache($post_ids)
+{
+    return update_meta_cache('post', $post_ids);
+}
+
+function update_user_caches($user)
+{
+    // Users are read straight from the database; there is nothing to cache.
+}

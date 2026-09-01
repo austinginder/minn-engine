@@ -536,3 +536,79 @@ function wp_parse_auth_cookie($cookie = '', $scheme = '')
     [$username, $expiration, $token, $hmac] = $parts;
     return ['username' => $username, 'expiration' => $expiration, 'token' => $token, 'hmac' => $hmac, 'scheme' => $scheme ?: 'auth'];
 }
+
+function wp_login_form($args = [])
+{
+    $defaults = [
+        'echo' => true,
+        'redirect' => (is_ssl() ? 'https://' : 'http://') . ($_SERVER['HTTP_HOST'] ?? '') . ($_SERVER['REQUEST_URI'] ?? ''),
+        'form_id' => 'loginform',
+        'label_username' => 'Username or Email Address',
+        'label_password' => 'Password',
+        'label_remember' => 'Remember Me',
+        'label_log_in' => 'Log In',
+        'id_username' => 'user_login',
+        'id_password' => 'user_pass',
+        'id_remember' => 'rememberme',
+        'id_submit' => 'wp-submit',
+        'remember' => true,
+        'value_username' => '',
+        'value_remember' => false,
+    ];
+    $args = wp_parse_args($args, apply_filters('login_form_defaults', $defaults));
+    $args['action'] = wp_login_url();
+    $form = Minn\Login\LoginForm::embedded(
+        $args,
+        (string) apply_filters('login_form_top', '', $args),
+        (string) apply_filters('login_form_middle', '', $args),
+        (string) apply_filters('login_form_bottom', '', $args),
+    );
+    if ($args['echo']) {
+        echo $form;
+        return;
+    }
+    return $form;
+}
+
+function wp_loginout($redirect = '', $display = true)
+{
+    $link = is_user_logged_in()
+        ? '<a href="' . esc_url(wp_logout_url($redirect)) . '">Log out</a>'
+        : '<a href="' . esc_url(wp_login_url($redirect)) . '">Log in</a>';
+    $link = apply_filters('loginout', $link);
+    if (!$display) {
+        return $link;
+    }
+    echo $link;
+}
+
+function wp_register($before = '<li>', $after = '</li>', $display = true)
+{
+    if (!is_user_logged_in()) {
+        $link = get_option('users_can_register')
+            ? $before . '<a href="' . esc_url(wp_registration_url()) . '">Register</a>' . $after
+            : '';
+    } else {
+        $link = $before . '<a href="' . esc_url(admin_url()) . '">Site Admin</a>' . $after;
+    }
+    $link = apply_filters('register', $link);
+    if (!$display) {
+        return $link;
+    }
+    echo $link;
+}
+
+function wp_meta()
+{
+    do_action('wp_meta');
+}
+
+function wp_destroy_current_session()
+{
+    $token = wp_get_session_token();
+    $user = wp_get_current_user();
+    if ($token === '' || (int) $user->ID === 0) {
+        return;
+    }
+    (new Sessions(new Users(Runtime::current()->db)))->destroy((int) $user->ID, $token);
+}

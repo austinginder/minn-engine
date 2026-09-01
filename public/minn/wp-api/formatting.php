@@ -868,3 +868,33 @@ function sanitize_locale_name($locale_name)
     $sanitized = (string) preg_replace('/[^A-Za-z0-9_-]/', '', (string) $locale_name);
     return apply_filters('sanitize_locale_name', $sanitized, $locale_name);
 }
+
+function wp_slash_strings_only($value)
+{
+    if (is_array($value)) {
+        return array_map('wp_slash_strings_only', $value);
+    }
+    return is_string($value) ? addslashes($value) : $value;
+}
+
+function wp_privacy_anonymize_ip($ip_addr, $ipv6_fallback = false)
+{
+    return Minn\Support\Ip::anonymize((string) $ip_addr);
+}
+
+function wp_maybe_decline_date($date, $format = '')
+{
+    // Declension applies to the Slavic locales only; en_US never changes.
+    return apply_filters('wp_maybe_decline_date', (string) $date, (string) $format);
+}
+
+function wp_trim_excerpt($text = '', $post = null)
+{
+    if ((string) $text !== '') {
+        return apply_filters('wp_trim_excerpt', (string) $text, (string) $text);
+    }
+    $post = get_post($post);
+    // The trimmed excerpt is plain text: the rendered markup is stripped back.
+    $generated = $post ? trim(wp_strip_all_tags(Minn\Content\Excerpt::render((array) $post->to_array()))) : '';
+    return apply_filters('wp_trim_excerpt', $generated, '');
+}

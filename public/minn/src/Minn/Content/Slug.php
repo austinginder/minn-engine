@@ -27,6 +27,19 @@ final class Slug
      *
      * @param Closure(string, int): string $utf8Encode percent-encodes non-ASCII bytes up to a length
      */
+    /**
+     * A slug cut to a byte length without splitting a multibyte character or
+     * leaving a dash hanging off the end.
+     */
+    public static function truncate(string $slug, int $length): string
+    {
+        if ($length < 1 || strlen($slug) <= $length) {
+            return $slug;
+        }
+        $cut = mb_strcut($slug, 0, $length);
+        return rtrim($cut, '-');
+    }
+
     public static function dashes(string $title, bool $forSave, Closure $utf8Encode): string
     {
         $title = strip_tags($title);

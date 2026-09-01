@@ -1116,3 +1116,45 @@ function wp_delete_nav_menu($menu)
     do_action('wp_delete_nav_menu', $id);
     return true;
 }
+
+function _get_term_hierarchy($taxonomy)
+{
+    return _minn_term_query()->hierarchy((string) $taxonomy);
+}
+
+function term_is_ancestor_of($term1, $term2, $taxonomy)
+{
+    $ancestor = is_object($term1) ? (int) $term1->term_id : (int) $term1;
+    $child = is_object($term2) ? (int) $term2->term_id : (int) $term2;
+    return in_array($ancestor, array_map('intval', get_ancestors($child, (string) $taxonomy, 'taxonomy')), true);
+}
+
+function get_category_parents($category_id, $link = false, $separator = '/', $nicename = false, $deprecated = [])
+{
+    $term = get_term((int) $category_id, 'category');
+    if (!$term || is_wp_error($term)) {
+        return $term instanceof WP_Error ? $term : '';
+    }
+    // Outermost first, the term itself last.
+    $ids = array_reverse(array_map('intval', get_ancestors((int) $category_id, 'category', 'taxonomy')));
+    $ids[] = (int) $category_id;
+    $line = [];
+    foreach ($ids as $id) {
+        $row = get_term($id, 'category');
+        if (!$row || is_wp_error($row)) {
+            continue;
+        }
+        $line[] = ['name' => $row->name, 'slug' => $row->slug, 'link' => get_category_link($id)];
+    }
+    return Minn\Front\TermLists::parentChain($line, (bool) $link, (string) $separator, (bool) $nicename);
+}
+
+function tag_description($tag = 0)
+{
+    return term_description($tag);
+}
+
+function _prime_term_caches($term_ids, $update_meta_cache = true)
+{
+    // Terms are read straight from the database; there is nothing to prime.
+}

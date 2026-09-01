@@ -248,3 +248,54 @@ class WP_Customize_Cropped_Image_Control extends WP_Customize_Image_Control
 {
     public $type = 'cropped_image';
 }
+
+// The customizer is Mute: its objects are recorded so a theme's registrations
+// do not fatal, and nothing renders. These sit here rather than among the
+// generated placeholders because their parent is declared in this file.
+class WP_Customize_Themes_Section extends WP_Customize_Section
+{
+}
+
+class WP_Customize_Sidebar_Section extends WP_Customize_Section
+{
+}
+
+class WP_Customize_Partial
+{
+    public $id = '';
+    public $type = 'default';
+    public $selector = '';
+    public $settings = [];
+    public $primary_setting = '';
+    public $render_callback = null;
+    public $container_inclusive = false;
+    public $fallback_refresh = true;
+
+    public function __construct($manager = null, $id = '', $args = [])
+    {
+        $this->id = (string) $id;
+        foreach ((array) $args as $key => $value) {
+            $this->$key = $value;
+        }
+    }
+
+    public function id_data()
+    {
+        return ['base' => $this->id, 'keys' => []];
+    }
+
+    public function json()
+    {
+        return ['settings' => $this->settings, 'primarySetting' => $this->primary_setting, 'selector' => $this->selector, 'type' => $this->type, 'containerInclusive' => $this->container_inclusive, 'fallbackRefresh' => $this->fallback_refresh];
+    }
+
+    public function check_capabilities()
+    {
+        return false;
+    }
+
+    public function render($container_context = [])
+    {
+        return false;
+    }
+}

@@ -34,6 +34,41 @@ final class LoginForm
             . '</form></body></html>';
     }
 
+    /**
+     * The sign-in form a theme embeds in a page, as distinct from the engine's
+     * own sign-in page above. Every label, id and class is a seam themes and
+     * plugins style against, so the shape is fixed.
+     *
+     * @param array<string, mixed> $args the parsed wp_login_form arguments
+     */
+    public static function embedded(array $args, string $top, string $middle, string $bottom): string
+    {
+        // The reference indents the fields inside each paragraph, and themes
+        // have been matching that markup for years, so the whitespace is part
+        // of the contract rather than formatting.
+        $indent = "\n\t\t\t\t";
+        $close = "\n\t\t\t";
+        $remember = $args['remember']
+            ? '<p class="login-remember"><label><input name="rememberme" type="checkbox" id="' . Html::attr($args['id_remember'])
+                . '" value="forever"' . ($args['value_remember'] ? ' checked="checked"' : '') . ' /> ' . Html::esc($args['label_remember']) . '</label></p>'
+            : '';
+        $username = '<p class="login-username">' . $indent
+            . '<label for="' . Html::attr($args['id_username']) . '">' . Html::esc($args['label_username']) . '</label>' . $indent
+            . '<input type="text" name="log" id="' . Html::attr($args['id_username']) . '" autocomplete="username" class="input" value="'
+            . Html::attr($args['value_username']) . '" size="20" />' . $close . '</p>';
+        $password = '<p class="login-password">' . $indent
+            . '<label for="' . Html::attr($args['id_password']) . '">' . Html::esc($args['label_password']) . '</label>' . $indent
+            . '<input type="password" name="pwd" id="' . Html::attr($args['id_password'])
+            . '" autocomplete="current-password" spellcheck="false" class="input" value="" size="20" />' . $close . '</p>';
+        $submit = '<p class="login-submit">' . $indent
+            . '<input type="submit" name="wp-submit" id="' . Html::attr($args['id_submit']) . '" class="button button-primary" value="'
+            . Html::attr($args['label_log_in']) . '" />' . $indent
+            . '<input type="hidden" name="redirect_to" value="' . Html::attr($args['redirect']) . '" />' . $close . '</p>';
+        return '<form name="' . Html::attr($args['form_id']) . '" id="' . Html::attr($args['form_id']) . '" action="'
+            . Html::attr($args['action']) . '" method="post">'
+            . $top . $username . $password . $middle . $remember . $submit . $bottom . '</form>';
+    }
+
     /** The "forgot password" form: one field, posts to itself. */
     public static function lostPassword(string $siteName, string $action, string $error, string $message): string
     {

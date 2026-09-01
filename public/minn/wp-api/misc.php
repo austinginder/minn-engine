@@ -648,3 +648,36 @@ function insert_with_markers($filename, $marker, $insertion)
 {
     return \Minn\Support\Markers::write((string) $filename, (string) $marker, array_map('strval', (array) $insertion));
 }
+
+function copy_dir($from, $to, $skip_list = [])
+{
+    return Minn\Support\FileTree::copy((string) $from, (string) $to, array_map('strval', (array) $skip_list));
+}
+
+function list_files($folder = '', $levels = 100, $exclusions = [], $include_hidden = false)
+{
+    if ((string) $folder === '' || (int) $levels < 1) {
+        return false;
+    }
+    return Minn\Support\FileTree::files((string) $folder, (int) $levels, array_map('strval', (array) $exclusions));
+}
+
+function win_is_writable($path)
+{
+    // Windows reports a directory's own writability wrongly, so WordPress
+    // probes it by opening a file. Everywhere else is_writable is the answer,
+    // and a path that does not exist yet is judged by the folder holding it.
+    $path = (string) $path;
+    return is_writable(file_exists($path) ? $path : dirname($path));
+}
+
+function wp_get_mu_plugins()
+{
+    $dir = defined('WPMU_PLUGIN_DIR') ? WPMU_PLUGIN_DIR : WP_CONTENT_DIR . '/mu-plugins';
+    $files = [];
+    foreach (glob(rtrim($dir, '/') . '/*.php') ?: [] as $file) {
+        $files[] = $file;
+    }
+    sort($files);
+    return $files;
+}

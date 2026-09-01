@@ -230,3 +230,38 @@ function wp_get_installed_translations($type)
     }
     return $out;
 }
+
+function translations_api($type, $args = null)
+{
+    $short = apply_filters('translations_api', false, $type, $args);
+    if ($short !== false) {
+        return $short;
+    }
+    if (!in_array($type, ['plugins', 'themes', 'core'], true)) {
+        return new WP_Error('invalid_type', 'Invalid translation type.');
+    }
+    $response = wp_remote_post('https://api.wordpress.org/translations/' . $type . '/1.0/', ['timeout' => 10, 'body' => ['wp_version' => $GLOBALS['wp_version'] ?? '', 'locale' => get_locale(), 'version' => (string) (((array) $args)['version'] ?? '')]]);
+    if (is_wp_error($response)) {
+        return new WP_Error('translations_api_failed', 'An unexpected error occurred.', $response->get_error_message());
+    }
+    $body = json_decode(wp_remote_retrieve_body($response), true);
+    return apply_filters('translations_api_result', is_array($body) ? $body : new WP_Error('translations_api_failed', 'An unexpected error occurred.'), $type, $args);
+}
+
+function wp_dropdown_languages($args = [])
+{
+    $args = wp_parse_args($args, ['id' => '', 'name' => '', 'languages' => [], 'translations' => [], 'selected' => '', 'echo' => true, 'show_available_translations' => true]);
+    $output = Minn\Admin\LanguageChoices::dropdown(
+        (string) $args['name'],
+        (string) $args['id'],
+        array_map('strval', (array) $args['languages']),
+        (array) $args['translations'],
+        (string) $args['selected'],
+        (bool) $args['show_available_translations'],
+    );
+    if (!$args['echo']) {
+        return $output;
+    }
+    echo $output;
+    return '';
+}

@@ -279,6 +279,25 @@ final readonly class TermQuery
         return array_values(array_filter($clauses, static fn ($c) => is_array($c) && isset($c['key'])));
     }
 
+    /**
+     * Every parent in a taxonomy that has children, mapped to its children's
+     * ids. A taxonomy nobody nested reads as an empty map.
+     *
+     * @return array<int, list<int>>
+     */
+    public function hierarchy(string $taxonomy): array
+    {
+        $out = [];
+        $rows = $this->db->rows(
+            "SELECT term_id, parent FROM {$this->db->table('term_taxonomy')} WHERE taxonomy = ? AND parent > 0 ORDER BY term_id ASC",
+            [$taxonomy],
+        );
+        foreach ($rows as $row) {
+            $out[(int) $row['parent']][] = (int) $row['term_id'];
+        }
+        return $out;
+    }
+
     /** Every term id under a term, however deep. @return list<int> */
     public function children(int $termId, string $taxonomy): array
     {

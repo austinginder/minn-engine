@@ -1553,6 +1553,76 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor implements Stringable
     }
 }
 
+class WP_Importer
+{
+
+    public function get_imported_posts($importer_name, $blog_id)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Importer::get_imported_posts');
+        return null;
+    }
+
+    public function count_imported_posts($importer_name, $blog_id)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Importer::count_imported_posts');
+        return null;
+    }
+
+    public function get_imported_comments($blog_id)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Importer::get_imported_comments');
+        return null;
+    }
+
+    public function set_blog($blog_id)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Importer::set_blog');
+        return null;
+    }
+
+    public function set_user($user_id)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Importer::set_user');
+        return null;
+    }
+
+    public function cmpr_strlen($a, $b)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Importer::cmpr_strlen');
+        return null;
+    }
+
+    public function get_page($url, $username = '', $password = '', $head = false)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Importer::get_page');
+        return null;
+    }
+
+    public function bump_request_timeout($val)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Importer::bump_request_timeout');
+        return null;
+    }
+
+    public function is_user_over_quota()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Importer::is_user_over_quota');
+        return null;
+    }
+
+    public function min_whitespace($text)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Importer::min_whitespace');
+        return null;
+    }
+
+    public function stop_the_insanity()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Importer::stop_the_insanity');
+        return null;
+    }
+}
+
 class WP_List_Table
 {
     public $items = NULL;
@@ -1851,6 +1921,101 @@ class WP_List_Table
     public function _js_vars()
     {
         \Minn\Runtime\PlaceholderTrace::hit('WP_List_Table::_js_vars');
+        return null;
+    }
+}
+
+class WP_Plugin_Install_List_Table extends WP_List_Table
+{
+    public $order = 'ASC';
+    public $orderby = NULL;
+    public $groups = [];
+    private $error = NULL;
+
+    public function ajax_user_can()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Plugin_Install_List_Table::ajax_user_can');
+        return null;
+    }
+
+    protected function get_installed_plugins()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Plugin_Install_List_Table::get_installed_plugins');
+        return null;
+    }
+
+    protected function get_installed_plugin_slugs()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Plugin_Install_List_Table::get_installed_plugin_slugs');
+        return null;
+    }
+
+    public function prepare_items()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Plugin_Install_List_Table::prepare_items');
+        return null;
+    }
+
+    public function no_items()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Plugin_Install_List_Table::no_items');
+        return null;
+    }
+
+    protected function get_views()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Plugin_Install_List_Table::get_views');
+        return null;
+    }
+
+    public function views()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Plugin_Install_List_Table::views');
+        return null;
+    }
+
+    public function display()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Plugin_Install_List_Table::display');
+    }
+
+    protected function display_tablenav($which)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Plugin_Install_List_Table::display_tablenav');
+    }
+
+    protected function get_table_classes()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Plugin_Install_List_Table::get_table_classes');
+        return null;
+    }
+
+    public function get_columns()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Plugin_Install_List_Table::get_columns');
+        return null;
+    }
+
+    private function order_callback($plugin_a, $plugin_b)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Plugin_Install_List_Table::order_callback');
+        return null;
+    }
+
+    public function display_rows()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Plugin_Install_List_Table::display_rows');
+    }
+
+    protected function get_dependencies_notice($plugin_data)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Plugin_Install_List_Table::get_dependencies_notice');
+        return null;
+    }
+
+    protected function get_more_details_link($name, $slug)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Plugin_Install_List_Table::get_more_details_link');
         return null;
     }
 }
@@ -2406,6 +2571,117 @@ class WP_REST_Menus_Controller extends WP_REST_Terms_Controller
     }
 }
 
+class WP_REST_Plugins_Controller extends WP_REST_Controller
+{
+    const PATTERN = '[^.\\/]+(?:\\/[^.\\/]+)?';
+
+    public function __construct()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Plugins_Controller::__construct');
+        return null;
+    }
+
+    protected function check_read_permission($plugin)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Plugins_Controller::check_read_permission');
+        return null;
+    }
+
+    protected function prepare_links($item)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Plugins_Controller::prepare_links');
+        return null;
+    }
+
+    protected function get_plugin_data($plugin)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Plugins_Controller::get_plugin_data');
+        return null;
+    }
+
+    protected function get_plugin_status($plugin)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Plugins_Controller::get_plugin_status');
+        return null;
+    }
+
+    protected function plugin_status_permission_check($plugin, $new_status, $current_status)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Plugins_Controller::plugin_status_permission_check');
+        return null;
+    }
+
+    protected function handle_plugin_status($plugin, $new_status, $current_status)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Plugins_Controller::handle_plugin_status');
+        return null;
+    }
+
+    public function validate_plugin_param($file)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Plugins_Controller::validate_plugin_param');
+        return null;
+    }
+
+    public function sanitize_plugin_param($file)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Plugins_Controller::sanitize_plugin_param');
+        return null;
+    }
+
+    protected function does_plugin_match_request($request, $item)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Plugins_Controller::does_plugin_match_request');
+        return null;
+    }
+
+    protected function is_plugin_installed($plugin)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Plugins_Controller::is_plugin_installed');
+        return null;
+    }
+
+    protected function is_filesystem_available()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Plugins_Controller::is_filesystem_available');
+        return null;
+    }
+}
+
+class WP_REST_Settings_Controller extends WP_REST_Controller
+{
+
+    public function __construct()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Settings_Controller::__construct');
+        return null;
+    }
+
+    protected function prepare_value($value, $schema)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Settings_Controller::prepare_value');
+        return null;
+    }
+
+    protected function get_registered_options()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Settings_Controller::get_registered_options');
+        return null;
+    }
+
+    public function sanitize_callback($value, $request, $param)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Settings_Controller::sanitize_callback');
+        return null;
+    }
+
+    protected function set_additional_properties_to_false($schema)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Settings_Controller::set_additional_properties_to_false');
+        return null;
+    }
+}
+
 class WP_REST_Templates_Controller extends WP_REST_Controller
 {
     protected $post_type = NULL;
@@ -2455,6 +2731,53 @@ class WP_REST_Templates_Controller extends WP_REST_Controller
     protected function get_available_actions()
     {
         \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Templates_Controller::get_available_actions');
+        return null;
+    }
+}
+
+class WP_REST_Themes_Controller extends WP_REST_Controller
+{
+    const PATTERN = '[^\\/:<>\\*\\?"\\|]+(?:\\/[^\\/:<>\\*\\?"\\|]+)?';
+
+    public function __construct()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Themes_Controller::__construct');
+        return null;
+    }
+
+    public function _sanitize_stylesheet_callback($stylesheet)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Themes_Controller::_sanitize_stylesheet_callback');
+        return null;
+    }
+
+    protected function check_read_active_theme_permission()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Themes_Controller::check_read_active_theme_permission');
+        return null;
+    }
+
+    protected function prepare_links($theme)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Themes_Controller::prepare_links');
+        return null;
+    }
+
+    protected function is_same_theme($theme_a, $theme_b)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Themes_Controller::is_same_theme');
+        return null;
+    }
+
+    protected function prepare_theme_support($support, $args, $feature, $request)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Themes_Controller::prepare_theme_support');
+        return null;
+    }
+
+    public function sanitize_theme_status($statuses, $request, $parameter)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Themes_Controller::sanitize_theme_status');
         return null;
     }
 }

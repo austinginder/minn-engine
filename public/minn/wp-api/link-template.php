@@ -110,11 +110,12 @@ function wp_login_url($redirect = '', $force_reauth = false)
 
 function wp_logout_url($redirect = '')
 {
-    $args = [];
+    // The action leads and the redirect follows it, in that order.
+    $args = ['action' => 'logout'];
     if (!empty($redirect)) {
         $args['redirect_to'] = urlencode((string) $redirect);
     }
-    $url = add_query_arg($args + ['action' => 'logout'], site_url('wp-login.php', 'login'));
+    $url = add_query_arg($args, site_url('wp-login.php', 'login'));
     $url = wp_nonce_url($url, 'log-out');
     return apply_filters('logout_url', $url, $redirect);
 }
@@ -719,4 +720,18 @@ function get_the_posts_navigation($args = [])
 function the_posts_navigation($args = [])
 {
     echo get_the_posts_navigation($args);
+}
+
+function get_archives_link($url, $text, $format = 'html', $before = '', $after = '', $selected = false)
+{
+    $url = esc_url($url);
+    $aria = $selected ? " aria-current='page'" : '';
+    $text = wptexturize($text);
+    $link = match ($format) {
+        'link' => "\t<link rel='archives' title='" . esc_attr($text) . "' href='$url' />\n",
+        'option' => "\t<option value='$url'" . ($selected ? " selected='selected'" : '') . ">$before $text $after</option>\n",
+        'html' => "\t<li>$before<a href='$url'$aria>$text</a>$after</li>\n",
+        default => "\t$before<a href='$url'$aria>$text</a>$after\n",
+    };
+    return apply_filters('get_archives_link', $link, $url, $text, $format, $before, $after, $selected);
 }
