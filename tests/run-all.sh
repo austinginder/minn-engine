@@ -73,7 +73,7 @@ start_reference "$DOGFOOD_REF" 8124
 start_reference "$SITE_ROOT/wp-reference" 8128
 
 failed=0
-for suite in unit style hooks api runtime rest-gate rest-posts auth application-passwords caps writes login-endpoint rest-parity embed minn-v1 comments media settings users terms write-fields editor templates navigation permalinks blocks theme classic styles probes dogfood cli layout hardening security install cron-mail reader extensions front-method recovery front-page menus declared-types global-styles reusable-blocks admin-surfaces updates site code-size; do
+for suite in unit style hooks api runtime rest-gate abilities rest-posts auth application-passwords caps writes login-endpoint rest-parity embed minn-v1 comments media settings users terms write-fields editor templates navigation permalinks blocks theme classic styles probes dogfood cli layout hardening security install cron-mail reader extensions front-method recovery front-page menus declared-types global-styles reusable-blocks admin-surfaces updates site code-size; do
 	printf '\n=== %s ===\n' "$suite"
 	php "$suite.test.php" || failed=1
 done

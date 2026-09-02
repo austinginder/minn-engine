@@ -49,11 +49,13 @@ final readonly class Route
                 $regex .= preg_quote($part, '#');
                 continue;
             }
-            if (str_ends_with($part, '*')) {
-                $regex .= '(?P<' . rtrim($part, '*') . '>.*)';
-            } elseif (str_contains($part, ':')) {
+            // A constrained capture is never the catch-all, however its
+            // constraint ends: "{slug:[a-z-]*}" is a slug, not the rest of the path.
+            if (str_contains($part, ':')) {
                 [$name, $constraint] = explode(':', $part, 2);
                 $regex .= "(?P<{$name}>{$constraint})";
+            } elseif (str_ends_with($part, '*')) {
+                $regex .= '(?P<' . rtrim($part, '*') . '>.*)';
             } else {
                 $regex .= "(?P<{$part}>[^/]+)";
             }

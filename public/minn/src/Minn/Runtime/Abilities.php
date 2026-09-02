@@ -114,6 +114,46 @@ final class Abilities
         return self::state()['abilities'];
     }
 
+    /**
+     * Whether the caller may run an ability: its own permission callback
+     * decides, and an ability without one is open to any signed-in caller,
+     * as the reference treats it.
+     */
+    public static function permits(string $name): bool
+    {
+        $ability = self::find($name);
+        if ($ability === null) {
+            return false;
+        }
+        $callback = $ability['permission_callback'] ?? null;
+        if (!is_callable($callback)) {
+            return true;
+        }
+        $allowed = $callback();
+        return $allowed instanceof \WP_Error ? false : (bool) $allowed;
+    }
+
+    /**
+     * Runs an ability and returns what it produced. The caller checks
+     * permits() first; this only executes.
+     */
+    public static function execute(string $name, mixed $input = null): mixed
+    {
+        $ability = self::find($name);
+        $callback = $ability['execute_callback'] ?? null;
+        if (!is_callable($callback)) {
+            return null;
+        }
+        return $callback($input);
+    }
+
+    /** Whether an ability is marked read-only, which decides the method its run endpoint takes. */
+    public static function isReadOnly(string $name): bool
+    {
+        $ability = self::find($name);
+        return (bool) (($ability['meta']['annotations']['readonly'] ?? false));
+    }
+
     /** Every category. */
     public static function allCategories(): array
     {

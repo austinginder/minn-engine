@@ -1,0 +1,14 @@
+[
+  {
+    "slug": "site",
+    "label": "Site",
+    "description": "Abilities that retrieve or modify site information and settings.",
+    "meta": []
+  },
+  {
+    "slug": "user",
+    "label": "User",
+    "description": "Abilities that retrieve or modify user information and settings.",
+    "meta": []
+  }
+]
