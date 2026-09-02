@@ -29427,13 +29427,14 @@
             "namespace": "Minn\\Content",
             "kind": "final class",
             "file": "public/minn/src/Minn/Content/Reader.php",
-            "lines": 75,
-            "doc": "Who is reading this request: their user id, whether they may read\nprivate content, whether they may edit a given post, and the\npost-password cookie they carry. Set once per request by the engine\nand consulted by the resolver, the queries, and the renderers.",
+            "lines": 72,
+            "doc": "Who is reading this request: their user id, whether they may read\nprivate content, whether they may edit a given post, and the\npost-password cookie they carry. Built once per surface by the engine,\ncarried by the request's context, and consulted by the resolver, the\nqueries, and the renderers.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Auth\\Capabilities",
-                "Minn\\Content\\PostStatus"
+                "Minn\\Content\\PostStatus",
+                "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
                 "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
@@ -29513,15 +29514,6 @@
             "cases": [],
             "constants": [],
             "properties": [
-                {
-                    "name": "current",
-                    "type": "?self",
-                    "readonly": false,
-                    "static": true,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": false
-                },
                 {
                     "name": "userId",
                     "type": "int",
@@ -29650,35 +29642,15 @@
                 },
                 {
                     "routes": [],
-                    "name": "set",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "set(self $reader): void",
-                    "doc": "Makes this reader the current one for the request.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "reader",
-                            "type": "self",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 61,
-                    "end": 64
-                },
-                {
-                    "routes": [],
                     "name": "current",
                     "static": true,
                     "visibility": "public",
                     "signature": "current(): self",
-                    "doc": "The request's reader, anonymous until one is set.",
+                    "doc": "The reader of the request being answered. The runtime holds it (the\ncontext it was built with carries it), so there is one holder and a\nrequest cannot see the reader of the one before it. Without a\nruntime, on the command line and in unit tests, nobody is reading.",
                     "shapes": [],
                     "params": [],
-                    "line": 67,
-                    "end": 70
+                    "line": 66,
+                    "end": 69
                 },
                 {
                     "routes": [],
@@ -29689,8 +29661,8 @@
                     "doc": "Whether the reader has a session.",
                     "shapes": [],
                     "params": [],
-                    "line": 73,
-                    "end": 76
+                    "line": 72,
+                    "end": 75
                 },
                 {
                     "routes": [],
@@ -29709,8 +29681,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 79,
-                    "end": 82
+                    "line": 78,
+                    "end": 81
                 },
                 {
                     "routes": [],
@@ -29731,8 +29703,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 85,
-                    "end": 89
+                    "line": 84,
+                    "end": 88
                 }
             ]
         },
@@ -33171,7 +33143,7 @@
             "namespace": "Minn",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Engine.php",
-            "lines": 192,
+            "lines": 194,
             "doc": "The engine's front door. An unmodified wp-config.php ends by requiring\nwp-settings.php, which is the engine's own boot file; it hands off here.\nREST is dispatched first (from the path or from ?rest_route=), then the\nadmin, the login endpoint, and finally the public site.",
             "implements": [],
             "extends": null,
@@ -33341,7 +33313,7 @@
                         }
                     ],
                     "line": 108,
-                    "end": 127
+                    "end": 126
                 },
                 {
                     "routes": [],
@@ -33360,21 +33332,21 @@
                             "doc": ""
                         }
                     ],
-                    "line": 129,
-                    "end": 208
+                    "line": 128,
+                    "end": 207
                 },
                 {
                     "routes": [],
                     "name": "frontPipeline",
                     "static": false,
                     "visibility": "private",
-                    "signature": "frontPipeline(Minn\\Db $db, Minn\\Http\\Request $request, Minn\\Runtime\\Runtime $runtime, Minn\\Content\\Site $site, Minn\\Content\\Users $users, Minn\\Auth\\Sessions $sessions, Minn\\Auth\\Cookie $cookie, Minn\\Auth\\Authenticator $authenticator, Minn\\Auth\\Capabilities $capabilities, Minn\\Admin\\App $app, mixed $session, Minn\\Front\\Resolver $resolver, Minn\\Front\\Permalinks $permalinks, ?Minn\\Theme\\Theme $theme, ?Minn\\Theme\\ClassicTheme $classicTheme): never",
+                    "signature": "frontPipeline(Minn\\Context $context, Minn\\Http\\Request $request, Minn\\Runtime\\Runtime $runtime, Minn\\Content\\Users $users, Minn\\Auth\\Sessions $sessions, Minn\\Auth\\Cookie $cookie, Minn\\Auth\\Authenticator $authenticator, Minn\\Admin\\App $app, mixed $session, Minn\\Front\\Resolver $resolver, Minn\\Front\\Permalinks $permalinks, ?Minn\\Theme\\Theme $theme, ?Minn\\Theme\\ClassicTheme $classicTheme): never",
                     "doc": "The themed front, admin app, and probe pipeline; split out so a mid-request ServeLogin signal can unwind it cleanly.",
                     "shapes": [],
                     "params": [
                         {
-                            "name": "db",
-                            "type": "Minn\\Db",
+                            "name": "context",
+                            "type": "Minn\\Context",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -33389,13 +33361,6 @@
                         {
                             "name": "runtime",
                             "type": "Minn\\Runtime\\Runtime",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "site",
-                            "type": "Minn\\Content\\Site",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -33424,13 +33389,6 @@
                         {
                             "name": "authenticator",
                             "type": "Minn\\Auth\\Authenticator",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "capabilities",
-                            "type": "Minn\\Auth\\Capabilities",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -33478,8 +33436,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 211,
-                    "end": 260
+                    "line": 210,
+                    "end": 262
                 }
             ]
         },
@@ -74260,6 +74218,7 @@
                 "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
                 "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
                 "Minn\\Blocks\\ImageTags",
+                "Minn\\Content\\Reader",
                 "Minn\\Engine",
                 "Minn\\Extension\\Extensions",
                 "Minn\\Front\\Feeds",

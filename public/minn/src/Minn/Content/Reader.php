@@ -6,17 +6,17 @@ namespace Minn\Content;
 
 use Closure;
 use Minn\Auth\Capabilities;
+use Minn\Runtime\Runtime;
 
 /**
  * Who is reading this request: their user id, whether they may read
  * private content, whether they may edit a given post, and the
- * post-password cookie they carry. Set once per request by the engine
- * and consulted by the resolver, the queries, and the renderers.
+ * post-password cookie they carry. Built once per surface by the engine,
+ * carried by the request's context, and consulted by the resolver, the
+ * queries, and the renderers.
  */
 final class Reader
 {
-    private static ?self $current = null;
-
     /** @param Closure(int): bool $canEditPost */
     public function __construct(
         public readonly int $userId,
@@ -57,16 +57,15 @@ final class Reader
         );
     }
 
-    /** Makes this reader the current one for the request. */
-    public static function set(self $reader): void
-    {
-        self::$current = $reader;
-    }
-
-    /** The request's reader, anonymous until one is set. */
+    /**
+     * The reader of the request being answered. The runtime holds it (the
+     * context it was built with carries it), so there is one holder and a
+     * request cannot see the reader of the one before it. Without a
+     * runtime, on the command line and in unit tests, nobody is reading.
+     */
     public static function current(): self
     {
-        return self::$current ??= self::anonymous();
+        return Runtime::booted() ? Runtime::current()->reader : self::anonymous();
     }
 
     /** Whether the reader has a session. */

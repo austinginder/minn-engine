@@ -73,10 +73,17 @@ are the context's answers.
 
 The extension seams live on the runtime too (`useSeams()` / `seams()`);
 `Extension\Extensions` is now a lookup with no state of its own, so a
-request cannot inherit the extensions of the one before it. `Reader` is
-still reachable through its own static accessor, which is the next slice to
-retire, along with `Db::shared()` at the five deep render sites and the
-render statics (`RenderState::current`, `Layout::$rootPaddingAware`,
+request cannot inherit the extensions of the one before it. `Reader` holds
+nothing either: `Reader::current()` reads the runtime's reader, and without
+a runtime (the command line, unit tests) nobody is reading, which is the
+default those paths already had. `Engine::frontPipeline` takes the context
+in place of the database, the site, and the capability engine.
+
+Still ambient, in the order they are worth retiring: `Db::shared()` at the
+five deep render sites (`Content\Blocks`, `Front\Permalinks`, `Mail\Mailer`,
+and the two theme block classes), which is what threading a context through
+the render pipeline would fix, and the render statics themselves
+(`RenderState::current`, `Layout::$rootPaddingAware`,
 `Content\Blocks::$renderer`).
 
 **The symbol gate.** Before a plugin folder is included, `Runtime\Symbols`

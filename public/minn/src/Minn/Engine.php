@@ -108,7 +108,6 @@ final readonly class Engine
     private function bootRuntimeForRest(Context $context, Api $api): void
     {
         $reader = Reader::forUser($api->caller()->id(), $context->capabilities, '', $api->caller()->session()?->token ?? '');
-        Reader::set($reader);
         $site = $context->site;
         $db = $context->db;
         $permalinks = \Minn\Front\Permalinks::fromDb($db);
@@ -179,9 +178,9 @@ final readonly class Engine
             (string) ($request->cookies['wp-postpass_' . md5((string) ($site->option('siteurl') ?? ''))] ?? ''),
             $session instanceof Authenticated ? $session->token : '',
         );
-        Reader::set($reader);
         $context = $context->withReader($reader);
-        $canReadUnpublished = static fn (PostRecord $post): bool => Reader::current()->canEdit((int) $post['ID']);
+        // The runtime boots below with this context, and Reader::current() reads it from there.
+        $canReadUnpublished = static fn (PostRecord $post): bool => $reader->canEdit((int) $post['ID']);
         $resolver = Resolver::fromDb($db, $canReadUnpublished);
         $permalinks = $resolver->permalinks();
         $theme = Theme::active($site, $permalinks, $context->themesDir());
@@ -198,7 +197,7 @@ final readonly class Engine
             $runtime->set('classic_theme', $classicTheme->stylesheet);
         }
         try {
-            $this->frontPipeline($db, $request, $runtime, $site, $users, $sessions, $cookie, $authenticator, $capabilities, $app, $session, $resolver, $permalinks, $theme, $classicTheme);
+            $this->frontPipeline($context, $request, $runtime, $users, $sessions, $cookie, $authenticator, $app, $session, $resolver, $permalinks, $theme, $classicTheme);
         } catch (\Minn\Login\ServeLogin) {
             // A hide-login plugin require'd wp-login.php mid-request: the
             // current request gets the sign-in surface, whatever its path.
@@ -208,10 +207,13 @@ final readonly class Engine
     }
 
     /** The themed front, admin app, and probe pipeline; split out so a mid-request ServeLogin signal can unwind it cleanly. */
-    private function frontPipeline(Db $db, Request $request, Runtime $runtime, Site $site, Users $users, Sessions $sessions, Cookie $cookie, Authenticator $authenticator, Capabilities $capabilities, App $app, mixed $session, Resolver $resolver, \Minn\Front\Permalinks $permalinks, ?Theme $theme, ?\Minn\Theme\ClassicTheme $classicTheme): never
+    private function frontPipeline(Context $context, Request $request, Runtime $runtime, Users $users, Sessions $sessions, Cookie $cookie, Authenticator $authenticator, App $app, mixed $session, Resolver $resolver, \Minn\Front\Permalinks $permalinks, ?Theme $theme, ?\Minn\Theme\ClassicTheme $classicTheme): never
     {
+        $db = $context->db;
+        $site = $context->site;
+        $capabilities = $context->capabilities;
         Plugins::load($runtime);
-        $seams = new Seams($db, $site, $request, Reader::current());
+        $seams = new Seams($db, $site, $request, $context->reader);
         (new Loader(ABSPATH . 'wp-content', $site))->register($seams);
         Extensions::set($seams);
         $appearance = new Appearance($users);

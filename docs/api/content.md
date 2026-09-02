@@ -26,7 +26,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`PostStatus`](#poststatus) | enum | 42 | The statuses a post row can hold; the value is the column's own spelling. |
 | [`PostWriter`](#postwriter) | final readonly class | 318 | Every write to the posts table and its satellites: rows, meta, term |
 | [`Posts`](#posts) | final readonly class | 391 | Reads over the posts table. A single post comes back as a PostRecord and |
-| [`Reader`](#reader) | final class | 75 | Who is reading this request: their user id, whether they may read |
+| [`Reader`](#reader) | final class | 72 | Who is reading this request: their user id, whether they may read |
 | [`Revisions`](#revisions) | final readonly class | 86 | Revision rows: the plain snapshots and the per-author autosave slots. |
 | [`Site`](#site) | final readonly class | 54 | Site-wide options and the site's clock. |
 | [`SiteIcon`](#siteicon) | final readonly class | 50 | The site icon: the attachment the site_icon option names, as the file |
@@ -1237,8 +1237,9 @@ Internals: `record()` (private, line 21), `byName()` (private, line 49), `byPath
 
 Who is reading this request: their user id, whether they may read
 private content, whether they may edit a given post, and the
-post-password cookie they carry. Set once per request by the engine
-and consulted by the resolver, the queries, and the renderers.
+post-password cookie they carry. Built once per surface by the engine,
+carried by the request's context, and consulted by the resolver, the
+queries, and the renderers.
 
 Used by: `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Content\PasswordGate`, `Minn\Content\Posts`, `Minn\Context`, `Minn\Engine`, `Minn\Extension\Seams`, `Minn\Front\CommentPostController`, `Minn\Front\Resolver`, `Minn\Runtime\PostQuery`, `Minn\Runtime\Runtime`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\PageRenderer`
 
@@ -1264,13 +1265,12 @@ The reader a signed-in user is, asked of the capability engine: what
 they may read privately, what they may edit, and the roles they hold.
 User 0 is nobody, whatever the capabilities say.
 
-### static `set(self $reader): void`
-
-Makes this reader the current one for the request.
-
 ### static `current(): self`
 
-The request's reader, anonymous until one is set.
+The reader of the request being answered. The runtime holds it (the
+context it was built with carries it), so there is one holder and a
+request cannot see the reader of the one before it. Without a
+runtime, on the command line and in unit tests, nobody is reading.
 
 ### `loggedIn(): bool`
 
