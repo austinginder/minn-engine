@@ -7,7 +7,7 @@ the front door, the autoloader, the one database door, the REST error
 | [`Autoloader`](#autoloader) | final class | 16 | PSR-4 for the Minn namespace: Minn\Http\Request lives at src/Minn/Http/Request.php. |
 | [`Context`](#context) | final readonly class | 41 | One request, as a value: the database door, who is asking, what they |
 | [`Db`](#db) | final class | 238 | The one door to the database. Every query is a prepared statement; the |
-| [`Engine`](#engine) | final readonly class | 215 | The engine's front door. An unmodified wp-config.php ends by requiring |
+| [`Engine`](#engine) | final readonly class | 219 | The engine's front door. An unmodified wp-config.php ends by requiring |
 | [`RestError`](#resterror) | final class | 49 | A WordPress-shaped error, thrown from anywhere and rendered once by the |
 
 ## Autoloader
@@ -34,7 +34,7 @@ The reader is the one part that differs by surface (REST resolves it
 from the nonce-bound caller, the front from the session cookie), so a
 context is made with the reader its surface resolved.
 
-Used by: `Minn\Engine`, `Minn\Runtime\Runtime`
+Used by: `Minn\Cli\Runtime`, `Minn\Engine`, `Minn\Runtime\Runtime`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Site $site, ?Minn\Http\Request $request, Minn\Content\Reader $reader, Minn\Auth\Capabilities $capabilities, string $engineDir, string $absPath, string $version)
@@ -179,7 +179,7 @@ admin, the login endpoint, and finally the public site.
 
 - const `WP_VERSION` = `'7.1'` — The WordPress release whose contracts the runtime speaks; wp-includes/version.php says the same.
 
-Used by: `Minn\Cli\AssetUpdate`, `Minn\Ops\Packages`, `Minn\Rest\Services`
+Used by: `Minn\Cli\AssetUpdate`, `Minn\Cli\MinnCommand`, `Minn\Cli\Runtime`, `Minn\Ops\Packages`, `Minn\Rest\Services`
 
 ```php
 __construct(string $version, string $engineDir)

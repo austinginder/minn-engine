@@ -48,6 +48,13 @@ final class Commands
         self::leaf('theme search', [ThemeCommand::class, 'search'], $early);
         self::leaf('theme update', [ThemeCommand::class, 'update'], $early);
         self::leaf('theme upgrade', [ThemeCommand::class, 'update'], $early);
+        self::leaf('cron event list', [CronCommand::class, 'event_list'], $early);
+        self::leaf('cron event run', [CronCommand::class, 'event_run'], $early);
+        self::leaf('cron event schedule', [CronCommand::class, 'event_schedule'], $early);
+        self::leaf('cron event delete', [CronCommand::class, 'event_delete'], $early);
+        self::leaf('cron event unschedule', [CronCommand::class, 'event_unschedule'], $early);
+        self::leaf('cron schedule list', [CronCommand::class, 'schedule_list'], $early);
+        self::leaf('cron test', [CronCommand::class, 'test'], $early);
         self::leaf('cache flush', [CacheCommand::class, 'flush'], $early);
         self::leaf('rewrite flush', [RewriteCommand::class, 'flush'], $early);
         self::leaf('rewrite structure', [RewriteCommand::class, 'structure'], $early);

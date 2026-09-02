@@ -360,7 +360,12 @@ facts that shaped the implementation.
   at different timestamps are allowed; a single event within ten minutes
   of an identical one is refused; `wp_unschedule_hook` returns the count
   removed; the engine's `wp_cron()` runs due hooks (single events removed,
-  recurring rescheduled, then the action fires).
+  recurring rescheduled, then the action fires). `wp_cron()` is called from
+  `Cron::run()` (through an injected closure, since firing needs the booted
+  runtime) on every wp-cron.php hit, on `wp minn cron`, and on a front request
+  that publishes a due post; the `wp cron event *` verbs
+  (`Minn\Cli\CronCommand`) boot the full runtime and operate the same option.
+  See `contracts/cron-mail.md`.
 - **HTTP**: `wp_remote_*` returns `{headers (CaseInsensitiveDictionary),
   body, response {code, message}, cookies, filename, http_response}` or
   `WP_Error http_request_failed`; a relative `src` given to the script

@@ -6,16 +6,17 @@ the wp verbs the engine answers itself
 |---|---|---|---|
 | [`AssetUpdate`](#assetupdate) | final class | 326 | Shared wording for `wp plugin update` and `wp theme update`. Captured |
 | [`CacheCommand`](#cachecommand) | final class | 15 | `wp cache flush`: the engine has no object cache, so this is a no-op success. |
-| [`Commands`](#commands) | final class | 87 | The verbs the engine answers to. Every one is registered for the |
+| [`Commands`](#commands) | final class | 94 | The verbs the engine answers to. Every one is registered for the |
+| [`CronCommand`](#croncommand) | final class | 277 | `wp cron`: the events, schedules, and spawn test a host and a fleet ask |
 | [`DirectorySearch`](#directorysearch) | final class | 37 | Shared wording for `wp theme search` and `wp plugin search`. The |
 | [`Installer`](#installer) | final class | 303 | The swap, both ways. Install parks WordPress's own files beside the |
 | [`MaintenanceCommand`](#maintenancecommand) | final class | 65 | `wp maintenance-mode`: the `.maintenance` marker in the webroot. The |
-| [`MinnCommand`](#minncommand) | final class | 302 | Identifies the engine. |
+| [`MinnCommand`](#minncommand) | final class | 308 | Identifies the engine. |
 | [`OptionCommand`](#optioncommand) | final class | 191 | Options, read and written straight to the options table. Serialized |
 | [`PluginCommand`](#plugincommand) | final class | 475 | `wp plugin list\|install\|update\|activate\|deactivate\|delete`: the inventory and the fleet's install/update/delete. |
 | [`Preflight`](#preflight) | final class | 360 | What a site will and will not get from the engine, before anything |
 | [`RewriteCommand`](#rewritecommand) | final class | 52 | `wp rewrite flush\|structure`: permalink_structure is the engine's |
-| [`Runtime`](#runtime) | final class | 38 | The engine, booted for a command: reads the site's wp-config.php (which |
+| [`Runtime`](#runtime) | final class | 64 | The engine, booted for a command: reads the site's wp-config.php (which |
 | [`SearchReplaceCommand`](#searchreplacecommand) | final class | 143 | `wp search-replace`: walks every string column, including serialized |
 | [`ThemeCommand`](#themecommand) | final class | 425 | `wp theme list\|install\|update\|activate\|delete`: the inventory CaptainCore |
 | [`UserCommand`](#usercommand) | final class | 366 | Users: the list and get views, and the one-time login link. |
@@ -79,7 +80,89 @@ addition lands after the bundle and overrides its leaf).
 
 Registers every engine verb with WP-CLI in the phase it runs in.
 
-Internals: `leaf()` (private, line 71), `replace()` (private, line 87)
+Internals: `leaf()` (private, line 78), `replace()` (private, line 94)
+
+
+## CronCommand
+
+`final class Minn\Cli\CronCommand` · `public/minn/src/Minn/Cli/CronCommand.php`
+
+`wp cron`: the events, schedules, and spawn test a host and a fleet ask
+for. Every verb boots the full runtime first, so a plugin's schedules and
+callbacks are registered before an event is listed, scheduled, or run. The
+wording and exit codes are the reference's, captured from `wp cron` on the
+oracle; the two time columns drift second to second and are never pinned.
+
+- const `EVENT_FIELDS` = `array (   0 => 'hook',   1 => 'next_run_gmt',   2 => 'next_run_relative',   3 => 'recurrence', )`
+- const `SCHEDULE_FIELDS` = `array (   0 => 'name',   1 => 'display',   2 => 'interval', )`
+
+Used by: `Minn\Cli\Commands`
+
+### `event_list(array $args, array $assocArgs): void`
+
+Lists the scheduled cron events.
+
+## OPTIONS
+
+[--hook=<name>]
+[--field=<field>]
+[--fields=<fields>]
+[--format=<format>]
+[--<field>=<value>]
+[--due-now]
+
+### `event_run(array $args, array $assocArgs): void`
+
+Runs the next scheduled cron event for the given hook.
+
+## OPTIONS
+
+[<hook>...]
+[--due-now]
+[--all]
+
+### `event_schedule(array $args, array $assocArgs): void`
+
+Schedules a new cron event.
+
+## OPTIONS
+
+<hook>
+[<next-run>]
+[<recurrence>]
+[--<field>=<value>]
+
+### `event_delete(array $args, array $assocArgs): void`
+
+Deletes all cron events for the given hook.
+
+## OPTIONS
+
+<hook>...
+
+### `event_unschedule(array $args, array $assocArgs): void`
+
+Unschedules all cron events for a given hook.
+
+## OPTIONS
+
+<hook>
+
+### `schedule_list(array $args, array $assocArgs): void`
+
+Lists available cron schedules.
+
+## OPTIONS
+
+[--field=<field>]
+[--fields=<fields>]
+[--format=<format>]
+
+### `test(array $args, array $assocArgs): void`
+
+Tests the WP Cron spawning system and reports the results.
+
+Internals: `scheduled()` (private, line 245), `eventArgs()` (private, line 260), `duration()` (private, line 267), `relative()` (private, line 289)
 
 
 ## DirectorySearch
@@ -304,7 +387,7 @@ resumed here.
 [--theme]
 : Treat the name as a theme rather than a plugin.
 
-Internals: `installer()` (private, line 199), `parkedTree()` (private, line 315), `engineVersion()` (private, line 326)
+Internals: `installer()` (private, line 207), `parkedTree()` (private, line 323), `engineVersion()` (private, line 334)
 
 
 ## OptionCommand
@@ -669,7 +752,7 @@ The engine, booted for a command: reads the site's wp-config.php (which
 ends in wp-settings.php, whose engine boot stops short of serving under
 WP-CLI) so the database constants and table prefix are known.
 
-Used by: `Minn\Cli\AssetUpdate`, `Minn\Cli\DirectorySearch`, `Minn\Cli\MaintenanceCommand`, `Minn\Cli\MinnCommand`, `Minn\Cli\OptionCommand`, `Minn\Cli\PluginCommand`, `Minn\Cli\RewriteCommand`, `Minn\Cli\SearchReplaceCommand`, `Minn\Cli\ThemeCommand`, `Minn\Cli\UserCommand`
+Used by: `Minn\Cli\AssetUpdate`, `Minn\Cli\CronCommand`, `Minn\Cli\DirectorySearch`, `Minn\Cli\MaintenanceCommand`, `Minn\Cli\MinnCommand`, `Minn\Cli\OptionCommand`, `Minn\Cli\PluginCommand`, `Minn\Cli\RewriteCommand`, `Minn\Cli\SearchReplaceCommand`, `Minn\Cli\ThemeCommand`, `Minn\Cli\UserCommand`
 
 - readonly `Minn\Db $db`
 - readonly `Minn\Content\Site $site`
@@ -681,7 +764,15 @@ Used by: `Minn\Cli\AssetUpdate`, `Minn\Cli\DirectorySearch`, `Minn\Cli\Maintenan
 
 The engine's runtime for a CLI process, booted once.
 
-Internals: `loadConfig()` (private, line 48)
+### static `bootEngine(): Minn\Runtime\Runtime`
+
+The full WordPress runtime for a command, booted once: the facade is
+defined, the site's plugins load as code, and the lifecycle actions
+fire, so a verb can fire a scheduled hook whose callback a plugin
+registered. The lighter boot() does none of this; only a command that
+needs the runtime (cron) asks for this, since it loads every plugin.
+
+Internals: `loadConfig()` (private, line 80)
 
 
 ## SearchReplaceCommand

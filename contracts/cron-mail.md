@@ -1,31 +1,51 @@
 # Cron and mail
 
-Suite: `tests/cron-mail.test.php` (25 checks, real mail through Mailpit on the dev
-machine). Code: `Minn\Cron\Cron`, `Minn\Mail\*`, `Minn\Auth\PasswordReset`,
+Suites: `tests/cron-mail.test.php` (25 checks, real mail through Mailpit on the dev
+machine) and `tests/cron.test.php` (24 checks: `wp cron` against the reference on the
+same database, and the fixture plugin's due hook firing on every trigger). Code:
+`Minn\Cron\Cron`, `Minn\Cli\CronCommand`, `Minn\Mail\*`, `Minn\Auth\PasswordReset`,
 `Minn\Login\LoginController`.
 
-## Scheduled posts
+## Scheduled events and posts
 
-The engine has no hook runner, so it does not read the `cron` option. It publishes
-scheduled posts directly: a `future` post whose `post_date_gmt` has passed gets
-`post_status = publish` and nothing else changes (dates and `post_modified` stay,
-the slug was set at scheduling), then the term counts are refreshed. Captured from
-the reference's own publish of a due post.
+A run does two things: it fires the `cron` option's due hooks, and it publishes due
+scheduled posts. Both happen under one sixty-second lock (`minn_cron_lock`).
 
-Triggers, any of which runs every due job under a sixty-second lock:
+**Due hooks.** The `cron` option holds every event a plugin scheduled
+(`wp_schedule_event` and friends, `contracts/runtime.md` "Cron"). A run reads the
+ready events (`wp_get_ready_cron_jobs`), reschedules the recurring ones, removes the
+single ones, and fires each hook through the facade (`wp_cron` →
+`do_action_ref_array`). Firing needs the booted runtime, so the caller passes it in
+as a closure; a run without one (never in production) publishes posts and sweeps only.
+
+**Scheduled posts.** A `future` post whose `post_date_gmt` has passed gets
+`post_status = publish` and nothing else changes (dates and `post_modified` stay, the
+slug was set at scheduling), then the term counts are refreshed. Captured from the
+reference's own publish of a due post. This is by row, not by the `publish_future_post`
+event, so a post scheduled by WordPress before an install is still published by the
+engine on time.
+
+Triggers:
 
 - `wp-cron.php` (any method, `doing_wp_cron` ignored; answers 200 with an empty
-  body, as the reference does; `DISABLE_WP_CRON` honoured);
-- `wp minn cron`;
-- a front request that finds a due post (one indexed query per request).
+  body, as the reference does; `DISABLE_WP_CRON` honoured) fires due hooks and
+  publishes due posts every time. The reference dispatches a locked background
+  loopback here; the engine runs the work inline under the same lock, which a
+  single-worker server can serve and a monitor reading the endpoint cannot tell
+  from the reference (an empty 200 either way);
+- `wp minn cron` (and `minn cron`): boots the full runtime, so due hooks fire and
+  the daily auto-update check runs; this is the verb a system cron calls;
+- a front request that finds a due post runs the same job (one indexed query per
+  request to find one).
 
 The same run sweeps expired transients (`_transient_timeout_*` past, both rows go)
 and expired sign-in throttle rows.
 
-Known gap: a post scheduled through the engine has no `publish_future_post` event in
-the `cron` option, so after an eject WordPress will not publish it until it is saved
-again; a post scheduled by WordPress before an install is published by the engine on
-time (it reads the row, not the event).
+Known gap: the engine does not spawn a background loopback from an ordinary front
+request the way the reference does, so a site with no server cron and no WP-CLI cron
+relies on a visitor request that happens to publish a due post to also fire due
+hooks. Managed hosts drive cron through `wp-cron.php` or `wp cron event run`, both of
+which fire everything.
 
 ## Mail
 

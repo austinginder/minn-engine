@@ -1248,7 +1248,7 @@ post-password cookie they carry. Built once per surface by the engine,
 carried by the request's context, and consulted by the resolver, the
 queries, and the renderers.
 
-Used by: `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Content\PasswordGate`, `Minn\Content\Posts`, `Minn\Context`, `Minn\Engine`, `Minn\Extension\Seams`, `Minn\Front\CommentPostController`, `Minn\Front\Resolver`, `Minn\Runtime\PostQuery`, `Minn\Runtime\Runtime`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Cli\Runtime`, `Minn\Content\PasswordGate`, `Minn\Content\Posts`, `Minn\Context`, `Minn\Engine`, `Minn\Extension\Seams`, `Minn\Front\CommentPostController`, `Minn\Front\Resolver`, `Minn\Runtime\PostQuery`, `Minn\Runtime\Runtime`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\PageRenderer`
 
 ```php
 __construct(int $userId, bool $readsPrivatePosts, bool $readsPrivatePages, Closure $canEditPost, string $postPassword, string $sessionToken = '', array $roles = array ( ))

@@ -248,7 +248,11 @@ final readonly class Engine
         $generator = (string) (\Minn\Support\Serialized::field($site->option('_site_transient_update_core'), 'version_checked') ?? '');
         $feeds = new Feeds($db, $site, $posts, new Comments($db), $users, $permalinks, $generator);
         $front = null;
-        $cron = new Cron($db, $site, new PostWriter($db, $posts, $site), new Updates($site, new Inventory(ABSPATH . 'wp-content', $site), new Packages($site, ABSPATH . 'wp-content'), ABSPATH . 'wp-content', $permalinks->url('/'), self::WP_VERSION));
+        // The runtime is booted for this request, so the cron option's due
+        // hooks fire through the facade; wp-cron.php runs them every time and
+        // a front request that publishes a due post runs them alongside it.
+        $fireDueEvents = static fn (): int => \function_exists('wp_cron') ? (int) \wp_cron() : 0;
+        $cron = new Cron($db, $site, new PostWriter($db, $posts, $site), new Updates($site, new Inventory(ABSPATH . 'wp-content', $site), new Packages($site, ABSPATH . 'wp-content'), ABSPATH . 'wp-content', $permalinks->url('/'), self::WP_VERSION), $fireDueEvents);
         $notFound = static function () use (&$front): Response { return $front->notFound(); };
         $feedController = new \Minn\Front\FeedController($site, $posts, $permalinks, $resolver, $feeds, $notFound);
         $front = new FrontController($resolver, new Renderer($db, $posts, $permalinks, $resolver->perPage()), $pages, $feedController, $cron, $classic);

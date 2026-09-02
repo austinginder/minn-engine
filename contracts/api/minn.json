@@ -17171,12 +17171,13 @@
             "namespace": "Minn\\Cli",
             "kind": "final class",
             "file": "public/minn/src/Minn/Cli/Commands.php",
-            "lines": 87,
+            "lines": 94,
             "doc": "The verbs the engine answers to. Every one is registered for the\nbefore_wp_load phase, which WP-CLI runs before it looks for WordPress,\nand each replaces the bundled subcommand of the same name (a deferred\naddition lands after the bundle and overrides its leaf).",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Cli\\CacheCommand",
+                "Minn\\Cli\\CronCommand",
                 "Minn\\Cli\\MaintenanceCommand",
                 "Minn\\Cli\\MinnCommand",
                 "Minn\\Cli\\OptionCommand",
@@ -17202,7 +17203,7 @@
                     "shapes": [],
                     "params": [],
                     "line": 18,
-                    "end": 61
+                    "end": 68
                 },
                 {
                     "routes": [],
@@ -17238,8 +17239,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 71,
-                    "end": 78
+                    "line": 78,
+                    "end": 85
                 },
                 {
                     "routes": [],
@@ -17275,8 +17276,322 @@
                             "doc": ""
                         }
                     ],
-                    "line": 87,
-                    "end": 100
+                    "line": 94,
+                    "end": 107
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Cli\\CronCommand",
+            "short": "CronCommand",
+            "namespace": "Minn\\Cli",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Cli/CronCommand.php",
+            "lines": 277,
+            "doc": "`wp cron`: the events, schedules, and spawn test a host and a fleet ask\nfor. Every verb boots the full runtime first, so a plugin's schedules and\ncallbacks are registered before an event is listed, scheduled, or run. The\nwording and exit codes are the reference's, captured from `wp cron` on the\noracle; the two time columns drift second to second and are never pinned.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Cli\\Runtime"
+            ],
+            "usedBy": [
+                "Minn\\Cli\\Commands"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "EVENT_FIELDS",
+                    "value": "array (   0 => 'hook',   1 => 'next_run_gmt',   2 => 'next_run_relative',   3 => 'recurrence', )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "SCHEDULE_FIELDS",
+                    "value": "array (   0 => 'name',   1 => 'display',   2 => 'interval', )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "event_list",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "event_list(array $args, array $assocArgs): void",
+                    "doc": "Lists the scheduled cron events.\n\n## OPTIONS\n\n[--hook=<name>]\n[--field=<field>]\n[--fields=<fields>]\n[--format=<format>]\n[--<field>=<value>]\n[--due-now]",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "assocArgs",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 36,
+                    "end": 66
+                },
+                {
+                    "routes": [],
+                    "name": "event_run",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "event_run(array $args, array $assocArgs): void",
+                    "doc": "Runs the next scheduled cron event for the given hook.\n\n## OPTIONS\n\n[<hook>...]\n[--due-now]\n[--all]",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "assocArgs",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 79,
+                    "end": 115
+                },
+                {
+                    "routes": [],
+                    "name": "event_schedule",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "event_schedule(array $args, array $assocArgs): void",
+                    "doc": "Schedules a new cron event.\n\n## OPTIONS\n\n<hook>\n[<next-run>]\n[<recurrence>]\n[--<field>=<value>]",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "assocArgs",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 129,
+                    "end": 156
+                },
+                {
+                    "routes": [],
+                    "name": "event_delete",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "event_delete(array $args, array $assocArgs): void",
+                    "doc": "Deletes all cron events for the given hook.\n\n## OPTIONS\n\n<hook>...",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "assocArgs",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 167,
+                    "end": 185
+                },
+                {
+                    "routes": [],
+                    "name": "event_unschedule",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "event_unschedule(array $args, array $assocArgs): void",
+                    "doc": "Unschedules all cron events for a given hook.\n\n## OPTIONS\n\n<hook>",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "assocArgs",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 196,
+                    "end": 205
+                },
+                {
+                    "routes": [],
+                    "name": "schedule_list",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "schedule_list(array $args, array $assocArgs): void",
+                    "doc": "Lists available cron schedules.\n\n## OPTIONS\n\n[--field=<field>]\n[--fields=<fields>]\n[--format=<format>]",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "assocArgs",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 218,
+                    "end": 227
+                },
+                {
+                    "routes": [],
+                    "name": "test",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "test(array $args, array $assocArgs): void",
+                    "doc": "Tests the WP Cron spawning system and reports the results.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "assocArgs",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 234,
+                    "end": 242
+                },
+                {
+                    "routes": [],
+                    "name": "scheduled",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "scheduled(array $crons, string $hook): bool",
+                    "doc": "Whether any instance of the hook is in the cron table.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "crons",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "hook",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 245,
+                    "end": 253
+                },
+                {
+                    "routes": [],
+                    "name": "eventArgs",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "eventArgs(array $assocArgs): array",
+                    "doc": "The event arguments passed as flags, the reference's own flags removed.",
+                    "shapes": [
+                        "@return array<string, string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "assocArgs",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 260,
+                    "end": 264
+                },
+                {
+                    "routes": [],
+                    "name": "duration",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "duration(int $seconds): string",
+                    "doc": "A number of seconds as the reference prints a recurrence: the two largest whole units, or \"now\".",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "seconds",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 267,
+                    "end": 286
+                },
+                {
+                    "routes": [],
+                    "name": "relative",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "relative(int $seconds): string",
+                    "doc": "The relative run time as the reference prints it: a duration ahead, or \"now\" once it is due.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "seconds",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 289,
+                    "end": 292
                 }
             ]
         },
@@ -17890,7 +18205,7 @@
             "namespace": "Minn\\Cli",
             "kind": "final class",
             "file": "public/minn/src/Minn/Cli/MinnCommand.php",
-            "lines": 302,
+            "lines": 308,
             "doc": "Identifies the engine.\n\n## EXAMPLES\n\nwp minn version\nwp minn info\nwp minn probe",
             "implements": [],
             "extends": null,
@@ -17902,10 +18217,13 @@
                 "Minn\\Content\\Posts",
                 "Minn\\Content\\Site",
                 "Minn\\Cron\\Cron",
+                "Minn\\Engine",
                 "Minn\\Extension\\Loader",
                 "Minn\\Mail\\MailSettings",
                 "Minn\\Mail\\Mailer",
                 "Minn\\Mail\\Message",
+                "Minn\\Ops\\Packages",
+                "Minn\\Ops\\Updates",
                 "Minn\\Runtime\\Recovery",
                 "Minn\\Runtime\\ScriptPack"
             ],
@@ -17941,8 +18259,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 36,
-                    "end": 39
+                    "line": 38,
+                    "end": 41
                 },
                 {
                     "routes": [],
@@ -17968,8 +18286,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 49,
-                    "end": 78
+                    "line": 51,
+                    "end": 80
                 },
                 {
                     "routes": [],
@@ -17995,8 +18313,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 85,
-                    "end": 95
+                    "line": 87,
+                    "end": 97
                 },
                 {
                     "routes": [],
@@ -18022,8 +18340,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 102,
-                    "end": 110
+                    "line": 104,
+                    "end": 118
                 },
                 {
                     "routes": [],
@@ -18049,8 +18367,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 122,
-                    "end": 131
+                    "line": 130,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -18076,8 +18394,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 143,
-                    "end": 146
+                    "line": 151,
+                    "end": 154
                 },
                 {
                     "routes": [],
@@ -18103,8 +18421,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 164,
-                    "end": 167
+                    "line": 172,
+                    "end": 175
                 },
                 {
                     "routes": [],
@@ -18130,8 +18448,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 179,
-                    "end": 182
+                    "line": 187,
+                    "end": 190
                 },
                 {
                     "routes": [],
@@ -18157,8 +18475,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 194,
-                    "end": 197
+                    "line": 202,
+                    "end": 205
                 },
                 {
                     "routes": [],
@@ -18184,8 +18502,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 230,
-                    "end": 260
+                    "line": 238,
+                    "end": 268
                 },
                 {
                     "routes": [],
@@ -18211,8 +18529,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 281,
-                    "end": 312
+                    "line": 289,
+                    "end": 320
                 },
                 {
                     "routes": [],
@@ -18245,8 +18563,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 199,
-                    "end": 209
+                    "line": 207,
+                    "end": 217
                 },
                 {
                     "routes": [],
@@ -18257,8 +18575,8 @@
                     "doc": "The WordPress the swap parked beside this webroot, when the manifest names one.",
                     "shapes": [],
                     "params": [],
-                    "line": 315,
-                    "end": 324
+                    "line": 323,
+                    "end": 332
                 },
                 {
                     "routes": [],
@@ -18269,8 +18587,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 326,
-                    "end": 329
+                    "line": 334,
+                    "end": 337
                 }
             ]
         },
@@ -19479,19 +19797,26 @@
             "namespace": "Minn\\Cli",
             "kind": "final class",
             "file": "public/minn/src/Minn/Cli/Runtime.php",
-            "lines": 38,
+            "lines": 64,
             "doc": "The engine, booted for a command: reads the site's wp-config.php (which\nends in wp-settings.php, whose engine boot stops short of serving under\nWP-CLI) so the database constants and table prefix are known.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Auth\\Capabilities",
+                "Minn\\Content\\Reader",
                 "Minn\\Content\\Site",
                 "Minn\\Content\\Users",
+                "Minn\\Context",
                 "Minn\\Db",
-                "Minn\\Front\\Permalinks"
+                "Minn\\Engine",
+                "Minn\\Front\\Permalinks",
+                "Minn\\Runtime\\Plugins",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Theme\\Theme"
             ],
             "usedBy": [
                 "Minn\\Cli\\AssetUpdate",
+                "Minn\\Cli\\CronCommand",
                 "Minn\\Cli\\DirectorySearch",
                 "Minn\\Cli\\MaintenanceCommand",
                 "Minn\\Cli\\MinnCommand",
@@ -19544,8 +19869,8 @@
                     }
                 ],
                 "visibility": "private",
-                "line": 23,
-                "end": 30
+                "line": 30,
+                "end": 37
             },
             "cases": [],
             "constants": [],
@@ -19553,6 +19878,15 @@
                 {
                     "name": "shared",
                     "type": "?self",
+                    "readonly": false,
+                    "static": true,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "engine",
+                    "type": "?Minn\\Runtime\\Runtime",
                     "readonly": false,
                     "static": true,
                     "doc": "",
@@ -19615,8 +19949,20 @@
                     "doc": "The engine's runtime for a CLI process, booted once.",
                     "shapes": [],
                     "params": [],
-                    "line": 33,
-                    "end": 45
+                    "line": 40,
+                    "end": 52
+                },
+                {
+                    "routes": [],
+                    "name": "bootEngine",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "bootEngine(): Minn\\Runtime\\Runtime",
+                    "doc": "The full WordPress runtime for a command, booted once: the facade is\ndefined, the site's plugins load as code, and the lifecycle actions\nfire, so a verb can fire a scheduled hook whose callback a plugin\nregistered. The lighter boot() does none of this; only a command that\nneeds the runtime (cron) asks for this, since it loads every plugin.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 61,
+                    "end": 77
                 },
                 {
                     "routes": [],
@@ -19635,8 +19981,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 55
+                    "line": 80,
+                    "end": 87
                 }
             ]
         },
@@ -27145,6 +27491,7 @@
             ],
             "usedBy": [
                 "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
+                "Minn\\Cli\\Runtime",
                 "Minn\\Content\\PasswordGate",
                 "Minn\\Content\\Posts",
                 "Minn\\Context",
@@ -30014,6 +30361,7 @@
                 "Minn\\Http\\Request"
             ],
             "usedBy": [
+                "Minn\\Cli\\Runtime",
                 "Minn\\Engine",
                 "Minn\\Runtime\\Runtime"
             ],
@@ -30224,8 +30572,8 @@
             "namespace": "Minn\\Cron",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Cron/Cron.php",
-            "lines": 103,
-            "doc": "The engine's scheduled work: scheduled posts go live when their time\ncomes, and expired throttle rows and transients are swept. Triggered by\nwp-cron.php, `wp minn cron`, `minn cron`, or a front request that finds\na post due. One run at a time, through a short-lived lock option.",
+            "lines": 108,
+            "doc": "The engine's scheduled work: due scheduled events fire, scheduled posts\ngo live when their time comes, and expired throttle rows and transients\nare swept. Triggered by wp-cron.php, `wp minn cron`, `minn cron`, or a\nfront request that finds a post due. One run at a time, through a\nshort-lived lock option.\n\nFiring the cron option's due hooks needs the booted runtime and the\nfacade, so it arrives as a closure the caller supplies (from the front\npipeline, or the CLI once it has booted the runtime); with none, only\nthe engine's own scheduled posts and sweeps run.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -30241,9 +30589,11 @@
                 "Minn\\Front\\ProbeController"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Db $db, Minn\\Content\\Site $site, Minn\\Content\\PostWriter $writer, ?Minn\\Ops\\Updates $updates = NULL)",
+                "signature": "__construct(Minn\\Db $db, Minn\\Content\\Site $site, Minn\\Content\\PostWriter $writer, ?Minn\\Ops\\Updates $updates = NULL, ?Closure $fireDueEvents = NULL)",
                 "doc": "",
-                "shapes": [],
+                "shapes": [
+                    "@param ?Closure(): int $fireDueEvents fires the cron option's due hooks and returns how many ran"
+                ],
                 "params": [
                     {
                         "name": "db",
@@ -30272,11 +30622,18 @@
                         "shape": "",
                         "default": "NULL",
                         "doc": ""
+                    },
+                    {
+                        "name": "fireDueEvents",
+                        "type": "?Closure",
+                        "shape": "?Closure(): int",
+                        "default": "NULL",
+                        "doc": "fires the cron option's due hooks and returns how many ran"
                     }
                 ],
                 "visibility": "public",
-                "line": 23,
-                "end": 25
+                "line": 31,
+                "end": 33
             },
             "cases": [],
             "constants": [
@@ -30329,6 +30686,15 @@
                     "doc": "",
                     "visibility": "private",
                     "promoted": true
+                },
+                {
+                    "name": "fireDueEvents",
+                    "type": "?Closure",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
                 }
             ],
             "methods": [
@@ -30343,8 +30709,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 28,
-                    "end": 49
+                    "line": 36,
+                    "end": 61
                 },
                 {
                     "routes": [],
@@ -30355,8 +30721,8 @@
                     "doc": "True when a scheduled post's time has come.",
                     "shapes": [],
                     "params": [],
-                    "line": 52,
-                    "end": 58
+                    "line": 64,
+                    "end": 70
                 },
                 {
                     "routes": [],
@@ -30367,8 +30733,8 @@
                     "doc": "A scheduled post goes live as the reference publishes it: status only, dates and modified untouched, term counts refreshed.",
                     "shapes": [],
                     "params": [],
-                    "line": 61,
-                    "end": 72
+                    "line": 73,
+                    "end": 84
                 },
                 {
                     "routes": [],
@@ -30379,8 +30745,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 74,
-                    "end": 86
+                    "line": 86,
+                    "end": 98
                 },
                 {
                     "routes": [],
@@ -30391,8 +30757,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 88,
-                    "end": 100
+                    "line": 100,
+                    "end": 112
                 },
                 {
                     "routes": [],
@@ -30403,8 +30769,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 102,
-                    "end": 114
+                    "line": 114,
+                    "end": 126
                 },
                 {
                     "routes": [],
@@ -30415,8 +30781,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 116,
-                    "end": 119
+                    "line": 128,
+                    "end": 131
                 }
             ]
         },
@@ -30917,7 +31283,7 @@
             "namespace": "Minn",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Engine.php",
-            "lines": 215,
+            "lines": 219,
             "doc": "The engine's front door. An unmodified wp-config.php ends by requiring\nwp-settings.php, which is the engine's own boot file; it hands off here.\nREST is dispatched first (from the path or from ?rest_route=), then the\nadmin, the login endpoint, and finally the public site.",
             "implements": [],
             "extends": null,
@@ -30993,6 +31359,8 @@
             ],
             "usedBy": [
                 "Minn\\Cli\\AssetUpdate",
+                "Minn\\Cli\\MinnCommand",
+                "Minn\\Cli\\Runtime",
                 "Minn\\Ops\\Packages",
                 "Minn\\Rest\\Services"
             ],
@@ -31258,7 +31626,7 @@
                         }
                     ],
                     "line": 231,
-                    "end": 283
+                    "end": 287
                 }
             ]
         },
@@ -48279,7 +48647,7 @@
             "namespace": "Minn\\Ops",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Ops/Diagnostics.php",
-            "lines": 360,
+            "lines": 415,
             "doc": "The System view's facts about this install: the engine, PHP, the\ndatabase, and the server, with the health checks a site owner acts on.\nEvery number is read live; nothing is cached or fetched from outside.",
             "implements": [],
             "extends": null,
@@ -48468,11 +48836,11 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "cron(): array",
-                    "doc": "Every scheduled post as a one-off event, soonest first.",
+                    "doc": "The scheduled events: the cron option's hooks and the engine's own scheduled posts, soonest first.",
                     "shapes": [],
                     "params": [],
                     "line": 206,
-                    "end": 222
+                    "end": 223
                 },
                 {
                     "routes": [],
@@ -48483,8 +48851,8 @@
                     "doc": "The autoloaded options: the summary and the largest rows.",
                     "shapes": [],
                     "params": [],
-                    "line": 225,
-                    "end": 244
+                    "line": 280,
+                    "end": 299
                 },
                 {
                     "routes": [],
@@ -48610,6 +48978,40 @@
                 },
                 {
                     "routes": [],
+                    "name": "cronOptionEvents",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "cronOptionEvents(): array",
+                    "doc": "The cron option's events as rows, a recurring event's interval read\nas its recurrence and a single event marked one-off.",
+                    "shapes": [
+                        "@return list<array<string, mixed>>"
+                    ],
+                    "params": [],
+                    "line": 231,
+                    "end": 258
+                },
+                {
+                    "routes": [],
+                    "name": "humanInterval",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "humanInterval(int $seconds): string",
+                    "doc": "A recurrence interval as its two largest whole units.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "seconds",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 261,
+                    "end": 277
+                },
+                {
+                    "routes": [],
                     "name": "autoloadSummary",
                     "static": false,
                     "visibility": "private",
@@ -48617,8 +49019,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 246,
-                    "end": 258
+                    "line": 301,
+                    "end": 313
                 },
                 {
                     "routes": [],
@@ -48631,8 +49033,8 @@
                         "@return array{events: int, overdue: int, next: ?int}"
                     ],
                     "params": [],
-                    "line": 261,
-                    "end": 276
+                    "line": 316,
+                    "end": 331
                 },
                 {
                     "routes": [],
@@ -48645,8 +49047,8 @@
                         "@return list<array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 279,
-                    "end": 284
+                    "line": 334,
+                    "end": 339
                 },
                 {
                     "routes": [],
@@ -48659,8 +49061,8 @@
                         "@return array{0: array<string, string>, 1: list<array>}"
                     ],
                     "params": [],
-                    "line": 287,
-                    "end": 323
+                    "line": 342,
+                    "end": 378
                 },
                 {
                     "routes": [],
@@ -48700,8 +49102,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 325,
-                    "end": 328
+                    "line": 380,
+                    "end": 383
                 },
                 {
                     "routes": [],
@@ -48722,8 +49124,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 331,
-                    "end": 338
+                    "line": 386,
+                    "end": 393
                 },
                 {
                     "routes": [],
@@ -48742,8 +49144,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 340,
-                    "end": 353
+                    "line": 395,
+                    "end": 408
                 },
                 {
                     "routes": [],
@@ -48762,8 +49164,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 355,
-                    "end": 361
+                    "line": 410,
+                    "end": 416
                 },
                 {
                     "routes": [],
@@ -48782,8 +49184,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 363,
-                    "end": 376
+                    "line": 418,
+                    "end": 431
                 }
             ]
         },
@@ -49145,6 +49547,7 @@
                 "Minn\\Admin\\PackagesController",
                 "Minn\\Cli\\AssetUpdate",
                 "Minn\\Cli\\DirectorySearch",
+                "Minn\\Cli\\MinnCommand",
                 "Minn\\Cli\\PluginCommand",
                 "Minn\\Cli\\ThemeCommand",
                 "Minn\\Engine",
@@ -49928,6 +50331,7 @@
                 "Minn\\Admin\\ThemesController",
                 "Minn\\Admin\\UpdatesController",
                 "Minn\\Cli\\AssetUpdate",
+                "Minn\\Cli\\MinnCommand",
                 "Minn\\Cron\\Cron",
                 "Minn\\Engine",
                 "Minn\\Rest\\Services"
@@ -72721,6 +73125,7 @@
                 "Minn\\Runtime\\Symbols"
             ],
             "usedBy": [
+                "Minn\\Cli\\Runtime",
                 "Minn\\Engine",
                 "Minn\\Extension\\Loader",
                 "Minn\\Theme\\ClassicRenderer"
@@ -75197,6 +75602,7 @@
                 "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
                 "Minn\\Blocks\\ImageTags",
                 "Minn\\Blocks\\RenderState",
+                "Minn\\Cli\\Runtime",
                 "Minn\\Content\\Blocks",
                 "Minn\\Content\\Reader",
                 "Minn\\Db",
@@ -86877,6 +87283,7 @@
                 "Minn\\Admin\\SiteController",
                 "Minn\\Blocks\\Dynamic\\Theme\\Structure",
                 "Minn\\Blocks\\Renderer",
+                "Minn\\Cli\\Runtime",
                 "Minn\\Engine",
                 "Minn\\Rest\\Services",
                 "Minn\\Theme\\ClassicRenderer",

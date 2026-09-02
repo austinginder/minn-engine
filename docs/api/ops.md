@@ -5,7 +5,7 @@
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`CoreStatus`](#corestatus) | final readonly class | 24 | The installed version comes from the update_core transient's |
-| [`Diagnostics`](#diagnostics) | final readonly class | 360 | The System view's facts about this install: the engine, PHP, the |
+| [`Diagnostics`](#diagnostics) | final readonly class | 415 | The System view's facts about this install: the engine, PHP, the |
 | [`InstalledSoftware`](#installedsoftware) | final readonly class | 59 | What is installed, as the System view lists it: every extension and |
 | [`Logs`](#logs) | final readonly class | 150 | The log files the System view can read and clear: the debug log the |
 | [`Packages`](#packages) | final readonly class | 489 | Putting themes and extensions on disk. Themes come from wordpress.org |
@@ -60,13 +60,13 @@ The wp-config debug constants as they stand; the engine never rewrites the file.
 
 ### `cron(): array`
 
-Every scheduled post as a one-off event, soonest first.
+The scheduled events: the cron option's hooks and the engine's own scheduled posts, soonest first.
 
 ### `autoload(): array`
 
 The autoloaded options: the summary and the largest rows.
 
-Internals: `checks()` (private, line 64), `engineGroup()` (private, line 101), `phpGroup()` (private, line 122), `serverGroup()` (private, line 145), `opcacheOn()` (private, line 163), `autoloadSummary()` (private, line 246), `cronSummary()` (private, line 261), `futurePosts()` (private, line 279), `databaseGroup()` (private, line 287), `check()` (private, line 325), `rows()` (private, line 331), `bytes()` (private, line 340), `offsetLabel()` (private, line 355), `relative()` (private, line 363)
+Internals: `checks()` (private, line 64), `engineGroup()` (private, line 101), `phpGroup()` (private, line 122), `serverGroup()` (private, line 145), `opcacheOn()` (private, line 163), `cronOptionEvents()` (private, line 231), `humanInterval()` (private, line 261), `autoloadSummary()` (private, line 301), `cronSummary()` (private, line 316), `futurePosts()` (private, line 334), `databaseGroup()` (private, line 342), `check()` (private, line 380), `rows()` (private, line 386), `bytes()` (private, line 395), `offsetLabel()` (private, line 410), `relative()` (private, line 418)
 
 
 ## InstalledSoftware
@@ -174,7 +174,7 @@ proves the same containment before anything is deleted.
 - const `INFO_OPTION` = `'minn_plugin_info'`
 - const `INFO_TTL` = `43200`
 
-Used by: `Minn\Admin\PackagesController`, `Minn\Cli\AssetUpdate`, `Minn\Cli\DirectorySearch`, `Minn\Cli\PluginCommand`, `Minn\Cli\ThemeCommand`, `Minn\Engine`, `Minn\Ops\Updates`, `Minn\Rest\PluginsController`, `Minn\Rest\Services`
+Used by: `Minn\Admin\PackagesController`, `Minn\Cli\AssetUpdate`, `Minn\Cli\DirectorySearch`, `Minn\Cli\MinnCommand`, `Minn\Cli\PluginCommand`, `Minn\Cli\ThemeCommand`, `Minn\Engine`, `Minn\Ops\Updates`, `Minn\Rest\PluginsController`, `Minn\Rest\Services`
 
 ```php
 __construct(Minn\Content\Site $site, string $contentDir)
@@ -281,7 +281,7 @@ auto_update_themes options, in the shape the app already reads.
 - const `THEMES_API` = `'https://api.wordpress.org/themes/update-check/1.1/'`
 - const `PACKAGE_HOST` = `'https://downloads.wordpress.org/'`
 
-Used by: `Minn\Admin\Notifications`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Cli\AssetUpdate`, `Minn\Cron\Cron`, `Minn\Engine`, `Minn\Rest\Services`
+Used by: `Minn\Admin\Notifications`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Cli\AssetUpdate`, `Minn\Cli\MinnCommand`, `Minn\Cron\Cron`, `Minn\Engine`, `Minn\Rest\Services`
 
 ```php
 __construct(Minn\Content\Site $site, Minn\Content\Inventory $inventory, Minn\Ops\Packages $packages, string $contentDir, string $home, string $wpVersion)

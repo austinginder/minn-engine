@@ -202,11 +202,11 @@ final readonly class Diagnostics
         ];
     }
 
-    /** Every scheduled post as a one-off event, soonest first. */
+    /** The scheduled events: the cron option's hooks and the engine's own scheduled posts, soonest first. */
     public function cron(): array
     {
         $now = time();
-        $items = [];
+        $items = $this->cronOptionEvents();
         foreach ($this->futurePosts() as $row) {
             $next = (int) strtotime($row['post_date_gmt'] . ' UTC');
             $items[] = [
@@ -218,7 +218,62 @@ final readonly class Diagnostics
                 'title' => (string) $row['post_title'],
             ];
         }
-        return ['now' => $now, 'disabled' => false, 'items' => $items];
+        usort($items, static fn (array $a, array $b): int => $a['next'] <=> $b['next']);
+        return ['now' => $now, 'disabled' => defined('DISABLE_WP_CRON') && DISABLE_WP_CRON, 'items' => $items];
+    }
+
+    /**
+     * The cron option's events as rows, a recurring event's interval read
+     * as its recurrence and a single event marked one-off.
+     *
+     * @return list<array<string, mixed>>
+     */
+    private function cronOptionEvents(): array
+    {
+        $cron = $this->site->option('cron');
+        if (!is_array($cron)) {
+            return [];
+        }
+        $now = time();
+        $items = [];
+        foreach ($cron as $timestamp => $hooks) {
+            if (!is_array($hooks)) {
+                continue;
+            }
+            foreach ($hooks as $hook => $keys) {
+                foreach ((array) $keys as $entry) {
+                    $interval = isset($entry['interval']) ? (int) $entry['interval'] : 0;
+                    $items[] = [
+                        'hook' => (string) $hook,
+                        'next' => (int) $timestamp,
+                        'overdue' => (int) $timestamp < $now - 300,
+                        'recurrence' => $interval > 0 ? self::humanInterval($interval) : 'One-off',
+                        'args' => count((array) ($entry['args'] ?? [])),
+                        'title' => '',
+                    ];
+                }
+            }
+        }
+        return $items;
+    }
+
+    /** A recurrence interval as its two largest whole units. */
+    private static function humanInterval(int $seconds): string
+    {
+        $units = [['week', 604800], ['day', 86400], ['hour', 3600], ['minute', 60], ['second', 1]];
+        $parts = [];
+        foreach ($units as [$name, $length]) {
+            if ($seconds < $length) {
+                continue;
+            }
+            $count = intdiv($seconds, $length);
+            $seconds -= $count * $length;
+            $parts[] = $count . ' ' . $name . ($count === 1 ? '' : 's');
+            if (count($parts) === 2) {
+                break;
+            }
+        }
+        return $parts === [] ? '0 seconds' : implode(' ', $parts);
     }
 
     /** The autoloaded options: the summary and the largest rows. */
@@ -264,13 +319,13 @@ final readonly class Diagnostics
         $events = 0;
         $overdue = 0;
         $next = null;
-        foreach ($this->futurePosts() as $row) {
-            $at = (int) strtotime($row['post_date_gmt'] . ' UTC');
+        foreach ($this->cron()['items'] as $item) {
+            $at = (int) $item['next'];
             $events++;
-            if ($at < $now - 300) {
+            if ($item['overdue']) {
                 $overdue++;
             }
-            $next ??= $at;
+            $next = $next === null ? $at : min($next, $at);
         }
         return ['events' => $events, 'overdue' => $overdue, 'next' => $next];
     }

@@ -4,23 +4,31 @@ declare(strict_types=1);
 
 namespace Minn\Cron;
 
+use Closure;
 use Minn\Ops\Updates;
 use Minn\Content\PostWriter;
 use Minn\Content\Site;
 use Minn\Db;
 
 /**
- * The engine's scheduled work: scheduled posts go live when their time
- * comes, and expired throttle rows and transients are swept. Triggered by
- * wp-cron.php, `wp minn cron`, `minn cron`, or a front request that finds
- * a post due. One run at a time, through a short-lived lock option.
+ * The engine's scheduled work: due scheduled events fire, scheduled posts
+ * go live when their time comes, and expired throttle rows and transients
+ * are swept. Triggered by wp-cron.php, `wp minn cron`, `minn cron`, or a
+ * front request that finds a post due. One run at a time, through a
+ * short-lived lock option.
+ *
+ * Firing the cron option's due hooks needs the booted runtime and the
+ * facade, so it arrives as a closure the caller supplies (from the front
+ * pipeline, or the CLI once it has booted the runtime); with none, only
+ * the engine's own scheduled posts and sweeps run.
  */
 final readonly class Cron
 {
     private const LOCK = 'minn_cron_lock';
     private const LOCK_TTL = 60;
 
-    public function __construct(private Db $db, private Site $site, private PostWriter $writer, private ?Updates $updates = null)
+    /** @param ?Closure(): int $fireDueEvents fires the cron option's due hooks and returns how many ran */
+    public function __construct(private Db $db, private Site $site, private PostWriter $writer, private ?Updates $updates = null, private ?Closure $fireDueEvents = null)
     {
     }
 
@@ -32,6 +40,10 @@ final readonly class Cron
         }
         try {
             $report = [];
+            if ($this->fireDueEvents !== null) {
+                $fired = ($this->fireDueEvents)();
+                $report[] = "fired {$fired} scheduled event" . ($fired === 1 ? '' : 's');
+            }
             $published = $this->publishDue();
             $report[] = "published {$published} scheduled post" . ($published === 1 ? '' : 's');
             $report[] = 'swept ' . $this->sweepTransients() . ' expired transients';
