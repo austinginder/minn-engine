@@ -1501,19 +1501,32 @@ paused and answers with the error page, and the NEXT request loads without
 it, so the site comes back on its own. `Minn\Http\Failure::onFatal()` is
 the seam; the engine installs the recorder once the database is in hand.
 
+- A pause is a site-wide decision, so it needs two things a single crafted
+  request cannot supply. First, the failure must happen while the
+  extensions BOOT: `Plugins::load()` arms recovery around the plugin and
+  theme includes and the boot actions through `wp_loaded`, and disarms it
+  after. A failure later in the request (a REST callback, a shortcode, a
+  template) answers to that request's input; it is logged and the request
+  ends in the error page, and nothing is paused however often it repeats.
+  Second, it must be the SECOND boot failure inside ten minutes: the first
+  is a strike in the engine's `minn_recovery_strikes` option (JSON, pruned
+  as it is read), the second pauses. A pause or a resume clears the strikes.
 - The paused list is stored where WordPress stores it, in the same shape:
   `paused_plugins` keyed by plugin file, `paused_themes` by stylesheet,
   each holding `type`, `file`, `line`, `message`. A site that ejects back
   to WordPress finds the pause it left with.
 - Only `plugins/` and `themes/` are ever blamed: a fatal in the engine is
-  not a plugin's fault and pausing something would not fix it.
+  not a plugin's fault and pausing something would not fix it. A symlinked
+  plugin reports its real path; blame maps it home through the same
+  realpath map `plugins_url()` uses.
 - A fatal before the database is reachable cannot be recorded; the error
   page still answers.
 - `wp minn recovery [status|resume <name> [--theme]|resume-all]`.
 - Recording never takes the request down: a failure inside recovery is
   logged and the error page still goes out.
-- Suite `tests/recovery.test.php` (9) drives the whole loop against a
-  plugin that really fatals.
+- Suite `tests/recovery.test.php` (17) drives the whole loop against a
+  plugin that really fatals at `init`, and against one whose REST route
+  fatals three times without being paused.
 
 DIFFERENCE from the reference, deliberate: WordPress emails the
 administrator a recovery-mode link and keeps the site broken until they

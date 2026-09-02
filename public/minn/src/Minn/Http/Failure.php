@@ -21,6 +21,27 @@ final class Failure
     private static $recorder = null;
     /** Whether this site asked to see errors (WP_DEBUG_DISPLAY, else WP_DEBUG). */
     private static bool $display = false;
+    /** Whether a failure right now may be recorded against an extension: only while the extensions boot. */
+    private static bool $armed = false;
+
+    /**
+     * Opens the window in which a failure is an extension's fault: while
+     * the plugins and the theme's functions file load and the boot actions
+     * fire, code that fails fails for every visitor, so pausing it heals
+     * the site. A failure after that (a route, a shortcode, a template)
+     * answers to one request's input and is never grounds for a pause;
+     * it is logged and the request ends in the error page.
+     */
+    public static function armRecovery(): void
+    {
+        self::$armed = true;
+    }
+
+    /** Closes the window armRecovery() opened. */
+    public static function disarmRecovery(): void
+    {
+        self::$armed = false;
+    }
 
     /**
      * What to do with a fatal beyond showing the page: the engine records
@@ -73,7 +94,7 @@ final class Failure
      */
     private static function record(array $error): void
     {
-        if (self::$recorder === null) {
+        if (self::$recorder === null || !self::$armed) {
             return;
         }
         $recorder = self::$recorder;

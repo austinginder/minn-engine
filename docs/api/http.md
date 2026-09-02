@@ -7,7 +7,7 @@ request, response, routing, and the outgoing client
 | [`Client`](#client) | final class | 101 | The engine's outgoing HTTP transport over curl. Redirects are followed by |
 | [`Download`](#download) | final class | 106 | A file the engine fetches for itself (a package, a language pack). Every |
 | [`Exchange`](#exchange) | final readonly class | 29 | What came back: the final response's status, headers (repeats as lists), Set-Cookie values, and body, or the transport error. |
-| [`Failure`](#failure) | final class | 115 | What the public sees when the engine cannot answer: a plain page with no |
+| [`Failure`](#failure) | final class | 136 | What the public sees when the engine cannot answer: a plain page with no |
 | [`Kernel`](#kernel) | final readonly class | 36 | The edge. Turns a request into a response through the router and turns |
 | [`Method`](#method) | enum | 33 |  |
 | [`Outbound`](#outbound) | final readonly class | 47 | One outgoing HTTP request, normalised: the client below needs nothing else. |
@@ -110,8 +110,21 @@ for them) and catches the fatal errors PHP would otherwise print.
 
 - const `FATAL` = `4437`
 
-Used by: `Minn\Engine`
+Used by: `Minn\Engine`, `Minn\Runtime\Plugins`
 
+
+### static `armRecovery(): void`
+
+Opens the window in which a failure is an extension's fault: while
+the plugins and the theme's functions file load and the boot actions
+fire, code that fails fails for every visitor, so pausing it heals
+the site. A failure after that (a route, a shortcode, a template)
+answers to one request's input and is never grounds for a pause;
+it is logged and the request ends in the error page.
+
+### static `disarmRecovery(): void`
+
+Closes the window armRecovery() opened.
 
 ### static `onFatal(callable $recorder): void`
 
@@ -143,7 +156,7 @@ The same page with the cause on it, for a site that asked to see
 errors. Only ever reached when WP_DEBUG_DISPLAY (or WP_DEBUG) is on:
 a site that has not asked never learns this much from a response.
 
-Internals: `record()` (private, line 74), `page()` (private, line 116)
+Internals: `record()` (private, line 95), `page()` (private, line 137)
 
 
 ## Kernel

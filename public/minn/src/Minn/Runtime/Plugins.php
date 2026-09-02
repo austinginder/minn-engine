@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\Content\Site;
-
+use Minn\Http\Failure;
 use Throwable;
 
 /**
@@ -42,8 +42,27 @@ final class Plugins
     /** @var array<string, array{functions: list<string>, classes: list<string>, files: int, truncated: bool, error?: string}> */
     private static array $skipped = [];
 
-    /** Loads the active plugins as code and fires the boot hooks. */
+    /**
+     * Loads the active plugins as code and fires the boot hooks. Recovery
+     * is armed for exactly this window: a failure here is one every
+     * visitor would hit, so it may be recorded against its extension.
+     */
     public static function load(Runtime $runtime): void
+    {
+        Failure::armRecovery();
+        try {
+            self::boot($runtime);
+        } catch (\Minn\Login\ServeLogin $signal) {
+            // A plugin asked for the sign-in page mid-boot; that is not a failure.
+            Failure::disarmRecovery();
+            throw $signal;
+        }
+        // A throw leaves recovery armed on purpose: the failure that ends the
+        // boot is the one the engine's catch records against its extension.
+        Failure::disarmRecovery();
+    }
+
+    private static function boot(Runtime $runtime): void
     {
         $content = $runtime->contentDir();
         $hooks = Runtime::hooks();

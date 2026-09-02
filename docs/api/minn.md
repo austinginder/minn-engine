@@ -6,7 +6,7 @@ the front door, the autoloader, the one database door, the REST error
 |---|---|---|---|
 | [`Autoloader`](#autoloader) | final class | 16 | PSR-4 for the Minn namespace: Minn\Http\Request lives at src/Minn/Http/Request.php. |
 | [`Db`](#db) | final class | 188 | The one door to the database. Every query is a prepared statement; the |
-| [`Engine`](#engine) | final readonly class | 175 | The engine's front door. An unmodified wp-config.php ends by requiring |
+| [`Engine`](#engine) | final readonly class | 184 | The engine's front door. An unmodified wp-config.php ends by requiring |
 | [`RestError`](#resterror) | final class | 49 | A WordPress-shaped error, thrown from anywhere and rendered once by the |
 
 ## Autoloader
@@ -120,7 +120,7 @@ __construct(string $version, string $engineDir)
 
 The front door: connect, check the salts, answer the request, and turn any failure into the right error page.
 
-Internals: `bootRuntimeForRest()` (private, line 108), `respond()` (private, line 137), `frontPipeline()` (private, line 208)
+Internals: `bootRuntimeForRest()` (private, line 108), `respond()` (private, line 137), `frontPipeline()` (private, line 217)
 
 
 ## RestError

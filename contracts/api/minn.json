@@ -32876,7 +32876,7 @@
             "namespace": "Minn",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Engine.php",
-            "lines": 175,
+            "lines": 184,
             "doc": "The engine's front door. An unmodified wp-config.php ends by requiring\nwp-settings.php, which is the engine's own boot file; it hands off here.\nREST is dispatched first (from the path or from ?rest_route=), then the\nadmin, the login endpoint, and finally the public site.",
             "implements": [],
             "extends": null,
@@ -33070,7 +33070,7 @@
                         }
                     ],
                     "line": 137,
-                    "end": 205
+                    "end": 214
                 },
                 {
                     "routes": [],
@@ -33187,8 +33187,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 208,
-                    "end": 243
+                    "line": 217,
+                    "end": 252
                 }
             ]
         },
@@ -43481,7 +43481,7 @@
             "namespace": "Minn\\Http",
             "kind": "final class",
             "file": "public/minn/src/Minn/Http/Failure.php",
-            "lines": 115,
+            "lines": 136,
             "doc": "What the public sees when the engine cannot answer: a plain page with no\ndetail, while the detail goes to the log. Installed once per request,\nit turns display_errors off (unless the site's own WP_DEBUG_DISPLAY asks\nfor them) and catches the fatal errors PHP would otherwise print.",
             "implements": [],
             "extends": null,
@@ -43490,7 +43490,8 @@
                 "Minn\\Support\\Html"
             ],
             "usedBy": [
-                "Minn\\Engine"
+                "Minn\\Engine",
+                "Minn\\Runtime\\Plugins"
             ],
             "constructor": null,
             "cases": [],
@@ -43520,9 +43521,42 @@
                     "doc": "Whether this site asked to see errors (WP_DEBUG_DISPLAY, else WP_DEBUG).",
                     "visibility": "private",
                     "promoted": false
+                },
+                {
+                    "name": "armed",
+                    "type": "bool",
+                    "readonly": false,
+                    "static": true,
+                    "doc": "Whether a failure right now may be recorded against an extension: only while the extensions boot.",
+                    "visibility": "private",
+                    "promoted": false
                 }
             ],
             "methods": [
+                {
+                    "routes": [],
+                    "name": "armRecovery",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "armRecovery(): void",
+                    "doc": "Opens the window in which a failure is an extension's fault: while\nthe plugins and the theme's functions file load and the boot actions\nfire, code that fails fails for every visitor, so pausing it heals\nthe site. A failure after that (a route, a shortcode, a template)\nanswers to one request's input and is never grounds for a pause;\nit is logged and the request ends in the error page.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 35,
+                    "end": 38
+                },
+                {
+                    "routes": [],
+                    "name": "disarmRecovery",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "disarmRecovery(): void",
+                    "doc": "Closes the window armRecovery() opened.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 41,
+                    "end": 44
+                },
                 {
                     "routes": [],
                     "name": "onFatal",
@@ -43542,8 +43576,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 32,
-                    "end": 35
+                    "line": 53,
+                    "end": 56
                 },
                 {
                     "routes": [],
@@ -43554,8 +43588,8 @@
                     "doc": "Installs the error handlers; detail is shown only under WP_DEBUG_DISPLAY.",
                     "shapes": [],
                     "params": [],
-                    "line": 38,
-                    "end": 57
+                    "line": 59,
+                    "end": 78
                 },
                 {
                     "routes": [],
@@ -43574,8 +43608,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 60,
-                    "end": 65
+                    "line": 81,
+                    "end": 86
                 },
                 {
                     "routes": [],
@@ -43586,8 +43620,8 @@
                     "doc": "The 500 page.",
                     "shapes": [],
                     "params": [],
-                    "line": 89,
-                    "end": 93
+                    "line": 110,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -43598,8 +43632,8 @@
                     "doc": "The 503 page the reference shows when the database cannot be reached.",
                     "shapes": [],
                     "params": [],
-                    "line": 96,
-                    "end": 101
+                    "line": 117,
+                    "end": 122
                 },
                 {
                     "routes": [],
@@ -43639,8 +43673,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 108,
-                    "end": 114
+                    "line": 129,
+                    "end": 135
                 },
                 {
                     "routes": [],
@@ -43661,8 +43695,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 74,
-                    "end": 86
+                    "line": 95,
+                    "end": 107
                 },
                 {
                     "routes": [],
@@ -43702,8 +43736,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 116,
-                    "end": 129
+                    "line": 137,
+                    "end": 150
                 }
             ]
         },
@@ -46132,7 +46166,8 @@
             "extends": "Exception",
             "uses": [],
             "usedBy": [
-                "Minn\\Engine"
+                "Minn\\Engine",
+                "Minn\\Runtime\\Plugins"
             ],
             "constructor": null,
             "cases": [],
@@ -70712,12 +70747,14 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Plugins.php",
-            "lines": 166,
+            "lines": 185,
             "doc": "Loads the site's plugins into the runtime the way the reference does:\nmu-plugins first, then active_plugins in stored order, each file\nincluded once. A plugin loads only when the static symbol read finds\nnothing the runtime lacks; otherwise it is reported and skipped so the\nsite keeps rendering. The lifecycle actions fire between the phases.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Content\\Site",
+                "Minn\\Http\\Failure",
+                "Minn\\Login\\ServeLogin",
                 "Minn\\Runtime\\Recovery",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\Symbols"
@@ -70770,7 +70807,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "load(Minn\\Runtime\\Runtime $runtime): void",
-                    "doc": "Loads the active plugins as code and fires the boot hooks.",
+                    "doc": "Loads the active plugins as code and fires the boot hooks. Recovery\nis armed for exactly this window: a failure here is one every\nvisitor would hit, so it may be recorded against its extension.",
                     "shapes": [],
                     "params": [
                         {
@@ -70781,8 +70818,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 46,
-                    "end": 88
+                    "line": 50,
+                    "end": 63
                 },
                 {
                     "routes": [],
@@ -70795,8 +70832,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 117,
-                    "end": 120
+                    "line": 136,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -70809,8 +70846,8 @@
                         "@return array<string, array<string, mixed>> plugin file => why it did not load"
                     ],
                     "params": [],
-                    "line": 127,
-                    "end": 130
+                    "line": 146,
+                    "end": 149
                 },
                 {
                     "routes": [],
@@ -70829,8 +70866,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 133,
-                    "end": 136
+                    "line": 152,
+                    "end": 155
+                },
+                {
+                    "routes": [],
+                    "name": "boot",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "boot(Minn\\Runtime\\Runtime $runtime): void",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "runtime",
+                            "type": "Minn\\Runtime\\Runtime",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 65,
+                    "end": 107
                 },
                 {
                     "routes": [],
@@ -70849,8 +70906,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 97,
-                    "end": 110
+                    "line": 116,
+                    "end": 129
                 },
                 {
                     "routes": [],
@@ -70883,8 +70940,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 138,
-                    "end": 154
+                    "line": 157,
+                    "end": 173
                 },
                 {
                     "routes": [],
@@ -70917,8 +70974,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 162,
-                    "end": 174
+                    "line": 181,
+                    "end": 193
                 },
                 {
                     "routes": [],
@@ -70937,8 +70994,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 177,
-                    "end": 182
+                    "line": 196,
+                    "end": 201
                 }
             ]
         },
@@ -72201,8 +72258,8 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/Recovery.php",
-            "lines": 124,
-            "doc": "Recovery from a fatal in someone else's code. When a plugin or theme\nkills a request, the file it died in names it, the engine records it as\npaused, and the next request loads without it: the site comes back on\nits own instead of staying down until a human reads the log.\n\nThe paused list is stored where WordPress stores it, in the same shape\n(`paused_plugins` keyed by plugin file, `paused_themes` by stylesheet,\neach holding type, file, line and message), so a site that ejects back\nto WordPress finds the pause it left with.",
+            "lines": 183,
+            "doc": "Recovery from a fatal in someone else's code. When a plugin or theme\nkills the boot of a request, the file it died in names it; a second\nsuch failure inside ten minutes records it as paused, and the next\nrequest loads without it: the site comes back on its own instead of\nstaying down until a human reads the log. One failure is only noted:\na pause is a site-wide decision, and a single request can be a\ncrafted one. Failures after boot (a route, a template) never pause\nanything; see Failure::armRecovery().\n\nThe paused list is stored where WordPress stores it, in the same shape\n(`paused_plugins` keyed by plugin file, `paused_themes` by stylesheet,\neach holding type, file, line and message), so a site that ejects back\nto WordPress finds the pause it left with. The strikes live in the\nengine's own `minn_recovery_strikes` option.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -72235,8 +72292,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 26,
-                "end": 28
+                "line": 34,
+                "end": 36
             },
             "cases": [],
             "constants": [
@@ -72250,6 +72307,18 @@
                     "name": "THEMES_OPTION",
                     "value": "'paused_themes'",
                     "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "STRIKES_OPTION",
+                    "value": "'minn_recovery_strikes'",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "WINDOW",
+                    "value": "600",
+                    "doc": "Seconds inside which a second boot failure pauses the extension.",
                     "visibility": "public"
                 }
             ],
@@ -72279,9 +72348,10 @@
                     "name": "blame",
                     "static": false,
                     "visibility": "public",
-                    "signature": "blame(string $file): ?array",
-                    "doc": "The extension a file belongs to: a plugin as its `folder/file.php`\n(or bare file for a single-file plugin), a theme as its slug.\nAnything outside the plugin and theme folders belongs to nobody, and\nis never paused: a fatal in the engine or in core is not a plugin's\nfault and pausing something would not fix it.",
+                    "signature": "blame(string $file, array $realpaths = array ( )): ?array",
+                    "doc": "The extension a file belongs to: a plugin as its `folder/file.php`\n(or bare file for a single-file plugin), a theme as its slug.\nAnything outside the plugin and theme folders belongs to nobody, and\nis never paused: a fatal in the engine or in core is not a plugin's\nfault and pausing something would not fix it. A symlinked plugin\nreports its real location; the realpath map (real folder to the\nfolder under plugins/) brings it home first.",
                     "shapes": [
+                        "@param array<string, string> $realpaths",
                         "@return array{kind: 'plugin'|'theme', name: string}|null"
                     ],
                     "params": [
@@ -72291,10 +72361,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "realpaths",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": "array ( )",
+                            "doc": ""
                         }
                     ],
-                    "line": 39,
-                    "end": 58
+                    "line": 50,
+                    "end": 76
                 },
                 {
                     "routes": [],
@@ -72323,8 +72400,30 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 83
+                    "line": 86,
+                    "end": 102
+                },
+                {
+                    "routes": [],
+                    "name": "strike",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "strike(array $blamed): bool",
+                    "doc": "Notes a boot failure against an extension. True when it is the\nsecond inside the window, which is when the caller pauses it; the\nfirst is only remembered. Strikes older than the window are dropped\nas they are read, so the option never grows.",
+                    "shapes": [
+                        "@param array{kind: string, name: string} $blamed"
+                    ],
+                    "params": [
+                        {
+                            "name": "blamed",
+                            "type": "array",
+                            "shape": "array{kind: string, name: string}",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 112,
+                    "end": 127
                 },
                 {
                     "routes": [],
@@ -72337,8 +72436,8 @@
                         "@return array<string, array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 90,
-                    "end": 93
+                    "line": 153,
+                    "end": 156
                 },
                 {
                     "routes": [],
@@ -72351,8 +72450,8 @@
                         "@return array<string, array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 100,
-                    "end": 103
+                    "line": 163,
+                    "end": 166
                 },
                 {
                     "routes": [],
@@ -72378,8 +72477,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 106,
-                    "end": 116
+                    "line": 169,
+                    "end": 180
                 },
                 {
                     "routes": [],
@@ -72390,8 +72489,44 @@
                     "doc": "Lets everything load again. Returns how many were released.",
                     "shapes": [],
                     "params": [],
-                    "line": 119,
-                    "end": 125
+                    "line": 183,
+                    "end": 189
+                },
+                {
+                    "routes": [],
+                    "name": "strikes",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "strikes(): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array<string, list<int>>"
+                    ],
+                    "params": [],
+                    "line": 130,
+                    "end": 134
+                },
+                {
+                    "routes": [],
+                    "name": "forgetStrikes",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "forgetStrikes(array $blamed): void",
+                    "doc": "",
+                    "shapes": [
+                        "@param array{kind: string, name: string} $blamed"
+                    ],
+                    "params": [
+                        {
+                            "name": "blamed",
+                            "type": "array",
+                            "shape": "array{kind: string, name: string}",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 137,
+                    "end": 146
                 },
                 {
                     "routes": [],
@@ -72412,8 +72547,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 128,
-                    "end": 133
+                    "line": 192,
+                    "end": 197
                 },
                 {
                     "routes": [],
@@ -72441,8 +72576,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 136,
-                    "end": 143
+                    "line": 200,
+                    "end": 207
                 }
             ]
         },

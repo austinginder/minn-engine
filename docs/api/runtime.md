@@ -31,13 +31,13 @@ the WordPress runtime plugins load against
 | [`Pages`](#pages) | final class | 113 | get_pages() as the reference shapes it: its arguments as a post query, and the tree order of the result. |
 | [`Patterns`](#patterns) | final class | 161 | The block pattern, pattern category, and block style registries as data. |
 | [`PlaceholderTrace`](#placeholdertrace) | final class | 27 | Records every call into a generated placeholder while a site opts in by |
-| [`Plugins`](#plugins) | final class | 166 | Loads the site's plugins into the runtime the way the reference does: |
+| [`Plugins`](#plugins) | final class | 185 | Loads the site's plugins into the runtime the way the reference does: |
 | [`PostInsert`](#postinsert) | final readonly class | 160 | The decisions behind wp_insert_post: which columns a postarr fills, when |
 | [`PostLookup`](#postlookup) | final readonly class | 85 | The post reads plugin code asks for by shape: a page by title, revisions, counts. |
 | [`PostQuery`](#postquery) | final class | 383 | The query WP_Query runs: its variables become one SELECT over the posts |
 | [`QueriedObject`](#queriedobject) | final readonly class | 70 | Which object a query is "about", read from its flags and variables: a term |
 | [`QueryFlags`](#queryflags) | final readonly class | 101 | The conditional flags a set of query variables implies (is_single, is_archive, |
-| [`Recovery`](#recovery) | final readonly class | 124 | Recovery from a fatal in someone else's code. When a plugin or theme |
+| [`Recovery`](#recovery) | final readonly class | 183 | Recovery from a fatal in someone else's code. When a plugin or theme |
 | [`Refusal`](#refusal) | final readonly class | 6 | A refused operation, the way plugin code expects to read it: a code, a message, optional data. The facade turns it into WP_Error. |
 | [`Registry`](#registry) | final class | 382 | Post types, taxonomies, and statuses as plugin code registers and reads |
 | [`Runtime`](#runtime) | final class | 210 | The WordPress runtime the engine offers plugin code: the procedural |
@@ -1282,7 +1282,9 @@ Used by: `Minn\Engine`, `Minn\Extension\Loader`, `Minn\Theme\ClassicRenderer`
 
 ### static `load(Minn\Runtime\Runtime $runtime): void`
 
-Loads the active plugins as code and fires the boot hooks.
+Loads the active plugins as code and fires the boot hooks. Recovery
+is armed for exactly this window: a failure here is one every
+visitor would hit, so it may be recorded against its extension.
 
 ### static `loaded(): array`
 
@@ -1300,7 +1302,7 @@ The plugins the symbol gate refused, with what they lacked.
 
 True when the named plugin file is running as code this request.
 
-Internals: `loadThemeFunctions()` (private, line 97), `includeFile()` (private, line 138), `registerRealpath()` (private, line 162), `isolatedInclude()` (private, line 177)
+Internals: `boot()` (private, line 65), `loadThemeFunctions()` (private, line 116), `includeFile()` (private, line 157), `registerRealpath()` (private, line 181), `isolatedInclude()` (private, line 196)
 
 
 ## PostInsert
@@ -1499,17 +1501,24 @@ Internals: `archiveFlags()` (private, line 73)
 `final readonly class Minn\Runtime\Recovery` · `public/minn/src/Minn/Runtime/Recovery.php`
 
 Recovery from a fatal in someone else's code. When a plugin or theme
-kills a request, the file it died in names it, the engine records it as
-paused, and the next request loads without it: the site comes back on
-its own instead of staying down until a human reads the log.
+kills the boot of a request, the file it died in names it; a second
+such failure inside ten minutes records it as paused, and the next
+request loads without it: the site comes back on its own instead of
+staying down until a human reads the log. One failure is only noted:
+a pause is a site-wide decision, and a single request can be a
+crafted one. Failures after boot (a route, a template) never pause
+anything; see Failure::armRecovery().
 
 The paused list is stored where WordPress stores it, in the same shape
 (`paused_plugins` keyed by plugin file, `paused_themes` by stylesheet,
 each holding type, file, line and message), so a site that ejects back
-to WordPress finds the pause it left with.
+to WordPress finds the pause it left with. The strikes live in the
+engine's own `minn_recovery_strikes` option.
 
 - const `PLUGINS_OPTION` = `'paused_plugins'`
 - const `THEMES_OPTION` = `'paused_themes'`
+- const `STRIKES_OPTION` = `'minn_recovery_strikes'`
+- const `WINDOW` = `600` — Seconds inside which a second boot failure pauses the extension.
 
 Used by: `Minn\Cli\MinnCommand`, `Minn\Engine`, `Minn\Runtime\Plugins`
 
@@ -1518,14 +1527,17 @@ __construct(Minn\Content\Site $site, string $contentDir)
 ```
 
 
-### `blame(string $file): ?array`
+### `blame(string $file, array $realpaths = array ( )): ?array`
 
 The extension a file belongs to: a plugin as its `folder/file.php`
 (or bare file for a single-file plugin), a theme as its slug.
 Anything outside the plugin and theme folders belongs to nobody, and
 is never paused: a fatal in the engine or in core is not a plugin's
-fault and pausing something would not fix it.
+fault and pausing something would not fix it. A symlinked plugin
+reports its real location; the realpath map (real folder to the
+folder under plugins/) brings it home first.
 
+- `@param array<string, string> $realpaths`
 - `@return array{kind: 'plugin'|'theme', name: string}|null`
 
 ### `pause(array $blamed, array $error): bool`
@@ -1536,6 +1548,15 @@ notify once.
 
 - `@param array{kind: string, name: string} $blamed`
 - `@param array{type: int, file: string, line: int, message: string} $error`
+
+### `strike(array $blamed): bool`
+
+Notes a boot failure against an extension. True when it is the
+second inside the window, which is when the caller pauses it; the
+first is only remembered. Strikes older than the window are dropped
+as they are read, so the option never grows.
+
+- `@param array{kind: string, name: string} $blamed`
 
 ### `pausedPlugins(): array`
 
@@ -1557,7 +1578,7 @@ Lets an extension load again. Returns false when it was not paused.
 
 Lets everything load again. Returns how many were released.
 
-Internals: `read()` (private, line 128), `write()` (private, line 136)
+Internals: `strikes()` (private, line 130), `forgetStrikes()` (private, line 137), `read()` (private, line 192), `write()` (private, line 200)
 
 
 ## Refusal

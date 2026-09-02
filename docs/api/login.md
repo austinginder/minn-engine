@@ -99,5 +99,5 @@ mid-request (a hide-login plugin serving its own sign-in URL, the
 perfmatters pattern). Engine::respond() catches it and answers the
 current request with the sign-in surface.
 
-Used by: `Minn\Engine`
+Used by: `Minn\Engine`, `Minn\Runtime\Plugins`
 

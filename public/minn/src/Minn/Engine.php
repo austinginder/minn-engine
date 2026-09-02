@@ -137,16 +137,25 @@ final readonly class Engine
     private function respond(Db $db): never
     {
         $request = Request::fromGlobals();
-        // With the database in hand, a fatal can now be blamed on the
-        // extension it came from and that extension paused, so the next
-        // request comes back without it.
+        // With the database in hand, a fatal during boot can be blamed on
+        // the extension it came from; the second inside ten minutes pauses
+        // it, so the next request comes back without it. The window in
+        // which this applies is opened by Plugins::load.
         Failure::onFatal(static function (array $error) use ($db): void {
             $recovery = new Recovery(new Site($db), ABSPATH . 'wp-content');
-            $blamed = $recovery->blame($error['file']);
-            if ($blamed === null || !$recovery->pause($blamed, $error)) {
+            $realpaths = Runtime::booted() ? (array) Runtime::current()->get('plugin_realpaths', []) : [];
+            $blamed = $recovery->blame($error['file'], $realpaths);
+            if ($blamed === null) {
                 return;
             }
-            error_log(sprintf('Minn Engine: paused %s %s after a fatal error; resume it with wp minn recovery resume', $blamed['kind'], $blamed['name']));
+            if (!$recovery->strike($blamed)) {
+                error_log(sprintf('Minn Engine: %s %s failed while booting; a second failure within ten minutes pauses it', $blamed['kind'], $blamed['name']));
+                return;
+            }
+            if (!$recovery->pause($blamed, $error)) {
+                return;
+            }
+            error_log(sprintf('Minn Engine: paused %s %s after a second fatal error while booting; resume it with wp minn recovery resume', $blamed['kind'], $blamed['name']));
         });
 
         $route = $request->query('rest_route');
