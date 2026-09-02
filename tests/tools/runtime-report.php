@@ -15,7 +15,7 @@ foreach (is_array($active) ? $active : [] as $plugin) {
     }
     $dir = str_contains($plugin, '/') ? dirname($file) : $file;
     $missing = Minn\Runtime\Symbols::missing($dir, Minn\Runtime\Runtime::options());
-    $report[$plugin] = ['state' => ($missing['functions'] === [] && $missing['classes'] === [] && !$missing['truncated']) ? 'loads' : 'skipped'] + $missing;
+    $report[$plugin] = ['state' => ($missing['functions'] === [] && $missing['classes'] === [] && !$missing['truncated'] && ($missing['redeclares'] === [] || Minn\Runtime\Symbols::redeclaresIn($file) === [])) ? 'loads' : 'skipped'] + $missing;
 }
 // The active theme's functions.php goes through the same gate (child, then parent).
 $stylesheet = (string) ($runtime->options()->get('stylesheet') ?? '');
@@ -26,6 +26,6 @@ foreach (array_unique([$stylesheet, $template]) as $slug) {
         continue;
     }
     $missing = Minn\Runtime\Symbols::missing($dir, Minn\Runtime\Runtime::options());
-    $report['theme:' . $slug] = ['state' => ($missing['functions'] === [] && $missing['classes'] === [] && !$missing['truncated']) ? 'loads' : 'skipped'] + $missing;
+    $report['theme:' . $slug] = ['state' => ($missing['functions'] === [] && $missing['classes'] === [] && !$missing['truncated'] && ($missing['redeclares'] === [] || Minn\Runtime\Symbols::redeclaresIn($dir . '/functions.php') === [])) ? 'loads' : 'skipped'] + $missing;
 }
 echo json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), "\n";

@@ -162,6 +162,13 @@ final class Plugins
             self::$skipped[$name] = $missing;
             return;
         }
+        // A redeclaration somewhere in the folder may sit behind a conditional
+        // include the static read cannot follow (a polyfill); only the main
+        // file is certain to be compiled, so only its collisions refuse the load.
+        if ($missing['redeclares'] !== [] && ($collisions = Symbols::redeclaresIn($file)) !== []) {
+            self::$skipped[$name] = $missing + ['error' => 'declares ' . implode(', ', $collisions) . ', which the runtime already defines (a pluggable override the engine cannot host yet)'];
+            return;
+        }
         try {
             self::registerRealpath($file, $name, $runtime);
             self::isolatedInclude($file);

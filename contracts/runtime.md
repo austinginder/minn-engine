@@ -67,8 +67,29 @@ plugin itself declares and what it guards with `function_exists()` /
 and PHP extensions are its business. If anything in that list is not
 provided by the runtime,
 the plugin is not loaded and the list is recorded (`Plugins::skipped()`).
+The verdict has a third list, `redeclares`: functions the folder declares
+without a `function_exists()` guard that the runtime already defines. On
+the reference a plugin may redefine a pluggable (`wp_mail`,
+`wp_authenticate`, and the rest of `pluggable.php`) because that file
+loads after the plugins; the facade loads first, so such a plugin would
+not compile. Only a collision in the plugin's MAIN file refuses the load
+(with the collision named): a redeclaration elsewhere in the folder may
+sit behind a conditional include the static read cannot follow, and
+WooCommerce's Abilities API polyfill is exactly that, so the folder-level
+list is advisory (`runtime-report.php` and `compat-scan.php` print it,
+`loads` ignores it). A collision that really compiles ends in the
+recovery path like any other boot fatal. Hosting the override (loading
+the pluggable set after the plugins, as the reference does) is the real
+fix and is a runtime milestone. A method named like a global function is
+never a declaration: the reader tracks class, trait, interface, enum, and
+anonymous-class bodies by brace depth. The class half of the read (`new`, `extends`,
+`implements`, `instanceof`, `::`) is proven by `tests/unit/symbols.php`
+along with the rest of the verdict; it had silently reported nothing
+before that suite existed.
 The read is cached in the `minn_runtime_symbols` option, keyed by the
-folder's newest modification time. This is what keeps a site rendering when
+folder's newest modification time and the reader's own version
+(`Symbols::READER`), so a change to the token reader retires every cached
+scan. This is what keeps a site rendering when
 a plugin needs a piece of the runtime that does not exist yet, and it is the
 list the next piece of runtime is built from.
 `MINN_SITE_ROOT=<root> php tests/tools/runtime-report.php` prints the

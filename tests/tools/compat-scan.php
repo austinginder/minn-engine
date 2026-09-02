@@ -27,6 +27,7 @@ foreach (file($argv[2] ?? '', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: 
         continue;
     }
     $missing = Minn\Runtime\Symbols::missingAgainst($path, $gap);
+    // Redeclarations are advisory here: only the main file's are certain, and this scan has no facade to ask.
     $loads = $missing['functions'] === [] && $missing['classes'] === [] && !$missing['truncated'];
     $report[$name] = ['state' => $loads ? 'loads' : 'skipped'] + $missing;
     fwrite(STDERR, sprintf("%-40s %s\n", $name, $report[$name]['state']));

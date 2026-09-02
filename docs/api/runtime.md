@@ -31,7 +31,7 @@ the WordPress runtime plugins load against
 | [`Pages`](#pages) | final class | 113 | get_pages() as the reference shapes it: its arguments as a post query, and the tree order of the result. |
 | [`Patterns`](#patterns) | final class | 161 | The block pattern, pattern category, and block style registries as data. |
 | [`PlaceholderTrace`](#placeholdertrace) | final class | 27 | Records every call into a generated placeholder while a site opts in by |
-| [`Plugins`](#plugins) | final class | 185 | Loads the site's plugins into the runtime the way the reference does: |
+| [`Plugins`](#plugins) | final class | 192 | Loads the site's plugins into the runtime the way the reference does: |
 | [`PostInsert`](#postinsert) | final readonly class | 160 | The decisions behind wp_insert_post: which columns a postarr fills, when |
 | [`PostLookup`](#postlookup) | final readonly class | 85 | The post reads plugin code asks for by shape: a page by title, revisions, counts. |
 | [`PostQuery`](#postquery) | final class | 383 | The query WP_Query runs: its variables become one SELECT over the posts |
@@ -44,9 +44,9 @@ the WordPress runtime plugins load against
 | [`ScriptModules`](#scriptmodules) | final class | 308 | The script modules registry: registrations with typed dependencies, the |
 | [`ScriptPack`](#scriptpack) | final class | 146 | The site-supplied script pack: the `wp-*` JavaScript packages the engine |
 | [`Shortcodes`](#shortcodes) | final class | 132 | The shortcode registry plugin code fills with add_shortcode, and the |
-| [`SymbolGap`](#symbolgap) | final readonly class | 69 | The part of the reference's interface the runtime does not answer: names in |
-| [`SymbolTable`](#symboltable) | final class | 60 | What a folder's PHP names, collected while its tokens are read: the |
-| [`Symbols`](#symbols) | final class | 222 | A static read of what a plugin's PHP calls: global functions and classes |
+| [`SymbolGap`](#symbolgap) | final readonly class | 87 | The part of the reference's interface the runtime does not answer: names in |
+| [`SymbolTable`](#symboltable) | final class | 69 | What a folder's PHP names, collected while its tokens are read: the |
+| [`Symbols`](#symbols) | final class | 273 | A static read of what a plugin's PHP calls: global functions and classes |
 | [`TagEditor`](#tageditor) | final class | 149 | Edits one start tag's attributes in place the way the reference's tag |
 | [`TaxonomyClause`](#taxonomyclause) | final class | 178 | The taxonomy side of a post query: every query var the reference reads |
 | [`TermQuery`](#termquery) | final readonly class | 393 | Term reads in the shapes plugin code asks for: get_terms() arguments to |
@@ -1302,7 +1302,7 @@ The plugins the symbol gate refused, with what they lacked.
 
 True when the named plugin file is running as code this request.
 
-Internals: `boot()` (private, line 65), `loadThemeFunctions()` (private, line 116), `includeFile()` (private, line 157), `registerRealpath()` (private, line 181), `isolatedInclude()` (private, line 196)
+Internals: `boot()` (private, line 65), `loadThemeFunctions()` (private, line 116), `includeFile()` (private, line 157), `registerRealpath()` (private, line 188), `isolatedInclude()` (private, line 203)
 
 
 ## PostInsert
@@ -2033,6 +2033,7 @@ Used by: `Minn\Runtime\Symbols`
 
 - readonly `array $functions`
 - readonly `array $classes`
+- readonly `array $known`
 
 ### static `ofLoadedFacade(string $engineDir): self`
 
@@ -2047,6 +2048,14 @@ The gap read from its JSON file.
 ### `lacksFunction(string $name): bool`
 
 Whether the runtime lacks a function.
+
+### `defines(string $name): bool`
+
+Whether the runtime already defines a function of the reference's
+interface, so a plugin declaring it again without a guard would fail
+to compile. On the reference the pluggable functions load after the
+plugins and a plugin's own definition wins; here the facade is loaded
+first, so the gate reports the collision instead of the fatal.
 
 ### `lacksClass(string $name): bool`
 
@@ -2078,7 +2087,11 @@ Notes a class referenced.
 
 ### `declare(string $function): void`
 
-Notes a function the folder declares.
+Notes a function the folder declares, a method included: a call by that name is not a need.
+
+### `declareGlobal(string $function): void`
+
+Notes a function declared in the global scope, which the runtime must not already define.
 
 ### `declareClass(string $class): void`
 
@@ -2092,7 +2105,7 @@ A name an existence check protects: function_exists, class_exists, defined, and 
 
 The table as the gate reads it.
 
-- `@return array{calls: list<string>, classes: list<string>, declared: array<string, true>, declaredClasses: array<string, true>, guarded: array<string, true>, truncated: bool}`
+- `@return array{calls: list<string>, classes: list<string>, declared: array<string, true>, declaredGlobal: array<string, true>, declaredClasses: array<string, true>, guarded: array<string, true>, truncated: bool}`
 
 
 ## Symbols
@@ -2108,6 +2121,7 @@ modification time.
 
 - const `MAX_FILES` = `6000`
 - const `SKIP_DIRS` = `array (   0 => 'node_modules',   1 => 'tests',   2 => 'test',   3 => '.git', )`
+- const `READER` = `2` — Bumped whenever the token reader changes, so every cached scan is made again.
 
 Used by: `Minn\Runtime\Plugins`
 
@@ -2115,16 +2129,23 @@ Used by: `Minn\Runtime\Plugins`
 
 What a plugin folder needs that the runtime lacks, cached by mtime.
 
-- `@return array{functions: list<string>, classes: list<string>, files: int, truncated: bool}`
+- `@return array{functions: list<string>, classes: list<string>, redeclares: list<string>, files: int, truncated: bool}`
+
+### static `redeclaresIn(string $file): array`
+
+The functions one file declares in the global scope, unguarded, that the
+loaded runtime already defines: including that file would not compile.
+
+- `@return list<string>`
 
 ### static `missingAgainst(string $dir, Minn\Runtime\SymbolGap $gap): array`
 
 The same read against an exported gap instead of the running engine, so a
 folder can be judged with no database, no options, and no facade loaded.
 
-- `@return array{functions: list<string>, classes: list<string>, files: int, truncated: bool}`
+- `@return array{functions: list<string>, classes: list<string>, redeclares: list<string>, files: int, truncated: bool}`
 
-Internals: `verdict()` (private, line 66), `phpFiles()` (private, line 88), `scan()` (private, line 122), `scanTokens()` (private, line 141), `noteName()` (private, line 186), `significant()` (private, line 224)
+Internals: `verdict()` (private, line 80), `phpFiles()` (private, line 112), `scan()` (private, line 146), `scanTokens()` (private, line 165), `noteName()` (private, line 240), `significant()` (private, line 275)
 
 
 ## TagEditor

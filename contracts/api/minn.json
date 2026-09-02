@@ -64066,7 +64066,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/UsersController.php",
-            "lines": 299,
+            "lines": 301,
             "doc": "wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives.",
             "implements": [],
             "extends": null,
@@ -64353,7 +64353,7 @@
                         }
                     ],
                     "line": 226,
-                    "end": 279
+                    "end": 281
                 },
                 {
                     "routes": [
@@ -64381,8 +64381,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 283,
-                    "end": 320
+                    "line": 285,
+                    "end": 322
                 },
                 {
                     "routes": [],
@@ -70747,7 +70747,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Plugins.php",
-            "lines": 185,
+            "lines": 192,
             "doc": "Loads the site's plugins into the runtime the way the reference does:\nmu-plugins first, then active_plugins in stored order, each file\nincluded once. A plugin loads only when the static symbol read finds\nnothing the runtime lacks; otherwise it is reported and skipped so the\nsite keeps rendering. The lifecycle actions fire between the phases.",
             "implements": [],
             "extends": null,
@@ -70941,7 +70941,7 @@
                         }
                     ],
                     "line": 157,
-                    "end": 173
+                    "end": 180
                 },
                 {
                     "routes": [],
@@ -70974,8 +70974,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 181,
-                    "end": 193
+                    "line": 188,
+                    "end": 200
                 },
                 {
                     "routes": [],
@@ -70994,8 +70994,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 196,
-                    "end": 201
+                    "line": 203,
+                    "end": 208
                 }
             ]
         },
@@ -74851,7 +74851,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/SymbolGap.php",
-            "lines": 69,
+            "lines": 87,
             "doc": "The part of the reference's interface the runtime does not answer: names in\ndata/api-names.json that no facade file defines. It is the whole input the\nsymbol gate needs, so it can be exported to JSON and carried to a machine\nthat holds plugin source but no engine, which is how the catalogue-wide\ncompatibility scan runs.",
             "implements": [],
             "extends": null,
@@ -74860,11 +74860,12 @@
                 "Minn\\Runtime\\Symbols"
             ],
             "constructor": {
-                "signature": "__construct(array $functions, array $classes)",
+                "signature": "__construct(array $functions, array $classes, array $known = array ( ))",
                 "doc": "",
                 "shapes": [
                     "@param array<string, true> $functions lower-cased function names the runtime lacks",
-                    "@param array<string, true> $classes lower-cased class, interface, trait, and enum names it lacks"
+                    "@param array<string, true> $classes lower-cased class, interface, trait, and enum names it lacks",
+                    "@param array<string, true> $known lower-cased function names in the reference's interface, lacking or not"
                 ],
                 "params": [
                     {
@@ -74880,11 +74881,18 @@
                         "shape": "array<string, true>",
                         "default": null,
                         "doc": "lower-cased class, interface, trait, and enum names it lacks"
+                    },
+                    {
+                        "name": "known",
+                        "type": "array",
+                        "shape": "array<string, true>",
+                        "default": "array ( )",
+                        "doc": "lower-cased function names in the reference's interface, lacking or not"
                     }
                 ],
                 "visibility": "private",
-                "line": 20,
-                "end": 22
+                "line": 21,
+                "end": 23
             },
             "cases": [],
             "constants": [],
@@ -74900,6 +74908,15 @@
                 },
                 {
                     "name": "classes",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "known",
                     "type": "array",
                     "readonly": true,
                     "static": false,
@@ -74926,8 +74943,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 29,
-                    "end": 49
+                    "line": 30,
+                    "end": 52
                 },
                 {
                     "routes": [],
@@ -74946,8 +74963,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 52,
-                    "end": 60
+                    "line": 55,
+                    "end": 64
                 },
                 {
                     "routes": [],
@@ -74966,8 +74983,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 63,
-                    "end": 66
+                    "line": 67,
+                    "end": 70
+                },
+                {
+                    "routes": [],
+                    "name": "defines",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "defines(string $name): bool",
+                    "doc": "Whether the runtime already defines a function of the reference's\ninterface, so a plugin declaring it again without a guard would fail\nto compile. On the reference the pluggable functions load after the\nplugins and a plugin's own definition wins; here the facade is loaded\nfirst, so the gate reports the collision instead of the fatal.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 79,
+                    "end": 83
                 },
                 {
                     "routes": [],
@@ -74986,8 +75023,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 69,
-                    "end": 72
+                    "line": 86,
+                    "end": 89
                 },
                 {
                     "routes": [],
@@ -74998,8 +75035,8 @@
                     "doc": "The gap as JSON.",
                     "shapes": [],
                     "params": [],
-                    "line": 75,
-                    "end": 81
+                    "line": 92,
+                    "end": 99
                 }
             ]
         },
@@ -75009,7 +75046,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/SymbolTable.php",
-            "lines": 60,
+            "lines": 69,
             "doc": "What a folder's PHP names, collected while its tokens are read: the\nfunctions it calls, the classes it references, and what it declares or\nguards itself, so the gate can subtract those before judging it.",
             "implements": [],
             "extends": null,
@@ -75041,6 +75078,15 @@
                 },
                 {
                     "name": "declared",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "declaredGlobal",
                     "type": "array",
                     "readonly": false,
                     "static": false,
@@ -75085,8 +75131,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 26,
-                    "end": 29
+                    "line": 28,
+                    "end": 31
                 },
                 {
                     "routes": [],
@@ -75105,8 +75151,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 32,
-                    "end": 35
+                    "line": 34,
+                    "end": 37
                 },
                 {
                     "routes": [],
@@ -75114,7 +75160,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "declare(string $function): void",
-                    "doc": "Notes a function the folder declares.",
+                    "doc": "Notes a function the folder declares, a method included: a call by that name is not a need.",
                     "shapes": [],
                     "params": [
                         {
@@ -75125,8 +75171,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 38,
-                    "end": 41
+                    "line": 40,
+                    "end": 43
+                },
+                {
+                    "routes": [],
+                    "name": "declareGlobal",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "declareGlobal(string $function): void",
+                    "doc": "Notes a function declared in the global scope, which the runtime must not already define.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "function",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 46,
+                    "end": 49
                 },
                 {
                     "routes": [],
@@ -75145,8 +75211,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 44,
-                    "end": 47
+                    "line": 52,
+                    "end": 55
                 },
                 {
                     "routes": [],
@@ -75165,8 +75231,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 50,
-                    "end": 53
+                    "line": 58,
+                    "end": 61
                 },
                 {
                     "routes": [],
@@ -75176,7 +75242,7 @@
                     "signature": "toArray(bool $truncated): array",
                     "doc": "The table as the gate reads it.",
                     "shapes": [
-                        "@return array{calls: list<string>, classes: list<string>, declared: array<string, true>, declaredClasses: array<string, true>, guarded: array<string, true>, truncated: bool}"
+                        "@return array{calls: list<string>, classes: list<string>, declared: array<string, true>, declaredGlobal: array<string, true>, declaredClasses: array<string, true>, guarded: array<string, true>, truncated: bool}"
                     ],
                     "params": [
                         {
@@ -75187,8 +75253,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 60,
-                    "end": 70
+                    "line": 68,
+                    "end": 79
                 }
             ]
         },
@@ -75198,7 +75264,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Symbols.php",
-            "lines": 222,
+            "lines": 273,
             "doc": "A static read of what a plugin's PHP calls: global functions and classes\nit uses but does not itself declare, minus the ones it guards with\nfunction_exists() or class_exists(). Checked against what the runtime\nprovides, this decides whether a plugin loads at all. The read is cached\nin the minn_runtime_symbols option keyed by the plugin folder's newest\nmodification time.",
             "implements": [],
             "extends": null,
@@ -75224,6 +75290,12 @@
                     "value": "array (   0 => 'node_modules',   1 => 'tests',   2 => 'test',   3 => '.git', )",
                     "doc": "",
                     "visibility": "private"
+                },
+                {
+                    "name": "READER",
+                    "value": "2",
+                    "doc": "Bumped whenever the token reader changes, so every cached scan is made again.",
+                    "visibility": "private"
                 }
             ],
             "properties": [],
@@ -75236,7 +75308,7 @@
                     "signature": "missing(string $dir, Minn\\Runtime\\Options $options): array",
                     "doc": "What a plugin folder needs that the runtime lacks, cached by mtime.",
                     "shapes": [
-                        "@return array{functions: list<string>, classes: list<string>, files: int, truncated: bool}"
+                        "@return array{functions: list<string>, classes: list<string>, redeclares: list<string>, files: int, truncated: bool}"
                     ],
                     "params": [
                         {
@@ -75254,8 +75326,30 @@
                             "doc": ""
                         }
                     ],
-                    "line": 25,
-                    "end": 44
+                    "line": 27,
+                    "end": 47
+                },
+                {
+                    "routes": [],
+                    "name": "redeclaresIn",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "redeclaresIn(string $file): array",
+                    "doc": "The functions one file declares in the global scope, unguarded, that the\nloaded runtime already defines: including that file would not compile.",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "file",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 55,
+                    "end": 58
                 },
                 {
                     "routes": [],
@@ -75265,7 +75359,7 @@
                     "signature": "missingAgainst(string $dir, Minn\\Runtime\\SymbolGap $gap): array",
                     "doc": "The same read against an exported gap instead of the running engine, so a\nfolder can be judged with no database, no options, and no facade loaded.",
                     "shapes": [
-                        "@return array{functions: list<string>, classes: list<string>, files: int, truncated: bool}"
+                        "@return array{functions: list<string>, classes: list<string>, redeclares: list<string>, files: int, truncated: bool}"
                     ],
                     "params": [
                         {
@@ -75283,8 +75377,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 52,
-                    "end": 56
+                    "line": 66,
+                    "end": 70
                 },
                 {
                     "routes": [],
@@ -75295,7 +75389,7 @@
                     "doc": "Only the reference's own interface counts: a function or class the plugin\nneeds from WordPress. Its own integrations with other plugins and PHP\nextensions are its business.",
                     "shapes": [
                         "@param array{calls: list<string>, classes: list<string>, declared: array<string, true>, declaredClasses: array<string, true>, guarded: array<string, true>, truncated: bool} $scan",
-                        "@return array{functions: list<string>, classes: list<string>, files: int, truncated: bool}"
+                        "@return array{functions: list<string>, classes: list<string>, redeclares: list<string>, files: int, truncated: bool}"
                     ],
                     "params": [
                         {
@@ -75320,8 +75414,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 66,
-                    "end": 85
+                    "line": 80,
+                    "end": 109
                 },
                 {
                     "routes": [],
@@ -75342,8 +75436,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 88,
-                    "end": 108
+                    "line": 112,
+                    "end": 132
                 },
                 {
                     "routes": [],
@@ -75365,8 +75459,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 122,
-                    "end": 138
+                    "line": 146,
+                    "end": 162
                 },
                 {
                     "routes": [],
@@ -75394,8 +75488,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 141,
-                    "end": 177
+                    "line": 165,
+                    "end": 231
                 },
                 {
                     "routes": [],
@@ -75437,8 +75531,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 186,
-                    "end": 221
+                    "line": 240,
+                    "end": 272
                 },
                 {
                     "routes": [],
@@ -75473,8 +75567,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 224,
-                    "end": 235
+                    "line": 275,
+                    "end": 286
                 }
             ]
         },

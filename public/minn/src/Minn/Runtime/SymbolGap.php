@@ -16,8 +16,9 @@ final readonly class SymbolGap
     /**
      * @param array<string, true> $functions lower-cased function names the runtime lacks
      * @param array<string, true> $classes lower-cased class, interface, trait, and enum names it lacks
+     * @param array<string, true> $known lower-cased function names in the reference's interface, lacking or not
      */
-    private function __construct(public array $functions, public array $classes)
+    private function __construct(public array $functions, public array $classes, public array $known = [])
     {
     }
 
@@ -34,7 +35,9 @@ final readonly class SymbolGap
             $data = is_array($decoded) ? $decoded : [];
         }
         $functions = [];
+        $known = [];
         foreach ($data['functions'] ?? [] as $name) {
+            $known[strtolower($name)] = true;
             if (!function_exists($name)) {
                 $functions[strtolower($name)] = true;
             }
@@ -45,7 +48,7 @@ final readonly class SymbolGap
                 $classes[strtolower($name)] = true;
             }
         }
-        return new self($functions, $classes);
+        return new self($functions, $classes, $known);
     }
 
     /** The gap read from its JSON file. */
@@ -56,6 +59,7 @@ final readonly class SymbolGap
         return new self(
             array_fill_keys(array_map(strtolower(...), $data['functions'] ?? []), true),
             array_fill_keys(array_map(strtolower(...), $data['classes'] ?? []), true),
+            array_fill_keys(array_map(strtolower(...), $data['known'] ?? []), true),
         );
     }
 
@@ -63,6 +67,19 @@ final readonly class SymbolGap
     public function lacksFunction(string $name): bool
     {
         return isset($this->functions[strtolower($name)]);
+    }
+
+    /**
+     * Whether the runtime already defines a function of the reference's
+     * interface, so a plugin declaring it again without a guard would fail
+     * to compile. On the reference the pluggable functions load after the
+     * plugins and a plugin's own definition wins; here the facade is loaded
+     * first, so the gate reports the collision instead of the fatal.
+     */
+    public function defines(string $name): bool
+    {
+        $lower = strtolower($name);
+        return isset($this->known[$lower]) && !isset($this->functions[$lower]);
     }
 
     /** Whether the runtime lacks a class. */
@@ -77,6 +94,7 @@ final readonly class SymbolGap
         return (string) json_encode([
             'functions' => array_keys($this->functions),
             'classes' => array_keys($this->classes),
+            'known' => array_keys($this->known),
         ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     }
 }

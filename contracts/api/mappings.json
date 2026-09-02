@@ -3,10 +3,10 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
         "minn": 437,
-        "composes": 707,
-        "leaf": 353,
-        "noop": 1244,
-        "functions": 2735,
+        "composes": 708,
+        "leaf": 354,
+        "noop": 1246,
+        "functions": 2739,
         "minnMethods": 411,
         "leafLinesOver15": 13
     },
@@ -7647,6 +7647,37 @@
         "WP_Widget_Block::widget": {
             "file": "classes/WP_Widget_Block.php",
             "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "wp_parse_args"
+            ]
+        },
+        "WP_Widget_Custom_HTML::__construct": {
+            "file": "classes/WP_Widget_Custom_HTML.php",
+            "lines": 6,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Widget_Custom_HTML::form": {
+            "file": "classes/WP_Widget_Custom_HTML.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Widget_Custom_HTML::update": {
+            "file": "classes/WP_Widget_Custom_HTML.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Widget_Custom_HTML::widget": {
+            "file": "classes/WP_Widget_Custom_HTML.php",
+            "lines": 8,
             "kind": "composes",
             "minn": [],
             "composes": [

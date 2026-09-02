@@ -62,7 +62,7 @@ foreach ($rows as $slug => $row) {
         $truncated[$slug] = true;
         continue;
     }
-    $names = array_merge($row['functions'] ?? [], $row['classes'] ?? []);
+    $names = array_merge($row['functions'] ?? [], $row['classes'] ?? [], array_map(static fn (string $n): string => "redeclares:{$n}", $row['redeclares'] ?? []));
     if ($names !== []) {
         $blockers[$slug] = array_fill_keys($names, true);
     }

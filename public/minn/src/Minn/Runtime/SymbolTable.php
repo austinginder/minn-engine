@@ -18,6 +18,8 @@ final class SymbolTable
     /** @var array<string, true> */
     private array $declared = [];
     /** @var array<string, true> */
+    private array $declaredGlobal = [];
+    /** @var array<string, true> */
     private array $declaredClasses = [];
     /** @var array<string, true> */
     private array $guarded = [];
@@ -34,10 +36,16 @@ final class SymbolTable
         $this->classes[$name] = true;
     }
 
-    /** Notes a function the folder declares. */
+    /** Notes a function the folder declares, a method included: a call by that name is not a need. */
     public function declare(string $function): void
     {
         $this->declared[strtolower($function)] = true;
+    }
+
+    /** Notes a function declared in the global scope, which the runtime must not already define. */
+    public function declareGlobal(string $function): void
+    {
+        $this->declaredGlobal[strtolower($function)] = true;
     }
 
     /** Notes a class the folder declares. */
@@ -55,7 +63,7 @@ final class SymbolTable
     /**
      * The table as the gate reads it.
      *
-     * @return array{calls: list<string>, classes: list<string>, declared: array<string, true>, declaredClasses: array<string, true>, guarded: array<string, true>, truncated: bool}
+     * @return array{calls: list<string>, classes: list<string>, declared: array<string, true>, declaredGlobal: array<string, true>, declaredClasses: array<string, true>, guarded: array<string, true>, truncated: bool}
      */
     public function toArray(bool $truncated): array
     {
@@ -63,6 +71,7 @@ final class SymbolTable
             'calls' => array_keys($this->calls),
             'classes' => array_keys($this->classes),
             'declared' => $this->declared,
+            'declaredGlobal' => $this->declaredGlobal,
             'declaredClasses' => $this->declaredClasses,
             'guarded' => $this->guarded,
             'truncated' => $truncated,
