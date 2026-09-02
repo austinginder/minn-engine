@@ -24,7 +24,7 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`Logs`](#logs) | final readonly class | 150 | The log files the System view can read and clear: the debug log the |
 | [`Notifications`](#notifications) | final readonly class | 202 | The bell feed: pending and recent comments, translation and core update |
 | [`OverviewController`](#overviewcontroller) | final readonly class | 141 | The Overview of minn-admin/v1: the payload, the drill-down behind one |
-| [`Packages`](#packages) | final readonly class | 441 | Putting themes and extensions on disk. Themes come from wordpress.org |
+| [`Packages`](#packages) | final readonly class | 489 | Putting themes and extensions on disk. Themes come from wordpress.org |
 | [`PackagesController`](#packagescontroller) | final readonly class | 116 | Adding and removing themes and extensions from the Extensions view. |
 | [`PreferencesController`](#preferencescontroller) | final readonly class | 120 | A person's own settings in minn-admin/v1: their appearance, the views |
 | [`RenderController`](#rendercontroller) | final readonly class | 54 | The editor's island previews: block markup rendered by the same |
@@ -33,8 +33,8 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`StructureController`](#structurecontroller) | final readonly class | 134 | The Structure view of minn-admin/v1: post types, taxonomies, and the |
 | [`SystemController`](#systemcontroller) | final readonly class | 89 | The System view: diagnostics, the scheduled-post list, autoloaded options, and the logs. |
 | [`ThemesController`](#themescontroller) | final readonly class | 97 | The theme inventory of minn-admin/v1: every theme on disk with its |
-| [`Translations`](#translations) | final readonly class | 237 | Languages for the admin. A person's locale is their `locale` user meta, |
-| [`Updates`](#updates) | final class | 323 | Update offers from wordpress.org for the site's plugins and themes: the |
+| [`Translations`](#translations) | final readonly class | 236 | Languages for the admin. A person's locale is their `locale` user meta, |
+| [`Updates`](#updates) | final class | 336 | Update offers from wordpress.org for the site's plugins and themes: the |
 | [`UpdatesController`](#updatescontroller) | final readonly class | 123 | The minn-admin/v1 update routes: offers, directory meta, the check, the installs, the auto-update lists. |
 | [`V1Controller`](#v1controller) | final readonly class | 60 | The boot burst of minn-admin/v1: the bell feed and its read marker, the |
 
@@ -798,9 +798,14 @@ Putting themes and extensions on disk. Themes come from wordpress.org
 from an uploaded zip or a URL, and must carry a minn.json: a WordPress
 plugin would install but never run, so it is refused with the reason.
 Every archive is unpacked through one guarded routine: exactly one
-top-level folder, no absolute or dotted paths, the folder's identity
-checked before it is moved into place.
+top-level folder that is a plain name (never "." or ".."), no absolute
+or dotted paths, no symbolic links, bounded entry count and size, the
+folder's identity checked and its destination proven to be a direct
+child of the kind's directory before it is moved into place. Removal
+proves the same containment before anything is deleted.
 
+- const `MAX_ARCHIVE` = `536870912` — The largest archive fetched or unpacked, in bytes.
+- const `MAX_ENTRIES` = `20000`
 - const `WPORG_THEMES` = `'https://api.wordpress.org/themes/info/1.2/'`
 - const `WPORG_PLUGINS` = `'https://api.wordpress.org/plugins/info/1.2/'`
 - const `INFO_OPTION` = `'minn_plugin_info'`
@@ -886,11 +891,12 @@ Unpacks a zip over a folder already there, replacing it whole.
 
 Removes a theme or plugin folder that is not in use.
 
-### `fetch(string $url): string`
+### `fetch(string $url, string ...$hostPrefixes): string`
 
-A package over https, refusing anything else.
+A package over https, every redirect hop included, refusing anything
+else; when host prefixes are given, every hop must start with one.
 
-Internals: `pluginPackage()` (private, line 151), `plain()` (private, line 192), `themePackage()` (private, line 286), `place()` (private, line 335), `identify()` (private, line 408), `describe()` (private, line 422), `removeTree()` (private, line 455)
+Internals: `pluginPackage()` (private, line 158), `plain()` (private, line 199), `themePackage()` (private, line 293), `place()` (private, line 342), `isFolderName()` (private, line 426), `contained()` (private, line 432), `isSymlinkEntry()` (private, line 443), `identify()` (private, line 458), `describe()` (private, line 472), `removeTree()` (private, line 507)
 
 
 ## PackagesController
@@ -1332,7 +1338,7 @@ Fetches and unpacks Minn Admin's language pack for a locale from the
 release the bundle's manifest names. True when files were written;
 false when the manifest offers no pack for the locale.
 
-Internals: `languages()` (private, line 118), `catalogFiles()` (private, line 200), `installedCodes()` (private, line 212), `names()` (private, line 233), `download()` (private, line 245)
+Internals: `languages()` (private, line 118), `catalogFiles()` (private, line 203), `installedCodes()` (private, line 215), `names()` (private, line 236), `download()` (private, line 248)
 
 
 ## Updates
@@ -1443,7 +1449,7 @@ Stylesheet => style.css headers. @return array<string, array<string, string>>
 
 - `@return array<string, array<string, string>>`
 
-Internals: `saveAuto()` (private, line 216), `install()` (private, line 285), `consume()` (private, line 297), `post()` (private, line 309), `map()` (private, line 333), `safeUrl()` (private, line 341)
+Internals: `saveAuto()` (private, line 219), `install()` (private, line 293), `consume()` (private, line 310), `post()` (private, line 322), `map()` (private, line 346), `safeUrl()` (private, line 354)
 
 
 ## UpdatesController

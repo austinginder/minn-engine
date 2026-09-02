@@ -30,6 +30,18 @@ What the engine does on its own, and what the server in front of it must do.
   valid references, pads decimal ones to three digits, and escapes stray brackets.
   `tests/unit/kses.php` pins seventy captured cases. Password-protected posts
   show only the password form.
+- **Packages.** `Minn\Admin\Packages` is the one way a theme, plugin, or extension
+  reaches disk. A folder name is a plain name (never `.` or `..`) and the path it
+  resolves to must be a direct child of `themes/` or `plugins/` before anything is
+  removed or replaced. An archive must hold exactly one such folder, no absolute or
+  dotted paths, no symbolic-link entries, at most twenty thousand entries, and at most
+  512 MB unpacked. Downloads go through `Minn\Http\Download`: https on every redirect
+  hop (at most five), a wordpress.org update must stay on `downloads.wordpress.org`
+  across every hop, bodies over the cap fail rather than truncate. A language pack
+  installs only when the bundle manifest names its SHA-256 and the download matches
+  it. Every wordpress.org update records the archive's SHA-256, version, and package
+  URL under `archives` in the `minn_updates` option, so an audit can ask what code
+  arrived and when.
 - **Sign-in and sign-out.** `redirect_to` is honoured for this site's own URLs only;
   logging out destroys the server-side session and needs the session's `log-out`
   nonce (a confirmation page stands in when it is missing).

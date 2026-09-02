@@ -90,12 +90,15 @@ final class Updates
             'translations' => '{}',
             'locale' => json_encode([$locale]),
         ]);
+        $stored = json_decode((string) ($this->site->option(self::OPTION) ?? ''), true);
         $state = [
             'checked' => time(),
             'plugins' => self::map($pluginAnswer['plugins'] ?? []),
             'no_update' => self::map($pluginAnswer['no_update'] ?? []),
             'themes' => self::map($themeAnswer['themes'] ?? []),
             'themes_current' => self::map($themeAnswer['no_update'] ?? []),
+            // What was installed is a record, not an answer from the directory; it rides across every check.
+            'archives' => is_array($stored['archives'] ?? null) ? $stored['archives'] : [],
         ];
         $this->site->setOption(self::OPTION, (string) json_encode($state, JSON_UNESCAPED_SLASHES));
         return $state;
@@ -159,7 +162,7 @@ final class Updates
     public function updatePlugin(string $file): string
     {
         if (!isset($this->pluginOffers()[$file])) {
-            $this->state(true);
+            $this->refresh();
         }
         if (!isset($this->pluginOffers()[$file])) {
             throw new RestError('no_update', 'No update available for that plugin.', 400);
@@ -173,7 +176,7 @@ final class Updates
     public function updateTheme(string $stylesheet): string
     {
         if (!isset($this->themeOffers()[$stylesheet])) {
-            $this->state(true);
+            $this->refresh();
         }
         if (!isset($this->themeOffers()[$stylesheet])) {
             throw new RestError('no_update', 'No update available for that theme.', 400);
@@ -282,15 +285,25 @@ final class Updates
         return $out;
     }
 
+    /**
+     * Fetches and unpacks an offer's package. Every redirect hop must stay
+     * on the wordpress.org download host, and the archive's SHA-256 is kept
+     * under "archives" in the state so an audit can ask what code arrived.
+     */
     private function install(string $package, string $kind, string $folder): void
     {
         if (!str_starts_with($package, self::PACKAGE_HOST)) {
             throw new RestError('update_failed', 'The offer carries no wordpress.org package.', 500);
         }
-        $result = $this->packages->unpackReplacing($this->packages->fetch($package), $kind);
+        $zip = $this->packages->fetch($package, self::PACKAGE_HOST);
+        $result = $this->packages->unpackReplacing($zip, $kind);
         if ($result['folder'] !== $folder) {
             throw new RestError('update_failed', "The package unpacked as {$result['folder']}, not {$folder}.", 500);
         }
+        $state = $this->state();
+        $state['archives']["{$kind}/{$folder}"] = ['sha256' => hash('sha256', $zip), 'version' => $result['version'], 'package' => $package, 'installed' => time()];
+        $this->state = $state;
+        $this->site->setOption(self::OPTION, (string) json_encode($state, JSON_UNESCAPED_SLASHES));
     }
 
     /** An applied offer moves to the current bucket so the next read agrees with the folder. */

@@ -4905,8 +4905,8 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/Packages.php",
-            "lines": 441,
-            "doc": "Putting themes and extensions on disk. Themes come from wordpress.org\n(block themes render on the engine) or an uploaded zip; extensions come\nfrom an uploaded zip or a URL, and must carry a minn.json: a WordPress\nplugin would install but never run, so it is refused with the reason.\nEvery archive is unpacked through one guarded routine: exactly one\ntop-level folder, no absolute or dotted paths, the folder's identity\nchecked before it is moved into place.",
+            "lines": 489,
+            "doc": "Putting themes and extensions on disk. Themes come from wordpress.org\n(block themes render on the engine) or an uploaded zip; extensions come\nfrom an uploaded zip or a URL, and must carry a minn.json: a WordPress\nplugin would install but never run, so it is refused with the reason.\nEvery archive is unpacked through one guarded routine: exactly one\ntop-level folder that is a plain name (never \".\" or \"..\"), no absolute\nor dotted paths, no symbolic links, bounded entry count and size, the\nfolder's identity checked and its destination proven to be a direct\nchild of the kind's directory before it is moved into place. Removal\nproves the same containment before anything is deleted.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -4914,6 +4914,7 @@
                 "Minn\\Content\\Site",
                 "Minn\\Engine",
                 "Minn\\Extension\\Manifest",
+                "Minn\\Http\\Download",
                 "Minn\\RestError",
                 "Minn\\Support\\FileHeaders"
             ],
@@ -4949,11 +4950,23 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 30,
-                "end": 32
+                "line": 37,
+                "end": 39
             },
             "cases": [],
             "constants": [
+                {
+                    "name": "MAX_ARCHIVE",
+                    "value": "536870912",
+                    "doc": "The largest archive fetched or unpacked, in bytes.",
+                    "visibility": "public"
+                },
+                {
+                    "name": "MAX_ENTRIES",
+                    "value": "20000",
+                    "doc": "",
+                    "visibility": "private"
+                },
                 {
                     "name": "WPORG_THEMES",
                     "value": "'https://api.wordpress.org/themes/info/1.2/'",
@@ -5019,8 +5032,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 35,
-                    "end": 59
+                    "line": 42,
+                    "end": 66
                 },
                 {
                     "routes": [],
@@ -5048,8 +5061,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 66,
-                    "end": 100
+                    "line": 73,
+                    "end": 107
                 },
                 {
                     "routes": [],
@@ -5068,8 +5081,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 103,
-                    "end": 136
+                    "line": 110,
+                    "end": 143
                 },
                 {
                     "routes": [],
@@ -5095,8 +5108,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 139,
-                    "end": 142
+                    "line": 146,
+                    "end": 149
                 },
                 {
                     "routes": [],
@@ -5122,8 +5135,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 145,
-                    "end": 148
+                    "line": 152,
+                    "end": 155
                 },
                 {
                     "routes": [],
@@ -5144,8 +5157,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 178,
-                    "end": 189
+                    "line": 185,
+                    "end": 196
                 },
                 {
                     "routes": [],
@@ -5180,8 +5193,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 202,
-                    "end": 226
+                    "line": 209,
+                    "end": 233
                 },
                 {
                     "routes": [],
@@ -5216,8 +5229,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 233,
-                    "end": 257
+                    "line": 240,
+                    "end": 264
                 },
                 {
                     "routes": [],
@@ -5238,8 +5251,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 264,
-                    "end": 271
+                    "line": 271,
+                    "end": 278
                 },
                 {
                     "routes": [],
@@ -5265,8 +5278,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 274,
-                    "end": 277
+                    "line": 281,
+                    "end": 284
                 },
                 {
                     "routes": [],
@@ -5292,8 +5305,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 280,
-                    "end": 283
+                    "line": 287,
+                    "end": 290
                 },
                 {
                     "routes": [],
@@ -5321,8 +5334,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 309,
-                    "end": 321
+                    "line": 316,
+                    "end": 328
                 },
                 {
                     "routes": [],
@@ -5348,8 +5361,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 324,
-                    "end": 327
+                    "line": 331,
+                    "end": 334
                 },
                 {
                     "routes": [],
@@ -5375,16 +5388,16 @@
                             "doc": ""
                         }
                     ],
-                    "line": 387,
-                    "end": 401
+                    "line": 405,
+                    "end": 423
                 },
                 {
                     "routes": [],
                     "name": "fetch",
                     "static": false,
                     "visibility": "public",
-                    "signature": "fetch(string $url): string",
-                    "doc": "A package over https, refusing anything else.",
+                    "signature": "fetch(string $url, string ...$hostPrefixes): string",
+                    "doc": "A package over https, every redirect hop included, refusing anything\nelse; when host prefixes are given, every hop must start with one.",
                     "shapes": [],
                     "params": [
                         {
@@ -5393,10 +5406,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "hostPrefixes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
                         }
                     ],
-                    "line": 442,
-                    "end": 453
+                    "line": 495,
+                    "end": 505
                 },
                 {
                     "routes": [],
@@ -5422,8 +5442,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 151,
-                    "end": 171
+                    "line": 158,
+                    "end": 178
                 },
                 {
                     "routes": [],
@@ -5442,8 +5462,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 192,
-                    "end": 195
+                    "line": 199,
+                    "end": 202
                 },
                 {
                     "routes": [],
@@ -5469,8 +5489,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 286,
-                    "end": 303
+                    "line": 293,
+                    "end": 310
                 },
                 {
                     "routes": [],
@@ -5505,8 +5525,82 @@
                             "doc": ""
                         }
                     ],
-                    "line": 335,
-                    "end": 384
+                    "line": 342,
+                    "end": 402
+                },
+                {
+                    "routes": [],
+                    "name": "isFolderName",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "isFolderName(string $name): bool",
+                    "doc": "A plain folder name: no separators, never \".\" or \"..\".",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 426,
+                    "end": 429
+                },
+                {
+                    "routes": [],
+                    "name": "contained",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "contained(string $kind, string $folder): string",
+                    "doc": "The path a folder of this kind lives at, proven to be a direct child of the kind's directory.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "kind",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "folder",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 432,
+                    "end": 440
+                },
+                {
+                    "routes": [],
+                    "name": "isSymlinkEntry",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "isSymlinkEntry(ZipArchive $archive, int $index): bool",
+                    "doc": "Whether a zip entry is recorded as a symbolic link (a Unix entry whose mode says so).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "archive",
+                            "type": "ZipArchive",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "index",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 443,
+                    "end": 451
                 },
                 {
                     "routes": [],
@@ -5534,8 +5628,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 408,
-                    "end": 419
+                    "line": 458,
+                    "end": 469
                 },
                 {
                     "routes": [],
@@ -5563,8 +5657,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 422,
-                    "end": 439
+                    "line": 472,
+                    "end": 489
                 },
                 {
                     "routes": [],
@@ -5583,8 +5677,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 455,
-                    "end": 462
+                    "line": 507,
+                    "end": 514
                 }
             ]
         },
@@ -7656,7 +7750,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/Translations.php",
-            "lines": 237,
+            "lines": 236,
             "doc": "Languages for the admin. A person's locale is their `locale` user meta,\nelse the site's WPLANG, else en_US, exactly as the reference resolves it.\nThe app translates itself from a map of its source strings, read from the\nJED catalogs Minn Admin's language packs install under\nwp-content/languages/plugins (the bundle's own languages folder is the\nfallback). Installing a pack fetches the release asset the bundle's\nmanifest names for that locale, checks its hash, and unpacks only that\nlocale's files, so an eject leaves the files WordPress would have written.",
             "implements": [],
             "extends": null,
@@ -7664,6 +7758,7 @@
                 "Minn\\Admin\\App",
                 "Minn\\Content\\Site",
                 "Minn\\Content\\Users",
+                "Minn\\Http\\Download",
                 "Minn\\RestError"
             ],
             "usedBy": [
@@ -7924,7 +8019,7 @@
                         }
                     ],
                     "line": 143,
-                    "end": 197
+                    "end": 200
                 },
                 {
                     "routes": [],
@@ -7972,8 +8067,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 200,
-                    "end": 209
+                    "line": 203,
+                    "end": 212
                 },
                 {
                     "routes": [],
@@ -7986,8 +8081,8 @@
                         "@return list<string> locale codes with a core pack or a Minn Admin pack on disk, sorted"
                     ],
                     "params": [],
-                    "line": 212,
-                    "end": 230
+                    "line": 215,
+                    "end": 233
                 },
                 {
                     "routes": [],
@@ -8000,8 +8095,8 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 233,
-                    "end": 243
+                    "line": 236,
+                    "end": 246
                 },
                 {
                     "routes": [],
@@ -8020,8 +8115,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 245,
-                    "end": 256
+                    "line": 248,
+                    "end": 255
                 }
             ]
         },
@@ -8031,7 +8126,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final class",
             "file": "public/minn/src/Minn/Admin/Updates.php",
-            "lines": 323,
+            "lines": 336,
             "doc": "Update offers from wordpress.org for the site's plugins and themes: the\ndirectory's update-check endpoints asked with the installed headers, the\nanswer kept in the minn_updates option (JSON) for twelve hours, and the\noffers applied by downloading the release archive through the one\npackage unpacker. A plugin or theme the directory does not know keeps\nits folder untouched and is never offered anything. The per-item\nauto-update lists are the site's own auto_update_plugins and\nauto_update_themes options, in the shape the app already reads.",
             "implements": [],
             "extends": null,
@@ -8237,7 +8332,7 @@
                     "shapes": [],
                     "params": [],
                     "line": 64,
-                    "end": 102
+                    "end": 105
                 },
                 {
                     "routes": [],
@@ -8250,8 +8345,8 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 105,
-                    "end": 116
+                    "line": 108,
+                    "end": 119
                 },
                 {
                     "routes": [],
@@ -8264,8 +8359,8 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 119,
-                    "end": 130
+                    "line": 122,
+                    "end": 133
                 },
                 {
                     "routes": [],
@@ -8278,8 +8373,8 @@
                         "@return array<string, array{slug: string, icon: string, url: string}>"
                     ],
                     "params": [],
-                    "line": 133,
-                    "end": 149
+                    "line": 136,
+                    "end": 152
                 },
                 {
                     "routes": [],
@@ -8298,8 +8393,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 152,
-                    "end": 156
+                    "line": 155,
+                    "end": 159
                 },
                 {
                     "routes": [],
@@ -8318,8 +8413,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 159,
-                    "end": 170
+                    "line": 162,
+                    "end": 173
                 },
                 {
                     "routes": [],
@@ -8338,8 +8433,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 173,
-                    "end": 184
+                    "line": 176,
+                    "end": 187
                 },
                 {
                     "routes": [],
@@ -8360,8 +8455,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 187,
-                    "end": 191
+                    "line": 190,
+                    "end": 194
                 },
                 {
                     "routes": [],
@@ -8389,8 +8484,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 198,
-                    "end": 201
+                    "line": 201,
+                    "end": 204
                 },
                 {
                     "routes": [],
@@ -8416,8 +8511,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 204,
-                    "end": 207
+                    "line": 207,
+                    "end": 210
                 },
                 {
                     "routes": [],
@@ -8430,8 +8525,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 228,
-                    "end": 246
+                    "line": 231,
+                    "end": 249
                 },
                 {
                     "routes": [],
@@ -8444,8 +8539,8 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 249,
-                    "end": 256
+                    "line": 252,
+                    "end": 259
                 },
                 {
                     "routes": [],
@@ -8458,8 +8553,8 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 259,
-                    "end": 266
+                    "line": 262,
+                    "end": 269
                 },
                 {
                     "routes": [],
@@ -8472,8 +8567,8 @@
                         "@return array<string, array<string, string>>"
                     ],
                     "params": [],
-                    "line": 269,
-                    "end": 283
+                    "line": 272,
+                    "end": 286
                 },
                 {
                     "routes": [],
@@ -8509,8 +8604,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 216,
-                    "end": 225
+                    "line": 219,
+                    "end": 228
                 },
                 {
                     "routes": [],
@@ -8518,7 +8613,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "install(string $package, string $kind, string $folder): void",
-                    "doc": "",
+                    "doc": "Fetches and unpacks an offer's package. Every redirect hop must stay\non the wordpress.org download host, and the archive's SHA-256 is kept\nunder \"archives\" in the state so an audit can ask what code arrived.",
                     "shapes": [],
                     "params": [
                         {
@@ -8543,8 +8638,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 285,
-                    "end": 294
+                    "line": 293,
+                    "end": 307
                 },
                 {
                     "routes": [],
@@ -8577,8 +8672,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 297,
-                    "end": 306
+                    "line": 310,
+                    "end": 319
                 },
                 {
                     "routes": [],
@@ -8606,8 +8701,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 309,
-                    "end": 330
+                    "line": 322,
+                    "end": 343
                 },
                 {
                     "routes": [],
@@ -8626,8 +8721,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 333,
-                    "end": 339
+                    "line": 346,
+                    "end": 352
                 },
                 {
                     "routes": [],
@@ -8646,8 +8741,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 341,
-                    "end": 344
+                    "line": 354,
+                    "end": 357
                 }
             ]
         },
@@ -43035,6 +43130,198 @@
                     ],
                     "line": 79,
                     "end": 111
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Http\\Download",
+            "short": "Download",
+            "namespace": "Minn\\Http",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Http/Download.php",
+            "lines": 106,
+            "doc": "A file the engine fetches for itself (a package, a language pack). Every\nhop of a redirect chain is judged on its own: https only, and when host\nprefixes are given, one of them, so a redirect cannot lead a download\noff the host the caller trusted. The body is capped, and a body over the\ncap fails rather than being truncated.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Admin\\Packages",
+                "Minn\\Admin\\Translations"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "MAX_HOPS",
+                    "value": "5",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "https",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "https(string $url, int $maxBytes, array $hostPrefixes = array ( ), string $userAgent = 'Minn Engine'): string",
+                    "doc": "The body at $url, following at most five redirects.",
+                    "shapes": [
+                        "@param list<string> $hostPrefixes URL prefixes every hop must start with (none: any https host)"
+                    ],
+                    "params": [
+                        {
+                            "name": "url",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "maxBytes",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "hostPrefixes",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": "array ( )",
+                            "doc": "URL prefixes every hop must start with (none: any https host)"
+                        },
+                        {
+                            "name": "userAgent",
+                            "type": "string",
+                            "shape": "",
+                            "default": "'Minn Engine'",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 26,
+                    "end": 57
+                },
+                {
+                    "routes": [],
+                    "name": "allow",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "allow(string $url, array $hostPrefixes): void",
+                    "doc": "",
+                    "shapes": [
+                        "@param list<string> $hostPrefixes"
+                    ],
+                    "params": [
+                        {
+                            "name": "url",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "hostPrefixes",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 60,
+                    "end": 74
+                },
+                {
+                    "routes": [],
+                    "name": "status",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "status(array $headers): int",
+                    "doc": "",
+                    "shapes": [
+                        "@param list<string> $headers"
+                    ],
+                    "params": [
+                        {
+                            "name": "headers",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 77,
+                    "end": 85
+                },
+                {
+                    "routes": [],
+                    "name": "location",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "location(array $headers): ?string",
+                    "doc": "",
+                    "shapes": [
+                        "@param list<string> $headers"
+                    ],
+                    "params": [
+                        {
+                            "name": "headers",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 88,
+                    "end": 97
+                },
+                {
+                    "routes": [],
+                    "name": "resolve",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "resolve(string $base, string $location): string",
+                    "doc": "A Location header made absolute against the URL that sent it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "base",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "location",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 100,
+                    "end": 115
+                },
+                {
+                    "routes": [],
+                    "name": "host",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "host(string $url): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "url",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 117,
+                    "end": 120
                 }
             ]
         },

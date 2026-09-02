@@ -292,6 +292,28 @@ check( in_array( 'minn-zip-theme', array_column( $b['themes'] ?? array(), 'style
 check( 200 === $s && ! is_dir( minn_test_site_root() . '/public/wp-content/themes/minn-zip-theme' ), 'themes/delete removes the folder', json_encode( $b ) );
 [ $s, $b ] = as_fetch( $ENGINE, '/minn-admin/v1/themes/delete', $admin, 'POST', '{"stylesheet":"twentytwentyfive"}' );
 check( 400 === $s, 'the active theme cannot be deleted', "status $s" );
+// A folder name that names the parent, or an archive whose only folder is ".", must never reach a delete.
+$themesDir = minn_test_site_root() . '/public/wp-content/themes';
+[ $s, $b ] = as_fetch( $ENGINE, '/minn-admin/v1/themes/delete', $admin, 'POST', '{"stylesheet":".."}' );
+check( 400 === $s && is_dir( $themesDir ) && is_dir( "$themesDir/twentytwentyfive" ), 'themes/delete refuses ".." and wp-content is untouched', "status $s" );
+[ $s, $b ] = as_fetch( $ENGINE, '/minn-admin/v1/themes/delete', $admin, 'POST', '{"stylesheet":"."}' );
+check( 400 === $s && is_dir( "$themesDir/twentytwentyfive" ), 'themes/delete refuses "."', "status $s" );
+$dotZip = "$pk/dot-top.zip";
+$z = new ZipArchive();
+$z->open( $dotZip, ZipArchive::CREATE | ZipArchive::OVERWRITE );
+$z->addFromString( './style.css', "/*\nTheme Name: Dot Top\nVersion: 1.0\n*/\n" );
+$z->close();
+[ $s, $b ] = $upload( '/minn-admin/v1/themes/upload', $dotZip, array( 'overwrite' => '1' ) );
+check( 400 === $s && 'bad_archive' === ( $b['code'] ?? '' ) && is_dir( "$themesDir/twentytwentyfive" ), 'an archive whose folder is "." is refused before any overwrite', json_encode( $b ) );
+$linkZip = "$pk/link-entry.zip";
+$z = new ZipArchive();
+$z->open( $linkZip, ZipArchive::CREATE | ZipArchive::OVERWRITE );
+$z->addFromString( 'link-theme/style.css', "/*\nTheme Name: Link Theme\nVersion: 1.0\n*/\n" );
+$z->addFromString( 'link-theme/etc', '/etc' );
+$z->setExternalAttributesName( 'link-theme/etc', ZipArchive::OPSYS_UNIX, ( 0120777 << 16 ) );
+$z->close();
+[ $s, $b ] = $upload( '/minn-admin/v1/themes/upload', $linkZip );
+check( 400 === $s && 'bad_archive' === ( $b['code'] ?? '' ) && ! is_dir( "$themesDir/link-theme" ), 'an archive holding a symbolic link is refused', json_encode( $b ) );
 shell_exec( 'rm -rf ' . escapeshellarg( minn_test_site_root() . '/public/wp-content/plugins/wp-plugin-x' ) );
 [ $s, $b ] = $upload( '/minn-admin/v1/plugins/upload', $zipOf( "$pk/wp-plugin-x", 'wp-plugin-x' ) );
 check( 200 === $s && is_dir( minn_test_site_root() . '/public/wp-content/plugins/wp-plugin-x' ), 'a WordPress plugin zip installs (plugins run on the engine)', json_encode( $b ) );

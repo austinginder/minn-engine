@@ -5,6 +5,7 @@ request, response, routing, and the outgoing client
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`Client`](#client) | final class | 101 | The engine's outgoing HTTP transport over curl. Redirects are followed by |
+| [`Download`](#download) | final class | 106 | A file the engine fetches for itself (a package, a language pack). Every |
 | [`Exchange`](#exchange) | final readonly class | 29 | What came back: the final response's status, headers (repeats as lists), Set-Cookie values, and body, or the transport error. |
 | [`Failure`](#failure) | final class | 115 | What the public sees when the engine cannot answer: a plain page with no |
 | [`Kernel`](#kernel) | final readonly class | 36 | The edge. Turns a request into a response through the router and turns |
@@ -40,6 +41,29 @@ A HEAD request, sent at once.
 Performs one outgoing request over curl and returns the exchange, a transport error included.
 
 Internals: `lastBlock()` (private, line 79)
+
+
+## Download
+
+`final class Minn\Http\Download` · `public/minn/src/Minn/Http/Download.php`
+
+A file the engine fetches for itself (a package, a language pack). Every
+hop of a redirect chain is judged on its own: https only, and when host
+prefixes are given, one of them, so a redirect cannot lead a download
+off the host the caller trusted. The body is capped, and a body over the
+cap fails rather than being truncated.
+
+- const `MAX_HOPS` = `5`
+
+Used by: `Minn\Admin\Packages`, `Minn\Admin\Translations`
+
+### static `https(string $url, int $maxBytes, array $hostPrefixes = array ( ), string $userAgent = 'Minn Engine'): string`
+
+The body at $url, following at most five redirects.
+
+- `@param list<string> $hostPrefixes URL prefixes every hop must start with (none: any https host)`
+
+Internals: `allow()` (private, line 60), `status()` (private, line 77), `location()` (private, line 88), `resolve()` (private, line 100), `host()` (private, line 117)
 
 
 ## Exchange

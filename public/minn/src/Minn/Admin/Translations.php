@@ -163,8 +163,11 @@ final readonly class Translations
         if (!is_writable($dir)) {
             throw new RestError('minn_language_install', 'The languages folder is not writable.', 500);
         }
+        if (empty($entry['sha256'])) {
+            throw new RestError('minn_language_install', 'The manifest names no hash for that language pack, so it cannot be verified.', 500);
+        }
         $zip = self::download((string) $entry['package']);
-        if (!empty($entry['sha256']) && !hash_equals((string) $entry['sha256'], hash('sha256', $zip))) {
+        if (!hash_equals((string) $entry['sha256'], hash('sha256', $zip))) {
             throw new RestError('minn_language_install', 'The language pack did not match the hash the manifest names.', 500);
         }
         $tmp = tempnam(sys_get_temp_dir(), 'minn-lang-');
@@ -244,14 +247,10 @@ final readonly class Translations
 
     private static function download(string $url): string
     {
-        if (!str_starts_with($url, 'https://')) {
-            throw new RestError('minn_language_install', 'Language packs are fetched over https only.', 500);
+        try {
+            return \Minn\Http\Download::https($url, 64 * 1048576, [], 'Minn Engine/' . MINN_ENGINE_VERSION);
+        } catch (\RuntimeException $e) {
+            throw new RestError('minn_language_install', 'The language pack could not be downloaded. ' . $e->getMessage(), 500);
         }
-        $context = stream_context_create(['http' => ['timeout' => 60, 'follow_location' => 1, 'user_agent' => 'Minn Engine/' . MINN_ENGINE_VERSION], 'ssl' => ['verify_peer' => true]]);
-        $body = @file_get_contents($url, false, $context);
-        if ($body === false || $body === '') {
-            throw new RestError('minn_language_install', 'The language pack could not be downloaded. Check the site can reach GitHub and try again.', 500);
-        }
-        return $body;
     }
 }

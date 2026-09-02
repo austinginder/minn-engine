@@ -8,6 +8,7 @@ use Closure;
 use Minn\Content\Inventory;
 use Minn\Content\Site;
 use Minn\Extension\Manifest;
+use Minn\Http\Download;
 use Minn\RestError;
 use Minn\Support\FileHeaders;
 
@@ -17,11 +18,17 @@ use Minn\Support\FileHeaders;
  * from an uploaded zip or a URL, and must carry a minn.json: a WordPress
  * plugin would install but never run, so it is refused with the reason.
  * Every archive is unpacked through one guarded routine: exactly one
- * top-level folder, no absolute or dotted paths, the folder's identity
- * checked before it is moved into place.
+ * top-level folder that is a plain name (never "." or ".."), no absolute
+ * or dotted paths, no symbolic links, bounded entry count and size, the
+ * folder's identity checked and its destination proven to be a direct
+ * child of the kind's directory before it is moved into place. Removal
+ * proves the same containment before anything is deleted.
  */
 final readonly class Packages
 {
+    /** The largest archive fetched or unpacked, in bytes. */
+    public const MAX_ARCHIVE = 512 * 1048576;
+    private const MAX_ENTRIES = 20000;
     private const WPORG_THEMES = 'https://api.wordpress.org/themes/info/1.2/';
     private const WPORG_PLUGINS = 'https://api.wordpress.org/plugins/info/1.2/';
     private const INFO_OPTION = 'minn_plugin_info';
@@ -342,14 +349,25 @@ final readonly class Packages
             if ($archive->open($tmp) !== true) {
                 throw new RestError('not_zip', 'The archive could not be opened.', 400);
             }
+            if ($archive->numFiles > self::MAX_ENTRIES) {
+                throw new RestError('bad_archive', 'The archive holds more than ' . self::MAX_ENTRIES . ' entries.', 400);
+            }
             $top = null;
+            $bytes = 0;
             for ($i = 0; $i < $archive->numFiles; $i++) {
                 $name = (string) $archive->getNameIndex($i);
-                if ($name === '' || str_starts_with($name, '/') || str_contains($name, '..') || str_starts_with($name, '__MACOSX/')) {
-                    if (!str_starts_with($name, '__MACOSX/')) {
-                        throw new RestError('bad_archive', 'The archive holds a path that leaves its folder.', 400);
-                    }
+                if (str_starts_with($name, '__MACOSX/')) {
                     continue;
+                }
+                if ($name === '' || str_starts_with($name, '/') || str_contains($name, '..') || str_contains($name, "\0") || str_contains($name, '\\')) {
+                    throw new RestError('bad_archive', 'The archive holds a path that leaves its folder.', 400);
+                }
+                if (self::isSymlinkEntry($archive, $i)) {
+                    throw new RestError('bad_archive', 'The archive holds a symbolic link.', 400);
+                }
+                $bytes += (int) (($archive->statIndex($i) ?: [])['size'] ?? 0);
+                if ($bytes > self::MAX_ARCHIVE) {
+                    throw new RestError('bad_archive', 'The archive unpacks to more than ' . (int) (self::MAX_ARCHIVE / 1048576) . ' MB.', 400);
                 }
                 $first = explode('/', $name, 2)[0];
                 if ($top !== null && $first !== $top) {
@@ -357,7 +375,7 @@ final readonly class Packages
                 }
                 $top = $first;
             }
-            if ($top === null || $top === '' || !preg_match('/^[A-Za-z0-9._-]+$/', $top)) {
+            if ($top === null || !self::isFolderName($top)) {
                 throw new RestError('bad_archive', 'The archive must hold exactly one folder.', 400);
             }
             mkdir($stage, 0755, true);
@@ -367,7 +385,7 @@ final readonly class Packages
             $archive->close();
             $source = "{$stage}/{$top}";
             $identity = $this->identify($source, $kind);
-            $dest = "{$this->contentDir}/" . ($kind === 'theme' ? 'themes' : 'plugins') . "/{$top}";
+            $dest = $this->contained($kind, $top);
             if (is_dir($dest)) {
                 $onExisting($dest, $kind, $identity);
             }
@@ -386,10 +404,10 @@ final readonly class Packages
     /** Removes a theme or plugin folder that is not in use. */
     public function remove(string $kind, string $folder): void
     {
-        if (!preg_match('/^[A-Za-z0-9._-]+$/', $folder)) {
+        if (!self::isFolderName($folder)) {
             throw new RestError('bad_slug', 'That is not a folder name.', 400);
         }
-        $dir = "{$this->contentDir}/" . ($kind === 'theme' ? 'themes' : 'plugins') . "/{$folder}";
+        $dir = $this->contained($kind, $folder);
         if (is_link($dir)) {
             unlink($dir);
             return;
@@ -397,7 +415,39 @@ final readonly class Packages
         if (!is_dir($dir)) {
             throw new RestError('not_found', ucfirst($kind) . ' not found.', 404);
         }
+        $kindDir = realpath(dirname($dir));
+        if ($kindDir === false || dirname((string) realpath($dir)) !== $kindDir) {
+            throw new RestError('bad_slug', 'That folder is not inside ' . basename($kindDir ?: dirname($dir)) . '.', 400);
+        }
         self::removeTree($dir);
+    }
+
+    /** A plain folder name: no separators, never "." or "..". */
+    private static function isFolderName(string $name): bool
+    {
+        return $name !== '.' && $name !== '..' && preg_match('/^[A-Za-z0-9._-]+$/', $name) === 1;
+    }
+
+    /** The path a folder of this kind lives at, proven to be a direct child of the kind's directory. */
+    private function contained(string $kind, string $folder): string
+    {
+        $kindDir = "{$this->contentDir}/" . ($kind === 'theme' ? 'themes' : 'plugins');
+        $path = "{$kindDir}/{$folder}";
+        if (!self::isFolderName($folder) || dirname($path) !== $kindDir) {
+            throw new RestError('bad_slug', 'That is not a folder name.', 400);
+        }
+        return $path;
+    }
+
+    /** Whether a zip entry is recorded as a symbolic link (a Unix entry whose mode says so). */
+    private static function isSymlinkEntry(\ZipArchive $archive, int $index): bool
+    {
+        $opsys = 0;
+        $attributes = 0;
+        if (!$archive->getExternalAttributesIndex($index, $opsys, $attributes)) {
+            return false;
+        }
+        return $opsys === \ZipArchive::OPSYS_UNIX && (($attributes >> 16) & 0170000) === 0120000;
     }
 
     /**
@@ -438,18 +488,20 @@ final readonly class Packages
         return ['name' => '', 'version' => '', 'kind' => 'unknown'];
     }
 
-    /** A package over https, refusing anything else. */
-    public function fetch(string $url): string
+    /**
+     * A package over https, every redirect hop included, refusing anything
+     * else; when host prefixes are given, every hop must start with one.
+     */
+    public function fetch(string $url, string ...$hostPrefixes): string
     {
         if (!str_starts_with($url, 'https://')) {
             throw new RestError('bad_url', 'Packages are fetched over https only.', 400);
         }
-        $context = stream_context_create(['http' => ['timeout' => 60, 'follow_location' => 1, 'ignore_errors' => true, 'user_agent' => 'WordPress/' . \Minn\Engine::WP_VERSION . '; ' . $this->site->option('home')], 'ssl' => ['verify_peer' => true]]);
-        $body = @file_get_contents($url, false, $context);
-        if ($body === false || $body === '') {
-            throw new RestError('download_failed', 'The download failed. Check the site can reach ' . (string) parse_url($url, PHP_URL_HOST) . ' and try again.', 502);
+        try {
+            return Download::https($url, self::MAX_ARCHIVE, array_values($hostPrefixes), 'WordPress/' . \Minn\Engine::WP_VERSION . '; ' . $this->site->option('home'));
+        } catch (\RuntimeException $e) {
+            throw new RestError('download_failed', $e->getMessage(), 502);
         }
-        return $body;
     }
 
     private static function removeTree(string $dir): void
