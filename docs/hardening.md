@@ -71,10 +71,25 @@ What the engine does on its own, and what the server in front of it must do.
   the logged-in cookie).
 - **Salts.** The engine refuses to serve until `wp-config.php` carries real keys and
   salts; the installer placeholder counts as missing.
-- **Addresses.** The throttle keys on `REMOTE_ADDR`. Behind a proxy or CDN that is the
-  proxy's address; terminate that at the server (have it rewrite the client address
-  into `REMOTE_ADDR`, as Caddy's `trusted_proxies` and nginx's `real_ip` do) rather
-  than trusting `X-Forwarded-For` in the engine.
+- **Addresses.** A forwarded header is a request header, so by default the engine
+  believes nobody: the client is `REMOTE_ADDR` and the scheme is the server's word.
+  Behind a proxy or CDN that is the proxy's address, which makes every visitor look
+  like one (the throttle would lock them all out together) and every request look
+  insecure (the auth cookie would lose `Secure`). Either terminate it at the server,
+  having it rewrite the client address into `REMOTE_ADDR` as Caddy's
+  `trusted_proxies` and nginx's `real_ip` do, or name the proxy in `wp-config.php`:
+
+  ```php
+  define('MINN_TRUSTED_PROXIES', '10.0.0.0/8, 2400:cb00::/32');
+  ```
+
+  The engine then reads the client from `X-Forwarded-For` and the scheme from
+  `X-Forwarded-Proto`, but only for a request that arrived from one of those
+  addresses. The client is the right-most forwarded address that is not itself
+  trusted, which is the one the proxy appended, so a visitor who sends their own
+  `X-Forwarded-For` cannot put an address the engine believes after it. `'*'`
+  trusts any address and is only right when nothing but the proxy can reach PHP.
+  Pinned by `tests/unit/trusted-proxies.php`.
 - **Database.** Every query is a prepared statement through `Minn\Db`. Serialized blobs
   are read by tolerant scanners and the engine's own decoder; nothing calls
   `unserialize()` on data from the database or a request.

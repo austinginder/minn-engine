@@ -45159,12 +45159,13 @@
             "namespace": "Minn\\Http",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Http/Request.php",
-            "lines": 118,
+            "lines": 122,
             "doc": "An immutable picture of the incoming request. Built once from the PHP\nglobals at the edge; handlers only ever see this object.",
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Http\\Method"
+                "Minn\\Http\\Method",
+                "Minn\\Http\\TrustedProxies"
             ],
             "usedBy": [
                 "Minn\\Admin\\AppController",
@@ -45455,7 +45456,7 @@
                     "shapes": [],
                     "params": [],
                     "line": 38,
-                    "end": 73
+                    "end": 77
                 },
                 {
                     "routes": [],
@@ -45466,8 +45467,8 @@
                     "doc": "The JSON body as an array, or the form fields when the body is empty.",
                     "shapes": [],
                     "params": [],
-                    "line": 76,
-                    "end": 83
+                    "line": 80,
+                    "end": 87
                 },
                 {
                     "routes": [],
@@ -45486,8 +45487,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 86,
-                    "end": 89
+                    "line": 90,
+                    "end": 93
                 },
                 {
                     "routes": [],
@@ -45513,8 +45514,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 92,
-                    "end": 96
+                    "line": 96,
+                    "end": 100
                 },
                 {
                     "routes": [],
@@ -45533,8 +45534,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 99,
-                    "end": 102
+                    "line": 103,
+                    "end": 106
                 },
                 {
                     "routes": [],
@@ -45553,8 +45554,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 105,
-                    "end": 108
+                    "line": 109,
+                    "end": 112
                 },
                 {
                     "routes": [],
@@ -45573,8 +45574,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 111,
-                    "end": 114
+                    "line": 115,
+                    "end": 118
                 },
                 {
                     "routes": [],
@@ -45585,8 +45586,8 @@
                     "doc": "The path split into non-empty segments: \"/a/b/\" becomes [\"a\", \"b\"].",
                     "shapes": [],
                     "params": [],
-                    "line": 117,
-                    "end": 120
+                    "line": 121,
+                    "end": 124
                 },
                 {
                     "routes": [],
@@ -45605,8 +45606,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 123,
-                    "end": 127
+                    "line": 127,
+                    "end": 131
                 }
             ]
         },
@@ -46255,6 +46256,200 @@
                     ],
                     "line": 71,
                     "end": 95
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Http\\TrustedProxies",
+            "short": "TrustedProxies",
+            "namespace": "Minn\\Http",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Http/TrustedProxies.php",
+            "lines": 104,
+            "doc": "Which addresses in front of the engine may speak for the client.\n\nBy default none do: a forwarded header is a request header, and a request\nheader is the client's word. Behind a proxy or CDN that terminates TLS,\n`REMOTE_ADDR` is then the proxy's, which makes every visitor look like one\naddress (the sign-in throttle would lock them all out together) and every\nrequest look insecure (the auth cookie would lose its Secure flag).\n\nA site says who to believe in `wp-config.php`:\n\ndefine('MINN_TRUSTED_PROXIES', '10.0.0.0/8, 2400:cb00::/32');\ndefine('MINN_TRUSTED_PROXIES', '*');   // any: only when nothing but the proxy can reach PHP\n\nThe client is then the right-most address in `X-Forwarded-For` that is not\nitself trusted, which is what a proxy chain appends, so a client that sends\nits own `X-Forwarded-For` cannot put an address the engine believes to the\nright of the proxy's.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Http\\Request"
+            ],
+            "constructor": {
+                "signature": "__construct(array $ranges)",
+                "doc": "",
+                "shapes": [
+                    "@param list<string> $ranges addresses or CIDR ranges, or ['*'] for any"
+                ],
+                "params": [
+                    {
+                        "name": "ranges",
+                        "type": "array",
+                        "shape": "list<string>",
+                        "default": null,
+                        "doc": "addresses or CIDR ranges, or ['*'] for any"
+                    }
+                ],
+                "visibility": "private",
+                "line": 29,
+                "end": 31
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "ranges",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "none",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "none(): self",
+                    "doc": "Nobody in front of the engine speaks for the client.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 34,
+                    "end": 37
+                },
+                {
+                    "routes": [],
+                    "name": "configured",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "configured(): self",
+                    "doc": "What the site declared in wp-config.php, or nobody.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 40,
+                    "end": 48
+                },
+                {
+                    "routes": [],
+                    "name": "trusts",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "trusts(string $address): bool",
+                    "doc": "Whether the engine believes what this address says about the client.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "address",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 51,
+                    "end": 62
+                },
+                {
+                    "routes": [],
+                    "name": "clientAddress",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "clientAddress(string $remoteAddress, string $forwardedFor): string",
+                    "doc": "The client's address, given who connected and what was forwarded: the\nright-most forwarded address that is not itself a trusted proxy.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "remoteAddress",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "forwardedFor",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 68,
+                    "end": 81
+                },
+                {
+                    "routes": [],
+                    "name": "forwardedSecure",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "forwardedSecure(string $remoteAddress, string $forwardedProto): bool",
+                    "doc": "Whether a forwarded scheme may be believed, and says https.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "remoteAddress",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "forwardedProto",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 84,
+                    "end": 92
+                },
+                {
+                    "routes": [],
+                    "name": "bare",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "bare(string $value): string",
+                    "doc": "An address with a port or brackets stripped, as a forwarded list may carry them.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 95,
+                    "end": 103
+                },
+                {
+                    "routes": [],
+                    "name": "covers",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "covers(string $range, string $address): bool",
+                    "doc": "Whether a CIDR range or a plain address covers the address given.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "range",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "address",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 106,
+                    "end": 128
                 }
             ]
         },

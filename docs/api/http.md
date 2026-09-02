@@ -14,11 +14,12 @@ request, response, routing, and the outgoing client
 | [`Method`](#method) | enum | 33 |  |
 | [`Outbound`](#outbound) | final readonly class | 47 | One outgoing HTTP request, normalised: the client below needs nothing else. |
 | [`Policy`](#policy) | final readonly class | 54 | What a route requires of its caller, as data on the route: the router |
-| [`Request`](#request) | final readonly class | 118 | An immutable picture of the incoming request. Built once from the PHP |
+| [`Request`](#request) | final readonly class | 122 | An immutable picture of the incoming request. Built once from the PHP |
 | [`Response`](#response) | final readonly class | 71 | What a handler returns. Nothing is written to the client until the |
 | [`Route`](#route) | final readonly class | 43 | Declares a handler method as a route. The policy lives here, as |
 | [`RouteMiss`](#routemiss) | final class | 3 | A handler declining a request its pattern matched: the router swallows |
 | [`Router`](#router) | final class | 79 | Matches a request to a #[Route] on one of the registered handler |
+| [`TrustedProxies`](#trustedproxies) | final readonly class | 104 | Which addresses in front of the engine may speak for the client. |
 
 ## Access
 
@@ -552,4 +553,53 @@ Every registered route with its policy, for the docs and the ratchet.
 ### `dispatch(Minn\Http\Request $request): ?Minn\Http\Response`
 
 Null when nothing matched, so the caller can fall through.
+
+
+## TrustedProxies
+
+`final readonly class Minn\Http\TrustedProxies` · `public/minn/src/Minn/Http/TrustedProxies.php`
+
+Which addresses in front of the engine may speak for the client.
+
+By default none do: a forwarded header is a request header, and a request
+header is the client's word. Behind a proxy or CDN that terminates TLS,
+`REMOTE_ADDR` is then the proxy's, which makes every visitor look like one
+address (the sign-in throttle would lock them all out together) and every
+request look insecure (the auth cookie would lose its Secure flag).
+
+A site says who to believe in `wp-config.php`:
+
+define('MINN_TRUSTED_PROXIES', '10.0.0.0/8, 2400:cb00::/32');
+define('MINN_TRUSTED_PROXIES', '*');   // any: only when nothing but the proxy can reach PHP
+
+The client is then the right-most address in `X-Forwarded-For` that is not
+itself trusted, which is what a proxy chain appends, so a client that sends
+its own `X-Forwarded-For` cannot put an address the engine believes to the
+right of the proxy's.
+
+Used by: `Minn\Http\Request`
+
+
+### static `none(): self`
+
+Nobody in front of the engine speaks for the client.
+
+### static `configured(): self`
+
+What the site declared in wp-config.php, or nobody.
+
+### `trusts(string $address): bool`
+
+Whether the engine believes what this address says about the client.
+
+### `clientAddress(string $remoteAddress, string $forwardedFor): string`
+
+The client's address, given who connected and what was forwarded: the
+right-most forwarded address that is not itself a trusted proxy.
+
+### `forwardedSecure(string $remoteAddress, string $forwardedProto): bool`
+
+Whether a forwarded scheme may be believed, and says https.
+
+Internals: `bare()` (private, line 95), `covers()` (private, line 106)
 

@@ -16,7 +16,7 @@ The engine's own classes under `public/minn/src/Minn/`, one page per namespace, 
 | [`Minn\Extension`](extension.md) | 8 | the extension contract and its seams |
 | [`Minn\Front`](front.md) | 24 | URL resolution, permalinks, feeds, sitemaps and the public page |
 | [`Minn\Html`](html.md) | 4 | the HTML tag processor |
-| [`Minn\Http`](http.md) | 15 | request, response, routing, and the outgoing client |
+| [`Minn\Http`](http.md) | 16 | request, response, routing, and the outgoing client |
 | [`Minn\Login`](login.md) | 3 | /wp-login.php and the sign-in surface |
 | [`Minn\Mail`](mail.md) | 6 | sending mail and the notices the engine sends |
 | [`Minn\Media`](media.md) | 9 | uploads, image sizes and attachment metadata |

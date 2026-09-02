@@ -50,6 +50,12 @@ final readonly class Request
         if (isset($_SERVER['CONTENT_TYPE'])) {
             $headers['content-type'] = (string) $_SERVER['CONTENT_TYPE'];
         }
+        // The scheme and the client's address are the server's word, never a
+        // request header's, unless the site named the proxy in front of it.
+        $proxies = TrustedProxies::configured();
+        $remoteAddress = (string) ($_SERVER['REMOTE_ADDR'] ?? '');
+        $secure = (($_SERVER['HTTPS'] ?? '') !== '' && $_SERVER['HTTPS'] !== 'off')
+            || ($_SERVER['SERVER_PORT'] ?? '') === '443';
         return new self(
             method: Method::fromName($_SERVER['REQUEST_METHOD'] ?? 'GET'),
             path: is_string($path) && $path !== '' ? $path : '/',
@@ -57,13 +63,11 @@ final readonly class Request
             headers: $headers,
             cookies: array_map(strval(...), $_COOKIE),
             body: (string) file_get_contents('php://input'),
-            // The scheme is the server's word, never a request header's.
-            secure: (($_SERVER['HTTPS'] ?? '') !== '' && $_SERVER['HTTPS'] !== 'off')
-                || ($_SERVER['SERVER_PORT'] ?? '') === '443',
+            secure: $secure || $proxies->forwardedSecure($remoteAddress, $headers['x-forwarded-proto'] ?? ''),
             host: (string) ($_SERVER['HTTP_HOST'] ?? ''),
             form: $_POST,
             files: $_FILES,
-            remoteAddress: (string) ($_SERVER['REMOTE_ADDR'] ?? ''),
+            remoteAddress: $proxies->clientAddress($remoteAddress, $headers['x-forwarded-for'] ?? ''),
             server: [
                 'software' => (string) ($_SERVER['SERVER_SOFTWARE'] ?? ''),
                 'protocol' => (string) ($_SERVER['SERVER_PROTOCOL'] ?? ''),
