@@ -225,7 +225,7 @@ $check('api docs: docs/api/ is current', is_array($docs) && ($docs['stale'] ?? t
 // or more (take the two or three the class calls; Services makes the rest
 // cheap). Lower a ceiling when a class loses its last offender.
 $undocumentedCeiling = 0;
-$boolParamCeiling = 102;
+$boolParamCeiling = 82;
 $wideConstructorCeiling = 24;
 $model = json_decode((string) file_get_contents(dirname(__DIR__) . '/contracts/api/minn.json'), true);
 $undocumented = 0;

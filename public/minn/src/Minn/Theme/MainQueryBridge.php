@@ -85,6 +85,6 @@ final readonly class MainQueryBridge
         }
         // Sticky posts ride on top of page 1 without consuming its slots, as the reference fills the page.
         $sticky = $resolution->kind === Kind::Home ? Serialized::intList($this->site->option('sticky_posts')) : [];
-        return $this->posts->listing($filter, $resolution->paged, $this->perPage, $sticky, stickyExtra: true);
+        return $this->posts->listing($filter, $resolution->paged, $this->perPage, $sticky);
     }
 }

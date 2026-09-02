@@ -1033,7 +1033,7 @@ function wp_delete_post($post_id = 0, $force_delete = false)
         wp_delete_post_revision($revision);
     }
     $writer = _minn_post_writer();
-    $writer->reparentChildren($post->ID, (int) $post->post_parent, $post->post_type === 'page');
+    $writer->reparentChildren($post->ID, (int) $post->post_parent, $post->post_type === 'page' ? ['page', 'attachment'] : ['attachment']);
     do_action('delete_post', $post->ID, $post);
     $taxonomies = $writer->taxonomiesOf($post->ID);
     $writer->destroy($post->ID);

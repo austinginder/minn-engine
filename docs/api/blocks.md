@@ -9,8 +9,8 @@ the block parser and renderer
 | [`BlockName`](#blockname) | final class | 17 | The block name rules: a string, lower-case, `namespace/name`. |
 | [`Context`](#context) | final class | 76 | What the template blocks render against: the resolution, the main |
 | [`Elements`](#elements) | final class | 79 | Per-block element styles (style.elements in a block's attributes, the |
-| [`ImageTags`](#imagetags) | final readonly class | 167 | The attributes the reference adds to an <img> that carries a |
-| [`Layout`](#layout) | final class | 126 | The layout-support classes the reference adds at render time. Every |
+| [`ImageTags`](#imagetags) | final readonly class | 186 | The attributes the reference adds to an <img> that carries a |
+| [`Layout`](#layout) | final class | 129 | The layout-support classes the reference adds at render time. Every |
 | [`Parser`](#parser) | final class | 91 | Parses block markup into a tree. The grammar is the delimiter comment: |
 | [`QueryVars`](#queryvars) | final class | 80 | The query variables a Query Loop block's context asks for, the way the reference's query block builds them. |
 | [`RenderState`](#renderstate) | final class | 260 | Per-request rendering state, owned by the renderer. The reference numbers |
@@ -172,21 +172,30 @@ the original.
 Used by: `Minn\Blocks\Renderer`
 
 ```php
-__construct(Minn\Content\Posts $posts, Minn\Media\Uploads $uploads)
+__construct(Minn\Content\Posts $posts, Minn\Media\Uploads $uploads, Closure $front)
 ```
+- `@param Closure(): bool $front whether the images are on a front-end page, where the loading budget applies`
 
 
-### `enrich(string $html, bool $withDataId = false, bool $front = false, bool $autoSizes = true): string`
+### `enrich(string $html): string`
 
 Rewrites every wp-image-* <img> in a fragment; other images pass through.
 
-### `featured(int $attachmentId, string $alt, string $style, bool $front): string`
+### `enrichGallery(string $html): string`
+
+The same for a gallery: every image also carries its data-id.
+
+### `enrichPlugin(string $html): string`
+
+The same for a plugin block's output, where the reference adds no sizes="auto".
+
+### `featured(int $attachmentId, string $alt, string $style): string`
 
 A post's featured image at full size, in the reference's attribute
 order (dimensions, source, class, alt, style, then the loading
 attributes and the srcset). Empty when the attachment has no file.
 
-Internals: `loadingPrefix()` (private, line 45), `minimumPriorityPixels()` (private, line 63), `enrichTag()` (private, line 69), `srcsetAttributes()` (private, line 127)
+Internals: `rewrite()` (private, line 50), `loadingPrefix()` (private, line 65), `minimumPriorityPixels()` (private, line 83), `enrichTag()` (private, line 89), `srcsetAttributes()` (private, line 147)
 
 
 ## Layout
@@ -203,6 +212,8 @@ observable), so the engine derives its own deterministic suffix from the
 layout attributes. Same shape, different value: recorded in the contract,
 and the parity suites normalise it.
 
+- const `ALWAYS_CONTAINER` = `array (   0 => 'columns', )` — Blocks the reference always gives a numbered container, whether or not their layout carries rules.
+
 Used by: `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Renderer`
 
 
@@ -210,7 +221,7 @@ Used by: `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Navigatio
 
 Whether the theme uses root padding-aware alignments.
 
-### static `classes(string $blockSlug, array $attrs, string $defaultType = 'flow', bool $alwaysContainer = false): array`
+### static `classes(string $blockSlug, array $attrs, string $defaultType = 'flow'): array`
 
 The layout classes a block's wrapper carries.
 
@@ -220,7 +231,7 @@ The layout classes a block's wrapper carries.
 
 The declarations behind a container class, in the reference's order.
 
-Internals: `hasRules()` (private, line 71), `suffix()` (private, line 139)
+Internals: `hasRules()` (private, line 74), `suffix()` (private, line 142)
 
 
 ## Parser
@@ -475,7 +486,7 @@ A tree of blocks as HTML.
 
 One block as HTML, with the filters around it.
 
-Internals: `renderNamed()` (private, line 194), `decorate()` (private, line 215), `gallery()` (private, line 247), `flexWithoutContainer()` (private, line 255)
+Internals: `renderNamed()` (private, line 198), `decorate()` (private, line 219), `gallery()` (private, line 247), `flexWithoutContainer()` (private, line 255)
 
 
 ## Selector

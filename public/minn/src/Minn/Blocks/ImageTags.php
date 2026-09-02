@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Blocks;
 
+use Closure;
 use Minn\Runtime\Runtime;
 
 use Minn\Content\Posts;
@@ -20,18 +21,37 @@ use Minn\Support\Html;
  */
 final readonly class ImageTags
 {
+    /** @param Closure(): bool $front whether the images are on a front-end page, where the loading budget applies */
     public function __construct(
         private Posts $posts,
         private Uploads $uploads,
+        private Closure $front,
     ) {
     }
 
     /** Rewrites every wp-image-* <img> in a fragment; other images pass through. */
-    public function enrich(string $html, bool $withDataId = false, bool $front = false, bool $autoSizes = true): string
+    public function enrich(string $html): string
+    {
+        return $this->rewrite($html, false, true);
+    }
+
+    /** The same for a gallery: every image also carries its data-id. */
+    public function enrichGallery(string $html): string
+    {
+        return $this->rewrite($html, true, true);
+    }
+
+    /** The same for a plugin block's output, where the reference adds no sizes="auto". */
+    public function enrichPlugin(string $html): string
+    {
+        return $this->rewrite($html, false, false);
+    }
+
+    private function rewrite(string $html, bool $withDataId, bool $autoSizes): string
     {
         return preg_replace_callback(
             '/<img\s[^>]*?class="[^"]*\bwp-image-(\d+)\b[^"]*"[^>]*\/?>/',
-            fn (array $m) => $this->enrichTag($m[0], (int) $m[1], $withDataId, $front, $autoSizes),
+            fn (array $m) => $this->enrichTag($m[0], (int) $m[1], $withDataId, $autoSizes),
             $html,
         );
     }
@@ -42,9 +62,9 @@ final readonly class ImageTags
      * images carry the "auto" sizes hint. In a REST response every image is
      * lazy.
      */
-    private static function loadingPrefix(bool $front, int $width = 0, int $height = 0): array
+    private function loadingPrefix(int $width = 0, int $height = 0): array
     {
-        if (!$front) {
+        if (!($this->front)()) {
             return ['loading="lazy" decoding="async"', true];
         }
         // Three eager images per page, every <img> on the page counting toward
@@ -66,7 +86,7 @@ final readonly class ImageTags
         return Runtime::booted() ? (int) Runtime::hooks()->filter('wp_min_priority_img_pixels', [$minimum]) : $minimum;
     }
 
-    private function enrichTag(string $tag, int $attachmentId, bool $withDataId, bool $front, bool $autoSizes = true): string
+    private function enrichTag(string $tag, int $attachmentId, bool $withDataId, bool $autoSizes): string
     {
         if (str_contains($tag, ' srcset=')) {
             // Already enriched by an inner image block; a gallery still adds its data-id.
@@ -111,7 +131,7 @@ final readonly class ImageTags
             $candidates[$meta['width']] = $fullUrl;
         }
         [$width, $height] = $shown;
-        [$loading, $auto] = self::loadingPrefix($front, $width, $height);
+        [$loading, $auto] = $this->loadingPrefix($width, $height);
         $prefix = $loading . ' width="' . $width . '" height="' . $height . '"' . ($withDataId ? ' data-id="' . $attachmentId . '"' : '');
         $tag = preg_replace('/^<img\s/', '<img ' . $prefix . ' ', $tag, 1);
         $srcset = self::srcsetAttributes($candidates, $width, $auto && $autoSizes, $attachmentId, $meta, $src, $height);
@@ -158,7 +178,7 @@ final readonly class ImageTags
      * order (dimensions, source, class, alt, style, then the loading
      * attributes and the srcset). Empty when the attachment has no file.
      */
-    public function featured(int $attachmentId, string $alt, string $style, bool $front): string
+    public function featured(int $attachmentId, string $alt, string $style): string
     {
         $meta = Metadata::parse($this->posts->meta($attachmentId, '_wp_attachment_metadata'));
         $file = $meta['file'] !== '' ? $meta['file'] : (string) ($this->posts->meta($attachmentId, '_wp_attached_file') ?? '');
@@ -174,7 +194,7 @@ final readonly class ImageTags
                 $candidates[$size['width']] = $baseUrl . '/' . $size['file'];
             }
         }
-        [$loading, $auto] = self::loadingPrefix($front, (int) $meta['width'], (int) $meta['height']);
+        [$loading, $auto] = $this->loadingPrefix((int) $meta['width'], (int) $meta['height']);
         $loading = match ($loading) {
             'fetchpriority="high" decoding="async"' => 'decoding="async" fetchpriority="high"',
             'loading="lazy" decoding="async"' => 'decoding="async" loading="lazy"',

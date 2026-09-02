@@ -333,29 +333,20 @@ final readonly class Posts
      * @param list<int> $stickyIds
      * @return array{posts: list<array>, total: int}
      */
-    public function listing(PostFilter $filter, int $page, int $perPage, array $stickyIds = [], bool $stickyExtra = false): Page
+    public function listing(PostFilter $filter, int $page, int $perPage, array $stickyIds = []): Page
     {
-        if ($stickyIds === []) {
+        if ($stickyIds === [] || $page > 1) {
             return $this->archive($filter, $page, $perPage);
         }
         $sticky = PostRecord::fromRows($this->db->rows(
             "SELECT * FROM {$this->db->table('posts')} WHERE ID IN (?) AND post_status = 'publish' AND post_type = 'post' ORDER BY post_date DESC",
             [$stickyIds],
         ));
-        $result = $this->archive($filter, $page, $perPage);
-        if ($page > 1) {
-            return $result;
-        }
+        // The first page keeps its full count of posts and adds the sticky ones on top, as the reference's main query does.
         $stickySet = array_flip(array_map(static fn (PostRecord $p) => $p->id, $sticky));
-        $notSticky = static fn (PostRecord $p): bool => !isset($stickySet[$p->id]);
-        if ($stickyExtra) {
-            // A query block keeps its full page of posts and adds the sticky ones on top.
-            $others = $this->archive($filter, 1, $perPage + count($sticky));
-            $rest = array_slice(array_values(array_filter($others->posts, $notSticky)), 0, $perPage);
-            return $others->withPosts([...$sticky, ...$rest]);
-        }
-        $rest = array_values(array_filter($result->posts, $notSticky));
-        return $result->withPosts(array_slice([...$sticky, ...$rest], 0, $perPage));
+        $others = $this->archive($filter, 1, $perPage + count($sticky));
+        $rest = array_slice(array_values(array_filter($others->posts, static fn (PostRecord $p): bool => !isset($stickySet[$p->id]))), 0, $perPage);
+        return $others->withPosts([...$sticky, ...$rest]);
     }
 
     /**

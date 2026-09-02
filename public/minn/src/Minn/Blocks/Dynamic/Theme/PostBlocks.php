@@ -177,7 +177,7 @@ final readonly class PostBlocks
             $style .= 'width:' . $block->attrs['width'] . ';';
         }
         $style .= 'object-fit:' . (string) $block->attr('scale', 'cover') . ';';
-        $img = $renderer->images()->featured($thumbnail, $alt, $style, $renderer->context()->front);
+        $img = $renderer->images()->featured($thumbnail, $alt, $style);
         if ($img === '') {
             return '';
         }

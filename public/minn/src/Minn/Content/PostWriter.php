@@ -299,13 +299,12 @@ final readonly class PostWriter
     }
 
     /** Removes a post, its revisions, term links, and meta. */
-    /** A deleted post's children (pages, and every attachment) move up to its parent. */
-    public function reparentChildren(int $id, int $parent, bool $pages): void
+    /** Moves a deleted post's children of the given types to another parent, the way the reference keeps pages and attachments attached. @param list<string> $types */
+    public function reparentChildren(int $id, int $parent, array $types): void
     {
-        if ($pages) {
-            $this->db->execute("UPDATE {$this->db->table('posts')} SET post_parent = ? WHERE post_parent = ? AND post_type = 'page'", [$parent, $id]);
+        foreach ($types as $type) {
+            $this->db->execute("UPDATE {$this->db->table('posts')} SET post_parent = ? WHERE post_parent = ? AND post_type = ?", [$parent, $id, $type]);
         }
-        $this->db->execute("UPDATE {$this->db->table('posts')} SET post_parent = ? WHERE post_parent = ? AND post_type = 'attachment'", [$parent, $id]);
     }
 
     /** Moves every post of one author to another. */

@@ -26,13 +26,9 @@ final class BodyClasses
         Resolution $resolution,
         array $coreClasses,
         ?string $customTemplate,
-        bool $privacyPage,
-        bool $loggedIn,
-        bool $customLogo,
-        bool $embedResponsive,
         string $themeSlug,
         ?string $parentSlug,
-        bool $bar,
+        BodyFacts $facts,
     ): array {
         $paging = array_values(array_filter($coreClasses, static fn (string $c) => preg_match('/^(?:page|single)?-?paged-\d+$/', $c) === 1));
         $classes = array_values(array_diff($coreClasses, $paging));
@@ -41,16 +37,16 @@ final class BodyClasses
             $classes = [...array_values(array_diff($classes, ['paged'])), 'paged'];
         }
         $classes = self::withSingularTokens($resolution, $classes, $customTemplate);
-        if ($privacyPage) {
+        if ($facts->privacyPage) {
             array_unshift($classes, 'privacy-policy');
         }
-        if ($loggedIn) {
+        if ($facts->loggedIn) {
             $classes[] = 'logged-in';
         }
-        if ($customLogo) {
+        if ($facts->customLogo) {
             $classes[] = 'wp-custom-logo';
         }
-        if ($embedResponsive) {
+        if ($facts->embedResponsive) {
             $classes[] = 'wp-embed-responsive';
         }
         array_push($classes, ...$paging);
@@ -58,7 +54,7 @@ final class BodyClasses
         if ($parentSlug !== null) {
             $classes[] = 'wp-child-theme-' . $themeSlug;
         }
-        if ($bar) {
+        if ($facts->bar) {
             $classes[] = 'minn-front-bar';
         }
         return $classes;

@@ -115,18 +115,13 @@ final readonly class ClassicRenderer
             $custom = $custom === 'default' ? null : $custom;
         }
         $parent = $this->theme->template !== $this->theme->stylesheet ? $this->theme->template : null;
-        return BodyClasses::classic(
-            $resolution,
-            $coreClasses,
-            $custom,
-            $resolution->kind === Kind::Page && $resolution->id() === (int) ($this->site->option('wp_page_for_privacy_policy') ?? 0),
-            Reader::current()->loggedIn(),
-            (int) \get_theme_mod('custom_logo') > 0,
-            \current_theme_supports('responsive-embeds') !== false,
-            $this->theme->stylesheet,
-            $parent,
-            $this->bar !== null && !$resolution->preview,
-        );
+        return BodyClasses::classic($resolution, $coreClasses, $custom, $this->theme->stylesheet, $parent, new BodyFacts(
+            privacyPage: $resolution->kind === Kind::Page && $resolution->id() === (int) ($this->site->option('wp_page_for_privacy_policy') ?? 0),
+            loggedIn: Reader::current()->loggedIn(),
+            customLogo: (int) \get_theme_mod('custom_logo') > 0,
+            embedResponsive: \current_theme_supports('responsive-embeds') !== false,
+            bar: $this->bar !== null && !$resolution->preview,
+        ));
     }
 
     private function standTitle(Resolution $resolution): void

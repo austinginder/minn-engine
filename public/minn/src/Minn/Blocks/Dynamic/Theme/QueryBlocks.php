@@ -66,7 +66,7 @@ final class QueryBlocks
             if (!empty($attrs['search'])) {
                 $filter = $filter->matching((string) $attrs['search']);
             }
-            $page = $this->posts->listing($filter, 1, $perPage, $sticky, stickyExtra: true);
+            $page = $this->posts->listing($filter, 1, $perPage, $sticky);
             $this->queries[] = ['page' => $page, 'inherit' => false];
         }
         $out = '';

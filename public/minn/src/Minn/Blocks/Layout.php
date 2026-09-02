@@ -17,6 +17,9 @@ namespace Minn\Blocks;
  */
 final class Layout
 {
+    /** Blocks the reference always gives a numbered container, whether or not their layout carries rules. */
+    private const ALWAYS_CONTAINER = ['columns'];
+
     /** Whether the active theme opts into root-padding-aware alignments (theme.json settings.useRootPaddingAwareAlignments). */
     private static bool $rootPaddingAware = true;
 
@@ -31,7 +34,7 @@ final class Layout
      *
      * @return list<string>
      */
-    public static function classes(string $blockSlug, array $attrs, string $defaultType = 'flow', bool $alwaysContainer = false): array
+    public static function classes(string $blockSlug, array $attrs, string $defaultType = 'flow'): array
     {
         $layout = (array) ($attrs['layout'] ?? []);
         $type = (string) ($layout['type'] ?? $defaultType);
@@ -58,7 +61,7 @@ final class Layout
             $classes[] = 'has-global-padding';
         }
         $classes[] = 'is-layout-' . $type;
-        if ($alwaysContainer || self::hasRules($type, $layout, $attrs)) {
+        if (in_array($blockSlug, self::ALWAYS_CONTAINER, true) || self::hasRules($type, $layout, $attrs)) {
             $container = 'wp-container-core-' . $blockSlug . '-is-layout-' . self::suffix($layout, $attrs);
             $classes[] = $container;
             RenderState::current()->recordContainer($container, self::declarations($type, $layout, $attrs));

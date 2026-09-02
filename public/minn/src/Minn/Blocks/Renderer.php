@@ -101,7 +101,11 @@ final class Renderer
         $permalinks = Permalinks::fromDb($db);
         $uploads = new Uploads($site, $permalinks, ABSPATH . 'wp-content/uploads');
         $posts = new Posts($db);
-        $renderer = new self(new ImageTags($posts, $uploads));
+        $renderer = null;
+        $images = new ImageTags($posts, $uploads, static function () use (&$renderer): bool {
+            return $renderer?->context()->front ?? false;
+        });
+        $renderer = new self($images);
         $theme = Theme::active($site, $permalinks, ABSPATH . 'wp-content/themes');
         Layout::rootPaddingAware((bool) ($theme?->json()['settings']['useRootPaddingAwareAlignments'] ?? false));
         $renderer->registerDynamic('core/latest-posts', (new LatestPosts($db, $site, $permalinks))->render(...));
@@ -200,7 +204,7 @@ final class Renderer
             $out = ($this->dynamic[$block->name])($block, $this);
             $this->state->setPendingElements($outer);
             // A plugin's block gets the content image treatment the reference applies to the_content.
-            return str_starts_with($block->name, 'core/') ? $out : $this->images->enrich($out, front: $this->context->front, autoSizes: false);
+            return str_starts_with($block->name, 'core/') ? $out : $this->images->enrichPlugin($out);
         }
         // A parent's element styles number before its children's.
         $elements = Elements::className($block->attrs, $block->name);
@@ -221,24 +225,20 @@ final class Renderer
         $html = match ($block->name) {
             'core/paragraph' => Html::addClasses($html, ['wp-block-paragraph']),
             'core/group' => Html::addClasses($html, Layout::classes('group', $block->attrs)),
-            'core/columns' => Html::addClasses($html, Layout::classes('columns', $block->attrs, 'flex', alwaysContainer: true)),
+            'core/columns' => Html::addClasses($html, Layout::classes('columns', $block->attrs, 'flex')),
             'core/column', 'core/quote', 'core/details' => Html::addClasses($html, ['is-layout-flow', "wp-block-{$slug}-is-layout-flow"]),
             'core/buttons' => Html::addClasses($html, self::flexWithoutContainer('buttons', $block->attrs)),
-            'core/gallery' => $this->images->enrich(
-                Html::addClasses($html, ['wp-block-gallery-' . self::gallery(), 'is-layout-flex', 'wp-block-gallery-is-layout-flex']),
-                withDataId: true,
-                front: $this->context->front,
-            ),
+            'core/gallery' => $this->images->enrichGallery(Html::addClasses($html, ['wp-block-gallery-' . self::gallery(), 'is-layout-flex', 'wp-block-gallery-is-layout-flex'])),
             'core/cover' => Html::addClasses(
-                $this->images->enrich($html, front: $this->context->front),
+                $this->images->enrich($html),
                 ['has-global-padding', 'is-layout-constrained', 'wp-block-cover-is-layout-constrained'],
                 'wp-block-cover__inner-container',
             ),
-            'core/image', 'core/media-text' => $this->images->enrich($html, front: $this->context->front),
+            'core/image', 'core/media-text' => $this->images->enrich($html),
             // Third-party blocks pass through as stored; their images still
             // count toward the page's loading rules, as the reference's
             // content filter sees them.
-            default => str_starts_with($block->name, 'core/') ? $html : $this->images->enrich($html, front: $this->context->front),
+            default => str_starts_with($block->name, 'core/') ? $html : $this->images->enrich($html),
         };
         $numbered = self::numberedStyle($block->name, $block->className());
         return $numbered === null ? $html : Html::addClasses($html, [$numbered]);

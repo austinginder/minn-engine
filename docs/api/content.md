@@ -24,8 +24,8 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`PostFilter`](#postfilter) | final readonly class | 55 | What a listing is narrowed to. Every field is optional and the object is |
 | [`PostRecord`](#postrecord) | final readonly class | 156 | One row of the posts table, read by name. The columns keep their |
 | [`PostStatus`](#poststatus) | enum | 42 | The statuses a post row can hold; the value is the column's own spelling. |
-| [`PostWriter`](#postwriter) | final readonly class | 316 | Every write to the posts table and its satellites: rows, meta, term |
-| [`Posts`](#posts) | final readonly class | 410 | Reads over the posts table. A single post comes back as a PostRecord and |
+| [`PostWriter`](#postwriter) | final readonly class | 315 | Every write to the posts table and its satellites: rows, meta, term |
+| [`Posts`](#posts) | final readonly class | 401 | Reads over the posts table. A single post comes back as a PostRecord and |
 | [`Reader`](#reader) | final class | 54 | Who is reading this request: their user id, whether they may read |
 | [`Revisions`](#revisions) | final readonly class | 86 | Revision rows: the plain snapshots and the per-author autosave slots. |
 | [`Site`](#site) | final readonly class | 54 | Site-wide options and the site's clock. |
@@ -1076,9 +1076,11 @@ reference would: compared against the latest revision, identical
 content-bearing fields add nothing, and the first update always
 snapshots.
 
-### `reparentChildren(int $id, int $parent, bool $pages): void`
+### `reparentChildren(int $id, int $parent, array $types): void`
 
-A deleted post's children (pages, and every attachment) move up to its parent.
+Moves a deleted post's children of the given types to another parent, the way the reference keeps pages and attachments attached. @param list<string> $types
+
+- `@param list<string> $types`
 
 ### `reassignAuthor(int $from, int $to): void`
 
@@ -1200,7 +1202,7 @@ The published post of the same type before this one, by date then id, or null.
 
 Published pages as a parent => children map, ordered by menu_order then title.
 
-### `listing(Minn\Content\PostFilter $filter, int $page, int $perPage, array $stickyIds = array ( ), bool $stickyExtra = false): Minn\Content\Page`
+### `listing(Minn\Content\PostFilter $filter, int $page, int $perPage, array $stickyIds = array ( )): Minn\Content\Page`
 
 The main query for a listing: sticky posts lead the first page of the
 blog index, followed by the rest by date, and are excluded from later
@@ -1230,7 +1232,7 @@ Reusable blocks (wp_block rows) in one status, newest first, capped at 100.
 
 The slug of the post's first category, or null.
 
-Internals: `record()` (private, line 21), `byName()` (private, line 49), `byPath()` (private, line 96), `scope()` (private, line 202), `like()` (private, line 228), `neighbour()` (private, line 303), `latest()` (private, line 376)
+Internals: `record()` (private, line 21), `byName()` (private, line 49), `byPath()` (private, line 96), `scope()` (private, line 202), `like()` (private, line 228), `neighbour()` (private, line 303), `latest()` (private, line 367)
 
 
 ## Reader

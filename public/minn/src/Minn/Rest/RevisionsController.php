@@ -64,7 +64,7 @@ final readonly class RevisionsController
             $this->clean(PostsWriteController::field($body['content'] ?? '')),
             $this->clean(PostsWriteController::field($body['excerpt'] ?? '')),
         );
-        return Reply::item($this->object($this->posts->find($revisionId), withPreview: true), Fields::fromQuery($request->query));
+        return Reply::item($this->object($this->posts->find($revisionId), Context::Edit), Fields::fromQuery($request->query));
     }
 
     private function clean(string $markup): string
@@ -95,8 +95,9 @@ final readonly class RevisionsController
     }
 
     /** One revision row as wp/v2 serves it (autosaves and revisions alike). */
-    public function object(array|PostRecord $r, bool $withPreview = false): array
+    public function object(array|PostRecord $r, Context $context = Context::View): array
     {
+        $withPreview = $context->isEdit();
         $id = (int) $r['ID'];
         $parent = (int) $r['post_parent'];
         $guid = $this->url->home('/?p=' . $id);

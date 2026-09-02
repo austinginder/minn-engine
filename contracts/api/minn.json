@@ -16398,7 +16398,7 @@
             "namespace": "Minn\\Blocks",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Blocks/ImageTags.php",
-            "lines": 167,
+            "lines": 186,
             "doc": "The attributes the reference adds to an <img> that carries a\nwp-image-{id} class: loading, decoding, width and height (prepended, in\nthat order), and srcset plus sizes (appended). The srcset lists the\ndisplayed size first, then every same-ratio size in stored order, then\nthe original.",
             "implements": [],
             "extends": null,
@@ -16414,9 +16414,11 @@
                 "Minn\\Blocks\\Renderer"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Content\\Posts $posts, Minn\\Media\\Uploads $uploads)",
+                "signature": "__construct(Minn\\Content\\Posts $posts, Minn\\Media\\Uploads $uploads, Closure $front)",
                 "doc": "",
-                "shapes": [],
+                "shapes": [
+                    "@param Closure(): bool $front whether the images are on a front-end page, where the loading budget applies"
+                ],
                 "params": [
                     {
                         "name": "posts",
@@ -16431,11 +16433,18 @@
                         "shape": "",
                         "default": null,
                         "doc": ""
+                    },
+                    {
+                        "name": "front",
+                        "type": "Closure",
+                        "shape": "Closure(): bool",
+                        "default": null,
+                        "doc": "whether the images are on a front-end page, where the loading budget applies"
                     }
                 ],
                 "visibility": "public",
-                "line": 23,
-                "end": 27
+                "line": 25,
+                "end": 30
             },
             "cases": [],
             "constants": [],
@@ -16457,6 +16466,15 @@
                     "doc": "",
                     "visibility": "private",
                     "promoted": true
+                },
+                {
+                    "name": "front",
+                    "type": "Closure",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
                 }
             ],
             "methods": [
@@ -16465,7 +16483,7 @@
                     "name": "enrich",
                     "static": false,
                     "visibility": "public",
-                    "signature": "enrich(string $html, bool $withDataId = false, bool $front = false, bool $autoSizes = true): string",
+                    "signature": "enrich(string $html): string",
                     "doc": "Rewrites every wp-image-* <img> in a fragment; other images pass through.",
                     "shapes": [],
                     "params": [
@@ -16475,38 +16493,57 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
-                        },
+                        }
+                    ],
+                    "line": 33,
+                    "end": 36
+                },
+                {
+                    "routes": [],
+                    "name": "enrichGallery",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "enrichGallery(string $html): string",
+                    "doc": "The same for a gallery: every image also carries its data-id.",
+                    "shapes": [],
+                    "params": [
                         {
-                            "name": "withDataId",
-                            "type": "bool",
+                            "name": "html",
+                            "type": "string",
                             "shape": "",
-                            "default": "false",
-                            "doc": ""
-                        },
-                        {
-                            "name": "front",
-                            "type": "bool",
-                            "shape": "",
-                            "default": "false",
-                            "doc": ""
-                        },
-                        {
-                            "name": "autoSizes",
-                            "type": "bool",
-                            "shape": "",
-                            "default": "true",
+                            "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 30,
-                    "end": 37
+                    "line": 39,
+                    "end": 42
+                },
+                {
+                    "routes": [],
+                    "name": "enrichPlugin",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "enrichPlugin(string $html): string",
+                    "doc": "The same for a plugin block's output, where the reference adds no sizes=\"auto\".",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "html",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 45,
+                    "end": 48
                 },
                 {
                     "routes": [],
                     "name": "featured",
                     "static": false,
                     "visibility": "public",
-                    "signature": "featured(int $attachmentId, string $alt, string $style, bool $front): string",
+                    "signature": "featured(int $attachmentId, string $alt, string $style): string",
                     "doc": "A post's featured image at full size, in the reference's attribute\norder (dimensions, source, class, alt, style, then the loading\nattributes and the srcset). Empty when the attachment has no file.",
                     "shapes": [],
                     "params": [
@@ -16530,34 +16567,54 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        }
+                    ],
+                    "line": 181,
+                    "end": 206
+                },
+                {
+                    "routes": [],
+                    "name": "rewrite",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "rewrite(string $html, bool $withDataId, bool $autoSizes): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "html",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
                         },
                         {
-                            "name": "front",
+                            "name": "withDataId",
+                            "type": "bool",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "autoSizes",
                             "type": "bool",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 161,
-                    "end": 186
+                    "line": 50,
+                    "end": 57
                 },
                 {
                     "routes": [],
                     "name": "loadingPrefix",
-                    "static": true,
+                    "static": false,
                     "visibility": "private",
-                    "signature": "loadingPrefix(bool $front, int $width = 0, int $height = 0): array",
+                    "signature": "loadingPrefix(int $width = 0, int $height = 0): array",
                     "doc": "On a page the first big-enough content image is fetched eagerly with\nhigh priority, the next few are eager, and the rest lazy; only lazy\nimages carry the \"auto\" sizes hint. In a REST response every image is\nlazy.",
                     "shapes": [],
                     "params": [
-                        {
-                            "name": "front",
-                            "type": "bool",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
                         {
                             "name": "width",
                             "type": "int",
@@ -16573,8 +16630,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 45,
-                    "end": 60
+                    "line": 65,
+                    "end": 80
                 },
                 {
                     "routes": [],
@@ -16585,15 +16642,15 @@
                     "doc": "The area an image must cover before it is worth fetching first.",
                     "shapes": [],
                     "params": [],
-                    "line": 63,
-                    "end": 67
+                    "line": 83,
+                    "end": 87
                 },
                 {
                     "routes": [],
                     "name": "enrichTag",
                     "static": false,
                     "visibility": "private",
-                    "signature": "enrichTag(string $tag, int $attachmentId, bool $withDataId, bool $front, bool $autoSizes = true): string",
+                    "signature": "enrichTag(string $tag, int $attachmentId, bool $withDataId, bool $autoSizes): string",
                     "doc": "",
                     "shapes": [],
                     "params": [
@@ -16619,22 +16676,15 @@
                             "doc": ""
                         },
                         {
-                            "name": "front",
+                            "name": "autoSizes",
                             "type": "bool",
                             "shape": "",
                             "default": null,
                             "doc": ""
-                        },
-                        {
-                            "name": "autoSizes",
-                            "type": "bool",
-                            "shape": "",
-                            "default": "true",
-                            "doc": ""
                         }
                     ],
-                    "line": 69,
-                    "end": 119
+                    "line": 89,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -16695,8 +16745,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 127,
-                    "end": 154
+                    "line": 147,
+                    "end": 174
                 }
             ]
         },
@@ -16706,7 +16756,7 @@
             "namespace": "Minn\\Blocks",
             "kind": "final class",
             "file": "public/minn/src/Minn/Blocks/Layout.php",
-            "lines": 126,
+            "lines": 129,
             "doc": "The layout-support classes the reference adds at render time. Every\ncontainer carries is-layout-{type} and {block}-is-layout-{type}; flex and\ngrid layouts with rules of their own also carry a wp-container-* class\nwhose suffix names their generated stylesheet.\n\nThat suffix is a digest the engine cannot reproduce (its inputs are not\nobservable), so the engine derives its own deterministic suffix from the\nlayout attributes. Same shape, different value: recorded in the contract,\nand the parity suites normalise it.",
             "implements": [],
             "extends": null,
@@ -16723,7 +16773,14 @@
             ],
             "constructor": null,
             "cases": [],
-            "constants": [],
+            "constants": [
+                {
+                    "name": "ALWAYS_CONTAINER",
+                    "value": "array (   0 => 'columns', )",
+                    "doc": "Blocks the reference always gives a numbered container, whether or not their layout carries rules.",
+                    "visibility": "private"
+                }
+            ],
             "properties": [
                 {
                     "name": "rootPaddingAware",
@@ -16753,15 +16810,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 24,
-                    "end": 27
+                    "line": 27,
+                    "end": 30
                 },
                 {
                     "routes": [],
                     "name": "classes",
                     "static": true,
                     "visibility": "public",
-                    "signature": "classes(string $blockSlug, array $attrs, string $defaultType = 'flow', bool $alwaysContainer = false): array",
+                    "signature": "classes(string $blockSlug, array $attrs, string $defaultType = 'flow'): array",
                     "doc": "The layout classes a block's wrapper carries.",
                     "shapes": [
                         "@return list<string>"
@@ -16787,17 +16844,10 @@
                             "shape": "",
                             "default": "'flow'",
                             "doc": ""
-                        },
-                        {
-                            "name": "alwaysContainer",
-                            "type": "bool",
-                            "shape": "",
-                            "default": "false",
-                            "doc": ""
                         }
                     ],
-                    "line": 34,
-                    "end": 68
+                    "line": 37,
+                    "end": 71
                 },
                 {
                     "routes": [],
@@ -16830,8 +16880,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 86,
-                    "end": 137
+                    "line": 89,
+                    "end": 140
                 },
                 {
                     "routes": [],
@@ -16864,8 +16914,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 71,
-                    "end": 83
+                    "line": 74,
+                    "end": 86
                 },
                 {
                     "routes": [],
@@ -16891,8 +16941,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 139,
-                    "end": 142
+                    "line": 142,
+                    "end": 145
                 }
             ]
         },
@@ -17942,7 +17992,7 @@
                         }
                     ],
                     "line": 98,
-                    "end": 120
+                    "end": 124
                 },
                 {
                     "routes": [],
@@ -17970,8 +18020,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 127,
-                    "end": 130
+                    "line": 131,
+                    "end": 134
                 },
                 {
                     "routes": [],
@@ -17990,8 +18040,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 133,
-                    "end": 136
+                    "line": 137,
+                    "end": 140
                 },
                 {
                     "routes": [],
@@ -18012,8 +18062,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 143,
-                    "end": 150
+                    "line": 147,
+                    "end": 154
                 },
                 {
                     "routes": [],
@@ -18032,8 +18082,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 153,
-                    "end": 192
+                    "line": 157,
+                    "end": 196
                 },
                 {
                     "routes": [],
@@ -18052,8 +18102,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 194,
-                    "end": 213
+                    "line": 198,
+                    "end": 217
                 },
                 {
                     "routes": [],
@@ -18086,7 +18136,7 @@
                             "doc": ""
                         }
                     ],
-                    "line": 215,
+                    "line": 219,
                     "end": 245
                 },
                 {
@@ -27721,7 +27771,7 @@
             "namespace": "Minn\\Content",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Content/PostWriter.php",
-            "lines": 316,
+            "lines": 315,
             "doc": "Every write to the posts table and its satellites: rows, meta, term\nlinks with the published counts the reference trusts on read, sticky\nand format side effects, and revision snapshots.",
             "implements": [],
             "extends": null,
@@ -28278,9 +28328,11 @@
                     "name": "reparentChildren",
                     "static": false,
                     "visibility": "public",
-                    "signature": "reparentChildren(int $id, int $parent, bool $pages): void",
-                    "doc": "A deleted post's children (pages, and every attachment) move up to its parent.",
-                    "shapes": [],
+                    "signature": "reparentChildren(int $id, int $parent, array $types): void",
+                    "doc": "Moves a deleted post's children of the given types to another parent, the way the reference keeps pages and attachments attached. @param list<string> $types",
+                    "shapes": [
+                        "@param list<string> $types"
+                    ],
                     "params": [
                         {
                             "name": "id",
@@ -28297,15 +28349,15 @@
                             "doc": ""
                         },
                         {
-                            "name": "pages",
-                            "type": "bool",
-                            "shape": "",
+                            "name": "types",
+                            "type": "array",
+                            "shape": "list<string>",
                             "default": null,
                             "doc": ""
                         }
                     ],
                     "line": 303,
-                    "end": 309
+                    "end": 308
                 },
                 {
                     "routes": [],
@@ -28331,8 +28383,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 312,
-                    "end": 315
+                    "line": 311,
+                    "end": 314
                 },
                 {
                     "routes": [],
@@ -28351,8 +28403,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 318,
-                    "end": 329
+                    "line": 317,
+                    "end": 328
                 },
                 {
                     "routes": [],
@@ -28384,7 +28436,7 @@
             "namespace": "Minn\\Content",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Content/Posts.php",
-            "lines": 410,
+            "lines": 401,
             "doc": "Reads over the posts table. A single post comes back as a PostRecord and\na listing as a Page of them; rendering and escaping happen elsewhere.",
             "implements": [],
             "extends": null,
@@ -28923,7 +28975,7 @@
                     "name": "listing",
                     "static": false,
                     "visibility": "public",
-                    "signature": "listing(Minn\\Content\\PostFilter $filter, int $page, int $perPage, array $stickyIds = array ( ), bool $stickyExtra = false): Minn\\Content\\Page",
+                    "signature": "listing(Minn\\Content\\PostFilter $filter, int $page, int $perPage, array $stickyIds = array ( )): Minn\\Content\\Page",
                     "doc": "The main query for a listing: sticky posts lead the first page of the\nblog index, followed by the rest by date, and are excluded from later\npages.",
                     "shapes": [
                         "@param list<int> $stickyIds",
@@ -28957,17 +29009,10 @@
                             "shape": "list<int>",
                             "default": "array ( )",
                             "doc": ""
-                        },
-                        {
-                            "name": "stickyExtra",
-                            "type": "bool",
-                            "shape": "",
-                            "default": "false",
-                            "doc": ""
                         }
                     ],
                     "line": 336,
-                    "end": 359
+                    "end": 350
                 },
                 {
                     "routes": [],
@@ -28986,8 +29031,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 365,
-                    "end": 368
+                    "line": 356,
+                    "end": 359
                 },
                 {
                     "routes": [],
@@ -29006,8 +29051,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 371,
-                    "end": 374
+                    "line": 362,
+                    "end": 365
                 },
                 {
                     "routes": [],
@@ -29033,8 +29078,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 391,
-                    "end": 398
+                    "line": 382,
+                    "end": 389
                 },
                 {
                     "routes": [],
@@ -29053,8 +29098,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 401,
-                    "end": 408
+                    "line": 392,
+                    "end": 399
                 },
                 {
                     "routes": [],
@@ -29073,8 +29118,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 411,
-                    "end": 422
+                    "line": 402,
+                    "end": 413
                 },
                 {
                     "routes": [],
@@ -29263,8 +29308,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 376,
-                    "end": 388
+                    "line": 367,
+                    "end": 379
                 }
             ]
         },
@@ -38352,6 +38397,72 @@
             ]
         },
         {
+            "name": "Minn\\Front\\Redirects",
+            "short": "Redirects",
+            "namespace": "Minn\\Front",
+            "kind": "enum",
+            "file": "public/minn/src/Minn/Front/Redirects.php",
+            "lines": 17,
+            "doc": "Whether a resolution may answer with a canonical redirect. A GET or HEAD\nfollows them (the trailing slash, the pretty permalink for ?p=, the\nguessed destination); any other method holds and resolves the path as\ntyped, as the reference's redirect_canonical bails on a POST.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http\\Method"
+            ],
+            "usedBy": [
+                "Minn\\Front\\Resolver"
+            ],
+            "constructor": null,
+            "cases": [
+                {
+                    "name": "Follow",
+                    "value": null,
+                    "doc": ""
+                },
+                {
+                    "name": "Hold",
+                    "value": null,
+                    "doc": ""
+                }
+            ],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "forMethod",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "forMethod(Minn\\Http\\Method $method): self",
+                    "doc": "The mode a request's method allows.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "method",
+                            "type": "Minn\\Http\\Method",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 19,
+                    "end": 22
+                },
+                {
+                    "routes": [],
+                    "name": "follows",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "follows(): bool",
+                    "doc": "Whether a canonical redirect may be answered.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 25,
+                    "end": 28
+                }
+            ]
+        },
+        {
             "name": "Minn\\Front\\Renderer",
             "short": "Renderer",
             "namespace": "Minn\\Front",
@@ -39182,7 +39293,7 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/Resolver.php",
-            "lines": 550,
+            "lines": 556,
             "doc": "Turns a public URL into a Resolution, following the reference's observed\nrules:\n\n- Unpaged content and archives without a trailing slash redirect to the\nslashed form, as typed (case kept); paged views, search, and 404s do not.\n- Query-var forms (?p=, ?page_id=, ?cat=, ?tag=, ?author=, ?m=, ?name=,\n?pagename=) redirect to the pretty form when the target is public.\n- Archive-shaped paths (category, tag, author, search, a four-digit year)\nare strict: a mismatch is a 404 with no guessing.\n- Plain-segment paths try the page hierarchy, then the post structure,\nthen redirect to the closest published page or post whose name starts\nwith the last segment, pages before posts, newest first.\n- Empty term and date archives are 404; an author archive is 200 for any\nname, even one that belongs to nobody.\n- Non-public posts are 404 to anonymous readers and served to a reader\nwho can edit them.",
             "implements": [],
             "extends": null,
@@ -39199,6 +39310,7 @@
                 "Minn\\Front\\Kind",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Front\\PluginRules",
+                "Minn\\Front\\Redirects",
                 "Minn\\Front\\Resolution",
                 "Minn\\Http\\Request",
                 "Minn\\Runtime\\Runtime"
@@ -39381,7 +39493,7 @@
                     "name": "resolve",
                     "static": false,
                     "visibility": "public",
-                    "signature": "resolve(Minn\\Http\\Request $request, bool $canonical = true): Minn\\Front\\Resolution",
+                    "signature": "resolve(Minn\\Http\\Request $request): Minn\\Front\\Resolution",
                     "doc": "$canonical mirrors the reference's redirect_canonical rule: only GET\nand HEAD get trailing-slash, pretty-URL, and 404-guess redirects;\nevery other method renders what the query alone finds, as typed.",
                     "shapes": [],
                     "params": [
@@ -39391,17 +39503,10 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
-                        },
-                        {
-                            "name": "canonical",
-                            "type": "bool",
-                            "shape": "",
-                            "default": "true",
-                            "doc": ""
                         }
                     ],
                     "line": 81,
-                    "end": 106
+                    "end": 107
                 },
                 {
                     "routes": [],
@@ -39436,8 +39541,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 448,
-                    "end": 463
+                    "line": 452,
+                    "end": 467
                 },
                 {
                     "routes": [],
@@ -39458,15 +39563,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 117,
-                    "end": 140
+                    "line": 118,
+                    "end": 141
                 },
                 {
                     "routes": [],
                     "name": "resolvePath",
                     "static": false,
                     "visibility": "private",
-                    "signature": "resolvePath(Minn\\Http\\Request $request, bool $canonical = true): Minn\\Front\\Resolution",
+                    "signature": "resolvePath(Minn\\Http\\Request $request, Minn\\Front\\Redirects $redirects): Minn\\Front\\Resolution",
                     "doc": "",
                     "shapes": [],
                     "params": [
@@ -39478,22 +39583,22 @@
                             "doc": ""
                         },
                         {
-                            "name": "canonical",
-                            "type": "bool",
+                            "name": "redirects",
+                            "type": "Minn\\Front\\Redirects",
                             "shape": "",
-                            "default": "true",
+                            "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 142,
-                    "end": 200
+                    "line": 143,
+                    "end": 202
                 },
                 {
                     "routes": [],
                     "name": "resolveQueryVars",
                     "static": false,
                     "visibility": "private",
-                    "signature": "resolveQueryVars(Minn\\Http\\Request $request, bool $canonical = true): Minn\\Front\\Resolution",
+                    "signature": "resolveQueryVars(Minn\\Http\\Request $request, Minn\\Front\\Redirects $redirects): Minn\\Front\\Resolution",
                     "doc": "",
                     "shapes": [],
                     "params": [
@@ -39505,22 +39610,22 @@
                             "doc": ""
                         },
                         {
-                            "name": "canonical",
-                            "type": "bool",
+                            "name": "redirects",
+                            "type": "Minn\\Front\\Redirects",
                             "shape": "",
-                            "default": "true",
+                            "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 202,
-                    "end": 282
+                    "line": 204,
+                    "end": 285
                 },
                 {
                     "routes": [],
                     "name": "dateRedirect",
                     "static": false,
                     "visibility": "private",
-                    "signature": "dateRedirect(int $year, ?int $month, ?int $day, bool $canonical = true): Minn\\Front\\Resolution",
+                    "signature": "dateRedirect(int $year, ?int $month, ?int $day, Minn\\Front\\Redirects $redirects): Minn\\Front\\Resolution",
                     "doc": "",
                     "shapes": [],
                     "params": [
@@ -39546,15 +39651,15 @@
                             "doc": ""
                         },
                         {
-                            "name": "canonical",
-                            "type": "bool",
+                            "name": "redirects",
+                            "type": "Minn\\Front\\Redirects",
                             "shape": "",
-                            "default": "true",
+                            "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 284,
-                    "end": 298
+                    "line": 287,
+                    "end": 302
                 },
                 {
                     "routes": [],
@@ -39573,8 +39678,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 300,
-                    "end": 312
+                    "line": 304,
+                    "end": 316
                 },
                 {
                     "routes": [],
@@ -39602,8 +39707,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 322,
-                    "end": 354
+                    "line": 326,
+                    "end": 358
                 },
                 {
                     "routes": [],
@@ -39624,8 +39729,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 357,
-                    "end": 360
+                    "line": 361,
+                    "end": 364
                 },
                 {
                     "routes": [],
@@ -39668,8 +39773,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 366,
-                    "end": 377
+                    "line": 370,
+                    "end": 381
                 },
                 {
                     "routes": [],
@@ -39704,8 +39809,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 380,
-                    "end": 390
+                    "line": 384,
+                    "end": 394
                 },
                 {
                     "routes": [],
@@ -39738,8 +39843,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 393,
-                    "end": 400
+                    "line": 397,
+                    "end": 404
                 },
                 {
                     "routes": [],
@@ -39765,8 +39870,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 402,
-                    "end": 416
+                    "line": 406,
+                    "end": 420
                 },
                 {
                     "routes": [],
@@ -39794,15 +39899,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 419,
-                    "end": 441
+                    "line": 423,
+                    "end": 445
                 },
                 {
                     "routes": [],
                     "name": "resolveContent",
                     "static": false,
                     "visibility": "private",
-                    "signature": "resolveContent(array $segments, int $paged, bool $canonical = true): Minn\\Front\\Resolution",
+                    "signature": "resolveContent(array $segments, int $paged, Minn\\Front\\Redirects $redirects): Minn\\Front\\Resolution",
                     "doc": "",
                     "shapes": [
                         "@param list<string> $segments"
@@ -39823,22 +39928,22 @@
                             "doc": ""
                         },
                         {
-                            "name": "canonical",
-                            "type": "bool",
+                            "name": "redirects",
+                            "type": "Minn\\Front\\Redirects",
                             "shape": "",
-                            "default": "true",
+                            "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 466,
-                    "end": 499
+                    "line": 470,
+                    "end": 504
                 },
                 {
                     "routes": [],
                     "name": "resolveSingle",
                     "static": false,
                     "visibility": "private",
-                    "signature": "resolveSingle(array $segments, int $paged = 1, bool $canonical = true): ?Minn\\Front\\Resolution",
+                    "signature": "resolveSingle(array $segments, int $paged, Minn\\Front\\Redirects $redirects): ?Minn\\Front\\Resolution",
                     "doc": "",
                     "shapes": [
                         "@param list<string> $segments"
@@ -39855,19 +39960,19 @@
                             "name": "paged",
                             "type": "int",
                             "shape": "",
-                            "default": "1",
+                            "default": null,
                             "doc": ""
                         },
                         {
-                            "name": "canonical",
-                            "type": "bool",
+                            "name": "redirects",
+                            "type": "Minn\\Front\\Redirects",
                             "shape": "",
-                            "default": "true",
+                            "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 502,
-                    "end": 536
+                    "line": 507,
+                    "end": 542
                 },
                 {
                     "routes": [],
@@ -39893,15 +39998,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 544,
-                    "end": 555
+                    "line": 550,
+                    "end": 561
                 },
                 {
                     "routes": [],
                     "name": "singleOrRedirect",
                     "static": false,
                     "visibility": "private",
-                    "signature": "singleOrRedirect(Minn\\Content\\PostRecord $post, int $paged, bool $forceRedirect): Minn\\Front\\Resolution",
+                    "signature": "singleOrRedirect(Minn\\Content\\PostRecord $post, int $paged, Minn\\Front\\Redirects $redirects): Minn\\Front\\Resolution",
                     "doc": "",
                     "shapes": [],
                     "params": [
@@ -39920,15 +40025,15 @@
                             "doc": ""
                         },
                         {
-                            "name": "forceRedirect",
-                            "type": "bool",
+                            "name": "redirects",
+                            "type": "Minn\\Front\\Redirects",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 557,
-                    "end": 564
+                    "line": 563,
+                    "end": 570
                 },
                 {
                     "routes": [],
@@ -39947,8 +40052,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 566,
-                    "end": 581
+                    "line": 572,
+                    "end": 587
                 },
                 {
                     "routes": [],
@@ -39967,8 +40072,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 583,
-                    "end": 586
+                    "line": 589,
+                    "end": 592
                 }
             ]
         },
@@ -43423,6 +43528,7 @@
                 "Minn\\Front\\FeedController",
                 "Minn\\Front\\FrontController",
                 "Minn\\Front\\ProbeController",
+                "Minn\\Front\\Redirects",
                 "Minn\\Front\\SitemapController",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Route",
@@ -57582,7 +57688,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/RevisionsController.php",
-            "lines": 129,
+            "lines": 130,
             "doc": "wp/v2 revisions and autosaves under posts and pages, plus wp/v2/blocks.",
             "implements": [],
             "extends": null,
@@ -57824,7 +57930,7 @@
                     "name": "object",
                     "static": false,
                     "visibility": "public",
-                    "signature": "object(Minn\\Content\\PostRecord|array $r, bool $withPreview = false): array",
+                    "signature": "object(Minn\\Content\\PostRecord|array $r, Minn\\Rest\\Context $context = Minn\\Rest\\Context::View): array",
                     "doc": "One revision row as wp/v2 serves it (autosaves and revisions alike).",
                     "shapes": [],
                     "params": [
@@ -57836,15 +57942,15 @@
                             "doc": ""
                         },
                         {
-                            "name": "withPreview",
-                            "type": "bool",
+                            "name": "context",
+                            "type": "Minn\\Rest\\Context",
                             "shape": "",
-                            "default": "false",
+                            "default": "Minn\\Rest\\Context::View",
                             "doc": ""
                         }
                     ],
                     "line": 98,
-                    "end": 133
+                    "end": 134
                 },
                 {
                     "routes": [],
@@ -57890,8 +57996,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 136,
-                    "end": 148
+                    "line": 137,
+                    "end": 149
                 }
             ]
         },
@@ -78026,13 +78132,14 @@
             "namespace": "Minn\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Theme/BodyClasses.php",
-            "lines": 69,
+            "lines": 65,
             "doc": "The body-class list a classic theme's body_class() starts from, in the\nreference's order: the query tokens (with the singular and template\ntokens spliced in front of the type token), logged-in, the embed and\ntheme tokens, with the numbered paging tokens re-seated after the embed\ntoken. The body_class filter runs over this list in the facade.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Front\\Kind",
-                "Minn\\Front\\Resolution"
+                "Minn\\Front\\Resolution",
+                "Minn\\Theme\\BodyFacts"
             ],
             "usedBy": [
                 "Minn\\Theme\\ClassicRenderer"
@@ -78047,7 +78154,7 @@
                     "name": "classic",
                     "static": true,
                     "visibility": "public",
-                    "signature": "classic(Minn\\Front\\Resolution $resolution, array $coreClasses, ?string $customTemplate, bool $privacyPage, bool $loggedIn, bool $customLogo, bool $embedResponsive, string $themeSlug, ?string $parentSlug, bool $bar): array",
+                    "signature": "classic(Minn\\Front\\Resolution $resolution, array $coreClasses, ?string $customTemplate, string $themeSlug, ?string $parentSlug, Minn\\Theme\\BodyFacts $facts): array",
                     "doc": "The body classes a classic theme's page carries.",
                     "shapes": [
                         "@param list<string> $coreClasses",
@@ -78076,34 +78183,6 @@
                             "doc": ""
                         },
                         {
-                            "name": "privacyPage",
-                            "type": "bool",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "loggedIn",
-                            "type": "bool",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "customLogo",
-                            "type": "bool",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "embedResponsive",
-                            "type": "bool",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
                             "name": "themeSlug",
                             "type": "string",
                             "shape": "",
@@ -78118,15 +78197,15 @@
                             "doc": ""
                         },
                         {
-                            "name": "bar",
-                            "type": "bool",
+                            "name": "facts",
+                            "type": "Minn\\Theme\\BodyFacts",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
                     "line": 25,
-                    "end": 65
+                    "end": 61
                 },
                 {
                     "routes": [],
@@ -78162,10 +78241,121 @@
                             "doc": ""
                         }
                     ],
-                    "line": 71,
-                    "end": 84
+                    "line": 67,
+                    "end": 80
                 }
             ]
+        },
+        {
+            "name": "Minn\\Theme\\BodyFacts",
+            "short": "BodyFacts",
+            "namespace": "Minn\\Theme",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Theme/BodyFacts.php",
+            "lines": 11,
+            "doc": "The facts about a page that decide the body classes a classic theme's\npage carries beyond the view tokens: privacy policy page, a signed-in\nreader, a custom logo, responsive embeds, and the Minn bar.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Theme\\BodyClasses",
+                "Minn\\Theme\\ClassicRenderer"
+            ],
+            "constructor": {
+                "signature": "__construct(bool $privacyPage = false, bool $loggedIn = false, bool $customLogo = false, bool $embedResponsive = true, bool $bar = false)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "privacyPage",
+                        "type": "bool",
+                        "shape": "",
+                        "default": "false",
+                        "doc": ""
+                    },
+                    {
+                        "name": "loggedIn",
+                        "type": "bool",
+                        "shape": "",
+                        "default": "false",
+                        "doc": ""
+                    },
+                    {
+                        "name": "customLogo",
+                        "type": "bool",
+                        "shape": "",
+                        "default": "false",
+                        "doc": ""
+                    },
+                    {
+                        "name": "embedResponsive",
+                        "type": "bool",
+                        "shape": "",
+                        "default": "true",
+                        "doc": ""
+                    },
+                    {
+                        "name": "bar",
+                        "type": "bool",
+                        "shape": "",
+                        "default": "false",
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 14,
+                "end": 21
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "privacyPage",
+                    "type": "bool",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "loggedIn",
+                    "type": "bool",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "customLogo",
+                    "type": "bool",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "embedResponsive",
+                    "type": "bool",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "bar",
+                    "type": "bool",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                }
+            ],
+            "methods": []
         },
         {
             "name": "Minn\\Theme\\ClassicContent",
@@ -78228,7 +78418,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/ClassicRenderer.php",
-            "lines": 135,
+            "lines": 130,
             "doc": "A whole page from the active classic theme: the reference's PHP template\nloader. The main query stands, template_redirect fires, the hierarchy\npicks a PHP file, template_include filters it, and load_template() runs\nit as the response body. The theme prints its own document; the engine\ncontributes the reference's wp_head defaults (title tag, robots, feed\nlinks, REST and oEmbed discovery, canonical, site icon) as hooks the\ntheme's wp_head() call fires.",
             "implements": [],
             "extends": null,
@@ -78246,6 +78436,7 @@
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Html",
                 "Minn\\Theme\\BodyClasses",
+                "Minn\\Theme\\BodyFacts",
                 "Minn\\Theme\\ClassicTheme",
                 "Minn\\Theme\\GlobalStyles",
                 "Minn\\Theme\\HeadLinks",
@@ -78511,7 +78702,7 @@
                         }
                     ],
                     "line": 110,
-                    "end": 130
+                    "end": 125
                 },
                 {
                     "routes": [],
@@ -78530,8 +78721,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 132,
-                    "end": 139
+                    "line": 127,
+                    "end": 134
                 },
                 {
                     "routes": [],
@@ -78542,8 +78733,8 @@
                     "doc": "The piece only the renderer holds: the engine stylesheets. The head defaults registered at setup_theme.",
                     "shapes": [],
                     "params": [],
-                    "line": 142,
-                    "end": 145
+                    "line": 137,
+                    "end": 140
                 },
                 {
                     "routes": [],
@@ -78554,8 +78745,8 @@
                     "doc": "The engine's block stylesheet, and the theme.json presets when the theme ships one, where the reference prints its block-library and global styles.",
                     "shapes": [],
                     "params": [],
-                    "line": 148,
-                    "end": 161
+                    "line": 143,
+                    "end": 156
                 }
             ]
         },

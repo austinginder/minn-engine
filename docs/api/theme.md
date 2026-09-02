@@ -5,9 +5,10 @@ the block-theme reader, templates, global styles and the page renderer
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`ArchiveTitle`](#archivetitle) | final class | 54 | The label and name an archive titles itself with: `Category:` around the |
-| [`BodyClasses`](#bodyclasses) | final class | 69 | The body-class list a classic theme's body_class() starts from, in the |
+| [`BodyClasses`](#bodyclasses) | final class | 65 | The body-class list a classic theme's body_class() starts from, in the |
+| [`BodyFacts`](#bodyfacts) | final readonly class | 11 | The facts about a page that decide the body classes a classic theme's |
 | [`ClassicContent`](#classiccontent) | final class | 37 | What a classic theme's the_content() prints: the engine's block pipeline |
-| [`ClassicRenderer`](#classicrenderer) | final readonly class | 135 | A whole page from the active classic theme: the reference's PHP template |
+| [`ClassicRenderer`](#classicrenderer) | final readonly class | 130 | A whole page from the active classic theme: the reference's PHP template |
 | [`ClassicTheme`](#classictheme) | final readonly class | 31 | The active classic (PHP-template) theme on disk. A theme is classic when |
 | [`Folder`](#folder) | final readonly class | 77 | A theme folder read from disk: its style.css headers, which folder its templates come from, its screenshot, whether it is a block theme. |
 | [`GlobalStyles`](#globalstyles) | final readonly class | 443 | theme.json to CSS. Presets become custom properties on :root and their |
@@ -63,14 +64,35 @@ token. The body_class filter runs over this list in the facade.
 
 Used by: `Minn\Theme\ClassicRenderer`
 
-### static `classic(Minn\Front\Resolution $resolution, array $coreClasses, ?string $customTemplate, bool $privacyPage, bool $loggedIn, bool $customLogo, bool $embedResponsive, string $themeSlug, ?string $parentSlug, bool $bar): array`
+### static `classic(Minn\Front\Resolution $resolution, array $coreClasses, ?string $customTemplate, string $themeSlug, ?string $parentSlug, Minn\Theme\BodyFacts $facts): array`
 
 The body classes a classic theme's page carries.
 
 - `@param list<string> $coreClasses`
 - `@return list<string>`
 
-Internals: `withSingularTokens()` (private, line 71)
+Internals: `withSingularTokens()` (private, line 67)
+
+
+## BodyFacts
+
+`final readonly class Minn\Theme\BodyFacts` · `public/minn/src/Minn/Theme/BodyFacts.php`
+
+The facts about a page that decide the body classes a classic theme's
+page carries beyond the view tokens: privacy policy page, a signed-in
+reader, a custom logo, responsive embeds, and the Minn bar.
+
+Used by: `Minn\Theme\BodyClasses`, `Minn\Theme\ClassicRenderer`
+
+```php
+__construct(bool $privacyPage = false, bool $loggedIn = false, bool $customLogo = false, bool $embedResponsive = true, bool $bar = false)
+```
+
+- readonly `bool $privacyPage`
+- readonly `bool $loggedIn`
+- readonly `bool $customLogo`
+- readonly `bool $embedResponsive`
+- readonly `bool $bar`
 
 
 ## ClassicContent
@@ -114,7 +136,7 @@ A classic renderer over the database door.
 
 The page for a resolution through the theme's PHP templates.
 
-Internals: `template()` (private, line 77), `bodyClasses()` (private, line 110), `standTitle()` (private, line 132), `registerHead()` (private, line 142), `registerStyles()` (private, line 148)
+Internals: `template()` (private, line 77), `bodyClasses()` (private, line 110), `standTitle()` (private, line 127), `registerHead()` (private, line 137), `registerStyles()` (private, line 143)
 
 
 ## ClassicTheme

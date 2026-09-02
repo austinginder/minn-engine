@@ -20,9 +20,10 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`PluginRules`](#pluginrules) | final class | 71 | Rewrite rules a plugin registered through add_rewrite_rule(): the |
 | [`PostNavigation`](#postnavigation) | final class | 36 | The links to the posts either side of this one, and the nav block that |
 | [`ProbeController`](#probecontroller) | final readonly class | 57 | The surface monitors, crawlers, and hosting checks hit that is not a |
+| [`Redirects`](#redirects) | enum | 17 | Whether a resolution may answer with a canonical redirect. A GET or HEAD |
 | [`Renderer`](#renderer) | final readonly class | 156 | The interim public theme: one clean template until the block-theme |
 | [`Resolution`](#resolution) | final readonly class | 108 | The outcome of resolving a public URL: which kind of thing it names, |
-| [`Resolver`](#resolver) | final readonly class | 550 | Turns a public URL into a Resolution, following the reference's observed |
+| [`Resolver`](#resolver) | final readonly class | 556 | Turns a public URL into a Resolution, following the reference's observed |
 | [`SitemapController`](#sitemapcontroller) | final readonly class | 46 | The sitemap index, its pages, and the two stylesheets. |
 | [`SitemapXml`](#sitemapxml) | final class | 43 | The two sitemap documents, index and URL set, from entry maps; one builder for the engine's routes and the facade's renderer. |
 | [`Sitemaps`](#sitemaps) | final readonly class | 147 | The sitemap index and its providers (posts, pages, categories, tags, |
@@ -571,6 +572,28 @@ Route: `GET /favicon.ico`
 The site icon, or the reference's default.
 
 
+## Redirects
+
+`enum Minn\Front\Redirects` · `public/minn/src/Minn/Front/Redirects.php`
+
+Whether a resolution may answer with a canonical redirect. A GET or HEAD
+follows them (the trailing slash, the pretty permalink for ?p=, the
+guessed destination); any other method holds and resolves the path as
+typed, as the reference's redirect_canonical bails on a POST.
+
+Cases: `Follow`, `Hold`
+
+Used by: `Minn\Front\Resolver`
+
+### static `forMethod(Minn\Http\Method $method): self`
+
+The mode a request's method allows.
+
+### `follows(): bool`
+
+Whether a canonical redirect may be answered.
+
+
 ## Renderer
 
 `final readonly class Minn\Front\Renderer` · `public/minn/src/Minn/Front/Renderer.php`
@@ -725,7 +748,7 @@ The link builder.
 
 Posts per page.
 
-### `resolve(Minn\Http\Request $request, bool $canonical = true): Minn\Front\Resolution`
+### `resolve(Minn\Http\Request $request): Minn\Front\Resolution`
 
 $canonical mirrors the reference's redirect_canonical rule: only GET
 and HEAD get trailing-slash, pretty-URL, and 404-guess redirects;
@@ -737,7 +760,7 @@ The site-local bounds of a date archive, or null when the date is invalid.
 
 - `@return array{0: string, 1: string}|null`
 
-Internals: `fromRuleVars()` (private, line 117), `resolvePath()` (private, line 142), `resolveQueryVars()` (private, line 202), `dateRedirect()` (private, line 284), `home()` (private, line 300), `pluginRoute()` (private, line 322), `segmentsOf()` (private, line 357), `taxonomyArchive()` (private, line 366), `termArchive()` (private, line 380), `termResolution()` (private, line 393), `authorArchive()` (private, line 402), `dateArchive()` (private, line 419), `resolveContent()` (private, line 466), `resolveSingle()` (private, line 502), `formerSlug()` (private, line 544), `singleOrRedirect()` (private, line 557), `readable()` (private, line 566), `pages()` (private, line 583)
+Internals: `fromRuleVars()` (private, line 118), `resolvePath()` (private, line 143), `resolveQueryVars()` (private, line 204), `dateRedirect()` (private, line 287), `home()` (private, line 304), `pluginRoute()` (private, line 326), `segmentsOf()` (private, line 361), `taxonomyArchive()` (private, line 370), `termArchive()` (private, line 384), `termResolution()` (private, line 397), `authorArchive()` (private, line 406), `dateArchive()` (private, line 423), `resolveContent()` (private, line 470), `resolveSingle()` (private, line 507), `formerSlug()` (private, line 550), `singleOrRedirect()` (private, line 563), `readable()` (private, line 572), `pages()` (private, line 589)
 
 
 ## SitemapController

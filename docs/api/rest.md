@@ -32,7 +32,7 @@ the wp/v2 surface: shapes and controllers
 | [`PostsWriteController`](#postswritecontroller) | final readonly class | 306 | wp/v2 posts and pages, write side: create, update, trash, and force |
 | [`Reply`](#reply) | final class | 48 | JSON responses in the reference's shape: its header set, its json_encode |
 | [`RestUrl`](#resturl) | final readonly class | 38 | REST URLs in the form the reference emits for the site's permalink mode: |
-| [`RevisionsController`](#revisionscontroller) | final readonly class | 129 | wp/v2 revisions and autosaves under posts and pages, plus wp/v2/blocks. |
+| [`RevisionsController`](#revisionscontroller) | final readonly class | 130 | wp/v2 revisions and autosaves under posts and pages, plus wp/v2/blocks. |
 | [`RouteArgs`](#routeargs) | final class | 36 | The argument groups a route registers with, filled the way register_rest_route fills them. |
 | [`RouteIndex`](#routeindex) | final class | 61 | The description of one route the REST index publishes: namespace, methods, endpoints with their argument schemas, self link. |
 | [`RouteMatch`](#routematch) | final class | 42 | Finds the registered handler for a method and path among the runtime's route table. |
@@ -1233,11 +1233,11 @@ Route: `GET /wp/v2/blocks`
 
 Reusable blocks and synced patterns (wp_block rows).
 
-### `object(Minn\Content\PostRecord|array $r, bool $withPreview = false): array`
+### `object(Minn\Content\PostRecord|array $r, Minn\Rest\Context $context = Minn\Rest\Context::View): array`
 
 One revision row as wp/v2 serves it (autosaves and revisions alike).
 
-Internals: `clean()` (private, line 70), `requireParent()` (private, line 136)
+Internals: `clean()` (private, line 70), `requireParent()` (private, line 137)
 
 
 ## RouteArgs

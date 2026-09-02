@@ -48,7 +48,7 @@ final readonly class FrontController
         if ($this->cron !== null && !(defined('DISABLE_WP_CRON') && DISABLE_WP_CRON) && $this->cron->due()) {
             $this->cron->run();
         }
-        $resolution = $this->resolver->resolve($request, $request->method->canonicalRedirects());
+        $resolution = $this->resolver->resolve($request);
         if ($resolution->kind === Kind::Redirect) {
             return Response::redirect((string) $resolution->location, $resolution->status);
         }
