@@ -29,42 +29,42 @@ final readonly class PreferencesController
     }
 
     /** The caller's appearance. */
-    #[Route(Method::Get, '/minn-admin/v1/me/appearance')]
+    #[Route(Method::Get, '/minn-admin/v1/me/appearance', policy: new Policy(Access::Floor))]
     public function myAppearance(Request $request): Response
     {
-        return Reply::answer($request, $this->appearance->read($this->caller->requireFloor()));
+        return Reply::answer($request, $this->appearance->read($this->caller->id()));
     }
 
     /** Saves the caller's appearance. */
-    #[Route(Method::Post, '/minn-admin/v1/me/appearance')]
+    #[Route(Method::Post, '/minn-admin/v1/me/appearance', policy: new Policy(Access::Floor))]
     public function saveMyAppearance(Request $request): Response
     {
-        return Reply::answer($request, $this->appearance->save($this->caller->requireFloor(), $this->appearanceBody($request)));
+        return Reply::answer($request, $this->appearance->save($this->caller->id(), $this->appearanceBody($request)));
     }
 
     /** A user's appearance, for one who may edit them. */
-    #[Route(Method::Get, '/minn-admin/v1/users/{id:\d+}/appearance')]
+    #[Route(Method::Get, '/minn-admin/v1/users/{id:\d+}/appearance', policy: new Policy(Access::Own, 'edit_user', param: 'id', caps: ['edit_posts'], signIn: 'rest_forbidden', signInMessage: 'Sorry, you are not allowed to do that.'))]
     public function userAppearance(Request $request, string $id): Response
     {
         return Reply::answer($request, $this->appearance->read($this->editableUser($id)));
     }
 
     /** Saves a user's appearance. */
-    #[Route(Method::Post, '/minn-admin/v1/users/{id:\d+}/appearance')]
+    #[Route(Method::Post, '/minn-admin/v1/users/{id:\d+}/appearance', policy: new Policy(Access::Own, 'edit_user', param: 'id', caps: ['edit_posts'], signIn: 'rest_forbidden', signInMessage: 'Sorry, you are not allowed to do that.'))]
     public function saveUserAppearance(Request $request, string $id): Response
     {
         return Reply::answer($request, $this->appearance->save($this->editableUser($id), $this->appearanceBody($request)));
     }
 
     /** The target user's restore list, for the user edit page. */
-    #[Route(Method::Get, '/minn-admin/v1/users/{id:\d+}/hidden')]
+    #[Route(Method::Get, '/minn-admin/v1/users/{id:\d+}/hidden', policy: new Policy(Access::Own, 'edit_user', param: 'id', caps: ['edit_posts'], signIn: 'rest_forbidden', signInMessage: 'Sorry, you are not allowed to do that.'))]
     public function hidden(Request $request, string $id): Response
     {
         return Reply::answer($request, ['hidden' => $this->hiddenIntegrations->listFor($this->editableUser($id))]);
     }
 
     /** An administrator restores something another person hid; hiding stays that person's own choice. */
-    #[Route(Method::Post, '/minn-admin/v1/users/{id:\d+}/integrations/unhide')]
+    #[Route(Method::Post, '/minn-admin/v1/users/{id:\d+}/integrations/unhide', policy: new Policy(Access::Own, 'edit_user', param: 'id', caps: ['edit_posts'], signIn: 'rest_forbidden', signInMessage: 'Sorry, you are not allowed to do that.'))]
     public function unhideForUser(Request $request, string $id): Response
     {
         $userId = $this->editableUser($id);
@@ -131,11 +131,6 @@ final readonly class PreferencesController
 
     private function editableUser(string $id): int
     {
-        $self = $this->caller->requireFloor();
-        $userId = (int) $id;
-        if ($userId !== $self && !$this->caller->can('edit_users')) {
-            throw new RestError('rest_forbidden', 'Sorry, you are not allowed to do that.', 403);
-        }
-        return $userId;
+        return (int) $id;
     }
 }

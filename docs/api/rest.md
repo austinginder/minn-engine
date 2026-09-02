@@ -17,7 +17,7 @@ the wp/v2 surface: shapes and controllers
 | [`Embed`](#embed) | final class | 180 | The _embed decoration and the embed context. Every embeddable link in an |
 | [`EngineRoutes`](#engineroutes) | final class | 52 | The engine's own REST routes in the reference's regex form, for the |
 | [`Fields`](#fields) | final readonly class | 92 | The _fields response filter. Dot paths descend ("title.rendered"); the |
-| [`GlobalStylesController`](#globalstylescontroller) | final readonly class | 141 | wp/v2/global-styles: the site editor's saved styles (one post per |
+| [`GlobalStylesController`](#globalstylescontroller) | final readonly class | 138 | wp/v2/global-styles: the site editor's saved styles (one post per |
 | [`GlobalStylesObject`](#globalstylesobject) | final readonly class | 87 | The wp/v2/global-styles item, theme, and revision shapes. |
 | [`IndexController`](#indexcontroller) | final readonly class | 53 | The API index at /wp-json/: the site facts monitors read (name, url, |
 | [`Links`](#links) | final class | 35 | Response link relations compacted through CURIEs: a rel that matches a CURIE's template becomes `name:suffix`, and the used CURIEs ride along. |
@@ -26,11 +26,11 @@ the wp/v2 surface: shapes and controllers
 | [`MediaObject`](#mediaobject) | final readonly class | 158 | The wp/v2 media object, view and edit context. |
 | [`MenuItemObject`](#menuitemobject) | final readonly class | 74 | The wp/v2/menu-items resource. |
 | [`MenuObject`](#menuobject) | final readonly class | 37 | The wp/v2/menus resource: a nav_menu term plus locations and auto_add. |
-| [`MenusController`](#menuscontroller) | final readonly class | 309 | wp/v2/menus, menu-items, and menu-locations. Viewing needs edit_posts; |
+| [`MenusController`](#menuscontroller) | final readonly class | 282 | wp/v2/menus, menu-items, and menu-locations. Viewing needs edit_posts; |
 | [`NavigationController`](#navigationcontroller) | final readonly class | 48 | wp/v2/navigation: the block theme's navigation menus, stored as |
 | [`ParamCheck`](#paramcheck) | final class | 75 | The required / validate / sanitize pass over a request's declared arguments. |
 | [`PluginsController`](#pluginscontroller) | final readonly class | 236 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
-| [`PolicyGate`](#policygate) | final readonly class | 53 | Judges a route's policy against the caller, with the reference's |
+| [`PolicyGate`](#policygate) | final readonly class | 58 | Judges a route's policy against the caller, with the reference's |
 | [`PostObject`](#postobject) | final readonly class | 476 | Builds the wp/v2 post and page objects in the reference's shape: the |
 | [`PostsController`](#postscontroller) | final readonly class | 174 | wp/v2 posts and pages, read side. |
 | [`PostsWriteController`](#postswritecontroller) | final readonly class | 306 | wp/v2 posts and pages, write side: create, update, trash, and force |
@@ -632,13 +632,13 @@ Replaces the title, settings, or styles the body names; what it leaves out stays
 
 ### `theme(Minn\Http\Request $request, string $stylesheet): Minn\Http\Response`
 
-Route: `GET /wp/v2/global-styles/themes/{stylesheet:[^/]+}`
+Route: `GET /wp/v2/global-styles/themes/{stylesheet:[^/]+} (cap edit_posts)`
 
 The active theme's settings and styles, the engine's defaults underneath.
 
 ### `variations(Minn\Http\Request $request, string $stylesheet): Minn\Http\Response`
 
-Route: `GET /wp/v2/global-styles/themes/{stylesheet:[^/]+}/variations`
+Route: `GET /wp/v2/global-styles/themes/{stylesheet:[^/]+}/variations (cap edit_posts)`
 
 The style variations the active theme ships.
 
@@ -654,7 +654,7 @@ Route: `GET /wp/v2/global-styles/{parent:\d+}/revisions/{id:\d+}`
 
 One revision of the saved styles.
 
-Internals: `post()` (private, line 110), `requireTheme()` (private, line 116), `requireParent()` (private, line 127), `title()` (private, line 140), `node()` (private, line 149)
+Internals: `post()` (private, line 112), `requireTheme()` (private, line 118), `requireParent()` (private, line 126), `title()` (private, line 139), `node()` (private, line 148)
 
 
 ## GlobalStylesObject
@@ -944,79 +944,79 @@ __construct(Minn\Content\Menus $menus, Minn\Rest\MenuObject $menuObject, Minn\Re
 
 ### `listMenus(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `GET /wp/v2/menus`
+Route: `GET /wp/v2/menus (cap edit_posts)`
 
 Every classic menu.
 
 ### `singleMenu(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `GET /wp/v2/menus/{id:\d+}`
+Route: `GET /wp/v2/menus/{id:\d+} (cap edit_posts)`
 
 One menu.
 
 ### `createMenu(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `POST /wp/v2/menus`
+Route: `POST /wp/v2/menus (cap edit_theme_options)`
 
 Creates a menu.
 
 ### `updateMenu(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `POST /wp/v2/menus/{id:\d+}`
+Route: `POST /wp/v2/menus/{id:\d+} (cap edit_theme_options)`
 
-Route: `PUT /wp/v2/menus/{id:\d+}`
+Route: `PUT /wp/v2/menus/{id:\d+} (cap edit_theme_options)`
 
-Route: `PATCH /wp/v2/menus/{id:\d+}`
+Route: `PATCH /wp/v2/menus/{id:\d+} (cap edit_theme_options)`
 
 Renames or re-describes a menu.
 
 ### `deleteMenu(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `DELETE /wp/v2/menus/{id:\d+}`
+Route: `DELETE /wp/v2/menus/{id:\d+} (cap edit_theme_options)`
 
 Deletes a menu and its items.
 
 ### `listItems(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `GET /wp/v2/menu-items`
+Route: `GET /wp/v2/menu-items (cap edit_posts)`
 
 The items of a menu.
 
 ### `singleItem(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `GET /wp/v2/menu-items/{id:\d+}`
+Route: `GET /wp/v2/menu-items/{id:\d+} (cap edit_posts)`
 
 One menu item.
 
 ### `createItem(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `POST /wp/v2/menu-items`
+Route: `POST /wp/v2/menu-items (cap edit_theme_options)`
 
 Creates a menu item.
 
 ### `updateItem(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `POST /wp/v2/menu-items/{id:\d+}`
+Route: `POST /wp/v2/menu-items/{id:\d+} (cap edit_theme_options)`
 
-Route: `PUT /wp/v2/menu-items/{id:\d+}`
+Route: `PUT /wp/v2/menu-items/{id:\d+} (cap edit_theme_options)`
 
-Route: `PATCH /wp/v2/menu-items/{id:\d+}`
+Route: `PATCH /wp/v2/menu-items/{id:\d+} (cap edit_theme_options)`
 
 Updates a menu item.
 
 ### `deleteItem(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `DELETE /wp/v2/menu-items/{id:\d+}`
+Route: `DELETE /wp/v2/menu-items/{id:\d+} (cap edit_theme_options)`
 
 Deletes a menu item.
 
 ### `locations(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `GET /wp/v2/menu-locations`
+Route: `GET /wp/v2/menu-locations (cap edit_posts)`
 
 The theme's menu locations.
 
-Internals: `gate()` (private, line 278), `writeGate()` (private, line 286), `titleFrom()` (private, line 295), `urlFrom()` (private, line 305), `refuse()` (private, line 315), `plain()` (private, line 325)
+Internals: `titleFrom()` (private, line 270), `urlFrom()` (private, line 280), `refuse()` (private, line 290), `plain()` (private, line 300)
 
 
 ## NavigationController
@@ -2076,61 +2076,61 @@ __construct(Minn\Theme\TemplateIndex $index, Minn\Theme\TemplateWriter $writer, 
 
 ### `templates(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `GET /wp/v2/templates`
+Route: `GET /wp/v2/templates (cap edit_posts)`
 
 The templates list.
 
 ### `parts(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `GET /wp/v2/template-parts`
+Route: `GET /wp/v2/template-parts (cap edit_posts)`
 
 The template parts list.
 
 ### `template(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `GET /wp/v2/templates/{id*}`
+Route: `GET /wp/v2/templates/{id*} (cap edit_posts)`
 
 One template.
 
 ### `part(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `GET /wp/v2/template-parts/{id*}`
+Route: `GET /wp/v2/template-parts/{id*} (cap edit_posts)`
 
 One template part.
 
 ### `saveTemplate(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `POST /wp/v2/templates/{id*}`
+Route: `POST /wp/v2/templates/{id*} (cap edit_posts + edit_theme_options)`
 
-Route: `PUT /wp/v2/templates/{id*}`
+Route: `PUT /wp/v2/templates/{id*} (cap edit_posts + edit_theme_options)`
 
-Route: `PATCH /wp/v2/templates/{id*}`
+Route: `PATCH /wp/v2/templates/{id*} (cap edit_posts + edit_theme_options)`
 
 Saves a template.
 
 ### `savePart(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `POST /wp/v2/template-parts/{id*}`
+Route: `POST /wp/v2/template-parts/{id*} (cap edit_posts + edit_theme_options)`
 
-Route: `PUT /wp/v2/template-parts/{id*}`
+Route: `PUT /wp/v2/template-parts/{id*} (cap edit_posts + edit_theme_options)`
 
-Route: `PATCH /wp/v2/template-parts/{id*}`
+Route: `PATCH /wp/v2/template-parts/{id*} (cap edit_posts + edit_theme_options)`
 
 Saves a template part.
 
 ### `deleteTemplate(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `DELETE /wp/v2/templates/{id*}`
+Route: `DELETE /wp/v2/templates/{id*} (cap edit_posts + edit_theme_options)`
 
 Deletes a customised template.
 
 ### `deletePart(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `DELETE /wp/v2/template-parts/{id*}`
+Route: `DELETE /wp/v2/template-parts/{id*} (cap edit_posts + edit_theme_options)`
 
 Deletes a customised template part.
 
-Internals: `listing()` (private, line 97), `single()` (private, line 115), `save()` (private, line 124), `delete()` (private, line 151), `trashed()` (private, line 168), `record()` (private, line 190), `readable()` (private, line 200), `requireWrite()` (private, line 211), `text()` (private, line 220)
+Internals: `listing()` (private, line 99), `single()` (private, line 117), `save()` (private, line 126), `delete()` (private, line 153), `trashed()` (private, line 170), `record()` (private, line 192), `readable()` (private, line 202), `requireWrite()` (private, line 213), `text()` (private, line 222)
 
 
 ## TermObject

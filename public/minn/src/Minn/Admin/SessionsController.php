@@ -9,6 +9,8 @@ use Minn\Content\Users;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
+use Minn\Http\Access;
+use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\Rest\Caller;
 use Minn\Rest\Fields;
@@ -31,7 +33,7 @@ final readonly class SessionsController
     }
 
     /** A user's sessions, the caller's own marked. */
-    #[Route(Method::Get, '/minn-admin/v1/users/{id:\d+}/sessions')]
+    #[Route(Method::Get, '/minn-admin/v1/users/{id:\d+}/sessions', policy: new Policy(Access::Own, 'edit_user', param: 'id', signIn: 'rest_forbidden', signInMessage: 'Sorry, you are not allowed to do that.'))]
     public function list(Request $request, string $id): Response
     {
         $userId = $this->target($id);
@@ -57,7 +59,7 @@ final readonly class SessionsController
     }
 
     /** Signs the person out everywhere; a caller acting on themselves keeps the session they are using. */
-    #[Route(Method::Delete, '/minn-admin/v1/users/{id:\d+}/sessions')]
+    #[Route(Method::Delete, '/minn-admin/v1/users/{id:\d+}/sessions', policy: new Policy(Access::Own, 'edit_user', param: 'id', signIn: 'rest_forbidden', signInMessage: 'Sorry, you are not allowed to do that.'))]
     public function destroyAll(Request $request, string $id): Response
     {
         $userId = $this->target($id);
@@ -70,7 +72,7 @@ final readonly class SessionsController
     }
 
     /** Signs one session out. */
-    #[Route(Method::Delete, '/minn-admin/v1/users/{id:\d+}/sessions/{verifier:[a-f0-9]{40,64}}')]
+    #[Route(Method::Delete, '/minn-admin/v1/users/{id:\d+}/sessions/{verifier:[a-f0-9]{40,64}}', policy: new Policy(Access::Own, 'edit_user', param: 'id', signIn: 'rest_forbidden', signInMessage: 'Sorry, you are not allowed to do that.'))]
     public function destroy(Request $request, string $id, string $verifier): Response
     {
         $userId = $this->target($id);
@@ -83,9 +85,8 @@ final readonly class SessionsController
     /** The user from the path: the caller themselves, or anyone the caller may edit. */
     private function target(string $id): int
     {
-        $this->caller->require('rest_forbidden', 'Sorry, you are not allowed to do that.', 401);
         $userId = (int) $id;
-        if ($userId <= 0 || ($this->caller->id() !== $userId && !$this->caller->can('edit_users'))) {
+        if ($userId <= 0) {
             throw new RestError('rest_forbidden', 'Sorry, you are not allowed to do that.', 403);
         }
         if ($this->users->find($userId) === null) {

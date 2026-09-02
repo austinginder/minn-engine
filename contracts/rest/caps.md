@@ -119,8 +119,16 @@ you are not allowed to do that." to refuse. The front's router judges the
 same policies against the session cookie alone (401 / 403 with the policy's
 codes); its routes are all public today.
 
-The style suite ratchets the count of routes with no policy (157 of 222 at
-the first cut, from the 65 whose first statement was a pure gate); the rest
-still decide inside their bodies, mostly after loading the record, and each
-moves onto the attribute as its controller is touched. The generated API
-docs print each route's policy after its pattern.
+The style suite ratchets the count of routes with no policy: 157 of 222
+after the first cut (the 65 whose first statement was a pure gate), 117
+after the second (menus, templates, global-styles themes, sessions, the
+per-user preference routes as `Own edit_user`, and the inline floors). The
+rest still decide inside their bodies, mostly after loading the record
+(the reference answers 404 for a missing parent before it refuses the
+capability, which a policy cannot order), and each moves onto the
+attribute as its controller is touched. The generated API docs print each
+route's policy after its pattern.
+
+`edit_user` on oneself maps to no primitive at all, and a meta capability
+that asks nothing further is held; `Capabilities::can` returned false for an
+empty requirement before the `Own` policies used it.

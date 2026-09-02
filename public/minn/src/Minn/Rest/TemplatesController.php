@@ -7,6 +7,8 @@ namespace Minn\Rest;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
+use Minn\Http\Access;
+use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\RestError;
 use Minn\Theme\TemplateIndex;
@@ -35,60 +37,60 @@ final readonly class TemplatesController
     }
 
     /** The templates list. */
-    #[Route(Method::Get, '/wp/v2/templates')]
+    #[Route(Method::Get, '/wp/v2/templates', policy: new Policy(Access::Cap, self::READ_CAP, signIn: 'rest_cannot_manage_templates', signInMessage: self::REFUSAL, refuse: 'rest_cannot_manage_templates', message: self::REFUSAL))]
     public function templates(Request $request): Response
     {
         return $this->listing($request, TemplateIndex::TEMPLATE);
     }
 
     /** The template parts list. */
-    #[Route(Method::Get, '/wp/v2/template-parts')]
+    #[Route(Method::Get, '/wp/v2/template-parts', policy: new Policy(Access::Cap, self::READ_CAP, signIn: 'rest_cannot_manage_templates', signInMessage: self::REFUSAL, refuse: 'rest_cannot_manage_templates', message: self::REFUSAL))]
     public function parts(Request $request): Response
     {
         return $this->listing($request, TemplateIndex::PART);
     }
 
     /** One template. */
-    #[Route(Method::Get, '/wp/v2/templates/{id*}')]
+    #[Route(Method::Get, '/wp/v2/templates/{id*}', policy: new Policy(Access::Cap, self::READ_CAP, signIn: 'rest_cannot_manage_templates', signInMessage: self::REFUSAL, refuse: 'rest_cannot_manage_templates', message: self::REFUSAL))]
     public function template(Request $request, string $id): Response
     {
         return $this->single($request, TemplateIndex::TEMPLATE, $id);
     }
 
     /** One template part. */
-    #[Route(Method::Get, '/wp/v2/template-parts/{id*}')]
+    #[Route(Method::Get, '/wp/v2/template-parts/{id*}', policy: new Policy(Access::Cap, self::READ_CAP, signIn: 'rest_cannot_manage_templates', signInMessage: self::REFUSAL, refuse: 'rest_cannot_manage_templates', message: self::REFUSAL))]
     public function part(Request $request, string $id): Response
     {
         return $this->single($request, TemplateIndex::PART, $id);
     }
 
     /** Saves a template. */
-    #[Route(Method::Post, '/wp/v2/templates/{id*}')]
-    #[Route(Method::Put, '/wp/v2/templates/{id*}')]
-    #[Route(Method::Patch, '/wp/v2/templates/{id*}')]
+    #[Route(Method::Post, '/wp/v2/templates/{id*}', policy: new Policy(Access::Cap, self::READ_CAP, caps: [self::WRITE_CAP], signIn: 'rest_cannot_manage_templates', signInMessage: self::REFUSAL, refuse: 'rest_cannot_manage_templates', message: self::REFUSAL))]
+    #[Route(Method::Put, '/wp/v2/templates/{id*}', policy: new Policy(Access::Cap, self::READ_CAP, caps: [self::WRITE_CAP], signIn: 'rest_cannot_manage_templates', signInMessage: self::REFUSAL, refuse: 'rest_cannot_manage_templates', message: self::REFUSAL))]
+    #[Route(Method::Patch, '/wp/v2/templates/{id*}', policy: new Policy(Access::Cap, self::READ_CAP, caps: [self::WRITE_CAP], signIn: 'rest_cannot_manage_templates', signInMessage: self::REFUSAL, refuse: 'rest_cannot_manage_templates', message: self::REFUSAL))]
     public function saveTemplate(Request $request, string $id): Response
     {
         return $this->save($request, TemplateIndex::TEMPLATE, $id);
     }
 
     /** Saves a template part. */
-    #[Route(Method::Post, '/wp/v2/template-parts/{id*}')]
-    #[Route(Method::Put, '/wp/v2/template-parts/{id*}')]
-    #[Route(Method::Patch, '/wp/v2/template-parts/{id*}')]
+    #[Route(Method::Post, '/wp/v2/template-parts/{id*}', policy: new Policy(Access::Cap, self::READ_CAP, caps: [self::WRITE_CAP], signIn: 'rest_cannot_manage_templates', signInMessage: self::REFUSAL, refuse: 'rest_cannot_manage_templates', message: self::REFUSAL))]
+    #[Route(Method::Put, '/wp/v2/template-parts/{id*}', policy: new Policy(Access::Cap, self::READ_CAP, caps: [self::WRITE_CAP], signIn: 'rest_cannot_manage_templates', signInMessage: self::REFUSAL, refuse: 'rest_cannot_manage_templates', message: self::REFUSAL))]
+    #[Route(Method::Patch, '/wp/v2/template-parts/{id*}', policy: new Policy(Access::Cap, self::READ_CAP, caps: [self::WRITE_CAP], signIn: 'rest_cannot_manage_templates', signInMessage: self::REFUSAL, refuse: 'rest_cannot_manage_templates', message: self::REFUSAL))]
     public function savePart(Request $request, string $id): Response
     {
         return $this->save($request, TemplateIndex::PART, $id);
     }
 
     /** Deletes a customised template. */
-    #[Route(Method::Delete, '/wp/v2/templates/{id*}')]
+    #[Route(Method::Delete, '/wp/v2/templates/{id*}', policy: new Policy(Access::Cap, self::READ_CAP, caps: [self::WRITE_CAP], signIn: 'rest_cannot_manage_templates', signInMessage: self::REFUSAL, refuse: 'rest_cannot_manage_templates', message: self::REFUSAL))]
     public function deleteTemplate(Request $request, string $id): Response
     {
         return $this->delete($request, TemplateIndex::TEMPLATE, $id);
     }
 
     /** Deletes a customised template part. */
-    #[Route(Method::Delete, '/wp/v2/template-parts/{id*}')]
+    #[Route(Method::Delete, '/wp/v2/template-parts/{id*}', policy: new Policy(Access::Cap, self::READ_CAP, caps: [self::WRITE_CAP], signIn: 'rest_cannot_manage_templates', signInMessage: self::REFUSAL, refuse: 'rest_cannot_manage_templates', message: self::REFUSAL))]
     public function deletePart(Request $request, string $id): Response
     {
         return $this->delete($request, TemplateIndex::PART, $id);

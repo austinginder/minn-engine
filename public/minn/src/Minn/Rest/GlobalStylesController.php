@@ -9,6 +9,8 @@ use Minn\Content\Revisions;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
+use Minn\Http\Access;
+use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\RestError;
 use Minn\Theme\ThemeStyles;
@@ -64,7 +66,7 @@ final readonly class GlobalStylesController
     }
 
     /** The active theme's settings and styles, the engine's defaults underneath. */
-    #[Route(Method::Get, '/wp/v2/global-styles/themes/{stylesheet:[^/]+}')]
+    #[Route(Method::Get, '/wp/v2/global-styles/themes/{stylesheet:[^/]+}', policy: new Policy(Access::Cap, 'edit_posts', signIn: 'rest_cannot_read_global_styles', signInMessage: 'Sorry, you are not allowed to access the global styles on this site.', refuse: 'rest_cannot_read_global_styles', message: 'Sorry, you are not allowed to access the global styles on this site.'))]
     public function theme(Request $request, string $stylesheet): Response
     {
         $this->requireTheme($stylesheet);
@@ -72,7 +74,7 @@ final readonly class GlobalStylesController
     }
 
     /** The style variations the active theme ships. */
-    #[Route(Method::Get, '/wp/v2/global-styles/themes/{stylesheet:[^/]+}/variations')]
+    #[Route(Method::Get, '/wp/v2/global-styles/themes/{stylesheet:[^/]+}/variations', policy: new Policy(Access::Cap, 'edit_posts', signIn: 'rest_cannot_read_global_styles', signInMessage: 'Sorry, you are not allowed to access the global styles on this site.', refuse: 'rest_cannot_read_global_styles', message: 'Sorry, you are not allowed to access the global styles on this site.'))]
     public function variations(Request $request, string $stylesheet): Response
     {
         $this->requireTheme($stylesheet);
@@ -115,9 +117,6 @@ final readonly class GlobalStylesController
     /** The theme routes answer only for the active stylesheet, and only to those who edit posts. */
     private function requireTheme(string $stylesheet): void
     {
-        if (!$this->caller->can('edit_posts')) {
-            throw $this->caller->refuse('rest_cannot_read_global_styles', 'Sorry, you are not allowed to access the global styles on this site.');
-        }
         if ($stylesheet !== $this->theme->stylesheet) {
             throw new RestError('rest_theme_not_found', 'Theme not found.', 404);
         }

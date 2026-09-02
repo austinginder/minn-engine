@@ -3868,7 +3868,7 @@
                 },
                 {
                     "routes": [
-                        "POST /minn-admin/v1/me/language"
+                        "POST /minn-admin/v1/me/language (floor edit_posts)"
                     ],
                     "name": "mine",
                     "static": false,
@@ -5990,7 +5990,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/PreferencesController.php",
-            "lines": 120,
+            "lines": 115,
             "doc": "A person's own settings in minn-admin/v1: their appearance, the views\nthey hid, and an administrator's reach into another person's, for the\nuser edit page.",
             "implements": [],
             "extends": null,
@@ -6075,7 +6075,7 @@
             "methods": [
                 {
                     "routes": [
-                        "GET /minn-admin/v1/me/appearance"
+                        "GET /minn-admin/v1/me/appearance (floor edit_posts)"
                     ],
                     "name": "myAppearance",
                     "static": false,
@@ -6097,7 +6097,7 @@
                 },
                 {
                     "routes": [
-                        "POST /minn-admin/v1/me/appearance"
+                        "POST /minn-admin/v1/me/appearance (floor edit_posts)"
                     ],
                     "name": "saveMyAppearance",
                     "static": false,
@@ -6119,7 +6119,7 @@
                 },
                 {
                     "routes": [
-                        "GET /minn-admin/v1/users/{id:\\d+}/appearance"
+                        "GET /minn-admin/v1/users/{id:\\d+}/appearance (cap edit_user on {id})"
                     ],
                     "name": "userAppearance",
                     "static": false,
@@ -6148,7 +6148,7 @@
                 },
                 {
                     "routes": [
-                        "POST /minn-admin/v1/users/{id:\\d+}/appearance"
+                        "POST /minn-admin/v1/users/{id:\\d+}/appearance (cap edit_user on {id})"
                     ],
                     "name": "saveUserAppearance",
                     "static": false,
@@ -6177,7 +6177,7 @@
                 },
                 {
                     "routes": [
-                        "GET /minn-admin/v1/users/{id:\\d+}/hidden"
+                        "GET /minn-admin/v1/users/{id:\\d+}/hidden (cap edit_user on {id})"
                     ],
                     "name": "hidden",
                     "static": false,
@@ -6206,7 +6206,7 @@
                 },
                 {
                     "routes": [
-                        "POST /minn-admin/v1/users/{id:\\d+}/integrations/unhide"
+                        "POST /minn-admin/v1/users/{id:\\d+}/integrations/unhide (cap edit_user on {id})"
                     ],
                     "name": "unhideForUser",
                     "static": false,
@@ -6355,7 +6355,7 @@
                         }
                     ],
                     "line": 132,
-                    "end": 140
+                    "end": 135
                 }
             ]
         },
@@ -6568,14 +6568,16 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/SessionsController.php",
-            "lines": 73,
+            "lines": 72,
             "doc": "A person's sign-in sessions, read from the same session_tokens store\nthe login endpoint writes. Verifiers are the store's keys (the sha256\nof each cookie token), so the app can name one without ever seeing\nthe token. Expired rows are skipped, not garbage-collected here.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Auth\\Sessions",
                 "Minn\\Content\\Users",
+                "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
+                "Minn\\Http\\Policy",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
@@ -6615,8 +6617,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 26,
-                "end": 31
+                "line": 28,
+                "end": 33
             },
             "cases": [],
             "constants": [],
@@ -6652,7 +6654,7 @@
             "methods": [
                 {
                     "routes": [
-                        "GET /minn-admin/v1/users/{id:\\d+}/sessions"
+                        "GET /minn-admin/v1/users/{id:\\d+}/sessions (cap edit_user on {id})"
                     ],
                     "name": "list",
                     "static": false,
@@ -6676,12 +6678,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 35,
-                    "end": 57
+                    "line": 37,
+                    "end": 59
                 },
                 {
                     "routes": [
-                        "DELETE /minn-admin/v1/users/{id:\\d+}/sessions"
+                        "DELETE /minn-admin/v1/users/{id:\\d+}/sessions (cap edit_user on {id})"
                     ],
                     "name": "destroyAll",
                     "static": false,
@@ -6705,12 +6707,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 61,
-                    "end": 70
+                    "line": 63,
+                    "end": 72
                 },
                 {
                     "routes": [
-                        "DELETE /minn-admin/v1/users/{id:\\d+}/sessions/{verifier:[a-f0-9]{40,64}}"
+                        "DELETE /minn-admin/v1/users/{id:\\d+}/sessions/{verifier:[a-f0-9]{40,64}} (cap edit_user on {id})"
                     ],
                     "name": "destroy",
                     "static": false,
@@ -6741,8 +6743,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 74,
-                    "end": 81
+                    "line": 76,
+                    "end": 83
                 },
                 {
                     "routes": [],
@@ -6761,8 +6763,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 84,
-                    "end": 95
+                    "line": 86,
+                    "end": 96
                 }
             ]
         },
@@ -9108,7 +9110,7 @@
             "methods": [
                 {
                     "routes": [
-                        "GET /minn-admin/v1/notifications"
+                        "GET /minn-admin/v1/notifications (floor edit_posts)"
                     ],
                     "name": "notifications",
                     "static": false,
@@ -10244,7 +10246,7 @@
             "namespace": "Minn\\Auth",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Auth/Capabilities.php",
-            "lines": 161,
+            "lines": 162,
             "doc": "The capability engine: a user's roles from {prefix}capabilities usermeta,\nthe primitives those roles grant, and the meta-capability mapping for\nedit_post, delete_post, and read_post.",
             "implements": [],
             "extends": null,
@@ -10442,7 +10444,7 @@
                         }
                     ],
                     "line": 74,
-                    "end": 87
+                    "end": 88
                 },
                 {
                     "routes": [],
@@ -10477,8 +10479,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 94,
-                    "end": 111
+                    "line": 95,
+                    "end": 112
                 },
                 {
                     "routes": [],
@@ -10513,8 +10515,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 114,
-                    "end": 156
+                    "line": 115,
+                    "end": 157
                 },
                 {
                     "routes": [],
@@ -10543,8 +10545,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 162,
-                    "end": 165
+                    "line": 163,
+                    "end": 166
                 },
                 {
                     "routes": [],
@@ -10563,8 +10565,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 167,
-                    "end": 174
+                    "line": 168,
+                    "end": 175
                 }
             ]
         },
@@ -43002,6 +43004,7 @@
                 "Minn\\Admin\\PackagesController",
                 "Minn\\Admin\\PreferencesController",
                 "Minn\\Admin\\RenderController",
+                "Minn\\Admin\\SessionsController",
                 "Minn\\Admin\\SiteController",
                 "Minn\\Admin\\StructureController",
                 "Minn\\Admin\\SystemController",
@@ -43009,9 +43012,12 @@
                 "Minn\\Admin\\UpdatesController",
                 "Minn\\Admin\\V1Controller",
                 "Minn\\Http\\Policy",
+                "Minn\\Rest\\GlobalStylesController",
+                "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PolicyGate",
-                "Minn\\Rest\\SettingsController"
+                "Minn\\Rest\\SettingsController",
+                "Minn\\Rest\\TemplatesController"
             ],
             "constructor": null,
             "cases": [
@@ -44429,6 +44435,7 @@
                 "Minn\\Admin\\PackagesController",
                 "Minn\\Admin\\PreferencesController",
                 "Minn\\Admin\\RenderController",
+                "Minn\\Admin\\SessionsController",
                 "Minn\\Admin\\SiteController",
                 "Minn\\Admin\\StructureController",
                 "Minn\\Admin\\SystemController",
@@ -44438,9 +44445,12 @@
                 "Minn\\Engine",
                 "Minn\\Http\\Route",
                 "Minn\\Http\\Router",
+                "Minn\\Rest\\GlobalStylesController",
+                "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PolicyGate",
-                "Minn\\Rest\\SettingsController"
+                "Minn\\Rest\\SettingsController",
+                "Minn\\Rest\\TemplatesController"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Http\\Access $access = Minn\\Http\\Access::Public, ?string $cap = NULL, array $caps = array ( ), ?string $param = NULL, string $signIn = 'rest_not_logged_in', string $signInMessage = 'You are not currently logged in.', string $refuse = 'rest_forbidden', string $message = 'Sorry, you are not allowed to do that.', ?Minn\\Http\\Policy $edit = NULL)",
@@ -54325,14 +54335,16 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/GlobalStylesController.php",
-            "lines": 141,
+            "lines": 138,
             "doc": "wp/v2/global-styles: the site editor's saved styles (one post per\ntheme, read and written by id, with its revisions) and the active\ntheme's own styles and variations. There is no collection, no create\nand no delete; the post is made on first use, as on the reference.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Content\\PostRecord",
                 "Minn\\Content\\Revisions",
+                "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
+                "Minn\\Http\\Policy",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
@@ -54390,8 +54402,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 28,
-                "end": 35
+                "line": 30,
+                "end": 37
             },
             "cases": [],
             "constants": [
@@ -54482,8 +54494,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 39,
-                    "end": 49
+                    "line": 41,
+                    "end": 51
                 },
                 {
                     "routes": [
@@ -54513,12 +54525,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 55,
-                    "end": 64
+                    "line": 57,
+                    "end": 66
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/global-styles/themes/{stylesheet:[^/]+}"
+                        "GET /wp/v2/global-styles/themes/{stylesheet:[^/]+} (cap edit_posts)"
                     ],
                     "name": "theme",
                     "static": false,
@@ -54542,12 +54554,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 72
+                    "line": 70,
+                    "end": 74
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/global-styles/themes/{stylesheet:[^/]+}/variations"
+                        "GET /wp/v2/global-styles/themes/{stylesheet:[^/]+}/variations (cap edit_posts)"
                     ],
                     "name": "variations",
                     "static": false,
@@ -54571,8 +54583,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 76,
-                    "end": 80
+                    "line": 78,
+                    "end": 82
                 },
                 {
                     "routes": [
@@ -54600,8 +54612,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 84,
-                    "end": 96
+                    "line": 86,
+                    "end": 98
                 },
                 {
                     "routes": [
@@ -54636,8 +54648,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 100,
-                    "end": 108
+                    "line": 102,
+                    "end": 110
                 },
                 {
                     "routes": [],
@@ -54656,8 +54668,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 110,
-                    "end": 113
+                    "line": 112,
+                    "end": 115
                 },
                 {
                     "routes": [],
@@ -54676,8 +54688,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 116,
-                    "end": 124
+                    "line": 118,
+                    "end": 123
                 },
                 {
                     "routes": [],
@@ -54696,8 +54708,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 127,
-                    "end": 137
+                    "line": 126,
+                    "end": 136
                 },
                 {
                     "routes": [],
@@ -54716,8 +54728,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 140,
-                    "end": 146
+                    "line": 139,
+                    "end": 145
                 },
                 {
                     "routes": [],
@@ -54743,8 +54755,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 149,
-                    "end": 162
+                    "line": 148,
+                    "end": 161
                 }
             ]
         },
@@ -56419,14 +56431,16 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/MenusController.php",
-            "lines": 309,
+            "lines": 282,
             "doc": "wp/v2/menus, menu-items, and menu-locations. Viewing needs edit_posts;\nwrites need edit_theme_options. Anonymous callers get 401.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Content\\Menus",
                 "Minn\\Content\\TermRecord",
+                "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
+                "Minn\\Http\\Policy",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
@@ -56486,8 +56500,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 23,
-                "end": 30
+                "line": 25,
+                "end": 32
             },
             "cases": [],
             "constants": [],
@@ -56541,7 +56555,7 @@
             "methods": [
                 {
                     "routes": [
-                        "GET /wp/v2/menus"
+                        "GET /wp/v2/menus (cap edit_posts)"
                     ],
                     "name": "listMenus",
                     "static": false,
@@ -56558,12 +56572,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 34,
-                    "end": 58
+                    "line": 36,
+                    "end": 59
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/menus/{id:\\d+}"
+                        "GET /wp/v2/menus/{id:\\d+} (cap edit_posts)"
                     ],
                     "name": "singleMenu",
                     "static": false,
@@ -56587,12 +56601,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 62,
+                    "line": 63,
                     "end": 70
                 },
                 {
                     "routes": [
-                        "POST /wp/v2/menus"
+                        "POST /wp/v2/menus (cap edit_theme_options)"
                     ],
                     "name": "createMenu",
                     "static": false,
@@ -56610,13 +56624,13 @@
                         }
                     ],
                     "line": 74,
-                    "end": 87
+                    "end": 86
                 },
                 {
                     "routes": [
-                        "POST /wp/v2/menus/{id:\\d+}",
-                        "PUT /wp/v2/menus/{id:\\d+}",
-                        "PATCH /wp/v2/menus/{id:\\d+}"
+                        "POST /wp/v2/menus/{id:\\d+} (cap edit_theme_options)",
+                        "PUT /wp/v2/menus/{id:\\d+} (cap edit_theme_options)",
+                        "PATCH /wp/v2/menus/{id:\\d+} (cap edit_theme_options)"
                     ],
                     "name": "updateMenu",
                     "static": false,
@@ -56640,12 +56654,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 93,
-                    "end": 111
+                    "line": 92,
+                    "end": 109
                 },
                 {
                     "routes": [
-                        "DELETE /wp/v2/menus/{id:\\d+}"
+                        "DELETE /wp/v2/menus/{id:\\d+} (cap edit_theme_options)"
                     ],
                     "name": "deleteMenu",
                     "static": false,
@@ -56669,12 +56683,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 115,
-                    "end": 129
+                    "line": 113,
+                    "end": 126
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/menu-items"
+                        "GET /wp/v2/menu-items (cap edit_posts)"
                     ],
                     "name": "listItems",
                     "static": false,
@@ -56691,12 +56705,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 133,
-                    "end": 150
+                    "line": 130,
+                    "end": 146
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/menu-items/{id:\\d+}"
+                        "GET /wp/v2/menu-items/{id:\\d+} (cap edit_posts)"
                     ],
                     "name": "singleItem",
                     "static": false,
@@ -56720,12 +56734,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 154,
-                    "end": 164
+                    "line": 150,
+                    "end": 159
                 },
                 {
                     "routes": [
-                        "POST /wp/v2/menu-items"
+                        "POST /wp/v2/menu-items (cap edit_theme_options)"
                     ],
                     "name": "createItem",
                     "static": false,
@@ -56742,14 +56756,14 @@
                             "doc": ""
                         }
                     ],
-                    "line": 168,
-                    "end": 195
+                    "line": 163,
+                    "end": 189
                 },
                 {
                     "routes": [
-                        "POST /wp/v2/menu-items/{id:\\d+}",
-                        "PUT /wp/v2/menu-items/{id:\\d+}",
-                        "PATCH /wp/v2/menu-items/{id:\\d+}"
+                        "POST /wp/v2/menu-items/{id:\\d+} (cap edit_theme_options)",
+                        "PUT /wp/v2/menu-items/{id:\\d+} (cap edit_theme_options)",
+                        "PATCH /wp/v2/menu-items/{id:\\d+} (cap edit_theme_options)"
                     ],
                     "name": "updateItem",
                     "static": false,
@@ -56773,12 +56787,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 201,
-                    "end": 248
+                    "line": 195,
+                    "end": 241
                 },
                 {
                     "routes": [
-                        "DELETE /wp/v2/menu-items/{id:\\d+}"
+                        "DELETE /wp/v2/menu-items/{id:\\d+} (cap edit_theme_options)"
                     ],
                     "name": "deleteItem",
                     "static": false,
@@ -56802,12 +56816,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 252,
-                    "end": 266
+                    "line": 245,
+                    "end": 258
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/menu-locations"
+                        "GET /wp/v2/menu-locations (cap edit_posts)"
                     ],
                     "name": "locations",
                     "static": false,
@@ -56824,55 +56838,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 270,
-                    "end": 276
-                },
-                {
-                    "routes": [],
-                    "name": "gate",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "gate(string $what): void",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "what",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 278,
-                    "end": 284
-                },
-                {
-                    "routes": [],
-                    "name": "writeGate",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "writeGate(string $code, string $message): void",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "code",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "message",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 286,
-                    "end": 292
+                    "line": 262,
+                    "end": 267
                 },
                 {
                     "routes": [],
@@ -56893,8 +56860,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 295,
-                    "end": 302
+                    "line": 270,
+                    "end": 277
                 },
                 {
                     "routes": [],
@@ -56915,8 +56882,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 305,
-                    "end": 312
+                    "line": 280,
+                    "end": 287
                 },
                 {
                     "routes": [],
@@ -56935,8 +56902,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 315,
-                    "end": 323
+                    "line": 290,
+                    "end": 298
                 },
                 {
                     "routes": [],
@@ -56955,8 +56922,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 325,
-                    "end": 328
+                    "line": 300,
+                    "end": 303
                 }
             ]
         },
@@ -57827,7 +57794,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/PolicyGate.php",
-            "lines": 53,
+            "lines": 58,
             "doc": "Judges a route's policy against the caller, with the reference's\nrefusals: a caller who is not signed in gets the policy's sign-in code\nat 401, a bad nonce is always 403 rest_cookie_invalid_nonce, and a\nsigned-in caller who lacks a capability gets the refusal code at 403.\nThe edit-context policy is judged as well when the request asks for it.",
             "implements": [],
             "extends": null,
@@ -57968,7 +57935,7 @@
                         }
                     ],
                     "line": 64,
-                    "end": 71
+                    "end": 76
                 }
             ]
         },
@@ -63316,7 +63283,9 @@
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
+                "Minn\\Http\\Policy",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
@@ -63368,8 +63337,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 29,
-                "end": 35
+                "line": 31,
+                "end": 37
             },
             "cases": [],
             "constants": [
@@ -63433,7 +63402,7 @@
             "methods": [
                 {
                     "routes": [
-                        "GET /wp/v2/templates"
+                        "GET /wp/v2/templates (cap edit_posts)"
                     ],
                     "name": "templates",
                     "static": false,
@@ -63450,12 +63419,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 39,
-                    "end": 42
+                    "line": 41,
+                    "end": 44
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/template-parts"
+                        "GET /wp/v2/template-parts (cap edit_posts)"
                     ],
                     "name": "parts",
                     "static": false,
@@ -63472,12 +63441,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 46,
-                    "end": 49
+                    "line": 48,
+                    "end": 51
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/templates/{id*}"
+                        "GET /wp/v2/templates/{id*} (cap edit_posts)"
                     ],
                     "name": "template",
                     "static": false,
@@ -63501,12 +63470,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 53,
-                    "end": 56
+                    "line": 55,
+                    "end": 58
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/template-parts/{id*}"
+                        "GET /wp/v2/template-parts/{id*} (cap edit_posts)"
                     ],
                     "name": "part",
                     "static": false,
@@ -63530,14 +63499,14 @@
                             "doc": ""
                         }
                     ],
-                    "line": 60,
-                    "end": 63
+                    "line": 62,
+                    "end": 65
                 },
                 {
                     "routes": [
-                        "POST /wp/v2/templates/{id*}",
-                        "PUT /wp/v2/templates/{id*}",
-                        "PATCH /wp/v2/templates/{id*}"
+                        "POST /wp/v2/templates/{id*} (cap edit_posts + edit_theme_options)",
+                        "PUT /wp/v2/templates/{id*} (cap edit_posts + edit_theme_options)",
+                        "PATCH /wp/v2/templates/{id*} (cap edit_posts + edit_theme_options)"
                     ],
                     "name": "saveTemplate",
                     "static": false,
@@ -63561,14 +63530,14 @@
                             "doc": ""
                         }
                     ],
-                    "line": 69,
-                    "end": 72
+                    "line": 71,
+                    "end": 74
                 },
                 {
                     "routes": [
-                        "POST /wp/v2/template-parts/{id*}",
-                        "PUT /wp/v2/template-parts/{id*}",
-                        "PATCH /wp/v2/template-parts/{id*}"
+                        "POST /wp/v2/template-parts/{id*} (cap edit_posts + edit_theme_options)",
+                        "PUT /wp/v2/template-parts/{id*} (cap edit_posts + edit_theme_options)",
+                        "PATCH /wp/v2/template-parts/{id*} (cap edit_posts + edit_theme_options)"
                     ],
                     "name": "savePart",
                     "static": false,
@@ -63592,12 +63561,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 78,
-                    "end": 81
+                    "line": 80,
+                    "end": 83
                 },
                 {
                     "routes": [
-                        "DELETE /wp/v2/templates/{id*}"
+                        "DELETE /wp/v2/templates/{id*} (cap edit_posts + edit_theme_options)"
                     ],
                     "name": "deleteTemplate",
                     "static": false,
@@ -63621,12 +63590,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 85,
-                    "end": 88
+                    "line": 87,
+                    "end": 90
                 },
                 {
                     "routes": [
-                        "DELETE /wp/v2/template-parts/{id*}"
+                        "DELETE /wp/v2/template-parts/{id*} (cap edit_posts + edit_theme_options)"
                     ],
                     "name": "deletePart",
                     "static": false,
@@ -63650,8 +63619,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 92,
-                    "end": 95
+                    "line": 94,
+                    "end": 97
                 },
                 {
                     "routes": [],
@@ -63677,8 +63646,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 97,
-                    "end": 113
+                    "line": 99,
+                    "end": 115
                 },
                 {
                     "routes": [],
@@ -63711,8 +63680,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 115,
-                    "end": 122
+                    "line": 117,
+                    "end": 124
                 },
                 {
                     "routes": [],
@@ -63745,8 +63714,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 124,
-                    "end": 143
+                    "line": 126,
+                    "end": 145
                 },
                 {
                     "routes": [],
@@ -63779,8 +63748,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 151,
-                    "end": 166
+                    "line": 153,
+                    "end": 168
                 },
                 {
                     "routes": [],
@@ -63799,8 +63768,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 168,
-                    "end": 188
+                    "line": 170,
+                    "end": 190
                 },
                 {
                     "routes": [],
@@ -63826,8 +63795,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 190,
-                    "end": 197
+                    "line": 192,
+                    "end": 199
                 },
                 {
                     "routes": [],
@@ -63838,8 +63807,8 @@
                     "doc": "Reading the layout is an editor's business, not only an administrator's.",
                     "shapes": [],
                     "params": [],
-                    "line": 200,
-                    "end": 209
+                    "line": 202,
+                    "end": 211
                 },
                 {
                     "routes": [],
@@ -63850,8 +63819,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 211,
-                    "end": 217
+                    "line": 213,
+                    "end": 219
                 },
                 {
                     "routes": [],
@@ -63870,8 +63839,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 220,
-                    "end": 226
+                    "line": 222,
+                    "end": 228
                 }
             ]
         },

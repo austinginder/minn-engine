@@ -9,6 +9,8 @@ use Minn\Content\Menus;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
+use Minn\Http\Access;
+use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\RestError;
 use Minn\Runtime\Refusal;
@@ -30,10 +32,9 @@ final readonly class MenusController
     }
 
     /** Every classic menu. */
-    #[Route(Method::Get, '/wp/v2/menus')]
+    #[Route(Method::Get, '/wp/v2/menus', policy: new Policy(Access::Cap, 'edit_posts', signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menus.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menus.'))]
     public function listMenus(Request $request): Response
     {
-        $this->gate('menus');
         $rows = $this->menus->all();
         $post = (int) $request->query('post', '0');
         if ($post > 0) {
@@ -58,10 +59,9 @@ final readonly class MenusController
     }
 
     /** One menu. */
-    #[Route(Method::Get, '/wp/v2/menus/{id:\d+}')]
+    #[Route(Method::Get, '/wp/v2/menus/{id:\d+}', policy: new Policy(Access::Cap, 'edit_posts', signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menus.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menus.'))]
     public function singleMenu(Request $request, string $id): Response
     {
-        $this->gate('menus');
         $row = $this->menus->find((int) $id);
         if ($row === null) {
             throw new RestError('rest_term_invalid', 'Term does not exist.', 404);
@@ -70,10 +70,9 @@ final readonly class MenusController
     }
 
     /** Creates a menu. */
-    #[Route(Method::Post, '/wp/v2/menus')]
+    #[Route(Method::Post, '/wp/v2/menus', policy: new Policy(Access::Cap, 'edit_theme_options', signIn: 'rest_cannot_create', signInMessage: 'Sorry, you are not allowed to create terms in this taxonomy.', refuse: 'rest_cannot_create', message: 'Sorry, you are not allowed to create terms in this taxonomy.'))]
     public function createMenu(Request $request): Response
     {
-        $this->writeGate('rest_cannot_create', 'Sorry, you are not allowed to create terms in this taxonomy.');
         $body = $request->json();
         if (!array_key_exists('name', $body)) {
             throw RestError::missingParams(['name']);
@@ -87,12 +86,11 @@ final readonly class MenusController
     }
 
     /** Renames or re-describes a menu. */
-    #[Route(Method::Post, '/wp/v2/menus/{id:\d+}')]
-    #[Route(Method::Put, '/wp/v2/menus/{id:\d+}')]
-    #[Route(Method::Patch, '/wp/v2/menus/{id:\d+}')]
+    #[Route(Method::Post, '/wp/v2/menus/{id:\d+}', policy: new Policy(Access::Cap, 'edit_theme_options', signIn: 'rest_cannot_update', signInMessage: 'Sorry, you are not allowed to edit this term.', refuse: 'rest_cannot_update', message: 'Sorry, you are not allowed to edit this term.'))]
+    #[Route(Method::Put, '/wp/v2/menus/{id:\d+}', policy: new Policy(Access::Cap, 'edit_theme_options', signIn: 'rest_cannot_update', signInMessage: 'Sorry, you are not allowed to edit this term.', refuse: 'rest_cannot_update', message: 'Sorry, you are not allowed to edit this term.'))]
+    #[Route(Method::Patch, '/wp/v2/menus/{id:\d+}', policy: new Policy(Access::Cap, 'edit_theme_options', signIn: 'rest_cannot_update', signInMessage: 'Sorry, you are not allowed to edit this term.', refuse: 'rest_cannot_update', message: 'Sorry, you are not allowed to edit this term.'))]
     public function updateMenu(Request $request, string $id): Response
     {
-        $this->writeGate('rest_cannot_update', 'Sorry, you are not allowed to edit this term.');
         $row = $this->menus->find((int) $id);
         if ($row === null) {
             throw new RestError('rest_term_invalid', 'Term does not exist.', 404);
@@ -111,10 +109,9 @@ final readonly class MenusController
     }
 
     /** Deletes a menu and its items. */
-    #[Route(Method::Delete, '/wp/v2/menus/{id:\d+}')]
+    #[Route(Method::Delete, '/wp/v2/menus/{id:\d+}', policy: new Policy(Access::Cap, 'edit_theme_options', signIn: 'rest_cannot_delete', signInMessage: 'Sorry, you are not allowed to delete this term.', refuse: 'rest_cannot_delete', message: 'Sorry, you are not allowed to delete this term.'))]
     public function deleteMenu(Request $request, string $id): Response
     {
-        $this->writeGate('rest_cannot_delete', 'Sorry, you are not allowed to delete this term.');
         $row = $this->menus->find((int) $id);
         if ($row === null) {
             throw new RestError('rest_term_invalid', 'Term does not exist.', 404);
@@ -129,10 +126,9 @@ final readonly class MenusController
     }
 
     /** The items of a menu. */
-    #[Route(Method::Get, '/wp/v2/menu-items')]
+    #[Route(Method::Get, '/wp/v2/menu-items', policy: new Policy(Access::Cap, 'edit_posts', signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menu items.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menu items.'))]
     public function listItems(Request $request): Response
     {
-        $this->gate('menu items');
         $menuId = (int) $request->query('menus', '0');
         $items = $this->menus->items($menuId > 0 ? $menuId : null);
         $perPage = max(1, min(100, (int) $request->query('per_page', '10')));
@@ -150,10 +146,9 @@ final readonly class MenusController
     }
 
     /** One menu item. */
-    #[Route(Method::Get, '/wp/v2/menu-items/{id:\d+}')]
+    #[Route(Method::Get, '/wp/v2/menu-items/{id:\d+}', policy: new Policy(Access::Cap, 'edit_posts', signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menu items.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menu items.'))]
     public function singleItem(Request $request, string $id): Response
     {
-        $this->gate('menu items');
         $item = $this->menus->findItem((int) $id);
         if ($item === null) {
             throw new RestError('rest_post_invalid_id', 'Invalid post ID.', 404);
@@ -164,10 +159,9 @@ final readonly class MenusController
     }
 
     /** Creates a menu item. */
-    #[Route(Method::Post, '/wp/v2/menu-items')]
+    #[Route(Method::Post, '/wp/v2/menu-items', policy: new Policy(Access::Cap, 'edit_theme_options', signIn: 'rest_cannot_create', signInMessage: 'Sorry, you are not allowed to create posts as this user.', refuse: 'rest_cannot_create', message: 'Sorry, you are not allowed to create posts as this user.'))]
     public function createItem(Request $request): Response
     {
-        $this->writeGate('rest_cannot_create', 'Sorry, you are not allowed to create posts as this user.');
         $body = $request->json();
         $type = (string) ($body['type'] ?? 'custom');
         $title = $this->titleFrom($body);
@@ -195,12 +189,11 @@ final readonly class MenusController
     }
 
     /** Updates a menu item. */
-    #[Route(Method::Post, '/wp/v2/menu-items/{id:\d+}')]
-    #[Route(Method::Put, '/wp/v2/menu-items/{id:\d+}')]
-    #[Route(Method::Patch, '/wp/v2/menu-items/{id:\d+}')]
+    #[Route(Method::Post, '/wp/v2/menu-items/{id:\d+}', policy: new Policy(Access::Cap, 'edit_theme_options', signIn: 'rest_cannot_update', signInMessage: 'Sorry, you are not allowed to edit this post.', refuse: 'rest_cannot_update', message: 'Sorry, you are not allowed to edit this post.'))]
+    #[Route(Method::Put, '/wp/v2/menu-items/{id:\d+}', policy: new Policy(Access::Cap, 'edit_theme_options', signIn: 'rest_cannot_update', signInMessage: 'Sorry, you are not allowed to edit this post.', refuse: 'rest_cannot_update', message: 'Sorry, you are not allowed to edit this post.'))]
+    #[Route(Method::Patch, '/wp/v2/menu-items/{id:\d+}', policy: new Policy(Access::Cap, 'edit_theme_options', signIn: 'rest_cannot_update', signInMessage: 'Sorry, you are not allowed to edit this post.', refuse: 'rest_cannot_update', message: 'Sorry, you are not allowed to edit this post.'))]
     public function updateItem(Request $request, string $id): Response
     {
-        $this->writeGate('rest_cannot_update', 'Sorry, you are not allowed to edit this post.');
         $item = $this->menus->findItem((int) $id);
         if ($item === null) {
             throw new RestError('rest_post_invalid_id', 'Invalid post ID.', 404);
@@ -248,10 +241,9 @@ final readonly class MenusController
     }
 
     /** Deletes a menu item. */
-    #[Route(Method::Delete, '/wp/v2/menu-items/{id:\d+}')]
+    #[Route(Method::Delete, '/wp/v2/menu-items/{id:\d+}', policy: new Policy(Access::Cap, 'edit_theme_options', signIn: 'rest_cannot_delete', signInMessage: 'Sorry, you are not allowed to delete this post.', refuse: 'rest_cannot_delete', message: 'Sorry, you are not allowed to delete this post.'))]
     public function deleteItem(Request $request, string $id): Response
     {
-        $this->writeGate('rest_cannot_delete', 'Sorry, you are not allowed to delete this post.');
         $item = $this->menus->findItem((int) $id);
         if ($item === null) {
             throw new RestError('rest_post_invalid_id', 'Invalid post ID.', 404);
@@ -266,29 +258,12 @@ final readonly class MenusController
     }
 
     /** The theme's menu locations. */
-    #[Route(Method::Get, '/wp/v2/menu-locations')]
+    #[Route(Method::Get, '/wp/v2/menu-locations', policy: new Policy(Access::Cap, 'edit_posts', signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menu locations.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menu locations.'))]
     public function locations(Request $request): Response
     {
-        $this->gate('menu locations');
         // Block themes register no classic locations; the reference returns []
         // with no pagination headers.
         return Reply::item([], Fields::fromQuery($request->query));
-    }
-
-    private function gate(string $what): void
-    {
-        $this->caller->require('rest_cannot_view', "Sorry, you are not allowed to view {$what}.", 401);
-        if (!$this->caller->can('edit_posts')) {
-            throw $this->caller->refuse('rest_cannot_view', "Sorry, you are not allowed to view {$what}.");
-        }
-    }
-
-    private function writeGate(string $code, string $message): void
-    {
-        $this->caller->require($code, $message, 401);
-        if (!$this->caller->can('edit_theme_options')) {
-            throw $this->caller->refuse($code, $message);
-        }
     }
 
     /** @param array<string, mixed> $body */

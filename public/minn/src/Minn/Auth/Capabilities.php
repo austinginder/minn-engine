@@ -83,7 +83,8 @@ final readonly class Capabilities
                 return false;
             }
         }
-        return $required !== [];
+        // A meta capability that maps to no primitive (edit_user on oneself) asks nothing further.
+        return true;
     }
 
     /**

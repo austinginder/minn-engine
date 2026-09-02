@@ -26,9 +26,9 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`OverviewController`](#overviewcontroller) | final readonly class | 141 | The Overview of minn-admin/v1: the payload, the drill-down behind one |
 | [`Packages`](#packages) | final readonly class | 489 | Putting themes and extensions on disk. Themes come from wordpress.org |
 | [`PackagesController`](#packagescontroller) | final readonly class | 108 | Adding and removing themes and extensions from the Extensions view. |
-| [`PreferencesController`](#preferencescontroller) | final readonly class | 120 | A person's own settings in minn-admin/v1: their appearance, the views |
+| [`PreferencesController`](#preferencescontroller) | final readonly class | 115 | A person's own settings in minn-admin/v1: their appearance, the views |
 | [`RenderController`](#rendercontroller) | final readonly class | 52 | The editor's island previews: block markup rendered by the same |
-| [`SessionsController`](#sessionscontroller) | final readonly class | 73 | A person's sign-in sessions, read from the same session_tokens store |
+| [`SessionsController`](#sessionscontroller) | final readonly class | 72 | A person's sign-in sessions, read from the same session_tokens store |
 | [`SiteController`](#sitecontroller) | final readonly class | 87 | The small Settings-view routes of minn-admin/v1: the site logo, the |
 | [`StructureController`](#structurecontroller) | final readonly class | 131 | The Structure view of minn-admin/v1: post types, taxonomies, and the |
 | [`SystemController`](#systemcontroller) | final readonly class | 73 | The System view: diagnostics, the scheduled-post list, autoloaded options, and the logs. |
@@ -646,7 +646,7 @@ The slice of the boot payload a language switch repaints from.
 
 ### `mine(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `POST /minn-admin/v1/me/language`
+Route: `POST /minn-admin/v1/me/language (floor edit_posts)`
 
 Sets the caller's own locale.
 
@@ -980,37 +980,37 @@ __construct(Minn\Admin\Appearance $appearance, Minn\Admin\HiddenIntegrations $hi
 
 ### `myAppearance(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `GET /minn-admin/v1/me/appearance`
+Route: `GET /minn-admin/v1/me/appearance (floor edit_posts)`
 
 The caller's appearance.
 
 ### `saveMyAppearance(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `POST /minn-admin/v1/me/appearance`
+Route: `POST /minn-admin/v1/me/appearance (floor edit_posts)`
 
 Saves the caller's appearance.
 
 ### `userAppearance(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `GET /minn-admin/v1/users/{id:\d+}/appearance`
+Route: `GET /minn-admin/v1/users/{id:\d+}/appearance (cap edit_user on {id})`
 
 A user's appearance, for one who may edit them.
 
 ### `saveUserAppearance(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `POST /minn-admin/v1/users/{id:\d+}/appearance`
+Route: `POST /minn-admin/v1/users/{id:\d+}/appearance (cap edit_user on {id})`
 
 Saves a user's appearance.
 
 ### `hidden(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `GET /minn-admin/v1/users/{id:\d+}/hidden`
+Route: `GET /minn-admin/v1/users/{id:\d+}/hidden (cap edit_user on {id})`
 
 The target user's restore list, for the user edit page.
 
 ### `unhideForUser(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `POST /minn-admin/v1/users/{id:\d+}/integrations/unhide`
+Route: `POST /minn-admin/v1/users/{id:\d+}/integrations/unhide (cap edit_user on {id})`
 
 An administrator restores something another person hid; hiding stays that person's own choice.
 
@@ -1078,23 +1078,23 @@ __construct(Minn\Content\Users $users, Minn\Auth\Sessions $sessions, Minn\Rest\C
 
 ### `list(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `GET /minn-admin/v1/users/{id:\d+}/sessions`
+Route: `GET /minn-admin/v1/users/{id:\d+}/sessions (cap edit_user on {id})`
 
 A user's sessions, the caller's own marked.
 
 ### `destroyAll(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `DELETE /minn-admin/v1/users/{id:\d+}/sessions`
+Route: `DELETE /minn-admin/v1/users/{id:\d+}/sessions (cap edit_user on {id})`
 
 Signs the person out everywhere; a caller acting on themselves keeps the session they are using.
 
 ### `destroy(Minn\Http\Request $request, string $id, string $verifier): Minn\Http\Response`
 
-Route: `DELETE /minn-admin/v1/users/{id:\d+}/sessions/{verifier:[a-f0-9]{40,64}}`
+Route: `DELETE /minn-admin/v1/users/{id:\d+}/sessions/{verifier:[a-f0-9]{40,64}} (cap edit_user on {id})`
 
 Signs one session out.
 
-Internals: `target()` (private, line 84)
+Internals: `target()` (private, line 86)
 
 
 ## SiteController
@@ -1524,7 +1524,7 @@ __construct(Minn\Db $db, Minn\Admin\Notifications $notifications, Minn\Admin\Cor
 
 ### `notifications(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `GET /minn-admin/v1/notifications`
+Route: `GET /minn-admin/v1/notifications (floor edit_posts)`
 
 The bell feed.
 

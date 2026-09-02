@@ -32,10 +32,10 @@ final readonly class V1Controller
     }
 
     /** The bell feed. */
-    #[Route(Method::Get, '/minn-admin/v1/notifications')]
+    #[Route(Method::Get, '/minn-admin/v1/notifications', policy: new Policy(Access::Floor))]
     public function notifications(Request $request): Response
     {
-        return Reply::answer($request, $this->notifications->items($this->caller->requireFloor()));
+        return Reply::answer($request, $this->notifications->items($this->caller->id()));
     }
 
     /** Body {id} marks one read; {} marks all read. */

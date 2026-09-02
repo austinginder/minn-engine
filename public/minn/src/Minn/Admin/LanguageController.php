@@ -59,10 +59,10 @@ final readonly class LanguageController
     }
 
     /** Sets the caller's own locale. */
-    #[Route(Method::Post, '/minn-admin/v1/me/language')]
+    #[Route(Method::Post, '/minn-admin/v1/me/language', policy: new Policy(Access::Floor))]
     public function mine(Request $request): Response
     {
-        return $this->setUserLocale($request, $this->caller->requireFloor());
+        return $this->setUserLocale($request, $this->caller->id());
     }
 
     /** Sets another user's locale. */

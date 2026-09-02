@@ -68,5 +68,10 @@ final readonly class PolicyGate
         if ($policy->cap === null || !$this->caller->can($policy->cap, $id)) {
             throw new RestError($policy->refuse, $policy->message, 403);
         }
+        foreach ($policy->caps as $capability) {
+            if (!$this->caller->can($capability)) {
+                throw new RestError($policy->refuse, $policy->message, 403);
+            }
+        }
     }
 }
