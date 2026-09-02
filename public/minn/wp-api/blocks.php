@@ -82,6 +82,65 @@ function parse_blocks($content)
     return array_map('_minn_block_to_array', Parser::parse($content));
 }
 
+/**
+ * A parsed block tree with every core/pattern block replaced by the blocks
+ * of the pattern it names, all the way down. A block whose slug names no
+ * pattern, carries no slug, or would reopen a pattern already being
+ * resolved is left exactly as it was written.
+ *
+ * @param array $blocks parsed blocks, as parse_blocks() returns them
+ */
+function resolve_pattern_blocks($blocks)
+{
+    return _minn_resolve_pattern_blocks((array) $blocks, []);
+}
+
+/** @internal the recursion itself, carrying the pattern slugs already open */
+function _minn_resolve_pattern_blocks(array $blocks, array $open): array
+{
+    $out = [];
+    foreach ((array) $blocks as $block) {
+        if (!is_array($block)) {
+            continue;
+        }
+        if (($block['blockName'] ?? '') === 'core/pattern') {
+            $slug = (string) ($block['attrs']['slug'] ?? '');
+            $markup = isset($open[$slug]) ? null : _minn_pattern_markup($slug);
+            if ($markup === null) {
+                $out[] = $block;
+                continue;
+            }
+            $open[$slug] = true;
+            foreach (_minn_resolve_pattern_blocks(parse_blocks($markup), $open) as $resolved) {
+                $out[] = $resolved;
+            }
+            unset($open[$slug]);
+            continue;
+        }
+        if (!empty($block['innerBlocks'])) {
+            $block['innerBlocks'] = _minn_resolve_pattern_blocks($block['innerBlocks'], $open);
+        }
+        $out[] = $block;
+    }
+    return $out;
+}
+
+/** @internal a pattern's markup: the active theme's file first, then anything registered, else null */
+function _minn_pattern_markup(string $slug): ?string
+{
+    if ($slug === '' || !Runtime::booted()) {
+        return null;
+    }
+    $runtime = Runtime::current();
+    $theme = Minn\Theme\Theme::forStyles(
+        new Minn\Content\Site($runtime->db),
+        Minn\Front\Permalinks::fromDb($runtime->db),
+        ABSPATH . 'wp-content/themes',
+    );
+    $markup = $theme?->pattern($slug) ?? Minn\Runtime\BlockHooks::registeredPattern($slug);
+    return $markup === '' ? null : $markup;
+}
+
 function serialize_block_attributes($block_attributes)
 {
     $encoded = wp_json_encode($block_attributes, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);

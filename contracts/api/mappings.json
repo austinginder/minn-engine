@@ -2,12 +2,12 @@
     "generated": "2026-09-02",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 436,
-        "composes": 706,
+        "minn": 437,
+        "composes": 707,
         "leaf": 353,
-        "noop": 1243,
-        "functions": 2732,
-        "minnMethods": 410,
+        "noop": 1244,
+        "functions": 2735,
+        "minnMethods": 411,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -8850,6 +8850,20 @@
             ],
             "composes": []
         },
+        "_minn_pattern_markup": {
+            "file": "blocks.php",
+            "lines": 11,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Content\\Site::__construct",
+                "Minn\\Front\\Permalinks::fromDb",
+                "Minn\\Runtime\\BlockHooks::registeredPattern",
+                "Minn\\Runtime\\Runtime::booted",
+                "Minn\\Runtime\\Runtime::current",
+                "Minn\\Theme\\Theme::forStyles"
+            ],
+            "composes": []
+        },
         "_minn_post_columns": {
             "file": "post.php",
             "lines": 1,
@@ -9007,6 +9021,16 @@
                 "Minn\\Runtime\\Runtime::request"
             ],
             "composes": []
+        },
+        "_minn_resolve_pattern_blocks": {
+            "file": "blocks.php",
+            "lines": 25,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_pattern_markup",
+                "parse_blocks"
+            ]
         },
         "_minn_rewrite": {
             "file": "misc.php",
@@ -17300,6 +17324,15 @@
             "minn": [],
             "composes": [
                 "mbstring_binary_safe_encoding"
+            ]
+        },
+        "resolve_pattern_blocks": {
+            "file": "blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_resolve_pattern_blocks"
             ]
         },
         "rest_add_application_passwords_to_index": {

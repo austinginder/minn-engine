@@ -208,5 +208,16 @@ nav_same( 'a status an editor may not ask for is refused identically', $editor, 
 nav_cleanup();
 nav_same( 'the fixture menu is the only one left', $admin, '/wp/v2/navigation', array( '_fields' => 'id,slug' ) );
 
+// 10. Where menus and parts are used. A block theme keeps its header in a
+// pattern, so the part's own markup is one wp:pattern block and everything
+// inside it is a level down: both answers are empty unless the engine
+// resolves pattern blocks the way the reference's resolve_pattern_blocks does.
+nav_same( 'the app sees where every menu is used', $admin, '/minn-admin/v1/navigation/usage' );
+nav_same( 'and which templates pull in which parts', $admin, '/minn-admin/v1/templates/usage' );
+[ , $usage ] = nav_fetch( $ENGINE, $admin, '/minn-admin/v1/navigation/usage' );
+check( ! empty( $usage['inline'] ) && in_array( 'header', array_column( $usage['inline'], 'slug' ), true ), 'the header part is found through its pattern', json_encode( $usage['inline'] ?? null ) );
+[ , $parts ] = nav_fetch( $ENGINE, $admin, '/minn-admin/v1/templates/usage' );
+check( ! empty( $parts['parts']['header'] ), 'and the templates that pull the header part are counted', json_encode( $parts['parts'] ?? null ) );
+
 echo "\n$pass passed, $fail failed\n";
 exit( $fail > 0 ? 1 : 0 );
