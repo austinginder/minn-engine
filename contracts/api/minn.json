@@ -9960,7 +9960,7 @@
             "namespace": "Minn\\Auth",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Auth/Authenticator.php",
-            "lines": 121,
+            "lines": 124,
             "doc": "Resolves the current user two ways. A page load carries the cookie alone;\na REST call must also carry a nonce bound to the same session.",
             "implements": [],
             "extends": null,
@@ -10013,7 +10013,14 @@
                 "end": 23
             },
             "cases": [],
-            "constants": [],
+            "constants": [
+                {
+                    "name": "NOBODY",
+                    "value": "'$wp$2y$10$q/tQZiHVAKXuCoJIeZTH0.rb6Otms4vDKv0NrPeGKdvracPiLPy4W'",
+                    "doc": "A real hash of a password nobody knows, checked against when the user does not exist so the answer takes as long either way.",
+                    "visibility": "private"
+                }
+            ],
             "properties": [
                 {
                     "name": "cookie",
@@ -10212,8 +10219,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 129,
-                    "end": 136
+                    "line": 132,
+                    "end": 139
                 }
             ]
         },
@@ -43482,7 +43489,7 @@
             "namespace": "Minn\\Http",
             "kind": "final class",
             "file": "public/minn/src/Minn/Http/Failure.php",
-            "lines": 136,
+            "lines": 146,
             "doc": "What the public sees when the engine cannot answer: a plain page with no\ndetail, while the detail goes to the log. Installed once per request,\nit turns display_errors off (unless the site's own WP_DEBUG_DISPLAY asks\nfor them) and catches the fatal errors PHP would otherwise print.",
             "implements": [],
             "extends": null,
@@ -43590,7 +43597,7 @@
                     "shapes": [],
                     "params": [],
                     "line": 59,
-                    "end": 78
+                    "end": 79
                 },
                 {
                     "routes": [],
@@ -43609,8 +43616,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 81,
-                    "end": 86
+                    "line": 90,
+                    "end": 96
                 },
                 {
                     "routes": [],
@@ -43621,8 +43628,8 @@
                     "doc": "The 500 page.",
                     "shapes": [],
                     "params": [],
-                    "line": 110,
-                    "end": 114
+                    "line": 120,
+                    "end": 124
                 },
                 {
                     "routes": [],
@@ -43633,8 +43640,8 @@
                     "doc": "The 503 page the reference shows when the database cannot be reached.",
                     "shapes": [],
                     "params": [],
-                    "line": 117,
-                    "end": 122
+                    "line": 127,
+                    "end": 132
                 },
                 {
                     "routes": [],
@@ -43674,8 +43681,20 @@
                             "doc": ""
                         }
                     ],
-                    "line": 129,
-                    "end": 135
+                    "line": 139,
+                    "end": 145
+                },
+                {
+                    "routes": [],
+                    "name": "discardOutput",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "discardOutput(): void",
+                    "doc": "Whatever a half-finished render left in the output buffers goes; the error page must stand alone.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 82,
+                    "end": 87
                 },
                 {
                     "routes": [],
@@ -43696,8 +43715,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 95,
-                    "end": 107
+                    "line": 105,
+                    "end": 117
                 },
                 {
                     "routes": [],
@@ -43737,8 +43756,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 137,
-                    "end": 150
+                    "line": 147,
+                    "end": 160
                 }
             ]
         },
@@ -46865,7 +46884,7 @@
             "namespace": "Minn\\Mail",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Mail/Mime.php",
-            "lines": 83,
+            "lines": 90,
             "doc": "A full MIME message from recorded mailer state, for the PHPMailer facade:\naddress headers, custom headers, the single-part body, and a\nmultipart/mixed wrap with base64 attachments when files ride along.",
             "implements": [],
             "extends": null,
@@ -46987,7 +47006,27 @@
                         }
                     ],
                     "line": 24,
-                    "end": 58
+                    "end": 59
+                },
+                {
+                    "routes": [],
+                    "name": "line",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "line(string $text): string",
+                    "doc": "A header name or value confined to one line: line breaks become spaces, NUL goes.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 62,
+                    "end": 65
                 },
                 {
                     "routes": [],
@@ -47030,8 +47069,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 64,
-                    "end": 87
+                    "line": 71,
+                    "end": 94
                 },
                 {
                     "routes": [],
@@ -47052,8 +47091,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 90,
-                    "end": 93
+                    "line": 97,
+                    "end": 100
                 }
             ]
         },
@@ -79529,7 +79568,7 @@
             "namespace": "Minn\\Support",
             "kind": "final class",
             "file": "public/minn/src/Minn/Support/Serialized.php",
-            "lines": 195,
+            "lines": 197,
             "doc": "Tolerant readers for the serialized-PHP blobs WordPress stores. Nothing\nhere executes the blob; each reader scans for the one shape it needs.",
             "implements": [],
             "extends": null,
@@ -79680,7 +79719,7 @@
                         }
                     ],
                     "line": 163,
-                    "end": 195
+                    "end": 197
                 },
                 {
                     "routes": [],
@@ -79699,8 +79738,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 198,
-                    "end": 204
+                    "line": 200,
+                    "end": 206
                 },
                 {
                     "routes": [],
@@ -80559,7 +80598,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/ClassicRenderer.php",
-            "lines": 130,
+            "lines": 139,
             "doc": "A whole page from the active classic theme: the reference's PHP template\nloader. The main query stands, template_redirect fires, the hierarchy\npicks a PHP file, template_include filters it, and load_template() runs\nit as the response body. The theme prints its own document; the engine\ncontributes the reference's wp_head defaults (title tag, robots, feed\nlinks, REST and oEmbed discovery, canonical, site icon) as hooks the\ntheme's wp_head() call fires.",
             "implements": [],
             "extends": null,
@@ -80803,7 +80842,7 @@
                         }
                     ],
                     "line": 51,
-                    "end": 75
+                    "end": 84
                 },
                 {
                     "routes": [],
@@ -80814,8 +80853,8 @@
                     "doc": "The reference's loader order: the first true conditional whose template exists wins, index.php last.",
                     "shapes": [],
                     "params": [],
-                    "line": 78,
-                    "end": 108
+                    "line": 87,
+                    "end": 117
                 },
                 {
                     "routes": [],
@@ -80843,8 +80882,8 @@
                             "doc": "@return list<string>"
                         }
                     ],
-                    "line": 111,
-                    "end": 126
+                    "line": 120,
+                    "end": 135
                 },
                 {
                     "routes": [],
@@ -80863,8 +80902,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 128,
-                    "end": 135
+                    "line": 137,
+                    "end": 144
                 },
                 {
                     "routes": [],
@@ -80875,8 +80914,8 @@
                     "doc": "The piece only the renderer holds: the engine stylesheets. The head defaults registered at setup_theme.",
                     "shapes": [],
                     "params": [],
-                    "line": 138,
-                    "end": 141
+                    "line": 147,
+                    "end": 150
                 },
                 {
                     "routes": [],
@@ -80887,8 +80926,8 @@
                     "doc": "The engine's block stylesheet, and the theme.json presets when the theme ships one, where the reference prints its block-library and global styles.",
                     "shapes": [],
                     "params": [],
-                    "line": 144,
-                    "end": 157
+                    "line": 153,
+                    "end": 166
                 }
             ]
         },

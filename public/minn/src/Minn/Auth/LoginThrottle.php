@@ -67,11 +67,11 @@ final readonly class LoginThrottle
     {
         $table = $this->db->table('options');
         $value = "{$start}:{$count}";
-        if ($this->db->option(self::key($address)) === null) {
-            $this->db->execute("INSERT INTO {$table} (option_name, option_value, autoload) VALUES (?, ?, 'off')", [self::key($address), $value]);
-            return;
-        }
-        $this->db->execute("UPDATE {$table} SET option_value = ? WHERE option_name = ?", [$value, self::key($address)]);
+        // One statement: two first failures arriving together must not race a read-then-insert into a duplicate-key error.
+        $this->db->execute(
+            "INSERT INTO {$table} (option_name, option_value, autoload) VALUES (?, ?, 'off') ON DUPLICATE KEY UPDATE option_value = VALUES(option_value)",
+            [self::key($address), $value],
+        );
     }
 
     /** Rows whose window has passed are dead weight; drop them now and then. */

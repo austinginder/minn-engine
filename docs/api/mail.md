@@ -7,7 +7,7 @@ sending mail and the notices the engine sends
 | [`MailSettings`](#mailsettings) | final readonly class | 60 | How mail leaves the site, from the minn_mail option (JSON or a serialized |
 | [`Mailer`](#mailer) | final readonly class | 87 | Sends a Message through the configured transport. Failures are logged |
 | [`Message`](#message) | final readonly class | 18 | One outgoing plain-text email. |
-| [`Mime`](#mime) | final readonly class | 83 | A full MIME message from recorded mailer state, for the PHPMailer facade: |
+| [`Mime`](#mime) | final readonly class | 90 | A full MIME message from recorded mailer state, for the PHPMailer facade: |
 | [`Notices`](#notices) | final readonly class | 65 | The messages the engine itself sends, worded as the reference words them |
 | [`Smtp`](#smtp) | final readonly class | 86 | A small SMTP client: SSL or STARTTLS, AUTH LOGIN or PLAIN, one message per connection. |
 
@@ -131,7 +131,7 @@ A whole MIME message, headers and body, from its parts.
 - `@param list<array{0: string, 1: string}> $customHeaders [name, value]`
 - `@param list<array{0: string, 1: string}> $attachments [path, name]`
 
-Internals: `payload()` (private, line 64), `addressList()` (private, line 90)
+Internals: `line()` (private, line 62), `payload()` (private, line 71), `addressList()` (private, line 97)
 
 
 ## Notices

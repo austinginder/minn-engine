@@ -51,10 +51,17 @@ final readonly class Mime
             . 'Message-ID: <' . bin2hex(random_bytes(12)) . '@' . (gethostname() ?: 'localhost') . ">\r\n"
             . "MIME-Version: 1.0\r\n";
         foreach ($customHeaders as [$name, $value]) {
-            $headers .= trim($name) . ': ' . trim($value) . "\r\n";
+            // A line break inside a caller's header would start a header of its own.
+            $headers .= self::line($name) . ': ' . self::line($value) . "\r\n";
         }
         [$typeHeaders, $payload] = self::payload($body, $contentType, $charset, $attachments);
         return $headers . $typeHeaders . "\r\n" . $payload;
+    }
+
+    /** A header name or value confined to one line: line breaks become spaces, NUL goes. */
+    private static function line(string $text): string
+    {
+        return trim((string) preg_replace('/[\r\n]+/', ' ', str_replace("\0", '', $text)));
     }
 
     /**

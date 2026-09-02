@@ -8,7 +8,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`BodyClasses`](#bodyclasses) | final class | 65 | The body-class list a classic theme's body_class() starts from, in the |
 | [`BodyFacts`](#bodyfacts) | final readonly class | 11 | The facts about a page that decide the body classes a classic theme's |
 | [`ClassicContent`](#classiccontent) | final class | 37 | What a classic theme's the_content() prints: the engine's block pipeline |
-| [`ClassicRenderer`](#classicrenderer) | final readonly class | 130 | A whole page from the active classic theme: the reference's PHP template |
+| [`ClassicRenderer`](#classicrenderer) | final readonly class | 139 | A whole page from the active classic theme: the reference's PHP template |
 | [`ClassicTheme`](#classictheme) | final readonly class | 31 | The active classic (PHP-template) theme on disk. A theme is classic when |
 | [`Folder`](#folder) | final readonly class | 77 | A theme folder read from disk: its style.css headers, which folder its templates come from, its screenshot, whether it is a block theme. |
 | [`GlobalStyles`](#globalstyles) | final readonly class | 433 | theme.json to CSS. Presets become custom properties on :root and their |
@@ -139,7 +139,7 @@ A classic renderer over the database door.
 
 The page for a resolution through the theme's PHP templates.
 
-Internals: `template()` (private, line 78), `bodyClasses()` (private, line 111), `standTitle()` (private, line 128), `registerHead()` (private, line 138), `registerStyles()` (private, line 144)
+Internals: `template()` (private, line 87), `bodyClasses()` (private, line 120), `standTitle()` (private, line 137), `registerHead()` (private, line 147), `registerStyles()` (private, line 153)
 
 
 ## ClassicTheme

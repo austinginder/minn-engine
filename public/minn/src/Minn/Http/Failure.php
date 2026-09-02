@@ -72,15 +72,25 @@ final class Failure
             }
             self::record($error);
             if (!$display && !headers_sent()) {
+                self::discardOutput();
                 self::internal()->send();
             }
         });
+    }
+
+    /** Whatever a half-finished render left in the output buffers goes; the error page must stand alone. */
+    private static function discardOutput(): void
+    {
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
     }
 
     /** Logs the cause; the response says only that something went wrong. */
     public static function report(Throwable $error): Response
     {
         error_log(sprintf('Minn Engine: %s: %s in %s:%d', $error::class, $error->getMessage(), $error->getFile(), $error->getLine()));
+        self::discardOutput();
         self::record(['type' => E_ERROR, 'file' => $error->getFile(), 'line' => $error->getLine(), 'message' => $error->getMessage()]);
         return self::$display ? self::detailed($error::class, $error->getMessage(), $error->getFile(), $error->getLine()) : self::internal();
     }

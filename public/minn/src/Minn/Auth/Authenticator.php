@@ -125,11 +125,14 @@ final readonly class Authenticator
         return (bool) Runtime::hooks()->filter('wp_is_application_passwords_available_for_user', [true, (object) $user]);
     }
 
+    /** A real hash of a password nobody knows, checked against when the user does not exist so the answer takes as long either way. */
+    private const NOBODY = '$wp$2y$10$q/tQZiHVAKXuCoJIeZTH0.rb6Otms4vDKv0NrPeGKdvracPiLPy4W';
+
     /** Username and password to a user row; no session is created here. */
     public function login(string $username, string $password): ?UserRecord
     {
         $user = $this->users->findByLogin($username) ?? (str_contains($username, '@') ? $this->users->findByEmail($username) : null);
-        if ($user === null || !Password::verify($password, $user->passwordHash)) {
+        if (!Password::verify($password, $user?->passwordHash ?? self::NOBODY) || $user === null) {
             return null;
         }
         return $user;

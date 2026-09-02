@@ -8,7 +8,7 @@ passwords, sessions, cookies, nonces, roles and capabilities
 | [`AuthCookies`](#authcookies) | final readonly class | 55 | The three cookies a sign-in sets: the auth cookie on the admin and |
 | [`AuthFailure`](#authfailure) | final readonly class | 18 | Why a request is not authenticated, as the reference's error code: a |
 | [`Authenticated`](#authenticated) | final readonly class | 16 | A validated session: the user row and the raw session token behind it. |
-| [`Authenticator`](#authenticator) | final readonly class | 121 | Resolves the current user two ways. A page load carries the cookie alone; |
+| [`Authenticator`](#authenticator) | final readonly class | 124 | Resolves the current user two ways. A page load carries the cookie alone; |
 | [`Capabilities`](#capabilities) | final readonly class | 161 | The capability engine: a user's roles from {prefix}capabilities usermeta, |
 | [`Cookie`](#cookie) | final readonly class | 75 | The logged_in auth cookie: username\|expiration\|token\|hmac, with |
 | [`LoginThrottle`](#loginthrottle) | final readonly class | 78 | Failed sign-ins per address, so a password guesser meets a wall: twenty |
@@ -178,6 +178,8 @@ The signed-in user's id.
 
 Resolves the current user two ways. A page load carries the cookie alone;
 a REST call must also carry a nonce bound to the same session.
+
+- const `NOBODY` = `'$wp$2y$10$q/tQZiHVAKXuCoJIeZTH0.rb6Otms4vDKv0NrPeGKdvracPiLPy4W'` — A real hash of a password nobody knows, checked against when the user does not exist so the answer takes as long either way.
 
 Used by: `Minn\Admin\AppController`, `Minn\Engine`, `Minn\Front\CommentPostController`, `Minn\Login\LoginController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\Caller`, `Minn\Rest\IndexController`, `Minn\Rest\Services`
 

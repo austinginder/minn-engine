@@ -14,7 +14,15 @@ What the engine does on its own, and what the server in front of it must do.
   window ends. Password and one-time-link failures share the counter, and a successful
   sign-in does not reset it (one owned account must not launder guesses at another);
   the window lapses on its own. Rows live in `wp_options` as `minn_login_throttle_*`,
-  autoload off.
+  autoload off, written as one upsert so two first failures cannot race. A sign-in
+  for a username that does not exist still verifies the password against a real
+  hash of a password nobody knows, so the answer takes as long either way.
+- **Error pages stand alone.** A failure part-way through a render (a classic
+  template that throws, a fatal) discards every open output buffer before the error
+  page is sent, so no half of a page precedes it.
+- **Mail headers are one line each.** A caller's custom header name or value has its
+  line breaks folded to spaces and NUL removed before it is written, so a plugin
+  cannot inject a header through one.
 - **Stored markup.** Callers without `unfiltered_html` have their post, media, comment,
   term, and profile markup filtered by `Minn\Support\Kses`, an allowlist written for
   the engine and matched against the reference's results. A URL attribute is judged

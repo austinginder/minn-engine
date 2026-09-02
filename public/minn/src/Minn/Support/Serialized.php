@@ -172,7 +172,9 @@ final class Serialized
             return 'i:' . $value . ';';
         }
         if (is_float($value)) {
-            return 'd:' . $value . ';';
+            // PHP's own serializer writes the shortest round-tripping form (serialize_precision -1);
+            // a string cast would round to "precision" digits and change a stored value on rewrite.
+            return serialize($value);
         }
         if (is_string($value)) {
             return 's:' . strlen($value) . ':"' . $value . '";';
