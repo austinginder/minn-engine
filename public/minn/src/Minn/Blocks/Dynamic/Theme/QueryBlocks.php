@@ -266,7 +266,7 @@ final class QueryBlocks
         if (!in_array($resolution->kind, [Kind::Category, Kind::Tag, Kind::Taxonomy], true)) {
             return '';
         }
-        $term = (new \Minn\Content\Terms(\Minn\Db::shared()))->row((int) $resolution->record['term_id'], (string) $resolution->record['taxonomy']);
+        $term = (new \Minn\Content\Terms(\Minn\Db::current()))->row((int) $resolution->record['term_id'], (string) $resolution->record['taxonomy']);
         $description = trim((string) ($term['description'] ?? ''));
         if ($description === '') {
             return '';

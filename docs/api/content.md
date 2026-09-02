@@ -5,7 +5,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`Autop`](#autop) | final class | 34 | Classic-content paragraphing: blank lines become paragraphs, single |
-| [`Blocks`](#blocks) | final class | 40 | The content pipeline's front door: block markup goes through the block |
+| [`Blocks`](#blocks) | final class | 46 | The content pipeline's front door: block markup goes through the block |
 | [`CommentClasses`](#commentclasses) | final class | 26 | The class tokens a rendered comment carries: its type, its author, odd/even and thread alternation, depth, then the caller's extras. |
 | [`CommentFilter`](#commentfilter) | final readonly class | 46 | What a comment listing is narrowed to. Every field is optional; the id |
 | [`CommentModeration`](#commentmoderation) | final readonly class | 43 | Whether a comment may be stored and in what state: the duplicate and |
@@ -69,7 +69,10 @@ Post content as HTML: blocks through the renderer, classic content through the p
 
 ### static `renderer(): Minn\Blocks\Renderer`
 
-The shared block renderer, built once from the shared database door.
+The block renderer of the request being answered, which its runtime
+holds and builds over that request's own database door. With no
+runtime (the command line, the unit suite) one off-request renderer
+stands in.
 
 ### static `paragraphs(string $raw): string`
 

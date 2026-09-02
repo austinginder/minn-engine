@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Blocks;
 
+use Minn\Runtime\Runtime;
+
 /**
  * Per-request rendering state, owned by the renderer. The reference numbers
  * galleries, style variations, and search inputs from ONE counter that runs
@@ -30,7 +32,10 @@ final class RenderState
     private int $depth = 0;
     private int $navigation = 0;
     public const MAX_DEPTH = 64;
-    private static ?self $current = null;
+    /** Whether the theme's layout puts root padding in custom properties; render configuration, so reset() leaves it. */
+    private bool $rootPaddingAware = true;
+    /** The state for code that renders with no request behind it: the command line and the unit suite. */
+    private static ?self $offRequest = null;
     /** the element class claimed for the dynamic block being rendered, until its wrapper takes it */
     private ?string $pendingElements = null;
     /** @var array<string, int> navigation labels used so far, for the reference's de-duplicated aria-labels */
@@ -38,16 +43,37 @@ final class RenderState
     /** @var list<string> element-style rules, in render order */
     private array $elementRules = [];
 
-    /** The request's state: the renderer's own once one exists, else a fresh one that the first renderer adopts. */
+    /**
+     * The state of the request being rendered, which its runtime holds, so
+     * a request cannot count on from the one before it. Rendering with no
+     * runtime (the command line, the unit suite) shares one off-request
+     * state instead, since the counters have to survive between calls.
+     */
     public static function current(): self
     {
-        return self::$current ??= new self();
+        return Runtime::booted() ? Runtime::current()->renderState() : self::$offRequest ??= new self();
     }
 
-    /** Makes this the request's state, the one current() answers with. */
+    /** Makes this the state current() answers with, for the renderer that brought its own. */
     public function adopt(): void
     {
-        self::$current = $this;
+        if (Runtime::booted()) {
+            Runtime::current()->useRenderState($this);
+            return;
+        }
+        self::$offRequest = $this;
+    }
+
+    /** Whether the theme puts root padding in custom properties, which decides the constrained layout's classes. */
+    public function rootPaddingAware(): bool
+    {
+        return $this->rootPaddingAware;
+    }
+
+    /** Records what the active theme's layout settings say about root padding. */
+    public function useRootPadding(bool $aware): void
+    {
+        $this->rootPaddingAware = $aware;
     }
 
     /** The next per-request counter value. */

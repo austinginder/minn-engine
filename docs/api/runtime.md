@@ -40,7 +40,7 @@ the WordPress runtime plugins load against
 | [`Recovery`](#recovery) | final readonly class | 183 | Recovery from a fatal in someone else's code. When a plugin or theme |
 | [`Refusal`](#refusal) | final readonly class | 6 | A refused operation, the way plugin code expects to read it: a code, a message, optional data. The facade turns it into WP_Error. |
 | [`Registry`](#registry) | final class | 382 | Post types, taxonomies, and statuses as plugin code registers and reads |
-| [`Runtime`](#runtime) | final class | 247 | The WordPress runtime the engine offers plugin code: the procedural |
+| [`Runtime`](#runtime) | final class | 269 | The WordPress runtime the engine offers plugin code: the procedural |
 | [`ScriptModules`](#scriptmodules) | final class | 308 | The script modules registry: registrations with typed dependencies, the |
 | [`ScriptPack`](#scriptpack) | final class | 146 | The site-supplied script pack: the `wp-*` JavaScript packages the engine |
 | [`Shortcodes`](#shortcodes) | final class | 132 | The shortcode registry plugin code fills with add_shortcode, and the |
@@ -1707,7 +1707,7 @@ The WordPress runtime the engine offers plugin code: the procedural
 facade under minn/wp-api/ plus the services it delegates to. One per
 request; the facade reaches it through these statics.
 
-Used by: `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Content\Reader`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\PluginRules`, `Minn\Front\Resolver`, `Minn\Rest\Api`, `Minn\Rest\Services`, `Minn\Runtime\Abilities`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\Constants`, `Minn\Runtime\Interactivity`, `Minn\Runtime\NavMenu`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostQuery`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\TermWriter`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
+Used by: `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\RenderState`, `Minn\Content\Blocks`, `Minn\Content\Reader`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\PluginRules`, `Minn\Front\Resolver`, `Minn\Rest\Api`, `Minn\Rest\Services`, `Minn\Runtime\Abilities`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\Constants`, `Minn\Runtime\Interactivity`, `Minn\Runtime\NavMenu`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostQuery`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\TermWriter`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
 
 ```php
 __construct(Minn\Context $context, bool $isAdmin = false)
@@ -1734,6 +1734,18 @@ Holds the extension seams this request registered, so nothing static has to.
 ### `seams(): ?Minn\Extension\SeamRunner`
 
 The extension seams, or null before the front has registered any (REST and the CLI never do).
+
+### `renderState(): Minn\Blocks\RenderState`
+
+The render state for this request, made on first use: one set of counters for everything rendered.
+
+### `useRenderState(Minn\Blocks\RenderState $state): void`
+
+Makes a render state this request's, so a renderer that brought its own is the one the leaves read.
+
+### `blockRenderer(): Minn\Blocks\Renderer`
+
+The block renderer for this request, made on first use over this request's own database door.
 
 ### static `boot(self $runtime): self`
 

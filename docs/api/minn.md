@@ -6,7 +6,7 @@ the front door, the autoloader, the one database door, the REST error
 |---|---|---|---|
 | [`Autoloader`](#autoloader) | final class | 16 | PSR-4 for the Minn namespace: Minn\Http\Request lives at src/Minn/Http/Request.php. |
 | [`Context`](#context) | final readonly class | 41 | One request, as a value: the database door, who is asking, what they |
-| [`Db`](#db) | final class | 188 | The one door to the database. Every query is a prepared statement; the |
+| [`Db`](#db) | final class | 203 | The one door to the database. Every query is a prepared statement; the |
 | [`Engine`](#engine) | final readonly class | 194 | The engine's front door. An unmodified wp-config.php ends by requiring |
 | [`RestError`](#resterror) | final class | 49 | A WordPress-shaped error, thrown from anywhere and rendered once by the |
 
@@ -83,9 +83,20 @@ __construct(mysqli $connection, string $prefix)
 ```
 
 
+### static `current(): self`
+
+The connection the request being answered speaks through: its
+runtime's own, so nothing deep in a render can reach a connection
+belonging to another request. With no runtime (the command line, the
+unit suite) it is the process's own connection.
+
+This is the one place in the core that asks the runtime anything; the
+alternative is a database door threaded through every renderer, and
+the seam is here until that threading is done.
+
 ### static `shared(): self`
 
-The one connection for this request, opened from wp-config's constants on first use.
+The one connection for this process, opened from wp-config's constants on first use.
 
 ### `connection(): mysqli`
 
@@ -141,7 +152,7 @@ The id the last INSERT produced.
 
 One option's raw value, or null when it is unset.
 
-Internals: `placeholders()` (private, line 137), `run()` (private, line 186)
+Internals: `placeholders()` (private, line 152), `run()` (private, line 201)
 
 
 ## Engine

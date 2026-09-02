@@ -21,13 +21,8 @@ final class Layout
     private const ALWAYS_CONTAINER = ['columns'];
 
     /** Whether the active theme opts into root-padding-aware alignments (theme.json settings.useRootPaddingAwareAlignments). */
-    private static bool $rootPaddingAware = true;
 
     /** Whether the theme uses root padding-aware alignments. */
-    public static function rootPaddingAware(bool $aware): void
-    {
-        self::$rootPaddingAware = $aware;
-    }
 
     /**
      * The layout classes a block's wrapper carries.
@@ -57,7 +52,7 @@ final class Layout
         // Constrained containers carry has-global-padding only under a theme
         // that opts into root-padding-aware alignments; observed on the reference
         // with and without the setting.
-        if ($type === 'constrained' && self::$rootPaddingAware) {
+        if ($type === 'constrained' && RenderState::current()->rootPaddingAware()) {
             $classes[] = 'has-global-padding';
         }
         $classes[] = 'is-layout-' . $type;

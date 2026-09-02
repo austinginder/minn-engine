@@ -30,7 +30,7 @@ final readonly class Mailer
      */
     public static function mail(string|array $to, string $subject, string $body): bool
     {
-        return self::forSite(new Site(Db::shared()))->send(Message::to($to, $subject, $body));
+        return self::forSite(new Site(Db::current()))->send(Message::to($to, $subject, $body));
     }
 
     /** The engine's own notices, worded once, from this site's name and address. */

@@ -24,7 +24,22 @@ final class Db
     ) {
     }
 
-    /** The one connection for this request, opened from wp-config's constants on first use. */
+    /**
+     * The connection the request being answered speaks through: its
+     * runtime's own, so nothing deep in a render can reach a connection
+     * belonging to another request. With no runtime (the command line, the
+     * unit suite) it is the process's own connection.
+     *
+     * This is the one place in the core that asks the runtime anything; the
+     * alternative is a database door threaded through every renderer, and
+     * the seam is here until that threading is done.
+     */
+    public static function current(): self
+    {
+        return \Minn\Runtime\Runtime::booted() ? \Minn\Runtime\Runtime::current()->db : self::shared();
+    }
+
+    /** The one connection for this process, opened from wp-config's constants on first use. */
     public static function shared(): self
     {
         if (self::$shared === null) {

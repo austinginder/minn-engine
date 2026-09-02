@@ -79,12 +79,32 @@ a runtime (the command line, unit tests) nobody is reading, which is the
 default those paths already had. `Engine::frontPipeline` takes the context
 in place of the database, the site, and the capability engine.
 
-Still ambient, in the order they are worth retiring: `Db::shared()` at the
-five deep render sites (`Content\Blocks`, `Front\Permalinks`, `Mail\Mailer`,
-and the two theme block classes), which is what threading a context through
-the render pipeline would fix, and the render statics themselves
-(`RenderState::current`, `Layout::$rootPaddingAware`,
-`Content\Blocks::$renderer`).
+The render pipeline holds nothing of its own either (2026-09-02). The
+runtime carries the request's `RenderState` (`renderState()` /
+`useRenderState()`, the counters that number galleries, style variations
+and search inputs across a whole response) and its block `Renderer`
+(`blockRenderer()`, built over that request's own database door), so a
+request cannot count on from the one before it. `Layout`'s root-padding
+flag is render configuration on the state rather than a static of its own,
+and `reset()` leaves it alone because it describes the theme, not the page.
+`Db::current()` is the request's connection when a runtime is booted and
+the process's otherwise, and the deep render sites that reached for
+`Db::shared()` (the two theme block classes, `Front\Permalinks`,
+`Mail\Mailer`) ask it instead; `Db::shared()` is now only what opens a
+connection, at the front door and on the command line.
+
+Rendering with no request behind it (the command line, the unit suite)
+shares one off-request state and renderer, because counters have to survive
+between calls; that is the documented fallback in `RenderState::current()`
+and `Content\Blocks::renderer()`, and it is the same behaviour those paths
+had before.
+
+Still ambient: nothing per-request outside the runtime. What remains is the
+threading itself, which would let the leaves take a render context as an
+argument instead of asking `RenderState::current()` (about twenty call
+sites across `Layout`, `Wrapper`, `Elements`, `ImageTags`, `GlobalStyles`
+and the facade's `media.php`), and would end the core's one question to the
+runtime in `Db::current()`.
 
 **The symbol gate.** Before a plugin folder is included, `Runtime\Symbols`
 tokenises every PHP file in it and lists the global functions it calls and

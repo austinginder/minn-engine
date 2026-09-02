@@ -19,10 +19,20 @@ return [
         $s->leave('part:header');
         return $first && !$again && $s->enter('part:header');
     },
-    'the request state is whichever instance adopted last' => static function () {
+    'with no request behind it, the state adopted last is the one current() answers with' => static function () {
         $s = new RenderState();
         $s->adopt();
         return RenderState::current() === $s;
+    },
+    'root padding is render configuration, so a reset leaves it alone' => static function () {
+        $s = new RenderState();
+        $s->useRootPadding(false);
+        $s->nextId();
+        $s->reset();
+        return $s->rootPaddingAware() === false && $s->nextId() === 1;
+    },
+    'a fresh state assumes the theme puts root padding in custom properties' => static function () {
+        return (new RenderState())->rootPaddingAware() === true;
     },
     'variations and galleries are recorded for the stylesheet' => static function () {
         $s = new RenderState();

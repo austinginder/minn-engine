@@ -16879,7 +16879,7 @@
             "namespace": "Minn\\Blocks",
             "kind": "final class",
             "file": "public/minn/src/Minn/Blocks/Layout.php",
-            "lines": 129,
+            "lines": 124,
             "doc": "The layout-support classes the reference adds at render time. Every\ncontainer carries is-layout-{type} and {block}-is-layout-{type}; flex and\ngrid layouts with rules of their own also carry a wp-container-* class\nwhose suffix names their generated stylesheet.\n\nThat suffix is a digest the engine cannot reproduce (its inputs are not\nobservable), so the engine derives its own deterministic suffix from the\nlayout attributes. Same shape, different value: recorded in the contract,\nand the parity suites normalise it.",
             "implements": [],
             "extends": null,
@@ -16904,38 +16904,8 @@
                     "visibility": "private"
                 }
             ],
-            "properties": [
-                {
-                    "name": "rootPaddingAware",
-                    "type": "bool",
-                    "readonly": false,
-                    "static": true,
-                    "doc": "Whether the active theme opts into root-padding-aware alignments (theme.json settings.useRootPaddingAwareAlignments).",
-                    "visibility": "private",
-                    "promoted": false
-                }
-            ],
+            "properties": [],
             "methods": [
-                {
-                    "routes": [],
-                    "name": "rootPaddingAware",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "rootPaddingAware(bool $aware): void",
-                    "doc": "Whether the theme uses root padding-aware alignments.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "aware",
-                            "type": "bool",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 27,
-                    "end": 30
-                },
                 {
                     "routes": [],
                     "name": "classes",
@@ -16969,8 +16939,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 37,
-                    "end": 71
+                    "line": 32,
+                    "end": 66
                 },
                 {
                     "routes": [],
@@ -17003,8 +16973,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 89,
-                    "end": 140
+                    "line": 84,
+                    "end": 135
                 },
                 {
                     "routes": [],
@@ -17037,8 +17007,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 74,
-                    "end": 86
+                    "line": 69,
+                    "end": 81
                 },
                 {
                     "routes": [],
@@ -17064,8 +17034,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 142,
-                    "end": 145
+                    "line": 137,
+                    "end": 140
                 }
             ]
         },
@@ -17260,11 +17230,13 @@
             "namespace": "Minn\\Blocks",
             "kind": "final class",
             "file": "public/minn/src/Minn/Blocks/RenderState.php",
-            "lines": 260,
+            "lines": 284,
             "doc": "Per-request rendering state, owned by the renderer. The reference numbers\ngalleries, style variations, and search inputs from ONE counter that runs\nacross every block rendered in the request (a list response keeps\ncounting from post to post), so the counter lives here, not on any block.\nLeaf helpers with no renderer in hand reach it through current().",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Runtime\\Runtime"
+            ],
             "usedBy": [
                 "Minn\\Blocks\\Dynamic\\Search",
                 "Minn\\Blocks\\Dynamic\\SyncedPattern",
@@ -17277,6 +17249,7 @@
                 "Minn\\Blocks\\Wrapper",
                 "Minn\\Content\\Excerpt",
                 "Minn\\Front\\FeedController",
+                "Minn\\Runtime\\Runtime",
                 "Minn\\Theme\\GlobalStyles",
                 "Minn\\Theme\\PageRenderer"
             ],
@@ -17391,11 +17364,20 @@
                     "promoted": false
                 },
                 {
-                    "name": "current",
+                    "name": "rootPaddingAware",
+                    "type": "bool",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "Whether the theme's layout puts root padding in custom properties; render configuration, so reset() leaves it.",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "offRequest",
                     "type": "?self",
                     "readonly": false,
                     "static": true,
-                    "doc": "",
+                    "doc": "The state for code that renders with no request behind it: the command line and the unit suite.",
                     "visibility": "private",
                     "promoted": false
                 },
@@ -17434,11 +17416,11 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "current(): self",
-                    "doc": "The request's state: the renderer's own once one exists, else a fresh one that the first renderer adopts.",
+                    "doc": "The state of the request being rendered, which its runtime holds, so\na request cannot count on from the one before it. Rendering with no\nruntime (the command line, the unit suite) shares one off-request\nstate instead, since the counters have to survive between calls.",
                     "shapes": [],
                     "params": [],
-                    "line": 42,
-                    "end": 45
+                    "line": 52,
+                    "end": 55
                 },
                 {
                     "routes": [],
@@ -17446,11 +17428,43 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "adopt(): void",
-                    "doc": "Makes this the request's state, the one current() answers with.",
+                    "doc": "Makes this the state current() answers with, for the renderer that brought its own.",
                     "shapes": [],
                     "params": [],
-                    "line": 48,
-                    "end": 51
+                    "line": 58,
+                    "end": 65
+                },
+                {
+                    "routes": [],
+                    "name": "rootPaddingAware",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "rootPaddingAware(): bool",
+                    "doc": "Whether the theme puts root padding in custom properties, which decides the constrained layout's classes.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 68,
+                    "end": 71
+                },
+                {
+                    "routes": [],
+                    "name": "useRootPadding",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "useRootPadding(bool $aware): void",
+                    "doc": "Records what the active theme's layout settings say about root padding.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "aware",
+                            "type": "bool",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 74,
+                    "end": 77
                 },
                 {
                     "routes": [],
@@ -17461,8 +17475,8 @@
                     "doc": "The next per-request counter value.",
                     "shapes": [],
                     "params": [],
-                    "line": 54,
-                    "end": 57
+                    "line": 80,
+                    "end": 83
                 },
                 {
                     "routes": [],
@@ -17473,8 +17487,8 @@
                     "doc": "Content images seen so far in this page, for the loading rules.",
                     "shapes": [],
                     "params": [],
-                    "line": 60,
-                    "end": 63
+                    "line": 86,
+                    "end": 89
                 },
                 {
                     "routes": [],
@@ -17500,8 +17514,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 69,
-                    "end": 75
+                    "line": 95,
+                    "end": 101
                 },
                 {
                     "routes": [],
@@ -17512,8 +17526,8 @@
                     "doc": "True once, for the image that gets fetchpriority=\"high\".",
                     "shapes": [],
                     "params": [],
-                    "line": 78,
-                    "end": 84
+                    "line": 104,
+                    "end": 110
                 },
                 {
                     "routes": [],
@@ -17539,8 +17553,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 87,
-                    "end": 90
+                    "line": 113,
+                    "end": 116
                 },
                 {
                     "routes": [],
@@ -17553,8 +17567,8 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 97,
-                    "end": 100
+                    "line": 123,
+                    "end": 126
                 },
                 {
                     "routes": [],
@@ -17573,8 +17587,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 103,
-                    "end": 106
+                    "line": 129,
+                    "end": 132
                 },
                 {
                     "routes": [],
@@ -17587,8 +17601,8 @@
                         "@return array<string, true>"
                     ],
                     "params": [],
-                    "line": 113,
-                    "end": 116
+                    "line": 139,
+                    "end": 142
                 },
                 {
                     "routes": [],
@@ -17621,8 +17635,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 119,
-                    "end": 122
+                    "line": 145,
+                    "end": 148
                 },
                 {
                     "routes": [],
@@ -17635,8 +17649,8 @@
                         "@return list<array{0: string, 1: string, 2: int}>"
                     ],
                     "params": [],
-                    "line": 129,
-                    "end": 132
+                    "line": 155,
+                    "end": 158
                 },
                 {
                     "routes": [],
@@ -17647,8 +17661,8 @@
                     "doc": "The next wp-elements-N class; the reference numbers these apart from the shared counter.",
                     "shapes": [],
                     "params": [],
-                    "line": 135,
-                    "end": 138
+                    "line": 161,
+                    "end": 164
                 },
                 {
                     "routes": [],
@@ -17667,8 +17681,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 141,
-                    "end": 145
+                    "line": 167,
+                    "end": 171
                 },
                 {
                     "routes": [],
@@ -17679,8 +17693,8 @@
                     "doc": "A page list renders plain on its own and takes the navigation block's\nitem classes, submenu toggles, and interactivity only while it sits\ninside one, so the navigation block marks the span it owns.",
                     "shapes": [],
                     "params": [],
-                    "line": 152,
-                    "end": 155
+                    "line": 178,
+                    "end": 181
                 },
                 {
                     "routes": [],
@@ -17691,8 +17705,8 @@
                     "doc": "Leaves a navigation block.",
                     "shapes": [],
                     "params": [],
-                    "line": 158,
-                    "end": 161
+                    "line": 184,
+                    "end": 187
                 },
                 {
                     "routes": [],
@@ -17703,8 +17717,8 @@
                     "doc": "Whether rendering is inside a navigation block.",
                     "shapes": [],
                     "params": [],
-                    "line": 164,
-                    "end": 167
+                    "line": 190,
+                    "end": 193
                 },
                 {
                     "routes": [],
@@ -17723,8 +17737,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 170,
-                    "end": 177
+                    "line": 196,
+                    "end": 203
                 },
                 {
                     "routes": [],
@@ -17743,8 +17757,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 180,
-                    "end": 183
+                    "line": 206,
+                    "end": 209
                 },
                 {
                     "routes": [],
@@ -17755,8 +17769,8 @@
                     "doc": "True while the block tree is shallower than the cap; deeper blocks render as nothing.",
                     "shapes": [],
                     "params": [],
-                    "line": 186,
-                    "end": 193
+                    "line": 212,
+                    "end": 219
                 },
                 {
                     "routes": [],
@@ -17767,8 +17781,8 @@
                     "doc": "Leaves one nesting level.",
                     "shapes": [],
                     "params": [],
-                    "line": 196,
-                    "end": 199
+                    "line": 222,
+                    "end": 225
                 },
                 {
                     "routes": [],
@@ -17779,8 +17793,8 @@
                     "doc": "How deep the block tree is right now; zero outside a page render.",
                     "shapes": [],
                     "params": [],
-                    "line": 202,
-                    "end": 205
+                    "line": 228,
+                    "end": 231
                 },
                 {
                     "routes": [],
@@ -17799,8 +17813,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 208,
-                    "end": 213
+                    "line": 234,
+                    "end": 239
                 },
                 {
                     "routes": [],
@@ -17811,8 +17825,8 @@
                     "doc": "The pending elements class, cleared.",
                     "shapes": [],
                     "params": [],
-                    "line": 216,
-                    "end": 221
+                    "line": 242,
+                    "end": 247
                 },
                 {
                     "routes": [],
@@ -17831,8 +17845,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 224,
-                    "end": 227
+                    "line": 250,
+                    "end": 253
                 },
                 {
                     "routes": [],
@@ -17845,8 +17859,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 234,
-                    "end": 237
+                    "line": 260,
+                    "end": 263
                 },
                 {
                     "routes": [],
@@ -17865,8 +17879,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 240,
-                    "end": 243
+                    "line": 266,
+                    "end": 269
                 },
                 {
                     "routes": [],
@@ -17879,8 +17893,8 @@
                         "@return list<int>"
                     ],
                     "params": [],
-                    "line": 250,
-                    "end": 253
+                    "line": 276,
+                    "end": 279
                 },
                 {
                     "routes": [],
@@ -17891,8 +17905,8 @@
                     "doc": "Clears every per-request counter.",
                     "shapes": [],
                     "params": [],
-                    "line": 256,
-                    "end": 272
+                    "line": 282,
+                    "end": 298
                 }
             ]
         },
@@ -17947,6 +17961,7 @@
                 "Minn\\Blocks\\Dynamic\\Theme\\Structure",
                 "Minn\\Blocks\\Wrapper",
                 "Minn\\Content\\Blocks",
+                "Minn\\Runtime\\Runtime",
                 "Minn\\Theme\\PageRenderer"
             ],
             "constructor": {
@@ -22836,14 +22851,15 @@
             "namespace": "Minn\\Content",
             "kind": "final class",
             "file": "public/minn/src/Minn/Content/Blocks.php",
-            "lines": 40,
+            "lines": 46,
             "doc": "The content pipeline's front door: block markup goes through the block\nrenderer (Minn\\Blocks), classic content rides the paragraph pipeline.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Blocks\\Renderer",
                 "Minn\\Content\\Texturize",
-                "Minn\\Db"
+                "Minn\\Db",
+                "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
                 "Minn\\Admin\\RenderController",
@@ -22864,11 +22880,11 @@
             "constants": [],
             "properties": [
                 {
-                    "name": "renderer",
+                    "name": "offRequest",
                     "type": "?Minn\\Blocks\\Renderer",
                     "readonly": false,
                     "static": true,
-                    "doc": "",
+                    "doc": "The renderer for code that renders with no request behind it: the command line and the unit suite.",
                     "visibility": "private",
                     "promoted": false
                 }
@@ -22891,8 +22907,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 19,
-                    "end": 29
+                    "line": 21,
+                    "end": 31
                 },
                 {
                     "routes": [],
@@ -22900,11 +22916,11 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "renderer(): Minn\\Blocks\\Renderer",
-                    "doc": "The shared block renderer, built once from the shared database door.",
+                    "doc": "The block renderer of the request being answered, which its runtime\nholds and builds over that request's own database door. With no\nruntime (the command line, the unit suite) one off-request renderer\nstands in.",
                     "shapes": [],
                     "params": [],
-                    "line": 32,
-                    "end": 35
+                    "line": 39,
+                    "end": 42
                 },
                 {
                     "routes": [],
@@ -22923,8 +22939,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 41,
-                    "end": 52
+                    "line": 48,
+                    "end": 59
                 }
             ]
         },
@@ -32697,11 +32713,13 @@
             "namespace": "Minn",
             "kind": "final class",
             "file": "public/minn/src/Minn/Db.php",
-            "lines": 188,
+            "lines": 203,
             "doc": "The one door to the database. Every query is a prepared statement; the\nplaceholder types are derived from the PHP values, so callers pass plain\narrays and never spell out \"issd\". A parameter that is a list stands for\na list of values: its \"?\" becomes as many placeholders as the list is\nlong, so \"post_type IN (?)\" takes the types themselves.",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Runtime\\Runtime"
+            ],
             "usedBy": [
                 "Minn\\Admin\\ActivityChart",
                 "Minn\\Admin\\ActivityFeed",
@@ -32838,15 +32856,27 @@
             "methods": [
                 {
                     "routes": [],
+                    "name": "current",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "current(): self",
+                    "doc": "The connection the request being answered speaks through: its\nruntime's own, so nothing deep in a render can reach a connection\nbelonging to another request. With no runtime (the command line, the\nunit suite) it is the process's own connection.\n\nThis is the one place in the core that asks the runtime anything; the\nalternative is a database door threaded through every renderer, and\nthe seam is here until that threading is done.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 37,
+                    "end": 40
+                },
+                {
+                    "routes": [],
                     "name": "shared",
                     "static": true,
                     "visibility": "public",
                     "signature": "shared(): self",
-                    "doc": "The one connection for this request, opened from wp-config's constants on first use.",
+                    "doc": "The one connection for this process, opened from wp-config's constants on first use.",
                     "shapes": [],
                     "params": [],
-                    "line": 28,
-                    "end": 36
+                    "line": 43,
+                    "end": 51
                 },
                 {
                     "routes": [],
@@ -32857,8 +32887,8 @@
                     "doc": "The underlying mysqli handle, for the facade's wpdb.",
                     "shapes": [],
                     "params": [],
-                    "line": 39,
-                    "end": 42
+                    "line": 54,
+                    "end": 57
                 },
                 {
                     "routes": [],
@@ -32877,8 +32907,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 45,
-                    "end": 48
+                    "line": 60,
+                    "end": 63
                 },
                 {
                     "routes": [],
@@ -32889,8 +32919,8 @@
                     "doc": "The table prefix from wp-config.",
                     "shapes": [],
                     "params": [],
-                    "line": 51,
-                    "end": 54
+                    "line": 66,
+                    "end": 69
                 },
                 {
                     "routes": [],
@@ -32909,8 +32939,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 57,
-                    "end": 60
+                    "line": 72,
+                    "end": 75
                 },
                 {
                     "routes": [],
@@ -32938,8 +32968,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 67,
-                    "end": 70
+                    "line": 82,
+                    "end": 85
                 },
                 {
                     "routes": [],
@@ -32967,8 +32997,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 77,
-                    "end": 80
+                    "line": 92,
+                    "end": 95
                 },
                 {
                     "routes": [],
@@ -32994,8 +33024,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 83,
-                    "end": 87
+                    "line": 98,
+                    "end": 102
                 },
                 {
                     "routes": [],
@@ -33021,8 +33051,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 90,
-                    "end": 93
+                    "line": 105,
+                    "end": 108
                 },
                 {
                     "routes": [],
@@ -33051,8 +33081,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 104,
-                    "end": 129
+                    "line": 119,
+                    "end": 144
                 },
                 {
                     "routes": [],
@@ -33063,8 +33093,8 @@
                     "doc": "The id the last INSERT produced.",
                     "shapes": [],
                     "params": [],
-                    "line": 171,
-                    "end": 174
+                    "line": 186,
+                    "end": 189
                 },
                 {
                     "routes": [],
@@ -33083,8 +33113,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 177,
-                    "end": 184
+                    "line": 192,
+                    "end": 199
                 },
                 {
                     "routes": [],
@@ -33105,8 +33135,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 137,
-                    "end": 168
+                    "line": 152,
+                    "end": 183
                 },
                 {
                     "routes": [],
@@ -33132,8 +33162,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 186,
-                    "end": 203
+                    "line": 201,
+                    "end": 218
                 }
             ]
         },
@@ -74188,12 +74218,14 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Runtime.php",
-            "lines": 247,
+            "lines": 269,
             "doc": "The WordPress runtime the engine offers plugin code: the procedural\nfacade under minn/wp-api/ plus the services it delegates to. One per\nrequest; the facade reaches it through these statics.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Auth\\Capabilities",
+                "Minn\\Blocks\\RenderState",
+                "Minn\\Blocks\\Renderer",
                 "Minn\\Content\\Reader",
                 "Minn\\Content\\Site",
                 "Minn\\Context",
@@ -74218,7 +74250,10 @@
                 "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
                 "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
                 "Minn\\Blocks\\ImageTags",
+                "Minn\\Blocks\\RenderState",
+                "Minn\\Content\\Blocks",
                 "Minn\\Content\\Reader",
+                "Minn\\Db",
                 "Minn\\Engine",
                 "Minn\\Extension\\Extensions",
                 "Minn\\Front\\Feeds",
@@ -74267,8 +74302,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 59,
-                "end": 71
+                "line": 65,
+                "end": 77
             },
             "cases": [],
             "constants": [],
@@ -74454,6 +74489,24 @@
                     "promoted": false
                 },
                 {
+                    "name": "renderState",
+                    "type": "?Minn\\Blocks\\RenderState",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "The counters and collected styles of everything rendered for this request.",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "blockRenderer",
+                    "type": "?Minn\\Blocks\\Renderer",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "The block renderer this request renders through.",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
                     "name": "context",
                     "type": "Minn\\Context",
                     "readonly": true,
@@ -74490,8 +74543,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 74,
-                    "end": 77
+                    "line": 80,
+                    "end": 83
                 },
                 {
                     "routes": [],
@@ -74502,8 +74555,52 @@
                     "doc": "The extension seams, or null before the front has registered any (REST and the CLI never do).",
                     "shapes": [],
                     "params": [],
-                    "line": 80,
-                    "end": 83
+                    "line": 86,
+                    "end": 89
+                },
+                {
+                    "routes": [],
+                    "name": "renderState",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "renderState(): Minn\\Blocks\\RenderState",
+                    "doc": "The render state for this request, made on first use: one set of counters for everything rendered.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 92,
+                    "end": 95
+                },
+                {
+                    "routes": [],
+                    "name": "useRenderState",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "useRenderState(Minn\\Blocks\\RenderState $state): void",
+                    "doc": "Makes a render state this request's, so a renderer that brought its own is the one the leaves read.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "state",
+                            "type": "Minn\\Blocks\\RenderState",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 98,
+                    "end": 101
+                },
+                {
+                    "routes": [],
+                    "name": "blockRenderer",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "blockRenderer(): Minn\\Blocks\\Renderer",
+                    "doc": "The block renderer for this request, made on first use over this request's own database door.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 104,
+                    "end": 107
                 },
                 {
                     "routes": [],
@@ -74522,8 +74619,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 86,
-                    "end": 105
+                    "line": 110,
+                    "end": 129
                 },
                 {
                     "routes": [],
@@ -74534,8 +74631,8 @@
                     "doc": "The booted runtime; throws when there is none.",
                     "shapes": [],
                     "params": [],
-                    "line": 108,
-                    "end": 114
+                    "line": 132,
+                    "end": 138
                 },
                 {
                     "routes": [],
@@ -74546,8 +74643,8 @@
                     "doc": "Whether the runtime is up.",
                     "shapes": [],
                     "params": [],
-                    "line": 117,
-                    "end": 120
+                    "line": 141,
+                    "end": 144
                 },
                 {
                     "routes": [],
@@ -74558,8 +74655,8 @@
                     "doc": "The hook registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 123,
-                    "end": 126
+                    "line": 147,
+                    "end": 150
                 },
                 {
                     "routes": [],
@@ -74570,8 +74667,8 @@
                     "doc": "The options store.",
                     "shapes": [],
                     "params": [],
-                    "line": 129,
-                    "end": 132
+                    "line": 153,
+                    "end": 156
                 },
                 {
                     "routes": [],
@@ -74597,8 +74694,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 143,
-                    "end": 158
+                    "line": 167,
+                    "end": 182
                 },
                 {
                     "routes": [],
@@ -74609,8 +74706,8 @@
                     "doc": "The object cache.",
                     "shapes": [],
                     "params": [],
-                    "line": 161,
-                    "end": 164
+                    "line": 185,
+                    "end": 188
                 },
                 {
                     "routes": [],
@@ -74621,8 +74718,8 @@
                     "doc": "The shortcode registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 167,
-                    "end": 170
+                    "line": 191,
+                    "end": 194
                 },
                 {
                     "routes": [],
@@ -74633,8 +74730,8 @@
                     "doc": "The script modules registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 173,
-                    "end": 179
+                    "line": 197,
+                    "end": 203
                 },
                 {
                     "routes": [],
@@ -74645,8 +74742,8 @@
                     "doc": "The interactivity API.",
                     "shapes": [],
                     "params": [],
-                    "line": 182,
-                    "end": 185
+                    "line": 206,
+                    "end": 209
                 },
                 {
                     "routes": [],
@@ -74657,8 +74754,8 @@
                     "doc": "The registered block templates.",
                     "shapes": [],
                     "params": [],
-                    "line": 188,
-                    "end": 191
+                    "line": 212,
+                    "end": 215
                 },
                 {
                     "routes": [],
@@ -74669,8 +74766,8 @@
                     "doc": "The post types, taxonomies, and statuses.",
                     "shapes": [],
                     "params": [],
-                    "line": 194,
-                    "end": 197
+                    "line": 218,
+                    "end": 221
                 },
                 {
                     "routes": [],
@@ -74681,8 +74778,8 @@
                     "doc": "A fresh post query over the runtime's registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 200,
-                    "end": 203
+                    "line": 224,
+                    "end": 227
                 },
                 {
                     "routes": [],
@@ -74708,8 +74805,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 206,
-                    "end": 209
+                    "line": 230,
+                    "end": 233
                 },
                 {
                     "routes": [],
@@ -74735,8 +74832,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 212,
-                    "end": 215
+                    "line": 236,
+                    "end": 239
                 },
                 {
                     "routes": [],
@@ -74747,8 +74844,8 @@
                     "doc": "Whether the request is over HTTPS.",
                     "shapes": [],
                     "params": [],
-                    "line": 218,
-                    "end": 221
+                    "line": 242,
+                    "end": 245
                 },
                 {
                     "routes": [],
@@ -74759,8 +74856,8 @@
                     "doc": "wp-content under the site root.",
                     "shapes": [],
                     "params": [],
-                    "line": 224,
-                    "end": 227
+                    "line": 248,
+                    "end": 251
                 },
                 {
                     "routes": [],
@@ -74779,8 +74876,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 230,
-                    "end": 250
+                    "line": 254,
+                    "end": 274
                 },
                 {
                     "routes": [],
@@ -74791,8 +74888,8 @@
                     "doc": "Fresh per-request state, for suites.",
                     "shapes": [],
                     "params": [],
-                    "line": 253,
-                    "end": 265
+                    "line": 277,
+                    "end": 289
                 }
             ]
         },

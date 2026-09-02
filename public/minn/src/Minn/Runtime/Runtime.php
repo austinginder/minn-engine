@@ -9,6 +9,8 @@ use Minn\Content\Reader;
 use Minn\Content\Site;
 use Minn\Context;
 use Minn\Db;
+use Minn\Blocks\RenderState;
+use Minn\Blocks\Renderer as BlockRenderer;
 use Minn\Extension\SeamRunner;
 use Minn\Http\Request;
 
@@ -50,6 +52,10 @@ final class Runtime
     public readonly string $version;
     /** The extension seams this request registered, once the front has loaded them. */
     private ?SeamRunner $seams = null;
+    /** The counters and collected styles of everything rendered for this request. */
+    private ?RenderState $renderState = null;
+    /** The block renderer this request renders through. */
+    private ?BlockRenderer $blockRenderer = null;
 
     /**
      * The runtime for one request. Everything about the request itself
@@ -80,6 +86,24 @@ final class Runtime
     public function seams(): ?SeamRunner
     {
         return $this->seams;
+    }
+
+    /** The render state for this request, made on first use: one set of counters for everything rendered. */
+    public function renderState(): RenderState
+    {
+        return $this->renderState ??= new RenderState();
+    }
+
+    /** Makes a render state this request's, so a renderer that brought its own is the one the leaves read. */
+    public function useRenderState(RenderState $state): void
+    {
+        $this->renderState = $state;
+    }
+
+    /** The block renderer for this request, made on first use over this request's own database door. */
+    public function blockRenderer(): BlockRenderer
+    {
+        return $this->blockRenderer ??= BlockRenderer::forDb($this->db);
     }
 
     /** Makes this request's runtime the one the facade sees and defines the facade. */

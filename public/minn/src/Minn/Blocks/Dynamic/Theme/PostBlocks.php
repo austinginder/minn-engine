@@ -235,7 +235,7 @@ final readonly class PostBlocks
 
     private function termRow(string $taxonomy, int $termId): ?TermRecord
     {
-        return (new \Minn\Content\Terms(\Minn\Db::shared()))->find($taxonomy, $termId);
+        return (new \Minn\Content\Terms(\Minn\Db::current()))->find($taxonomy, $termId);
     }
 
     /**

@@ -239,8 +239,8 @@ final readonly class Permalinks
         $author = null;
         $category = null;
         if (str_contains($this->structure, '%author%')) {
-            $author = (string) (Db::shared()->value(
-                "SELECT user_nicename FROM " . Db::shared()->table('users') . " WHERE ID = ? LIMIT 1",
+            $author = (string) (Db::current()->value(
+                "SELECT user_nicename FROM " . Db::current()->table('users') . " WHERE ID = ? LIMIT 1",
                 [$post->authorId],
             ) ?? '');
         }

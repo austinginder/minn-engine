@@ -10,10 +10,10 @@ the block parser and renderer
 | [`Context`](#context) | final class | 76 | What the template blocks render against: the resolution, the main |
 | [`Elements`](#elements) | final class | 79 | Per-block element styles (style.elements in a block's attributes, the |
 | [`ImageTags`](#imagetags) | final readonly class | 186 | The attributes the reference adds to an <img> that carries a |
-| [`Layout`](#layout) | final class | 129 | The layout-support classes the reference adds at render time. Every |
+| [`Layout`](#layout) | final class | 124 | The layout-support classes the reference adds at render time. Every |
 | [`Parser`](#parser) | final class | 91 | Parses block markup into a tree. The grammar is the delimiter comment: |
 | [`QueryVars`](#queryvars) | final class | 80 | The query variables a Query Loop block's context asks for, the way the reference's query block builds them. |
-| [`RenderState`](#renderstate) | final class | 260 | Per-request rendering state, owned by the renderer. The reference numbers |
+| [`RenderState`](#renderstate) | final class | 284 | Per-request rendering state, owned by the renderer. The reference numbers |
 | [`Renderer`](#renderer) | final class | 228 | Renders a block tree the way the reference renders post_content: |
 | [`Selector`](#selector) | final class | 42 | The CSS selector a block type declares for its root or for one feature, from its `selectors` map or the older per-support keys. |
 | [`Styles`](#styles) | final class | 155 | The inline style and class names a block's "style" and preset |
@@ -216,11 +216,6 @@ and the parity suites normalise it.
 
 Used by: `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Renderer`
 
-
-### static `rootPaddingAware(bool $aware): void`
-
-Whether the theme uses root padding-aware alignments.
-
 ### static `classes(string $blockSlug, array $attrs, string $defaultType = 'flow'): array`
 
 The layout classes a block's wrapper carries.
@@ -231,7 +226,7 @@ The layout classes a block's wrapper carries.
 
 The declarations behind a container class, in the reference's order.
 
-Internals: `hasRules()` (private, line 74), `suffix()` (private, line 142)
+Internals: `hasRules()` (private, line 69), `suffix()` (private, line 137)
 
 
 ## Parser
@@ -288,16 +283,27 @@ Leaf helpers with no renderer in hand reach it through current().
 
 - const `MAX_DEPTH` = `64`
 
-Used by: `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Elements`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Layout`, `Minn\Blocks\Renderer`, `Minn\Blocks\Wrapper`, `Minn\Content\Excerpt`, `Minn\Front\FeedController`, `Minn\Theme\GlobalStyles`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Elements`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Layout`, `Minn\Blocks\Renderer`, `Minn\Blocks\Wrapper`, `Minn\Content\Excerpt`, `Minn\Front\FeedController`, `Minn\Runtime\Runtime`, `Minn\Theme\GlobalStyles`, `Minn\Theme\PageRenderer`
 
 
 ### static `current(): self`
 
-The request's state: the renderer's own once one exists, else a fresh one that the first renderer adopts.
+The state of the request being rendered, which its runtime holds, so
+a request cannot count on from the one before it. Rendering with no
+runtime (the command line, the unit suite) shares one off-request
+state instead, since the counters have to survive between calls.
 
 ### `adopt(): void`
 
-Makes this the request's state, the one current() answers with.
+Makes this the state current() answers with, for the renderer that brought its own.
+
+### `rootPaddingAware(): bool`
+
+Whether the theme puts root padding in custom properties, which decides the constrained layout's classes.
+
+### `useRootPadding(bool $aware): void`
+
+Records what the active theme's layout settings say about root padding.
 
 ### `nextId(): int`
 
@@ -435,7 +441,7 @@ counters), and finally texturize over the whole.
 These come from the active theme's registered block styles; the set
 mirrors the reference's theme until the engine reads theme data.
 
-Used by: `Minn\Blocks\Dynamic\Archives`, `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Wrapper`, `Minn\Content\Blocks`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Blocks\Dynamic\Archives`, `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Wrapper`, `Minn\Content\Blocks`, `Minn\Runtime\Runtime`, `Minn\Theme\PageRenderer`
 
 ```php
 __construct(Minn\Blocks\ImageTags $images)

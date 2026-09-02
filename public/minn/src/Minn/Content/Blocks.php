@@ -6,6 +6,7 @@ namespace Minn\Content;
 
 use Minn\Blocks\Renderer;
 use Minn\Db;
+use Minn\Runtime\Runtime;
 
 /**
  * The content pipeline's front door: block markup goes through the block
@@ -13,7 +14,8 @@ use Minn\Db;
  */
 final class Blocks
 {
-    private static ?Renderer $renderer = null;
+    /** The renderer for code that renders with no request behind it: the command line and the unit suite. */
+    private static ?Renderer $offRequest = null;
 
     /** Post content as HTML: blocks through the renderer, classic content through the paragraph rules. */
     public static function render(string $raw): string
@@ -28,10 +30,15 @@ final class Blocks
         return (string) preg_replace('#</p>(?!\n)#', "</p>\n", self::renderer()->render($raw));
     }
 
-    /** The shared block renderer, built once from the shared database door. */
+    /**
+     * The block renderer of the request being answered, which its runtime
+     * holds and builds over that request's own database door. With no
+     * runtime (the command line, the unit suite) one off-request renderer
+     * stands in.
+     */
     public static function renderer(): Renderer
     {
-        return self::$renderer ??= Renderer::forDb(Db::shared());
+        return Runtime::booted() ? Runtime::current()->blockRenderer() : self::$offRequest ??= Renderer::forDb(Db::shared());
     }
 
     /**

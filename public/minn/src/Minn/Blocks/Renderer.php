@@ -107,7 +107,7 @@ final class Renderer
         });
         $renderer = new self($images);
         $theme = Theme::active($site, $permalinks, ABSPATH . 'wp-content/themes');
-        Layout::rootPaddingAware((bool) ($theme?->json()['settings']['useRootPaddingAwareAlignments'] ?? false));
+        $renderer->state()->useRootPadding((bool) ($theme?->json()['settings']['useRootPaddingAwareAlignments'] ?? false));
         $renderer->registerDynamic('core/latest-posts', (new LatestPosts($db, $site, $permalinks))->render(...));
         $renderer->registerDynamic('core/categories', (new Categories($db, $permalinks))->render(...));
         $renderer->registerDynamic('core/archives', (new Archives($db, $permalinks))->render(...));
