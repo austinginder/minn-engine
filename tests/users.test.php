@@ -174,6 +174,15 @@ check( 'Renamed User' === ( $b['name'] ?? '' ) && array( 'editor' ) === ( $b['ro
 check( 200 === $st, 'WordPress edits the profile' );
 [ , $b ] = us_fetch( $ENGINE, $Q . '%2F' . $nid . '&context=edit', $admin );
 check( 'Oracle' === ( $b['first_name'] ?? '' ), 'engine sees the WordPress edit' );
+// A role change the caller may not make is refused before anything else in the body lands.
+$author = us_mint( 3 );
+$refused = array();
+foreach ( array( $ENGINE => 'engine', $REF => 'reference' ) as $base => $side ) {
+	[ $st, $b ] = us_fetch( $base, $Q . '%2F3', $author, 'POST', '{"name":"Scribe Elevated","roles":["administrator"]}' );
+	[ , $after ] = us_fetch( $base, $Q . '%2F3&context=edit', $author );
+	$refused[ $side ] = array( $st, $b['code'] ?? '', $after['name'] ?? '', $after['roles'] ?? array() );
+}
+check( $refused['engine'] === $refused['reference'] && 403 === $refused['engine'][0] && 'scribe' === $refused['engine'][2], 'an author asking for a role is refused before the rename is written, on both stacks', json_encode( $refused ) );
 
 // 4. Delete: refusal ladder, then reassignment of authorship.
 us_parity( 'delete without reassign rejected', $Q . '%2F' . $nid, $admin, 'DELETE' );

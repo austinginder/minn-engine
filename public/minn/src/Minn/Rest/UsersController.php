@@ -235,6 +235,12 @@ final readonly class UsersController
             throw $this->caller->refuse('rest_cannot_edit', 'Sorry, you are not allowed to edit this user.');
         }
         $body = $request->json();
+        // The role refusal is decided before anything is written, so a caller
+        // without promote_users cannot land the other edits on the way to a 403.
+        if (isset($body['roles'][0]) && !$this->caller->can('promote_users')) {
+            throw $this->caller->refuse('rest_cannot_edit_roles', 'Sorry, you are not allowed to edit roles of this user.');
+        }
+        $role = isset($body['roles'][0]) ? $this->validRole((string) $body['roles'][0]) : null;
         $columns = [];
         if (isset($body['name'])) {
             $columns['display_name'] = Kses::text((string) $body['name']);
@@ -266,11 +272,7 @@ final readonly class UsersController
         if (isset($body['meta']['show_admin_bar_front'])) {
             $this->users->setMeta($userId, 'show_admin_bar_front', $body['meta']['show_admin_bar_front'] === 'false' ? 'false' : 'true');
         }
-        if (isset($body['roles'][0])) {
-            if (!$this->caller->can('promote_users')) {
-                throw $this->caller->refuse('rest_cannot_edit_roles', 'Sorry, you are not allowed to edit roles of this user.');
-            }
-            $role = $this->validRole((string) $body['roles'][0]);
+        if ($role !== null) {
             $prefix = $this->db->prefix();
             $this->users->setMeta($userId, "{$prefix}capabilities", Roles::serializeSingle($role));
             $this->users->setMeta($userId, "{$prefix}user_level", (string) Roles::level($role));
