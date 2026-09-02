@@ -33,7 +33,7 @@ line in table/summary, even when the list is empty.
 Used by: `Minn\Cli\PluginCommand`, `Minn\Cli\ThemeCommand`
 
 ```php
-__construct(string $kind, Minn\Admin\Updates $updates, Minn\Content\Inventory $inventory)
+__construct(string $kind, Minn\Ops\Updates $updates, Minn\Content\Inventory $inventory)
 ```
 
 

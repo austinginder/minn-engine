@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Cli;
 
-use Minn\Admin\Packages;
+use Minn\Ops\Packages;
 use Minn\RestError;
 use WP_CLI;
 use WP_CLI\Formatter;

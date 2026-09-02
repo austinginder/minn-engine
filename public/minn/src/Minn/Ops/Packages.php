@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Minn\Admin;
+namespace Minn\Ops;
 
 use Closure;
 use Minn\Content\Inventory;

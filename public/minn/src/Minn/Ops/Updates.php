@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Minn\Admin;
+namespace Minn\Ops;
 
 use Minn\Content\Inventory;
 use Minn\Content\Site;

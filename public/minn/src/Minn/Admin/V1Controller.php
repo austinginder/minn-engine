@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Admin;
 
+use Minn\Ops\CoreStatus;
 use Minn\Db;
 use Minn\Http\Method;
 use Minn\Http\Request;

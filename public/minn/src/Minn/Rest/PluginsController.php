@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
-use Minn\Admin\Packages;
+use Minn\Ops\Packages;
 use Minn\Content\Inventory;
 use Minn\Content\PluginState;
 use Minn\Content\Site;

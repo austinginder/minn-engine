@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Admin;
 
+use Minn\Ops\Updates;
 use Minn\Content\CommentRecord;
 use Minn\Auth\Capabilities;
 use Minn\Content\Site;

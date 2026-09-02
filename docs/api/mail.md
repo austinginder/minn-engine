@@ -22,7 +22,7 @@ The sender defaults to the site name at a no-reply address on the home host.
 
 - const `OPTION` = `'minn_mail'`
 
-Used by: `Minn\Admin\Diagnostics`, `Minn\Cli\MinnCommand`, `Minn\Mail\Mailer`, `Minn\Mail\Smtp`
+Used by: `Minn\Cli\MinnCommand`, `Minn\Mail\Mailer`, `Minn\Mail\Smtp`, `Minn\Ops\Diagnostics`
 
 ```php
 __construct(string $transport = 'mail', string $host = '', int $port = 587, string $encryption = 'tls', string $username = '', string $password = '', string $fromEmail = '', string $fromName = '')

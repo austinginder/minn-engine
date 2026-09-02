@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Cron;
 
-use Minn\Admin\Updates;
+use Minn\Ops\Updates;
 use Minn\Content\PostWriter;
 use Minn\Content\Site;
 use Minn\Db;

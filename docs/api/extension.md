@@ -57,7 +57,7 @@ Finds extensions under wp-content/plugins and wp-content/mu-plugins,
 decides which are active, autoloads them, and asks each to register.
 An extension that throws is logged and skipped; the page still renders.
 
-Used by: `Minn\Admin\InstalledSoftware`, `Minn\Cli\MinnCommand`, `Minn\Cli\PluginCommand`, `Minn\Content\PluginState`, `Minn\Engine`, `Minn\Rest\PluginsController`, `Minn\Rest\Services`
+Used by: `Minn\Cli\MinnCommand`, `Minn\Cli\PluginCommand`, `Minn\Content\PluginState`, `Minn\Engine`, `Minn\Ops\InstalledSoftware`, `Minn\Rest\PluginsController`, `Minn\Rest\Services`
 
 ```php
 __construct(string $contentDir, Minn\Content\Site $site)
@@ -126,7 +126,7 @@ named in the minn_active_extensions option. "shortcodes" and "blocks"
 are the content tokens preflight treats as provided instead of missing.
 "types" are extra post types the engine should serve on wp/v2.
 
-Used by: `Minn\Admin\Packages`, `Minn\Cli\Preflight`, `Minn\Content\PluginState`, `Minn\Extension\Loader`, `Minn\Rest\PluginsController`
+Used by: `Minn\Cli\Preflight`, `Minn\Content\PluginState`, `Minn\Extension\Loader`, `Minn\Ops\Packages`, `Minn\Rest\PluginsController`
 
 ```php
 __construct(string $slug, string $dir, string $name, string $version, string $license, array $replaces, array $autoload, string $extension, string $covers = '', array $shortcodes = array ( ), array $blocks = array ( ), array $types = array ( ))

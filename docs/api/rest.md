@@ -1177,7 +1177,7 @@ installed or deleted from here.
 Used by: `Minn\Rest\Api`
 
 ```php
-__construct(Minn\Content\Site $site, Minn\Content\Inventory $inventory, Minn\Extension\Loader $extensions, Minn\Rest\RestUrl $url, Minn\Rest\Caller $caller, Minn\Admin\Packages $packages, string $contentDir)
+__construct(Minn\Content\Site $site, Minn\Content\Inventory $inventory, Minn\Extension\Loader $extensions, Minn\Rest\RestUrl $url, Minn\Rest\Caller $caller, Minn\Ops\Packages $packages, string $contentDir)
 ```
 
 
@@ -1779,7 +1779,7 @@ dependencies in plain constructor calls: there is no autowiring, and
 get() knows only the names listed here, so a wrong one fails at the
 first call rather than deep in a handler.
 
-- const `NAMED` = `array (   'Minn\\Content\\Users' => 'users',   'Minn\\Content\\Posts' => 'posts',   'Minn\\Content\\Terms' => 'terms',   'Minn\\Content\\Comments' => 'comments',   'Minn\\Content\\Site' => 'site',   'Minn\\Content\\PostWriter' => 'writer',   'Minn\\Front\\Permalinks' => 'permalinks',   'Minn\\Rest\\RestUrl' => 'url',   'Minn\\Auth\\Capabilities' => 'capabilities',   'Minn\\Rest\\Caller' => 'caller',   'Minn\\Extension\\Loader' => 'loader',   'Minn\\Rest\\Types' => 'types',   'Minn\\Rest\\Taxonomies' => 'taxonomies',   'Minn\\Media\\Uploads' => 'uploads',   'Minn\\Content\\Inventory' => 'inventory',   'Minn\\Admin\\Packages' => 'packages',   'Minn\\Admin\\App' => 'app',   'Minn\\Admin\\Logs' => 'logs',   'Minn\\Admin\\Updates' => 'updates',   'Minn\\Content\\Menus' => 'menus',   'Minn\\Content\\Revisions' => 'revisions',   'Minn\\Auth\\Sessions' => 'sessions',   'Minn\\Auth\\ApplicationPasswords' => 'applicationPasswords',   'Minn\\Admin\\Translations' => 'translations',   'Minn\\Admin\\Appearance' => 'appearance',   'Minn\\Admin\\HiddenIntegrations' => 'hiddenIntegrations',   'Minn\\Admin\\ActivityFeed' => 'activityFeed',   'Minn\\Admin\\Dashboard' => 'dashboard',   'Minn\\Admin\\Notifications' => 'notifications',   'Minn\\Admin\\Diagnostics' => 'diagnostics',   'Minn\\Media\\Writer' => 'mediaWriter',   'Minn\\Rest\\Schema' => 'schema',   'Minn\\Rest\\PostObject' => 'postObject',   'Minn\\Rest\\TermObject' => 'termObject',   'Minn\\Rest\\UserObject' => 'userObject',   'Minn\\Rest\\MediaObject' => 'mediaObject',   'Minn\\Rest\\CommentObject' => 'commentObject',   'Minn\\Theme\\UserStyles' => 'userStyles',   'Minn\\Theme\\ThemeStyles' => 'themeStyles', )`
+- const `NAMED` = `array (   'Minn\\Content\\Users' => 'users',   'Minn\\Content\\Posts' => 'posts',   'Minn\\Content\\Terms' => 'terms',   'Minn\\Content\\Comments' => 'comments',   'Minn\\Content\\Site' => 'site',   'Minn\\Content\\PostWriter' => 'writer',   'Minn\\Front\\Permalinks' => 'permalinks',   'Minn\\Rest\\RestUrl' => 'url',   'Minn\\Auth\\Capabilities' => 'capabilities',   'Minn\\Rest\\Caller' => 'caller',   'Minn\\Extension\\Loader' => 'loader',   'Minn\\Rest\\Types' => 'types',   'Minn\\Rest\\Taxonomies' => 'taxonomies',   'Minn\\Media\\Uploads' => 'uploads',   'Minn\\Content\\Inventory' => 'inventory',   'Minn\\Ops\\Packages' => 'packages',   'Minn\\Admin\\App' => 'app',   'Minn\\Ops\\Logs' => 'logs',   'Minn\\Ops\\Updates' => 'updates',   'Minn\\Content\\Menus' => 'menus',   'Minn\\Content\\Revisions' => 'revisions',   'Minn\\Auth\\Sessions' => 'sessions',   'Minn\\Auth\\ApplicationPasswords' => 'applicationPasswords',   'Minn\\Admin\\Translations' => 'translations',   'Minn\\Admin\\Appearance' => 'appearance',   'Minn\\Admin\\HiddenIntegrations' => 'hiddenIntegrations',   'Minn\\Admin\\ActivityFeed' => 'activityFeed',   'Minn\\Admin\\Dashboard' => 'dashboard',   'Minn\\Admin\\Notifications' => 'notifications',   'Minn\\Ops\\Diagnostics' => 'diagnostics',   'Minn\\Media\\Writer' => 'mediaWriter',   'Minn\\Rest\\Schema' => 'schema',   'Minn\\Rest\\PostObject' => 'postObject',   'Minn\\Rest\\TermObject' => 'termObject',   'Minn\\Rest\\UserObject' => 'userObject',   'Minn\\Rest\\MediaObject' => 'mediaObject',   'Minn\\Rest\\CommentObject' => 'commentObject',   'Minn\\Theme\\UserStyles' => 'userStyles',   'Minn\\Theme\\ThemeStyles' => 'themeStyles', )`
 
 Used by: `Minn\Rest\Api`
 
@@ -1905,15 +1905,15 @@ The JSON Schema validator, with the reference's filters passed in.
 
 The Minn Admin bundle on disk.
 
-### `packages(): Minn\Admin\Packages`
+### `packages(): Minn\Ops\Packages`
 
 Installing and removing themes and extensions.
 
-### `logs(): Minn\Admin\Logs`
+### `logs(): Minn\Ops\Logs`
 
 The debug log reader.
 
-### `updates(): Minn\Admin\Updates`
+### `updates(): Minn\Ops\Updates`
 
 Update checks and offers.
 
@@ -1941,7 +1941,7 @@ The overview payload.
 
 The bell feed.
 
-### `diagnostics(): Minn\Admin\Diagnostics`
+### `diagnostics(): Minn\Ops\Diagnostics`
 
 The System view's payload.
 

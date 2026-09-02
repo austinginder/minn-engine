@@ -108,7 +108,7 @@ Header values from a plugin or theme file. The labels (Plugin Name,
 Theme Name, Version) are the published file-header contract; the
 reader is a line scan of the first 8 KB, never PHP execution.
 
-Used by: `Minn\Admin\App`, `Minn\Admin\InstalledSoftware`, `Minn\Admin\Packages`, `Minn\Admin\ThemesController`, `Minn\Admin\Updates`, `Minn\Cli\ThemeCommand`, `Minn\Content\Inventory`, `Minn\Rest\PluginsController`, `Minn\Theme\Folder`
+Used by: `Minn\Admin\App`, `Minn\Admin\ThemesController`, `Minn\Cli\ThemeCommand`, `Minn\Content\Inventory`, `Minn\Ops\InstalledSoftware`, `Minn\Ops\Packages`, `Minn\Ops\Updates`, `Minn\Rest\PluginsController`, `Minn\Theme\Folder`
 
 ### static `values(string $file, array $labels): array`
 
@@ -423,7 +423,7 @@ here executes the blob; each reader scans for the one shape it needs.
 
 - const `INVALID` = `'' . "\0" . 'minn:invalid' . "\0" . ''` — Returned by decode() when the blob is not a serialized value the reader accepts.
 
-Used by: `Minn\Admin\App`, `Minn\Admin\Appearance`, `Minn\Admin\CoreStatus`, `Minn\Admin\Dashboard`, `Minn\Admin\HiddenIntegrations`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\SiteController`, `Minn\Admin\Updates`, `Minn\Auth\ApplicationPasswords`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Cli\OptionCommand`, `Minn\Cli\Preflight`, `Minn\Content\Inventory`, `Minn\Content\Menus`, `Minn\Content\PluginState`, `Minn\Content\PostWriter`, `Minn\Engine`, `Minn\Extension\Loader`, `Minn\Mail\MailSettings`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Runtime\Options`, `Minn\Runtime\Recovery`, `Minn\Support\SearchReplace`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Admin\App`, `Minn\Admin\Appearance`, `Minn\Admin\Dashboard`, `Minn\Admin\HiddenIntegrations`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\SiteController`, `Minn\Auth\ApplicationPasswords`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Cli\OptionCommand`, `Minn\Cli\Preflight`, `Minn\Content\Inventory`, `Minn\Content\Menus`, `Minn\Content\PluginState`, `Minn\Content\PostWriter`, `Minn\Engine`, `Minn\Extension\Loader`, `Minn\Mail\MailSettings`, `Minn\Ops\CoreStatus`, `Minn\Ops\Updates`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Runtime\Options`, `Minn\Runtime\Recovery`, `Minn\Support\SearchReplace`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`
 
 ### static `stringList(?string $blob): array`
 

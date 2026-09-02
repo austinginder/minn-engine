@@ -21,7 +21,7 @@ a post due. One run at a time, through a short-lived lock option.
 Used by: `Minn\Cli\MinnCommand`, `Minn\Engine`, `Minn\Front\FrontController`, `Minn\Front\ProbeController`
 
 ```php
-__construct(Minn\Db $db, Minn\Content\Site $site, Minn\Content\PostWriter $writer, ?Minn\Admin\Updates $updates = NULL)
+__construct(Minn\Db $db, Minn\Content\Site $site, Minn\Content\PostWriter $writer, ?Minn\Ops\Updates $updates = NULL)
 ```
 
 

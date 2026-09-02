@@ -19,7 +19,7 @@ use Minn\Admin\ThemesController;
 use Minn\Admin\PackagesController;
 use Minn\Admin\RenderController;
 use Minn\Admin\SessionsController;
-use Minn\Admin\CoreStatus;
+use Minn\Ops\CoreStatus;
 use Minn\Admin\V1Controller;
 use Minn\Db;
 use Minn\Http\Request;

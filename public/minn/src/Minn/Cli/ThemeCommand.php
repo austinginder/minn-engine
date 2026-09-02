@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Cli;
 
-use Minn\Admin\Packages;
+use Minn\Ops\Packages;
 use Minn\Content\Inventory;
 use Minn\RestError;
 use Minn\Support\FileHeaders;

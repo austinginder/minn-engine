@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Cli;
 
-use Minn\Admin\Packages;
-use Minn\Admin\Updates;
+use Minn\Ops\Packages;
+use Minn\Ops\Updates;
 use Minn\Content\Inventory;
 use Minn\Engine;
 use Minn\RestError;

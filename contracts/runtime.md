@@ -137,6 +137,25 @@ can be replayed, a second boot inherits the first's registries on purpose;
 `Runtime::boot()` says so where a reader will look for it. What worker
 mode needs is plugin re-execution, not tidier statics.
 
+**Operations are their own namespace (2026-09-02).** `Minn\Ops` holds what
+the engine can be asked to *do*, with nothing of the admin client in it:
+`Packages` (put a theme, plugin or extension on disk, or take one off),
+`Updates` (ask wordpress.org, apply an offer, record the archive's hash),
+`Diagnostics` (system, cron, autoload), `Logs`, `InstalledSoftware`, and
+`CoreStatus`. Each takes only a site, a database door, or a path, so the
+CLI, cron, a REST controller and an ability can all call the same class;
+`Cli\*` and `Cron\Cron` already do, which is what the split records.
+
+`Minn\Admin` keeps what belongs to Minn Admin itself: the
+`minn-admin/v1` controllers, the boot payload, the app bundle, the
+appearance and hidden-integration preferences, and the overview's
+dashboard, feed and formatting. The cut is by dependency, not by taste:
+`Translations` stayed in `Admin` because it reads the Minn Admin bundle
+for its catalogue, and `Format` stayed because it is the dashboard's own
+number and date formatting. `LanguageChoices` is in neither place
+properly (it renders a select for the facade's `wp_dropdown_languages`)
+and is left where it is, named here so it is not mistaken for settled.
+
 **The symbol gate.** Before a plugin folder is included, `Runtime\Symbols`
 tokenises every PHP file in it and lists the global functions it calls and
 the classes it instantiates, extends, or reads statically, minus what the
