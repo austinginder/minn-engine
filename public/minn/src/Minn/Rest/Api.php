@@ -8,7 +8,13 @@ use Minn\Admin\AdminTypes;
 use Minn\Admin\LanguageController;
 use Minn\Admin\UpdatesController;
 use Minn\Admin\SystemController;
-use Minn\Admin\ManageController;
+use Minn\Admin\BundleController;
+use Minn\Admin\EditorController;
+use Minn\Admin\OverviewController;
+use Minn\Admin\PreferencesController;
+use Minn\Admin\SiteController;
+use Minn\Admin\StructureController;
+use Minn\Admin\ThemesController;
 use Minn\Admin\PackagesController;
 use Minn\Admin\RenderController;
 use Minn\Admin\SessionsController;
@@ -73,7 +79,10 @@ final readonly class Api
         $postsWrite = new PostsWriteController($s->posts(), $s->writer(), $s->site(), $s->postObject(), $s->url(), $caller);
         $controllers = [
             new IndexController($s->site(), $s->permalinks(), $s->url(), $router),
-            new V1Controller($s->db(), $s->site(), $s->posts(), $s->writer(), $s->permalinks(), $s->dashboard(), $s->notifications(), new CoreStatus($s->site()), new AdminTypes($s->types(), $s->capabilities()), $caller, $s->users()),
+            new V1Controller($s->db(), $s->notifications(), new CoreStatus($s->site()), new AdminTypes($s->types(), $s->capabilities()), $caller),
+            new OverviewController($s->db(), $s->site(), $s->dashboard(), $s->users(), $caller),
+            new EditorController($s->writer(), $caller),
+            new SiteController($s->db(), $s->site(), $s->posts(), $s->permalinks(), $caller),
             new TermsController($s->db(), $s->terms(), $s->site(), $s->termObject(), $caller),
             new UsersController($s->db(), $s->users(), $s->site(), $s->userObject(), $s->url(), $caller, $s->capabilities()->roles()),
             new ApplicationPasswordsController($s->users(), $s->site(), $s->applicationPasswords(), $s->url(), $caller, $s->schema()),
@@ -82,7 +91,10 @@ final readonly class Api
             new SearchController($s->db(), $s->types(), $s->permalinks(), $s->url(), $caller),
             new PluginsController($s->site(), $s->inventory(), $s->loader(), $s->url(), $caller, $s->packages(), $s->contentDir()),
             new SessionsController($s->users(), $s->sessions(), $caller),
-            new ManageController($s->db(), $s->site(), $s->types(), $s->taxonomies(), $s->loader(), $s->inventory(), $s->permalinks(), $s->app(), $s->appearance(), $s->hiddenIntegrations(), $s->updates(), $caller, $s->contentDir()),
+            new StructureController($s->db(), $s->types(), $s->taxonomies(), $caller),
+            new ThemesController($s->site(), $s->permalinks(), $s->updates(), $caller, $s->contentDir()),
+            new PreferencesController($s->appearance(), $s->hiddenIntegrations(), $caller),
+            new BundleController($s->app(), $caller),
             new LanguageController($s->translations(), $s->users(), $s->site(), $s->capabilities(), $caller),
             new PackagesController($s->packages(), $s->site(), $caller),
             new UpdatesController($s->updates(), $caller),

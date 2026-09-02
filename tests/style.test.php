@@ -226,13 +226,17 @@ $check('api docs: docs/api/ is current', is_array($docs) && ($docs['stale'] ?? t
 // cheap). Lower a ceiling when a class loses its last offender.
 $undocumentedCeiling = 0;
 $boolParamCeiling = 102;
-$wideConstructorCeiling = 47;
+$wideConstructorCeiling = 26;
 $model = json_decode((string) file_get_contents(dirname(__DIR__) . '/contracts/api/minn.json'), true);
 $undocumented = 0;
 $boolParams = 0;
 $wideConstructors = 0;
 foreach ($model['classes'] ?? [] as $class) {
-    if (count($class['constructor']['params'] ?? []) >= 6) {
+    // A record's columns are data, not dependencies: only parameters that are
+    // not promoted public properties count toward a wide constructor.
+    $public = array_column(array_filter($class['properties'], static fn (array $p) => $p['visibility'] === 'public' && ($p['promoted'] ?? false)), 'name');
+    $dependencies = array_filter($class['constructor']['params'] ?? [], static fn (array $p) => !in_array($p['name'], $public, true));
+    if (count($dependencies) >= 6) {
         $wideConstructors++;
     }
     foreach ($class['methods'] as $method) {

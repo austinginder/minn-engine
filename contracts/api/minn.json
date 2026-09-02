@@ -684,7 +684,7 @@
             "usedBy": [
                 "Minn\\Admin\\AppController",
                 "Minn\\Admin\\BootPayload",
-                "Minn\\Admin\\ManageController",
+                "Minn\\Admin\\BundleController",
                 "Minn\\Admin\\Translations",
                 "Minn\\Engine",
                 "Minn\\Front\\AdminBar",
@@ -1133,7 +1133,7 @@
             ],
             "usedBy": [
                 "Minn\\Admin\\BootPayload",
-                "Minn\\Admin\\ManageController",
+                "Minn\\Admin\\PreferencesController",
                 "Minn\\Engine",
                 "Minn\\Front\\AdminBar",
                 "Minn\\Rest\\Services"
@@ -1671,6 +1671,165 @@
             ]
         },
         {
+            "name": "Minn\\Admin\\BundleController",
+            "short": "BundleController",
+            "namespace": "Minn\\Admin",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Admin/BundleController.php",
+            "lines": 39,
+            "doc": "What the app bundle carries: the changelog, the user guide, and the\ntranslation offers (none: the engine has no update channel to poll).",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Admin\\App",
+                "Minn\\Http\\Method",
+                "Minn\\Http\\Request",
+                "Minn\\Http\\Response",
+                "Minn\\Http\\Route",
+                "Minn\\Rest\\Caller",
+                "Minn\\Rest\\Reply"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\Api"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Admin\\App $app, Minn\\Rest\\Caller $caller)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "app",
+                        "type": "Minn\\Admin\\App",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "caller",
+                        "type": "Minn\\Rest\\Caller",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 20,
+                "end": 24
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "app",
+                    "type": "Minn\\Admin\\App",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "caller",
+                    "type": "Minn\\Rest\\Caller",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [
+                        "GET /minn-admin/v1/translations"
+                    ],
+                    "name": "translations",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "translations(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "The translation offers; none on the engine.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 28,
+                    "end": 32
+                },
+                {
+                    "routes": [
+                        "GET /minn-admin/v1/changelog"
+                    ],
+                    "name": "changelog",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "changelog(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "The app's bundled changelog.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 36,
+                    "end": 40
+                },
+                {
+                    "routes": [
+                        "GET /minn-admin/v1/guide"
+                    ],
+                    "name": "guide",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "guide(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "The app's bundled user guide.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 44,
+                    "end": 48
+                },
+                {
+                    "routes": [],
+                    "name": "bundled",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "bundled(string $relative): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array{version: string, markdown: string}"
+                    ],
+                    "params": [
+                        {
+                            "name": "relative",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 51,
+                    "end": 55
+                }
+            ]
+        },
+        {
             "name": "Minn\\Admin\\CoreStatus",
             "short": "CoreStatus",
             "namespace": "Minn\\Admin",
@@ -1754,7 +1913,7 @@
                 "Minn\\Support\\Serialized"
             ],
             "usedBy": [
-                "Minn\\Admin\\V1Controller",
+                "Minn\\Admin\\OverviewController",
                 "Minn\\Rest\\Services"
             ],
             "constructor": {
@@ -2825,6 +2984,180 @@
             ]
         },
         {
+            "name": "Minn\\Admin\\EditorController",
+            "short": "EditorController",
+            "namespace": "Minn\\Admin",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Admin/EditorController.php",
+            "lines": 48,
+            "doc": "The editor's helpers in minn-admin/v1: the edit lock, and the template\nand pattern lists (honestly empty: the engine carries no theme content).",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Content\\PostWriter",
+                "Minn\\Http\\Method",
+                "Minn\\Http\\Request",
+                "Minn\\Http\\Response",
+                "Minn\\Http\\Route",
+                "Minn\\RestError",
+                "Minn\\Rest\\Caller",
+                "Minn\\Rest\\Reply"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\Api"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Content\\PostWriter $writer, Minn\\Rest\\Caller $caller)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "writer",
+                        "type": "Minn\\Content\\PostWriter",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "caller",
+                        "type": "Minn\\Rest\\Caller",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 22,
+                "end": 26
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "writer",
+                    "type": "Minn\\Content\\PostWriter",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "caller",
+                    "type": "Minn\\Rest\\Caller",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [
+                        "POST /minn-admin/v1/posts/{id:\\d+}/lock"
+                    ],
+                    "name": "lock",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "lock(Minn\\Http\\Request $request, string $id): Minn\\Http\\Response",
+                    "doc": "Takes the edit lock on a post.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 30,
+                    "end": 38
+                },
+                {
+                    "routes": [
+                        "POST /minn-admin/v1/posts/{id:\\d+}/unlock"
+                    ],
+                    "name": "unlock",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "unlock(Minn\\Http\\Request $request, string $id): Minn\\Http\\Response",
+                    "doc": "Releases the edit lock on a post.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 42,
+                    "end": 50
+                },
+                {
+                    "routes": [
+                        "GET /minn-admin/v1/templates"
+                    ],
+                    "name": "templates",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "templates(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "No theme, no page templates: an honest empty set.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 54,
+                    "end": 58
+                },
+                {
+                    "routes": [
+                        "GET /minn-admin/v1/patterns"
+                    ],
+                    "name": "patterns",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "patterns(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "Theme patterns are GPL theme content the engine does not carry.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 62,
+                    "end": 66
+                }
+            ]
+        },
+        {
             "name": "Minn\\Admin\\Format",
             "short": "Format",
             "namespace": "Minn\\Admin",
@@ -2960,7 +3293,7 @@
             ],
             "usedBy": [
                 "Minn\\Admin\\BootPayload",
-                "Minn\\Admin\\ManageController",
+                "Minn\\Admin\\PreferencesController",
                 "Minn\\Engine",
                 "Minn\\Rest\\Services"
             ],
@@ -3767,855 +4100,6 @@
             ]
         },
         {
-            "name": "Minn\\Admin\\ManageController",
-            "short": "ManageController",
-            "namespace": "Minn\\Admin",
-            "kind": "final readonly class",
-            "file": "public/minn/src/Minn/Admin/ManageController.php",
-            "lines": 372,
-            "doc": "The Manage half of minn-admin/v1: the Structure view (post types,\ntaxonomies, the terms switcher), the Extensions view's theme\ninventory, the update slots (always empty: the engine has no update\nchannel to poll), the bundled changelog and guide, and the person's\nappearance. Everything answers from the registries, the theme folders,\nand the app bundle on disk; nothing calls out.",
-            "implements": [],
-            "extends": null,
-            "uses": [
-                "Minn\\Admin\\App",
-                "Minn\\Admin\\Appearance",
-                "Minn\\Admin\\HiddenIntegrations",
-                "Minn\\Admin\\Updates",
-                "Minn\\Content\\Inventory",
-                "Minn\\Content\\Site",
-                "Minn\\Db",
-                "Minn\\Extension\\Loader",
-                "Minn\\Front\\Permalinks",
-                "Minn\\Http\\Method",
-                "Minn\\Http\\Request",
-                "Minn\\Http\\Response",
-                "Minn\\Http\\Route",
-                "Minn\\RestError",
-                "Minn\\Rest\\Caller",
-                "Minn\\Rest\\Reply",
-                "Minn\\Rest\\Taxonomies",
-                "Minn\\Rest\\Types",
-                "Minn\\Support\\FileHeaders"
-            ],
-            "usedBy": [
-                "Minn\\Rest\\Api"
-            ],
-            "constructor": {
-                "signature": "__construct(Minn\\Db $db, Minn\\Content\\Site $site, Minn\\Rest\\Types $types, Minn\\Rest\\Taxonomies $taxonomies, Minn\\Extension\\Loader $extensions, Minn\\Content\\Inventory $inventory, Minn\\Front\\Permalinks $permalinks, Minn\\Admin\\App $app, Minn\\Admin\\Appearance $appearance, Minn\\Admin\\HiddenIntegrations $hiddenIntegrations, Minn\\Admin\\Updates $updates, Minn\\Rest\\Caller $caller, string $contentDir)",
-                "doc": "",
-                "shapes": [],
-                "params": [
-                    {
-                        "name": "db",
-                        "type": "Minn\\Db",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "site",
-                        "type": "Minn\\Content\\Site",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "types",
-                        "type": "Minn\\Rest\\Types",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "taxonomies",
-                        "type": "Minn\\Rest\\Taxonomies",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "extensions",
-                        "type": "Minn\\Extension\\Loader",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "inventory",
-                        "type": "Minn\\Content\\Inventory",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "permalinks",
-                        "type": "Minn\\Front\\Permalinks",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "app",
-                        "type": "Minn\\Admin\\App",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "appearance",
-                        "type": "Minn\\Admin\\Appearance",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "hiddenIntegrations",
-                        "type": "Minn\\Admin\\HiddenIntegrations",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "updates",
-                        "type": "Minn\\Admin\\Updates",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "caller",
-                        "type": "Minn\\Rest\\Caller",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "contentDir",
-                        "type": "string",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    }
-                ],
-                "visibility": "public",
-                "line": 33,
-                "end": 48
-            },
-            "cases": [],
-            "constants": [],
-            "properties": [
-                {
-                    "name": "db",
-                    "type": "Minn\\Db",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "site",
-                    "type": "Minn\\Content\\Site",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "types",
-                    "type": "Minn\\Rest\\Types",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "taxonomies",
-                    "type": "Minn\\Rest\\Taxonomies",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "extensions",
-                    "type": "Minn\\Extension\\Loader",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "inventory",
-                    "type": "Minn\\Content\\Inventory",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "permalinks",
-                    "type": "Minn\\Front\\Permalinks",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "app",
-                    "type": "Minn\\Admin\\App",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "appearance",
-                    "type": "Minn\\Admin\\Appearance",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "hiddenIntegrations",
-                    "type": "Minn\\Admin\\HiddenIntegrations",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "updates",
-                    "type": "Minn\\Admin\\Updates",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "caller",
-                    "type": "Minn\\Rest\\Caller",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "contentDir",
-                    "type": "string",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                }
-            ],
-            "methods": [
-                {
-                    "routes": [
-                        "GET /minn-admin/v1/term-taxonomies"
-                    ],
-                    "name": "termTaxonomies",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "termTaxonomies(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "The taxonomies of each public type, for the Structure view.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 52,
-                    "end": 83
-                },
-                {
-                    "routes": [
-                        "GET /minn-admin/v1/post-types"
-                    ],
-                    "name": "postTypes",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "postTypes(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "The Structure view's post types: core and site-declared, with their live counts.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 87,
-                    "end": 126
-                },
-                {
-                    "routes": [
-                        "GET /minn-admin/v1/taxonomies"
-                    ],
-                    "name": "taxonomies",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "taxonomies(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "Every taxonomy with its counts.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 130,
-                    "end": 153
-                },
-                {
-                    "routes": [
-                        "GET /minn-admin/v1/themes"
-                    ],
-                    "name": "themes",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "themes(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "Every theme on disk with the active one marked.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 157,
-                    "end": 185
-                },
-                {
-                    "routes": [
-                        "POST /minn-admin/v1/themes/activate"
-                    ],
-                    "name": "activateTheme",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "activateTheme(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "Switches the active theme.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 189,
-                    "end": 206
-                },
-                {
-                    "routes": [
-                        "GET /minn-admin/v1/translations"
-                    ],
-                    "name": "translations",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "translations(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "The translation offers; none on the engine.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 210,
-                    "end": 214
-                },
-                {
-                    "routes": [
-                        "GET /minn-admin/v1/changelog"
-                    ],
-                    "name": "changelog",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "changelog(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "The app's bundled changelog.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 218,
-                    "end": 222
-                },
-                {
-                    "routes": [
-                        "GET /minn-admin/v1/guide"
-                    ],
-                    "name": "guide",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "guide(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "The app's bundled user guide.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 226,
-                    "end": 230
-                },
-                {
-                    "routes": [
-                        "GET /minn-admin/v1/me/appearance"
-                    ],
-                    "name": "myAppearance",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "myAppearance(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "The caller's appearance.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 234,
-                    "end": 237
-                },
-                {
-                    "routes": [
-                        "POST /minn-admin/v1/me/appearance"
-                    ],
-                    "name": "saveMyAppearance",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "saveMyAppearance(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "Saves the caller's appearance.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 241,
-                    "end": 244
-                },
-                {
-                    "routes": [
-                        "GET /minn-admin/v1/users/{id:\\d+}/appearance"
-                    ],
-                    "name": "userAppearance",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "userAppearance(Minn\\Http\\Request $request, string $id): Minn\\Http\\Response",
-                    "doc": "A user's appearance, for one who may edit them.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "id",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 248,
-                    "end": 251
-                },
-                {
-                    "routes": [
-                        "POST /minn-admin/v1/users/{id:\\d+}/appearance"
-                    ],
-                    "name": "saveUserAppearance",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "saveUserAppearance(Minn\\Http\\Request $request, string $id): Minn\\Http\\Response",
-                    "doc": "Saves a user's appearance.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "id",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 255,
-                    "end": 258
-                },
-                {
-                    "routes": [
-                        "GET /minn-admin/v1/users/{id:\\d+}/hidden"
-                    ],
-                    "name": "hidden",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "hidden(Minn\\Http\\Request $request, string $id): Minn\\Http\\Response",
-                    "doc": "The target user's restore list, for the user edit page.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "id",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 262,
-                    "end": 265
-                },
-                {
-                    "routes": [
-                        "POST /minn-admin/v1/users/{id:\\d+}/integrations/unhide"
-                    ],
-                    "name": "unhideForUser",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "unhideForUser(Minn\\Http\\Request $request, string $id): Minn\\Http\\Response",
-                    "doc": "An administrator restores something another person hid; hiding stays that person's own choice.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "id",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 269,
-                    "end": 278
-                },
-                {
-                    "routes": [
-                        "POST /minn-admin/v1/integrations/hide"
-                    ],
-                    "name": "hide",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "hide(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "Hides a view for the caller.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 282,
-                    "end": 289
-                },
-                {
-                    "routes": [
-                        "POST /minn-admin/v1/integrations/unhide"
-                    ],
-                    "name": "unhide",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "unhide(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "Shows a view again for the caller.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 293,
-                    "end": 298
-                },
-                {
-                    "routes": [],
-                    "name": "integrationId",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "integrationId(Minn\\Http\\Request $request): string",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 300,
-                    "end": 307
-                },
-                {
-                    "routes": [],
-                    "name": "integrationState",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "integrationState(int $userId): array",
-                    "doc": "The boot slices a hide or unhide repaints from. The engine registers no\nplugin surfaces, editor panels, design sources, or block forms.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "userId",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 313,
-                    "end": 325
-                },
-                {
-                    "routes": [],
-                    "name": "bundled",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "bundled(string $relative): array",
-                    "doc": "",
-                    "shapes": [
-                        "@return array{version: string, markdown: string}"
-                    ],
-                    "params": [
-                        {
-                            "name": "relative",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 328,
-                    "end": 332
-                },
-                {
-                    "routes": [],
-                    "name": "appearanceBody",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "appearanceBody(Minn\\Http\\Request $request): array",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 334,
-                    "end": 338
-                },
-                {
-                    "routes": [],
-                    "name": "editableUser",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "editableUser(string $id): int",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "id",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 340,
-                    "end": 348
-                },
-                {
-                    "routes": [],
-                    "name": "themeText",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "themeText(string $value): string",
-                    "doc": "A theme header as the reference serves it: tags stripped, a bare ampersand entity-encoded.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "value",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 351,
-                    "end": 354
-                },
-                {
-                    "routes": [],
-                    "name": "themeFolders",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "themeFolders(): array",
-                    "doc": "",
-                    "shapes": [
-                        "@return array<string, array<string, string>> slug => style.css headers"
-                    ],
-                    "params": [],
-                    "line": 357,
-                    "end": 371
-                },
-                {
-                    "routes": [],
-                    "name": "screenshot",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "screenshot(string $slug): string",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "slug",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 373,
-                    "end": 381
-                },
-                {
-                    "routes": [],
-                    "name": "publicTypes",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "publicTypes(): array",
-                    "doc": "",
-                    "shapes": [
-                        "@return list<string>"
-                    ],
-                    "params": [],
-                    "line": 384,
-                    "end": 387
-                },
-                {
-                    "routes": [],
-                    "name": "termCount",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "termCount(string $taxonomy): int",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "taxonomy",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 389,
-                    "end": 392
-                },
-                {
-                    "routes": [],
-                    "name": "postCount",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "postCount(string $type): int",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "type",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 394,
-                    "end": 400
-                }
-            ]
-        },
-        {
             "name": "Minn\\Admin\\Notifications",
             "short": "Notifications",
             "namespace": "Minn\\Admin",
@@ -4994,6 +4478,341 @@
                     "params": [],
                     "line": 212,
                     "end": 222
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Admin\\OverviewController",
+            "short": "OverviewController",
+            "namespace": "Minn\\Admin",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Admin/OverviewController.php",
+            "lines": 141,
+            "doc": "The Overview of minn-admin/v1: the payload, the drill-down behind one\nchart bar, and the pick of cards, the person's own and the site's default.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Admin\\Dashboard",
+                "Minn\\Content\\Site",
+                "Minn\\Content\\Users",
+                "Minn\\Db",
+                "Minn\\Http\\Method",
+                "Minn\\Http\\Request",
+                "Minn\\Http\\Response",
+                "Minn\\Http\\Route",
+                "Minn\\RestError",
+                "Minn\\Rest\\Caller",
+                "Minn\\Rest\\Reply",
+                "Minn\\Support\\Serialized"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\Api"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Db $db, Minn\\Content\\Site $site, Minn\\Admin\\Dashboard $dashboard, Minn\\Content\\Users $users, Minn\\Rest\\Caller $caller)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "db",
+                        "type": "Minn\\Db",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "site",
+                        "type": "Minn\\Content\\Site",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "dashboard",
+                        "type": "Minn\\Admin\\Dashboard",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "users",
+                        "type": "Minn\\Content\\Users",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "caller",
+                        "type": "Minn\\Rest\\Caller",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 25,
+                "end": 32
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "db",
+                    "type": "Minn\\Db",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "site",
+                    "type": "Minn\\Content\\Site",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "dashboard",
+                    "type": "Minn\\Admin\\Dashboard",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "users",
+                    "type": "Minn\\Content\\Users",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "caller",
+                    "type": "Minn\\Rest\\Caller",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [
+                        "GET /minn-admin/v1/overview"
+                    ],
+                    "name": "overview",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "overview(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "The overview payload.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 36,
+                    "end": 40
+                },
+                {
+                    "routes": [
+                        "GET /minn-admin/v1/overview/activity"
+                    ],
+                    "name": "overviewActivity",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "overviewActivity(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "The events behind one chart bar.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 44,
+                    "end": 49
+                },
+                {
+                    "routes": [
+                        "POST /minn-admin/v1/overview/metrics"
+                    ],
+                    "name": "setOverviewMetrics",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "setOverviewMetrics(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "Saves the caller's pick of overview cards.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 53,
+                    "end": 63
+                },
+                {
+                    "routes": [
+                        "POST /minn-admin/v1/overview/metric-defaults"
+                    ],
+                    "name": "setOverviewMetricDefaults",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "setOverviewMetricDefaults(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "Saves the site's default overview cards.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 67,
+                    "end": 78
+                },
+                {
+                    "routes": [],
+                    "name": "metricKeysFrom",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "metricKeysFrom(Minn\\Http\\Request $request): ?array",
+                    "doc": "The cleaned keys, null when the caller asked for a clear; a missing or non-list keys member refuses.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 81,
+                    "end": 95
+                },
+                {
+                    "routes": [],
+                    "name": "storedMetricLayout",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "storedMetricLayout(int $userId): array",
+                    "doc": "The stored layout, unfiltered by the catalog, so a save answers without a second Overview round trip.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "userId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 98,
+                    "end": 110
+                },
+                {
+                    "routes": [],
+                    "name": "days",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "days(Minn\\Http\\Request $request): int",
+                    "doc": "?days must be an in-range integer; the reference's parameter errors otherwise.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 113,
+                    "end": 127
+                },
+                {
+                    "routes": [],
+                    "name": "window",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "window(Minn\\Http\\Request $request): array",
+                    "doc": "Both bounds required, \"Y-m-d H:i:s\". @return array{0: string, 1: string}",
+                    "shapes": [
+                        "@return array{0: string, 1: string}"
+                    ],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 130,
+                    "end": 154
+                },
+                {
+                    "routes": [],
+                    "name": "parameterError",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "parameterError(string $param, string $code, string $message, mixed $data): Minn\\RestError",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "param",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "code",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "message",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "data",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 156,
+                    "end": 162
                 }
             ]
         },
@@ -5979,6 +5798,379 @@
             ]
         },
         {
+            "name": "Minn\\Admin\\PreferencesController",
+            "short": "PreferencesController",
+            "namespace": "Minn\\Admin",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Admin/PreferencesController.php",
+            "lines": 120,
+            "doc": "A person's own settings in minn-admin/v1: their appearance, the views\nthey hid, and an administrator's reach into another person's, for the\nuser edit page.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Admin\\Appearance",
+                "Minn\\Admin\\HiddenIntegrations",
+                "Minn\\Http\\Method",
+                "Minn\\Http\\Request",
+                "Minn\\Http\\Response",
+                "Minn\\Http\\Route",
+                "Minn\\RestError",
+                "Minn\\Rest\\Caller",
+                "Minn\\Rest\\Reply"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\Api"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Admin\\Appearance $appearance, Minn\\Admin\\HiddenIntegrations $hiddenIntegrations, Minn\\Rest\\Caller $caller)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "appearance",
+                        "type": "Minn\\Admin\\Appearance",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "hiddenIntegrations",
+                        "type": "Minn\\Admin\\HiddenIntegrations",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "caller",
+                        "type": "Minn\\Rest\\Caller",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 22,
+                "end": 27
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "appearance",
+                    "type": "Minn\\Admin\\Appearance",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "hiddenIntegrations",
+                    "type": "Minn\\Admin\\HiddenIntegrations",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "caller",
+                    "type": "Minn\\Rest\\Caller",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [
+                        "GET /minn-admin/v1/me/appearance"
+                    ],
+                    "name": "myAppearance",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "myAppearance(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "The caller's appearance.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 31,
+                    "end": 34
+                },
+                {
+                    "routes": [
+                        "POST /minn-admin/v1/me/appearance"
+                    ],
+                    "name": "saveMyAppearance",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "saveMyAppearance(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "Saves the caller's appearance.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 38,
+                    "end": 41
+                },
+                {
+                    "routes": [
+                        "GET /minn-admin/v1/users/{id:\\d+}/appearance"
+                    ],
+                    "name": "userAppearance",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "userAppearance(Minn\\Http\\Request $request, string $id): Minn\\Http\\Response",
+                    "doc": "A user's appearance, for one who may edit them.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 45,
+                    "end": 48
+                },
+                {
+                    "routes": [
+                        "POST /minn-admin/v1/users/{id:\\d+}/appearance"
+                    ],
+                    "name": "saveUserAppearance",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "saveUserAppearance(Minn\\Http\\Request $request, string $id): Minn\\Http\\Response",
+                    "doc": "Saves a user's appearance.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 52,
+                    "end": 55
+                },
+                {
+                    "routes": [
+                        "GET /minn-admin/v1/users/{id:\\d+}/hidden"
+                    ],
+                    "name": "hidden",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "hidden(Minn\\Http\\Request $request, string $id): Minn\\Http\\Response",
+                    "doc": "The target user's restore list, for the user edit page.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 59,
+                    "end": 62
+                },
+                {
+                    "routes": [
+                        "POST /minn-admin/v1/users/{id:\\d+}/integrations/unhide"
+                    ],
+                    "name": "unhideForUser",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "unhideForUser(Minn\\Http\\Request $request, string $id): Minn\\Http\\Response",
+                    "doc": "An administrator restores something another person hid; hiding stays that person's own choice.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 66,
+                    "end": 75
+                },
+                {
+                    "routes": [
+                        "POST /minn-admin/v1/integrations/hide"
+                    ],
+                    "name": "hide",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "hide(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "Hides a view for the caller.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 79,
+                    "end": 86
+                },
+                {
+                    "routes": [
+                        "POST /minn-admin/v1/integrations/unhide"
+                    ],
+                    "name": "unhide",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "unhide(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "Shows a view again for the caller.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 90,
+                    "end": 95
+                },
+                {
+                    "routes": [],
+                    "name": "integrationId",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "integrationId(Minn\\Http\\Request $request): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 97,
+                    "end": 104
+                },
+                {
+                    "routes": [],
+                    "name": "integrationState",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "integrationState(int $userId): array",
+                    "doc": "The boot slices a hide or unhide repaints from. The engine registers no\nplugin surfaces, editor panels, design sources, or block forms.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "userId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 110,
+                    "end": 122
+                },
+                {
+                    "routes": [],
+                    "name": "appearanceBody",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "appearanceBody(Minn\\Http\\Request $request): array",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 124,
+                    "end": 128
+                },
+                {
+                    "routes": [],
+                    "name": "editableUser",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "editableUser(string $id): int",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 130,
+                    "end": 138
+                }
+            ]
+        },
+        {
             "name": "Minn\\Admin\\RenderController",
             "short": "RenderController",
             "namespace": "Minn\\Admin",
@@ -6384,6 +6576,464 @@
             ]
         },
         {
+            "name": "Minn\\Admin\\SiteController",
+            "short": "SiteController",
+            "namespace": "Minn\\Admin",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Admin/SiteController.php",
+            "lines": 91,
+            "doc": "The small Settings-view routes of minn-admin/v1: the site logo, the\npermalink structure, the spam queue, and the months the library spans.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Content\\Posts",
+                "Minn\\Content\\Site",
+                "Minn\\Db",
+                "Minn\\Front\\Permalinks",
+                "Minn\\Http\\Method",
+                "Minn\\Http\\Request",
+                "Minn\\Http\\Response",
+                "Minn\\Http\\Route",
+                "Minn\\Media\\Metadata",
+                "Minn\\Rest\\Caller",
+                "Minn\\Rest\\Reply",
+                "Minn\\Support\\Serialized",
+                "Minn\\Theme\\Theme"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\Api"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Db $db, Minn\\Content\\Site $site, Minn\\Content\\Posts $posts, Minn\\Front\\Permalinks $permalinks, Minn\\Rest\\Caller $caller)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "db",
+                        "type": "Minn\\Db",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "site",
+                        "type": "Minn\\Content\\Site",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "posts",
+                        "type": "Minn\\Content\\Posts",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "permalinks",
+                        "type": "Minn\\Front\\Permalinks",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "caller",
+                        "type": "Minn\\Rest\\Caller",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 27,
+                "end": 34
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "db",
+                    "type": "Minn\\Db",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "site",
+                    "type": "Minn\\Content\\Site",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "posts",
+                    "type": "Minn\\Content\\Posts",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "permalinks",
+                    "type": "Minn\\Front\\Permalinks",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "caller",
+                    "type": "Minn\\Rest\\Caller",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [
+                        "GET /minn-admin/v1/site-logo"
+                    ],
+                    "name": "siteLogo",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "siteLogo(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "The site logo attachment.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 38,
+                    "end": 52
+                },
+                {
+                    "routes": [
+                        "GET /minn-admin/v1/permalinks"
+                    ],
+                    "name": "permalinks",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "permalinks(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "The permalink structure.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 69,
+                    "end": 81
+                },
+                {
+                    "routes": [
+                        "GET /minn-admin/v1/spam"
+                    ],
+                    "name": "spam",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "spam(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "The spam settings.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 85,
+                    "end": 102
+                },
+                {
+                    "routes": [
+                        "GET /minn-admin/v1/media/months"
+                    ],
+                    "name": "mediaMonths",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "mediaMonths(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "The months the library has uploads in.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 106,
+                    "end": 114
+                },
+                {
+                    "routes": [],
+                    "name": "logoUrl",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "logoUrl(int $id): string",
+                    "doc": "The custom logo's medium rendition, the size the app's card shows.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 55,
+                    "end": 65
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Admin\\StructureController",
+            "short": "StructureController",
+            "namespace": "Minn\\Admin",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Admin/StructureController.php",
+            "lines": 134,
+            "doc": "The Structure view of minn-admin/v1: post types, taxonomies, and the\nterms switcher, each with its live counts, answered from the registries.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Db",
+                "Minn\\Http\\Method",
+                "Minn\\Http\\Request",
+                "Minn\\Http\\Response",
+                "Minn\\Http\\Route",
+                "Minn\\Rest\\Caller",
+                "Minn\\Rest\\Reply",
+                "Minn\\Rest\\Taxonomies",
+                "Minn\\Rest\\Types"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\Api"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Db $db, Minn\\Rest\\Types $types, Minn\\Rest\\Taxonomies $taxonomies, Minn\\Rest\\Caller $caller)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "db",
+                        "type": "Minn\\Db",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "types",
+                        "type": "Minn\\Rest\\Types",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "taxonomies",
+                        "type": "Minn\\Rest\\Taxonomies",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "caller",
+                        "type": "Minn\\Rest\\Caller",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 23,
+                "end": 29
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "db",
+                    "type": "Minn\\Db",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "types",
+                    "type": "Minn\\Rest\\Types",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "taxonomies",
+                    "type": "Minn\\Rest\\Taxonomies",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "caller",
+                    "type": "Minn\\Rest\\Caller",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [
+                        "GET /minn-admin/v1/term-taxonomies"
+                    ],
+                    "name": "termTaxonomies",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "termTaxonomies(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "The taxonomies of each public type, for the Structure view.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 33,
+                    "end": 64
+                },
+                {
+                    "routes": [
+                        "GET /minn-admin/v1/post-types"
+                    ],
+                    "name": "postTypes",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "postTypes(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "The Structure view's post types: core and site-declared, with their live counts.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 68,
+                    "end": 107
+                },
+                {
+                    "routes": [
+                        "GET /minn-admin/v1/taxonomies"
+                    ],
+                    "name": "taxonomies",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "taxonomies(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "Every taxonomy with its counts.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 111,
+                    "end": 134
+                },
+                {
+                    "routes": [],
+                    "name": "publicTypes",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "publicTypes(): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [],
+                    "line": 137,
+                    "end": 140
+                },
+                {
+                    "routes": [],
+                    "name": "termCount",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "termCount(string $taxonomy): int",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "taxonomy",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 142,
+                    "end": 145
+                },
+                {
+                    "routes": [],
+                    "name": "postCount",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "postCount(string $type): int",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 147,
+                    "end": 153
+                }
+            ]
+        },
+        {
             "name": "Minn\\Admin\\SystemController",
             "short": "SystemController",
             "namespace": "Minn\\Admin",
@@ -6693,6 +7343,227 @@
                     "params": [],
                     "line": 96,
                     "end": 102
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Admin\\ThemesController",
+            "short": "ThemesController",
+            "namespace": "Minn\\Admin",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Admin/ThemesController.php",
+            "lines": 97,
+            "doc": "The theme inventory of minn-admin/v1: every theme on disk with its\nheaders, screenshot, and update offer, and the switch of the active one.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Admin\\Updates",
+                "Minn\\Content\\Site",
+                "Minn\\Front\\Permalinks",
+                "Minn\\Http\\Method",
+                "Minn\\Http\\Request",
+                "Minn\\Http\\Response",
+                "Minn\\Http\\Route",
+                "Minn\\RestError",
+                "Minn\\Rest\\Caller",
+                "Minn\\Rest\\Reply",
+                "Minn\\Support\\FileHeaders"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\Api"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Content\\Site $site, Minn\\Front\\Permalinks $permalinks, Minn\\Admin\\Updates $updates, Minn\\Rest\\Caller $caller, string $contentDir)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "site",
+                        "type": "Minn\\Content\\Site",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "permalinks",
+                        "type": "Minn\\Front\\Permalinks",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "updates",
+                        "type": "Minn\\Admin\\Updates",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "caller",
+                        "type": "Minn\\Rest\\Caller",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "contentDir",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 24,
+                "end": 31
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "site",
+                    "type": "Minn\\Content\\Site",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "permalinks",
+                    "type": "Minn\\Front\\Permalinks",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "updates",
+                    "type": "Minn\\Admin\\Updates",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "caller",
+                    "type": "Minn\\Rest\\Caller",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "contentDir",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [
+                        "GET /minn-admin/v1/themes"
+                    ],
+                    "name": "themes",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "themes(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "Every theme on disk with the active one marked.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 35,
+                    "end": 63
+                },
+                {
+                    "routes": [
+                        "POST /minn-admin/v1/themes/activate"
+                    ],
+                    "name": "activateTheme",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "activateTheme(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "Switches the active theme.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 67,
+                    "end": 84
+                },
+                {
+                    "routes": [],
+                    "name": "themeText",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "themeText(string $value): string",
+                    "doc": "A theme header as the reference serves it: tags stripped, a bare ampersand entity-encoded.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 87,
+                    "end": 90
+                },
+                {
+                    "routes": [],
+                    "name": "themeFolders",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "themeFolders(): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array<string, array<string, string>> slug => style.css headers"
+                    ],
+                    "params": [],
+                    "line": 93,
+                    "end": 107
+                },
+                {
+                    "routes": [],
+                    "name": "screenshot",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "screenshot(string $slug): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "slug",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 109,
+                    "end": 117
                 }
             ]
         },
@@ -7090,8 +7961,8 @@
                 "Minn\\Support\\Serialized"
             ],
             "usedBy": [
-                "Minn\\Admin\\ManageController",
                 "Minn\\Admin\\Notifications",
+                "Minn\\Admin\\ThemesController",
                 "Minn\\Admin\\UpdatesController",
                 "Minn\\Cli\\AssetUpdate",
                 "Minn\\Cron\\Cron",
@@ -7929,78 +8800,33 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/V1Controller.php",
-            "lines": 316,
-            "doc": "The minn-admin/v1 namespace: the dashboard burst, the editor helpers,\nand the small Settings-view routes. Every route sits behind the same\ncapability floor (edit_posts) the plugin declares.",
+            "lines": 60,
+            "doc": "The boot burst of minn-admin/v1: the bell feed and its read marker, the\ncore status, and the one-round-trip boot-status the app starts from.\nEvery route sits behind the same capability floor (edit_posts) the\nplugin declares.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Admin\\AdminTypes",
                 "Minn\\Admin\\CoreStatus",
-                "Minn\\Admin\\Dashboard",
                 "Minn\\Admin\\Notifications",
-                "Minn\\Content\\PostWriter",
-                "Minn\\Content\\Posts",
-                "Minn\\Content\\Site",
-                "Minn\\Content\\Users",
                 "Minn\\Db",
-                "Minn\\Front\\Permalinks",
                 "Minn\\Http\\Method",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
-                "Minn\\Media\\Metadata",
-                "Minn\\RestError",
                 "Minn\\Rest\\Caller",
-                "Minn\\Rest\\Reply",
-                "Minn\\Support\\Serialized",
-                "Minn\\Theme\\Theme"
+                "Minn\\Rest\\Reply"
             ],
             "usedBy": [
                 "Minn\\Rest\\Api"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Db $db, Minn\\Content\\Site $site, Minn\\Content\\Posts $posts, Minn\\Content\\PostWriter $writer, Minn\\Front\\Permalinks $permalinks, Minn\\Admin\\Dashboard $dashboard, Minn\\Admin\\Notifications $notifications, Minn\\Admin\\CoreStatus $core, Minn\\Admin\\AdminTypes $types, Minn\\Rest\\Caller $caller, Minn\\Content\\Users $users)",
+                "signature": "__construct(Minn\\Db $db, Minn\\Admin\\Notifications $notifications, Minn\\Admin\\CoreStatus $core, Minn\\Admin\\AdminTypes $types, Minn\\Rest\\Caller $caller)",
                 "doc": "",
                 "shapes": [],
                 "params": [
                     {
                         "name": "db",
                         "type": "Minn\\Db",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "site",
-                        "type": "Minn\\Content\\Site",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "posts",
-                        "type": "Minn\\Content\\Posts",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "writer",
-                        "type": "Minn\\Content\\PostWriter",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "permalinks",
-                        "type": "Minn\\Front\\Permalinks",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "dashboard",
-                        "type": "Minn\\Admin\\Dashboard",
                         "shape": "",
                         "default": null,
                         "doc": ""
@@ -8032,18 +8858,11 @@
                         "shape": "",
                         "default": null,
                         "doc": ""
-                    },
-                    {
-                        "name": "users",
-                        "type": "Minn\\Content\\Users",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
                     }
                 ],
                 "visibility": "public",
-                "line": 31,
-                "end": 44
+                "line": 23,
+                "end": 30
             },
             "cases": [],
             "constants": [],
@@ -8051,51 +8870,6 @@
                 {
                     "name": "db",
                     "type": "Minn\\Db",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "site",
-                    "type": "Minn\\Content\\Site",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "posts",
-                    "type": "Minn\\Content\\Posts",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "writer",
-                    "type": "Minn\\Content\\PostWriter",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "permalinks",
-                    "type": "Minn\\Front\\Permalinks",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "dashboard",
-                    "type": "Minn\\Admin\\Dashboard",
                     "readonly": true,
                     "static": false,
                     "doc": "",
@@ -8137,62 +8911,9 @@
                     "doc": "",
                     "visibility": "private",
                     "promoted": true
-                },
-                {
-                    "name": "users",
-                    "type": "Minn\\Content\\Users",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
                 }
             ],
             "methods": [
-                {
-                    "routes": [
-                        "GET /minn-admin/v1/overview"
-                    ],
-                    "name": "overview",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "overview(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "The overview payload.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 48,
-                    "end": 52
-                },
-                {
-                    "routes": [
-                        "GET /minn-admin/v1/overview/activity"
-                    ],
-                    "name": "overviewActivity",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "overviewActivity(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "The events behind one chart bar.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 56,
-                    "end": 61
-                },
                 {
                     "routes": [
                         "GET /minn-admin/v1/notifications"
@@ -8212,8 +8933,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 65,
-                    "end": 68
+                    "line": 34,
+                    "end": 37
                 },
                 {
                     "routes": [
@@ -8234,8 +8955,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 72,
-                    "end": 78
+                    "line": 41,
+                    "end": 47
                 },
                 {
                     "routes": [
@@ -8256,8 +8977,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 82,
-                    "end": 87
+                    "line": 51,
+                    "end": 56
                 },
                 {
                     "routes": [
@@ -8278,385 +8999,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 96,
-                    "end": 110
-                },
-                {
-                    "routes": [
-                        "POST /minn-admin/v1/posts/{id:\\d+}/lock"
-                    ],
-                    "name": "lock",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "lock(Minn\\Http\\Request $request, string $id): Minn\\Http\\Response",
-                    "doc": "Takes the edit lock on a post.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "id",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 114,
-                    "end": 122
-                },
-                {
-                    "routes": [
-                        "POST /minn-admin/v1/posts/{id:\\d+}/unlock"
-                    ],
-                    "name": "unlock",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "unlock(Minn\\Http\\Request $request, string $id): Minn\\Http\\Response",
-                    "doc": "Releases the edit lock on a post.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "id",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 126,
-                    "end": 134
-                },
-                {
-                    "routes": [
-                        "GET /minn-admin/v1/templates"
-                    ],
-                    "name": "templates",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "templates(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "No theme, no page templates: an honest empty set.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 138,
-                    "end": 142
-                },
-                {
-                    "routes": [
-                        "GET /minn-admin/v1/patterns"
-                    ],
-                    "name": "patterns",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "patterns(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "Theme patterns are GPL theme content the engine does not carry.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 146,
-                    "end": 150
-                },
-                {
-                    "routes": [
-                        "GET /minn-admin/v1/site-logo"
-                    ],
-                    "name": "siteLogo",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "siteLogo(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "The site logo attachment.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 154,
-                    "end": 168
-                },
-                {
-                    "routes": [
-                        "POST /minn-admin/v1/overview/metrics"
-                    ],
-                    "name": "setOverviewMetrics",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "setOverviewMetrics(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "Saves the caller's pick of overview cards.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 172,
-                    "end": 182
-                },
-                {
-                    "routes": [
-                        "POST /minn-admin/v1/overview/metric-defaults"
-                    ],
-                    "name": "setOverviewMetricDefaults",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "setOverviewMetricDefaults(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "Saves the site's default overview cards.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 186,
-                    "end": 197
-                },
-                {
-                    "routes": [
-                        "GET /minn-admin/v1/permalinks"
-                    ],
-                    "name": "permalinks",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "permalinks(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "The permalink structure.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 246,
-                    "end": 258
-                },
-                {
-                    "routes": [
-                        "GET /minn-admin/v1/spam"
-                    ],
-                    "name": "spam",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "spam(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "The spam settings.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 262,
-                    "end": 279
-                },
-                {
-                    "routes": [
-                        "GET /minn-admin/v1/media/months"
-                    ],
-                    "name": "mediaMonths",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "mediaMonths(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "The months the library has uploads in.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 283,
-                    "end": 291
-                },
-                {
-                    "routes": [],
-                    "name": "metricKeysFrom",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "metricKeysFrom(Minn\\Http\\Request $request): ?array",
-                    "doc": "The cleaned keys, null when the caller asked for a clear; a missing or non-list keys member refuses.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 200,
-                    "end": 214
-                },
-                {
-                    "routes": [],
-                    "name": "storedMetricLayout",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "storedMetricLayout(int $userId): array",
-                    "doc": "The stored layout, unfiltered by the catalog, so a save answers without a second Overview round trip.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "userId",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 217,
-                    "end": 229
-                },
-                {
-                    "routes": [],
-                    "name": "logoUrl",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "logoUrl(int $id): string",
-                    "doc": "The custom logo's medium rendition, the size the app's card shows.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "id",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 232,
-                    "end": 242
-                },
-                {
-                    "routes": [],
-                    "name": "days",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "days(Minn\\Http\\Request $request): int",
-                    "doc": "?days must be an in-range integer; the reference's parameter errors otherwise.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 294,
-                    "end": 308
-                },
-                {
-                    "routes": [],
-                    "name": "window",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "window(Minn\\Http\\Request $request): array",
-                    "doc": "Both bounds required, \"Y-m-d H:i:s\". @return array{0: string, 1: string}",
-                    "shapes": [
-                        "@return array{0: string, 1: string}"
-                    ],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 311,
-                    "end": 335
-                },
-                {
-                    "routes": [],
-                    "name": "parameterError",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "parameterError(string $param, string $code, string $message, mixed $data): Minn\\RestError",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "param",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "code",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "message",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "data",
-                            "type": "mixed",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 337,
-                    "end": 343
+                    "line": 65,
+                    "end": 79
                 }
             ]
         },
@@ -23855,7 +24199,6 @@
             ],
             "usedBy": [
                 "Minn\\Admin\\Diagnostics",
-                "Minn\\Admin\\ManageController",
                 "Minn\\Admin\\Packages",
                 "Minn\\Admin\\Updates",
                 "Minn\\Cli\\AssetUpdate",
@@ -26834,7 +27177,7 @@
                 "Minn\\Support\\Serialized"
             ],
             "usedBy": [
-                "Minn\\Admin\\V1Controller",
+                "Minn\\Admin\\EditorController",
                 "Minn\\Cli\\MinnCommand",
                 "Minn\\Content\\Menus",
                 "Minn\\Content\\Revisions",
@@ -27500,7 +27843,7 @@
             "usedBy": [
                 "Minn\\Admin\\BootPayload",
                 "Minn\\Admin\\RenderController",
-                "Minn\\Admin\\V1Controller",
+                "Minn\\Admin\\SiteController",
                 "Minn\\Blocks\\Dynamic\\LatestComments",
                 "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
                 "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
@@ -28863,14 +29206,15 @@
                 "Minn\\Admin\\Dashboard",
                 "Minn\\Admin\\Diagnostics",
                 "Minn\\Admin\\LanguageController",
-                "Minn\\Admin\\ManageController",
                 "Minn\\Admin\\Notifications",
+                "Minn\\Admin\\OverviewController",
                 "Minn\\Admin\\Packages",
                 "Minn\\Admin\\PackagesController",
                 "Minn\\Admin\\RenderController",
+                "Minn\\Admin\\SiteController",
+                "Minn\\Admin\\ThemesController",
                 "Minn\\Admin\\Translations",
                 "Minn\\Admin\\Updates",
-                "Minn\\Admin\\V1Controller",
                 "Minn\\Blocks\\Dynamic\\Dates",
                 "Minn\\Blocks\\Dynamic\\LatestComments",
                 "Minn\\Blocks\\Dynamic\\LatestPosts",
@@ -30582,9 +30926,9 @@
                 "Minn\\Admin\\HiddenIntegrations",
                 "Minn\\Admin\\LanguageController",
                 "Minn\\Admin\\Notifications",
+                "Minn\\Admin\\OverviewController",
                 "Minn\\Admin\\SessionsController",
                 "Minn\\Admin\\Translations",
-                "Minn\\Admin\\V1Controller",
                 "Minn\\Auth\\ApplicationPasswords",
                 "Minn\\Auth\\Authenticator",
                 "Minn\\Auth\\Capabilities",
@@ -31274,9 +31618,11 @@
                 "Minn\\Admin\\ActivityFeed",
                 "Minn\\Admin\\Dashboard",
                 "Minn\\Admin\\Diagnostics",
-                "Minn\\Admin\\ManageController",
                 "Minn\\Admin\\Notifications",
+                "Minn\\Admin\\OverviewController",
                 "Minn\\Admin\\RenderController",
+                "Minn\\Admin\\SiteController",
+                "Minn\\Admin\\StructureController",
                 "Minn\\Admin\\V1Controller",
                 "Minn\\Auth\\AuthCookies",
                 "Minn\\Auth\\Authenticator",
@@ -32171,7 +32517,6 @@
             ],
             "usedBy": [
                 "Minn\\Admin\\Diagnostics",
-                "Minn\\Admin\\ManageController",
                 "Minn\\Cli\\MinnCommand",
                 "Minn\\Cli\\PluginCommand",
                 "Minn\\Content\\PluginState",
@@ -35986,9 +36331,9 @@
                 "Minn\\Admin\\AppController",
                 "Minn\\Admin\\BootPayload",
                 "Minn\\Admin\\Diagnostics",
-                "Minn\\Admin\\ManageController",
                 "Minn\\Admin\\RenderController",
-                "Minn\\Admin\\V1Controller",
+                "Minn\\Admin\\SiteController",
+                "Minn\\Admin\\ThemesController",
                 "Minn\\Blocks\\Dynamic\\Archives",
                 "Minn\\Blocks\\Dynamic\\Categories",
                 "Minn\\Blocks\\Dynamic\\LatestComments",
@@ -41766,12 +42111,18 @@
             "uses": [],
             "usedBy": [
                 "Minn\\Admin\\AppController",
+                "Minn\\Admin\\BundleController",
+                "Minn\\Admin\\EditorController",
                 "Minn\\Admin\\LanguageController",
-                "Minn\\Admin\\ManageController",
+                "Minn\\Admin\\OverviewController",
                 "Minn\\Admin\\PackagesController",
+                "Minn\\Admin\\PreferencesController",
                 "Minn\\Admin\\RenderController",
                 "Minn\\Admin\\SessionsController",
+                "Minn\\Admin\\SiteController",
+                "Minn\\Admin\\StructureController",
                 "Minn\\Admin\\SystemController",
+                "Minn\\Admin\\ThemesController",
                 "Minn\\Admin\\UpdatesController",
                 "Minn\\Admin\\V1Controller",
                 "Minn\\Engine",
@@ -42227,13 +42578,19 @@
             ],
             "usedBy": [
                 "Minn\\Admin\\AppController",
+                "Minn\\Admin\\BundleController",
                 "Minn\\Admin\\Diagnostics",
+                "Minn\\Admin\\EditorController",
                 "Minn\\Admin\\LanguageController",
-                "Minn\\Admin\\ManageController",
+                "Minn\\Admin\\OverviewController",
                 "Minn\\Admin\\PackagesController",
+                "Minn\\Admin\\PreferencesController",
                 "Minn\\Admin\\RenderController",
                 "Minn\\Admin\\SessionsController",
+                "Minn\\Admin\\SiteController",
+                "Minn\\Admin\\StructureController",
                 "Minn\\Admin\\SystemController",
+                "Minn\\Admin\\ThemesController",
                 "Minn\\Admin\\UpdatesController",
                 "Minn\\Admin\\V1Controller",
                 "Minn\\Auth\\Authenticator",
@@ -42669,12 +43026,18 @@
             "uses": [],
             "usedBy": [
                 "Minn\\Admin\\AppController",
+                "Minn\\Admin\\BundleController",
+                "Minn\\Admin\\EditorController",
                 "Minn\\Admin\\LanguageController",
-                "Minn\\Admin\\ManageController",
+                "Minn\\Admin\\OverviewController",
                 "Minn\\Admin\\PackagesController",
+                "Minn\\Admin\\PreferencesController",
                 "Minn\\Admin\\RenderController",
                 "Minn\\Admin\\SessionsController",
+                "Minn\\Admin\\SiteController",
+                "Minn\\Admin\\StructureController",
                 "Minn\\Admin\\SystemController",
+                "Minn\\Admin\\ThemesController",
                 "Minn\\Admin\\UpdatesController",
                 "Minn\\Admin\\V1Controller",
                 "Minn\\Auth\\AuthCookies",
@@ -42977,12 +43340,18 @@
             ],
             "usedBy": [
                 "Minn\\Admin\\AppController",
+                "Minn\\Admin\\BundleController",
+                "Minn\\Admin\\EditorController",
                 "Minn\\Admin\\LanguageController",
-                "Minn\\Admin\\ManageController",
+                "Minn\\Admin\\OverviewController",
                 "Minn\\Admin\\PackagesController",
+                "Minn\\Admin\\PreferencesController",
                 "Minn\\Admin\\RenderController",
                 "Minn\\Admin\\SessionsController",
+                "Minn\\Admin\\SiteController",
+                "Minn\\Admin\\StructureController",
                 "Minn\\Admin\\SystemController",
+                "Minn\\Admin\\ThemesController",
                 "Minn\\Admin\\UpdatesController",
                 "Minn\\Admin\\V1Controller",
                 "Minn\\Front\\AssetsController",
@@ -46073,7 +46442,7 @@
             "extends": null,
             "uses": [],
             "usedBy": [
-                "Minn\\Admin\\V1Controller",
+                "Minn\\Admin\\SiteController",
                 "Minn\\Blocks\\ImageTags",
                 "Minn\\Media\\Writer",
                 "Minn\\Rest\\MediaController",
@@ -48302,18 +48671,20 @@
             "extends": "RuntimeException",
             "uses": [],
             "usedBy": [
+                "Minn\\Admin\\EditorController",
                 "Minn\\Admin\\LanguageController",
                 "Minn\\Admin\\Logs",
-                "Minn\\Admin\\ManageController",
+                "Minn\\Admin\\OverviewController",
                 "Minn\\Admin\\Packages",
                 "Minn\\Admin\\PackagesController",
+                "Minn\\Admin\\PreferencesController",
                 "Minn\\Admin\\RenderController",
                 "Minn\\Admin\\SessionsController",
                 "Minn\\Admin\\SystemController",
+                "Minn\\Admin\\ThemesController",
                 "Minn\\Admin\\Translations",
                 "Minn\\Admin\\Updates",
                 "Minn\\Admin\\UpdatesController",
-                "Minn\\Admin\\V1Controller",
                 "Minn\\Cli\\AssetUpdate",
                 "Minn\\Cli\\DirectorySearch",
                 "Minn\\Cli\\PluginCommand",
@@ -48628,19 +48999,25 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Api.php",
-            "lines": 127,
+            "lines": 133,
             "doc": "The REST API: wires the controllers for one request and dispatches a\nroute. Errors thrown anywhere underneath become the reference's error\npayload under the reference's headers.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Admin\\AdminTypes",
+                "Minn\\Admin\\BundleController",
                 "Minn\\Admin\\CoreStatus",
+                "Minn\\Admin\\EditorController",
                 "Minn\\Admin\\LanguageController",
-                "Minn\\Admin\\ManageController",
+                "Minn\\Admin\\OverviewController",
                 "Minn\\Admin\\PackagesController",
+                "Minn\\Admin\\PreferencesController",
                 "Minn\\Admin\\RenderController",
                 "Minn\\Admin\\SessionsController",
+                "Minn\\Admin\\SiteController",
+                "Minn\\Admin\\StructureController",
                 "Minn\\Admin\\SystemController",
+                "Minn\\Admin\\ThemesController",
                 "Minn\\Admin\\UpdatesController",
                 "Minn\\Admin\\V1Controller",
                 "Minn\\Db",
@@ -48755,8 +49132,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 31,
-                "end": 42
+                "line": 37,
+                "end": 48
             },
             "cases": [],
             "constants": [],
@@ -48855,8 +49232,8 @@
                         "@return array<string, list<string>> the engine's routes in the reference's form, route => methods"
                     ],
                     "params": [],
-                    "line": 49,
-                    "end": 52
+                    "line": 55,
+                    "end": 58
                 },
                 {
                     "routes": [],
@@ -48882,8 +49259,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 55,
-                    "end": 61
+                    "line": 61,
+                    "end": 67
                 },
                 {
                     "routes": [],
@@ -48894,8 +49271,8 @@
                     "doc": "Who is making this request.",
                     "shapes": [],
                     "params": [],
-                    "line": 106,
-                    "end": 109
+                    "line": 118,
+                    "end": 121
                 },
                 {
                     "routes": [],
@@ -48906,8 +49283,8 @@
                     "doc": "The wp/v2 post shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 112,
-                    "end": 115
+                    "line": 124,
+                    "end": 127
                 },
                 {
                     "routes": [],
@@ -48918,8 +49295,8 @@
                     "doc": "The wp/v2 term shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 118,
-                    "end": 121
+                    "line": 130,
+                    "end": 133
                 },
                 {
                     "routes": [],
@@ -48930,8 +49307,8 @@
                     "doc": "The wp/v2 user shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 124,
-                    "end": 127
+                    "line": 136,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -48942,8 +49319,8 @@
                     "doc": "The post types the surface knows.",
                     "shapes": [],
                     "params": [],
-                    "line": 130,
-                    "end": 133
+                    "line": 142,
+                    "end": 145
                 },
                 {
                     "routes": [],
@@ -48962,8 +49339,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 136,
-                    "end": 154
+                    "line": 148,
+                    "end": 166
                 },
                 {
                     "routes": [],
@@ -48991,8 +49368,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 69,
-                    "end": 103
+                    "line": 75,
+                    "end": 115
                 }
             ]
         },
@@ -49586,12 +49963,18 @@
                 "Minn\\RestError"
             ],
             "usedBy": [
+                "Minn\\Admin\\BundleController",
+                "Minn\\Admin\\EditorController",
                 "Minn\\Admin\\LanguageController",
-                "Minn\\Admin\\ManageController",
+                "Minn\\Admin\\OverviewController",
                 "Minn\\Admin\\PackagesController",
+                "Minn\\Admin\\PreferencesController",
                 "Minn\\Admin\\RenderController",
                 "Minn\\Admin\\SessionsController",
+                "Minn\\Admin\\SiteController",
+                "Minn\\Admin\\StructureController",
                 "Minn\\Admin\\SystemController",
+                "Minn\\Admin\\ThemesController",
                 "Minn\\Admin\\UpdatesController",
                 "Minn\\Admin\\V1Controller",
                 "Minn\\Rest\\Api",
@@ -55695,12 +56078,18 @@
                 "Minn\\Rest\\Fields"
             ],
             "usedBy": [
+                "Minn\\Admin\\BundleController",
+                "Minn\\Admin\\EditorController",
                 "Minn\\Admin\\LanguageController",
-                "Minn\\Admin\\ManageController",
+                "Minn\\Admin\\OverviewController",
                 "Minn\\Admin\\PackagesController",
+                "Minn\\Admin\\PreferencesController",
                 "Minn\\Admin\\RenderController",
                 "Minn\\Admin\\SessionsController",
+                "Minn\\Admin\\SiteController",
+                "Minn\\Admin\\StructureController",
                 "Minn\\Admin\\SystemController",
+                "Minn\\Admin\\ThemesController",
                 "Minn\\Admin\\UpdatesController",
                 "Minn\\Admin\\V1Controller",
                 "Minn\\Rest\\Api",
@@ -58880,7 +59269,7 @@
                 "Minn\\Rest\\RestUrl"
             ],
             "usedBy": [
-                "Minn\\Admin\\ManageController",
+                "Minn\\Admin\\StructureController",
                 "Minn\\Rest\\Embed",
                 "Minn\\Rest\\Services",
                 "Minn\\Rest\\TaxonomiesController"
@@ -60401,7 +60790,7 @@
             ],
             "usedBy": [
                 "Minn\\Admin\\AdminTypes",
-                "Minn\\Admin\\ManageController",
+                "Minn\\Admin\\StructureController",
                 "Minn\\Engine",
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\DeclaredPostsController",
@@ -74248,8 +74637,8 @@
             "usedBy": [
                 "Minn\\Admin\\App",
                 "Minn\\Admin\\Diagnostics",
-                "Minn\\Admin\\ManageController",
                 "Minn\\Admin\\Packages",
+                "Minn\\Admin\\ThemesController",
                 "Minn\\Admin\\Updates",
                 "Minn\\Cli\\ThemeCommand",
                 "Minn\\Content\\Inventory",
@@ -75573,8 +75962,9 @@
                 "Minn\\Admin\\Dashboard",
                 "Minn\\Admin\\HiddenIntegrations",
                 "Minn\\Admin\\Notifications",
+                "Minn\\Admin\\OverviewController",
+                "Minn\\Admin\\SiteController",
                 "Minn\\Admin\\Updates",
-                "Minn\\Admin\\V1Controller",
                 "Minn\\Auth\\ApplicationPasswords",
                 "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
                 "Minn\\Cli\\Installer",
@@ -80890,7 +81280,7 @@
             ],
             "usedBy": [
                 "Minn\\Admin\\RenderController",
-                "Minn\\Admin\\V1Controller",
+                "Minn\\Admin\\SiteController",
                 "Minn\\Blocks\\Dynamic\\Theme\\Structure",
                 "Minn\\Blocks\\Renderer",
                 "Minn\\Engine",

@@ -59,7 +59,7 @@ Finds extensions under wp-content/plugins and wp-content/mu-plugins,
 decides which are active, autoloads them, and asks each to register.
 An extension that throws is logged and skipped; the page still renders.
 
-Used by: `Minn\Admin\Diagnostics`, `Minn\Admin\ManageController`, `Minn\Cli\MinnCommand`, `Minn\Cli\PluginCommand`, `Minn\Content\PluginState`, `Minn\Engine`, `Minn\Rest\PluginsController`, `Minn\Rest\Services`
+Used by: `Minn\Admin\Diagnostics`, `Minn\Cli\MinnCommand`, `Minn\Cli\PluginCommand`, `Minn\Content\PluginState`, `Minn\Engine`, `Minn\Rest\PluginsController`, `Minn\Rest\Services`
 
 ```php
 __construct(string $contentDir, Minn\Content\Site $site)

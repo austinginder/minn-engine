@@ -693,7 +693,7 @@ merges the same way, with the child's preset lists replacing the
 parent's whole. The engine reads the site's installed theme the way it
 reads the site's database; it never runs the theme's PHP.
 
-Used by: `Minn\Admin\RenderController`, `Minn\Admin\V1Controller`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Engine`, `Minn\Rest\Services`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\GlobalStyles`, `Minn\Theme\PageRenderer`, `Minn\Theme\TemplateIndex`, `Minn\Theme\TemplatePatterns`, `Minn\Theme\Templates`
+Used by: `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Engine`, `Minn\Rest\Services`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\GlobalStyles`, `Minn\Theme\PageRenderer`, `Minn\Theme\TemplateIndex`, `Minn\Theme\TemplatePatterns`, `Minn\Theme\Templates`
 
 ```php
 __construct(string $slug, string $dir, string $uri, ?Minn\Theme\Theme $parent = NULL)
