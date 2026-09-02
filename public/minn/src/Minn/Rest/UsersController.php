@@ -10,6 +10,7 @@ use Minn\Auth\Roles;
 use Minn\Content\Site;
 use Minn\Content\Users;
 use Minn\Db;
+use Minn\Http\Args;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
@@ -42,7 +43,7 @@ final readonly class UsersController
     }
 
     /** The signed-in user. */
-    #[Route(Method::Get, '/wp/v2/users/me')]
+    #[Route(Method::Get, '/wp/v2/users/me', args: [Args::CONTEXT, Args::FIELDS, Args::EMBED])]
     public function me(Request $request): Response
     {
         $user = $this->caller->require()->user;
@@ -54,7 +55,7 @@ final readonly class UsersController
     }
 
     /** View context lists published authors; edit context lists everyone. */
-    #[Route(Method::Get, '/wp/v2/users')]
+    #[Route(Method::Get, '/wp/v2/users', args: [Args::CONTEXT, Args::FIELDS, Args::EMBED, Args::LISTING])]
     public function list(Request $request): Response
     {
         $self = $this->caller->id();
@@ -114,7 +115,7 @@ final readonly class UsersController
     }
 
     /** One user. */
-    #[Route(Method::Get, '/wp/v2/users/{id:\d+}')]
+    #[Route(Method::Get, '/wp/v2/users/{id:\d+}', args: [Args::CONTEXT, Args::FIELDS, Args::EMBED])]
     public function single(Request $request, string $id): Response
     {
         $userId = (int) $id;

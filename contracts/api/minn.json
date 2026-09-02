@@ -43410,6 +43410,98 @@
             "methods": []
         },
         {
+            "name": "Minn\\Http\\Args",
+            "short": "Args",
+            "namespace": "Minn\\Http",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Http/Args.php",
+            "lines": 181,
+            "doc": "The parameters a route accepts, as the reference describes them in the\nREST index: name => {description, type, ...}. The descriptions and the\nenums were captured from the reference, so a client that reads either\nindex is told the same thing.\n\nA route declares only what it really reads. An argument published here\nthat the handler ignores would be worse than none at all, because a\nclient reading the index would build a request around it, so each set\nbelow names the code that consumes it.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Http\\Route",
+                "Minn\\Rest\\CommentsController",
+                "Minn\\Rest\\MediaController",
+                "Minn\\Rest\\PostsController",
+                "Minn\\Rest\\TermsController",
+                "Minn\\Rest\\UsersController"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "CONTEXT",
+                    "value": "array (   'context' =>    array (     'description' => 'Scope under which the request is made; determines fields present in response.',     'type' => 'string',     'enum' =>      array (       0 => 'view',       1 => 'embed',       2 => 'edit',     ),     'default' => 'view',     'required' => false,   ), )",
+                    "doc": "Read by Rest\\Context::of(): which view of a resource is wanted.",
+                    "visibility": "public"
+                },
+                {
+                    "name": "FIELDS",
+                    "value": "array (   '_fields' =>    array (     'description' => 'Limit response to specific fields.',     'type' => 'array',     'items' =>      array (       'type' => 'string',     ),     'required' => false,   ), )",
+                    "doc": "Read by Rest\\Fields::fromQuery(): the subset of fields to return.",
+                    "visibility": "public"
+                },
+                {
+                    "name": "EMBED",
+                    "value": "array (   '_embed' =>    array (     'description' => 'Embed the resources linked to the response.',     'type' => 'string',     'required' => false,   ), )",
+                    "doc": "Read by Rest\\Embed: whether linked resources are embedded in the response.",
+                    "visibility": "public"
+                },
+                {
+                    "name": "LISTING",
+                    "value": "array (   'page' =>    array (     'description' => 'Current page of the collection.',     'type' => 'integer',     'default' => 1,     'minimum' => 1,     'required' => false,   ),   'per_page' =>    array (     'description' => 'Maximum number of items to be returned in result set.',     'type' => 'integer',     'default' => 10,     'minimum' => 1,     'maximum' => 100,     'required' => false,   ),   'search' =>    array (     'description' => 'Limit results to those matching a string.',     'type' => 'string',     'required' => false,   ),   'include' =>    array (     'description' => 'Limit result set to specific IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'exclude' =>    array (     'description' => 'Ensure result set excludes specific IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'author' =>    array (     'description' => 'Limit result set to posts assigned to specific authors.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'author_exclude' =>    array (     'description' => 'Ensure result set excludes posts assigned to specific authors.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'parent' =>    array (     'description' => 'Limit result set to items with particular parent IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'parent_exclude' =>    array (     'description' => 'Limit result set to all items except those of a particular parent ID.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'slug' =>    array (     'description' => 'Limit result set to posts with one or more specific slugs.',     'type' => 'array',     'items' =>      array (       'type' => 'string',     ),     'required' => false,   ),   'order' =>    array (     'description' => 'Order sort attribute ascending or descending.',     'type' => 'string',     'default' => 'desc',     'enum' =>      array (       0 => 'asc',       1 => 'desc',     ),     'required' => false,   ),   'orderby' =>    array (     'description' => 'Sort collection by post attribute.',     'type' => 'string',     'default' => 'date',     'enum' =>      array (       0 => 'author',       1 => 'date',       2 => 'id',       3 => 'include',       4 => 'modified',       5 => 'parent',       6 => 'relevance',       7 => 'slug',       8 => 'include_slugs',       9 => 'title',     ),     'required' => false,   ), )",
+                    "doc": "Read by Rest\\ListQuery::fromRequest(): how a collection is paged, narrowed and ordered.",
+                    "visibility": "public"
+                },
+                {
+                    "name": "TERMS",
+                    "value": "array (   'categories' =>    array (     'description' => 'Limit result set to items with specific terms assigned in the categories taxonomy.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'required' => false,   ),   'categories_exclude' =>    array (     'description' => 'Limit result set to items except those with specific terms assigned in the categories taxonomy.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'required' => false,   ),   'tags' =>    array (     'description' => 'Limit result set to items with specific terms assigned in the tags taxonomy.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'required' => false,   ),   'tags_exclude' =>    array (     'description' => 'Limit result set to items except those with specific terms assigned in the tags taxonomy.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'required' => false,   ), )",
+                    "doc": "Read by Rest\\ListQuery::termFilters(): the taxonomy narrowings a post collection takes.",
+                    "visibility": "public"
+                },
+                {
+                    "name": "STATUS",
+                    "value": "array (   'status' =>    array (     'description' => 'Limit result set to posts assigned one or more statuses.',     'type' => 'array',     'items' =>      array (       'enum' =>        array (         0 => 'publish',         1 => 'future',         2 => 'draft',         3 => 'pending',         4 => 'private',         5 => 'trash',         6 => 'auto-draft',         7 => 'inherit',         8 => 'request-pending',         9 => 'request-confirmed',         10 => 'request-failed',         11 => 'request-completed',         12 => 'any',       ),       'type' => 'string',     ),     'default' => 'publish',     'required' => false,   ), )",
+                    "doc": "Read by Rest\\PostsController::serveList(): the statuses a listing may ask for.",
+                    "visibility": "public"
+                },
+                {
+                    "name": "FORCE",
+                    "value": "array (   'force' =>    array (     'description' => 'Whether to bypass Trash and force deletion.',     'type' => 'boolean',     'default' => false,     'required' => false,   ), )",
+                    "doc": "Read by Content\\PostWriter: whether a delete bypasses the trash.",
+                    "visibility": "public"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "merge",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "merge(array $sets): array",
+                    "doc": "The sets merged into one map, as a route's endpoint publishes them.",
+                    "shapes": [
+                        "@param list<array<string, array<string, mixed>>> $sets",
+                        "@return array<string, array<string, mixed>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "sets",
+                            "type": "array",
+                            "shape": "list<array<string, array<string, mixed>>>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 194,
+                    "end": 197
+                }
+            ]
+        },
+        {
             "name": "Minn\\Http\\Client",
             "short": "Client",
             "namespace": "Minn\\Http",
@@ -45841,11 +45933,12 @@
             "namespace": "Minn\\Http",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Http/Route.php",
-            "lines": 31,
-            "doc": "Declares a handler method as a route. The policy lives here, as\nmetadata the router enforces before the handler runs, so the\nauthorization surface of the engine is a grep away; a route with no\npolicy is one the ratchet in the style suite counts down.\n\nPatterns: \"/wp/v2/posts/{id}\" captures one segment, \"{id:\\d+}\" constrains\nit, and \"/{path*}\" captures the rest of the path (slashes included).",
+            "lines": 43,
+            "doc": "Declares a handler method as a route. The policy lives here, as\nmetadata the router enforces before the handler runs, so the\nauthorization surface of the engine is a grep away; a route with no\npolicy is one the ratchet in the style suite counts down. The parameter\nsets it reads live here too, so the REST index can tell a client what a\nroute takes as well as what it requires of them.\n\nPatterns: \"/wp/v2/posts/{id}\" captures one segment, \"{id:\\d+}\" constrains\nit, and \"/{path*}\" captures the rest of the path (slashes included).",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Http\\Args",
                 "Minn\\Http\\Method",
                 "Minn\\Http\\Policy"
             ],
@@ -45895,9 +45988,11 @@
                 "Minn\\Rest\\UsersController"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Http\\Method $method, string $pattern, ?Minn\\Http\\Policy $policy = NULL)",
+                "signature": "__construct(Minn\\Http\\Method $method, string $pattern, ?Minn\\Http\\Policy $policy = NULL, array $args = array ( ))",
                 "doc": "",
-                "shapes": [],
+                "shapes": [
+                    "@param list<array<string, array<string, mixed>>> $args the parameter sets this route reads, from Args"
+                ],
                 "params": [
                     {
                         "name": "method",
@@ -45919,11 +46014,18 @@
                         "shape": "",
                         "default": "NULL",
                         "doc": ""
+                    },
+                    {
+                        "name": "args",
+                        "type": "array",
+                        "shape": "list<array<string, array<string, mixed>>>",
+                        "default": "array ( )",
+                        "doc": "the parameter sets this route reads, from Args"
                     }
                 ],
                 "visibility": "public",
-                "line": 21,
-                "end": 26
+                "line": 24,
+                "end": 30
             },
             "cases": [],
             "constants": [],
@@ -45954,9 +46056,32 @@
                     "doc": "",
                     "visibility": "public",
                     "promoted": true
+                },
+                {
+                    "name": "args",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
                 }
             ],
             "methods": [
+                {
+                    "routes": [],
+                    "name": "arguments",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "arguments(): array",
+                    "doc": "The parameters this route accepts, as the REST index publishes them.",
+                    "shapes": [
+                        "@return array<string, array<string, mixed>>"
+                    ],
+                    "params": [],
+                    "line": 37,
+                    "end": 40
+                },
                 {
                     "routes": [],
                     "name": "regex",
@@ -45966,8 +46091,8 @@
                     "doc": "The pattern as a regular expression with named captures.",
                     "shapes": [],
                     "params": [],
-                    "line": 29,
-                    "end": 48
+                    "line": 43,
+                    "end": 62
                 }
             ]
         },
@@ -46105,7 +46230,7 @@
                     "signature": "table(): array",
                     "doc": "Every registered route with its policy, for the docs and the ratchet.",
                     "shapes": [
-                        "@return list<array{method: string, pattern: string, policy: ?Policy, handler: string}>"
+                        "@return list<array{method: string, pattern: string, policy: ?Policy, args: array<string, array<string, mixed>>, handler: string}>"
                     ],
                     "params": [],
                     "line": 61,
@@ -53410,6 +53535,7 @@
                 "Minn\\Content\\PostRecord",
                 "Minn\\Content\\Posts",
                 "Minn\\Content\\Site",
+                "Minn\\Http\\Args",
                 "Minn\\Http\\Method",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
@@ -53470,8 +53596,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 28,
-                "end": 35
+                "line": 29,
+                "end": 36
             },
             "cases": [],
             "constants": [],
@@ -53542,8 +53668,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 39,
-                    "end": 66
+                    "line": 40,
+                    "end": 67
                 },
                 {
                     "routes": [
@@ -53571,8 +53697,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 70,
-                    "end": 87
+                    "line": 71,
+                    "end": 88
                 },
                 {
                     "routes": [
@@ -53593,8 +53719,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 91,
-                    "end": 141
+                    "line": 92,
+                    "end": 142
                 },
                 {
                     "routes": [
@@ -53624,8 +53750,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 154,
-                    "end": 182
+                    "line": 155,
+                    "end": 183
                 },
                 {
                     "routes": [
@@ -53653,8 +53779,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 186,
-                    "end": 209
+                    "line": 187,
+                    "end": 210
                 },
                 {
                     "routes": [],
@@ -53687,8 +53813,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 144,
-                    "end": 148
+                    "line": 145,
+                    "end": 149
                 },
                 {
                     "routes": [],
@@ -53707,8 +53833,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 212,
-                    "end": 228
+                    "line": 213,
+                    "end": 229
                 },
                 {
                     "routes": [],
@@ -53727,8 +53853,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 235,
-                    "end": 263
+                    "line": 236,
+                    "end": 264
                 },
                 {
                     "routes": [],
@@ -53754,8 +53880,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 266,
-                    "end": 278
+                    "line": 267,
+                    "end": 279
                 },
                 {
                     "routes": [],
@@ -53774,8 +53900,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 281,
-                    "end": 288
+                    "line": 282,
+                    "end": 289
                 },
                 {
                     "routes": [],
@@ -53794,8 +53920,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 295,
-                    "end": 304
+                    "line": 296,
+                    "end": 305
                 }
             ]
         },
@@ -55388,7 +55514,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/IndexController.php",
-            "lines": 53,
+            "lines": 61,
             "doc": "The API index at /wp-json/: the site facts monitors read (name, url,\nhome, namespaces) and the routes this engine serves, described from its\nown router rather than the reference's full schema.",
             "implements": [],
             "extends": null,
@@ -55510,7 +55636,7 @@
                         }
                     ],
                     "line": 35,
-                    "end": 74
+                    "end": 82
                 }
             ]
         },
@@ -56084,6 +56210,7 @@
                 "Minn\\Content\\PostRecord",
                 "Minn\\Content\\Posts",
                 "Minn\\Db",
+                "Minn\\Http\\Args",
                 "Minn\\Http\\Method",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
@@ -56145,8 +56272,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 26,
-                "end": 33
+                "line": 27,
+                "end": 34
             },
             "cases": [],
             "constants": [],
@@ -56217,8 +56344,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 37,
-                    "end": 61
+                    "line": 38,
+                    "end": 62
                 },
                 {
                     "routes": [
@@ -56246,8 +56373,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 115,
-                    "end": 124
+                    "line": 116,
+                    "end": 125
                 },
                 {
                     "routes": [
@@ -56268,8 +56395,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 128,
-                    "end": 162
+                    "line": 129,
+                    "end": 163
                 },
                 {
                     "routes": [
@@ -56299,8 +56426,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 168,
-                    "end": 195
+                    "line": 169,
+                    "end": 196
                 },
                 {
                     "routes": [
@@ -56328,8 +56455,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 199,
-                    "end": 212
+                    "line": 200,
+                    "end": 213
                 },
                 {
                     "routes": [],
@@ -56350,8 +56477,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 70,
-                    "end": 100
+                    "line": 71,
+                    "end": 101
                 },
                 {
                     "routes": [],
@@ -56377,8 +56504,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 102,
-                    "end": 111
+                    "line": 103,
+                    "end": 112
                 },
                 {
                     "routes": [],
@@ -56397,8 +56524,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 214,
-                    "end": 221
+                    "line": 215,
+                    "end": 222
                 }
             ]
         },
@@ -58972,6 +59099,7 @@
                 "Minn\\Content\\PostRecord",
                 "Minn\\Content\\Posts",
                 "Minn\\Db",
+                "Minn\\Http\\Args",
                 "Minn\\Http\\Method",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
@@ -59025,8 +59153,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 31,
-                "end": 37
+                "line": 32,
+                "end": 38
             },
             "cases": [],
             "constants": [
@@ -59102,8 +59230,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 41,
-                    "end": 44
+                    "line": 42,
+                    "end": 45
                 },
                 {
                     "routes": [],
@@ -59129,8 +59257,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 47,
-                    "end": 90
+                    "line": 48,
+                    "end": 91
                 },
                 {
                     "routes": [
@@ -59165,8 +59293,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 161,
-                    "end": 164
+                    "line": 162,
+                    "end": 165
                 },
                 {
                     "routes": [],
@@ -59199,8 +59327,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 167,
-                    "end": 190
+                    "line": 168,
+                    "end": 191
                 },
                 {
                     "routes": [],
@@ -59235,8 +59363,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 99,
-                    "end": 120
+                    "line": 100,
+                    "end": 121
                 },
                 {
                     "routes": [],
@@ -59279,8 +59407,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 129,
-                    "end": 141
+                    "line": 130,
+                    "end": 142
                 },
                 {
                     "routes": [],
@@ -59299,8 +59427,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 143,
-                    "end": 157
+                    "line": 144,
+                    "end": 158
                 }
             ]
         },
@@ -64555,6 +64683,7 @@
                 "Minn\\Content\\TermRecord",
                 "Minn\\Content\\Terms",
                 "Minn\\Db",
+                "Minn\\Http\\Args",
                 "Minn\\Http\\Method",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
@@ -64612,8 +64741,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 23,
-                "end": 30
+                "line": 24,
+                "end": 31
             },
             "cases": [],
             "constants": [
@@ -64698,8 +64827,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 34,
-                    "end": 94
+                    "line": 35,
+                    "end": 95
                 },
                 {
                     "routes": [
@@ -64734,8 +64863,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 98,
-                    "end": 115
+                    "line": 99,
+                    "end": 116
                 },
                 {
                     "routes": [
@@ -64763,8 +64892,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 119,
-                    "end": 155
+                    "line": 120,
+                    "end": 156
                 },
                 {
                     "routes": [
@@ -64801,8 +64930,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 161,
-                    "end": 190
+                    "line": 162,
+                    "end": 191
                 },
                 {
                     "routes": [
@@ -64837,8 +64966,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 194,
-                    "end": 215
+                    "line": 195,
+                    "end": 216
                 }
             ]
         },
@@ -65330,6 +65459,7 @@
                 "Minn\\Content\\UserRecord",
                 "Minn\\Content\\Users",
                 "Minn\\Db",
+                "Minn\\Http\\Args",
                 "Minn\\Http\\Method",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
@@ -65403,8 +65533,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 33,
-                "end": 42
+                "line": 34,
+                "end": 43
             },
             "cases": [],
             "constants": [
@@ -65500,8 +65630,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 46,
-                    "end": 54
+                    "line": 47,
+                    "end": 55
                 },
                 {
                     "routes": [
@@ -65522,8 +65652,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 58,
-                    "end": 114
+                    "line": 59,
+                    "end": 115
                 },
                 {
                     "routes": [
@@ -65551,8 +65681,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 118,
-                    "end": 138
+                    "line": 119,
+                    "end": 139
                 },
                 {
                     "routes": [
@@ -65573,8 +65703,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 178,
-                    "end": 220
+                    "line": 179,
+                    "end": 221
                 },
                 {
                     "routes": [
@@ -65604,8 +65734,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 226,
-                    "end": 281
+                    "line": 227,
+                    "end": 282
                 },
                 {
                     "routes": [
@@ -65633,8 +65763,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 285,
-                    "end": 322
+                    "line": 286,
+                    "end": 323
                 },
                 {
                     "routes": [],
@@ -65653,8 +65783,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 141,
-                    "end": 152
+                    "line": 142,
+                    "end": 153
                 },
                 {
                     "routes": [],
@@ -65673,8 +65803,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 154,
-                    "end": 160
+                    "line": 155,
+                    "end": 161
                 },
                 {
                     "routes": [],
@@ -65693,8 +65823,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 163,
-                    "end": 169
+                    "line": 164,
+                    "end": 170
                 },
                 {
                     "routes": [],
@@ -65713,8 +65843,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 171,
-                    "end": 174
+                    "line": 172,
+                    "end": 175
                 }
             ]
         },

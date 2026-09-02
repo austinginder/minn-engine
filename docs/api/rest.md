@@ -19,7 +19,7 @@ the wp/v2 surface: shapes and controllers
 | [`Fields`](#fields) | final readonly class | 92 | The _fields response filter. Dot paths descend ("title.rendered"); the |
 | [`GlobalStylesController`](#globalstylescontroller) | final readonly class | 138 | wp/v2/global-styles: the site editor's saved styles (one post per |
 | [`GlobalStylesObject`](#globalstylesobject) | final readonly class | 87 | The wp/v2/global-styles item, theme, and revision shapes. |
-| [`IndexController`](#indexcontroller) | final readonly class | 53 | The API index at /wp-json/: the site facts monitors read (name, url, |
+| [`IndexController`](#indexcontroller) | final readonly class | 61 | The API index at /wp-json/: the site facts monitors read (name, url, |
 | [`Links`](#links) | final class | 35 | Response link relations compacted through CURIEs: a rel that matches a CURIE's template becomes `name:suffix`, and the used CURIEs ride along. |
 | [`ListQuery`](#listquery) | final readonly class | 170 | The collection parameters a wp/v2 list accepts, read once from the |
 | [`MediaController`](#mediacontroller) | final readonly class | 199 | wp/v2/media: list, single, upload on both transports (multipart field |
@@ -414,7 +414,7 @@ Route: `DELETE /wp/v2/comments/{id:\d+}`
 
 Trash remembers where the comment came from; force removes it outright.
 
-Internals: `notifyModerator()` (private, line 144), `filter()` (private, line 212), `guarded()` (private, line 235), `date()` (private, line 266), `plainComment()` (private, line 281), `cleanComment()` (private, line 295)
+Internals: `notifyModerator()` (private, line 145), `filter()` (private, line 213), `guarded()` (private, line 236), `date()` (private, line 267), `plainComment()` (private, line 282), `cleanComment()` (private, line 296)
 
 
 ## Context
@@ -861,7 +861,7 @@ Route: `DELETE /wp/v2/media/{id:\d+}`
 
 Attachments cannot be trashed; force removes the row, its meta, and its files.
 
-Internals: `libraryClauses()` (private, line 70), `restDate()` (private, line 102), `attachment()` (private, line 214)
+Internals: `libraryClauses()` (private, line 71), `restDate()` (private, line 103), `attachment()` (private, line 215)
 
 
 ## MediaObject
@@ -1282,7 +1282,7 @@ One post or page.
 
 One post of any type, with the reference's read rules.
 
-Internals: `visibleStatuses()` (private, line 99), `visibility()` (private, line 129), `orderSql()` (private, line 143)
+Internals: `visibleStatuses()` (private, line 100), `visibility()` (private, line 130), `orderSql()` (private, line 144)
 
 
 ## PostsWriteController
@@ -2362,5 +2362,5 @@ Route: `DELETE /wp/v2/users/{id:\d+}`
 
 reassign is REQUIRED (checked before the user lookup), and so is force.
 
-Internals: `welcome()` (private, line 141), `hasPublishedContent()` (private, line 154), `validRole()` (private, line 163), `validEmail()` (private, line 171)
+Internals: `welcome()` (private, line 142), `hasPublishedContent()` (private, line 155), `validRole()` (private, line 164), `validEmail()` (private, line 172)
 

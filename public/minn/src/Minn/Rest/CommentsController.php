@@ -10,6 +10,7 @@ use Minn\Content\PostRecord;
 use Minn\Content\Comments;
 use Minn\Content\Posts;
 use Minn\Content\Site;
+use Minn\Http\Args;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
@@ -35,7 +36,7 @@ final readonly class CommentsController
     }
 
     /** The comments list with its status tabs and pagination headers. */
-    #[Route(Method::Get, '/wp/v2/comments')]
+    #[Route(Method::Get, '/wp/v2/comments', args: [Args::CONTEXT, Args::FIELDS, Args::EMBED, Args::LISTING])]
     public function list(Request $request): Response
     {
         $context = Context::of($request);
@@ -66,7 +67,7 @@ final readonly class CommentsController
     }
 
     /** One comment, if the caller may read it. */
-    #[Route(Method::Get, '/wp/v2/comments/{id:\d+}')]
+    #[Route(Method::Get, '/wp/v2/comments/{id:\d+}', args: [Args::CONTEXT, Args::FIELDS, Args::EMBED])]
     public function single(Request $request, string $id): Response
     {
         $comment = $this->plainComment((int) $id);

@@ -5,6 +5,7 @@ request, response, routing, and the outgoing client
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`Access`](#access) | enum | 13 | Who a route is for. The five answers every route gives, so the |
+| [`Args`](#args) | final class | 181 | The parameters a route accepts, as the reference describes them in the |
 | [`Client`](#client) | final class | 101 | The engine's outgoing HTTP transport over curl. Redirects are followed by |
 | [`Download`](#download) | final class | 106 | A file the engine fetches for itself (a package, a language pack). Every |
 | [`Exchange`](#exchange) | final readonly class | 29 | What came back: the final response's status, headers (repeats as lists), Set-Cookie values, and body, or the transport error. |
@@ -15,7 +16,7 @@ request, response, routing, and the outgoing client
 | [`Policy`](#policy) | final readonly class | 54 | What a route requires of its caller, as data on the route: the router |
 | [`Request`](#request) | final readonly class | 118 | An immutable picture of the incoming request. Built once from the PHP |
 | [`Response`](#response) | final readonly class | 71 | What a handler returns. Nothing is written to the client until the |
-| [`Route`](#route) | final readonly class | 31 | Declares a handler method as a route. The policy lives here, as |
+| [`Route`](#route) | final readonly class | 43 | Declares a handler method as a route. The policy lives here, as |
 | [`RouteMiss`](#routemiss) | final class | 3 | A handler declining a request its pattern matched: the router swallows |
 | [`Router`](#router) | final class | 79 | Matches a request to a #[Route] on one of the registered handler |
 
@@ -29,6 +30,38 @@ authorization surface of the engine reads as a list of these.
 Cases: `Public`, `SignedIn`, `Cap`, `Floor`, `Own`
 
 Used by: `Minn\Admin\AppController`, `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Front\AssetsController`, `Minn\Front\CommentPostController`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\ProbeController`, `Minn\Front\SitemapController`, `Minn\Http\Policy`, `Minn\Login\LoginController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PolicyGate`, `Minn\Rest\SettingsController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TypesController`
+
+
+## Args
+
+`final class Minn\Http\Args` · `public/minn/src/Minn/Http/Args.php`
+
+The parameters a route accepts, as the reference describes them in the
+REST index: name => {description, type, ...}. The descriptions and the
+enums were captured from the reference, so a client that reads either
+index is told the same thing.
+
+A route declares only what it really reads. An argument published here
+that the handler ignores would be worse than none at all, because a
+client reading the index would build a request around it, so each set
+below names the code that consumes it.
+
+- const `CONTEXT` = `array (   'context' =>    array (     'description' => 'Scope under which the request is made; determines fields present in response.',     'type' => 'string',     'enum' =>      array (       0 => 'view',       1 => 'embed',       2 => 'edit',     ),     'default' => 'view',     'required' => false,   ), )` — Read by Rest\Context::of(): which view of a resource is wanted.
+- const `FIELDS` = `array (   '_fields' =>    array (     'description' => 'Limit response to specific fields.',     'type' => 'array',     'items' =>      array (       'type' => 'string',     ),     'required' => false,   ), )` — Read by Rest\Fields::fromQuery(): the subset of fields to return.
+- const `EMBED` = `array (   '_embed' =>    array (     'description' => 'Embed the resources linked to the response.',     'type' => 'string',     'required' => false,   ), )` — Read by Rest\Embed: whether linked resources are embedded in the response.
+- const `LISTING` = `array (   'page' =>    array (     'description' => 'Current page of the collection.',     'type' => 'integer',     'default' => 1,     'minimum' => 1,     'required' => false,   ),   'per_page' =>    array (     'description' => 'Maximum number of items to be returned in result set.',     'type' => 'integer',     'default' => 10,     'minimum' => 1,     'maximum' => 100,     'required' => false,   ),   'search' =>    array (     'description' => 'Limit results to those matching a string.',     'type' => 'string',     'required' => false,   ),   'include' =>    array (     'description' => 'Limit result set to specific IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'exclude' =>    array (     'description' => 'Ensure result set excludes specific IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'author' =>    array (     'description' => 'Limit result set to posts assigned to specific authors.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'author_exclude' =>    array (     'description' => 'Ensure result set excludes posts assigned to specific authors.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'parent' =>    array (     'description' => 'Limit result set to items with particular parent IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'parent_exclude' =>    array (     'description' => 'Limit result set to all items except those of a particular parent ID.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'slug' =>    array (     'description' => 'Limit result set to posts with one or more specific slugs.',     'type' => 'array',     'items' =>      array (       'type' => 'string',     ),     'required' => false,   ),   'order' =>    array (     'description' => 'Order sort attribute ascending or descending.',     'type' => 'string',     'default' => 'desc',     'enum' =>      array (       0 => 'asc',       1 => 'desc',     ),     'required' => false,   ),   'orderby' =>    array (     'description' => 'Sort collection by post attribute.',     'type' => 'string',     'default' => 'date',     'enum' =>      array (       0 => 'author',       1 => 'date',       2 => 'id',       3 => 'include',       4 => 'modified',       5 => 'parent',       6 => 'relevance',       7 => 'slug',       8 => 'include_slugs',       9 => 'title',     ),     'required' => false,   ), )` — Read by Rest\ListQuery::fromRequest(): how a collection is paged, narrowed and ordered.
+- const `TERMS` = `array (   'categories' =>    array (     'description' => 'Limit result set to items with specific terms assigned in the categories taxonomy.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'required' => false,   ),   'categories_exclude' =>    array (     'description' => 'Limit result set to items except those with specific terms assigned in the categories taxonomy.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'required' => false,   ),   'tags' =>    array (     'description' => 'Limit result set to items with specific terms assigned in the tags taxonomy.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'required' => false,   ),   'tags_exclude' =>    array (     'description' => 'Limit result set to items except those with specific terms assigned in the tags taxonomy.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'required' => false,   ), )` — Read by Rest\ListQuery::termFilters(): the taxonomy narrowings a post collection takes.
+- const `STATUS` = `array (   'status' =>    array (     'description' => 'Limit result set to posts assigned one or more statuses.',     'type' => 'array',     'items' =>      array (       'enum' =>        array (         0 => 'publish',         1 => 'future',         2 => 'draft',         3 => 'pending',         4 => 'private',         5 => 'trash',         6 => 'auto-draft',         7 => 'inherit',         8 => 'request-pending',         9 => 'request-confirmed',         10 => 'request-failed',         11 => 'request-completed',         12 => 'any',       ),       'type' => 'string',     ),     'default' => 'publish',     'required' => false,   ), )` — Read by Rest\PostsController::serveList(): the statuses a listing may ask for.
+- const `FORCE` = `array (   'force' =>    array (     'description' => 'Whether to bypass Trash and force deletion.',     'type' => 'boolean',     'default' => false,     'required' => false,   ), )` — Read by Content\PostWriter: whether a delete bypasses the trash.
+
+Used by: `Minn\Http\Route`, `Minn\Rest\CommentsController`, `Minn\Rest\MediaController`, `Minn\Rest\PostsController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`
+
+### static `merge(array $sets): array`
+
+The sets merged into one map, as a route's endpoint publishes them.
+
+- `@param list<array<string, array<string, mixed>>> $sets`
+- `@return array<string, array<string, mixed>>`
 
 
 ## Client
@@ -440,7 +473,9 @@ Writes the status, the headers, the cookies, and the body, and ends the request.
 Declares a handler method as a route. The policy lives here, as
 metadata the router enforces before the handler runs, so the
 authorization surface of the engine is a grep away; a route with no
-policy is one the ratchet in the style suite counts down.
+policy is one the ratchet in the style suite counts down. The parameter
+sets it reads live here too, so the REST index can tell a client what a
+route takes as well as what it requires of them.
 
 Patterns: "/wp/v2/posts/{id}" captures one segment, "{id:\d+}" constrains
 it, and "/{path*}" captures the rest of the path (slashes included).
@@ -448,12 +483,20 @@ it, and "/{path*}" captures the rest of the path (slashes included).
 Used by: `Minn\Admin\AppController`, `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Front\AssetsController`, `Minn\Front\CommentPostController`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\ProbeController`, `Minn\Front\SitemapController`, `Minn\Http\Router`, `Minn\Login\LoginController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentsController`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\NavigationController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\TypesController`, `Minn\Rest\UsersController`
 
 ```php
-__construct(Minn\Http\Method $method, string $pattern, ?Minn\Http\Policy $policy = NULL)
+__construct(Minn\Http\Method $method, string $pattern, ?Minn\Http\Policy $policy = NULL, array $args = array ( ))
 ```
+- `@param list<array<string, array<string, mixed>>> $args the parameter sets this route reads, from Args`
 
 - readonly `Minn\Http\Method $method`
 - readonly `string $pattern`
 - readonly `?Minn\Http\Policy $policy`
+- readonly `array $args`
+
+### `arguments(): array`
+
+The parameters this route accepts, as the REST index publishes them.
+
+- `@return array<string, array<string, mixed>>`
 
 ### `regex(): string`
 
@@ -504,7 +547,7 @@ The registered routes, for an index: pattern => methods. @return array<string, l
 
 Every registered route with its policy, for the docs and the ratchet.
 
-- `@return list<array{method: string, pattern: string, policy: ?Policy, handler: string}>`
+- `@return list<array{method: string, pattern: string, policy: ?Policy, args: array<string, array<string, mixed>>, handler: string}>`
 
 ### `dispatch(Minn\Http\Request $request): ?Minn\Http\Response`
 

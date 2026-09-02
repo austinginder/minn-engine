@@ -7,6 +7,7 @@ namespace Minn\Rest;
 use Minn\Content\PostRecord;
 use Minn\Content\Posts;
 use Minn\Db;
+use Minn\Http\Args;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
@@ -33,7 +34,7 @@ final readonly class MediaController
     }
 
     /** The media library list. */
-    #[Route(Method::Get, '/wp/v2/media')]
+    #[Route(Method::Get, '/wp/v2/media', args: [Args::CONTEXT, Args::FIELDS, Args::EMBED, Args::LISTING])]
     public function list(Request $request): Response
     {
         $context = Context::of($request);
@@ -111,7 +112,7 @@ final readonly class MediaController
     }
 
     /** One attachment. */
-    #[Route(Method::Get, '/wp/v2/media/{id:\d+}')]
+    #[Route(Method::Get, '/wp/v2/media/{id:\d+}', args: [Args::CONTEXT, Args::FIELDS, Args::EMBED])]
     public function single(Request $request, string $id): Response
     {
         $attachment = $this->attachment((int) $id);

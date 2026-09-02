@@ -8,6 +8,7 @@ use Minn\Content\TermRecord;
 use Minn\Content\Site;
 use Minn\Content\Terms;
 use Minn\Db;
+use Minn\Http\Args;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
@@ -30,7 +31,7 @@ final readonly class TermsController
     }
 
     /** The categories or tags list. */
-    #[Route(Method::Get, '/wp/v2/{base:categories|tags|wp_pattern_category}')]
+    #[Route(Method::Get, '/wp/v2/{base:categories|tags|wp_pattern_category}', args: [Args::CONTEXT, Args::FIELDS, Args::EMBED, Args::LISTING])]
     public function list(Request $request, string $base): Response
     {
         $config = TermObject::config($base);
@@ -94,7 +95,7 @@ final readonly class TermsController
     }
 
     /** One category or tag. */
-    #[Route(Method::Get, '/wp/v2/{base:categories|tags|wp_pattern_category}/{id:\d+}')]
+    #[Route(Method::Get, '/wp/v2/{base:categories|tags|wp_pattern_category}/{id:\d+}', args: [Args::CONTEXT, Args::FIELDS, Args::EMBED])]
     public function single(Request $request, string $base, string $id): Response
     {
         $config = TermObject::config($base);

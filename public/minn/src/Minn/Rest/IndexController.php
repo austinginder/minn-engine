@@ -36,6 +36,14 @@ final readonly class IndexController
     {
         $routes = ['/' => ['namespace' => '', 'methods' => ['GET'], 'endpoints' => [['methods' => ['GET'], 'args' => ['context' => ['default' => 'view', 'required' => false]]]], '_links' => ['self' => [['href' => $this->url->to('/')]]]]];
         $namespaces = [];
+        // What each route reads, gathered per pattern from the attributes so the
+        // index tells a client the parameters that really work on it.
+        $arguments = [];
+        foreach ($this->router->table() as $row) {
+            foreach (EngineRoutes::forms($row['pattern']) as $form) {
+                $arguments[$form] = array_merge($arguments[$form] ?? [], $row['args']);
+            }
+        }
         foreach ($this->router->routes() as $pattern => $methods) {
             foreach (EngineRoutes::forms($pattern) as $route) {
             if ($route === '/') {
@@ -47,7 +55,7 @@ final readonly class IndexController
                 $routes['/' . $namespace] = ['namespace' => $namespace, 'methods' => ['GET'], 'endpoints' => [['methods' => ['GET'], 'args' => ['namespace' => ['default' => $namespace, 'required' => false], 'context' => ['default' => 'view', 'required' => false]]]], '_links' => ['self' => [['href' => $this->url->to('/' . $namespace)]]]];
             }
             $methods = array_values(array_unique(array_map(static fn (string $m) => $m === '*' ? 'GET' : $m, $methods)));
-            $routes[$route] = ['namespace' => $namespace, 'methods' => $methods, 'endpoints' => [['methods' => $methods, 'args' => []]]];
+            $routes[$route] = ['namespace' => $namespace, 'methods' => $methods, 'endpoints' => [['methods' => $methods, 'args' => $arguments[$route] ?? []]]];
             if (!str_contains($route, '(?P<')) {
                 $routes[$route]['_links'] = ['self' => [['href' => $this->url->to($route)]]];
             }

@@ -56,13 +56,13 @@ final class Router
     /**
      * Every registered route with its policy, for the docs and the ratchet.
      *
-     * @return list<array{method: string, pattern: string, policy: ?Policy, handler: string}>
+     * @return list<array{method: string, pattern: string, policy: ?Policy, args: array<string, array<string, mixed>>, handler: string}>
      */
     public function table(): array
     {
         $rows = [];
         foreach ($this->routes as ['route' => $route, 'handler' => $handler, 'method' => $method]) {
-            $rows[] = ['method' => $route->method->value, 'pattern' => $route->pattern, 'policy' => $route->policy, 'handler' => $handler::class . '::' . $method->getName()];
+            $rows[] = ['method' => $route->method->value, 'pattern' => $route->pattern, 'policy' => $route->policy, 'args' => $route->arguments(), 'handler' => $handler::class . '::' . $method->getName()];
         }
         return $rows;
     }

@@ -10,7 +10,9 @@ use Attribute;
  * Declares a handler method as a route. The policy lives here, as
  * metadata the router enforces before the handler runs, so the
  * authorization surface of the engine is a grep away; a route with no
- * policy is one the ratchet in the style suite counts down.
+ * policy is one the ratchet in the style suite counts down. The parameter
+ * sets it reads live here too, so the REST index can tell a client what a
+ * route takes as well as what it requires of them.
  *
  * Patterns: "/wp/v2/posts/{id}" captures one segment, "{id:\d+}" constrains
  * it, and "/{path*}" captures the rest of the path (slashes included).
@@ -18,11 +20,23 @@ use Attribute;
 #[Attribute(Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
 final readonly class Route
 {
+    /** @param list<array<string, array<string, mixed>>> $args the parameter sets this route reads, from Args */
     public function __construct(
         public Method $method,
         public string $pattern,
         public ?Policy $policy = null,
+        public array $args = [],
     ) {
+    }
+
+    /**
+     * The parameters this route accepts, as the REST index publishes them.
+     *
+     * @return array<string, array<string, mixed>>
+     */
+    public function arguments(): array
+    {
+        return Args::merge($this->args);
     }
 
     /** The pattern as a regular expression with named captures. */

@@ -8,6 +8,7 @@ use Minn\Content\PostRecord;
 use Minn\Content\Posts;
 use Minn\Auth\TypeCapabilities;
 use Minn\Db;
+use Minn\Http\Args;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
@@ -37,7 +38,7 @@ final readonly class PostsController
     }
 
     /** The posts or pages list. */
-    #[Route(Method::Get, '/wp/v2/{base:posts|pages}')]
+    #[Route(Method::Get, '/wp/v2/{base:posts|pages}', args: [Args::CONTEXT, Args::FIELDS, Args::EMBED, Args::LISTING, Args::TERMS, Args::STATUS])]
     public function list(Request $request, string $base): Response
     {
         return $this->serveList($request, $base === 'pages' ? 'page' : 'post');
@@ -157,7 +158,7 @@ final readonly class PostsController
     }
 
     /** One post or page. */
-    #[Route(Method::Get, '/wp/v2/{base:posts|pages}/{id:\d+}')]
+    #[Route(Method::Get, '/wp/v2/{base:posts|pages}/{id:\d+}', args: [Args::CONTEXT, Args::FIELDS, Args::EMBED])]
     public function single(Request $request, string $base, string $id): Response
     {
         return $this->serveSingle($request, $base === 'pages' ? 'page' : 'post', $id);
