@@ -28480,7 +28480,6 @@
                 "Minn\\Rest\\TemplateObject",
                 "Minn\\Runtime\\PostQuery",
                 "Minn\\Theme\\ClassicRenderer",
-                "Minn\\Theme\\HeadLinks",
                 "Minn\\Theme\\MainQueryBridge",
                 "Minn\\Theme\\PageRenderer",
                 "Minn\\Theme\\Templates"
@@ -30022,19 +30021,23 @@
             "namespace": "Minn\\Content",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Content/SiteIcon.php",
-            "lines": 24,
+            "lines": 50,
             "doc": "The site icon: the attachment the site_icon option names, as the file\nunder uploads it points at. Read by the favicon route, the head links,\nand the admin app's sidebar.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Content\\Posts",
                 "Minn\\Content\\Site",
-                "Minn\\Front\\Permalinks"
+                "Minn\\Front\\Permalinks",
+                "Minn\\Media\\Metadata"
             ],
             "usedBy": [
                 "Minn\\Admin\\BootPayload",
                 "Minn\\Engine",
-                "Minn\\Front\\ProbeController"
+                "Minn\\Front\\ProbeController",
+                "Minn\\Theme\\ClassicRenderer",
+                "Minn\\Theme\\HeadLinks",
+                "Minn\\Theme\\PageRenderer"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Content\\Site $site, Minn\\Content\\Posts $posts, Minn\\Front\\Permalinks $permalinks)",
@@ -30064,8 +30067,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 16,
-                "end": 21
+                "line": 17,
+                "end": 22
             },
             "cases": [],
             "constants": [],
@@ -30108,8 +30111,28 @@
                     "doc": "The icon's path under uploads, or null when the site has none.",
                     "shapes": [],
                     "params": [],
-                    "line": 24,
-                    "end": 29
+                    "line": 25,
+                    "end": 30
+                },
+                {
+                    "routes": [],
+                    "name": "urlAt",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "urlAt(int $size): string",
+                    "doc": "The URL of the icon's smallest generated size that covers a square of\n$size pixels, or of the original when no size does; empty without an icon.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "size",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 36,
+                    "end": 56
                 },
                 {
                     "routes": [],
@@ -30120,8 +30143,8 @@
                     "doc": "The icon's URL, empty when the site has none.",
                     "shapes": [],
                     "params": [],
-                    "line": 32,
-                    "end": 36
+                    "line": 59,
+                    "end": 63
                 }
             ]
         },
@@ -47817,9 +47840,9 @@
             "usedBy": [
                 "Minn\\Admin\\SiteController",
                 "Minn\\Blocks\\ImageTags",
+                "Minn\\Content\\SiteIcon",
                 "Minn\\Media\\Writer",
-                "Minn\\Rest\\MediaObject",
-                "Minn\\Theme\\HeadLinks"
+                "Minn\\Rest\\MediaObject"
             ],
             "constructor": null,
             "cases": [],
@@ -78426,6 +78449,7 @@
                 "Minn\\Content\\Posts",
                 "Minn\\Content\\Reader",
                 "Minn\\Content\\Site",
+                "Minn\\Content\\SiteIcon",
                 "Minn\\Db",
                 "Minn\\Front\\AdminBar",
                 "Minn\\Front\\DocumentTitle",
@@ -78503,8 +78527,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 30,
-                "end": 39
+                "line": 31,
+                "end": 40
             },
             "cases": [],
             "constants": [],
@@ -78626,8 +78650,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 42,
-                    "end": 47
+                    "line": 43,
+                    "end": 48
                 },
                 {
                     "routes": [],
@@ -78660,8 +78684,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 50,
-                    "end": 74
+                    "line": 51,
+                    "end": 75
                 },
                 {
                     "routes": [],
@@ -78672,8 +78696,8 @@
                     "doc": "The reference's loader order: the first true conditional whose template exists wins, index.php last.",
                     "shapes": [],
                     "params": [],
-                    "line": 77,
-                    "end": 107
+                    "line": 78,
+                    "end": 108
                 },
                 {
                     "routes": [],
@@ -78701,8 +78725,8 @@
                             "doc": "@return list<string>"
                         }
                     ],
-                    "line": 110,
-                    "end": 125
+                    "line": 111,
+                    "end": 126
                 },
                 {
                     "routes": [],
@@ -78721,8 +78745,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 127,
-                    "end": 134
+                    "line": 128,
+                    "end": 135
                 },
                 {
                     "routes": [],
@@ -78733,8 +78757,8 @@
                     "doc": "The piece only the renderer holds: the engine stylesheets. The head defaults registered at setup_theme.",
                     "shapes": [],
                     "params": [],
-                    "line": 137,
-                    "end": 140
+                    "line": 138,
+                    "end": 141
                 },
                 {
                     "routes": [],
@@ -78745,8 +78769,8 @@
                     "doc": "The engine's block stylesheet, and the theme.json presets when the theme ships one, where the reference prints its block-library and global styles.",
                     "shapes": [],
                     "params": [],
-                    "line": 143,
-                    "end": 156
+                    "line": 144,
+                    "end": 157
                 }
             ]
         },
@@ -79541,18 +79565,17 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/HeadLinks.php",
-            "lines": 135,
+            "lines": 114,
             "doc": "The links the reference puts in every head: the site and comments\nfeeds (plus the archive's own feed), the REST discovery link, the\nJSON alternate for the queried object, and the site icon set. The\nblock path prints them as one run; the classic path prints the same\npieces from the reference's wp_head hooks.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Content\\PostRecord",
-                "Minn\\Content\\Posts",
                 "Minn\\Content\\Site",
+                "Minn\\Content\\SiteIcon",
                 "Minn\\Front\\Kind",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Front\\Resolution",
-                "Minn\\Media\\Metadata",
                 "Minn\\Support\\Html"
             ],
             "usedBy": [
@@ -79560,7 +79583,7 @@
                 "Minn\\Theme\\PageRenderer"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Content\\Site $site, Minn\\Content\\Posts $posts, Minn\\Front\\Permalinks $permalinks)",
+                "signature": "__construct(Minn\\Content\\Site $site, Minn\\Content\\SiteIcon $icon, Minn\\Front\\Permalinks $permalinks)",
                 "doc": "",
                 "shapes": [],
                 "params": [
@@ -79572,8 +79595,8 @@
                         "doc": ""
                     },
                     {
-                        "name": "posts",
-                        "type": "Minn\\Content\\Posts",
+                        "name": "icon",
+                        "type": "Minn\\Content\\SiteIcon",
                         "shape": "",
                         "default": null,
                         "doc": ""
@@ -79603,8 +79626,8 @@
                     "promoted": true
                 },
                 {
-                    "name": "posts",
-                    "type": "Minn\\Content\\Posts",
+                    "name": "icon",
+                    "type": "Minn\\Content\\SiteIcon",
                     "readonly": true,
                     "static": false,
                     "doc": "",
@@ -79756,45 +79779,11 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "icons(): string",
-                    "doc": "The site icon links.",
+                    "doc": "The site icon links: the 32 and 192 pixel icons, the Apple touch icon, and the tile image.",
                     "shapes": [],
                     "params": [],
                     "line": 124,
-                    "end": 136
-                },
-                {
-                    "routes": [],
-                    "name": "iconFileAt",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "iconFileAt(int $attachment, string $file, int $size): string",
-                    "doc": "The smallest generated sub-size at least the requested square, the way the reference picks icon sizes; the original when none fits.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "attachment",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "file",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "size",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 139,
-                    "end": 155
+                    "end": 134
                 }
             ]
         },
@@ -80242,6 +80231,7 @@
                 "Minn\\Content\\Posts",
                 "Minn\\Content\\Reader",
                 "Minn\\Content\\Site",
+                "Minn\\Content\\SiteIcon",
                 "Minn\\Content\\Texturize",
                 "Minn\\Content\\Users",
                 "Minn\\Db",
@@ -80322,8 +80312,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 44,
-                "end": 53
+                "line": 45,
+                "end": 54
             },
             "cases": [],
             "constants": [],
@@ -80438,8 +80428,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 56,
-                    "end": 69
+                    "line": 57,
+                    "end": 70
                 },
                 {
                     "routes": [],
@@ -80467,8 +80457,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 79,
-                    "end": 117
+                    "line": 80,
+                    "end": 118
                 },
                 {
                     "routes": [],
@@ -80501,8 +80491,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 120,
-                    "end": 154
+                    "line": 121,
+                    "end": 155
                 },
                 {
                     "routes": [],
@@ -80513,8 +80503,8 @@
                     "doc": "The reference filters template_include under block themes too (the\ncanvas is the incoming value); a plugin swapping in its own PHP file\ntakes the whole response over, the CaptainCore Manager shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 161,
-                    "end": 174
+                    "line": 162,
+                    "end": 175
                 },
                 {
                     "routes": [],
@@ -80535,8 +80525,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 182,
-                    "end": 188
+                    "line": 183,
+                    "end": 189
                 },
                 {
                     "routes": [],
@@ -80562,8 +80552,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 191,
-                    "end": 205
+                    "line": 192,
+                    "end": 206
                 },
                 {
                     "routes": [],
@@ -80603,8 +80593,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 212,
-                    "end": 236
+                    "line": 213,
+                    "end": 237
                 }
             ]
         },

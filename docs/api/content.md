@@ -29,7 +29,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`Reader`](#reader) | final class | 54 | Who is reading this request: their user id, whether they may read |
 | [`Revisions`](#revisions) | final readonly class | 86 | Revision rows: the plain snapshots and the per-author autosave slots. |
 | [`Site`](#site) | final readonly class | 54 | Site-wide options and the site's clock. |
-| [`SiteIcon`](#siteicon) | final readonly class | 24 | The site icon: the attachment the site_icon option names, as the file |
+| [`SiteIcon`](#siteicon) | final readonly class | 50 | The site icon: the attachment the site_icon option names, as the file |
 | [`Slug`](#slug) | final class | 56 |  |
 | [`TermLinks`](#termlinks) | final class | 39 | A post's terms rendered as links, in the two shapes the reference |
 | [`TermRecord`](#termrecord) | final readonly class | 88 | One term with its taxonomy row, read by name: $term->name, ->slug, |
@@ -1100,7 +1100,7 @@ Internals: `saveSticky()` (private, line 184)
 Reads over the posts table. A single post comes back as a PostRecord and
 a listing as a Page of them; rendering and escaping happen elsewhere.
 
-Used by: `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Renderer`, `Minn\Cli\MinnCommand`, `Minn\Content\Menus`, `Minn\Content\PostWriter`, `Minn\Content\SiteIcon`, `Minn\Engine`, `Minn\Front\CommentPostController`, `Minn\Front\FeedController`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Media\Writer`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\Services`, `Minn\Rest\TemplateObject`, `Minn\Runtime\PostQuery`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
+Used by: `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Renderer`, `Minn\Cli\MinnCommand`, `Minn\Content\Menus`, `Minn\Content\PostWriter`, `Minn\Content\SiteIcon`, `Minn\Engine`, `Minn\Front\CommentPostController`, `Minn\Front\FeedController`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Media\Writer`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\Services`, `Minn\Rest\TemplateObject`, `Minn\Runtime\PostQuery`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
 
 ```php
 __construct(Minn\Db $db)
@@ -1364,7 +1364,7 @@ The site icon: the attachment the site_icon option names, as the file
 under uploads it points at. Read by the favicon route, the head links,
 and the admin app's sidebar.
 
-Used by: `Minn\Admin\BootPayload`, `Minn\Engine`, `Minn\Front\ProbeController`
+Used by: `Minn\Admin\BootPayload`, `Minn\Engine`, `Minn\Front\ProbeController`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\PageRenderer`
 
 ```php
 __construct(Minn\Content\Site $site, Minn\Content\Posts $posts, Minn\Front\Permalinks $permalinks)
@@ -1374,6 +1374,11 @@ __construct(Minn\Content\Site $site, Minn\Content\Posts $posts, Minn\Front\Perma
 ### `file(): ?string`
 
 The icon's path under uploads, or null when the site has none.
+
+### `urlAt(int $size): string`
+
+The URL of the icon's smallest generated size that covers a square of
+$size pixels, or of the original when no size does; empty without an icon.
 
 ### `url(): string`
 

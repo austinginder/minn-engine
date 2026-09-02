@@ -152,7 +152,7 @@ image_meta as a:13 with alt last.
 
 - const `IMAGE_META_KEYS` = `array (   0 => 'aperture',   1 => 'credit',   2 => 'camera',   3 => 'caption',   4 => 'created_timestamp',   5 => 'copyright',   6 => 'focal_length',   7 => 'iso',   8 => 'shutter_speed',   9 => 'title',   10 => 'orientation', )`
 
-Used by: `Minn\Admin\SiteController`, `Minn\Blocks\ImageTags`, `Minn\Media\Writer`, `Minn\Rest\MediaObject`, `Minn\Theme\HeadLinks`
+Used by: `Minn\Admin\SiteController`, `Minn\Blocks\ImageTags`, `Minn\Content\SiteIcon`, `Minn\Media\Writer`, `Minn\Rest\MediaObject`
 
 ### static `parse(?string $blob): array`
 

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Minn\Theme;
 
 use Minn\Content\PostRecord;
-use Minn\Content\Posts;
+use Minn\Content\SiteIcon;
 use Minn\Content\Site;
 use Minn\Front\Kind;
 use Minn\Front\Permalinks;
@@ -23,7 +23,7 @@ final readonly class HeadLinks
 {
     public function __construct(
         private Site $site,
-        private Posts $posts,
+        private SiteIcon $icon,
         private Permalinks $permalinks,
     ) {
     }
@@ -120,37 +120,16 @@ final readonly class HeadLinks
         return "<link rel='shortlink' href='" . Html::attr($this->permalinks->url('/?p=' . $id)) . "' />" . "\n";
     }
 
-    /** The site icon links. */
+    /** The site icon links: the 32 and 192 pixel icons, the Apple touch icon, and the tile image. */
     public function icons(): string
     {
-        $icon = (int) ($this->site->option('site_icon') ?? 0);
-        $iconFile = $icon > 0 ? $this->posts->meta($icon, '_wp_attached_file') : null;
-        if ($iconFile === null) {
+        if ($this->icon->file() === null) {
             return '';
         }
-        $url = fn (int $size): string => Html::attr($this->permalinks->url('/wp-content/uploads/' . $this->iconFileAt($icon, (string) $iconFile, $size)));
+        $url = fn (int $size): string => Html::attr($this->icon->urlAt($size));
         return '<link rel="icon" href="' . $url(32) . '" sizes="32x32" />' . "\n"
             . '<link rel="icon" href="' . $url(192) . '" sizes="192x192" />' . "\n"
             . '<link rel="apple-touch-icon" href="' . $url(180) . '" />' . "\n"
             . '<meta name="msapplication-TileImage" content="' . $url(270) . '" />' . "\n";
-    }
-
-    /** The smallest generated sub-size at least the requested square, the way the reference picks icon sizes; the original when none fits. */
-    private function iconFileAt(int $attachment, string $file, int $size): string
-    {
-        $meta = \Minn\Media\Metadata::parse($this->posts->meta($attachment, '_wp_attachment_metadata'));
-        $best = null;
-        foreach ((array) ($meta['sizes'] ?? []) as $candidate) {
-            $w = (int) ($candidate['width'] ?? 0);
-            $h = (int) ($candidate['height'] ?? 0);
-            if ($w >= $size && $h >= $size && ($best === null || $w < (int) $best['width'])) {
-                $best = $candidate;
-            }
-        }
-        if ($best === null || !is_string($best['file'] ?? null)) {
-            return $file;
-        }
-        $dir = dirname($file);
-        return ($dir === '.' ? '' : $dir . '/') . $best['file'];
     }
 }

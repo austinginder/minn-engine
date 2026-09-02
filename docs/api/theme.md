@@ -12,7 +12,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`ClassicTheme`](#classictheme) | final readonly class | 31 | The active classic (PHP-template) theme on disk. A theme is classic when |
 | [`Folder`](#folder) | final readonly class | 77 | A theme folder read from disk: its style.css headers, which folder its templates come from, its screenshot, whether it is a block theme. |
 | [`GlobalStyles`](#globalstyles) | final readonly class | 443 | theme.json to CSS. Presets become custom properties on :root and their |
-| [`HeadLinks`](#headlinks) | final readonly class | 135 | The links the reference puts in every head: the site and comments |
+| [`HeadLinks`](#headlinks) | final readonly class | 114 | The links the reference puts in every head: the site and comments |
 | [`Hierarchy`](#hierarchy) | final class | 146 | The classic template hierarchy: the candidate file names each template |
 | [`MainQueryBridge`](#mainquerybridge) | final readonly class | 67 | Stands the main query for a themed page: a plugin's archive runs through |
 | [`PageRenderer`](#pagerenderer) | final readonly class | 196 | A whole page from the active block theme: the template the resolution |
@@ -136,7 +136,7 @@ A classic renderer over the database door.
 
 The page for a resolution through the theme's PHP templates.
 
-Internals: `template()` (private, line 77), `bodyClasses()` (private, line 110), `standTitle()` (private, line 127), `registerHead()` (private, line 137), `registerStyles()` (private, line 143)
+Internals: `template()` (private, line 78), `bodyClasses()` (private, line 111), `standTitle()` (private, line 128), `registerHead()` (private, line 138), `registerStyles()` (private, line 144)
 
 
 ## ClassicTheme
@@ -268,7 +268,7 @@ pieces from the reference's wp_head hooks.
 Used by: `Minn\Theme\ClassicRenderer`, `Minn\Theme\PageRenderer`
 
 ```php
-__construct(Minn\Content\Site $site, Minn\Content\Posts $posts, Minn\Front\Permalinks $permalinks)
+__construct(Minn\Content\Site $site, Minn\Content\SiteIcon $icon, Minn\Front\Permalinks $permalinks)
 ```
 
 
@@ -306,9 +306,7 @@ Singular views only; posts and pages alike shortlink as ?p={id}, in the referenc
 
 ### `icons(): string`
 
-The site icon links.
-
-Internals: `iconFileAt()` (private, line 139)
+The site icon links: the 32 and 192 pixel icons, the Apple touch icon, and the tile image.
 
 
 ## Hierarchy
@@ -435,7 +433,7 @@ those, and the theme (and child theme) tokens close the list.
 
 The page for a resolution, or null when the theme has no template for it.
 
-Internals: `pluginTemplate()` (private, line 161), `skipLinkTarget()` (private, line 182), `documentTitle()` (private, line 191), `head()` (private, line 212)
+Internals: `pluginTemplate()` (private, line 162), `skipLinkTarget()` (private, line 183), `documentTitle()` (private, line 192), `head()` (private, line 213)
 
 
 ## PatternText
