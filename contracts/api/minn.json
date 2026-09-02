@@ -41043,19 +41043,730 @@
             ]
         },
         {
+            "name": "Minn\\Html\\Edits",
+            "short": "Edits",
+            "namespace": "Minn\\Html",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Html/Edits.php",
+            "lines": 252,
+            "doc": "The edits pending on the current token: attribute sets and removals,\nclass additions and removals, and a text replacement, in call order.\nThey answer reads before they are written, and become the source\nreplacements the reader splices in when it moves on.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Html\\Tags"
+            ],
+            "usedBy": [
+                "Minn\\Html\\Tags"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "attributes",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "classes",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "text",
+                    "type": "?string",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "validName",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "validName(string $name): bool",
+                    "doc": "Whether an attribute name may be set at all, by the reference's rules.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 22,
+                    "end": 28
+                },
+                {
+                    "routes": [],
+                    "name": "setAttribute",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "setAttribute(string $name, string|true $value): void",
+                    "doc": "Records a set; setting class outright forgets the class edits before it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "string|true",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 31,
+                    "end": 38
+                },
+                {
+                    "routes": [],
+                    "name": "removeAttribute",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "removeAttribute(string $name): void",
+                    "doc": "Records a removal of an attribute the source has.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 41,
+                    "end": 49
+                },
+                {
+                    "routes": [],
+                    "name": "cancelAttribute",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "cancelAttribute(string $name): void",
+                    "doc": "Forgets a pending set that never reached the source: cancelling an addition is not a removal.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 52,
+                    "end": 59
+                },
+                {
+                    "routes": [],
+                    "name": "attribute",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "attribute(string $lower): ?array",
+                    "doc": "The pending set or removal for a lowercase name, or null when there is none. @return array{name: string, value: string|true|null}|null",
+                    "shapes": [
+                        "@return array{name: string, value: string|true|null}|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "lower",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 62,
+                    "end": 65
+                },
+                {
+                    "routes": [],
+                    "name": "addClass",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "addClass(string $class): void",
+                    "doc": "Records a class to add; a later removal of the same class wins.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "class",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 68,
+                    "end": 72
+                },
+                {
+                    "routes": [],
+                    "name": "removeClass",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "removeClass(string $class): void",
+                    "doc": "Records a class to remove; a later addition of the same class wins.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "class",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 75,
+                    "end": 79
+                },
+                {
+                    "routes": [],
+                    "name": "hasClassEdits",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "hasClassEdits(): bool",
+                    "doc": "Whether any class edit is pending.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 82,
+                    "end": 85
+                },
+                {
+                    "routes": [],
+                    "name": "hasTagEdits",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "hasTagEdits(): bool",
+                    "doc": "Whether any attribute or class edit is pending.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 88,
+                    "end": 91
+                },
+                {
+                    "routes": [],
+                    "name": "classesAfter",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "classesAfter(array $base): array",
+                    "doc": "The class list after the pending edits: additions appended once,\nremovals gone.",
+                    "shapes": [
+                        "@param list<string> $base",
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "base",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 100,
+                    "end": 117
+                },
+                {
+                    "routes": [],
+                    "name": "setTextFor",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "setTextFor(?string $type, ?string $tagName, ?string $commentType, string $text): bool",
+                    "doc": "Records a text replacement for a token of a kind that takes one: text\n(escaped), an ordinary HTML comment, or a raw-text element's body\n(script and style bodies get their closers escaped). False when the\nkind takes none, or the text would end the element early.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "tagName",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": "the lowercase tag name of an opening tag, null for anything else"
+                        },
+                        {
+                            "name": "commentType",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 127,
+                    "end": 154
+                },
+                {
+                    "routes": [],
+                    "name": "takeText",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "takeText(): ?string",
+                    "doc": "The pending text replacement, taken: it is cleared on read.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 157,
+                    "end": 162
+                },
+                {
+                    "routes": [],
+                    "name": "takeReplacements",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "takeReplacements(array $attributes, int $nameEnd, ?string $baseClassValue): array",
+                    "doc": "The source replacements the attribute and class edits amount to, and\nforgets them: a changed attribute is rewritten in place (its duplicates\nremoved), a removed one is cut, a new one is inserted after the tag name.",
+                    "shapes": [
+                        "@param list<array{name: string, lower: string, start: int, end: int, value: ?string}> $attributes the tag's own",
+                        "@return list<array{int, int, string}> start, end, text"
+                    ],
+                    "params": [
+                        {
+                            "name": "attributes",
+                            "type": "array",
+                            "shape": "list<array{name: string, lower: string, start: int, end: int, value: ?string}>",
+                            "default": null,
+                            "doc": "the tag's own"
+                        },
+                        {
+                            "name": "nameEnd",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "baseClassValue",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 172,
+                    "end": 212
+                },
+                {
+                    "routes": [],
+                    "name": "clear",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "clear(): void",
+                    "doc": "Forgets everything pending.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 215,
+                    "end": 220
+                },
+                {
+                    "routes": [],
+                    "name": "rebuiltClassValue",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "rebuiltClassValue(string $base): string",
+                    "doc": "The class attribute after edits: source order and inner whitespace kept, removed classes gone with the space before them, additions appended.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "base",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 223,
+                    "end": 247
+                },
+                {
+                    "routes": [],
+                    "name": "existingName",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "existingName(array $attributes, string $lower): ?string",
+                    "doc": "",
+                    "shapes": [
+                        "@param list<array{name: string, lower: string}> $attributes"
+                    ],
+                    "params": [
+                        {
+                            "name": "attributes",
+                            "type": "array",
+                            "shape": "list<array{name: string, lower: string}>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "lower",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 250,
+                    "end": 258
+                },
+                {
+                    "routes": [],
+                    "name": "escape",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "escape(string $value): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 260,
+                    "end": 263
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Html\\Scanner",
+            "short": "Scanner",
+            "namespace": "Minn\\Html",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Html/Scanner.php",
+            "lines": 238,
+            "doc": "Reads one token's shape out of raw HTML at an offset: a tag with its\nname and attributes, a comment of one of the reference's kinds, a\ndoctype, or a processing instruction. Pure and stateless; null means the\ninput ends before the token does, which is where a streaming reader pauses.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Html\\Tags"
+            ],
+            "usedBy": [
+                "Minn\\Html\\Tags"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "tag",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "tag(string $html, int $at, int $nameStart): ?array",
+                    "doc": "A tag starting at $at, its name from $nameStart (one byte in for an\nopener, two for a closer): the name, where it ends, the end offset,\nthe attributes with their source offsets, and the self-closing flag.",
+                    "shapes": [
+                        "@return array{name: string, nameEnd: int, end: int, attributes: list<array{name: string, lower: string, start: int, end: int, value: ?string, quoted: bool}>, selfClosing: bool}|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "html",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "at",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "nameStart",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 22,
+                    "end": 63
+                },
+                {
+                    "routes": [],
+                    "name": "rawText",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "rawText(string $html, string $name, int $from): ?array",
+                    "doc": "A raw-text element's body (script, style, textarea, ...): from $from to\nits closing tag, or null when the closer never comes.",
+                    "shapes": [
+                        "@return array{textStart: int, textLength: int, end: int}|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "html",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "from",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 71,
+                    "end": 82
+                },
+                {
+                    "routes": [],
+                    "name": "markupDeclaration",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "markupDeclaration(string $html, int $at): ?array",
+                    "doc": "What \"<!\" opens at $at: an HTML comment (abruptly closed or not), a\ndoctype, a CDATA lookalike, or a bogus comment.",
+                    "shapes": [
+                        "@return array{kind: string, start: int, end: int, textStart: int, textLength: int, commentType?: string, fullStart?: int, fullLength?: int}|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "html",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "at",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 90,
+                    "end": 131
+                },
+                {
+                    "routes": [],
+                    "name": "question",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "question(string $html, int $at): ?array",
+                    "doc": "What \"<?\" opens at $at: a PHP tag as a processing instruction, another\nPI-shaped run as a comment lookalike, or a plain bogus comment.",
+                    "shapes": [
+                        "@return array{kind: string, start: int, end: int, textStart: int, textLength: int, commentType?: string, fullStart?: int, fullLength?: int}|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "html",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "at",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 139,
+                    "end": 158
+                },
+                {
+                    "routes": [],
+                    "name": "doctype",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "doctype(string $body): array",
+                    "doc": "A doctype's body split into its name and public and system identifiers.",
+                    "shapes": [
+                        "@return array{name: ?string, public: ?string, system: ?string}"
+                    ],
+                    "params": [
+                        {
+                            "name": "body",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 165,
+                    "end": 183
+                },
+                {
+                    "routes": [],
+                    "name": "isSpace",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "isSpace(string $c): bool",
+                    "doc": "Whether a byte is HTML whitespace.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "c",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 186,
+                    "end": 189
+                },
+                {
+                    "routes": [],
+                    "name": "attribute",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "attribute(string $html, int $i): ?array",
+                    "doc": "One attribute from $i: its name (a leading \"=\" is part of it), then an\noptional quoted or bare value. Null when the input ends first.",
+                    "shapes": [
+                        "@return array{int, string, int, int, ?string, bool}|null offset after, name, start, end, value, quoted"
+                    ],
+                    "params": [
+                        {
+                            "name": "html",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "i",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 197,
+                    "end": 243
+                },
+                {
+                    "routes": [],
+                    "name": "comment",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "comment(int $start, int $end, int $textStart, int $textLength, string $type, int $fullStart, int $fullLength): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array{kind: string, start: int, end: int, textStart: int, textLength: int, commentType: string, fullStart: int, fullLength: int}"
+                    ],
+                    "params": [
+                        {
+                            "name": "start",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "end",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "textStart",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "textLength",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "fullStart",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "fullLength",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 246,
+                    "end": 249
+                }
+            ]
+        },
+        {
             "name": "Minn\\Html\\Tags",
             "short": "Tags",
             "namespace": "Minn\\Html",
             "kind": "final class",
             "file": "public/minn/src/Minn/Html/Tags.php",
-            "lines": 938,
+            "lines": 581,
             "doc": "A streaming HTML tokenizer with in-place edits: tags, text, comments,\ndoctypes, and processing instructions in document order, attribute reads\nwith character references decoded, attribute and class edits applied to\nthe source without reserialising anything else, bookmarks to seek back to.\nBehaviour pinned by the html-tag-processor probe fixture.",
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Html\\Decoder"
+                "Minn\\Html\\Decoder",
+                "Minn\\Html\\Edits",
+                "Minn\\Html\\Scanner"
             ],
-            "usedBy": [],
+            "usedBy": [
+                "Minn\\Html\\Edits",
+                "Minn\\Html\\Scanner"
+            ],
             "constructor": {
                 "signature": "__construct(string $html)",
                 "doc": "",
@@ -41070,8 +41781,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 62,
-                "end": 65
+                "line": 59,
+                "end": 63
             },
             "cases": [],
             "constants": [
@@ -41150,8 +41861,8 @@
                 {
                     "name": "RAW_TEXT",
                     "value": "array (   0 => 'script',   1 => 'style',   2 => 'textarea',   3 => 'title',   4 => 'xmp',   5 => 'iframe',   6 => 'noembed',   7 => 'noframes', )",
-                    "doc": "",
-                    "visibility": "private"
+                    "doc": "Elements whose body is raw text up to the closer.",
+                    "visibility": "public"
                 },
                 {
                     "name": "RAW_DECODED",
@@ -41321,26 +42032,8 @@
                     "promoted": false
                 },
                 {
-                    "name": "attributeUpdates",
-                    "type": "array",
-                    "readonly": false,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": false
-                },
-                {
-                    "name": "classUpdates",
-                    "type": "array",
-                    "readonly": false,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": false
-                },
-                {
-                    "name": "textUpdate",
-                    "type": "?string",
+                    "name": "edits",
+                    "type": "Minn\\Html\\Edits",
                     "readonly": false,
                     "static": false,
                     "doc": "",
@@ -41367,8 +42060,8 @@
                     "doc": "Advances to the next token; false at the end or at an incomplete one.",
                     "shapes": [],
                     "params": [],
-                    "line": 70,
-                    "end": 126
+                    "line": 66,
+                    "end": 122
                 },
                 {
                     "routes": [],
@@ -41389,8 +42082,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 388,
-                    "end": 417
+                    "line": 201,
+                    "end": 230
                 },
                 {
                     "routes": [],
@@ -41401,8 +42094,8 @@
                     "doc": "Whether the scan stopped inside an unfinished token.",
                     "shapes": [],
                     "params": [],
-                    "line": 420,
-                    "end": 423
+                    "line": 233,
+                    "end": 236
                 },
                 {
                     "routes": [],
@@ -41413,8 +42106,8 @@
                     "doc": "The current token's kind.",
                     "shapes": [],
                     "params": [],
-                    "line": 428,
-                    "end": 431
+                    "line": 239,
+                    "end": 242
                 },
                 {
                     "routes": [],
@@ -41425,8 +42118,8 @@
                     "doc": "The current token's name.",
                     "shapes": [],
                     "params": [],
-                    "line": 434,
-                    "end": 442
+                    "line": 245,
+                    "end": 253
                 },
                 {
                     "routes": [],
@@ -41437,8 +42130,8 @@
                     "doc": "The current tag name, upper-cased.",
                     "shapes": [],
                     "params": [],
-                    "line": 445,
-                    "end": 451
+                    "line": 256,
+                    "end": 262
                 },
                 {
                     "routes": [],
@@ -41449,8 +42142,8 @@
                     "doc": "Whether the current tag is a closer.",
                     "shapes": [],
                     "params": [],
-                    "line": 454,
-                    "end": 457
+                    "line": 265,
+                    "end": 268
                 },
                 {
                     "routes": [],
@@ -41461,8 +42154,8 @@
                     "doc": "Whether the current tag has the self-closing flag.",
                     "shapes": [],
                     "params": [],
-                    "line": 460,
-                    "end": 463
+                    "line": 271,
+                    "end": 274
                 },
                 {
                     "routes": [],
@@ -41473,8 +42166,8 @@
                     "doc": "The current comment's kind.",
                     "shapes": [],
                     "params": [],
-                    "line": 466,
-                    "end": 469
+                    "line": 277,
+                    "end": 280
                 },
                 {
                     "routes": [],
@@ -41485,8 +42178,8 @@
                     "doc": "The current comment's whole text.",
                     "shapes": [],
                     "params": [],
-                    "line": 472,
-                    "end": 475
+                    "line": 283,
+                    "end": 286
                 },
                 {
                     "routes": [],
@@ -41497,8 +42190,8 @@
                     "doc": "The current token's text as a reader sees it.",
                     "shapes": [],
                     "params": [],
-                    "line": 478,
-                    "end": 488
+                    "line": 289,
+                    "end": 299
                 },
                 {
                     "routes": [],
@@ -41511,8 +42204,8 @@
                         "@return array{name: ?string, public: ?string, system: ?string}|null"
                     ],
                     "params": [],
-                    "line": 491,
-                    "end": 512
+                    "line": 302,
+                    "end": 308
                 },
                 {
                     "routes": [],
@@ -41531,8 +42224,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 515,
-                    "end": 535
+                    "line": 311,
+                    "end": 331
                 },
                 {
                     "routes": [],
@@ -41553,8 +42246,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 542,
-                    "end": 555
+                    "line": 338,
+                    "end": 351
                 },
                 {
                     "routes": [],
@@ -41567,8 +42260,8 @@
                         "@return list<string> distinct class names after pending edits"
                     ],
                     "params": [],
-                    "line": 562,
-                    "end": 582
+                    "line": 358,
+                    "end": 364
                 },
                 {
                     "routes": [],
@@ -41587,8 +42280,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 585,
-                    "end": 588
+                    "line": 367,
+                    "end": 370
                 },
                 {
                     "routes": [],
@@ -41614,8 +42307,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 618,
-                    "end": 638
+                    "line": 398,
+                    "end": 411
                 },
                 {
                     "routes": [],
@@ -41634,8 +42327,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 641,
-                    "end": 665
+                    "line": 414,
+                    "end": 434
                 },
                 {
                     "routes": [],
@@ -41654,8 +42347,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 668,
-                    "end": 676
+                    "line": 437,
+                    "end": 444
                 },
                 {
                     "routes": [],
@@ -41674,8 +42367,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 679,
-                    "end": 687
+                    "line": 447,
+                    "end": 454
                 },
                 {
                     "routes": [],
@@ -41683,7 +42376,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "setModifiableText(string $text): bool",
-                    "doc": "Replaces the current token's text.",
+                    "doc": "Replaces the current token's text, when its kind allows it.",
                     "shapes": [],
                     "params": [
                         {
@@ -41694,8 +42387,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 690,
-                    "end": 718
+                    "line": 457,
+                    "end": 460
                 },
                 {
                     "routes": [],
@@ -41714,8 +42407,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 723,
-                    "end": 733
+                    "line": 463,
+                    "end": 473
                 },
                 {
                     "routes": [],
@@ -41734,8 +42427,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 736,
-                    "end": 743
+                    "line": 476,
+                    "end": 483
                 },
                 {
                     "routes": [],
@@ -41754,8 +42447,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 746,
-                    "end": 749
+                    "line": 486,
+                    "end": 489
                 },
                 {
                     "routes": [],
@@ -41774,8 +42467,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 752,
-                    "end": 762
+                    "line": 492,
+                    "end": 502
                 },
                 {
                     "routes": [],
@@ -41786,186 +42479,8 @@
                     "doc": "The document with every update written in.",
                     "shapes": [],
                     "params": [],
-                    "line": 767,
-                    "end": 771
-                },
-                {
-                    "routes": [],
-                    "name": "scanTag",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "scanTag(int $at, bool $closer): bool",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "at",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "closer",
-                            "type": "bool",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 128,
-                    "end": 180
-                },
-                {
-                    "routes": [],
-                    "name": "scanAttribute",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "scanAttribute(int $i): ?array",
-                    "doc": "One attribute from the cursor: its name (a leading \"=\" is part of it),\nthen an optional quoted or bare value. Null pauses the scan at the end\nof the input.",
-                    "shapes": [
-                        "@return array{int, string, int, int, ?string, bool}|null cursor after, name, start, end, value, quoted"
-                    ],
-                    "params": [
-                        {
-                            "name": "i",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 189,
-                    "end": 239
-                },
-                {
-                    "routes": [],
-                    "name": "enterRawText",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "enterRawText(string $name, int $i): bool",
-                    "doc": "A raw-text element (script, style, ...): the token runs to its closer, or the scan pauses.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "name",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "i",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 242,
-                    "end": 262
-                },
-                {
-                    "routes": [],
-                    "name": "scanMarkupDeclaration",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "scanMarkupDeclaration(int $at): bool",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "at",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 264,
-                    "end": 317
-                },
-                {
-                    "routes": [],
-                    "name": "scanQuestion",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "scanQuestion(int $at): bool",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "at",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 319,
-                    "end": 345
-                },
-                {
-                    "routes": [],
-                    "name": "setComment",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "setComment(int $start, int $end, int $textStart, int $textLength, string $type, int $fullStart, int $fullLength): void",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "start",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "end",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "textStart",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "textLength",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "type",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "fullStart",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "fullLength",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 347,
-                    "end": 354
+                    "line": 505,
+                    "end": 509
                 },
                 {
                     "routes": [],
@@ -42019,8 +42534,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 356,
-                    "end": 364
+                    "line": 124,
+                    "end": 132
                 },
                 {
                     "routes": [],
@@ -42031,28 +42546,55 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 366,
-                    "end": 376
+                    "line": 134,
+                    "end": 144
                 },
                 {
                     "routes": [],
-                    "name": "isSpace",
-                    "static": true,
+                    "name": "takeTag",
+                    "static": false,
                     "visibility": "private",
-                    "signature": "isSpace(string $c): bool",
-                    "doc": "",
+                    "signature": "takeTag(int $at, bool $closer): bool",
+                    "doc": "A tag the scanner read at $at becomes the current token; a raw-text element carries its body to its closer.",
                     "shapes": [],
                     "params": [
                         {
-                            "name": "c",
-                            "type": "string",
+                            "name": "at",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "closer",
+                            "type": "bool",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 378,
-                    "end": 381
+                    "line": 147,
+                    "end": 173
+                },
+                {
+                    "routes": [],
+                    "name": "take",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "take(?array $found): bool",
+                    "doc": "A comment, doctype, or processing instruction the scanner read becomes the current token; null pauses.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "found",
+                            "type": "?array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 176,
+                    "end": 194
                 },
                 {
                     "routes": [],
@@ -42065,8 +42607,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 591,
-                    "end": 598
+                    "line": 373,
+                    "end": 380
                 },
                 {
                     "routes": [],
@@ -42077,8 +42619,8 @@
                     "doc": "The class attribute's decoded value before class edits: a pending set, else the source.",
                     "shapes": [],
                     "params": [],
-                    "line": 601,
-                    "end": 613
+                    "line": 383,
+                    "end": 395
                 },
                 {
                     "routes": [],
@@ -42089,22 +42631,8 @@
                     "doc": "Writes every pending update into the source, keeping bookmarks and the current token aligned.",
                     "shapes": [],
                     "params": [],
-                    "line": 775,
-                    "end": 795
-                },
-                {
-                    "routes": [],
-                    "name": "attributeReplacements",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "attributeReplacements(): array",
-                    "doc": "The edits the attribute and class updates amount to: a changed\nattribute is rewritten in place (its duplicates removed), a removed\none is cut, a new one is inserted after the tag name.",
-                    "shapes": [
-                        "@return list<array{int, int, string}> start, end, text"
-                    ],
-                    "params": [],
-                    "line": 804,
-                    "end": 842
+                    "line": 512,
+                    "end": 530
                 },
                 {
                     "routes": [],
@@ -42125,8 +42653,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 850,
-                    "end": 873
+                    "line": 538,
+                    "end": 561
                 },
                 {
                     "routes": [],
@@ -42137,8 +42665,8 @@
                     "doc": "Re-reads the current token so attribute offsets match the new source.",
                     "shapes": [],
                     "params": [],
-                    "line": 876,
-                    "end": 892
+                    "line": 564,
+                    "end": 578
                 },
                 {
                     "routes": [],
@@ -42149,60 +42677,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 894,
-                    "end": 906
-                },
-                {
-                    "routes": [],
-                    "name": "existingName",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "existingName(string $lower): ?string",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "lower",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 908,
-                    "end": 916
-                },
-                {
-                    "routes": [],
-                    "name": "rebuiltClassValue",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "rebuiltClassValue(): string",
-                    "doc": "The class attribute after edits: source order and inner whitespace kept, removed classes gone with the space before them, additions appended.",
-                    "shapes": [],
-                    "params": [],
-                    "line": 919,
-                    "end": 945
-                },
-                {
-                    "routes": [],
-                    "name": "escape",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "escape(string $value): string",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "value",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 947,
-                    "end": 950
+                    "line": 580,
+                    "end": 592
                 }
             ]
         },

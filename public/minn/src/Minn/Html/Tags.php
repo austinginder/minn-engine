@@ -27,7 +27,8 @@ final class Tags
     public const COMMENT_CDATA = 'COMMENT_AS_CDATA_LOOKALIKE';
     public const COMMENT_PI = 'COMMENT_AS_PI_NODE_LOOKALIKE';
 
-    private const RAW_TEXT = ['script', 'style', 'textarea', 'title', 'xmp', 'iframe', 'noembed', 'noframes'];
+    /** Elements whose body is raw text up to the closer. */
+    public const RAW_TEXT = ['script', 'style', 'textarea', 'title', 'xmp', 'iframe', 'noembed', 'noframes'];
     private const RAW_DECODED = ['textarea', 'title'];
     private const MAX_BOOKMARKS = 10;
 
@@ -51,20 +52,15 @@ final class Tags
     private int $fullTextStart = 0;
     private int $fullTextLength = 0;
 
-    /** @var array<string, array{name: string, value: string|true|null}> pending attribute sets (null = remove), by lowercase name, in call order */
-    private array $attributeUpdates = [];
-    /** @var array<string, bool> pending class additions (true) and removals (false), in call order */
-    private array $classUpdates = [];
-    private ?string $textUpdate = null;
+    private Edits $edits;
     /** @var array<string, array{0: int, 1: int}> */
     private array $bookmarks = [];
 
     public function __construct(string $html)
     {
         $this->html = $html;
+        $this->edits = new Edits();
     }
-
-    // ---- Scanning.
 
     /** Advances to the next token; false at the end or at an incomplete one. */
     public function nextToken(): bool
@@ -90,15 +86,15 @@ final class Tags
         }
         $next = $html[$at + 1] ?? '';
         if ($next === '!') {
-            return $this->scanMarkupDeclaration($at);
+            return $this->take(Scanner::markupDeclaration($html, $at));
         }
         if ($next === '?') {
-            return $this->scanQuestion($at);
+            return $this->take(Scanner::question($html, $at));
         }
         if ($next === '/') {
             $third = $html[$at + 2] ?? '';
             if ($third !== '' && ctype_alpha($third)) {
-                return $this->scanTag($at, true);
+                return $this->takeTag($at, true);
             }
             if ($third === '>') {
                 // "</>" is nothing at all: skip it.
@@ -115,7 +111,7 @@ final class Tags
             return true;
         }
         if ($next !== '' && ctype_alpha($next)) {
-            return $this->scanTag($at, false);
+            return $this->takeTag($at, false);
         }
         // A lone "<" is text.
         $lt = strpos($html, '<', $at + 1);
@@ -123,234 +119,6 @@ final class Tags
         $this->setToken(self::TEXT, '#text', $at, $end, $at, $end - $at);
         $this->cursor = $end;
         return true;
-    }
-
-    private function scanTag(int $at, bool $closer): bool
-    {
-        $html = $this->html;
-        $length = strlen($html);
-        $nameStart = $at + ($closer ? 2 : 1);
-        $i = $nameStart;
-        while ($i < $length && !self::isSpace($html[$i]) && $html[$i] !== '/' && $html[$i] !== '>') {
-            $i++;
-        }
-        $name = strtolower(substr($html, $nameStart, $i - $nameStart));
-        $nameEnd = $i;
-        $attributes = [];
-        $selfClosing = false;
-        while (true) {
-            while ($i < $length && (self::isSpace($html[$i]) || $html[$i] === '/')) {
-                $i++;
-            }
-            if ($i >= $length) {
-                $this->paused = true;
-                return false;
-            }
-            if ($html[$i] === '>') {
-                $selfClosing = $i > $nameEnd && $html[$i - 1] === '/' && ($i - 1 > $nameEnd || !$closer);
-                // The flag is the slash immediately before ">" that is not part of an unquoted value.
-                if ($attributes !== [] && end($attributes)['end'] === $i && end($attributes)['value'] !== null && !end($attributes)['quoted']) {
-                    $selfClosing = false;
-                }
-                $i++;
-                break;
-            }
-            $attribute = $this->scanAttribute($i);
-            if ($attribute === null) {
-                return false;
-            }
-            [$i, $attrName, $attrStart, $attrEnd, $value, $quoted] = $attribute;
-            if ($attrName === '') {
-                // A stray character such as a quote before "=": consume it as a name.
-                $i = max($i, $attrStart + 1);
-                continue;
-            }
-            $attributes[] = ['name' => $attrName, 'lower' => strtolower($attrName), 'start' => $attrStart, 'end' => $attrEnd, 'value' => $value, 'quoted' => $quoted];
-        }
-        $this->setToken(self::TAG, strtoupper($name), $at, $i, $i, 0);
-        $this->nameEnd = $nameEnd;
-        $this->closer = $closer;
-        $this->selfClosing = $selfClosing;
-        $this->attributes = $closer ? [] : $attributes;
-        $this->cursor = $i;
-        if (!$closer && in_array($name, self::RAW_TEXT, true)) {
-            return $this->enterRawText($name, $i);
-        }
-        return true;
-    }
-
-    /**
-     * One attribute from the cursor: its name (a leading "=" is part of it),
-     * then an optional quoted or bare value. Null pauses the scan at the end
-     * of the input.
-     *
-     * @return array{int, string, int, int, ?string, bool}|null cursor after, name, start, end, value, quoted
-     */
-    private function scanAttribute(int $i): ?array
-    {
-        $html = $this->html;
-        $length = strlen($html);
-        // Attribute name: runs to whitespace, "/", ">" or "=" (a leading "=" is part of the name).
-        $attrStart = $i;
-        if ($html[$i] === '=') {
-            $i++;
-        }
-        while ($i < $length && !self::isSpace($html[$i]) && $html[$i] !== '/' && $html[$i] !== '>' && $html[$i] !== '=') {
-            $i++;
-        }
-        $attrName = substr($html, $attrStart, $i - $attrStart);
-        $j = $i;
-        while ($j < $length && self::isSpace($html[$j])) {
-            $j++;
-        }
-        $value = null;
-        $quoted = false;
-        $attrEnd = $i;
-        if ($j < $length && $html[$j] === '=') {
-            $j++;
-            while ($j < $length && self::isSpace($html[$j])) {
-                $j++;
-            }
-            if ($j >= $length) {
-                $this->paused = true;
-                return null;
-            }
-            $quote = $html[$j];
-            if ($quote === '"' || $quote === "'") {
-                $close = strpos($html, $quote, $j + 1);
-                if ($close === false) {
-                    $this->paused = true;
-                    return null;
-                }
-                $value = substr($html, $j + 1, $close - $j - 1);
-                $quoted = true;
-                $attrEnd = $close + 1;
-            } else {
-                $k = $j;
-                while ($k < $length && !self::isSpace($html[$k]) && $html[$k] !== '>') {
-                    $k++;
-                }
-                $value = substr($html, $j, $k - $j);
-                $attrEnd = $k;
-            }
-            $i = $attrEnd;
-        }
-        return [$i, $attrName, $attrStart, $attrEnd, $value, $quoted];
-    }
-
-    /** A raw-text element (script, style, ...): the token runs to its closer, or the scan pauses. */
-    private function enterRawText(string $name, int $i): bool
-    {
-        $html = $this->html;
-        $closeAt = stripos($html, '</' . $name, $i);
-        if ($closeAt === false) {
-            $this->paused = true;
-            $this->resetToken();
-            return false;
-        }
-        $gt = strpos($html, '>', $closeAt);
-        if ($gt === false) {
-            $this->paused = true;
-            $this->resetToken();
-            return false;
-        }
-        $this->textStart = $i;
-        $this->textLength = $closeAt - $i;
-        $this->end = $gt + 1;
-        $this->cursor = $gt + 1;
-        return true;
-    }
-
-    private function scanMarkupDeclaration(int $at): bool
-    {
-        $html = $this->html;
-        if (substr($html, $at, 4) === '<!--') {
-            if (substr($html, $at, 5) === '<!-->') {
-                $this->setComment($at, $at + 5, $at + 4, 0, self::COMMENT_ABRUPT, $at + 4, 0);
-                return true;
-            }
-            if (substr($html, $at, 6) === '<!--->') {
-                $this->setComment($at, $at + 6, $at + 4, 0, self::COMMENT_ABRUPT, $at + 4, 0);
-                return true;
-            }
-            $search = $at + 4;
-            while (true) {
-                $dashes = strpos($html, '--', $search);
-                if ($dashes === false) {
-                    $this->paused = true;
-                    return false;
-                }
-                $after = substr($html, $dashes + 2, 2);
-                if (($after[0] ?? '') === '>') {
-                    $this->setComment($at, $dashes + 3, $at + 4, $dashes - $at - 4, self::COMMENT_HTML, $at + 4, $dashes - $at - 4);
-                    return true;
-                }
-                if ($after === '!>') {
-                    $this->setComment($at, $dashes + 4, $at + 4, $dashes - $at - 4, self::COMMENT_HTML, $at + 4, $dashes - $at - 4);
-                    return true;
-                }
-                $search = $dashes + 1;
-            }
-        }
-        if (strtoupper(substr($html, $at, 9)) === '<!DOCTYPE') {
-            $gt = strpos($html, '>', $at + 9);
-            if ($gt === false) {
-                $this->paused = true;
-                return false;
-            }
-            $this->setToken(self::DOCTYPE, 'html', $at, $gt + 1, $at + 9, $gt - $at - 9);
-            $this->cursor = $gt + 1;
-            return true;
-        }
-        // Bogus comment: "<!" up to the next ">".
-        $gt = strpos($html, '>', $at + 2);
-        if ($gt === false) {
-            $this->paused = true;
-            return false;
-        }
-        if (substr($html, $at, 9) === '<![CDATA[' && substr($html, $gt - 2, 2) === ']]' && $gt - 2 >= $at + 9) {
-            $this->setComment($at, $gt + 1, $at + 9, $gt - 2 - $at - 9, self::COMMENT_CDATA, $at + 2, $gt - $at - 2);
-            return true;
-        }
-        $this->setComment($at, $gt + 1, $at + 2, $gt - $at - 2, self::COMMENT_INVALID, $at + 2, $gt - $at - 2);
-        return true;
-    }
-
-    private function scanQuestion(int $at): bool
-    {
-        $html = $this->html;
-        $gt = strpos($html, '>', $at + 2);
-        if ($gt === false) {
-            $this->paused = true;
-            return false;
-        }
-        if (strtolower(substr($html, $at, 5)) === '<?php' && substr($html, $gt - 1, 1) === '?') {
-            // PHP tags read as processing instructions with a "php" target.
-            $bodyStart = $at + 5;
-            if ($bodyStart < $gt - 1 && self::isSpace($html[$bodyStart])) {
-                $bodyStart++;
-            }
-            $this->setToken(self::PI, '#processing-instruction', $at, $gt + 1, $bodyStart, max(0, $gt - 1 - $bodyStart));
-            $this->name = 'php';
-            $this->cursor = $gt + 1;
-            return true;
-        }
-        if ($html[$gt - 1] === '?' && preg_match('/^<\?([a-zA-Z][a-zA-Z0-9]*)/', substr($html, $at, min(64, $gt - $at)), $m)) {
-            $bodyStart = $at + 2 + strlen($m[1]);
-            $this->setComment($at, $gt + 1, $bodyStart, max(0, $gt - 1 - $bodyStart), self::COMMENT_PI, $at + 1, $gt - $at - 1);
-            return true;
-        }
-        $this->setComment($at, $gt + 1, $at + 2, $gt - $at - 2, self::COMMENT_HTML, $at + 2, $gt - $at - 2);
-        return true;
-    }
-
-    private function setComment(int $start, int $end, int $textStart, int $textLength, string $type, int $fullStart, int $fullLength): void
-    {
-        $this->setToken(self::COMMENT, '#comment', $start, $end, $textStart, $textLength);
-        $this->commentType = $type;
-        $this->fullTextStart = $fullStart;
-        $this->fullTextLength = $fullLength;
-        $this->cursor = $end;
     }
 
     private function setToken(string $type, string $name, int $start, int $end, int $textStart, int $textLength): void
@@ -375,9 +143,54 @@ final class Tags
         $this->fullTextLength = 0;
     }
 
-    private static function isSpace(string $c): bool
+    /** A tag the scanner read at $at becomes the current token; a raw-text element carries its body to its closer. */
+    private function takeTag(int $at, bool $closer): bool
     {
-        return $c === ' ' || $c === "\t" || $c === "\n" || $c === "\r" || $c === "\f";
+        $tag = Scanner::tag($this->html, $at, $at + ($closer ? 2 : 1));
+        if ($tag === null) {
+            $this->paused = true;
+            return false;
+        }
+        $this->setToken(self::TAG, strtoupper($tag['name']), $at, $tag['end'], $tag['end'], 0);
+        $this->nameEnd = $tag['nameEnd'];
+        $this->closer = $closer;
+        $this->selfClosing = $tag['selfClosing'];
+        $this->attributes = $closer ? [] : $tag['attributes'];
+        $this->cursor = $tag['end'];
+        if (!$closer && in_array($tag['name'], self::RAW_TEXT, true)) {
+            $raw = Scanner::rawText($this->html, $tag['name'], $tag['end']);
+            if ($raw === null) {
+                $this->paused = true;
+                $this->resetToken();
+                return false;
+            }
+            $this->textStart = $raw['textStart'];
+            $this->textLength = $raw['textLength'];
+            $this->end = $raw['end'];
+            $this->cursor = $raw['end'];
+        }
+        return true;
+    }
+
+    /** A comment, doctype, or processing instruction the scanner read becomes the current token; null pauses. */
+    private function take(?array $found): bool
+    {
+        if ($found === null) {
+            $this->paused = true;
+            return false;
+        }
+        $type = match ($found['kind']) { 'comment' => self::COMMENT, 'doctype' => self::DOCTYPE, default => self::PI };
+        $name = match ($found['kind']) { 'comment' => '#comment', 'doctype' => 'html', default => '#processing-instruction' };
+        $this->setToken($type, $name, $found['start'], $found['end'], $found['textStart'], $found['textLength']);
+        if ($found['kind'] === 'comment') {
+            $this->commentType = $found['commentType'];
+            $this->fullTextStart = $found['fullStart'];
+            $this->fullTextLength = $found['fullLength'];
+        } elseif ($found['kind'] === 'pi') {
+            $this->name = 'php';
+        }
+        $this->cursor = $found['end'];
+        return true;
     }
 
     /**
@@ -421,8 +234,6 @@ final class Tags
     {
         return $this->paused;
     }
-
-    // ---- Reads.
 
     /** The current token's kind. */
     public function tokenType(): ?string
@@ -493,22 +304,7 @@ final class Tags
         if ($this->type !== self::DOCTYPE) {
             return null;
         }
-        $body = trim(substr($this->html, $this->textStart, $this->textLength));
-        if ($body === '') {
-            return ['name' => null, 'public' => null, 'system' => null];
-        }
-        preg_match('/^(\S+)\s*(.*)$/s', $body, $m);
-        $name = strtolower($m[1]);
-        $rest = $m[2] ?? '';
-        $public = null;
-        $system = null;
-        if (preg_match('/^PUBLIC\s+(["\'])(.*?)\1\s*(?:(["\'])(.*?)\3)?/is', $rest, $pm)) {
-            $public = $pm[2];
-            $system = isset($pm[4]) ? $pm[4] : null;
-        } elseif (preg_match('/^SYSTEM\s+(["\'])(.*?)\1/is', $rest, $sm)) {
-            $system = $sm[2];
-        }
-        return ['name' => $name, 'public' => $public, 'system' => $system];
+        return Scanner::doctype(substr($this->html, $this->textStart, $this->textLength));
     }
 
     /** The decoded value, true for a bare attribute, null when absent; a pending edit answers first. */
@@ -518,13 +314,13 @@ final class Tags
             return null;
         }
         $lower = strtolower($name);
-        if ($lower === 'class' && $this->classUpdates !== []) {
+        if ($lower === 'class' && $this->edits->hasClassEdits()) {
             $list = $this->classes();
             return $list === [] ? null : implode(' ', $list);
         }
-        if (array_key_exists($lower, $this->attributeUpdates)) {
-            $value = $this->attributeUpdates[$lower]['value'];
-            return $value === true ? true : ($value === null ? null : $value);
+        $pending = $this->edits->attribute($lower);
+        if ($pending !== null) {
+            return $pending['value'];
         }
         foreach ($this->attributes as $attr) {
             if ($attr['lower'] === $lower) {
@@ -564,21 +360,7 @@ final class Tags
         if ($this->type !== self::TAG || $this->closer) {
             return [];
         }
-        $list = [];
-        foreach ($this->baseClassList() as $class) {
-            if (!in_array($class, $list, true)) {
-                $list[] = $class;
-            }
-        }
-        foreach ($this->classUpdates as $class => $add) {
-            $class = (string) $class;
-            if ($add && !in_array($class, $list, true)) {
-                $list[] = $class;
-            } elseif (!$add) {
-                $list = array_values(array_filter($list, static fn (string $c) => $c !== $class));
-            }
-        }
-        return $list;
+        return $this->edits->classesAfter($this->baseClassList());
     }
 
     /** Whether the current tag has a class. */
@@ -600,9 +382,9 @@ final class Tags
     /** The class attribute's decoded value before class edits: a pending set, else the source. */
     private function baseClassValue(): ?string
     {
-        if (array_key_exists('class', $this->attributeUpdates)) {
-            $value = $this->attributeUpdates['class']['value'];
-            return $value === true ? '' : $value;
+        $pending = $this->edits->attribute('class');
+        if ($pending !== null) {
+            return $pending['value'] === true ? '' : $pending['value'];
         }
         foreach ($this->attributes as $attr) {
             if ($attr['lower'] === 'class') {
@@ -611,8 +393,6 @@ final class Tags
         }
         return null;
     }
-
-    // ---- Edits.
 
     /** Sets an attribute on the current tag. */
     public function setAttribute(string $name, string|bool|int|float|null $value): bool
@@ -623,17 +403,10 @@ final class Tags
         if ($value === false) {
             return $this->removeAttribute($name);
         }
-        if ($name === '' || preg_match('/[\s"\'>\/=\x00-\x1F\x7F]/', $name) || preg_match('/[\p{Cc}\p{Zs}]/u', $name) && preg_match('/\s/', $name)) {
+        if (!Edits::validName($name)) {
             return false;
         }
-        if (preg_match('/[^\x21-\x7E\x80-\xFF]/', $name)) {
-            return false;
-        }
-        $lower = strtolower($name);
-        if ($lower === 'class') {
-            $this->classUpdates = [];
-        }
-        $this->attributeUpdates[$lower] = ['name' => $name, 'value' => $value === true ? true : (string) $value];
+        $this->edits->setAttribute($name, $value === true ? true : (string) $value);
         return true;
     }
 
@@ -644,9 +417,6 @@ final class Tags
             return false;
         }
         $lower = strtolower($name);
-        if ($lower === 'class') {
-            $this->classUpdates = [];
-        }
         $exists = false;
         foreach ($this->attributes as $attr) {
             if ($attr['lower'] === $lower) {
@@ -656,11 +426,10 @@ final class Tags
         }
         if (!$exists) {
             // Only a pending addition: cancelling it is not a removal.
-            unset($this->attributeUpdates[$lower]);
+            $this->edits->cancelAttribute($name);
             return false;
         }
-        unset($this->attributeUpdates[$lower]);
-        $this->attributeUpdates[$lower] = ['name' => $name, 'value' => null];
+        $this->edits->removeAttribute($name);
         return true;
     }
 
@@ -670,8 +439,7 @@ final class Tags
         if ($this->type !== self::TAG || $this->closer) {
             return false;
         }
-        unset($this->classUpdates[$class]);
-        $this->classUpdates[$class] = true;
+        $this->edits->addClass($class);
         return true;
     }
 
@@ -681,43 +449,15 @@ final class Tags
         if ($this->type !== self::TAG || $this->closer) {
             return false;
         }
-        unset($this->classUpdates[$class]);
-        $this->classUpdates[$class] = false;
+        $this->edits->removeClass($class);
         return true;
     }
 
-    /** Replaces the current token's text. */
+    /** Replaces the current token's text, when its kind allows it. */
     public function setModifiableText(string $text): bool
     {
-        if ($this->type === self::TEXT) {
-            $this->textUpdate = strtr($text, ['&' => '&amp;', '<' => '&lt;']);
-            return true;
-        }
-        if ($this->type === self::COMMENT) {
-            if ($this->commentType !== self::COMMENT_HTML || str_contains($text, '-->')) {
-                return false;
-            }
-            $this->textUpdate = $text;
-            return true;
-        }
-        if ($this->type === self::TAG && !$this->closer) {
-            $name = strtolower((string) $this->name);
-            if ($name === 'script' || $name === 'style') {
-                $this->textUpdate = preg_replace_callback('#</(' . $name[0] . ')(?=' . substr($name, 1) . ')#i', static fn (array $m) => '</\\u00' . dechex(ord($m[1])), $text) ?? $text;
-                return true;
-            }
-            if (in_array($name, self::RAW_TEXT, true)) {
-                if (stripos($text, '</' . $name) !== false) {
-                    return false;
-                }
-                $this->textUpdate = $text;
-                return true;
-            }
-        }
-        return false;
+        return $this->edits->setTextFor($this->type, $this->closer ? null : strtolower((string) $this->name), $this->commentType, $text);
     }
-
-    // ---- Bookmarks.
 
     /** Names the current token's position. */
     public function setBookmark(string $name): bool
@@ -761,8 +501,6 @@ final class Tags
         return $this->nextToken();
     }
 
-    // ---- Output.
-
     /** The document with every update written in. */
     public function html(): string
     {
@@ -770,7 +508,6 @@ final class Tags
         return $this->html;
     }
 
-    /** Applies the pending edits to the source and re-reads the current token at its (possibly shifted) place. */
     /** Writes every pending update into the source, keeping bookmarks and the current token aligned. */
     private function flush(): void
     {
@@ -778,67 +515,18 @@ final class Tags
             return;
         }
         $replacements = [];
-        if ($this->textUpdate !== null) {
-            $replacements[] = [$this->textStart, $this->textStart + $this->textLength, $this->textUpdate];
-            $this->textUpdate = null;
+        $text = $this->edits->takeText();
+        if ($text !== null) {
+            $replacements[] = [$this->textStart, $this->textStart + $this->textLength, $text];
         }
-        if ($this->type === self::TAG && !$this->closer && ($this->attributeUpdates !== [] || $this->classUpdates !== [])) {
-            $replacements = [...$replacements, ...$this->attributeReplacements()];
-            $this->attributeUpdates = [];
-            $this->classUpdates = [];
+        if ($this->type === self::TAG && !$this->closer && $this->edits->hasTagEdits()) {
+            $replacements = [...$replacements, ...$this->edits->takeReplacements($this->attributes, $this->nameEnd, $this->baseClassValue())];
         }
         if ($replacements === []) {
             return;
         }
         $this->applyReplacements($replacements);
         $this->rescanCurrent();
-    }
-
-    /**
-     * The edits the attribute and class updates amount to: a changed
-     * attribute is rewritten in place (its duplicates removed), a removed
-     * one is cut, a new one is inserted after the tag name.
-     *
-     * @return list<array{int, int, string}> start, end, text
-     */
-    private function attributeReplacements(): array
-    {
-        $replacements = [];
-        $inserts = [];
-        $updates = $this->attributeUpdates;
-        if ($this->classUpdates !== []) {
-            $classValue = $this->rebuiltClassValue();
-            unset($updates['class']);
-            $updates['class'] = ['name' => $this->existingName('class') ?? 'class', 'value' => $classValue === '' ? null : $classValue];
-            if ($classValue === '' && $this->existingName('class') === null) {
-                unset($updates['class']);
-            }
-        }
-        foreach ($updates as $lower => $update) {
-            $lower = (string) $lower;
-            $text = $update['value'] === true ? $update['name'] : $update['name'] . '="' . self::escape((string) $update['value']) . '"';
-            $matched = false;
-            foreach ($this->attributes as $attr) {
-                if ($attr['lower'] !== $lower) {
-                    continue;
-                }
-                if ($update['value'] === null) {
-                    $replacements[] = [$attr['start'], $attr['end'], ''];
-                    continue;
-                }
-                if (!$matched) {
-                    $replacements[] = [$attr['start'], $attr['end'], $text];
-                }
-                $matched = true;
-            }
-            if (!$matched && $update['value'] !== null) {
-                $inserts[] = ' ' . $text;
-            }
-        }
-        if ($inserts !== []) {
-            $replacements[] = [$this->nameEnd, $this->nameEnd, implode('', array_reverse($inserts))];
-        }
-        return $replacements;
     }
 
     /**
@@ -882,9 +570,7 @@ final class Tags
         $this->cursor = $tokenStart;
         $this->ended = false;
         $this->paused = false;
-        $this->attributeUpdates = [];
-        $this->classUpdates = [];
-        $this->textUpdate = null;
+        $this->edits->clear();
         $this->rescan();
         $this->cursor = $resume;
         $this->ended = $wasEnded;
@@ -905,47 +591,4 @@ final class Tags
         }
     }
 
-    private function existingName(string $lower): ?string
-    {
-        foreach ($this->attributes as $attr) {
-            if ($attr['lower'] === $lower) {
-                return $attr['name'];
-            }
-        }
-        return null;
-    }
-
-    /** The class attribute after edits: source order and inner whitespace kept, removed classes gone with the space before them, additions appended. */
-    private function rebuiltClassValue(): string
-    {
-        $base = $this->baseClassValue() ?? '';
-        $keep = [];
-        $seen = [];
-        preg_match_all('/([ \t\n\r\f]*)([^ \t\n\r\f]+)/', $base, $m, PREG_SET_ORDER);
-        $out = '';
-        foreach ($m as $part) {
-            $class = $part[2];
-            if (isset($this->classUpdates[$class]) && $this->classUpdates[$class] === false) {
-                continue;
-            }
-            if (in_array($class, $seen, true)) {
-                continue;
-            }
-            $seen[] = $class;
-            $out .= ($out === '' ? '' : $part[1]) . $class;
-        }
-        foreach ($this->classUpdates as $class => $add) {
-            $class = (string) $class;
-            if ($add && !in_array($class, $seen, true)) {
-                $seen[] = $class;
-                $out .= ($out === '' ? '' : ' ') . $class;
-            }
-        }
-        return $out;
-    }
-
-    private static function escape(string $value): string
-    {
-        return htmlspecialchars($value, ENT_QUOTES | ENT_HTML5 | ENT_SUBSTITUTE, 'UTF-8', true);
-    }
 }

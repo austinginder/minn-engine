@@ -165,7 +165,7 @@ $check("facade map: leaf functions over fifteen lines stay at or under {$leafCei
 // (none now: the twenty-two the pass started with are split) and classes past six hundred
 // lines. Lower a ceiling when a file loses its last offender; never raise one.
 $longMethodCeiling = 0;
-$bigClassCeiling = 4;
+$bigClassCeiling = 0;
 $longMethods = [];
 $bigClasses = [];
 foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root, FilesystemIterator::SKIP_DOTS)) as $file) {

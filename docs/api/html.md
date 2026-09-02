@@ -5,7 +5,9 @@ the HTML tag processor
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`Decoder`](#decoder) | final class | 86 | Character reference decoding for text and attribute values: numeric and |
-| [`Tags`](#tags) | final class | 938 | A streaming HTML tokenizer with in-place edits: tags, text, comments, |
+| [`Edits`](#edits) | final class | 252 | The edits pending on the current token: attribute sets and removals, |
+| [`Scanner`](#scanner) | final class | 238 | Reads one token's shape out of raw HTML at an offset: a tag with its |
+| [`Tags`](#tags) | final class | 581 | A streaming HTML tokenizer with in-place edits: tags, text, comments, |
 
 ## Decoder
 
@@ -27,6 +29,144 @@ Text with its character references decoded.
 An attribute value with its character references decoded.
 
 Internals: `decode()` (private, line 29), `codePoint()` (private, line 69), `legacy()` (private, line 82)
+
+
+## Edits
+
+`final class Minn\Html\Edits` · `public/minn/src/Minn/Html/Edits.php`
+
+The edits pending on the current token: attribute sets and removals,
+class additions and removals, and a text replacement, in call order.
+They answer reads before they are written, and become the source
+replacements the reader splices in when it moves on.
+
+Used by: `Minn\Html\Tags`
+
+
+### static `validName(string $name): bool`
+
+Whether an attribute name may be set at all, by the reference's rules.
+
+### `setAttribute(string $name, string|true $value): void`
+
+Records a set; setting class outright forgets the class edits before it.
+
+### `removeAttribute(string $name): void`
+
+Records a removal of an attribute the source has.
+
+### `cancelAttribute(string $name): void`
+
+Forgets a pending set that never reached the source: cancelling an addition is not a removal.
+
+### `attribute(string $lower): ?array`
+
+The pending set or removal for a lowercase name, or null when there is none. @return array{name: string, value: string|true|null}|null
+
+- `@return array{name: string, value: string|true|null}|null`
+
+### `addClass(string $class): void`
+
+Records a class to add; a later removal of the same class wins.
+
+### `removeClass(string $class): void`
+
+Records a class to remove; a later addition of the same class wins.
+
+### `hasClassEdits(): bool`
+
+Whether any class edit is pending.
+
+### `hasTagEdits(): bool`
+
+Whether any attribute or class edit is pending.
+
+### `classesAfter(array $base): array`
+
+The class list after the pending edits: additions appended once,
+removals gone.
+
+- `@param list<string> $base`
+- `@return list<string>`
+
+### `setTextFor(?string $type, ?string $tagName, ?string $commentType, string $text): bool`
+
+Records a text replacement for a token of a kind that takes one: text
+(escaped), an ordinary HTML comment, or a raw-text element's body
+(script and style bodies get their closers escaped). False when the
+kind takes none, or the text would end the element early.
+
+### `takeText(): ?string`
+
+The pending text replacement, taken: it is cleared on read.
+
+### `takeReplacements(array $attributes, int $nameEnd, ?string $baseClassValue): array`
+
+The source replacements the attribute and class edits amount to, and
+forgets them: a changed attribute is rewritten in place (its duplicates
+removed), a removed one is cut, a new one is inserted after the tag name.
+
+- `@param list<array{name: string, lower: string, start: int, end: int, value: ?string}> $attributes the tag's own`
+- `@return list<array{int, int, string}> start, end, text`
+
+### `clear(): void`
+
+Forgets everything pending.
+
+Internals: `rebuiltClassValue()` (private, line 223), `existingName()` (private, line 250), `escape()` (private, line 260)
+
+
+## Scanner
+
+`final class Minn\Html\Scanner` · `public/minn/src/Minn/Html/Scanner.php`
+
+Reads one token's shape out of raw HTML at an offset: a tag with its
+name and attributes, a comment of one of the reference's kinds, a
+doctype, or a processing instruction. Pure and stateless; null means the
+input ends before the token does, which is where a streaming reader pauses.
+
+Used by: `Minn\Html\Tags`
+
+### static `tag(string $html, int $at, int $nameStart): ?array`
+
+A tag starting at $at, its name from $nameStart (one byte in for an
+opener, two for a closer): the name, where it ends, the end offset,
+the attributes with their source offsets, and the self-closing flag.
+
+- `@return array{name: string, nameEnd: int, end: int, attributes: list<array{name: string, lower: string, start: int, end: int, value: ?string, quoted: bool}>, selfClosing: bool}|null`
+
+### static `rawText(string $html, string $name, int $from): ?array`
+
+A raw-text element's body (script, style, textarea, ...): from $from to
+its closing tag, or null when the closer never comes.
+
+- `@return array{textStart: int, textLength: int, end: int}|null`
+
+### static `markupDeclaration(string $html, int $at): ?array`
+
+What "<!" opens at $at: an HTML comment (abruptly closed or not), a
+doctype, a CDATA lookalike, or a bogus comment.
+
+- `@return array{kind: string, start: int, end: int, textStart: int, textLength: int, commentType?: string, fullStart?: int, fullLength?: int}|null`
+
+### static `question(string $html, int $at): ?array`
+
+What "<?" opens at $at: a PHP tag as a processing instruction, another
+PI-shaped run as a comment lookalike, or a plain bogus comment.
+
+- `@return array{kind: string, start: int, end: int, textStart: int, textLength: int, commentType?: string, fullStart?: int, fullLength?: int}|null`
+
+### static `doctype(string $body): array`
+
+A doctype's body split into its name and public and system identifiers.
+
+- `@return array{name: ?string, public: ?string, system: ?string}`
+
+### static `isSpace(string $c): bool`
+
+Whether a byte is HTML whitespace.
+
+Internals: `attribute()` (private, line 197), `comment()` (private, line 246)
 
 
 ## Tags
@@ -51,9 +191,11 @@ Behaviour pinned by the html-tag-processor probe fixture.
 - const `COMMENT_INVALID` = `'COMMENT_AS_INVALID_HTML'`
 - const `COMMENT_CDATA` = `'COMMENT_AS_CDATA_LOOKALIKE'`
 - const `COMMENT_PI` = `'COMMENT_AS_PI_NODE_LOOKALIKE'`
-- const `RAW_TEXT` = `array (   0 => 'script',   1 => 'style',   2 => 'textarea',   3 => 'title',   4 => 'xmp',   5 => 'iframe',   6 => 'noembed',   7 => 'noframes', )`
+- const `RAW_TEXT` = `array (   0 => 'script',   1 => 'style',   2 => 'textarea',   3 => 'title',   4 => 'xmp',   5 => 'iframe',   6 => 'noembed',   7 => 'noframes', )` — Elements whose body is raw text up to the closer.
 - const `RAW_DECODED` = `array (   0 => 'textarea',   1 => 'title', )`
 - const `MAX_BOOKMARKS` = `10`
+
+Used by: `Minn\Html\Edits`, `Minn\Html\Scanner`
 
 ```php
 __construct(string $html)
@@ -150,7 +292,7 @@ Removes a class from the current tag.
 
 ### `setModifiableText(string $text): bool`
 
-Replaces the current token's text.
+Replaces the current token's text, when its kind allows it.
 
 ### `setBookmark(string $name): bool`
 
@@ -172,5 +314,5 @@ Moves to a bookmark.
 
 The document with every update written in.
 
-Internals: `scanTag()` (private, line 128), `scanAttribute()` (private, line 189), `enterRawText()` (private, line 242), `scanMarkupDeclaration()` (private, line 264), `scanQuestion()` (private, line 319), `setComment()` (private, line 347), `setToken()` (private, line 356), `resetToken()` (private, line 366), `isSpace()` (private, line 378), `baseClassList()` (private, line 591), `baseClassValue()` (private, line 601), `flush()` (private, line 775), `attributeReplacements()` (private, line 804), `applyReplacements()` (private, line 850), `rescanCurrent()` (private, line 876), `rescan()` (private, line 894), `existingName()` (private, line 908), `rebuiltClassValue()` (private, line 919), `escape()` (private, line 947)
+Internals: `setToken()` (private, line 124), `resetToken()` (private, line 134), `takeTag()` (private, line 147), `take()` (private, line 176), `baseClassList()` (private, line 373), `baseClassValue()` (private, line 383), `flush()` (private, line 512), `applyReplacements()` (private, line 538), `rescanCurrent()` (private, line 564), `rescan()` (private, line 580)
 
