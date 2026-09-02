@@ -50,7 +50,7 @@ final readonly class Api
      */
     public function routes(): array
     {
-        return EngineRoutes::map($this->router);
+        return EngineRoutes::map($this->router, $this->services->types()->declaredBases());
     }
 
     /** The API for one request: the shared services and the route table. */
@@ -74,7 +74,7 @@ final readonly class Api
         $postsController = new PostsController($s->db(), $s->posts(), $s->postObject(), $caller);
         $postsWrite = new PostsWriteController($s->posts(), $s->writer(), $s->site(), $s->postObject(), $s->url(), $caller);
         $controllers = [
-            new IndexController($s->site(), $s->permalinks(), $s->url(), $router),
+            new IndexController($s->site(), $s->permalinks(), $s->url(), $router, $s->types()),
             new AbilitiesController($s->url(), $caller),
             new V1Controller($s->db(), $s->notifications(), new CoreStatus($s->site()), new AdminTypes($s->types(), $s->capabilities()), $caller),
             new OverviewController($s->db(), $s->site(), $s->dashboard(), $s->users(), $caller),
@@ -168,7 +168,7 @@ final readonly class Api
             if ($response === null && Runtime::booted()) {
                 $response = RuntimeRoutes::dispatch($request);
             }
-            if ($response !== null && Runtime::booted() && $request->path === '/') {
+            if ($response !== null && Runtime::booted() && ($request->path === '/' || preg_match('#^/[a-z0-9-]+/v\d+$#', $request->path) === 1)) {
                 $response = RuntimeRoutes::mergeIndex($response);
             }
             return $response ?? Reply::error(RestError::noRoute());

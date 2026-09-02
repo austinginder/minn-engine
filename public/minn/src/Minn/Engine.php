@@ -231,10 +231,11 @@ final readonly class Engine
         $capabilities = $context->capabilities;
         Plugins::load($runtime);
         $seams = new Seams($db, $site, $request, $context->reader);
-        (new Loader(ABSPATH . 'wp-content', $site))->register($seams);
+        $loader = new Loader(ABSPATH . 'wp-content', $site);
+        $loader->register($seams);
         Extensions::set($seams);
         $appearance = new Appearance($users);
-        $adminTypes = new AdminTypes(new Types(new RestUrl($permalinks), (new Loader(ABSPATH . 'wp-content', $site))->declaredTypes()), $capabilities);
+        $adminTypes = new AdminTypes(new Types(new RestUrl($permalinks), $loader->declaredTypes()), $capabilities);
         $adminOff = App::switchedOff(ABSPATH . 'wp-content', $site);
         $bar = $adminOff ? null : AdminBar::forReader($session instanceof Authenticated ? $session : null, $capabilities, $site, $permalinks, $app, $appearance, $adminTypes);
         $pages = $theme === null ? null : PageRenderer::create($db, $theme, $permalinks, $resolver->perPage(), $bar);

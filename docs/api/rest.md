@@ -16,11 +16,11 @@ the wp/v2 surface: shapes and controllers
 | [`Context`](#context) | enum | 18 | The view a REST caller asked for. View is the public shape, edit adds the |
 | [`DeclaredPostsController`](#declaredpostscontroller) | final readonly class | 56 | wp/v2/{rest_base} for extra post types declared by an active extension. |
 | [`Embed`](#embed) | final class | 180 | The _embed decoration and the embed context. Every embeddable link in an |
-| [`EngineRoutes`](#engineroutes) | final class | 52 | The engine's own REST routes in the reference's regex form, for the |
+| [`EngineRoutes`](#engineroutes) | final class | 65 | The engine's own REST routes in the reference's regex form, for the |
 | [`Fields`](#fields) | final readonly class | 92 | The _fields response filter. Dot paths descend ("title.rendered"); the |
 | [`GlobalStylesController`](#globalstylescontroller) | final readonly class | 138 | wp/v2/global-styles: the site editor's saved styles (one post per |
 | [`GlobalStylesObject`](#globalstylesobject) | final readonly class | 87 | The wp/v2/global-styles item, theme, and revision shapes. |
-| [`IndexController`](#indexcontroller) | final readonly class | 61 | The API index at /wp-json/: the site facts monitors read (name, url, |
+| [`IndexController`](#indexcontroller) | final readonly class | 96 | The API index at /wp-json/: the site facts monitors read (name, url, |
 | [`Links`](#links) | final class | 35 | Response link relations compacted through CURIEs: a rel that matches a CURIE's template becomes `name:suffix`, and the used CURIEs ride along. |
 | [`ListQuery`](#listquery) | final readonly class | 170 | The collection parameters a wp/v2 list accepts, read once from the |
 | [`MediaController`](#mediacontroller) | final readonly class | 199 | wp/v2/media: list, single, upload on both transports (multipart field |
@@ -42,7 +42,7 @@ the wp/v2 surface: shapes and controllers
 | [`RouteIndex`](#routeindex) | final class | 61 | The description of one route the REST index publishes: namespace, methods, endpoints with their argument schemas, self link. |
 | [`RouteMatch`](#routematch) | final class | 42 | Finds the registered handler for a method and path among the runtime's route table. |
 | [`RouteTable`](#routetable) | final class | 38 | The registered endpoints in dispatch shape: one handler list per route, methods as a set, non-numeric keys lifted into the route's options. |
-| [`RuntimeRoutes`](#runtimeroutes) | final class | 96 | Routes plugin code registered with register_rest_route(), answered |
+| [`RuntimeRoutes`](#runtimeroutes) | final class | 103 | Routes plugin code registered with register_rest_route(), answered |
 | [`Schema`](#schema) | final readonly class | 471 | JSON-schema handling the way the REST API's argument validation does it: |
 | [`SchemaValues`](#schemavalues) | final class | 201 | The value side of JSON Schema, as the reference applies it: what counts |
 | [`SearchController`](#searchcontroller) | final readonly class | 136 | wp/v2 search over published content: id, title, url, type, and the |
@@ -55,7 +55,7 @@ the wp/v2 surface: shapes and controllers
 | [`TemplatesController`](#templatescontroller) | final readonly class | 205 | wp/v2/templates and wp/v2/template-parts: the block theme's templates as |
 | [`TermObject`](#termobject) | final readonly class | 76 | The wp/v2 category and tag objects. |
 | [`TermsController`](#termscontroller) | final readonly class | 198 | wp/v2 categories, tags, and pattern categories: list, single, and the create/update/delete the taxonomy admin drives. |
-| [`Types`](#types) | final class | 87 | The engine's registry of built-in post types, seeded from the observed |
+| [`Types`](#types) | final class | 97 | The engine's registry of built-in post types, seeded from the observed |
 | [`TypesController`](#typescontroller) | final readonly class | 24 | wp/v2 types. |
 | [`UserObject`](#userobject) | final readonly class | 97 | The wp/v2 user objects: the public view shape and the edit-context shape. |
 | [`UsersController`](#userscontroller) | final readonly class | 301 | wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives. |
@@ -600,19 +600,24 @@ to learn what the site answers (a missing /wp/v2/comments there reads as
 
 Used by: `Minn\Rest\Api`, `Minn\Rest\IndexController`
 
-### static `map(Minn\Http\Router $router): array`
+### static `map(Minn\Http\Router $router, array $declaredBases = array ( )): array`
 
 The router's routes as route => methods, the way the index lists them.
 
+- `@param list<string> $declaredBases the rest_base of every declared type`
 - `@return array<string, list<string>> route => methods`
 
-### static `forms(string $pattern): array`
+### static `forms(string $pattern, array $declaredBases = array ( )): array`
 
 A route attribute pattern as the reference writes routes: `{id:\d+}`
 becomes `(?P<id>\d+)`, a bare capture matches one segment, a `{rest*}`
 capture the remainder, and an alternation of literals expands to one
-route per literal.
+route per literal. The declared-type routes are written once as a
+`{base}` catch-all; they list per declared type under its rest_base
+(as the reference lists a registered type) and not at all when no
+type is declared, so nothing listed answers no-route.
 
+- `@param list<string> $declaredBases`
 - `@return list<string>`
 
 
@@ -756,12 +761,13 @@ Internals: `links()` (private, line 79), `node()` (private, line 97)
 
 The API index at /wp-json/: the site facts monitors read (name, url,
 home, namespaces) and the routes this engine serves, described from its
-own router rather than the reference's full schema.
+own router rather than the reference's full schema; and the index of one
+namespace at /wp-json/{namespace}, the same routes narrowed.
 
 Used by: `Minn\Rest\Api`
 
 ```php
-__construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, Minn\Rest\RestUrl $url, Minn\Http\Router $router)
+__construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, Minn\Rest\RestUrl $url, Minn\Http\Router $router, Minn\Rest\Types $types)
 ```
 
 
@@ -770,6 +776,17 @@ __construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, Minn\Res
 Route: `GET / (public)`
 
 The REST index: namespaces, routes, and the site's description.
+
+### `namespaceIndex(Minn\Http\Request $request, string $namespace): Minn\Http\Response`
+
+Route: `GET /{namespace:[a-z0-9-]+/v\d+} (public)`
+
+One namespace's index, as the reference answers /wp-json/wp/v2: the
+namespace, its routes (the namespace root among them), and the link
+up to the root index. A namespace the engine does not serve is left
+to the runtime, whose plugins may own it.
+
+Internals: `catalogue()` (private, line 90)
 
 
 ## Links
@@ -1604,7 +1621,7 @@ Null when the runtime has no route for the request either.
 
 The engine's index plus the namespaces and routes the runtime holds.
 
-Internals: `wpRequest()` (private, line 80), `ensure()` (private, line 96), `toResponse()` (private, line 103)
+Internals: `wpRequest()` (private, line 87), `ensure()` (private, line 103), `toResponse()` (private, line 110)
 
 
 ## Schema
@@ -2285,7 +2302,7 @@ The default category is capability-denied before the force check.
 The engine's registry of built-in post types, seeded from the observed
 contract (src/data/types.json) with _links attached at runtime.
 
-Used by: `Minn\Admin\AdminTypes`, `Minn\Admin\StructureController`, `Minn\Engine`, `Minn\Rest\Api`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\Embed`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\TypesController`
+Used by: `Minn\Admin\AdminTypes`, `Minn\Admin\StructureController`, `Minn\Engine`, `Minn\Rest\Api`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\Embed`, `Minn\Rest\IndexController`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\TypesController`
 
 ```php
 __construct(Minn\Rest\RestUrl $url, array $declared = array ( ))
@@ -2306,6 +2323,12 @@ One post type by slug, or null.
 ### `slugForRestBase(string $base): ?string`
 
 The type behind a rest_base, or null.
+
+### `declaredBases(): array`
+
+The rest_base of every type an extension declared. @return list<string>
+
+- `@return list<string>`
 
 ### `isDeclared(string $slug): bool`
 

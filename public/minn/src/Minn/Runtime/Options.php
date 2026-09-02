@@ -20,11 +20,25 @@ final class Options
     /** @var array<string, true> */
     private array $missing = [];
 
+    /**
+     * The options the engine keeps for itself: the symbol-gate cache a plugin
+     * could otherwise rewrite to pass its own gate, the recovery strikes, the
+     * cron lock, and the sign-in throttle rows. The facade refuses to write
+     * them; the engine writes them through this class directly.
+     */
+    public const GUARDED = ['minn_runtime_symbols', 'minn_recovery_strikes', 'minn_cron_lock'];
+    private const GUARDED_PREFIX = 'minn_login_throttle_';
+
     public function __construct(private readonly Db $db)
     {
     }
 
-    /** The stored value, or null when the option does not exist. */
+    /** Whether plugin code is refused a write to this option. */
+    public static function guarded(string $name): bool
+    {
+        return in_array($name, self::GUARDED, true) || str_starts_with($name, self::GUARDED_PREFIX);
+    }
+
     /** Every autoloaded option as stored. @return array<string, string> */
     public function autoloaded(): array
     {

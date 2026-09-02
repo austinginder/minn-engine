@@ -116,6 +116,30 @@ if ($live) {
     }
     $check(in_array('wp/v2', $index['namespaces'] ?? [], true) && in_array('minn-admin/v1', $index['namespaces'] ?? [], true), 'index lists the wp/v2 and minn-admin/v1 namespaces');
     $check(isset($index['routes']['/wp/v2/posts']), 'index describes /wp/v2/posts');
+    $advertised = array_keys($index['routes'] ?? []);
+    $check(array_filter($advertised, static fn (string $r): bool => str_contains($r, '(?P<base>')) === [], 'index advertises no per-type catch-all (each declared type is listed under its rest_base)');
+    $check(count(array_filter($advertised, static fn (string $r): bool => str_starts_with($r, '/minn-admin/v1/system/logs/'))) === 1, 'system/logs/{id} is listed once, in the escaping the plugin uses', implode(' ', array_filter($advertised, static fn (string $r): bool => str_starts_with($r, '/minn-admin/v1/system/logs/'))));
+    $noRoute = [];
+    foreach ($advertised as $route) {
+        if (str_contains($route, '(?P<') || $route === '/' || !in_array('GET', $index['routes'][$route]['methods'] ?? [], true)) {
+            continue;
+        }
+        [$status, , $body] = probe_fetch($ENGINE, '/wp-json' . $route);
+        if ($status === 404 && str_contains((string) $body, 'rest_no_route')) {
+            $noRoute[] = $route;
+        }
+    }
+    $check($noRoute === [], 'every advertised literal GET route answers something other than no-route', implode(' ', $noRoute));
+    foreach (['/wp/v2', '/minn-admin/v1'] as $namespace) {
+        [$status, , $body] = probe_fetch($ENGINE, '/wp-json' . $namespace);
+        [$refStatus, , $refBody] = probe_fetch($REF, '/wp-json' . $namespace);
+        $ours = json_decode((string) $body, true);
+        $theirs = json_decode((string) $refBody, true);
+        $check($status === 200 && $refStatus === 200 && array_keys($ours ?? []) === array_keys($theirs ?? []) && ($ours['namespace'] ?? '') === ($theirs['namespace'] ?? '-'), "namespace index $namespace has the reference's shape", "$status vs $refStatus: " . implode(',', array_keys($ours ?? [])));
+        $check(($ours['_links']['up'][0]['href'] ?? '') === "$ENGINE/wp-json/" && isset($ours['routes'][$namespace]) && array_filter(array_keys($ours['routes'] ?? []), static fn (string $r): bool => !str_starts_with($r, $namespace)) === [], "namespace index $namespace links up and lists only its own routes");
+    }
+    [$status, , $body] = probe_fetch($ENGINE, '/wp-json/nope/v9');
+    $check($status === 404 && str_contains((string) $body, 'rest_no_route'), 'an unknown namespace index is no-route');
 }
 echo "\n$pass passed, $fail failed\n";
 exit($fail === 0 ? 0 : 1);

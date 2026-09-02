@@ -193,7 +193,7 @@ final readonly class CommentsController
         }
         $postId = $comment->postId;
         $fields = Fields::fromQuery($request->query);
-        if (filter_var($request->query('force', ''), FILTER_VALIDATE_BOOLEAN)) {
+        if ($request->flag('force')) {
             $previous = $this->object->build($comment, Context::Edit);
             $this->comments->delete($commentId);
             $this->comments->recount($postId);

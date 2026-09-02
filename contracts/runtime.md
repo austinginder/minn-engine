@@ -187,7 +187,8 @@ before that suite existed.
 The read is cached in the `minn_runtime_symbols` option, keyed by the
 folder's newest modification time and the reader's own version
 (`Symbols::READER`), so a change to the token reader retires every cached
-scan. This is what keeps a site rendering when
+scan; the option is one the facade refuses to write (see "Options" below),
+so plugin code cannot forge its own verdict. This is what keeps a site rendering when
 a plugin needs a piece of the runtime that does not exist yet, and it is the
 list the next piece of runtime is built from.
 `MINN_SITE_ROOT=<root> php tests/tools/runtime-report.php` prints the
@@ -247,7 +248,13 @@ instead. Known gap.
   value keeps its PHP type when read again in the same request (`5` stays
   int, `false` stays false, `null` reads back as `''`); `update_option`
   returns false when nothing changed; a transient with no expiry has no
-  timeout row; an expired transient is deleted on read.
+  timeout row; an expired transient is deleted on read. The options the
+  engine keeps for itself (`Runtime\Options::GUARDED`: the symbol-gate cache
+  `minn_runtime_symbols`, `minn_recovery_strikes`, `minn_cron_lock`, and the
+  `minn_login_throttle_*` rows) are refused through `add_option`,
+  `update_option` and `delete_option` (false, no hooks fired); reads are
+  ordinary. A plugin could otherwise rewrite the cache that gates its own
+  load.
 - **Escaping**: `esc_html` and `esc_attr` are identical, keep known named
   entities and numeric references, and encode unknown ones (`&bogus;` →
   `&amp;bogus;`); `esc_textarea` double-encodes; `esc_js` strips

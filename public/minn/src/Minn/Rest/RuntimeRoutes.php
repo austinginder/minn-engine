@@ -63,12 +63,19 @@ final class RuntimeRoutes
         $server = \rest_get_server();
         $runtime = $server->get_data_for_routes($server->get_routes(), 'view');
         unset($runtime['/']);
-        foreach ($server->get_namespaces() as $namespace) {
-            if (!in_array($namespace, $data['namespaces'] ?? [], true)) {
-                $data['namespaces'][] = $namespace;
+        // A namespace index carries only its own namespace's routes and no namespace list.
+        $scope = isset($data['namespace']) ? (string) $data['namespace'] : null;
+        if ($scope === null) {
+            foreach ($server->get_namespaces() as $namespace) {
+                if (!in_array($namespace, $data['namespaces'] ?? [], true)) {
+                    $data['namespaces'][] = $namespace;
+                }
             }
         }
         foreach ($runtime as $route => $description) {
+            if ($scope !== null && (string) ($description['namespace'] ?? '') !== $scope) {
+                continue;
+            }
             if (!isset($data['routes'][$route])) {
                 $data['routes'][$route] = $description;
             }

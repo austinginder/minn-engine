@@ -59,14 +59,14 @@ final readonly class SystemController
     }
 
     /** One log's tail. */
-    #[Route(Method::Get, '/minn-admin/v1/system/logs/{id:[a-zA-Z0-9:_.-]+}', policy: new Policy(Access::Cap, 'manage_options', signIn: 'rest_forbidden', signInMessage: 'Sorry, you are not allowed to do that.'))]
+    #[Route(Method::Get, '/minn-admin/v1/system/logs/{id:[a-zA-Z0-9:_.\-]+}', policy: new Policy(Access::Cap, 'manage_options', signIn: 'rest_forbidden', signInMessage: 'Sorry, you are not allowed to do that.'))]
     public function log(Request $request, string $id): Response
     {
         return Reply::answer($request, $this->logs->read($id));
     }
 
     /** Empties one log. */
-    #[Route(Method::Delete, '/minn-admin/v1/system/logs/{id:[a-zA-Z0-9:_.-]+}', policy: new Policy(Access::Cap, 'manage_options', signIn: 'rest_forbidden', signInMessage: 'Sorry, you are not allowed to do that.'))]
+    #[Route(Method::Delete, '/minn-admin/v1/system/logs/{id:[a-zA-Z0-9:_.\-]+}', policy: new Policy(Access::Cap, 'manage_options', signIn: 'rest_forbidden', signInMessage: 'Sorry, you are not allowed to do that.'))]
     public function clearLog(Request $request, string $id): Response
     {
         $this->logs->clear($id);

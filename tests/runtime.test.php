@@ -49,6 +49,11 @@ $check('footer output before </body>', strpos($html, 'minn-test-plugin footer') 
 [, $home] = minn_test_fetch($base . '/');
 $check('home page carries the marks too', str_contains($home, 'minn-test-plugin-body') && str_contains($home, 'minn-test-plugin footer'));
 
+// The options the engine keeps for itself are refused through the facade: the symbol-gate cache above all.
+$symbols = get_option('minn_runtime_symbols');
+$check('plugin code cannot rewrite the symbol-gate cache', update_option('minn_runtime_symbols', ['forged' => true]) === false && get_option('minn_runtime_symbols') === $symbols);
+$check('plugin code cannot add, update, or delete the engine-owned options', add_option('minn_cron_lock', '1') === false && update_option('minn_recovery_strikes', []) === false && delete_option('minn_login_throttle_x') === false && delete_option('minn_runtime_symbols') === false && get_option('minn_runtime_symbols') === $symbols);
+
 [, $feed] = minn_test_fetch($base . '/feed/');
 $check('feed content runs the_content', str_contains($feed, 'minn-test-plugin-content'));
 

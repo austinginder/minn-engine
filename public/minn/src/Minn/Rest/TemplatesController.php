@@ -158,7 +158,7 @@ final readonly class TemplatesController
             throw new RestError('rest_invalid_template', "Templates based on theme files can't be removed.", 400);
         }
         $fields = Fields::fromQuery($request->query);
-        if ($request->query('force') !== 'true') {
+        if (!$request->flag('force')) {
             $this->writer->trash($record);
             return Reply::item($this->object->view($this->trashed($record), Context::Edit), $fields);
         }

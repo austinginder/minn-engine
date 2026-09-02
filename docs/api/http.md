@@ -14,11 +14,11 @@ request, response, routing, and the outgoing client
 | [`Method`](#method) | enum | 33 |  |
 | [`Outbound`](#outbound) | final readonly class | 47 | One outgoing HTTP request, normalised: the client below needs nothing else. |
 | [`Policy`](#policy) | final readonly class | 54 | What a route requires of its caller, as data on the route: the router |
-| [`Request`](#request) | final readonly class | 122 | An immutable picture of the incoming request. Built once from the PHP |
+| [`Request`](#request) | final readonly class | 128 | An immutable picture of the incoming request. Built once from the PHP |
 | [`Response`](#response) | final readonly class | 101 | What a handler returns. Nothing is written to the client until the |
-| [`Route`](#route) | final readonly class | 45 | Declares a handler method as a route. The policy lives here, as |
+| [`Route`](#route) | final readonly class | 49 | Declares a handler method as a route. The policy lives here, as |
 | [`RouteMiss`](#routemiss) | final class | 3 | A handler declining a request its pattern matched: the router swallows |
-| [`Router`](#router) | final class | 79 | Matches a request to a #[Route] on one of the registered handler |
+| [`Router`](#router) | final class | 81 | Matches a request to a #[Route] on one of the registered handler |
 | [`TrustedProxies`](#trustedproxies) | final readonly class | 104 | Which addresses in front of the engine may speak for the client. |
 
 ## Access
@@ -394,6 +394,10 @@ The same request addressed to another path (a REST route carried in ?rest_route=
 
 One query value as a string, or the default when it is absent or not a string.
 
+### `flag(string $key): bool`
+
+A query value read as the reference reads a boolean argument: true, 1, yes, on; anything else is false.
+
 ### `has(string $key): bool`
 
 Whether the query carries this key at all, even empty.
@@ -499,7 +503,7 @@ it, and "/{path*}" captures the rest of the path (slashes included).
 Used by: `Minn\Admin\AppController`, `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Front\AssetsController`, `Minn\Front\CommentPostController`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\ProbeController`, `Minn\Front\SitemapController`, `Minn\Http\Router`, `Minn\Login\LoginController`, `Minn\Rest\AbilitiesController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentsController`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\NavigationController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\TypesController`, `Minn\Rest\UsersController`
 
 ```php
-__construct(Minn\Http\Method $method, string $pattern, ?Minn\Http\Policy $policy = NULL, array $args = array ( ))
+__construct(Minn\Http\Method $method, string $pattern, ?Minn\Http\Policy $policy = NULL, array $args = array ( ), bool $index = true)
 ```
 - `@param list<array<string, array<string, mixed>>> $args the parameter sets this route reads, from Args`
 
@@ -507,6 +511,7 @@ __construct(Minn\Http\Method $method, string $pattern, ?Minn\Http\Policy $policy
 - readonly `string $pattern`
 - readonly `?Minn\Http\Policy $policy`
 - readonly `array $args`
+- readonly `bool $index`
 
 ### `arguments(): array`
 
@@ -528,7 +533,7 @@ it and goes on to the next route, so a catch-all pattern can leave a
 path it does not own to whatever registers after it (a plugin's route
 under the same namespace, say) instead of answering "no route" itself.
 
-Used by: `Minn\Http\Router`, `Minn\Rest\DeclaredPostsController`
+Used by: `Minn\Http\Router`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\IndexController`
 
 
 ## Router
@@ -555,7 +560,7 @@ Registers every #[Route] method of the given handlers; returns the router for ch
 
 ### `routes(): array`
 
-The registered routes, for an index: pattern => methods. @return array<string, list<string>>
+The routes that list in an index: pattern => methods. @return array<string, list<string>>
 
 - `@return array<string, list<string>>`
 

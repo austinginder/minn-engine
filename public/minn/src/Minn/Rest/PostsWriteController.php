@@ -199,7 +199,7 @@ final readonly class PostsWriteController
         }
         $fields = Fields::fromQuery($request->query);
 
-        if (!filter_var($request->query('force', ''), FILTER_VALIDATE_BOOLEAN)) {
+        if (!$request->flag('force')) {
             if ($post->isTrashed()) {
                 throw new RestError('rest_already_trashed', 'The post has already been deleted.', 410);
             }

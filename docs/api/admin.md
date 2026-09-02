@@ -961,13 +961,13 @@ The logs list.
 
 ### `log(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `GET /minn-admin/v1/system/logs/{id:[a-zA-Z0-9:_.-]+} (cap manage_options)`
+Route: `GET /minn-admin/v1/system/logs/{id:[a-zA-Z0-9:_.\-]+} (cap manage_options)`
 
 One log's tail.
 
 ### `clearLog(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `DELETE /minn-admin/v1/system/logs/{id:[a-zA-Z0-9:_.-]+} (cap manage_options)`
+Route: `DELETE /minn-admin/v1/system/logs/{id:[a-zA-Z0-9:_.\-]+} (cap manage_options)`
 
 Empties one log.
 

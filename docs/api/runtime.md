@@ -26,7 +26,7 @@ the WordPress runtime plugins load against
 | [`NavMenu`](#navmenu) | final class | 303 | Nav-menu item decoration for wp_nav_menu(): the reference's class tokens |
 | [`OEmbed`](#oembed) | final class | 92 | oEmbed as data: provider matching against the wildcard table, response parsing, and the markup an oEmbed payload becomes. |
 | [`ObjectCache`](#objectcache) | final class | 52 | The per-request object cache behind wp_cache_*: groups of keys, nothing persistent. |
-| [`Options`](#options) | final class | 161 | Options as plugin code sees them: PHP values, decoded from the stored |
+| [`Options`](#options) | final class | 175 | Options as plugin code sees them: PHP values, decoded from the stored |
 | [`PageMenu`](#pagemenu) | final class | 40 | The page-list menu a classic theme falls back to when no menu is |
 | [`Pages`](#pages) | final class | 113 | get_pages() as the reference shapes it: its arguments as a post query, and the tree order of the result. |
 | [`Patterns`](#patterns) | final class | 161 | The block pattern, pattern category, and block style registries as data. |
@@ -1073,12 +1073,22 @@ blob by the engine's own reader, cached for the request so a value written
 and read again in one request keeps its PHP type (an int stays an int,
 false stays false) exactly as the reference shows.
 
+- const `GUARDED` = `array (   0 => 'minn_runtime_symbols',   1 => 'minn_recovery_strikes',   2 => 'minn_cron_lock', )` — The options the engine keeps for itself: the symbol-gate cache a plugin
+could otherwise rewrite to pass its own gate, the recovery strikes, the
+cron lock, and the sign-in throttle rows. The facade refuses to write
+them; the engine writes them through this class directly.
+- const `GUARDED_PREFIX` = `'minn_login_throttle_'`
+
 Used by: `Minn\Runtime\Runtime`, `Minn\Runtime\Symbols`
 
 ```php
 __construct(Minn\Db $db)
 ```
 
+
+### static `guarded(string $name): bool`
+
+Whether plugin code is refused a write to this option.
 
 ### `autoloaded(): array`
 
@@ -1133,7 +1143,7 @@ What the reference stores: arrays and objects serialized, scalars as their strin
 
 A stored option value decoded the way the reference reads it.
 
-Internals: `switchAutoload()` (private, line 103)
+Internals: `switchAutoload()` (private, line 117)
 
 
 ## PageMenu

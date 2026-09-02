@@ -77,6 +77,16 @@ final class Types
         return null;
     }
 
+    /** The rest_base of every type an extension declared. @return list<string> */
+    public function declaredBases(): array
+    {
+        $bases = [];
+        foreach (array_keys($this->declared) as $slug) {
+            $bases[] = $this->restBase((string) $slug);
+        }
+        return $bases;
+    }
+
     /** Whether an extension declared this type. */
     public function isDeclared(string $slug): bool
     {

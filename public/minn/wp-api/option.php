@@ -4,6 +4,7 @@
  * Storage shapes and return values follow contracts/fixtures/api/functions.json.
  */
 
+use Minn\Runtime\Options;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\StoredObjects;
 use Minn\Support\Serialized;
@@ -57,7 +58,7 @@ function delete_network_option($network_id, $option)
 function add_option($option, $value = '', $deprecated = '', $autoload = null)
 {
     $option = trim((string) $option);
-    if ($option === '') {
+    if ($option === '' || Options::guarded($option)) {
         return false;
     }
     $value = apply_filters("pre_add_option_{$option}", $value, $option);
@@ -83,7 +84,7 @@ function add_site_option($option, $value)
 function update_option($option, $value, $autoload = null)
 {
     $option = trim((string) $option);
-    if ($option === '') {
+    if ($option === '' || Options::guarded($option)) {
         return false;
     }
     $old = get_option($option);
@@ -109,7 +110,7 @@ function update_site_option($option, $value)
 function delete_option($option)
 {
     $option = trim((string) $option);
-    if ($option === '') {
+    if ($option === '' || Options::guarded($option)) {
         return false;
     }
     do_action('delete_option', $option);

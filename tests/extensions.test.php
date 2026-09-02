@@ -66,6 +66,7 @@ check(str_contains($page, 'seam-marked here'), 'a block filter rewrote the parag
 check(!str_contains($page, 'gated away'), 'a block gate dropped the gated block');
 check(preg_match('/<!-- seam:content post-\d+ -->/', $page) === 1, 'the content filter ran after blocks and shortcodes');
 check(str_contains($page, '<meta name="seam-probe" content="head">'), 'the head seam contributed to the document head');
+check(strpos($page, '<meta name="seam-probe" content="head">') > strpos($page, 'id="global-styles-inline-css"'), 'the head seam prints after the stylesheets, as the contract says');
 check(str_contains($page, '<!-- seam:footer reader-0 -->'), 'the footer seam contributed before the body closes, with the reader');
 check(preg_match('/<body class="[^"]*\bseam-body\b/', $page) === 1, 'the body class seam');
 $feed = fetch("$ENGINE/feed/");

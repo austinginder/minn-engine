@@ -15,7 +15,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`HeadLinks`](#headlinks) | final readonly class | 114 | The links the reference puts in every head: the site and comments |
 | [`Hierarchy`](#hierarchy) | final class | 146 | The classic template hierarchy: the candidate file names each template |
 | [`MainQueryBridge`](#mainquerybridge) | final readonly class | 67 | Stands the main query for a themed page: a plugin's archive runs through |
-| [`PageRenderer`](#pagerenderer) | final readonly class | 196 | A whole page from the active block theme: the template the resolution |
+| [`PageRenderer`](#pagerenderer) | final readonly class | 197 | A whole page from the active block theme: the template the resolution |
 | [`PatternText`](#patterntext) | final class | 198 | Block-theme patterns are PHP files whose only code is a handful of |
 | [`StylePresets`](#stylepresets) | final class | 174 | The preset side of theme.json: the colour, gradient, font-size, |
 | [`StyleSettings`](#stylesettings) | final class | 82 | The settings and styles nodes as wp/v2/global-styles reports them: |
@@ -436,7 +436,7 @@ those, and the theme (and child theme) tokens close the list.
 
 The page for a resolution, or null when the theme has no template for it.
 
-Internals: `pluginTemplate()` (private, line 162), `skipLinkTarget()` (private, line 183), `documentTitle()` (private, line 192), `head()` (private, line 213)
+Internals: `pluginTemplate()` (private, line 162), `skipLinkTarget()` (private, line 183), `documentTitle()` (private, line 192), `head()` (private, line 214)
 
 
 ## PatternText

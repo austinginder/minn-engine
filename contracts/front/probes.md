@@ -63,6 +63,12 @@ last is the 404 page. The XSL files are the engine's own.
   `site_icon_url`, `_links.help`). Routes are described from the engine's own
   router, alternations expanded to concrete routes, without argument schemas:
   a much shorter document than the reference's 230 KB, recorded divergence.
+  The declared-type routes (one `{base}` catch-all in the router) are listed
+  per declared type under its `rest_base`, as the reference lists a registered
+  type, and not at all when no type is declared; every literal route the index
+  advertises answers (the probes suite walks them). A runtime plugin's routes
+  merge in from the runtime's server; the engine spells a shared pattern the
+  way the plugin does so the merged index lists it once.
 
 ## Known gaps
 

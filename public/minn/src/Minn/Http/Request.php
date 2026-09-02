@@ -99,6 +99,12 @@ final readonly class Request
         return is_string($value) ? $value : $default;
     }
 
+    /** A query value read as the reference reads a boolean argument: true, 1, yes, on; anything else is false. */
+    public function flag(string $key): bool
+    {
+        return filter_var($this->query($key, ''), FILTER_VALIDATE_BOOLEAN);
+    }
+
     /** Whether the query carries this key at all, even empty. */
     public function has(string $key): bool
     {

@@ -208,7 +208,8 @@ final readonly class PageRenderer
     /**
      * The head: title, the discovery links, the engine's stylesheets (inside
      * wp_head when the runtime is up, where the reference prints a theme's,
-     * after plugin styles), the extension head, the fonts, the bar's own.
+     * after plugin styles), then the extension head (after the stylesheets
+     * either way, as the seam contract says), the fonts, the bar's own.
      */
     private function head(Resolution $resolution, string $title, GlobalStyles $styles, ?AdminBar $bar): string
     {
@@ -229,8 +230,8 @@ final readonly class PageRenderer
             . '<title>' . htmlspecialchars($title, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false) . '</title>' . "\n"
             . $this->headLinks->all($resolution)
             . $stylesheets
-            . (Extensions::runner()?->head() ?? '')
             . $runtimeHead
+            . (Extensions::runner()?->head() ?? '')
             . ($fontFaces === '' ? '' : '<style class="wp-fonts-local">' . "\n" . $fontFaces . '</style>' . "\n")
             . ($bar === null ? '' : $bar->head())
             . '</head>' . "\n";

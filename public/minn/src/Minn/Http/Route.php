@@ -20,12 +20,16 @@ use Attribute;
 #[Attribute(Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
 final readonly class Route
 {
-    /** @param list<array<string, array<string, mixed>>> $args the parameter sets this route reads, from Args */
+    /**
+     * @param list<array<string, array<string, mixed>>> $args the parameter sets this route reads, from Args
+     * @param bool $index whether the route is listed in the REST index (a route the index spells itself is not)
+     */
     public function __construct(
         public Method $method,
         public string $pattern,
         public ?Policy $policy = null,
         public array $args = [],
+        public bool $index = true,
     ) {
     }
 

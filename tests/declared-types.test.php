@@ -119,6 +119,11 @@ echo "declared-types suite: $ENGINE (engine) / $REF (oracle)\n";
 
 dt_wp( 'plugin activate minn-test-types' );
 dt_wp( 'option update minn_active_extensions \'["minn-block-visibility","minn-test-types"]\'' );
+
+// The index lists the declared type under its rest_base, as the reference lists a registered type, never as a catch-all.
+[ $s, $index ] = dt_fetch( $ENGINE, 'rest_route=/', null );
+check( 200 === $s && isset( $index['routes']['/wp/v2/zz-note'], $index['routes']['/wp/v2/zz-note/(?P<id>\d+)'] ), 'the index advertises the declared type under its rest_base', implode( ' ', array_filter( array_keys( $index['routes'] ?? array() ), static fn ( $r ) => str_contains( $r, 'zz-note' ) || str_contains( $r, '<base>' ) ) ) );
+check( isset( $index['routes']['/wp/v2/zz-note']['_links']['self'][0]['href'] ) && str_ends_with( $index['routes']['/wp/v2/zz-note']['_links']['self'][0]['href'], '/wp/v2/zz-note' ), 'the declared list route carries a self link' );
 $admin = dt_mint( 1 );
 
 dt_parity( 'types list includes zz_note', 'rest_route=' . rawurlencode( '/wp/v2/types' ) );

@@ -204,7 +204,7 @@ final readonly class MediaController
         if (!$this->caller->can('delete_post', $attachmentId)) {
             throw $this->caller->refuse('rest_cannot_delete', 'Sorry, you are not allowed to delete this post.');
         }
-        if (!filter_var($request->query('force', ''), FILTER_VALIDATE_BOOLEAN)) {
+        if (!$request->flag('force')) {
             throw new RestError('rest_trash_not_supported', "The post does not support trashing. Set 'force=true' to delete.", 501);
         }
         $previous = $this->object->build($attachment, Context::Edit);

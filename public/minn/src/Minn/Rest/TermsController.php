@@ -207,7 +207,7 @@ final readonly class TermsController
         if ($taxonomy === 'category' && $termId === (int) ($this->site->option('default_category') ?? 0)) {
             throw new RestError('rest_cannot_delete', 'Sorry, you are not allowed to delete this term.', 403);
         }
-        if (!filter_var($request->query('force', ''), FILTER_VALIDATE_BOOLEAN)) {
+        if (!$request->flag('force')) {
             throw new RestError('rest_trash_not_supported', "Terms do not support trashing. Set 'force=true' to delete.", 501);
         }
         $previous = $this->object->view($term, $base);

@@ -17,13 +17,14 @@ final class EngineRoutes
     /**
      * The router's routes as route => methods, the way the index lists them.
      *
+     * @param list<string> $declaredBases the rest_base of every declared type
      * @return array<string, list<string>> route => methods
      */
-    public static function map(Router $router): array
+    public static function map(Router $router, array $declaredBases = []): array
     {
         $map = [];
         foreach ($router->routes() as $pattern => $methods) {
-            foreach (self::forms($pattern) as $route) {
+            foreach (self::forms($pattern, $declaredBases) as $route) {
                 $map[$route] = array_values(array_unique(array_merge($map[$route] ?? [], $methods)));
             }
         }
@@ -34,11 +35,23 @@ final class EngineRoutes
      * A route attribute pattern as the reference writes routes: `{id:\d+}`
      * becomes `(?P<id>\d+)`, a bare capture matches one segment, a `{rest*}`
      * capture the remainder, and an alternation of literals expands to one
-     * route per literal.
+     * route per literal. The declared-type routes are written once as a
+     * `{base}` catch-all; they list per declared type under its rest_base
+     * (as the reference lists a registered type) and not at all when no
+     * type is declared, so nothing listed answers no-route.
+     *
+     * @param list<string> $declaredBases
      * @return list<string>
      */
-    public static function forms(string $pattern): array
+    public static function forms(string $pattern, array $declaredBases = []): array
     {
+        if (preg_match('/\{base:[^}|]+\}/', $pattern) === 1) {
+            $routes = [];
+            foreach ($declaredBases as $base) {
+                array_push($routes, ...self::forms((string) preg_replace('/\{base:[^}|]+\}/', $base, $pattern)));
+            }
+            return $routes;
+        }
         $routes = [$pattern];
         while (true) {
             $expanded = [];

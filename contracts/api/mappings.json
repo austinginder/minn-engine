@@ -7,7 +7,7 @@
         "leaf": 355,
         "noop": 1247,
         "functions": 2741,
-        "minnMethods": 414,
+        "minnMethods": 415,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -9891,6 +9891,7 @@
             "lines": 17,
             "kind": "minn",
             "minn": [
+                "Minn\\Runtime\\Options::guarded",
                 "Minn\\Runtime\\Runtime::options"
             ],
             "composes": [
@@ -10923,6 +10924,7 @@
             "lines": 11,
             "kind": "minn",
             "minn": [
+                "Minn\\Runtime\\Options::guarded",
                 "Minn\\Runtime\\Runtime::options"
             ],
             "composes": [
@@ -19348,6 +19350,7 @@
             "lines": 17,
             "kind": "minn",
             "minn": [
+                "Minn\\Runtime\\Options::guarded",
                 "Minn\\Runtime\\Runtime::options"
             ],
             "composes": [

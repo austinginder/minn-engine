@@ -43,12 +43,14 @@ final class Router
         return $this;
     }
 
-    /** The registered routes, for an index: pattern => methods. @return array<string, list<string>> */
+    /** The routes that list in an index: pattern => methods. @return array<string, list<string>> */
     public function routes(): array
     {
         $index = [];
         foreach ($this->routes as ['route' => $route]) {
-            $index[$route->pattern][] = $route->method->value;
+            if ($route->index) {
+                $index[$route->pattern][] = $route->method->value;
+            }
         }
         return $index;
     }

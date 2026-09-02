@@ -296,7 +296,7 @@ final readonly class UsersController
         if (!$this->caller->can('delete_users')) {
             throw $this->caller->refuse('rest_user_cannot_delete', 'Sorry, you are not allowed to delete this user.');
         }
-        if (!filter_var($request->query('force', ''), FILTER_VALIDATE_BOOLEAN)) {
+        if (!$request->flag('force')) {
             throw new RestError('rest_trash_not_supported', "Users do not support trashing. Set 'force=true' to delete.", 501);
         }
         $reassign = (string) $request->query('reassign', '');
