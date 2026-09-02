@@ -57,7 +57,7 @@ final readonly class Api
     public static function forRequest(Db $db, Request $request): self
     {
         $s = Services::forRequest($db, $request);
-        $router = new Router();
+        $router = new Router((new PolicyGate($s->caller()))->closure());
         $router->register(...self::controllers($s, $router));
         return new self($request, $router, $s, new Embed($router, $s->types(), $s->taxonomies()));
     }

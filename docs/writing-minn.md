@@ -23,8 +23,9 @@ tells you what WordPress does, not what it says it does.
 
 ## Your first controller
 
-A route is a method with an attribute. The router enforces the capability
-before the method runs; the method gets the request and the captures it names.
+A route is a method with an attribute. The router has the gate judge the
+route's policy before the method runs; the method gets the request and the
+captures it names.
 
 ```php
 <?php
@@ -34,30 +35,38 @@ declare(strict_types=1);
 namespace Minn\Rest;
 
 use Minn\Content\Posts;
+use Minn\Http\Access;
 use Minn\Http\Method;
+use Minn\Http\Policy;
 use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\RestError;
 
-/** wp/v2/acme/items: one read, cap-gated. */
+/** wp/v2/acme/items: one read, for callers who may edit posts. */
 final readonly class ItemsController
 {
-    public function __construct(private Posts $posts, private Caller $caller)
+    public function __construct(private Posts $posts)
     {
     }
 
-    #[Route(Method::Get, '/wp/v2/acme/items/{id:\d+}', cap: 'edit_posts')]
+    #[Route(Method::Get, '/wp/v2/acme/items/{id:\d+}', policy: new Policy(Access::Cap, 'edit_posts', refuse: 'rest_forbidden_context', message: 'Sorry, you are not allowed to edit posts in this post type.'))]
     public function show(Request $request, string $id): Response
     {
         $post = $this->posts->find((int) $id);
         if ($post === null) {
             throw new RestError('rest_post_invalid_id', 'Invalid post ID.', 404);
         }
-        return Reply::item(['id' => (int) $post['ID'], 'title' => $post['post_title']], Fields::fromQuery($request->query));
+        return Reply::item(['id' => $post->id, 'title' => $post->title], Fields::fromQuery($request->query));
     }
 }
 ```
+
+The policy is data: `Access` says who (Public, SignedIn, Cap, Floor for the
+Minn Admin floor, Own for a capability on the captured id), and the codes and
+messages are the ones the reference answers with, captured first. A route
+that cannot state its whole decision as a policy keeps the residual check in
+the body and is counted by the style suite's ratchet until it can.
 
 Wire it into the route table in `Rest\Api::controllers()` beside the others,
 taking what it needs from `Rest\Services` (one memoised getter per shared object;

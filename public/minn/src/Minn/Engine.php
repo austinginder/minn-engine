@@ -236,7 +236,21 @@ final readonly class Engine
         $feedController = new \Minn\Front\FeedController($site, $posts, $permalinks, $resolver, $feeds, $notFound);
         $front = new FrontController($resolver, new Renderer($db, $posts, $permalinks, $resolver->perPage()), $pages, $feedController, $cron, $classic);
 
-        $router = (new Router())->register(
+        // The front's routes are public or judge their own session; a policy that asks
+        // for more is refused outright rather than judged half-way.
+        $gate = static function (\Minn\Http\Policy $policy) use ($authenticator, $capabilities, $request): void {
+            $session = $authenticator->session($request->cookies);
+            $userId = $session instanceof Authenticated ? $session->id() : 0;
+            if ($userId === 0) {
+                throw new \Minn\RestError($policy->signIn, $policy->signInMessage, 401);
+            }
+            foreach ($policy->capabilities() as $capability) {
+                if (!$capabilities->can($userId, $capability)) {
+                    throw new \Minn\RestError($policy->refuse, $policy->message, 403);
+                }
+            }
+        };
+        $router = (new Router($gate))->register(
             new AssetsController($this->engineDir . '/assets'),
             // The sign-in page sits under /minn-admin/, so it registers ahead of the shell's catch-all.
             new LoginController($site, $permalinks, $authenticator, new \Minn\Auth\SignIn($sessions, new AuthCookies($db, $cookie), new LoginThrottle($db)), $users, new PasswordReset($users), Mailer::forSite($site)),

@@ -8,6 +8,8 @@ use Minn\Db;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
+use Minn\Http\Access;
+use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\Rest\Caller;
 use Minn\Rest\Reply;
@@ -37,7 +39,7 @@ final readonly class V1Controller
     }
 
     /** Body {id} marks one read; {} marks all read. */
-    #[Route(Method::Post, '/minn-admin/v1/notifications/read')]
+    #[Route(Method::Post, '/minn-admin/v1/notifications/read', policy: new Policy(Access::Floor))]
     public function notificationsRead(Request $request): Response
     {
         $userId = $this->caller->requireFloor();
@@ -47,10 +49,9 @@ final readonly class V1Controller
     }
 
     /** The core status. */
-    #[Route(Method::Get, '/minn-admin/v1/core')]
+    #[Route(Method::Get, '/minn-admin/v1/core', policy: new Policy(Access::Floor))]
     public function core(Request $request): Response
     {
-        $this->caller->requireFloor();
         $this->caller->requireCap('update_core');
         return Reply::answer($request, $this->core->data());
     }
@@ -61,7 +62,7 @@ final readonly class V1Controller
      * standalone. The engine serves what it can honestly answer and omits
      * the plugin-inventory sections it has no installation for.
      */
-    #[Route(Method::Get, '/minn-admin/v1/boot-status')]
+    #[Route(Method::Get, '/minn-admin/v1/boot-status', policy: new Policy(Access::Floor))]
     public function bootStatus(Request $request): Response
     {
         $userId = $this->caller->requireFloor();

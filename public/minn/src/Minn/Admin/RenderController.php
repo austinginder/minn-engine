@@ -12,6 +12,8 @@ use Minn\Front\Permalinks;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
+use Minn\Http\Access;
+use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\Rest\Caller;
 use Minn\Rest\Reply;
@@ -39,10 +41,9 @@ final readonly class RenderController
     }
 
     /** Renders blocks for the editor's preview. */
-    #[Route(Method::Post, '/minn-admin/v1/render-blocks')]
+    #[Route(Method::Post, '/minn-admin/v1/render-blocks', policy: new Policy(Access::Floor))]
     public function render(Request $request): Response
     {
-        $this->caller->requireFloor();
         $blocks = $request->json()['blocks'] ?? null;
         if (!is_array($blocks)) {
             throw new RestError('invalid_blocks', 'Expected an array of block markup strings.', 400);
@@ -55,10 +56,9 @@ final readonly class RenderController
     }
 
     /** The stylesheets previews are scoped under: the engine's own, the theme's, and theme.json inline. */
-    #[Route(Method::Get, '/minn-admin/v1/editor-styles')]
+    #[Route(Method::Get, '/minn-admin/v1/editor-styles', policy: new Policy(Access::Floor))]
     public function editorStyles(Request $request): Response
     {
-        $this->caller->requireFloor();
         return Reply::answer($request, $this->styles());
     }
 

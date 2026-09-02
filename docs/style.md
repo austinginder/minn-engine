@@ -46,10 +46,16 @@ prose, is the rule.
 - **Serialized blobs are read, never executed.** `Minn\Support\Serialized` parses
   WordPress's serialized-PHP by tolerant byte scanning. `unserialize()` does not appear
   anywhere in `src/`. This rule has held under real pressure every milestone.
-- **Capabilities are declared, not checked.** A route's requirement is metadata on the
-  handler (`#[Route(Method::POST, '/wp/v2/posts', cap: 'edit_posts')]`) and the router
-  enforces it before the handler runs. A handler that needs a finer-grained check
-  (own post vs others') asks `Caps::can($user, 'edit_post', $id)` once and clearly.
+- **Capabilities are declared, not checked.** A route's requirement is a `Policy` on the
+  attribute (`#[Route(Method::Post, '/wp/v2/media', policy: new Policy(Access::Cap,
+  'upload_files', refuse: 'rest_cannot_create', message: '...'))]`) and the router has
+  the gate judge it before the handler runs; a router cannot be built without a gate.
+  `Access` names the five answers (Public, SignedIn, Cap, Floor, Own), the codes and
+  messages are the reference's, and `edit:` carries the policy for the edit context.
+  A handler keeps only the residual decision a policy cannot state (own post versus
+  others' once the record is loaded, publish, author reassignment), asked of the
+  caller once and clearly. A route with no policy is counted by the style suite's
+  ratchet, and that count only falls.
 
 ## Naming
 

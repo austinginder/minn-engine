@@ -7,6 +7,8 @@ namespace Minn\Rest;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
+use Minn\Http\Access;
+use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\RestError;
 
@@ -20,13 +22,12 @@ final readonly class SettingsController
     }
 
     /** The site settings: read, or write from the body. */
-    #[Route(Method::Get, '/wp/v2/settings')]
-    #[Route(Method::Post, '/wp/v2/settings')]
-    #[Route(Method::Put, '/wp/v2/settings')]
-    #[Route(Method::Patch, '/wp/v2/settings')]
+    #[Route(Method::Get, '/wp/v2/settings', policy: new Policy(Access::SignedIn, signIn: 'rest_forbidden', signInMessage: 'Sorry, you are not allowed to do that.'))]
+    #[Route(Method::Post, '/wp/v2/settings', policy: new Policy(Access::SignedIn, signIn: 'rest_forbidden', signInMessage: 'Sorry, you are not allowed to do that.'))]
+    #[Route(Method::Put, '/wp/v2/settings', policy: new Policy(Access::SignedIn, signIn: 'rest_forbidden', signInMessage: 'Sorry, you are not allowed to do that.'))]
+    #[Route(Method::Patch, '/wp/v2/settings', policy: new Policy(Access::SignedIn, signIn: 'rest_forbidden', signInMessage: 'Sorry, you are not allowed to do that.'))]
     public function settings(Request $request): Response
     {
-        $this->caller->require('rest_forbidden', 'Sorry, you are not allowed to do that.');
         if (!$this->caller->can('manage_options')) {
             throw new RestError('rest_forbidden', 'Sorry, you are not allowed to do that.', 403);
         }

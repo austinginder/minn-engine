@@ -271,7 +271,7 @@ foreach (classNames($src) as $name) {
         $routes = [];
         foreach ($method->getAttributes(Minn\Http\Route::class) as $attribute) {
             $route = $attribute->newInstance();
-            $routes[] = $route->method->value . ' ' . $route->pattern . ($route->cap !== null ? " (cap: {$route->cap})" : '');
+            $routes[] = $route->method->value . ' ' . $route->pattern . ($route->policy !== null ? ' (' . $route->policy->describe() . ')' : '');
         }
         $entry['methods'][] = [
             'routes' => $routes,

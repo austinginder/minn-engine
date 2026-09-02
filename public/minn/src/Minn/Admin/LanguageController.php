@@ -10,6 +10,8 @@ use Minn\Content\Users;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
+use Minn\Http\Access;
+use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\Rest\Caller;
 use Minn\Rest\Reply;
@@ -28,7 +30,7 @@ final readonly class LanguageController
     }
 
     /** The languages a user may pick, installed and available. */
-    #[Route(Method::Get, '/minn-admin/v1/languages')]
+    #[Route(Method::Get, '/minn-admin/v1/languages', policy: new Policy(Access::Floor))]
     public function languages(Request $request): Response
     {
         $self = $this->caller->requireFloor();
@@ -40,7 +42,7 @@ final readonly class LanguageController
     }
 
     /** The slice of the boot payload a language switch repaints from. */
-    #[Route(Method::Get, '/minn-admin/v1/boot-locale')]
+    #[Route(Method::Get, '/minn-admin/v1/boot-locale', policy: new Policy(Access::Floor))]
     public function bootLocale(Request $request): Response
     {
         $userId = $this->caller->requireFloor();
@@ -64,7 +66,7 @@ final readonly class LanguageController
     }
 
     /** Sets another user's locale. */
-    #[Route(Method::Post, '/minn-admin/v1/users/{id:\d+}/language')]
+    #[Route(Method::Post, '/minn-admin/v1/users/{id:\d+}/language', policy: new Policy(Access::Floor))]
     public function user(Request $request, string $id): Response
     {
         $self = $this->caller->requireFloor();
@@ -78,10 +80,9 @@ final readonly class LanguageController
     }
 
     /** Sets the site's locale. */
-    #[Route(Method::Post, '/minn-admin/v1/site/language')]
+    #[Route(Method::Post, '/minn-admin/v1/site/language', policy: new Policy(Access::Floor))]
     public function site(Request $request): Response
     {
-        $this->caller->requireFloor();
         $this->caller->requireCap('manage_options');
         [$locale, $downloaded] = $this->ensure($request);
         $this->site->setOption('WPLANG', $locale === 'en_US' ? '' : $locale);

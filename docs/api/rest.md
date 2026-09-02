@@ -29,7 +29,8 @@ the wp/v2 surface: shapes and controllers
 | [`MenusController`](#menuscontroller) | final readonly class | 309 | wp/v2/menus, menu-items, and menu-locations. Viewing needs edit_posts; |
 | [`NavigationController`](#navigationcontroller) | final readonly class | 48 | wp/v2/navigation: the block theme's navigation menus, stored as |
 | [`ParamCheck`](#paramcheck) | final class | 75 | The required / validate / sanitize pass over a request's declared arguments. |
-| [`PluginsController`](#pluginscontroller) | final readonly class | 248 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
+| [`PluginsController`](#pluginscontroller) | final readonly class | 236 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
+| [`PolicyGate`](#policygate) | final readonly class | 53 | Judges a route's policy against the caller, with the reference's |
 | [`PostObject`](#postobject) | final readonly class | 476 | Builds the wp/v2 post and page objects in the reference's shape: the |
 | [`PostsController`](#postscontroller) | final readonly class | 174 | wp/v2 posts and pages, read side. |
 | [`PostsWriteController`](#postswritecontroller) | final readonly class | 306 | wp/v2 posts and pages, write side: create, update, trash, and force |
@@ -46,7 +47,7 @@ the wp/v2 surface: shapes and controllers
 | [`SearchController`](#searchcontroller) | final readonly class | 136 | wp/v2 search over published content: id, title, url, type, and the |
 | [`Services`](#services) | final class | 380 | The objects one REST request shares, each made once, on first use, from |
 | [`Settings`](#settings) | final readonly class | 76 | The registered settings the Settings views read and write, mapped to |
-| [`SettingsController`](#settingscontroller) | final readonly class | 25 | wp/v2/settings: read and write, both behind manage_options. |
+| [`SettingsController`](#settingscontroller) | final readonly class | 24 | wp/v2/settings: read and write, both behind manage_options. |
 | [`Taxonomies`](#taxonomies) | final class | 48 | The taxonomy registry the wp/v2 surface describes: the core set seeded |
 | [`TaxonomiesController`](#taxonomiescontroller) | final readonly class | 47 | wp/v2 taxonomies: the registry, whole or per type, in view or edit context. |
 | [`TemplateObject`](#templateobject) | final readonly class | 98 | The wp/v2/templates and wp/v2/template-parts resource. |
@@ -292,7 +293,7 @@ Trashes or deletes a block.
 Who is making this REST call. Resolved once from the cookie and nonce;
 an anonymous or failed caller has id 0 and every capability check fails.
 
-Used by: `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermObject`, `Minn\Rest\TermsController`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`
+Used by: `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermObject`, `Minn\Rest\TermsController`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`
 
 ```php
 __construct(Minn\Http\Request $request, Minn\Auth\Authenticator $authenticator, Minn\Auth\Capabilities $capabilities)
@@ -426,7 +427,7 @@ a linked resource carries when it rides inside another response.
 
 Cases: `View` = `'view'`, `Edit` = `'edit'`, `Embed` = `'embed'`
 
-Used by: `Minn\Rest\BlocksController`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenusController`, `Minn\Rest\PostsController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`
+Used by: `Minn\Rest\BlocksController`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenusController`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostsController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`
 
 ### static `of(Minn\Http\Request $request): self`
 
@@ -1120,39 +1121,69 @@ __construct(Minn\Content\Site $site, Minn\Content\Inventory $inventory, Minn\Ext
 
 ### `list(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `GET /wp/v2/plugins`
+Route: `GET /wp/v2/plugins (cap activate_plugins)`
 
 The plugins list, optionally by status.
 
 ### `install(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `POST /wp/v2/plugins`
+Route: `POST /wp/v2/plugins (cap activate_plugins)`
 
 Installs a wordpress.org plugin by slug, optionally activating it; answers 201 with the item.
 
 ### `single(Minn\Http\Request $request, string $plugin): Minn\Http\Response`
 
-Route: `GET /wp/v2/plugins/{plugin:[^.\/]+(?:\/[^.\/]+)?}`
+Route: `GET /wp/v2/plugins/{plugin:[^.\/]+(?:\/[^.\/]+)?} (cap activate_plugins)`
 
 One plugin.
 
 ### `update(Minn\Http\Request $request, string $plugin): Minn\Http\Response`
 
-Route: `PUT /wp/v2/plugins/{plugin:[^.\/]+(?:\/[^.\/]+)?}`
+Route: `PUT /wp/v2/plugins/{plugin:[^.\/]+(?:\/[^.\/]+)?} (cap activate_plugins)`
 
-Route: `POST /wp/v2/plugins/{plugin:[^.\/]+(?:\/[^.\/]+)?}`
+Route: `POST /wp/v2/plugins/{plugin:[^.\/]+(?:\/[^.\/]+)?} (cap activate_plugins)`
 
-Route: `PATCH /wp/v2/plugins/{plugin:[^.\/]+(?:\/[^.\/]+)?}`
+Route: `PATCH /wp/v2/plugins/{plugin:[^.\/]+(?:\/[^.\/]+)?} (cap activate_plugins)`
 
 Activates or deactivates a plugin.
 
 ### `delete(Minn\Http\Request $request, string $plugin): Minn\Http\Response`
 
-Route: `DELETE /wp/v2/plugins/{plugin:[^.\/]+(?:\/[^.\/]+)?}`
+Route: `DELETE /wp/v2/plugins/{plugin:[^.\/]+(?:\/[^.\/]+)?} (cap activate_plugins)`
 
 Deletes an inactive plugin.
 
-Internals: `items()` (private, line 141), `find()` (private, line 156), `manifestFor()` (private, line 166), `extensionItem()` (private, line 176), `pluginItem()` (private, line 199), `text()` (private, line 231), `description()` (private, line 237), `uri()` (private, line 256), `links()` (private, line 261), `extensionKey()` (private, line 266), `requireManager()` (private, line 271)
+Internals: `items()` (private, line 138), `find()` (private, line 153), `manifestFor()` (private, line 163), `extensionItem()` (private, line 173), `pluginItem()` (private, line 196), `text()` (private, line 228), `description()` (private, line 234), `uri()` (private, line 253), `links()` (private, line 258), `extensionKey()` (private, line 263)
+
+
+## PolicyGate
+
+`final readonly class Minn\Rest\PolicyGate` · `public/minn/src/Minn/Rest/PolicyGate.php`
+
+Judges a route's policy against the caller, with the reference's
+refusals: a caller who is not signed in gets the policy's sign-in code
+at 401, a bad nonce is always 403 rest_cookie_invalid_nonce, and a
+signed-in caller who lacks a capability gets the refusal code at 403.
+The edit-context policy is judged as well when the request asks for it.
+
+Used by: `Minn\Rest\Api`
+
+```php
+__construct(Minn\Rest\Caller $caller)
+```
+
+
+### `closure(): Closure`
+
+The judge as the router takes it.
+
+### `judge(Minn\Http\Policy $policy, Minn\Http\Request $request, array $captures): void`
+
+Throws the refusal the policy names, or returns.
+
+- `@param array<string, string> $captures`
+
+Internals: `capabilities()` (private, line 50), `own()` (private, line 64)
 
 
 ## PostObject
@@ -1923,13 +1954,13 @@ __construct(Minn\Rest\Settings $settings, Minn\Rest\Caller $caller)
 
 ### `settings(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `GET /wp/v2/settings`
+Route: `GET /wp/v2/settings (signed in)`
 
-Route: `POST /wp/v2/settings`
+Route: `POST /wp/v2/settings (signed in)`
 
-Route: `PUT /wp/v2/settings`
+Route: `PUT /wp/v2/settings (signed in)`
 
-Route: `PATCH /wp/v2/settings`
+Route: `PATCH /wp/v2/settings (signed in)`
 
 The site settings: read, or write from the body.
 

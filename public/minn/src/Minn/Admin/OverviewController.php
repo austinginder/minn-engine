@@ -10,6 +10,8 @@ use Minn\Db;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
+use Minn\Http\Access;
+use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\Rest\Caller;
 use Minn\Rest\Reply;
@@ -32,7 +34,7 @@ final readonly class OverviewController
     }
 
     /** The overview payload. */
-    #[Route(Method::Get, '/minn-admin/v1/overview')]
+    #[Route(Method::Get, '/minn-admin/v1/overview', policy: new Policy(Access::Floor))]
     public function overview(Request $request): Response
     {
         $userId = $this->caller->requireFloor();
@@ -40,7 +42,7 @@ final readonly class OverviewController
     }
 
     /** The events behind one chart bar. */
-    #[Route(Method::Get, '/minn-admin/v1/overview/activity')]
+    #[Route(Method::Get, '/minn-admin/v1/overview/activity', policy: new Policy(Access::Floor))]
     public function overviewActivity(Request $request): Response
     {
         $userId = $this->caller->requireFloor();
@@ -49,7 +51,7 @@ final readonly class OverviewController
     }
 
     /** Saves the caller's pick of overview cards. */
-    #[Route(Method::Post, '/minn-admin/v1/overview/metrics')]
+    #[Route(Method::Post, '/minn-admin/v1/overview/metrics', policy: new Policy(Access::Floor))]
     public function setOverviewMetrics(Request $request): Response
     {
         $userId = $this->caller->requireFloor();
@@ -63,7 +65,7 @@ final readonly class OverviewController
     }
 
     /** Saves the site's default overview cards. */
-    #[Route(Method::Post, '/minn-admin/v1/overview/metric-defaults')]
+    #[Route(Method::Post, '/minn-admin/v1/overview/metric-defaults', policy: new Policy(Access::Floor))]
     public function setOverviewMetricDefaults(Request $request): Response
     {
         $userId = $this->caller->requireFloor();

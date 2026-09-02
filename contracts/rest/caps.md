@@ -96,3 +96,31 @@ fixture set; the parity diff caught it immediately.
 - Application passwords, `promote_users` flows, multisite super-admin.
 - Roles beyond the built-in five (a plugin-registered role would need its
   option entry, which the parser already reads).
+
+## Policies on routes (2026-09-02)
+
+A route's authorization is data on its attribute, `policy: new Policy(...)`,
+judged by the router before the handler runs; a router cannot be built
+without the gate that judges it. `Minn\Http\Access` names the five answers:
+
+| Access | Judged as | Anonymous | Signed in, refused |
+|---|---|---|---|
+| `Public` | never resolved | | |
+| `SignedIn` | `Caller::require(signIn, signInMessage)` | 401 `signIn` | |
+| `Cap` | signed in, then `cap` and every `caps` entry | 401 `signIn` | 403 `refuse` |
+| `Floor` | signed in as `rest_forbidden`, then `edit_posts` and every `caps` entry | 401 `rest_forbidden` | 403 `rest_forbidden` |
+| `Own` | signed in, then `cap` on the id the `param` capture holds | 401 `signIn` | 403 `refuse` |
+
+A bad nonce is always 403 `rest_cookie_invalid_nonce`, from `Caller::require`.
+`edit:` carries a second policy judged as well when the request asks for the
+edit context. Defaults are the reference's common pair: `rest_not_logged_in`
+/ "You are not currently logged in." to sign in, `rest_forbidden` / "Sorry,
+you are not allowed to do that." to refuse. The front's router judges the
+same policies against the session cookie alone (401 / 403 with the policy's
+codes); its routes are all public today.
+
+The style suite ratchets the count of routes with no policy (157 of 222 at
+the first cut, from the 65 whose first statement was a pure gate); the rest
+still decide inside their bodies, mostly after loading the record, and each
+moves onto the attribute as its controller is touched. The generated API
+docs print each route's policy after its pattern.

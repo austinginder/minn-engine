@@ -7,6 +7,8 @@ namespace Minn\Admin;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
+use Minn\Http\Access;
+use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\Rest\Caller;
 use Minn\Rest\Reply;
@@ -20,10 +22,9 @@ final readonly class UpdatesController
     }
 
     /** The plugin update offers. */
-    #[Route(Method::Get, '/minn-admin/v1/plugin-updates')]
+    #[Route(Method::Get, '/minn-admin/v1/plugin-updates', policy: new Policy(Access::SignedIn))]
     public function pluginUpdates(Request $request): Response
     {
-        $this->caller->require();
         $this->caller->requireCap('update_plugins');
         return Reply::answer($request, [
             'updates' => (object) $this->updates->pluginOffers(),
@@ -36,19 +37,17 @@ final readonly class UpdatesController
     }
 
     /** Icons and details for the installed plugins. */
-    #[Route(Method::Get, '/minn-admin/v1/plugin-meta')]
+    #[Route(Method::Get, '/minn-admin/v1/plugin-meta', policy: new Policy(Access::SignedIn))]
     public function pluginMeta(Request $request): Response
     {
-        $this->caller->require();
         $this->caller->requireCap('activate_plugins');
         return Reply::answer($request, (object) $this->updates->pluginMeta());
     }
 
     /** Asks wordpress.org again, now. */
-    #[Route(Method::Post, '/minn-admin/v1/check-updates')]
+    #[Route(Method::Post, '/minn-admin/v1/check-updates', policy: new Policy(Access::SignedIn))]
     public function check(Request $request): Response
     {
-        $this->caller->require();
         if (!$this->caller->can('update_plugins') && !$this->caller->can('update_themes')) {
             throw $this->caller->refuse('rest_forbidden', 'Sorry, you are not allowed to do that.');
         }
@@ -67,10 +66,9 @@ final readonly class UpdatesController
     }
 
     /** Updates one plugin. */
-    #[Route(Method::Post, '/minn-admin/v1/plugins/update')]
+    #[Route(Method::Post, '/minn-admin/v1/plugins/update', policy: new Policy(Access::SignedIn))]
     public function updatePlugin(Request $request): Response
     {
-        $this->caller->require();
         $this->caller->requireCap('update_plugins');
         $file = (string) ($request->json()['plugin'] ?? '');
         if ($file === '') {
@@ -83,10 +81,9 @@ final readonly class UpdatesController
     }
 
     /** Updates every plugin with an offer. */
-    #[Route(Method::Post, '/minn-admin/v1/plugins/update-all')]
+    #[Route(Method::Post, '/minn-admin/v1/plugins/update-all', policy: new Policy(Access::SignedIn))]
     public function updateAll(Request $request): Response
     {
-        $this->caller->require();
         $this->caller->requireCap('update_plugins');
         $this->updates->refresh();
         $updated = [];
@@ -105,10 +102,9 @@ final readonly class UpdatesController
     }
 
     /** Updates one theme. */
-    #[Route(Method::Post, '/minn-admin/v1/themes/update')]
+    #[Route(Method::Post, '/minn-admin/v1/themes/update', policy: new Policy(Access::SignedIn))]
     public function updateTheme(Request $request): Response
     {
-        $this->caller->require();
         $this->caller->requireCap('update_themes');
         $stylesheet = (string) ($request->json()['stylesheet'] ?? '');
         if (!preg_match('/^[A-Za-z0-9._-]+$/', $stylesheet)) {

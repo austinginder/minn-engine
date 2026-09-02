@@ -8,6 +8,8 @@ use Minn\Content\PostWriter;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
+use Minn\Http\Access;
+use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\Rest\Caller;
 use Minn\Rest\Reply;
@@ -26,7 +28,7 @@ final readonly class EditorController
     }
 
     /** Takes the edit lock on a post. */
-    #[Route(Method::Post, '/minn-admin/v1/posts/{id:\d+}/lock')]
+    #[Route(Method::Post, '/minn-admin/v1/posts/{id:\d+}/lock', policy: new Policy(Access::Floor))]
     public function lock(Request $request, string $id): Response
     {
         $userId = $this->caller->requireFloor();
@@ -38,10 +40,9 @@ final readonly class EditorController
     }
 
     /** Releases the edit lock on a post. */
-    #[Route(Method::Post, '/minn-admin/v1/posts/{id:\d+}/unlock')]
+    #[Route(Method::Post, '/minn-admin/v1/posts/{id:\d+}/unlock', policy: new Policy(Access::Floor))]
     public function unlock(Request $request, string $id): Response
     {
-        $this->caller->requireFloor();
         if (!$this->caller->can('edit_post', (int) $id)) {
             throw new RestError('rest_cannot_edit', 'Sorry, you are not allowed to edit this post.', 403);
         }
@@ -50,18 +51,16 @@ final readonly class EditorController
     }
 
     /** No theme, no page templates: an honest empty set. */
-    #[Route(Method::Get, '/minn-admin/v1/templates')]
+    #[Route(Method::Get, '/minn-admin/v1/templates', policy: new Policy(Access::Floor))]
     public function templates(Request $request): Response
     {
-        $this->caller->requireFloor();
         return Reply::answer($request, ['templates' => []]);
     }
 
     /** Theme patterns are GPL theme content the engine does not carry. */
-    #[Route(Method::Get, '/minn-admin/v1/patterns')]
+    #[Route(Method::Get, '/minn-admin/v1/patterns', policy: new Policy(Access::Floor))]
     public function patterns(Request $request): Response
     {
-        $this->caller->requireFloor();
         return Reply::answer($request, ['patterns' => []]);
     }
 }

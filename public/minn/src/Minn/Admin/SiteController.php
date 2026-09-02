@@ -11,6 +11,8 @@ use Minn\Front\Permalinks;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
+use Minn\Http\Access;
+use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\Media\Metadata;
 use Minn\Rest\Caller;
@@ -34,10 +36,9 @@ final readonly class SiteController
     }
 
     /** The site logo attachment. */
-    #[Route(Method::Get, '/minn-admin/v1/site-logo')]
+    #[Route(Method::Get, '/minn-admin/v1/site-logo', policy: new Policy(Access::Floor))]
     public function siteLogo(Request $request): Response
     {
-        $this->caller->requireFloor();
         // The app treats every block theme as logo-capable (its Site Logo
         // block manages one whether or not the theme declares support);
         // a classic theme needs the declared custom-logo support.
@@ -65,10 +66,9 @@ final readonly class SiteController
     }
 
     /** The permalink structure. */
-    #[Route(Method::Get, '/minn-admin/v1/permalinks')]
+    #[Route(Method::Get, '/minn-admin/v1/permalinks', policy: new Policy(Access::Floor))]
     public function permalinks(Request $request): Response
     {
-        $this->caller->requireFloor();
         $this->caller->requireCap('manage_options');
         $structure = $this->permalinks->structure;
         return Reply::answer($request, [
@@ -81,10 +81,9 @@ final readonly class SiteController
     }
 
     /** The spam settings. */
-    #[Route(Method::Get, '/minn-admin/v1/spam')]
+    #[Route(Method::Get, '/minn-admin/v1/spam', policy: new Policy(Access::Floor))]
     public function spam(Request $request): Response
     {
-        $this->caller->requireFloor();
         $this->caller->requireCap('moderate_comments');
         $counts = ['spam' => 0, 'pending' => 0];
         $rows = $this->db->rows(
@@ -102,10 +101,9 @@ final readonly class SiteController
     }
 
     /** The months the library has uploads in. */
-    #[Route(Method::Get, '/minn-admin/v1/media/months')]
+    #[Route(Method::Get, '/minn-admin/v1/media/months', policy: new Policy(Access::Floor))]
     public function mediaMonths(Request $request): Response
     {
-        $this->caller->requireFloor();
         $rows = $this->db->rows(
             "SELECT DATE_FORMAT(post_date, '%Y-%m') AS ym, COUNT(*) AS c FROM {$this->db->table('posts')}
              WHERE post_type = 'attachment' AND post_status = 'inherit' GROUP BY ym ORDER BY ym DESC",

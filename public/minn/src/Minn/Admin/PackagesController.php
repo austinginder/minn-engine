@@ -8,6 +8,8 @@ use Minn\Content\Site;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
+use Minn\Http\Access;
+use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\Rest\Caller;
 use Minn\Rest\Reply;
@@ -21,36 +23,32 @@ final readonly class PackagesController
     }
 
     /** Searches wordpress.org themes. */
-    #[Route(Method::Get, '/minn-admin/v1/themes/search')]
+    #[Route(Method::Get, '/minn-admin/v1/themes/search', policy: new Policy(Access::Floor, caps: ['install_themes']))]
     public function searchThemes(Request $request): Response
     {
-        $this->caller->requireFloor('install_themes');
         return Reply::answer($request, ['themes' => $this->packages->searchThemes(trim((string) ($request->query('q') ?? '')))]);
     }
 
     /** Installs a theme from wordpress.org by slug. */
-    #[Route(Method::Post, '/minn-admin/v1/themes/install')]
+    #[Route(Method::Post, '/minn-admin/v1/themes/install', policy: new Policy(Access::Floor, caps: ['install_themes']))]
     public function installTheme(Request $request): Response
     {
-        $this->caller->requireFloor('install_themes');
         $slug = trim((string) ($request->json()['slug'] ?? ''));
         return Reply::answer($request, ['installed' => true, 'stylesheet' => $this->packages->installTheme($slug)]);
     }
 
     /** Installs a theme from an uploaded zip. */
-    #[Route(Method::Post, '/minn-admin/v1/themes/upload')]
+    #[Route(Method::Post, '/minn-admin/v1/themes/upload', policy: new Policy(Access::Floor, caps: ['install_themes']))]
     public function uploadTheme(Request $request): Response
     {
-        $this->caller->requireFloor('install_themes');
         $result = !empty($request->form['overwrite']) ? $this->packages->unpackReplacing($this->uploaded($request, 'Theme'), 'theme') : $this->packages->unpack($this->uploaded($request, 'Theme'), 'theme');
         return Reply::answer($request, ['installed' => true, 'stylesheet' => $result['folder']]);
     }
 
     /** Deletes an inactive theme. */
-    #[Route(Method::Post, '/minn-admin/v1/themes/delete')]
+    #[Route(Method::Post, '/minn-admin/v1/themes/delete', policy: new Policy(Access::Floor, caps: ['delete_themes']))]
     public function deleteTheme(Request $request): Response
     {
-        $this->caller->requireFloor('delete_themes');
         $stylesheet = trim((string) ($request->json()['stylesheet'] ?? ''));
         if ($stylesheet === (string) ($this->site->option('stylesheet') ?? '') || $stylesheet === (string) ($this->site->option('template') ?? '')) {
             throw new RestError('theme_in_use', 'The active theme (or its parent) cannot be deleted.', 400);
@@ -60,19 +58,17 @@ final readonly class PackagesController
     }
 
     /** A plugin zip: a WordPress plugin or a Minn extension. */
-    #[Route(Method::Post, '/minn-admin/v1/plugins/upload')]
+    #[Route(Method::Post, '/minn-admin/v1/plugins/upload', policy: new Policy(Access::Floor, caps: ['install_plugins']))]
     public function uploadPlugin(Request $request): Response
     {
-        $this->caller->requireFloor('install_plugins');
         $result = !empty($request->form['overwrite']) ? $this->packages->unpackReplacing($this->uploaded($request, 'Plugin'), 'extension') : $this->packages->unpack($this->uploaded($request, 'Plugin'), 'extension');
         return Reply::answer($request, ['installed' => true, 'plugin' => $result['folder'] . '/' . $result['folder']]);
     }
 
     /** A zip URL, or a GitHub owner/repo whose latest release carries a zip asset. */
-    #[Route(Method::Post, '/minn-admin/v1/plugins/install-url')]
+    #[Route(Method::Post, '/minn-admin/v1/plugins/install-url', policy: new Policy(Access::Floor, caps: ['install_plugins']))]
     public function installFromUrl(Request $request): Response
     {
-        $this->caller->requireFloor('install_plugins');
         $body = $request->json();
         $url = trim((string) ($body['url'] ?? ''));
         $github = trim((string) ($body['github'] ?? ''));
@@ -102,18 +98,16 @@ final readonly class PackagesController
     }
 
     /** Searches wordpress.org plugins. */
-    #[Route(Method::Get, '/minn-admin/v1/plugins/search')]
+    #[Route(Method::Get, '/minn-admin/v1/plugins/search', policy: new Policy(Access::Floor, caps: ['install_plugins']))]
     public function searchPlugins(Request $request): Response
     {
-        $this->caller->requireFloor('install_plugins');
         return Reply::answer($request, $this->packages->searchPlugins(trim((string) ($request->query('q') ?? '')), (int) ($request->query('page') ?? 1)));
     }
 
     /** One wordpress.org plugin's details. */
-    #[Route(Method::Get, '/minn-admin/v1/plugins/info')]
+    #[Route(Method::Get, '/minn-admin/v1/plugins/info', policy: new Policy(Access::Floor, caps: ['install_plugins']))]
     public function pluginInfo(Request $request): Response
     {
-        $this->caller->requireFloor('install_plugins');
         return Reply::answer($request, $this->packages->pluginInfo(trim((string) ($request->query('slug') ?? ''))));
     }
 

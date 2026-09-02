@@ -13,6 +13,8 @@ use Minn\Extension\Manifest;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
+use Minn\Http\Access;
+use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\RestError;
 use Minn\Support\FileHeaders;
@@ -42,20 +44,18 @@ final readonly class PluginsController
     }
 
     /** The plugins list, optionally by status. */
-    #[Route(Method::Get, '/wp/v2/plugins')]
+    #[Route(Method::Get, '/wp/v2/plugins', policy: new Policy(Access::Cap, 'activate_plugins', signIn: 'rest_cannot_view_plugins', signInMessage: 'Sorry, you are not allowed to manage plugins for this site.', refuse: 'rest_cannot_view_plugins', message: 'Sorry, you are not allowed to manage plugins for this site.'))]
     public function list(Request $request): Response
     {
-        $this->requireManager();
         $status = $request->query('status');
         $items = array_values(array_filter($this->items(), static fn (array $p) => $status === null || $p['status'] === $status));
         return Reply::item($items, Fields::fromQuery($request->query));
     }
 
     /** Installs a wordpress.org plugin by slug, optionally activating it; answers 201 with the item. */
-    #[Route(Method::Post, '/wp/v2/plugins')]
+    #[Route(Method::Post, '/wp/v2/plugins', policy: new Policy(Access::Cap, 'activate_plugins', signIn: 'rest_cannot_view_plugins', signInMessage: 'Sorry, you are not allowed to manage plugins for this site.', refuse: 'rest_cannot_view_plugins', message: 'Sorry, you are not allowed to manage plugins for this site.'))]
     public function install(Request $request): Response
     {
-        $this->requireManager();
         if (!$this->caller->can('install_plugins')) {
             throw new RestError('rest_cannot_install_plugin', 'Sorry, you are not allowed to install plugins on this site.', 403);
         }
@@ -89,20 +89,18 @@ final readonly class PluginsController
     }
 
     /** One plugin. */
-    #[Route(Method::Get, '/wp/v2/plugins/{plugin:[^.\/]+(?:\/[^.\/]+)?}')]
+    #[Route(Method::Get, '/wp/v2/plugins/{plugin:[^.\/]+(?:\/[^.\/]+)?}', policy: new Policy(Access::Cap, 'activate_plugins', signIn: 'rest_cannot_view_plugins', signInMessage: 'Sorry, you are not allowed to manage plugins for this site.', refuse: 'rest_cannot_view_plugins', message: 'Sorry, you are not allowed to manage plugins for this site.'))]
     public function single(Request $request, string $plugin): Response
     {
-        $this->requireManager();
         return Reply::item($this->find($plugin), Fields::fromQuery($request->query));
     }
 
     /** Activates or deactivates a plugin. */
-    #[Route(Method::Put, '/wp/v2/plugins/{plugin:[^.\/]+(?:\/[^.\/]+)?}')]
-    #[Route(Method::Post, '/wp/v2/plugins/{plugin:[^.\/]+(?:\/[^.\/]+)?}')]
-    #[Route(Method::Patch, '/wp/v2/plugins/{plugin:[^.\/]+(?:\/[^.\/]+)?}')]
+    #[Route(Method::Put, '/wp/v2/plugins/{plugin:[^.\/]+(?:\/[^.\/]+)?}', policy: new Policy(Access::Cap, 'activate_plugins', signIn: 'rest_cannot_view_plugins', signInMessage: 'Sorry, you are not allowed to manage plugins for this site.', refuse: 'rest_cannot_view_plugins', message: 'Sorry, you are not allowed to manage plugins for this site.'))]
+    #[Route(Method::Post, '/wp/v2/plugins/{plugin:[^.\/]+(?:\/[^.\/]+)?}', policy: new Policy(Access::Cap, 'activate_plugins', signIn: 'rest_cannot_view_plugins', signInMessage: 'Sorry, you are not allowed to manage plugins for this site.', refuse: 'rest_cannot_view_plugins', message: 'Sorry, you are not allowed to manage plugins for this site.'))]
+    #[Route(Method::Patch, '/wp/v2/plugins/{plugin:[^.\/]+(?:\/[^.\/]+)?}', policy: new Policy(Access::Cap, 'activate_plugins', signIn: 'rest_cannot_view_plugins', signInMessage: 'Sorry, you are not allowed to manage plugins for this site.', refuse: 'rest_cannot_view_plugins', message: 'Sorry, you are not allowed to manage plugins for this site.'))]
     public function update(Request $request, string $plugin): Response
     {
-        $this->requireManager();
         $item = $this->find($plugin);
         $status = (string) ($request->json()['status'] ?? $request->form['status'] ?? '');
         if (!in_array($status, ['active', 'inactive'], true)) {
@@ -117,10 +115,9 @@ final readonly class PluginsController
     }
 
     /** Deletes an inactive plugin. */
-    #[Route(Method::Delete, '/wp/v2/plugins/{plugin:[^.\/]+(?:\/[^.\/]+)?}')]
+    #[Route(Method::Delete, '/wp/v2/plugins/{plugin:[^.\/]+(?:\/[^.\/]+)?}', policy: new Policy(Access::Cap, 'activate_plugins', signIn: 'rest_cannot_view_plugins', signInMessage: 'Sorry, you are not allowed to manage plugins for this site.', refuse: 'rest_cannot_view_plugins', message: 'Sorry, you are not allowed to manage plugins for this site.'))]
     public function delete(Request $request, string $plugin): Response
     {
-        $this->requireManager();
         if (!$this->caller->can('delete_plugins')) {
             throw new RestError('rest_cannot_delete_plugin', 'Sorry, you are not allowed to delete plugins for this site.', 403);
         }
@@ -268,11 +265,4 @@ final readonly class PluginsController
         return $manifest->slug . '/' . $manifest->slug;
     }
 
-    private function requireManager(): void
-    {
-        $this->caller->require('rest_cannot_view_plugins', 'Sorry, you are not allowed to manage plugins for this site.');
-        if (!$this->caller->can('activate_plugins')) {
-            throw new RestError('rest_cannot_view_plugins', 'Sorry, you are not allowed to manage plugins for this site.', 403);
-        }
-    }
 }

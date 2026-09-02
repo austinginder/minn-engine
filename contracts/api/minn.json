@@ -1664,13 +1664,15 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/BundleController.php",
-            "lines": 39,
+            "lines": 36,
             "doc": "What the app bundle carries: the changelog, the user guide, and the\ntranslation offers (none: the engine has no update channel to poll).",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Admin\\App",
+                "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
+                "Minn\\Http\\Policy",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
@@ -1701,8 +1703,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 20,
-                "end": 24
+                "line": 22,
+                "end": 26
             },
             "cases": [],
             "constants": [],
@@ -1729,7 +1731,7 @@
             "methods": [
                 {
                     "routes": [
-                        "GET /minn-admin/v1/translations"
+                        "GET /minn-admin/v1/translations (floor edit_posts)"
                     ],
                     "name": "translations",
                     "static": false,
@@ -1746,12 +1748,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 28,
-                    "end": 32
+                    "line": 30,
+                    "end": 33
                 },
                 {
                     "routes": [
-                        "GET /minn-admin/v1/changelog"
+                        "GET /minn-admin/v1/changelog (floor edit_posts)"
                     ],
                     "name": "changelog",
                     "static": false,
@@ -1768,12 +1770,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 36,
+                    "line": 37,
                     "end": 40
                 },
                 {
                     "routes": [
-                        "GET /minn-admin/v1/guide"
+                        "GET /minn-admin/v1/guide (floor edit_posts)"
                     ],
                     "name": "guide",
                     "static": false,
@@ -1791,7 +1793,7 @@
                         }
                     ],
                     "line": 44,
-                    "end": 48
+                    "end": 47
                 },
                 {
                     "routes": [],
@@ -1812,8 +1814,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 51,
-                    "end": 55
+                    "line": 50,
+                    "end": 54
                 }
             ]
         },
@@ -2935,13 +2937,15 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/EditorController.php",
-            "lines": 48,
+            "lines": 45,
             "doc": "The editor's helpers in minn-admin/v1: the edit lock, and the template\nand pattern lists (honestly empty: the engine carries no theme content).",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Content\\PostWriter",
+                "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
+                "Minn\\Http\\Policy",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
@@ -2973,8 +2977,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 22,
-                "end": 26
+                "line": 24,
+                "end": 28
             },
             "cases": [],
             "constants": [],
@@ -3001,7 +3005,7 @@
             "methods": [
                 {
                     "routes": [
-                        "POST /minn-admin/v1/posts/{id:\\d+}/lock"
+                        "POST /minn-admin/v1/posts/{id:\\d+}/lock (floor edit_posts)"
                     ],
                     "name": "lock",
                     "static": false,
@@ -3025,12 +3029,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 30,
-                    "end": 38
+                    "line": 32,
+                    "end": 40
                 },
                 {
                     "routes": [
-                        "POST /minn-admin/v1/posts/{id:\\d+}/unlock"
+                        "POST /minn-admin/v1/posts/{id:\\d+}/unlock (floor edit_posts)"
                     ],
                     "name": "unlock",
                     "static": false,
@@ -3054,12 +3058,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 42,
-                    "end": 50
+                    "line": 44,
+                    "end": 51
                 },
                 {
                     "routes": [
-                        "GET /minn-admin/v1/templates"
+                        "GET /minn-admin/v1/templates (floor edit_posts)"
                     ],
                     "name": "templates",
                     "static": false,
@@ -3076,12 +3080,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 54,
+                    "line": 55,
                     "end": 58
                 },
                 {
                     "routes": [
-                        "GET /minn-admin/v1/patterns"
+                        "GET /minn-admin/v1/patterns (floor edit_posts)"
                     ],
                     "name": "patterns",
                     "static": false,
@@ -3099,7 +3103,7 @@
                         }
                     ],
                     "line": 62,
-                    "end": 66
+                    "end": 65
                 }
             ]
         },
@@ -3701,7 +3705,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/LanguageController.php",
-            "lines": 100,
+            "lines": 99,
             "doc": "Languages: what is installed, what a person reads in, what the site defaults to.",
             "implements": [],
             "extends": null,
@@ -3710,7 +3714,9 @@
                 "Minn\\Auth\\Capabilities",
                 "Minn\\Content\\Site",
                 "Minn\\Content\\Users",
+                "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
+                "Minn\\Http\\Policy",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
@@ -3763,8 +3769,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 21,
-                "end": 28
+                "line": 23,
+                "end": 30
             },
             "cases": [],
             "constants": [],
@@ -3818,7 +3824,7 @@
             "methods": [
                 {
                     "routes": [
-                        "GET /minn-admin/v1/languages"
+                        "GET /minn-admin/v1/languages (floor edit_posts)"
                     ],
                     "name": "languages",
                     "static": false,
@@ -3835,12 +3841,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 32,
-                    "end": 40
+                    "line": 34,
+                    "end": 42
                 },
                 {
                     "routes": [
-                        "GET /minn-admin/v1/boot-locale"
+                        "GET /minn-admin/v1/boot-locale (floor edit_posts)"
                     ],
                     "name": "bootLocale",
                     "static": false,
@@ -3857,8 +3863,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 44,
-                    "end": 57
+                    "line": 46,
+                    "end": 59
                 },
                 {
                     "routes": [
@@ -3879,12 +3885,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 61,
-                    "end": 64
+                    "line": 63,
+                    "end": 66
                 },
                 {
                     "routes": [
-                        "POST /minn-admin/v1/users/{id:\\d+}/language"
+                        "POST /minn-admin/v1/users/{id:\\d+}/language (floor edit_posts)"
                     ],
                     "name": "user",
                     "static": false,
@@ -3908,12 +3914,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 78
+                    "line": 70,
+                    "end": 80
                 },
                 {
                     "routes": [
-                        "POST /minn-admin/v1/site/language"
+                        "POST /minn-admin/v1/site/language (floor edit_posts)"
                     ],
                     "name": "site",
                     "static": false,
@@ -3930,8 +3936,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 82,
-                    "end": 89
+                    "line": 84,
+                    "end": 90
                 },
                 {
                     "routes": [],
@@ -3957,8 +3963,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 91,
-                    "end": 100
+                    "line": 92,
+                    "end": 101
                 },
                 {
                     "routes": [],
@@ -3979,8 +3985,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 103,
-                    "end": 116
+                    "line": 104,
+                    "end": 117
                 }
             ]
         },
@@ -4579,7 +4585,9 @@
                 "Minn\\Content\\Site",
                 "Minn\\Content\\Users",
                 "Minn\\Db",
+                "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
+                "Minn\\Http\\Policy",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
@@ -4633,8 +4641,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 25,
-                "end": 32
+                "line": 27,
+                "end": 34
             },
             "cases": [],
             "constants": [],
@@ -4688,7 +4696,7 @@
             "methods": [
                 {
                     "routes": [
-                        "GET /minn-admin/v1/overview"
+                        "GET /minn-admin/v1/overview (floor edit_posts)"
                     ],
                     "name": "overview",
                     "static": false,
@@ -4705,12 +4713,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 36,
-                    "end": 40
+                    "line": 38,
+                    "end": 42
                 },
                 {
                     "routes": [
-                        "GET /minn-admin/v1/overview/activity"
+                        "GET /minn-admin/v1/overview/activity (floor edit_posts)"
                     ],
                     "name": "overviewActivity",
                     "static": false,
@@ -4727,12 +4735,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 44,
-                    "end": 49
+                    "line": 46,
+                    "end": 51
                 },
                 {
                     "routes": [
-                        "POST /minn-admin/v1/overview/metrics"
+                        "POST /minn-admin/v1/overview/metrics (floor edit_posts)"
                     ],
                     "name": "setOverviewMetrics",
                     "static": false,
@@ -4749,12 +4757,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 53,
-                    "end": 63
+                    "line": 55,
+                    "end": 65
                 },
                 {
                     "routes": [
-                        "POST /minn-admin/v1/overview/metric-defaults"
+                        "POST /minn-admin/v1/overview/metric-defaults (floor edit_posts)"
                     ],
                     "name": "setOverviewMetricDefaults",
                     "static": false,
@@ -4771,8 +4779,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 67,
-                    "end": 78
+                    "line": 69,
+                    "end": 80
                 },
                 {
                     "routes": [],
@@ -4791,8 +4799,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 81,
-                    "end": 95
+                    "line": 83,
+                    "end": 97
                 },
                 {
                     "routes": [],
@@ -4811,8 +4819,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 98,
-                    "end": 110
+                    "line": 100,
+                    "end": 112
                 },
                 {
                     "routes": [],
@@ -4831,8 +4839,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 113,
-                    "end": 127
+                    "line": 115,
+                    "end": 129
                 },
                 {
                     "routes": [],
@@ -4853,8 +4861,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 130,
-                    "end": 154
+                    "line": 132,
+                    "end": 156
                 },
                 {
                     "routes": [],
@@ -4894,8 +4902,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 156,
-                    "end": 162
+                    "line": 158,
+                    "end": 164
                 }
             ]
         },
@@ -5688,14 +5696,16 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/PackagesController.php",
-            "lines": 116,
+            "lines": 108,
             "doc": "Adding and removing themes and extensions from the Extensions view.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Admin\\Packages",
                 "Minn\\Content\\Site",
+                "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
+                "Minn\\Http\\Policy",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
@@ -5734,8 +5744,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 19,
-                "end": 21
+                "line": 21,
+                "end": 23
             },
             "cases": [],
             "constants": [],
@@ -5771,7 +5781,7 @@
             "methods": [
                 {
                     "routes": [
-                        "GET /minn-admin/v1/themes/search"
+                        "GET /minn-admin/v1/themes/search (floor edit_posts + install_themes)"
                     ],
                     "name": "searchThemes",
                     "static": false,
@@ -5788,12 +5798,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 25,
-                    "end": 29
+                    "line": 27,
+                    "end": 30
                 },
                 {
                     "routes": [
-                        "POST /minn-admin/v1/themes/install"
+                        "POST /minn-admin/v1/themes/install (floor edit_posts + install_themes)"
                     ],
                     "name": "installTheme",
                     "static": false,
@@ -5810,12 +5820,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 33,
+                    "line": 34,
                     "end": 38
                 },
                 {
                     "routes": [
-                        "POST /minn-admin/v1/themes/upload"
+                        "POST /minn-admin/v1/themes/upload (floor edit_posts + install_themes)"
                     ],
                     "name": "uploadTheme",
                     "static": false,
@@ -5833,11 +5843,11 @@
                         }
                     ],
                     "line": 42,
-                    "end": 47
+                    "end": 46
                 },
                 {
                     "routes": [
-                        "POST /minn-admin/v1/themes/delete"
+                        "POST /minn-admin/v1/themes/delete (floor edit_posts + delete_themes)"
                     ],
                     "name": "deleteTheme",
                     "static": false,
@@ -5854,12 +5864,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 51,
-                    "end": 60
+                    "line": 50,
+                    "end": 58
                 },
                 {
                     "routes": [
-                        "POST /minn-admin/v1/plugins/upload"
+                        "POST /minn-admin/v1/plugins/upload (floor edit_posts + install_plugins)"
                     ],
                     "name": "uploadPlugin",
                     "static": false,
@@ -5876,12 +5886,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 64,
-                    "end": 69
+                    "line": 62,
+                    "end": 66
                 },
                 {
                     "routes": [
-                        "POST /minn-admin/v1/plugins/install-url"
+                        "POST /minn-admin/v1/plugins/install-url (floor edit_posts + install_plugins)"
                     ],
                     "name": "installFromUrl",
                     "static": false,
@@ -5898,12 +5908,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 73,
-                    "end": 102
+                    "line": 70,
+                    "end": 98
                 },
                 {
                     "routes": [
-                        "GET /minn-admin/v1/plugins/search"
+                        "GET /minn-admin/v1/plugins/search (floor edit_posts + install_plugins)"
                     ],
                     "name": "searchPlugins",
                     "static": false,
@@ -5920,12 +5930,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 106,
-                    "end": 110
+                    "line": 102,
+                    "end": 105
                 },
                 {
                     "routes": [
-                        "GET /minn-admin/v1/plugins/info"
+                        "GET /minn-admin/v1/plugins/info (floor edit_posts + install_plugins)"
                     ],
                     "name": "pluginInfo",
                     "static": false,
@@ -5942,8 +5952,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 114,
-                    "end": 118
+                    "line": 109,
+                    "end": 112
                 },
                 {
                     "routes": [],
@@ -5969,8 +5979,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 120,
-                    "end": 130
+                    "line": 114,
+                    "end": 124
                 }
             ]
         },
@@ -5987,7 +5997,9 @@
             "uses": [
                 "Minn\\Admin\\Appearance",
                 "Minn\\Admin\\HiddenIntegrations",
+                "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
+                "Minn\\Http\\Policy",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
@@ -6026,8 +6038,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 22,
-                "end": 27
+                "line": 24,
+                "end": 29
             },
             "cases": [],
             "constants": [],
@@ -6080,8 +6092,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 31,
-                    "end": 34
+                    "line": 33,
+                    "end": 36
                 },
                 {
                     "routes": [
@@ -6102,8 +6114,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 38,
-                    "end": 41
+                    "line": 40,
+                    "end": 43
                 },
                 {
                     "routes": [
@@ -6131,8 +6143,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 45,
-                    "end": 48
+                    "line": 47,
+                    "end": 50
                 },
                 {
                     "routes": [
@@ -6160,8 +6172,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 52,
-                    "end": 55
+                    "line": 54,
+                    "end": 57
                 },
                 {
                     "routes": [
@@ -6189,8 +6201,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 59,
-                    "end": 62
+                    "line": 61,
+                    "end": 64
                 },
                 {
                     "routes": [
@@ -6218,12 +6230,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 66,
-                    "end": 75
+                    "line": 68,
+                    "end": 77
                 },
                 {
                     "routes": [
-                        "POST /minn-admin/v1/integrations/hide"
+                        "POST /minn-admin/v1/integrations/hide (floor edit_posts)"
                     ],
                     "name": "hide",
                     "static": false,
@@ -6240,12 +6252,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 79,
-                    "end": 86
+                    "line": 81,
+                    "end": 88
                 },
                 {
                     "routes": [
-                        "POST /minn-admin/v1/integrations/unhide"
+                        "POST /minn-admin/v1/integrations/unhide (floor edit_posts)"
                     ],
                     "name": "unhide",
                     "static": false,
@@ -6262,8 +6274,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 90,
-                    "end": 95
+                    "line": 92,
+                    "end": 97
                 },
                 {
                     "routes": [],
@@ -6282,8 +6294,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 97,
-                    "end": 104
+                    "line": 99,
+                    "end": 106
                 },
                 {
                     "routes": [],
@@ -6302,8 +6314,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 110,
-                    "end": 122
+                    "line": 112,
+                    "end": 124
                 },
                 {
                     "routes": [],
@@ -6322,8 +6334,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 124,
-                    "end": 128
+                    "line": 126,
+                    "end": 130
                 },
                 {
                     "routes": [],
@@ -6342,8 +6354,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 130,
-                    "end": 138
+                    "line": 132,
+                    "end": 140
                 }
             ]
         },
@@ -6353,7 +6365,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/RenderController.php",
-            "lines": 54,
+            "lines": 52,
             "doc": "The editor's island previews: block markup rendered by the same\nrenderer the public site uses, with the stylesheets that site loads\n(the engine's block stylesheet, the theme's, and the theme.json rules)\nso a preview looks like the page will.",
             "implements": [],
             "extends": null,
@@ -6363,7 +6375,9 @@
                 "Minn\\Content\\Site",
                 "Minn\\Db",
                 "Minn\\Front\\Permalinks",
+                "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
+                "Minn\\Http\\Policy",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
@@ -6426,8 +6440,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 31,
-                "end": 39
+                "line": 33,
+                "end": 41
             },
             "cases": [],
             "constants": [],
@@ -6490,7 +6504,7 @@
             "methods": [
                 {
                     "routes": [
-                        "POST /minn-admin/v1/render-blocks"
+                        "POST /minn-admin/v1/render-blocks (floor edit_posts)"
                     ],
                     "name": "render",
                     "static": false,
@@ -6507,12 +6521,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 43,
-                    "end": 55
+                    "line": 45,
+                    "end": 56
                 },
                 {
                     "routes": [
-                        "GET /minn-admin/v1/editor-styles"
+                        "GET /minn-admin/v1/editor-styles (floor edit_posts)"
                     ],
                     "name": "editorStyles",
                     "static": false,
@@ -6529,7 +6543,7 @@
                             "doc": ""
                         }
                     ],
-                    "line": 59,
+                    "line": 60,
                     "end": 63
                 },
                 {
@@ -6758,7 +6772,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/SiteController.php",
-            "lines": 91,
+            "lines": 87,
             "doc": "The small Settings-view routes of minn-admin/v1: the site logo, the\npermalink structure, the spam queue, and the months the library spans.",
             "implements": [],
             "extends": null,
@@ -6767,7 +6781,9 @@
                 "Minn\\Content\\Site",
                 "Minn\\Db",
                 "Minn\\Front\\Permalinks",
+                "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
+                "Minn\\Http\\Policy",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
@@ -6822,8 +6838,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 27,
-                "end": 34
+                "line": 29,
+                "end": 36
             },
             "cases": [],
             "constants": [],
@@ -6877,7 +6893,7 @@
             "methods": [
                 {
                     "routes": [
-                        "GET /minn-admin/v1/site-logo"
+                        "GET /minn-admin/v1/site-logo (floor edit_posts)"
                     ],
                     "name": "siteLogo",
                     "static": false,
@@ -6894,12 +6910,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 38,
-                    "end": 52
+                    "line": 40,
+                    "end": 53
                 },
                 {
                     "routes": [
-                        "GET /minn-admin/v1/permalinks"
+                        "GET /minn-admin/v1/permalinks (floor edit_posts)"
                     ],
                     "name": "permalinks",
                     "static": false,
@@ -6916,12 +6932,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 69,
+                    "line": 70,
                     "end": 81
                 },
                 {
                     "routes": [
-                        "GET /minn-admin/v1/spam"
+                        "GET /minn-admin/v1/spam (floor edit_posts)"
                     ],
                     "name": "spam",
                     "static": false,
@@ -6939,11 +6955,11 @@
                         }
                     ],
                     "line": 85,
-                    "end": 102
+                    "end": 101
                 },
                 {
                     "routes": [
-                        "GET /minn-admin/v1/media/months"
+                        "GET /minn-admin/v1/media/months (floor edit_posts)"
                     ],
                     "name": "mediaMonths",
                     "static": false,
@@ -6960,8 +6976,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 106,
-                    "end": 114
+                    "line": 105,
+                    "end": 112
                 },
                 {
                     "routes": [],
@@ -6980,8 +6996,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 55,
-                    "end": 65
+                    "line": 56,
+                    "end": 66
                 }
             ]
         },
@@ -6991,13 +7007,15 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/StructureController.php",
-            "lines": 134,
+            "lines": 131,
             "doc": "The Structure view of minn-admin/v1: post types, taxonomies, and the\nterms switcher, each with its live counts, answered from the registries.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Db",
+                "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
+                "Minn\\Http\\Policy",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
@@ -7044,8 +7062,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 23,
-                "end": 29
+                "line": 25,
+                "end": 31
             },
             "cases": [],
             "constants": [],
@@ -7090,7 +7108,7 @@
             "methods": [
                 {
                     "routes": [
-                        "GET /minn-admin/v1/term-taxonomies"
+                        "GET /minn-admin/v1/term-taxonomies (floor edit_posts)"
                     ],
                     "name": "termTaxonomies",
                     "static": false,
@@ -7107,12 +7125,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 33,
-                    "end": 64
+                    "line": 35,
+                    "end": 65
                 },
                 {
                     "routes": [
-                        "GET /minn-admin/v1/post-types"
+                        "GET /minn-admin/v1/post-types (floor edit_posts)"
                     ],
                     "name": "postTypes",
                     "static": false,
@@ -7129,12 +7147,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
+                    "line": 69,
                     "end": 107
                 },
                 {
                     "routes": [
-                        "GET /minn-admin/v1/taxonomies"
+                        "GET /minn-admin/v1/taxonomies (floor edit_posts)"
                     ],
                     "name": "taxonomies",
                     "static": false,
@@ -7152,7 +7170,7 @@
                         }
                     ],
                     "line": 111,
-                    "end": 134
+                    "end": 133
                 },
                 {
                     "routes": [],
@@ -7165,8 +7183,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 137,
-                    "end": 140
+                    "line": 136,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -7185,8 +7203,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 142,
-                    "end": 145
+                    "line": 141,
+                    "end": 144
                 },
                 {
                     "routes": [],
@@ -7205,8 +7223,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 147,
-                    "end": 153
+                    "line": 146,
+                    "end": 152
                 }
             ]
         },
@@ -7216,14 +7234,16 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/SystemController.php",
-            "lines": 89,
+            "lines": 73,
             "doc": "The System view: diagnostics, the scheduled-post list, autoloaded options, and the logs.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Admin\\Diagnostics",
                 "Minn\\Admin\\Logs",
+                "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
+                "Minn\\Http\\Policy",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
@@ -7262,8 +7282,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 18,
-                "end": 20
+                "line": 20,
+                "end": 22
             },
             "cases": [],
             "constants": [],
@@ -7299,7 +7319,7 @@
             "methods": [
                 {
                     "routes": [
-                        "GET /minn-admin/v1/system"
+                        "GET /minn-admin/v1/system (cap manage_options)"
                     ],
                     "name": "system",
                     "static": false,
@@ -7316,12 +7336,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 24,
-                    "end": 28
+                    "line": 26,
+                    "end": 29
                 },
                 {
                     "routes": [
-                        "GET /minn-admin/v1/system/cron"
+                        "GET /minn-admin/v1/system/cron (cap manage_options)"
                     ],
                     "name": "cron",
                     "static": false,
@@ -7338,12 +7358,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 32,
+                    "line": 33,
                     "end": 36
                 },
                 {
                     "routes": [
-                        "GET /minn-admin/v1/system/autoload"
+                        "GET /minn-admin/v1/system/autoload (cap manage_options)"
                     ],
                     "name": "autoload",
                     "static": false,
@@ -7361,11 +7381,11 @@
                         }
                     ],
                     "line": 40,
-                    "end": 44
+                    "end": 43
                 },
                 {
                     "routes": [
-                        "POST /minn-admin/v1/system/config"
+                        "POST /minn-admin/v1/system/config (cap manage_options)"
                     ],
                     "name": "config",
                     "static": false,
@@ -7382,12 +7402,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 52
+                    "line": 47,
+                    "end": 50
                 },
                 {
                     "routes": [
-                        "GET /minn-admin/v1/system/logs"
+                        "GET /minn-admin/v1/system/logs (cap manage_options)"
                     ],
                     "name": "logs",
                     "static": false,
@@ -7404,12 +7424,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 56,
-                    "end": 60
+                    "line": 54,
+                    "end": 57
                 },
                 {
                     "routes": [
-                        "GET /minn-admin/v1/system/logs/{id:[a-zA-Z0-9:_.-]+}"
+                        "GET /minn-admin/v1/system/logs/{id:[a-zA-Z0-9:_.-]+} (cap manage_options)"
                     ],
                     "name": "log",
                     "static": false,
@@ -7433,12 +7453,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 64,
-                    "end": 68
+                    "line": 61,
+                    "end": 64
                 },
                 {
                     "routes": [
-                        "DELETE /minn-admin/v1/system/logs/{id:[a-zA-Z0-9:_.-]+}"
+                        "DELETE /minn-admin/v1/system/logs/{id:[a-zA-Z0-9:_.-]+} (cap manage_options)"
                     ],
                     "name": "clearLog",
                     "static": false,
@@ -7462,12 +7482,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 72,
-                    "end": 77
+                    "line": 68,
+                    "end": 72
                 },
                 {
                     "routes": [
-                        "GET /minn-admin/v1/system/debug-log"
+                        "GET /minn-admin/v1/system/debug-log (cap manage_options)"
                     ],
                     "name": "debugLog",
                     "static": false,
@@ -7484,12 +7504,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 81,
-                    "end": 85
+                    "line": 76,
+                    "end": 79
                 },
                 {
                     "routes": [
-                        "DELETE /minn-admin/v1/system/debug-log"
+                        "DELETE /minn-admin/v1/system/debug-log (cap manage_options)"
                     ],
                     "name": "clearDebugLog",
                     "static": false,
@@ -7506,20 +7526,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 89,
-                    "end": 94
-                },
-                {
-                    "routes": [],
-                    "name": "requireOwner",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "requireOwner(): void",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [],
-                    "line": 96,
-                    "end": 102
+                    "line": 83,
+                    "end": 87
                 }
             ]
         },
@@ -7529,7 +7537,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/ThemesController.php",
-            "lines": 97,
+            "lines": 95,
             "doc": "The theme inventory of minn-admin/v1: every theme on disk with its\nheaders, screenshot, and update offer, and the switch of the active one.",
             "implements": [],
             "extends": null,
@@ -7537,7 +7545,9 @@
                 "Minn\\Admin\\Updates",
                 "Minn\\Content\\Site",
                 "Minn\\Front\\Permalinks",
+                "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
+                "Minn\\Http\\Policy",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
@@ -7591,8 +7601,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 24,
-                "end": 31
+                "line": 26,
+                "end": 33
             },
             "cases": [],
             "constants": [],
@@ -7646,7 +7656,7 @@
             "methods": [
                 {
                     "routes": [
-                        "GET /minn-admin/v1/themes"
+                        "GET /minn-admin/v1/themes (floor edit_posts)"
                     ],
                     "name": "themes",
                     "static": false,
@@ -7663,12 +7673,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 35,
-                    "end": 63
+                    "line": 37,
+                    "end": 64
                 },
                 {
                     "routes": [
-                        "POST /minn-admin/v1/themes/activate"
+                        "POST /minn-admin/v1/themes/activate (floor edit_posts)"
                     ],
                     "name": "activateTheme",
                     "static": false,
@@ -7685,7 +7695,7 @@
                             "doc": ""
                         }
                     ],
-                    "line": 67,
+                    "line": 68,
                     "end": 84
                 },
                 {
@@ -8752,13 +8762,15 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/UpdatesController.php",
-            "lines": 123,
+            "lines": 117,
             "doc": "The minn-admin/v1 update routes: offers, directory meta, the check, the installs, the auto-update lists.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Admin\\Updates",
+                "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
+                "Minn\\Http\\Policy",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
@@ -8790,8 +8802,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 18,
-                "end": 20
+                "line": 20,
+                "end": 22
             },
             "cases": [],
             "constants": [],
@@ -8818,7 +8830,7 @@
             "methods": [
                 {
                     "routes": [
-                        "GET /minn-admin/v1/plugin-updates"
+                        "GET /minn-admin/v1/plugin-updates (signed in)"
                     ],
                     "name": "pluginUpdates",
                     "static": false,
@@ -8835,12 +8847,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 24,
-                    "end": 36
+                    "line": 26,
+                    "end": 37
                 },
                 {
                     "routes": [
-                        "GET /minn-admin/v1/plugin-meta"
+                        "GET /minn-admin/v1/plugin-meta (signed in)"
                     ],
                     "name": "pluginMeta",
                     "static": false,
@@ -8857,12 +8869,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 40,
+                    "line": 41,
                     "end": 45
                 },
                 {
                     "routes": [
-                        "POST /minn-admin/v1/check-updates"
+                        "POST /minn-admin/v1/check-updates (signed in)"
                     ],
                     "name": "check",
                     "static": false,
@@ -8880,11 +8892,11 @@
                         }
                     ],
                     "line": 49,
-                    "end": 67
+                    "end": 66
                 },
                 {
                     "routes": [
-                        "POST /minn-admin/v1/plugins/update"
+                        "POST /minn-admin/v1/plugins/update (signed in)"
                     ],
                     "name": "updatePlugin",
                     "static": false,
@@ -8901,12 +8913,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 71,
-                    "end": 83
+                    "line": 70,
+                    "end": 81
                 },
                 {
                     "routes": [
-                        "POST /minn-admin/v1/plugins/update-all"
+                        "POST /minn-admin/v1/plugins/update-all (signed in)"
                     ],
                     "name": "updateAll",
                     "static": false,
@@ -8923,12 +8935,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 87,
-                    "end": 105
+                    "line": 85,
+                    "end": 102
                 },
                 {
                     "routes": [
-                        "POST /minn-admin/v1/themes/update"
+                        "POST /minn-admin/v1/themes/update (signed in)"
                     ],
                     "name": "updateTheme",
                     "static": false,
@@ -8945,8 +8957,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 109,
-                    "end": 118
+                    "line": 106,
+                    "end": 114
                 },
                 {
                     "routes": [
@@ -8967,8 +8979,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 122,
-                    "end": 136
+                    "line": 118,
+                    "end": 132
                 }
             ]
         },
@@ -8978,7 +8990,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/V1Controller.php",
-            "lines": 60,
+            "lines": 59,
             "doc": "The boot burst of minn-admin/v1: the bell feed and its read marker, the\ncore status, and the one-round-trip boot-status the app starts from.\nEvery route sits behind the same capability floor (edit_posts) the\nplugin declares.",
             "implements": [],
             "extends": null,
@@ -8987,7 +8999,9 @@
                 "Minn\\Admin\\CoreStatus",
                 "Minn\\Admin\\Notifications",
                 "Minn\\Db",
+                "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
+                "Minn\\Http\\Policy",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
@@ -9039,8 +9053,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 23,
-                "end": 30
+                "line": 25,
+                "end": 32
             },
             "cases": [],
             "constants": [],
@@ -9111,12 +9125,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 34,
-                    "end": 37
+                    "line": 36,
+                    "end": 39
                 },
                 {
                     "routes": [
-                        "POST /minn-admin/v1/notifications/read"
+                        "POST /minn-admin/v1/notifications/read (floor edit_posts)"
                     ],
                     "name": "notificationsRead",
                     "static": false,
@@ -9133,12 +9147,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 41,
-                    "end": 47
+                    "line": 43,
+                    "end": 49
                 },
                 {
                     "routes": [
-                        "GET /minn-admin/v1/core"
+                        "GET /minn-admin/v1/core (floor edit_posts)"
                     ],
                     "name": "core",
                     "static": false,
@@ -9155,12 +9169,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 51,
-                    "end": 56
+                    "line": 53,
+                    "end": 57
                 },
                 {
                     "routes": [
-                        "GET /minn-admin/v1/boot-status"
+                        "GET /minn-admin/v1/boot-status (floor edit_posts)"
                     ],
                     "name": "bootStatus",
                     "static": false,
@@ -9177,8 +9191,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 65,
-                    "end": 79
+                    "line": 66,
+                    "end": 80
                 }
             ]
         },
@@ -32884,7 +32898,7 @@
             "namespace": "Minn",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Engine.php",
-            "lines": 184,
+            "lines": 198,
             "doc": "The engine's front door. An unmodified wp-config.php ends by requiring\nwp-settings.php, which is the engine's own boot file; it hands off here.\nREST is dispatched first (from the path or from ?rest_route=), then the\nadmin, the login endpoint, and finally the public site.",
             "implements": [],
             "extends": null,
@@ -32937,12 +32951,14 @@
                 "Minn\\Http\\Failure",
                 "Minn\\Http\\Kernel",
                 "Minn\\Http\\Method",
+                "Minn\\Http\\Policy",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Router",
                 "Minn\\Login\\LoginController",
                 "Minn\\Login\\ServeLogin",
                 "Minn\\Mail\\Mailer",
+                "Minn\\RestError",
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\RestUrl",
                 "Minn\\Rest\\Types",
@@ -33196,7 +33212,7 @@
                         }
                     ],
                     "line": 217,
-                    "end": 252
+                    "end": 266
                 }
             ]
         },
@@ -42968,6 +42984,68 @@
             ]
         },
         {
+            "name": "Minn\\Http\\Access",
+            "short": "Access",
+            "namespace": "Minn\\Http",
+            "kind": "enum",
+            "file": "public/minn/src/Minn/Http/Access.php",
+            "lines": 13,
+            "doc": "Who a route is for. The five answers every route gives, so the\nauthorization surface of the engine reads as a list of these.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Admin\\BundleController",
+                "Minn\\Admin\\EditorController",
+                "Minn\\Admin\\LanguageController",
+                "Minn\\Admin\\OverviewController",
+                "Minn\\Admin\\PackagesController",
+                "Minn\\Admin\\PreferencesController",
+                "Minn\\Admin\\RenderController",
+                "Minn\\Admin\\SiteController",
+                "Minn\\Admin\\StructureController",
+                "Minn\\Admin\\SystemController",
+                "Minn\\Admin\\ThemesController",
+                "Minn\\Admin\\UpdatesController",
+                "Minn\\Admin\\V1Controller",
+                "Minn\\Http\\Policy",
+                "Minn\\Rest\\PluginsController",
+                "Minn\\Rest\\PolicyGate",
+                "Minn\\Rest\\SettingsController"
+            ],
+            "constructor": null,
+            "cases": [
+                {
+                    "name": "Public",
+                    "value": null,
+                    "doc": "Anyone, signed in or not; the caller is never resolved."
+                },
+                {
+                    "name": "SignedIn",
+                    "value": null,
+                    "doc": "A signed-in caller, whoever they are."
+                },
+                {
+                    "name": "Cap",
+                    "value": null,
+                    "doc": "A signed-in caller holding the named capability (and every extra one)."
+                },
+                {
+                    "name": "Floor",
+                    "value": null,
+                    "doc": "The Minn Admin floor: signed in, may edit posts, and holds every extra capability named; refused as rest_forbidden."
+                },
+                {
+                    "name": "Own",
+                    "value": null,
+                    "doc": "A signed-in caller holding a capability on the object a pattern capture names."
+                }
+            ],
+            "constants": [],
+            "properties": [],
+            "methods": []
+        },
+        {
             "name": "Minn\\Http\\Client",
             "short": "Client",
             "namespace": "Minn\\Http",
@@ -44331,6 +44409,241 @@
             ]
         },
         {
+            "name": "Minn\\Http\\Policy",
+            "short": "Policy",
+            "namespace": "Minn\\Http",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Http/Policy.php",
+            "lines": 54,
+            "doc": "What a route requires of its caller, as data on the route: the router\nenforces it before the handler runs, so a grep over the attributes is\nthe authorization surface. The two refusals are the reference's: a\ncaller who is not signed in gets the sign-in code (401), a signed-in\ncaller who lacks the capability gets the refusal code (403); how a bad\nnonce is answered belongs to whoever judges the policy.\n\nWritten inline in the attribute with `new`, which is what an attribute\nargument allows: `policy: new Policy(Access::Cap, 'upload_files',\nrefuse: 'rest_cannot_create', message: '...')`.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http\\Access"
+            ],
+            "usedBy": [
+                "Minn\\Admin\\BundleController",
+                "Minn\\Admin\\EditorController",
+                "Minn\\Admin\\LanguageController",
+                "Minn\\Admin\\OverviewController",
+                "Minn\\Admin\\PackagesController",
+                "Minn\\Admin\\PreferencesController",
+                "Minn\\Admin\\RenderController",
+                "Minn\\Admin\\SiteController",
+                "Minn\\Admin\\StructureController",
+                "Minn\\Admin\\SystemController",
+                "Minn\\Admin\\ThemesController",
+                "Minn\\Admin\\UpdatesController",
+                "Minn\\Admin\\V1Controller",
+                "Minn\\Engine",
+                "Minn\\Http\\Route",
+                "Minn\\Http\\Router",
+                "Minn\\Rest\\PluginsController",
+                "Minn\\Rest\\PolicyGate",
+                "Minn\\Rest\\SettingsController"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Http\\Access $access = Minn\\Http\\Access::Public, ?string $cap = NULL, array $caps = array ( ), ?string $param = NULL, string $signIn = 'rest_not_logged_in', string $signInMessage = 'You are not currently logged in.', string $refuse = 'rest_forbidden', string $message = 'Sorry, you are not allowed to do that.', ?Minn\\Http\\Policy $edit = NULL)",
+                "doc": "",
+                "shapes": [
+                    "@param list<string> $caps further capabilities every one of which the caller must hold"
+                ],
+                "params": [
+                    {
+                        "name": "access",
+                        "type": "Minn\\Http\\Access",
+                        "shape": "",
+                        "default": "Minn\\Http\\Access::Public",
+                        "doc": ""
+                    },
+                    {
+                        "name": "cap",
+                        "type": "?string",
+                        "shape": "",
+                        "default": "NULL",
+                        "doc": ""
+                    },
+                    {
+                        "name": "caps",
+                        "type": "array",
+                        "shape": "list<string>",
+                        "default": "array ( )",
+                        "doc": "further capabilities every one of which the caller must hold"
+                    },
+                    {
+                        "name": "param",
+                        "type": "?string",
+                        "shape": "string|null",
+                        "default": "NULL",
+                        "doc": "the pattern capture holding the object id an Own policy judges"
+                    },
+                    {
+                        "name": "signIn",
+                        "type": "string",
+                        "shape": "",
+                        "default": "'rest_not_logged_in'",
+                        "doc": ""
+                    },
+                    {
+                        "name": "signInMessage",
+                        "type": "string",
+                        "shape": "",
+                        "default": "'You are not currently logged in.'",
+                        "doc": ""
+                    },
+                    {
+                        "name": "refuse",
+                        "type": "string",
+                        "shape": "",
+                        "default": "'rest_forbidden'",
+                        "doc": ""
+                    },
+                    {
+                        "name": "message",
+                        "type": "string",
+                        "shape": "",
+                        "default": "'Sorry, you are not allowed to do that.'",
+                        "doc": ""
+                    },
+                    {
+                        "name": "edit",
+                        "type": "?Minn\\Http\\Policy",
+                        "shape": "Policy|null",
+                        "default": "NULL",
+                        "doc": "a policy judged as well when the request asks for the edit context"
+                    }
+                ],
+                "visibility": "public",
+                "line": 26,
+                "end": 37
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "access",
+                    "type": "Minn\\Http\\Access",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "cap",
+                    "type": "?string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "caps",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "param",
+                    "type": "?string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "signIn",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "signInMessage",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "refuse",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "message",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "edit",
+                    "type": "?Minn\\Http\\Policy",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "isPublic",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "isPublic(): bool",
+                    "doc": "Whether the route is open to anyone, so the caller need not be resolved at all.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 40,
+                    "end": 43
+                },
+                {
+                    "routes": [],
+                    "name": "capabilities",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "capabilities(): array",
+                    "doc": "Every capability the policy asks for by name, the one on the object\nincluded, so a listing can show what a route takes.",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [],
+                    "line": 51,
+                    "end": 58
+                },
+                {
+                    "routes": [],
+                    "name": "describe",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "describe(): string",
+                    "doc": "The policy in one line, for the route index and the docs.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 61,
+                    "end": 71
+                }
+            ]
+        },
+        {
             "name": "Minn\\Http\\Request",
             "short": "Request",
             "namespace": "Minn\\Http",
@@ -44392,6 +44705,7 @@
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\NavigationController",
                 "Minn\\Rest\\PluginsController",
+                "Minn\\Rest\\PolicyGate",
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\PostsWriteController",
                 "Minn\\Rest\\Reply",
@@ -45109,11 +45423,12 @@
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Http/Route.php",
             "lines": 31,
-            "doc": "Declares a handler method as a route. The capability requirement lives\nhere, as metadata the router enforces before the handler runs, so the\nauthorization surface of the engine is a grep away.\n\nPatterns: \"/wp/v2/posts/{id}\" captures one segment, \"{id:\\d+}\" constrains\nit, and \"/{path*}\" captures the rest of the path (slashes included).",
+            "doc": "Declares a handler method as a route. The policy lives here, as\nmetadata the router enforces before the handler runs, so the\nauthorization surface of the engine is a grep away; a route with no\npolicy is one the ratchet in the style suite counts down.\n\nPatterns: \"/wp/v2/posts/{id}\" captures one segment, \"{id:\\d+}\" constrains\nit, and \"/{path*}\" captures the rest of the path (slashes included).",
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Http\\Method"
+                "Minn\\Http\\Method",
+                "Minn\\Http\\Policy"
             ],
             "usedBy": [
                 "Minn\\Admin\\AppController",
@@ -45161,7 +45476,7 @@
                 "Minn\\Rest\\UsersController"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Http\\Method $method, string $pattern, ?string $cap = NULL)",
+                "signature": "__construct(Minn\\Http\\Method $method, string $pattern, ?Minn\\Http\\Policy $policy = NULL)",
                 "doc": "",
                 "shapes": [],
                 "params": [
@@ -45180,16 +45495,16 @@
                         "doc": ""
                     },
                     {
-                        "name": "cap",
-                        "type": "?string",
+                        "name": "policy",
+                        "type": "?Minn\\Http\\Policy",
                         "shape": "",
                         "default": "NULL",
                         "doc": ""
                     }
                 ],
                 "visibility": "public",
-                "line": 20,
-                "end": 25
+                "line": 21,
+                "end": 26
             },
             "cases": [],
             "constants": [],
@@ -45213,8 +45528,8 @@
                     "promoted": true
                 },
                 {
-                    "name": "cap",
-                    "type": "?string",
+                    "name": "policy",
+                    "type": "?Minn\\Http\\Policy",
                     "readonly": true,
                     "static": false,
                     "doc": "",
@@ -45232,8 +45547,8 @@
                     "doc": "The pattern as a regular expression with named captures.",
                     "shapes": [],
                     "params": [],
-                    "line": 28,
-                    "end": 47
+                    "line": 29,
+                    "end": 48
                 }
             ]
         },
@@ -45267,17 +45582,17 @@
             "namespace": "Minn\\Http",
             "kind": "final class",
             "file": "public/minn/src/Minn/Http/Router.php",
-            "lines": 68,
-            "doc": "Matches a request to a #[Route] on one of the registered handler\nobjects, enforces the declared capability, and invokes the method with\nthe request plus the named pattern captures.",
+            "lines": 79,
+            "doc": "Matches a request to a #[Route] on one of the registered handler\nobjects, has the gate judge the route's policy, and invokes the method\nwith the request plus the named pattern captures. The gate is the one\nthing a router cannot be built without: a policy nobody judges is a\nroute nobody may call.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Http\\Method",
+                "Minn\\Http\\Policy",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
-                "Minn\\Http\\RouteMiss",
-                "Minn\\RestError"
+                "Minn\\Http\\RouteMiss"
             ],
             "usedBy": [
                 "Minn\\Engine",
@@ -45288,23 +45603,23 @@
                 "Minn\\Rest\\IndexController"
             ],
             "constructor": {
-                "signature": "__construct(?Closure $gate = NULL)",
+                "signature": "__construct(Closure $gate)",
                 "doc": "",
                 "shapes": [
-                    "@param Closure(string $cap, Request $request): void $gate throws RestError when the capability is missing"
+                    "@param Closure(Policy $policy, Request $request, array<string, string> $captures): void $gate throws when the policy refuses the caller"
                 ],
                 "params": [
                     {
                         "name": "gate",
-                        "type": "?Closure",
+                        "type": "Closure",
                         "shape": "",
-                        "default": "NULL",
+                        "default": null,
                         "doc": ""
                     }
                 ],
                 "visibility": "public",
-                "line": 23,
-                "end": 25
+                "line": 24,
+                "end": 26
             },
             "cases": [],
             "constants": [],
@@ -45320,7 +45635,7 @@
                 },
                 {
                     "name": "gate",
-                    "type": "?Closure",
+                    "type": "Closure",
                     "readonly": true,
                     "static": false,
                     "doc": "",
@@ -45346,8 +45661,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 28,
-                    "end": 43
+                    "line": 29,
+                    "end": 44
                 },
                 {
                     "routes": [],
@@ -45360,8 +45675,22 @@
                         "@return array<string, list<string>>"
                     ],
                     "params": [],
-                    "line": 46,
-                    "end": 53
+                    "line": 47,
+                    "end": 54
+                },
+                {
+                    "routes": [],
+                    "name": "table",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "table(): array",
+                    "doc": "Every registered route with its policy, for the docs and the ratchet.",
+                    "shapes": [
+                        "@return list<array{method: string, pattern: string, policy: ?Policy, handler: string}>"
+                    ],
+                    "params": [],
+                    "line": 61,
+                    "end": 68
                 },
                 {
                     "routes": [],
@@ -45380,8 +45709,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 56,
-                    "end": 83
+                    "line": 71,
+                    "end": 95
                 }
             ]
         },
@@ -50644,8 +50973,8 @@
                 "Minn\\Cli\\DirectorySearch",
                 "Minn\\Cli\\PluginCommand",
                 "Minn\\Cli\\ThemeCommand",
+                "Minn\\Engine",
                 "Minn\\Http\\Kernel",
-                "Minn\\Http\\Router",
                 "Minn\\Media\\Uploads",
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\ApplicationPasswordsController",
@@ -50657,6 +50986,7 @@
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\PluginsController",
+                "Minn\\Rest\\PolicyGate",
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\PostsWriteController",
                 "Minn\\Rest\\Reply",
@@ -51000,6 +51330,7 @@
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\NavigationController",
                 "Minn\\Rest\\PluginsController",
+                "Minn\\Rest\\PolicyGate",
                 "Minn\\Rest\\PostObject",
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\PostsWriteController",
@@ -52193,6 +52524,7 @@
                 "Minn\\Rest\\MenuObject",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\PluginsController",
+                "Minn\\Rest\\PolicyGate",
                 "Minn\\Rest\\PostObject",
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\PostsWriteController",
@@ -53070,6 +53402,7 @@
                 "Minn\\Rest\\MediaObject",
                 "Minn\\Rest\\MenuItemObject",
                 "Minn\\Rest\\MenusController",
+                "Minn\\Rest\\PolicyGate",
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\RevisionsController",
                 "Minn\\Rest\\TemplateObject",
@@ -56974,7 +57307,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/PluginsController.php",
-            "lines": 248,
+            "lines": 236,
             "doc": "wp/v2 plugins: what sits in wp-content/plugins, in the reference's\nshape. Minn extensions (a minn.json manifest) are listed alongside the\nWordPress plugins the folder still holds; the engine runs the former\nand only records the latter's stored state. Activation writes the same\noptions the reference and the extension loader read; files are never\ninstalled or deleted from here.",
             "implements": [],
             "extends": null,
@@ -56986,7 +57319,9 @@
                 "Minn\\Content\\Texturize",
                 "Minn\\Extension\\Loader",
                 "Minn\\Extension\\Manifest",
+                "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
+                "Minn\\Http\\Policy",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
@@ -57058,8 +57393,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 33,
-                "end": 42
+                "line": 35,
+                "end": 44
             },
             "cases": [],
             "constants": [],
@@ -57131,7 +57466,7 @@
             "methods": [
                 {
                     "routes": [
-                        "GET /wp/v2/plugins"
+                        "GET /wp/v2/plugins (cap activate_plugins)"
                     ],
                     "name": "list",
                     "static": false,
@@ -57148,12 +57483,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 46,
-                    "end": 52
+                    "line": 48,
+                    "end": 53
                 },
                 {
                     "routes": [
-                        "POST /wp/v2/plugins"
+                        "POST /wp/v2/plugins (cap activate_plugins)"
                     ],
                     "name": "install",
                     "static": false,
@@ -57170,12 +57505,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 56,
+                    "line": 57,
                     "end": 89
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/plugins/{plugin:[^.\\/]+(?:\\/[^.\\/]+)?}"
+                        "GET /wp/v2/plugins/{plugin:[^.\\/]+(?:\\/[^.\\/]+)?} (cap activate_plugins)"
                     ],
                     "name": "single",
                     "static": false,
@@ -57200,13 +57535,13 @@
                         }
                     ],
                     "line": 93,
-                    "end": 97
+                    "end": 96
                 },
                 {
                     "routes": [
-                        "PUT /wp/v2/plugins/{plugin:[^.\\/]+(?:\\/[^.\\/]+)?}",
-                        "POST /wp/v2/plugins/{plugin:[^.\\/]+(?:\\/[^.\\/]+)?}",
-                        "PATCH /wp/v2/plugins/{plugin:[^.\\/]+(?:\\/[^.\\/]+)?}"
+                        "PUT /wp/v2/plugins/{plugin:[^.\\/]+(?:\\/[^.\\/]+)?} (cap activate_plugins)",
+                        "POST /wp/v2/plugins/{plugin:[^.\\/]+(?:\\/[^.\\/]+)?} (cap activate_plugins)",
+                        "PATCH /wp/v2/plugins/{plugin:[^.\\/]+(?:\\/[^.\\/]+)?} (cap activate_plugins)"
                     ],
                     "name": "update",
                     "static": false,
@@ -57230,12 +57565,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 103,
-                    "end": 117
+                    "line": 102,
+                    "end": 115
                 },
                 {
                     "routes": [
-                        "DELETE /wp/v2/plugins/{plugin:[^.\\/]+(?:\\/[^.\\/]+)?}"
+                        "DELETE /wp/v2/plugins/{plugin:[^.\\/]+(?:\\/[^.\\/]+)?} (cap activate_plugins)"
                     ],
                     "name": "delete",
                     "static": false,
@@ -57259,8 +57594,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 121,
-                    "end": 138
+                    "line": 119,
+                    "end": 135
                 },
                 {
                     "routes": [],
@@ -57273,8 +57608,8 @@
                         "@return list<array>"
                     ],
                     "params": [],
-                    "line": 141,
-                    "end": 154
+                    "line": 138,
+                    "end": 151
                 },
                 {
                     "routes": [],
@@ -57293,8 +57628,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 156,
-                    "end": 164
+                    "line": 153,
+                    "end": 161
                 },
                 {
                     "routes": [],
@@ -57313,8 +57648,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 166,
-                    "end": 174
+                    "line": 163,
+                    "end": 171
                 },
                 {
                     "routes": [],
@@ -57340,8 +57675,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 176,
-                    "end": 197
+                    "line": 173,
+                    "end": 194
                 },
                 {
                     "routes": [],
@@ -57374,8 +57709,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 199,
-                    "end": 228
+                    "line": 196,
+                    "end": 225
                 },
                 {
                     "routes": [],
@@ -57401,8 +57736,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 231,
-                    "end": 234
+                    "line": 228,
+                    "end": 231
                 },
                 {
                     "routes": [],
@@ -57421,8 +57756,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 237,
-                    "end": 253
+                    "line": 234,
+                    "end": 250
                 },
                 {
                     "routes": [],
@@ -57441,8 +57776,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 256,
-                    "end": 259
+                    "line": 253,
+                    "end": 256
                 },
                 {
                     "routes": [],
@@ -57461,8 +57796,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 261,
-                    "end": 264
+                    "line": 258,
+                    "end": 261
                 },
                 {
                     "routes": [],
@@ -57481,20 +57816,159 @@
                             "doc": ""
                         }
                     ],
-                    "line": 266,
-                    "end": 269
+                    "line": 263,
+                    "end": 266
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Rest\\PolicyGate",
+            "short": "PolicyGate",
+            "namespace": "Minn\\Rest",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Rest/PolicyGate.php",
+            "lines": 53,
+            "doc": "Judges a route's policy against the caller, with the reference's\nrefusals: a caller who is not signed in gets the policy's sign-in code\nat 401, a bad nonce is always 403 rest_cookie_invalid_nonce, and a\nsigned-in caller who lacks a capability gets the refusal code at 403.\nThe edit-context policy is judged as well when the request asks for it.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http\\Access",
+                "Minn\\Http\\Policy",
+                "Minn\\Http\\Request",
+                "Minn\\RestError",
+                "Minn\\Rest\\Caller",
+                "Minn\\Rest\\Context"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\Api"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Rest\\Caller $caller)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "caller",
+                        "type": "Minn\\Rest\\Caller",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 22,
+                "end": 24
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "caller",
+                    "type": "Minn\\Rest\\Caller",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "closure",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "closure(): Closure",
+                    "doc": "The judge as the router takes it.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 27,
+                    "end": 30
                 },
                 {
                     "routes": [],
-                    "name": "requireManager",
+                    "name": "judge",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "judge(Minn\\Http\\Policy $policy, Minn\\Http\\Request $request, array $captures): void",
+                    "doc": "Throws the refusal the policy names, or returns.",
+                    "shapes": [
+                        "@param array<string, string> $captures"
+                    ],
+                    "params": [
+                        {
+                            "name": "policy",
+                            "type": "Minn\\Http\\Policy",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "captures",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 37,
+                    "end": 48
+                },
+                {
+                    "routes": [],
+                    "name": "capabilities",
                     "static": false,
                     "visibility": "private",
-                    "signature": "requireManager(): void",
+                    "signature": "capabilities(Minn\\Http\\Policy $policy): void",
                     "doc": "",
                     "shapes": [],
-                    "params": [],
-                    "line": 271,
-                    "end": 277
+                    "params": [
+                        {
+                            "name": "policy",
+                            "type": "Minn\\Http\\Policy",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 50,
+                    "end": 61
+                },
+                {
+                    "routes": [],
+                    "name": "own",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "own(Minn\\Http\\Policy $policy, array $captures): void",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, string> $captures"
+                    ],
+                    "params": [
+                        {
+                            "name": "policy",
+                            "type": "Minn\\Http\\Policy",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "captures",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 64,
+                    "end": 71
                 }
             ]
         },
@@ -62286,12 +62760,14 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/SettingsController.php",
-            "lines": 25,
+            "lines": 24,
             "doc": "wp/v2/settings: read and write, both behind manage_options.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
+                "Minn\\Http\\Policy",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
@@ -62325,8 +62801,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 16,
-                "end": 20
+                "line": 18,
+                "end": 22
             },
             "cases": [],
             "constants": [],
@@ -62353,10 +62829,10 @@
             "methods": [
                 {
                     "routes": [
-                        "GET /wp/v2/settings",
-                        "POST /wp/v2/settings",
-                        "PUT /wp/v2/settings",
-                        "PATCH /wp/v2/settings"
+                        "GET /wp/v2/settings (signed in)",
+                        "POST /wp/v2/settings (signed in)",
+                        "PUT /wp/v2/settings (signed in)",
+                        "PATCH /wp/v2/settings (signed in)"
                     ],
                     "name": "settings",
                     "static": false,
@@ -62373,8 +62849,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 27,
-                    "end": 37
+                    "line": 29,
+                    "end": 38
                 }
             ]
         },

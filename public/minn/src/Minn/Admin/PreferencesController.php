@@ -7,6 +7,8 @@ namespace Minn\Admin;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
+use Minn\Http\Access;
+use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\Rest\Caller;
 use Minn\Rest\Reply;
@@ -75,7 +77,7 @@ final readonly class PreferencesController
     }
 
     /** Hides a view for the caller. */
-    #[Route(Method::Post, '/minn-admin/v1/integrations/hide')]
+    #[Route(Method::Post, '/minn-admin/v1/integrations/hide', policy: new Policy(Access::Floor))]
     public function hide(Request $request): Response
     {
         $userId = $this->caller->requireFloor();
@@ -86,7 +88,7 @@ final readonly class PreferencesController
     }
 
     /** Shows a view again for the caller. */
-    #[Route(Method::Post, '/minn-admin/v1/integrations/unhide')]
+    #[Route(Method::Post, '/minn-admin/v1/integrations/unhide', policy: new Policy(Access::Floor))]
     public function unhide(Request $request): Response
     {
         $userId = $this->caller->requireFloor();

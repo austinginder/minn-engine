@@ -9,6 +9,8 @@ use Minn\Front\Permalinks;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
+use Minn\Http\Access;
+use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\Rest\Caller;
 use Minn\Rest\Reply;
@@ -31,10 +33,9 @@ final readonly class ThemesController
     }
 
     /** Every theme on disk with the active one marked. */
-    #[Route(Method::Get, '/minn-admin/v1/themes')]
+    #[Route(Method::Get, '/minn-admin/v1/themes', policy: new Policy(Access::Floor))]
     public function themes(Request $request): Response
     {
-        $this->caller->requireFloor();
         $this->caller->requireCap('switch_themes');
         $active = (string) ($this->site->option('stylesheet') ?? '');
         $offers = $this->caller->can('update_themes') ? $this->updates->themeOffers() : [];
@@ -63,10 +64,9 @@ final readonly class ThemesController
     }
 
     /** Switches the active theme. */
-    #[Route(Method::Post, '/minn-admin/v1/themes/activate')]
+    #[Route(Method::Post, '/minn-admin/v1/themes/activate', policy: new Policy(Access::Floor))]
     public function activateTheme(Request $request): Response
     {
-        $this->caller->requireFloor();
         $this->caller->requireCap('switch_themes');
         $stylesheet = trim((string) ($request->json()['stylesheet'] ?? $request->form['stylesheet'] ?? ''));
         $folders = $this->themeFolders();

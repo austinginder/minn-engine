@@ -160,6 +160,29 @@ $leafCeiling = 13;
 $check("facade map: leaf functions over fifteen lines stay at or under {$leafCeiling}", is_array($mapping) && ($mapping['leafLinesOver15'] ?? PHP_INT_MAX) <= $leafCeiling, (string) ($mapping['leafLinesOver15'] ?? '?'));
 
 
+// The policy ratchet: every #[Route] states who it is for as a Policy on the
+// attribute, judged by the router before the handler runs. Routes that still
+// decide inside their body are counted here, and the count only falls: lower
+// it when a controller loses its last bare route, never raise it.
+$bareRouteCeiling = 157;
+$bareRoutes = 0;
+$routesTotal = 0;
+foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root, FilesystemIterator::SKIP_DOTS)) as $file) {
+    if ($file->getExtension() !== 'php') {
+        continue;
+    }
+    foreach (file($file->getPathname()) ?: [] as $line) {
+        if (preg_match('/^\s*#\[Route\(/', $line)) {
+            $routesTotal++;
+            if (!str_contains($line, 'policy:')) {
+                $bareRoutes++;
+            }
+        }
+    }
+}
+$check("routes without a policy stay at or under {$bareRouteCeiling} (of {$routesTotal})", $bareRoutes <= $bareRouteCeiling, (string) $bareRoutes);
+$check('no route names the retired cap: argument', shell_exec('grep -rl "cap: " ' . escapeshellarg($root) . ' --include=*.php | xargs grep -l "#\[Route(.*cap: " 2>/dev/null') === null);
+
 // The engine ratchet: src/Minn/ is the code this project points at, so two
 // counts may only fall here too. Methods whose body runs past eighty lines
 // (none now: the twenty-two the pass started with are split) and classes past six hundred

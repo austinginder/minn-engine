@@ -4,6 +4,7 @@ request, response, routing, and the outgoing client
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
+| [`Access`](#access) | enum | 13 | Who a route is for. The five answers every route gives, so the |
 | [`Client`](#client) | final class | 101 | The engine's outgoing HTTP transport over curl. Redirects are followed by |
 | [`Download`](#download) | final class | 106 | A file the engine fetches for itself (a package, a language pack). Every |
 | [`Exchange`](#exchange) | final readonly class | 29 | What came back: the final response's status, headers (repeats as lists), Set-Cookie values, and body, or the transport error. |
@@ -11,11 +12,24 @@ request, response, routing, and the outgoing client
 | [`Kernel`](#kernel) | final readonly class | 36 | The edge. Turns a request into a response through the router and turns |
 | [`Method`](#method) | enum | 33 |  |
 | [`Outbound`](#outbound) | final readonly class | 47 | One outgoing HTTP request, normalised: the client below needs nothing else. |
+| [`Policy`](#policy) | final readonly class | 54 | What a route requires of its caller, as data on the route: the router |
 | [`Request`](#request) | final readonly class | 118 | An immutable picture of the incoming request. Built once from the PHP |
 | [`Response`](#response) | final readonly class | 72 | What a handler returns. Nothing is written to the client until the |
-| [`Route`](#route) | final readonly class | 31 | Declares a handler method as a route. The capability requirement lives |
+| [`Route`](#route) | final readonly class | 31 | Declares a handler method as a route. The policy lives here, as |
 | [`RouteMiss`](#routemiss) | final class | 3 | A handler declining a request its pattern matched: the router swallows |
-| [`Router`](#router) | final class | 68 | Matches a request to a #[Route] on one of the registered handler |
+| [`Router`](#router) | final class | 79 | Matches a request to a #[Route] on one of the registered handler |
+
+## Access
+
+`enum Minn\Http\Access` · `public/minn/src/Minn/Http/Access.php`
+
+Who a route is for. The five answers every route gives, so the
+authorization surface of the engine reads as a list of these.
+
+Cases: `Public`, `SignedIn`, `Cap`, `Floor`, `Own`
+
+Used by: `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Http\Policy`, `Minn\Rest\PluginsController`, `Minn\Rest\PolicyGate`, `Minn\Rest\SettingsController`
+
 
 ## Client
 
@@ -246,6 +260,54 @@ A HEAD.
 - `@param list<string> $headers "Name: value" lines`
 
 
+## Policy
+
+`final readonly class Minn\Http\Policy` · `public/minn/src/Minn/Http/Policy.php`
+
+What a route requires of its caller, as data on the route: the router
+enforces it before the handler runs, so a grep over the attributes is
+the authorization surface. The two refusals are the reference's: a
+caller who is not signed in gets the sign-in code (401), a signed-in
+caller who lacks the capability gets the refusal code (403); how a bad
+nonce is answered belongs to whoever judges the policy.
+
+Written inline in the attribute with `new`, which is what an attribute
+argument allows: `policy: new Policy(Access::Cap, 'upload_files',
+refuse: 'rest_cannot_create', message: '...')`.
+
+Used by: `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Engine`, `Minn\Http\Route`, `Minn\Http\Router`, `Minn\Rest\PluginsController`, `Minn\Rest\PolicyGate`, `Minn\Rest\SettingsController`
+
+```php
+__construct(Minn\Http\Access $access = Minn\Http\Access::Public, ?string $cap = NULL, array $caps = array ( ), ?string $param = NULL, string $signIn = 'rest_not_logged_in', string $signInMessage = 'You are not currently logged in.', string $refuse = 'rest_forbidden', string $message = 'Sorry, you are not allowed to do that.', ?Minn\Http\Policy $edit = NULL)
+```
+- `@param list<string> $caps further capabilities every one of which the caller must hold`
+
+- readonly `Minn\Http\Access $access`
+- readonly `?string $cap`
+- readonly `array $caps`
+- readonly `?string $param`
+- readonly `string $signIn`
+- readonly `string $signInMessage`
+- readonly `string $refuse`
+- readonly `string $message`
+- readonly `?Minn\Http\Policy $edit`
+
+### `isPublic(): bool`
+
+Whether the route is open to anyone, so the caller need not be resolved at all.
+
+### `capabilities(): array`
+
+Every capability the policy asks for by name, the one on the object
+included, so a listing can show what a route takes.
+
+- `@return list<string>`
+
+### `describe(): string`
+
+The policy in one line, for the route index and the docs.
+
+
 ## Request
 
 `final readonly class Minn\Http\Request` · `public/minn/src/Minn/Http/Request.php`
@@ -253,7 +315,7 @@ A HEAD.
 An immutable picture of the incoming request. Built once from the PHP
 globals at the edge; handlers only ever see this object.
 
-Used by: `Minn\Admin\AppController`, `Minn\Admin\BundleController`, `Minn\Admin\Diagnostics`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Auth\Authenticator`, `Minn\Auth\SignIn`, `Minn\Autoloader`, `Minn\Engine`, `Minn\Extension\Seams`, `Minn\Front\AssetsController`, `Minn\Front\Canonical`, `Minn\Front\CommentPostController`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\ProbeController`, `Minn\Front\Resolver`, `Minn\Front\SitemapController`, `Minn\Http\Kernel`, `Minn\Http\Router`, `Minn\Login\LoginController`, `Minn\Media\Upload`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlocksController`, `Minn\Rest\Caller`, `Minn\Rest\CommentsController`, `Minn\Rest\Context`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\Embed`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\ListQuery`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\NavigationController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Reply`, `Minn\Rest\RevisionsController`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\TypesController`, `Minn\Rest\UsersController`, `Minn\Runtime\Runtime`
+Used by: `Minn\Admin\AppController`, `Minn\Admin\BundleController`, `Minn\Admin\Diagnostics`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Auth\Authenticator`, `Minn\Auth\SignIn`, `Minn\Autoloader`, `Minn\Engine`, `Minn\Extension\Seams`, `Minn\Front\AssetsController`, `Minn\Front\Canonical`, `Minn\Front\CommentPostController`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\ProbeController`, `Minn\Front\Resolver`, `Minn\Front\SitemapController`, `Minn\Http\Kernel`, `Minn\Http\Router`, `Minn\Login\LoginController`, `Minn\Media\Upload`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlocksController`, `Minn\Rest\Caller`, `Minn\Rest\CommentsController`, `Minn\Rest\Context`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\Embed`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\ListQuery`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\NavigationController`, `Minn\Rest\PluginsController`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Reply`, `Minn\Rest\RevisionsController`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\TypesController`, `Minn\Rest\UsersController`, `Minn\Runtime\Runtime`
 
 ```php
 __construct(Minn\Http\Method $method, string $path, array $query, array $headers, array $cookies, string $body, bool $secure, string $host, array $form = array ( ), array $files = array ( ), string $remoteAddress = '', array $server = array ( ))
@@ -370,9 +432,10 @@ Writes the status, the headers, the cookies, and the body, and ends the request.
 
 `final readonly class Minn\Http\Route` · `public/minn/src/Minn/Http/Route.php`
 
-Declares a handler method as a route. The capability requirement lives
-here, as metadata the router enforces before the handler runs, so the
-authorization surface of the engine is a grep away.
+Declares a handler method as a route. The policy lives here, as
+metadata the router enforces before the handler runs, so the
+authorization surface of the engine is a grep away; a route with no
+policy is one the ratchet in the style suite counts down.
 
 Patterns: "/wp/v2/posts/{id}" captures one segment, "{id:\d+}" constrains
 it, and "/{path*}" captures the rest of the path (slashes included).
@@ -380,12 +443,12 @@ it, and "/{path*}" captures the rest of the path (slashes included).
 Used by: `Minn\Admin\AppController`, `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Front\AssetsController`, `Minn\Front\CommentPostController`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\ProbeController`, `Minn\Front\SitemapController`, `Minn\Http\Router`, `Minn\Login\LoginController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentsController`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\NavigationController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\TypesController`, `Minn\Rest\UsersController`
 
 ```php
-__construct(Minn\Http\Method $method, string $pattern, ?string $cap = NULL)
+__construct(Minn\Http\Method $method, string $pattern, ?Minn\Http\Policy $policy = NULL)
 ```
 
 - readonly `Minn\Http\Method $method`
 - readonly `string $pattern`
-- readonly `?string $cap`
+- readonly `?Minn\Http\Policy $policy`
 
 ### `regex(): string`
 
@@ -409,15 +472,17 @@ Used by: `Minn\Http\Router`, `Minn\Rest\DeclaredPostsController`
 `final class Minn\Http\Router` · `public/minn/src/Minn/Http/Router.php`
 
 Matches a request to a #[Route] on one of the registered handler
-objects, enforces the declared capability, and invokes the method with
-the request plus the named pattern captures.
+objects, has the gate judge the route's policy, and invokes the method
+with the request plus the named pattern captures. The gate is the one
+thing a router cannot be built without: a policy nobody judges is a
+route nobody may call.
 
 Used by: `Minn\Engine`, `Minn\Http\Kernel`, `Minn\Rest\Api`, `Minn\Rest\Embed`, `Minn\Rest\EngineRoutes`, `Minn\Rest\IndexController`
 
 ```php
-__construct(?Closure $gate = NULL)
+__construct(Closure $gate)
 ```
-- `@param Closure(string $cap, Request $request): void $gate throws RestError when the capability is missing`
+- `@param Closure(Policy $policy, Request $request, array<string, string> $captures): void $gate throws when the policy refuses the caller`
 
 
 ### `register(object ...$handlers): self`
@@ -429,6 +494,12 @@ Registers every #[Route] method of the given handlers; returns the router for ch
 The registered routes, for an index: pattern => methods. @return array<string, list<string>>
 
 - `@return array<string, list<string>>`
+
+### `table(): array`
+
+Every registered route with its policy, for the docs and the ratchet.
+
+- `@return list<array{method: string, pattern: string, policy: ?Policy, handler: string}>`
 
 ### `dispatch(Minn\Http\Request $request): ?Minn\Http\Response`
 

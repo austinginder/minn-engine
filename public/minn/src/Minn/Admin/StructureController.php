@@ -8,6 +8,8 @@ use Minn\Db;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
+use Minn\Http\Access;
+use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\Rest\Caller;
 use Minn\Rest\Reply;
@@ -29,10 +31,9 @@ final readonly class StructureController
     }
 
     /** The taxonomies of each public type, for the Structure view. */
-    #[Route(Method::Get, '/minn-admin/v1/term-taxonomies')]
+    #[Route(Method::Get, '/minn-admin/v1/term-taxonomies', policy: new Policy(Access::Floor))]
     public function termTaxonomies(Request $request): Response
     {
-        $this->caller->requireFloor();
         $public = $this->publicTypes();
         $out = [];
         foreach ($this->taxonomies->all() as $slug => $taxonomy) {
@@ -64,10 +65,9 @@ final readonly class StructureController
     }
 
     /** The Structure view's post types: core and site-declared, with their live counts. */
-    #[Route(Method::Get, '/minn-admin/v1/post-types')]
+    #[Route(Method::Get, '/minn-admin/v1/post-types', policy: new Policy(Access::Floor))]
     public function postTypes(Request $request): Response
     {
-        $this->caller->requireFloor();
         $this->caller->requireCap('manage_options');
         $admin = (array) json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/types-admin.json'), true);
         $out = [];
@@ -107,10 +107,9 @@ final readonly class StructureController
     }
 
     /** Every taxonomy with its counts. */
-    #[Route(Method::Get, '/minn-admin/v1/taxonomies')]
+    #[Route(Method::Get, '/minn-admin/v1/taxonomies', policy: new Policy(Access::Floor))]
     public function taxonomies(Request $request): Response
     {
-        $this->caller->requireFloor();
         $this->caller->requireCap('manage_options');
         $out = [];
         foreach ($this->taxonomies->all() as $slug => $taxonomy) {
