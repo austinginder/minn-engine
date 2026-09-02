@@ -94,4 +94,22 @@ recorded gap.
 - A malformed JSON body should 400 (`rest_invalid_json`) before auth, as
   core does.
 - `minn_attached_to` is always null (parent identity payload not built).
-- Real content sniffing (finfo) vs the extension map.
+- Content sniffing beyond images (finfo for PDFs, audio, video) vs the
+  extension map.
+
+## What the bytes decide (images)
+
+For an image name the bytes are read before anything is stored. Bytes
+that are not an image the library knows are refused with status 500 and
+the message "Sorry, you are not allowed to upload this file type."; the
+code names the transport, `rest_upload_unknown_error` for a multipart
+field and `rest_upload_sideload_error` for a raw body, as the reference
+answers each. Bytes of another image type are accepted and the file is
+stored under that type's extension (a GIF uploaded as `x.png` becomes
+`x.gif`, mime `image/gif`), as the reference stores it. The decode
+itself is bounded: the header's dimensions are checked against the
+memory the request has left before a pixel is decoded, so a small file
+claiming a huge canvas yields an attachment with no sub-sizes instead of
+a dead request, and the sizes are made before the row is inserted so a
+failure never leaves a headless attachment. A size name that leaves the
+file's own folder is ignored on delete.

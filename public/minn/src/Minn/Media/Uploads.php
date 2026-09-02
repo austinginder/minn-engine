@@ -6,6 +6,7 @@ namespace Minn\Media;
 
 use Minn\Content\Site;
 use Minn\Front\Permalinks;
+use Minn\RestError;
 
 /** The uploads directory: paths, URLs, the allowed types, and landing a file. */
 final readonly class Uploads
@@ -99,20 +100,23 @@ final readonly class Uploads
             $try = "{$stem}-{$n}.{$ext}";
         }
         $path = "{$dir}/{$try}";
-        if ($movedFrom !== null) {
-            rename($movedFrom, $path);
-        } else {
-            file_put_contents($path, (string) $raw);
+        $written = $movedFrom !== null ? @rename($movedFrom, $path) : @file_put_contents($path, (string) $raw) !== false;
+        if (!$written || !is_file($path)) {
+            throw new RestError('rest_upload_unknown_error', 'The file could not be written to the uploads folder.', 500);
         }
         return "{$subdir}/{$try}";
     }
 
-    /** Removes the original and every generated size. */
+    /** Removes the original and every generated size; a size name that leaves the file's own folder is ignored. */
     public function remove(string $relativePath, array $sizes): void
     {
         $dir = dirname($this->pathFor($relativePath));
         foreach ($sizes as $size) {
-            @unlink($dir . '/' . $size['file']);
+            $name = (string) ($size['file'] ?? '');
+            if ($name === '' || str_contains($name, '/') || str_contains($name, '\\') || str_contains($name, '..')) {
+                continue;
+            }
+            @unlink($dir . '/' . $name);
         }
         @unlink($this->pathFor($relativePath));
     }

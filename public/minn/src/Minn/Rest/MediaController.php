@@ -139,8 +139,22 @@ final readonly class MediaController
         if ($upload === null) {
             throw new RestError('rest_upload_no_data', 'No data supplied.', 400);
         }
+        // The refusal code names the transport: a multipart field is an "unknown
+        // error", a raw body a "sideload error"; the message and status are one.
+        $refused = static fn (): RestError => new RestError($upload->movedFrom === null ? 'rest_upload_sideload_error' : 'rest_upload_unknown_error', 'Sorry, you are not allowed to upload this file type.', 500);
         if ($upload->mime() === null) {
-            throw new RestError('rest_upload_unknown_error', 'Sorry, you are not allowed to upload this file type.', 500);
+            throw $refused();
+        }
+        if ($upload->isImage()) {
+            // The bytes decide: non-image bytes under an image name are refused, and a
+            // GIF named .png is stored as .gif, both as the reference answers.
+            $sniffed = $upload->sniffedMime();
+            if ($sniffed === null) {
+                throw $refused();
+            }
+            if ($sniffed !== $upload->mime()) {
+                $upload = $upload->renamedFor($sniffed);
+            }
         }
         $id = $this->library->attach($upload, $userId);
         return Reply::item($this->object->build($this->posts->find($id), Context::Edit), Fields::fromQuery($request->query), 201)

@@ -17,9 +17,18 @@ final readonly class Canvas
     {
     }
 
-    /** A canvas from an image file, or null when it cannot be decoded. */
+    /**
+     * A canvas from an image file, or null when it cannot be decoded or
+     * would not fit in memory. The header names the dimensions before a
+     * pixel is decoded, so a small file that claims a huge canvas is
+     * refused instead of taking the request down.
+     */
     public static function open(string $path): ?self
     {
+        $size = @getimagesize($path);
+        if ($size === false || !self::affordable((int) $size[0], (int) $size[1])) {
+            return null;
+        }
         $bytes = @file_get_contents($path);
         $image = $bytes === false ? false : @imagecreatefromstring($bytes);
         if (!$image) {
@@ -28,6 +37,40 @@ final readonly class Canvas
         imagealphablending($image, false);
         imagesavealpha($image, true);
         return new self($image, imagesx($image), imagesy($image));
+    }
+
+    /**
+     * Whether a bitmap of these dimensions fits the memory left to this
+     * request: five bytes a pixel for the decoded image (GD keeps four and
+     * a little), twice over because every operation makes a second canvas,
+     * under what memory_limit leaves after what is already in use.
+     */
+    private static function affordable(int $width, int $height): bool
+    {
+        if ($width <= 0 || $height <= 0) {
+            return false;
+        }
+        $needed = $width * $height * 5 * 2;
+        $limit = self::memoryLimit();
+        $room = $limit === null ? 512 * 1048576 : $limit - memory_get_usage(true) - 16 * 1048576;
+        return $needed <= $room;
+    }
+
+    /** memory_limit in bytes, or null when it is unlimited. */
+    private static function memoryLimit(): ?int
+    {
+        $raw = trim((string) ini_get('memory_limit'));
+        if ($raw === '' || $raw === '-1') {
+            return null;
+        }
+        $unit = strtolower(substr($raw, -1));
+        $number = (int) $raw;
+        return match ($unit) {
+            'g' => $number * 1073741824,
+            'm' => $number * 1048576,
+            'k' => $number * 1024,
+            default => $number,
+        };
     }
 
     /**

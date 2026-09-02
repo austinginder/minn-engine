@@ -47439,7 +47439,7 @@
             "namespace": "Minn\\Media",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Media/Canvas.php",
-            "lines": 98,
+            "lines": 141,
             "doc": "One GD bitmap and the operations the media layer needs on it. Every\noperation returns a new canvas; alpha is preserved throughout, which is\nwhat makes PNG and WebP sub-sizes match the reference's.",
             "implements": [],
             "extends": null,
@@ -47516,7 +47516,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "open(string $path): ?self",
-                    "doc": "A canvas from an image file, or null when it cannot be decoded.",
+                    "doc": "A canvas from an image file, or null when it cannot be decoded or\nwould not fit in memory. The header names the dimensions before a\npixel is decoded, so a small file that claims a huge canvas is\nrefused instead of taking the request down.",
                     "shapes": [],
                     "params": [
                         {
@@ -47527,8 +47527,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 21,
-                    "end": 31
+                    "line": 26,
+                    "end": 40
                 },
                 {
                     "routes": [],
@@ -47549,8 +47549,8 @@
                             "doc": "dst x, dst y, src x, src y, dst w, dst h, src w, src h (the GD argument order)"
                         }
                     ],
-                    "line": 38,
-                    "end": 46
+                    "line": 81,
+                    "end": 89
                 },
                 {
                     "routes": [],
@@ -47604,8 +47604,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 49,
-                    "end": 52
+                    "line": 92,
+                    "end": 95
                 },
                 {
                     "routes": [],
@@ -47624,8 +47624,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 55,
-                    "end": 59
+                    "line": 98,
+                    "end": 102
                 },
                 {
                     "routes": [],
@@ -47636,8 +47636,8 @@
                     "doc": "A canvas mirrored on either axis.",
                     "shapes": [],
                     "params": [],
-                    "line": 62,
-                    "end": 65
+                    "line": 105,
+                    "end": 108
                 },
                 {
                     "routes": [],
@@ -47648,8 +47648,8 @@
                     "doc": "A canvas mirrored left to right.",
                     "shapes": [],
                     "params": [],
-                    "line": 68,
-                    "end": 71
+                    "line": 111,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -47660,8 +47660,8 @@
                     "doc": "An untouched copy of the canvas.",
                     "shapes": [],
                     "params": [],
-                    "line": 74,
-                    "end": 77
+                    "line": 117,
+                    "end": 120
                 },
                 {
                     "routes": [],
@@ -47694,8 +47694,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 87,
-                    "end": 94
+                    "line": 130,
+                    "end": 137
                 },
                 {
                     "routes": [],
@@ -47721,8 +47721,47 @@
                             "doc": ""
                         }
                     ],
-                    "line": 97,
-                    "end": 100
+                    "line": 140,
+                    "end": 143
+                },
+                {
+                    "routes": [],
+                    "name": "affordable",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "affordable(int $width, int $height): bool",
+                    "doc": "Whether a bitmap of these dimensions fits the memory left to this\nrequest: five bytes a pixel for the decoded image (GD keeps four and\na little), twice over because every operation makes a second canvas,\nunder what memory_limit leaves after what is already in use.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "width",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "height",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 48,
+                    "end": 57
+                },
+                {
+                    "routes": [],
+                    "name": "memoryLimit",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "memoryLimit(): ?int",
+                    "doc": "memory_limit in bytes, or null when it is unlimited.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 60,
+                    "end": 74
                 },
                 {
                     "routes": [],
@@ -47741,8 +47780,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 79,
-                    "end": 84
+                    "line": 122,
+                    "end": 127
                 },
                 {
                     "routes": [],
@@ -47775,8 +47814,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 102,
-                    "end": 110
+                    "line": 145,
+                    "end": 153
                 }
             ]
         },
@@ -48560,7 +48599,7 @@
             "namespace": "Minn\\Media",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Media/Upload.php",
-            "lines": 52,
+            "lines": 76,
             "doc": "One file arriving for the library, on either transport: a multipart\nfield named \"file\" (a temporary upload to move) or a raw body whose\nContent-Disposition names the file. The parent is read from the same\nrequest, wherever the client put it.",
             "implements": [],
             "extends": null,
@@ -48685,6 +48724,38 @@
                 },
                 {
                     "routes": [],
+                    "name": "sniffedMime",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "sniffedMime(): ?string",
+                    "doc": "The image type the bytes themselves say they are, or null when they\nare not an image the library knows. What the name claims is checked\nagainst this: the reference refuses non-image bytes under an image\nname and renames a file whose bytes are a different image type.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 54,
+                    "end": 59
+                },
+                {
+                    "routes": [],
+                    "name": "renamedFor",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "renamedFor(string $mime): self",
+                    "doc": "The same upload under a name whose extension matches a mime type.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "mime",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 62,
+                    "end": 70
+                },
+                {
+                    "routes": [],
                     "name": "isImage",
                     "static": false,
                     "visibility": "public",
@@ -48692,8 +48763,8 @@
                     "doc": "Whether the file is an image the engine will make sizes for; SVG is not.",
                     "shapes": [],
                     "params": [],
-                    "line": 49,
-                    "end": 53
+                    "line": 73,
+                    "end": 77
                 },
                 {
                     "routes": [],
@@ -48712,8 +48783,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 56,
-                    "end": 65
+                    "line": 80,
+                    "end": 89
                 }
             ]
         },
@@ -48723,13 +48794,14 @@
             "namespace": "Minn\\Media",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Media/Uploads.php",
-            "lines": 169,
+            "lines": 172,
             "doc": "The uploads directory: paths, URLs, the allowed types, and landing a file.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Content\\Site",
-                "Minn\\Front\\Permalinks"
+                "Minn\\Front\\Permalinks",
+                "Minn\\RestError"
             ],
             "usedBy": [
                 "Minn\\Blocks\\ImageTags",
@@ -48767,8 +48839,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 27,
-                "end": 32
+                "line": 28,
+                "end": 33
             },
             "cases": [],
             "constants": [
@@ -48818,8 +48890,8 @@
                     "doc": "The uploads directory on disk.",
                     "shapes": [],
                     "params": [],
-                    "line": 35,
-                    "end": 38
+                    "line": 36,
+                    "end": 39
                 },
                 {
                     "routes": [],
@@ -48830,8 +48902,8 @@
                     "doc": "The uploads directory's URL.",
                     "shapes": [],
                     "params": [],
-                    "line": 41,
-                    "end": 44
+                    "line": 42,
+                    "end": 45
                 },
                 {
                     "routes": [],
@@ -48850,8 +48922,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 47,
-                    "end": 50
+                    "line": 48,
+                    "end": 51
                 },
                 {
                     "routes": [],
@@ -48870,8 +48942,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 53,
-                    "end": 56
+                    "line": 54,
+                    "end": 57
                 },
                 {
                     "routes": [],
@@ -48890,8 +48962,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 65,
-                    "end": 78
+                    "line": 66,
+                    "end": 79
                 },
                 {
                     "routes": [],
@@ -48924,7 +48996,7 @@
                             "doc": ""
                         }
                     ],
-                    "line": 86,
+                    "line": 87,
                     "end": 108
                 },
                 {
@@ -48933,7 +49005,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "remove(string $relativePath, array $sizes): void",
-                    "doc": "Removes the original and every generated size.",
+                    "doc": "Removes the original and every generated size; a size name that leaves the file's own folder is ignored.",
                     "shapes": [],
                     "params": [
                         {
@@ -48952,7 +49024,7 @@
                         }
                     ],
                     "line": 111,
-                    "end": 118
+                    "end": 122
                 },
                 {
                     "routes": [],
@@ -48989,8 +49061,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 128,
-                    "end": 153
+                    "line": 132,
+                    "end": 157
                 },
                 {
                     "routes": [],
@@ -49060,8 +49132,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 162,
-                    "end": 178
+                    "line": 166,
+                    "end": 182
                 }
             ]
         },
@@ -49071,7 +49143,7 @@
             "namespace": "Minn\\Media",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Media/Writer.php",
-            "lines": 94,
+            "lines": 96,
             "doc": "The writes the media library makes. An Upload becomes an attachment: the\nfile lands in the dated uploads directory under a unique name, the row is\ninserted with the stored name as its title and slug, and an image gets\nits sub-sizes and the serialized metadata blob. Edits stamp the row\nmodified; removal takes the files with the row.",
             "implements": [],
             "extends": null,
@@ -49210,7 +49282,7 @@
                         }
                     ],
                     "line": 32,
-                    "end": 70
+                    "end": 72
                 },
                 {
                     "routes": [],
@@ -49236,8 +49308,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 73,
-                    "end": 81
+                    "line": 75,
+                    "end": 83
                 },
                 {
                     "routes": [],
@@ -49263,8 +49335,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 84,
-                    "end": 87
+                    "line": 86,
+                    "end": 89
                 },
                 {
                     "routes": [],
@@ -49283,8 +49355,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 90,
-                    "end": 97
+                    "line": 92,
+                    "end": 99
                 },
                 {
                     "routes": [],
@@ -49312,8 +49384,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 100,
-                    "end": 112
+                    "line": 102,
+                    "end": 114
                 }
             ]
         },
@@ -50509,6 +50581,7 @@
                 "Minn\\Cli\\ThemeCommand",
                 "Minn\\Http\\Kernel",
                 "Minn\\Http\\Router",
+                "Minn\\Media\\Uploads",
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\BlocksController",
@@ -55092,7 +55165,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/MediaController.php",
-            "lines": 185,
+            "lines": 199,
             "doc": "wp/v2/media: list, single, upload on both transports (multipart field\n\"file\", or a raw body with Content-Disposition), field edits, and force\ndelete with the files.",
             "implements": [],
             "extends": null,
@@ -55285,7 +55358,7 @@
                         }
                     ],
                     "line": 128,
-                    "end": 148
+                    "end": 162
                 },
                 {
                     "routes": [
@@ -55315,8 +55388,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 154,
-                    "end": 181
+                    "line": 168,
+                    "end": 195
                 },
                 {
                     "routes": [
@@ -55344,8 +55417,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 185,
-                    "end": 198
+                    "line": 199,
+                    "end": 212
                 },
                 {
                     "routes": [],
@@ -55413,8 +55486,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 200,
-                    "end": 207
+                    "line": 214,
+                    "end": 221
                 }
             ]
         },

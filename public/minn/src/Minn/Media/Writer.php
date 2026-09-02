@@ -37,6 +37,8 @@ final readonly class Writer
         $title = preg_replace('/\.[^.]+$/', '', basename($relative));
         $now = $this->site->localNow();
         $nowGmt = gmdate('Y-m-d H:i:s');
+        // The sizes are made before the row exists: a decode that fails leaves files to sweep, never a headless attachment.
+        $metadata = $upload->isImage() ? Metadata::serialize($this->imageMetadata($relative, $mime)) : null;
 
         $id = $this->posts->insert([
             'post_author' => $authorId,
@@ -63,8 +65,8 @@ final readonly class Writer
             'comment_count' => 0,
         ]);
         $this->posts->setMeta($id, '_wp_attached_file', $relative);
-        if ($upload->isImage()) {
-            $this->posts->setMeta($id, '_wp_attachment_metadata', Metadata::serialize($this->imageMetadata($relative, $mime)));
+        if ($metadata !== null) {
+            $this->posts->setMeta($id, '_wp_attachment_metadata', $metadata);
         }
         return $id;
     }

@@ -4,15 +4,15 @@ uploads, image sizes and attachment metadata
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Canvas`](#canvas) | final readonly class | 98 | One GD bitmap and the operations the media layer needs on it. Every |
+| [`Canvas`](#canvas) | final readonly class | 141 | One GD bitmap and the operations the media layer needs on it. Every |
 | [`Gallery`](#gallery) | final class | 54 | The classic `[gallery]` shortcode's markup. Every gallery on a page is |
 | [`Images`](#images) | final readonly class | 67 | GD sub-size generation from the size options the site stores. |
 | [`Kind`](#kind) | final class | 53 | Whether an attachment is an image, audio, video, or a given extension, judged by its MIME type first and its file extension second. |
 | [`Metadata`](#metadata) | final class | 111 | The _wp_attachment_metadata blob: parsed by scanning for the shapes it |
 | [`Sizing`](#sizing) | final class | 207 | The image size arithmetic the media functions share: the crop or scale a |
-| [`Upload`](#upload) | final readonly class | 52 | One file arriving for the library, on either transport: a multipart |
-| [`Uploads`](#uploads) | final readonly class | 169 | The uploads directory: paths, URLs, the allowed types, and landing a file. |
-| [`Writer`](#writer) | final readonly class | 94 | The writes the media library makes. An Upload becomes an attachment: the |
+| [`Upload`](#upload) | final readonly class | 76 | One file arriving for the library, on either transport: a multipart |
+| [`Uploads`](#uploads) | final readonly class | 172 | The uploads directory: paths, URLs, the allowed types, and landing a file. |
+| [`Writer`](#writer) | final readonly class | 96 | The writes the media library makes. An Upload becomes an attachment: the |
 
 ## Canvas
 
@@ -29,7 +29,10 @@ Used by: `Minn\Media\Images`
 
 ### static `open(string $path): ?self`
 
-A canvas from an image file, or null when it cannot be decoded.
+A canvas from an image file, or null when it cannot be decoded or
+would not fit in memory. The header names the dimensions before a
+pixel is decoded, so a small file that claims a huge canvas is
+refused instead of taking the request down.
 
 ### `resample(array $box): self`
 
@@ -65,7 +68,7 @@ Writes the bitmap in the given format; the directory is created when missing.
 
 Writes the image to the output in a format, at a quality.
 
-Internals: `flipped()` (private, line 79), `encode()` (private, line 102)
+Internals: `affordable()` (private, line 48), `memoryLimit()` (private, line 60), `flipped()` (private, line 122), `encode()` (private, line 145)
 
 
 ## Gallery
@@ -257,6 +260,17 @@ Null when the request carries no file.
 
 The mime type the extension maps to, or null for one the library refuses.
 
+### `sniffedMime(): ?string`
+
+The image type the bytes themselves say they are, or null when they
+are not an image the library knows. What the name claims is checked
+against this: the reference refuses non-image bytes under an image
+name and renames a file whose bytes are a different image type.
+
+### `renamedFor(string $mime): self`
+
+The same upload under a name whose extension matches a mime type.
+
 ### `isImage(): bool`
 
 Whether the file is an image the engine will make sizes for; SVG is not.
@@ -311,7 +325,7 @@ the relative path ("2026/08/name.png").
 
 ### `remove(string $relativePath, array $sizes): void`
 
-Removes the original and every generated size.
+Removes the original and every generated size; a size name that leaves the file's own folder is ignored.
 
 ### static `attachmentFiles(string $file, array $meta, ?array $backupSizes): array`
 
@@ -364,5 +378,5 @@ Sets an attachment's alt text.
 
 Removes an attachment: its files, every generated size, its meta, and its row.
 
-Internals: `imageMetadata()` (private, line 100)
+Internals: `imageMetadata()` (private, line 102)
 

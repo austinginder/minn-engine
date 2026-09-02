@@ -45,6 +45,30 @@ final readonly class Upload
         return Uploads::MIMES[strtolower(pathinfo($this->filename, PATHINFO_EXTENSION))] ?? null;
     }
 
+    /**
+     * The image type the bytes themselves say they are, or null when they
+     * are not an image the library knows. What the name claims is checked
+     * against this: the reference refuses non-image bytes under an image
+     * name and renames a file whose bytes are a different image type.
+     */
+    public function sniffedMime(): ?string
+    {
+        $info = $this->movedFrom !== null ? @getimagesize($this->movedFrom) : @getimagesizefromstring((string) $this->raw);
+        $mime = is_array($info) ? (string) ($info['mime'] ?? '') : '';
+        return in_array($mime, Uploads::MIMES, true) ? $mime : null;
+    }
+
+    /** The same upload under a name whose extension matches a mime type. */
+    public function renamedFor(string $mime): self
+    {
+        $extension = array_search($mime, Uploads::MIMES, true);
+        if (!is_string($extension)) {
+            return $this;
+        }
+        $stem = (string) preg_replace('/\.[^.]+$/', '', $this->filename);
+        return new self("{$stem}.{$extension}", $this->movedFrom, $this->raw, $this->parent);
+    }
+
     /** Whether the file is an image the engine will make sizes for; SVG is not. */
     public function isImage(): bool
     {

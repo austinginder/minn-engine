@@ -191,6 +191,23 @@ $mid = (int) ( $mp_up['id'] ?? 0 );
 $d = minn_test_diff( md_norm( $back ), md_norm( $mp_up ) );
 check( 200 === $st && null === $d, 'multipart upload reads back identically too', (string) $d );
 
+// The bytes decide the type: non-image bytes under an image name are refused, and a GIF
+// named .png is stored as .gif, on both stacks alike.
+$fake = sys_get_temp_dir() . '/minn-media-fake-' . getmypid() . '.png';
+file_put_contents( $fake, '<?php echo 1; ?>' );
+$gifAsPng = sys_get_temp_dir() . '/minn-media-gif-' . getmypid() . '.png';
+file_put_contents( $gifAsPng, base64_decode( 'R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==' ) );
+$bytes = array();
+foreach ( array( $ENGINE => 'engine', $REF => 'reference' ) as $base => $side ) {
+	[ $st, $b ] = md_upload( $base, $admin, $fake, 'minn-fake-bytes.png' );
+	[ $st2, $b2 ] = md_upload( $base, $admin, $gifAsPng, 'minn-gif-bytes.png' );
+	$bytes[ $side ] = array( $st, $b['code'] ?? '', $st2, $b2['mime_type'] ?? '', pathinfo( (string) ( $b2['source_url'] ?? '' ), PATHINFO_EXTENSION ) );
+}
+@unlink( $fake );
+@unlink( $gifAsPng );
+check( $bytes['engine'] === $bytes['reference'] && 500 === $bytes['engine'][0] && 'rest_upload_sideload_error' === $bytes['engine'][1], 'non-image bytes under a .png name are refused as the reference refuses them (the raw transport says sideload)', json_encode( $bytes ) );
+check( 201 === $bytes['engine'][2] && 'image/gif' === $bytes['engine'][3] && 'gif' === $bytes['engine'][4], 'GIF bytes under a .png name are stored as .gif, as the reference stores them', json_encode( $bytes ) );
+
 // 3. Field edits round-trip across stacks.
 [ $st, $b ] = md_fetch( $ENGINE, $Q . '%2F' . $bid, $admin, 'POST', json_encode( array( 'alt_text' => 'Engine alt', 'title' => 'Engine title', 'caption' => 'A caption' ) ) );
 check( 200 === $st && 'Engine alt' === ( $b['alt_text'] ?? '' ), 'engine edits alt/title/caption' );
