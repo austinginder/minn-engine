@@ -24,7 +24,7 @@ final readonly class FrontController
         private Resolver $resolver,
         private Renderer $renderer,
         private ?PageRenderer $theme = null,
-        private ?ProbeController $probes = null,
+        private ?FeedController $feeds = null,
         private ?Cron $cron = null,
         private ?ClassicRenderer $classic = null,
     ) {
@@ -52,8 +52,8 @@ final readonly class FrontController
         if ($resolution->kind === Kind::Redirect) {
             return Response::redirect((string) $resolution->location, $resolution->status);
         }
-        if ($this->probes !== null && $request->has('feed') && $resolution->kind !== Kind::NotFound) {
-            return $this->probes->queryFeed($request, $resolution, (string) $request->query('feed', 'rss2'));
+        if ($this->feeds !== null && $request->has('feed') && $resolution->kind !== Kind::NotFound) {
+            return $this->feeds->queryFeed($request, $resolution, (string) $request->query('feed', 'rss2'));
         }
         $html = $this->theme?->render($resolution, $this->renderer->bodyClasses($resolution), $this->renderer->title($resolution))
             ?? $this->classic?->render($resolution, $this->renderer->bodyClasses($resolution), $this->renderer->title($resolution))

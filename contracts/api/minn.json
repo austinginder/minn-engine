@@ -1291,7 +1291,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/BootPayload.php",
-            "lines": 242,
+            "lines": 234,
             "doc": "The window.MINN boot payload, assembled from the engine: the keys app.js\nneeds to boot and drive the wp/v2 surface, with capabilities from the\nengine's own model.",
             "implements": [],
             "extends": null,
@@ -1303,8 +1303,8 @@
                 "Minn\\Auth\\Authenticated",
                 "Minn\\Auth\\Capabilities",
                 "Minn\\Auth\\Nonce",
-                "Minn\\Content\\Posts",
                 "Minn\\Content\\Site",
+                "Minn\\Content\\SiteIcon",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Runtime\\Runtime"
             ],
@@ -1313,7 +1313,7 @@
                 "Minn\\Engine"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Content\\Site $site, Minn\\Front\\Permalinks $permalinks, Minn\\Auth\\Capabilities $capabilities, Minn\\Admin\\App $app, string $engineVersion, Minn\\Admin\\Appearance $appearance, Minn\\Admin\\HiddenIntegrations $hidden, Minn\\Content\\Posts $posts, bool $blockTheme = false, ?Minn\\Admin\\Translations $translations = NULL)",
+                "signature": "__construct(Minn\\Content\\Site $site, Minn\\Front\\Permalinks $permalinks, Minn\\Auth\\Capabilities $capabilities, Minn\\Admin\\App $app, string $engineVersion, Minn\\Admin\\Appearance $appearance, Minn\\Admin\\HiddenIntegrations $hidden, Minn\\Content\\SiteIcon $icon, bool $blockTheme = false, ?Minn\\Admin\\Translations $translations = NULL)",
                 "doc": "",
                 "shapes": [],
                 "params": [
@@ -1367,8 +1367,8 @@
                         "doc": ""
                     },
                     {
-                        "name": "posts",
-                        "type": "Minn\\Content\\Posts",
+                        "name": "icon",
+                        "type": "Minn\\Content\\SiteIcon",
                         "shape": "",
                         "default": null,
                         "doc": ""
@@ -1466,8 +1466,8 @@
                     "promoted": true
                 },
                 {
-                    "name": "posts",
-                    "type": "Minn\\Content\\Posts",
+                    "name": "icon",
+                    "type": "Minn\\Content\\SiteIcon",
                     "readonly": true,
                     "static": false,
                     "doc": "",
@@ -1646,18 +1646,6 @@
                 },
                 {
                     "routes": [],
-                    "name": "siteIcon",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "siteIcon(): string",
-                    "doc": "The site icon as the app shows it in the sidebar: the attachment file behind the site_icon option.",
-                    "shapes": [],
-                    "params": [],
-                    "line": 230,
-                    "end": 235
-                },
-                {
-                    "routes": [],
                     "name": "adapterSlices",
                     "static": false,
                     "visibility": "private",
@@ -1665,8 +1653,8 @@
                     "doc": "What Minn Admin's own adapters contribute when the plugin runs as code\non the runtime: plugin surfaces (Tools), editor panels, design\nsources, editor commands, block forms. Absent, the app's fallbacks apply.",
                     "shapes": [],
                     "params": [],
-                    "line": 242,
-                    "end": 261
+                    "line": 234,
+                    "end": 253
                 }
             ]
         },
@@ -2433,27 +2421,25 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/Diagnostics.php",
-            "lines": 402,
+            "lines": 360,
             "doc": "The System view's facts about this install: the engine, PHP, the\ndatabase, and the server, with the health checks a site owner acts on.\nEvery number is read live; nothing is cached or fetched from outside.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Admin\\InstalledSoftware",
                 "Minn\\Admin\\Logs",
-                "Minn\\Content\\Inventory",
                 "Minn\\Content\\Site",
                 "Minn\\Db",
-                "Minn\\Extension\\Loader",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Http\\Request",
-                "Minn\\Mail\\MailSettings",
-                "Minn\\Support\\FileHeaders"
+                "Minn\\Mail\\MailSettings"
             ],
             "usedBy": [
                 "Minn\\Admin\\SystemController",
                 "Minn\\Rest\\Services"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Db $db, Minn\\Content\\Site $site, Minn\\Front\\Permalinks $permalinks, Minn\\Content\\Inventory $inventory, Minn\\Extension\\Loader $extensions, Minn\\Admin\\Logs $logs, string $engineVersion, string $webroot)",
+                "signature": "__construct(Minn\\Db $db, Minn\\Content\\Site $site, Minn\\Front\\Permalinks $permalinks, Minn\\Admin\\InstalledSoftware $software, Minn\\Admin\\Logs $logs, string $engineVersion, string $webroot)",
                 "doc": "",
                 "shapes": [],
                 "params": [
@@ -2479,15 +2465,8 @@
                         "doc": ""
                     },
                     {
-                        "name": "inventory",
-                        "type": "Minn\\Content\\Inventory",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "extensions",
-                        "type": "Minn\\Extension\\Loader",
+                        "name": "software",
+                        "type": "Minn\\Admin\\InstalledSoftware",
                         "shape": "",
                         "default": null,
                         "doc": ""
@@ -2515,8 +2494,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 25,
-                "end": 35
+                "line": 22,
+                "end": 31
             },
             "cases": [],
             "constants": [
@@ -2556,17 +2535,8 @@
                     "promoted": true
                 },
                 {
-                    "name": "inventory",
-                    "type": "Minn\\Content\\Inventory",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "extensions",
-                    "type": "Minn\\Extension\\Loader",
+                    "name": "software",
+                    "type": "Minn\\Admin\\InstalledSoftware",
                     "readonly": true,
                     "static": false,
                     "doc": "",
@@ -2619,8 +2589,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 38,
-                    "end": 59
+                    "line": 34,
+                    "end": 55
                 },
                 {
                     "routes": [],
@@ -2631,8 +2601,8 @@
                     "doc": "The wp-config debug constants as they stand; the engine never rewrites the file.",
                     "shapes": [],
                     "params": [],
-                    "line": 174,
-                    "end": 207
+                    "line": 170,
+                    "end": 203
                 },
                 {
                     "routes": [],
@@ -2643,8 +2613,8 @@
                     "doc": "Every scheduled post as a one-off event, soonest first.",
                     "shapes": [],
                     "params": [],
-                    "line": 210,
-                    "end": 226
+                    "line": 206,
+                    "end": 222
                 },
                 {
                     "routes": [],
@@ -2655,8 +2625,8 @@
                     "doc": "The autoloaded options: the summary and the largest rows.",
                     "shapes": [],
                     "params": [],
-                    "line": 229,
-                    "end": 248
+                    "line": 225,
+                    "end": 244
                 },
                 {
                     "routes": [],
@@ -2700,8 +2670,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 102
+                    "line": 64,
+                    "end": 98
                 },
                 {
                     "routes": [],
@@ -2729,8 +2699,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 105,
-                    "end": 123
+                    "line": 101,
+                    "end": 119
                 },
                 {
                     "routes": [],
@@ -2743,8 +2713,8 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 126,
-                    "end": 146
+                    "line": 122,
+                    "end": 142
                 },
                 {
                     "routes": [],
@@ -2765,8 +2735,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 149,
-                    "end": 165
+                    "line": 145,
+                    "end": 161
                 },
                 {
                     "routes": [],
@@ -2777,8 +2747,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 167,
-                    "end": 171
+                    "line": 163,
+                    "end": 167
                 },
                 {
                     "routes": [],
@@ -2789,8 +2759,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 250,
-                    "end": 262
+                    "line": 246,
+                    "end": 258
                 },
                 {
                     "routes": [],
@@ -2803,8 +2773,8 @@
                         "@return array{events: int, overdue: int, next: ?int}"
                     ],
                     "params": [],
-                    "line": 265,
-                    "end": 280
+                    "line": 261,
+                    "end": 276
                 },
                 {
                     "routes": [],
@@ -2817,8 +2787,8 @@
                         "@return list<array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 283,
-                    "end": 288
+                    "line": 279,
+                    "end": 284
                 },
                 {
                     "routes": [],
@@ -2831,32 +2801,8 @@
                         "@return array{0: array<string, string>, 1: list<array>}"
                     ],
                     "params": [],
-                    "line": 291,
-                    "end": 327
-                },
-                {
-                    "routes": [],
-                    "name": "extensionsManifest",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "extensionsManifest(): array",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [],
-                    "line": 329,
-                    "end": 353
-                },
-                {
-                    "routes": [],
-                    "name": "activeThemeLabel",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "activeThemeLabel(): string",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [],
-                    "line": 355,
-                    "end": 368
+                    "line": 287,
+                    "end": 323
                 },
                 {
                     "routes": [],
@@ -2896,8 +2842,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 370,
-                    "end": 373
+                    "line": 325,
+                    "end": 328
                 },
                 {
                     "routes": [],
@@ -2918,8 +2864,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 376,
-                    "end": 383
+                    "line": 331,
+                    "end": 338
                 },
                 {
                     "routes": [],
@@ -2938,8 +2884,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 385,
-                    "end": 398
+                    "line": 340,
+                    "end": 353
                 },
                 {
                     "routes": [],
@@ -2958,8 +2904,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 400,
-                    "end": 406
+                    "line": 355,
+                    "end": 361
                 },
                 {
                     "routes": [],
@@ -2978,8 +2924,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 408,
-                    "end": 421
+                    "line": 363,
+                    "end": 376
                 }
             ]
         },
@@ -3480,6 +3426,143 @@
                     ],
                     "line": 103,
                     "end": 112
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Admin\\InstalledSoftware",
+            "short": "InstalledSoftware",
+            "namespace": "Minn\\Admin",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Admin/InstalledSoftware.php",
+            "lines": 59,
+            "doc": "What is installed, as the System view lists it: every extension and\nWordPress plugin with whether it runs, the mu-plugins, the themes with\ntheir parents, and the active theme's label.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Content\\Inventory",
+                "Minn\\Content\\Site",
+                "Minn\\Extension\\Loader",
+                "Minn\\Support\\FileHeaders"
+            ],
+            "usedBy": [
+                "Minn\\Admin\\Diagnostics",
+                "Minn\\Rest\\Services"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Content\\Site $site, Minn\\Content\\Inventory $inventory, Minn\\Extension\\Loader $extensions, string $webroot)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "site",
+                        "type": "Minn\\Content\\Site",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "inventory",
+                        "type": "Minn\\Content\\Inventory",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "extensions",
+                        "type": "Minn\\Extension\\Loader",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "webroot",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 19,
+                "end": 25
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "site",
+                    "type": "Minn\\Content\\Site",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "inventory",
+                    "type": "Minn\\Content\\Inventory",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "extensions",
+                    "type": "Minn\\Extension\\Loader",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "webroot",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "activeExtensionCount",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "activeExtensionCount(): int",
+                    "doc": "How many Minn extensions are active.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 28,
+                    "end": 31
+                },
+                {
+                    "routes": [],
+                    "name": "manifest",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "manifest(): array",
+                    "doc": "Plugins, mu-plugins, and themes with their versions and whether each is active.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 34,
+                    "end": 58
+                },
+                {
+                    "routes": [],
+                    "name": "activeThemeLabel",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "activeThemeLabel(): string",
+                    "doc": "The active theme's name and version, naming the parent of a child theme; the slug when the headers are missing.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 61,
+                    "end": 74
                 }
             ]
         },
@@ -9418,9 +9501,9 @@
                 "Minn\\Http\\Response"
             ],
             "usedBy": [
+                "Minn\\Auth\\SignIn",
                 "Minn\\Engine",
-                "Minn\\Front\\CommentPostController",
-                "Minn\\Login\\LoginController"
+                "Minn\\Front\\CommentPostController"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Db $db, Minn\\Auth\\Cookie $cookie)",
@@ -9689,6 +9772,7 @@
                 "Minn\\Admin\\BootPayload",
                 "Minn\\Auth\\Authenticator",
                 "Minn\\Auth\\Cookie",
+                "Minn\\Auth\\SignIn",
                 "Minn\\Engine",
                 "Minn\\Front\\AdminBar",
                 "Minn\\Front\\CommentPostController",
@@ -10599,8 +10683,8 @@
                 "Minn\\Db"
             ],
             "usedBy": [
-                "Minn\\Engine",
-                "Minn\\Login\\LoginController"
+                "Minn\\Auth\\SignIn",
+                "Minn\\Engine"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Db $db)",
@@ -11792,8 +11876,8 @@
                 "Minn\\Admin\\SessionsController",
                 "Minn\\Auth\\Authenticator",
                 "Minn\\Auth\\Cookie",
+                "Minn\\Auth\\SignIn",
                 "Minn\\Engine",
-                "Minn\\Login\\LoginController",
                 "Minn\\Rest\\Services"
             ],
             "constructor": {
@@ -12136,6 +12220,336 @@
                     ],
                     "line": 169,
                     "end": 172
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Auth\\SignIn",
+            "short": "SignIn",
+            "namespace": "Minn\\Auth",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Auth/SignIn.php",
+            "lines": 70,
+            "doc": "The door itself: what a sign-in surface needs beyond checking a\npassword. Sessions are minted here, the three cookies ride out on the\nresponse, and the failure counter behind the throttle is kept in one\nplace with the session store and the cookie jar it protects.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Auth\\AuthCookies",
+                "Minn\\Auth\\Authenticated",
+                "Minn\\Auth\\LoginThrottle",
+                "Minn\\Auth\\Sessions",
+                "Minn\\Content\\UserRecord",
+                "Minn\\Http\\Request",
+                "Minn\\Http\\Response"
+            ],
+            "usedBy": [
+                "Minn\\Engine",
+                "Minn\\Login\\LoginController"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Auth\\Sessions $sessions, Minn\\Auth\\AuthCookies $cookies, Minn\\Auth\\LoginThrottle $throttle)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "sessions",
+                        "type": "Minn\\Auth\\Sessions",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "cookies",
+                        "type": "Minn\\Auth\\AuthCookies",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "throttle",
+                        "type": "Minn\\Auth\\LoginThrottle",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 21,
+                "end": 26
+            },
+            "cases": [],
+            "constants": [
+                {
+                    "name": "DAY",
+                    "value": "86400",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "sessions",
+                    "type": "Minn\\Auth\\Sessions",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "cookies",
+                    "type": "Minn\\Auth\\AuthCookies",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "throttle",
+                    "type": "Minn\\Auth\\LoginThrottle",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "retryAfter",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "retryAfter(string $address): ?int",
+                    "doc": "Seconds this address must wait before another attempt, or null when it may try now.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "address",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 29,
+                    "end": 32
+                },
+                {
+                    "routes": [],
+                    "name": "recordFailure",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "recordFailure(string $address): void",
+                    "doc": "Counts one failed attempt from an address.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "address",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 35,
+                    "end": 38
+                },
+                {
+                    "routes": [],
+                    "name": "hash",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "hash(): string",
+                    "doc": "The cookie-name hash the sign-in cookies, the postpass cookie, and the reset cookie share.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 41,
+                    "end": 44
+                },
+                {
+                    "routes": [],
+                    "name": "establish",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "establish(Minn\\Http\\Response $response, Minn\\Content\\UserRecord $user, Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "Signs a user in for two days: a new session, and the response with the cookies attached for the browser session.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "response",
+                            "type": "Minn\\Http\\Response",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "user",
+                            "type": "Minn\\Content\\UserRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 47,
+                    "end": 50
+                },
+                {
+                    "routes": [],
+                    "name": "remember",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "remember(Minn\\Http\\Response $response, Minn\\Content\\UserRecord $user, Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "Signs a user in for fourteen days, the cookies kept past the browser session: \"remember me\", and the one-time login link.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "response",
+                            "type": "Minn\\Http\\Response",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "user",
+                            "type": "Minn\\Content\\UserRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 53,
+                    "end": 56
+                },
+                {
+                    "routes": [],
+                    "name": "end",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "end(Minn\\Http\\Response $response, Minn\\Auth\\Authenticated $session): Minn\\Http\\Response",
+                    "doc": "Ends one session and clears the cookies from the response.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "response",
+                            "type": "Minn\\Http\\Response",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "session",
+                            "type": "Minn\\Auth\\Authenticated",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 68,
+                    "end": 72
+                },
+                {
+                    "routes": [],
+                    "name": "endAll",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "endAll(Minn\\Http\\Response $response, int $userId): Minn\\Http\\Response",
+                    "doc": "Ends every session of a user (a password reset) and clears the cookies from the response.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "response",
+                            "type": "Minn\\Http\\Response",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "userId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 75,
+                    "end": 79
+                },
+                {
+                    "routes": [],
+                    "name": "clear",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "clear(Minn\\Http\\Response $response): Minn\\Http\\Response",
+                    "doc": "The response with the sign-in cookies cleared.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "response",
+                            "type": "Minn\\Http\\Response",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 82,
+                    "end": 85
+                },
+                {
+                    "routes": [],
+                    "name": "open",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "open(Minn\\Http\\Response $response, Minn\\Content\\UserRecord $user, Minn\\Http\\Request $request, int $days): Minn\\Http\\Response",
+                    "doc": "A session longer than the two-day default is one to keep past the browser session, as the reference's remember-me does.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "response",
+                            "type": "Minn\\Http\\Response",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "user",
+                            "type": "Minn\\Content\\UserRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "days",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 59,
+                    "end": 65
                 }
             ]
         },
@@ -12629,7 +13043,7 @@
             ],
             "usedBy": [
                 "Minn\\Blocks\\Renderer",
-                "Minn\\Front\\ProbeController",
+                "Minn\\Front\\FeedController",
                 "Minn\\Theme\\PageRenderer"
             ],
             "constructor": {
@@ -16691,7 +17105,7 @@
                 "Minn\\Blocks\\Renderer",
                 "Minn\\Blocks\\Wrapper",
                 "Minn\\Content\\Excerpt",
-                "Minn\\Front\\ProbeController",
+                "Minn\\Front\\FeedController",
                 "Minn\\Theme\\GlobalStyles",
                 "Minn\\Theme\\PageRenderer"
             ],
@@ -22121,8 +22535,8 @@
                 "Minn\\Admin\\RenderController",
                 "Minn\\Blocks\\Dynamic\\Theme\\Comments",
                 "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
+                "Minn\\Front\\FeedController",
                 "Minn\\Front\\Feeds",
-                "Minn\\Front\\ProbeController",
                 "Minn\\Front\\Renderer",
                 "Minn\\Rest\\CommentObject",
                 "Minn\\Rest\\MediaObject",
@@ -24198,7 +24612,7 @@
                 "Minn\\Support\\Serialized"
             ],
             "usedBy": [
-                "Minn\\Admin\\Diagnostics",
+                "Minn\\Admin\\InstalledSoftware",
                 "Minn\\Admin\\Packages",
                 "Minn\\Admin\\Updates",
                 "Minn\\Cli\\AssetUpdate",
@@ -26125,7 +26539,7 @@
             "usedBy": [
                 "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
                 "Minn\\Content\\Posts",
-                "Minn\\Front\\ProbeController",
+                "Minn\\Front\\FeedController",
                 "Minn\\Front\\Renderer",
                 "Minn\\Front\\Resolver",
                 "Minn\\Theme\\MainQueryBridge"
@@ -26412,6 +26826,7 @@
                 "Minn\\Front\\Resolution",
                 "Minn\\Front\\Resolver",
                 "Minn\\Front\\Sitemaps",
+                "Minn\\Media\\Writer",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MediaObject",
@@ -27184,7 +27599,6 @@
                 "Minn\\Cron\\Cron",
                 "Minn\\Engine",
                 "Minn\\Media\\Writer",
-                "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\PostsWriteController",
                 "Minn\\Rest\\Services",
                 "Minn\\Runtime\\PostInsert",
@@ -27841,7 +28255,6 @@
                 "Minn\\Db"
             ],
             "usedBy": [
-                "Minn\\Admin\\BootPayload",
                 "Minn\\Admin\\RenderController",
                 "Minn\\Admin\\SiteController",
                 "Minn\\Blocks\\Dynamic\\LatestComments",
@@ -27853,13 +28266,15 @@
                 "Minn\\Cli\\MinnCommand",
                 "Minn\\Content\\Menus",
                 "Minn\\Content\\PostWriter",
+                "Minn\\Content\\SiteIcon",
                 "Minn\\Engine",
                 "Minn\\Front\\CommentPostController",
+                "Minn\\Front\\FeedController",
                 "Minn\\Front\\Feeds",
                 "Minn\\Front\\Permalinks",
-                "Minn\\Front\\ProbeController",
                 "Minn\\Front\\Renderer",
                 "Minn\\Front\\Resolver",
+                "Minn\\Media\\Writer",
                 "Minn\\Rest\\CommentObject",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\MediaController",
@@ -29205,6 +29620,7 @@
                 "Minn\\Admin\\CoreStatus",
                 "Minn\\Admin\\Dashboard",
                 "Minn\\Admin\\Diagnostics",
+                "Minn\\Admin\\InstalledSoftware",
                 "Minn\\Admin\\LanguageController",
                 "Minn\\Admin\\Notifications",
                 "Minn\\Admin\\OverviewController",
@@ -29230,12 +29646,14 @@
                 "Minn\\Content\\PluginState",
                 "Minn\\Content\\PostWriter",
                 "Minn\\Content\\Revisions",
+                "Minn\\Content\\SiteIcon",
                 "Minn\\Cron\\Cron",
                 "Minn\\Engine",
                 "Minn\\Extension\\Loader",
                 "Minn\\Extension\\Seams",
                 "Minn\\Front\\AdminBar",
                 "Minn\\Front\\CommentPostController",
+                "Minn\\Front\\FeedController",
                 "Minn\\Front\\Feeds",
                 "Minn\\Front\\ProbeController",
                 "Minn\\Front\\Sitemaps",
@@ -29248,7 +29666,6 @@
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\IndexController",
-                "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PostsWriteController",
                 "Minn\\Rest\\Services",
@@ -29410,6 +29827,115 @@
                     ],
                     "line": 57,
                     "end": 62
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Content\\SiteIcon",
+            "short": "SiteIcon",
+            "namespace": "Minn\\Content",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Content/SiteIcon.php",
+            "lines": 24,
+            "doc": "The site icon: the attachment the site_icon option names, as the file\nunder uploads it points at. Read by the favicon route, the head links,\nand the admin app's sidebar.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Content\\Posts",
+                "Minn\\Content\\Site",
+                "Minn\\Front\\Permalinks"
+            ],
+            "usedBy": [
+                "Minn\\Admin\\BootPayload",
+                "Minn\\Engine",
+                "Minn\\Front\\ProbeController"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Content\\Site $site, Minn\\Content\\Posts $posts, Minn\\Front\\Permalinks $permalinks)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "site",
+                        "type": "Minn\\Content\\Site",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "posts",
+                        "type": "Minn\\Content\\Posts",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "permalinks",
+                        "type": "Minn\\Front\\Permalinks",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 16,
+                "end": 21
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "site",
+                    "type": "Minn\\Content\\Site",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "posts",
+                    "type": "Minn\\Content\\Posts",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "permalinks",
+                    "type": "Minn\\Front\\Permalinks",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "file",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "file(): ?string",
+                    "doc": "The icon's path under uploads, or null when the site has none.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 24,
+                    "end": 29
+                },
+                {
+                    "routes": [],
+                    "name": "url",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "url(): string",
+                    "doc": "The icon's URL, empty when the site has none.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 32,
+                    "end": 36
                 }
             ]
         },
@@ -30519,6 +31045,7 @@
                 "Minn\\Auth\\Authenticator",
                 "Minn\\Auth\\Cookie",
                 "Minn\\Auth\\PasswordReset",
+                "Minn\\Auth\\SignIn",
                 "Minn\\Cli\\UserCommand",
                 "Minn\\Content\\Users",
                 "Minn\\Front\\AdminBar",
@@ -32050,7 +32577,7 @@
             "namespace": "Minn",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Engine.php",
-            "lines": 172,
+            "lines": 175,
             "doc": "The engine's front door. An unmodified wp-config.php ends by requiring\nwp-settings.php, which is the engine's own boot file; it hands off here.\nREST is dispatched first (from the path or from ?rest_route=), then the\nadmin, the login endpoint, and finally the public site.",
             "implements": [],
             "extends": null,
@@ -32073,6 +32600,7 @@
                 "Minn\\Auth\\PasswordReset",
                 "Minn\\Auth\\Salts",
                 "Minn\\Auth\\Sessions",
+                "Minn\\Auth\\SignIn",
                 "Minn\\Content\\Comments",
                 "Minn\\Content\\Inventory",
                 "Minn\\Content\\PostRecord",
@@ -32080,6 +32608,7 @@
                 "Minn\\Content\\Posts",
                 "Minn\\Content\\Reader",
                 "Minn\\Content\\Site",
+                "Minn\\Content\\SiteIcon",
                 "Minn\\Content\\Users",
                 "Minn\\Cron\\Cron",
                 "Minn\\Db",
@@ -32089,12 +32618,14 @@
                 "Minn\\Front\\AdminBar",
                 "Minn\\Front\\AssetsController",
                 "Minn\\Front\\CommentPostController",
+                "Minn\\Front\\FeedController",
                 "Minn\\Front\\Feeds",
                 "Minn\\Front\\FrontController",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Front\\ProbeController",
                 "Minn\\Front\\Renderer",
                 "Minn\\Front\\Resolver",
+                "Minn\\Front\\SitemapController",
                 "Minn\\Front\\Sitemaps",
                 "Minn\\Http\\Failure",
                 "Minn\\Http\\Kernel",
@@ -32143,8 +32674,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 74,
-                "end": 79
+                "line": 75,
+                "end": 80
             },
             "cases": [],
             "constants": [
@@ -32185,8 +32716,8 @@
                     "doc": "The front door: connect, check the salts, answer the request, and turn any failure into the right error page.",
                     "shapes": [],
                     "params": [],
-                    "line": 82,
-                    "end": 100
+                    "line": 83,
+                    "end": 101
                 },
                 {
                     "routes": [],
@@ -32219,8 +32750,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 107,
-                    "end": 134
+                    "line": 108,
+                    "end": 135
                 },
                 {
                     "routes": [],
@@ -32239,8 +32770,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 136,
-                    "end": 204
+                    "line": 137,
+                    "end": 205
                 },
                 {
                     "routes": [],
@@ -32357,8 +32888,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 207,
-                    "end": 239
+                    "line": 208,
+                    "end": 243
                 }
             ]
         },
@@ -32516,7 +33047,7 @@
                 "Minn\\Support\\Serialized"
             ],
             "usedBy": [
-                "Minn\\Admin\\Diagnostics",
+                "Minn\\Admin\\InstalledSoftware",
                 "Minn\\Cli\\MinnCommand",
                 "Minn\\Cli\\PluginCommand",
                 "Minn\\Content\\PluginState",
@@ -35228,6 +35759,339 @@
             ]
         },
         {
+            "name": "Minn\\Front\\FeedController",
+            "short": "FeedController",
+            "namespace": "Minn\\Front",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Front/FeedController.php",
+            "lines": 94,
+            "doc": "The feeds: the site's, the comments', a post's or an archive's by the\npath in front of /feed/, and the ?feed= query form on any page.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Blocks\\Context",
+                "Minn\\Blocks\\RenderState",
+                "Minn\\Content\\Blocks",
+                "Minn\\Content\\PostFilter",
+                "Minn\\Content\\Posts",
+                "Minn\\Content\\Site",
+                "Minn\\Front\\Feeds",
+                "Minn\\Front\\Kind",
+                "Minn\\Front\\Permalinks",
+                "Minn\\Front\\Resolution",
+                "Minn\\Front\\Resolver",
+                "Minn\\Http\\Method",
+                "Minn\\Http\\Request",
+                "Minn\\Http\\Response",
+                "Minn\\Http\\Route"
+            ],
+            "usedBy": [
+                "Minn\\Engine",
+                "Minn\\Front\\FrontController"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Content\\Site $site, Minn\\Content\\Posts $posts, Minn\\Front\\Permalinks $permalinks, Minn\\Front\\Resolver $resolver, Minn\\Front\\Feeds $feeds, Closure $notFound)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "site",
+                        "type": "Minn\\Content\\Site",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "posts",
+                        "type": "Minn\\Content\\Posts",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "permalinks",
+                        "type": "Minn\\Front\\Permalinks",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "resolver",
+                        "type": "Minn\\Front\\Resolver",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "feeds",
+                        "type": "Minn\\Front\\Feeds",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "notFound",
+                        "type": "Closure",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 25,
+                "end": 34
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "site",
+                    "type": "Minn\\Content\\Site",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "posts",
+                    "type": "Minn\\Content\\Posts",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "permalinks",
+                    "type": "Minn\\Front\\Permalinks",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "resolver",
+                    "type": "Minn\\Front\\Resolver",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "feeds",
+                    "type": "Minn\\Front\\Feeds",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "notFound",
+                    "type": "Closure",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [
+                        "GET /feed",
+                        "GET /feed/",
+                        "GET /feed/{kind:rss2|rss|atom|rdf}",
+                        "GET /feed/{kind:rss2|rss|atom|rdf}/"
+                    ],
+                    "name": "siteFeed",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "siteFeed(Minn\\Http\\Request $request, string $kind = 'rss2'): Minn\\Http\\Response",
+                    "doc": "The site feed in one of its kinds.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "kind",
+                            "type": "string",
+                            "shape": "",
+                            "default": "'rss2'",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 41,
+                    "end": 47
+                },
+                {
+                    "routes": [
+                        "GET /comments/feed",
+                        "GET /comments/feed/"
+                    ],
+                    "name": "commentsFeed",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "commentsFeed(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "The comments feed.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 52,
+                    "end": 58
+                },
+                {
+                    "routes": [
+                        "GET /{path*}/feed",
+                        "GET /{path*}/feed/",
+                        "GET /{path*}/feed/{kind:rss2|rss|atom|rdf}",
+                        "GET /{path*}/feed/{kind:rss2|rss|atom|rdf}/"
+                    ],
+                    "name": "pathFeed",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "pathFeed(Minn\\Http\\Request $request, string $path, string $kind = 'rss2'): Minn\\Http\\Response",
+                    "doc": "A post's comment feed, or an archive's feed, by resolving the path in front of /feed/.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "path",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "kind",
+                            "type": "string",
+                            "shape": "",
+                            "default": "'rss2'",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 65,
+                    "end": 72
+                },
+                {
+                    "routes": [],
+                    "name": "queryFeed",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "queryFeed(Minn\\Http\\Request $request, Minn\\Front\\Resolution $resolution, string $kind): Minn\\Http\\Response",
+                    "doc": "The ?feed= query form on any resolvable path.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "resolution",
+                            "type": "Minn\\Front\\Resolution",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "kind",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 75,
+                    "end": 78
+                },
+                {
+                    "routes": [],
+                    "name": "feed",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "feed(Minn\\Front\\Resolution $resolution, string $kind, Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "resolution",
+                            "type": "Minn\\Front\\Resolution",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "kind",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 80,
+                    "end": 110
+                },
+                {
+                    "routes": [],
+                    "name": "feedResponse",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "feedResponse(string $body, string $kind): Minn\\Http\\Response",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "body",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "kind",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 112,
+                    "end": 115
+                }
+            ]
+        },
+        {
             "name": "Minn\\Front\\Feeds",
             "short": "Feeds",
             "namespace": "Minn\\Front",
@@ -35256,7 +36120,7 @@
             ],
             "usedBy": [
                 "Minn\\Engine",
-                "Minn\\Front\\ProbeController"
+                "Minn\\Front\\FeedController"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Db $db, Minn\\Content\\Site $site, Minn\\Content\\Posts $posts, Minn\\Content\\Comments $comments, Minn\\Content\\Users $users, Minn\\Front\\Permalinks $permalinks, string $generatorVersion)",
@@ -35830,8 +36694,8 @@
             "extends": null,
             "uses": [
                 "Minn\\Cron\\Cron",
+                "Minn\\Front\\FeedController",
                 "Minn\\Front\\Kind",
-                "Minn\\Front\\ProbeController",
                 "Minn\\Front\\Renderer",
                 "Minn\\Front\\Resolution",
                 "Minn\\Front\\Resolver",
@@ -35846,7 +36710,7 @@
                 "Minn\\Engine"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Front\\Resolver $resolver, Minn\\Front\\Renderer $renderer, ?Minn\\Theme\\PageRenderer $theme = NULL, ?Minn\\Front\\ProbeController $probes = NULL, ?Minn\\Cron\\Cron $cron = NULL, ?Minn\\Theme\\ClassicRenderer $classic = NULL)",
+                "signature": "__construct(Minn\\Front\\Resolver $resolver, Minn\\Front\\Renderer $renderer, ?Minn\\Theme\\PageRenderer $theme = NULL, ?Minn\\Front\\FeedController $feeds = NULL, ?Minn\\Cron\\Cron $cron = NULL, ?Minn\\Theme\\ClassicRenderer $classic = NULL)",
                 "doc": "",
                 "shapes": [],
                 "params": [
@@ -35872,8 +36736,8 @@
                         "doc": ""
                     },
                     {
-                        "name": "probes",
-                        "type": "?Minn\\Front\\ProbeController",
+                        "name": "feeds",
+                        "type": "?Minn\\Front\\FeedController",
                         "shape": "",
                         "default": "NULL",
                         "doc": ""
@@ -35928,8 +36792,8 @@
                     "promoted": true
                 },
                 {
-                    "name": "probes",
-                    "type": "?Minn\\Front\\ProbeController",
+                    "name": "feeds",
+                    "type": "?Minn\\Front\\FeedController",
                     "readonly": true,
                     "static": false,
                     "doc": "",
@@ -36012,8 +36876,8 @@
                 "Minn\\Front\\AdminBar",
                 "Minn\\Front\\Canonical",
                 "Minn\\Front\\DocumentTitle",
+                "Minn\\Front\\FeedController",
                 "Minn\\Front\\FrontController",
-                "Minn\\Front\\ProbeController",
                 "Minn\\Front\\Renderer",
                 "Minn\\Front\\Resolution",
                 "Minn\\Front\\Resolver",
@@ -36348,9 +37212,11 @@
                 "Minn\\Blocks\\Renderer",
                 "Minn\\Cli\\Runtime",
                 "Minn\\Content\\Menus",
+                "Minn\\Content\\SiteIcon",
                 "Minn\\Engine",
                 "Minn\\Front\\AdminBar",
                 "Minn\\Front\\CommentPostController",
+                "Minn\\Front\\FeedController",
                 "Minn\\Front\\Feeds",
                 "Minn\\Front\\ProbeController",
                 "Minn\\Front\\Renderer",
@@ -37133,48 +37999,31 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/ProbeController.php",
-            "lines": 184,
-            "doc": "The surface monitors, crawlers, and hosting checks hit that is not a\npage: feeds, sitemaps, robots.txt, the XML-RPC and cron endpoints, and\nthe admin entry point.",
+            "lines": 57,
+            "doc": "The surface monitors, crawlers, and hosting checks hit that is not a\npage: robots.txt, the XML-RPC and cron endpoints, the admin entry point,\nand the favicon. Feeds and sitemaps have controllers of their own.",
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Blocks\\Context",
-                "Minn\\Blocks\\RenderState",
-                "Minn\\Content\\Blocks",
-                "Minn\\Content\\PostFilter",
-                "Minn\\Content\\Posts",
                 "Minn\\Content\\Site",
+                "Minn\\Content\\SiteIcon",
                 "Minn\\Cron\\Cron",
-                "Minn\\Front\\Feeds",
-                "Minn\\Front\\Kind",
                 "Minn\\Front\\Permalinks",
-                "Minn\\Front\\Resolution",
-                "Minn\\Front\\Resolver",
-                "Minn\\Front\\Sitemaps",
                 "Minn\\Http\\Method",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route"
             ],
             "usedBy": [
-                "Minn\\Engine",
-                "Minn\\Front\\FrontController"
+                "Minn\\Engine"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Content\\Site $site, Minn\\Content\\Posts $posts, Minn\\Front\\Permalinks $permalinks, Minn\\Front\\Resolver $resolver, Minn\\Front\\Feeds $feeds, Minn\\Front\\Sitemaps $sitemaps, Closure $notFound, ?Minn\\Cron\\Cron $cron = NULL)",
+                "signature": "__construct(Minn\\Content\\Site $site, Minn\\Front\\Permalinks $permalinks, Minn\\Content\\SiteIcon $icon, ?Minn\\Cron\\Cron $cron = NULL)",
                 "doc": "",
                 "shapes": [],
                 "params": [
                     {
                         "name": "site",
                         "type": "Minn\\Content\\Site",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "posts",
-                        "type": "Minn\\Content\\Posts",
                         "shape": "",
                         "default": null,
                         "doc": ""
@@ -37187,29 +38036,8 @@
                         "doc": ""
                     },
                     {
-                        "name": "resolver",
-                        "type": "Minn\\Front\\Resolver",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "feeds",
-                        "type": "Minn\\Front\\Feeds",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "sitemaps",
-                        "type": "Minn\\Front\\Sitemaps",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "notFound",
-                        "type": "Closure",
+                        "name": "icon",
+                        "type": "Minn\\Content\\SiteIcon",
                         "shape": "",
                         "default": null,
                         "doc": ""
@@ -37223,8 +38051,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 27,
-                "end": 38
+                "line": 22,
+                "end": 28
             },
             "cases": [],
             "constants": [],
@@ -37232,15 +38060,6 @@
                 {
                     "name": "site",
                     "type": "Minn\\Content\\Site",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "posts",
-                    "type": "Minn\\Content\\Posts",
                     "readonly": true,
                     "static": false,
                     "doc": "",
@@ -37257,35 +38076,8 @@
                     "promoted": true
                 },
                 {
-                    "name": "resolver",
-                    "type": "Minn\\Front\\Resolver",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "feeds",
-                    "type": "Minn\\Front\\Feeds",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "sitemaps",
-                    "type": "Minn\\Front\\Sitemaps",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "notFound",
-                    "type": "Closure",
+                    "name": "icon",
+                    "type": "Minn\\Content\\SiteIcon",
                     "readonly": true,
                     "static": false,
                     "doc": "",
@@ -37322,8 +38114,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 42,
-                    "end": 49
+                    "line": 32,
+                    "end": 39
                 },
                 {
                     "routes": [
@@ -37344,8 +38136,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 53,
-                    "end": 59
+                    "line": 43,
+                    "end": 49
                 },
                 {
                     "routes": [
@@ -37366,8 +38158,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 63,
-                    "end": 69
+                    "line": 53,
+                    "end": 59
                 },
                 {
                     "routes": [
@@ -37389,8 +38181,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 74,
-                    "end": 77
+                    "line": 64,
+                    "end": 67
                 },
                 {
                     "routes": [
@@ -37411,319 +38203,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 81,
-                    "end": 89
-                },
-                {
-                    "routes": [
-                        "GET /wp-sitemap.xml"
-                    ],
-                    "name": "sitemapIndex",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "sitemapIndex(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "The sitemap index.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 93,
-                    "end": 96
-                },
-                {
-                    "routes": [
-                        "GET /wp-sitemap-{type:posts|taxonomies|users}-{rest:[a-z_0-9-]+}.xml"
-                    ],
-                    "name": "sitemap",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "sitemap(Minn\\Http\\Request $request, string $type, string $rest): Minn\\Http\\Response",
-                    "doc": "One sitemap page.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "type",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "rest",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 100,
-                    "end": 107
-                },
-                {
-                    "routes": [
-                        "GET /wp-sitemap.xsl"
-                    ],
-                    "name": "sitemapStylesheet",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "sitemapStylesheet(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "The sitemap stylesheet.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 111,
-                    "end": 114
-                },
-                {
-                    "routes": [
-                        "GET /wp-sitemap-index.xsl"
-                    ],
-                    "name": "sitemapIndexStylesheet",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "sitemapIndexStylesheet(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "The sitemap index stylesheet.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 118,
-                    "end": 121
-                },
-                {
-                    "routes": [
-                        "GET /feed",
-                        "GET /feed/",
-                        "GET /feed/{kind:rss2|rss|atom|rdf}",
-                        "GET /feed/{kind:rss2|rss|atom|rdf}/"
-                    ],
-                    "name": "siteFeed",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "siteFeed(Minn\\Http\\Request $request, string $kind = 'rss2'): Minn\\Http\\Response",
-                    "doc": "The site feed in one of its kinds.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "kind",
-                            "type": "string",
-                            "shape": "",
-                            "default": "'rss2'",
-                            "doc": ""
-                        }
-                    ],
-                    "line": 128,
-                    "end": 134
-                },
-                {
-                    "routes": [
-                        "GET /comments/feed",
-                        "GET /comments/feed/"
-                    ],
-                    "name": "commentsFeed",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "commentsFeed(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "The comments feed.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 139,
-                    "end": 145
-                },
-                {
-                    "routes": [
-                        "GET /{path*}/feed",
-                        "GET /{path*}/feed/",
-                        "GET /{path*}/feed/{kind:rss2|rss|atom|rdf}",
-                        "GET /{path*}/feed/{kind:rss2|rss|atom|rdf}/"
-                    ],
-                    "name": "pathFeed",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "pathFeed(Minn\\Http\\Request $request, string $path, string $kind = 'rss2'): Minn\\Http\\Response",
-                    "doc": "A post's comment feed, or an archive's feed, by resolving the path in front of /feed/.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "path",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "kind",
-                            "type": "string",
-                            "shape": "",
-                            "default": "'rss2'",
-                            "doc": ""
-                        }
-                    ],
-                    "line": 152,
-                    "end": 159
-                },
-                {
-                    "routes": [],
-                    "name": "queryFeed",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "queryFeed(Minn\\Http\\Request $request, Minn\\Front\\Resolution $resolution, string $kind): Minn\\Http\\Response",
-                    "doc": "The ?feed= query form on any resolvable path.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "resolution",
-                            "type": "Minn\\Front\\Resolution",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "kind",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 162,
-                    "end": 165
-                },
-                {
-                    "routes": [],
-                    "name": "feed",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "feed(Minn\\Front\\Resolution $resolution, string $kind, Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "resolution",
-                            "type": "Minn\\Front\\Resolution",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "kind",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 167,
-                    "end": 197
-                },
-                {
-                    "routes": [],
-                    "name": "feedResponse",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "feedResponse(string $body, string $kind): Minn\\Http\\Response",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "body",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "kind",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 199,
-                    "end": 202
-                },
-                {
-                    "routes": [],
-                    "name": "xml",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "xml(string $body): Minn\\Http\\Response",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "body",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 204,
-                    "end": 207
+                    "line": 71,
+                    "end": 75
                 }
             ]
         },
@@ -37989,8 +38470,8 @@
                 "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
                 "Minn\\Front\\AdminBar",
                 "Minn\\Front\\DocumentTitle",
+                "Minn\\Front\\FeedController",
                 "Minn\\Front\\FrontController",
-                "Minn\\Front\\ProbeController",
                 "Minn\\Front\\Renderer",
                 "Minn\\Front\\Resolver",
                 "Minn\\Runtime\\MainQuery",
@@ -38582,8 +39063,8 @@
             "usedBy": [
                 "Minn\\Engine",
                 "Minn\\Front\\Canonical",
+                "Minn\\Front\\FeedController",
                 "Minn\\Front\\FrontController",
-                "Minn\\Front\\ProbeController",
                 "Minn\\Front\\Renderer",
                 "Minn\\Theme\\MainQueryBridge",
                 "Minn\\Theme\\PageRenderer"
@@ -39349,6 +39830,197 @@
             ]
         },
         {
+            "name": "Minn\\Front\\SitemapController",
+            "short": "SitemapController",
+            "namespace": "Minn\\Front",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Front/SitemapController.php",
+            "lines": 46,
+            "doc": "The sitemap index, its pages, and the two stylesheets.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Front\\Sitemaps",
+                "Minn\\Http\\Method",
+                "Minn\\Http\\Request",
+                "Minn\\Http\\Response",
+                "Minn\\Http\\Route"
+            ],
+            "usedBy": [
+                "Minn\\Engine"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Front\\Sitemaps $sitemaps, Closure $notFound)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "sitemaps",
+                        "type": "Minn\\Front\\Sitemaps",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "notFound",
+                        "type": "Closure",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 18,
+                "end": 23
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "sitemaps",
+                    "type": "Minn\\Front\\Sitemaps",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "notFound",
+                    "type": "Closure",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [
+                        "GET /wp-sitemap.xml"
+                    ],
+                    "name": "sitemapIndex",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "sitemapIndex(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "The sitemap index.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 27,
+                    "end": 30
+                },
+                {
+                    "routes": [
+                        "GET /wp-sitemap-{type:posts|taxonomies|users}-{rest:[a-z_0-9-]+}.xml"
+                    ],
+                    "name": "sitemap",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "sitemap(Minn\\Http\\Request $request, string $type, string $rest): Minn\\Http\\Response",
+                    "doc": "One sitemap page.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "rest",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 34,
+                    "end": 41
+                },
+                {
+                    "routes": [
+                        "GET /wp-sitemap.xsl"
+                    ],
+                    "name": "sitemapStylesheet",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "sitemapStylesheet(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "The sitemap stylesheet.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 45,
+                    "end": 48
+                },
+                {
+                    "routes": [
+                        "GET /wp-sitemap-index.xsl"
+                    ],
+                    "name": "sitemapIndexStylesheet",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "sitemapIndexStylesheet(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "The sitemap index stylesheet.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 52,
+                    "end": 55
+                },
+                {
+                    "routes": [],
+                    "name": "xml",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "xml(string $body): Minn\\Http\\Response",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "body",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 57,
+                    "end": 60
+                }
+            ]
+        },
+        {
             "name": "Minn\\Front\\SitemapXml",
             "short": "SitemapXml",
             "namespace": "Minn\\Front",
@@ -39504,7 +40176,7 @@
             ],
             "usedBy": [
                 "Minn\\Engine",
-                "Minn\\Front\\ProbeController"
+                "Minn\\Front\\SitemapController"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Db $db, Minn\\Content\\Site $site, Minn\\Front\\Permalinks $permalinks)",
@@ -42129,8 +42801,10 @@
                 "Minn\\Front\\AssetsController",
                 "Minn\\Front\\Canonical",
                 "Minn\\Front\\CommentPostController",
+                "Minn\\Front\\FeedController",
                 "Minn\\Front\\FrontController",
                 "Minn\\Front\\ProbeController",
+                "Minn\\Front\\SitemapController",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Route",
                 "Minn\\Http\\Router",
@@ -42594,15 +43268,18 @@
                 "Minn\\Admin\\UpdatesController",
                 "Minn\\Admin\\V1Controller",
                 "Minn\\Auth\\Authenticator",
+                "Minn\\Auth\\SignIn",
                 "Minn\\Autoloader",
                 "Minn\\Engine",
                 "Minn\\Extension\\Seams",
                 "Minn\\Front\\AssetsController",
                 "Minn\\Front\\Canonical",
                 "Minn\\Front\\CommentPostController",
+                "Minn\\Front\\FeedController",
                 "Minn\\Front\\FrontController",
                 "Minn\\Front\\ProbeController",
                 "Minn\\Front\\Resolver",
+                "Minn\\Front\\SitemapController",
                 "Minn\\Http\\Kernel",
                 "Minn\\Http\\Router",
                 "Minn\\Login\\LoginController",
@@ -43041,11 +43718,14 @@
                 "Minn\\Admin\\UpdatesController",
                 "Minn\\Admin\\V1Controller",
                 "Minn\\Auth\\AuthCookies",
+                "Minn\\Auth\\SignIn",
                 "Minn\\Engine",
                 "Minn\\Front\\AssetsController",
                 "Minn\\Front\\CommentPostController",
+                "Minn\\Front\\FeedController",
                 "Minn\\Front\\FrontController",
                 "Minn\\Front\\ProbeController",
+                "Minn\\Front\\SitemapController",
                 "Minn\\Http\\Failure",
                 "Minn\\Http\\Kernel",
                 "Minn\\Http\\Router",
@@ -43356,8 +44036,10 @@
                 "Minn\\Admin\\V1Controller",
                 "Minn\\Front\\AssetsController",
                 "Minn\\Front\\CommentPostController",
+                "Minn\\Front\\FeedController",
                 "Minn\\Front\\FrontController",
                 "Minn\\Front\\ProbeController",
+                "Minn\\Front\\SitemapController",
                 "Minn\\Http\\Router",
                 "Minn\\Login\\LoginController",
                 "Minn\\Rest\\ApplicationPasswordsController",
@@ -43585,20 +44267,18 @@
             "namespace": "Minn\\Login",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Login/LoginController.php",
-            "lines": 336,
+            "lines": 329,
             "doc": "Signing in. The page people see is /minn-admin/login: the form, the\nlost-password and reset flows, and logout all live there and link there.\n/wp-login.php stays as the address tooling knows (one-time login links,\nuptime probes, scripted sign-ins) and answers in place with the same\nshapes; a bare GET of it sends a browser to the clean page. Sessions\nand cookies validate on the engine AND on WordPress either way.",
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Auth\\AuthCookies",
                 "Minn\\Auth\\Authenticated",
                 "Minn\\Auth\\Authenticator",
-                "Minn\\Auth\\LoginThrottle",
                 "Minn\\Auth\\Nonce",
                 "Minn\\Auth\\Password",
                 "Minn\\Auth\\PasswordReset",
                 "Minn\\Auth\\PortableHash",
-                "Minn\\Auth\\Sessions",
+                "Minn\\Auth\\SignIn",
                 "Minn\\Content\\Site",
                 "Minn\\Content\\Users",
                 "Minn\\Front\\Permalinks",
@@ -43614,7 +44294,7 @@
                 "Minn\\Engine"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Content\\Site $site, Minn\\Front\\Permalinks $permalinks, Minn\\Auth\\Authenticator $authenticator, Minn\\Auth\\Sessions $sessions, Minn\\Auth\\AuthCookies $cookies, Minn\\Content\\Users $users, Minn\\Auth\\LoginThrottle $throttle, Minn\\Auth\\PasswordReset $reset, Minn\\Mail\\Mailer $mailer)",
+                "signature": "__construct(Minn\\Content\\Site $site, Minn\\Front\\Permalinks $permalinks, Minn\\Auth\\Authenticator $authenticator, Minn\\Auth\\SignIn $signIn, Minn\\Content\\Users $users, Minn\\Auth\\PasswordReset $reset, Minn\\Mail\\Mailer $mailer)",
                 "doc": "",
                 "shapes": [],
                 "params": [
@@ -43640,15 +44320,8 @@
                         "doc": ""
                     },
                     {
-                        "name": "sessions",
-                        "type": "Minn\\Auth\\Sessions",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "cookies",
-                        "type": "Minn\\Auth\\AuthCookies",
+                        "name": "signIn",
+                        "type": "Minn\\Auth\\SignIn",
                         "shape": "",
                         "default": null,
                         "doc": ""
@@ -43656,13 +44329,6 @@
                     {
                         "name": "users",
                         "type": "Minn\\Content\\Users",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "throttle",
-                        "type": "Minn\\Auth\\LoginThrottle",
                         "shape": "",
                         "default": null,
                         "doc": ""
@@ -43683,8 +44349,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 40,
-                "end": 51
+                "line": 38,
+                "end": 47
             },
             "cases": [],
             "constants": [
@@ -43736,17 +44402,8 @@
                     "promoted": true
                 },
                 {
-                    "name": "sessions",
-                    "type": "Minn\\Auth\\Sessions",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "cookies",
-                    "type": "Minn\\Auth\\AuthCookies",
+                    "name": "signIn",
+                    "type": "Minn\\Auth\\SignIn",
                     "readonly": true,
                     "static": false,
                     "doc": "",
@@ -43756,15 +44413,6 @@
                 {
                     "name": "users",
                     "type": "Minn\\Content\\Users",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "throttle",
-                    "type": "Minn\\Auth\\LoginThrottle",
                     "readonly": true,
                     "static": false,
                     "doc": "",
@@ -43812,8 +44460,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 60,
-                    "end": 98
+                    "line": 56,
+                    "end": 94
                 },
                 {
                     "routes": [
@@ -43836,8 +44484,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 248,
-                    "end": 274
+                    "line": 241,
+                    "end": 266
                 },
                 {
                     "routes": [],
@@ -43856,8 +44504,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 101,
-                    "end": 136
+                    "line": 97,
+                    "end": 132
                 },
                 {
                     "routes": [],
@@ -43876,8 +44524,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 143,
-                    "end": 157
+                    "line": 139,
+                    "end": 153
                 },
                 {
                     "routes": [],
@@ -43898,8 +44546,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 160,
-                    "end": 173
+                    "line": 156,
+                    "end": 169
                 },
                 {
                     "routes": [],
@@ -43918,8 +44566,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 175,
-                    "end": 201
+                    "line": 171,
+                    "end": 196
                 },
                 {
                     "routes": [],
@@ -43938,8 +44586,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 209,
-                    "end": 242
+                    "line": 204,
+                    "end": 235
                 },
                 {
                     "routes": [],
@@ -43958,8 +44606,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 280,
-                    "end": 292
+                    "line": 272,
+                    "end": 284
                 },
                 {
                     "routes": [],
@@ -43978,8 +44626,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 299,
-                    "end": 317
+                    "line": 291,
+                    "end": 308
                 },
                 {
                     "routes": [],
@@ -43998,8 +44646,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 324,
-                    "end": 332
+                    "line": 315,
+                    "end": 323
                 },
                 {
                     "routes": [],
@@ -44032,8 +44680,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 335,
-                    "end": 342
+                    "line": 326,
+                    "end": 333
                 },
                 {
                     "routes": [],
@@ -44052,8 +44700,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 345,
-                    "end": 348
+                    "line": 336,
+                    "end": 339
                 },
                 {
                     "routes": [],
@@ -44079,8 +44727,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 351,
-                    "end": 356
+                    "line": 342,
+                    "end": 347
                 },
                 {
                     "routes": [],
@@ -44113,8 +44761,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 358,
-                    "end": 368
+                    "line": 349,
+                    "end": 359
                 }
             ]
         },
@@ -46445,7 +47093,6 @@
                 "Minn\\Admin\\SiteController",
                 "Minn\\Blocks\\ImageTags",
                 "Minn\\Media\\Writer",
-                "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MediaObject",
                 "Minn\\Theme\\HeadLinks"
             ],
@@ -47009,7 +47656,6 @@
                 "Minn\\Blocks\\Renderer",
                 "Minn\\Media\\Upload",
                 "Minn\\Media\\Writer",
-                "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MediaObject",
                 "Minn\\Rest\\Services"
             ],
@@ -47345,12 +47991,14 @@
             "namespace": "Minn\\Media",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Media/Writer.php",
-            "lines": 66,
-            "doc": "Turns an Upload into an attachment: the file lands in the dated uploads\ndirectory under a unique name, the row is inserted with the stored\nname as its title and slug, and an image gets its sub-sizes and the\nserialized metadata blob.",
+            "lines": 94,
+            "doc": "The writes the media library makes. An Upload becomes an attachment: the\nfile lands in the dated uploads directory under a unique name, the row is\ninserted with the stored name as its title and slug, and an image gets\nits sub-sizes and the serialized metadata blob. Edits stamp the row\nmodified; removal takes the files with the row.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Content\\PostRecord",
                 "Minn\\Content\\PostWriter",
+                "Minn\\Content\\Posts",
                 "Minn\\Content\\Site",
                 "Minn\\Content\\Slug",
                 "Minn\\Media\\Images",
@@ -47363,13 +48011,20 @@
                 "Minn\\Rest\\Services"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Content\\PostWriter $posts, Minn\\Content\\Site $site, Minn\\Media\\Uploads $uploads, Minn\\Media\\Images $images)",
+                "signature": "__construct(Minn\\Content\\PostWriter $posts, Minn\\Content\\Posts $reads, Minn\\Content\\Site $site, Minn\\Media\\Uploads $uploads, Minn\\Media\\Images $images)",
                 "doc": "",
                 "shapes": [],
                 "params": [
                     {
                         "name": "posts",
                         "type": "Minn\\Content\\PostWriter",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "reads",
+                        "type": "Minn\\Content\\Posts",
                         "shape": "",
                         "default": null,
                         "doc": ""
@@ -47397,8 +48052,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 19,
-                "end": 25
+                "line": 22,
+                "end": 29
             },
             "cases": [],
             "constants": [],
@@ -47406,6 +48061,15 @@
                 {
                     "name": "posts",
                     "type": "Minn\\Content\\PostWriter",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "reads",
+                    "type": "Minn\\Content\\Posts",
                     "readonly": true,
                     "static": false,
                     "doc": "",
@@ -47465,8 +48129,82 @@
                             "doc": ""
                         }
                     ],
-                    "line": 28,
-                    "end": 66
+                    "line": 32,
+                    "end": 70
+                },
+                {
+                    "routes": [],
+                    "name": "edit",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "edit(int $id, array $columns): void",
+                    "doc": "Sets the given columns on an attachment and stamps it modified; nothing happens for none.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "columns",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 73,
+                    "end": 81
+                },
+                {
+                    "routes": [],
+                    "name": "setAlt",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "setAlt(int $id, string $alt): void",
+                    "doc": "Sets an attachment's alt text.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "alt",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 84,
+                    "end": 87
+                },
+                {
+                    "routes": [],
+                    "name": "remove",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "remove(Minn\\Content\\PostRecord $attachment): void",
+                    "doc": "Removes an attachment: its files, every generated size, its meta, and its row.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "attachment",
+                            "type": "Minn\\Content\\PostRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 90,
+                    "end": 97
                 },
                 {
                     "routes": [],
@@ -47494,8 +48232,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 69,
-                    "end": 81
+                    "line": 100,
+                    "end": 112
                 }
             ]
         },
@@ -48999,7 +49737,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Api.php",
-            "lines": 133,
+            "lines": 128,
             "doc": "The REST API: wires the controllers for one request and dispatches a\nroute. Errors thrown anywhere underneath become the reference's error\npayload under the reference's headers.",
             "implements": [],
             "extends": null,
@@ -49063,27 +49801,13 @@
                 "Minn\\Engine"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Db $db, Minn\\Http\\Request $request, Minn\\Rest\\Caller $caller, Minn\\Http\\Router $router, Minn\\Rest\\PostObject $postObject, Minn\\Rest\\TermObject $termObject, Minn\\Rest\\UserObject $userObject, Minn\\Rest\\Types $types, Minn\\Rest\\Embed $embed)",
+                "signature": "__construct(Minn\\Http\\Request $request, Minn\\Http\\Router $router, Minn\\Rest\\Services $services, Minn\\Rest\\Embed $embed)",
                 "doc": "",
                 "shapes": [],
                 "params": [
                     {
-                        "name": "db",
-                        "type": "Minn\\Db",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
                         "name": "request",
                         "type": "Minn\\Http\\Request",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "caller",
-                        "type": "Minn\\Rest\\Caller",
                         "shape": "",
                         "default": null,
                         "doc": ""
@@ -49096,29 +49820,8 @@
                         "doc": ""
                     },
                     {
-                        "name": "postObject",
-                        "type": "Minn\\Rest\\PostObject",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "termObject",
-                        "type": "Minn\\Rest\\TermObject",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "userObject",
-                        "type": "Minn\\Rest\\UserObject",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "types",
-                        "type": "Minn\\Rest\\Types",
+                        "name": "services",
+                        "type": "Minn\\Rest\\Services",
                         "shape": "",
                         "default": null,
                         "doc": ""
@@ -49133,32 +49836,14 @@
                 ],
                 "visibility": "public",
                 "line": 37,
-                "end": 48
+                "end": 43
             },
             "cases": [],
             "constants": [],
             "properties": [
                 {
-                    "name": "db",
-                    "type": "Minn\\Db",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
                     "name": "request",
                     "type": "Minn\\Http\\Request",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "caller",
-                    "type": "Minn\\Rest\\Caller",
                     "readonly": true,
                     "static": false,
                     "doc": "",
@@ -49175,35 +49860,8 @@
                     "promoted": true
                 },
                 {
-                    "name": "postObject",
-                    "type": "Minn\\Rest\\PostObject",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "termObject",
-                    "type": "Minn\\Rest\\TermObject",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "userObject",
-                    "type": "Minn\\Rest\\UserObject",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "types",
-                    "type": "Minn\\Rest\\Types",
+                    "name": "services",
+                    "type": "Minn\\Rest\\Services",
                     "readonly": true,
                     "static": false,
                     "doc": "",
@@ -49232,8 +49890,8 @@
                         "@return array<string, list<string>> the engine's routes in the reference's form, route => methods"
                     ],
                     "params": [],
-                    "line": 55,
-                    "end": 58
+                    "line": 50,
+                    "end": 53
                 },
                 {
                     "routes": [],
@@ -49259,8 +49917,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 61,
-                    "end": 67
+                    "line": 56,
+                    "end": 62
                 },
                 {
                     "routes": [],
@@ -49271,8 +49929,8 @@
                     "doc": "Who is making this request.",
                     "shapes": [],
                     "params": [],
-                    "line": 118,
-                    "end": 121
+                    "line": 113,
+                    "end": 116
                 },
                 {
                     "routes": [],
@@ -49283,8 +49941,8 @@
                     "doc": "The wp/v2 post shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 124,
-                    "end": 127
+                    "line": 119,
+                    "end": 122
                 },
                 {
                     "routes": [],
@@ -49295,8 +49953,8 @@
                     "doc": "The wp/v2 term shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 130,
-                    "end": 133
+                    "line": 125,
+                    "end": 128
                 },
                 {
                     "routes": [],
@@ -49307,8 +49965,8 @@
                     "doc": "The wp/v2 user shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 136,
-                    "end": 139
+                    "line": 131,
+                    "end": 134
                 },
                 {
                     "routes": [],
@@ -49319,8 +49977,8 @@
                     "doc": "The post types the surface knows.",
                     "shapes": [],
                     "params": [],
-                    "line": 142,
-                    "end": 145
+                    "line": 137,
+                    "end": 140
                 },
                 {
                     "routes": [],
@@ -49339,8 +49997,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 148,
-                    "end": 166
+                    "line": 143,
+                    "end": 161
                 },
                 {
                     "routes": [],
@@ -49368,8 +50026,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 75,
-                    "end": 115
+                    "line": 70,
+                    "end": 110
                 }
             ]
         },
@@ -52378,23 +53036,19 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/MediaController.php",
-            "lines": 209,
+            "lines": 185,
             "doc": "wp/v2/media: list, single, upload on both transports (multipart field\n\"file\", or a raw body with Content-Disposition), field edits, and force\ndelete with the files.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Content\\PostRecord",
-                "Minn\\Content\\PostWriter",
                 "Minn\\Content\\Posts",
-                "Minn\\Content\\Site",
                 "Minn\\Db",
                 "Minn\\Http\\Method",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
-                "Minn\\Media\\Metadata",
                 "Minn\\Media\\Upload",
-                "Minn\\Media\\Uploads",
                 "Minn\\Media\\Writer",
                 "Minn\\RestError",
                 "Minn\\Rest\\Caller",
@@ -52410,7 +53064,7 @@
                 "Minn\\Rest\\Api"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Db $db, Minn\\Content\\Posts $posts, Minn\\Content\\PostWriter $writer, Minn\\Content\\Site $site, Minn\\Media\\Uploads $uploads, Minn\\Media\\Writer $library, Minn\\Rest\\MediaObject $object, Minn\\Rest\\Caller $caller)",
+                "signature": "__construct(Minn\\Db $db, Minn\\Content\\Posts $posts, Minn\\Media\\Writer $library, Minn\\Rest\\MediaObject $object, Minn\\Rest\\Caller $caller)",
                 "doc": "",
                 "shapes": [],
                 "params": [
@@ -52424,27 +53078,6 @@
                     {
                         "name": "posts",
                         "type": "Minn\\Content\\Posts",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "writer",
-                        "type": "Minn\\Content\\PostWriter",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "site",
-                        "type": "Minn\\Content\\Site",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "uploads",
-                        "type": "Minn\\Media\\Uploads",
                         "shape": "",
                         "default": null,
                         "doc": ""
@@ -52472,8 +53105,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 30,
-                "end": 40
+                "line": 26,
+                "end": 33
             },
             "cases": [],
             "constants": [],
@@ -52490,33 +53123,6 @@
                 {
                     "name": "posts",
                     "type": "Minn\\Content\\Posts",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "writer",
-                    "type": "Minn\\Content\\PostWriter",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "site",
-                    "type": "Minn\\Content\\Site",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "uploads",
-                    "type": "Minn\\Media\\Uploads",
                     "readonly": true,
                     "static": false,
                     "doc": "",
@@ -52571,8 +53177,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 44,
-                    "end": 68
+                    "line": 37,
+                    "end": 61
                 },
                 {
                     "routes": [
@@ -52600,8 +53206,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 122,
-                    "end": 131
+                    "line": 115,
+                    "end": 124
                 },
                 {
                     "routes": [
@@ -52622,8 +53228,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 135,
-                    "end": 155
+                    "line": 128,
+                    "end": 148
                 },
                 {
                     "routes": [
@@ -52653,8 +53259,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 161,
-                    "end": 192
+                    "line": 154,
+                    "end": 181
                 },
                 {
                     "routes": [
@@ -52682,8 +53288,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 196,
-                    "end": 214
+                    "line": 185,
+                    "end": 198
                 },
                 {
                     "routes": [],
@@ -52704,8 +53310,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 77,
-                    "end": 107
+                    "line": 70,
+                    "end": 100
                 },
                 {
                     "routes": [],
@@ -52731,8 +53337,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 109,
-                    "end": 118
+                    "line": 102,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -52751,42 +53357,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 216,
-                    "end": 223
-                },
-                {
-                    "routes": [],
-                    "name": "setMetaValue",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "setMetaValue(int $id, string $key, string $value): void",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "id",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "key",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "value",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 225,
-                    "end": 235
+                    "line": 200,
+                    "end": 207
                 }
             ]
         },
@@ -58335,6 +58907,7 @@
                 "Minn\\Admin\\Dashboard",
                 "Minn\\Admin\\Diagnostics",
                 "Minn\\Admin\\HiddenIntegrations",
+                "Minn\\Admin\\InstalledSoftware",
                 "Minn\\Admin\\Logs",
                 "Minn\\Admin\\Notifications",
                 "Minn\\Admin\\Packages",
@@ -58414,8 +58987,8 @@
                     }
                 ],
                 "visibility": "private",
-                "line": 100,
-                "end": 106
+                "line": 101,
+                "end": 107
             },
             "cases": [],
             "constants": [
@@ -58498,8 +59071,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 109,
-                    "end": 112
+                    "line": 110,
+                    "end": 113
                 },
                 {
                     "routes": [],
@@ -58518,8 +59091,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 122,
-                    "end": 127
+                    "line": 123,
+                    "end": 128
                 },
                 {
                     "routes": [],
@@ -58530,8 +59103,8 @@
                     "doc": "The database door.",
                     "shapes": [],
                     "params": [],
-                    "line": 130,
-                    "end": 133
+                    "line": 131,
+                    "end": 134
                 },
                 {
                     "routes": [],
@@ -58542,8 +59115,8 @@
                     "doc": "The request being answered.",
                     "shapes": [],
                     "params": [],
-                    "line": 136,
-                    "end": 139
+                    "line": 137,
+                    "end": 140
                 },
                 {
                     "routes": [],
@@ -58554,8 +59127,8 @@
                     "doc": "The site root, no trailing slash.",
                     "shapes": [],
                     "params": [],
-                    "line": 142,
-                    "end": 145
+                    "line": 143,
+                    "end": 146
                 },
                 {
                     "routes": [],
@@ -58566,8 +59139,8 @@
                     "doc": "wp-content under the site root.",
                     "shapes": [],
                     "params": [],
-                    "line": 148,
-                    "end": 151
+                    "line": 149,
+                    "end": 152
                 },
                 {
                     "routes": [],
@@ -58578,8 +59151,8 @@
                     "doc": "The users repository.",
                     "shapes": [],
                     "params": [],
-                    "line": 156,
-                    "end": 159
+                    "line": 157,
+                    "end": 160
                 },
                 {
                     "routes": [],
@@ -58590,8 +59163,8 @@
                     "doc": "The posts repository.",
                     "shapes": [],
                     "params": [],
-                    "line": 162,
-                    "end": 165
+                    "line": 163,
+                    "end": 166
                 },
                 {
                     "routes": [],
@@ -58602,8 +59175,8 @@
                     "doc": "The terms repository.",
                     "shapes": [],
                     "params": [],
-                    "line": 168,
-                    "end": 171
+                    "line": 169,
+                    "end": 172
                 },
                 {
                     "routes": [],
@@ -58614,8 +59187,8 @@
                     "doc": "The comments repository.",
                     "shapes": [],
                     "params": [],
-                    "line": 174,
-                    "end": 177
+                    "line": 175,
+                    "end": 178
                 },
                 {
                     "routes": [],
@@ -58626,8 +59199,8 @@
                     "doc": "The site's options.",
                     "shapes": [],
                     "params": [],
-                    "line": 180,
-                    "end": 183
+                    "line": 181,
+                    "end": 184
                 },
                 {
                     "routes": [],
@@ -58638,8 +59211,8 @@
                     "doc": "The post writer.",
                     "shapes": [],
                     "params": [],
-                    "line": 186,
-                    "end": 189
+                    "line": 187,
+                    "end": 190
                 },
                 {
                     "routes": [],
@@ -58650,8 +59223,8 @@
                     "doc": "Revisions and autosaves.",
                     "shapes": [],
                     "params": [],
-                    "line": 192,
-                    "end": 195
+                    "line": 193,
+                    "end": 196
                 },
                 {
                     "routes": [],
@@ -58662,8 +59235,8 @@
                     "doc": "Classic menus and their items.",
                     "shapes": [],
                     "params": [],
-                    "line": 198,
-                    "end": 201
+                    "line": 199,
+                    "end": 202
                 },
                 {
                     "routes": [],
@@ -58674,8 +59247,8 @@
                     "doc": "What wp-content holds: plugins, themes, drop-ins.",
                     "shapes": [],
                     "params": [],
-                    "line": 204,
-                    "end": 207
+                    "line": 205,
+                    "end": 208
                 },
                 {
                     "routes": [],
@@ -58686,8 +59259,8 @@
                     "doc": "Link building from the permalink structure.",
                     "shapes": [],
                     "params": [],
-                    "line": 212,
-                    "end": 215
+                    "line": 213,
+                    "end": 216
                 },
                 {
                     "routes": [],
@@ -58698,8 +59271,8 @@
                     "doc": "REST URL building.",
                     "shapes": [],
                     "params": [],
-                    "line": 218,
-                    "end": 221
+                    "line": 219,
+                    "end": 222
                 },
                 {
                     "routes": [],
@@ -58710,8 +59283,8 @@
                     "doc": "The capability engine.",
                     "shapes": [],
                     "params": [],
-                    "line": 224,
-                    "end": 227
+                    "line": 225,
+                    "end": 228
                 },
                 {
                     "routes": [],
@@ -58722,8 +59295,8 @@
                     "doc": "Who is making this call.",
                     "shapes": [],
                     "params": [],
-                    "line": 230,
-                    "end": 233
+                    "line": 231,
+                    "end": 234
                 },
                 {
                     "routes": [],
@@ -58734,8 +59307,8 @@
                     "doc": "The session store.",
                     "shapes": [],
                     "params": [],
-                    "line": 236,
-                    "end": 239
+                    "line": 237,
+                    "end": 240
                 },
                 {
                     "routes": [],
@@ -58746,8 +59319,8 @@
                     "doc": "Application passwords for Basic auth.",
                     "shapes": [],
                     "params": [],
-                    "line": 242,
-                    "end": 245
+                    "line": 243,
+                    "end": 246
                 },
                 {
                     "routes": [],
@@ -58758,8 +59331,8 @@
                     "doc": "The extension loader.",
                     "shapes": [],
                     "params": [],
-                    "line": 250,
-                    "end": 253
+                    "line": 251,
+                    "end": 254
                 },
                 {
                     "routes": [],
@@ -58770,8 +59343,8 @@
                     "doc": "The post types the REST surface knows.",
                     "shapes": [],
                     "params": [],
-                    "line": 256,
-                    "end": 259
+                    "line": 257,
+                    "end": 260
                 },
                 {
                     "routes": [],
@@ -58782,8 +59355,8 @@
                     "doc": "The taxonomies the REST surface knows.",
                     "shapes": [],
                     "params": [],
-                    "line": 262,
-                    "end": 265
+                    "line": 263,
+                    "end": 266
                 },
                 {
                     "routes": [],
@@ -58794,8 +59367,8 @@
                     "doc": "The uploads directory.",
                     "shapes": [],
                     "params": [],
-                    "line": 268,
-                    "end": 271
+                    "line": 269,
+                    "end": 272
                 },
                 {
                     "routes": [],
@@ -58806,8 +59379,8 @@
                     "doc": "Stores an upload as an attachment.",
                     "shapes": [],
                     "params": [],
-                    "line": 274,
-                    "end": 277
+                    "line": 275,
+                    "end": 278
                 },
                 {
                     "routes": [],
@@ -58818,8 +59391,8 @@
                     "doc": "The JSON Schema validator, with the reference's filters passed in.",
                     "shapes": [],
                     "params": [],
-                    "line": 280,
-                    "end": 287
+                    "line": 281,
+                    "end": 288
                 },
                 {
                     "routes": [],
@@ -58830,8 +59403,8 @@
                     "doc": "The Minn Admin bundle on disk.",
                     "shapes": [],
                     "params": [],
-                    "line": 292,
-                    "end": 295
+                    "line": 293,
+                    "end": 296
                 },
                 {
                     "routes": [],
@@ -58842,8 +59415,8 @@
                     "doc": "Installing and removing themes and extensions.",
                     "shapes": [],
                     "params": [],
-                    "line": 298,
-                    "end": 301
+                    "line": 299,
+                    "end": 302
                 },
                 {
                     "routes": [],
@@ -58854,8 +59427,8 @@
                     "doc": "The debug log reader.",
                     "shapes": [],
                     "params": [],
-                    "line": 304,
-                    "end": 307
+                    "line": 305,
+                    "end": 308
                 },
                 {
                     "routes": [],
@@ -58866,8 +59439,8 @@
                     "doc": "Update checks and offers.",
                     "shapes": [],
                     "params": [],
-                    "line": 310,
-                    "end": 313
+                    "line": 311,
+                    "end": 314
                 },
                 {
                     "routes": [],
@@ -58878,8 +59451,8 @@
                     "doc": "Locales and the app's catalogs.",
                     "shapes": [],
                     "params": [],
-                    "line": 316,
-                    "end": 319
+                    "line": 317,
+                    "end": 320
                 },
                 {
                     "routes": [],
@@ -58890,8 +59463,8 @@
                     "doc": "The app's per-user appearance.",
                     "shapes": [],
                     "params": [],
-                    "line": 322,
-                    "end": 325
+                    "line": 323,
+                    "end": 326
                 },
                 {
                     "routes": [],
@@ -58902,8 +59475,8 @@
                     "doc": "The app's per-user hidden views.",
                     "shapes": [],
                     "params": [],
-                    "line": 328,
-                    "end": 331
+                    "line": 329,
+                    "end": 332
                 },
                 {
                     "routes": [],
@@ -58914,8 +59487,8 @@
                     "doc": "What happened lately.",
                     "shapes": [],
                     "params": [],
-                    "line": 334,
-                    "end": 337
+                    "line": 335,
+                    "end": 338
                 },
                 {
                     "routes": [],
@@ -58926,8 +59499,8 @@
                     "doc": "The overview payload.",
                     "shapes": [],
                     "params": [],
-                    "line": 340,
-                    "end": 343
+                    "line": 341,
+                    "end": 344
                 },
                 {
                     "routes": [],
@@ -58938,8 +59511,8 @@
                     "doc": "The bell feed.",
                     "shapes": [],
                     "params": [],
-                    "line": 346,
-                    "end": 349
+                    "line": 347,
+                    "end": 350
                 },
                 {
                     "routes": [],
@@ -58950,8 +59523,8 @@
                     "doc": "The System view's payload.",
                     "shapes": [],
                     "params": [],
-                    "line": 352,
-                    "end": 355
+                    "line": 353,
+                    "end": 356
                 },
                 {
                     "routes": [],
@@ -58962,8 +59535,8 @@
                     "doc": "The active block theme's templates; null under a classic theme, where the routes answer as the reference does when it never registered them.",
                     "shapes": [],
                     "params": [],
-                    "line": 360,
-                    "end": 367
+                    "line": 361,
+                    "end": 368
                 },
                 {
                     "routes": [],
@@ -58974,8 +59547,8 @@
                     "doc": "Writes block templates; null under a classic theme.",
                     "shapes": [],
                     "params": [],
-                    "line": 370,
-                    "end": 374
+                    "line": 371,
+                    "end": 375
                 },
                 {
                     "routes": [],
@@ -58986,8 +59559,8 @@
                     "doc": "The wp/v2 post shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 379,
-                    "end": 382
+                    "line": 380,
+                    "end": 383
                 },
                 {
                     "routes": [],
@@ -58998,8 +59571,8 @@
                     "doc": "The wp/v2 term shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 385,
-                    "end": 388
+                    "line": 386,
+                    "end": 389
                 },
                 {
                     "routes": [],
@@ -59010,8 +59583,8 @@
                     "doc": "The wp/v2 user shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 391,
-                    "end": 394
+                    "line": 392,
+                    "end": 395
                 },
                 {
                     "routes": [],
@@ -59022,8 +59595,8 @@
                     "doc": "The wp/v2 media shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 397,
-                    "end": 400
+                    "line": 398,
+                    "end": 401
                 },
                 {
                     "routes": [],
@@ -59034,8 +59607,8 @@
                     "doc": "The wp/v2 comment shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 403,
-                    "end": 406
+                    "line": 404,
+                    "end": 407
                 },
                 {
                     "routes": [],
@@ -59063,8 +59636,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 414,
-                    "end": 418
+                    "line": 415,
+                    "end": 419
                 }
             ]
         },
@@ -74636,7 +75209,7 @@
             "uses": [],
             "usedBy": [
                 "Minn\\Admin\\App",
-                "Minn\\Admin\\Diagnostics",
+                "Minn\\Admin\\InstalledSoftware",
                 "Minn\\Admin\\Packages",
                 "Minn\\Admin\\ThemesController",
                 "Minn\\Admin\\Updates",
@@ -78230,7 +78803,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/HeadLinks.php",
-            "lines": 129,
+            "lines": 135,
             "doc": "The links the reference puts in every head: the site and comments\nfeeds (plus the archive's own feed), the REST discovery link, the\nJSON alternate for the queried object, and the site icon set. The\nblock path prints them as one run; the classic path prints the same\npieces from the reference's wp_head hooks.",
             "implements": [],
             "extends": null,
@@ -78313,6 +78886,18 @@
             "methods": [
                 {
                     "routes": [],
+                    "name": "engineStylesheet",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "engineStylesheet(): string",
+                    "doc": "The link to the engine's own block stylesheet.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 32,
+                    "end": 35
+                },
+                {
+                    "routes": [],
                     "name": "all",
                     "static": false,
                     "visibility": "public",
@@ -78328,8 +78913,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 32,
-                    "end": 35
+                    "line": 38,
+                    "end": 41
                 },
                 {
                     "routes": [],
@@ -78340,8 +78925,8 @@
                     "doc": "The site and comments feed links.",
                     "shapes": [],
                     "params": [],
-                    "line": 38,
-                    "end": 43
+                    "line": 44,
+                    "end": 49
                 },
                 {
                     "routes": [],
@@ -78360,8 +78945,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 46,
-                    "end": 74
+                    "line": 52,
+                    "end": 80
                 },
                 {
                     "routes": [],
@@ -78372,8 +78957,8 @@
                     "doc": "No trailing newline: the reference prints the JSON alternate and the RSD link on the same physical line.",
                     "shapes": [],
                     "params": [],
-                    "line": 77,
-                    "end": 80
+                    "line": 83,
+                    "end": 86
                 },
                 {
                     "routes": [],
@@ -78392,8 +78977,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 83,
-                    "end": 96
+                    "line": 89,
+                    "end": 102
                 },
                 {
                     "routes": [],
@@ -78404,8 +78989,8 @@
                     "doc": "The RSD link.",
                     "shapes": [],
                     "params": [],
-                    "line": 99,
-                    "end": 102
+                    "line": 105,
+                    "end": 108
                 },
                 {
                     "routes": [],
@@ -78424,8 +79009,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 105,
-                    "end": 115
+                    "line": 111,
+                    "end": 121
                 },
                 {
                     "routes": [],
@@ -78436,8 +79021,8 @@
                     "doc": "The site icon links.",
                     "shapes": [],
                     "params": [],
-                    "line": 118,
-                    "end": 130
+                    "line": 124,
+                    "end": 136
                 },
                 {
                     "routes": [],
@@ -78470,8 +79055,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 133,
-                    "end": 149
+                    "line": 139,
+                    "end": 155
                 }
             ]
         },
@@ -78900,7 +79485,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/PageRenderer.php",
-            "lines": 206,
+            "lines": 196,
             "doc": "A whole page from the active block theme: the template the resolution\nmaps to, rendered against the main query, inside the document shell the\nreference emits (skip link, wp-site-blocks, the skip-link target on the\nfirst main element).",
             "implements": [],
             "extends": null,
@@ -78944,34 +79529,13 @@
                 "Minn\\Front\\FrontController"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Db $db, Minn\\Content\\Site $site, Minn\\Content\\Posts $posts, Minn\\Front\\Permalinks $permalinks, Minn\\Theme\\Theme $theme, Minn\\Theme\\Templates $templates, Minn\\Blocks\\Renderer $renderer, int $perPage, ?Minn\\Front\\AdminBar $bar = NULL, ?Minn\\Theme\\MainQueryBridge $bridge = NULL, ?Minn\\Theme\\HeadLinks $headLinks = NULL)",
+                "signature": "__construct(Minn\\Content\\Site $site, Minn\\Theme\\Theme $theme, Minn\\Theme\\Templates $templates, Minn\\Blocks\\Renderer $renderer, Minn\\Theme\\MainQueryBridge $bridge, Minn\\Theme\\HeadLinks $headLinks, ?Minn\\Front\\AdminBar $bar = NULL)",
                 "doc": "",
                 "shapes": [],
                 "params": [
                     {
-                        "name": "db",
-                        "type": "Minn\\Db",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
                         "name": "site",
                         "type": "Minn\\Content\\Site",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "posts",
-                        "type": "Minn\\Content\\Posts",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "permalinks",
-                        "type": "Minn\\Front\\Permalinks",
                         "shape": "",
                         "default": null,
                         "doc": ""
@@ -78998,8 +79562,15 @@
                         "doc": ""
                     },
                     {
-                        "name": "perPage",
-                        "type": "int",
+                        "name": "bridge",
+                        "type": "Minn\\Theme\\MainQueryBridge",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "headLinks",
+                        "type": "Minn\\Theme\\HeadLinks",
                         "shape": "",
                         "default": null,
                         "doc": ""
@@ -79010,59 +79581,18 @@
                         "shape": "",
                         "default": "NULL",
                         "doc": ""
-                    },
-                    {
-                        "name": "bridge",
-                        "type": "?Minn\\Theme\\MainQueryBridge",
-                        "shape": "",
-                        "default": "NULL",
-                        "doc": ""
-                    },
-                    {
-                        "name": "headLinks",
-                        "type": "?Minn\\Theme\\HeadLinks",
-                        "shape": "",
-                        "default": "NULL",
-                        "doc": ""
                     }
                 ],
                 "visibility": "public",
                 "line": 44,
-                "end": 57
+                "end": 53
             },
             "cases": [],
             "constants": [],
             "properties": [
                 {
-                    "name": "db",
-                    "type": "Minn\\Db",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
                     "name": "site",
                     "type": "Minn\\Content\\Site",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "posts",
-                    "type": "Minn\\Content\\Posts",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "permalinks",
-                    "type": "Minn\\Front\\Permalinks",
                     "readonly": true,
                     "static": false,
                     "doc": "",
@@ -79097,8 +79627,17 @@
                     "promoted": true
                 },
                 {
-                    "name": "perPage",
-                    "type": "int",
+                    "name": "bridge",
+                    "type": "Minn\\Theme\\MainQueryBridge",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "headLinks",
+                    "type": "Minn\\Theme\\HeadLinks",
                     "readonly": true,
                     "static": false,
                     "doc": "",
@@ -79108,24 +79647,6 @@
                 {
                     "name": "bar",
                     "type": "?Minn\\Front\\AdminBar",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "bridge",
-                    "type": "?Minn\\Theme\\MainQueryBridge",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "headLinks",
-                    "type": "?Minn\\Theme\\HeadLinks",
                     "readonly": true,
                     "static": false,
                     "doc": "",
@@ -79179,8 +79700,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 60,
-                    "end": 73
+                    "line": 56,
+                    "end": 69
                 },
                 {
                     "routes": [],
@@ -79208,8 +79729,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 83,
-                    "end": 121
+                    "line": 79,
+                    "end": 117
                 },
                 {
                     "routes": [],
@@ -79242,8 +79763,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 124,
-                    "end": 159
+                    "line": 120,
+                    "end": 154
                 },
                 {
                     "routes": [],
@@ -79254,8 +79775,8 @@
                     "doc": "The reference filters template_include under block themes too (the\ncanvas is the incoming value); a plugin swapping in its own PHP file\ntakes the whole response over, the CaptainCore Manager shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 166,
-                    "end": 179
+                    "line": 161,
+                    "end": 174
                 },
                 {
                     "routes": [],
@@ -79276,8 +79797,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 187,
-                    "end": 193
+                    "line": 182,
+                    "end": 188
                 },
                 {
                     "routes": [],
@@ -79303,8 +79824,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 196,
-                    "end": 210
+                    "line": 191,
+                    "end": 205
                 },
                 {
                     "routes": [],
@@ -79344,28 +79865,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 217,
-                    "end": 241
-                },
-                {
-                    "routes": [],
-                    "name": "headLinks",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "headLinks(Minn\\Front\\Resolution $resolution): string",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "resolution",
-                            "type": "Minn\\Front\\Resolution",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 243,
-                    "end": 246
+                    "line": 212,
+                    "end": 236
                 }
             ]
         },

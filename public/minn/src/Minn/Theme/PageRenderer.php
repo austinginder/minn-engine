@@ -42,17 +42,13 @@ use Minn\Support\Serialized;
 final readonly class PageRenderer
 {
     public function __construct(
-        private Db $db,
         private Site $site,
-        private Posts $posts,
-        private Permalinks $permalinks,
         private Theme $theme,
         private Templates $templates,
         private Renderer $renderer,
-        private int $perPage,
+        private MainQueryBridge $bridge,
+        private HeadLinks $headLinks,
         private ?AdminBar $bar = null,
-        private ?MainQueryBridge $bridge = null,
-        private ?HeadLinks $headLinks = null,
     ) {
     }
 
@@ -69,7 +65,7 @@ final readonly class PageRenderer
         (new QueryBlocks($posts, $site, $permalinks))->register($renderer);
         (new Navigation($db, $posts, $permalinks))->register($renderer);
         (new Comments($db, new CommentStore($db), $site, $permalinks))->register($renderer);
-        return new self($db, $site, $posts, $permalinks, $theme, $templates, $renderer, $perPage, $bar, new MainQueryBridge($site, $posts, $perPage), new HeadLinks($site, $posts, $permalinks));
+        return new self($site, $theme, $templates, $renderer, new MainQueryBridge($site, $posts, $perPage), new HeadLinks($site, $posts, $permalinks), $bar);
     }
 
     /**
@@ -127,14 +123,13 @@ final readonly class PageRenderer
         if ($template === null) {
             return null;
         }
-        $bridge = $this->bridge ?? new MainQueryBridge($this->site, $this->posts, $this->perPage);
-        $query = $bridge->stand($resolution);
+        $query = $this->bridge->stand($resolution);
         $takeover = $this->pluginTemplate();
         if ($takeover !== null) {
             return $takeover;
         }
         RenderState::reset();
-        $this->renderer->withContext(new Context($resolution, $query->posts, $query->total, $bridge->perPage(), true));
+        $this->renderer->withContext(new Context($resolution, $query->posts, $query->total, $this->bridge->perPage(), true));
         // The reference texturizes the rendered template as a whole, after the
         // blocks: straight quotes in a theme's own markup curl, content that was
         // texturized on its way in is left alone.
@@ -218,7 +213,7 @@ final readonly class PageRenderer
     {
         // The theme's own style.css is the theme's to enqueue from its
         // functions.php, which the runtime loads; the reference links it no other way.
-        $stylesheets = '<link rel="stylesheet" id="minn-blocks-css" href="' . Html::attr($this->permalinks->url('/minn/assets/blocks.css')) . '" />' . "\n"
+        $stylesheets = $this->headLinks->engineStylesheet()
             . '<style id="global-styles-inline-css">' . "\n" . $styles->css() . "\n" . '</style>' . "\n";
         $runtimeHead = '';
         if (Runtime::booted()) {
@@ -231,17 +226,12 @@ final readonly class PageRenderer
             . '<meta charset="UTF-8" />' . "\n"
             . '<meta name="viewport" content="width=device-width, initial-scale=1" />' . "\n"
             . '<title>' . htmlspecialchars($title, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false) . '</title>' . "\n"
-            . $this->headLinks($resolution)
+            . $this->headLinks->all($resolution)
             . $stylesheets
             . (Extensions::runner()?->head() ?? '')
             . $runtimeHead
             . ($fontFaces === '' ? '' : '<style class="wp-fonts-local">' . "\n" . $fontFaces . '</style>' . "\n")
             . ($bar === null ? '' : $bar->head())
             . '</head>' . "\n";
-    }
-
-    private function headLinks(Resolution $resolution): string
-    {
-        return ($this->headLinks ?? new HeadLinks($this->site, $this->posts, $this->permalinks))->all($resolution);
     }
 }

@@ -4,14 +4,11 @@ declare(strict_types=1);
 
 namespace Minn\Admin;
 
-use Minn\Content\Inventory;
 use Minn\Content\Site;
 use Minn\Db;
-use Minn\Extension\Loader;
 use Minn\Front\Permalinks;
 use Minn\Http\Request;
 use Minn\Mail\MailSettings;
-use Minn\Support\FileHeaders;
 
 /**
  * The System view's facts about this install: the engine, PHP, the
@@ -26,8 +23,7 @@ final readonly class Diagnostics
         private Db $db,
         private Site $site,
         private Permalinks $permalinks,
-        private Inventory $inventory,
-        private Loader $extensions,
+        private InstalledSoftware $software,
         private Logs $logs,
         private string $engineVersion,
         private string $webroot,
@@ -47,7 +43,7 @@ final readonly class Diagnostics
             'config' => $this->config(),
             'logs' => $this->logs->listPayload(),
             'licenses' => null,
-            'extensions' => $this->extensionsManifest(),
+            'extensions' => $this->software->manifest(),
             'integrations' => null,
             'groups' => [
                 ['title' => 'Minn Engine', 'icon' => 'server', 'rows' => self::rows($this->engineGroup($cron, $mail))],
@@ -116,8 +112,8 @@ final readonly class Diagnostics
             'Permalinks' => (string) ($this->site->option('permalink_structure') ?: 'Plain'),
             'Debug mode' => $debugOn ? ((defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) ? 'On + log' : 'On') : 'Off',
             'Mail transport' => $mail->transport,
-            'Active theme' => $this->activeThemeLabel(),
-            'Active extensions' => (string) count($this->extensions->active()),
+            'Active theme' => $this->software->activeThemeLabel(),
+            'Active extensions' => (string) $this->software->activeExtensionCount(),
             'Cron' => $cron['events'] === 0 ? 'nothing scheduled' : "{$cron['events']} scheduled post" . ($cron['events'] === 1 ? '' : 's') . ($cron['next'] !== null ? ', next ' . self::relative($cron['next']) : ''),
         ];
     }
@@ -324,47 +320,6 @@ final readonly class Diagnostics
             'Expired transients' => number_format((int) ($expired['c'] ?? 0)) . ((int) ($expired['s'] ?? 0) > 0 ? ' (' . Logs::human((int) $expired['s']) . ')' : ''),
         ];
         return [$database, $top];
-    }
-
-    private function extensionsManifest(): array
-    {
-        $plugins = [];
-        foreach ($this->extensions->found() as $manifest) {
-            $plugins[] = ['name' => $manifest->name, 'version' => $manifest->version !== '' ? $manifest->version : '—', 'active' => in_array($manifest, $this->extensions->active(), true)];
-        }
-        foreach ($this->inventory->plugins() as $plugin) {
-            $plugins[] = ['name' => $plugin['title'] . ' (WordPress plugin, not run)', 'version' => $plugin['version'] !== '' ? $plugin['version'] : '—', 'active' => false];
-        }
-        usort($plugins, static fn (array $a, array $b): int => ($b['active'] <=> $a['active']) ?: strcasecmp($a['name'], $b['name']));
-        $mu = array_map(static fn (array $p) => ['name' => $p['title'], 'version' => $p['version'], 'active' => true], $this->inventory->mustUse());
-        $themes = [];
-        foreach ($this->inventory->themes() as $theme) {
-            $headers = FileHeaders::values("{$this->webroot}/wp-content/themes/{$theme['name']}/style.css", ['Template']);
-            $parent = $headers['Template'] === '' ? '' : FileHeaders::values("{$this->webroot}/wp-content/themes/{$headers['Template']}/style.css", ['Theme Name'])['Theme Name'];
-            $themes[] = ['name' => $theme['title'], 'version' => $theme['version'] !== '' ? $theme['version'] : '—', 'active' => $theme['status'] === 'active', 'parent' => $parent];
-        }
-        usort($themes, static fn (array $a, array $b): int => ($b['active'] <=> $a['active']) ?: strcasecmp($a['name'], $b['name']));
-        return [
-            'plugins' => $plugins,
-            'active_plugins' => count(array_filter($plugins, static fn (array $p) => $p['active'])),
-            'mu_plugins' => $mu,
-            'themes' => $themes,
-        ];
-    }
-
-    private function activeThemeLabel(): string
-    {
-        $slug = (string) ($this->site->option('stylesheet') ?? '');
-        $headers = FileHeaders::values("{$this->webroot}/wp-content/themes/{$slug}/style.css", ['Theme Name', 'Version', 'Template']);
-        if ($headers['Theme Name'] === '') {
-            return $slug === '' ? '(none)' : $slug;
-        }
-        $label = trim($headers['Theme Name'] . ' ' . $headers['Version']);
-        if ($headers['Template'] !== '') {
-            $parent = FileHeaders::values("{$this->webroot}/wp-content/themes/{$headers['Template']}/style.css", ['Theme Name'])['Theme Name'];
-            $label .= ' (child of ' . ($parent !== '' ? $parent : $headers['Template']) . ')';
-        }
-        return $label;
     }
 
     private static function check(string $key, string $label, string $status, string $detail): array

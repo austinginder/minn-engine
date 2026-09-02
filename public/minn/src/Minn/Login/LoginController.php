@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Login;
 
-use Minn\Auth\AuthCookies;
-use Minn\Auth\LoginThrottle;
 use Minn\Auth\Authenticator;
-use Minn\Auth\Sessions;
+use Minn\Auth\SignIn;
 use Minn\Content\Site;
 use Minn\Content\Users;
 use Minn\Front\Permalinks;
@@ -41,10 +39,8 @@ final readonly class LoginController
         private Site $site,
         private Permalinks $permalinks,
         private Authenticator $authenticator,
-        private Sessions $sessions,
-        private AuthCookies $cookies,
+        private SignIn $signIn,
         private Users $users,
-        private LoginThrottle $throttle,
         private PasswordReset $reset,
         private Mailer $mailer,
     ) {
@@ -108,12 +104,12 @@ final readonly class LoginController
             // The reference hashes the password into a ten-day cookie and sends the reader back; a wrong password simply stays locked.
             $back = $this->safeRedirect((string) ($request->form['redirect_to'] ?? $request->header('referer') ?? ''));
             return Response::redirect($back === $this->permalinks->url('/minn-admin/') ? $this->permalinks->url('/') : $back, 302)
-                ->withCookie('wp-postpass_' . $this->cookies->hash(), PortableHash::hash((string) ($request->form['post_password'] ?? '')), ['expires' => time() + 10 * self::DAY, 'path' => '/', 'secure' => $request->secure, 'samesite' => 'Lax']);
+                ->withCookie('wp-postpass_' . $this->signIn->hash(), PortableHash::hash((string) ($request->form['post_password'] ?? '')), ['expires' => time() + 10 * self::DAY, 'path' => '/', 'secure' => $request->secure, 'samesite' => 'Lax']);
         }
         if ($action !== 'lostpassword' && $action !== 'retrievepassword') {
             return null;
         }
-        $wait = $this->throttle->retryAfter($request->remoteAddress);
+        $wait = $this->signIn->retryAfter($request->remoteAddress);
         if ($wait !== null) {
             return $this->tooManyAttempts($request, $wait);
         }
@@ -124,7 +120,7 @@ final readonly class LoginController
         }
         $user = $this->users->findByLogin($login) ?? (str_contains($login, '@') ? $this->users->findByEmail($login) : null);
         if ($user === null) {
-            $this->throttle->recordFailure($request->remoteAddress);
+            $this->signIn->recordFailure($request->remoteAddress);
             return Response::html(LoginForm::lostPassword($siteName, $this->actionUrl($request, 'lostpassword'), 'Error: There is no account with that username or email address.', ''));
         }
         $key = $this->reset->issue($user);
@@ -146,7 +142,7 @@ final readonly class LoginController
         $login = (string) $request->query('login', '');
         if ($key !== '' && $login !== '') {
             return Response::redirect($this->actionUrl($request, 'rp'), 302)
-                ->withCookie('wp-resetpass-' . $this->cookies->hash(), $login . ':' . $key, ['path' => $this->base($request), 'httponly' => true, 'secure' => $request->secure, 'samesite' => 'Lax']);
+                ->withCookie('wp-resetpass-' . $this->signIn->hash(), $login . ':' . $key, ['path' => $this->base($request), 'httponly' => true, 'secure' => $request->secure, 'samesite' => 'Lax']);
         }
         [$user, $cookieKey] = $this->resetSession($request);
         if ($user === null) {
@@ -159,14 +155,14 @@ final readonly class LoginController
     /** The user and key from the reset cookie, when the key is still good. @return array{0: ?array, 1: string} */
     private function resetSession(Request $request): array
     {
-        $cookie = (string) ($request->cookies['wp-resetpass-' . $this->cookies->hash()] ?? '');
+        $cookie = (string) ($request->cookies['wp-resetpass-' . $this->signIn->hash()] ?? '');
         if (!str_contains($cookie, ':')) {
             return [null, ''];
         }
         [$login, $key] = explode(':', $cookie, 2);
         $user = $this->users->findByLogin($login);
         if ($user === null || !$this->reset->verify($user, $key)) {
-            $this->throttle->recordFailure($request->remoteAddress);
+            $this->signIn->recordFailure($request->remoteAddress);
             return [null, ''];
         }
         return [$user, $key];
@@ -174,7 +170,7 @@ final readonly class LoginController
 
     private function savePassword(Request $request): Response
     {
-        $wait = $this->throttle->retryAfter($request->remoteAddress);
+        $wait = $this->signIn->retryAfter($request->remoteAddress);
         if ($wait !== null) {
             return $this->tooManyAttempts($request, $wait);
         }
@@ -195,9 +191,8 @@ final readonly class LoginController
         }
         $this->users->update($user->id, ['user_pass' => Password::hash($pass1)]);
         $this->reset->clear($user);
-        $this->sessions->destroyAll($user->id);
-        return $this->cookies->clear(Response::html(LoginForm::notice($siteName, 'Password Reset', 'Your password has been reset.', $this->permalinks->url($this->base($request)))))
-            ->withCookie('wp-resetpass-' . $this->cookies->hash(), ' ', ['expires' => time() - 31536000, 'path' => $this->base($request), 'httponly' => true, 'secure' => $request->secure, 'samesite' => 'Lax']);
+        return $this->signIn->endAll(Response::html(LoginForm::notice($siteName, 'Password Reset', 'Your password has been reset.', $this->permalinks->url($this->base($request)))), $user->id)
+            ->withCookie('wp-resetpass-' . $this->signIn->hash(), ' ', ['expires' => time() - 31536000, 'path' => $this->base($request), 'httponly' => true, 'secure' => $request->secure, 'samesite' => 'Lax']);
     }
 
     /**
@@ -209,13 +204,13 @@ final readonly class LoginController
     private function tokenLogin(Request $request): Response
     {
         $error = 'Invalid one-time login token. <a href="' . $this->permalinks->url($this->base($request)) . '">Try signing in instead</a>?';
-        $wait = $this->throttle->retryAfter($request->remoteAddress);
+        $wait = $this->signIn->retryAfter($request->remoteAddress);
         if ($wait !== null) {
             return $this->tooManyAttempts($request, $wait);
         }
         $user = $this->users->find((int) $request->query('user_id', '0'));
         if ($user === null) {
-            $this->throttle->recordFailure($request->remoteAddress);
+            $this->signIn->recordFailure($request->remoteAddress);
             return Response::html($error, 403);
         }
         $id = $user->id;
@@ -224,21 +219,19 @@ final readonly class LoginController
         if ($token === '' || time() - $minted > 15 * 60) {
             $this->users->deleteMeta($id, 'cove_login_token');
             $this->users->deleteMeta($id, 'cove_login_token_time');
-            $this->throttle->recordFailure($request->remoteAddress);
+            $this->signIn->recordFailure($request->remoteAddress);
             return Response::html($error, 403);
         }
         // The meta holds the raw token (the helper mu-plugin's own format);
         // a hash is still accepted for a link minted before the change.
         $provided = (string) $request->query('cove_login_token', '');
         if (!hash_equals($token, $provided) && !hash_equals($token, hash('sha256', $provided))) {
-            $this->throttle->recordFailure($request->remoteAddress);
+            $this->signIn->recordFailure($request->remoteAddress);
             return Response::html($error, 403);
         }
         $this->users->deleteMeta($id, 'cove_login_token');
         $this->users->deleteMeta($id, 'cove_login_token_time');
-        $expiration = time() + 14 * self::DAY;
-        $session = $this->sessions->create($id, $expiration, $request->remoteAddress, (string) ($request->header('user-agent') ?? ''));
-        return $this->cookies->attach(Response::redirect($this->permalinks->url('/minn-admin/'), 302), $user, $expiration, $session, $request->secure, persistent: true);
+        return $this->signIn->remember(Response::redirect($this->permalinks->url('/minn-admin/'), 302), $user, $request);
     }
 
     /** Handles the posted form for each of those pages. */
@@ -254,23 +247,22 @@ final readonly class LoginController
         if ($reset !== null) {
             return $reset;
         }
-        $wait = $this->throttle->retryAfter($request->remoteAddress);
+        $wait = $this->signIn->retryAfter($request->remoteAddress);
         if ($wait !== null) {
             return $this->tooManyAttempts($request, $wait);
         }
         $user = $this->authenticator->login((string) ($request->form['log'] ?? ''), (string) ($request->form['pwd'] ?? ''));
         if ($user === null) {
-            $this->throttle->recordFailure($request->remoteAddress);
+            $this->signIn->recordFailure($request->remoteAddress);
             return Response::html($this->render($request, 'Error: The username or password you entered is incorrect.'));
         }
         // Remember me extends the session from two days to fourteen and keeps
         // the cookie past the browser session; the failure counter is left to
         // lapse, so a sign-in to one account cannot reset guesses at another.
         $remember = !empty($request->form['rememberme']);
-        $expiration = time() + ($remember ? 14 : 2) * self::DAY;
-        $token = $this->sessions->create($user->id, $expiration, $request->remoteAddress, (string) ($request->header('user-agent') ?? ''));
         $redirect = $this->safeRedirect((string) ($request->form['redirect_to'] ?? ''));
-        return $this->cookies->attach(Response::redirect($redirect, 302), $user, $expiration, $token, $request->secure, $remember);
+        $response = Response::redirect($redirect, 302);
+        return $remember ? $this->signIn->remember($response, $user, $request) : $this->signIn->establish($response, $user, $request);
     }
 
     /**
@@ -299,9 +291,9 @@ final readonly class LoginController
     private function logout(Request $request): Response
     {
         $session = $this->authenticator->session($request->cookies);
-        $signedOut = $this->cookies->clear(Response::redirect($this->permalinks->url($this->base($request) . '?loggedout=true'), 302));
+        $signedOut = Response::redirect($this->permalinks->url($this->base($request) . '?loggedout=true'), 302);
         if (!$session instanceof Authenticated) {
-            return $signedOut;
+            return $this->signIn->clear($signedOut);
         }
         $nonce = (string) ($request->query('_wpnonce') ?? $request->form['_wpnonce'] ?? '');
         if (!Nonce::verify($nonce, $session->id(), $session->token, 'log-out')) {
@@ -312,8 +304,7 @@ final readonly class LoginController
                 . '<p>Do you really want to <a href="' . Html::attr($link) . '">log out</a>?</p></body></html>',
             );
         }
-        $this->sessions->destroy($session->id(), $session->token);
-        return $signedOut;
+        return $this->signIn->end($signedOut, $session);
     }
 
     /**

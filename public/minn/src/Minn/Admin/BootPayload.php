@@ -7,7 +7,7 @@ namespace Minn\Admin;
 use Minn\Auth\Authenticated;
 use Minn\Auth\Capabilities;
 use Minn\Auth\Nonce;
-use Minn\Content\Posts;
+use Minn\Content\SiteIcon;
 use Minn\Content\Site;
 use Minn\Front\Permalinks;
 use Minn\Runtime\Runtime;
@@ -31,7 +31,7 @@ final readonly class BootPayload
         private string $engineVersion,
         private Appearance $appearance,
         private HiddenIntegrations $hidden,
-        private Posts $posts,
+        private SiteIcon $icon,
         private bool $blockTheme = false,
         private ?Translations $translations = null,
     ) {
@@ -110,7 +110,7 @@ final readonly class BootPayload
         return [
 
             'name' => $this->site->option('blogname') ?? 'Site',
-            'icon' => $this->siteIcon(),
+            'icon' => $this->icon->url(),
             'url' => $this->permalinks->url('/'),
             'adminUrl' => $this->permalinks->url('/minn-admin/'),
             'logout' => $this->permalinks->url('/minn-admin/login/logout'),
@@ -224,14 +224,6 @@ final readonly class BootPayload
             $GLOBALS['post'] = $query->post;
             Runtime::current()->set('post', $query->post);
         }
-    }
-
-    /** The site icon as the app shows it in the sidebar: the attachment file behind the site_icon option. */
-    private function siteIcon(): string
-    {
-        $icon = (int) ($this->site->option('site_icon') ?? 0);
-        $file = $icon > 0 ? $this->posts->meta($icon, '_wp_attached_file') : null;
-        return $file === null ? '' : $this->permalinks->url('/wp-content/uploads/' . $file);
     }
 
     /**

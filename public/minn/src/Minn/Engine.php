@@ -25,6 +25,7 @@ use Minn\Auth\LoginThrottle;
 use Minn\Auth\Sessions;
 use Minn\Content\Posts;
 use Minn\Content\Site;
+use Minn\Content\SiteIcon;
 use Minn\Content\Users;
 use Minn\Content\Comments;
 use Minn\Front\AdminBar;
@@ -198,7 +199,7 @@ final readonly class Engine
         } catch (\Minn\Login\ServeLogin) {
             // A hide-login plugin require'd wp-login.php mid-request: the
             // current request gets the sign-in surface, whatever its path.
-            $login = new LoginController($site, $permalinks, $authenticator, $sessions, new AuthCookies($db, $cookie), $users, new LoginThrottle($db), new PasswordReset($users), Mailer::forSite($site));
+            $login = new LoginController($site, $permalinks, $authenticator, new \Minn\Auth\SignIn($sessions, new AuthCookies($db, $cookie), new LoginThrottle($db)), $users, new PasswordReset($users), Mailer::forSite($site));
             ($request->method === Method::Post ? $login->signIn($request) : $login->form($request))->send();
         }
     }
@@ -222,15 +223,18 @@ final readonly class Engine
         $feeds = new Feeds($db, $site, $posts, new Comments($db), $users, $permalinks, $generator);
         $front = null;
         $cron = new Cron($db, $site, new PostWriter($db, $posts, $site), new Updates($site, new Inventory(ABSPATH . 'wp-content', $site), new Packages($site, ABSPATH . 'wp-content'), ABSPATH . 'wp-content', $permalinks->url('/'), self::WP_VERSION));
-        $probes = new ProbeController($site, $posts, $permalinks, $resolver, $feeds, new Sitemaps($db, $site, $permalinks), static function () use (&$front): Response { return $front->notFound(); }, $cron);
-        $front = new FrontController($resolver, new Renderer($db, $posts, $permalinks, $resolver->perPage()), $pages, $probes, $cron, $classic);
+        $notFound = static function () use (&$front): Response { return $front->notFound(); };
+        $feedController = new \Minn\Front\FeedController($site, $posts, $permalinks, $resolver, $feeds, $notFound);
+        $front = new FrontController($resolver, new Renderer($db, $posts, $permalinks, $resolver->perPage()), $pages, $feedController, $cron, $classic);
 
         $router = (new Router())->register(
             new AssetsController($this->engineDir . '/assets'),
             // The sign-in page sits under /minn-admin/, so it registers ahead of the shell's catch-all.
-            new LoginController($site, $permalinks, $authenticator, $sessions, new AuthCookies($db, $cookie), $users, new LoginThrottle($db), new PasswordReset($users), Mailer::forSite($site)),
-            new AppController($app, new BootPayload($site, $permalinks, $capabilities, $app, $this->version, $appearance, new HiddenIntegrations($users, $capabilities), $posts, $theme !== null, new Translations($users, $site, $app, ABSPATH . 'wp-content')), $authenticator, $capabilities, $permalinks, $this->version, $adminOff),
-            $probes,
+            new LoginController($site, $permalinks, $authenticator, new \Minn\Auth\SignIn($sessions, new AuthCookies($db, $cookie), new LoginThrottle($db)), $users, new PasswordReset($users), Mailer::forSite($site)),
+            new AppController($app, new BootPayload($site, $permalinks, $capabilities, $app, $this->version, $appearance, new HiddenIntegrations($users, $capabilities), new SiteIcon($site, $posts, $permalinks), $theme !== null, new Translations($users, $site, $app, ABSPATH . 'wp-content')), $authenticator, $capabilities, $permalinks, $this->version, $adminOff),
+            new ProbeController($site, $permalinks, new SiteIcon($site, $posts, $permalinks), $cron),
+            new \Minn\Front\SitemapController(new Sitemaps($db, $site, $permalinks), $notFound),
+            $feedController,
             new CommentPostController($site, $posts, new Comments($db), $permalinks, $authenticator, $capabilities, new AuthCookies($db, $cookie)),
             $front,
         );

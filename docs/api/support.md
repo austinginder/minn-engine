@@ -108,7 +108,7 @@ Header values from a plugin or theme file. The labels (Plugin Name,
 Theme Name, Version) are the published file-header contract; the
 reader is a line scan of the first 8 KB, never PHP execution.
 
-Used by: `Minn\Admin\App`, `Minn\Admin\Diagnostics`, `Minn\Admin\Packages`, `Minn\Admin\ThemesController`, `Minn\Admin\Updates`, `Minn\Cli\ThemeCommand`, `Minn\Content\Inventory`, `Minn\Rest\PluginsController`, `Minn\Theme\Folder`
+Used by: `Minn\Admin\App`, `Minn\Admin\InstalledSoftware`, `Minn\Admin\Packages`, `Minn\Admin\ThemesController`, `Minn\Admin\Updates`, `Minn\Cli\ThemeCommand`, `Minn\Content\Inventory`, `Minn\Rest\PluginsController`, `Minn\Theme\Folder`
 
 ### static `values(string $file, array $labels): array`
 

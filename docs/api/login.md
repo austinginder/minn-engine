@@ -4,7 +4,7 @@
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`LoginController`](#logincontroller) | final readonly class | 336 | Signing in. The page people see is /minn-admin/login: the form, the |
+| [`LoginController`](#logincontroller) | final readonly class | 329 | Signing in. The page people see is /minn-admin/login: the form, the |
 | [`LoginForm`](#loginform) | final class | 137 | The sign-in page markup. |
 | [`ServeLogin`](#servelogin) | final class | 3 | Thrown by the wp-login.php shape file when plugin code require's it |
 
@@ -26,7 +26,7 @@ and cookies validate on the engine AND on WordPress either way.
 Used by: `Minn\Engine`
 
 ```php
-__construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, Minn\Auth\Authenticator $authenticator, Minn\Auth\Sessions $sessions, Minn\Auth\AuthCookies $cookies, Minn\Content\Users $users, Minn\Auth\LoginThrottle $throttle, Minn\Auth\PasswordReset $reset, Minn\Mail\Mailer $mailer)
+__construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, Minn\Auth\Authenticator $authenticator, Minn\Auth\SignIn $signIn, Minn\Content\Users $users, Minn\Auth\PasswordReset $reset, Minn\Mail\Mailer $mailer)
 ```
 
 
@@ -50,7 +50,7 @@ Route: `POST /wp-login.php`
 
 Handles the posted form for each of those pages.
 
-Internals: `lostPassword()` (private, line 101), `openResetLink()` (private, line 143), `resetSession()` (private, line 160), `savePassword()` (private, line 175), `tokenLogin()` (private, line 209), `safeRedirect()` (private, line 280), `logout()` (private, line 299), `action()` (private, line 324), `actionUrl()` (private, line 335), `base()` (private, line 345), `tooManyAttempts()` (private, line 351), `render()` (private, line 358)
+Internals: `lostPassword()` (private, line 97), `openResetLink()` (private, line 139), `resetSession()` (private, line 156), `savePassword()` (private, line 171), `tokenLogin()` (private, line 204), `safeRedirect()` (private, line 272), `logout()` (private, line 291), `action()` (private, line 315), `actionUrl()` (private, line 326), `base()` (private, line 336), `tooManyAttempts()` (private, line 342), `render()` (private, line 349)
 
 
 ## LoginForm

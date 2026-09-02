@@ -12,7 +12,7 @@ uploads, image sizes and attachment metadata
 | [`Sizing`](#sizing) | final class | 207 | The image size arithmetic the media functions share: the crop or scale a |
 | [`Upload`](#upload) | final readonly class | 52 | One file arriving for the library, on either transport: a multipart |
 | [`Uploads`](#uploads) | final readonly class | 169 | The uploads directory: paths, URLs, the allowed types, and landing a file. |
-| [`Writer`](#writer) | final readonly class | 66 | Turns an Upload into an attachment: the file lands in the dated uploads |
+| [`Writer`](#writer) | final readonly class | 94 | The writes the media library makes. An Upload becomes an attachment: the |
 
 ## Canvas
 
@@ -152,7 +152,7 @@ image_meta as a:13 with alt last.
 
 - const `IMAGE_META_KEYS` = `array (   0 => 'aperture',   1 => 'credit',   2 => 'camera',   3 => 'caption',   4 => 'created_timestamp',   5 => 'copyright',   6 => 'focal_length',   7 => 'iso',   8 => 'shutter_speed',   9 => 'title',   10 => 'orientation', )`
 
-Used by: `Minn\Admin\SiteController`, `Minn\Blocks\ImageTags`, `Minn\Media\Writer`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Theme\HeadLinks`
+Used by: `Minn\Admin\SiteController`, `Minn\Blocks\ImageTags`, `Minn\Media\Writer`, `Minn\Rest\MediaObject`, `Minn\Theme\HeadLinks`
 
 ### static `parse(?string $blob): array`
 
@@ -274,7 +274,7 @@ The uploads directory: paths, URLs, the allowed types, and landing a file.
 
 - const `MIMES` = `array (   'png' => 'image/png',   'jpg' => 'image/jpeg',   'jpeg' => 'image/jpeg',   'gif' => 'image/gif',   'webp' => 'image/webp',   'pdf' => 'application/pdf',   'txt' => 'text/plain',   'mp4' => 'video/mp4',   'mp3' => 'audio/mpeg',   'zip' => 'application/zip', )` — extension => canonical mime
 
-Used by: `Minn\Blocks\ImageTags`, `Minn\Blocks\Renderer`, `Minn\Media\Upload`, `Minn\Media\Writer`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\Services`
+Used by: `Minn\Blocks\ImageTags`, `Minn\Blocks\Renderer`, `Minn\Media\Upload`, `Minn\Media\Writer`, `Minn\Rest\MediaObject`, `Minn\Rest\Services`
 
 ```php
 __construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, string $baseDir)
@@ -335,15 +335,16 @@ the URL likewise, with year/month subfolders when the site asks.
 
 `final readonly class Minn\Media\Writer` · `public/minn/src/Minn/Media/Writer.php`
 
-Turns an Upload into an attachment: the file lands in the dated uploads
-directory under a unique name, the row is inserted with the stored
-name as its title and slug, and an image gets its sub-sizes and the
-serialized metadata blob.
+The writes the media library makes. An Upload becomes an attachment: the
+file lands in the dated uploads directory under a unique name, the row is
+inserted with the stored name as its title and slug, and an image gets
+its sub-sizes and the serialized metadata blob. Edits stamp the row
+modified; removal takes the files with the row.
 
 Used by: `Minn\Rest\MediaController`, `Minn\Rest\Services`
 
 ```php
-__construct(Minn\Content\PostWriter $posts, Minn\Content\Site $site, Minn\Media\Uploads $uploads, Minn\Media\Images $images)
+__construct(Minn\Content\PostWriter $posts, Minn\Content\Posts $reads, Minn\Content\Site $site, Minn\Media\Uploads $uploads, Minn\Media\Images $images)
 ```
 
 
@@ -351,5 +352,17 @@ __construct(Minn\Content\PostWriter $posts, Minn\Content\Site $site, Minn\Media\
 
 The new attachment's id. The mime is the caller's to check first.
 
-Internals: `imageMetadata()` (private, line 69)
+### `edit(int $id, array $columns): void`
+
+Sets the given columns on an attachment and stamps it modified; nothing happens for none.
+
+### `setAlt(int $id, string $alt): void`
+
+Sets an attachment's alt text.
+
+### `remove(Minn\Content\PostRecord $attachment): void`
+
+Removes an attachment: its files, every generated size, its meta, and its row.
+
+Internals: `imageMetadata()` (private, line 100)
 

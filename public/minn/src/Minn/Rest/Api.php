@@ -35,14 +35,9 @@ use Minn\Runtime\Runtime;
 final readonly class Api
 {
     public function __construct(
-        private Db $db,
         private Request $request,
-        private Caller $caller,
         private Router $router,
-        private PostObject $postObject,
-        private TermObject $termObject,
-        private UserObject $userObject,
-        private Types $types,
+        private Services $services,
         private Embed $embed,
     ) {
     }
@@ -63,7 +58,7 @@ final readonly class Api
         $s = Services::forRequest($db, $request);
         $router = new Router();
         $router->register(...self::controllers($s, $router));
-        return new self($db, $request, $s->caller(), $router, $s->postObject(), $s->termObject(), $s->userObject(), $s->types(), new Embed($router, $s->types(), $s->taxonomies()));
+        return new self($request, $router, $s, new Embed($router, $s->types(), $s->taxonomies()));
     }
 
     /**
@@ -103,7 +98,7 @@ final readonly class Api
             new SettingsController(new Settings($s->site()), $caller),
             new CommentsController($s->comments(), $s->posts(), $s->site(), $s->commentObject(), $caller),
             new RevisionsController($s->posts(), $s->revisions(), $s->url(), $caller),
-            new MediaController($s->db(), $s->posts(), $s->writer(), $s->site(), $s->uploads(), $s->mediaWriter(), $s->mediaObject(), $caller),
+            new MediaController($s->db(), $s->posts(), $s->mediaWriter(), $s->mediaObject(), $caller),
             new MenusController($s->menus(), new MenuObject($s->menus(), $s->url(), $caller), new MenuItemObject($s->url(), $caller), $caller, $s->url()),
         ];
         $templates = $s->templates();
@@ -117,31 +112,31 @@ final readonly class Api
     /** Who is making this request. */
     public function caller(): Caller
     {
-        return $this->caller;
+        return $this->services->caller();
     }
 
     /** The wp/v2 post shape. */
     public function postObject(): PostObject
     {
-        return $this->postObject;
+        return $this->services->postObject();
     }
 
     /** The wp/v2 term shape. */
     public function termObject(): TermObject
     {
-        return $this->termObject;
+        return $this->services->termObject();
     }
 
     /** The wp/v2 user shape. */
     public function userObject(): UserObject
     {
-        return $this->userObject;
+        return $this->services->userObject();
     }
 
     /** The post types the surface knows. */
     public function types(): Types
     {
-        return $this->types;
+        return $this->services->types();
     }
 
     /** Resolves a REST route (from the path or from ?rest_route=) to a response. */

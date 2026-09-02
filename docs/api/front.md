@@ -10,6 +10,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`CommentList`](#commentlist) | final class | 52 | The classic threaded comment walk: top-level comments in order (or |
 | [`CommentPostController`](#commentpostcontroller) | final readonly class | 139 | wp-comments-post.php: the comment form's target. The reference's |
 | [`DocumentTitle`](#documenttitle) | final class | 47 | The document title as parts (title, tagline, page, site) in the order the |
+| [`FeedController`](#feedcontroller) | final readonly class | 94 | The feeds: the site's, the comments', a post's or an archive's by the |
 | [`Feeds`](#feeds) | final readonly class | 316 | The syndication feeds, byte for byte in the reference's shape: RSS 2.0 |
 | [`FrontController`](#frontcontroller) | final readonly class | 45 | The public site. One catch-all route: resolve the URL, then either |
 | [`Kind`](#kind) | enum | 17 | What a public URL resolved to. |
@@ -18,10 +19,11 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`Permalinks`](#permalinks) | final readonly class | 234 | Builds public URLs from the site's permalink structure. With an empty |
 | [`PluginRules`](#pluginrules) | final class | 71 | Rewrite rules a plugin registered through add_rewrite_rule(): the |
 | [`PostNavigation`](#postnavigation) | final class | 36 | The links to the posts either side of this one, and the nav block that |
-| [`ProbeController`](#probecontroller) | final readonly class | 184 | The surface monitors, crawlers, and hosting checks hit that is not a |
+| [`ProbeController`](#probecontroller) | final readonly class | 57 | The surface monitors, crawlers, and hosting checks hit that is not a |
 | [`Renderer`](#renderer) | final readonly class | 156 | The interim public theme: one clean template until the block-theme |
 | [`Resolution`](#resolution) | final readonly class | 108 | The outcome of resolving a public URL: which kind of thing it names, |
 | [`Resolver`](#resolver) | final readonly class | 550 | Turns a public URL into a Resolution, following the reference's observed |
+| [`SitemapController`](#sitemapcontroller) | final readonly class | 46 | The sitemap index, its pages, and the two stylesheets. |
 | [`SitemapXml`](#sitemapxml) | final class | 43 | The two sitemap documents, index and URL set, from entry maps; one builder for the engine's routes and the facade's renderer. |
 | [`Sitemaps`](#sitemaps) | final readonly class | 147 | The sitemap index and its providers (posts, pages, categories, tags, |
 | [`TermLists`](#termlists) | final class | 177 | The two term listings themes print: the nested category list and the |
@@ -174,6 +176,59 @@ The parts joined with the reference's separator.
 - `@param array<string, string> $parts`
 
 
+## FeedController
+
+`final readonly class Minn\Front\FeedController` · `public/minn/src/Minn/Front/FeedController.php`
+
+The feeds: the site's, the comments', a post's or an archive's by the
+path in front of /feed/, and the ?feed= query form on any page.
+
+Used by: `Minn\Engine`, `Minn\Front\FrontController`
+
+```php
+__construct(Minn\Content\Site $site, Minn\Content\Posts $posts, Minn\Front\Permalinks $permalinks, Minn\Front\Resolver $resolver, Minn\Front\Feeds $feeds, Closure $notFound)
+```
+
+
+### `siteFeed(Minn\Http\Request $request, string $kind = 'rss2'): Minn\Http\Response`
+
+Route: `GET /feed`
+
+Route: `GET /feed/`
+
+Route: `GET /feed/{kind:rss2|rss|atom|rdf}`
+
+Route: `GET /feed/{kind:rss2|rss|atom|rdf}/`
+
+The site feed in one of its kinds.
+
+### `commentsFeed(Minn\Http\Request $request): Minn\Http\Response`
+
+Route: `GET /comments/feed`
+
+Route: `GET /comments/feed/`
+
+The comments feed.
+
+### `pathFeed(Minn\Http\Request $request, string $path, string $kind = 'rss2'): Minn\Http\Response`
+
+Route: `GET /{path*}/feed`
+
+Route: `GET /{path*}/feed/`
+
+Route: `GET /{path*}/feed/{kind:rss2|rss|atom|rdf}`
+
+Route: `GET /{path*}/feed/{kind:rss2|rss|atom|rdf}/`
+
+A post's comment feed, or an archive's feed, by resolving the path in front of /feed/.
+
+### `queryFeed(Minn\Http\Request $request, Minn\Front\Resolution $resolution, string $kind): Minn\Http\Response`
+
+The ?feed= query form on any resolvable path.
+
+Internals: `feed()` (private, line 80), `feedResponse()` (private, line 112)
+
+
 ## Feeds
 
 `final readonly class Minn\Front\Feeds` · `public/minn/src/Minn/Front/Feeds.php`
@@ -183,7 +238,7 @@ for the site, its archives, and comments; Atom and RDF for the site.
 The whitespace inside each item is part of the captured output and is
 reproduced as-is.
 
-Used by: `Minn\Engine`, `Minn\Front\ProbeController`
+Used by: `Minn\Engine`, `Minn\Front\FeedController`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Site $site, Minn\Content\Posts $posts, Minn\Content\Comments $comments, Minn\Content\Users $users, Minn\Front\Permalinks $permalinks, string $generatorVersion)
@@ -231,7 +286,7 @@ interim template otherwise.
 Used by: `Minn\Engine`
 
 ```php
-__construct(Minn\Front\Resolver $resolver, Minn\Front\Renderer $renderer, ?Minn\Theme\PageRenderer $theme = NULL, ?Minn\Front\ProbeController $probes = NULL, ?Minn\Cron\Cron $cron = NULL, ?Minn\Theme\ClassicRenderer $classic = NULL)
+__construct(Minn\Front\Resolver $resolver, Minn\Front\Renderer $renderer, ?Minn\Theme\PageRenderer $theme = NULL, ?Minn\Front\FeedController $feeds = NULL, ?Minn\Cron\Cron $cron = NULL, ?Minn\Theme\ClassicRenderer $classic = NULL)
 ```
 
 
@@ -254,7 +309,7 @@ What a public URL resolved to.
 
 Cases: `Home`, `Single`, `Page`, `Category`, `Tag`, `Author`, `Date`, `Search`, `Taxonomy`, `PostTypeArchive`, `NotFound`, `Redirect`
 
-Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Front\AdminBar`, `Minn\Front\Canonical`, `Minn\Front\DocumentTitle`, `Minn\Front\FrontController`, `Minn\Front\ProbeController`, `Minn\Front\Renderer`, `Minn\Front\Resolution`, `Minn\Front\Resolver`, `Minn\Runtime\MainQuery`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\BodyClasses`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
+Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Front\AdminBar`, `Minn\Front\Canonical`, `Minn\Front\DocumentTitle`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\Renderer`, `Minn\Front\Resolution`, `Minn\Front\Resolver`, `Minn\Runtime\MainQuery`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\BodyClasses`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
 
 
 ## ListingLinks
@@ -326,7 +381,7 @@ structure every link is a query-string form (?p=, ?cat=); with a
 structure, published and private posts get their pretty form and every
 other status keeps the query form, which is what the reference emits.
 
-Used by: `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Admin\Diagnostics`, `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Admin\ThemesController`, `Minn\Blocks\Dynamic\Archives`, `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Cli\Runtime`, `Minn\Content\Menus`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Front\CommentPostController`, `Minn\Front\Feeds`, `Minn\Front\ProbeController`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Front\Sitemaps`, `Minn\Login\LoginController`, `Minn\Media\Uploads`, `Minn\Rest\CommentObject`, `Minn\Rest\IndexController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\RestUrl`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\TermObject`, `Minn\Rest\UserObject`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\PageRenderer`, `Minn\Theme\Theme`
+Used by: `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Admin\Diagnostics`, `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Admin\ThemesController`, `Minn\Blocks\Dynamic\Archives`, `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Cli\Runtime`, `Minn\Content\Menus`, `Minn\Content\SiteIcon`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Front\CommentPostController`, `Minn\Front\FeedController`, `Minn\Front\Feeds`, `Minn\Front\ProbeController`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Front\Sitemaps`, `Minn\Login\LoginController`, `Minn\Media\Uploads`, `Minn\Rest\CommentObject`, `Minn\Rest\IndexController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\RestUrl`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\TermObject`, `Minn\Rest\UserObject`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\PageRenderer`, `Minn\Theme\Theme`
 
 ```php
 __construct(Minn\Content\Posts $posts, Minn\Content\Terms $terms, string $home, string $structure, int $frontPageId = 0, int $postsPageId = 0, ?Closure $registry = NULL)
@@ -473,13 +528,13 @@ Internals: `link()` (private, line 31)
 `final readonly class Minn\Front\ProbeController` · `public/minn/src/Minn/Front/ProbeController.php`
 
 The surface monitors, crawlers, and hosting checks hit that is not a
-page: feeds, sitemaps, robots.txt, the XML-RPC and cron endpoints, and
-the admin entry point.
+page: robots.txt, the XML-RPC and cron endpoints, the admin entry point,
+and the favicon. Feeds and sitemaps have controllers of their own.
 
-Used by: `Minn\Engine`, `Minn\Front\FrontController`
+Used by: `Minn\Engine`
 
 ```php
-__construct(Minn\Content\Site $site, Minn\Content\Posts $posts, Minn\Front\Permalinks $permalinks, Minn\Front\Resolver $resolver, Minn\Front\Feeds $feeds, Minn\Front\Sitemaps $sitemaps, Closure $notFound, ?Minn\Cron\Cron $cron = NULL)
+__construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, Minn\Content\SiteIcon $icon, ?Minn\Cron\Cron $cron = NULL)
 ```
 
 
@@ -514,68 +569,6 @@ The admin is Minn Admin; the reference's admin path lands there.
 Route: `GET /favicon.ico`
 
 The site icon, or the reference's default.
-
-### `sitemapIndex(Minn\Http\Request $request): Minn\Http\Response`
-
-Route: `GET /wp-sitemap.xml`
-
-The sitemap index.
-
-### `sitemap(Minn\Http\Request $request, string $type, string $rest): Minn\Http\Response`
-
-Route: `GET /wp-sitemap-{type:posts|taxonomies|users}-{rest:[a-z_0-9-]+}.xml`
-
-One sitemap page.
-
-### `sitemapStylesheet(Minn\Http\Request $request): Minn\Http\Response`
-
-Route: `GET /wp-sitemap.xsl`
-
-The sitemap stylesheet.
-
-### `sitemapIndexStylesheet(Minn\Http\Request $request): Minn\Http\Response`
-
-Route: `GET /wp-sitemap-index.xsl`
-
-The sitemap index stylesheet.
-
-### `siteFeed(Minn\Http\Request $request, string $kind = 'rss2'): Minn\Http\Response`
-
-Route: `GET /feed`
-
-Route: `GET /feed/`
-
-Route: `GET /feed/{kind:rss2|rss|atom|rdf}`
-
-Route: `GET /feed/{kind:rss2|rss|atom|rdf}/`
-
-The site feed in one of its kinds.
-
-### `commentsFeed(Minn\Http\Request $request): Minn\Http\Response`
-
-Route: `GET /comments/feed`
-
-Route: `GET /comments/feed/`
-
-The comments feed.
-
-### `pathFeed(Minn\Http\Request $request, string $path, string $kind = 'rss2'): Minn\Http\Response`
-
-Route: `GET /{path*}/feed`
-
-Route: `GET /{path*}/feed/`
-
-Route: `GET /{path*}/feed/{kind:rss2|rss|atom|rdf}`
-
-Route: `GET /{path*}/feed/{kind:rss2|rss|atom|rdf}/`
-
-A post's comment feed, or an archive's feed, by resolving the path in front of /feed/.
-
-### `queryFeed(Minn\Http\Request $request, Minn\Front\Resolution $resolution, string $kind): Minn\Http\Response`
-
-The ?feed= query form on any resolvable path.
-
-Internals: `feed()` (private, line 167), `feedResponse()` (private, line 199), `xml()` (private, line 204)
 
 
 ## Renderer
@@ -620,7 +613,7 @@ The outcome of resolving a public URL: which kind of thing it names,
 the record behind it, and the page number for paginated views. Redirects
 carry their target instead.
 
-Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Front\AdminBar`, `Minn\Front\DocumentTitle`, `Minn\Front\FrontController`, `Minn\Front\ProbeController`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Runtime\MainQuery`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\BodyClasses`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
+Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Front\AdminBar`, `Minn\Front\DocumentTitle`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Runtime\MainQuery`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\BodyClasses`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
 
 - readonly `Minn\Front\Kind $kind`
 - readonly `Minn\Content\PostRecord|Minn\Content\UserRecord|Minn\Content\TermRecord|array|null $record`
@@ -712,7 +705,7 @@ name, even one that belongs to nobody.
 - Non-public posts are 404 to anonymous readers and served to a reader
 who can edit them.
 
-Used by: `Minn\Engine`, `Minn\Front\Canonical`, `Minn\Front\FrontController`, `Minn\Front\ProbeController`, `Minn\Front\Renderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Engine`, `Minn\Front\Canonical`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\Renderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Content\Terms $terms, Minn\Front\Permalinks $permalinks, Closure $canReadUnpublished, int $perPage)
@@ -745,6 +738,46 @@ The site-local bounds of a date archive, or null when the date is invalid.
 - `@return array{0: string, 1: string}|null`
 
 Internals: `fromRuleVars()` (private, line 117), `resolvePath()` (private, line 142), `resolveQueryVars()` (private, line 202), `dateRedirect()` (private, line 284), `home()` (private, line 300), `pluginRoute()` (private, line 322), `segmentsOf()` (private, line 357), `taxonomyArchive()` (private, line 366), `termArchive()` (private, line 380), `termResolution()` (private, line 393), `authorArchive()` (private, line 402), `dateArchive()` (private, line 419), `resolveContent()` (private, line 466), `resolveSingle()` (private, line 502), `formerSlug()` (private, line 544), `singleOrRedirect()` (private, line 557), `readable()` (private, line 566), `pages()` (private, line 583)
+
+
+## SitemapController
+
+`final readonly class Minn\Front\SitemapController` · `public/minn/src/Minn/Front/SitemapController.php`
+
+The sitemap index, its pages, and the two stylesheets.
+
+Used by: `Minn\Engine`
+
+```php
+__construct(Minn\Front\Sitemaps $sitemaps, Closure $notFound)
+```
+
+
+### `sitemapIndex(Minn\Http\Request $request): Minn\Http\Response`
+
+Route: `GET /wp-sitemap.xml`
+
+The sitemap index.
+
+### `sitemap(Minn\Http\Request $request, string $type, string $rest): Minn\Http\Response`
+
+Route: `GET /wp-sitemap-{type:posts|taxonomies|users}-{rest:[a-z_0-9-]+}.xml`
+
+One sitemap page.
+
+### `sitemapStylesheet(Minn\Http\Request $request): Minn\Http\Response`
+
+Route: `GET /wp-sitemap.xsl`
+
+The sitemap stylesheet.
+
+### `sitemapIndexStylesheet(Minn\Http\Request $request): Minn\Http\Response`
+
+Route: `GET /wp-sitemap-index.xsl`
+
+The sitemap index stylesheet.
+
+Internals: `xml()` (private, line 57)
 
 
 ## SitemapXml
@@ -780,7 +813,7 @@ URLs a page, lastmod on content only.
 
 - const `PER_PAGE` = `2000`
 
-Used by: `Minn\Engine`, `Minn\Front\ProbeController`
+Used by: `Minn\Engine`, `Minn\Front\SitemapController`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Site $site, Minn\Front\Permalinks $permalinks)

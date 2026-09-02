@@ -4,20 +4,24 @@ declare(strict_types=1);
 
 namespace Minn\Media;
 
+use Minn\Content\PostRecord;
+use Minn\Content\Posts;
 use Minn\Content\PostWriter;
 use Minn\Content\Site;
 use Minn\Content\Slug;
 
 /**
- * Turns an Upload into an attachment: the file lands in the dated uploads
- * directory under a unique name, the row is inserted with the stored
- * name as its title and slug, and an image gets its sub-sizes and the
- * serialized metadata blob.
+ * The writes the media library makes. An Upload becomes an attachment: the
+ * file lands in the dated uploads directory under a unique name, the row is
+ * inserted with the stored name as its title and slug, and an image gets
+ * its sub-sizes and the serialized metadata blob. Edits stamp the row
+ * modified; removal takes the files with the row.
  */
 final readonly class Writer
 {
     public function __construct(
         private PostWriter $posts,
+        private Posts $reads,
         private Site $site,
         private Uploads $uploads,
         private Images $images,
@@ -63,6 +67,33 @@ final readonly class Writer
             $this->posts->setMeta($id, '_wp_attachment_metadata', Metadata::serialize($this->imageMetadata($relative, $mime)));
         }
         return $id;
+    }
+
+    /** Sets the given columns on an attachment and stamps it modified; nothing happens for none. */
+    public function edit(int $id, array $columns): void
+    {
+        if ($columns === []) {
+            return;
+        }
+        $columns['post_modified'] = $this->site->localNow();
+        $columns['post_modified_gmt'] = gmdate('Y-m-d H:i:s');
+        $this->posts->update($id, $columns);
+    }
+
+    /** Sets an attachment's alt text. */
+    public function setAlt(int $id, string $alt): void
+    {
+        $this->posts->setMeta($id, '_wp_attachment_image_alt', $alt);
+    }
+
+    /** Removes an attachment: its files, every generated size, its meta, and its row. */
+    public function remove(PostRecord $attachment): void
+    {
+        $file = $this->reads->meta($attachment->id, '_wp_attached_file');
+        if ($file !== null && $file !== '') {
+            $this->uploads->remove($file, Metadata::parse($this->reads->meta($attachment->id, '_wp_attachment_metadata'))['sizes']);
+        }
+        $this->posts->destroy($attachment->id);
     }
 
     /** @return array<string, mixed> */

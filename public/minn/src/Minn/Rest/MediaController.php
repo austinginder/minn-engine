@@ -6,16 +6,12 @@ namespace Minn\Rest;
 
 use Minn\Content\PostRecord;
 use Minn\Content\Posts;
-use Minn\Content\PostWriter;
-use Minn\Content\Site;
 use Minn\Db;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
-use Minn\Media\Metadata;
 use Minn\Media\Upload;
-use Minn\Media\Uploads;
 use Minn\Media\Writer;
 use Minn\RestError;
 use Minn\Support\Kses;
@@ -30,9 +26,6 @@ final readonly class MediaController
     public function __construct(
         private Db $db,
         private Posts $posts,
-        private PostWriter $writer,
-        private Site $site,
-        private Uploads $uploads,
         private Writer $library,
         private MediaObject $object,
         private Caller $caller,
@@ -181,14 +174,10 @@ final readonly class MediaController
             $columns['post_parent'] = $parent;
         }
         if (isset($body['alt_text'])) {
-            $this->setMetaValue($attachmentId, '_wp_attachment_image_alt', (string) $body['alt_text']);
+            $this->library->setAlt($attachmentId, (string) $body['alt_text']);
         }
-        if ($columns !== []) {
-            $columns['post_modified'] = $this->site->localNow();
-            $columns['post_modified_gmt'] = gmdate('Y-m-d H:i:s');
-            $this->writer->update($attachmentId, $columns);
-        }
-        return Reply::item($this->object->build($this->posts->find($attachmentId), Context::Edit), Fields::fromQuery($request->query));
+        $this->library->edit($attachmentId, $columns);
+        return Reply::answer($request, $this->object->build($this->posts->find($attachmentId), Context::Edit));
     }
 
     /** Attachments cannot be trashed; force removes the row, its meta, and its files. */
@@ -204,13 +193,8 @@ final readonly class MediaController
             throw new RestError('rest_trash_not_supported', "The post does not support trashing. Set 'force=true' to delete.", 501);
         }
         $previous = $this->object->build($attachment, Context::Edit);
-        $file = $this->posts->meta($attachmentId, '_wp_attached_file');
-        if ($file !== null && $file !== '') {
-            $this->uploads->remove($file, Metadata::parse($this->posts->meta($attachmentId, '_wp_attachment_metadata'))['sizes']);
-        }
-        $this->db->execute("DELETE FROM {$this->db->table('postmeta')} WHERE post_id = ?", [$attachmentId]);
-        $this->db->execute("DELETE FROM {$this->db->table('posts')} WHERE ID = ?", [$attachmentId]);
-        return Reply::item(['deleted' => true, 'previous' => $previous], Fields::fromQuery($request->query));
+        $this->library->remove($attachment);
+        return Reply::answer($request, ['deleted' => true, 'previous' => $previous]);
     }
 
     private function attachment(int $id): PostRecord
@@ -220,17 +204,5 @@ final readonly class MediaController
             throw new RestError('rest_post_invalid_id', 'Invalid post ID.', 404);
         }
         return $post;
-    }
-
-    private function setMetaValue(int $id, string $key, string $value): void
-    {
-        if ($this->posts->meta($id, $key) === null) {
-            $this->writer->setMeta($id, $key, $value);
-            return;
-        }
-        $this->db->execute(
-            "UPDATE {$this->db->table('postmeta')} SET meta_value = ? WHERE post_id = ? AND meta_key = ?",
-            [$value, $id, $key],
-        );
     }
 }

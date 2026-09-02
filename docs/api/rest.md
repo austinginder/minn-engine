@@ -5,7 +5,7 @@ the wp/v2 surface: shapes and controllers
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`AdditionalFields`](#additionalfields) | final class | 46 | Which object type a wp/v2 route serves, so fields registered for that type can ride on the engine's own responses. |
-| [`Api`](#api) | final readonly class | 133 | The REST API: wires the controllers for one request and dispatches a |
+| [`Api`](#api) | final readonly class | 128 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 171 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`BatchRequest`](#batchrequest) | final class | 32 | The requests a batch payload names, normalised into descriptors the |
 | [`Caller`](#caller) | final class | 85 | Who is making this REST call. Resolved once from the cookie and nonce; |
@@ -19,7 +19,7 @@ the wp/v2 surface: shapes and controllers
 | [`IndexController`](#indexcontroller) | final readonly class | 53 | The API index at /wp-json/: the site facts monitors read (name, url, |
 | [`Links`](#links) | final class | 35 | Response link relations compacted through CURIEs: a rel that matches a CURIE's template becomes `name:suffix`, and the used CURIEs ride along. |
 | [`ListQuery`](#listquery) | final readonly class | 148 | The collection parameters a wp/v2 list accepts, read once from the |
-| [`MediaController`](#mediacontroller) | final readonly class | 209 | wp/v2/media: list, single, upload on both transports (multipart field |
+| [`MediaController`](#mediacontroller) | final readonly class | 185 | wp/v2/media: list, single, upload on both transports (multipart field |
 | [`MediaObject`](#mediaobject) | final readonly class | 158 | The wp/v2 media object, view and edit context. |
 | [`MenuItemObject`](#menuitemobject) | final readonly class | 74 | The wp/v2/menu-items resource. |
 | [`MenuObject`](#menuobject) | final readonly class | 37 | The wp/v2/menus resource: a nav_menu term plus locations and auto_add. |
@@ -86,7 +86,7 @@ payload under the reference's headers.
 Used by: `Minn\Engine`
 
 ```php
-__construct(Minn\Db $db, Minn\Http\Request $request, Minn\Rest\Caller $caller, Minn\Http\Router $router, Minn\Rest\PostObject $postObject, Minn\Rest\TermObject $termObject, Minn\Rest\UserObject $userObject, Minn\Rest\Types $types, Minn\Rest\Embed $embed)
+__construct(Minn\Http\Request $request, Minn\Http\Router $router, Minn\Rest\Services $services, Minn\Rest\Embed $embed)
 ```
 
 
@@ -124,7 +124,7 @@ The post types the surface knows.
 
 Resolves a REST route (from the path or from ?rest_route=) to a response.
 
-Internals: `controllers()` (private, line 75)
+Internals: `controllers()` (private, line 70)
 
 
 ## ApplicationPasswordsController
@@ -645,7 +645,7 @@ delete with the files.
 Used by: `Minn\Rest\Api`
 
 ```php
-__construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Content\PostWriter $writer, Minn\Content\Site $site, Minn\Media\Uploads $uploads, Minn\Media\Writer $library, Minn\Rest\MediaObject $object, Minn\Rest\Caller $caller)
+__construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Media\Writer $library, Minn\Rest\MediaObject $object, Minn\Rest\Caller $caller)
 ```
 
 
@@ -683,7 +683,7 @@ Route: `DELETE /wp/v2/media/{id:\d+}`
 
 Attachments cannot be trashed; force removes the row, its meta, and its files.
 
-Internals: `libraryClauses()` (private, line 77), `restDate()` (private, line 109), `attachment()` (private, line 216), `setMetaValue()` (private, line 225)
+Internals: `libraryClauses()` (private, line 70), `restDate()` (private, line 102), `attachment()` (private, line 200)
 
 
 ## MediaObject
@@ -1682,7 +1682,7 @@ The wp/v2 media shape.
 
 The wp/v2 comment shape.
 
-Internals: `share()` (private, line 414)
+Internals: `share()` (private, line 415)
 
 
 ## Settings

@@ -10,14 +10,15 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`App`](#app) | final readonly class | 98 | The Minn Admin app on disk: the symlinked dev copy the engine serves the |
 | [`AppController`](#appcontroller) | final readonly class | 131 | Serves Minn Admin from the engine: the path-routed shell (every |
 | [`Appearance`](#appearance) | final readonly class | 79 | A person's Minn Admin appearance: the colour scheme and its custom |
-| [`BootPayload`](#bootpayload) | final readonly class | 242 | The window.MINN boot payload, assembled from the engine: the keys app.js |
+| [`BootPayload`](#bootpayload) | final readonly class | 234 | The window.MINN boot payload, assembled from the engine: the keys app.js |
 | [`BundleController`](#bundlecontroller) | final readonly class | 39 | What the app bundle carries: the changelog, the user guide, and the |
 | [`CoreStatus`](#corestatus) | final readonly class | 24 | The installed version comes from the update_core transient's |
 | [`Dashboard`](#dashboard) | final readonly class | 290 | The overview payload: stat cards, the activity chart, and the recent |
-| [`Diagnostics`](#diagnostics) | final readonly class | 402 | The System view's facts about this install: the engine, PHP, the |
+| [`Diagnostics`](#diagnostics) | final readonly class | 360 | The System view's facts about this install: the engine, PHP, the |
 | [`EditorController`](#editorcontroller) | final readonly class | 48 | The editor's helpers in minn-admin/v1: the edit lock, and the template |
 | [`Format`](#format) | final class | 51 | The dashboard's number, size, age, and title formatting. |
 | [`HiddenIntegrations`](#hiddenintegrations) | final readonly class | 94 | What a person hid from their own Minn Admin: the app's per-user map |
+| [`InstalledSoftware`](#installedsoftware) | final readonly class | 59 | What is installed, as the System view lists it: every extension and |
 | [`LanguageChoices`](#languagechoices) | final class | 42 | The language picker's markup. English always leads the list and carries the |
 | [`LanguageController`](#languagecontroller) | final readonly class | 100 | Languages: what is installed, what a person reads in, what the site defaults to. |
 | [`Logs`](#logs) | final readonly class | 150 | The log files the System view can read and clear: the debug log the |
@@ -305,7 +306,7 @@ engine's own model.
 Used by: `Minn\Admin\AppController`, `Minn\Engine`
 
 ```php
-__construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, Minn\Auth\Capabilities $capabilities, Minn\Admin\App $app, string $engineVersion, Minn\Admin\Appearance $appearance, Minn\Admin\HiddenIntegrations $hidden, Minn\Content\Posts $posts, bool $blockTheme = false, ?Minn\Admin\Translations $translations = NULL)
+__construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, Minn\Auth\Capabilities $capabilities, Minn\Admin\App $app, string $engineVersion, Minn\Admin\Appearance $appearance, Minn\Admin\HiddenIntegrations $hidden, Minn\Content\SiteIcon $icon, bool $blockTheme = false, ?Minn\Admin\Translations $translations = NULL)
 ```
 
 
@@ -317,7 +318,7 @@ The site's name, or Site when it has none.
 
 The window.MINN payload the app boots from, for one signed-in session.
 
-Internals: `userSlice()` (private, line 91), `siteSlice()` (private, line 108), `commerce()` (private, line 134), `caps()` (private, line 146), `pluginPayload()` (private, line 194), `standHomeQuery()` (private, line 216), `siteIcon()` (private, line 230), `adapterSlices()` (private, line 242)
+Internals: `userSlice()` (private, line 91), `siteSlice()` (private, line 108), `commerce()` (private, line 134), `caps()` (private, line 146), `pluginPayload()` (private, line 194), `standHomeQuery()` (private, line 216), `adapterSlices()` (private, line 234)
 
 
 ## BundleController
@@ -428,7 +429,7 @@ Every number is read live; nothing is cached or fetched from outside.
 Used by: `Minn\Admin\SystemController`, `Minn\Rest\Services`
 
 ```php
-__construct(Minn\Db $db, Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, Minn\Content\Inventory $inventory, Minn\Extension\Loader $extensions, Minn\Admin\Logs $logs, string $engineVersion, string $webroot)
+__construct(Minn\Db $db, Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, Minn\Admin\InstalledSoftware $software, Minn\Admin\Logs $logs, string $engineVersion, string $webroot)
 ```
 
 
@@ -448,7 +449,7 @@ Every scheduled post as a one-off event, soonest first.
 
 The autoloaded options: the summary and the largest rows.
 
-Internals: `checks()` (private, line 68), `engineGroup()` (private, line 105), `phpGroup()` (private, line 126), `serverGroup()` (private, line 149), `opcacheOn()` (private, line 167), `autoloadSummary()` (private, line 250), `cronSummary()` (private, line 265), `futurePosts()` (private, line 283), `databaseGroup()` (private, line 291), `extensionsManifest()` (private, line 329), `activeThemeLabel()` (private, line 355), `check()` (private, line 370), `rows()` (private, line 376), `bytes()` (private, line 385), `offsetLabel()` (private, line 400), `relative()` (private, line 408)
+Internals: `checks()` (private, line 64), `engineGroup()` (private, line 101), `phpGroup()` (private, line 122), `serverGroup()` (private, line 145), `opcacheOn()` (private, line 163), `autoloadSummary()` (private, line 246), `cronSummary()` (private, line 261), `futurePosts()` (private, line 279), `databaseGroup()` (private, line 287), `check()` (private, line 325), `rows()` (private, line 331), `bytes()` (private, line 340), `offsetLabel()` (private, line 355), `relative()` (private, line 363)
 
 
 ## EditorController
@@ -562,6 +563,34 @@ False when the id names nothing this person could hide.
 ### `unhide(int $userId, string $id): void`
 
 Shows a hidden view again.
+
+
+## InstalledSoftware
+
+`final readonly class Minn\Admin\InstalledSoftware` · `public/minn/src/Minn/Admin/InstalledSoftware.php`
+
+What is installed, as the System view lists it: every extension and
+WordPress plugin with whether it runs, the mu-plugins, the themes with
+their parents, and the active theme's label.
+
+Used by: `Minn\Admin\Diagnostics`, `Minn\Rest\Services`
+
+```php
+__construct(Minn\Content\Site $site, Minn\Content\Inventory $inventory, Minn\Extension\Loader $extensions, string $webroot)
+```
+
+
+### `activeExtensionCount(): int`
+
+How many Minn extensions are active.
+
+### `manifest(): array`
+
+Plugins, mu-plugins, and themes with their versions and whether each is active.
+
+### `activeThemeLabel(): string`
+
+The active theme's name and version, naming the parent of a child theme; the slug when the headers are missing.
 
 
 ## LanguageChoices

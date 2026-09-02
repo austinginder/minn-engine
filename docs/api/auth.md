@@ -20,6 +20,7 @@ passwords, sessions, cookies, nonces, roles and capabilities
 | [`Roles`](#roles) | final class | 68 | Role definitions from the site's {prefix}user_roles option, parsed by a |
 | [`Salts`](#salts) | final class | 35 | The site's own secret material, read from the constants wp-config.php |
 | [`Sessions`](#sessions) | final readonly class | 160 | The session_tokens usermeta store: {sha256(token): {expiration, ip, ua, |
+| [`SignIn`](#signin) | final readonly class | 70 | The door itself: what a sign-in surface needs beyond checking a |
 | [`TypeCapabilities`](#typecapabilities) | final readonly class | 41 | The capability names a post type's permissions are built from. Posts and |
 
 ## ApplicationPasswords
@@ -100,7 +101,7 @@ plugins paths (the secure variant over HTTPS, keyed off that scheme's
 salt) and the logged_in cookie on the site root, which is the one REST
 reads. Every value shares the username|expiration|token|hmac shape.
 
-Used by: `Minn\Engine`, `Minn\Front\CommentPostController`, `Minn\Login\LoginController`
+Used by: `Minn\Auth\SignIn`, `Minn\Engine`, `Minn\Front\CommentPostController`
 
 ```php
 __construct(Minn\Db $db, Minn\Auth\Cookie $cookie)
@@ -155,7 +156,7 @@ A session whose nonce did not verify.
 
 A validated session: the user row and the raw session token behind it.
 
-Used by: `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Auth\Cookie`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Front\CommentPostController`, `Minn\Login\LoginController`, `Minn\Rest\Caller`
+Used by: `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Auth\Cookie`, `Minn\Auth\SignIn`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Front\CommentPostController`, `Minn\Login\LoginController`, `Minn\Rest\Caller`
 
 ```php
 __construct(Minn\Content\UserRecord $user, string $token, ?array $applicationPassword = NULL)
@@ -326,7 +327,7 @@ as "window start:count"; a successful sign-in clears the row.
 - const `WINDOW` = `900`
 - const `PREFIX` = `'minn_login_throttle_'`
 
-Used by: `Minn\Engine`, `Minn\Login\LoginController`
+Used by: `Minn\Auth\SignIn`, `Minn\Engine`
 
 ```php
 __construct(Minn\Db $db)
@@ -561,7 +562,7 @@ The session_tokens usermeta store: {sha256(token): {expiration, ip, ua,
 login}}. Read by a bounded scan of the serialized blob and written by
 serializing it ourselves, so stored data is never executed.
 
-Used by: `Minn\Admin\SessionsController`, `Minn\Auth\Authenticator`, `Minn\Auth\Cookie`, `Minn\Engine`, `Minn\Login\LoginController`, `Minn\Rest\Services`
+Used by: `Minn\Admin\SessionsController`, `Minn\Auth\Authenticator`, `Minn\Auth\Cookie`, `Minn\Auth\SignIn`, `Minn\Engine`, `Minn\Rest\Services`
 
 ```php
 __construct(Minn\Content\Users $users)
@@ -607,6 +608,59 @@ Every stored session of a user, keyed by token hash.
 The map in PHP's serialized form, entry keys in the order given.
 
 Internals: `parseEntry()` (private, line 125), `prune()` (private, line 143), `write()` (private, line 149), `string()` (private, line 169)
+
+
+## SignIn
+
+`final readonly class Minn\Auth\SignIn` · `public/minn/src/Minn/Auth/SignIn.php`
+
+The door itself: what a sign-in surface needs beyond checking a
+password. Sessions are minted here, the three cookies ride out on the
+response, and the failure counter behind the throttle is kept in one
+place with the session store and the cookie jar it protects.
+
+- const `DAY` = `86400`
+
+Used by: `Minn\Engine`, `Minn\Login\LoginController`
+
+```php
+__construct(Minn\Auth\Sessions $sessions, Minn\Auth\AuthCookies $cookies, Minn\Auth\LoginThrottle $throttle)
+```
+
+
+### `retryAfter(string $address): ?int`
+
+Seconds this address must wait before another attempt, or null when it may try now.
+
+### `recordFailure(string $address): void`
+
+Counts one failed attempt from an address.
+
+### `hash(): string`
+
+The cookie-name hash the sign-in cookies, the postpass cookie, and the reset cookie share.
+
+### `establish(Minn\Http\Response $response, Minn\Content\UserRecord $user, Minn\Http\Request $request): Minn\Http\Response`
+
+Signs a user in for two days: a new session, and the response with the cookies attached for the browser session.
+
+### `remember(Minn\Http\Response $response, Minn\Content\UserRecord $user, Minn\Http\Request $request): Minn\Http\Response`
+
+Signs a user in for fourteen days, the cookies kept past the browser session: "remember me", and the one-time login link.
+
+### `end(Minn\Http\Response $response, Minn\Auth\Authenticated $session): Minn\Http\Response`
+
+Ends one session and clears the cookies from the response.
+
+### `endAll(Minn\Http\Response $response, int $userId): Minn\Http\Response`
+
+Ends every session of a user (a password reset) and clears the cookies from the response.
+
+### `clear(Minn\Http\Response $response): Minn\Http\Response`
+
+The response with the sign-in cookies cleared.
+
+Internals: `open()` (private, line 59)
 
 
 ## TypeCapabilities

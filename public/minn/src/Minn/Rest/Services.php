@@ -13,6 +13,7 @@ use Minn\Admin\Appearance;
 use Minn\Admin\Dashboard;
 use Minn\Admin\Diagnostics;
 use Minn\Admin\HiddenIntegrations;
+use Minn\Admin\InstalledSoftware;
 use Minn\Admin\Logs;
 use Minn\Admin\Notifications;
 use Minn\Admin\Packages;
@@ -273,7 +274,7 @@ final class Services
     /** Stores an upload as an attachment. */
     public function mediaWriter(): Writer
     {
-        return $this->share(Writer::class, fn () => new Writer($this->writer(), $this->site(), $this->uploads(), new Images($this->site())));
+        return $this->share(Writer::class, fn () => new Writer($this->writer(), $this->posts(), $this->site(), $this->uploads(), new Images($this->site())));
     }
 
     /** The JSON Schema validator, with the reference's filters passed in. */
@@ -351,7 +352,7 @@ final class Services
     /** The System view's payload. */
     public function diagnostics(): Diagnostics
     {
-        return $this->share(Diagnostics::class, fn () => new Diagnostics($this->db, $this->site(), $this->permalinks(), $this->inventory(), $this->loader(), $this->logs(), MINN_ENGINE_VERSION, $this->root));
+        return $this->share(Diagnostics::class, fn () => new Diagnostics($this->db, $this->site(), $this->permalinks(), new InstalledSoftware($this->site(), $this->inventory(), $this->loader(), $this->root), $this->logs(), MINN_ENGINE_VERSION, $this->root));
     }
 
     // ---- the block theme, when there is one

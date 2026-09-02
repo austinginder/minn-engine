@@ -28,6 +28,12 @@ final readonly class HeadLinks
     ) {
     }
 
+    /** The link to the engine's own block stylesheet. */
+    public function engineStylesheet(): string
+    {
+        return '<link rel="stylesheet" id="minn-blocks-css" href="' . Html::attr($this->permalinks->url('/minn/assets/blocks.css')) . '" />' . "\n";
+    }
+
     /** Every head link for a resolution. */
     public function all(Resolution $resolution): string
     {

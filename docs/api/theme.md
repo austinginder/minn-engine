@@ -11,10 +11,10 @@ the block-theme reader, templates, global styles and the page renderer
 | [`ClassicTheme`](#classictheme) | final readonly class | 31 | The active classic (PHP-template) theme on disk. A theme is classic when |
 | [`Folder`](#folder) | final readonly class | 77 | A theme folder read from disk: its style.css headers, which folder its templates come from, its screenshot, whether it is a block theme. |
 | [`GlobalStyles`](#globalstyles) | final readonly class | 611 | theme.json to CSS. Presets become custom properties on :root and their |
-| [`HeadLinks`](#headlinks) | final readonly class | 129 | The links the reference puts in every head: the site and comments |
+| [`HeadLinks`](#headlinks) | final readonly class | 135 | The links the reference puts in every head: the site and comments |
 | [`Hierarchy`](#hierarchy) | final class | 146 | The classic template hierarchy: the candidate file names each template |
 | [`MainQueryBridge`](#mainquerybridge) | final readonly class | 67 | Stands the main query for a themed page: a plugin's archive runs through |
-| [`PageRenderer`](#pagerenderer) | final readonly class | 206 | A whole page from the active block theme: the template the resolution |
+| [`PageRenderer`](#pagerenderer) | final readonly class | 196 | A whole page from the active block theme: the template the resolution |
 | [`PatternText`](#patterntext) | final class | 198 | Block-theme patterns are PHP files whose only code is a handful of |
 | [`TemplateIndex`](#templateindex) | final class | 250 | Every block template and template part the site offers, in the order the |
 | [`TemplatePartTheme`](#templateparttheme) | final readonly class | 45 | A template-part block inside a template says which theme's part it means. |
@@ -264,6 +264,10 @@ __construct(Minn\Content\Site $site, Minn\Content\Posts $posts, Minn\Front\Perma
 ```
 
 
+### `engineStylesheet(): string`
+
+The link to the engine's own block stylesheet.
+
 ### `all(Minn\Front\Resolution $resolution): string`
 
 Every head link for a resolution.
@@ -296,7 +300,7 @@ Singular views only; posts and pages alike shortlink as ?p={id}, in the referenc
 
 The site icon links.
 
-Internals: `iconFileAt()` (private, line 133)
+Internals: `iconFileAt()` (private, line 139)
 
 
 ## Hierarchy
@@ -402,7 +406,7 @@ first main element).
 Used by: `Minn\Engine`, `Minn\Front\FrontController`
 
 ```php
-__construct(Minn\Db $db, Minn\Content\Site $site, Minn\Content\Posts $posts, Minn\Front\Permalinks $permalinks, Minn\Theme\Theme $theme, Minn\Theme\Templates $templates, Minn\Blocks\Renderer $renderer, int $perPage, ?Minn\Front\AdminBar $bar = NULL, ?Minn\Theme\MainQueryBridge $bridge = NULL, ?Minn\Theme\HeadLinks $headLinks = NULL)
+__construct(Minn\Content\Site $site, Minn\Theme\Theme $theme, Minn\Theme\Templates $templates, Minn\Blocks\Renderer $renderer, Minn\Theme\MainQueryBridge $bridge, Minn\Theme\HeadLinks $headLinks, ?Minn\Front\AdminBar $bar = NULL)
 ```
 
 
@@ -423,7 +427,7 @@ those, and the theme (and child theme) tokens close the list.
 
 The page for a resolution, or null when the theme has no template for it.
 
-Internals: `pluginTemplate()` (private, line 166), `skipLinkTarget()` (private, line 187), `documentTitle()` (private, line 196), `head()` (private, line 217), `headLinks()` (private, line 243)
+Internals: `pluginTemplate()` (private, line 161), `skipLinkTarget()` (private, line 182), `documentTitle()` (private, line 191), `head()` (private, line 212)
 
 
 ## PatternText

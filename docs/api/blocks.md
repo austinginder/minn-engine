@@ -87,7 +87,7 @@ What the template blocks render against: the resolution, the main
 query's posts, and a stack of "current post" frames pushed by post
 templates and comment templates as they loop.
 
-Used by: `Minn\Blocks\Renderer`, `Minn\Front\ProbeController`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Blocks\Renderer`, `Minn\Front\FeedController`, `Minn\Theme\PageRenderer`
 
 ```php
 __construct(Minn\Front\Resolution $resolution, array $posts, int $total, int $perPage, bool $front)
@@ -276,7 +276,7 @@ to post), so the counter lives here, not on any block.
 
 - const `MAX_DEPTH` = `64`
 
-Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Elements`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Layout`, `Minn\Blocks\Renderer`, `Minn\Blocks\Wrapper`, `Minn\Content\Excerpt`, `Minn\Front\ProbeController`, `Minn\Theme\GlobalStyles`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Elements`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Layout`, `Minn\Blocks\Renderer`, `Minn\Blocks\Wrapper`, `Minn\Content\Excerpt`, `Minn\Front\FeedController`, `Minn\Theme\GlobalStyles`, `Minn\Theme\PageRenderer`
 
 
 ### static `nextId(): int`
