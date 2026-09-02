@@ -44,6 +44,7 @@ the WordPress runtime plugins load against
 | [`ScriptModules`](#scriptmodules) | final class | 308 | The script modules registry: registrations with typed dependencies, the |
 | [`ScriptPack`](#scriptpack) | final class | 146 | The site-supplied script pack: the `wp-*` JavaScript packages the engine |
 | [`Shortcodes`](#shortcodes) | final class | 132 | The shortcode registry plugin code fills with add_shortcode, and the |
+| [`StoredObjects`](#storedobjects) | final class | 32 | The classes a stored blob may name and come back as. The serialized |
 | [`SymbolGap`](#symbolgap) | final readonly class | 87 | The part of the reference's interface the runtime does not answer: names in |
 | [`SymbolTable`](#symboltable) | final class | 69 | What a folder's PHP names, collected while its tokens are read: the |
 | [`Symbols`](#symbols) | final class | 273 | A static read of what a plugin's PHP calls: global functions and classes |
@@ -1117,7 +1118,7 @@ Drops an option from the cache.
 
 ### static `toStorage(mixed $value): string`
 
-What the reference stores: arrays serialized, scalars as their string form.
+What the reference stores: arrays and objects serialized, scalars as their string form.
 
 ### static `fromStorage(string $raw): mixed`
 
@@ -2067,6 +2068,36 @@ Content with the shortcodes removed.
 Shortcode attribute text as an array.
 
 - `@return array<int|string, string> named attributes; bare words and quoted values keyed by position`
+
+
+## StoredObjects
+
+`final class Minn\Runtime\StoredObjects` · `public/minn/src/Minn/Runtime/StoredObjects.php`
+
+The classes a stored blob may name and come back as. The serialized
+reader never instantiates; the facade registers one factory per value
+class it owns (WP_Post, WP_Term, WP_Comment) and a record naming any
+other class stays a stdClass of its properties. That is what lets a
+transient the reference wrote, holding post objects, read back typed.
+
+Used by: `Minn\Runtime\Options`
+
+
+### static `register(string $class, Closure $factory): void`
+
+Registers what a record naming this class becomes.
+
+### static `reviver(): Closure`
+
+The reviver the serialized reader takes: a factory's object, or the properties as they are.
+
+### static `knows(string $class): bool`
+
+Whether a factory is registered for the class.
+
+### static `reset(): void`
+
+Forgets every factory, for suites.
 
 
 ## SymbolGap

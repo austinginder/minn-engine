@@ -150,11 +150,11 @@ final class Options
         unset($this->cache[$name], $this->missing[$name]);
     }
 
-    /** What the reference stores: arrays serialized, scalars as their string form. */
+    /** What the reference stores: arrays and objects serialized, scalars as their string form. */
     public static function toStorage(mixed $value): string
     {
         if (is_array($value) || is_object($value)) {
-            return Serialized::encode(is_object($value) ? (array) $value : $value);
+            return Serialized::encode($value);
         }
         if ($value === false || $value === null) {
             return '';
@@ -166,7 +166,7 @@ final class Options
     public static function fromStorage(string $raw): mixed
     {
         if ($raw !== '' && preg_match('/^[aObis]:|^N;/', $raw)) {
-            $decoded = Serialized::decode($raw);
+            $decoded = Serialized::decode($raw, StoredObjects::reviver());
             if ($decoded !== Serialized::INVALID) {
                 return $decoded;
             }

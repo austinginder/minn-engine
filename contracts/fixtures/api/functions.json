@@ -107,6 +107,43 @@
         "https://minn.localhost"
     ],
     [
+        "option object bytes",
+        [
+            "a:1:{s:1:\"p\";O:7:\"WP_Post\":24:{s:2:\"ID\";",
+            "WP_Post",
+            1,
+            "hello-world"
+        ]
+    ],
+    [
+        "option object top-level",
+        [
+            "O:7:\"WP_Post\":24:{",
+            "WP_Post",
+            1
+        ]
+    ],
+    [
+        "option term and comment revive",
+        [
+            "WP_Term",
+            1,
+            "category",
+            "WP_Comment",
+            "1",
+            "stdClass",
+            1
+        ]
+    ],
+    [
+        "unknown class stays unknown",
+        [
+            true,
+            false,
+            false
+        ]
+    ],
+    [
         "transient missing",
         false
     ],

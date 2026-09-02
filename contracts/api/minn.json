@@ -61697,7 +61697,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Schema.php",
-            "lines": 468,
+            "lines": 471,
             "doc": "JSON-schema handling the way the REST API's argument validation does it:\nvalidate a value against a schema (a Refusal names what failed), sanitise\nit into the schema's type, filter a response by context, and the type\ntests the schema vocabulary needs. Behaviour pinned by contracts/fixtures/api/rest.json.",
             "implements": [],
             "extends": null,
@@ -61752,6 +61752,12 @@
                     "value": "array (   0 => 'array',   1 => 'object',   2 => 'string',   3 => 'number',   4 => 'integer',   5 => 'boolean',   6 => 'null', )",
                     "doc": "",
                     "visibility": "private"
+                },
+                {
+                    "name": "KEYWORDS",
+                    "value": "array (   0 => 'title',   1 => 'description',   2 => 'default',   3 => 'type',   4 => 'format',   5 => 'enum',   6 => 'items',   7 => 'properties',   8 => 'additionalProperties',   9 => 'patternProperties',   10 => 'minProperties',   11 => 'maxProperties',   12 => 'minimum',   13 => 'maximum',   14 => 'exclusiveMinimum',   15 => 'exclusiveMaximum',   16 => 'multipleOf',   17 => 'minLength',   18 => 'maxLength',   19 => 'pattern',   20 => 'minItems',   21 => 'maxItems',   22 => 'uniqueItems',   23 => 'anyOf',   24 => 'oneOf', )",
+                    "doc": "Every keyword a route schema may carry, in the reference's order; the endpoint subset drops the three descriptive ones.",
+                    "visibility": "public"
                 },
                 {
                     "name": "ENDPOINT_KEYWORDS",
@@ -61950,8 +61956,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 437,
-                    "end": 466
+                    "line": 440,
+                    "end": 469
                 },
                 {
                     "routes": [],
@@ -61970,8 +61976,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 469,
-                    "end": 482
+                    "line": 472,
+                    "end": 485
                 },
                 {
                     "routes": [],
@@ -71655,6 +71661,7 @@
             "extends": null,
             "uses": [
                 "Minn\\Db",
+                "Minn\\Runtime\\StoredObjects",
                 "Minn\\Support\\Serialized"
             ],
             "usedBy": [
@@ -71947,7 +71954,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "toStorage(mixed $value): string",
-                    "doc": "What the reference stores: arrays serialized, scalars as their string form.",
+                    "doc": "What the reference stores: arrays and objects serialized, scalars as their string form.",
                     "shapes": [],
                     "params": [
                         {
@@ -76873,6 +76880,108 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\StoredObjects",
+            "short": "StoredObjects",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/StoredObjects.php",
+            "lines": 32,
+            "doc": "The classes a stored blob may name and come back as. The serialized\nreader never instantiates; the facade registers one factory per value\nclass it owns (WP_Post, WP_Term, WP_Comment) and a record naming any\nother class stays a stdClass of its properties. That is what lets a\ntransient the reference wrote, holding post objects, read back typed.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Runtime\\Options"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "factories",
+                    "type": "array",
+                    "readonly": false,
+                    "static": true,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "register",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "register(string $class, Closure $factory): void",
+                    "doc": "Registers what a record naming this class becomes.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "class",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "factory",
+                            "type": "Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 20,
+                    "end": 23
+                },
+                {
+                    "routes": [],
+                    "name": "reviver",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "reviver(): Closure",
+                    "doc": "The reviver the serialized reader takes: a factory's object, or the properties as they are.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 26,
+                    "end": 32
+                },
+                {
+                    "routes": [],
+                    "name": "knows",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "knows(string $class): bool",
+                    "doc": "Whether a factory is registered for the class.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "class",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 35,
+                    "end": 38
+                },
+                {
+                    "routes": [],
+                    "name": "reset",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "reset(): void",
+                    "doc": "Forgets every factory, for suites.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 41,
+                    "end": 44
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\SymbolGap",
             "short": "SymbolGap",
             "namespace": "Minn\\Runtime",
@@ -81288,7 +81397,7 @@
             "namespace": "Minn\\Support",
             "kind": "final class",
             "file": "public/minn/src/Minn/Support/Serialized.php",
-            "lines": 197,
+            "lines": 202,
             "doc": "Tolerant readers for the serialized-PHP blobs WordPress stores. Nothing\nhere executes the blob; each reader scans for the one shape it needs.",
             "implements": [],
             "extends": null,
@@ -81406,9 +81515,11 @@
                     "name": "decode",
                     "static": true,
                     "visibility": "public",
-                    "signature": "decode(string $blob): mixed",
-                    "doc": "A serialized scalar or array as PHP data, parsed by this reader:\nstrings, integers, floats, booleans, null, and arrays of those.\nObjects are refused (nothing here instantiates anything), as is any\nblob with trailing bytes or a malformed shape, with INVALID.",
-                    "shapes": [],
+                    "signature": "decode(string $blob, ?Closure $revive = NULL): mixed",
+                    "doc": "A serialized scalar or array as PHP data, parsed by this reader:\nstrings, integers, floats, booleans, null, and arrays of those. An\nobject record becomes a stdClass of its properties, or whatever the\nreviver makes of the class name and those properties; nothing here\ninstantiates anything itself. A blob with trailing bytes or a\nmalformed shape is INVALID.",
+                    "shapes": [
+                        "@param ?\\Closure(string, \\stdClass): object $revive"
+                    ],
                     "params": [
                         {
                             "name": "blob",
@@ -81416,10 +81527,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "revive",
+                            "type": "?Closure",
+                            "shape": "?\\Closure(string, \\stdClass): object",
+                            "default": "NULL",
+                            "doc": ""
                         }
                     ],
-                    "line": 56,
-                    "end": 68
+                    "line": 60,
+                    "end": 72
                 },
                 {
                     "routes": [],
@@ -81427,7 +81545,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "encode(mixed $value): string",
-                    "doc": "PHP's serialize() for the values decode() accepts: null, bool, int,\nfloat, string, and arrays of those. Objects are refused.",
+                    "doc": "PHP's serialize() for the values decode() accepts: null, bool, int,\nfloat, string, arrays of those, and objects written as their class.",
                     "shapes": [],
                     "params": [
                         {
@@ -81438,8 +81556,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 163,
-                    "end": 197
+                    "line": 168,
+                    "end": 202
                 },
                 {
                     "routes": [],
@@ -81458,15 +81576,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 200,
-                    "end": 206
+                    "line": 205,
+                    "end": 211
                 },
                 {
                     "routes": [],
                     "name": "read",
                     "static": true,
                     "visibility": "private",
-                    "signature": "read(string $blob, int $offset): mixed",
+                    "signature": "read(string $blob, int $offset, ?Closure $revive): mixed",
                     "doc": "",
                     "shapes": [],
                     "params": [
@@ -81483,10 +81601,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "revive",
+                            "type": "?Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
                         }
                     ],
-                    "line": 70,
-                    "end": 138
+                    "line": 74,
+                    "end": 143
                 },
                 {
                     "routes": [],
@@ -81519,8 +81644,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 140,
-                    "end": 146
+                    "line": 145,
+                    "end": 151
                 },
                 {
                     "routes": [],
@@ -81553,8 +81678,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 148,
-                    "end": 157
+                    "line": 153,
+                    "end": 162
                 }
             ]
         },

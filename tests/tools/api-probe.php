@@ -52,6 +52,12 @@ $say('default_option filter with default', get_option('minn_probe_dflt', 'given'
 $say('siteurl trailing', get_option('siteurl'));
 $say('home', get_option('home'));
 
+// Objects stored in an option: written as the class, read back as the class.
+$say('option object bytes', (static function () { update_option('minn_probe_obj', ['p' => get_post(1)]); $raw = (string) $GLOBALS['wpdb']->get_var("SELECT option_value FROM {$GLOBALS['wpdb']->options} WHERE option_name = 'minn_probe_obj'"); $back = maybe_unserialize($raw); delete_option('minn_probe_obj'); return [substr($raw, 0, 40), get_class($back['p']), $back['p']->ID, $back['p']->post_name]; })());
+$say('option object top-level', (static function () { update_option('minn_probe_obj', get_post(1)); $raw = (string) $GLOBALS['wpdb']->get_var("SELECT option_value FROM {$GLOBALS['wpdb']->options} WHERE option_name = 'minn_probe_obj'"); $back = maybe_unserialize($raw); delete_option('minn_probe_obj'); return [substr($raw, 0, 18), get_class($back), $back->ID]; })());
+$say('option term and comment revive', (static function () { $back = maybe_unserialize(serialize(['t' => get_term(1), 'c' => get_comment(1), 'o' => (object) ['a' => 1]])); return [get_class($back['t']), $back['t']->term_id, $back['t']->taxonomy, get_class($back['c']), $back['c']->comment_ID, get_class($back['o']), $back['o']->a]; })());
+// The reference hands back an incomplete class here and the engine a stdClass; both stacks agree it is an object of no known class.
+$say('unknown class stays unknown', (static function () { $back = maybe_unserialize('O:12:"Not_A_Class_":1:{s:1:"k";s:1:"v";}'); return [is_object($back), $back instanceof WP_Post, $back instanceof WP_Term]; })());
 // Transients.
 delete_transient('minn_probe_t');
 $say('transient missing', get_transient('minn_probe_t'));

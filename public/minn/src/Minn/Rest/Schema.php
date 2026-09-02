@@ -426,6 +426,9 @@ final readonly class Schema
         return null;
     }
 
+    /** Every keyword a route schema may carry, in the reference's order; the endpoint subset drops the three descriptive ones. */
+    public const KEYWORDS = ['title', 'description', 'default', ...self::ENDPOINT_KEYWORDS];
+
     /** An object schema that names its properties forbids the others unless it says otherwise, all the way down. */
     private const ENDPOINT_KEYWORDS = ['type', 'format', 'enum', 'items', 'properties', 'additionalProperties', 'patternProperties', 'minProperties', 'maxProperties', 'minimum', 'maximum', 'exclusiveMinimum', 'exclusiveMaximum', 'multipleOf', 'minLength', 'maxLength', 'pattern', 'minItems', 'maxItems', 'uniqueItems', 'anyOf', 'oneOf'];
 

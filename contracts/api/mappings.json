@@ -5,9 +5,9 @@
         "minn": 437,
         "composes": 708,
         "leaf": 355,
-        "noop": 1246,
-        "functions": 2740,
-        "minnMethods": 413,
+        "noop": 1247,
+        "functions": 2741,
+        "minnMethods": 414,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -16272,6 +16272,7 @@
             "lines": 5,
             "kind": "minn",
             "minn": [
+                "Minn\\Runtime\\StoredObjects::reviver",
                 "Minn\\Support\\Serialized::decode"
             ],
             "composes": [
@@ -17523,6 +17524,13 @@
                 "rest_get_combining_operation_error",
                 "rest_validate_value_from_schema"
             ]
+        },
+        "rest_get_allowed_schema_keywords": {
+            "file": "rest-api.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
         },
         "rest_get_avatar_sizes": {
             "file": "rest-api.php",

@@ -49,25 +49,29 @@ final class Serialized
 
     /**
      * A serialized scalar or array as PHP data, parsed by this reader:
-     * strings, integers, floats, booleans, null, and arrays of those.
-     * Objects are refused (nothing here instantiates anything), as is any
-     * blob with trailing bytes or a malformed shape, with INVALID.
+     * strings, integers, floats, booleans, null, and arrays of those. An
+     * object record becomes a stdClass of its properties, or whatever the
+     * reviver makes of the class name and those properties; nothing here
+     * instantiates anything itself. A blob with trailing bytes or a
+     * malformed shape is INVALID.
+     *
+     * @param ?\Closure(string, \stdClass): object $revive
      */
-    public static function decode(string $blob): mixed
+    public static function decode(string $blob, ?\Closure $revive = null): mixed
     {
         if ($blob === '' || !preg_match('/^[sidbNaO]:|^N;/', $blob)) {
             return self::INVALID;
         }
         $offset = 0;
         try {
-            $value = self::read($blob, $offset);
+            $value = self::read($blob, $offset, $revive);
         } catch (\ValueError) {
             return self::INVALID;
         }
         return $offset === strlen($blob) ? $value : self::INVALID;
     }
 
-    private static function read(string $blob, int &$offset): mixed
+    private static function read(string $blob, int &$offset, ?\Closure $revive): mixed
     {
         $type = $blob[$offset] ?? '';
         $offset++;
@@ -95,11 +99,12 @@ final class Serialized
                 self::expect($blob, $offset, ';');
                 return $string;
             case 'O':
-                // An object becomes a plain stdClass carrying its properties; no
-                // class is ever instantiated, which is what keeps this safe.
+                // The properties land on a plain stdClass; only the reviver may
+                // turn that into something else, and only for a class it knows.
                 self::expect($blob, $offset, ':');
                 $nameLength = (int) self::until($blob, $offset, ':');
                 self::expect($blob, $offset, '"');
+                $class = substr($blob, $offset, $nameLength);
                 $offset += $nameLength;
                 self::expect($blob, $offset, '"');
                 self::expect($blob, $offset, ':');
@@ -107,28 +112,28 @@ final class Serialized
                 self::expect($blob, $offset, '{');
                 $object = new \stdClass();
                 for ($i = 0; $i < $count; $i++) {
-                    $key = self::read($blob, $offset);
+                    $key = self::read($blob, $offset, $revive);
                     if (!is_string($key)) {
                         throw new \ValueError('key');
                     }
                     if (str_starts_with($key, "\0")) {
                         $key = (string) substr($key, (int) strrpos($key, "\0") + 1);
                     }
-                    $object->{$key} = self::read($blob, $offset);
+                    $object->{$key} = self::read($blob, $offset, $revive);
                 }
                 self::expect($blob, $offset, '}');
-                return $object;
+                return $revive === null ? $object : $revive($class, $object);
             case 'a':
                 self::expect($blob, $offset, ':');
                 $count = (int) self::until($blob, $offset, ':');
                 self::expect($blob, $offset, '{');
                 $array = [];
                 for ($i = 0; $i < $count; $i++) {
-                    $key = self::read($blob, $offset);
+                    $key = self::read($blob, $offset, $revive);
                     if (!is_int($key) && !is_string($key)) {
                         throw new \ValueError('key');
                     }
-                    $array[$key] = self::read($blob, $offset);
+                    $array[$key] = self::read($blob, $offset, $revive);
                 }
                 self::expect($blob, $offset, '}');
                 return $array;
@@ -158,7 +163,7 @@ final class Serialized
 
     /**
      * PHP's serialize() for the values decode() accepts: null, bool, int,
-     * float, string, and arrays of those. Objects are refused.
+     * float, string, arrays of those, and objects written as their class.
      */
     public static function encode(mixed $value): string
     {

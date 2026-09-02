@@ -20,7 +20,7 @@ escaping, serialized readers, small helpers
 | [`Markers`](#markers) | final class | 28 | The BEGIN/END marker blocks insert_with_markers() maintains in files like |
 | [`Paths`](#paths) | final class | 64 | File-system path and permission spellings. |
 | [`SearchReplace`](#searchreplace) | final class | 38 | String replace that walks serialized-PHP arrays of scalars without |
-| [`Serialized`](#serialized) | final class | 197 | Tolerant readers for the serialized-PHP blobs WordPress stores. Nothing |
+| [`Serialized`](#serialized) | final class | 202 | Tolerant readers for the serialized-PHP blobs WordPress stores. Nothing |
 | [`Time`](#time) | final class | 21 | Human-scale spans: a number of seconds as the largest whole unit it fills, rounded, never below one. |
 | [`Url`](#url) | final class | 196 | URL shaping the escaping and query helpers share: the character cleanup |
 
@@ -437,23 +437,27 @@ A flat string list in the stored form.
 
 The first "field";value pair inside a blob: string, int, or float value as a string.
 
-### static `decode(string $blob): mixed`
+### static `decode(string $blob, ?Closure $revive = NULL): mixed`
 
 A serialized scalar or array as PHP data, parsed by this reader:
-strings, integers, floats, booleans, null, and arrays of those.
-Objects are refused (nothing here instantiates anything), as is any
-blob with trailing bytes or a malformed shape, with INVALID.
+strings, integers, floats, booleans, null, and arrays of those. An
+object record becomes a stdClass of its properties, or whatever the
+reviver makes of the class name and those properties; nothing here
+instantiates anything itself. A blob with trailing bytes or a
+malformed shape is INVALID.
+
+- `@param ?\Closure(string, \stdClass): object $revive`
 
 ### static `encode(mixed $value): string`
 
 PHP's serialize() for the values decode() accepts: null, bool, int,
-float, string, and arrays of those. Objects are refused.
+float, string, arrays of those, and objects written as their class.
 
 ### static `intList(?string $blob): array`
 
 The integer values of a serialized list such as sticky_posts.
 
-Internals: `read()` (private, line 70), `expect()` (private, line 140), `until()` (private, line 148)
+Internals: `read()` (private, line 74), `expect()` (private, line 145), `until()` (private, line 153)
 
 
 ## Time

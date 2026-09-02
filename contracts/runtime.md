@@ -994,6 +994,57 @@ rewrite layer deserves its own verified session. Facts:
   under `php -S` can DIE during a heavy search request; when a parity run
   shows the reference side empty, restart 8127 before reading diffs.
 
+## Stored objects, and the one symbol WooCommerce 11 was short of (2026-09-02)
+
+shop-dogfood answered every page with `Call to undefined function WC()` from
+orderable. Two facts behind it, both settled against the oracle:
+
+- **The symbol gate skipped WooCommerce 11 for one function**,
+  `rest_get_allowed_schema_keywords` (its email editor's schema validator
+  calls it). The facade returns `Rest\Schema::KEYWORDS`, the reference's
+  list in its order: title, description, default, then the twenty-two
+  endpoint keywords. The gate's verdict is computed on every request
+  against the loaded facade; only the token scan is cached, so a new
+  symbol takes effect without clearing `minn_runtime_symbols`. The three
+  abilities-API names WooCommerce's vendor copy declares are guarded by
+  `function_exists('wp_register_ability')` in its bootstrap, so they never
+  compile against the engine and the main-file-only redeclare rule is right
+  to let the plugin through.
+- **A plugin that depends on a skipped plugin still runs.** orderable asks
+  `active_plugins` whether WooCommerce is active, not whether `WC()` exists,
+  and the option still names it. On the reference an inactive WooCommerce is
+  absent from the option, so dependents step aside; on the engine a skipped
+  plugin is invisible to them. Open: whether `Plugins::skipped()` should be
+  subtracted from what the runtime hands back for `active_plugins`, so a
+  gate skip degrades the way a deactivation does instead of fataling the
+  page. Not done; the fix that mattered was making WooCommerce load.
+
+With WooCommerce running, `/cart/`, `/my-account/` and every product page
+fataled in CoBlocks: `has_coblocks_block(WP_Post $post)` received a
+stdClass. CoBlocks caches its `wp_template_part` query in a transient, and
+that transient was WRITTEN BY WORDPRESS before the site moved: an array of
+`O:7:"WP_Post":24:{...}` records. `Support\Serialized::decode` turned every
+object record into a stdClass by design. The reader still instantiates
+nothing; it now takes a reviver closure, and `Runtime\StoredObjects` is the
+registry the facade fills at load (`wp-api/defaults/stored-objects.php`:
+WP_Post, WP_Term, WP_Comment, each `new WP_X($properties)`). Option reads
+(`Options::fromStorage`) and `maybe_unserialize` (which meta reads go
+through) pass that reviver; every other decode call stays plain. A record
+naming any other class stays a stdClass of its properties, where the
+reference hands back `__PHP_Incomplete_Class`; the probe row pins only what
+both agree on (an object of no known class). Writes changed to match too:
+`Options::toStorage` and `maybe_serialize` no longer cast a top-level object
+to an array, so an option holding a post is stored `O:7:"WP_Post":24:{` on
+both stacks (the facade's WP_Post declares the reference's twenty-four
+properties in its order, which the byte prefix row checks). Not revived:
+WP_User (its stored shape nests a `data` row; nothing on the dogfood sites
+stores one). Unit file `tests/unit/stored-objects.php`; probe rows
+`option object bytes`, `option object top-level`, `option term and comment
+revive`, `unknown class stays unknown`.
+
+The oracle's own `/feed/` answers 500 on shop-dogfood's reference (a plugin
+under `php -S`); the engine's feed renders. Not chased.
+
 ## What a plugin cannot do yet
 
 All twenty-five of the dogfood site's plugins load as code now

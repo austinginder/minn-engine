@@ -365,6 +365,11 @@ function rest_get_queried_resource_route()
     return apply_filters('rest_queried_resource_route', $route);
 }
 
+function rest_get_allowed_schema_keywords()
+{
+    return Schema::KEYWORDS;
+}
+
 function rest_get_endpoint_args_for_schema($schema, $method = WP_REST_Server::CREATABLE)
 {
     return Schema::endpointArgs((array) $schema, $method === WP_REST_Server::CREATABLE);

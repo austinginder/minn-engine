@@ -43,7 +43,7 @@ the wp/v2 surface: shapes and controllers
 | [`RouteMatch`](#routematch) | final class | 42 | Finds the registered handler for a method and path among the runtime's route table. |
 | [`RouteTable`](#routetable) | final class | 38 | The registered endpoints in dispatch shape: one handler list per route, methods as a set, non-numeric keys lifted into the route's options. |
 | [`RuntimeRoutes`](#runtimeroutes) | final class | 96 | Routes plugin code registered with register_rest_route(), answered |
-| [`Schema`](#schema) | final readonly class | 468 | JSON-schema handling the way the REST API's argument validation does it: |
+| [`Schema`](#schema) | final readonly class | 471 | JSON-schema handling the way the REST API's argument validation does it: |
 | [`SchemaValues`](#schemavalues) | final class | 201 | The value side of JSON Schema, as the reference applies it: what counts |
 | [`SearchController`](#searchcontroller) | final readonly class | 136 | wp/v2 search over published content: id, title, url, type, and the |
 | [`Services`](#services) | final class | 380 | The objects one REST request shares, each made once, on first use, from |
@@ -1617,6 +1617,7 @@ it into the schema's type, filter a response by context, and the type
 tests the schema vocabulary needs. Behaviour pinned by contracts/fixtures/api/rest.json.
 
 - const `TYPES` = `array (   0 => 'array',   1 => 'object',   2 => 'string',   3 => 'number',   4 => 'integer',   5 => 'boolean',   6 => 'null', )`
+- const `KEYWORDS` = `array (   0 => 'title',   1 => 'description',   2 => 'default',   3 => 'type',   4 => 'format',   5 => 'enum',   6 => 'items',   7 => 'properties',   8 => 'additionalProperties',   9 => 'patternProperties',   10 => 'minProperties',   11 => 'maxProperties',   12 => 'minimum',   13 => 'maximum',   14 => 'exclusiveMinimum',   15 => 'exclusiveMaximum',   16 => 'multipleOf',   17 => 'minLength',   18 => 'maxLength',   19 => 'pattern',   20 => 'minItems',   21 => 'maxItems',   22 => 'uniqueItems',   23 => 'anyOf',   24 => 'oneOf', )` — Every keyword a route schema may carry, in the reference's order; the endpoint subset drops the three descriptive ones.
 - const `ENDPOINT_KEYWORDS` = `array (   0 => 'type',   1 => 'format',   2 => 'enum',   3 => 'items',   4 => 'properties',   5 => 'additionalProperties',   6 => 'patternProperties',   7 => 'minProperties',   8 => 'maxProperties',   9 => 'minimum',   10 => 'maximum',   11 => 'exclusiveMinimum',   12 => 'exclusiveMaximum',   13 => 'multipleOf',   14 => 'minLength',   15 => 'maxLength',   16 => 'pattern',   17 => 'minItems',   18 => 'maxItems',   19 => 'uniqueItems',   20 => 'anyOf',   21 => 'oneOf', )` — An object schema that names its properties forbids the others unless it says otherwise, all the way down.
 
 Used by: `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\SchemaValues`, `Minn\Rest\Services`

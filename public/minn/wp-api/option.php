@@ -5,6 +5,7 @@
  */
 
 use Minn\Runtime\Runtime;
+use Minn\Runtime\StoredObjects;
 use Minn\Support\Serialized;
 
 function get_option($option, $default_value = false)
@@ -374,7 +375,7 @@ function is_serialized_string($data)
 function maybe_serialize($data)
 {
     if (is_array($data) || is_object($data)) {
-        return Serialized::encode(is_object($data) ? (array) $data : $data);
+        return Serialized::encode($data);
     }
     if (is_serialized($data, false)) {
         return Serialized::encode($data);
@@ -387,7 +388,7 @@ function maybe_unserialize($data)
     if (!is_serialized($data)) {
         return $data;
     }
-    $decoded = Serialized::decode(trim((string) $data));
+    $decoded = Serialized::decode(trim((string) $data), StoredObjects::reviver());
     return $decoded === Serialized::INVALID ? $data : $decoded;
 }
 

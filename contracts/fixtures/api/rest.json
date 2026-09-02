@@ -1124,6 +1124,36 @@
         ]
     ],
     [
+        "rest_get_allowed_schema_keywords",
+        [
+            "title",
+            "description",
+            "default",
+            "type",
+            "format",
+            "enum",
+            "items",
+            "properties",
+            "additionalProperties",
+            "patternProperties",
+            "minProperties",
+            "maxProperties",
+            "minimum",
+            "maximum",
+            "exclusiveMinimum",
+            "exclusiveMaximum",
+            "multipleOf",
+            "minLength",
+            "maxLength",
+            "pattern",
+            "minItems",
+            "maxItems",
+            "uniqueItems",
+            "anyOf",
+            "oneOf"
+        ]
+    ],
+    [
         "rest_sanitize_value_from_schema",
         [
             5,
