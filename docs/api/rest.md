@@ -705,7 +705,7 @@ __construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, Minn\Res
 
 ### `index(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `GET /`
+Route: `GET / (public)`
 
 The REST index: namespaces, routes, and the site's description.
 
@@ -2268,13 +2268,13 @@ __construct(Minn\Rest\Types $types)
 
 ### `list(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `GET /wp/v2/types`
+Route: `GET /wp/v2/types (public)`
 
 Deliberately a whole-payload reply: _fields strips every type key, yielding [].
 
 ### `single(Minn\Http\Request $request, string $slug): Minn\Http\Response`
 
-Route: `GET /wp/v2/types/{slug:[\w-]+}`
+Route: `GET /wp/v2/types/{slug:[\w-]+} (public)`
 
 One post type.
 

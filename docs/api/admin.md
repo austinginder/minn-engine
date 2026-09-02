@@ -229,25 +229,25 @@ __construct(Minn\Admin\App $app, Minn\Admin\BootPayload $payload, Minn\Auth\Auth
 
 ### `shell(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `GET /minn-admin`
+Route: `GET /minn-admin (public)`
 
-Route: `GET /minn-admin/{rest*}`
+Route: `GET /minn-admin/{rest*} (public)`
 
 Requires a signed-in user who can edit content; otherwise the login form.
 
 ### `asset(Minn\Http\Request $request, string $path): Minn\Http\Response`
 
-Route: `GET /minn/admin/assets/{path*}`
+Route: `GET /minn/admin/assets/{path*} (public)`
 
 One file of the app bundle, with its content type and caching headers.
 
 ### `ajax(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `* /wp-admin/admin-ajax.php`
+Route: `* /wp-admin/admin-ajax.php (public)`
 
 The one admin-ajax action the app needs: a fresh REST nonce.
 
-Internals: `offPage()` (private, line 61), `render()` (private, line 107)
+Internals: `offPage()` (private, line 63), `render()` (private, line 109)
 
 
 ## Appearance

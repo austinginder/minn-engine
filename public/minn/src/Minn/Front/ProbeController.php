@@ -10,6 +10,8 @@ use Minn\Cron\Cron;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
+use Minn\Http\Access;
+use Minn\Http\Policy;
 use Minn\Http\Route;
 
 /**
@@ -28,7 +30,7 @@ final readonly class ProbeController
     }
 
     /** robots.txt. */
-    #[Route(Method::Get, '/robots.txt')]
+    #[Route(Method::Get, '/robots.txt', policy: new Policy(Access::Public))]
     public function robots(Request $request): Response
     {
         $public = ($this->site->option('blog_public') ?? '1') !== '0';
@@ -39,7 +41,7 @@ final readonly class ProbeController
     }
 
     /** XML-RPC is not served; GET answers the way the reference does, POST is refused outright. */
-    #[Route(Method::Any, '/xmlrpc.php')]
+    #[Route(Method::Any, '/xmlrpc.php', policy: new Policy(Access::Public))]
     public function xmlrpc(Request $request): Response
     {
         if ($request->method === Method::Post) {
@@ -49,7 +51,7 @@ final readonly class ProbeController
     }
 
     /** wp-cron.php: runs what is due. */
-    #[Route(Method::Any, '/wp-cron.php')]
+    #[Route(Method::Any, '/wp-cron.php', policy: new Policy(Access::Public))]
     public function cron(Request $request): Response
     {
         if ($this->cron !== null && !(defined('DISABLE_WP_CRON') && DISABLE_WP_CRON)) {
@@ -59,15 +61,15 @@ final readonly class ProbeController
     }
 
     /** The admin is Minn Admin; the reference's admin path lands there. */
-    #[Route(Method::Get, '/wp-admin')]
-    #[Route(Method::Get, '/wp-admin/{rest*}')]
+    #[Route(Method::Get, '/wp-admin', policy: new Policy(Access::Public))]
+    #[Route(Method::Get, '/wp-admin/{rest*}', policy: new Policy(Access::Public))]
     public function admin(Request $request): Response
     {
         return Response::redirect($this->permalinks->url('/minn-admin/'), 302);
     }
 
     /** The site icon, or the reference's default. */
-    #[Route(Method::Get, '/favicon.ico')]
+    #[Route(Method::Get, '/favicon.ico', policy: new Policy(Access::Public))]
     public function favicon(Request $request): Response
     {
         $url = $this->icon->url();

@@ -12,6 +12,8 @@ use Minn\Front\Permalinks;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
+use Minn\Http\Access;
+use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\Support\Html;
 
@@ -35,8 +37,8 @@ final readonly class AppController
     }
 
     /** Requires a signed-in user who can edit content; otherwise the login form. */
-    #[Route(Method::Get, '/minn-admin')]
-    #[Route(Method::Get, '/minn-admin/{rest*}')]
+    #[Route(Method::Get, '/minn-admin', policy: new Policy(Access::Public))]
+    #[Route(Method::Get, '/minn-admin/{rest*}', policy: new Policy(Access::Public))]
     public function shell(Request $request): Response
     {
         $session = $this->authenticator->session($request->cookies);
@@ -76,7 +78,7 @@ final readonly class AppController
     }
 
     /** One file of the app bundle, with its content type and caching headers. */
-    #[Route(Method::Get, '/minn/admin/assets/{path*}')]
+    #[Route(Method::Get, '/minn/admin/assets/{path*}', policy: new Policy(Access::Public))]
     public function asset(Request $request, string $path): Response
     {
         $asset = $this->app->asset('assets/' . ltrim($path, '/'));
@@ -88,7 +90,7 @@ final readonly class AppController
     }
 
     /** The one admin-ajax action the app needs: a fresh REST nonce. */
-    #[Route(Method::Any, '/wp-admin/admin-ajax.php')]
+    #[Route(Method::Any, '/wp-admin/admin-ajax.php', policy: new Policy(Access::Public))]
     public function ajax(Request $request): Response
     {
         $action = $request->form['action'] ?? $request->query('action') ?? '';

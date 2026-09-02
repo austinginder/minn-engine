@@ -14,6 +14,8 @@ use Minn\Content\Site;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
+use Minn\Http\Access;
+use Minn\Http\Policy;
 use Minn\Http\Route;
 
 /**
@@ -34,10 +36,10 @@ final readonly class FeedController
     }
 
     /** The site feed in one of its kinds. */
-    #[Route(Method::Get, '/feed')]
-    #[Route(Method::Get, '/feed/')]
-    #[Route(Method::Get, '/feed/{kind:rss2|rss|atom|rdf}')]
-    #[Route(Method::Get, '/feed/{kind:rss2|rss|atom|rdf}/')]
+    #[Route(Method::Get, '/feed', policy: new Policy(Access::Public))]
+    #[Route(Method::Get, '/feed/', policy: new Policy(Access::Public))]
+    #[Route(Method::Get, '/feed/{kind:rss2|rss|atom|rdf}', policy: new Policy(Access::Public))]
+    #[Route(Method::Get, '/feed/{kind:rss2|rss|atom|rdf}/', policy: new Policy(Access::Public))]
     public function siteFeed(Request $request, string $kind = 'rss2'): Response
     {
         if (!str_ends_with($request->path, '/')) {
@@ -47,8 +49,8 @@ final readonly class FeedController
     }
 
     /** The comments feed. */
-    #[Route(Method::Get, '/comments/feed')]
-    #[Route(Method::Get, '/comments/feed/')]
+    #[Route(Method::Get, '/comments/feed', policy: new Policy(Access::Public))]
+    #[Route(Method::Get, '/comments/feed/', policy: new Policy(Access::Public))]
     public function commentsFeed(Request $request): Response
     {
         if (!str_ends_with($request->path, '/')) {
@@ -58,10 +60,10 @@ final readonly class FeedController
     }
 
     /** A post's comment feed, or an archive's feed, by resolving the path in front of /feed/. */
-    #[Route(Method::Get, '/{path*}/feed')]
-    #[Route(Method::Get, '/{path*}/feed/')]
-    #[Route(Method::Get, '/{path*}/feed/{kind:rss2|rss|atom|rdf}')]
-    #[Route(Method::Get, '/{path*}/feed/{kind:rss2|rss|atom|rdf}/')]
+    #[Route(Method::Get, '/{path*}/feed', policy: new Policy(Access::Public))]
+    #[Route(Method::Get, '/{path*}/feed/', policy: new Policy(Access::Public))]
+    #[Route(Method::Get, '/{path*}/feed/{kind:rss2|rss|atom|rdf}', policy: new Policy(Access::Public))]
+    #[Route(Method::Get, '/{path*}/feed/{kind:rss2|rss|atom|rdf}/', policy: new Policy(Access::Public))]
     public function pathFeed(Request $request, string $path, string $kind = 'rss2'): Response
     {
         if (!str_ends_with($request->path, '/')) {

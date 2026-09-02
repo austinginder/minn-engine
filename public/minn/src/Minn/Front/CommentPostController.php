@@ -18,6 +18,8 @@ use Minn\Content\Site;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
+use Minn\Http\Access;
+use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\Mail\Mailer;
 use Minn\Support\Html;
@@ -46,7 +48,7 @@ final readonly class CommentPostController
     }
 
     /** The comment form's target. */
-    #[Route(Method::Any, '/wp-comments-post.php')]
+    #[Route(Method::Any, '/wp-comments-post.php', policy: new Policy(Access::Public))]
     public function post(Request $request): Response
     {
         if ($request->method !== Method::Post) {

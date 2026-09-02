@@ -7,6 +7,8 @@ namespace Minn\Front;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
+use Minn\Http\Access;
+use Minn\Http\Policy;
 use Minn\Http\Route;
 
 /** The engine's own static assets, served under a reserved path. */
@@ -19,7 +21,7 @@ final readonly class AssetsController
     }
 
     /** One engine asset file. */
-    #[Route(Method::Get, '/minn/assets/{path*}')]
+    #[Route(Method::Get, '/minn/assets/{path*}', policy: new Policy(Access::Public))]
     public function asset(Request $request, string $path): Response
     {
         $relative = str_replace('..', '', $path);
@@ -32,7 +34,7 @@ final readonly class AssetsController
     }
 
     /** The MIT libraries the engine ships, served at the paths the reference registers them under. */
-    #[Route(Method::Get, '/wp-includes/js/jquery/{file:[a-z0-9.-]+\.js}')]
+    #[Route(Method::Get, '/wp-includes/js/jquery/{file:[a-z0-9.-]+\.js}', policy: new Policy(Access::Public))]
     public function jquery(Request $request, string $file): Response
     {
         $path = realpath($this->assetsDir . '/vendor/jquery/' . $file);

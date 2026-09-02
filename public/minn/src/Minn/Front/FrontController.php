@@ -7,6 +7,8 @@ namespace Minn\Front;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
+use Minn\Http\Access;
+use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\Theme\ClassicRenderer;
 use Minn\Theme\PageRenderer;
@@ -41,7 +43,7 @@ final readonly class FrontController
     }
 
     /** The public page for any path. */
-    #[Route(Method::Any, '/{path*}')]
+    #[Route(Method::Any, '/{path*}', policy: new Policy(Access::Public))]
     public function show(Request $request): Response
     {
         // A scheduled post whose time has come goes live before the page is built.

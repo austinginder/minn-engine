@@ -12,6 +12,8 @@ use Minn\Front\Permalinks;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
+use Minn\Http\Access;
+use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\Auth\Authenticated;
 use Minn\Auth\Nonce;
@@ -52,7 +54,7 @@ final readonly class LoginController
     /** The sign-in, lost-password, reset, and logout pages. */
     #[Route(Method::Get, self::PATH)]
     #[Route(Method::Get, self::PATH . '/{segment:lost-password|reset|logout}')]
-    #[Route(Method::Get, '/wp-login.php')]
+    #[Route(Method::Get, '/wp-login.php', policy: new Policy(Access::Public))]
     public function form(Request $request): Response
     {
         if ($request->path === '/wp-login.php' && $request->query === []) {
@@ -237,7 +239,7 @@ final readonly class LoginController
     /** Handles the posted form for each of those pages. */
     #[Route(Method::Post, self::PATH)]
     #[Route(Method::Post, self::PATH . '/{segment:lost-password|reset|logout}')]
-    #[Route(Method::Post, '/wp-login.php')]
+    #[Route(Method::Post, '/wp-login.php', policy: new Policy(Access::Public))]
     public function signIn(Request $request): Response
     {
         if ($this->action($request) === 'logout') {

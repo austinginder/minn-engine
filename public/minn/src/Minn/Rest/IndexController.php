@@ -10,6 +10,8 @@ use Minn\Front\Permalinks;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
+use Minn\Http\Access;
+use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\Http\Router;
 
@@ -29,7 +31,7 @@ final readonly class IndexController
     }
 
     /** The REST index: namespaces, routes, and the site's description. */
-    #[Route(Method::Get, '/')]
+    #[Route(Method::Get, '/', policy: new Policy(Access::Public))]
     public function index(Request $request): Response
     {
         $routes = ['/' => ['namespace' => '', 'methods' => ['GET'], 'endpoints' => [['methods' => ['GET'], 'args' => ['context' => ['default' => 'view', 'required' => false]]]], '_links' => ['self' => [['href' => $this->url->to('/')]]]]];

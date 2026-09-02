@@ -78,13 +78,13 @@ __construct(string $assetsDir)
 
 ### `asset(Minn\Http\Request $request, string $path): Minn\Http\Response`
 
-Route: `GET /minn/assets/{path*}`
+Route: `GET /minn/assets/{path*} (public)`
 
 One engine asset file.
 
 ### `jquery(Minn\Http\Request $request, string $file): Minn\Http\Response`
 
-Route: `GET /wp-includes/js/jquery/{file:[a-z0-9.-]+\.js}`
+Route: `GET /wp-includes/js/jquery/{file:[a-z0-9.-]+\.js} (public)`
 
 The MIT libraries the engine ships, served at the paths the reference registers them under.
 
@@ -146,11 +146,11 @@ __construct(Minn\Content\Site $site, Minn\Content\Posts $posts, Minn\Content\Com
 
 ### `post(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `* /wp-comments-post.php`
+Route: `* /wp-comments-post.php (public)`
 
 The comment form's target.
 
-Internals: `approval()` (private, line 133), `rememberAuthor()` (private, line 140), `moderationHash()` (private, line 150), `notifyModerator()` (private, line 155), `refusal()` (private, line 162)
+Internals: `approval()` (private, line 135), `rememberAuthor()` (private, line 142), `moderationHash()` (private, line 152), `notifyModerator()` (private, line 157), `refusal()` (private, line 164)
 
 
 ## DocumentTitle
@@ -193,33 +193,33 @@ __construct(Minn\Content\Site $site, Minn\Content\Posts $posts, Minn\Front\Perma
 
 ### `siteFeed(Minn\Http\Request $request, string $kind = 'rss2'): Minn\Http\Response`
 
-Route: `GET /feed`
+Route: `GET /feed (public)`
 
-Route: `GET /feed/`
+Route: `GET /feed/ (public)`
 
-Route: `GET /feed/{kind:rss2|rss|atom|rdf}`
+Route: `GET /feed/{kind:rss2|rss|atom|rdf} (public)`
 
-Route: `GET /feed/{kind:rss2|rss|atom|rdf}/`
+Route: `GET /feed/{kind:rss2|rss|atom|rdf}/ (public)`
 
 The site feed in one of its kinds.
 
 ### `commentsFeed(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `GET /comments/feed`
+Route: `GET /comments/feed (public)`
 
-Route: `GET /comments/feed/`
+Route: `GET /comments/feed/ (public)`
 
 The comments feed.
 
 ### `pathFeed(Minn\Http\Request $request, string $path, string $kind = 'rss2'): Minn\Http\Response`
 
-Route: `GET /{path*}/feed`
+Route: `GET /{path*}/feed (public)`
 
-Route: `GET /{path*}/feed/`
+Route: `GET /{path*}/feed/ (public)`
 
-Route: `GET /{path*}/feed/{kind:rss2|rss|atom|rdf}`
+Route: `GET /{path*}/feed/{kind:rss2|rss|atom|rdf} (public)`
 
-Route: `GET /{path*}/feed/{kind:rss2|rss|atom|rdf}/`
+Route: `GET /{path*}/feed/{kind:rss2|rss|atom|rdf}/ (public)`
 
 A post's comment feed, or an archive's feed, by resolving the path in front of /feed/.
 
@@ -227,7 +227,7 @@ A post's comment feed, or an archive's feed, by resolving the path in front of /
 
 The ?feed= query form on any resolvable path.
 
-Internals: `feed()` (private, line 80), `feedResponse()` (private, line 112)
+Internals: `feed()` (private, line 82), `feedResponse()` (private, line 114)
 
 
 ## Feeds
@@ -297,7 +297,7 @@ The themed (or interim) 404 page.
 
 ### `show(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `* /{path*}`
+Route: `* /{path*} (public)`
 
 The public page for any path.
 
@@ -543,33 +543,33 @@ __construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, Minn\Con
 
 ### `robots(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `GET /robots.txt`
+Route: `GET /robots.txt (public)`
 
 robots.txt.
 
 ### `xmlrpc(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `* /xmlrpc.php`
+Route: `* /xmlrpc.php (public)`
 
 XML-RPC is not served; GET answers the way the reference does, POST is refused outright.
 
 ### `cron(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `* /wp-cron.php`
+Route: `* /wp-cron.php (public)`
 
 wp-cron.php: runs what is due.
 
 ### `admin(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `GET /wp-admin`
+Route: `GET /wp-admin (public)`
 
-Route: `GET /wp-admin/{rest*}`
+Route: `GET /wp-admin/{rest*} (public)`
 
 The admin is Minn Admin; the reference's admin path lands there.
 
 ### `favicon(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `GET /favicon.ico`
+Route: `GET /favicon.ico (public)`
 
 The site icon, or the reference's default.
 
@@ -780,29 +780,29 @@ __construct(Minn\Front\Sitemaps $sitemaps, Closure $notFound)
 
 ### `sitemapIndex(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `GET /wp-sitemap.xml`
+Route: `GET /wp-sitemap.xml (public)`
 
 The sitemap index.
 
 ### `sitemap(Minn\Http\Request $request, string $type, string $rest): Minn\Http\Response`
 
-Route: `GET /wp-sitemap-{type:posts|taxonomies|users}-{rest:[a-z_0-9-]+}.xml`
+Route: `GET /wp-sitemap-{type:posts|taxonomies|users}-{rest:[a-z_0-9-]+}.xml (public)`
 
 One sitemap page.
 
 ### `sitemapStylesheet(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `GET /wp-sitemap.xsl`
+Route: `GET /wp-sitemap.xsl (public)`
 
 The sitemap stylesheet.
 
 ### `sitemapIndexStylesheet(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `GET /wp-sitemap-index.xsl`
+Route: `GET /wp-sitemap-index.xsl (public)`
 
 The sitemap index stylesheet.
 
-Internals: `xml()` (private, line 57)
+Internals: `xml()` (private, line 59)
 
 
 ## SitemapXml

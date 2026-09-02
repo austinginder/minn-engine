@@ -122,7 +122,11 @@ codes); its routes are all public today.
 The style suite ratchets the count of routes with no policy: 157 of 222
 after the first cut (the 65 whose first statement was a pure gate), 117
 after the second (menus, templates, global-styles themes, sessions, the
-per-user preference routes as `Own edit_user`, and the inline floors). The
+per-user preference routes as `Own edit_user`, and the inline floors), 84
+after the third, which declared `Access::Public` on the routes that are
+public on purpose (the front, feeds, sitemaps, probes, assets, sign-in, the
+app shell, the REST index and types), so a bare route now means "not yet
+decided" and nothing else. The
 rest still decide inside their bodies, mostly after loading the record
 (the reference answers 404 for a missing parent before it refuses the
 capability, which a policy cannot order), and each moves onto the

@@ -36,7 +36,7 @@ Route: `GET /minn-admin/login`
 
 Route: `GET /minn-admin/login/{segment:lost-password|reset|logout}`
 
-Route: `GET /wp-login.php`
+Route: `GET /wp-login.php (public)`
 
 The sign-in, lost-password, reset, and logout pages.
 
@@ -46,11 +46,11 @@ Route: `POST /minn-admin/login`
 
 Route: `POST /minn-admin/login/{segment:lost-password|reset|logout}`
 
-Route: `POST /wp-login.php`
+Route: `POST /wp-login.php (public)`
 
 Handles the posted form for each of those pages.
 
-Internals: `lostPassword()` (private, line 97), `openResetLink()` (private, line 139), `resetSession()` (private, line 156), `savePassword()` (private, line 171), `tokenLogin()` (private, line 204), `safeRedirect()` (private, line 272), `logout()` (private, line 291), `action()` (private, line 315), `actionUrl()` (private, line 326), `base()` (private, line 336), `tooManyAttempts()` (private, line 342), `render()` (private, line 349)
+Internals: `lostPassword()` (private, line 99), `openResetLink()` (private, line 141), `resetSession()` (private, line 158), `savePassword()` (private, line 173), `tokenLogin()` (private, line 206), `safeRedirect()` (private, line 274), `logout()` (private, line 293), `action()` (private, line 317), `actionUrl()` (private, line 328), `base()` (private, line 338), `tooManyAttempts()` (private, line 344), `render()` (private, line 351)
 
 
 ## LoginForm

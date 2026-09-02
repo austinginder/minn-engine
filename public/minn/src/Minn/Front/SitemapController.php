@@ -8,6 +8,8 @@ use Closure;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
+use Minn\Http\Access;
+use Minn\Http\Policy;
 use Minn\Http\Route;
 
 /**
@@ -23,14 +25,14 @@ final readonly class SitemapController
     }
 
     /** The sitemap index. */
-    #[Route(Method::Get, '/wp-sitemap.xml')]
+    #[Route(Method::Get, '/wp-sitemap.xml', policy: new Policy(Access::Public))]
     public function sitemapIndex(Request $request): Response
     {
         return self::xml($this->sitemaps->index());
     }
 
     /** One sitemap page. */
-    #[Route(Method::Get, '/wp-sitemap-{type:posts|taxonomies|users}-{rest:[a-z_0-9-]+}.xml')]
+    #[Route(Method::Get, '/wp-sitemap-{type:posts|taxonomies|users}-{rest:[a-z_0-9-]+}.xml', policy: new Policy(Access::Public))]
     public function sitemap(Request $request, string $type, string $rest): Response
     {
         if (!preg_match('/^(?:(.+)-)?(\d+)$/', $rest, $m)) {
@@ -41,14 +43,14 @@ final readonly class SitemapController
     }
 
     /** The sitemap stylesheet. */
-    #[Route(Method::Get, '/wp-sitemap.xsl')]
+    #[Route(Method::Get, '/wp-sitemap.xsl', policy: new Policy(Access::Public))]
     public function sitemapStylesheet(Request $request): Response
     {
         return self::xml(Sitemaps::stylesheet());
     }
 
     /** The sitemap index stylesheet. */
-    #[Route(Method::Get, '/wp-sitemap-index.xsl')]
+    #[Route(Method::Get, '/wp-sitemap-index.xsl', policy: new Policy(Access::Public))]
     public function sitemapIndexStylesheet(Request $request): Response
     {
         return self::xml(Sitemaps::indexStylesheet());

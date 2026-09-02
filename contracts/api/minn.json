@@ -873,7 +873,9 @@
                 "Minn\\Auth\\Capabilities",
                 "Minn\\Auth\\Nonce",
                 "Minn\\Front\\Permalinks",
+                "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
+                "Minn\\Http\\Policy",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
@@ -938,8 +940,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 25,
-                "end": 35
+                "line": 27,
+                "end": 37
             },
             "cases": [],
             "constants": [],
@@ -1011,8 +1013,8 @@
             "methods": [
                 {
                     "routes": [
-                        "GET /minn-admin",
-                        "GET /minn-admin/{rest*}"
+                        "GET /minn-admin (public)",
+                        "GET /minn-admin/{rest*} (public)"
                     ],
                     "name": "shell",
                     "static": false,
@@ -1029,12 +1031,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 40,
-                    "end": 58
+                    "line": 42,
+                    "end": 60
                 },
                 {
                     "routes": [
-                        "GET /minn/admin/assets/{path*}"
+                        "GET /minn/admin/assets/{path*} (public)"
                     ],
                     "name": "asset",
                     "static": false,
@@ -1058,12 +1060,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 80,
-                    "end": 88
+                    "line": 82,
+                    "end": 90
                 },
                 {
                     "routes": [
-                        "* /wp-admin/admin-ajax.php"
+                        "* /wp-admin/admin-ajax.php (public)"
                     ],
                     "name": "ajax",
                     "static": false,
@@ -1080,8 +1082,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 92,
-                    "end": 101
+                    "line": 94,
+                    "end": 103
                 },
                 {
                     "routes": [],
@@ -1092,8 +1094,8 @@
                     "doc": "The engine without an admin: the site keeps serving; the command that brings the admin back is named.",
                     "shapes": [],
                     "params": [],
-                    "line": 61,
-                    "end": 76
+                    "line": 63,
+                    "end": 78
                 },
                 {
                     "routes": [],
@@ -1112,8 +1114,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 107,
-                    "end": 152
+                    "line": 109,
+                    "end": 154
                 }
             ]
         },
@@ -35314,7 +35316,9 @@
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
+                "Minn\\Http\\Policy",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route"
@@ -35336,8 +35340,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 17,
-                "end": 19
+                "line": 19,
+                "end": 21
             },
             "cases": [],
             "constants": [
@@ -35362,7 +35366,7 @@
             "methods": [
                 {
                     "routes": [
-                        "GET /minn/assets/{path*}"
+                        "GET /minn/assets/{path*} (public)"
                     ],
                     "name": "asset",
                     "static": false,
@@ -35386,12 +35390,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 23,
-                    "end": 32
+                    "line": 25,
+                    "end": 34
                 },
                 {
                     "routes": [
-                        "GET /wp-includes/js/jquery/{file:[a-z0-9.-]+\\.js}"
+                        "GET /wp-includes/js/jquery/{file:[a-z0-9.-]+\\.js} (public)"
                     ],
                     "name": "jquery",
                     "static": false,
@@ -35415,8 +35419,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 36,
-                    "end": 43
+                    "line": 38,
+                    "end": 45
                 }
             ]
         },
@@ -35666,7 +35670,9 @@
                 "Minn\\Content\\Site",
                 "Minn\\Content\\UserRecord",
                 "Minn\\Front\\Permalinks",
+                "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
+                "Minn\\Http\\Policy",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
@@ -35733,8 +35739,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 37,
-                "end": 46
+                "line": 39,
+                "end": 48
             },
             "cases": [],
             "constants": [
@@ -35813,7 +35819,7 @@
             "methods": [
                 {
                     "routes": [
-                        "* /wp-comments-post.php"
+                        "* /wp-comments-post.php (public)"
                     ],
                     "name": "post",
                     "static": false,
@@ -35830,8 +35836,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 50,
-                    "end": 130
+                    "line": 52,
+                    "end": 132
                 },
                 {
                     "routes": [],
@@ -35864,8 +35870,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 133,
-                    "end": 137
+                    "line": 135,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -35912,8 +35918,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 140,
-                    "end": 148
+                    "line": 142,
+                    "end": 150
                 },
                 {
                     "routes": [],
@@ -35932,8 +35938,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 150,
-                    "end": 153
+                    "line": 152,
+                    "end": 155
                 },
                 {
                     "routes": [],
@@ -35966,8 +35972,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 155,
-                    "end": 159
+                    "line": 157,
+                    "end": 161
                 },
                 {
                     "routes": [],
@@ -35993,8 +35999,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 162,
-                    "end": 170
+                    "line": 164,
+                    "end": 172
                 }
             ]
         },
@@ -36105,7 +36111,9 @@
                 "Minn\\Front\\Permalinks",
                 "Minn\\Front\\Resolution",
                 "Minn\\Front\\Resolver",
+                "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
+                "Minn\\Http\\Policy",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route"
@@ -36163,8 +36171,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 25,
-                "end": 34
+                "line": 27,
+                "end": 36
             },
             "cases": [],
             "constants": [],
@@ -36227,10 +36235,10 @@
             "methods": [
                 {
                     "routes": [
-                        "GET /feed",
-                        "GET /feed/",
-                        "GET /feed/{kind:rss2|rss|atom|rdf}",
-                        "GET /feed/{kind:rss2|rss|atom|rdf}/"
+                        "GET /feed (public)",
+                        "GET /feed/ (public)",
+                        "GET /feed/{kind:rss2|rss|atom|rdf} (public)",
+                        "GET /feed/{kind:rss2|rss|atom|rdf}/ (public)"
                     ],
                     "name": "siteFeed",
                     "static": false,
@@ -36254,13 +36262,13 @@
                             "doc": ""
                         }
                     ],
-                    "line": 41,
-                    "end": 47
+                    "line": 43,
+                    "end": 49
                 },
                 {
                     "routes": [
-                        "GET /comments/feed",
-                        "GET /comments/feed/"
+                        "GET /comments/feed (public)",
+                        "GET /comments/feed/ (public)"
                     ],
                     "name": "commentsFeed",
                     "static": false,
@@ -36277,15 +36285,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 52,
-                    "end": 58
+                    "line": 54,
+                    "end": 60
                 },
                 {
                     "routes": [
-                        "GET /{path*}/feed",
-                        "GET /{path*}/feed/",
-                        "GET /{path*}/feed/{kind:rss2|rss|atom|rdf}",
-                        "GET /{path*}/feed/{kind:rss2|rss|atom|rdf}/"
+                        "GET /{path*}/feed (public)",
+                        "GET /{path*}/feed/ (public)",
+                        "GET /{path*}/feed/{kind:rss2|rss|atom|rdf} (public)",
+                        "GET /{path*}/feed/{kind:rss2|rss|atom|rdf}/ (public)"
                     ],
                     "name": "pathFeed",
                     "static": false,
@@ -36316,8 +36324,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 65,
-                    "end": 72
+                    "line": 67,
+                    "end": 74
                 },
                 {
                     "routes": [],
@@ -36350,8 +36358,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 75,
-                    "end": 78
+                    "line": 77,
+                    "end": 80
                 },
                 {
                     "routes": [],
@@ -36384,8 +36392,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 80,
-                    "end": 110
+                    "line": 82,
+                    "end": 112
                 },
                 {
                     "routes": [],
@@ -36411,8 +36419,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 112,
-                    "end": 115
+                    "line": 114,
+                    "end": 117
                 }
             ]
         },
@@ -37024,7 +37032,9 @@
                 "Minn\\Front\\Renderer",
                 "Minn\\Front\\Resolution",
                 "Minn\\Front\\Resolver",
+                "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
+                "Minn\\Http\\Policy",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
@@ -37083,8 +37093,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 23,
-                "end": 31
+                "line": 25,
+                "end": 33
             },
             "cases": [],
             "constants": [],
@@ -37154,12 +37164,12 @@
                     "doc": "The themed (or interim) 404 page.",
                     "shapes": [],
                     "params": [],
-                    "line": 34,
-                    "end": 41
+                    "line": 36,
+                    "end": 43
                 },
                 {
                     "routes": [
-                        "* /{path*}"
+                        "* /{path*} (public)"
                     ],
                     "name": "show",
                     "static": false,
@@ -37176,8 +37186,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 45,
-                    "end": 64
+                    "line": 47,
+                    "end": 66
                 }
             ]
         },
@@ -38341,7 +38351,9 @@
                 "Minn\\Content\\SiteIcon",
                 "Minn\\Cron\\Cron",
                 "Minn\\Front\\Permalinks",
+                "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
+                "Minn\\Http\\Policy",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route"
@@ -38384,8 +38396,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 22,
-                "end": 28
+                "line": 24,
+                "end": 30
             },
             "cases": [],
             "constants": [],
@@ -38430,7 +38442,7 @@
             "methods": [
                 {
                     "routes": [
-                        "GET /robots.txt"
+                        "GET /robots.txt (public)"
                     ],
                     "name": "robots",
                     "static": false,
@@ -38447,12 +38459,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 32,
-                    "end": 39
+                    "line": 34,
+                    "end": 41
                 },
                 {
                     "routes": [
-                        "* /xmlrpc.php"
+                        "* /xmlrpc.php (public)"
                     ],
                     "name": "xmlrpc",
                     "static": false,
@@ -38469,12 +38481,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 43,
-                    "end": 49
+                    "line": 45,
+                    "end": 51
                 },
                 {
                     "routes": [
-                        "* /wp-cron.php"
+                        "* /wp-cron.php (public)"
                     ],
                     "name": "cron",
                     "static": false,
@@ -38491,13 +38503,13 @@
                             "doc": ""
                         }
                     ],
-                    "line": 53,
-                    "end": 59
+                    "line": 55,
+                    "end": 61
                 },
                 {
                     "routes": [
-                        "GET /wp-admin",
-                        "GET /wp-admin/{rest*}"
+                        "GET /wp-admin (public)",
+                        "GET /wp-admin/{rest*} (public)"
                     ],
                     "name": "admin",
                     "static": false,
@@ -38514,12 +38526,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 64,
-                    "end": 67
+                    "line": 66,
+                    "end": 69
                 },
                 {
                     "routes": [
-                        "GET /favicon.ico"
+                        "GET /favicon.ico (public)"
                     ],
                     "name": "favicon",
                     "static": false,
@@ -38536,8 +38548,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 71,
-                    "end": 75
+                    "line": 73,
+                    "end": 77
                 }
             ]
         },
@@ -40234,7 +40246,9 @@
             "extends": null,
             "uses": [
                 "Minn\\Front\\Sitemaps",
+                "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
+                "Minn\\Http\\Policy",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route"
@@ -40263,8 +40277,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 18,
-                "end": 23
+                "line": 20,
+                "end": 25
             },
             "cases": [],
             "constants": [],
@@ -40291,7 +40305,7 @@
             "methods": [
                 {
                     "routes": [
-                        "GET /wp-sitemap.xml"
+                        "GET /wp-sitemap.xml (public)"
                     ],
                     "name": "sitemapIndex",
                     "static": false,
@@ -40308,12 +40322,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 27,
-                    "end": 30
+                    "line": 29,
+                    "end": 32
                 },
                 {
                     "routes": [
-                        "GET /wp-sitemap-{type:posts|taxonomies|users}-{rest:[a-z_0-9-]+}.xml"
+                        "GET /wp-sitemap-{type:posts|taxonomies|users}-{rest:[a-z_0-9-]+}.xml (public)"
                     ],
                     "name": "sitemap",
                     "static": false,
@@ -40344,12 +40358,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 34,
-                    "end": 41
+                    "line": 36,
+                    "end": 43
                 },
                 {
                     "routes": [
-                        "GET /wp-sitemap.xsl"
+                        "GET /wp-sitemap.xsl (public)"
                     ],
                     "name": "sitemapStylesheet",
                     "static": false,
@@ -40366,12 +40380,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 45,
-                    "end": 48
+                    "line": 47,
+                    "end": 50
                 },
                 {
                     "routes": [
-                        "GET /wp-sitemap-index.xsl"
+                        "GET /wp-sitemap-index.xsl (public)"
                     ],
                     "name": "sitemapIndexStylesheet",
                     "static": false,
@@ -40388,8 +40402,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 52,
-                    "end": 55
+                    "line": 54,
+                    "end": 57
                 },
                 {
                     "routes": [],
@@ -40408,8 +40422,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 57,
-                    "end": 60
+                    "line": 59,
+                    "end": 62
                 }
             ]
         },
@@ -42997,6 +43011,7 @@
             "extends": null,
             "uses": [],
             "usedBy": [
+                "Minn\\Admin\\AppController",
                 "Minn\\Admin\\BundleController",
                 "Minn\\Admin\\EditorController",
                 "Minn\\Admin\\LanguageController",
@@ -43011,13 +43026,22 @@
                 "Minn\\Admin\\ThemesController",
                 "Minn\\Admin\\UpdatesController",
                 "Minn\\Admin\\V1Controller",
+                "Minn\\Front\\AssetsController",
+                "Minn\\Front\\CommentPostController",
+                "Minn\\Front\\FeedController",
+                "Minn\\Front\\FrontController",
+                "Minn\\Front\\ProbeController",
+                "Minn\\Front\\SitemapController",
                 "Minn\\Http\\Policy",
+                "Minn\\Login\\LoginController",
                 "Minn\\Rest\\GlobalStylesController",
+                "Minn\\Rest\\IndexController",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PolicyGate",
                 "Minn\\Rest\\SettingsController",
-                "Minn\\Rest\\TemplatesController"
+                "Minn\\Rest\\TemplatesController",
+                "Minn\\Rest\\TypesController"
             ],
             "constructor": null,
             "cases": [
@@ -44428,6 +44452,7 @@
                 "Minn\\Http\\Access"
             ],
             "usedBy": [
+                "Minn\\Admin\\AppController",
                 "Minn\\Admin\\BundleController",
                 "Minn\\Admin\\EditorController",
                 "Minn\\Admin\\LanguageController",
@@ -44443,14 +44468,23 @@
                 "Minn\\Admin\\UpdatesController",
                 "Minn\\Admin\\V1Controller",
                 "Minn\\Engine",
+                "Minn\\Front\\AssetsController",
+                "Minn\\Front\\CommentPostController",
+                "Minn\\Front\\FeedController",
+                "Minn\\Front\\FrontController",
+                "Minn\\Front\\ProbeController",
+                "Minn\\Front\\SitemapController",
                 "Minn\\Http\\Route",
                 "Minn\\Http\\Router",
+                "Minn\\Login\\LoginController",
                 "Minn\\Rest\\GlobalStylesController",
+                "Minn\\Rest\\IndexController",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PolicyGate",
                 "Minn\\Rest\\SettingsController",
-                "Minn\\Rest\\TemplatesController"
+                "Minn\\Rest\\TemplatesController",
+                "Minn\\Rest\\TypesController"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Http\\Access $access = Minn\\Http\\Access::Public, ?string $cap = NULL, array $caps = array ( ), ?string $param = NULL, string $signIn = 'rest_not_logged_in', string $signInMessage = 'You are not currently logged in.', string $refuse = 'rest_forbidden', string $message = 'Sorry, you are not allowed to do that.', ?Minn\\Http\\Policy $edit = NULL)",
@@ -45745,7 +45779,9 @@
                 "Minn\\Content\\Site",
                 "Minn\\Content\\Users",
                 "Minn\\Front\\Permalinks",
+                "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
+                "Minn\\Http\\Policy",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
@@ -45812,8 +45848,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 38,
-                "end": 47
+                "line": 40,
+                "end": 49
             },
             "cases": [],
             "constants": [
@@ -45906,7 +45942,7 @@
                     "routes": [
                         "GET /minn-admin/login",
                         "GET /minn-admin/login/{segment:lost-password|reset|logout}",
-                        "GET /wp-login.php"
+                        "GET /wp-login.php (public)"
                     ],
                     "name": "form",
                     "static": false,
@@ -45923,14 +45959,14 @@
                             "doc": ""
                         }
                     ],
-                    "line": 56,
-                    "end": 94
+                    "line": 58,
+                    "end": 96
                 },
                 {
                     "routes": [
                         "POST /minn-admin/login",
                         "POST /minn-admin/login/{segment:lost-password|reset|logout}",
-                        "POST /wp-login.php"
+                        "POST /wp-login.php (public)"
                     ],
                     "name": "signIn",
                     "static": false,
@@ -45947,8 +45983,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 241,
-                    "end": 266
+                    "line": 243,
+                    "end": 268
                 },
                 {
                     "routes": [],
@@ -45967,8 +46003,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 97,
-                    "end": 132
+                    "line": 99,
+                    "end": 134
                 },
                 {
                     "routes": [],
@@ -45987,8 +46023,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 139,
-                    "end": 153
+                    "line": 141,
+                    "end": 155
                 },
                 {
                     "routes": [],
@@ -46009,8 +46045,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 156,
-                    "end": 169
+                    "line": 158,
+                    "end": 171
                 },
                 {
                     "routes": [],
@@ -46029,8 +46065,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 171,
-                    "end": 196
+                    "line": 173,
+                    "end": 198
                 },
                 {
                     "routes": [],
@@ -46049,8 +46085,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 204,
-                    "end": 235
+                    "line": 206,
+                    "end": 237
                 },
                 {
                     "routes": [],
@@ -46069,8 +46105,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 272,
-                    "end": 284
+                    "line": 274,
+                    "end": 286
                 },
                 {
                     "routes": [],
@@ -46089,8 +46125,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 291,
-                    "end": 308
+                    "line": 293,
+                    "end": 310
                 },
                 {
                     "routes": [],
@@ -46109,8 +46145,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 315,
-                    "end": 323
+                    "line": 317,
+                    "end": 325
                 },
                 {
                     "routes": [],
@@ -46143,8 +46179,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 326,
-                    "end": 333
+                    "line": 328,
+                    "end": 335
                 },
                 {
                     "routes": [],
@@ -46163,8 +46199,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 336,
-                    "end": 339
+                    "line": 338,
+                    "end": 341
                 },
                 {
                     "routes": [],
@@ -46190,8 +46226,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 342,
-                    "end": 347
+                    "line": 344,
+                    "end": 349
                 },
                 {
                     "routes": [],
@@ -46224,8 +46260,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 349,
-                    "end": 359
+                    "line": 351,
+                    "end": 361
                 }
             ]
         },
@@ -54985,7 +55021,9 @@
                 "Minn\\Auth\\Authenticator",
                 "Minn\\Content\\Site",
                 "Minn\\Front\\Permalinks",
+                "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
+                "Minn\\Http\\Policy",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
@@ -55033,8 +55071,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 23,
-                "end": 29
+                "line": 25,
+                "end": 31
             },
             "cases": [],
             "constants": [],
@@ -55079,7 +55117,7 @@
             "methods": [
                 {
                     "routes": [
-                        "GET /"
+                        "GET / (public)"
                     ],
                     "name": "index",
                     "static": false,
@@ -55096,8 +55134,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 33,
-                    "end": 72
+                    "line": 35,
+                    "end": 74
                 }
             ]
         },
@@ -64533,7 +64571,9 @@
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
+                "Minn\\Http\\Policy",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
@@ -64559,8 +64599,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 16,
-                "end": 18
+                "line": 18,
+                "end": 20
             },
             "cases": [],
             "constants": [],
@@ -64578,7 +64618,7 @@
             "methods": [
                 {
                     "routes": [
-                        "GET /wp/v2/types"
+                        "GET /wp/v2/types (public)"
                     ],
                     "name": "list",
                     "static": false,
@@ -64595,12 +64635,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 22,
-                    "end": 25
+                    "line": 24,
+                    "end": 27
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/types/{slug:[\\w-]+}"
+                        "GET /wp/v2/types/{slug:[\\w-]+} (public)"
                     ],
                     "name": "single",
                     "static": false,
@@ -64624,8 +64664,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 29,
-                    "end": 36
+                    "line": 31,
+                    "end": 38
                 }
             ]
         },
