@@ -8,13 +8,13 @@ request, response, routing, and the outgoing client
 | [`Client`](#client) | final class | 101 | The engine's outgoing HTTP transport over curl. Redirects are followed by |
 | [`Download`](#download) | final class | 106 | A file the engine fetches for itself (a package, a language pack). Every |
 | [`Exchange`](#exchange) | final readonly class | 29 | What came back: the final response's status, headers (repeats as lists), Set-Cookie values, and body, or the transport error. |
-| [`Failure`](#failure) | final class | 146 | What the public sees when the engine cannot answer: a plain page with no |
+| [`Failure`](#failure) | final class | 166 | What the public sees when the engine cannot answer: a plain page with no |
 | [`Kernel`](#kernel) | final readonly class | 36 | The edge. Turns a request into a response through the router and turns |
 | [`Method`](#method) | enum | 33 |  |
 | [`Outbound`](#outbound) | final readonly class | 47 | One outgoing HTTP request, normalised: the client below needs nothing else. |
 | [`Policy`](#policy) | final readonly class | 54 | What a route requires of its caller, as data on the route: the router |
 | [`Request`](#request) | final readonly class | 118 | An immutable picture of the incoming request. Built once from the PHP |
-| [`Response`](#response) | final readonly class | 72 | What a handler returns. Nothing is written to the client until the |
+| [`Response`](#response) | final readonly class | 71 | What a handler returns. Nothing is written to the client until the |
 | [`Route`](#route) | final readonly class | 31 | Declares a handler method as a route. The policy lives here, as |
 | [`RouteMiss`](#routemiss) | final class | 3 | A handler declining a request its pattern matched: the router swallows |
 | [`Router`](#router) | final class | 79 | Matches a request to a #[Route] on one of the registered handler |
@@ -155,7 +155,12 @@ Installs the error handlers; detail is shown only under WP_DEBUG_DISPLAY.
 
 ### static `report(Throwable $error): Minn\Http\Response`
 
-Logs the cause; the response says only that something went wrong.
+Logs the cause; the page says only that something went wrong.
+
+### static `reportJson(Throwable $error): Minn\Http\Response`
+
+The same, for a request that asked for JSON: a client that speaks REST
+is answered in REST, never handed the HTML error page.
 
 ### static `internal(): Minn\Http\Response`
 
@@ -171,7 +176,7 @@ The same page with the cause on it, for a site that asked to see
 errors. Only ever reached when WP_DEBUG_DISPLAY (or WP_DEBUG) is on:
 a site that has not asked never learns this much from a response.
 
-Internals: `discardOutput()` (private, line 82), `record()` (private, line 105), `page()` (private, line 147)
+Internals: `discardOutput()` (private, line 82), `note()` (private, line 111), `record()` (private, line 125), `page()` (private, line 167)
 
 
 ## Kernel
@@ -423,7 +428,7 @@ The same response with a cookie to set.
 
 The same response with an empty body, the HEAD answer.
 
-### `send(): never`
+### `send(): void`
 
 Writes the status, the headers, the cookies, and the body, and ends the request.
 

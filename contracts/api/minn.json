@@ -33173,7 +33173,7 @@
             "namespace": "Minn",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Engine.php",
-            "lines": 194,
+            "lines": 215,
             "doc": "The engine's front door. An unmodified wp-config.php ends by requiring\nwp-settings.php, which is the engine's own boot file; it hands off here.\nREST is dispatched first (from the path or from ?rest_route=), then the\nadmin, the login endpoint, and finally the public site.",
             "implements": [],
             "extends": null,
@@ -33311,12 +33311,52 @@
                     "name": "serve",
                     "static": false,
                     "visibility": "public",
-                    "signature": "serve(): never",
-                    "doc": "The front door: connect, check the salts, answer the request, and turn any failure into the right error page.",
+                    "signature": "serve(): void",
+                    "doc": "The front door: answer the request that arrived and send it. This is\nthe only place the engine touches the world, so everything under it\nis a function of a request, callable more than once in a process.",
                     "shapes": [],
                     "params": [],
-                    "line": 83,
-                    "end": 101
+                    "line": 87,
+                    "end": 91
+                },
+                {
+                    "routes": [],
+                    "name": "answer",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "answer(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "The response for one request, whatever happens: a database that\ncannot be reached, salts that are not set, or a failure anywhere\nunderneath, each answered in the language the request asked in.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 98,
+                    "end": 115
+                },
+                {
+                    "routes": [],
+                    "name": "restRoute",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "restRoute(Minn\\Http\\Request $request): ?string",
+                    "doc": "The REST route a request names, in the path or in ?rest_route=, or null when it is not a REST request.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 118,
+                    "end": 125
                 },
                 {
                     "routes": [],
@@ -33342,16 +33382,16 @@
                             "doc": ""
                         }
                     ],
-                    "line": 108,
-                    "end": 126
+                    "line": 132,
+                    "end": 150
                 },
                 {
                     "routes": [],
-                    "name": "respond",
+                    "name": "handle",
                     "static": false,
                     "visibility": "private",
-                    "signature": "respond(Minn\\Db $db): never",
-                    "doc": "",
+                    "signature": "handle(Minn\\Db $db, Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "The response the request's own surface produces: REST, then the admin, the login endpoint, and the public site.",
                     "shapes": [],
                     "params": [
                         {
@@ -33360,17 +33400,24 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
                         }
                     ],
-                    "line": 128,
-                    "end": 207
+                    "line": 153,
+                    "end": 228
                 },
                 {
                     "routes": [],
                     "name": "frontPipeline",
                     "static": false,
                     "visibility": "private",
-                    "signature": "frontPipeline(Minn\\Context $context, Minn\\Http\\Request $request, Minn\\Runtime\\Runtime $runtime, Minn\\Content\\Users $users, Minn\\Auth\\Sessions $sessions, Minn\\Auth\\Cookie $cookie, Minn\\Auth\\Authenticator $authenticator, Minn\\Admin\\App $app, mixed $session, Minn\\Front\\Resolver $resolver, Minn\\Front\\Permalinks $permalinks, ?Minn\\Theme\\Theme $theme, ?Minn\\Theme\\ClassicTheme $classicTheme): never",
+                    "signature": "frontPipeline(Minn\\Context $context, Minn\\Http\\Request $request, Minn\\Runtime\\Runtime $runtime, Minn\\Content\\Users $users, Minn\\Auth\\Sessions $sessions, Minn\\Auth\\Cookie $cookie, Minn\\Auth\\Authenticator $authenticator, Minn\\Admin\\App $app, mixed $session, Minn\\Front\\Resolver $resolver, Minn\\Front\\Permalinks $permalinks, ?Minn\\Theme\\Theme $theme, ?Minn\\Theme\\ClassicTheme $classicTheme): Minn\\Http\\Response",
                     "doc": "The themed front, admin app, and probe pipeline; split out so a mid-request ServeLogin signal can unwind it cleanly.",
                     "shapes": [],
                     "params": [
@@ -33466,8 +33513,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 210,
-                    "end": 262
+                    "line": 231,
+                    "end": 283
                 }
             ]
         },
@@ -43819,7 +43866,7 @@
             "namespace": "Minn\\Http",
             "kind": "final class",
             "file": "public/minn/src/Minn/Http/Failure.php",
-            "lines": 146,
+            "lines": 166,
             "doc": "What the public sees when the engine cannot answer: a plain page with no\ndetail, while the detail goes to the log. Installed once per request,\nit turns display_errors off (unless the site's own WP_DEBUG_DISPLAY asks\nfor them) and catches the fatal errors PHP would otherwise print.",
             "implements": [],
             "extends": null,
@@ -43935,7 +43982,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "report(Throwable $error): Minn\\Http\\Response",
-                    "doc": "Logs the cause; the response says only that something went wrong.",
+                    "doc": "Logs the cause; the page says only that something went wrong.",
                     "shapes": [],
                     "params": [
                         {
@@ -43947,7 +43994,27 @@
                         }
                     ],
                     "line": 90,
-                    "end": 96
+                    "end": 94
+                },
+                {
+                    "routes": [],
+                    "name": "reportJson",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "reportJson(Throwable $error): Minn\\Http\\Response",
+                    "doc": "The same, for a request that asked for JSON: a client that speaks REST\nis answered in REST, never handed the HTML error page.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "error",
+                            "type": "Throwable",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 100,
+                    "end": 108
                 },
                 {
                     "routes": [],
@@ -43958,8 +44025,8 @@
                     "doc": "The 500 page.",
                     "shapes": [],
                     "params": [],
-                    "line": 120,
-                    "end": 124
+                    "line": 140,
+                    "end": 144
                 },
                 {
                     "routes": [],
@@ -43970,8 +44037,8 @@
                     "doc": "The 503 page the reference shows when the database cannot be reached.",
                     "shapes": [],
                     "params": [],
-                    "line": 127,
-                    "end": 132
+                    "line": 147,
+                    "end": 152
                 },
                 {
                     "routes": [],
@@ -44011,8 +44078,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 139,
-                    "end": 145
+                    "line": 159,
+                    "end": 165
                 },
                 {
                     "routes": [],
@@ -44025,6 +44092,26 @@
                     "params": [],
                     "line": 82,
                     "end": 87
+                },
+                {
+                    "routes": [],
+                    "name": "note",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "note(Throwable $error): void",
+                    "doc": "Logs the failure, clears whatever a half-finished render left, and offers it to recovery.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "error",
+                            "type": "Throwable",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 111,
+                    "end": 116
                 },
                 {
                     "routes": [],
@@ -44045,8 +44132,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 105,
-                    "end": 117
+                    "line": 125,
+                    "end": 137
                 },
                 {
                     "routes": [],
@@ -44086,8 +44173,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 147,
-                    "end": 160
+                    "line": 167,
+                    "end": 180
                 }
             ]
         },
@@ -45372,7 +45459,7 @@
             "namespace": "Minn\\Http",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Http/Response.php",
-            "lines": 72,
+            "lines": 71,
             "doc": "What a handler returns. Nothing is written to the client until the\nkernel calls send(), so a response can be inspected, wrapped, or\nreplaced on the way out.",
             "implements": [],
             "extends": null,
@@ -45674,12 +45761,12 @@
                     "name": "send",
                     "static": false,
                     "visibility": "public",
-                    "signature": "send(): never",
+                    "signature": "send(): void",
                     "doc": "Writes the status, the headers, the cookies, and the body, and ends the request.",
                     "shapes": [],
                     "params": [],
                     "line": 71,
-                    "end": 82
+                    "end": 81
                 }
             ]
         },
@@ -74218,7 +74305,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Runtime.php",
-            "lines": 269,
+            "lines": 281,
             "doc": "The WordPress runtime the engine offers plugin code: the procedural\nfacade under minn/wp-api/ plus the services it delegates to. One per\nrequest; the facade reaches it through these statics.",
             "implements": [],
             "extends": null,
@@ -74608,7 +74695,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "boot(self $runtime): self",
-                    "doc": "Makes this request's runtime the one the facade sees and defines the facade.",
+                    "doc": "Makes this request's runtime the one the facade sees and defines the\nfacade.\n\nDeliberately does NOT start the facade's registries empty. A process\nanswering a second request would then have a fresh hook table that no\nplugin can fill again: plugin files register their hooks as they are\nincluded, and an include happens once per process. Until a plugin's\nregistrations can be replayed, a second boot inherits the first's\nregistries on purpose, which is why a worker runtime is not yet\nsomething the engine claims (see contracts/runtime.md).",
                     "shapes": [],
                     "params": [
                         {
@@ -74619,8 +74706,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 110,
-                    "end": 129
+                    "line": 121,
+                    "end": 140
                 },
                 {
                     "routes": [],
@@ -74631,8 +74718,8 @@
                     "doc": "The booted runtime; throws when there is none.",
                     "shapes": [],
                     "params": [],
-                    "line": 132,
-                    "end": 138
+                    "line": 143,
+                    "end": 149
                 },
                 {
                     "routes": [],
@@ -74643,8 +74730,8 @@
                     "doc": "Whether the runtime is up.",
                     "shapes": [],
                     "params": [],
-                    "line": 141,
-                    "end": 144
+                    "line": 152,
+                    "end": 155
                 },
                 {
                     "routes": [],
@@ -74655,8 +74742,8 @@
                     "doc": "The hook registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 147,
-                    "end": 150
+                    "line": 158,
+                    "end": 161
                 },
                 {
                     "routes": [],
@@ -74667,8 +74754,8 @@
                     "doc": "The options store.",
                     "shapes": [],
                     "params": [],
-                    "line": 153,
-                    "end": 156
+                    "line": 164,
+                    "end": 167
                 },
                 {
                     "routes": [],
@@ -74694,8 +74781,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 167,
-                    "end": 182
+                    "line": 178,
+                    "end": 193
                 },
                 {
                     "routes": [],
@@ -74706,8 +74793,8 @@
                     "doc": "The object cache.",
                     "shapes": [],
                     "params": [],
-                    "line": 185,
-                    "end": 188
+                    "line": 196,
+                    "end": 199
                 },
                 {
                     "routes": [],
@@ -74718,8 +74805,8 @@
                     "doc": "The shortcode registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 191,
-                    "end": 194
+                    "line": 202,
+                    "end": 205
                 },
                 {
                     "routes": [],
@@ -74730,8 +74817,8 @@
                     "doc": "The script modules registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 197,
-                    "end": 203
+                    "line": 208,
+                    "end": 214
                 },
                 {
                     "routes": [],
@@ -74742,8 +74829,8 @@
                     "doc": "The interactivity API.",
                     "shapes": [],
                     "params": [],
-                    "line": 206,
-                    "end": 209
+                    "line": 217,
+                    "end": 220
                 },
                 {
                     "routes": [],
@@ -74754,8 +74841,8 @@
                     "doc": "The registered block templates.",
                     "shapes": [],
                     "params": [],
-                    "line": 212,
-                    "end": 215
+                    "line": 223,
+                    "end": 226
                 },
                 {
                     "routes": [],
@@ -74766,8 +74853,8 @@
                     "doc": "The post types, taxonomies, and statuses.",
                     "shapes": [],
                     "params": [],
-                    "line": 218,
-                    "end": 221
+                    "line": 229,
+                    "end": 232
                 },
                 {
                     "routes": [],
@@ -74778,8 +74865,8 @@
                     "doc": "A fresh post query over the runtime's registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 224,
-                    "end": 227
+                    "line": 235,
+                    "end": 238
                 },
                 {
                     "routes": [],
@@ -74805,8 +74892,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 230,
-                    "end": 233
+                    "line": 241,
+                    "end": 244
                 },
                 {
                     "routes": [],
@@ -74832,8 +74919,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 236,
-                    "end": 239
+                    "line": 247,
+                    "end": 250
                 },
                 {
                     "routes": [],
@@ -74844,8 +74931,8 @@
                     "doc": "Whether the request is over HTTPS.",
                     "shapes": [],
                     "params": [],
-                    "line": 242,
-                    "end": 245
+                    "line": 253,
+                    "end": 256
                 },
                 {
                     "routes": [],
@@ -74856,8 +74943,8 @@
                     "doc": "wp-content under the site root.",
                     "shapes": [],
                     "params": [],
-                    "line": 248,
-                    "end": 251
+                    "line": 259,
+                    "end": 262
                 },
                 {
                     "routes": [],
@@ -74876,8 +74963,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 254,
-                    "end": 274
+                    "line": 265,
+                    "end": 285
                 },
                 {
                     "routes": [],
@@ -74888,8 +74975,8 @@
                     "doc": "Fresh per-request state, for suites.",
                     "shapes": [],
                     "params": [],
-                    "line": 277,
-                    "end": 289
+                    "line": 288,
+                    "end": 301
                 }
             ]
         },

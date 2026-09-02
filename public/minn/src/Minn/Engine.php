@@ -79,25 +79,49 @@ final readonly class Engine
     ) {
     }
 
-    /** The front door: connect, check the salts, answer the request, and turn any failure into the right error page. */
-    public function serve(): never
+    /**
+     * The front door: answer the request that arrived and send it. This is
+     * the only place the engine touches the world, so everything under it
+     * is a function of a request, callable more than once in a process.
+     */
+    public function serve(): void
     {
         Failure::install();
+        $this->answer(Request::fromGlobals())->send();
+    }
+
+    /**
+     * The response for one request, whatever happens: a database that
+     * cannot be reached, salts that are not set, or a failure anywhere
+     * underneath, each answered in the language the request asked in.
+     */
+    public function answer(Request $request): Response
+    {
         try {
             $db = Db::shared();
         } catch (\mysqli_sql_exception $e) {
             error_log('Minn Engine: database connection failed: ' . $e->getMessage());
-            Failure::databaseUnavailable()->send();
+            return Failure::databaseUnavailable();
         }
         if (!Salts::configured()) {
             error_log('Minn Engine: wp-config.php is missing its unique keys and salts (AUTH_KEY … NONCE_SALT); refusing to sign anything.');
-            Failure::internal()->send();
+            return Failure::internal();
         }
         try {
-            $this->respond($db);
+            return $this->handle($db, $request);
         } catch (\Throwable $e) {
-            Failure::report($e)->send();
+            return self::restRoute($request) === null ? Failure::report($e) : Failure::reportJson($e);
         }
+    }
+
+    /** The REST route a request names, in the path or in ?rest_route=, or null when it is not a REST request. */
+    private static function restRoute(Request $request): ?string
+    {
+        $route = $request->query('rest_route');
+        if ($route === null && str_starts_with($request->path, '/wp-json')) {
+            $route = substr($request->path, strlen('/wp-json')) ?: '/';
+        }
+        return $route;
     }
 
     /**
@@ -125,9 +149,9 @@ final readonly class Engine
         \rest_get_server();
     }
 
-    private function respond(Db $db): never
+    /** The response the request's own surface produces: REST, then the admin, the login endpoint, and the public site. */
+    private function handle(Db $db, Request $request): Response
     {
-        $request = Request::fromGlobals();
         // With the database in hand, a fatal during boot can be blamed on
         // the extension it came from; the second inside ten minutes pauses
         // it, so the next request comes back without it. The window in
@@ -155,14 +179,11 @@ final readonly class Engine
         $capabilities = Capabilities::fromDb($db);
         $context = new Context($db, $site, $request, Reader::anonymous(), $capabilities, $this->engineDir, ABSPATH, self::WP_VERSION);
 
-        $route = $request->query('rest_route');
-        if ($route === null && str_starts_with($request->path, '/wp-json')) {
-            $route = substr($request->path, strlen('/wp-json')) ?: '/';
-        }
+        $route = self::restRoute($request);
         if ($route !== null) {
             $api = Api::forRequest($db, $request);
             $this->bootRuntimeForRest($context, $api);
-            $api->handle($route)->send();
+            return $api->handle($route);
         }
 
         $users = new Users($db);
@@ -197,17 +218,17 @@ final readonly class Engine
             $runtime->set('classic_theme', $classicTheme->stylesheet);
         }
         try {
-            $this->frontPipeline($context, $request, $runtime, $users, $sessions, $cookie, $authenticator, $app, $session, $resolver, $permalinks, $theme, $classicTheme);
+            return $this->frontPipeline($context, $request, $runtime, $users, $sessions, $cookie, $authenticator, $app, $session, $resolver, $permalinks, $theme, $classicTheme);
         } catch (\Minn\Login\ServeLogin) {
             // A hide-login plugin require'd wp-login.php mid-request: the
             // current request gets the sign-in surface, whatever its path.
             $login = new LoginController($site, $permalinks, $authenticator, new \Minn\Auth\SignIn($sessions, new AuthCookies($db, $cookie), new LoginThrottle($db)), $users, new PasswordReset($users), Mailer::forSite($site));
-            ($request->method === Method::Post ? $login->signIn($request) : $login->form($request))->send();
+            return $request->method === Method::Post ? $login->signIn($request) : $login->form($request);
         }
     }
 
     /** The themed front, admin app, and probe pipeline; split out so a mid-request ServeLogin signal can unwind it cleanly. */
-    private function frontPipeline(Context $context, Request $request, Runtime $runtime, Users $users, Sessions $sessions, Cookie $cookie, Authenticator $authenticator, App $app, mixed $session, Resolver $resolver, \Minn\Front\Permalinks $permalinks, ?Theme $theme, ?\Minn\Theme\ClassicTheme $classicTheme): never
+    private function frontPipeline(Context $context, Request $request, Runtime $runtime, Users $users, Sessions $sessions, Cookie $cookie, Authenticator $authenticator, App $app, mixed $session, Resolver $resolver, \Minn\Front\Permalinks $permalinks, ?Theme $theme, ?\Minn\Theme\ClassicTheme $classicTheme): Response
     {
         $db = $context->db;
         $site = $context->site;
@@ -258,6 +279,6 @@ final readonly class Engine
             $front,
         );
         $response = (new Kernel($router))->handle($request);
-        ($response ?? Response::html('<!doctype html><title>Not Found</title><p>Not found.', 404))->send();
+        return $response ?? Response::html('<!doctype html><title>Not Found</title><p>Not found.', 404);
     }
 }

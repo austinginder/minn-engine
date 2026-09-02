@@ -86,13 +86,33 @@ final class Failure
         }
     }
 
-    /** Logs the cause; the response says only that something went wrong. */
+    /** Logs the cause; the page says only that something went wrong. */
     public static function report(Throwable $error): Response
+    {
+        self::note($error);
+        return self::$display ? self::detailed($error::class, $error->getMessage(), $error->getFile(), $error->getLine()) : self::internal();
+    }
+
+    /**
+     * The same, for a request that asked for JSON: a client that speaks REST
+     * is answered in REST, never handed the HTML error page.
+     */
+    public static function reportJson(Throwable $error): Response
+    {
+        self::note($error);
+        $payload = ['code' => 'internal_server_error', 'message' => 'The site hit an error while answering this request.', 'data' => ['status' => 500]];
+        if (self::$display) {
+            $payload['data']['minn_error'] = sprintf('%s: %s in %s:%d', $error::class, $error->getMessage(), $error->getFile(), $error->getLine());
+        }
+        return Response::json($payload, 500)->withHeader('Cache-Control', 'no-store');
+    }
+
+    /** Logs the failure, clears whatever a half-finished render left, and offers it to recovery. */
+    private static function note(Throwable $error): void
     {
         error_log(sprintf('Minn Engine: %s: %s in %s:%d', $error::class, $error->getMessage(), $error->getFile(), $error->getLine()));
         self::discardOutput();
         self::record(['type' => E_ERROR, 'file' => $error->getFile(), 'line' => $error->getLine(), 'message' => $error->getMessage()]);
-        return self::$display ? self::detailed($error::class, $error->getMessage(), $error->getFile(), $error->getLine()) : self::internal();
     }
 
     /**

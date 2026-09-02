@@ -106,7 +106,18 @@ final class Runtime
         return $this->blockRenderer ??= BlockRenderer::forDb($this->db);
     }
 
-    /** Makes this request's runtime the one the facade sees and defines the facade. */
+    /**
+     * Makes this request's runtime the one the facade sees and defines the
+     * facade.
+     *
+     * Deliberately does NOT start the facade's registries empty. A process
+     * answering a second request would then have a fresh hook table that no
+     * plugin can fill again: plugin files register their hooks as they are
+     * included, and an include happens once per process. Until a plugin's
+     * registrations can be replayed, a second boot inherits the first's
+     * registries on purpose, which is why a worker runtime is not yet
+     * something the engine claims (see contracts/runtime.md).
+     */
     public static function boot(self $runtime): self
     {
         self::$current = $runtime;
@@ -285,6 +296,7 @@ final class Runtime
         self::$registry = null;
         self::$interactivity = new Interactivity();
         self::$scriptModules = null;
+        self::$blockTemplates = null;
         self::$options = self::$current === null ? null : new Options(self::$current->db);
     }
 }

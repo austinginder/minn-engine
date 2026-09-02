@@ -40,7 +40,7 @@ the WordPress runtime plugins load against
 | [`Recovery`](#recovery) | final readonly class | 183 | Recovery from a fatal in someone else's code. When a plugin or theme |
 | [`Refusal`](#refusal) | final readonly class | 6 | A refused operation, the way plugin code expects to read it: a code, a message, optional data. The facade turns it into WP_Error. |
 | [`Registry`](#registry) | final class | 382 | Post types, taxonomies, and statuses as plugin code registers and reads |
-| [`Runtime`](#runtime) | final class | 269 | The WordPress runtime the engine offers plugin code: the procedural |
+| [`Runtime`](#runtime) | final class | 281 | The WordPress runtime the engine offers plugin code: the procedural |
 | [`ScriptModules`](#scriptmodules) | final class | 308 | The script modules registry: registrations with typed dependencies, the |
 | [`ScriptPack`](#scriptpack) | final class | 146 | The site-supplied script pack: the `wp-*` JavaScript packages the engine |
 | [`Shortcodes`](#shortcodes) | final class | 132 | The shortcode registry plugin code fills with add_shortcode, and the |
@@ -1749,7 +1749,16 @@ The block renderer for this request, made on first use over this request's own d
 
 ### static `boot(self $runtime): self`
 
-Makes this request's runtime the one the facade sees and defines the facade.
+Makes this request's runtime the one the facade sees and defines the
+facade.
+
+Deliberately does NOT start the facade's registries empty. A process
+answering a second request would then have a fresh hook table that no
+plugin can fill again: plugin files register their hooks as they are
+included, and an include happens once per process. Until a plugin's
+registrations can be replayed, a second boot inherits the first's
+registries on purpose, which is why a worker runtime is not yet
+something the engine claims (see contracts/runtime.md).
 
 ### static `current(): self`
 

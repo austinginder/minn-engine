@@ -68,7 +68,7 @@ final readonly class Response
     }
 
     /** Writes the status, the headers, the cookies, and the body, and ends the request. */
-    public function send(): never
+    public function send(): void
     {
         http_response_code($this->status);
         foreach ($this->headers as $name => $value) {
@@ -78,6 +78,5 @@ final readonly class Response
             setcookie($name, $value, $options);
         }
         echo $this->body;
-        exit;
     }
 }

@@ -106,6 +106,37 @@ sites across `Layout`, `Wrapper`, `Elements`, `ImageTags`, `GlobalStyles`
 and the facade's `media.php`), and would end the core's one question to the
 runtime in `Db::current()`.
 
+**The kernel is a function of the request (2026-09-02).** `Engine::serve()`
+is the only place the engine touches the world: it installs the failure
+handlers, asks `Engine::answer(Request): Response` for the response, and
+sends it. `answer()` returns the response for anything that can happen (a
+database that cannot be reached, salts that are not set, a failure
+anywhere underneath), and `Engine::handle()` under it returns the response
+of whichever surface owns the request. Nothing below the front door
+returns `never` any more, and `Response::send()` writes headers and body
+without `exit`, so the call sites return rather than relying on the
+process ending.
+
+A failure is answered in the language the request asked in:
+`Failure::report()` for a page, `Failure::reportJson()` for a REST route
+(the reference's error object, `internal_server_error` at 500), so Minn
+Admin no longer gets HTML on a 500. Neither says anything about the cause
+unless the site has debug display on; the cause always goes to the log.
+Pinned by `tests/unit/failure.php`.
+
+**Worker mode is still not reachable, and it is not static hygiene that
+blocks it.** Answering several requests from one process was tried
+directly: the responses are correct, but the same page rendered twice in a
+process differs by the script modules the first render marked as printed.
+Starting each boot with empty registries fixes that and breaks far more:
+plugin files register their hooks as they are included, `include_once`
+means an include happens once per process, so the second request gets a
+hook table no plugin can fill again and loses every plugin and theme
+registration (a 59 KB page became 34 KB). Until a plugin's registrations
+can be replayed, a second boot inherits the first's registries on purpose;
+`Runtime::boot()` says so where a reader will look for it. What worker
+mode needs is plugin re-execution, not tidier statics.
+
 **The symbol gate.** Before a plugin folder is included, `Runtime\Symbols`
 tokenises every PHP file in it and lists the global functions it calls and
 the classes it instantiates, extends, or reads statically, minus what the
