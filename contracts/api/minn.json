@@ -44386,7 +44386,7 @@
             "namespace": "Minn\\Http",
             "kind": "final class",
             "file": "public/minn/src/Minn/Http/Router.php",
-            "lines": 81,
+            "lines": 120,
             "doc": "Matches a request to a #[Route] on one of the registered handler\nobjects, has the gate judge the route's policy, and invokes the method\nwith the request plus the named pattern captures. The gate is the one\nthing a router cannot be built without: a policy nobody judges is a\nroute nobody may call.",
             "implements": [],
             "extends": null,
@@ -44498,6 +44498,28 @@
                 },
                 {
                     "routes": [],
+                    "name": "allowed",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "allowed(Minn\\Http\\Request $request): array",
+                    "doc": "The methods the caller may use on this path, for the Allow header:\nevery route matching the path, its policy judged for the caller\nwithout dispatching. A route that states no policy counts for GET\nonly, until it states one. Empty when nothing matched or nothing\nis allowed, and the header is then left out, as the reference does.",
+                    "shapes": [
+                        "@return list<string> in the reference's order"
+                    ],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 81,
+                    "end": 98
+                },
+                {
+                    "routes": [],
                     "name": "dispatch",
                     "static": false,
                     "visibility": "public",
@@ -44513,8 +44535,44 @@
                             "doc": ""
                         }
                     ],
-                    "line": 73,
-                    "end": 97
+                    "line": 112,
+                    "end": 136
+                },
+                {
+                    "routes": [],
+                    "name": "admits",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "admits(Minn\\Http\\Policy $policy, Minn\\Http\\Request $request, array $captures): bool",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, string> $captures"
+                    ],
+                    "params": [
+                        {
+                            "name": "policy",
+                            "type": "Minn\\Http\\Policy",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "captures",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 101,
+                    "end": 109
                 }
             ]
         },
@@ -52939,7 +52997,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Api.php",
-            "lines": 165,
+            "lines": 182,
             "doc": "The REST API: wires the controllers for one request and dispatches a\nroute. Errors thrown anywhere underneath become the reference's error\npayload under the reference's headers.",
             "implements": [],
             "extends": null,
@@ -53233,7 +53291,7 @@
                         }
                     ],
                     "line": 160,
-                    "end": 178
+                    "end": 185
                 },
                 {
                     "routes": [],
@@ -53252,8 +53310,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 186,
-                    "end": 193
+                    "line": 193,
+                    "end": 200
                 },
                 {
                     "routes": [],
@@ -53301,8 +53359,35 @@
                             "doc": ""
                         }
                     ],
-                    "line": 195,
-                    "end": 199
+                    "line": 202,
+                    "end": 206
+                },
+                {
+                    "routes": [],
+                    "name": "withAllow",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "withAllow(Minn\\Http\\Request $request, Minn\\Http\\Response $response): Minn\\Http\\Response",
+                    "doc": "The Allow header as the reference sends it: the methods the caller\nmay use on the matched path, and no header when there are none.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "response",
+                            "type": "Minn\\Http\\Response",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 212,
+                    "end": 216
                 }
             ]
         },
@@ -61256,7 +61341,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/Reply.php",
-            "lines": 48,
+            "lines": 47,
             "doc": "JSON responses in the reference's shape: its header set, its json_encode\nflags (slashes escaped), the _fields filter, and the pagination headers\non lists.",
             "implements": [],
             "extends": null,
@@ -61308,7 +61393,7 @@
             "constants": [
                 {
                     "name": "HEADERS",
-                    "value": "array (   'Content-Type' => 'application/json; charset=UTF-8',   'X-Content-Type-Options' => 'nosniff',   'Access-Control-Expose-Headers' => 'X-WP-Total, X-WP-TotalPages, Link',   'Access-Control-Allow-Headers' => 'Authorization, X-WP-Nonce, Content-Disposition, Content-MD5, Content-Type',   'Allow' => 'GET', )",
+                    "value": "array (   'Content-Type' => 'application/json; charset=UTF-8',   'X-Content-Type-Options' => 'nosniff',   'Access-Control-Expose-Headers' => 'X-WP-Total, X-WP-TotalPages, Link',   'Access-Control-Allow-Headers' => 'Authorization, X-WP-Nonce, Content-Disposition, Content-MD5, Content-Type', )",
                     "doc": "",
                     "visibility": "public"
                 }
@@ -61346,8 +61431,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 27,
-                    "end": 30
+                    "line": 26,
+                    "end": 29
                 },
                 {
                     "routes": [],
@@ -61380,8 +61465,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 33,
-                    "end": 39
+                    "line": 32,
+                    "end": 38
                 },
                 {
                     "routes": [],
@@ -61423,8 +61508,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 46,
-                    "end": 56
+                    "line": 45,
+                    "end": 55
                 },
                 {
                     "routes": [],
@@ -61443,8 +61528,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 59,
-                    "end": 62
+                    "line": 58,
+                    "end": 61
                 }
             ]
         },
@@ -63367,7 +63452,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/SearchController.php",
-            "lines": 136,
+            "lines": 137,
             "doc": "wp/v2 search over published content: id, title, url, type, and the\npost type as subtype. Ordered the way the reference orders a search:\na title holding every term first, then a title holding any term, then\nan excerpt match, then a content match, newest first within a rank.",
             "implements": [],
             "extends": null,
@@ -63512,7 +63597,7 @@
                         }
                     ],
                     "line": 38,
-                    "end": 70
+                    "end": 71
                 },
                 {
                     "routes": [],
@@ -63531,8 +63616,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 72,
-                    "end": 92
+                    "line": 73,
+                    "end": 93
                 },
                 {
                     "routes": [],
@@ -63551,8 +63636,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 95,
-                    "end": 107
+                    "line": 96,
+                    "end": 108
                 },
                 {
                     "routes": [],
@@ -63578,8 +63663,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 110,
-                    "end": 118
+                    "line": 111,
+                    "end": 119
                 },
                 {
                     "routes": [],
@@ -63600,8 +63685,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 121,
-                    "end": 136
+                    "line": 122,
+                    "end": 137
                 },
                 {
                     "routes": [],
@@ -63620,8 +63705,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 138,
-                    "end": 141
+                    "line": 139,
+                    "end": 142
                 },
                 {
                     "routes": [],
@@ -63668,8 +63753,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 143,
-                    "end": 157
+                    "line": 144,
+                    "end": 158
                 }
             ]
         },

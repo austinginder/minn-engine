@@ -18,7 +18,7 @@ request, response, routing, and the outgoing client
 | [`Response`](#response) | final readonly class | 101 | What a handler returns. Nothing is written to the client until the |
 | [`Route`](#route) | final readonly class | 49 | Declares a handler method as a route. The policy lives here, as |
 | [`RouteMiss`](#routemiss) | final class | 3 | A handler declining a request its pattern matched: the router swallows |
-| [`Router`](#router) | final class | 81 | Matches a request to a #[Route] on one of the registered handler |
+| [`Router`](#router) | final class | 120 | Matches a request to a #[Route] on one of the registered handler |
 | [`TrustedProxies`](#trustedproxies) | final readonly class | 104 | Which addresses in front of the engine may speak for the client. |
 
 ## Access
@@ -570,9 +570,21 @@ Every registered route with its policy, for the docs and the ratchet.
 
 - `@return list<array{method: string, pattern: string, policy: ?Policy, args: array<string, array<string, mixed>>, handler: string}>`
 
+### `allowed(Minn\Http\Request $request): array`
+
+The methods the caller may use on this path, for the Allow header:
+every route matching the path, its policy judged for the caller
+without dispatching. A route that states no policy counts for GET
+only, until it states one. Empty when nothing matched or nothing
+is allowed, and the header is then left out, as the reference does.
+
+- `@return list<string> in the reference's order`
+
 ### `dispatch(Minn\Http\Request $request): ?Minn\Http\Response`
 
 Null when nothing matched, so the caller can fall through.
+
+Internals: `admits()` (private, line 101)
 
 
 ## TrustedProxies

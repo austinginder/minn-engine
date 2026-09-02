@@ -20,7 +20,6 @@ final class Reply
         'X-Content-Type-Options' => 'nosniff',
         'Access-Control-Expose-Headers' => 'X-WP-Total, X-WP-TotalPages, Link',
         'Access-Control-Allow-Headers' => 'Authorization, X-WP-Nonce, Content-Disposition, Content-MD5, Content-Type',
-        'Allow' => 'GET',
     ];
 
     /** One item, shaped by the request's own _fields: what nearly every handler ends with. */

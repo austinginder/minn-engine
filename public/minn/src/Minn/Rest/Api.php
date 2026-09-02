@@ -164,7 +164,14 @@ final readonly class Api
             // Plugin code gets the reference's say before the engine's routes: an
             // authentication refusal, a pre-dispatch answer, or a removed endpoint.
             $response = Runtime::booted() ? RuntimeRoutes::gate($request) : null;
-            $response ??= $this->engineResponse($request);
+            if ($response === null) {
+                try {
+                    $response = $this->engineResponse($request);
+                } catch (RestError $error) {
+                    return $this->withAllow($request, Reply::error($error));
+                }
+                $response = $response === null ? null : $this->withAllow($request, $response);
+            }
             if ($response === null && Runtime::booted()) {
                 $response = RuntimeRoutes::dispatch($request);
             }
@@ -196,5 +203,15 @@ final readonly class Api
     {
         $response = $this->router->dispatch($request);
         return $response === null ? null : $this->embed->decorate($request, $response);
+    }
+
+    /**
+     * The Allow header as the reference sends it: the methods the caller
+     * may use on the matched path, and no header when there are none.
+     */
+    private function withAllow(Request $request, Response $response): Response
+    {
+        $methods = $this->router->allowed($request);
+        return $methods === [] ? $response->withoutHeader('Allow') : $response->withHeader('Allow', implode(', ', $methods));
     }
 }

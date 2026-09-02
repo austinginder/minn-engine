@@ -69,6 +69,45 @@ final class Router
         return $rows;
     }
 
+    /**
+     * The methods the caller may use on this path, for the Allow header:
+     * every route matching the path, its policy judged for the caller
+     * without dispatching. A route that states no policy counts for GET
+     * only, until it states one. Empty when nothing matched or nothing
+     * is allowed, and the header is then left out, as the reference does.
+     *
+     * @return list<string> in the reference's order
+     */
+    public function allowed(Request $request): array
+    {
+        $allowed = [];
+        foreach ($this->routes as ['route' => $route]) {
+            $method = $route->method;
+            if ($method === Method::Any || $method === Method::Head || !preg_match($route->regex(), $request->path, $captures)) {
+                continue;
+            }
+            $captures = array_filter($captures, is_string(...), ARRAY_FILTER_USE_KEY);
+            $allowed[] = match (true) {
+                $route->policy === null => $method === Method::Get ? 'GET' : null,
+                $route->policy->isPublic() => $method->value,
+                default => $this->admits($route->policy, $request, $captures) ? $method->value : null,
+            };
+        }
+        $order = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'];
+        return array_values(array_intersect($order, array_unique(array_filter($allowed))));
+    }
+
+    /** @param array<string, string> $captures */
+    private function admits(Policy $policy, Request $request, array $captures): bool
+    {
+        try {
+            ($this->gate)($policy, $request, $captures);
+            return true;
+        } catch (RestError) {
+            return false;
+        }
+    }
+
     /** Null when nothing matched, so the caller can fall through. */
     public function dispatch(Request $request): ?Response
     {

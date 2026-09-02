@@ -6,7 +6,7 @@ the wp/v2 surface: shapes and controllers
 |---|---|---|---|
 | [`AbilitiesController`](#abilitiescontroller) | final readonly class | 142 | wp-abilities/v1: what this site can be asked to do, and the doing of it. |
 | [`AdditionalFields`](#additionalfields) | final class | 46 | Which object type a wp/v2 route serves, so fields registered for that type can ride on the engine's own responses. |
-| [`Api`](#api) | final readonly class | 165 | The REST API: wires the controllers for one request and dispatches a |
+| [`Api`](#api) | final readonly class | 182 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 171 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`BatchRequest`](#batchrequest) | final class | 32 | The requests a batch payload names, normalised into descriptors the |
 | [`BlocksController`](#blockscontroller) | final readonly class | 69 | wp/v2/blocks: synced patterns and reusable blocks, stored as wp_block |
@@ -35,7 +35,7 @@ the wp/v2 surface: shapes and controllers
 | [`PostObject`](#postobject) | final readonly class | 476 | Builds the wp/v2 post and page objects in the reference's shape: the |
 | [`PostsController`](#postscontroller) | final readonly class | 174 | wp/v2 posts and pages, read side. |
 | [`PostsWriteController`](#postswritecontroller) | final readonly class | 319 | wp/v2 posts and pages, write side: create, update, trash, and force |
-| [`Reply`](#reply) | final class | 48 | JSON responses in the reference's shape: its header set, its json_encode |
+| [`Reply`](#reply) | final class | 47 | JSON responses in the reference's shape: its header set, its json_encode |
 | [`RestUrl`](#resturl) | final readonly class | 38 | REST URLs in the form the reference emits for the site's permalink mode: |
 | [`RevisionsController`](#revisionscontroller) | final readonly class | 142 | wp/v2 revisions and autosaves under posts, pages, and blocks. |
 | [`RouteArgs`](#routeargs) | final class | 36 | The argument groups a route registers with, filled the way register_rest_route fills them. |
@@ -45,7 +45,7 @@ the wp/v2 surface: shapes and controllers
 | [`RuntimeRoutes`](#runtimeroutes) | final class | 103 | Routes plugin code registered with register_rest_route(), answered |
 | [`Schema`](#schema) | final readonly class | 471 | JSON-schema handling the way the REST API's argument validation does it: |
 | [`SchemaValues`](#schemavalues) | final class | 201 | The value side of JSON Schema, as the reference applies it: what counts |
-| [`SearchController`](#searchcontroller) | final readonly class | 136 | wp/v2 search over published content: id, title, url, type, and the |
+| [`SearchController`](#searchcontroller) | final readonly class | 137 | wp/v2 search over published content: id, title, url, type, and the |
 | [`Services`](#services) | final class | 380 | The objects one REST request shares, each made once, on first use, from |
 | [`Settings`](#settings) | final readonly class | 76 | The registered settings the Settings views read and write, mapped to |
 | [`SettingsController`](#settingscontroller) | final readonly class | 24 | wp/v2/settings: read and write, both behind manage_options. |
@@ -203,7 +203,7 @@ takes it; the runtime's table is never consulted. This is what the
 runtime's server calls for a core route, so a route the engine
 declines cannot bounce between the two.
 
-Internals: `controllers()` (private, line 71), `engineResponse()` (private, line 195)
+Internals: `controllers()` (private, line 71), `engineResponse()` (private, line 202), `withAllow()` (private, line 212)
 
 
 ## ApplicationPasswordsController
@@ -1430,7 +1430,7 @@ JSON responses in the reference's shape: its header set, its json_encode
 flags (slashes escaped), the _fields filter, and the pagination headers
 on lists.
 
-- const `HEADERS` = `array (   'Content-Type' => 'application/json; charset=UTF-8',   'X-Content-Type-Options' => 'nosniff',   'Access-Control-Expose-Headers' => 'X-WP-Total, X-WP-TotalPages, Link',   'Access-Control-Allow-Headers' => 'Authorization, X-WP-Nonce, Content-Disposition, Content-MD5, Content-Type',   'Allow' => 'GET', )`
+- const `HEADERS` = `array (   'Content-Type' => 'application/json; charset=UTF-8',   'X-Content-Type-Options' => 'nosniff',   'Access-Control-Expose-Headers' => 'X-WP-Total, X-WP-TotalPages, Link',   'Access-Control-Allow-Headers' => 'Authorization, X-WP-Nonce, Content-Disposition, Content-MD5, Content-Type', )`
 
 Used by: `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\TypesController`, `Minn\Rest\UsersController`
 
@@ -1784,7 +1784,7 @@ Route: `GET /wp/v2/search`
 
 Search across post types with the reference's relevance order.
 
-Internals: `item()` (private, line 72), `subtypes()` (private, line 95), `rankExpression()` (private, line 110), `terms()` (private, line 121), `escapeLike()` (private, line 138), `intParam()` (private, line 143)
+Internals: `item()` (private, line 73), `subtypes()` (private, line 96), `rankExpression()` (private, line 111), `terms()` (private, line 122), `escapeLike()` (private, line 139), `intParam()` (private, line 144)
 
 
 ## Services

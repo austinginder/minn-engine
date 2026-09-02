@@ -49,10 +49,11 @@ final readonly class SearchController
         $posts = $this->db->table('posts');
         $where = "post_status = 'publish' AND post_type IN (?)";
         $params = [$subtypes];
-        $rank = '0';
+        // With no term there is nothing to rank: the newest first, as the reference lists.
+        $order = 'post_date DESC, ID DESC';
         $rankParams = [];
         if ($terms !== []) {
-            $rank = $this->rankExpression($terms, $rankParams);
+            $order = $this->rankExpression($terms, $rankParams) . ', ' . $order;
             foreach ($terms as $term) {
                 $like = '%' . self::escapeLike($term) . '%';
                 $where .= ' AND (post_title LIKE ? OR post_excerpt LIKE ? OR post_content LIKE ?)';
@@ -62,7 +63,7 @@ final readonly class SearchController
         $total = (int) $this->db->value("SELECT COUNT(*) FROM {$posts} WHERE {$where}", $params);
         $rows = $this->db->rows(
             "SELECT ID, post_title, post_type, post_name, post_date, post_parent, post_status FROM {$posts}
-             WHERE {$where} ORDER BY {$rank}, post_date DESC, ID DESC LIMIT ? OFFSET ?",
+             WHERE {$where} ORDER BY {$order} LIMIT ? OFFSET ?",
             [...$params, ...$rankParams, $perPage, ($page - 1) * $perPage],
         );
         $items = array_map(fn (PostRecord $post) => $this->item($post), PostRecord::fromRows($rows));

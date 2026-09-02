@@ -133,7 +133,7 @@ as_parity( 'wp/v2/taxonomies/category matches', '/wp/v2/taxonomies/category', nu
 as_parity( 'wp/v2/taxonomies/nope is 404 both sides', '/wp/v2/taxonomies/nope', null );
 
 // 3. wp/v2 search.
-foreach ( array( '/wp/v2/search?per_page=6&search=hello', '/wp/v2/search?per_page=6&_fields=id,title,url,type,subtype&search=doc', '/wp/v2/search?search=zzzznothing', '/wp/v2/search?type=post&subtype=page&search=doc', '/wp/v2/search?search=hello&per_page=1&page=2' ) as $q ) {
+foreach ( array( '/wp/v2/search?per_page=4', '/wp/v2/search?per_page=6&search=hello', '/wp/v2/search?per_page=6&_fields=id,title,url,type,subtype&search=doc', '/wp/v2/search?search=zzzznothing', '/wp/v2/search?type=post&subtype=page&search=doc', '/wp/v2/search?search=hello&per_page=1&page=2' ) as $q ) {
 	as_parity( "search $q matches", $q, null );
 }
 [ , , $rh ] = as_fetch( $REF, '/wp/v2/search?search=hello', null );

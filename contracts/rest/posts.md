@@ -39,7 +39,18 @@ normalize the capture origin to the engine origin before comparing.
   `post_format-post-format-{format}` when a format term is assigned.
 - List headers: `X-WP-Total`, `X-WP-TotalPages`,
   `Access-Control-Expose-Headers`, `Access-Control-Allow-Headers`,
-  `X-Content-Type-Options: nosniff`, `Allow: GET`.
+  `X-Content-Type-Options: nosniff`, and `Allow`.
+- `Allow` (every wp/v2 and minn-admin/v1 response; suite `allow`): the
+  methods on the matched route the caller may use, judged per caller, in the
+  order GET, POST, PUT, PATCH, DELETE; a 401 or 400 carries it too (an
+  anonymous POST to posts answers `401` with `Allow: GET`; an administrator's
+  bad settings write answers `400` with `GET, POST, PUT, PATCH`); the header is
+  left out when no method is allowed (an anonymous read of settings, an
+  author's, a post that does not exist, the response to a force delete). On
+  the engine the judgement is the route's `Policy`, so a route that states no
+  policy yet counts for GET only; the `allow` suite lists the cases that still
+  differ, each with the change that settles it (B1 bare write routes and the
+  Own policy's missing answer, B7 the Floor), as a ratchet.
 - Errors: `rest_post_invalid_id` (404), `rest_no_route` (404),
   `rest_post_invalid_page_number` (400).
 
