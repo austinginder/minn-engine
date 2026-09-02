@@ -78,6 +78,17 @@ final readonly class Users
      */
     public function createAccount(array $fields): int
     {
+        return $this->db->transaction(fn (): int => $this->writeAccount($fields));
+    }
+
+    /**
+     * The account's row and the fourteen meta rows the reference gives a new
+     * user, written as one unit by createAccount().
+     *
+     * @param array<string, mixed> $fields
+     */
+    private function writeAccount(array $fields): int
+    {
         $login = $fields['login'];
         $id = $this->insert([
             'user_login' => $login,

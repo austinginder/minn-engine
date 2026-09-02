@@ -87,13 +87,15 @@ final readonly class Terms
     /** Inserts a term and its taxonomy row and returns the term id. */
     public function create(string $name, string $slug, string $taxonomy, string $description, int $parent): int
     {
-        $this->db->execute("INSERT INTO {$this->db->table('terms')} (name, slug, term_group) VALUES (?, ?, 0)", [$name, $slug]);
-        $termId = $this->db->insertId();
-        $this->db->execute(
-            "INSERT INTO {$this->db->table('term_taxonomy')} (term_id, taxonomy, description, parent, count) VALUES (?, ?, ?, ?, 0)",
-            [$termId, $taxonomy, $description, $parent],
-        );
-        return $termId;
+        return $this->db->transaction(function () use ($name, $slug, $taxonomy, $description, $parent): int {
+            $this->db->execute("INSERT INTO {$this->db->table('terms')} (name, slug, term_group) VALUES (?, ?, 0)", [$name, $slug]);
+            $termId = $this->db->insertId();
+            $this->db->execute(
+                "INSERT INTO {$this->db->table('term_taxonomy')} (term_id, taxonomy, description, parent, count) VALUES (?, ?, ?, ?, 0)",
+                [$termId, $taxonomy, $description, $parent],
+            );
+            return $termId;
+        });
     }
 
     /** Changes a term's name and slug. */
@@ -116,15 +118,17 @@ final readonly class Terms
     {
         $termId = (int) $term['term_id'];
         $ttid = (int) $term['term_taxonomy_id'];
-        if ($hierarchical) {
-            $this->db->execute(
-                "UPDATE {$this->db->table('term_taxonomy')} SET parent = ? WHERE parent = ? AND taxonomy = ?",
-                [(int) $term['parent'], $termId, (string) $term['taxonomy']],
-            );
-        }
-        $this->db->execute("DELETE FROM {$this->db->table('term_relationships')} WHERE term_taxonomy_id = ?", [$ttid]);
-        $this->db->execute("DELETE FROM {$this->db->table('term_taxonomy')} WHERE term_taxonomy_id = ?", [$ttid]);
-        $this->db->execute("DELETE FROM {$this->db->table('terms')} WHERE term_id = ?", [$termId]);
+        $this->db->transaction(function () use ($term, $hierarchical, $termId, $ttid): void {
+            if ($hierarchical) {
+                $this->db->execute(
+                    "UPDATE {$this->db->table('term_taxonomy')} SET parent = ? WHERE parent = ? AND taxonomy = ?",
+                    [(int) $term['parent'], $termId, (string) $term['taxonomy']],
+                );
+            }
+            $this->db->execute("DELETE FROM {$this->db->table('term_relationships')} WHERE term_taxonomy_id = ?", [$ttid]);
+            $this->db->execute("DELETE FROM {$this->db->table('term_taxonomy')} WHERE term_taxonomy_id = ?", [$ttid]);
+            $this->db->execute("DELETE FROM {$this->db->table('terms')} WHERE term_id = ?", [$termId]);
+        });
     }
 
     /** "parent/child" for hierarchical taxonomies, the bare slug otherwise. */

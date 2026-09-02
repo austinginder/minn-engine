@@ -316,15 +316,25 @@ final readonly class PostWriter
         $this->db->execute("UPDATE {$this->db->table('posts')} SET post_author = ? WHERE post_author = ?", [$to, $from]);
     }
 
+    /** The database door this writer writes through, for a caller wrapping several of its verbs in one transaction. */
+    public function db(): \Minn\Db
+    {
+        return $this->db;
+    }
+
     /** Hard-deletes a post with its revisions and its meta. */
     public function destroy(int $id): void
     {
-        $posts = $this->db->table('posts');
-        $this->db->execute("DELETE FROM {$posts} WHERE post_parent = ? AND post_type = 'revision'", [$id]);
-        $this->db->execute("DELETE FROM {$posts} WHERE ID = ?", [$id]);
-        $taxonomies = $this->taxonomiesOf($id);
-        $this->db->execute("DELETE FROM {$this->db->table('term_relationships')} WHERE object_id = ?", [$id]);
-        $this->db->execute("DELETE FROM {$this->db->table('postmeta')} WHERE post_id = ?", [$id]);
+        $taxonomies = $this->db->transaction(function () use ($id): array {
+            $posts = $this->db->table('posts');
+            $this->db->execute("DELETE FROM {$posts} WHERE post_parent = ? AND post_type = 'revision'", [$id]);
+            $this->db->execute("DELETE FROM {$posts} WHERE ID = ?", [$id]);
+            $taxonomies = $this->taxonomiesOf($id);
+            $this->db->execute("DELETE FROM {$this->db->table('term_relationships')} WHERE object_id = ?", [$id]);
+            $this->db->execute("DELETE FROM {$this->db->table('postmeta')} WHERE post_id = ?", [$id]);
+            return $taxonomies;
+        });
+        // The counts are read back from what the delete left, so they are settled after it commits.
         foreach ($taxonomies as $taxonomy) {
             $this->recount($taxonomy);
         }

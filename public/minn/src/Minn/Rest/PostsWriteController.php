@@ -90,6 +90,21 @@ final readonly class PostsWriteController
             $slug = $this->writer->uniqueSlug($title, 0);
         }
 
+        // The row, its extended fields, its guid and its terms are one post:
+        // a failure part-way through leaves none of it rather than a stub.
+        $id = $this->writer->db()->transaction(fn (): int => $this->writeNewPost($body, $type, $author, $status, $slug, $date, $dateGmt, $modified, $modifiedGmt, $title));
+
+        return Reply::item($this->object->edit($this->posts->find($id), $userId), Fields::fromQuery($request->query), 201)
+            ->withHeader('Location', $this->url->to('/wp/v2/' . $base . '/' . $id));
+    }
+
+    /**
+     * Writes a new post and everything that belongs to it, as one unit.
+     *
+     * @param array<string, mixed> $body
+     */
+    private function writeNewPost(array $body, string $type, int $author, string $status, string $slug, string $date, string $dateGmt, string $modified, string $modifiedGmt, string $title): int
+    {
         $id = $this->writer->insert([
             'post_author' => $author,
             'post_date' => $date,
@@ -120,9 +135,7 @@ final readonly class PostsWriteController
         if ($type === 'post' && (!isset($body['categories']) || $body['categories'] === [])) {
             $this->writer->setTerms($id, 'category', [(int) ($this->site->option('default_category') ?? 1)]);
         }
-
-        return Reply::item($this->object->edit($this->posts->find($id), $userId), Fields::fromQuery($request->query), 201)
-            ->withHeader('Location', $this->url->to('/wp/v2/' . $base . '/' . $id));
+        return $id;
     }
 
     /** Updates a post or page. */

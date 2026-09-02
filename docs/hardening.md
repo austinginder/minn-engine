@@ -38,6 +38,15 @@ What the engine does on its own, and what the server in front of it must do.
   valid references, pads decimal ones to three digits, and escapes stray brackets.
   `tests/unit/kses.php` pins seventy captured cases. Password-protected posts
   show only the password form.
+- **Compound writes are one unit.** `Db::transaction()` wraps the verbs that
+  touch more than one table, so a failure part-way through leaves nothing
+  behind rather than a half-written record: creating and deleting a term
+  (its `terms` and `term_taxonomy` rows), hard-deleting a post (its
+  revisions, meta and term relationships), creating a user (the account and
+  the fourteen meta rows the reference gives it), and creating a post over
+  REST (the row, its extended fields, its guid and its terms). A nested call
+  joins the transaction already open, since the storage engine has no nested
+  transactions. Pinned by `tests/unit/transaction.php`.
 - **Packages.** `Minn\Admin\Packages` is the one way a theme, plugin, or extension
   reaches disk. A folder name is a plain name (never `.` or `..`) and the path it
   resolves to must be a direct child of `themes/` or `plugins/` before anything is

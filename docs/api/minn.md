@@ -6,7 +6,7 @@ the front door, the autoloader, the one database door, the REST error
 |---|---|---|---|
 | [`Autoloader`](#autoloader) | final class | 16 | PSR-4 for the Minn namespace: Minn\Http\Request lives at src/Minn/Http/Request.php. |
 | [`Context`](#context) | final readonly class | 41 | One request, as a value: the database door, who is asking, what they |
-| [`Db`](#db) | final class | 203 | The one door to the database. Every query is a prepared statement; the |
+| [`Db`](#db) | final class | 238 | The one door to the database. Every query is a prepared statement; the |
 | [`Engine`](#engine) | final readonly class | 215 | The engine's front door. An unmodified wp-config.php ends by requiring |
 | [`RestError`](#resterror) | final class | 49 | A WordPress-shaped error, thrown from anywhere and rendered once by the |
 
@@ -144,6 +144,19 @@ caller that means "everything" when the list is empty says so itself.
 - `@param list<mixed> $params`
 - `@return array{0: string, 1: list<mixed>}`
 
+### `transaction(callable $work): mixed`
+
+Runs a unit of work as one transaction: everything the closure writes
+lands, or none of it does. The closure's return value is passed back.
+
+A transaction already open is joined rather than nested, since the
+storage engine has no nested transactions; the outermost call is the
+one that commits. A table that cannot do transactions (MyISAM, which
+no WordPress core table uses) silently keeps each write, which is the
+behaviour there was before this existed.
+
+- `@param callable(): T $work`
+
 ### `insertId(): int`
 
 The id the last INSERT produced.
@@ -152,7 +165,7 @@ The id the last INSERT produced.
 
 One option's raw value, or null when it is unset.
 
-Internals: `placeholders()` (private, line 152), `run()` (private, line 201)
+Internals: `placeholders()` (private, line 154), `run()` (private, line 236)
 
 
 ## Engine

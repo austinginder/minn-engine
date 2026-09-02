@@ -17,6 +17,8 @@ use mysqli_stmt;
 final class Db
 {
     private static ?self $shared = null;
+    /** Whether a transaction this door opened is still open, so a nested call joins it instead of starting another. */
+    private bool $inTransaction = false;
 
     public function __construct(
         private readonly mysqli $connection,
@@ -180,6 +182,39 @@ final class Db
         }
         $pieces[] = $buffer;
         return $pieces;
+    }
+
+    /**
+     * Runs a unit of work as one transaction: everything the closure writes
+     * lands, or none of it does. The closure's return value is passed back.
+     *
+     * A transaction already open is joined rather than nested, since the
+     * storage engine has no nested transactions; the outermost call is the
+     * one that commits. A table that cannot do transactions (MyISAM, which
+     * no WordPress core table uses) silently keeps each write, which is the
+     * behaviour there was before this existed.
+     *
+     * @template T
+     * @param callable(): T $work
+     * @return T
+     */
+    public function transaction(callable $work): mixed
+    {
+        if ($this->inTransaction) {
+            return $work();
+        }
+        $this->inTransaction = true;
+        $this->connection->begin_transaction();
+        try {
+            $result = $work();
+        } catch (\Throwable $failure) {
+            $this->connection->rollback();
+            $this->inTransaction = false;
+            throw $failure;
+        }
+        $this->connection->commit();
+        $this->inTransaction = false;
+        return $result;
     }
 
     /** The id the last INSERT produced. */

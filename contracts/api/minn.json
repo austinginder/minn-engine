@@ -27913,7 +27913,7 @@
             "namespace": "Minn\\Content",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Content/PostWriter.php",
-            "lines": 318,
+            "lines": 328,
             "doc": "Every write to the posts table and its satellites: rows, meta, term\nlinks with the published counts the reference trusts on read, sticky\nand format side effects, and revision snapshots.",
             "implements": [],
             "extends": null,
@@ -28531,6 +28531,18 @@
                 },
                 {
                     "routes": [],
+                    "name": "db",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "db(): Minn\\Db",
+                    "doc": "The database door this writer writes through, for a caller wrapping several of its verbs in one transaction.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 320,
+                    "end": 323
+                },
+                {
+                    "routes": [],
                     "name": "destroy",
                     "static": false,
                     "visibility": "public",
@@ -28546,8 +28558,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 320,
-                    "end": 331
+                    "line": 326,
+                    "end": 341
                 },
                 {
                     "routes": [],
@@ -30908,7 +30920,7 @@
             "namespace": "Minn\\Content",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Content/Terms.php",
-            "lines": 137,
+            "lines": 141,
             "doc": "",
             "implements": [],
             "extends": null,
@@ -31149,7 +31161,7 @@
                         }
                     ],
                     "line": 88,
-                    "end": 97
+                    "end": 99
                 },
                 {
                     "routes": [],
@@ -31182,8 +31194,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 100,
-                    "end": 103
+                    "line": 102,
+                    "end": 105
                 },
                 {
                     "routes": [],
@@ -31223,8 +31235,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 106,
-                    "end": 112
+                    "line": 108,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -31250,8 +31262,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 115,
-                    "end": 128
+                    "line": 117,
+                    "end": 132
                 },
                 {
                     "routes": [],
@@ -31270,8 +31282,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 131,
-                    "end": 144
+                    "line": 135,
+                    "end": 148
                 },
                 {
                     "routes": [],
@@ -31790,7 +31802,7 @@
             "namespace": "Minn\\Content",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Content/Users.php",
-            "lines": 202,
+            "lines": 213,
             "doc": "",
             "implements": [],
             "extends": null,
@@ -31988,7 +32000,7 @@
                         }
                     ],
                     "line": 79,
-                    "end": 115
+                    "end": 82
                 },
                 {
                     "routes": [],
@@ -32009,8 +32021,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 122,
-                    "end": 127
+                    "line": 133,
+                    "end": 138
                 },
                 {
                     "routes": [],
@@ -32038,8 +32050,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 134,
-                    "end": 139
+                    "line": 145,
+                    "end": 150
                 },
                 {
                     "routes": [],
@@ -32058,8 +32070,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 142,
-                    "end": 146
+                    "line": 153,
+                    "end": 157
                 },
                 {
                     "routes": [],
@@ -32080,8 +32092,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 149,
-                    "end": 152
+                    "line": 160,
+                    "end": 163
                 },
                 {
                     "routes": [],
@@ -32100,8 +32112,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 155,
-                    "end": 158
+                    "line": 166,
+                    "end": 169
                 },
                 {
                     "routes": [],
@@ -32127,8 +32139,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 161,
-                    "end": 164
+                    "line": 172,
+                    "end": 175
                 },
                 {
                     "routes": [],
@@ -32139,8 +32151,8 @@
                     "doc": "How many users the site has.",
                     "shapes": [],
                     "params": [],
-                    "line": 167,
-                    "end": 170
+                    "line": 178,
+                    "end": 181
                 },
                 {
                     "routes": [],
@@ -32168,8 +32180,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 177,
-                    "end": 184
+                    "line": 188,
+                    "end": 195
                 },
                 {
                     "routes": [],
@@ -32195,8 +32207,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 187,
-                    "end": 190
+                    "line": 198,
+                    "end": 201
                 },
                 {
                     "routes": [],
@@ -32222,8 +32234,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 193,
-                    "end": 200
+                    "line": 204,
+                    "end": 211
                 },
                 {
                     "routes": [],
@@ -32256,8 +32268,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 207,
-                    "end": 212
+                    "line": 218,
+                    "end": 223
                 },
                 {
                     "routes": [],
@@ -32280,6 +32292,28 @@
                     ],
                     "line": 19,
                     "end": 22
+                },
+                {
+                    "routes": [],
+                    "name": "writeAccount",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "writeAccount(array $fields): int",
+                    "doc": "The account's row and the fourteen meta rows the reference gives a new\nuser, written as one unit by createAccount().",
+                    "shapes": [
+                        "@param array<string, mixed> $fields"
+                    ],
+                    "params": [
+                        {
+                            "name": "fields",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 90,
+                    "end": 126
                 }
             ]
         },
@@ -32713,7 +32747,7 @@
             "namespace": "Minn",
             "kind": "final class",
             "file": "public/minn/src/Minn/Db.php",
-            "lines": 203,
+            "lines": 238,
             "doc": "The one door to the database. Every query is a prepared statement; the\nplaceholder types are derived from the PHP values, so callers pass plain\narrays and never spell out \"issd\". A parameter that is a list stands for\na list of values: its \"?\" becomes as many placeholders as the list is\nlong, so \"post_type IN (?)\" takes the types themselves.",
             "implements": [],
             "extends": null,
@@ -32819,8 +32853,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 21,
-                "end": 25
+                "line": 23,
+                "end": 27
             },
             "cases": [],
             "constants": [],
@@ -32831,6 +32865,15 @@
                     "readonly": false,
                     "static": true,
                     "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "inTransaction",
+                    "type": "bool",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "Whether a transaction this door opened is still open, so a nested call joins it instead of starting another.",
                     "visibility": "private",
                     "promoted": false
                 },
@@ -32863,8 +32906,8 @@
                     "doc": "The connection the request being answered speaks through: its\nruntime's own, so nothing deep in a render can reach a connection\nbelonging to another request. With no runtime (the command line, the\nunit suite) it is the process's own connection.\n\nThis is the one place in the core that asks the runtime anything; the\nalternative is a database door threaded through every renderer, and\nthe seam is here until that threading is done.",
                     "shapes": [],
                     "params": [],
-                    "line": 37,
-                    "end": 40
+                    "line": 39,
+                    "end": 42
                 },
                 {
                     "routes": [],
@@ -32875,8 +32918,8 @@
                     "doc": "The one connection for this process, opened from wp-config's constants on first use.",
                     "shapes": [],
                     "params": [],
-                    "line": 43,
-                    "end": 51
+                    "line": 45,
+                    "end": 53
                 },
                 {
                     "routes": [],
@@ -32887,8 +32930,8 @@
                     "doc": "The underlying mysqli handle, for the facade's wpdb.",
                     "shapes": [],
                     "params": [],
-                    "line": 54,
-                    "end": 57
+                    "line": 56,
+                    "end": 59
                 },
                 {
                     "routes": [],
@@ -32907,8 +32950,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 60,
-                    "end": 63
+                    "line": 62,
+                    "end": 65
                 },
                 {
                     "routes": [],
@@ -32919,8 +32962,8 @@
                     "doc": "The table prefix from wp-config.",
                     "shapes": [],
                     "params": [],
-                    "line": 66,
-                    "end": 69
+                    "line": 68,
+                    "end": 71
                 },
                 {
                     "routes": [],
@@ -32939,8 +32982,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 72,
-                    "end": 75
+                    "line": 74,
+                    "end": 77
                 },
                 {
                     "routes": [],
@@ -32968,8 +33011,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 82,
-                    "end": 85
+                    "line": 84,
+                    "end": 87
                 },
                 {
                     "routes": [],
@@ -32997,8 +33040,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 92,
-                    "end": 95
+                    "line": 94,
+                    "end": 97
                 },
                 {
                     "routes": [],
@@ -33024,8 +33067,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 98,
-                    "end": 102
+                    "line": 100,
+                    "end": 104
                 },
                 {
                     "routes": [],
@@ -33051,8 +33094,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 105,
-                    "end": 108
+                    "line": 107,
+                    "end": 110
                 },
                 {
                     "routes": [],
@@ -33081,8 +33124,30 @@
                             "doc": ""
                         }
                     ],
-                    "line": 119,
-                    "end": 144
+                    "line": 121,
+                    "end": 146
+                },
+                {
+                    "routes": [],
+                    "name": "transaction",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "transaction(callable $work): mixed",
+                    "doc": "Runs a unit of work as one transaction: everything the closure writes\nlands, or none of it does. The closure's return value is passed back.\n\nA transaction already open is joined rather than nested, since the\nstorage engine has no nested transactions; the outermost call is the\none that commits. A table that cannot do transactions (MyISAM, which\nno WordPress core table uses) silently keeps each write, which is the\nbehaviour there was before this existed.",
+                    "shapes": [
+                        "@param callable(): T $work"
+                    ],
+                    "params": [
+                        {
+                            "name": "work",
+                            "type": "callable",
+                            "shape": "callable(): T",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 201,
+                    "end": 218
                 },
                 {
                     "routes": [],
@@ -33093,8 +33158,8 @@
                     "doc": "The id the last INSERT produced.",
                     "shapes": [],
                     "params": [],
-                    "line": 186,
-                    "end": 189
+                    "line": 221,
+                    "end": 224
                 },
                 {
                     "routes": [],
@@ -33113,8 +33178,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 192,
-                    "end": 199
+                    "line": 227,
+                    "end": 234
                 },
                 {
                     "routes": [],
@@ -33135,8 +33200,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 152,
-                    "end": 183
+                    "line": 154,
+                    "end": 185
                 },
                 {
                     "routes": [],
@@ -33162,8 +33227,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 201,
-                    "end": 218
+                    "line": 236,
+                    "end": 253
                 }
             ]
         },
@@ -59245,7 +59310,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/PostsWriteController.php",
-            "lines": 306,
+            "lines": 319,
             "doc": "wp/v2 posts and pages, write side: create, update, trash, and force\ndelete, each gated by the capability engine and answering with the\nedit-context object the reference returns.",
             "implements": [],
             "extends": null,
@@ -59455,7 +59520,7 @@
                         }
                     ],
                     "line": 48,
-                    "end": 126
+                    "end": 99
                 },
                 {
                     "routes": [
@@ -59492,8 +59557,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 132,
-                    "end": 135
+                    "line": 145,
+                    "end": 148
                 },
                 {
                     "routes": [],
@@ -59526,8 +59591,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 138,
-                    "end": 166
+                    "line": 151,
+                    "end": 179
                 },
                 {
                     "routes": [
@@ -59562,8 +59627,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 170,
-                    "end": 173
+                    "line": 183,
+                    "end": 186
                 },
                 {
                     "routes": [],
@@ -59596,8 +59661,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 176,
-                    "end": 204
+                    "line": 189,
+                    "end": 217
                 },
                 {
                     "routes": [],
@@ -59616,8 +59681,93 @@
                             "doc": ""
                         }
                     ],
-                    "line": 323,
-                    "end": 329
+                    "line": 336,
+                    "end": 342
+                },
+                {
+                    "routes": [],
+                    "name": "writeNewPost",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "writeNewPost(array $body, string $type, int $author, string $status, string $slug, string $date, string $dateGmt, string $modified, string $modifiedGmt, string $title): int",
+                    "doc": "Writes a new post and everything that belongs to it, as one unit.",
+                    "shapes": [
+                        "@param array<string, mixed> $body"
+                    ],
+                    "params": [
+                        {
+                            "name": "body",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "author",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "status",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "slug",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "date",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "dateGmt",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "modified",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "modifiedGmt",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "title",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 106,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -59643,8 +59793,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 207,
-                    "end": 217
+                    "line": 220,
+                    "end": 230
                 },
                 {
                     "routes": [],
@@ -59679,8 +59829,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 226,
-                    "end": 262
+                    "line": 239,
+                    "end": 275
                 },
                 {
                     "routes": [],
@@ -59715,8 +59865,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 271,
-                    "end": 293
+                    "line": 284,
+                    "end": 306
                 },
                 {
                     "routes": [],
@@ -59742,8 +59892,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 296,
-                    "end": 305
+                    "line": 309,
+                    "end": 318
                 },
                 {
                     "routes": [],
@@ -59762,8 +59912,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 308,
-                    "end": 314
+                    "line": 321,
+                    "end": 327
                 },
                 {
                     "routes": [],
@@ -59782,8 +59932,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 317,
-                    "end": 320
+                    "line": 330,
+                    "end": 333
                 }
             ]
         },

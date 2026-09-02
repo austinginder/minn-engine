@@ -24,7 +24,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`PostFilter`](#postfilter) | final readonly class | 55 | What a listing is narrowed to. Every field is optional and the object is |
 | [`PostRecord`](#postrecord) | final readonly class | 156 | One row of the posts table, read by name. The columns keep their |
 | [`PostStatus`](#poststatus) | enum | 42 | The statuses a post row can hold; the value is the column's own spelling. |
-| [`PostWriter`](#postwriter) | final readonly class | 318 | Every write to the posts table and its satellites: rows, meta, term |
+| [`PostWriter`](#postwriter) | final readonly class | 328 | Every write to the posts table and its satellites: rows, meta, term |
 | [`Posts`](#posts) | final readonly class | 391 | Reads over the posts table. A single post comes back as a PostRecord and |
 | [`Reader`](#reader) | final class | 72 | Who is reading this request: their user id, whether they may read |
 | [`Revisions`](#revisions) | final readonly class | 86 | Revision rows: the plain snapshots and the per-author autosave slots. |
@@ -33,10 +33,10 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`Slug`](#slug) | final class | 56 |  |
 | [`TermLinks`](#termlinks) | final class | 39 | A post's terms rendered as links, in the two shapes the reference |
 | [`TermRecord`](#termrecord) | final readonly class | 88 | One term with its taxonomy row, read by name: $term->name, ->slug, |
-| [`Terms`](#terms) | final readonly class | 137 |  |
+| [`Terms`](#terms) | final readonly class | 141 |  |
 | [`Texturize`](#texturize) | final class | 51 | The texturize subset the reference applies to rendered text: straight |
 | [`UserRecord`](#userrecord) | final readonly class | 96 | One row of the users table, read by name. Columns keep their WordPress |
-| [`Users`](#users) | final readonly class | 202 |  |
+| [`Users`](#users) | final readonly class | 213 |  |
 
 ## Autop
 
@@ -1089,6 +1089,10 @@ Moves a deleted post's children of the given types to another parent, the way th
 
 Moves every post of one author to another.
 
+### `db(): Minn\Db`
+
+The database door this writer writes through, for a caller wrapping several of its verbs in one transaction.
+
 ### `destroy(int $id): void`
 
 Hard-deletes a post with its revisions and its meta.
@@ -1748,5 +1752,5 @@ Replaces one usermeta row. The (user_id, meta_key) pair carries no
 unique index on the stock schema, so this is a delete plus insert
 rather than an upsert.
 
-Internals: `record()` (private, line 19)
+Internals: `record()` (private, line 19), `writeAccount()` (private, line 90)
 

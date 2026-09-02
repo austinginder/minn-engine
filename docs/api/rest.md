@@ -33,7 +33,7 @@ the wp/v2 surface: shapes and controllers
 | [`PolicyGate`](#policygate) | final readonly class | 58 | Judges a route's policy against the caller, with the reference's |
 | [`PostObject`](#postobject) | final readonly class | 476 | Builds the wp/v2 post and page objects in the reference's shape: the |
 | [`PostsController`](#postscontroller) | final readonly class | 174 | wp/v2 posts and pages, read side. |
-| [`PostsWriteController`](#postswritecontroller) | final readonly class | 306 | wp/v2 posts and pages, write side: create, update, trash, and force |
+| [`PostsWriteController`](#postswritecontroller) | final readonly class | 319 | wp/v2 posts and pages, write side: create, update, trash, and force |
 | [`Reply`](#reply) | final class | 48 | JSON responses in the reference's shape: its header set, its json_encode |
 | [`RestUrl`](#resturl) | final readonly class | 38 | REST URLs in the form the reference emits for the site's permalink mode: |
 | [`RevisionsController`](#revisionscontroller) | final readonly class | 142 | wp/v2 revisions and autosaves under posts, pages, and blocks. |
@@ -1340,7 +1340,7 @@ Trashes a post of any type, or deletes it with force.
 
 A field that may arrive as a scalar or as {raw: ...}.
 
-Internals: `scheduledIfFuture()` (private, line 207), `fieldColumns()` (private, line 226), `statusColumns()` (private, line 271), `checkStickyPasswordConflict()` (private, line 296), `validStatus()` (private, line 308), `clean()` (private, line 317)
+Internals: `writeNewPost()` (private, line 106), `scheduledIfFuture()` (private, line 220), `fieldColumns()` (private, line 239), `statusColumns()` (private, line 284), `checkStickyPasswordConflict()` (private, line 309), `validStatus()` (private, line 321), `clean()` (private, line 330)
 
 
 ## Reply
