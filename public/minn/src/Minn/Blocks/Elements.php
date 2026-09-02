@@ -59,8 +59,8 @@ final class Elements
         if ($rules === '') {
             return null;
         }
-        $class = 'wp-elements-' . RenderState::nextElements();
-        RenderState::recordElementRule(str_replace('%CLASS%', $class, $rules));
+        $class = 'wp-elements-' . RenderState::current()->nextElements();
+        RenderState::current()->recordElementRule(str_replace('%CLASS%', $class, $rules));
         return $class;
     }
 

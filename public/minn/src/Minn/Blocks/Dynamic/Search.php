@@ -30,7 +30,7 @@ final readonly class Search
     /** The block's HTML. */
     public function render(Block $block, Renderer $renderer): string
     {
-        $id = 'wp-block-search__input-' . RenderState::nextId();
+        $id = 'wp-block-search__input-' . $renderer->state()->nextId();
         $label = (string) $block->attr('label', 'Search');
         $buttonText = (string) $block->attr('buttonText', 'Search');
         $placeholder = (string) $block->attr('placeholder', '');

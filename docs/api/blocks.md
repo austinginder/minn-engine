@@ -13,8 +13,8 @@ the block parser and renderer
 | [`Layout`](#layout) | final class | 126 | The layout-support classes the reference adds at render time. Every |
 | [`Parser`](#parser) | final class | 91 | Parses block markup into a tree. The grammar is the delimiter comment: |
 | [`QueryVars`](#queryvars) | final class | 80 | The query variables a Query Loop block's context asks for, the way the reference's query block builds them. |
-| [`RenderState`](#renderstate) | final class | 247 | Per-request rendering state. The reference numbers galleries, style |
-| [`Renderer`](#renderer) | final class | 219 | Renders a block tree the way the reference renders post_content: |
+| [`RenderState`](#renderstate) | final class | 260 | Per-request rendering state, owned by the renderer. The reference numbers |
+| [`Renderer`](#renderer) | final class | 228 | Renders a block tree the way the reference renders post_content: |
 | [`Selector`](#selector) | final class | 42 | The CSS selector a block type declares for its root or for one feature, from its `selectors` map or the older per-support keys. |
 | [`Styles`](#styles) | final class | 155 | The inline style and class names a block's "style" and preset |
 | [`Supports`](#supports) | final class | 72 | The wrapper attributes a block's supports declaration earns from its |
@@ -269,134 +269,143 @@ Internals: `taxQuery()` (private, line 62)
 
 `final class Minn\Blocks\RenderState` · `public/minn/src/Minn/Blocks/RenderState.php`
 
-Per-request rendering state. The reference numbers galleries, style
-variations, and search inputs from ONE counter that runs across every
-block rendered in the request (a list response keeps counting from post
-to post), so the counter lives here, not on any block.
+Per-request rendering state, owned by the renderer. The reference numbers
+galleries, style variations, and search inputs from ONE counter that runs
+across every block rendered in the request (a list response keeps
+counting from post to post), so the counter lives here, not on any block.
+Leaf helpers with no renderer in hand reach it through current().
 
 - const `MAX_DEPTH` = `64`
 
-Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Elements`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Layout`, `Minn\Blocks\Renderer`, `Minn\Blocks\Wrapper`, `Minn\Content\Excerpt`, `Minn\Front\FeedController`, `Minn\Theme\GlobalStyles`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Elements`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Layout`, `Minn\Blocks\Renderer`, `Minn\Blocks\Wrapper`, `Minn\Content\Excerpt`, `Minn\Front\FeedController`, `Minn\Theme\GlobalStyles`, `Minn\Theme\PageRenderer`
 
 
-### static `nextId(): int`
+### static `current(): self`
+
+The request's state: the renderer's own once one exists, else a fresh one that the first renderer adopts.
+
+### `adopt(): void`
+
+Makes this the request's state, the one current() answers with.
+
+### `nextId(): int`
 
 The next per-request counter value.
 
-### static `nextImage(): int`
+### `nextImage(): int`
 
 Content images seen so far in this page, for the loading rules.
 
-### static `refundImages(int $count, bool $priority): void`
+### `refundImages(int $count, bool $priority): void`
 
 Images a plugin's block filter removed from the page give their budget
 back, so the next image still counts as if the hidden ones never rendered.
 
-### static `claimPriority(): bool`
+### `claimPriority(): bool`
 
 True once, for the image that gets fetchpriority="high".
 
-### static `recordContainer(string $class, string $declarations): void`
+### `recordContainer(string $class, string $declarations): void`
 
 A container stylesheet this page needs: the class and its declarations.
 
-### static `containers(): array`
+### `containers(): array`
 
 The layout containers rendering discovered.
 
 - `@return array<string, string>`
 
-### static `recordBlock(string $blockName): void`
+### `recordBlock(string $blockName): void`
 
 Every block name the page rendered; the stylesheet prints block styles for these only.
 
-### static `blocks(): array`
+### `blocks(): array`
 
 The block names rendering met.
 
 - `@return array<string, true>`
 
-### static `recordVariation(string $blockName, string $style, int $instance): void`
+### `recordVariation(string $blockName, string $style, int $instance): void`
 
 Notes a style variation instance for the stylesheet.
 
-### static `variations(): array`
+### `variations(): array`
 
 The style variations rendering met.
 
 - `@return list<array{0: string, 1: string, 2: int}>`
 
-### static `nextElements(): int`
+### `nextElements(): int`
 
 The next wp-elements-N class; the reference numbers these apart from the shared counter.
 
-### static `uniqueLabel(string $label): string`
+### `uniqueLabel(string $label): string`
 
 A navigation's aria-label: the label itself the first time, then "label N" for repeats.
 
-### static `enterNavigation(): void`
+### `enterNavigation(): void`
 
 A page list renders plain on its own and takes the navigation block's
 item classes, submenu toggles, and interactivity only while it sits
 inside one, so the navigation block marks the span it owns.
 
-### static `leaveNavigation(): void`
+### `leaveNavigation(): void`
 
 Leaves a navigation block.
 
-### static `inNavigation(): bool`
+### `inNavigation(): bool`
 
 Whether rendering is inside a navigation block.
 
-### static `enter(string $key): bool`
+### `enter(string $key): bool`
 
 Marks a nested source as being rendered; false when it is already open (a cycle).
 
-### static `leave(string $key): void`
+### `leave(string $key): void`
 
 Leaves a cycle-guarded key.
 
-### static `descend(): bool`
+### `descend(): bool`
 
 True while the block tree is shallower than the cap; deeper blocks render as nothing.
 
-### static `ascend(): void`
+### `ascend(): void`
 
 Leaves one nesting level.
 
-### static `depth(): int`
+### `depth(): int`
 
 How deep the block tree is right now; zero outside a page render.
 
-### static `setPendingElements(?string $class): ?string`
+### `setPendingElements(?string $class): ?string`
 
 A dynamic block claims its element class before rendering, so a block that renders nothing still counts.
 
-### static `takePendingElements(): ?string`
+### `takePendingElements(): ?string`
 
 The pending elements class, cleared.
 
-### static `recordElementRule(string $css): void`
+### `recordElementRule(string $css): void`
 
 Adds a per-elements CSS rule.
 
-### static `elementRules(): array`
+### `elementRules(): array`
 
 The per-elements CSS rules rendering produced.
 
 - `@return list<string>`
 
-### static `recordGallery(int $instance): void`
+### `recordGallery(int $instance): void`
 
 Notes a gallery instance.
 
-### static `galleries(): array`
+### `galleries(): array`
 
 The gallery instances rendering met.
 
 - `@return list<int>`
 
-### static `reset(): void`
+### `reset(): void`
 
 Clears every per-request counter.
 
@@ -425,6 +434,10 @@ __construct(Minn\Blocks\ImageTags $images)
 ### static `numberedStyle(string $blockName, string $className): ?string`
 
 The numbered companion of a registered style variation, consuming a counter; null when none applies.
+
+### `state(): Minn\Blocks\RenderState`
+
+The per-request rendering state: counters, containers, variations, the images seen.
 
 ### `context(): Minn\Blocks\Context`
 
@@ -462,7 +475,7 @@ A tree of blocks as HTML.
 
 One block as HTML, with the filters around it.
 
-Internals: `renderNamed()` (private, line 185), `decorate()` (private, line 206), `gallery()` (private, line 238), `flexWithoutContainer()` (private, line 246)
+Internals: `renderNamed()` (private, line 194), `decorate()` (private, line 215), `gallery()` (private, line 247), `flexWithoutContainer()` (private, line 255)
 
 
 ## Selector

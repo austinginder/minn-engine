@@ -50,8 +50,8 @@ final class Renderer
     {
         foreach (self::NUMBERED_STYLES[$blockName] ?? [] as $style) {
             if (preg_match('/\bis-style-' . preg_quote($style, '/') . '\b/', $className)) {
-                $instance = RenderState::nextId();
-                RenderState::recordVariation($blockName, $style, $instance);
+                $instance = RenderState::current()->nextId();
+                RenderState::current()->recordVariation($blockName, $style, $instance);
                 return "is-style-{$style}--" . $instance;
             }
         }
@@ -61,10 +61,19 @@ final class Renderer
     /** @var array<string, callable> */
     private array $dynamic = [];
     private Context $context;
+    private RenderState $state;
 
     public function __construct(private readonly ImageTags $images)
     {
+        $this->state = RenderState::current();
+        $this->state->adopt();
         $this->context = Context::forRest();
+    }
+
+    /** The per-request rendering state: counters, containers, variations, the images seen. */
+    public function state(): RenderState
+    {
+        return $this->state;
     }
 
     /** What is being rendered. */
@@ -146,12 +155,12 @@ final class Renderer
         if ($block->name === null) {
             return $block->innerHtml;
         }
-        if (!RenderState::descend()) {
+        if (!$this->state->descend()) {
             return '';
         }
         $seams = Extensions::runner();
         if ($seams !== null && !$seams->allowsBlock($block)) {
-            RenderState::ascend();
+            $this->state->ascend();
             return '';
         }
         try {
@@ -165,7 +174,7 @@ final class Renderer
             }
             $html = $this->renderNamed($block);
             if ($html !== '') {
-                RenderState::recordBlock($block->name);
+                $this->state->recordBlock($block->name);
             }
             $html = $seams === null ? $html : $seams->filterBlock($block, $html);
             if (!$filtered) {
@@ -174,11 +183,11 @@ final class Renderer
             $after = BlockFilters::after($block, $html);
             $lost = substr_count($html, '<img') - substr_count($after, '<img');
             if ($lost > 0) {
-                RenderState::refundImages($lost, str_contains($html, 'fetchpriority="high"') && !str_contains($after, 'fetchpriority="high"'));
+                $this->state->refundImages($lost, str_contains($html, 'fetchpriority="high"') && !str_contains($after, 'fetchpriority="high"'));
             }
             return $after;
         } finally {
-            RenderState::ascend();
+            $this->state->ascend();
         }
     }
 
@@ -187,9 +196,9 @@ final class Renderer
         if (isset($this->dynamic[$block->name])) {
             // The element class is numbered before the block renders (the
             // reference counts it even for a block that renders nothing).
-            $outer = RenderState::setPendingElements(Elements::className($block->attrs, $block->name));
+            $outer = $this->state->setPendingElements(Elements::className($block->attrs, $block->name));
             $out = ($this->dynamic[$block->name])($block, $this);
-            RenderState::setPendingElements($outer);
+            $this->state->setPendingElements($outer);
             // A plugin's block gets the content image treatment the reference applies to the_content.
             return str_starts_with($block->name, 'core/') ? $out : $this->images->enrich($out, front: $this->context->front, autoSizes: false);
         }
@@ -237,8 +246,8 @@ final class Renderer
 
     private static function gallery(): int
     {
-        $instance = RenderState::nextId();
-        RenderState::recordGallery($instance);
+        $instance = RenderState::current()->nextId();
+        RenderState::current()->recordGallery($instance);
         return $instance;
     }
 

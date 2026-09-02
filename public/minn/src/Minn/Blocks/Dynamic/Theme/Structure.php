@@ -43,7 +43,7 @@ final readonly class Structure
     {
         $slug = (string) $block->attr('slug', '');
         $markup = $this->templates->part($slug);
-        if ($markup === null || !RenderState::enter('part:' . $slug)) {
+        if ($markup === null || !$renderer->state()->enter('part:' . $slug)) {
             return '';
         }
         $area = (string) $block->attr('area', $this->theme->partArea($slug));
@@ -53,7 +53,7 @@ final readonly class Structure
         }
         $markup = BlockHooks::forPart($markup, $slug, $area);
         $inner = $renderer->renderBlocks(Parser::parse($markup));
-        RenderState::leave('part:' . $slug);
+        $renderer->state()->leave('part:' . $slug);
         $classes = trim($block->className() . ' wp-block-template-part');
         return '<' . $tag . ' class="' . Html::attr($classes) . '">' . $inner . '</' . $tag . '>';
     }
@@ -66,13 +66,13 @@ final readonly class Structure
         $markup = $this->theme->pattern($slug);
         $registered = $markup === null ? BlockHooks::registeredPattern($slug) : null;
         $markup ??= $registered;
-        if ($markup === null || !RenderState::enter('pattern:' . $slug)) {
+        if ($markup === null || !$renderer->state()->enter('pattern:' . $slug)) {
             return '';
         }
         $meta = $this->theme->patternMeta($slug);
         $markup = $registered !== null ? $markup : BlockHooks::forPattern($markup, $slug, $meta['blockTypes'], $meta['categories']);
         $out = $renderer->renderBlocks(Parser::parse($markup));
-        RenderState::leave('pattern:' . $slug);
+        $renderer->state()->leave('pattern:' . $slug);
         return $out;
     }
 

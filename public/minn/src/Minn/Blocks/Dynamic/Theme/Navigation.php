@@ -54,7 +54,7 @@ final readonly class Navigation
         if ($items === []) {
             $menu = $this->menuPost((int) $block->attr('ref', 0));
             $menuKey = $menu === null ? null : 'menu:' . (int) $menu['ID'];
-            if ($menuKey !== null && !RenderState::enter($menuKey)) {
+            if ($menuKey !== null && !$renderer->state()->enter($menuKey)) {
                 return '';
             }
             $items = $menu === null ? $this->classicItems() : Parser::parse((string) $menu['post_content']);
@@ -63,8 +63,8 @@ final readonly class Navigation
         }
         // Only blocks are items; the whitespace between them is not rendered.
         $items = array_values(array_filter($items, static fn (Block $item) => $item->name !== null));
-        $label = RenderState::uniqueLabel($label);
-        $id = RenderState::nextId();
+        $label = $renderer->state()->uniqueLabel($label);
+        $id = $renderer->state()->nextId();
         $layout = (array) $block->attr('layout', []);
         $vertical = ($layout['orientation'] ?? '') === 'vertical';
         $justify = (string) ($layout['justifyContent'] ?? '');
@@ -86,11 +86,11 @@ final readonly class Navigation
             'wp-block-navigation',
             ...$family,
         ])));
-        RenderState::enterNavigation();
+        $renderer->state()->enterNavigation();
         $list = '<ul ' . $style . 'class="' . Html::attr($listClasses) . '">' . $this->items($items, $renderer) . '</ul>';
-        RenderState::leaveNavigation();
+        $renderer->state()->leaveNavigation();
         if ($menuKey !== null) {
-            RenderState::leave($menuKey);
+            $renderer->state()->leave($menuKey);
         }
 
         $navClasses = array_values(array_filter([
@@ -260,7 +260,7 @@ final readonly class Navigation
      */
     private function pageItems(array $tree, int $parent, int $currentId, array $ancestors, string $submenuColors = ' has-text-color has-contrast-color has-background has-base-background-color'): string
     {
-        $inNav = RenderState::inNavigation();
+        $inNav = RenderState::current()->inNavigation();
         $out = '';
         foreach ($tree[$parent] ?? [] as $page) {
             $id = (int) $page['ID'];

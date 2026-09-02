@@ -45,7 +45,7 @@ final class Wrapper
                 $classes[] = $numbered;
             }
         }
-        $elements = RenderState::takePendingElements();
+        $elements = RenderState::current()->takePendingElements();
         if ($elements !== null) {
             $classes[] = $elements;
         }

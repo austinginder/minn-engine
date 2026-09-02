@@ -28,11 +28,11 @@ final readonly class SyncedPattern
             "SELECT post_content FROM {$this->db->table('posts')} WHERE ID = ? AND post_type = 'wp_block' AND post_status = 'publish' LIMIT 1",
             [$ref],
         );
-        if ($row === null || !RenderState::enter('block:' . $ref)) {
+        if ($row === null || !$renderer->state()->enter('block:' . $ref)) {
             return '';
         }
         $out = $renderer->renderBlocks(Parser::parse((string) $row['post_content']));
-        RenderState::leave('block:' . $ref);
+        $renderer->state()->leave('block:' . $ref);
         return $out;
     }
 }

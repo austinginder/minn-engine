@@ -1,5 +1,5 @@
 {
-    "generated": "2026-09-01",
+    "generated": "2026-09-02",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
         "minn": 354,
@@ -7,7 +7,7 @@
         "leaf": 352,
         "noop": 1238,
         "functions": 2644,
-        "minnMethods": 403,
+        "minnMethods": 401,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -20600,9 +20600,7 @@
             "lines": 29,
             "kind": "minn",
             "minn": [
-                "Minn\\Blocks\\RenderState::claimPriority",
-                "Minn\\Blocks\\RenderState::depth",
-                "Minn\\Blocks\\RenderState::nextImage",
+                "Minn\\Blocks\\RenderState::current",
                 "Minn\\Runtime\\Runtime::current",
                 "Minn\\Runtime\\Runtime::get",
                 "Minn\\Runtime\\Runtime::set"

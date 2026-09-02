@@ -128,7 +128,7 @@ final readonly class PageRenderer
         if ($takeover !== null) {
             return $takeover;
         }
-        RenderState::reset();
+        RenderState::current()->reset();
         $this->renderer->withContext(new Context($resolution, $query->posts, $query->total, $this->bridge->perPage(), true));
         // The reference texturizes the rendered template as a whole, after the
         // blocks: straight quotes in a theme's own markup curl, content that was

@@ -61,7 +61,7 @@ final class Layout
         if ($alwaysContainer || self::hasRules($type, $layout, $attrs)) {
             $container = 'wp-container-core-' . $blockSlug . '-is-layout-' . self::suffix($layout, $attrs);
             $classes[] = $container;
-            RenderState::recordContainer($container, self::declarations($type, $layout, $attrs));
+            RenderState::current()->recordContainer($container, self::declarations($type, $layout, $attrs));
         }
         $classes[] = 'wp-block-' . $blockSlug . '-is-layout-' . $type;
         return $classes;

@@ -13573,7 +13573,6 @@
             "uses": [
                 "Minn\\Blocks\\Block",
                 "Minn\\Blocks\\Dynamic\\Dates",
-                "Minn\\Blocks\\RenderState",
                 "Minn\\Blocks\\Renderer",
                 "Minn\\Content\\CommentRecord",
                 "Minn\\Content\\Posts",
@@ -17088,13 +17087,12 @@
             "namespace": "Minn\\Blocks",
             "kind": "final class",
             "file": "public/minn/src/Minn/Blocks/RenderState.php",
-            "lines": 247,
-            "doc": "Per-request rendering state. The reference numbers galleries, style\nvariations, and search inputs from ONE counter that runs across every\nblock rendered in the request (a list response keeps counting from post\nto post), so the counter lives here, not on any block.",
+            "lines": 260,
+            "doc": "Per-request rendering state, owned by the renderer. The reference numbers\ngalleries, style variations, and search inputs from ONE counter that runs\nacross every block rendered in the request (a list response keeps\ncounting from post to post), so the counter lives here, not on any block.\nLeaf helpers with no renderer in hand reach it through current().",
             "implements": [],
             "extends": null,
             "uses": [],
             "usedBy": [
-                "Minn\\Blocks\\Dynamic\\LatestComments",
                 "Minn\\Blocks\\Dynamic\\Search",
                 "Minn\\Blocks\\Dynamic\\SyncedPattern",
                 "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
@@ -17124,7 +17122,7 @@
                     "name": "counter",
                     "type": "int",
                     "readonly": false,
-                    "static": true,
+                    "static": false,
                     "doc": "",
                     "visibility": "private",
                     "promoted": false
@@ -17133,7 +17131,7 @@
                     "name": "images",
                     "type": "int",
                     "readonly": false,
-                    "static": true,
+                    "static": false,
                     "doc": "",
                     "visibility": "private",
                     "promoted": false
@@ -17142,7 +17140,7 @@
                     "name": "priorityClaimed",
                     "type": "bool",
                     "readonly": false,
-                    "static": true,
+                    "static": false,
                     "doc": "",
                     "visibility": "private",
                     "promoted": false
@@ -17151,7 +17149,7 @@
                     "name": "containers",
                     "type": "array",
                     "readonly": false,
-                    "static": true,
+                    "static": false,
                     "doc": "",
                     "visibility": "private",
                     "promoted": false
@@ -17160,7 +17158,7 @@
                     "name": "variations",
                     "type": "array",
                     "readonly": false,
-                    "static": true,
+                    "static": false,
                     "doc": "",
                     "visibility": "private",
                     "promoted": false
@@ -17169,7 +17167,7 @@
                     "name": "blocks",
                     "type": "array",
                     "readonly": false,
-                    "static": true,
+                    "static": false,
                     "doc": "",
                     "visibility": "private",
                     "promoted": false
@@ -17178,7 +17176,7 @@
                     "name": "galleries",
                     "type": "array",
                     "readonly": false,
-                    "static": true,
+                    "static": false,
                     "doc": "",
                     "visibility": "private",
                     "promoted": false
@@ -17187,7 +17185,7 @@
                     "name": "elements",
                     "type": "int",
                     "readonly": false,
-                    "static": true,
+                    "static": false,
                     "doc": "",
                     "visibility": "private",
                     "promoted": false
@@ -17196,7 +17194,7 @@
                     "name": "active",
                     "type": "array",
                     "readonly": false,
-                    "static": true,
+                    "static": false,
                     "doc": "",
                     "visibility": "private",
                     "promoted": false
@@ -17205,7 +17203,7 @@
                     "name": "depth",
                     "type": "int",
                     "readonly": false,
-                    "static": true,
+                    "static": false,
                     "doc": "",
                     "visibility": "private",
                     "promoted": false
@@ -17213,6 +17211,15 @@
                 {
                     "name": "navigation",
                     "type": "int",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "current",
+                    "type": "?self",
                     "readonly": false,
                     "static": true,
                     "doc": "",
@@ -17223,7 +17230,7 @@
                     "name": "pendingElements",
                     "type": "?string",
                     "readonly": false,
-                    "static": true,
+                    "static": false,
                     "doc": "the element class claimed for the dynamic block being rendered, until its wrapper takes it",
                     "visibility": "private",
                     "promoted": false
@@ -17232,7 +17239,7 @@
                     "name": "labels",
                     "type": "array",
                     "readonly": false,
-                    "static": true,
+                    "static": false,
                     "doc": "",
                     "visibility": "private",
                     "promoted": false
@@ -17241,7 +17248,7 @@
                     "name": "elementRules",
                     "type": "array",
                     "readonly": false,
-                    "static": true,
+                    "static": false,
                     "doc": "",
                     "visibility": "private",
                     "promoted": false
@@ -17250,32 +17257,56 @@
             "methods": [
                 {
                     "routes": [],
-                    "name": "nextId",
+                    "name": "current",
                     "static": true,
+                    "visibility": "public",
+                    "signature": "current(): self",
+                    "doc": "The request's state: the renderer's own once one exists, else a fresh one that the first renderer adopts.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 42,
+                    "end": 45
+                },
+                {
+                    "routes": [],
+                    "name": "adopt",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "adopt(): void",
+                    "doc": "Makes this the request's state, the one current() answers with.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 48,
+                    "end": 51
+                },
+                {
+                    "routes": [],
+                    "name": "nextId",
+                    "static": false,
                     "visibility": "public",
                     "signature": "nextId(): int",
                     "doc": "The next per-request counter value.",
                     "shapes": [],
                     "params": [],
-                    "line": 40,
-                    "end": 43
+                    "line": 54,
+                    "end": 57
                 },
                 {
                     "routes": [],
                     "name": "nextImage",
-                    "static": true,
+                    "static": false,
                     "visibility": "public",
                     "signature": "nextImage(): int",
                     "doc": "Content images seen so far in this page, for the loading rules.",
                     "shapes": [],
                     "params": [],
-                    "line": 46,
-                    "end": 49
+                    "line": 60,
+                    "end": 63
                 },
                 {
                     "routes": [],
                     "name": "refundImages",
-                    "static": true,
+                    "static": false,
                     "visibility": "public",
                     "signature": "refundImages(int $count, bool $priority): void",
                     "doc": "Images a plugin's block filter removed from the page give their budget\nback, so the next image still counts as if the hidden ones never rendered.",
@@ -17296,25 +17327,25 @@
                             "doc": ""
                         }
                     ],
-                    "line": 55,
-                    "end": 61
+                    "line": 69,
+                    "end": 75
                 },
                 {
                     "routes": [],
                     "name": "claimPriority",
-                    "static": true,
+                    "static": false,
                     "visibility": "public",
                     "signature": "claimPriority(): bool",
                     "doc": "True once, for the image that gets fetchpriority=\"high\".",
                     "shapes": [],
                     "params": [],
-                    "line": 64,
-                    "end": 70
+                    "line": 78,
+                    "end": 84
                 },
                 {
                     "routes": [],
                     "name": "recordContainer",
-                    "static": true,
+                    "static": false,
                     "visibility": "public",
                     "signature": "recordContainer(string $class, string $declarations): void",
                     "doc": "A container stylesheet this page needs: the class and its declarations.",
@@ -17335,13 +17366,13 @@
                             "doc": ""
                         }
                     ],
-                    "line": 73,
-                    "end": 76
+                    "line": 87,
+                    "end": 90
                 },
                 {
                     "routes": [],
                     "name": "containers",
-                    "static": true,
+                    "static": false,
                     "visibility": "public",
                     "signature": "containers(): array",
                     "doc": "The layout containers rendering discovered.",
@@ -17349,13 +17380,13 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 83,
-                    "end": 86
+                    "line": 97,
+                    "end": 100
                 },
                 {
                     "routes": [],
                     "name": "recordBlock",
-                    "static": true,
+                    "static": false,
                     "visibility": "public",
                     "signature": "recordBlock(string $blockName): void",
                     "doc": "Every block name the page rendered; the stylesheet prints block styles for these only.",
@@ -17369,13 +17400,13 @@
                             "doc": ""
                         }
                     ],
-                    "line": 89,
-                    "end": 92
+                    "line": 103,
+                    "end": 106
                 },
                 {
                     "routes": [],
                     "name": "blocks",
-                    "static": true,
+                    "static": false,
                     "visibility": "public",
                     "signature": "blocks(): array",
                     "doc": "The block names rendering met.",
@@ -17383,13 +17414,13 @@
                         "@return array<string, true>"
                     ],
                     "params": [],
-                    "line": 99,
-                    "end": 102
+                    "line": 113,
+                    "end": 116
                 },
                 {
                     "routes": [],
                     "name": "recordVariation",
-                    "static": true,
+                    "static": false,
                     "visibility": "public",
                     "signature": "recordVariation(string $blockName, string $style, int $instance): void",
                     "doc": "Notes a style variation instance for the stylesheet.",
@@ -17417,13 +17448,13 @@
                             "doc": ""
                         }
                     ],
-                    "line": 105,
-                    "end": 108
+                    "line": 119,
+                    "end": 122
                 },
                 {
                     "routes": [],
                     "name": "variations",
-                    "static": true,
+                    "static": false,
                     "visibility": "public",
                     "signature": "variations(): array",
                     "doc": "The style variations rendering met.",
@@ -17431,25 +17462,25 @@
                         "@return list<array{0: string, 1: string, 2: int}>"
                     ],
                     "params": [],
-                    "line": 115,
-                    "end": 118
+                    "line": 129,
+                    "end": 132
                 },
                 {
                     "routes": [],
                     "name": "nextElements",
-                    "static": true,
+                    "static": false,
                     "visibility": "public",
                     "signature": "nextElements(): int",
                     "doc": "The next wp-elements-N class; the reference numbers these apart from the shared counter.",
                     "shapes": [],
                     "params": [],
-                    "line": 121,
-                    "end": 124
+                    "line": 135,
+                    "end": 138
                 },
                 {
                     "routes": [],
                     "name": "uniqueLabel",
-                    "static": true,
+                    "static": false,
                     "visibility": "public",
                     "signature": "uniqueLabel(string $label): string",
                     "doc": "A navigation's aria-label: the label itself the first time, then \"label N\" for repeats.",
@@ -17463,49 +17494,49 @@
                             "doc": ""
                         }
                     ],
-                    "line": 127,
-                    "end": 131
+                    "line": 141,
+                    "end": 145
                 },
                 {
                     "routes": [],
                     "name": "enterNavigation",
-                    "static": true,
+                    "static": false,
                     "visibility": "public",
                     "signature": "enterNavigation(): void",
                     "doc": "A page list renders plain on its own and takes the navigation block's\nitem classes, submenu toggles, and interactivity only while it sits\ninside one, so the navigation block marks the span it owns.",
                     "shapes": [],
                     "params": [],
-                    "line": 138,
-                    "end": 141
+                    "line": 152,
+                    "end": 155
                 },
                 {
                     "routes": [],
                     "name": "leaveNavigation",
-                    "static": true,
+                    "static": false,
                     "visibility": "public",
                     "signature": "leaveNavigation(): void",
                     "doc": "Leaves a navigation block.",
                     "shapes": [],
                     "params": [],
-                    "line": 144,
-                    "end": 147
+                    "line": 158,
+                    "end": 161
                 },
                 {
                     "routes": [],
                     "name": "inNavigation",
-                    "static": true,
+                    "static": false,
                     "visibility": "public",
                     "signature": "inNavigation(): bool",
                     "doc": "Whether rendering is inside a navigation block.",
                     "shapes": [],
                     "params": [],
-                    "line": 150,
-                    "end": 153
+                    "line": 164,
+                    "end": 167
                 },
                 {
                     "routes": [],
                     "name": "enter",
-                    "static": true,
+                    "static": false,
                     "visibility": "public",
                     "signature": "enter(string $key): bool",
                     "doc": "Marks a nested source as being rendered; false when it is already open (a cycle).",
@@ -17519,13 +17550,13 @@
                             "doc": ""
                         }
                     ],
-                    "line": 156,
-                    "end": 163
+                    "line": 170,
+                    "end": 177
                 },
                 {
                     "routes": [],
                     "name": "leave",
-                    "static": true,
+                    "static": false,
                     "visibility": "public",
                     "signature": "leave(string $key): void",
                     "doc": "Leaves a cycle-guarded key.",
@@ -17539,49 +17570,49 @@
                             "doc": ""
                         }
                     ],
-                    "line": 166,
-                    "end": 169
+                    "line": 180,
+                    "end": 183
                 },
                 {
                     "routes": [],
                     "name": "descend",
-                    "static": true,
+                    "static": false,
                     "visibility": "public",
                     "signature": "descend(): bool",
                     "doc": "True while the block tree is shallower than the cap; deeper blocks render as nothing.",
                     "shapes": [],
                     "params": [],
-                    "line": 172,
-                    "end": 179
+                    "line": 186,
+                    "end": 193
                 },
                 {
                     "routes": [],
                     "name": "ascend",
-                    "static": true,
+                    "static": false,
                     "visibility": "public",
                     "signature": "ascend(): void",
                     "doc": "Leaves one nesting level.",
                     "shapes": [],
                     "params": [],
-                    "line": 182,
-                    "end": 185
+                    "line": 196,
+                    "end": 199
                 },
                 {
                     "routes": [],
                     "name": "depth",
-                    "static": true,
+                    "static": false,
                     "visibility": "public",
                     "signature": "depth(): int",
                     "doc": "How deep the block tree is right now; zero outside a page render.",
                     "shapes": [],
                     "params": [],
-                    "line": 188,
-                    "end": 191
+                    "line": 202,
+                    "end": 205
                 },
                 {
                     "routes": [],
                     "name": "setPendingElements",
-                    "static": true,
+                    "static": false,
                     "visibility": "public",
                     "signature": "setPendingElements(?string $class): ?string",
                     "doc": "A dynamic block claims its element class before rendering, so a block that renders nothing still counts.",
@@ -17595,25 +17626,25 @@
                             "doc": ""
                         }
                     ],
-                    "line": 194,
-                    "end": 199
+                    "line": 208,
+                    "end": 213
                 },
                 {
                     "routes": [],
                     "name": "takePendingElements",
-                    "static": true,
+                    "static": false,
                     "visibility": "public",
                     "signature": "takePendingElements(): ?string",
                     "doc": "The pending elements class, cleared.",
                     "shapes": [],
                     "params": [],
-                    "line": 202,
-                    "end": 207
+                    "line": 216,
+                    "end": 221
                 },
                 {
                     "routes": [],
                     "name": "recordElementRule",
-                    "static": true,
+                    "static": false,
                     "visibility": "public",
                     "signature": "recordElementRule(string $css): void",
                     "doc": "Adds a per-elements CSS rule.",
@@ -17627,13 +17658,13 @@
                             "doc": ""
                         }
                     ],
-                    "line": 210,
-                    "end": 213
+                    "line": 224,
+                    "end": 227
                 },
                 {
                     "routes": [],
                     "name": "elementRules",
-                    "static": true,
+                    "static": false,
                     "visibility": "public",
                     "signature": "elementRules(): array",
                     "doc": "The per-elements CSS rules rendering produced.",
@@ -17641,13 +17672,13 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 220,
-                    "end": 223
+                    "line": 234,
+                    "end": 237
                 },
                 {
                     "routes": [],
                     "name": "recordGallery",
-                    "static": true,
+                    "static": false,
                     "visibility": "public",
                     "signature": "recordGallery(int $instance): void",
                     "doc": "Notes a gallery instance.",
@@ -17661,13 +17692,13 @@
                             "doc": ""
                         }
                     ],
-                    "line": 226,
-                    "end": 229
+                    "line": 240,
+                    "end": 243
                 },
                 {
                     "routes": [],
                     "name": "galleries",
-                    "static": true,
+                    "static": false,
                     "visibility": "public",
                     "signature": "galleries(): array",
                     "doc": "The gallery instances rendering met.",
@@ -17675,20 +17706,20 @@
                         "@return list<int>"
                     ],
                     "params": [],
-                    "line": 236,
-                    "end": 239
+                    "line": 250,
+                    "end": 253
                 },
                 {
                     "routes": [],
                     "name": "reset",
-                    "static": true,
+                    "static": false,
                     "visibility": "public",
                     "signature": "reset(): void",
                     "doc": "Clears every per-request counter.",
                     "shapes": [],
                     "params": [],
-                    "line": 242,
-                    "end": 258
+                    "line": 256,
+                    "end": 272
                 }
             ]
         },
@@ -17698,7 +17729,7 @@
             "namespace": "Minn\\Blocks",
             "kind": "final class",
             "file": "public/minn/src/Minn/Blocks/Renderer.php",
-            "lines": 219,
+            "lines": 228,
             "doc": "Renders a block tree the way the reference renders post_content:\ndelimiters gone, each block's own HTML kept with inner blocks rendered\nin place, then the per-block render-time additions (layout classes, the\nparagraph class, image attributes, gallery ids, style-variation\ncounters), and finally texturize over the whole.",
             "implements": [],
             "extends": null,
@@ -17759,8 +17790,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 65,
-                "end": 68
+                "line": 66,
+                "end": 71
             },
             "cases": [],
             "constants": [
@@ -17784,6 +17815,15 @@
                 {
                     "name": "context",
                     "type": "Minn\\Blocks\\Context",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "state",
+                    "type": "Minn\\Blocks\\RenderState",
                     "readonly": false,
                     "static": false,
                     "doc": "",
@@ -17830,6 +17870,18 @@
                 },
                 {
                     "routes": [],
+                    "name": "state",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "state(): Minn\\Blocks\\RenderState",
+                    "doc": "The per-request rendering state: counters, containers, variations, the images seen.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 74,
+                    "end": 77
+                },
+                {
+                    "routes": [],
                     "name": "context",
                     "static": false,
                     "visibility": "public",
@@ -17837,8 +17889,8 @@
                     "doc": "What is being rendered.",
                     "shapes": [],
                     "params": [],
-                    "line": 71,
-                    "end": 74
+                    "line": 80,
+                    "end": 83
                 },
                 {
                     "routes": [],
@@ -17857,8 +17909,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 77,
-                    "end": 80
+                    "line": 86,
+                    "end": 89
                 },
                 {
                     "routes": [],
@@ -17869,8 +17921,8 @@
                     "doc": "The image tag builder.",
                     "shapes": [],
                     "params": [],
-                    "line": 83,
-                    "end": 86
+                    "line": 92,
+                    "end": 95
                 },
                 {
                     "routes": [],
@@ -17889,8 +17941,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 89,
-                    "end": 111
+                    "line": 98,
+                    "end": 120
                 },
                 {
                     "routes": [],
@@ -17918,8 +17970,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 118,
-                    "end": 121
+                    "line": 127,
+                    "end": 130
                 },
                 {
                     "routes": [],
@@ -17938,8 +17990,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 124,
-                    "end": 127
+                    "line": 133,
+                    "end": 136
                 },
                 {
                     "routes": [],
@@ -17960,8 +18012,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 134,
-                    "end": 141
+                    "line": 143,
+                    "end": 150
                 },
                 {
                     "routes": [],
@@ -17980,8 +18032,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 144,
-                    "end": 183
+                    "line": 153,
+                    "end": 192
                 },
                 {
                     "routes": [],
@@ -18000,8 +18052,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 185,
-                    "end": 204
+                    "line": 194,
+                    "end": 213
                 },
                 {
                     "routes": [],
@@ -18034,8 +18086,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 206,
-                    "end": 236
+                    "line": 215,
+                    "end": 245
                 },
                 {
                     "routes": [],
@@ -18046,8 +18098,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 238,
-                    "end": 243
+                    "line": 247,
+                    "end": 252
                 },
                 {
                     "routes": [],
@@ -18073,8 +18125,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 246,
-                    "end": 252
+                    "line": 255,
+                    "end": 261
                 }
             ]
         },

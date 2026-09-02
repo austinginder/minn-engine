@@ -111,7 +111,7 @@ final readonly class GlobalStyles
             // The theme's (or the site editor's) own CSS, printed as written between the preset classes and the block styles.
             $out .= str_ireplace('</style', '', $styles['css']);
         }
-        $rendered = RenderState::blocks();
+        $rendered = RenderState::current()->blocks();
         foreach ((array) ($styles['blocks'] ?? []) as $name => $blockStyles) {
             $core = str_starts_with((string) $name, 'core/');
             if (!$core || isset($rendered[$name]) && !in_array($name, self::STYLESHEET_LESS, true)) {
@@ -315,7 +315,7 @@ final readonly class GlobalStyles
     private function variationStyles(array $blocks): string
     {
         $out = '';
-        foreach (RenderState::variations() as [$name, $style, $instance]) {
+        foreach (RenderState::current()->variations() as [$name, $style, $instance]) {
             $slug = str_starts_with($name, 'core/') ? substr($name, 5) : str_replace('/', '-', $name);
             $variation = (array) ($blocks[$name]['variations'][$style] ?? []);
             // The variation class rides on the block's own class inside the block's root selector
@@ -345,8 +345,8 @@ final readonly class GlobalStyles
 
     private function containerStyles(): string
     {
-        $out = implode('', RenderState::elementRules());
-        foreach (RenderState::containers() as $class => $declarations) {
+        $out = implode('', RenderState::current()->elementRules());
+        foreach (RenderState::current()->containers() as $class => $declarations) {
             if (str_starts_with($declarations, '>')) {
                 // A flow or constrained gap is a pair of child rules, not a declaration on the container.
                 foreach (array_filter(explode('}', $declarations)) as $rule) {
@@ -356,7 +356,7 @@ final readonly class GlobalStyles
             }
             $out .= ".{$class}{{$declarations}}";
         }
-        foreach (RenderState::galleries() as $instance) {
+        foreach (RenderState::current()->galleries() as $instance) {
             $out .= ".wp-block-gallery.wp-block-gallery-{$instance}{--wp--style--unstable-gallery-gap:var( --wp--style--gallery-gap-default, var( --gallery-block--gutter-size, var( --wp--style--block-gap, 0.5em ) ) );}";
         }
         return $out;

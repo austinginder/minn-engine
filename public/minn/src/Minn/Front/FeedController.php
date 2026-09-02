@@ -104,7 +104,7 @@ final readonly class FeedController
         // its category current).
         $posts = $this->posts->listing($filter, 1, $this->feeds->perFeed())->posts;
         // Images in a feed follow the page rules (eager budget, high priority first).
-        RenderState::reset();
+        RenderState::current()->reset();
         Blocks::renderer()->withContext(new Context($resolution, $posts, count($posts), $this->feeds->perFeed(), true));
         return self::feedResponse($this->feeds->posts($posts, $kind, $self, $title), $kind);
     }

@@ -51,12 +51,12 @@ final readonly class ImageTags
         // the budget; the first eager image large enough to be worth the
         // network's attention is fetched with high priority, and a thumbnail
         // or an avatar is not, so the flag can fall to a later image.
-        $seen = RenderState::nextImage();
+        $seen = RenderState::current()->nextImage();
         if ($seen > 3) {
             return ['loading="lazy" decoding="async"', true];
         }
         $large = $width * $height >= self::minimumPriorityPixels();
-        return $large && RenderState::claimPriority() ? ['fetchpriority="high" decoding="async"', false] : ['decoding="async"', false];
+        return $large && RenderState::current()->claimPriority() ? ['fetchpriority="high" decoding="async"', false] : ['decoding="async"', false];
     }
 
     /** The area an image must cover before it is worth fetching first. */

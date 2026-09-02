@@ -97,7 +97,7 @@ final class Excerpt
     {
         foreach ($blocks as $block) {
             if ($block->name !== null && in_array($block->name, self::ALLOWED, true)) {
-                RenderState::recordBlock($block->name);
+                RenderState::current()->recordBlock($block->name);
             }
             self::recordRendered($block->innerBlocks);
         }
