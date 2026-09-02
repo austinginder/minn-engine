@@ -11,9 +11,6 @@ use Minn\Admin\Appearance;
 use Minn\Admin\Translations;
 use Minn\Admin\AppController;
 use Minn\Admin\HiddenIntegrations;
-use Minn\Content\Inventory;
-use Minn\Ops\Packages;
-use Minn\Ops\Updates;
 use Minn\Admin\BootPayload;
 use Minn\Auth\Authenticated;
 use Minn\Auth\AuthCookies;
@@ -51,7 +48,6 @@ use Minn\Auth\Salts;
 use Minn\Auth\PasswordReset;
 use Minn\Mail\Mailer;
 use Minn\Cron\Cron;
-use Minn\Content\PostWriter;
 use Minn\Content\Reader;
 use Minn\Front\CommentPostController;
 use Minn\Extension\Extensions;
@@ -249,10 +245,18 @@ final readonly class Engine
         $feeds = new Feeds($db, $site, $posts, new Comments($db), $users, $permalinks, $generator);
         $front = null;
         // The runtime is booted for this request, so the cron option's due
-        // hooks fire through the facade; wp-cron.php runs them every time and
-        // a front request that publishes a due post runs them alongside it.
-        $fireDueEvents = static fn (): int => \function_exists('wp_cron') ? (int) \wp_cron() : 0;
-        $cron = new Cron($db, $site, new PostWriter($db, $posts, $site), new Updates($site, new Inventory(ABSPATH . 'wp-content', $site), new Packages($site, ABSPATH . 'wp-content'), ABSPATH . 'wp-content', $permalinks->url('/'), self::WP_VERSION), $fireDueEvents);
+        // hooks fire through the facade: on every wp-cron.php hit, and after
+        // the response of a front request that found something due. The
+        // reference fires them in a request of their own where DOING_CRON is
+        // set, and a callback may ask for it.
+        $fireDueEvents = static function (): int {
+            if (!\function_exists('wp_cron')) {
+                return 0;
+            }
+            \defined('DOING_CRON') || \define('DOING_CRON', true);
+            return (int) \wp_cron();
+        };
+        $cron = Cron::create($db, $site, ABSPATH . 'wp-content', $permalinks->url('/'), self::WP_VERSION, $fireDueEvents);
         $notFound = static function () use (&$front): Response { return $front->notFound(); };
         $feedController = new \Minn\Front\FeedController($site, $posts, $permalinks, $resolver, $feeds, $notFound);
         $front = new FrontController($resolver, new Renderer($db, $posts, $permalinks, $resolver->perPage()), $pages, $feedController, $cron, $classic);

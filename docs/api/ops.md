@@ -5,11 +5,11 @@
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`CoreStatus`](#corestatus) | final readonly class | 24 | The installed version comes from the update_core transient's |
-| [`Diagnostics`](#diagnostics) | final readonly class | 415 | The System view's facts about this install: the engine, PHP, the |
+| [`Diagnostics`](#diagnostics) | final readonly class | 408 | The System view's facts about this install: the engine, PHP, the |
 | [`InstalledSoftware`](#installedsoftware) | final readonly class | 59 | What is installed, as the System view lists it: every extension and |
 | [`Logs`](#logs) | final readonly class | 150 | The log files the System view can read and clear: the debug log the |
 | [`Packages`](#packages) | final readonly class | 489 | Putting themes and extensions on disk. Themes come from wordpress.org |
-| [`Updates`](#updates) | final class | 336 | Update offers from wordpress.org for the site's plugins and themes: the |
+| [`Updates`](#updates) | final class | 344 | Update offers from wordpress.org for the site's plugins and themes: the |
 
 ## CoreStatus
 
@@ -66,7 +66,7 @@ The scheduled events: the cron option's hooks and the engine's own scheduled pos
 
 The autoloaded options: the summary and the largest rows.
 
-Internals: `checks()` (private, line 64), `engineGroup()` (private, line 101), `phpGroup()` (private, line 122), `serverGroup()` (private, line 145), `opcacheOn()` (private, line 163), `cronOptionEvents()` (private, line 231), `humanInterval()` (private, line 261), `autoloadSummary()` (private, line 301), `cronSummary()` (private, line 316), `futurePosts()` (private, line 334), `databaseGroup()` (private, line 342), `check()` (private, line 380), `rows()` (private, line 386), `bytes()` (private, line 395), `offsetLabel()` (private, line 410), `relative()` (private, line 418)
+Internals: `checks()` (private, line 65), `engineGroup()` (private, line 102), `phpGroup()` (private, line 123), `serverGroup()` (private, line 146), `opcacheOn()` (private, line 164), `cronOptionEvents()` (private, line 232), `humanInterval()` (private, line 255), `autoloadSummary()` (private, line 295), `cronSummary()` (private, line 310), `futurePosts()` (private, line 328), `databaseGroup()` (private, line 336), `check()` (private, line 374), `rows()` (private, line 380), `bytes()` (private, line 389), `offsetLabel()` (private, line 404), `relative()` (private, line 412)
 
 
 ## InstalledSoftware
@@ -174,7 +174,7 @@ proves the same containment before anything is deleted.
 - const `INFO_OPTION` = `'minn_plugin_info'`
 - const `INFO_TTL` = `43200`
 
-Used by: `Minn\Admin\PackagesController`, `Minn\Cli\AssetUpdate`, `Minn\Cli\DirectorySearch`, `Minn\Cli\MinnCommand`, `Minn\Cli\PluginCommand`, `Minn\Cli\ThemeCommand`, `Minn\Engine`, `Minn\Ops\Updates`, `Minn\Rest\PluginsController`, `Minn\Rest\Services`
+Used by: `Minn\Admin\PackagesController`, `Minn\Cli\AssetUpdate`, `Minn\Cli\DirectorySearch`, `Minn\Cli\PluginCommand`, `Minn\Cli\ThemeCommand`, `Minn\Cron\Cron`, `Minn\Ops\Updates`, `Minn\Rest\PluginsController`, `Minn\Rest\Services`
 
 ```php
 __construct(Minn\Content\Site $site, string $contentDir)
@@ -281,7 +281,7 @@ auto_update_themes options, in the shape the app already reads.
 - const `THEMES_API` = `'https://api.wordpress.org/themes/update-check/1.1/'`
 - const `PACKAGE_HOST` = `'https://downloads.wordpress.org/'`
 
-Used by: `Minn\Admin\Notifications`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Cli\AssetUpdate`, `Minn\Cli\MinnCommand`, `Minn\Cron\Cron`, `Minn\Engine`, `Minn\Rest\Services`
+Used by: `Minn\Admin\Notifications`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Cli\AssetUpdate`, `Minn\Cron\Cron`, `Minn\Rest\Services`
 
 ```php
 __construct(Minn\Content\Site $site, Minn\Content\Inventory $inventory, Minn\Ops\Packages $packages, string $contentDir, string $home, string $wpVersion)
@@ -348,9 +348,10 @@ Takes one plugin or theme off the auto-update list; the list after.
 
 ### `runAuto(): array`
 
-Applies every offer on the auto-update lists; returns what was updated. @return list<string>
+Applies every offer on the auto-update lists: what was updated, and
+what was refused with the reason, by plugin file or theme slug.
 
-- `@return list<string>`
+- `@return array{done: list<string>, failed: array<string, string>}`
 
 ### `pluginVersions(): array`
 
@@ -370,5 +371,5 @@ Stylesheet => style.css headers. @return array<string, array<string, string>>
 
 - `@return array<string, array<string, string>>`
 
-Internals: `saveAuto()` (private, line 219), `install()` (private, line 293), `consume()` (private, line 310), `post()` (private, line 322), `map()` (private, line 346), `safeUrl()` (private, line 354)
+Internals: `saveAuto()` (private, line 219), `install()` (private, line 301), `consume()` (private, line 318), `post()` (private, line 330), `map()` (private, line 354), `safeUrl()` (private, line 362)
 

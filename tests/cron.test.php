@@ -131,6 +131,43 @@ $check('wp-cron.php fired the due event', str_contains($log3, '"event":"once"'),
 [$gone2] = $engine('cron event list --hook=minn_test_cron_once --format=count');
 $check('wp-cron.php removed the single event after firing', trim($gone2) === '0', $gone2);
 
+// DOING_CRON travels with the run: the reference's cron request declares it, and a callback may ask.
+$check('wp-cron.php fires the event under DOING_CRON', str_contains($log3, '"cron":true'), $log3);
+$check('wp minn cron fires the event under DOING_CRON', str_contains($log2, '"cron":true'), $log2);
+$check('wp cron event run fires the event without DOING_CRON, as WP-CLI does', str_contains($log, '"cron":false'), $log);
+
+// An ordinary front request finds the due event and runs it once the page is sent.
+$engine('option delete minn_test_cron_log');
+$engine('option delete minn_cron_lock');
+$engine("cron event schedule minn_test_cron_once now");
+[$homeHeaders, $homeBody] = minn_test_fetch("$ENGINE/", 10);
+$check('the front page answers normally with an event due', ($homeHeaders['status'] ?? 0) === 200 && str_contains($homeBody, '</html>'), 'status ' . ($homeHeaders['status'] ?? '?'));
+$log4 = '';
+for ($i = 0; $i < 20; $i++) {
+    usleep(250000);
+    [$log4] = $engine('option get minn_test_cron_log --format=json');
+    if (str_contains($log4, '"event":"once"')) {
+        break;
+    }
+}
+$check('a front request fired the due event after its response, under DOING_CRON', str_contains($log4, '"event":"once"') && str_contains($log4, '"cron":true'), $log4);
+[$gone3] = $engine('cron event list --hook=minn_test_cron_once --format=count');
+$check('the front request removed the single event after firing', trim($gone3) === '0', $gone3);
+
+// The System view lists the option's events beside scheduled posts.
+$mint = json_decode((string) shell_exec('wp --path=' . escapeshellarg($REF_DIR) . ' eval-file ' . escapeshellarg(dirname(__DIR__) . '/tests/tools/mint-session.php') . ' 1 2>/dev/null'), true);
+$check('an admin session mints for the System view read', is_array($mint) && !empty($mint['cookie']));
+if (is_array($mint) && !empty($mint['cookie'])) {
+    $context = stream_context_create([
+        'ssl' => ['verify_peer' => false, 'verify_peer_name' => false],
+        'http' => ['ignore_errors' => true, 'header' => "Cookie: {$mint['cookie_name']}={$mint['cookie']}\r\nX-WP-Nonce: {$mint['nonce']}\r\n"],
+    ]);
+    $system = json_decode((string) @file_get_contents("$ENGINE/wp-json/minn-admin/v1/system/cron", false, $context), true);
+    $ticks = array_values(array_filter($system['items'] ?? [], static fn (array $item): bool => $item['hook'] === 'minn_test_cron_tick'));
+    $check("system/cron lists the plugin's recurring event with its recurrence", $ticks !== [] && $ticks[0]['recurrence'] === '5 minutes' && $ticks[0]['overdue'] === false, json_encode($system));
+    $check('system/cron reports the option events in its counts', ($system['items'] ?? []) !== [] && is_int($system['now'] ?? null), json_encode(array_keys($system ?? [])));
+}
+
 $restore();
 
 echo "\n{$pass} passed, {$fail} failed\n";

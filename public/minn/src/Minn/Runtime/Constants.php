@@ -44,6 +44,10 @@ final class Constants
             'WP_ADMIN' => $runtime->isAdmin,
             'MINN_RUNTIME' => true,
         ];
+        // The reference's wp-cron.php declares itself before anything loads, and a plugin reads it at plugins_loaded.
+        if ($runtime->request?->path === '/wp-cron.php') {
+            $computed['DOING_CRON'] = true;
+        }
         foreach ($fixed + $computed as $name => $value) {
             if (!defined($name)) {
                 define($name, $value);

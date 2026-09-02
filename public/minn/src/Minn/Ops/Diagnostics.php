@@ -6,6 +6,7 @@ namespace Minn\Ops;
 
 use Minn\Content\Site;
 use Minn\Db;
+use Minn\Runtime\CronTable;
 use Minn\Front\Permalinks;
 use Minn\Http\Request;
 use Minn\Mail\MailSettings;
@@ -230,16 +231,9 @@ final readonly class Diagnostics
      */
     private function cronOptionEvents(): array
     {
-        $cron = $this->site->option('cron');
-        if (!is_array($cron)) {
-            return [];
-        }
         $now = time();
         $items = [];
-        foreach ($cron as $timestamp => $hooks) {
-            if (!is_array($hooks)) {
-                continue;
-            }
+        foreach (CronTable::fromBlob($this->site->option('cron')) as $timestamp => $hooks) {
             foreach ($hooks as $hook => $keys) {
                 foreach ((array) $keys as $entry) {
                     $interval = isset($entry['interval']) ? (int) $entry['interval'] : 0;

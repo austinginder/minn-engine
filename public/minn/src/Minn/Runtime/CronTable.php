@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Support\Serialized;
+
 /**
  * The cron option's shape, operated on as data: timestamp => hook => key =>
  * entry, kept in natural timestamp order. The key is the reference's own
@@ -19,6 +21,24 @@ final class CronTable
     public static function key(array $args): string
     {
         return md5(serialize(array_values($args)));
+    }
+
+    /**
+     * The table read from the option's stored blob: the version marker
+     * dropped, timestamps in order, an unreadable or absent blob empty.
+     *
+     * @return array<int, array<string, array<string, array<string, mixed>>>>
+     */
+    public static function fromBlob(?string $blob): array
+    {
+        $crons = $blob === null ? null : Serialized::decode($blob);
+        if (!is_array($crons)) {
+            return [];
+        }
+        unset($crons['version']);
+        $crons = array_filter($crons, static fn ($hooks, $at): bool => is_int($at) && is_array($hooks), ARRAY_FILTER_USE_BOTH);
+        ksort($crons);
+        return $crons;
     }
 
     /** Whether the same hook and arguments are already scheduled within the window around the timestamp. */

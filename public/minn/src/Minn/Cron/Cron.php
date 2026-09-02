@@ -5,17 +5,23 @@ declare(strict_types=1);
 namespace Minn\Cron;
 
 use Closure;
-use Minn\Ops\Updates;
+use Minn\Content\Inventory;
+use Minn\Content\Posts;
 use Minn\Content\PostWriter;
 use Minn\Content\Site;
 use Minn\Db;
+use Minn\Ops\Packages;
+use Minn\Ops\Updates;
+use Minn\Runtime\CronTable;
+use Throwable;
 
 /**
- * The engine's scheduled work: due scheduled events fire, scheduled posts
- * go live when their time comes, and expired throttle rows and transients
- * are swept. Triggered by wp-cron.php, `wp minn cron`, `minn cron`, or a
- * front request that finds a post due. One run at a time, through a
- * short-lived lock option.
+ * The engine's scheduled work: scheduled posts go live when their time
+ * comes, the cron option's due events fire, expired throttle rows and
+ * transients are swept, and the daily auto-update check runs. Triggered
+ * by wp-cron.php, `wp minn cron`, `minn cron`, or a front request that
+ * finds something due (after its response is sent). One run at a time,
+ * through a short-lived lock option.
  *
  * Firing the cron option's due hooks needs the booted runtime and the
  * facade, so it arrives as a closure the caller supplies (from the front
@@ -32,6 +38,18 @@ final readonly class Cron
     {
     }
 
+    /**
+     * The one recipe every trigger builds from: the post writer, the
+     * updater over the site's wp-content, and the runtime's firing closure.
+     *
+     * @param ?Closure(): int $fireDueEvents
+     */
+    public static function create(Db $db, Site $site, string $contentDir, string $homeUrl, string $version, ?Closure $fireDueEvents): self
+    {
+        $updates = new Updates($site, new Inventory($contentDir, $site), new Packages($site, $contentDir), $contentDir, $homeUrl, $version);
+        return new self($db, $site, new PostWriter($db, new Posts($db), $site), $updates, $fireDueEvents);
+    }
+
     /** Runs every due job; the report lists what happened. @return list<string> */
     public function run(): array
     {
@@ -39,19 +57,16 @@ final readonly class Cron
             return ['another run holds the lock'];
         }
         try {
-            $report = [];
-            if ($this->fireDueEvents !== null) {
-                $fired = ($this->fireDueEvents)();
-                $report[] = "fired {$fired} scheduled event" . ($fired === 1 ? '' : 's');
-            }
+            // Posts go live first: a plugin's failing callback never holds one back.
             $published = $this->publishDue();
-            $report[] = "published {$published} scheduled post" . ($published === 1 ? '' : 's');
+            $report = ["published {$published} scheduled post" . ($published === 1 ? '' : 's')];
+            if ($this->fireDueEvents !== null) {
+                $report[] = $this->fireEvents();
+            }
             $report[] = 'swept ' . $this->sweepTransients() . ' expired transients';
             $report[] = 'swept ' . $this->sweepThrottle() . ' expired throttle rows';
             if ($this->updates !== null && (int) ($this->site->option('minn_auto_updates_last') ?? 0) < time() - 86400) {
-                $this->site->setOption('minn_auto_updates_last', (string) time());
-                $done = $this->updates->runAuto();
-                $report[] = 'applied ' . count($done) . ' automatic update' . (count($done) === 1 ? '' : 's');
+                array_push($report, ...$this->applyAutoUpdates());
             }
             $this->site->setOption('minn_cron_last', (string) time());
             return $report;
@@ -60,8 +75,48 @@ final readonly class Cron
         }
     }
 
-    /** True when a scheduled post's time has come. */
+    /** True when a scheduled post's time has come or the cron option holds a due event. */
     public function due(): bool
+    {
+        return $this->postDue() || CronTable::due(CronTable::fromBlob($this->site->option('cron')), time()) !== [];
+    }
+
+    /**
+     * Fires the due events through the runtime. A callback that throws
+     * ends the events step, as a fatal ends the reference's cron request;
+     * the event was already rescheduled or removed, so it does not repeat
+     * on the next trigger, and the sweeps still run.
+     */
+    private function fireEvents(): string
+    {
+        try {
+            $fired = ($this->fireDueEvents)();
+            return "fired {$fired} scheduled event" . ($fired === 1 ? '' : 's');
+        } catch (Throwable $failure) {
+            error_log('minn cron: a scheduled event failed: ' . $failure->getMessage());
+            return 'scheduled events stopped: ' . $failure->getMessage();
+        }
+    }
+
+    /**
+     * The daily auto-update pass. The stamp is written before the pass so
+     * a failing update is retried tomorrow, not on every trigger; what was
+     * refused is reported by name.
+     *
+     * @return list<string>
+     */
+    private function applyAutoUpdates(): array
+    {
+        $this->site->setOption('minn_auto_updates_last', (string) time());
+        $result = $this->updates->runAuto();
+        $lines = ['applied ' . count($result['done']) . ' automatic update' . (count($result['done']) === 1 ? '' : 's')];
+        foreach ($result['failed'] as $item => $reason) {
+            $lines[] = "automatic update of {$item} refused: {$reason}";
+        }
+        return $lines;
+    }
+
+    private function postDue(): bool
     {
         return $this->db->value(
             "SELECT 1 FROM {$this->db->table('posts')} WHERE post_status = 'future' AND post_date_gmt <= ? LIMIT 1",

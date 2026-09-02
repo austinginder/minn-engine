@@ -6,11 +6,7 @@ namespace Minn\Cli;
 
 use WP_CLI;
 use Minn\Content\Inventory;
-use Minn\Content\Posts;
-use Minn\Content\PostWriter;
 use Minn\Cron\Cron;
-use Minn\Ops\Packages;
-use Minn\Ops\Updates;
 use Minn\Extension\Loader;
 use Minn\Mail\MailSettings;
 use Minn\Mail\Mailer;
@@ -105,12 +101,12 @@ final class MinnCommand
     {
         // The full runtime, so a plugin's due hooks fire and the auto-update
         // check runs the way it does on a web trigger; a system cron that
-        // calls this verb gets both.
+        // calls this verb gets both, under the constant the reference's cron
+        // request carries.
+        \defined('DOING_CRON') || \define('DOING_CRON', true);
         Runtime::bootEngine();
         $lite = Runtime::boot();
-        $updates = new Updates($lite->site, new Inventory(ABSPATH . 'wp-content', $lite->site), new Packages($lite->site, ABSPATH . 'wp-content'), ABSPATH . 'wp-content', $lite->permalinks->url('/'), \Minn\Engine::WP_VERSION);
-        $fireDueEvents = static fn (): int => (int) \wp_cron();
-        $cron = new Cron($lite->db, $lite->site, new PostWriter($lite->db, new Posts($lite->db), $lite->site), $updates, $fireDueEvents);
+        $cron = Cron::create($lite->db, $lite->site, ABSPATH . 'wp-content', $lite->permalinks->url('/'), \Minn\Engine::WP_VERSION, static fn (): int => (int) \wp_cron());
         foreach ($cron->run() as $line) {
             WP_CLI::log($line);
         }

@@ -24,7 +24,7 @@ function minn_test_cron_record($event, $args = [])
 {
     $log = get_option('minn_test_cron_log');
     $log = is_array($log) ? $log : [];
-    $log[] = ['event' => $event, 'args' => $args, 'at' => time()];
+    $log[] = ['event' => $event, 'args' => $args, 'at' => time(), 'cron' => wp_doing_cron()];
     update_option('minn_test_cron_log', $log, false);
 }
 

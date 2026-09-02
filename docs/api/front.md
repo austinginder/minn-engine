@@ -12,7 +12,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`DocumentTitle`](#documenttitle) | final class | 47 | The document title as parts (title, tagline, page, site) in the order the |
 | [`FeedController`](#feedcontroller) | final readonly class | 94 | The feeds: the site's, the comments', a post's or an archive's by the |
 | [`Feeds`](#feeds) | final readonly class | 316 | The syndication feeds, byte for byte in the reference's shape: RSS 2.0 |
-| [`FrontController`](#frontcontroller) | final readonly class | 45 | The public site. One catch-all route: resolve the URL, then either |
+| [`FrontController`](#frontcontroller) | final readonly class | 55 | The public site. One catch-all route: resolve the URL, then either |
 | [`Kind`](#kind) | enum | 17 | What a public URL resolved to. |
 | [`ListingLinks`](#listinglinks) | final class | 53 | The prev/next links a paged listing prints: which page sits either side of |
 | [`Pagination`](#pagination) | final class | 62 | Numbered page links in the reference's shape: previous, the end and |
@@ -299,7 +299,9 @@ The themed (or interim) 404 page.
 
 Route: `* /{path*} (public)`
 
-The public page for any path.
+The public page for any path; when scheduled work is due, the run follows the response.
+
+Internals: `page()` (private, line 61)
 
 
 ## Kind

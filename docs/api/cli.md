@@ -387,7 +387,7 @@ resumed here.
 [--theme]
 : Treat the name as a theme rather than a plugin.
 
-Internals: `installer()` (private, line 207), `parkedTree()` (private, line 323), `engineVersion()` (private, line 334)
+Internals: `installer()` (private, line 203), `parkedTree()` (private, line 319), `engineVersion()` (private, line 330)
 
 
 ## OptionCommand

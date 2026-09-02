@@ -362,8 +362,8 @@ facts that shaped the implementation.
   removed; the engine's `wp_cron()` runs due hooks (single events removed,
   recurring rescheduled, then the action fires). `wp_cron()` is called from
   `Cron::run()` (through an injected closure, since firing needs the booted
-  runtime) on every wp-cron.php hit, on `wp minn cron`, and on a front request
-  that publishes a due post; the `wp cron event *` verbs
+  runtime) on every wp-cron.php hit, on `wp minn cron`, and after the response
+  of a front request that found a due post or event; the `wp cron event *` verbs
   (`Minn\Cli\CronCommand`) boot the full runtime and operate the same option.
   See `contracts/cron-mail.md`.
 - **HTTP**: `wp_remote_*` returns `{headers (CaseInsensitiveDictionary),

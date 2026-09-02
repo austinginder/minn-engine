@@ -42,14 +42,24 @@ final readonly class FrontController
         return Response::html($html, 404);
     }
 
-    /** The public page for any path. */
+    /** The public page for any path; when scheduled work is due, the run follows the response. */
     #[Route(Method::Any, '/{path*}', policy: new Policy(Access::Public))]
     public function show(Request $request): Response
     {
-        // A scheduled post whose time has come goes live before the page is built.
-        if ($this->cron !== null && !(defined('DISABLE_WP_CRON') && DISABLE_WP_CRON) && $this->cron->due()) {
-            $this->cron->run();
+        $response = $this->page($request);
+        if ($this->cron === null || (defined('DISABLE_WP_CRON') && DISABLE_WP_CRON) || !$this->cron->due()) {
+            return $response;
         }
+        // The reference spawns a background request for what is due; the
+        // engine does the same work in this process once the page is sent.
+        $cron = $this->cron;
+        return $response->afterSend(static function () use ($cron): void {
+            $cron->run();
+        });
+    }
+
+    private function page(Request $request): Response
+    {
         $resolution = $this->resolver->resolve($request);
         if ($resolution->kind === Kind::Redirect) {
             return Response::redirect((string) $resolution->location, $resolution->status);

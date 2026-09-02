@@ -18213,8 +18213,6 @@
                 "Minn\\Cli\\Installer",
                 "Minn\\Cli\\Runtime",
                 "Minn\\Content\\Inventory",
-                "Minn\\Content\\PostWriter",
-                "Minn\\Content\\Posts",
                 "Minn\\Content\\Site",
                 "Minn\\Cron\\Cron",
                 "Minn\\Engine",
@@ -18222,8 +18220,6 @@
                 "Minn\\Mail\\MailSettings",
                 "Minn\\Mail\\Mailer",
                 "Minn\\Mail\\Message",
-                "Minn\\Ops\\Packages",
-                "Minn\\Ops\\Updates",
                 "Minn\\Runtime\\Recovery",
                 "Minn\\Runtime\\ScriptPack"
             ],
@@ -18259,8 +18255,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 38,
-                    "end": 41
+                    "line": 34,
+                    "end": 37
                 },
                 {
                     "routes": [],
@@ -18286,8 +18282,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 51,
-                    "end": 80
+                    "line": 47,
+                    "end": 76
                 },
                 {
                     "routes": [],
@@ -18313,8 +18309,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 87,
-                    "end": 97
+                    "line": 83,
+                    "end": 93
                 },
                 {
                     "routes": [],
@@ -18340,8 +18336,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 104,
-                    "end": 118
+                    "line": 100,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -18367,8 +18363,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 130,
-                    "end": 139
+                    "line": 126,
+                    "end": 135
                 },
                 {
                     "routes": [],
@@ -18394,8 +18390,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 151,
-                    "end": 154
+                    "line": 147,
+                    "end": 150
                 },
                 {
                     "routes": [],
@@ -18421,8 +18417,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 172,
-                    "end": 175
+                    "line": 168,
+                    "end": 171
                 },
                 {
                     "routes": [],
@@ -18448,8 +18444,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 187,
-                    "end": 190
+                    "line": 183,
+                    "end": 186
                 },
                 {
                     "routes": [],
@@ -18475,8 +18471,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 202,
-                    "end": 205
+                    "line": 198,
+                    "end": 201
                 },
                 {
                     "routes": [],
@@ -18502,8 +18498,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 238,
-                    "end": 268
+                    "line": 234,
+                    "end": 264
                 },
                 {
                     "routes": [],
@@ -18529,8 +18525,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 289,
-                    "end": 320
+                    "line": 285,
+                    "end": 316
                 },
                 {
                     "routes": [],
@@ -18563,8 +18559,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 207,
-                    "end": 217
+                    "line": 203,
+                    "end": 213
                 },
                 {
                     "routes": [],
@@ -18575,8 +18571,8 @@
                     "doc": "The WordPress the swap parked beside this webroot, when the manifest names one.",
                     "shapes": [],
                     "params": [],
-                    "line": 323,
-                    "end": 332
+                    "line": 319,
+                    "end": 328
                 },
                 {
                     "routes": [],
@@ -18587,8 +18583,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 334,
-                    "end": 337
+                    "line": 330,
+                    "end": 333
                 }
             ]
         },
@@ -22972,7 +22968,7 @@
                 "Minn\\Cli\\PluginCommand",
                 "Minn\\Cli\\ThemeCommand",
                 "Minn\\Content\\PluginState",
-                "Minn\\Engine",
+                "Minn\\Cron\\Cron",
                 "Minn\\Ops\\InstalledSoftware",
                 "Minn\\Ops\\Packages",
                 "Minn\\Ops\\Updates",
@@ -25951,11 +25947,9 @@
             ],
             "usedBy": [
                 "Minn\\Admin\\EditorController",
-                "Minn\\Cli\\MinnCommand",
                 "Minn\\Content\\Menus",
                 "Minn\\Content\\Revisions",
                 "Minn\\Cron\\Cron",
-                "Minn\\Engine",
                 "Minn\\Media\\Writer",
                 "Minn\\Rest\\PostsWriteController",
                 "Minn\\Rest\\Services",
@@ -26636,10 +26630,10 @@
                 "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
                 "Minn\\Blocks\\ImageTags",
                 "Minn\\Blocks\\Renderer",
-                "Minn\\Cli\\MinnCommand",
                 "Minn\\Content\\Menus",
                 "Minn\\Content\\PostWriter",
                 "Minn\\Content\\SiteIcon",
+                "Minn\\Cron\\Cron",
                 "Minn\\Engine",
                 "Minn\\Front\\CommentPostController",
                 "Minn\\Front\\FeedController",
@@ -30572,15 +30566,19 @@
             "namespace": "Minn\\Cron",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Cron/Cron.php",
-            "lines": 108,
-            "doc": "The engine's scheduled work: due scheduled events fire, scheduled posts\ngo live when their time comes, and expired throttle rows and transients\nare swept. Triggered by wp-cron.php, `wp minn cron`, `minn cron`, or a\nfront request that finds a post due. One run at a time, through a\nshort-lived lock option.\n\nFiring the cron option's due hooks needs the booted runtime and the\nfacade, so it arrives as a closure the caller supplies (from the front\npipeline, or the CLI once it has booted the runtime); with none, only\nthe engine's own scheduled posts and sweeps run.",
+            "lines": 157,
+            "doc": "The engine's scheduled work: scheduled posts go live when their time\ncomes, the cron option's due events fire, expired throttle rows and\ntransients are swept, and the daily auto-update check runs. Triggered\nby wp-cron.php, `wp minn cron`, `minn cron`, or a front request that\nfinds something due (after its response is sent). One run at a time,\nthrough a short-lived lock option.\n\nFiring the cron option's due hooks needs the booted runtime and the\nfacade, so it arrives as a closure the caller supplies (from the front\npipeline, or the CLI once it has booted the runtime); with none, only\nthe engine's own scheduled posts and sweeps run.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Content\\Inventory",
                 "Minn\\Content\\PostWriter",
+                "Minn\\Content\\Posts",
                 "Minn\\Content\\Site",
                 "Minn\\Db",
-                "Minn\\Ops\\Updates"
+                "Minn\\Ops\\Packages",
+                "Minn\\Ops\\Updates",
+                "Minn\\Runtime\\CronTable"
             ],
             "usedBy": [
                 "Minn\\Cli\\MinnCommand",
@@ -30632,8 +30630,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 31,
-                "end": 33
+                "line": 37,
+                "end": 39
             },
             "cases": [],
             "constants": [
@@ -30700,6 +30698,63 @@
             "methods": [
                 {
                     "routes": [],
+                    "name": "create",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "create(Minn\\Db $db, Minn\\Content\\Site $site, string $contentDir, string $homeUrl, string $version, ?Closure $fireDueEvents): self",
+                    "doc": "The one recipe every trigger builds from: the post writer, the\nupdater over the site's wp-content, and the runtime's firing closure.",
+                    "shapes": [
+                        "@param ?Closure(): int $fireDueEvents"
+                    ],
+                    "params": [
+                        {
+                            "name": "db",
+                            "type": "Minn\\Db",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "site",
+                            "type": "Minn\\Content\\Site",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "contentDir",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "homeUrl",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "version",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "fireDueEvents",
+                            "type": "?Closure",
+                            "shape": "?Closure(): int",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 47,
+                    "end": 51
+                },
+                {
+                    "routes": [],
                     "name": "run",
                     "static": false,
                     "visibility": "public",
@@ -30709,8 +30764,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 36,
-                    "end": 61
+                    "line": 54,
+                    "end": 76
                 },
                 {
                     "routes": [],
@@ -30718,11 +30773,49 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "due(): bool",
-                    "doc": "True when a scheduled post's time has come.",
+                    "doc": "True when a scheduled post's time has come or the cron option holds a due event.",
                     "shapes": [],
                     "params": [],
-                    "line": 64,
-                    "end": 70
+                    "line": 79,
+                    "end": 82
+                },
+                {
+                    "routes": [],
+                    "name": "fireEvents",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "fireEvents(): string",
+                    "doc": "Fires the due events through the runtime. A callback that throws\nends the events step, as a fatal ends the reference's cron request;\nthe event was already rescheduled or removed, so it does not repeat\non the next trigger, and the sweeps still run.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 90,
+                    "end": 99
+                },
+                {
+                    "routes": [],
+                    "name": "applyAutoUpdates",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "applyAutoUpdates(): array",
+                    "doc": "The daily auto-update pass. The stamp is written before the pass so\na failing update is retried tomorrow, not on every trigger; what was\nrefused is reported by name.",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [],
+                    "line": 108,
+                    "end": 117
+                },
+                {
+                    "routes": [],
+                    "name": "postDue",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "postDue(): bool",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 119,
+                    "end": 125
                 },
                 {
                     "routes": [],
@@ -30733,8 +30826,8 @@
                     "doc": "A scheduled post goes live as the reference publishes it: status only, dates and modified untouched, term counts refreshed.",
                     "shapes": [],
                     "params": [],
-                    "line": 73,
-                    "end": 84
+                    "line": 128,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -30745,8 +30838,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 86,
-                    "end": 98
+                    "line": 141,
+                    "end": 153
                 },
                 {
                     "routes": [],
@@ -30757,8 +30850,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 100,
-                    "end": 112
+                    "line": 155,
+                    "end": 167
                 },
                 {
                     "routes": [],
@@ -30769,8 +30862,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 114,
-                    "end": 126
+                    "line": 169,
+                    "end": 181
                 },
                 {
                     "routes": [],
@@ -30781,8 +30874,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 128,
-                    "end": 131
+                    "line": 183,
+                    "end": 186
                 }
             ]
         },
@@ -31283,7 +31376,7 @@
             "namespace": "Minn",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Engine.php",
-            "lines": 219,
+            "lines": 227,
             "doc": "The engine's front door. An unmodified wp-config.php ends by requiring\nwp-settings.php, which is the engine's own boot file; it hands off here.\nREST is dispatched first (from the path or from ?rest_route=), then the\nadmin, the login endpoint, and finally the public site.",
             "implements": [],
             "extends": null,
@@ -31306,9 +31399,7 @@
                 "Minn\\Auth\\Sessions",
                 "Minn\\Auth\\SignIn",
                 "Minn\\Content\\Comments",
-                "Minn\\Content\\Inventory",
                 "Minn\\Content\\PostRecord",
-                "Minn\\Content\\PostWriter",
                 "Minn\\Content\\Posts",
                 "Minn\\Content\\Reader",
                 "Minn\\Content\\Site",
@@ -31342,8 +31433,6 @@
                 "Minn\\Login\\LoginController",
                 "Minn\\Login\\ServeLogin",
                 "Minn\\Mail\\Mailer",
-                "Minn\\Ops\\Packages",
-                "Minn\\Ops\\Updates",
                 "Minn\\RestError",
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\RestUrl",
@@ -31385,8 +31474,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 75,
-                "end": 80
+                "line": 71,
+                "end": 76
             },
             "cases": [],
             "constants": [
@@ -31427,8 +31516,8 @@
                     "doc": "The front door: answer the request that arrived and send it. This is\nthe only place the engine touches the world, so everything under it\nis a function of a request, callable more than once in a process.",
                     "shapes": [],
                     "params": [],
-                    "line": 87,
-                    "end": 91
+                    "line": 83,
+                    "end": 87
                 },
                 {
                     "routes": [],
@@ -31447,8 +31536,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 98,
-                    "end": 115
+                    "line": 94,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -31467,8 +31556,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 118,
-                    "end": 125
+                    "line": 114,
+                    "end": 121
                 },
                 {
                     "routes": [],
@@ -31494,8 +31583,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 132,
-                    "end": 150
+                    "line": 128,
+                    "end": 146
                 },
                 {
                     "routes": [],
@@ -31521,8 +31610,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 153,
-                    "end": 228
+                    "line": 149,
+                    "end": 224
                 },
                 {
                     "routes": [],
@@ -31625,8 +31714,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 231,
-                    "end": 287
+                    "line": 227,
+                    "end": 291
                 }
             ]
         },
@@ -35402,7 +35491,7 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/FrontController.php",
-            "lines": 45,
+            "lines": 55,
             "doc": "The public site. One catch-all route: resolve the URL, then either\nredirect or render, through the active block theme when there is one,\nthe classic PHP template runner when the theme is classic, and the\ninterim template otherwise.",
             "implements": [],
             "extends": null,
@@ -35556,7 +35645,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "show(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "The public page for any path.",
+                    "doc": "The public page for any path; when scheduled work is due, the run follows the response.",
                     "shapes": [],
                     "params": [
                         {
@@ -35568,7 +35657,27 @@
                         }
                     ],
                     "line": 47,
-                    "end": 66
+                    "end": 59
+                },
+                {
+                    "routes": [],
+                    "name": "page",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "page(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 61,
+                    "end": 76
                 }
             ]
         },
@@ -43669,8 +43778,8 @@
             "namespace": "Minn\\Http",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Http/Response.php",
-            "lines": 71,
-            "doc": "What a handler returns. Nothing is written to the client until the\nkernel calls send(), so a response can be inspected, wrapped, or\nreplaced on the way out.",
+            "lines": 101,
+            "doc": "What a handler returns. Nothing is written to the client until the\nkernel calls send(), so a response can be inspected, wrapped, or\nreplaced on the way out. Work that belongs after the client has its\nanswer (a cron run a page found due) rides along as afterSend closures.",
             "implements": [],
             "extends": null,
             "uses": [],
@@ -43730,11 +43839,12 @@
                 "Minn\\Rest\\UsersController"
             ],
             "constructor": {
-                "signature": "__construct(int $status = 200, array $headers = array ( ), string $body = '', array $cookies = array ( ))",
+                "signature": "__construct(int $status = 200, array $headers = array ( ), string $body = '', array $cookies = array ( ), array $afterSend = array ( ))",
                 "doc": "",
                 "shapes": [
                     "@param array<string, string> $headers",
-                    "@param list<array{0: string, 1: string, 2: array}> $cookies name, value, setcookie options"
+                    "@param list<array{0: string, 1: string, 2: array}> $cookies name, value, setcookie options",
+                    "@param list<Closure(): void> $afterSend run once the response has been handed to the client"
                 ],
                 "params": [
                     {
@@ -43764,11 +43874,18 @@
                         "shape": "list<array{0: string, 1: string, 2: array}>",
                         "default": "array ( )",
                         "doc": "name, value, setcookie options"
+                    },
+                    {
+                        "name": "afterSend",
+                        "type": "array",
+                        "shape": "list<Closure(): void>",
+                        "default": "array ( )",
+                        "doc": "run once the response has been handed to the client"
                     }
                 ],
                 "visibility": "public",
-                "line": 18,
-                "end": 24
+                "line": 22,
+                "end": 29
             },
             "cases": [],
             "constants": [],
@@ -43808,6 +43925,15 @@
                     "doc": "",
                     "visibility": "public",
                     "promoted": true
+                },
+                {
+                    "name": "afterSend",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
                 }
             ],
             "methods": [
@@ -43835,8 +43961,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 27,
-                    "end": 30
+                    "line": 32,
+                    "end": 35
                 },
                 {
                     "routes": [],
@@ -43862,8 +43988,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 33,
-                    "end": 40
+                    "line": 38,
+                    "end": 45
                 },
                 {
                     "routes": [],
@@ -43889,8 +44015,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 43,
-                    "end": 46
+                    "line": 48,
+                    "end": 51
                 },
                 {
                     "routes": [],
@@ -43916,8 +44042,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 49,
-                    "end": 52
+                    "line": 54,
+                    "end": 57
+                },
+                {
+                    "routes": [],
+                    "name": "withoutHeader",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "withoutHeader(string $name): self",
+                    "doc": "The same response without one header.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 60,
+                    "end": 63
                 },
                 {
                     "routes": [],
@@ -43952,8 +44098,8 @@
                             "doc": "setcookie options: expires, path, secure, httponly, samesite"
                         }
                     ],
-                    "line": 59,
-                    "end": 62
+                    "line": 70,
+                    "end": 73
                 },
                 {
                     "routes": [],
@@ -43964,8 +44110,30 @@
                     "doc": "The same response with an empty body, the HEAD answer.",
                     "shapes": [],
                     "params": [],
-                    "line": 65,
-                    "end": 68
+                    "line": 76,
+                    "end": 79
+                },
+                {
+                    "routes": [],
+                    "name": "afterSend",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "afterSend(Closure $work): self",
+                    "doc": "The same response with work to run once the client has been answered. @param Closure(): void $work",
+                    "shapes": [
+                        "@param Closure(): void $work"
+                    ],
+                    "params": [
+                        {
+                            "name": "work",
+                            "type": "Closure",
+                            "shape": "Closure(): void",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 82,
+                    "end": 85
                 },
                 {
                     "routes": [],
@@ -43973,11 +44141,11 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "send(): void",
-                    "doc": "Writes the status, the headers, the cookies, and the body, and ends the request.",
+                    "doc": "Writes the status, the headers, the cookies, and the body, ends the\nrequest for the client, then runs the after-send work in the same\nprocess (the server that can close the connection first does).",
                     "shapes": [],
                     "params": [],
-                    "line": 71,
-                    "end": 81
+                    "line": 92,
+                    "end": 114
                 }
             ]
         },
@@ -48647,7 +48815,7 @@
             "namespace": "Minn\\Ops",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Ops/Diagnostics.php",
-            "lines": 415,
+            "lines": 408,
             "doc": "The System view's facts about this install: the engine, PHP, the\ndatabase, and the server, with the health checks a site owner acts on.\nEvery number is read live; nothing is cached or fetched from outside.",
             "implements": [],
             "extends": null,
@@ -48658,7 +48826,8 @@
                 "Minn\\Http\\Request",
                 "Minn\\Mail\\MailSettings",
                 "Minn\\Ops\\InstalledSoftware",
-                "Minn\\Ops\\Logs"
+                "Minn\\Ops\\Logs",
+                "Minn\\Runtime\\CronTable"
             ],
             "usedBy": [
                 "Minn\\Admin\\SystemController",
@@ -48720,8 +48889,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 22,
-                "end": 31
+                "line": 23,
+                "end": 32
             },
             "cases": [],
             "constants": [
@@ -48815,8 +48984,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 34,
-                    "end": 55
+                    "line": 35,
+                    "end": 56
                 },
                 {
                     "routes": [],
@@ -48827,8 +48996,8 @@
                     "doc": "The wp-config debug constants as they stand; the engine never rewrites the file.",
                     "shapes": [],
                     "params": [],
-                    "line": 170,
-                    "end": 203
+                    "line": 171,
+                    "end": 204
                 },
                 {
                     "routes": [],
@@ -48839,8 +49008,8 @@
                     "doc": "The scheduled events: the cron option's hooks and the engine's own scheduled posts, soonest first.",
                     "shapes": [],
                     "params": [],
-                    "line": 206,
-                    "end": 223
+                    "line": 207,
+                    "end": 224
                 },
                 {
                     "routes": [],
@@ -48851,8 +49020,8 @@
                     "doc": "The autoloaded options: the summary and the largest rows.",
                     "shapes": [],
                     "params": [],
-                    "line": 280,
-                    "end": 299
+                    "line": 274,
+                    "end": 293
                 },
                 {
                     "routes": [],
@@ -48896,8 +49065,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 64,
-                    "end": 98
+                    "line": 65,
+                    "end": 99
                 },
                 {
                     "routes": [],
@@ -48925,8 +49094,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 101,
-                    "end": 119
+                    "line": 102,
+                    "end": 120
                 },
                 {
                     "routes": [],
@@ -48939,8 +49108,8 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 122,
-                    "end": 142
+                    "line": 123,
+                    "end": 143
                 },
                 {
                     "routes": [],
@@ -48961,8 +49130,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 145,
-                    "end": 161
+                    "line": 146,
+                    "end": 162
                 },
                 {
                     "routes": [],
@@ -48973,8 +49142,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 163,
-                    "end": 167
+                    "line": 164,
+                    "end": 168
                 },
                 {
                     "routes": [],
@@ -48987,8 +49156,8 @@
                         "@return list<array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 231,
-                    "end": 258
+                    "line": 232,
+                    "end": 252
                 },
                 {
                     "routes": [],
@@ -49007,8 +49176,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 261,
-                    "end": 277
+                    "line": 255,
+                    "end": 271
                 },
                 {
                     "routes": [],
@@ -49019,8 +49188,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 301,
-                    "end": 313
+                    "line": 295,
+                    "end": 307
                 },
                 {
                     "routes": [],
@@ -49033,8 +49202,8 @@
                         "@return array{events: int, overdue: int, next: ?int}"
                     ],
                     "params": [],
-                    "line": 316,
-                    "end": 331
+                    "line": 310,
+                    "end": 325
                 },
                 {
                     "routes": [],
@@ -49047,8 +49216,8 @@
                         "@return list<array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 334,
-                    "end": 339
+                    "line": 328,
+                    "end": 333
                 },
                 {
                     "routes": [],
@@ -49061,8 +49230,8 @@
                         "@return array{0: array<string, string>, 1: list<array>}"
                     ],
                     "params": [],
-                    "line": 342,
-                    "end": 378
+                    "line": 336,
+                    "end": 372
                 },
                 {
                     "routes": [],
@@ -49102,8 +49271,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 380,
-                    "end": 383
+                    "line": 374,
+                    "end": 377
                 },
                 {
                     "routes": [],
@@ -49124,8 +49293,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 386,
-                    "end": 393
+                    "line": 380,
+                    "end": 387
                 },
                 {
                     "routes": [],
@@ -49144,8 +49313,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 395,
-                    "end": 408
+                    "line": 389,
+                    "end": 402
                 },
                 {
                     "routes": [],
@@ -49164,8 +49333,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 410,
-                    "end": 416
+                    "line": 404,
+                    "end": 410
                 },
                 {
                     "routes": [],
@@ -49184,8 +49353,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 418,
-                    "end": 431
+                    "line": 412,
+                    "end": 425
                 }
             ]
         },
@@ -49547,10 +49716,9 @@
                 "Minn\\Admin\\PackagesController",
                 "Minn\\Cli\\AssetUpdate",
                 "Minn\\Cli\\DirectorySearch",
-                "Minn\\Cli\\MinnCommand",
                 "Minn\\Cli\\PluginCommand",
                 "Minn\\Cli\\ThemeCommand",
-                "Minn\\Engine",
+                "Minn\\Cron\\Cron",
                 "Minn\\Ops\\Updates",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\Services"
@@ -50314,7 +50482,7 @@
             "namespace": "Minn\\Ops",
             "kind": "final class",
             "file": "public/minn/src/Minn/Ops/Updates.php",
-            "lines": 336,
+            "lines": 344,
             "doc": "Update offers from wordpress.org for the site's plugins and themes: the\ndirectory's update-check endpoints asked with the installed headers, the\nanswer kept in the minn_updates option (JSON) for twelve hours, and the\noffers applied by downloading the release archive through the one\npackage unpacker. A plugin or theme the directory does not know keeps\nits folder untouched and is never offered anything. The per-item\nauto-update lists are the site's own auto_update_plugins and\nauto_update_themes options, in the shape the app already reads.",
             "implements": [],
             "extends": null,
@@ -50331,9 +50499,7 @@
                 "Minn\\Admin\\ThemesController",
                 "Minn\\Admin\\UpdatesController",
                 "Minn\\Cli\\AssetUpdate",
-                "Minn\\Cli\\MinnCommand",
                 "Minn\\Cron\\Cron",
-                "Minn\\Engine",
                 "Minn\\Rest\\Services"
             ],
             "constructor": {
@@ -50709,13 +50875,13 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "runAuto(): array",
-                    "doc": "Applies every offer on the auto-update lists; returns what was updated. @return list<string>",
+                    "doc": "Applies every offer on the auto-update lists: what was updated, and\nwhat was refused with the reason, by plugin file or theme slug.",
                     "shapes": [
-                        "@return list<string>"
+                        "@return array{done: list<string>, failed: array<string, string>}"
                     ],
                     "params": [],
-                    "line": 231,
-                    "end": 249
+                    "line": 236,
+                    "end": 257
                 },
                 {
                     "routes": [],
@@ -50728,8 +50894,8 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 252,
-                    "end": 259
+                    "line": 260,
+                    "end": 267
                 },
                 {
                     "routes": [],
@@ -50742,8 +50908,8 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 262,
-                    "end": 269
+                    "line": 270,
+                    "end": 277
                 },
                 {
                     "routes": [],
@@ -50756,8 +50922,8 @@
                         "@return array<string, array<string, string>>"
                     ],
                     "params": [],
-                    "line": 272,
-                    "end": 286
+                    "line": 280,
+                    "end": 294
                 },
                 {
                     "routes": [],
@@ -50827,8 +50993,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 293,
-                    "end": 307
+                    "line": 301,
+                    "end": 315
                 },
                 {
                     "routes": [],
@@ -50861,8 +51027,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 310,
-                    "end": 319
+                    "line": 318,
+                    "end": 327
                 },
                 {
                     "routes": [],
@@ -50890,8 +51056,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 322,
-                    "end": 343
+                    "line": 330,
+                    "end": 351
                 },
                 {
                     "routes": [],
@@ -50910,8 +51076,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 346,
-                    "end": 352
+                    "line": 354,
+                    "end": 360
                 },
                 {
                     "routes": [],
@@ -50930,8 +51096,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 354,
-                    "end": 357
+                    "line": 362,
+                    "end": 365
                 }
             ]
         },
@@ -69104,7 +69270,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Constants.php",
-            "lines": 52,
+            "lines": 56,
             "doc": "The constants plugin code expects: the fixed set from data/constants.json\n(captured from the reference) and the per-site ones computed here. Nothing\nalready defined is touched, so wp-config.php keeps the last word.",
             "implements": [],
             "extends": null,
@@ -69137,7 +69303,7 @@
                         }
                     ],
                     "line": 15,
-                    "end": 62
+                    "end": 66
                 }
             ]
         },
@@ -69147,12 +69313,17 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/CronTable.php",
-            "lines": 113,
+            "lines": 131,
             "doc": "The cron option's shape, operated on as data: timestamp => hook => key =>\nentry, kept in natural timestamp order. The key is the reference's own\n(a hash of the serialized argument list), so both stacks read one table.",
             "implements": [],
             "extends": null,
-            "uses": [],
-            "usedBy": [],
+            "uses": [
+                "Minn\\Support\\Serialized"
+            ],
+            "usedBy": [
+                "Minn\\Cron\\Cron",
+                "Minn\\Ops\\Diagnostics"
+            ],
             "constructor": null,
             "cases": [],
             "constants": [],
@@ -69177,8 +69348,30 @@
                             "doc": ""
                         }
                     ],
-                    "line": 19,
-                    "end": 22
+                    "line": 21,
+                    "end": 24
+                },
+                {
+                    "routes": [],
+                    "name": "fromBlob",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "fromBlob(?string $blob): array",
+                    "doc": "The table read from the option's stored blob: the version marker\ndropped, timestamps in order, an unreadable or absent blob empty.",
+                    "shapes": [
+                        "@return array<int, array<string, array<string, array<string, mixed>>>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "blob",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 32,
+                    "end": 42
                 },
                 {
                     "routes": [],
@@ -69225,8 +69418,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 25,
-                    "end": 39
+                    "line": 45,
+                    "end": 59
                 },
                 {
                     "routes": [],
@@ -69273,8 +69466,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 42,
-                    "end": 47
+                    "line": 62,
+                    "end": 67
                 },
                 {
                     "routes": [],
@@ -69314,8 +69507,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 50,
-                    "end": 60
+                    "line": 70,
+                    "end": 80
                 },
                 {
                     "routes": [],
@@ -69343,8 +69536,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 67,
-                    "end": 78
+                    "line": 87,
+                    "end": 98
                 },
                 {
                     "routes": [],
@@ -69379,8 +69572,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 85,
-                    "end": 94
+                    "line": 105,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -69420,8 +69613,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 97,
-                    "end": 104
+                    "line": 117,
+                    "end": 124
                 },
                 {
                     "routes": [],
@@ -69454,8 +69647,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 107,
-                    "end": 110
+                    "line": 127,
+                    "end": 130
                 },
                 {
                     "routes": [],
@@ -69481,8 +69674,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 113,
-                    "end": 123
+                    "line": 133,
+                    "end": 143
                 }
             ]
         },
@@ -81831,6 +82024,7 @@
                 "Minn\\Ops\\Updates",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PostObject",
+                "Minn\\Runtime\\CronTable",
                 "Minn\\Runtime\\Options",
                 "Minn\\Runtime\\Recovery",
                 "Minn\\Support\\SearchReplace",

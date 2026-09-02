@@ -15,8 +15,8 @@ the WordPress runtime plugins load against
 | [`CommentCloser`](#commentcloser) | final readonly class | 22 | The Discussion setting that closes comments on old posts. Observed on the |
 | [`CommentQuery`](#commentquery) | final readonly class | 117 | Comment reads in the get_comments() shape: arguments to rows or a count, and the approval breakdown wp_count_comments reports. |
 | [`Connectors`](#connectors) | final class | 212 | The connectors registry: the external services a site talks to (AI |
-| [`Constants`](#constants) | final class | 52 | The constants plugin code expects: the fixed set from data/constants.json |
-| [`CronTable`](#crontable) | final class | 113 | The cron option's shape, operated on as data: timestamp => hook => key => |
+| [`Constants`](#constants) | final class | 56 | The constants plugin code expects: the fixed set from data/constants.json |
+| [`CronTable`](#crontable) | final class | 131 | The cron option's shape, operated on as data: timestamp => hook => key => |
 | [`DbDelta`](#dbdelta) | final readonly class | 125 | dbDelta as the reference does it: a CREATE TABLE statement creates the |
 | [`Hooks`](#hooks) | final class | 251 | The hook registry plugin code registers into and the engine fires. |
 | [`Interactivity`](#interactivity) | final class | 509 | Server-side directive processing for the Interactivity API: the state and |
@@ -601,11 +601,20 @@ The cron option's shape, operated on as data: timestamp => hook => key =>
 entry, kept in natural timestamp order. The key is the reference's own
 (a hash of the serialized argument list), so both stacks read one table.
 
+Used by: `Minn\Cron\Cron`, `Minn\Ops\Diagnostics`
+
 ### static `key(array $args): string`
 
 The key an event's arguments hash to.
 
 - `@param array<int, array<string, array<string, array<string, mixed>>>> $crons`
+
+### static `fromBlob(?string $blob): array`
+
+The table read from the option's stored blob: the version marker
+dropped, timestamps in order, an unreadable or absent blob empty.
+
+- `@return array<int, array<string, array<string, array<string, mixed>>>>`
 
 ### static `hasNear(array $crons, int $timestamp, string $hook, string $key, int $window): bool`
 

@@ -4,17 +4,18 @@ scheduled publishing
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Cron`](#cron) | final readonly class | 108 | The engine's scheduled work: due scheduled events fire, scheduled posts |
+| [`Cron`](#cron) | final readonly class | 157 | The engine's scheduled work: scheduled posts go live when their time |
 
 ## Cron
 
 `final readonly class Minn\Cron\Cron` · `public/minn/src/Minn/Cron/Cron.php`
 
-The engine's scheduled work: due scheduled events fire, scheduled posts
-go live when their time comes, and expired throttle rows and transients
-are swept. Triggered by wp-cron.php, `wp minn cron`, `minn cron`, or a
-front request that finds a post due. One run at a time, through a
-short-lived lock option.
+The engine's scheduled work: scheduled posts go live when their time
+comes, the cron option's due events fire, expired throttle rows and
+transients are swept, and the daily auto-update check runs. Triggered
+by wp-cron.php, `wp minn cron`, `minn cron`, or a front request that
+finds something due (after its response is sent). One run at a time,
+through a short-lived lock option.
 
 Firing the cron option's due hooks needs the booted runtime and the
 facade, so it arrives as a closure the caller supplies (from the front
@@ -32,6 +33,13 @@ __construct(Minn\Db $db, Minn\Content\Site $site, Minn\Content\PostWriter $write
 - `@param ?Closure(): int $fireDueEvents fires the cron option's due hooks and returns how many ran`
 
 
+### static `create(Minn\Db $db, Minn\Content\Site $site, string $contentDir, string $homeUrl, string $version, ?Closure $fireDueEvents): self`
+
+The one recipe every trigger builds from: the post writer, the
+updater over the site's wp-content, and the runtime's firing closure.
+
+- `@param ?Closure(): int $fireDueEvents`
+
 ### `run(): array`
 
 Runs every due job; the report lists what happened. @return list<string>
@@ -40,7 +48,7 @@ Runs every due job; the report lists what happened. @return list<string>
 
 ### `due(): bool`
 
-True when a scheduled post's time has come.
+True when a scheduled post's time has come or the cron option holds a due event.
 
-Internals: `publishDue()` (private, line 73), `sweepTransients()` (private, line 86), `sweepThrottle()` (private, line 100), `lock()` (private, line 114), `unlock()` (private, line 128)
+Internals: `fireEvents()` (private, line 90), `applyAutoUpdates()` (private, line 108), `postDue()` (private, line 119), `publishDue()` (private, line 128), `sweepTransients()` (private, line 141), `sweepThrottle()` (private, line 155), `lock()` (private, line 169), `unlock()` (private, line 183)
 

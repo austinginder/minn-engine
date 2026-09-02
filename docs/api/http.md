@@ -15,7 +15,7 @@ request, response, routing, and the outgoing client
 | [`Outbound`](#outbound) | final readonly class | 47 | One outgoing HTTP request, normalised: the client below needs nothing else. |
 | [`Policy`](#policy) | final readonly class | 54 | What a route requires of its caller, as data on the route: the router |
 | [`Request`](#request) | final readonly class | 122 | An immutable picture of the incoming request. Built once from the PHP |
-| [`Response`](#response) | final readonly class | 71 | What a handler returns. Nothing is written to the client until the |
+| [`Response`](#response) | final readonly class | 101 | What a handler returns. Nothing is written to the client until the |
 | [`Route`](#route) | final readonly class | 45 | Declares a handler method as a route. The policy lives here, as |
 | [`RouteMiss`](#routemiss) | final class | 3 | A handler declining a request its pattern matched: the router swallows |
 | [`Router`](#router) | final class | 79 | Matches a request to a #[Route] on one of the registered handler |
@@ -421,20 +421,23 @@ The query string with the given keys removed, ready to append to a redirect.
 
 What a handler returns. Nothing is written to the client until the
 kernel calls send(), so a response can be inspected, wrapped, or
-replaced on the way out.
+replaced on the way out. Work that belongs after the client has its
+answer (a cron run a page found due) rides along as afterSend closures.
 
 Used by: `Minn\Admin\AppController`, `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Auth\AuthCookies`, `Minn\Auth\SignIn`, `Minn\Engine`, `Minn\Front\AssetsController`, `Minn\Front\CommentPostController`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\ProbeController`, `Minn\Front\SitemapController`, `Minn\Http\Failure`, `Minn\Http\Kernel`, `Minn\Http\Router`, `Minn\Login\LoginController`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentsController`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\Embed`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\NavigationController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Reply`, `Minn\Rest\RevisionsController`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\TypesController`, `Minn\Rest\UsersController`
 
 ```php
-__construct(int $status = 200, array $headers = array ( ), string $body = '', array $cookies = array ( ))
+__construct(int $status = 200, array $headers = array ( ), string $body = '', array $cookies = array ( ), array $afterSend = array ( ))
 ```
 - `@param array<string, string> $headers`
 - `@param list<array{0: string, 1: string, 2: array}> $cookies name, value, setcookie options`
+- `@param list<Closure(): void> $afterSend run once the response has been handed to the client`
 
 - readonly `int $status`
 - readonly `array $headers`
 - readonly `string $body`
 - readonly `array $cookies`
+- readonly `array $afterSend`
 
 ### static `html(string $body, int $status = 200): self`
 
@@ -452,6 +455,10 @@ A redirect to a location.
 
 The same response with one header set.
 
+### `withoutHeader(string $name): self`
+
+The same response without one header.
+
 ### `withCookie(string $name, string $value, array $options): self`
 
 The same response with a cookie to set.
@@ -462,9 +469,17 @@ The same response with a cookie to set.
 
 The same response with an empty body, the HEAD answer.
 
+### `afterSend(Closure $work): self`
+
+The same response with work to run once the client has been answered. @param Closure(): void $work
+
+- `@param Closure(): void $work`
+
 ### `send(): void`
 
-Writes the status, the headers, the cookies, and the body, and ends the request.
+Writes the status, the headers, the cookies, and the body, ends the
+request for the client, then runs the after-send work in the same
+process (the server that can close the connection first does).
 
 
 ## Route

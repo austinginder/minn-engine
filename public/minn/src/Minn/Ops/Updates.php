@@ -227,25 +227,33 @@ final class Updates
         return $list;
     }
 
-    /** Applies every offer on the auto-update lists; returns what was updated. @return list<string> */
+    /**
+     * Applies every offer on the auto-update lists: what was updated, and
+     * what was refused with the reason, by plugin file or theme slug.
+     *
+     * @return array{done: list<string>, failed: array<string, string>}
+     */
     public function runAuto(): array
     {
         $done = [];
+        $failed = [];
         foreach (array_intersect(array_keys($this->pluginOffers()), $this->auto('plugin')) as $file) {
             try {
                 $this->updatePlugin($file);
                 $done[] = $file;
-            } catch (RestError) {
+            } catch (RestError $refusal) {
+                $failed[$file] = $refusal->getMessage();
             }
         }
         foreach (array_intersect(array_keys($this->themeOffers()), $this->auto('theme')) as $slug) {
             try {
                 $this->updateTheme($slug);
                 $done[] = $slug;
-            } catch (RestError) {
+            } catch (RestError $refusal) {
+                $failed[$slug] = $refusal->getMessage();
             }
         }
-        return $done;
+        return ['done' => $done, 'failed' => $failed];
     }
 
     /** Plugin file => installed version. @return array<string, string> */
