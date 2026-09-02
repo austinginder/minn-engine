@@ -131,6 +131,20 @@ class WP_REST_Server
         return $this->engine_endpoints;
     }
 
+    /** Whether a rest_endpoints filter dropped the route that would answer this request, so the engine must not answer it either. */
+    public function route_removed_by_filter($request): bool
+    {
+        $all = array_keys($this->endpoints + $this->engine_endpoints());
+        $kept = array_keys($this->get_routes());
+        $path = (string) $request->get_route();
+        foreach (array_diff($all, $kept) as $route) {
+            if (@preg_match('@^' . $route . '$@i', $path) === 1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public function engine_callback($request)
     {
         return $this->engine_response($request) ?? new WP_Error('rest_no_route', 'No route was found matching the URL and request method.', ['status' => 404]);
@@ -250,7 +264,15 @@ class WP_REST_Server
             $headers['content-type'] = 'application/x-www-form-urlencoded';
         }
         $minnRequest = new Request($method, '/wp-json' . $route, $query, $headers, $runtime->request?->cookies ?? [], $body, $runtime->isSecure(), $runtime->request?->host ?? (string) parse_url(home_url(), PHP_URL_HOST), $form);
-        $response = Api::forRequest($runtime->db, $minnRequest)->handle($route);
+        $api = Api::forRequest($runtime->db, $minnRequest);
+        if (($runtime->reader?->userId ?? 0) > 0) {
+            // An in-process call carries no nonce; it runs as the outer request's user.
+            $api->actingAs($runtime->reader->userId, $runtime->reader->sessionToken);
+        }
+        $response = $api->handleEngineOnly($route);
+        if ($response === null) {
+            return null;
+        }
         $data = json_decode($response->body, true);
         if ($response->status === 404 && is_array($data) && ($data['code'] ?? '') === 'rest_no_route') {
             return null;

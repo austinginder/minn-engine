@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Auth\Authenticated;
 use Minn\Admin\AdminTypes;
 use Minn\Admin\LanguageController;
 use Minn\Admin\UpdatesController;
@@ -140,15 +141,29 @@ final readonly class Api
         return $this->services->types();
     }
 
+    /**
+     * Runs the request as a user already proven by the outer request, for
+     * the in-process calls plugin code makes; a user who no longer exists
+     * leaves the caller as the request itself resolves it.
+     */
+    public function actingAs(int $userId, string $token): self
+    {
+        $user = $this->services->users()->find($userId);
+        if ($user !== null) {
+            $this->services->caller()->resolveAs(new Authenticated($user, $token));
+        }
+        return $this;
+    }
+
     /** Resolves a REST route (from the path or from ?rest_route=) to a response. */
     public function handle(string $route): Response
     {
         $request = $this->request->withPath('/' . trim($route, '/'));
         try {
-            $response = $this->router->dispatch($request);
-            if ($response !== null) {
-                $response = $this->embed->decorate($request, $response);
-            }
+            // Plugin code gets the reference's say before the engine's routes: an
+            // authentication refusal, a pre-dispatch answer, or a removed endpoint.
+            $response = Runtime::booted() ? RuntimeRoutes::gate($request) : null;
+            $response ??= $this->engineResponse($request);
             if ($response === null && Runtime::booted()) {
                 $response = RuntimeRoutes::dispatch($request);
             }
@@ -159,5 +174,26 @@ final readonly class Api
         } catch (RestError $error) {
             return Reply::error($error);
         }
+    }
+
+    /**
+     * The engine's own answer to a route, or null when no engine route
+     * takes it; the runtime's table is never consulted. This is what the
+     * runtime's server calls for a core route, so a route the engine
+     * declines cannot bounce between the two.
+     */
+    public function handleEngineOnly(string $route): ?Response
+    {
+        try {
+            return $this->engineResponse($this->request->withPath('/' . trim($route, '/')));
+        } catch (RestError $error) {
+            return Reply::error($error);
+        }
+    }
+
+    private function engineResponse(Request $request): ?Response
+    {
+        $response = $this->router->dispatch($request);
+        return $response === null ? null : $this->embed->decorate($request, $response);
     }
 }

@@ -156,7 +156,7 @@ A session whose nonce did not verify.
 
 A validated session: the user row and the raw session token behind it.
 
-Used by: `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Auth\Cookie`, `Minn\Auth\SignIn`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Front\CommentPostController`, `Minn\Login\LoginController`, `Minn\Rest\Caller`
+Used by: `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Auth\Cookie`, `Minn\Auth\SignIn`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Front\CommentPostController`, `Minn\Login\LoginController`, `Minn\Rest\Api`, `Minn\Rest\Caller`
 
 ```php
 __construct(Minn\Content\UserRecord $user, string $token, ?array $applicationPassword = NULL)

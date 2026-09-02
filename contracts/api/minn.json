@@ -9872,6 +9872,7 @@
                 "Minn\\Front\\AdminBar",
                 "Minn\\Front\\CommentPostController",
                 "Minn\\Login\\LoginController",
+                "Minn\\Rest\\Api",
                 "Minn\\Rest\\Caller"
             ],
             "constructor": {
@@ -45218,12 +45219,36 @@
             ]
         },
         {
+            "name": "Minn\\Http\\RouteMiss",
+            "short": "RouteMiss",
+            "namespace": "Minn\\Http",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Http/RouteMiss.php",
+            "lines": 3,
+            "doc": "A handler declining a request its pattern matched: the router swallows\nit and goes on to the next route, so a catch-all pattern can leave a\npath it does not own to whatever registers after it (a plugin's route\nunder the same namespace, say) instead of answering \"no route\" itself.",
+            "implements": [
+                "Stringable",
+                "Throwable"
+            ],
+            "extends": "RuntimeException",
+            "uses": [],
+            "usedBy": [
+                "Minn\\Http\\Router",
+                "Minn\\Rest\\DeclaredPostsController"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": []
+        },
+        {
             "name": "Minn\\Http\\Router",
             "short": "Router",
             "namespace": "Minn\\Http",
             "kind": "final class",
             "file": "public/minn/src/Minn/Http/Router.php",
-            "lines": 63,
+            "lines": 68,
             "doc": "Matches a request to a #[Route] on one of the registered handler\nobjects, enforces the declared capability, and invokes the method with\nthe request plus the named pattern captures.",
             "implements": [],
             "extends": null,
@@ -45232,6 +45257,7 @@
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
+                "Minn\\Http\\RouteMiss",
                 "Minn\\RestError"
             ],
             "usedBy": [
@@ -45336,7 +45362,7 @@
                         }
                     ],
                     "line": 56,
-                    "end": 78
+                    "end": 83
                 }
             ]
         },
@@ -50587,7 +50613,6 @@
                 "Minn\\Rest\\BlocksController",
                 "Minn\\Rest\\Caller",
                 "Minn\\Rest\\CommentsController",
-                "Minn\\Rest\\DeclaredPostsController",
                 "Minn\\Rest\\Embed",
                 "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\MediaController",
@@ -50597,6 +50622,7 @@
                 "Minn\\Rest\\PostsWriteController",
                 "Minn\\Rest\\Reply",
                 "Minn\\Rest\\RevisionsController",
+                "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Rest\\SearchController",
                 "Minn\\Rest\\SettingsController",
                 "Minn\\Rest\\TaxonomiesController",
@@ -50892,7 +50918,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Api.php",
-            "lines": 129,
+            "lines": 164,
             "doc": "The REST API: wires the controllers for one request and dispatches a\nroute. Errors thrown anywhere underneath become the reference's error\npayload under the reference's headers.",
             "implements": [],
             "extends": null,
@@ -50913,6 +50939,7 @@
                 "Minn\\Admin\\ThemesController",
                 "Minn\\Admin\\UpdatesController",
                 "Minn\\Admin\\V1Controller",
+                "Minn\\Auth\\Authenticated",
                 "Minn\\Db",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
@@ -50993,8 +51020,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 37,
-                "end": 43
+                "line": 38,
+                "end": 44
             },
             "cases": [],
             "constants": [],
@@ -51048,8 +51075,8 @@
                         "@return array<string, list<string>> the engine's routes in the reference's form, route => methods"
                     ],
                     "params": [],
-                    "line": 50,
-                    "end": 53
+                    "line": 51,
+                    "end": 54
                 },
                 {
                     "routes": [],
@@ -51075,8 +51102,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 56,
-                    "end": 62
+                    "line": 57,
+                    "end": 63
                 },
                 {
                     "routes": [],
@@ -51087,8 +51114,8 @@
                     "doc": "Who is making this request.",
                     "shapes": [],
                     "params": [],
-                    "line": 114,
-                    "end": 117
+                    "line": 115,
+                    "end": 118
                 },
                 {
                     "routes": [],
@@ -51099,8 +51126,8 @@
                     "doc": "The wp/v2 post shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 120,
-                    "end": 123
+                    "line": 121,
+                    "end": 124
                 },
                 {
                     "routes": [],
@@ -51111,8 +51138,8 @@
                     "doc": "The wp/v2 term shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 126,
-                    "end": 129
+                    "line": 127,
+                    "end": 130
                 },
                 {
                     "routes": [],
@@ -51123,8 +51150,8 @@
                     "doc": "The wp/v2 user shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 132,
-                    "end": 135
+                    "line": 133,
+                    "end": 136
                 },
                 {
                     "routes": [],
@@ -51135,8 +51162,35 @@
                     "doc": "The post types the surface knows.",
                     "shapes": [],
                     "params": [],
-                    "line": 138,
-                    "end": 141
+                    "line": 139,
+                    "end": 142
+                },
+                {
+                    "routes": [],
+                    "name": "actingAs",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "actingAs(int $userId, string $token): self",
+                    "doc": "Runs the request as a user already proven by the outer request, for\nthe in-process calls plugin code makes; a user who no longer exists\nleaves the caller as the request itself resolves it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "userId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "token",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 149,
+                    "end": 156
                 },
                 {
                     "routes": [],
@@ -51155,8 +51209,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 144,
-                    "end": 162
+                    "line": 159,
+                    "end": 177
+                },
+                {
+                    "routes": [],
+                    "name": "handleEngineOnly",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "handleEngineOnly(string $route): ?Minn\\Http\\Response",
+                    "doc": "The engine's own answer to a route, or null when no engine route\ntakes it; the runtime's table is never consulted. This is what the\nruntime's server calls for a core route, so a route the engine\ndeclines cannot bounce between the two.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "route",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 185,
+                    "end": 192
                 },
                 {
                     "routes": [],
@@ -51184,8 +51258,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 70,
-                    "end": 111
+                    "line": 71,
+                    "end": 112
+                },
+                {
+                    "routes": [],
+                    "name": "engineResponse",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "engineResponse(Minn\\Http\\Request $request): ?Minn\\Http\\Response",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 194,
+                    "end": 198
                 }
             ]
         },
@@ -52020,7 +52114,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/Caller.php",
-            "lines": 85,
+            "lines": 95,
             "doc": "Who is making this REST call. Resolved once from the cookie and nonce;\nan anonymous or failed caller has id 0 and every capability check fails.",
             "implements": [],
             "extends": null,
@@ -52149,6 +52243,26 @@
             "methods": [
                 {
                     "routes": [],
+                    "name": "resolveAs",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "resolveAs(Minn\\Auth\\Authenticated $session): void",
+                    "doc": "Settles the caller as a session already proven elsewhere: an\nin-process request a plugin makes through rest_do_request() carries\nno nonce, so it runs as whoever the outer request resolved.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "session",
+                            "type": "Minn\\Auth\\Authenticated",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 34,
+                    "end": 37
+                },
+                {
+                    "routes": [],
                     "name": "session",
                     "static": false,
                     "visibility": "public",
@@ -52156,8 +52270,8 @@
                     "doc": "The session, or null for an anonymous or refused caller.",
                     "shapes": [],
                     "params": [],
-                    "line": 30,
-                    "end": 34
+                    "line": 40,
+                    "end": 44
                 },
                 {
                     "routes": [],
@@ -52168,8 +52282,8 @@
                     "doc": "The caller's user id, 0 when anonymous.",
                     "shapes": [],
                     "params": [],
-                    "line": 37,
-                    "end": 40
+                    "line": 47,
+                    "end": 50
                 },
                 {
                     "routes": [],
@@ -52195,8 +52309,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 43,
-                    "end": 46
+                    "line": 53,
+                    "end": 56
                 },
                 {
                     "routes": [],
@@ -52207,8 +52321,8 @@
                     "doc": "The capability engine.",
                     "shapes": [],
                     "params": [],
-                    "line": 49,
-                    "end": 52
+                    "line": 59,
+                    "end": 62
                 },
                 {
                     "routes": [],
@@ -52241,8 +52355,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 58,
-                    "end": 68
+                    "line": 68,
+                    "end": 78
                 },
                 {
                     "routes": [],
@@ -52261,8 +52375,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 75,
-                    "end": 80
+                    "line": 85,
+                    "end": 90
                 },
                 {
                     "routes": [],
@@ -52281,8 +52395,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 83,
-                    "end": 90
+                    "line": 93,
+                    "end": 100
                 },
                 {
                     "routes": [],
@@ -52308,8 +52422,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 93,
-                    "end": 96
+                    "line": 103,
+                    "end": 106
                 },
                 {
                     "routes": [],
@@ -52320,8 +52434,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 98,
-                    "end": 101
+                    "line": 108,
+                    "end": 111
                 }
             ]
         },
@@ -52986,7 +53100,7 @@
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/DeclaredPostsController.php",
             "lines": 56,
-            "doc": "wp/v2/{rest_base} for extra post types declared by an active extension.\nRegistered last so core collections (users, comments, menus, ...) match\nfirst; unknown bases become rest_no_route.",
+            "doc": "wp/v2/{rest_base} for extra post types declared by an active extension.\nRegistered last so core collections (users, comments, menus, ...) match\nfirst; an unknown base is declined, so a plugin's own route under wp/v2\n(answered by the runtime after the engine's routes) is not shadowed.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -52994,7 +53108,7 @@
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
-                "Minn\\RestError",
+                "Minn\\Http\\RouteMiss",
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\PostsWriteController",
                 "Minn\\Rest\\Types"
@@ -53030,8 +53144,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 20,
-                "end": 25
+                "line": 21,
+                "end": 26
             },
             "cases": [],
             "constants": [],
@@ -53091,8 +53205,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 29,
-                    "end": 32
+                    "line": 30,
+                    "end": 33
                 },
                 {
                     "routes": [
@@ -53127,8 +53241,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 36,
-                    "end": 39
+                    "line": 37,
+                    "end": 40
                 },
                 {
                     "routes": [
@@ -53156,8 +53270,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 43,
-                    "end": 47
+                    "line": 44,
+                    "end": 48
                 },
                 {
                     "routes": [
@@ -53194,8 +53308,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 53,
-                    "end": 56
+                    "line": 54,
+                    "end": 57
                 },
                 {
                     "routes": [
@@ -53230,8 +53344,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 60,
-                    "end": 63
+                    "line": 61,
+                    "end": 64
                 },
                 {
                     "routes": [],
@@ -53250,8 +53364,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 65,
-                    "end": 72
+                    "line": 66,
+                    "end": 73
                 }
             ]
         },
@@ -59828,13 +59942,14 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/RuntimeRoutes.php",
-            "lines": 56,
-            "doc": "Routes plugin code registered with register_rest_route(), answered\nthrough the runtime's server after the engine's own routes have had\ntheir turn; and the runtime's namespaces folded into the index.",
+            "lines": 96,
+            "doc": "Routes plugin code registered with register_rest_route(), answered\nthrough the runtime's server after the engine's own routes have had\ntheir turn; the runtime's say before the engine answers at all (an\nauthentication refusal, a pre-dispatch answer, a removed endpoint);\nand the runtime's namespaces folded into the index.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
+                "Minn\\RestError",
                 "Minn\\Rest\\Reply"
             ],
             "usedBy": [
@@ -59845,6 +59960,26 @@
             "constants": [],
             "properties": [],
             "methods": [
+                {
+                    "routes": [],
+                    "name": "gate",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "gate(Minn\\Http\\Request $request): ?Minn\\Http\\Response",
+                    "doc": "What plugin code decides before any route runs, engine routes\nincluded, in the reference's order: rest_authentication_errors may\nrefuse the request, rest_pre_dispatch may answer it outright, and a\nroute a rest_endpoints filter removed is no route at all. Null lets\nthe engine's router proceed.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 26,
+                    "end": 42
+                },
                 {
                     "routes": [],
                     "name": "dispatch",
@@ -59862,8 +59997,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 18,
-                    "end": 46
+                    "line": 45,
+                    "end": 54
                 },
                 {
                     "routes": [],
@@ -59882,8 +60017,68 @@
                             "doc": ""
                         }
                     ],
-                    "line": 49,
-                    "end": 69
+                    "line": 57,
+                    "end": 77
+                },
+                {
+                    "routes": [],
+                    "name": "wpRequest",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "wpRequest(Minn\\Http\\Request $request): WP_REST_Request",
+                    "doc": "The request as the runtime's server reads it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 80,
+                    "end": 93
+                },
+                {
+                    "routes": [],
+                    "name": "ensure",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "ensure(mixed $result): WP_REST_Response",
+                    "doc": "A callback's return as a response object, an error converted.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "result",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 96,
+                    "end": 100
+                },
+                {
+                    "routes": [],
+                    "name": "toResponse",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "toResponse(WP_REST_Response $response): Minn\\Http\\Response",
+                    "doc": "The runtime's response as the engine sends it, with the reference's header set.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "response",
+                            "type": "WP_REST_Response",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 103,
+                    "end": 111
                 }
             ]
         },

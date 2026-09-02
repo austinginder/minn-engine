@@ -14,7 +14,8 @@ request, response, routing, and the outgoing client
 | [`Request`](#request) | final readonly class | 118 | An immutable picture of the incoming request. Built once from the PHP |
 | [`Response`](#response) | final readonly class | 72 | What a handler returns. Nothing is written to the client until the |
 | [`Route`](#route) | final readonly class | 31 | Declares a handler method as a route. The capability requirement lives |
-| [`Router`](#router) | final class | 63 | Matches a request to a #[Route] on one of the registered handler |
+| [`RouteMiss`](#routemiss) | final class | 3 | A handler declining a request its pattern matched: the router swallows |
+| [`Router`](#router) | final class | 68 | Matches a request to a #[Route] on one of the registered handler |
 
 ## Client
 
@@ -389,6 +390,18 @@ __construct(Minn\Http\Method $method, string $pattern, ?string $cap = NULL)
 ### `regex(): string`
 
 The pattern as a regular expression with named captures.
+
+
+## RouteMiss
+
+`final class Minn\Http\RouteMiss` · `public/minn/src/Minn/Http/RouteMiss.php` · implements `Stringable`, `Throwable`
+
+A handler declining a request its pattern matched: the router swallows
+it and goes on to the next route, so a catch-all pattern can leave a
+path it does not own to whatever registers after it (a plugin's route
+under the same namespace, say) instead of answering "no route" itself.
+
+Used by: `Minn\Http\Router`, `Minn\Rest\DeclaredPostsController`
 
 
 ## Router

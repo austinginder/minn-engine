@@ -4,10 +4,10 @@
     "summary": {
         "minn": 437,
         "composes": 708,
-        "leaf": 354,
+        "leaf": 355,
         "noop": 1246,
-        "functions": 2739,
-        "minnMethods": 411,
+        "functions": 2740,
+        "minnMethods": 413,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -4529,12 +4529,14 @@
         },
         "WP_REST_Server::engine_response": {
             "file": "classes/WP_REST_Server.php",
-            "lines": 24,
+            "lines": 32,
             "kind": "minn",
             "minn": [
                 "Minn\\Http\\Method::tryFrom",
                 "Minn\\Http\\Request::__construct",
+                "Minn\\Rest\\Api::actingAs",
                 "Minn\\Rest\\Api::forRequest",
+                "Minn\\Rest\\Api::handleEngineOnly",
                 "Minn\\Runtime\\Runtime::current",
                 "Minn\\Runtime\\Runtime::isSecure"
             ],
@@ -4742,6 +4744,13 @@
         "WP_REST_Server::response_to_data": {
             "file": "classes/WP_REST_Server.php",
             "lines": 6,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_REST_Server::route_removed_by_filter": {
+            "file": "classes/WP_REST_Server.php",
+            "lines": 9,
             "kind": "leaf",
             "minn": [],
             "composes": []

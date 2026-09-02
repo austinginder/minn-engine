@@ -8,12 +8,13 @@ use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
-use Minn\RestError;
+use Minn\Http\RouteMiss;
 
 /**
  * wp/v2/{rest_base} for extra post types declared by an active extension.
  * Registered last so core collections (users, comments, menus, ...) match
- * first; unknown bases become rest_no_route.
+ * first; an unknown base is declined, so a plugin's own route under wp/v2
+ * (answered by the runtime after the engine's routes) is not shadowed.
  */
 final readonly class DeclaredPostsController
 {
@@ -66,7 +67,7 @@ final readonly class DeclaredPostsController
     {
         $slug = $this->types->slugForRestBase($base);
         if ($slug === null || !$this->types->isDeclared($slug)) {
-            throw RestError::noRoute();
+            throw new RouteMiss();
         }
         return $slug;
     }

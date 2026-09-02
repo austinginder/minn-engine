@@ -5,11 +5,11 @@ the wp/v2 surface: shapes and controllers
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`AdditionalFields`](#additionalfields) | final class | 46 | Which object type a wp/v2 route serves, so fields registered for that type can ride on the engine's own responses. |
-| [`Api`](#api) | final readonly class | 129 | The REST API: wires the controllers for one request and dispatches a |
+| [`Api`](#api) | final readonly class | 164 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 171 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`BatchRequest`](#batchrequest) | final class | 32 | The requests a batch payload names, normalised into descriptors the |
 | [`BlocksController`](#blockscontroller) | final readonly class | 69 | wp/v2/blocks: synced patterns and reusable blocks, stored as wp_block |
-| [`Caller`](#caller) | final class | 85 | Who is making this REST call. Resolved once from the cookie and nonce; |
+| [`Caller`](#caller) | final class | 95 | Who is making this REST call. Resolved once from the cookie and nonce; |
 | [`CommentObject`](#commentobject) | final readonly class | 75 | The wp/v2 comment object; edit context adds the moderation-desk fields. |
 | [`CommentsController`](#commentscontroller) | final readonly class | 280 | wp/v2/comments: the status tabs with pagination headers, single, |
 | [`Context`](#context) | enum | 18 | The view a REST caller asked for. View is the public shape, edit adds the |
@@ -40,7 +40,7 @@ the wp/v2 surface: shapes and controllers
 | [`RouteIndex`](#routeindex) | final class | 61 | The description of one route the REST index publishes: namespace, methods, endpoints with their argument schemas, self link. |
 | [`RouteMatch`](#routematch) | final class | 42 | Finds the registered handler for a method and path among the runtime's route table. |
 | [`RouteTable`](#routetable) | final class | 38 | The registered endpoints in dispatch shape: one handler list per route, methods as a set, non-numeric keys lifted into the route's options. |
-| [`RuntimeRoutes`](#runtimeroutes) | final class | 56 | Routes plugin code registered with register_rest_route(), answered |
+| [`RuntimeRoutes`](#runtimeroutes) | final class | 96 | Routes plugin code registered with register_rest_route(), answered |
 | [`Schema`](#schema) | final readonly class | 468 | JSON-schema handling the way the REST API's argument validation does it: |
 | [`SchemaValues`](#schemavalues) | final class | 201 | The value side of JSON Schema, as the reference applies it: what counts |
 | [`SearchController`](#searchcontroller) | final readonly class | 136 | wp/v2 search over published content: id, title, url, type, and the |
@@ -123,11 +123,24 @@ The wp/v2 user shape.
 
 The post types the surface knows.
 
+### `actingAs(int $userId, string $token): self`
+
+Runs the request as a user already proven by the outer request, for
+the in-process calls plugin code makes; a user who no longer exists
+leaves the caller as the request itself resolves it.
+
 ### `handle(string $route): Minn\Http\Response`
 
 Resolves a REST route (from the path or from ?rest_route=) to a response.
 
-Internals: `controllers()` (private, line 70)
+### `handleEngineOnly(string $route): ?Minn\Http\Response`
+
+The engine's own answer to a route, or null when no engine route
+takes it; the runtime's table is never consulted. This is what the
+runtime's server calls for a core route, so a route the engine
+declines cannot bounce between the two.
+
+Internals: `controllers()` (private, line 71), `engineResponse()` (private, line 194)
 
 
 ## ApplicationPasswordsController
@@ -286,6 +299,12 @@ __construct(Minn\Http\Request $request, Minn\Auth\Authenticator $authenticator, 
 ```
 
 
+### `resolveAs(Minn\Auth\Authenticated $session): void`
+
+Settles the caller as a session already proven elsewhere: an
+in-process request a plugin makes through rest_do_request() carries
+no nonce, so it runs as whoever the outer request resolved.
+
 ### `session(): ?Minn\Auth\Authenticated`
 
 The session, or null for an anonymous or refused caller.
@@ -321,7 +340,7 @@ same rest_forbidden the reference uses. Returns the caller's id.
 
 401 for an anonymous caller, 403 for one who is signed in but refused.
 
-Internals: `resolve()` (private, line 98)
+Internals: `resolve()` (private, line 108)
 
 
 ## CommentObject
@@ -424,7 +443,8 @@ Whether this is the edit context.
 
 wp/v2/{rest_base} for extra post types declared by an active extension.
 Registered last so core collections (users, comments, menus, ...) match
-first; unknown bases become rest_no_route.
+first; an unknown base is declined, so a plugin's own route under wp/v2
+(answered by the runtime after the engine's routes) is not shadowed.
 
 Used by: `Minn\Rest\Api`
 
@@ -467,7 +487,7 @@ Route: `DELETE /wp/v2/{base:[a-z0-9_-]+}/{id:\d+}`
 
 Trashes or deletes a post of a declared type.
 
-Internals: `slug()` (private, line 65)
+Internals: `slug()` (private, line 66)
 
 
 ## Embed
@@ -1469,9 +1489,19 @@ Registered endpoints as a route table with their options.
 
 Routes plugin code registered with register_rest_route(), answered
 through the runtime's server after the engine's own routes have had
-their turn; and the runtime's namespaces folded into the index.
+their turn; the runtime's say before the engine answers at all (an
+authentication refusal, a pre-dispatch answer, a removed endpoint);
+and the runtime's namespaces folded into the index.
 
 Used by: `Minn\Rest\Api`
+
+### static `gate(Minn\Http\Request $request): ?Minn\Http\Response`
+
+What plugin code decides before any route runs, engine routes
+included, in the reference's order: rest_authentication_errors may
+refuse the request, rest_pre_dispatch may answer it outright, and a
+route a rest_endpoints filter removed is no route at all. Null lets
+the engine's router proceed.
 
 ### static `dispatch(Minn\Http\Request $request): ?Minn\Http\Response`
 
@@ -1480,6 +1510,8 @@ Null when the runtime has no route for the request either.
 ### static `mergeIndex(Minn\Http\Response $response): Minn\Http\Response`
 
 The engine's index plus the namespaces and routes the runtime holds.
+
+Internals: `wpRequest()` (private, line 80), `ensure()` (private, line 96), `toResponse()` (private, line 103)
 
 
 ## Schema

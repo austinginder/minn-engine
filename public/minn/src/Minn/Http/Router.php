@@ -71,7 +71,12 @@ final class Router
                 array_filter($captures, is_string(...), ARRAY_FILTER_USE_KEY),
                 array_flip($wanted),
             );
-            $response = $method->invoke($handler, $request, ...$arguments);
+            try {
+                $response = $method->invoke($handler, $request, ...$arguments);
+            } catch (RouteMiss) {
+                // The handler declined: the next matching route gets its turn.
+                continue;
+            }
             return $request->method === Method::Head ? $response->withoutBody() : $response;
         }
         return null;

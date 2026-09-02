@@ -26,6 +26,16 @@ final class Caller
     ) {
     }
 
+    /**
+     * Settles the caller as a session already proven elsewhere: an
+     * in-process request a plugin makes through rest_do_request() carries
+     * no nonce, so it runs as whoever the outer request resolved.
+     */
+    public function resolveAs(Authenticated $session): void
+    {
+        $this->resolved = $session;
+    }
+
     /** The session, or null for an anonymous or refused caller. */
     public function session(): ?Authenticated
     {

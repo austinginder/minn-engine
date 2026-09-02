@@ -286,8 +286,22 @@ facts that shaped the implementation.
   `get_params` puts defaulted keys first; errors from callbacks become
   responses with the status from their data (500 and `data: null` when
   bare, `additional_errors` for the rest); the engine's own `wp/v2`
-  routes serve `rest_do_request` in-process and `register_rest_field`
+  routes serve `rest_do_request` in-process, running as the outer
+  request's user (an in-process request carries no nonce; the engine's
+  caller is settled from the runtime's reader), and `register_rest_field`
   additions are attached to their items.
+- **What plugin code decides before the engine answers** (suite
+  `rest-gate`, 9, against the reference with the same fixture plugin):
+  `rest_authentication_errors` may refuse any request, engine routes and
+  the index included; `rest_pre_dispatch` may answer any request outright;
+  a route a `rest_endpoints` filter removed is `rest_no_route` even when
+  the engine has a handler for it. `RuntimeRoutes::gate()` runs the three
+  before the engine's router, in the reference's order. A plugin route
+  registered under `wp/v2` answers: the engine's declared-types catch-all
+  declines an unknown base (`Http\RouteMiss`, which the router swallows
+  to try the next route) instead of answering no-route itself. Not yet
+  applied to engine routes: `rest_request_before_callbacks`,
+  `rest_request_after_callbacks`, `rest_post_dispatch`.
 - **Blocks** (`contracts/fixtures/api/blocks.json`): `parse_blocks` is the
   engine's own parser as arrays; `serialize_block_attributes` writes
   lower-case hex escapes for `<>&"` and `--`; `register_block_type` refuses
