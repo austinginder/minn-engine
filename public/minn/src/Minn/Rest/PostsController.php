@@ -61,6 +61,13 @@ final readonly class PostsController
             $where .= ' AND menu_order = ?';
             $params[] = $query->menuOrder;
         }
+        foreach ([$query->terms, $query->termsExclude] as $exclude => $filters) {
+            foreach ($filters as $taxonomy => $ids) {
+                $where .= ' AND ID ' . ($exclude === 1 ? 'NOT IN' : 'IN') . " (SELECT tr.object_id FROM {$this->db->table('term_relationships')} tr
+                    JOIN {$this->db->table('term_taxonomy')} tt ON tt.term_taxonomy_id = tr.term_taxonomy_id WHERE tt.taxonomy = ? AND tt.term_id IN (?))";
+                $params = [...$params, $taxonomy, $ids];
+            }
+        }
 
         $table = $this->db->table('posts');
         $total = (int) $this->db->value("SELECT COUNT(*) FROM {$table} WHERE {$where}", $params);

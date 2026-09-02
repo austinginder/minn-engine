@@ -12,8 +12,9 @@ use Minn\Front\Permalinks;
 final readonly class TermObject
 {
     private const TAXONOMIES = [
-        'categories' => ['taxonomy' => 'category', 'has_parent' => true, 'post_arg' => 'categories'],
-        'tags' => ['taxonomy' => 'post_tag', 'has_parent' => false, 'post_arg' => 'tags'],
+        'categories' => ['taxonomy' => 'category', 'has_parent' => true, 'post_arg' => 'categories', 'post_base' => 'posts'],
+        'tags' => ['taxonomy' => 'post_tag', 'has_parent' => false, 'post_arg' => 'tags', 'post_base' => 'posts'],
+        'wp_pattern_category' => ['taxonomy' => 'wp_pattern_category', 'has_parent' => false, 'post_arg' => 'wp_pattern_category', 'post_base' => 'blocks'],
     ];
 
     public function __construct(
@@ -33,7 +34,7 @@ final readonly class TermObject
     /**
      * The taxonomy behind a rest_base.
      *
-     * @return array{taxonomy: string, has_parent: bool, post_arg: string}
+     * @return array{taxonomy: string, has_parent: bool, post_arg: string, post_base: string}
      */
     public static function config(string $restBase): array
     {
@@ -67,7 +68,7 @@ final readonly class TermObject
         if ($config['has_parent'] && (int) $term['parent'] > 0) {
             $links['up'] = [['embeddable' => true, 'href' => $this->url->to("/wp/v2/{$restBase}/" . (int) $term['parent'])]];
         }
-        $links['wp:post_type'] = [['href' => $this->url->to('/wp/v2/posts', [$config['post_arg'] => $id])]];
+        $links['wp:post_type'] = [['href' => $this->url->to('/wp/v2/' . $config['post_base'], [$config['post_arg'] => $id])]];
         $links['curies'] = RestUrl::curies();
         $object['_links'] = $links;
         return $object;

@@ -235,12 +235,15 @@ final readonly class PostWriter
         if (isset($body['meta']['footnotes'])) {
             $this->setMeta($id, 'footnotes', (string) $body['meta']['footnotes']);
         }
+        if ($type === 'wp_block' && isset($body['meta']['wp_pattern_sync_status'])) {
+            $this->setMeta($id, 'wp_pattern_sync_status', (string) $body['meta']['wp_pattern_sync_status']);
+        }
     }
 
-    /** Assigns categories and tags from a write body, replacing existing links. */
+    /** Assigns categories, tags, and pattern categories from a write body, replacing existing links. */
     public function applyTerms(int $id, array $body): void
     {
-        foreach (['categories' => 'category', 'tags' => 'post_tag'] as $field => $taxonomy) {
+        foreach (['categories' => 'category', 'tags' => 'post_tag', 'wp_pattern_category' => 'wp_pattern_category'] as $field => $taxonomy) {
             if (array_key_exists($field, $body) && is_array($body[$field])) {
                 $this->setTerms($id, $taxonomy, array_map(intval(...), $body[$field]));
             }

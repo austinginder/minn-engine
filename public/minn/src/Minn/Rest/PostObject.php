@@ -26,6 +26,8 @@ final readonly class PostObject
 {
     /** The one post type whose REST shape is not post-shaped. */
     private const NAVIGATION = 'wp_navigation';
+    /** The other: a pattern carries its content raw, its category, and its sync status. */
+    private const BLOCK = 'wp_block';
 
     public function __construct(
         private Db $db,
@@ -44,6 +46,7 @@ final readonly class PostObject
             'page' => 'pages',
             'post' => 'posts',
             'wp_navigation' => 'navigation',
+            'wp_block' => 'blocks',
             default => str_replace('_', '-', $type),
         };
     }
@@ -60,10 +63,10 @@ final readonly class PostObject
         return [
             'id' => $p->id,
             'date' => self::date($p->date),
-            'date_gmt' => self::date($p->dateGmt),
+            'date_gmt' => $this->gmt($p->date, $p->dateGmt),
             'guid' => ['rendered' => $p->guid],
             'modified' => self::date($p->modified),
-            'modified_gmt' => self::date($p->modifiedGmt),
+            'modified_gmt' => $this->gmt($p->modified, $p->modifiedGmt),
             'slug' => $p->slug,
             'status' => $p->status,
             'type' => $p->type,
@@ -78,20 +81,54 @@ final readonly class PostObject
         ];
     }
 
+    /**
+     * A pattern (wp_block) is read by editors only, so its title and
+     * content come raw even in view context: no rendered title, no rendered
+     * content. It carries an excerpt, the footnotes meta, its pattern
+     * categories, and the sync status core registers beside meta.
+     */
+    private function blockView(PostRecord $p): array
+    {
+        $protected = $p->isProtected();
+        return [
+            'id' => $p->id,
+            'date' => self::date($p->date),
+            'date_gmt' => $this->gmt($p->date, $p->dateGmt),
+            'guid' => ['rendered' => $p->guid],
+            'modified' => self::date($p->modified),
+            'modified_gmt' => $this->gmt($p->modified, $p->modifiedGmt),
+            'slug' => $p->slug,
+            'status' => $p->status,
+            'type' => $p->type,
+            'link' => $this->permalinks->forPost($p),
+            'title' => ['raw' => $p->title],
+            'content' => ['raw' => $p->content, 'protected' => $protected],
+            'excerpt' => ['rendered' => $protected ? '' : Excerpt::render($p), 'protected' => $protected],
+            'template' => '',
+            'meta' => ['footnotes' => $this->posts->meta($p->id, 'footnotes') ?? ''],
+            'wp_pattern_category' => array_map(static fn (array $term) => $term[0], $this->posts->terms($p->id, 'wp_pattern_category')),
+            'wp_pattern_sync_status' => $this->posts->meta($p->id, 'wp_pattern_sync_status') ?? '',
+            '_links' => $this->links($p),
+        ];
+    }
+
     /** The view-context object: the shared fields, then the type's own, then class_list and _links. */
     public function view(PostRecord $p): array
     {
         if ($p->type === self::NAVIGATION) {
             return $this->navigationView($p);
         }
+        if ($p->type === self::BLOCK) {
+            return $this->blockView($p);
+        }
         $protected = $p->isProtected();
         $object = [
             'id' => $p->id,
             'date' => self::date($p->date),
-            'date_gmt' => self::date($p->dateGmt),
+            'date_gmt' => $this->gmt($p->date, $p->dateGmt),
             'guid' => ['rendered' => $p->guid],
             'modified' => self::date($p->modified),
-            'modified_gmt' => self::date($p->modifiedGmt),
+            'modified_gmt' => $this->gmt($p->modified, $p->modifiedGmt),
             'slug' => $p->slug,
             'status' => $p->status,
             'type' => $p->type,
@@ -205,8 +242,8 @@ final readonly class PostObject
             // An authorless post (post_author 0) carries no author link at
             // all, and a navigation menu never carries one: it has no author
             // field to link from.
-            'author' => $author > 0 && $type !== self::NAVIGATION ? [['embeddable' => true, 'href' => $this->url->to('/wp/v2/users/' . $author)]] : null,
-            'replies' => $type === self::NAVIGATION
+            'author' => $author > 0 && $type !== self::NAVIGATION && $type !== self::BLOCK ? [['embeddable' => true, 'href' => $this->url->to('/wp/v2/users/' . $author)]] : null,
+            'replies' => $type === self::NAVIGATION || $type === self::BLOCK
                 ? null
                 : [['embeddable' => true, 'href' => $this->url->to('/wp/v2/comments', ['post' => $id])]],
             'version-history' => [['count' => $this->posts->revisionCount($id), 'href' => $this->url->to("{$base}/{$id}/revisions")]],
@@ -220,13 +257,25 @@ final readonly class PostObject
                 ? [['embeddable' => true, 'href' => $this->url->to('/wp/v2/media/' . $featured)]]
                 : null,
             'wp:attachment' => [['href' => $this->url->to('/wp/v2/media', ['parent' => $id])]],
-            'wp:term' => $type !== 'page' && $type !== self::NAVIGATION ? [
-                ['taxonomy' => 'category', 'embeddable' => true, 'href' => $this->url->to('/wp/v2/categories', ['post' => $id])],
-                ['taxonomy' => 'post_tag', 'embeddable' => true, 'href' => $this->url->to('/wp/v2/tags', ['post' => $id])],
-            ] : null,
+            'wp:term' => $this->termLinks($type, $id),
             'curies' => RestUrl::curies(),
         ];
         return array_filter($links, static fn ($value) => $value !== null);
+    }
+
+    /** The taxonomy links a type carries: posts their categories and tags, patterns their pattern categories, pages and menus none. */
+    private function termLinks(string $type, int $id): ?array
+    {
+        if ($type === self::BLOCK) {
+            return [['taxonomy' => 'wp_pattern_category', 'embeddable' => true, 'href' => $this->url->to('/wp/v2/wp_pattern_category', ['post' => $id])]];
+        }
+        if ($type === 'page' || $type === self::NAVIGATION) {
+            return null;
+        }
+        return [
+            ['taxonomy' => 'category', 'embeddable' => true, 'href' => $this->url->to('/wp/v2/categories', ['post' => $id])],
+            ['taxonomy' => 'post_tag', 'embeddable' => true, 'href' => $this->url->to('/wp/v2/tags', ['post' => $id])],
+        ];
     }
 
     /**
@@ -241,13 +290,18 @@ final readonly class PostObject
         $protected = $p->isProtected();
 
         $view['guid'] = ['rendered' => $p->guid, 'raw' => $p->guid];
-        $view['title'] = ['raw' => $p->title, 'rendered' => Texturize::html($p->title)];
-        $view['content'] = [
-            'raw' => $p->content,
-            'rendered' => PostStatus::of($p) === PostStatus::Trash ? '' : Blocks::render($p->content),
-            'protected' => $protected,
-            'block_version' => str_contains($p->content, '<!-- wp:') ? 1 : 0,
-        ];
+        if ($p->type === self::BLOCK) {
+            // A pattern's title stays raw-only; its content gains only the block version.
+            $view['content'] = ['raw' => $p->content, 'protected' => $protected, 'block_version' => str_contains($p->content, '<!-- wp:') ? 1 : 0];
+        } else {
+            $view['title'] = ['raw' => $p->title, 'rendered' => Texturize::html($p->title)];
+            $view['content'] = [
+                'raw' => $p->content,
+                'rendered' => PostStatus::of($p) === PostStatus::Trash ? '' : Blocks::render($p->content),
+                'protected' => $protected,
+                'block_version' => str_contains($p->content, '<!-- wp:') ? 1 : 0,
+            ];
+        }
         if (isset($view['excerpt'])) {
             $view['excerpt'] = [
                 'raw' => $p->excerpt,
@@ -274,6 +328,12 @@ final readonly class PostObject
         unset($ordered['_links']);
         $ordered['minn_modified'] = $this->modifiedUnsaved($p, $userId);
         $ordered['minn_lock'] = $this->lockHolder($id, $userId);
+        if ($p->type === self::BLOCK) {
+            // Core registers the sync status after the app's fields, so it prints after them here.
+            $sync = $ordered['wp_pattern_sync_status'];
+            unset($ordered['wp_pattern_sync_status']);
+            $ordered['wp_pattern_sync_status'] = $sync;
+        }
         $ordered['_links'] = $this->editLinks($p, $userId);
         return $ordered;
     }
@@ -353,15 +413,22 @@ final readonly class PostObject
         if ($can('unfiltered_html')) {
             $actions['wp:action-unfiltered-html'] = true;
         }
-        if ($can($others) && $type !== self::NAVIGATION) {
+        if ($can($others) && $type !== self::NAVIGATION && $type !== self::BLOCK) {
             if ($type === 'post') {
                 $actions['wp:action-sticky'] = true;
             }
             $actions['wp:action-assign-author'] = true;
         }
+        if ($type === self::BLOCK) {
+            // Pattern categories: anyone who edits posts may create one, and assign is broadly held.
+            if ($can('edit_posts')) {
+                $actions['wp:action-create-wp_pattern_category'] = true;
+            }
+            $actions['wp:action-assign-wp_pattern_category'] = true;
+        }
         // Taxonomy actions belong to types with taxonomies (posts, not pages);
         // assign is broadly held, create is gated per taxonomy.
-        if ($type !== 'page' && $type !== self::NAVIGATION) {
+        if ($type !== 'page' && $type !== self::NAVIGATION && $type !== self::BLOCK) {
             if ($can('manage_categories')) {
                 $actions['wp:action-create-categories'] = true;
             }
@@ -376,6 +443,7 @@ final readonly class PostObject
             'wp:action-assign-author', 'wp:action-assign-categories', 'wp:action-assign-tags',
             'wp:action-create-categories', 'wp:action-create-tags', 'wp:action-publish',
             'wp:action-sticky', 'wp:action-unfiltered-html',
+            'wp:action-create-wp_pattern_category', 'wp:action-assign-wp_pattern_category',
         ];
         $curies = $links['curies'];
         unset($links['curies']);
@@ -408,6 +476,20 @@ final readonly class PostObject
             $allow[] = 'DELETE';
         }
         return $allow;
+    }
+
+    /**
+     * A gmt timestamp for the wire: the stored one, or, when it is the
+     * draft zero, the local time converted through the site's offset, the
+     * way the reference derives it.
+     */
+    private function gmt(string $local, string $gmt): string
+    {
+        if (!str_starts_with($gmt, '0000-00-00') || $local === '' || str_starts_with($local, '0000-00-00')) {
+            return self::date($gmt);
+        }
+        $offset = (int) round(((float) ($this->db->option('gmt_offset') ?? 0)) * 3600);
+        return self::date(gmdate('Y-m-d H:i:s', (int) strtotime($local . ' UTC') - $offset));
     }
 
     /** A MySQL datetime in the reference's ISO form. */

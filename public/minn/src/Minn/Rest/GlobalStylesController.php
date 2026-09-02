@@ -87,7 +87,8 @@ final readonly class GlobalStylesController
         $perPage = (int) $request->query('per_page', '0');
         $page = max(1, (int) $request->query('page', '1'));
         $pages = $perPage > 0 ? (int) ceil(count($rows) / $perPage) : 1;
-        if ($page > max(1, $pages)) {
+        // A page past the end is an error only when there are revisions to page through.
+        if ($rows !== [] && $page > $pages) {
             throw new RestError('rest_revision_invalid_page_number', 'The page number requested is larger than the number of pages available.', 400);
         }
         $shown = $perPage > 0 ? array_slice($rows, ($page - 1) * $perPage, $perPage) : $rows;

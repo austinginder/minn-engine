@@ -107,7 +107,7 @@ final readonly class Api
         if ($templates !== null && $templateWriter !== null) {
             $controllers[] = new TemplatesController($templates, $templateWriter, new TemplateObject($templates, $s->posts(), $s->url(), $caller), $caller);
         }
-        return [...$controllers, $postsController, $postsWrite, new NavigationController($postsController, $postsWrite), new DeclaredPostsController($s->types(), $postsController, $postsWrite)];
+        return [...$controllers, $postsController, $postsWrite, new NavigationController($postsController, $postsWrite), new BlocksController($postsController, $postsWrite, $s->posts(), $caller), new DeclaredPostsController($s->types(), $postsController, $postsWrite)];
     }
 
     /** Who is making this request. */

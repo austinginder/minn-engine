@@ -8,6 +8,7 @@ the wp/v2 surface: shapes and controllers
 | [`Api`](#api) | final readonly class | 129 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 171 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`BatchRequest`](#batchrequest) | final class | 32 | The requests a batch payload names, normalised into descriptors the |
+| [`BlocksController`](#blockscontroller) | final readonly class | 69 | wp/v2/blocks: synced patterns and reusable blocks, stored as wp_block |
 | [`Caller`](#caller) | final class | 85 | Who is making this REST call. Resolved once from the cookie and nonce; |
 | [`CommentObject`](#commentobject) | final readonly class | 75 | The wp/v2 comment object; edit context adds the moderation-desk fields. |
 | [`CommentsController`](#commentscontroller) | final readonly class | 280 | wp/v2/comments: the status tabs with pagination headers, single, |
@@ -16,11 +17,11 @@ the wp/v2 surface: shapes and controllers
 | [`Embed`](#embed) | final class | 180 | The _embed decoration and the embed context. Every embeddable link in an |
 | [`EngineRoutes`](#engineroutes) | final class | 52 | The engine's own REST routes in the reference's regex form, for the |
 | [`Fields`](#fields) | final readonly class | 92 | The _fields response filter. Dot paths descend ("title.rendered"); the |
-| [`GlobalStylesController`](#globalstylescontroller) | final readonly class | 140 | wp/v2/global-styles: the site editor's saved styles (one post per |
+| [`GlobalStylesController`](#globalstylescontroller) | final readonly class | 141 | wp/v2/global-styles: the site editor's saved styles (one post per |
 | [`GlobalStylesObject`](#globalstylesobject) | final readonly class | 87 | The wp/v2/global-styles item, theme, and revision shapes. |
 | [`IndexController`](#indexcontroller) | final readonly class | 53 | The API index at /wp-json/: the site facts monitors read (name, url, |
 | [`Links`](#links) | final class | 35 | Response link relations compacted through CURIEs: a rel that matches a CURIE's template becomes `name:suffix`, and the used CURIEs ride along. |
-| [`ListQuery`](#listquery) | final readonly class | 148 | The collection parameters a wp/v2 list accepts, read once from the |
+| [`ListQuery`](#listquery) | final readonly class | 170 | The collection parameters a wp/v2 list accepts, read once from the |
 | [`MediaController`](#mediacontroller) | final readonly class | 185 | wp/v2/media: list, single, upload on both transports (multipart field |
 | [`MediaObject`](#mediaobject) | final readonly class | 158 | The wp/v2 media object, view and edit context. |
 | [`MenuItemObject`](#menuitemobject) | final readonly class | 74 | The wp/v2/menu-items resource. |
@@ -29,12 +30,12 @@ the wp/v2 surface: shapes and controllers
 | [`NavigationController`](#navigationcontroller) | final readonly class | 48 | wp/v2/navigation: the block theme's navigation menus, stored as |
 | [`ParamCheck`](#paramcheck) | final class | 75 | The required / validate / sanitize pass over a request's declared arguments. |
 | [`PluginsController`](#pluginscontroller) | final readonly class | 248 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
-| [`PostObject`](#postobject) | final readonly class | 394 | Builds the wp/v2 post and page objects in the reference's shape: the |
-| [`PostsController`](#postscontroller) | final readonly class | 167 | wp/v2 posts and pages, read side. |
+| [`PostObject`](#postobject) | final readonly class | 476 | Builds the wp/v2 post and page objects in the reference's shape: the |
+| [`PostsController`](#postscontroller) | final readonly class | 174 | wp/v2 posts and pages, read side. |
 | [`PostsWriteController`](#postswritecontroller) | final readonly class | 306 | wp/v2 posts and pages, write side: create, update, trash, and force |
 | [`Reply`](#reply) | final class | 48 | JSON responses in the reference's shape: its header set, its json_encode |
 | [`RestUrl`](#resturl) | final readonly class | 38 | REST URLs in the form the reference emits for the site's permalink mode: |
-| [`RevisionsController`](#revisionscontroller) | final readonly class | 130 | wp/v2 revisions and autosaves under posts and pages, plus wp/v2/blocks. |
+| [`RevisionsController`](#revisionscontroller) | final readonly class | 142 | wp/v2 revisions and autosaves under posts, pages, and blocks. |
 | [`RouteArgs`](#routeargs) | final class | 36 | The argument groups a route registers with, filled the way register_rest_route fills them. |
 | [`RouteIndex`](#routeindex) | final class | 61 | The description of one route the REST index publishes: namespace, methods, endpoints with their argument schemas, self link. |
 | [`RouteMatch`](#routematch) | final class | 42 | Finds the registered handler for a method and path among the runtime's route table. |
@@ -50,8 +51,8 @@ the wp/v2 surface: shapes and controllers
 | [`TaxonomiesController`](#taxonomiescontroller) | final readonly class | 47 | wp/v2 taxonomies: the registry, whole or per type, in view or edit context. |
 | [`TemplateObject`](#templateobject) | final readonly class | 98 | The wp/v2/templates and wp/v2/template-parts resource. |
 | [`TemplatesController`](#templatescontroller) | final readonly class | 205 | wp/v2/templates and wp/v2/template-parts: the block theme's templates as |
-| [`TermObject`](#termobject) | final readonly class | 75 | The wp/v2 category and tag objects. |
-| [`TermsController`](#termscontroller) | final readonly class | 195 | wp/v2 categories and tags: list, single, and the create/update/delete the taxonomy admin drives. |
+| [`TermObject`](#termobject) | final readonly class | 76 | The wp/v2 category and tag objects. |
+| [`TermsController`](#termscontroller) | final readonly class | 198 | wp/v2 categories, tags, and pattern categories: list, single, and the create/update/delete the taxonomy admin drives. |
 | [`Types`](#types) | final class | 87 | The engine's registry of built-in post types, seeded from the observed |
 | [`TypesController`](#typescontroller) | final readonly class | 24 | wp/v2 types. |
 | [`UserObject`](#userobject) | final readonly class | 97 | The wp/v2 user objects: the public view shape and the edit-context shape. |
@@ -214,6 +215,63 @@ The batch body's requests in the reference's normalised form.
 - `@return list<array{method: string, path: string, query: array<string, mixed>, body: ?array, headers: ?array}>`
 
 
+## BlocksController
+
+`final readonly class Minn\Rest\BlocksController` · `public/minn/src/Minn/Rest/BlocksController.php`
+
+wp/v2/blocks: synced patterns and reusable blocks, stored as wp_block
+posts. The reading and writing is the posts machinery with the post
+type's own capabilities; what is this type's alone is the reading gate:
+without edit_posts the list is empty and a single block is refused,
+published or not.
+
+- const `TYPE` = `'wp_block'`
+- const `BASE` = `'blocks'`
+
+Used by: `Minn\Rest\Api`
+
+```php
+__construct(Minn\Rest\PostsController $reads, Minn\Rest\PostsWriteController $writes, Minn\Content\Posts $posts, Minn\Rest\Caller $caller)
+```
+
+
+### `list(Minn\Http\Request $request): Minn\Http\Response`
+
+Route: `GET /wp/v2/blocks`
+
+The blocks the caller may edit; an empty list for anyone else.
+
+### `single(Minn\Http\Request $request, string $id): Minn\Http\Response`
+
+Route: `GET /wp/v2/blocks/{id:\d+}`
+
+One block. Editing context is the posts machinery's own gate
+(rest_forbidden_context); a view is refused to anyone who cannot edit
+posts, and a trashed or unknown block is not found rather than refused.
+
+### `create(Minn\Http\Request $request): Minn\Http\Response`
+
+Route: `POST /wp/v2/blocks`
+
+Creates a block.
+
+### `update(Minn\Http\Request $request, string $id): Minn\Http\Response`
+
+Route: `POST /wp/v2/blocks/{id:\d+}`
+
+Route: `PUT /wp/v2/blocks/{id:\d+}`
+
+Route: `PATCH /wp/v2/blocks/{id:\d+}`
+
+Updates a block.
+
+### `delete(Minn\Http\Request $request, string $id): Minn\Http\Response`
+
+Route: `DELETE /wp/v2/blocks/{id:\d+}`
+
+Trashes or deletes a block.
+
+
 ## Caller
 
 `final class Minn\Rest\Caller` · `public/minn/src/Minn/Rest/Caller.php`
@@ -221,7 +279,7 @@ The batch body's requests in the reference's normalised form.
 Who is making this REST call. Resolved once from the cookie and nonce;
 an anonymous or failed caller has id 0 and every capability check fails.
 
-Used by: `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermObject`, `Minn\Rest\TermsController`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`
+Used by: `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermObject`, `Minn\Rest\TermsController`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`
 
 ```php
 __construct(Minn\Http\Request $request, Minn\Auth\Authenticator $authenticator, Minn\Auth\Capabilities $capabilities)
@@ -349,7 +407,7 @@ a linked resource carries when it rides inside another response.
 
 Cases: `View` = `'view'`, `Edit` = `'edit'`, `Embed` = `'embed'`
 
-Used by: `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenusController`, `Minn\Rest\PostsController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplatesController`, `Minn\Rest\UsersController`
+Used by: `Minn\Rest\BlocksController`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenusController`, `Minn\Rest\PostsController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`
 
 ### static `of(Minn\Http\Request $request): self`
 
@@ -485,7 +543,7 @@ the whole payload otherwise, which is why _fields on the associative
 types response strips every key and yields [] over HTTP, a reference
 quirk the engine reproduces by construction.
 
-Used by: `Minn\Admin\SessionsController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Reply`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\TypesController`, `Minn\Rest\UsersController`
+Used by: `Minn\Admin\SessionsController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Reply`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\TypesController`, `Minn\Rest\UsersController`
 
 - readonly `array $paths`
 - readonly `bool $deferred`
@@ -575,7 +633,7 @@ Route: `GET /wp/v2/global-styles/{parent:\d+}/revisions/{id:\d+}`
 
 One revision of the saved styles.
 
-Internals: `post()` (private, line 109), `requireTheme()` (private, line 115), `requireParent()` (private, line 126), `title()` (private, line 139), `node()` (private, line 148)
+Internals: `post()` (private, line 110), `requireTheme()` (private, line 116), `requireParent()` (private, line 127), `title()` (private, line 140), `node()` (private, line 149)
 
 
 ## GlobalStylesObject
@@ -656,10 +714,12 @@ words, and the ordering. clauses() turns the narrowing ones into the SQL
 fragments and parameters a controller appends to its own visibility
 clause, so posts, pages, and media build their lists the same way.
 
+- const `TERM_ARGS` = `array (   'categories' => 'category',   'tags' => 'post_tag',   'wp_pattern_category' => 'wp_pattern_category', )` — The list parameters that name terms, by the taxonomy they filter on.
+
 Used by: `Minn\Rest\CommentsController`, `Minn\Rest\MediaController`, `Minn\Rest\PostsController`
 
 ```php
-__construct(int $page = 1, int $perPage = 10, array $include = array ( ), array $exclude = array ( ), array $author = array ( ), array $authorExclude = array ( ), array $parent = array ( ), array $parentExclude = array ( ), array $slugs = array ( ), array $words = array ( ), ?int $menuOrder = NULL, string $orderBy = 'date', string $order = 'DESC')
+__construct(int $page = 1, int $perPage = 10, array $include = array ( ), array $exclude = array ( ), array $author = array ( ), array $authorExclude = array ( ), array $parent = array ( ), array $parentExclude = array ( ), array $slugs = array ( ), array $words = array ( ), ?int $menuOrder = NULL, string $orderBy = 'date', string $order = 'DESC', array $terms = array ( ), array $termsExclude = array ( ))
 ```
 - `@param list<int> $include`
 - `@param list<int> $exclude`
@@ -683,6 +743,8 @@ __construct(int $page = 1, int $perPage = 10, array $include = array ( ), array 
 - readonly `?int $menuOrder`
 - readonly `string $orderBy`
 - readonly `string $order`
+- readonly `array $terms`
+- readonly `array $termsExclude`
 
 ### static `fromRequest(Minn\Http\Request $request): self`
 
@@ -726,7 +788,7 @@ post=0 means "no post".
 
 - `@return list<int>`
 
-Internals: `list()` (private, line 153), `words()` (private, line 159)
+Internals: `termFilters()` (private, line 76), `list()` (private, line 175), `words()` (private, line 181)
 
 
 ## MediaController
@@ -1082,6 +1144,7 @@ view context, the edit context (raw+rendered dual fields, editor-only
 fields, and cap-gated wp:action-* links), and their _links blocks.
 
 - const `NAVIGATION` = `'wp_navigation'` — The one post type whose REST shape is not post-shaped.
+- const `BLOCK` = `'wp_block'` — The other: a pattern carries its content raw, its category, and its sync status.
 
 Used by: `Minn\Rest\Api`, `Minn\Rest\CommentObject`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\Services`, `Minn\Rest\UserObject`
 
@@ -1130,7 +1193,7 @@ The view links plus the caller's verbs and cap-gated wp:action-* entries.
 
 A MySQL datetime in the reference's ISO form.
 
-Internals: `navigationView()` (private, line 57), `viewTerms()` (private, line 118), `typeFields()` (private, line 134), `classList()` (private, line 164), `format()` (private, line 186), `allow()` (private, line 399)
+Internals: `navigationView()` (private, line 60), `blockView()` (private, line 90), `viewTerms()` (private, line 155), `typeFields()` (private, line 171), `classList()` (private, line 201), `format()` (private, line 223), `termLinks()` (private, line 267), `allow()` (private, line 467), `gmt()` (private, line 486)
 
 
 ## PostsController
@@ -1141,7 +1204,7 @@ wp/v2 posts and pages, read side.
 
 - const `ORDER_BY` = `array (   'date' => 'post_date',   'modified' => 'post_modified',   'title' => 'post_title',   'slug' => 'post_name',   'id' => 'ID',   'author' => 'post_author',   'menu_order' => 'menu_order',   'include' => 'include', )`
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\NavigationController`
+Used by: `Minn\Rest\Api`, `Minn\Rest\BlocksController`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\NavigationController`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Rest\PostObject $object, Minn\Rest\Caller $caller)
@@ -1168,7 +1231,7 @@ One post or page.
 
 One post of any type, with the reference's read rules.
 
-Internals: `visibleStatuses()` (private, line 92), `visibility()` (private, line 122), `orderSql()` (private, line 136)
+Internals: `visibleStatuses()` (private, line 99), `visibility()` (private, line 129), `orderSql()` (private, line 143)
 
 
 ## PostsWriteController
@@ -1181,7 +1244,7 @@ edit-context object the reference returns.
 
 - const `LIVE` = `array (   0 => 'publish',   1 => 'future',   2 => 'private', )` — The statuses that make a post live: they need the publish capability and give the post its slug.
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\MediaController`, `Minn\Rest\NavigationController`, `Minn\Rest\RevisionsController`
+Used by: `Minn\Rest\Api`, `Minn\Rest\BlocksController`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\MediaController`, `Minn\Rest\NavigationController`, `Minn\Rest\RevisionsController`
 
 ```php
 __construct(Minn\Content\Posts $posts, Minn\Content\PostWriter $writer, Minn\Content\Site $site, Minn\Rest\PostObject $object, Minn\Rest\RestUrl $url, Minn\Rest\Caller $caller)
@@ -1239,7 +1302,7 @@ on lists.
 
 - const `HEADERS` = `array (   'Content-Type' => 'application/json; charset=UTF-8',   'X-Content-Type-Options' => 'nosniff',   'Access-Control-Expose-Headers' => 'X-WP-Total, X-WP-TotalPages, Link',   'Access-Control-Allow-Headers' => 'Authorization, X-WP-Nonce, Content-Disposition, Content-MD5, Content-Type',   'Allow' => 'GET', )`
 
-Used by: `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\CommentsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\TypesController`, `Minn\Rest\UsersController`
+Used by: `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\TypesController`, `Minn\Rest\UsersController`
 
 ### static `answer(Minn\Http\Request $request, mixed $data, int $status = 200): Minn\Http\Response`
 
@@ -1295,7 +1358,7 @@ The curies entry every wp/v2 _links block ends with.
 
 `final readonly class Minn\Rest\RevisionsController` · `public/minn/src/Minn/Rest/RevisionsController.php`
 
-wp/v2 revisions and autosaves under posts and pages, plus wp/v2/blocks.
+wp/v2 revisions and autosaves under posts, pages, and blocks.
 
 Used by: `Minn\Rest\Api`
 
@@ -1306,33 +1369,33 @@ __construct(Minn\Content\Posts $posts, Minn\Content\Revisions $revisions, Minn\R
 
 ### `revisions(Minn\Http\Request $request, string $base, string $id): Minn\Http\Response`
 
-Route: `GET /wp/v2/{base:posts|pages}/{id:\d+}/revisions`
+Route: `GET /wp/v2/{base:posts|pages|blocks}/{id:\d+}/revisions`
 
 Real revisions, not autosaves.
 
+### `revision(Minn\Http\Request $request, string $base, string $id, string $revisionId): Minn\Http\Response`
+
+Route: `GET /wp/v2/{base:posts|pages|blocks}/{id:\d+}/revisions/{revisionId:\d+}`
+
+One revision of a post, page, or block.
+
 ### `autosaves(Minn\Http\Request $request, string $base, string $id): Minn\Http\Response`
 
-Route: `GET /wp/v2/{base:posts|pages}/{id:\d+}/autosaves`
+Route: `GET /wp/v2/{base:posts|pages|blocks}/{id:\d+}/autosaves`
 
 The autosaves of a post.
 
 ### `createAutosave(Minn\Http\Request $request, string $base, string $id): Minn\Http\Response`
 
-Route: `POST /wp/v2/{base:posts|pages}/{id:\d+}/autosaves`
+Route: `POST /wp/v2/{base:posts|pages|blocks}/{id:\d+}/autosaves`
 
 One autosave slot per author; the reply carries a preview link.
-
-### `blocks(Minn\Http\Request $request): Minn\Http\Response`
-
-Route: `GET /wp/v2/blocks`
-
-Reusable blocks and synced patterns (wp_block rows).
 
 ### `object(Minn\Content\PostRecord|array $r, Minn\Rest\Context $context = Minn\Rest\Context::View): array`
 
 One revision row as wp/v2 serves it (autosaves and revisions alike).
 
-Internals: `clean()` (private, line 70), `requireParent()` (private, line 137)
+Internals: `clean()` (private, line 84), `withPreviewLink()` (private, line 124), `meta()` (private, line 136), `requireParent()` (private, line 148)
 
 
 ## RouteArgs
@@ -2013,7 +2076,7 @@ Internals: `listing()` (private, line 97), `single()` (private, line 115), `save
 
 The wp/v2 category and tag objects.
 
-- const `TAXONOMIES` = `array (   'categories' =>    array (     'taxonomy' => 'category',     'has_parent' => true,     'post_arg' => 'categories',   ),   'tags' =>    array (     'taxonomy' => 'post_tag',     'has_parent' => false,     'post_arg' => 'tags',   ), )`
+- const `TAXONOMIES` = `array (   'categories' =>    array (     'taxonomy' => 'category',     'has_parent' => true,     'post_arg' => 'categories',     'post_base' => 'posts',   ),   'tags' =>    array (     'taxonomy' => 'post_tag',     'has_parent' => false,     'post_arg' => 'tags',     'post_base' => 'posts',   ),   'wp_pattern_category' =>    array (     'taxonomy' => 'wp_pattern_category',     'has_parent' => false,     'post_arg' => 'wp_pattern_category',     'post_base' => 'blocks',   ), )`
 
 Used by: `Minn\Rest\Api`, `Minn\Rest\Services`, `Minn\Rest\TermsController`
 
@@ -2030,20 +2093,20 @@ The REST URL builder.
 
 The taxonomy behind a rest_base.
 
-- `@return array{taxonomy: string, has_parent: bool, post_arg: string}`
+- `@return array{taxonomy: string, has_parent: bool, post_arg: string, post_base: string}`
 
 ### `view(Minn\Content\TermRecord $term, string $restBase): array`
 
 The wp/v2 term shape.
 
-Internals: `allowedVerbs()` (private, line 77)
+Internals: `allowedVerbs()` (private, line 78)
 
 
 ## TermsController
 
 `final readonly class Minn\Rest\TermsController` · `public/minn/src/Minn/Rest/TermsController.php`
 
-wp/v2 categories and tags: list, single, and the create/update/delete the taxonomy admin drives.
+wp/v2 categories, tags, and pattern categories: list, single, and the create/update/delete the taxonomy admin drives.
 
 - const `ORDER_BY` = `array (   'name' => 't.name',   'count' => 'tt.count',   'id' => 't.term_id',   'slug' => 't.slug', )`
 
@@ -2056,35 +2119,35 @@ __construct(Minn\Db $db, Minn\Content\Terms $terms, Minn\Content\Site $site, Min
 
 ### `list(Minn\Http\Request $request, string $base): Minn\Http\Response`
 
-Route: `GET /wp/v2/{base:categories|tags}`
+Route: `GET /wp/v2/{base:categories|tags|wp_pattern_category}`
 
 The categories or tags list.
 
 ### `single(Minn\Http\Request $request, string $base, string $id): Minn\Http\Response`
 
-Route: `GET /wp/v2/{base:categories|tags}/{id:\d+}`
+Route: `GET /wp/v2/{base:categories|tags|wp_pattern_category}/{id:\d+}`
 
 One category or tag.
 
 ### `create(Minn\Http\Request $request, string $base): Minn\Http\Response`
 
-Route: `POST /wp/v2/{base:categories|tags}`
+Route: `POST /wp/v2/{base:categories|tags|wp_pattern_category}`
 
-Tags are open to edit_posts holders; categories need manage_categories.
+Tags and pattern categories are open to edit_posts holders; categories need manage_categories.
 
 ### `update(Minn\Http\Request $request, string $base, string $id): Minn\Http\Response`
 
-Route: `POST /wp/v2/{base:categories|tags}/{id:\d+}`
+Route: `POST /wp/v2/{base:categories|tags|wp_pattern_category}/{id:\d+}`
 
-Route: `PUT /wp/v2/{base:categories|tags}/{id:\d+}`
+Route: `PUT /wp/v2/{base:categories|tags|wp_pattern_category}/{id:\d+}`
 
-Route: `PATCH /wp/v2/{base:categories|tags}/{id:\d+}`
+Route: `PATCH /wp/v2/{base:categories|tags|wp_pattern_category}/{id:\d+}`
 
 Updates a category or tag.
 
 ### `delete(Minn\Http\Request $request, string $base, string $id): Minn\Http\Response`
 
-Route: `DELETE /wp/v2/{base:categories|tags}/{id:\d+}`
+Route: `DELETE /wp/v2/{base:categories|tags|wp_pattern_category}/{id:\d+}`
 
 The default category is capability-denied before the force check.
 

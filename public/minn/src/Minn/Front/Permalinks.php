@@ -22,6 +22,9 @@ use Minn\Db;
  */
 final readonly class Permalinks
 {
+    /** Core taxonomies with no front-end archive: their terms link by query only. */
+    private const QUERY_ONLY = ['wp_pattern_category', 'wp_theme', 'wp_template_part_area'];
+
     public function __construct(
         private Posts $posts,
         private Terms $terms,
@@ -94,7 +97,7 @@ final readonly class Permalinks
         // A navigation menu is not publicly queryable and gets no type
         // prefix: the reference fills the plain post structure for it,
         // category token and all.
-        if ($post->type !== 'post' && $post->type !== 'wp_navigation') {
+        if ($post->type !== 'post' && $post->type !== 'wp_navigation' && $post->type !== 'wp_block') {
             if ($this->isPretty() && $this->hasPrettyLink($post)) {
                 return $this->url('/' . $this->typeSlug($post->type) . '/' . $post->slug . '/');
             }
@@ -146,6 +149,10 @@ final readonly class Permalinks
     public function forTerm(TermRecord $term): string
     {
         $taxonomy = (string) $term['taxonomy'];
+        if (in_array($taxonomy, self::QUERY_ONLY, true)) {
+            // No rewrite rule serves these, pretty permalinks or not.
+            return $this->url('/?taxonomy=' . $taxonomy . '&term=' . $term['slug']);
+        }
         if (!$this->isPretty()) {
             return $taxonomy === 'category'
                 ? $this->url('/?cat=' . (int) $term['term_id'])

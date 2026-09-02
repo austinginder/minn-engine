@@ -15,7 +15,7 @@ use Minn\Http\Route;
 use Minn\RestError;
 use Minn\Support\Kses;
 
-/** wp/v2 categories and tags: list, single, and the create/update/delete the taxonomy admin drives. */
+/** wp/v2 categories, tags, and pattern categories: list, single, and the create/update/delete the taxonomy admin drives. */
 final readonly class TermsController
 {
     private const ORDER_BY = ['name' => 't.name', 'count' => 'tt.count', 'id' => 't.term_id', 'slug' => 't.slug'];
@@ -30,7 +30,7 @@ final readonly class TermsController
     }
 
     /** The categories or tags list. */
-    #[Route(Method::Get, '/wp/v2/{base:categories|tags}')]
+    #[Route(Method::Get, '/wp/v2/{base:categories|tags|wp_pattern_category}')]
     public function list(Request $request, string $base): Response
     {
         $config = TermObject::config($base);
@@ -94,7 +94,7 @@ final readonly class TermsController
     }
 
     /** One category or tag. */
-    #[Route(Method::Get, '/wp/v2/{base:categories|tags}/{id:\d+}')]
+    #[Route(Method::Get, '/wp/v2/{base:categories|tags|wp_pattern_category}/{id:\d+}')]
     public function single(Request $request, string $base, string $id): Response
     {
         $config = TermObject::config($base);
@@ -108,18 +108,21 @@ final readonly class TermsController
         if ($row === null) {
             throw new RestError('rest_term_invalid', 'Term does not exist.', 404);
         }
+        if (Context::of($request)->isEdit() && !$this->caller->can('manage_categories')) {
+            throw $this->caller->refuse('rest_forbidden_context', 'Sorry, you are not allowed to edit this term.');
+        }
         return Reply::item($this->object->view(TermRecord::fromRow($row), $base), Fields::fromQuery($request->query));
     }
 
-    /** Tags are open to edit_posts holders; categories need manage_categories. */
-    #[Route(Method::Post, '/wp/v2/{base:categories|tags}')]
+    /** Tags and pattern categories are open to edit_posts holders; categories need manage_categories. */
+    #[Route(Method::Post, '/wp/v2/{base:categories|tags|wp_pattern_category}')]
     public function create(Request $request, string $base): Response
     {
         $config = TermObject::config($base);
         $taxonomy = $config['taxonomy'];
         $refusal = 'Sorry, you are not allowed to create terms in this taxonomy.';
         $this->caller->require('rest_cannot_create', $refusal);
-        if (!$this->caller->can($taxonomy === 'post_tag' ? 'edit_posts' : 'manage_categories')) {
+        if (!$this->caller->can($taxonomy === 'category' ? 'manage_categories' : 'edit_posts')) {
             throw new RestError('rest_cannot_create', $refusal, 403);
         }
         $body = $request->json();
@@ -152,9 +155,9 @@ final readonly class TermsController
     }
 
     /** Updates a category or tag. */
-    #[Route(Method::Post, '/wp/v2/{base:categories|tags}/{id:\d+}')]
-    #[Route(Method::Put, '/wp/v2/{base:categories|tags}/{id:\d+}')]
-    #[Route(Method::Patch, '/wp/v2/{base:categories|tags}/{id:\d+}')]
+    #[Route(Method::Post, '/wp/v2/{base:categories|tags|wp_pattern_category}/{id:\d+}')]
+    #[Route(Method::Put, '/wp/v2/{base:categories|tags|wp_pattern_category}/{id:\d+}')]
+    #[Route(Method::Patch, '/wp/v2/{base:categories|tags|wp_pattern_category}/{id:\d+}')]
     public function update(Request $request, string $base, string $id): Response
     {
         $config = TermObject::config($base);
@@ -187,7 +190,7 @@ final readonly class TermsController
     }
 
     /** The default category is capability-denied before the force check. */
-    #[Route(Method::Delete, '/wp/v2/{base:categories|tags}/{id:\d+}')]
+    #[Route(Method::Delete, '/wp/v2/{base:categories|tags|wp_pattern_category}/{id:\d+}')]
     public function delete(Request $request, string $base, string $id): Response
     {
         $config = TermObject::config($base);

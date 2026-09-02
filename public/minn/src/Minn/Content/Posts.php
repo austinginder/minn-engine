@@ -388,16 +388,6 @@ final readonly class Posts
         ));
     }
 
-    /** Reusable blocks (wp_block rows) in one status, newest first, capped at 100. */
-    public function blocks(string $status): array
-    {
-        return $this->db->rows(
-            "SELECT * FROM {$this->db->table('posts')} WHERE post_type = 'wp_block' AND post_status = ?
-             ORDER BY post_date DESC LIMIT 100",
-            [$status],
-        );
-    }
-
     /** The slug of the post's first category, or null. */
     public function firstCategorySlug(int $postId): ?string
     {

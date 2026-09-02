@@ -39,8 +39,15 @@ final readonly class ListQuery
         public ?int $menuOrder = null,
         public string $orderBy = 'date',
         public string $order = 'DESC',
+        /** @var array<string, list<int>> taxonomy => term ids the rows must carry one of */
+        public array $terms = [],
+        /** @var array<string, list<int>> taxonomy => term ids the rows must not carry */
+        public array $termsExclude = [],
     ) {
     }
+
+    /** The list parameters that name terms, by the taxonomy they filter on. */
+    private const TERM_ARGS = ['categories' => 'category', 'tags' => 'post_tag', 'wp_pattern_category' => 'wp_pattern_category'];
 
     /** The list parameters read from the request. */
     public static function fromRequest(Request $request): self
@@ -60,7 +67,22 @@ final readonly class ListQuery
             menuOrder: preg_match('/^-?\d+$/', $menuOrder) === 1 ? (int) $menuOrder : null,
             orderBy: (string) $request->query('orderby', 'date'),
             order: strtoupper((string) $request->query('order', 'desc')) === 'ASC' ? 'ASC' : 'DESC',
+            terms: self::termFilters($request, ''),
+            termsExclude: self::termFilters($request, '_exclude'),
         );
+    }
+
+    /** @return array<string, list<int>> */
+    private static function termFilters(Request $request, string $suffix): array
+    {
+        $filters = [];
+        foreach (self::TERM_ARGS as $arg => $taxonomy) {
+            $ids = self::ids((string) $request->query($arg . $suffix, ''));
+            if ($ids !== []) {
+                $filters[$taxonomy] = $ids;
+            }
+        }
+        return $filters;
     }
 
     /**

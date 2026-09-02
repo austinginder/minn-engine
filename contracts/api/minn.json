@@ -27774,7 +27774,7 @@
             "namespace": "Minn\\Content",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Content/PostWriter.php",
-            "lines": 315,
+            "lines": 318,
             "doc": "Every write to the posts table and its satellites: rows, meta, term\nlinks with the published counts the reference trusts on read, sticky\nand format side effects, and revision snapshots.",
             "implements": [],
             "extends": null,
@@ -28271,7 +28271,7 @@
                         }
                     ],
                     "line": 219,
-                    "end": 238
+                    "end": 241
                 },
                 {
                     "routes": [],
@@ -28279,7 +28279,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "applyTerms(int $id, array $body): void",
-                    "doc": "Assigns categories and tags from a write body, replacing existing links.",
+                    "doc": "Assigns categories, tags, and pattern categories from a write body, replacing existing links.",
                     "shapes": [],
                     "params": [
                         {
@@ -28297,8 +28297,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 241,
-                    "end": 248
+                    "line": 244,
+                    "end": 251
                 },
                 {
                     "routes": [],
@@ -28324,8 +28324,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 256,
-                    "end": 299
+                    "line": 259,
+                    "end": 302
                 },
                 {
                     "routes": [],
@@ -28360,8 +28360,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 303,
-                    "end": 308
+                    "line": 306,
+                    "end": 311
                 },
                 {
                     "routes": [],
@@ -28387,8 +28387,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 311,
-                    "end": 314
+                    "line": 314,
+                    "end": 317
                 },
                 {
                     "routes": [],
@@ -28407,8 +28407,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 317,
-                    "end": 328
+                    "line": 320,
+                    "end": 331
                 },
                 {
                     "routes": [],
@@ -28440,7 +28440,7 @@
             "namespace": "Minn\\Content",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Content/Posts.php",
-            "lines": 401,
+            "lines": 391,
             "doc": "Reads over the posts table. A single post comes back as a PostRecord and\na listing as a Page of them; rendering and escaping happen elsewhere.",
             "implements": [],
             "extends": null,
@@ -28472,6 +28472,7 @@
                 "Minn\\Front\\Renderer",
                 "Minn\\Front\\Resolver",
                 "Minn\\Media\\Writer",
+                "Minn\\Rest\\BlocksController",
                 "Minn\\Rest\\CommentObject",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\MediaController",
@@ -29087,26 +29088,6 @@
                 },
                 {
                     "routes": [],
-                    "name": "blocks",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "blocks(string $status): array",
-                    "doc": "Reusable blocks (wp_block rows) in one status, newest first, capped at 100.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "status",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 392,
-                    "end": 399
-                },
-                {
-                    "routes": [],
                     "name": "firstCategorySlug",
                     "static": false,
                     "visibility": "public",
@@ -29122,8 +29103,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 402,
-                    "end": 413
+                    "line": 392,
+                    "end": 403
                 },
                 {
                     "routes": [],
@@ -37400,7 +37381,7 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/Permalinks.php",
-            "lines": 234,
+            "lines": 241,
             "doc": "Builds public URLs from the site's permalink structure. With an empty\nstructure every link is a query-string form (?p=, ?cat=); with a\nstructure, published and private posts get their pretty form and every\nother status keeps the query form, which is what the reference emits.",
             "implements": [],
             "extends": null,
@@ -37519,11 +37500,18 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 25,
-                "end": 35
+                "line": 28,
+                "end": 38
             },
             "cases": [],
-            "constants": [],
+            "constants": [
+                {
+                    "name": "QUERY_ONLY",
+                    "value": "array (   0 => 'wp_pattern_category',   1 => 'wp_theme',   2 => 'wp_template_part_area', )",
+                    "doc": "Core taxonomies with no front-end archive: their terms link by query only.",
+                    "visibility": "private"
+                }
+            ],
             "properties": [
                 {
                     "name": "posts",
@@ -37607,8 +37595,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 38,
-                    "end": 43
+                    "line": 41,
+                    "end": 46
                 },
                 {
                     "routes": [],
@@ -37627,8 +37615,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 46,
-                    "end": 51
+                    "line": 49,
+                    "end": 54
                 },
                 {
                     "routes": [],
@@ -37647,8 +37635,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 54,
-                    "end": 59
+                    "line": 57,
+                    "end": 62
                 },
                 {
                     "routes": [],
@@ -37667,8 +37655,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 62,
-                    "end": 73
+                    "line": 65,
+                    "end": 76
                 },
                 {
                     "routes": [],
@@ -37679,8 +37667,8 @@
                     "doc": "Whether the site uses a permalink structure.",
                     "shapes": [],
                     "params": [],
-                    "line": 76,
-                    "end": 79
+                    "line": 79,
+                    "end": 82
                 },
                 {
                     "routes": [],
@@ -37699,8 +37687,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 82,
-                    "end": 85
+                    "line": 85,
+                    "end": 88
                 },
                 {
                     "routes": [],
@@ -37719,8 +37707,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 88,
-                    "end": 107
+                    "line": 91,
+                    "end": 110
                 },
                 {
                     "routes": [],
@@ -37739,8 +37727,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 110,
-                    "end": 116
+                    "line": 113,
+                    "end": 119
                 },
                 {
                     "routes": [],
@@ -37759,8 +37747,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 119,
-                    "end": 125
+                    "line": 122,
+                    "end": 128
                 },
                 {
                     "routes": [],
@@ -37779,8 +37767,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 132,
-                    "end": 143
+                    "line": 135,
+                    "end": 146
                 },
                 {
                     "routes": [],
@@ -37799,8 +37787,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 146,
-                    "end": 160
+                    "line": 149,
+                    "end": 167
                 },
                 {
                     "routes": [],
@@ -37819,8 +37807,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 163,
-                    "end": 168
+                    "line": 170,
+                    "end": 175
                 },
                 {
                     "routes": [],
@@ -37853,8 +37841,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 171,
-                    "end": 184
+                    "line": 178,
+                    "end": 191
                 },
                 {
                     "routes": [],
@@ -37873,8 +37861,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 187,
-                    "end": 190
+                    "line": 194,
+                    "end": 197
                 },
                 {
                     "routes": [],
@@ -37900,8 +37888,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 193,
-                    "end": 196
+                    "line": 200,
+                    "end": 203
                 },
                 {
                     "routes": [],
@@ -37912,8 +37900,8 @@
                     "doc": "A regex over the structure's tokens, so an incoming path can be\nmatched back to the post it names. Null when the structure has no\nidentifying token.",
                     "shapes": [],
                     "params": [],
-                    "line": 203,
-                    "end": 222
+                    "line": 210,
+                    "end": 229
                 },
                 {
                     "routes": [],
@@ -37932,8 +37920,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 224,
-                    "end": 227
+                    "line": 231,
+                    "end": 234
                 },
                 {
                     "routes": [],
@@ -37952,8 +37940,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 229,
-                    "end": 255
+                    "line": 236,
+                    "end": 262
                 }
             ]
         },
@@ -43571,6 +43559,7 @@
                 "Minn\\Http\\Router",
                 "Minn\\Login\\LoginController",
                 "Minn\\Rest\\ApplicationPasswordsController",
+                "Minn\\Rest\\BlocksController",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\DeclaredPostsController",
                 "Minn\\Rest\\Embed",
@@ -44048,6 +44037,7 @@
                 "Minn\\Media\\Upload",
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\ApplicationPasswordsController",
+                "Minn\\Rest\\BlocksController",
                 "Minn\\Rest\\Caller",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\Context",
@@ -44495,6 +44485,7 @@
                 "Minn\\Login\\LoginController",
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\ApplicationPasswordsController",
+                "Minn\\Rest\\BlocksController",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\DeclaredPostsController",
                 "Minn\\Rest\\Embed",
@@ -44807,6 +44798,7 @@
                 "Minn\\Http\\Router",
                 "Minn\\Login\\LoginController",
                 "Minn\\Rest\\ApplicationPasswordsController",
+                "Minn\\Rest\\BlocksController",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\DeclaredPostsController",
                 "Minn\\Rest\\GlobalStylesController",
@@ -50196,6 +50188,7 @@
                 "Minn\\Http\\Router",
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\ApplicationPasswordsController",
+                "Minn\\Rest\\BlocksController",
                 "Minn\\Rest\\Caller",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\DeclaredPostsController",
@@ -50530,6 +50523,7 @@
                 "Minn\\Http\\Router",
                 "Minn\\RestError",
                 "Minn\\Rest\\ApplicationPasswordsController",
+                "Minn\\Rest\\BlocksController",
                 "Minn\\Rest\\Caller",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\DeclaredPostsController",
@@ -51371,6 +51365,260 @@
             ]
         },
         {
+            "name": "Minn\\Rest\\BlocksController",
+            "short": "BlocksController",
+            "namespace": "Minn\\Rest",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Rest/BlocksController.php",
+            "lines": 69,
+            "doc": "wp/v2/blocks: synced patterns and reusable blocks, stored as wp_block\nposts. The reading and writing is the posts machinery with the post\ntype's own capabilities; what is this type's alone is the reading gate:\nwithout edit_posts the list is empty and a single block is refused,\npublished or not.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Content\\Posts",
+                "Minn\\Http\\Method",
+                "Minn\\Http\\Request",
+                "Minn\\Http\\Response",
+                "Minn\\Http\\Route",
+                "Minn\\RestError",
+                "Minn\\Rest\\Caller",
+                "Minn\\Rest\\Context",
+                "Minn\\Rest\\Fields",
+                "Minn\\Rest\\PostsController",
+                "Minn\\Rest\\PostsWriteController",
+                "Minn\\Rest\\Reply"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\Api"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Rest\\PostsController $reads, Minn\\Rest\\PostsWriteController $writes, Minn\\Content\\Posts $posts, Minn\\Rest\\Caller $caller)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "reads",
+                        "type": "Minn\\Rest\\PostsController",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "writes",
+                        "type": "Minn\\Rest\\PostsWriteController",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "posts",
+                        "type": "Minn\\Content\\Posts",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "caller",
+                        "type": "Minn\\Rest\\Caller",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 26,
+                "end": 32
+            },
+            "cases": [],
+            "constants": [
+                {
+                    "name": "TYPE",
+                    "value": "'wp_block'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "BASE",
+                    "value": "'blocks'",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "reads",
+                    "type": "Minn\\Rest\\PostsController",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "writes",
+                    "type": "Minn\\Rest\\PostsWriteController",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "posts",
+                    "type": "Minn\\Content\\Posts",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "caller",
+                    "type": "Minn\\Rest\\Caller",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [
+                        "GET /wp/v2/blocks"
+                    ],
+                    "name": "list",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "list(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "The blocks the caller may edit; an empty list for anyone else.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 36,
+                    "end": 42
+                },
+                {
+                    "routes": [
+                        "GET /wp/v2/blocks/{id:\\d+}"
+                    ],
+                    "name": "single",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "single(Minn\\Http\\Request $request, string $id): Minn\\Http\\Response",
+                    "doc": "One block. Editing context is the posts machinery's own gate\n(rest_forbidden_context); a view is refused to anyone who cannot edit\nposts, and a trashed or unknown block is not found rather than refused.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 50,
+                    "end": 65
+                },
+                {
+                    "routes": [
+                        "POST /wp/v2/blocks"
+                    ],
+                    "name": "create",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "create(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "Creates a block.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 69,
+                    "end": 72
+                },
+                {
+                    "routes": [
+                        "POST /wp/v2/blocks/{id:\\d+}",
+                        "PUT /wp/v2/blocks/{id:\\d+}",
+                        "PATCH /wp/v2/blocks/{id:\\d+}"
+                    ],
+                    "name": "update",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "update(Minn\\Http\\Request $request, string $id): Minn\\Http\\Response",
+                    "doc": "Updates a block.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 78,
+                    "end": 81
+                },
+                {
+                    "routes": [
+                        "DELETE /wp/v2/blocks/{id:\\d+}"
+                    ],
+                    "name": "delete",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "delete(Minn\\Http\\Request $request, string $id): Minn\\Http\\Response",
+                    "doc": "Trashes or deletes a block.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 85,
+                    "end": 88
+                }
+            ]
+        },
+        {
             "name": "Minn\\Rest\\Caller",
             "short": "Caller",
             "namespace": "Minn\\Rest",
@@ -51405,6 +51653,7 @@
                 "Minn\\Admin\\V1Controller",
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\ApplicationPasswordsController",
+                "Minn\\Rest\\BlocksController",
                 "Minn\\Rest\\CommentObject",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\GlobalStylesController",
@@ -52262,6 +52511,7 @@
                 "Minn\\Http\\Request"
             ],
             "usedBy": [
+                "Minn\\Rest\\BlocksController",
                 "Minn\\Rest\\CommentObject",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\Embed",
@@ -52275,6 +52525,7 @@
                 "Minn\\Rest\\RevisionsController",
                 "Minn\\Rest\\TemplateObject",
                 "Minn\\Rest\\TemplatesController",
+                "Minn\\Rest\\TermsController",
                 "Minn\\Rest\\UsersController"
             ],
             "constructor": null,
@@ -53003,6 +53254,7 @@
             "usedBy": [
                 "Minn\\Admin\\SessionsController",
                 "Minn\\Rest\\ApplicationPasswordsController",
+                "Minn\\Rest\\BlocksController",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\Embed",
                 "Minn\\Rest\\GlobalStylesController",
@@ -53191,7 +53443,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/GlobalStylesController.php",
-            "lines": 140,
+            "lines": 141,
             "doc": "wp/v2/global-styles: the site editor's saved styles (one post per\ntheme, read and written by id, with its revisions) and the active\ntheme's own styles and variations. There is no collection, no create\nand no delete; the post is made on first use, as on the reference.",
             "implements": [],
             "extends": null,
@@ -53467,7 +53719,7 @@
                         }
                     ],
                     "line": 84,
-                    "end": 95
+                    "end": 96
                 },
                 {
                     "routes": [
@@ -53502,8 +53754,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 99,
-                    "end": 107
+                    "line": 100,
+                    "end": 108
                 },
                 {
                     "routes": [],
@@ -53522,8 +53774,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 109,
-                    "end": 112
+                    "line": 110,
+                    "end": 113
                 },
                 {
                     "routes": [],
@@ -53542,8 +53794,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 115,
-                    "end": 123
+                    "line": 116,
+                    "end": 124
                 },
                 {
                     "routes": [],
@@ -53562,8 +53814,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 126,
-                    "end": 136
+                    "line": 127,
+                    "end": 137
                 },
                 {
                     "routes": [],
@@ -53582,8 +53834,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 139,
-                    "end": 145
+                    "line": 140,
+                    "end": 146
                 },
                 {
                     "routes": [],
@@ -53609,8 +53861,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 148,
-                    "end": 161
+                    "line": 149,
+                    "end": 162
                 }
             ]
         },
@@ -54011,7 +54263,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/ListQuery.php",
-            "lines": 148,
+            "lines": 170,
             "doc": "The collection parameters a wp/v2 list accepts, read once from the\nrequest into typed fields: the page, the id lists, the slugs, the search\nwords, and the ordering. clauses() turns the narrowing ones into the SQL\nfragments and parameters a controller appends to its own visibility\nclause, so posts, pages, and media build their lists the same way.",
             "implements": [],
             "extends": null,
@@ -54024,7 +54276,7 @@
                 "Minn\\Rest\\PostsController"
             ],
             "constructor": {
-                "signature": "__construct(int $page = 1, int $perPage = 10, array $include = array ( ), array $exclude = array ( ), array $author = array ( ), array $authorExclude = array ( ), array $parent = array ( ), array $parentExclude = array ( ), array $slugs = array ( ), array $words = array ( ), ?int $menuOrder = NULL, string $orderBy = 'date', string $order = 'DESC')",
+                "signature": "__construct(int $page = 1, int $perPage = 10, array $include = array ( ), array $exclude = array ( ), array $author = array ( ), array $authorExclude = array ( ), array $parent = array ( ), array $parentExclude = array ( ), array $slugs = array ( ), array $words = array ( ), ?int $menuOrder = NULL, string $orderBy = 'date', string $order = 'DESC', array $terms = array ( ), array $termsExclude = array ( ))",
                 "doc": "",
                 "shapes": [
                     "@param list<int> $include",
@@ -54127,14 +54379,35 @@
                         "shape": "",
                         "default": "'DESC'",
                         "doc": ""
+                    },
+                    {
+                        "name": "terms",
+                        "type": "array",
+                        "shape": "",
+                        "default": "array ( )",
+                        "doc": ""
+                    },
+                    {
+                        "name": "termsExclude",
+                        "type": "array",
+                        "shape": "",
+                        "default": "array ( )",
+                        "doc": ""
                     }
                 ],
                 "visibility": "public",
                 "line": 28,
-                "end": 43
+                "end": 47
             },
             "cases": [],
-            "constants": [],
+            "constants": [
+                {
+                    "name": "TERM_ARGS",
+                    "value": "array (   'categories' => 'category',   'tags' => 'post_tag',   'wp_pattern_category' => 'wp_pattern_category', )",
+                    "doc": "The list parameters that name terms, by the taxonomy they filter on.",
+                    "visibility": "private"
+                }
+            ],
             "properties": [
                 {
                     "name": "page",
@@ -54252,6 +54525,24 @@
                     "doc": "",
                     "visibility": "public",
                     "promoted": true
+                },
+                {
+                    "name": "terms",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "termsExclude",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
                 }
             ],
             "methods": [
@@ -54272,8 +54563,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 46,
-                    "end": 64
+                    "line": 53,
+                    "end": 73
                 },
                 {
                     "routes": [],
@@ -54286,8 +54577,8 @@
                         "@return array{string, list<mixed>}"
                     ],
                     "params": [],
-                    "line": 73,
-                    "end": 97
+                    "line": 95,
+                    "end": 119
                 },
                 {
                     "routes": [],
@@ -54298,8 +54589,8 @@
                     "doc": "Whether a search narrows the list.",
                     "shapes": [],
                     "params": [],
-                    "line": 100,
-                    "end": 103
+                    "line": 122,
+                    "end": 125
                 },
                 {
                     "routes": [],
@@ -54310,8 +54601,8 @@
                     "doc": "The first row of the requested page.",
                     "shapes": [],
                     "params": [],
-                    "line": 106,
-                    "end": 109
+                    "line": 128,
+                    "end": 131
                 },
                 {
                     "routes": [],
@@ -54330,8 +54621,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 112,
-                    "end": 115
+                    "line": 134,
+                    "end": 137
                 },
                 {
                     "routes": [],
@@ -54350,8 +54641,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 118,
-                    "end": 121
+                    "line": 140,
+                    "end": 143
                 },
                 {
                     "routes": [],
@@ -54372,8 +54663,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 129,
-                    "end": 132
+                    "line": 151,
+                    "end": 154
                 },
                 {
                     "routes": [],
@@ -54394,8 +54685,37 @@
                             "doc": ""
                         }
                     ],
-                    "line": 140,
-                    "end": 150
+                    "line": 162,
+                    "end": 172
+                },
+                {
+                    "routes": [],
+                    "name": "termFilters",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "termFilters(Minn\\Http\\Request $request, string $suffix): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array<string, list<int>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "suffix",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 76,
+                    "end": 86
                 },
                 {
                     "routes": [],
@@ -54416,8 +54736,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 153,
-                    "end": 156
+                    "line": 175,
+                    "end": 178
                 },
                 {
                     "routes": [],
@@ -54438,8 +54758,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 159,
-                    "end": 162
+                    "line": 181,
+                    "end": 184
                 }
             ]
         },
@@ -56635,7 +56955,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/PostObject.php",
-            "lines": 394,
+            "lines": 476,
             "doc": "Builds the wp/v2 post and page objects in the reference's shape: the\nview context, the edit context (raw+rendered dual fields, editor-only\nfields, and cap-gated wp:action-* links), and their _links blocks.",
             "implements": [],
             "extends": null,
@@ -56715,8 +57035,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 30,
-                "end": 38
+                "line": 32,
+                "end": 40
             },
             "cases": [],
             "constants": [
@@ -56724,6 +57044,12 @@
                     "name": "NAVIGATION",
                     "value": "'wp_navigation'",
                     "doc": "The one post type whose REST shape is not post-shaped.",
+                    "visibility": "private"
+                },
+                {
+                    "name": "BLOCK",
+                    "value": "'wp_block'",
+                    "doc": "The other: a pattern carries its content raw, its category, and its sync status.",
                     "visibility": "private"
                 }
             ],
@@ -56801,8 +57127,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 41,
-                    "end": 49
+                    "line": 43,
+                    "end": 52
                 },
                 {
                     "routes": [],
@@ -56821,8 +57147,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 82,
-                    "end": 110
+                    "line": 116,
+                    "end": 147
                 },
                 {
                     "routes": [],
@@ -56841,8 +57167,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 192,
-                    "end": 230
+                    "line": 229,
+                    "end": 264
                 },
                 {
                     "routes": [],
@@ -56868,8 +57194,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 237,
-                    "end": 279
+                    "line": 286,
+                    "end": 339
                 },
                 {
                     "routes": [],
@@ -56888,8 +57214,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 286,
-                    "end": 301
+                    "line": 346,
+                    "end": 361
                 },
                 {
                     "routes": [],
@@ -56915,8 +57241,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 304,
-                    "end": 314
+                    "line": 364,
+                    "end": 374
                 },
                 {
                     "routes": [],
@@ -56942,8 +57268,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 317,
-                    "end": 333
+                    "line": 377,
+                    "end": 393
                 },
                 {
                     "routes": [],
@@ -56969,8 +57295,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 336,
-                    "end": 390
+                    "line": 396,
+                    "end": 458
                 },
                 {
                     "routes": [],
@@ -56989,8 +57315,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 414,
-                    "end": 417
+                    "line": 496,
+                    "end": 499
                 },
                 {
                     "routes": [],
@@ -57009,8 +57335,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 57,
-                    "end": 79
+                    "line": 60,
+                    "end": 82
+                },
+                {
+                    "routes": [],
+                    "name": "blockView",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "blockView(Minn\\Content\\PostRecord $p): array",
+                    "doc": "A pattern (wp_block) is read by editors only, so its title and\ncontent come raw even in view context: no rendered title, no rendered\ncontent. It carries an excerpt, the footnotes meta, its pattern\ncategories, and the sync status core registers beside meta.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "p",
+                            "type": "Minn\\Content\\PostRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 90,
+                    "end": 113
                 },
                 {
                     "routes": [],
@@ -57031,8 +57377,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 118,
-                    "end": 125
+                    "line": 155,
+                    "end": 162
                 },
                 {
                     "routes": [],
@@ -57061,8 +57407,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 134,
-                    "end": 155
+                    "line": 171,
+                    "end": 192
                 },
                 {
                     "routes": [],
@@ -57098,8 +57444,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 164,
-                    "end": 183
+                    "line": 201,
+                    "end": 220
                 },
                 {
                     "routes": [],
@@ -57120,8 +57466,35 @@
                             "doc": ""
                         }
                     ],
-                    "line": 186,
-                    "end": 189
+                    "line": 223,
+                    "end": 226
+                },
+                {
+                    "routes": [],
+                    "name": "termLinks",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "termLinks(string $type, int $id): ?array",
+                    "doc": "The taxonomy links a type carries: posts their categories and tags, patterns their pattern categories, pages and menus none.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 267,
+                    "end": 279
                 },
                 {
                     "routes": [],
@@ -57149,8 +57522,35 @@
                             "doc": ""
                         }
                     ],
-                    "line": 399,
-                    "end": 411
+                    "line": 467,
+                    "end": 479
+                },
+                {
+                    "routes": [],
+                    "name": "gmt",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "gmt(string $local, string $gmt): string",
+                    "doc": "A gmt timestamp for the wire: the stored one, or, when it is the\ndraft zero, the local time converted through the site's offset, the\nway the reference derives it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "local",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "gmt",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 486,
+                    "end": 493
                 }
             ]
         },
@@ -57160,7 +57560,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/PostsController.php",
-            "lines": 167,
+            "lines": 174,
             "doc": "wp/v2 posts and pages, read side.",
             "implements": [],
             "extends": null,
@@ -57183,6 +57583,7 @@
             ],
             "usedBy": [
                 "Minn\\Rest\\Api",
+                "Minn\\Rest\\BlocksController",
                 "Minn\\Rest\\DeclaredPostsController",
                 "Minn\\Rest\\NavigationController"
             ],
@@ -57326,7 +57727,7 @@
                         }
                     ],
                     "line": 47,
-                    "end": 83
+                    "end": 90
                 },
                 {
                     "routes": [
@@ -57361,8 +57762,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 154,
-                    "end": 157
+                    "line": 161,
+                    "end": 164
                 },
                 {
                     "routes": [],
@@ -57395,8 +57796,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 160,
-                    "end": 183
+                    "line": 167,
+                    "end": 190
                 },
                 {
                     "routes": [],
@@ -57431,8 +57832,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 92,
-                    "end": 113
+                    "line": 99,
+                    "end": 120
                 },
                 {
                     "routes": [],
@@ -57475,8 +57876,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 122,
-                    "end": 134
+                    "line": 129,
+                    "end": 141
                 },
                 {
                     "routes": [],
@@ -57495,8 +57896,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 136,
-                    "end": 150
+                    "line": 143,
+                    "end": 157
                 }
             ]
         },
@@ -57531,6 +57932,7 @@
             ],
             "usedBy": [
                 "Minn\\Rest\\Api",
+                "Minn\\Rest\\BlocksController",
                 "Minn\\Rest\\DeclaredPostsController",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\NavigationController",
@@ -58080,6 +58482,7 @@
                 "Minn\\Admin\\V1Controller",
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\ApplicationPasswordsController",
+                "Minn\\Rest\\BlocksController",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\IndexController",
@@ -58379,8 +58782,8 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/RevisionsController.php",
-            "lines": 130,
-            "doc": "wp/v2 revisions and autosaves under posts and pages, plus wp/v2/blocks.",
+            "lines": 142,
+            "doc": "wp/v2 revisions and autosaves under posts, pages, and blocks.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -58488,7 +58891,7 @@
             "methods": [
                 {
                     "routes": [
-                        "GET /wp/v2/{base:posts|pages}/{id:\\d+}/revisions"
+                        "GET /wp/v2/{base:posts|pages|blocks}/{id:\\d+}/revisions"
                     ],
                     "name": "revisions",
                     "static": false,
@@ -58524,7 +58927,50 @@
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/{base:posts|pages}/{id:\\d+}/autosaves"
+                        "GET /wp/v2/{base:posts|pages|blocks}/{id:\\d+}/revisions/{revisionId:\\d+}"
+                    ],
+                    "name": "revision",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "revision(Minn\\Http\\Request $request, string $base, string $id, string $revisionId): Minn\\Http\\Response",
+                    "doc": "One revision of a post, page, or block.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "base",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "revisionId",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 42,
+                    "end": 52
+                },
+                {
+                    "routes": [
+                        "GET /wp/v2/{base:posts|pages|blocks}/{id:\\d+}/autosaves"
                     ],
                     "name": "autosaves",
                     "static": false,
@@ -58555,12 +59001,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 42,
-                    "end": 52
+                    "line": 56,
+                    "end": 66
                 },
                 {
                     "routes": [
-                        "POST /wp/v2/{base:posts|pages}/{id:\\d+}/autosaves"
+                        "POST /wp/v2/{base:posts|pages|blocks}/{id:\\d+}/autosaves"
                     ],
                     "name": "createAutosave",
                     "static": false,
@@ -58591,30 +59037,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 56,
-                    "end": 68
-                },
-                {
-                    "routes": [
-                        "GET /wp/v2/blocks"
-                    ],
-                    "name": "blocks",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "blocks(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "Reusable blocks and synced patterns (wp_block rows).",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 77,
-                    "end": 95
+                    "line": 70,
+                    "end": 82
                 },
                 {
                     "routes": [],
@@ -58640,8 +59064,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 98,
-                    "end": 134
+                    "line": 90,
+                    "end": 121
                 },
                 {
                     "routes": [],
@@ -58660,8 +59084,62 @@
                             "doc": ""
                         }
                     ],
-                    "line": 70,
-                    "end": 73
+                    "line": 84,
+                    "end": 87
+                },
+                {
+                    "routes": [],
+                    "name": "withPreviewLink",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "withPreviewLink(array $object, int $parent): array",
+                    "doc": "The autosave POST reply names where to preview the draft, just before its links; a revision never carries it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "object",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "parent",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 124,
+                    "end": 133
+                },
+                {
+                    "routes": [],
+                    "name": "meta",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "meta(int $id, string $parentType): array",
+                    "doc": "A revision's meta: the footnotes, and for a pattern the sync status core revisions too.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "parentType",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 136,
+                    "end": 145
                 },
                 {
                     "routes": [],
@@ -58687,8 +59165,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 137,
-                    "end": 149
+                    "line": 148,
+                    "end": 161
                 }
             ]
         },
@@ -62297,7 +62775,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/TermObject.php",
-            "lines": 75,
+            "lines": 76,
             "doc": "The wp/v2 category and tag objects.",
             "implements": [],
             "extends": null,
@@ -62348,14 +62826,14 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 19,
-                "end": 25
+                "line": 20,
+                "end": 26
             },
             "cases": [],
             "constants": [
                 {
                     "name": "TAXONOMIES",
-                    "value": "array (   'categories' =>    array (     'taxonomy' => 'category',     'has_parent' => true,     'post_arg' => 'categories',   ),   'tags' =>    array (     'taxonomy' => 'post_tag',     'has_parent' => false,     'post_arg' => 'tags',   ), )",
+                    "value": "array (   'categories' =>    array (     'taxonomy' => 'category',     'has_parent' => true,     'post_arg' => 'categories',     'post_base' => 'posts',   ),   'tags' =>    array (     'taxonomy' => 'post_tag',     'has_parent' => false,     'post_arg' => 'tags',     'post_base' => 'posts',   ),   'wp_pattern_category' =>    array (     'taxonomy' => 'wp_pattern_category',     'has_parent' => false,     'post_arg' => 'wp_pattern_category',     'post_base' => 'blocks',   ), )",
                     "doc": "",
                     "visibility": "private"
                 }
@@ -62408,8 +62886,8 @@
                     "doc": "The REST URL builder.",
                     "shapes": [],
                     "params": [],
-                    "line": 28,
-                    "end": 31
+                    "line": 29,
+                    "end": 32
                 },
                 {
                     "routes": [],
@@ -62419,7 +62897,7 @@
                     "signature": "config(string $restBase): array",
                     "doc": "The taxonomy behind a rest_base.",
                     "shapes": [
-                        "@return array{taxonomy: string, has_parent: bool, post_arg: string}"
+                        "@return array{taxonomy: string, has_parent: bool, post_arg: string, post_base: string}"
                     ],
                     "params": [
                         {
@@ -62430,8 +62908,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 38,
-                    "end": 41
+                    "line": 39,
+                    "end": 42
                 },
                 {
                     "routes": [],
@@ -62457,8 +62935,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 44,
-                    "end": 74
+                    "line": 45,
+                    "end": 75
                 },
                 {
                     "routes": [],
@@ -62484,8 +62962,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 77,
-                    "end": 85
+                    "line": 78,
+                    "end": 86
                 }
             ]
         },
@@ -62495,8 +62973,8 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/TermsController.php",
-            "lines": 195,
-            "doc": "wp/v2 categories and tags: list, single, and the create/update/delete the taxonomy admin drives.",
+            "lines": 198,
+            "doc": "wp/v2 categories, tags, and pattern categories: list, single, and the create/update/delete the taxonomy admin drives.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -62510,6 +62988,7 @@
                 "Minn\\Http\\Route",
                 "Minn\\RestError",
                 "Minn\\Rest\\Caller",
+                "Minn\\Rest\\Context",
                 "Minn\\Rest\\Fields",
                 "Minn\\Rest\\Reply",
                 "Minn\\Rest\\TermObject",
@@ -62622,7 +63101,7 @@
             "methods": [
                 {
                     "routes": [
-                        "GET /wp/v2/{base:categories|tags}"
+                        "GET /wp/v2/{base:categories|tags|wp_pattern_category}"
                     ],
                     "name": "list",
                     "static": false,
@@ -62651,7 +63130,7 @@
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/{base:categories|tags}/{id:\\d+}"
+                        "GET /wp/v2/{base:categories|tags|wp_pattern_category}/{id:\\d+}"
                     ],
                     "name": "single",
                     "static": false,
@@ -62683,17 +63162,17 @@
                         }
                     ],
                     "line": 98,
-                    "end": 112
+                    "end": 115
                 },
                 {
                     "routes": [
-                        "POST /wp/v2/{base:categories|tags}"
+                        "POST /wp/v2/{base:categories|tags|wp_pattern_category}"
                     ],
                     "name": "create",
                     "static": false,
                     "visibility": "public",
                     "signature": "create(Minn\\Http\\Request $request, string $base): Minn\\Http\\Response",
-                    "doc": "Tags are open to edit_posts holders; categories need manage_categories.",
+                    "doc": "Tags and pattern categories are open to edit_posts holders; categories need manage_categories.",
                     "shapes": [],
                     "params": [
                         {
@@ -62711,14 +63190,14 @@
                             "doc": ""
                         }
                     ],
-                    "line": 116,
-                    "end": 152
+                    "line": 119,
+                    "end": 155
                 },
                 {
                     "routes": [
-                        "POST /wp/v2/{base:categories|tags}/{id:\\d+}",
-                        "PUT /wp/v2/{base:categories|tags}/{id:\\d+}",
-                        "PATCH /wp/v2/{base:categories|tags}/{id:\\d+}"
+                        "POST /wp/v2/{base:categories|tags|wp_pattern_category}/{id:\\d+}",
+                        "PUT /wp/v2/{base:categories|tags|wp_pattern_category}/{id:\\d+}",
+                        "PATCH /wp/v2/{base:categories|tags|wp_pattern_category}/{id:\\d+}"
                     ],
                     "name": "update",
                     "static": false,
@@ -62749,12 +63228,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 158,
-                    "end": 187
+                    "line": 161,
+                    "end": 190
                 },
                 {
                     "routes": [
-                        "DELETE /wp/v2/{base:categories|tags}/{id:\\d+}"
+                        "DELETE /wp/v2/{base:categories|tags|wp_pattern_category}/{id:\\d+}"
                     ],
                     "name": "delete",
                     "static": false,
@@ -62785,8 +63264,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 191,
-                    "end": 212
+                    "line": 194,
+                    "end": 215
                 }
             ]
         },
