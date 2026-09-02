@@ -128,7 +128,7 @@ named in the minn_active_extensions option. "shortcodes" and "blocks"
 are the content tokens preflight treats as provided instead of missing.
 "types" are extra post types the engine should serve on wp/v2.
 
-Used by: `Minn\Admin\Packages`, `Minn\Cli\Installer`, `Minn\Content\PluginState`, `Minn\Extension\Loader`, `Minn\Rest\PluginsController`
+Used by: `Minn\Admin\Packages`, `Minn\Cli\Preflight`, `Minn\Content\PluginState`, `Minn\Extension\Loader`, `Minn\Rest\PluginsController`
 
 ```php
 __construct(string $slug, string $dir, string $name, string $version, string $license, array $replaces, array $autoload, string $extension, string $covers = '', array $shortcodes = array ( ), array $blocks = array ( ), array $types = array ( ))

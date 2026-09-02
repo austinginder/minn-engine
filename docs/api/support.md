@@ -415,7 +415,7 @@ here executes the blob; each reader scans for the one shape it needs.
 
 - const `INVALID` = `'' . "\0" . 'minn:invalid' . "\0" . ''` — Returned by decode() when the blob is not a serialized value the reader accepts.
 
-Used by: `Minn\Admin\App`, `Minn\Admin\Appearance`, `Minn\Admin\CoreStatus`, `Minn\Admin\Dashboard`, `Minn\Admin\HiddenIntegrations`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\SiteController`, `Minn\Admin\Updates`, `Minn\Auth\ApplicationPasswords`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Cli\Installer`, `Minn\Cli\OptionCommand`, `Minn\Content\Inventory`, `Minn\Content\Menus`, `Minn\Content\PluginState`, `Minn\Content\PostWriter`, `Minn\Engine`, `Minn\Extension\Loader`, `Minn\Mail\MailSettings`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Runtime\Options`, `Minn\Runtime\Recovery`, `Minn\Support\SearchReplace`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Admin\App`, `Minn\Admin\Appearance`, `Minn\Admin\CoreStatus`, `Minn\Admin\Dashboard`, `Minn\Admin\HiddenIntegrations`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\SiteController`, `Minn\Admin\Updates`, `Minn\Auth\ApplicationPasswords`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Cli\OptionCommand`, `Minn\Cli\Preflight`, `Minn\Content\Inventory`, `Minn\Content\Menus`, `Minn\Content\PluginState`, `Minn\Content\PostWriter`, `Minn\Engine`, `Minn\Extension\Loader`, `Minn\Mail\MailSettings`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Runtime\Options`, `Minn\Runtime\Recovery`, `Minn\Support\SearchReplace`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`
 
 ### static `stringList(?string $blob): array`
 

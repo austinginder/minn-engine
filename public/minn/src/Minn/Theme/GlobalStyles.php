@@ -97,16 +97,16 @@ final readonly class GlobalStyles
         // Core's own theme.json sits under the theme's: the button element's inherit-everything
         // defaults print for every theme, each key replaceable by the theme.
         $styles = $this->styles();
-        $presets = $this->presets($settings);
+        $presets = StylePresets::presets($settings);
 
-        $out = ':root{' . $this->presetProperties($presets) . '}';
+        $out = ':root{' . StylePresets::presetProperties($presets) . '}';
         $out .= '.wp-block-button{--wp--preset--dimension--25: 25%;--wp--preset--dimension--50: 50%;--wp--preset--dimension--75: 75%;--wp--preset--dimension--100: 100%;}';
         $layout = (array) ($settings['layout'] ?? []);
         $out .= ':root { --wp--style--global--content-size: ' . ($layout['contentSize'] ?? '620px') . ';--wp--style--global--wide-size: ' . ($layout['wideSize'] ?? '1000px') . '; }';
         $out .= self::structuralRules((string) Styles::value((string) ($styles['spacing']['blockGap'] ?? '24px')), (bool) ($this->theme->json()['settings']['useRootPaddingAwareAlignments'] ?? false));
         $out .= $this->rootStyles($styles);
         $out .= $this->elementStyles((array) ($styles['elements'] ?? []), '');
-        $out .= $this->presetClasses($presets);
+        $out .= StylePresets::presetClasses($presets);
         if (is_string($styles['css'] ?? null) && $styles['css'] !== '') {
             // The theme's (or the site editor's) own CSS, printed as written between the preset classes and the block styles.
             $out .= str_ireplace('</style', '', $styles['css']);
@@ -123,100 +123,6 @@ final readonly class GlobalStyles
         return $out;
     }
 
-    /** @return array<string, list<array{slug: string, value: string}>> */
-    private function presets(array $settings): array
-    {
-        $core = (array) json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/presets.json'), true);
-        $merge = static fn (array $defaults, array $own, string $key) => [...$defaults, ...array_map(static fn (array $p) => ['slug' => (string) $p['slug'], 'value' => (string) $p[$key]], $own)];
-        $fontSizes = self::presetList($settings['typography']['fontSizes'] ?? []);
-        $spacing = self::presetList($settings['spacing']['spacingSizes'] ?? []);
-        return [
-            'aspect-ratio' => $core['aspect-ratio'] ?? [],
-            'color' => $merge($core['color'] ?? [], self::presetList($settings['color']['palette'] ?? []), 'color'),
-            'gradient' => $merge($core['gradient'] ?? [], self::presetList($settings['color']['gradients'] ?? []), 'gradient'),
-            'font-size' => array_map(static fn (array $p) => ['slug' => (string) $p['slug'], 'value' => self::fluidFontSize($p, $settings)], self::defaultSlugsFirst($fontSizes, ['small', 'medium', 'large', 'x-large'])),
-            'font-family' => array_map(static fn (array $p) => ['slug' => (string) $p['slug'], 'value' => (string) $p['fontFamily']], self::fontFamilies($settings)),
-            'spacing' => self::spacingPresets($core['spacing'] ?? [], $spacing),
-            'shadow' => $merge($core['shadow'] ?? [], self::presetList($settings['shadow']['presets'] ?? []), 'shadow'),
-        ];
-    }
-
-    /**
-     * A theme size that reuses one of core's slugs prints in core's position;
-     * the theme's own slugs follow.
-     *
-     * @param list<array> $presets
-     * @param list<string> $defaults
-     * @return list<array>
-     */
-    private static function defaultSlugsFirst(array $presets, array $defaults): array
-    {
-        $rank = array_flip($defaults);
-        $keyed = [];
-        foreach ($presets as $i => $preset) {
-            $slug = (string) ($preset['slug'] ?? '');
-            $keyed[] = [isset($rank[$slug]) ? $rank[$slug] : count($defaults) + $i, $preset];
-        }
-        usort($keyed, static fn (array $a, array $b) => $a[0] <=> $b[0]);
-        return array_column($keyed, 1);
-    }
-
-    /**
-     * The default spacing scale (20 to 80) is always present, whatever
-     * defaultSpacingSizes says; a theme size with the same slug replaces the
-     * default in place, and the theme's other sizes follow the scale.
-     *
-     * @return list<array{slug: string, value: string}>
-     */
-    private static function spacingPresets(array $defaults, array $own): array
-    {
-        $out = [];
-        foreach ($defaults as $preset) {
-            $out[(string) $preset['slug']] = ['slug' => (string) $preset['slug'], 'value' => (string) $preset['value']];
-        }
-        foreach ($own as $preset) {
-            $out[(string) $preset['slug']] = ['slug' => (string) $preset['slug'], 'value' => (string) $preset['size']];
-        }
-        return array_values($out);
-    }
-
-    /**
-     * A preset list as theme.json writes it is a plain list; as the site
-     * editor saves it, it is keyed by origin (default, theme, custom). The
-     * reference prints the origins in that order, so the two shapes flatten
-     * to one list here.
-     *
-     * @return list<array>
-     */
-    public static function presetList(mixed $presets): array
-    {
-        if (!is_array($presets)) {
-            return [];
-        }
-        if (array_is_list($presets)) {
-            return array_values(array_filter($presets, 'is_array'));
-        }
-        $out = [];
-        foreach (['default', 'theme', 'custom'] as $origin) {
-            foreach ((array) ($presets[$origin] ?? []) as $preset) {
-                if (is_array($preset)) {
-                    $out[] = $preset;
-                }
-            }
-        }
-        return $out;
-    }
-
-    /**
-     * The font family presets in the settings.
-     *
-     * @return list<array>
-     */
-    public static function fontFamilies(array $settings): array
-    {
-        return self::presetList($settings['typography']['fontFamilies'] ?? []);
-    }
-
     /**
      * The @font-face rules for every family that declares font files, as
      * the reference prints them in its own style element: family (quoted
@@ -229,7 +135,7 @@ final readonly class GlobalStyles
     {
         $json = $this->user === null ? $this->theme->json() : Theme::merge($this->theme->json(), $this->user);
         $out = '';
-        foreach (self::fontFamilies((array) ($json['settings'] ?? [])) as $family) {
+        foreach (StylePresets::fontFamilies((array) ($json['settings'] ?? [])) as $family) {
             foreach ((array) ($family['fontFace'] ?? []) as $face) {
                 if (!is_array($face) || !isset($face['fontFamily'])) {
                     continue;
@@ -238,7 +144,7 @@ final readonly class GlobalStyles
                 foreach ((array) ($face['src'] ?? []) as $src) {
                     $url = $this->fontUrl((string) $src);
                     if ($url !== null) {
-                        $sources[] = "url('" . $url . "') format('" . self::fontFormat($url) . "')";
+                        $sources[] = "url('" . $url . "') format('" . StylePresets::fontFormat($url) . "')";
                     }
                 }
                 if ($sources === []) {
@@ -270,80 +176,6 @@ final readonly class GlobalStyles
             }
         }
         return null;
-    }
-
-    private static function fontFormat(string $url): string
-    {
-        return match (strtolower(pathinfo(parse_url($url, PHP_URL_PATH) ?: '', PATHINFO_EXTENSION))) {
-            'woff' => 'woff',
-            'ttf' => 'truetype',
-            'otf' => 'opentype',
-            'eot' => 'embedded-opentype',
-            'svg' => 'svg',
-            default => 'woff2',
-        };
-    }
-
-    /**
-     * A font size with fluid bounds becomes clamp(min, min + ((1vw - v) * f),
-     * max) scaled between a 320px viewport and the theme's wide size, which
-     * is how the reference arrives at 0.196 for a 1rem to 1.125rem size on a
-     * 1340px wide layout. A plain size stays as written.
-     */
-    private static function fluidFontSize(array $preset, array $settings): string
-    {
-        $size = (string) $preset['size'];
-        $fluid = $preset['fluid'] ?? ($settings['typography']['fluid'] ?? false);
-        if ($fluid === false || !is_array($fluid) || !isset($fluid['min'], $fluid['max'])) {
-            return $size;
-        }
-        $min = (string) $fluid['min'];
-        $max = (string) $fluid['max'];
-        $unit = preg_replace('/[0-9.]/', '', $min) ?: 'rem';
-        $perRem = $unit === 'rem' ? 1 : 16;
-        $minViewport = 320 / 16;
-        $maxViewport = ((float) ($settings['layout']['wideSize'] ?? '1600px')) / 16;
-        $slope = ((float) $max - (float) $min) / $perRem / ($maxViewport - $minViewport);
-        $factor = rtrim(rtrim(number_format($slope * 100, 3, '.', ''), '0'), '.');
-        $offset = $unit === 'rem' ? ($minViewport / 100) . 'rem' : (320 / 100) . 'px';
-        // The additive term is always in rem: a px minimum is converted (20px becomes 1.25rem, 35px 2.188rem).
-        $base = $unit === 'rem' ? $min : rtrim(rtrim(number_format((float) $min / 16, 3, '.', ''), '0'), '.') . 'rem';
-        return sprintf('clamp(%s, %s + ((1vw - %s) * %s), %s)', $min, $base, $offset, $factor, $max);
-    }
-
-    private function presetProperties(array $presets): string
-    {
-        $out = '';
-        foreach ($presets as $kind => $entries) {
-            foreach ($entries as $entry) {
-                $out .= "--wp--preset--{$kind}--{$entry['slug']}: {$entry['value']};";
-            }
-        }
-        return $out;
-    }
-
-    private function presetClasses(array $presets): string
-    {
-        $out = '';
-        foreach ($presets['color'] as $c) {
-            $out .= ".has-{$c['slug']}-color{color: var(--wp--preset--color--{$c['slug']}) !important;}";
-        }
-        foreach ($presets['color'] as $c) {
-            $out .= ".has-{$c['slug']}-background-color{background-color: var(--wp--preset--color--{$c['slug']}) !important;}";
-        }
-        foreach ($presets['color'] as $c) {
-            $out .= ".has-{$c['slug']}-border-color{border-color: var(--wp--preset--color--{$c['slug']}) !important;}";
-        }
-        foreach ($presets['gradient'] as $g) {
-            $out .= ".has-{$g['slug']}-gradient-background{background: var(--wp--preset--gradient--{$g['slug']}) !important;}";
-        }
-        foreach ($presets['font-size'] as $f) {
-            $out .= ".has-{$f['slug']}-font-size{font-size: var(--wp--preset--font-size--{$f['slug']}) !important;}";
-        }
-        foreach ($presets['font-family'] as $f) {
-            $out .= ".has-{$f['slug']}-font-family{font-family: var(--wp--preset--font-family--{$f['slug']}) !important;}";
-        }
-        return $out;
     }
 
     /** The engine's own layout rules on the reference's class hooks; the global-padding rules exist only under root-padding-aware alignments. */

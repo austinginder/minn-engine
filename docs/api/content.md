@@ -358,7 +358,7 @@ without a database.
 the rest are silent core types that still occupy the posts table.
 - const `CONTENT_TYPES` = `array (   0 => 'post',   1 => 'page',   2 => 'wp_block',   3 => 'wp_template',   4 => 'wp_template_part',   5 => 'wp_navigation', )` — post_content that a visitor (or a theme template) can actually see.
 
-Used by: `Minn\Cli\Installer`
+Used by: `Minn\Cli\Preflight`
 
 ### static `shortcodes(string $content): array`
 

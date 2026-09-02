@@ -10,7 +10,7 @@ The engine's own classes under `public/minn/src/Minn/`, one page per namespace, 
 | [`Minn\Blocks`](blocks.md) | 15 | the block parser and renderer |
 | [`Minn\Blocks\Dynamic`](blocks-dynamic.md) | 9 | dynamic core blocks that render from data |
 | [`Minn\Blocks\Dynamic\Theme`](blocks-dynamic-theme.md) | 5 | the template blocks a block theme composes with |
-| [`Minn\Cli`](cli.md) | 14 | the wp verbs the engine answers itself |
+| [`Minn\Cli`](cli.md) | 15 | the wp verbs the engine answers itself |
 | [`Minn\Content`](content.md) | 33 | the repositories and records: posts, users, terms, comments, and the render pipeline |
 | [`Minn\Cron`](cron.md) | 1 | scheduled publishing |
 | [`Minn\Extension`](extension.md) | 8 | the extension contract and its seams |
@@ -22,6 +22,6 @@ The engine's own classes under `public/minn/src/Minn/`, one page per namespace, 
 | [`Minn\Media`](media.md) | 9 | uploads, image sizes and attachment metadata |
 | [`Minn\Query`](query.md) | 4 | shared SQL fragments |
 | [`Minn\Rest`](rest.md) | 50 | the wp/v2 surface: shapes and controllers |
-| [`Minn\Runtime`](runtime.md) | 48 | the WordPress runtime plugins load against |
+| [`Minn\Runtime`](runtime.md) | 50 | the WordPress runtime plugins load against |
 | [`Minn\Support`](support.md) | 19 | escaping, serialized readers, small helpers |
-| [`Minn\Theme`](theme.md) | 19 | the block-theme reader, templates, global styles and the page renderer |
+| [`Minn\Theme`](theme.md) | 20 | the block-theme reader, templates, global styles and the page renderer |

@@ -10,12 +10,13 @@ the block-theme reader, templates, global styles and the page renderer
 | [`ClassicRenderer`](#classicrenderer) | final readonly class | 135 | A whole page from the active classic theme: the reference's PHP template |
 | [`ClassicTheme`](#classictheme) | final readonly class | 31 | The active classic (PHP-template) theme on disk. A theme is classic when |
 | [`Folder`](#folder) | final readonly class | 77 | A theme folder read from disk: its style.css headers, which folder its templates come from, its screenshot, whether it is a block theme. |
-| [`GlobalStyles`](#globalstyles) | final readonly class | 611 | theme.json to CSS. Presets become custom properties on :root and their |
+| [`GlobalStyles`](#globalstyles) | final readonly class | 443 | theme.json to CSS. Presets become custom properties on :root and their |
 | [`HeadLinks`](#headlinks) | final readonly class | 135 | The links the reference puts in every head: the site and comments |
 | [`Hierarchy`](#hierarchy) | final class | 146 | The classic template hierarchy: the candidate file names each template |
 | [`MainQueryBridge`](#mainquerybridge) | final readonly class | 67 | Stands the main query for a themed page: a plugin's archive runs through |
 | [`PageRenderer`](#pagerenderer) | final readonly class | 196 | A whole page from the active block theme: the template the resolution |
 | [`PatternText`](#patterntext) | final class | 198 | Block-theme patterns are PHP files whose only code is a handful of |
+| [`StylePresets`](#stylepresets) | final class | 174 | The preset side of theme.json: the colour, gradient, font-size, |
 | [`TemplateIndex`](#templateindex) | final class | 250 | Every block template and template part the site offers, in the order the |
 | [`TemplatePartTheme`](#templateparttheme) | final readonly class | 45 | A template-part block inside a template says which theme's part it means. |
 | [`TemplatePatterns`](#templatepatterns) | final readonly class | 88 | A template can name a pattern instead of carrying its blocks, and the |
@@ -220,21 +221,6 @@ data expects (the CSS writer resolves them on the way out instead).
 
 The global stylesheet from theme.json and the user's styles.
 
-### static `presetList(mixed $presets): array`
-
-A preset list as theme.json writes it is a plain list; as the site
-editor saves it, it is keyed by origin (default, theme, custom). The
-reference prints the origins in that order, so the two shapes flatten
-to one list here.
-
-- `@return list<array>`
-
-### static `fontFamilies(array $settings): array`
-
-The font family presets in the settings.
-
-- `@return list<array>`
-
 ### `fontFaces(): string`
 
 The @font-face rules for every family that declares font files, as
@@ -244,7 +230,7 @@ file:./ resolved against the theme that carries the file and the
 format named from the extension. Families without files print
 nothing.
 
-Internals: `presets()` (private, line 127), `defaultSlugsFirst()` (private, line 152), `spacingPresets()` (private, line 171), `fontUrl()` (private, line 258), `fontFormat()` (private, line 275), `fluidFontSize()` (private, line 293), `presetProperties()` (private, line 314), `presetClasses()` (private, line 325), `structuralRules()` (private, line 350), `gapRules()` (private, line 370), `rootStyles()` (private, line 386), `elementStyles()` (private, line 400), `blockStyles()` (private, line 429), `withoutEmpty()` (private, line 448), `scopedCss()` (private, line 461), `variationStyles()` (private, line 483), `containerStyles()` (private, line 514), `declarations()` (private, line 539), `ordered()` (private, line 610)
+Internals: `fontUrl()` (private, line 164), `structuralRules()` (private, line 182), `gapRules()` (private, line 202), `rootStyles()` (private, line 218), `elementStyles()` (private, line 232), `blockStyles()` (private, line 261), `withoutEmpty()` (private, line 280), `scopedCss()` (private, line 293), `variationStyles()` (private, line 315), `containerStyles()` (private, line 346), `declarations()` (private, line 371), `ordered()` (private, line 442)
 
 
 ## HeadLinks
@@ -452,6 +438,73 @@ Used by: `Minn\Theme\Theme`
 A pattern file's HTML with its PHP interpreted, never executed.
 
 Internals: `statements()` (private, line 46), `printf()` (private, line 73), `expression()` (private, line 84), `term()` (private, line 100), `escape()` (private, line 128), `arguments()` (private, line 134), `stringLiteral()` (private, line 161), `identifier()` (private, line 184), `skipSpace()` (private, line 194)
+
+
+## StylePresets
+
+`final class Minn\Theme\StylePresets` · `public/minn/src/Minn/Theme/StylePresets.php`
+
+The preset side of theme.json: the colour, gradient, font-size,
+font-family, spacing, and shadow lists a theme declares over core's
+own, as the custom properties on :root and the has-* utility classes
+the reference prints for them. Pure: settings in, CSS fragments out.
+
+Used by: `Minn\Theme\GlobalStyles`
+
+### static `presets(array $settings): array`
+
+Every preset list the theme declares, over core's own, keyed by kind.
+
+### static `presetList(mixed $presets): array`
+
+A preset list as theme.json writes it is a plain list; as the site
+editor saves it, it is keyed by origin (default, theme, custom). The
+reference prints the origins in that order, so the two shapes flatten
+to one list here.
+
+- `@return list<array>`
+
+### static `fontFamilies(array $settings): array`
+
+The font family presets in the settings.
+
+- `@return list<array>`
+
+### static `presetProperties(array $presets): string`
+
+The presets as custom properties for :root.
+
+### static `presetClasses(array $presets): string`
+
+The has-* utility classes the presets give every colour, gradient, font size, and font family.
+
+### static `defaultSlugsFirst(array $presets, array $defaults): array`
+
+A theme size that reuses one of core's slugs prints in core's position;
+the theme's own slugs follow.
+
+- `@param list<array> $presets`
+- `@param list<string> $defaults`
+- `@return list<array>`
+
+### static `spacingPresets(array $defaults, array $own): array`
+
+The default spacing scale (20 to 80) is always present, whatever
+defaultSpacingSizes says; a theme size with the same slug replaces the
+default in place, and the theme's other sizes follow the scale.
+
+- `@return list<array{slug: string, value: string}>`
+
+### static `fluidFontSize(array $preset, array $settings): string`
+
+A font size with fluid bounds becomes clamp(min, min + ((1vw - v) * f),
+max) scaled between a 320px viewport and the theme's wide size, which
+is how the reference arrives at 0.196 for a 1rem to 1.125rem size on a
+1340px wide layout. A plain size stays as written.
+
+### static `fontFormat(string $url): string`
+
+The format() a font source is declared with, from its file extension.
 
 
 ## TemplateIndex

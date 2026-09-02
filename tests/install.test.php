@@ -205,12 +205,12 @@ mkdir("$kinds/child", 0755, true);
 mkdir("$kinds/parent-block/templates", 0755, true);
 file_put_contents("$kinds/parent-block/templates/index.html", '');
 mkdir("$kinds/empty", 0755, true);
-$check('themeKind: block', Minn\Cli\Installer::themeKind("$kinds/block", "$kinds/block") === 'block');
-$check('themeKind: classic', Minn\Cli\Installer::themeKind("$kinds/classic", "$kinds/classic") === 'classic');
-$check('themeKind: hybrid with theme.json is classic', Minn\Cli\Installer::themeKind("$kinds/hybrid", "$kinds/hybrid") === 'classic');
-$check('themeKind: child of a block parent is block', Minn\Cli\Installer::themeKind("$kinds/child", "$kinds/parent-block") === 'block');
-$check('themeKind: empty is none', Minn\Cli\Installer::themeKind("$kinds/empty", "$kinds/empty") === 'none');
-$check('themeKind: missing dir', Minn\Cli\Installer::themeKind("$kinds/missing", "$kinds/missing") === 'missing');
+$check('themeKind: block', Minn\Cli\Preflight::themeKind("$kinds/block", "$kinds/block") === 'block');
+$check('themeKind: classic', Minn\Cli\Preflight::themeKind("$kinds/classic", "$kinds/classic") === 'classic');
+$check('themeKind: hybrid with theme.json is classic', Minn\Cli\Preflight::themeKind("$kinds/hybrid", "$kinds/hybrid") === 'classic');
+$check('themeKind: child of a block parent is block', Minn\Cli\Preflight::themeKind("$kinds/child", "$kinds/parent-block") === 'block');
+$check('themeKind: empty is none', Minn\Cli\Preflight::themeKind("$kinds/empty", "$kinds/empty") === 'none');
+$check('themeKind: missing dir', Minn\Cli\Preflight::themeKind("$kinds/missing", "$kinds/missing") === 'missing');
 
 $manifestDir = "$SCRATCH/manifest-plugin";
 mkdir($manifestDir, 0755, true);

@@ -8,11 +8,12 @@ the wp verbs the engine answers itself
 | [`CacheCommand`](#cachecommand) | final class | 15 | `wp cache flush`: the engine has no object cache, so this is a no-op success. |
 | [`Commands`](#commands) | final class | 87 | The verbs the engine answers to. Every one is registered for the |
 | [`DirectorySearch`](#directorysearch) | final class | 37 | Shared wording for `wp theme search` and `wp plugin search`. The |
-| [`Installer`](#installer) | final class | 641 | The swap, both ways. Install parks WordPress's own files beside the |
+| [`Installer`](#installer) | final class | 303 | The swap, both ways. Install parks WordPress's own files beside the |
 | [`MaintenanceCommand`](#maintenancecommand) | final class | 65 | `wp maintenance-mode`: the `.maintenance` marker in the webroot. The |
 | [`MinnCommand`](#minncommand) | final class | 302 | Identifies the engine. |
 | [`OptionCommand`](#optioncommand) | final class | 191 | Options, read and written straight to the options table. Serialized |
 | [`PluginCommand`](#plugincommand) | final class | 475 | `wp plugin list\|install\|update\|activate\|deactivate\|delete`: the inventory and the fleet's install/update/delete. |
+| [`Preflight`](#preflight) | final class | 360 | What a site will and will not get from the engine, before anything |
 | [`RewriteCommand`](#rewritecommand) | final class | 52 | `wp rewrite flush\|structure`: permalink_structure is the engine's |
 | [`Runtime`](#runtime) | final class | 38 | The engine, booted for a command: reads the site's wp-config.php (which |
 | [`SearchReplaceCommand`](#searchreplacecommand) | final class | 143 | `wp search-replace`: walks every string column, including serialized |
@@ -119,7 +120,7 @@ will not get before anything moves.
 assets outside minn/. Eject still deletes them.
 - const `SKIP` = `array (   0 => '.git',   1 => 'node_modules',   2 => 'tests',   3 => 'docs',   4 => '.DS_Store',   5 => '.install.json', )` — Development-only trees inside the engine or the admin bundle that never ship.
 
-Used by: `Minn\Cli\MinnCommand`
+Used by: `Minn\Cli\MinnCommand`, `Minn\Cli\Preflight`
 
 
 ### static `main(array $argv, string $engineDir): int`
@@ -128,19 +129,13 @@ The bin entry: runs one command against a webroot and returns the exit code.
 
 - `@param list<string> $argv`
 
-### static `themeKind(string $dir, string $parentDir): string`
+### `preflight(string $root): string`
 
-Same line Theme::active / ClassicTheme::active draw: a block template
-index (child or parent) is a block theme; otherwise a parent index.php
-is a classic theme.
+What the site will and will not get; the worst light decides install. The report lands in the output.
 
 ### `status(string $root): int`
 
 Prints what the webroot is running.
-
-### `preflight(string $root): string`
-
-What the site will and will not get; the worst light decides install.
 
 ### `install(string $root, array $options): int`
 
@@ -152,7 +147,11 @@ Installs the engine into a webroot when the preflight allows it.
 
 Puts WordPress back and removes the engine's files.
 
-Internals: `help()` (private, line 103), `optionReader()` (private, line 155), `preflightTheme()` (private, line 167), `preflightPlugins()` (private, line 206), `surveyContent()` (private, line 277), `surveyMarkup()` (private, line 286), `surveyMenus()` (private, line 327), `surveyTables()` (private, line 354), `surveyTypes()` (private, line 373), `state()` (private, line 502), `manifest()` (private, line 513), `writePlaceholders()` (private, line 524), `readConfig()` (private, line 545), `env()` (private, line 579), `move()` (private, line 590), `copyTree()` (private, line 606), `removeTree()` (private, line 625), `version()` (private, line 642), `light()` (private, line 648), `say()` (private, line 657)
+### static `state(string $root): string`
+
+What a webroot is running: minn, wordpress, or unknown.
+
+Internals: `help()` (private, line 87), `manifest()` (private, line 225), `writePlaceholders()` (private, line 236), `move()` (private, line 257), `copyTree()` (private, line 273), `removeTree()` (private, line 292), `version()` (private, line 309), `say()` (private, line 315)
 
 
 ## MaintenanceCommand
@@ -590,6 +589,38 @@ options:
 ---
 
 Internals: `switch()` (private, line 328), `installOne()` (private, line 361), `installArchive()` (private, line 421), `pinVersion()` (private, line 450), `activateFolder()` (private, line 474)
+
+
+## Preflight
+
+`final class Minn\Cli\Preflight` · `public/minn/src/Minn/Cli/Preflight.php`
+
+What a site will and will not get from the engine, before anything
+moves: the config it can read, the database it can reach, the theme's
+kind, the plugins the extensions cover, and the content survey (the
+shortcodes, third-party blocks, menus, extra tables, and extra post
+types in the database). Every finding is a light; the worst decides.
+
+Used by: `Minn\Cli\Installer`
+
+
+### `lines(): array`
+
+The report, one line per finding. @return list<string>
+
+- `@return list<string>`
+
+### `run(string $root): string`
+
+Runs every check and returns the worst light: GREEN, AMBER, or RED.
+
+### static `themeKind(string $dir, string $parentDir): string`
+
+Same line Theme::active / ClassicTheme::active draw: a block template
+index (child or parent) is a block theme; otherwise a parent index.php
+is a classic theme.
+
+Internals: `readConfig()` (private, line 89), `env()` (private, line 123), `optionReader()` (private, line 134), `preflightTheme()` (private, line 146), `preflightPlugins()` (private, line 185), `surveyContent()` (private, line 248), `surveyMarkup()` (private, line 257), `surveyMenus()` (private, line 298), `surveyTables()` (private, line 325), `surveyTypes()` (private, line 344), `light()` (private, line 366), `say()` (private, line 375)
 
 
 ## RewriteCommand

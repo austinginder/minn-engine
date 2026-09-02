@@ -22,6 +22,7 @@ the WordPress runtime plugins load against
 | [`Interactivity`](#interactivity) | final class | 509 | Server-side directive processing for the Interactivity API: the state and |
 | [`MainQuery`](#mainquery) | final class | 34 | The query variables the reference's main query would carry for a URL the |
 | [`Meta`](#meta) | final readonly class | 133 | The four meta tables behind get_metadata and friends: reads by object, and the row-level writes the update and delete rules need. |
+| [`MetaClause`](#metaclause) | final class | 120 | The meta side of a post query: meta_key and its friends as one clause, |
 | [`NavMenu`](#navmenu) | final class | 303 | Nav-menu item decoration for wp_nav_menu(): the reference's class tokens |
 | [`OEmbed`](#oembed) | final class | 92 | oEmbed as data: provider matching against the wildcard table, response parsing, and the markup an oEmbed payload becomes. |
 | [`ObjectCache`](#objectcache) | final class | 52 | The per-request object cache behind wp_cache_*: groups of keys, nothing persistent. |
@@ -33,7 +34,7 @@ the WordPress runtime plugins load against
 | [`Plugins`](#plugins) | final class | 166 | Loads the site's plugins into the runtime the way the reference does: |
 | [`PostInsert`](#postinsert) | final readonly class | 160 | The decisions behind wp_insert_post: which columns a postarr fills, when |
 | [`PostLookup`](#postlookup) | final readonly class | 85 | The post reads plugin code asks for by shape: a page by title, revisions, counts. |
-| [`PostQuery`](#postquery) | final class | 646 | The query WP_Query runs: its variables become one SELECT over the posts |
+| [`PostQuery`](#postquery) | final class | 383 | The query WP_Query runs: its variables become one SELECT over the posts |
 | [`QueriedObject`](#queriedobject) | final readonly class | 70 | Which object a query is "about", read from its flags and variables: a term |
 | [`QueryFlags`](#queryflags) | final readonly class | 101 | The conditional flags a set of query variables implies (is_single, is_archive, |
 | [`Recovery`](#recovery) | final readonly class | 124 | Recovery from a fatal in someone else's code. When a plugin or theme |
@@ -47,6 +48,7 @@ the WordPress runtime plugins load against
 | [`SymbolTable`](#symboltable) | final class | 60 | What a folder's PHP names, collected while its tokens are read: the |
 | [`Symbols`](#symbols) | final class | 222 | A static read of what a plugin's PHP calls: global functions and classes |
 | [`TagEditor`](#tageditor) | final class | 149 | Edits one start tag's attributes in place the way the reference's tag |
+| [`TaxonomyClause`](#taxonomyclause) | final class | 178 | The taxonomy side of a post query: every query var the reference reads |
 | [`TermQuery`](#termquery) | final readonly class | 393 | Term reads in the shapes plugin code asks for: get_terms() arguments to |
 | [`TermWriter`](#termwriter) | final readonly class | 146 | The decisions behind wp_insert_term, wp_update_term, wp_delete_term, and |
 | [`TreeWalk`](#treewalk) | final class | 74 | The Walker contract's traversal: elements keyed by the walker's |
@@ -913,6 +915,31 @@ Deletes the given meta rows.
 - `@param list<int> $ids`
 
 
+## MetaClause
+
+`final class Minn\Runtime\MetaClause` · `public/minn/src/Minn/Runtime/MetaClause.php`
+
+The meta side of a post query: meta_key and its friends as one clause,
+then an explicit meta_query, each clause an EXISTS on postmeta with the
+reference's compare and type rules, as one WHERE fragment on p.ID.
+
+Used by: `Minn\Runtime\PostQuery`
+
+```php
+__construct(Minn\Db $db)
+```
+
+
+### `where(array $q): ?array`
+
+The WHERE fragment and its parameters for a query's meta conditions,
+or null when the query has none.
+
+- `@return array{string, list<mixed>}|null`
+
+Internals: `metaClauses()` (private, line 45), `metaSql()` (private, line 79)
+
+
 ## NavMenu
 
 `final class Minn\Runtime\NavMenu` · `public/minn/src/Minn/Runtime/NavMenu.php`
@@ -1408,7 +1435,7 @@ Runs a WP_Query-shaped args array and returns its rows and totals.
 - `@param array<string, mixed> $q`
 - `@return array{rows: list<array>, found: int, sticky: list<array>}`
 
-Internals: `perPage()` (private, line 83), `types()` (private, line 95), `statuses()` (private, line 119), `singular()` (private, line 147), `authors()` (private, line 181), `parents()` (private, line 213), `ids()` (private, line 231), `search()` (private, line 264), `dates()` (private, line 279), `taxonomies()` (private, line 337), `taxonomyClauses()` (private, line 355), `taxonomySql()` (private, line 424), `termTaxonomyIds()` (private, line 464), `meta()` (private, line 500), `metaClauses()` (private, line 515), `metaSql()` (private, line 549), `order()` (private, line 605)
+Internals: `perPage()` (private, line 88), `types()` (private, line 100), `statuses()` (private, line 124), `singular()` (private, line 152), `authors()` (private, line 186), `parents()` (private, line 218), `ids()` (private, line 236), `search()` (private, line 269), `dates()` (private, line 284), `order()` (private, line 342)
 
 
 ## QueriedObject
@@ -1559,7 +1586,7 @@ them. The built-in set is data/registry.json, captured from the
 reference; registrations derive their defaults the way the content
 probe observed (contracts/fixtures/api/content.json).
 
-Used by: `Minn\Front\Permalinks`, `Minn\Rest\AdditionalFields`, `Minn\Runtime\PostQuery`, `Minn\Runtime\QueriedObject`, `Minn\Runtime\QueryFlags`, `Minn\Runtime\Runtime`
+Used by: `Minn\Front\Permalinks`, `Minn\Rest\AdditionalFields`, `Minn\Runtime\PostQuery`, `Minn\Runtime\QueriedObject`, `Minn\Runtime\QueryFlags`, `Minn\Runtime\Runtime`, `Minn\Runtime\TaxonomyClause`
 
 ```php
 __construct(string $engineDir)
@@ -2129,6 +2156,33 @@ Sets or removes one inline style property.
 The tag as edited.
 
 Internals: `classes()` (private, line 99), `setClasses()` (private, line 106), `splice()` (private, line 147)
+
+
+## TaxonomyClause
+
+`final class Minn\Runtime\TaxonomyClause` · `public/minn/src/Minn/Runtime/TaxonomyClause.php`
+
+The taxonomy side of a post query: every query var the reference reads
+(cat, category_name, tag, the __in and __and pairs, each taxonomy's own
+var) and an explicit tax_query, resolved to term_taxonomy ids with
+children included where the taxonomy is hierarchical, as one WHERE
+fragment on p.ID.
+
+Used by: `Minn\Runtime\PostQuery`
+
+```php
+__construct(Minn\Db $db, Minn\Runtime\Registry $registry)
+```
+
+
+### `where(array $q): ?array`
+
+The WHERE fragment and its parameters for a query's taxonomy conditions,
+or null when the query has none.
+
+- `@return array{string, list<mixed>}|null`
+
+Internals: `taxonomyClauses()` (private, line 50), `taxonomySql()` (private, line 119), `termTaxonomyIds()` (private, line 159)
 
 
 ## TermQuery

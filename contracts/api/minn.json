@@ -19436,17 +19436,16 @@
             "namespace": "Minn\\Cli",
             "kind": "final class",
             "file": "public/minn/src/Minn/Cli/Installer.php",
-            "lines": 641,
+            "lines": 303,
             "doc": "The swap, both ways. Install parks WordPress's own files beside the\nwebroot, lays the engine and its shape files down, and leaves\nwp-config.php and wp-content untouched; eject puts every parked file\nback and removes what install wrote. A manifest in minn/.install.json\nis the record eject works from. Preflight says what the site will and\nwill not get before anything moves.",
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Content\\ContentScan",
-                "Minn\\Extension\\Manifest",
-                "Minn\\Support\\Serialized"
+                "Minn\\Cli\\Preflight"
             ],
             "usedBy": [
-                "Minn\\Cli\\MinnCommand"
+                "Minn\\Cli\\MinnCommand",
+                "Minn\\Cli\\Preflight"
             ],
             "constructor": {
                 "signature": "__construct(string $engineDir)",
@@ -19462,8 +19461,8 @@
                     }
                 ],
                 "visibility": "private",
-                "line": 45,
-                "end": 47
+                "line": 40,
+                "end": 42
             },
             "cases": [],
             "constants": [
@@ -19515,15 +19514,6 @@
                     "promoted": false
                 },
                 {
-                    "name": "worst",
-                    "type": "string",
-                    "readonly": false,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": false
-                },
-                {
                     "name": "engineDir",
                     "type": "string",
                     "readonly": true,
@@ -19560,35 +19550,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 54,
-                    "end": 79
+                    "line": 49,
+                    "end": 74
                 },
                 {
                     "routes": [],
-                    "name": "themeKind",
-                    "static": true,
+                    "name": "preflight",
+                    "static": false,
                     "visibility": "public",
-                    "signature": "themeKind(string $dir, string $parentDir): string",
-                    "doc": "Same line Theme::active / ClassicTheme::active draw: a block template\nindex (child or parent) is a block theme; otherwise a parent index.php\nis a classic theme.",
+                    "signature": "preflight(string $root): string",
+                    "doc": "What the site will and will not get; the worst light decides install. The report lands in the output.",
                     "shapes": [],
                     "params": [
                         {
-                            "name": "dir",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "parentDir",
+                            "name": "root",
                             "type": "string",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 88,
-                    "end": 101
+                    "line": 77,
+                    "end": 85
                 },
                 {
                     "routes": [],
@@ -19607,28 +19590,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 110,
-                    "end": 119
-                },
-                {
-                    "routes": [],
-                    "name": "preflight",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "preflight(string $root): string",
-                    "doc": "What the site will and will not get; the worst light decides install.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "root",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 122,
-                    "end": 152
+                    "line": 94,
+                    "end": 103
                 },
                 {
                     "routes": [],
@@ -19656,8 +19619,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 400,
-                    "end": 454
+                    "line": 111,
+                    "end": 165
                 },
                 {
                     "routes": [],
@@ -19676,8 +19639,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 457,
-                    "end": 500
+                    "line": 168,
+                    "end": 211
+                },
+                {
+                    "routes": [],
+                    "name": "state",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "state(string $root): string",
+                    "doc": "What a webroot is running: minn, wordpress, or unknown.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "root",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 214,
+                    "end": 223
                 },
                 {
                     "routes": [],
@@ -19688,301 +19671,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 103,
-                    "end": 107
-                },
-                {
-                    "routes": [],
-                    "name": "optionReader",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "optionReader(mysqli $db, string $prefix): Closure",
-                    "doc": "A reader for one option's raw value, on the site's own connection. @return \\Closure(string): ?string",
-                    "shapes": [
-                        "@return \\Closure(string): ?string"
-                    ],
-                    "params": [
-                        {
-                            "name": "db",
-                            "type": "mysqli",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "prefix",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 155,
-                    "end": 164
-                },
-                {
-                    "routes": [],
-                    "name": "preflightTheme",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "preflightTheme(string $root, Closure $option): void",
-                    "doc": "The active theme: present, and block or classic. @param \\Closure(string): ?string $option",
-                    "shapes": [
-                        "@param \\Closure(string): ?string $option"
-                    ],
-                    "params": [
-                        {
-                            "name": "root",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "option",
-                            "type": "Closure",
-                            "shape": "\\Closure(string): ?string",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 167,
-                    "end": 196
-                },
-                {
-                    "routes": [],
-                    "name": "preflightPlugins",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "preflightPlugins(string $root, Closure $option): array",
-                    "doc": "The active plugins against the extensions on disk: what each provides,\nwhat will not run, and the shortcodes, blocks, and types the active\nextensions cover, for the content survey.",
-                    "shapes": [
-                        "@param \\Closure(string): ?string $option",
-                        "@return array{array<string, string>, array<string, string>, array<string, string>}"
-                    ],
-                    "params": [
-                        {
-                            "name": "root",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "option",
-                            "type": "Closure",
-                            "shape": "\\Closure(string): ?string",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 206,
-                    "end": 258
-                },
-                {
-                    "routes": [],
-                    "name": "surveyContent",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "surveyContent(mysqli $db, string $prefix, array $coveredShortcodes, array $coveredBlocks, array $coveredTypes): void",
-                    "doc": "What the content holds that the engine must serve: shortcodes and\nthird-party blocks against the extensions covering them, menus, extra\ntables, and extra post types.",
-                    "shapes": [
-                        "@param array<string, string> $coveredShortcodes",
-                        "@param array<string, string> $coveredBlocks",
-                        "@param array<string, string> $coveredTypes"
-                    ],
-                    "params": [
-                        {
-                            "name": "db",
-                            "type": "mysqli",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "prefix",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "coveredShortcodes",
-                            "type": "array",
-                            "shape": "array<string, string>",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "coveredBlocks",
-                            "type": "array",
-                            "shape": "array<string, string>",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "coveredTypes",
-                            "type": "array",
-                            "shape": "array<string, string>",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 277,
-                    "end": 283
-                },
-                {
-                    "routes": [],
-                    "name": "surveyMarkup",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "surveyMarkup(mysqli $db, string $prefix, array $coveredShortcodes, array $coveredBlocks): void",
-                    "doc": "",
-                    "shapes": [
-                        "@param array<string, string> $coveredShortcodes @param array<string, string> $coveredBlocks"
-                    ],
-                    "params": [
-                        {
-                            "name": "db",
-                            "type": "mysqli",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "prefix",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "coveredShortcodes",
-                            "type": "array",
-                            "shape": "array<string, string>",
-                            "default": null,
-                            "doc": "@param array<string, string> $coveredBlocks"
-                        },
-                        {
-                            "name": "coveredBlocks",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 286,
-                    "end": 325
-                },
-                {
-                    "routes": [],
-                    "name": "surveyMenus",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "surveyMenus(mysqli $db, string $prefix): void",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "db",
-                            "type": "mysqli",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "prefix",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 327,
-                    "end": 352
-                },
-                {
-                    "routes": [],
-                    "name": "surveyTables",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "surveyTables(mysqli $db, string $prefix): void",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "db",
-                            "type": "mysqli",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "prefix",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 354,
-                    "end": 370
-                },
-                {
-                    "routes": [],
-                    "name": "surveyTypes",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "surveyTypes(mysqli $db, string $prefix, array $coveredTypes): void",
-                    "doc": "",
-                    "shapes": [
-                        "@param array<string, string> $coveredTypes"
-                    ],
-                    "params": [
-                        {
-                            "name": "db",
-                            "type": "mysqli",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "prefix",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "coveredTypes",
-                            "type": "array",
-                            "shape": "array<string, string>",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 373,
-                    "end": 393
-                },
-                {
-                    "routes": [],
-                    "name": "state",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "state(string $root): string",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "root",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 502,
-                    "end": 511
+                    "line": 87,
+                    "end": 91
                 },
                 {
                     "routes": [],
@@ -20001,8 +19691,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 513,
-                    "end": 517
+                    "line": 225,
+                    "end": 229
                 },
                 {
                     "routes": [],
@@ -20021,55 +19711,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 524,
-                    "end": 542
-                },
-                {
-                    "routes": [],
-                    "name": "readConfig",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "readConfig(string $file): array",
-                    "doc": "The database constants and prefix, read from the file as text: nothing in it runs.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "file",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 545,
-                    "end": 573
-                },
-                {
-                    "routes": [],
-                    "name": "env",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "env(string $name, ?string $default = NULL): ?string",
-                    "doc": "getenv, then {NAME}_FILE (Docker secrets), then the fallback.\nMatches the official image's getenv_docker without running that PHP.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "name",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "default",
-                            "type": "?string",
-                            "shape": "",
-                            "default": "NULL",
-                            "doc": ""
-                        }
-                    ],
-                    "line": 579,
-                    "end": 587
+                    "line": 236,
+                    "end": 254
                 },
                 {
                     "routes": [],
@@ -20095,8 +19738,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 590,
-                    "end": 604
+                    "line": 257,
+                    "end": 271
                 },
                 {
                     "routes": [],
@@ -20122,8 +19765,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 606,
-                    "end": 623
+                    "line": 273,
+                    "end": 290
                 },
                 {
                     "routes": [],
@@ -20142,8 +19785,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 625,
-                    "end": 640
+                    "line": 292,
+                    "end": 307
                 },
                 {
                     "routes": [],
@@ -20154,35 +19797,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 642,
-                    "end": 646
-                },
-                {
-                    "routes": [],
-                    "name": "light",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "light(string $light, string $text): void",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "light",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "text",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 648,
-                    "end": 655
+                    "line": 309,
+                    "end": 313
                 },
                 {
                     "routes": [],
@@ -20201,8 +19817,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 657,
-                    "end": 660
+                    "line": 315,
+                    "end": 318
                 }
             ]
         },
@@ -21385,6 +21001,479 @@
                     ],
                     "line": 474,
                     "end": 489
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Cli\\Preflight",
+            "short": "Preflight",
+            "namespace": "Minn\\Cli",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Cli/Preflight.php",
+            "lines": 360,
+            "doc": "What a site will and will not get from the engine, before anything\nmoves: the config it can read, the database it can reach, the theme's\nkind, the plugins the extensions cover, and the content survey (the\nshortcodes, third-party blocks, menus, extra tables, and extra post\ntypes in the database). Every finding is a light; the worst decides.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Cli\\Installer",
+                "Minn\\Content\\ContentScan",
+                "Minn\\Extension\\Manifest",
+                "Minn\\Support\\Serialized"
+            ],
+            "usedBy": [
+                "Minn\\Cli\\Installer"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "lines",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "worst",
+                    "type": "string",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "lines",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "lines(): array",
+                    "doc": "The report, one line per finding. @return list<string>",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [],
+                    "line": 27,
+                    "end": 30
+                },
+                {
+                    "routes": [],
+                    "name": "run",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "run(string $root): string",
+                    "doc": "Runs every check and returns the worst light: GREEN, AMBER, or RED.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "root",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 34,
+                    "end": 64
+                },
+                {
+                    "routes": [],
+                    "name": "themeKind",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "themeKind(string $dir, string $parentDir): string",
+                    "doc": "Same line Theme::active / ClassicTheme::active draw: a block template\nindex (child or parent) is a block theme; otherwise a parent index.php\nis a classic theme.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "dir",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "parentDir",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 73,
+                    "end": 86
+                },
+                {
+                    "routes": [],
+                    "name": "readConfig",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "readConfig(string $file): array",
+                    "doc": "The database constants and prefix, read from the file as text: nothing in it runs.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "file",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 89,
+                    "end": 117
+                },
+                {
+                    "routes": [],
+                    "name": "env",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "env(string $name, ?string $default = NULL): ?string",
+                    "doc": "getenv, then {NAME}_FILE (Docker secrets), then the fallback.\nMatches the official image's getenv_docker without running that PHP.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "default",
+                            "type": "?string",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 123,
+                    "end": 131
+                },
+                {
+                    "routes": [],
+                    "name": "optionReader",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "optionReader(mysqli $db, string $prefix): Closure",
+                    "doc": "A reader for one option's raw value, on the site's own connection. @return \\Closure(string): ?string",
+                    "shapes": [
+                        "@return \\Closure(string): ?string"
+                    ],
+                    "params": [
+                        {
+                            "name": "db",
+                            "type": "mysqli",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "prefix",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 134,
+                    "end": 143
+                },
+                {
+                    "routes": [],
+                    "name": "preflightTheme",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "preflightTheme(string $root, Closure $option): void",
+                    "doc": "The active theme: present, and block or classic. @param \\Closure(string): ?string $option",
+                    "shapes": [
+                        "@param \\Closure(string): ?string $option"
+                    ],
+                    "params": [
+                        {
+                            "name": "root",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "option",
+                            "type": "Closure",
+                            "shape": "\\Closure(string): ?string",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 146,
+                    "end": 175
+                },
+                {
+                    "routes": [],
+                    "name": "preflightPlugins",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "preflightPlugins(string $root, Closure $option): array",
+                    "doc": "The active plugins against the extensions on disk: what each provides,\nwhat will not run, and the shortcodes, blocks, and types the active\nextensions cover, for the content survey.",
+                    "shapes": [
+                        "@param \\Closure(string): ?string $option",
+                        "@return array{array<string, string>, array<string, string>, array<string, string>}"
+                    ],
+                    "params": [
+                        {
+                            "name": "root",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "option",
+                            "type": "Closure",
+                            "shape": "\\Closure(string): ?string",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 185,
+                    "end": 237
+                },
+                {
+                    "routes": [],
+                    "name": "surveyContent",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "surveyContent(mysqli $db, string $prefix, array $coveredShortcodes, array $coveredBlocks, array $coveredTypes): void",
+                    "doc": "What the content holds that the engine must serve: shortcodes and\nthird-party blocks against the extensions covering them, menus, extra\ntables, and extra post types.",
+                    "shapes": [
+                        "@param array<string, string> $coveredShortcodes",
+                        "@param array<string, string> $coveredBlocks",
+                        "@param array<string, string> $coveredTypes"
+                    ],
+                    "params": [
+                        {
+                            "name": "db",
+                            "type": "mysqli",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "prefix",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "coveredShortcodes",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "coveredBlocks",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "coveredTypes",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 248,
+                    "end": 254
+                },
+                {
+                    "routes": [],
+                    "name": "surveyMarkup",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "surveyMarkup(mysqli $db, string $prefix, array $coveredShortcodes, array $coveredBlocks): void",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, string> $coveredShortcodes @param array<string, string> $coveredBlocks"
+                    ],
+                    "params": [
+                        {
+                            "name": "db",
+                            "type": "mysqli",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "prefix",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "coveredShortcodes",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": null,
+                            "doc": "@param array<string, string> $coveredBlocks"
+                        },
+                        {
+                            "name": "coveredBlocks",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 257,
+                    "end": 296
+                },
+                {
+                    "routes": [],
+                    "name": "surveyMenus",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "surveyMenus(mysqli $db, string $prefix): void",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "db",
+                            "type": "mysqli",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "prefix",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 298,
+                    "end": 323
+                },
+                {
+                    "routes": [],
+                    "name": "surveyTables",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "surveyTables(mysqli $db, string $prefix): void",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "db",
+                            "type": "mysqli",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "prefix",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 325,
+                    "end": 341
+                },
+                {
+                    "routes": [],
+                    "name": "surveyTypes",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "surveyTypes(mysqli $db, string $prefix, array $coveredTypes): void",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, string> $coveredTypes"
+                    ],
+                    "params": [
+                        {
+                            "name": "db",
+                            "type": "mysqli",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "prefix",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "coveredTypes",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 344,
+                    "end": 364
+                },
+                {
+                    "routes": [],
+                    "name": "light",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "light(string $light, string $text): void",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "light",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 366,
+                    "end": 373
+                },
+                {
+                    "routes": [],
+                    "name": "say",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "say(string $line): void",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "line",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 375,
+                    "end": 378
                 }
             ]
         },
@@ -24202,7 +24291,7 @@
                 "Minn\\Blocks\\Parser"
             ],
             "usedBy": [
-                "Minn\\Cli\\Installer"
+                "Minn\\Cli\\Preflight"
             ],
             "constructor": null,
             "cases": [],
@@ -32201,10 +32290,12 @@
                 "Minn\\Runtime\\CommentQuery",
                 "Minn\\Runtime\\DbDelta",
                 "Minn\\Runtime\\Meta",
+                "Minn\\Runtime\\MetaClause",
                 "Minn\\Runtime\\Options",
                 "Minn\\Runtime\\PostLookup",
                 "Minn\\Runtime\\PostQuery",
                 "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\TaxonomyClause",
                 "Minn\\Runtime\\TermQuery",
                 "Minn\\Runtime\\TermWriter",
                 "Minn\\Runtime\\UserQuery",
@@ -33243,7 +33334,7 @@
             "uses": [],
             "usedBy": [
                 "Minn\\Admin\\Packages",
-                "Minn\\Cli\\Installer",
+                "Minn\\Cli\\Preflight",
                 "Minn\\Content\\PluginState",
                 "Minn\\Extension\\Loader",
                 "Minn\\Rest\\PluginsController"
@@ -66637,6 +66728,130 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\MetaClause",
+            "short": "MetaClause",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/MetaClause.php",
+            "lines": 120,
+            "doc": "The meta side of a post query: meta_key and its friends as one clause,\nthen an explicit meta_query, each clause an EXISTS on postmeta with the\nreference's compare and type rules, as one WHERE fragment on p.ID.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Db"
+            ],
+            "usedBy": [
+                "Minn\\Runtime\\PostQuery"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Db $db)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "db",
+                        "type": "Minn\\Db",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 19,
+                "end": 21
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "params",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "db",
+                    "type": "Minn\\Db",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "where",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "where(array $q): ?array",
+                    "doc": "The WHERE fragment and its parameters for a query's meta conditions,\nor null when the query has none.",
+                    "shapes": [
+                        "@return array{string, list<mixed>}|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "q",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 29,
+                    "end": 38
+                },
+                {
+                    "routes": [],
+                    "name": "metaClauses",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "metaClauses(array $q): array",
+                    "doc": "The meta_query the query vars amount to.",
+                    "shapes": [
+                        "@return array{string, list<array<string, mixed>>} relation, clauses"
+                    ],
+                    "params": [
+                        {
+                            "name": "q",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 45,
+                    "end": 76
+                },
+                {
+                    "routes": [],
+                    "name": "metaSql",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "metaSql(array $clause): string",
+                    "doc": "One clause as an EXISTS on postmeta, its parameters pushed. @param array<string, mixed> $clause",
+                    "shapes": [
+                        "@param array<string, mixed> $clause"
+                    ],
+                    "params": [
+                        {
+                            "name": "clause",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 79,
+                    "end": 132
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\NavMenu",
             "short": "NavMenu",
             "namespace": "Minn\\Runtime",
@@ -69191,7 +69406,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/PostQuery.php",
-            "lines": 646,
+            "lines": 383,
             "doc": "The query WP_Query runs: its variables become one SELECT over the posts\ntable with the joins the taxonomy, meta, and author conditions need.\nShapes and defaults follow contracts/fixtures/api/content.json.",
             "implements": [],
             "extends": null,
@@ -69199,8 +69414,10 @@
                 "Minn\\Content\\Posts",
                 "Minn\\Content\\Reader",
                 "Minn\\Db",
+                "Minn\\Runtime\\MetaClause",
                 "Minn\\Runtime\\Registry",
-                "Minn\\Runtime\\Runtime"
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\TaxonomyClause"
             ],
             "usedBy": [
                 "Minn\\Runtime\\Runtime"
@@ -69316,7 +69533,7 @@
                         }
                     ],
                     "line": 35,
-                    "end": 81
+                    "end": 86
                 },
                 {
                     "routes": [],
@@ -69335,8 +69552,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 83,
-                    "end": 93
+                    "line": 88,
+                    "end": 98
                 },
                 {
                     "routes": [],
@@ -69355,8 +69572,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 95,
-                    "end": 117
+                    "line": 100,
+                    "end": 122
                 },
                 {
                     "routes": [],
@@ -69375,8 +69592,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 119,
-                    "end": 145
+                    "line": 124,
+                    "end": 150
                 },
                 {
                     "routes": [],
@@ -69395,8 +69612,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 147,
-                    "end": 179
+                    "line": 152,
+                    "end": 184
                 },
                 {
                     "routes": [],
@@ -69415,8 +69632,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 181,
-                    "end": 211
+                    "line": 186,
+                    "end": 216
                 },
                 {
                     "routes": [],
@@ -69435,8 +69652,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 213,
-                    "end": 229
+                    "line": 218,
+                    "end": 234
                 },
                 {
                     "routes": [],
@@ -69455,8 +69672,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 231,
-                    "end": 262
+                    "line": 236,
+                    "end": 267
                 },
                 {
                     "routes": [],
@@ -69475,8 +69692,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 264,
-                    "end": 277
+                    "line": 269,
+                    "end": 282
                 },
                 {
                     "routes": [],
@@ -69495,166 +69712,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 279,
-                    "end": 334
-                },
-                {
-                    "routes": [],
-                    "name": "taxonomies",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "taxonomies(array $q): void",
-                    "doc": "The taxonomy narrowing: every query var the reference reads, then tax_query, joined by its relation.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "q",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 337,
-                    "end": 345
-                },
-                {
-                    "routes": [],
-                    "name": "taxonomyClauses",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "taxonomyClauses(array $q, array $taxonomies): array",
-                    "doc": "The tax_query the query vars amount to: cat, category_name, the __in /\n__not_in / __and pairs, tag and its slug forms, every registered\ntaxonomy's own query var, and finally an explicit tax_query.",
-                    "shapes": [
-                        "@param array<string, array<string, mixed>> $taxonomies the registry's taxonomies",
-                        "@return array{string, list<array<string, mixed>>} relation, clauses"
-                    ],
-                    "params": [
-                        {
-                            "name": "q",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "taxonomies",
-                            "type": "array",
-                            "shape": "array<string, array<string, mixed>>",
-                            "default": null,
-                            "doc": "the registry's taxonomies"
-                        }
-                    ],
-                    "line": 355,
-                    "end": 421
-                },
-                {
-                    "routes": [],
-                    "name": "taxonomySql",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "taxonomySql(array $clause): string",
-                    "doc": "One clause as SQL on p.ID, its parameters pushed. @param array<string, mixed> $clause",
-                    "shapes": [
-                        "@param array<string, mixed> $clause"
-                    ],
-                    "params": [
-                        {
-                            "name": "clause",
-                            "type": "array",
-                            "shape": "array<string, mixed>",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 424,
-                    "end": 461
-                },
-                {
-                    "routes": [],
-                    "name": "termTaxonomyIds",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "termTaxonomyIds(array $clause): array",
-                    "doc": "",
-                    "shapes": [
-                        "@return list<int>"
-                    ],
-                    "params": [
-                        {
-                            "name": "clause",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 464,
-                    "end": 497
-                },
-                {
-                    "routes": [],
-                    "name": "meta",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "meta(array $q): void",
-                    "doc": "The meta narrowing: meta_key and friends as one clause, then meta_query, joined by its relation.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "q",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 500,
-                    "end": 508
-                },
-                {
-                    "routes": [],
-                    "name": "metaClauses",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "metaClauses(array $q): array",
-                    "doc": "The meta_query the query vars amount to.",
-                    "shapes": [
-                        "@return array{string, list<array<string, mixed>>} relation, clauses"
-                    ],
-                    "params": [
-                        {
-                            "name": "q",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 515,
-                    "end": 546
-                },
-                {
-                    "routes": [],
-                    "name": "metaSql",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "metaSql(array $clause): string",
-                    "doc": "One clause as an EXISTS on postmeta, its parameters pushed. @param array<string, mixed> $clause",
-                    "shapes": [
-                        "@param array<string, mixed> $clause"
-                    ],
-                    "params": [
-                        {
-                            "name": "clause",
-                            "type": "array",
-                            "shape": "array<string, mixed>",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 549,
-                    "end": 602
+                    "line": 284,
+                    "end": 339
                 },
                 {
                     "routes": [],
@@ -69675,8 +69734,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 605,
-                    "end": 659
+                    "line": 342,
+                    "end": 396
                 }
             ]
         },
@@ -70373,7 +70432,8 @@
                 "Minn\\Runtime\\PostQuery",
                 "Minn\\Runtime\\QueriedObject",
                 "Minn\\Runtime\\QueryFlags",
-                "Minn\\Runtime\\Runtime"
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\TaxonomyClause"
             ],
             "constructor": {
                 "signature": "__construct(string $engineDir)",
@@ -73476,6 +73536,177 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\TaxonomyClause",
+            "short": "TaxonomyClause",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/TaxonomyClause.php",
+            "lines": 178,
+            "doc": "The taxonomy side of a post query: every query var the reference reads\n(cat, category_name, tag, the __in and __and pairs, each taxonomy's own\nvar) and an explicit tax_query, resolved to term_taxonomy ids with\nchildren included where the taxonomy is hierarchical, as one WHERE\nfragment on p.ID.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Db",
+                "Minn\\Runtime\\Registry"
+            ],
+            "usedBy": [
+                "Minn\\Runtime\\PostQuery"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Db $db, Minn\\Runtime\\Registry $registry)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "db",
+                        "type": "Minn\\Db",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "registry",
+                        "type": "Minn\\Runtime\\Registry",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 21,
+                "end": 23
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "params",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "db",
+                    "type": "Minn\\Db",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "registry",
+                    "type": "Minn\\Runtime\\Registry",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "where",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "where(array $q): ?array",
+                    "doc": "The WHERE fragment and its parameters for a query's taxonomy conditions,\nor null when the query has none.",
+                    "shapes": [
+                        "@return array{string, list<mixed>}|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "q",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 31,
+                    "end": 40
+                },
+                {
+                    "routes": [],
+                    "name": "taxonomyClauses",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "taxonomyClauses(array $q, array $taxonomies): array",
+                    "doc": "The tax_query the query vars amount to: cat, category_name, the __in /\n__not_in / __and pairs, tag and its slug forms, every registered\ntaxonomy's own query var, and finally an explicit tax_query.",
+                    "shapes": [
+                        "@param array<string, array<string, mixed>> $taxonomies the registry's taxonomies",
+                        "@return array{string, list<array<string, mixed>>} relation, clauses"
+                    ],
+                    "params": [
+                        {
+                            "name": "q",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomies",
+                            "type": "array",
+                            "shape": "array<string, array<string, mixed>>",
+                            "default": null,
+                            "doc": "the registry's taxonomies"
+                        }
+                    ],
+                    "line": 50,
+                    "end": 116
+                },
+                {
+                    "routes": [],
+                    "name": "taxonomySql",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "taxonomySql(array $clause): string",
+                    "doc": "One clause as SQL on p.ID, its parameters pushed. @param array<string, mixed> $clause",
+                    "shapes": [
+                        "@param array<string, mixed> $clause"
+                    ],
+                    "params": [
+                        {
+                            "name": "clause",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 119,
+                    "end": 156
+                },
+                {
+                    "routes": [],
+                    "name": "termTaxonomyIds",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "termTaxonomyIds(array $clause): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return list<int>"
+                    ],
+                    "params": [
+                        {
+                            "name": "clause",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 159,
+                    "end": 192
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\TermQuery",
             "short": "TermQuery",
             "namespace": "Minn\\Runtime",
@@ -76540,8 +76771,8 @@
                 "Minn\\Admin\\Updates",
                 "Minn\\Auth\\ApplicationPasswords",
                 "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
-                "Minn\\Cli\\Installer",
                 "Minn\\Cli\\OptionCommand",
+                "Minn\\Cli\\Preflight",
                 "Minn\\Content\\Inventory",
                 "Minn\\Content\\Menus",
                 "Minn\\Content\\PluginState",
@@ -78175,13 +78406,14 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/GlobalStyles.php",
-            "lines": 611,
+            "lines": 443,
             "doc": "theme.json to CSS. Presets become custom properties on :root and their\nhas-* utility classes; settings.layout sizes, root styles, elements, and\nper-block styles become rules; the containers, galleries, and style\nvariations the page actually rendered get their own stylesheets. The\nlayout rules themselves (flow, constrained, flex, grid, alignments) are\nthe engine's own, written to the same class hooks.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Blocks\\RenderState",
                 "Minn\\Blocks\\Styles",
+                "Minn\\Theme\\StylePresets",
                 "Minn\\Theme\\Theme"
             ],
             "usedBy": [
@@ -78293,50 +78525,6 @@
                 },
                 {
                     "routes": [],
-                    "name": "presetList",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "presetList(mixed $presets): array",
-                    "doc": "A preset list as theme.json writes it is a plain list; as the site\neditor saves it, it is keyed by origin (default, theme, custom). The\nreference prints the origins in that order, so the two shapes flatten\nto one list here.",
-                    "shapes": [
-                        "@return list<array>"
-                    ],
-                    "params": [
-                        {
-                            "name": "presets",
-                            "type": "mixed",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 191,
-                    "end": 208
-                },
-                {
-                    "routes": [],
-                    "name": "fontFamilies",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "fontFamilies(array $settings): array",
-                    "doc": "The font family presets in the settings.",
-                    "shapes": [
-                        "@return list<array>"
-                    ],
-                    "params": [
-                        {
-                            "name": "settings",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 215,
-                    "end": 218
-                },
-                {
-                    "routes": [],
                     "name": "fontFaces",
                     "static": false,
                     "visibility": "public",
@@ -78344,90 +78532,8 @@
                     "doc": "The @font-face rules for every family that declares font files, as\nthe reference prints them in its own style element: family (quoted\nwhen it has a space), style, weight, display, then the sources with\nfile:./ resolved against the theme that carries the file and the\nformat named from the extension. Families without files print\nnothing.",
                     "shapes": [],
                     "params": [],
-                    "line": 228,
-                    "end": 256
-                },
-                {
-                    "routes": [],
-                    "name": "presets",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "presets(array $settings): array",
-                    "doc": "",
-                    "shapes": [
-                        "@return array<string, list<array{slug: string, value: string}>>"
-                    ],
-                    "params": [
-                        {
-                            "name": "settings",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 127,
-                    "end": 142
-                },
-                {
-                    "routes": [],
-                    "name": "defaultSlugsFirst",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "defaultSlugsFirst(array $presets, array $defaults): array",
-                    "doc": "A theme size that reuses one of core's slugs prints in core's position;\nthe theme's own slugs follow.",
-                    "shapes": [
-                        "@param list<array> $presets",
-                        "@param list<string> $defaults",
-                        "@return list<array>"
-                    ],
-                    "params": [
-                        {
-                            "name": "presets",
-                            "type": "array",
-                            "shape": "list<array>",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "defaults",
-                            "type": "array",
-                            "shape": "list<string>",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 152,
+                    "line": 134,
                     "end": 162
-                },
-                {
-                    "routes": [],
-                    "name": "spacingPresets",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "spacingPresets(array $defaults, array $own): array",
-                    "doc": "The default spacing scale (20 to 80) is always present, whatever\ndefaultSpacingSizes says; a theme size with the same slug replaces the\ndefault in place, and the theme's other sizes follow the scale.",
-                    "shapes": [
-                        "@return list<array{slug: string, value: string}>"
-                    ],
-                    "params": [
-                        {
-                            "name": "defaults",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "own",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 171,
-                    "end": 181
                 },
                 {
                     "routes": [],
@@ -78446,95 +78552,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 258,
-                    "end": 273
-                },
-                {
-                    "routes": [],
-                    "name": "fontFormat",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "fontFormat(string $url): string",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "url",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 275,
-                    "end": 285
-                },
-                {
-                    "routes": [],
-                    "name": "fluidFontSize",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "fluidFontSize(array $preset, array $settings): string",
-                    "doc": "A font size with fluid bounds becomes clamp(min, min + ((1vw - v) * f),\nmax) scaled between a 320px viewport and the theme's wide size, which\nis how the reference arrives at 0.196 for a 1rem to 1.125rem size on a\n1340px wide layout. A plain size stays as written.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "preset",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "settings",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 293,
-                    "end": 312
-                },
-                {
-                    "routes": [],
-                    "name": "presetProperties",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "presetProperties(array $presets): string",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "presets",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 314,
-                    "end": 323
-                },
-                {
-                    "routes": [],
-                    "name": "presetClasses",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "presetClasses(array $presets): string",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "presets",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 325,
-                    "end": 347
+                    "line": 164,
+                    "end": 179
                 },
                 {
                     "routes": [],
@@ -78560,8 +78579,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 350,
-                    "end": 367
+                    "line": 182,
+                    "end": 199
                 },
                 {
                     "routes": [],
@@ -78587,8 +78606,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 370,
-                    "end": 379
+                    "line": 202,
+                    "end": 211
                 },
                 {
                     "routes": [],
@@ -78607,8 +78626,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 386,
-                    "end": 398
+                    "line": 218,
+                    "end": 230
                 },
                 {
                     "routes": [],
@@ -78634,8 +78653,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 400,
-                    "end": 427
+                    "line": 232,
+                    "end": 259
                 },
                 {
                     "routes": [],
@@ -78661,8 +78680,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 429,
-                    "end": 446
+                    "line": 261,
+                    "end": 278
                 },
                 {
                     "routes": [],
@@ -78681,8 +78700,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 448,
-                    "end": 458
+                    "line": 280,
+                    "end": 290
                 },
                 {
                     "routes": [],
@@ -78708,8 +78727,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 461,
-                    "end": 480
+                    "line": 293,
+                    "end": 312
                 },
                 {
                     "routes": [],
@@ -78728,8 +78747,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 483,
-                    "end": 512
+                    "line": 315,
+                    "end": 344
                 },
                 {
                     "routes": [],
@@ -78740,8 +78759,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 514,
-                    "end": 531
+                    "line": 346,
+                    "end": 363
                 },
                 {
                     "routes": [],
@@ -78769,8 +78788,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 539,
-                    "end": 600
+                    "line": 371,
+                    "end": 432
                 },
                 {
                     "routes": [],
@@ -78792,8 +78811,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 610,
-                    "end": 627
+                    "line": 442,
+                    "end": 459
                 }
             ]
         },
@@ -80113,6 +80132,238 @@
                     "params": [],
                     "line": 194,
                     "end": 211
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Theme\\StylePresets",
+            "short": "StylePresets",
+            "namespace": "Minn\\Theme",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Theme/StylePresets.php",
+            "lines": 174,
+            "doc": "The preset side of theme.json: the colour, gradient, font-size,\nfont-family, spacing, and shadow lists a theme declares over core's\nown, as the custom properties on :root and the has-* utility classes\nthe reference prints for them. Pure: settings in, CSS fragments out.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Theme\\GlobalStyles"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "presets",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "presets(array $settings): array",
+                    "doc": "Every preset list the theme declares, over core's own, keyed by kind.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "settings",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 17,
+                    "end": 32
+                },
+                {
+                    "routes": [],
+                    "name": "presetList",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "presetList(mixed $presets): array",
+                    "doc": "A preset list as theme.json writes it is a plain list; as the site\neditor saves it, it is keyed by origin (default, theme, custom). The\nreference prints the origins in that order, so the two shapes flatten\nto one list here.",
+                    "shapes": [
+                        "@return list<array>"
+                    ],
+                    "params": [
+                        {
+                            "name": "presets",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 42,
+                    "end": 59
+                },
+                {
+                    "routes": [],
+                    "name": "fontFamilies",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "fontFamilies(array $settings): array",
+                    "doc": "The font family presets in the settings.",
+                    "shapes": [
+                        "@return list<array>"
+                    ],
+                    "params": [
+                        {
+                            "name": "settings",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 66,
+                    "end": 69
+                },
+                {
+                    "routes": [],
+                    "name": "presetProperties",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "presetProperties(array $presets): string",
+                    "doc": "The presets as custom properties for :root.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "presets",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 72,
+                    "end": 81
+                },
+                {
+                    "routes": [],
+                    "name": "presetClasses",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "presetClasses(array $presets): string",
+                    "doc": "The has-* utility classes the presets give every colour, gradient, font size, and font family.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "presets",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 84,
+                    "end": 106
+                },
+                {
+                    "routes": [],
+                    "name": "defaultSlugsFirst",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "defaultSlugsFirst(array $presets, array $defaults): array",
+                    "doc": "A theme size that reuses one of core's slugs prints in core's position;\nthe theme's own slugs follow.",
+                    "shapes": [
+                        "@param list<array> $presets",
+                        "@param list<string> $defaults",
+                        "@return list<array>"
+                    ],
+                    "params": [
+                        {
+                            "name": "presets",
+                            "type": "array",
+                            "shape": "list<array>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "defaults",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 116,
+                    "end": 126
+                },
+                {
+                    "routes": [],
+                    "name": "spacingPresets",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "spacingPresets(array $defaults, array $own): array",
+                    "doc": "The default spacing scale (20 to 80) is always present, whatever\ndefaultSpacingSizes says; a theme size with the same slug replaces the\ndefault in place, and the theme's other sizes follow the scale.",
+                    "shapes": [
+                        "@return list<array{slug: string, value: string}>"
+                    ],
+                    "params": [
+                        {
+                            "name": "defaults",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "own",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 135,
+                    "end": 145
+                },
+                {
+                    "routes": [],
+                    "name": "fluidFontSize",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "fluidFontSize(array $preset, array $settings): string",
+                    "doc": "A font size with fluid bounds becomes clamp(min, min + ((1vw - v) * f),\nmax) scaled between a 320px viewport and the theme's wide size, which\nis how the reference arrives at 0.196 for a 1rem to 1.125rem size on a\n1340px wide layout. A plain size stays as written.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "preset",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "settings",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 153,
+                    "end": 172
+                },
+                {
+                    "routes": [],
+                    "name": "fontFormat",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "fontFormat(string $url): string",
+                    "doc": "The format() a font source is declared with, from its file extension.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "url",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 175,
+                    "end": 185
                 }
             ]
         },
