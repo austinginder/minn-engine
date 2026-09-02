@@ -9,278 +9,283 @@
  * way the reference gates it.
  */
 
-wp_register_ability_category('site', [
-    'label' => 'Site',
-    'description' => 'Abilities that retrieve or modify site information and settings.',
+// Registered on the abilities init, as the reference registers core's own:
+// the facade is loaded before any request has a runtime, and an ability
+// registry belongs to a request.
+add_action('wp_abilities_api_init', static function (): void {
+    wp_register_ability_category('site', [
+        'label' => 'Site',
+        'description' => 'Abilities that retrieve or modify site information and settings.',
+        ]);
+    wp_register_ability_category('user', [
+        'label' => 'User',
+        'description' => 'Abilities that retrieve or modify user information and settings.',
+        ]);
+
+    wp_register_ability('core/get-site-info', [
+        'label' => 'Get Site Information',
+        'description' => 'Returns site information configured in WordPress. By default returns all fields, or optionally a filtered subset.',
+        'category' => 'site',
+        'input_schema' => [
+            'type' => 'object',
+            'properties' => [
+            'fields' => [
+                'type' => 'array',
+                'items' => [
+                'type' => 'string',
+                'enum' => [
+                    'name',
+                    'description',
+                    'url',
+                    'wpurl',
+                    'admin_email',
+                    'charset',
+                    'language',
+                    'version',
+                ],
+                ],
+                'description' => 'Optional: Limit response to specific fields. If omitted, all fields are returned.',
+            ],
+            ],
+            'additionalProperties' => false,
+            'default' => [],
+        ],
+        'output_schema' => [
+            'type' => 'object',
+            'properties' => [
+            'name' => [
+                'type' => 'string',
+                'title' => 'Site Title',
+                'description' => 'The site title.',
+            ],
+            'description' => [
+                'type' => 'string',
+                'title' => 'Tagline',
+                'description' => 'The site tagline.',
+            ],
+            'url' => [
+                'type' => 'string',
+                'title' => 'Site Address (URL)',
+                'description' => 'The public URL where visitors access the site. May differ from the WordPress installation URL.',
+            ],
+            'wpurl' => [
+                'type' => 'string',
+                'title' => 'WordPress Address (URL)',
+                'description' => 'The URL where WordPress core files are served. May differ from the public site URL.',
+            ],
+            'admin_email' => [
+                'type' => 'string',
+                'title' => 'Administration Email Address',
+                'description' => 'The site administrator email address.',
+            ],
+            'charset' => [
+                'type' => 'string',
+                'title' => 'Site Charset',
+                'description' => 'The site character encoding.',
+            ],
+            'language' => [
+                'type' => 'string',
+                'title' => 'Site Language',
+                'description' => 'The site locale in dash form (e.g. en-US).',
+            ],
+            'version' => [
+                'type' => 'string',
+                'title' => 'WordPress Version',
+                'description' => 'The WordPress core version running on this site.',
+            ],
+            ],
+            'additionalProperties' => false,
+        ],
+        'meta' => [
+            'annotations' => [
+            'readonly' => true,
+            'destructive' => false,
+            'idempotent' => true,
+            ],
+            'public' => true,
+            'show_in_rest' => true,
+        ],
+        'execute_callback' => static fn (mixed $input): mixed => _minn_ability_get_site_info((array) ($input ?? [])),
+        'permission_callback' => static fn (): bool => _minn_ability_may_get_site_info(),
     ]);
-wp_register_ability_category('user', [
-    'label' => 'User',
-    'description' => 'Abilities that retrieve or modify user information and settings.',
+
+    wp_register_ability('core/get-user-info', [
+        'label' => 'Get User Information',
+        'description' => 'Returns profile details for the current authenticated user to support personalization, auditing, and access-aware behavior. By default returns all fields, or optionally a filtered subset.',
+        'category' => 'user',
+        'input_schema' => [
+            'type' => 'object',
+            'properties' => [
+            'fields' => [
+                'type' => 'array',
+                'items' => [
+                'type' => 'string',
+                'enum' => [
+                    'id',
+                    'display_name',
+                    'user_nicename',
+                    'user_login',
+                    'roles',
+                    'locale',
+                    'first_name',
+                    'last_name',
+                    'nickname',
+                    'description',
+                    'user_url',
+                ],
+                ],
+                'description' => 'Optional: Limit response to specific fields. If omitted, all fields are returned.',
+            ],
+            ],
+            'additionalProperties' => false,
+            'default' => [],
+        ],
+        'output_schema' => [
+            'type' => 'object',
+            'properties' => [
+            'id' => [
+                'type' => 'integer',
+                'title' => 'User ID',
+                'description' => 'Unique identifier for the user.',
+            ],
+            'display_name' => [
+                'type' => 'string',
+                'title' => 'Display Name',
+                'description' => 'Public-facing name selected by the user.',
+            ],
+            'user_nicename' => [
+                'type' => 'string',
+                'title' => 'User Nicename',
+                'description' => 'URL-friendly slug for the user. Defaults to the username.',
+            ],
+            'user_login' => [
+                'type' => 'string',
+                'title' => 'Username',
+                'description' => 'Login identifier for the user. Cannot be changed once set.',
+            ],
+            'roles' => [
+                'type' => 'array',
+                'title' => 'Roles',
+                'description' => 'Roles assigned to the user, such as administrator, editor, author, contributor, or subscriber.',
+                'items' => [
+                'type' => 'string',
+                ],
+            ],
+            'locale' => [
+                'type' => 'string',
+                'title' => 'Language',
+                'description' => 'Locale code for the user, such as en_US.',
+            ],
+            'first_name' => [
+                'type' => 'string',
+                'title' => 'First Name',
+                'description' => 'Given name.',
+            ],
+            'last_name' => [
+                'type' => 'string',
+                'title' => 'Last Name',
+                'description' => 'Family name.',
+            ],
+            'nickname' => [
+                'type' => 'string',
+                'title' => 'Nickname',
+                'description' => 'Informal name. Defaults to the username.',
+            ],
+            'description' => [
+                'type' => 'string',
+                'title' => 'Biographical Info',
+                'description' => 'User-authored biography. May be empty.',
+            ],
+            'user_url' => [
+                'type' => 'string',
+                'title' => 'Website',
+                'description' => 'Personal website URL.',
+            ],
+            ],
+            'additionalProperties' => false,
+        ],
+        'meta' => [
+            'annotations' => [
+            'readonly' => true,
+            'destructive' => false,
+            'idempotent' => true,
+            ],
+            'public' => true,
+            'show_in_rest' => true,
+        ],
+        'execute_callback' => static fn (mixed $input): mixed => _minn_ability_get_user_info((array) ($input ?? [])),
+        'permission_callback' => static fn (): bool => _minn_ability_may_get_user_info(),
     ]);
 
-wp_register_ability('core/get-site-info', [
-    'label' => 'Get Site Information',
-    'description' => 'Returns site information configured in WordPress. By default returns all fields, or optionally a filtered subset.',
-    'category' => 'site',
-    'input_schema' => [
-        'type' => 'object',
-        'properties' => [
-        'fields' => [
-            'type' => 'array',
-            'items' => [
-            'type' => 'string',
-            'enum' => [
-                'name',
-                'description',
-                'url',
-                'wpurl',
-                'admin_email',
-                'charset',
-                'language',
-                'version',
+    wp_register_ability('core/get-environment-info', [
+        'label' => 'Get Environment Info',
+        'description' => 'Returns core details about the site\'s runtime context for diagnostics and compatibility (environment, PHP runtime, database server info, WordPress version). By default returns all fields, or optionally a filtered subset.',
+        'category' => 'site',
+        'input_schema' => [
+            'type' => 'object',
+            'properties' => [
+            'fields' => [
+                'type' => 'array',
+                'items' => [
+                'type' => 'string',
+                'enum' => [
+                    'environment',
+                    'php_version',
+                    'db_server_info',
+                    'wp_version',
+                ],
+                ],
+                'description' => 'Optional: Limit response to specific fields. If omitted, all fields are returned.',
             ],
             ],
-            'description' => 'Optional: Limit response to specific fields. If omitted, all fields are returned.',
+            'additionalProperties' => false,
+            'default' => [],
         ],
-        ],
-        'additionalProperties' => false,
-        'default' => [],
-    ],
-    'output_schema' => [
-        'type' => 'object',
-        'properties' => [
-        'name' => [
-            'type' => 'string',
-            'title' => 'Site Title',
-            'description' => 'The site title.',
-        ],
-        'description' => [
-            'type' => 'string',
-            'title' => 'Tagline',
-            'description' => 'The site tagline.',
-        ],
-        'url' => [
-            'type' => 'string',
-            'title' => 'Site Address (URL)',
-            'description' => 'The public URL where visitors access the site. May differ from the WordPress installation URL.',
-        ],
-        'wpurl' => [
-            'type' => 'string',
-            'title' => 'WordPress Address (URL)',
-            'description' => 'The URL where WordPress core files are served. May differ from the public site URL.',
-        ],
-        'admin_email' => [
-            'type' => 'string',
-            'title' => 'Administration Email Address',
-            'description' => 'The site administrator email address.',
-        ],
-        'charset' => [
-            'type' => 'string',
-            'title' => 'Site Charset',
-            'description' => 'The site character encoding.',
-        ],
-        'language' => [
-            'type' => 'string',
-            'title' => 'Site Language',
-            'description' => 'The site locale in dash form (e.g. en-US).',
-        ],
-        'version' => [
-            'type' => 'string',
-            'title' => 'WordPress Version',
-            'description' => 'The WordPress core version running on this site.',
-        ],
-        ],
-        'additionalProperties' => false,
-    ],
-    'meta' => [
-        'annotations' => [
-        'readonly' => true,
-        'destructive' => false,
-        'idempotent' => true,
-        ],
-        'public' => true,
-        'show_in_rest' => true,
-    ],
-    'execute_callback' => static fn (mixed $input): mixed => _minn_ability_get_site_info((array) ($input ?? [])),
-    'permission_callback' => static fn (): bool => _minn_ability_may_get_site_info(),
-]);
-
-wp_register_ability('core/get-user-info', [
-    'label' => 'Get User Information',
-    'description' => 'Returns profile details for the current authenticated user to support personalization, auditing, and access-aware behavior. By default returns all fields, or optionally a filtered subset.',
-    'category' => 'user',
-    'input_schema' => [
-        'type' => 'object',
-        'properties' => [
-        'fields' => [
-            'type' => 'array',
-            'items' => [
-            'type' => 'string',
-            'enum' => [
-                'id',
-                'display_name',
-                'user_nicename',
-                'user_login',
-                'roles',
-                'locale',
-                'first_name',
-                'last_name',
-                'nickname',
-                'description',
-                'user_url',
+        'output_schema' => [
+            'type' => 'object',
+            'properties' => [
+            'environment' => [
+                'type' => 'string',
+                'title' => 'Environment Type',
+                'description' => 'The site\'s runtime environment classification.',
+                'enum' => [
+                'production',
+                'staging',
+                'development',
+                'local',
+                ],
+            ],
+            'php_version' => [
+                'type' => 'string',
+                'title' => 'PHP Version',
+                'description' => 'The PHP runtime version executing WordPress.',
+            ],
+            'db_server_info' => [
+                'type' => 'string',
+                'title' => 'Database Server Info',
+                'description' => 'The database server vendor and version string reported by the driver.',
+            ],
+            'wp_version' => [
+                'type' => 'string',
+                'title' => 'WordPress Version',
+                'description' => 'The WordPress core version running on this site.',
             ],
             ],
-            'description' => 'Optional: Limit response to specific fields. If omitted, all fields are returned.',
+            'additionalProperties' => false,
         ],
-        ],
-        'additionalProperties' => false,
-        'default' => [],
-    ],
-    'output_schema' => [
-        'type' => 'object',
-        'properties' => [
-        'id' => [
-            'type' => 'integer',
-            'title' => 'User ID',
-            'description' => 'Unique identifier for the user.',
-        ],
-        'display_name' => [
-            'type' => 'string',
-            'title' => 'Display Name',
-            'description' => 'Public-facing name selected by the user.',
-        ],
-        'user_nicename' => [
-            'type' => 'string',
-            'title' => 'User Nicename',
-            'description' => 'URL-friendly slug for the user. Defaults to the username.',
-        ],
-        'user_login' => [
-            'type' => 'string',
-            'title' => 'Username',
-            'description' => 'Login identifier for the user. Cannot be changed once set.',
-        ],
-        'roles' => [
-            'type' => 'array',
-            'title' => 'Roles',
-            'description' => 'Roles assigned to the user, such as administrator, editor, author, contributor, or subscriber.',
-            'items' => [
-            'type' => 'string',
+        'meta' => [
+            'annotations' => [
+            'readonly' => true,
+            'destructive' => false,
+            'idempotent' => true,
             ],
+            'public' => true,
+            'show_in_rest' => true,
         ],
-        'locale' => [
-            'type' => 'string',
-            'title' => 'Language',
-            'description' => 'Locale code for the user, such as en_US.',
-        ],
-        'first_name' => [
-            'type' => 'string',
-            'title' => 'First Name',
-            'description' => 'Given name.',
-        ],
-        'last_name' => [
-            'type' => 'string',
-            'title' => 'Last Name',
-            'description' => 'Family name.',
-        ],
-        'nickname' => [
-            'type' => 'string',
-            'title' => 'Nickname',
-            'description' => 'Informal name. Defaults to the username.',
-        ],
-        'description' => [
-            'type' => 'string',
-            'title' => 'Biographical Info',
-            'description' => 'User-authored biography. May be empty.',
-        ],
-        'user_url' => [
-            'type' => 'string',
-            'title' => 'Website',
-            'description' => 'Personal website URL.',
-        ],
-        ],
-        'additionalProperties' => false,
-    ],
-    'meta' => [
-        'annotations' => [
-        'readonly' => true,
-        'destructive' => false,
-        'idempotent' => true,
-        ],
-        'public' => true,
-        'show_in_rest' => true,
-    ],
-    'execute_callback' => static fn (mixed $input): mixed => _minn_ability_get_user_info((array) ($input ?? [])),
-    'permission_callback' => static fn (): bool => _minn_ability_may_get_user_info(),
-]);
-
-wp_register_ability('core/get-environment-info', [
-    'label' => 'Get Environment Info',
-    'description' => 'Returns core details about the site\'s runtime context for diagnostics and compatibility (environment, PHP runtime, database server info, WordPress version). By default returns all fields, or optionally a filtered subset.',
-    'category' => 'site',
-    'input_schema' => [
-        'type' => 'object',
-        'properties' => [
-        'fields' => [
-            'type' => 'array',
-            'items' => [
-            'type' => 'string',
-            'enum' => [
-                'environment',
-                'php_version',
-                'db_server_info',
-                'wp_version',
-            ],
-            ],
-            'description' => 'Optional: Limit response to specific fields. If omitted, all fields are returned.',
-        ],
-        ],
-        'additionalProperties' => false,
-        'default' => [],
-    ],
-    'output_schema' => [
-        'type' => 'object',
-        'properties' => [
-        'environment' => [
-            'type' => 'string',
-            'title' => 'Environment Type',
-            'description' => 'The site\'s runtime environment classification.',
-            'enum' => [
-            'production',
-            'staging',
-            'development',
-            'local',
-            ],
-        ],
-        'php_version' => [
-            'type' => 'string',
-            'title' => 'PHP Version',
-            'description' => 'The PHP runtime version executing WordPress.',
-        ],
-        'db_server_info' => [
-            'type' => 'string',
-            'title' => 'Database Server Info',
-            'description' => 'The database server vendor and version string reported by the driver.',
-        ],
-        'wp_version' => [
-            'type' => 'string',
-            'title' => 'WordPress Version',
-            'description' => 'The WordPress core version running on this site.',
-        ],
-        ],
-        'additionalProperties' => false,
-    ],
-    'meta' => [
-        'annotations' => [
-        'readonly' => true,
-        'destructive' => false,
-        'idempotent' => true,
-        ],
-        'public' => true,
-        'show_in_rest' => true,
-    ],
-    'execute_callback' => static fn (mixed $input): mixed => _minn_ability_get_environment_info((array) ($input ?? [])),
-    'permission_callback' => static fn (): bool => _minn_ability_may_get_environment_info(),
-]);
+        'execute_callback' => static fn (mixed $input): mixed => _minn_ability_get_environment_info((array) ($input ?? [])),
+        'permission_callback' => static fn (): bool => _minn_ability_may_get_environment_info(),
+    ]);
+});
 
 /** The site facts core's get-site-info answers with, narrowed to the fields asked for. */
 function _minn_ability_get_site_info(array $input): array
