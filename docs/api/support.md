@@ -14,7 +14,7 @@ escaping, serialized readers, small helpers
 | [`Html`](#html) | final class | 80 |  |
 | [`Ip`](#ip) | final class | 22 | Addresses with their identifying tail removed, for logs and analytics that |
 | [`Json`](#json) | final class | 19 | Makes a value encodable: strings that are not valid UTF-8 get their high bytes replaced, recursively. |
-| [`Kses`](#kses) | final class | 215 | The HTML a user without unfiltered_html may store. Tags outside the |
+| [`Kses`](#kses) | final class | 332 | The HTML a user without unfiltered_html may store. Tags outside the |
 | [`Lists`](#lists) | final class | 90 | List shaping behind the facade's array utilities: the multi-field sort |
 | [`Locale`](#locale) | final class | 31 | The locale's calendar and number vocabulary as data: the names a site |
 | [`Markers`](#markers) | final class | 28 | The BEGIN/END marker blocks insert_with_markers() maintains in files like |
@@ -249,6 +249,9 @@ Comments (the block delimiters) pass through untouched.
 - const `URL_ATTRIBUTES` = `array (   0 => 'href',   1 => 'src',   2 => 'cite',   3 => 'poster',   4 => 'longdesc',   5 => 'usemap', )`
 - const `SCHEMES` = `array (   0 => 'http',   1 => 'https',   2 => 'ftp',   3 => 'ftps',   4 => 'mailto',   5 => 'news',   6 => 'irc',   7 => 'gopher',   8 => 'nntp',   9 => 'feed',   10 => 'telnet',   11 => 'mms',   12 => 'rtsp',   13 => 'sms',   14 => 'svn',   15 => 'tel',   16 => 'fax',   17 => 'xmpp',   18 => 'webcal',   19 => 'urn', )`
 - const `CSS_PROPERTIES` = `array (   0 => 'background',   1 => 'background-color',   2 => 'background-image',   3 => 'background-position',   4 => 'background-repeat',   5 => 'background-size',   6 => 'background-attachment',   7 => 'background-blend-mode',   8 => 'border',   9 => 'border-radius',   10 => 'border-width',   11 => 'border-color',   12 => 'border-style',   13 => 'border-spacing',   14 => 'border-collapse',   15 => 'border-top',   16 => 'border-right',   17 => 'border-bottom',   18 => 'border-left',   19 => 'border-top-color',   20 => 'border-right-color',   21 => 'border-bottom-color',   22 => 'border-left-color',   23 => 'border-top-width',   24 => 'border-right-width',   25 => 'border-bottom-width',   26 => 'border-left-width',   27 => 'border-top-style',   28 => 'border-right-style',   29 => 'border-bottom-style',   30 => 'border-left-style',   31 => 'border-top-left-radius',   32 => 'border-top-right-radius',   33 => 'border-bottom-right-radius',   34 => 'border-bottom-left-radius',   35 => 'caption-side',   36 => 'clear',   37 => 'color',   38 => 'columns',   39 => 'column-count',   40 => 'column-gap',   41 => 'column-width',   42 => 'column-span',   43 => 'column-rule',   44 => 'cursor',   45 => 'direction',   46 => 'display',   47 => 'filter',   48 => 'float',   49 => 'flex',   50 => 'flex-basis',   51 => 'flex-direction',   52 => 'flex-flow',   53 => 'flex-grow',   54 => 'flex-shrink',   55 => 'flex-wrap',   56 => 'font',   57 => 'font-family',   58 => 'font-size',   59 => 'font-style',   60 => 'font-variant',   61 => 'font-weight',   62 => 'font-display',   63 => 'gap',   64 => 'row-gap',   65 => 'column-gap',   66 => 'grid',   67 => 'grid-area',   68 => 'grid-auto-columns',   69 => 'grid-auto-flow',   70 => 'grid-auto-rows',   71 => 'grid-column',   72 => 'grid-column-end',   73 => 'grid-column-gap',   74 => 'grid-column-start',   75 => 'grid-gap',   76 => 'grid-row',   77 => 'grid-row-end',   78 => 'grid-row-gap',   79 => 'grid-row-start',   80 => 'grid-template',   81 => 'grid-template-areas',   82 => 'grid-template-columns',   83 => 'grid-template-rows',   84 => 'height',   85 => 'min-height',   86 => 'max-height',   87 => 'width',   88 => 'min-width',   89 => 'max-width',   90 => 'justify-content',   91 => 'justify-items',   92 => 'justify-self',   93 => 'align-content',   94 => 'align-items',   95 => 'align-self',   96 => 'letter-spacing',   97 => 'line-height',   98 => 'list-style',   99 => 'list-style-image',   100 => 'list-style-position',   101 => 'list-style-type',   102 => 'margin',   103 => 'margin-top',   104 => 'margin-right',   105 => 'margin-bottom',   106 => 'margin-left',   107 => 'margin-block',   108 => 'margin-block-start',   109 => 'margin-block-end',   110 => 'margin-inline',   111 => 'margin-inline-start',   112 => 'margin-inline-end',   113 => 'object-fit',   114 => 'object-position',   115 => 'opacity',   116 => 'order',   117 => 'overflow',   118 => 'overflow-wrap',   119 => 'overflow-x',   120 => 'overflow-y',   121 => 'padding',   122 => 'padding-top',   123 => 'padding-right',   124 => 'padding-bottom',   125 => 'padding-left',   126 => 'padding-block',   127 => 'padding-block-start',   128 => 'padding-block-end',   129 => 'padding-inline',   130 => 'padding-inline-start',   131 => 'padding-inline-end',   132 => 'position',   133 => 'resize',   134 => 'table-layout',   135 => 'text-align',   136 => 'text-decoration',   137 => 'text-indent',   138 => 'text-shadow',   139 => 'text-transform',   140 => 'text-wrap',   141 => 'vertical-align',   142 => 'visibility',   143 => 'white-space',   144 => 'word-break',   145 => 'word-spacing',   146 => 'word-wrap',   147 => 'writing-mode',   148 => 'aspect-ratio',   149 => 'box-shadow',   150 => 'box-sizing',   151 => 'z-index', )`
+- const `REFERENCE` = `'/&(#[0-9]+|#[xX][0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]{0,31});/'`
+- const `STRAY_AMPERSAND` = `'/&(?!(?:#[0-9]+|#[xX][0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]{0,31});)/'`
+- const `MARKUP` = `array (   '&' => '&amp;',   '<' => '&lt;',   '>' => '&gt;',   '"' => '&quot;',   '\'' => '&apos;', )`
 
 Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Content\Users`, `Minn\Front\CommentPostController`, `Minn\Rest\CommentsController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`
 
@@ -268,13 +271,18 @@ A URL for a stored field: empty when its scheme is not one the reference allows.
 
 ### static `attributeUrl(string $url): string`
 
-A URL inside markup: an unsafe scheme is cut off and the rest kept, as the reference does.
+A URL inside markup: whatever stands before the first colon, once
+every character reference and percent escape is decoded as deep as it
+goes and the invisible characters are dropped, must be an allowed
+scheme, or it is cut off and the rest is judged again. The reference
+cuts "?q=a:b" to "b" and "javascript:alert(1)//http://" to "//" the
+same way. A value with a good scheme is returned as given.
 
 ### static `style(string $style): string`
 
 A style attribute's value with only the listed properties kept.
 
-Internals: `attributes()` (private, line 142), `srcset()` (private, line 179), `css()` (private, line 202)
+Internals: `deepDecode()` (private, line 163), `visible()` (private, line 176), `normalizeText()` (private, line 191), `normalizeAttribute()` (private, line 214), `unquoted()` (private, line 234), `named()` (private, line 244), `codePoint()` (private, line 251), `attributes()` (private, line 261), `srcset()` (private, line 298), `css()` (private, line 321)
 
 
 ## Lists

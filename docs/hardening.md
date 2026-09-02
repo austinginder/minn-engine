@@ -17,7 +17,18 @@ What the engine does on its own, and what the server in front of it must do.
   autoload off.
 - **Stored markup.** Callers without `unfiltered_html` have their post, media, comment,
   term, and profile markup filtered by `Minn\Support\Kses`, an allowlist written for
-  the engine and matched against the reference's results. Password-protected posts
+  the engine and matched against the reference's results. A URL attribute is judged
+  on a copy decoded as deep as it goes (character references, named and numeric,
+  with or without semicolons, and percent escapes, repeated until nothing changes)
+  with whitespace and control characters removed: whatever stands before the first
+  colon must be an allowed scheme or it is cut off and the rest judged again, so
+  `&#106;avascript:`, `javascript&colon;`, `jav&#x09;ascript:` and `j%61vascript:`
+  all lose their scheme exactly as the reference cuts them. Every attribute value is
+  stored normalised the way the reference stores it (references decoded to their
+  characters, the five markup characters kept escaped, an apostrophe as `&apos;`,
+  invalid references and stray ampersands as `&amp;`); text between tags keeps its
+  valid references, pads decimal ones to three digits, and escapes stray brackets.
+  `tests/unit/kses.php` pins seventy captured cases. Password-protected posts
   show only the password form.
 - **Sign-in and sign-out.** `redirect_to` is honoured for this site's own URLs only;
   logging out destroys the server-side session and needs the session's `log-out`

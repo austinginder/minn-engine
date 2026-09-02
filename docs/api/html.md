@@ -17,7 +17,7 @@ Character reference decoding for text and attribute values: numeric and
 named references, the legacy names that work without a semicolon (not in
 an attribute when an "=" or alphanumeric follows), unknown ones left as is.
 
-Used by: `Minn\Html\Tags`
+Used by: `Minn\Html\Tags`, `Minn\Support\Kses`
 
 
 ### static `text(string $raw): string`

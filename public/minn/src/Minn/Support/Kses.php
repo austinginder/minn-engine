@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Support;
 
+use Minn\Html\Decoder;
+
 /**
  * The HTML a user without unfiltered_html may store. Tags outside the
  * allowlist are removed and their text kept; attributes outside the tag's
@@ -87,13 +89,20 @@ final class Kses
     public static function filter(string $html, array $allowed): string
     {
         return (string) preg_replace_callback(
-            '/<!--.*?-->|<\/?([a-zA-Z][a-zA-Z0-9-]*)((?:\s+[^\s=>\/]+(?:\s*=\s*(?:"[^"]*"|\'[^\']*\'|[^\s"\'>]+))?)*)\s*(\/?)>|<[^>]*>?/s',
+            '/<!--.*?-->|<\/?([a-zA-Z][a-zA-Z0-9-]*)((?:\s+[^\s=>\/]+(?:\s*=\s*(?:"[^"]*"|\'[^\']*\'|[^\s"\'>]+))?)*)\s*(\/?)>|<[^>]*>?|[^<]+/s',
             static function (array $m) use ($allowed): string {
                 if (str_starts_with($m[0], '<!--')) {
                     return $m[0];
                 }
+                if ($m[0][0] !== '<') {
+                    return self::normalizeText($m[0]);
+                }
                 $tag = strtolower($m[1] ?? '');
-                if ($tag === '' || !isset($allowed[$tag])) {
+                if ($tag === '') {
+                    // A "<" that starts no tag is text (the reference keeps "a &lt; b").
+                    return '&lt;' . self::normalizeText(substr($m[0], 1));
+                }
+                if (!isset($allowed[$tag])) {
                     return '';
                 }
                 if (str_starts_with($m[0], '</')) {
@@ -124,18 +133,128 @@ final class Kses
         return in_array(strtolower($m[1]), self::SCHEMES, true) ? $url : '';
     }
 
-    /** A URL inside markup: an unsafe scheme is cut off and the rest kept, as the reference does. */
+    /**
+     * A URL inside markup: whatever stands before the first colon, once
+     * every character reference and percent escape is decoded as deep as it
+     * goes and the invisible characters are dropped, must be an allowed
+     * scheme, or it is cut off and the rest is judged again. The reference
+     * cuts "?q=a:b" to "b" and "javascript:alert(1)//http://" to "//" the
+     * same way. A value with a good scheme is returned as given.
+     */
     public static function attributeUrl(string $url): string
     {
         $url = trim($url);
-        while (preg_match('/^([a-zA-Z][a-zA-Z0-9+.\s-]*):/', $url, $m)) {
-            $scheme = strtolower((string) preg_replace('/\s+/', '', $m[1]));
+        for ($round = 0; $round < 8; $round++) {
+            $decoded = self::deepDecode($url);
+            $colon = strpos($decoded, ':');
+            if ($colon === false) {
+                return $url;
+            }
+            $scheme = strtolower(self::visible(substr($decoded, 0, $colon)));
             if (in_array($scheme, self::SCHEMES, true)) {
                 return $url;
             }
-            $url = substr($url, strlen($m[0]));
+            $url = self::normalizeAttribute(substr($decoded, $colon + 1));
         }
-        return $url;
+        return '';
+    }
+
+    /** A value with its references and percent escapes decoded until nothing changes, so no encoding hides a scheme. */
+    private static function deepDecode(string $value): string
+    {
+        for ($round = 0; $round < 6; $round++) {
+            $next = rawurldecode(Decoder::attribute($value));
+            if ($next === $value) {
+                break;
+            }
+            $value = $next;
+        }
+        return $value;
+    }
+
+    /** The text with whitespace, control characters, no-break spaces, and replacement characters removed. */
+    private static function visible(string $text): string
+    {
+        return preg_replace('/[\s\x00-\x1F\x7F\x{A0}\x{FFFD}]+/u', '', $text)
+            ?? (string) preg_replace('/[\s\x00-\x1F\x7F]+/', '', $text);
+    }
+
+    private const REFERENCE = '/&(#[0-9]+|#[xX][0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]{0,31});/';
+    private const STRAY_AMPERSAND = '/&(?!(?:#[0-9]+|#[xX][0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]{0,31});)/';
+    private const MARKUP = ['&' => '&amp;', '<' => '&lt;', '>' => '&gt;', '"' => '&quot;', "'" => '&apos;'];
+
+    /**
+     * Text between tags as the reference stores it: valid references stay
+     * references (decimal ones padded to three digits), invalid ones and
+     * stray ampersands become "&amp;", and a closing bracket is escaped.
+     */
+    private static function normalizeText(string $text): string
+    {
+        $text = (string) preg_replace_callback(self::REFERENCE, static function (array $m): string {
+            $body = $m[1];
+            if ($body[0] !== '#') {
+                return self::named($body) === null ? '&amp;' . $body . ';' : '&' . $body . ';';
+            }
+            $code = self::codePoint($body);
+            if ($code === null) {
+                return '&amp;' . $body . ';';
+            }
+            return $body[1] === 'x' || $body[1] === 'X' ? '&' . $body . ';' : '&#' . str_pad((string) $code, 3, '0', STR_PAD_LEFT) . ';';
+        }, $text);
+        $text = (string) preg_replace(self::STRAY_AMPERSAND, '&amp;', $text);
+        return str_replace('>', '&gt;', $text);
+    }
+
+    /**
+     * An attribute value as the reference stores it: valid references become
+     * their characters, except that the five markup characters stay escaped
+     * (an apostrophe as &apos;); invalid references and stray ampersands
+     * become "&amp;"; raw quotes are escaped.
+     */
+    private static function normalizeAttribute(string $value): string
+    {
+        $value = (string) preg_replace_callback(self::REFERENCE, static function (array $m): string {
+            $body = $m[1];
+            if ($body[0] !== '#') {
+                $char = self::named($body);
+            } else {
+                $code = self::codePoint($body);
+                $char = $code === null ? null : Decoder::text('&#' . $code . ';');
+            }
+            if ($char === null) {
+                return '&amp;' . $body . ';';
+            }
+            return self::MARKUP[$char] ?? $char;
+        }, $value);
+        $value = (string) preg_replace(self::STRAY_AMPERSAND, '&amp;', $value);
+        return str_replace(['"', "'"], ['&quot;', '&apos;'], $value);
+    }
+
+    /** An attribute value without the one pair of quotes that wrapped it; a value may itself end in the other quote. */
+    private static function unquoted(string $value): string
+    {
+        $first = $value[0] ?? '';
+        if (($first === '"' || $first === "'") && strlen($value) >= 2 && str_ends_with($value, $first)) {
+            return substr($value, 1, -1);
+        }
+        return $value;
+    }
+
+    /** What a named reference stands for, or null when the name is not one. */
+    private static function named(string $name): ?string
+    {
+        $decoded = html_entity_decode('&' . $name . ';', ENT_QUOTES | ENT_HTML5 | ENT_SUBSTITUTE, 'UTF-8');
+        return $decoded === '&' . $name . ';' ? null : $decoded;
+    }
+
+    /** A numeric reference's code point, or null when it names no character the reference accepts (NUL, controls, surrogates, beyond Unicode). */
+    private static function codePoint(string $body): ?int
+    {
+        $code = $body[1] === 'x' || $body[1] === 'X' ? hexdec(substr($body, 2)) : (int) substr($body, 1);
+        if (!is_int($code) || $code > 0x10FFFF || ($code >= 0xD800 && $code <= 0xDFFF)) {
+            return null;
+        }
+        return $code >= 0x20 || in_array($code, [0x09, 0x0A, 0x0D], true) ? $code : null;
     }
 
     /** @param list<string> $allowedForTag */
@@ -145,7 +264,7 @@ final class Kses
         preg_match_all('/([a-zA-Z_:][-a-zA-Z0-9_:.]*)(?:\s*=\s*("[^"]*"|\'[^\']*\'|[^\s"\'>]+))?/', $raw, $matches, PREG_SET_ORDER);
         foreach ($matches as $attribute) {
             $name = strtolower($attribute[1]);
-            $value = isset($attribute[2]) ? trim($attribute[2], '"\'') : null;
+            $value = isset($attribute[2]) ? self::normalizeAttribute(self::unquoted($attribute[2])) : null;
             $permitted = in_array($name, $allowedForTag, true)
                 || in_array($name, self::GLOBAL_ATTRIBUTES, true)
                 || str_starts_with($name, 'aria-')
@@ -170,7 +289,7 @@ final class Kses
                     continue;
                 }
             }
-            $out .= ' ' . $name . '="' . str_replace('"', '&quot;', $value) . '"';
+            $out .= ' ' . $name . '="' . $value . '"';
         }
         return $out;
     }
@@ -179,7 +298,7 @@ final class Kses
     private static function srcset(string $value): string
     {
         foreach (explode(',', $value) as $candidate) {
-            $url = trim(explode(' ', trim($candidate))[0] ?? '');
+            $url = trim(explode(' ', trim(self::deepDecode($candidate)))[0] ?? '');
             if ($url === '' || !preg_match('#^(?:https?:)?//#', $url) && !str_starts_with($url, '/')) {
                 return '';
             }

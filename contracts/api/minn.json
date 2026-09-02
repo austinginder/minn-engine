@@ -41103,7 +41103,8 @@
             "extends": null,
             "uses": [],
             "usedBy": [
-                "Minn\\Html\\Tags"
+                "Minn\\Html\\Tags",
+                "Minn\\Support\\Kses"
             ],
             "constructor": null,
             "cases": [],
@@ -77795,11 +77796,13 @@
             "namespace": "Minn\\Support",
             "kind": "final class",
             "file": "public/minn/src/Minn/Support/Kses.php",
-            "lines": 215,
+            "lines": 332,
             "doc": "The HTML a user without unfiltered_html may store. Tags outside the\nallowlist are removed and their text kept; attributes outside the tag's\nlist (and the global set) are dropped; URL attributes lose unsafe\nschemes; style attributes keep only listed properties and no code.\nComments (the block delimiters) pass through untouched.",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Html\\Decoder"
+            ],
             "usedBy": [
                 "Minn\\Blocks\\Dynamic\\LatestComments",
                 "Minn\\Blocks\\Dynamic\\SocialLinks",
@@ -77853,6 +77856,24 @@
                     "value": "array (   0 => 'background',   1 => 'background-color',   2 => 'background-image',   3 => 'background-position',   4 => 'background-repeat',   5 => 'background-size',   6 => 'background-attachment',   7 => 'background-blend-mode',   8 => 'border',   9 => 'border-radius',   10 => 'border-width',   11 => 'border-color',   12 => 'border-style',   13 => 'border-spacing',   14 => 'border-collapse',   15 => 'border-top',   16 => 'border-right',   17 => 'border-bottom',   18 => 'border-left',   19 => 'border-top-color',   20 => 'border-right-color',   21 => 'border-bottom-color',   22 => 'border-left-color',   23 => 'border-top-width',   24 => 'border-right-width',   25 => 'border-bottom-width',   26 => 'border-left-width',   27 => 'border-top-style',   28 => 'border-right-style',   29 => 'border-bottom-style',   30 => 'border-left-style',   31 => 'border-top-left-radius',   32 => 'border-top-right-radius',   33 => 'border-bottom-right-radius',   34 => 'border-bottom-left-radius',   35 => 'caption-side',   36 => 'clear',   37 => 'color',   38 => 'columns',   39 => 'column-count',   40 => 'column-gap',   41 => 'column-width',   42 => 'column-span',   43 => 'column-rule',   44 => 'cursor',   45 => 'direction',   46 => 'display',   47 => 'filter',   48 => 'float',   49 => 'flex',   50 => 'flex-basis',   51 => 'flex-direction',   52 => 'flex-flow',   53 => 'flex-grow',   54 => 'flex-shrink',   55 => 'flex-wrap',   56 => 'font',   57 => 'font-family',   58 => 'font-size',   59 => 'font-style',   60 => 'font-variant',   61 => 'font-weight',   62 => 'font-display',   63 => 'gap',   64 => 'row-gap',   65 => 'column-gap',   66 => 'grid',   67 => 'grid-area',   68 => 'grid-auto-columns',   69 => 'grid-auto-flow',   70 => 'grid-auto-rows',   71 => 'grid-column',   72 => 'grid-column-end',   73 => 'grid-column-gap',   74 => 'grid-column-start',   75 => 'grid-gap',   76 => 'grid-row',   77 => 'grid-row-end',   78 => 'grid-row-gap',   79 => 'grid-row-start',   80 => 'grid-template',   81 => 'grid-template-areas',   82 => 'grid-template-columns',   83 => 'grid-template-rows',   84 => 'height',   85 => 'min-height',   86 => 'max-height',   87 => 'width',   88 => 'min-width',   89 => 'max-width',   90 => 'justify-content',   91 => 'justify-items',   92 => 'justify-self',   93 => 'align-content',   94 => 'align-items',   95 => 'align-self',   96 => 'letter-spacing',   97 => 'line-height',   98 => 'list-style',   99 => 'list-style-image',   100 => 'list-style-position',   101 => 'list-style-type',   102 => 'margin',   103 => 'margin-top',   104 => 'margin-right',   105 => 'margin-bottom',   106 => 'margin-left',   107 => 'margin-block',   108 => 'margin-block-start',   109 => 'margin-block-end',   110 => 'margin-inline',   111 => 'margin-inline-start',   112 => 'margin-inline-end',   113 => 'object-fit',   114 => 'object-position',   115 => 'opacity',   116 => 'order',   117 => 'overflow',   118 => 'overflow-wrap',   119 => 'overflow-x',   120 => 'overflow-y',   121 => 'padding',   122 => 'padding-top',   123 => 'padding-right',   124 => 'padding-bottom',   125 => 'padding-left',   126 => 'padding-block',   127 => 'padding-block-start',   128 => 'padding-block-end',   129 => 'padding-inline',   130 => 'padding-inline-start',   131 => 'padding-inline-end',   132 => 'position',   133 => 'resize',   134 => 'table-layout',   135 => 'text-align',   136 => 'text-decoration',   137 => 'text-indent',   138 => 'text-shadow',   139 => 'text-transform',   140 => 'text-wrap',   141 => 'vertical-align',   142 => 'visibility',   143 => 'white-space',   144 => 'word-break',   145 => 'word-spacing',   146 => 'word-wrap',   147 => 'writing-mode',   148 => 'aspect-ratio',   149 => 'box-shadow',   150 => 'box-sizing',   151 => 'z-index', )",
                     "doc": "",
                     "visibility": "private"
+                },
+                {
+                    "name": "REFERENCE",
+                    "value": "'/&(#[0-9]+|#[xX][0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]{0,31});/'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "STRAY_AMPERSAND",
+                    "value": "'/&(?!(?:#[0-9]+|#[xX][0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]{0,31});)/'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "MARKUP",
+                    "value": "array (   '&' => '&amp;',   '<' => '&lt;',   '>' => '&gt;',   '\"' => '&quot;',   '\\'' => '&apos;', )",
+                    "doc": "",
+                    "visibility": "private"
                 }
             ],
             "properties": [],
@@ -77883,8 +77904,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 87,
-                    "end": 106
+                    "line": 89,
+                    "end": 115
                 },
                 {
                     "routes": [],
@@ -77903,8 +77924,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 109,
-                    "end": 115
+                    "line": 118,
+                    "end": 124
                 },
                 {
                     "routes": [],
@@ -77923,8 +77944,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 118,
-                    "end": 125
+                    "line": 127,
+                    "end": 134
                 },
                 {
                     "routes": [],
@@ -77932,7 +77953,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "attributeUrl(string $url): string",
-                    "doc": "A URL inside markup: an unsafe scheme is cut off and the rest kept, as the reference does.",
+                    "doc": "A URL inside markup: whatever stands before the first colon, once\nevery character reference and percent escape is decoded as deep as it\ngoes and the invisible characters are dropped, must be an allowed\nscheme, or it is cut off and the rest is judged again. The reference\ncuts \"?q=a:b\" to \"b\" and \"javascript:alert(1)//http://\" to \"//\" the\nsame way. A value with a good scheme is returned as given.",
                     "shapes": [],
                     "params": [
                         {
@@ -77943,8 +77964,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 128,
-                    "end": 139
+                    "line": 144,
+                    "end": 160
                 },
                 {
                     "routes": [],
@@ -77963,8 +77984,148 @@
                             "doc": ""
                         }
                     ],
+                    "line": 310,
+                    "end": 313
+                },
+                {
+                    "routes": [],
+                    "name": "deepDecode",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "deepDecode(string $value): string",
+                    "doc": "A value with its references and percent escapes decoded until nothing changes, so no encoding hides a scheme.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 163,
+                    "end": 173
+                },
+                {
+                    "routes": [],
+                    "name": "visible",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "visible(string $text): string",
+                    "doc": "The text with whitespace, control characters, no-break spaces, and replacement characters removed.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 176,
+                    "end": 180
+                },
+                {
+                    "routes": [],
+                    "name": "normalizeText",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "normalizeText(string $text): string",
+                    "doc": "Text between tags as the reference stores it: valid references stay\nreferences (decimal ones padded to three digits), invalid ones and\nstray ampersands become \"&amp;\", and a closing bracket is escaped.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
                     "line": 191,
-                    "end": 194
+                    "end": 206
+                },
+                {
+                    "routes": [],
+                    "name": "normalizeAttribute",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "normalizeAttribute(string $value): string",
+                    "doc": "An attribute value as the reference stores it: valid references become\ntheir characters, except that the five markup characters stay escaped\n(an apostrophe as &apos;); invalid references and stray ampersands\nbecome \"&amp;\"; raw quotes are escaped.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 214,
+                    "end": 231
+                },
+                {
+                    "routes": [],
+                    "name": "unquoted",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "unquoted(string $value): string",
+                    "doc": "An attribute value without the one pair of quotes that wrapped it; a value may itself end in the other quote.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 234,
+                    "end": 241
+                },
+                {
+                    "routes": [],
+                    "name": "named",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "named(string $name): ?string",
+                    "doc": "What a named reference stands for, or null when the name is not one.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 244,
+                    "end": 248
+                },
+                {
+                    "routes": [],
+                    "name": "codePoint",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "codePoint(string $body): ?int",
+                    "doc": "A numeric reference's code point, or null when it names no character the reference accepts (NUL, controls, surrogates, beyond Unicode).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "body",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 251,
+                    "end": 258
                 },
                 {
                     "routes": [],
@@ -77992,8 +78153,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 142,
-                    "end": 176
+                    "line": 261,
+                    "end": 295
                 },
                 {
                     "routes": [],
@@ -78012,8 +78173,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 179,
-                    "end": 188
+                    "line": 298,
+                    "end": 307
                 },
                 {
                     "routes": [],
@@ -78032,8 +78193,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 202,
-                    "end": 227
+                    "line": 321,
+                    "end": 346
                 }
             ]
         },
