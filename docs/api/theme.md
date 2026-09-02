@@ -11,20 +11,23 @@ the block-theme reader, templates, global styles and the page renderer
 | [`ClassicRenderer`](#classicrenderer) | final readonly class | 130 | A whole page from the active classic theme: the reference's PHP template |
 | [`ClassicTheme`](#classictheme) | final readonly class | 31 | The active classic (PHP-template) theme on disk. A theme is classic when |
 | [`Folder`](#folder) | final readonly class | 77 | A theme folder read from disk: its style.css headers, which folder its templates come from, its screenshot, whether it is a block theme. |
-| [`GlobalStyles`](#globalstyles) | final readonly class | 443 | theme.json to CSS. Presets become custom properties on :root and their |
+| [`GlobalStyles`](#globalstyles) | final readonly class | 433 | theme.json to CSS. Presets become custom properties on :root and their |
 | [`HeadLinks`](#headlinks) | final readonly class | 114 | The links the reference puts in every head: the site and comments |
 | [`Hierarchy`](#hierarchy) | final class | 146 | The classic template hierarchy: the candidate file names each template |
 | [`MainQueryBridge`](#mainquerybridge) | final readonly class | 67 | Stands the main query for a themed page: a plugin's archive runs through |
 | [`PageRenderer`](#pagerenderer) | final readonly class | 196 | A whole page from the active block theme: the template the resolution |
 | [`PatternText`](#patterntext) | final class | 198 | Block-theme patterns are PHP files whose only code is a handful of |
 | [`StylePresets`](#stylepresets) | final class | 174 | The preset side of theme.json: the colour, gradient, font-size, |
+| [`StyleSettings`](#stylesettings) | final class | 82 | The settings and styles nodes as wp/v2/global-styles reports them: |
 | [`TemplateIndex`](#templateindex) | final class | 250 | Every block template and template part the site offers, in the order the |
 | [`TemplatePartTheme`](#templateparttheme) | final readonly class | 45 | A template-part block inside a template says which theme's part it means. |
 | [`TemplatePatterns`](#templatepatterns) | final readonly class | 88 | A template can name a pattern instead of carrying its blocks, and the |
 | [`TemplateRecord`](#templaterecord) | final readonly class | 34 | One block template or template part, whatever it came from: a theme |
 | [`TemplateWriter`](#templatewriter) | final readonly class | 92 | Saving and removing block templates. A template the theme ships is never |
-| [`Templates`](#templates) | final readonly class | 146 | Which template renders a resolution, and where its markup comes from: |
-| [`Theme`](#theme) | final class | 318 | The active block theme on disk, read as data: theme.json, the templates |
+| [`Templates`](#templates) | final readonly class | 153 | Which template renders a resolution, and where its markup comes from: |
+| [`Theme`](#theme) | final class | 327 | The active block theme on disk, read as data: theme.json, the templates |
+| [`ThemeStyles`](#themestyles) | final readonly class | 115 | The active theme's global styles as wp/v2/global-styles/themes/{stylesheet} |
+| [`UserStyles`](#userstyles) | final readonly class | 106 | The site editor's saved global styles: one wp_global_styles post per |
 
 ## ArchiveTitle
 
@@ -252,7 +255,7 @@ file:./ resolved against the theme that carries the file and the
 format named from the extension. Families without files print
 nothing.
 
-Internals: `fontUrl()` (private, line 164), `structuralRules()` (private, line 182), `gapRules()` (private, line 202), `rootStyles()` (private, line 218), `elementStyles()` (private, line 232), `blockStyles()` (private, line 261), `withoutEmpty()` (private, line 280), `scopedCss()` (private, line 293), `variationStyles()` (private, line 315), `containerStyles()` (private, line 346), `declarations()` (private, line 371), `ordered()` (private, line 442)
+Internals: `fontUrl()` (private, line 154), `structuralRules()` (private, line 172), `gapRules()` (private, line 192), `rootStyles()` (private, line 208), `elementStyles()` (private, line 222), `blockStyles()` (private, line 251), `withoutEmpty()` (private, line 270), `scopedCss()` (private, line 283), `variationStyles()` (private, line 305), `containerStyles()` (private, line 336), `declarations()` (private, line 361), `ordered()` (private, line 432)
 
 
 ## HeadLinks
@@ -527,6 +530,35 @@ is how the reference arrives at 0.196 for a 1rem to 1.125rem size on a
 The format() a font source is declared with, from its file extension.
 
 
+## StyleSettings
+
+`final class Minn\Theme\StyleSettings` · `public/minn/src/Minn/Theme/StyleSettings.php`
+
+The settings and styles nodes as wp/v2/global-styles reports them:
+preset lists keyed by the origin that declared them, appearanceTools
+spelled out as the flags it stands for, and var:preset tokens resolved
+to the custom properties they name. Pure: a node in, a node out.
+
+- const `PRESET_PATHS` = `array (   0 =>    array (     0 => 'color',     1 => 'palette',   ),   1 =>    array (     0 => 'color',     1 => 'gradients',   ),   2 =>    array (     0 => 'color',     1 => 'duotone',   ),   3 =>    array (     0 => 'typography',     1 => 'fontSizes',   ),   4 =>    array (     0 => 'typography',     1 => 'fontFamilies',   ),   5 =>    array (     0 => 'spacing',     1 => 'spacingSizes',   ),   6 =>    array (     0 => 'shadow',     1 => 'presets',   ),   7 =>    array (     0 => 'dimensions',     1 => 'aspectRatios',   ),   8 =>    array (     0 => 'dimensions',     1 => 'dimensionSizes',   ), )` — Where a settings node keeps preset lists, at its root and under each block.
+- const `APPEARANCE_TOOLS` = `array (   'background' =>    array (     0 => 'backgroundImage',     1 => 'backgroundSize',     2 => 'gradient',   ),   'border' =>    array (     0 => 'color',     1 => 'radius',     2 => 'style',     3 => 'width',   ),   'color' =>    array (     0 => 'link',     1 => 'heading',     2 => 'button',     3 => 'caption',   ),   'dimensions' =>    array (     0 => 'aspectRatio',     1 => 'height',     2 => 'minHeight',     3 => 'minWidth',     4 => 'width',   ),   'position' =>    array (     0 => 'sticky',   ),   'spacing' =>    array (     0 => 'blockGap',     1 => 'margin',     2 => 'padding',   ),   'typography' =>    array (     0 => 'lineHeight',     1 => 'textColumns',   ), )` — What appearanceTools switches on, group by group in the order the
+reference appends the groups it has to add; a group already present
+keeps its place and gains the flags at its end.
+
+Used by: `Minn\Rest\GlobalStylesObject`, `Minn\Theme\GlobalStyles`, `Minn\Theme\ThemeStyles`
+
+### static `normalize(array $settings, string $origin): array`
+
+A settings node as written (theme.json, a variation, or the site
+editor's post) with its presets keyed by origin and appearanceTools
+expanded.
+
+### static `resolved(array $node): array`
+
+Every var:preset|kind|slug token replaced by the custom property it names.
+
+Internals: `presetsUnder()` (private, line 69), `withAppearanceTools()` (private, line 81)
+
+
 ## TemplateIndex
 
 `final class Minn\Theme\TemplateIndex` · `public/minn/src/Minn/Theme/TemplateIndex.php`
@@ -751,12 +783,14 @@ The block-theme template hierarchy for each kind of resolution.
 ### `userStyles(): ?array`
 
 The site editor's saved global styles for the active theme, when any.
+An emptied node is stored as [] and reads as nothing, the way the
+reference reads it; a list where a map belongs is dropped the same way.
 
 ### `customTemplate(int $pageId): ?string`
 
 A page's chosen custom template, from _wp_page_template meta.
 
-Internals: `filtered()` (private, line 77), `hierarchy()` (private, line 101), `saved()` (private, line 152)
+Internals: `filtered()` (private, line 77), `hierarchy()` (private, line 101), `saved()` (private, line 159)
 
 
 ## Theme
@@ -770,7 +804,7 @@ merges the same way, with the child's preset lists replacing the
 parent's whole. The engine reads the site's installed theme the way it
 reads the site's database; it never runs the theme's PHP.
 
-Used by: `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Engine`, `Minn\Rest\Services`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\GlobalStyles`, `Minn\Theme\PageRenderer`, `Minn\Theme\TemplateIndex`, `Minn\Theme\TemplatePatterns`, `Minn\Theme\Templates`
+Used by: `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Engine`, `Minn\Rest\Services`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\GlobalStyles`, `Minn\Theme\PageRenderer`, `Minn\Theme\TemplateIndex`, `Minn\Theme\TemplatePatterns`, `Minn\Theme\Templates`, `Minn\Theme\ThemeStyles`
 
 ```php
 __construct(string $slug, string $dir, string $uri, ?Minn\Theme\Theme $parent = NULL)
@@ -798,6 +832,13 @@ The theme's own name, and the parent's, for body classes.
 ### `json(): array`
 
 The theme.json with the parent's merged in.
+
+### `styleFiles(): array`
+
+Every JSON file under styles/, the parent theme's first and each
+theme's in path order: block style partials and style variations alike.
+
+- `@return list<string>`
 
 ### static `merge(array $base, array $over): array`
 
@@ -862,5 +903,91 @@ pattern into a template. A field the header omits is omitted here.
 
 The theme's stylesheet URL when it ships one; a child's own, else nothing (the parent's is not enqueued for it).
 
-Internals: `at()` (private, line 58), `withStylePartials()` (private, line 89), `partialFiles()` (private, line 116), `safe()` (private, line 147), `htmlFiles()` (private, line 210), `patternIndex()` (private, line 322)
+Internals: `at()` (private, line 59), `withStylePartials()` (private, line 90), `partialFiles()` (private, line 126), `safe()` (private, line 157), `htmlFiles()` (private, line 220), `patternIndex()` (private, line 332)
+
+
+## ThemeStyles
+
+`final readonly class Minn\Theme\ThemeStyles` · `public/minn/src/Minn/Theme/ThemeStyles.php`
+
+The active theme's global styles as wp/v2/global-styles/themes/{stylesheet}
+reports them: the engine's defaults (captured from the reference under a
+theme with no theme.json) with the theme's own settings and styles over
+them, and the style variations the theme ships.
+
+Used by: `Minn\Rest\GlobalStylesController`, `Minn\Rest\Services`
+
+```php
+__construct(?Minn\Theme\Theme $theme, string $stylesheet)
+```
+
+- readonly `string $stylesheet`
+
+### static `forSite(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, string $themesDir): self`
+
+The site's active theme as styling data, whether or not it is a block theme.
+
+### `settings(): array`
+
+Settings: presets by origin, appearanceTools expanded, the defaults underneath.
+
+### `styles(): array`
+
+Styles: the theme's over the defaults, block style partials and section styles in, every var:preset token resolved.
+
+### `variations(): array`
+
+The style variations under styles/: every JSON file there that names
+no blockTypes (those are block style partials), the parent theme's
+first, in path order, $schema dropped and the nodes normalized the
+way the theme's own are.
+
+- `@return list<array>`
+
+Internals: `withSectionStyles()` (private, line 91), `partials()` (private, line 113), `defaults()` (private, line 126)
+
+
+## UserStyles
+
+`final readonly class Minn\Theme\UserStyles` · `public/minn/src/Minn/Theme/UserStyles.php`
+
+The site editor's saved global styles: one wp_global_styles post per
+theme, tied to it by the wp_theme term, holding a versioned JSON body
+of the settings and styles the editor wrote. Every changed save leaves
+a revision behind, as a post's does.
+
+Used by: `Minn\Rest\GlobalStylesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\Services`
+
+```php
+__construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Content\PostWriter $writer, Minn\Content\Terms $terms, Minn\Content\Site $site)
+```
+
+
+### `idFor(string $stylesheet): ?int`
+
+The newest published global-styles post carrying the theme's term, or null.
+
+### `ensure(string $stylesheet, int $userId): int`
+
+The theme's post, made the way the reference makes it when there is none yet.
+
+### `find(int $id): ?Minn\Content\PostRecord`
+
+The post when it is a global-styles post, else null.
+
+### static `decode(string $json): array`
+
+What a global-styles body holds; a missing, malformed, or list-shaped
+node is empty, as the reference reads it.
+
+- `@return array{settings: array, styles: array}`
+
+### static `isBlank(string $json): bool`
+
+True when the body carries nothing at all under settings or styles, malformed or not.
+
+### `save(int $id, int $userId, ?string $title, ?array $settings, ?array $styles): void`
+
+Replaces what the caller names (null keeps the stored value), stamps
+the modified time, and snapshots a revision when anything changed.
 

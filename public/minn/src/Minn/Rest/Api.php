@@ -97,6 +97,7 @@ final readonly class Api
             new SystemController($s->diagnostics(), $s->logs(), $caller),
             new SettingsController(new Settings($s->site()), $caller),
             new CommentsController($s->comments(), $s->posts(), $s->site(), $s->commentObject(), $caller),
+            new GlobalStylesController($s->userStyles(), $s->themeStyles(), new GlobalStylesObject($s->revisions(), $s->url(), $caller), $s->revisions(), $caller),
             new RevisionsController($s->posts(), $s->revisions(), $s->url(), $caller),
             new MediaController($s->db(), $s->posts(), $s->mediaWriter(), $s->mediaObject(), $caller),
             new MenusController($s->menus(), new MenuObject($s->menus(), $s->url(), $caller), new MenuItemObject($s->url(), $caller), $caller, $s->url()),

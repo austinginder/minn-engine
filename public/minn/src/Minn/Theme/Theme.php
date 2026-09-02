@@ -1,5 +1,6 @@
 <?php
 
+
 declare(strict_types=1);
 
 namespace Minn\Theme;
@@ -88,28 +89,37 @@ final class Theme
      */
     private function withStylePartials(array $json): array
     {
-        $dirs = [];
-        for ($theme = $this; $theme !== null; $theme = $theme->parent) {
-            array_unshift($dirs, $theme->dir);
-        }
-        foreach ($dirs as $dir) {
-            foreach (self::partialFiles("{$dir}/styles") as $file) {
-                $partial = json_decode((string) file_get_contents($file), true);
-                if (!is_array($partial) || !is_array($partial['blockTypes'] ?? null)) {
-                    continue;
-                }
-                $slug = (string) ($partial['slug'] ?? pathinfo($file, PATHINFO_FILENAME));
-                if (!self::safe($slug)) {
-                    continue;
-                }
-                foreach ($partial['blockTypes'] as $type) {
-                    if (is_string($type) && preg_match('/^[a-z][a-z0-9-]*\/[a-z][a-z0-9-]*$/', $type)) {
-                        $json['styles']['blocks'][$type]['variations'][$slug] = (array) ($partial['styles'] ?? []);
-                    }
+        foreach ($this->styleFiles() as $file) {
+            $partial = json_decode((string) file_get_contents($file), true);
+            if (!is_array($partial) || !is_array($partial['blockTypes'] ?? null)) {
+                continue;
+            }
+            $slug = (string) ($partial['slug'] ?? pathinfo($file, PATHINFO_FILENAME));
+            if (!self::safe($slug)) {
+                continue;
+            }
+            foreach ($partial['blockTypes'] as $type) {
+                if (is_string($type) && preg_match('/^[a-z][a-z0-9-]*\/[a-z][a-z0-9-]*$/', $type)) {
+                    $json['styles']['blocks'][$type]['variations'][$slug] = (array) ($partial['styles'] ?? []);
                 }
             }
         }
         return $json;
+    }
+
+    /**
+     * Every JSON file under styles/, the parent theme's first and each
+     * theme's in path order: block style partials and style variations alike.
+     *
+     * @return list<string>
+     */
+    public function styleFiles(): array
+    {
+        $files = [];
+        for ($theme = $this; $theme !== null; $theme = $theme->parent) {
+            $files = [...self::partialFiles("{$theme->dir}/styles"), ...$files];
+        }
+        return $files;
     }
 
     /** @return list<string> */

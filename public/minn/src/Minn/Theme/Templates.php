@@ -131,12 +131,19 @@ final readonly class Templates
         };
     }
 
-    /** The site editor's saved global styles for the active theme, when any. */
+    /**
+     * The site editor's saved global styles for the active theme, when any.
+     * An emptied node is stored as [] and reads as nothing, the way the
+     * reference reads it; a list where a map belongs is dropped the same way.
+     */
     public function userStyles(): ?array
     {
         $json = $this->saved('wp_global_styles', null);
         $decoded = $json === null ? null : json_decode($json, true);
-        return is_array($decoded) ? $decoded : null;
+        if (!is_array($decoded)) {
+            return null;
+        }
+        return array_filter($decoded, static fn ($node) => !is_array($node) || !array_is_list($node));
     }
 
     /** A page's chosen custom template, from _wp_page_template meta. */

@@ -76,17 +76,7 @@ final readonly class GlobalStyles
      */
     public function resolvedStyles(): array
     {
-        $resolve = static function (array $node) use (&$resolve): array {
-            foreach ($node as $key => $value) {
-                if (is_array($value)) {
-                    $node[$key] = $resolve($value);
-                } elseif (is_string($value) && str_starts_with($value, 'var:')) {
-                    $node[$key] = 'var(--wp--' . str_replace('|', '--', substr($value, 4)) . ')';
-                }
-            }
-            return $node;
-        };
-        return $resolve($this->styles());
+        return StyleSettings::resolved($this->styles());
     }
 
     /** The global stylesheet from theme.json and the user's styles. */

@@ -256,7 +256,7 @@ final readonly class PostWriter
     public function maybeSaveRevision(int $id, int $userId): void
     {
         $post = $this->posts->find($id);
-        if ($post === null || !in_array($post['post_type'], ['post', 'page'], true)) {
+        if ($post === null || !in_array($post['post_type'], ['post', 'page', 'wp_global_styles'], true)) {
             return;
         }
         $latest = $this->db->row(

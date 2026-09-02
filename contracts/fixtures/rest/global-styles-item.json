@@ -1,0 +1,52 @@
+{
+    "id": 9555,
+    "title": {
+        "raw": "Custom Styles",
+        "rendered": "Custom Styles"
+    },
+    "settings": [],
+    "styles": [],
+    "_links": {
+        "self": [
+            {
+                "href": "http://127.0.0.1:8123/wp-json/wp/v2/global-styles/9555",
+                "targetHints": {
+                    "allow": [
+                        "GET",
+                        "POST",
+                        "PUT",
+                        "PATCH"
+                    ]
+                }
+            }
+        ],
+        "about": [
+            {
+                "href": "http://127.0.0.1:8123/wp-json/wp/v2/types/wp_global_styles"
+            }
+        ],
+        "version-history": [
+            {
+                "count": 14,
+                "href": "http://127.0.0.1:8123/wp-json/wp/v2/global-styles/9555/revisions"
+            }
+        ],
+        "wp:action-publish": [
+            {
+                "href": "http://127.0.0.1:8123/wp-json/wp/v2/global-styles/9555"
+            }
+        ],
+        "wp:action-edit-css": [
+            {
+                "href": "http://127.0.0.1:8123/wp-json/wp/v2/global-styles/9555"
+            }
+        ],
+        "curies": [
+            {
+                "name": "wp",
+                "href": "https://api.w.org/{rel}",
+                "templated": true
+            }
+        ]
+    }
+}

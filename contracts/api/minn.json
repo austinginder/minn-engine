@@ -27019,6 +27019,8 @@
                 "Minn\\Front\\Sitemaps",
                 "Minn\\Media\\Writer",
                 "Minn\\Rest\\CommentsController",
+                "Minn\\Rest\\GlobalStylesController",
+                "Minn\\Rest\\GlobalStylesObject",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MediaObject",
                 "Minn\\Rest\\PostObject",
@@ -27028,7 +27030,8 @@
                 "Minn\\Rest\\SearchController",
                 "Minn\\Runtime\\CommentCloser",
                 "Minn\\Theme\\ClassicContent",
-                "Minn\\Theme\\HeadLinks"
+                "Minn\\Theme\\HeadLinks",
+                "Minn\\Theme\\UserStyles"
             ],
             "constructor": {
                 "signature": "__construct(int $id, int $authorId, string $date, string $dateGmt, string $content, string $title, string $excerpt, string $status, string $commentStatus, string $pingStatus, string $password, string $slug, string $modified, string $modifiedGmt, int $parentId, string $guid, int $menuOrder, string $type, string $mimeType, int $commentCount, array $row)",
@@ -27794,7 +27797,8 @@
                 "Minn\\Rest\\Services",
                 "Minn\\Runtime\\PostInsert",
                 "Minn\\Runtime\\TermWriter",
-                "Minn\\Theme\\TemplateWriter"
+                "Minn\\Theme\\TemplateWriter",
+                "Minn\\Theme\\UserStyles"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Db $db, Minn\\Content\\Posts $posts, Minn\\Content\\Site $site)",
@@ -28482,7 +28486,8 @@
                 "Minn\\Theme\\ClassicRenderer",
                 "Minn\\Theme\\MainQueryBridge",
                 "Minn\\Theme\\PageRenderer",
-                "Minn\\Theme\\Templates"
+                "Minn\\Theme\\Templates",
+                "Minn\\Theme\\UserStyles"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Db $db)",
@@ -29600,6 +29605,8 @@
                 "Minn\\Db"
             ],
             "usedBy": [
+                "Minn\\Rest\\GlobalStylesController",
+                "Minn\\Rest\\GlobalStylesObject",
                 "Minn\\Rest\\RevisionsController",
                 "Minn\\Rest\\Services"
             ],
@@ -29867,7 +29874,9 @@
                 "Minn\\Theme\\PageRenderer",
                 "Minn\\Theme\\TemplateIndex",
                 "Minn\\Theme\\TemplateWriter",
-                "Minn\\Theme\\Theme"
+                "Minn\\Theme\\Theme",
+                "Minn\\Theme\\ThemeStyles",
+                "Minn\\Theme\\UserStyles"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Db $db)",
@@ -30782,7 +30791,8 @@
                 "Minn\\Rest\\Services",
                 "Minn\\Rest\\TermsController",
                 "Minn\\Runtime\\TermWriter",
-                "Minn\\Theme\\TemplateWriter"
+                "Minn\\Theme\\TemplateWriter",
+                "Minn\\Theme\\UserStyles"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Db $db)",
@@ -31173,6 +31183,7 @@
                 "Minn\\Content\\Blocks",
                 "Minn\\Content\\Excerpt",
                 "Minn\\Front\\Feeds",
+                "Minn\\Rest\\GlobalStylesObject",
                 "Minn\\Rest\\MediaObject",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PostObject",
@@ -32423,7 +32434,8 @@
                 "Minn\\Theme\\PageRenderer",
                 "Minn\\Theme\\TemplateIndex",
                 "Minn\\Theme\\TemplateWriter",
-                "Minn\\Theme\\Templates"
+                "Minn\\Theme\\Templates",
+                "Minn\\Theme\\UserStyles"
             ],
             "constructor": {
                 "signature": "__construct(mysqli $connection, string $prefix)",
@@ -37448,7 +37460,8 @@
                 "Minn\\Theme\\ClassicRenderer",
                 "Minn\\Theme\\HeadLinks",
                 "Minn\\Theme\\PageRenderer",
-                "Minn\\Theme\\Theme"
+                "Minn\\Theme\\Theme",
+                "Minn\\Theme\\ThemeStyles"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Content\\Posts $posts, Minn\\Content\\Terms $terms, string $home, string $structure, int $frontPageId = 0, int $postsPageId = 0, ?Closure $registry = NULL)",
@@ -43561,6 +43574,7 @@
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\DeclaredPostsController",
                 "Minn\\Rest\\Embed",
+                "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\IndexController",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenusController",
@@ -44039,6 +44053,7 @@
                 "Minn\\Rest\\Context",
                 "Minn\\Rest\\DeclaredPostsController",
                 "Minn\\Rest\\Embed",
+                "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\IndexController",
                 "Minn\\Rest\\ListQuery",
                 "Minn\\Rest\\MediaController",
@@ -44483,6 +44498,7 @@
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\DeclaredPostsController",
                 "Minn\\Rest\\Embed",
+                "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\IndexController",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenusController",
@@ -44793,6 +44809,7 @@
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\DeclaredPostsController",
+                "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\IndexController",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenusController",
@@ -50183,6 +50200,7 @@
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\DeclaredPostsController",
                 "Minn\\Rest\\Embed",
+                "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\PluginsController",
@@ -50485,7 +50503,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Api.php",
-            "lines": 128,
+            "lines": 129,
             "doc": "The REST API: wires the controllers for one request and dispatches a\nroute. Errors thrown anywhere underneath become the reference's error\npayload under the reference's headers.",
             "implements": [],
             "extends": null,
@@ -50517,6 +50535,8 @@
                 "Minn\\Rest\\DeclaredPostsController",
                 "Minn\\Rest\\Embed",
                 "Minn\\Rest\\EngineRoutes",
+                "Minn\\Rest\\GlobalStylesController",
+                "Minn\\Rest\\GlobalStylesObject",
                 "Minn\\Rest\\IndexController",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenuItemObject",
@@ -50677,8 +50697,8 @@
                     "doc": "Who is making this request.",
                     "shapes": [],
                     "params": [],
-                    "line": 113,
-                    "end": 116
+                    "line": 114,
+                    "end": 117
                 },
                 {
                     "routes": [],
@@ -50689,8 +50709,8 @@
                     "doc": "The wp/v2 post shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 119,
-                    "end": 122
+                    "line": 120,
+                    "end": 123
                 },
                 {
                     "routes": [],
@@ -50701,8 +50721,8 @@
                     "doc": "The wp/v2 term shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 125,
-                    "end": 128
+                    "line": 126,
+                    "end": 129
                 },
                 {
                     "routes": [],
@@ -50713,8 +50733,8 @@
                     "doc": "The wp/v2 user shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 131,
-                    "end": 134
+                    "line": 132,
+                    "end": 135
                 },
                 {
                     "routes": [],
@@ -50725,8 +50745,8 @@
                     "doc": "The post types the surface knows.",
                     "shapes": [],
                     "params": [],
-                    "line": 137,
-                    "end": 140
+                    "line": 138,
+                    "end": 141
                 },
                 {
                     "routes": [],
@@ -50745,8 +50765,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 143,
-                    "end": 161
+                    "line": 144,
+                    "end": 162
                 },
                 {
                     "routes": [],
@@ -50775,7 +50795,7 @@
                         }
                     ],
                     "line": 70,
-                    "end": 110
+                    "end": 111
                 }
             ]
         },
@@ -51387,6 +51407,8 @@
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\CommentObject",
                 "Minn\\Rest\\CommentsController",
+                "Minn\\Rest\\GlobalStylesController",
+                "Minn\\Rest\\GlobalStylesObject",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MediaObject",
                 "Minn\\Rest\\MenuItemObject",
@@ -52243,6 +52265,8 @@
                 "Minn\\Rest\\CommentObject",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\Embed",
+                "Minn\\Rest\\GlobalStylesController",
+                "Minn\\Rest\\GlobalStylesObject",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MediaObject",
                 "Minn\\Rest\\MenuItemObject",
@@ -52981,6 +53005,7 @@
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\Embed",
+                "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\IndexController",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenusController",
@@ -53157,6 +53182,646 @@
                     ],
                     "line": 58,
                     "end": 80
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Rest\\GlobalStylesController",
+            "short": "GlobalStylesController",
+            "namespace": "Minn\\Rest",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Rest/GlobalStylesController.php",
+            "lines": 140,
+            "doc": "wp/v2/global-styles: the site editor's saved styles (one post per\ntheme, read and written by id, with its revisions) and the active\ntheme's own styles and variations. There is no collection, no create\nand no delete; the post is made on first use, as on the reference.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Content\\PostRecord",
+                "Minn\\Content\\Revisions",
+                "Minn\\Http\\Method",
+                "Minn\\Http\\Request",
+                "Minn\\Http\\Response",
+                "Minn\\Http\\Route",
+                "Minn\\RestError",
+                "Minn\\Rest\\Caller",
+                "Minn\\Rest\\Context",
+                "Minn\\Rest\\Fields",
+                "Minn\\Rest\\GlobalStylesObject",
+                "Minn\\Rest\\Reply",
+                "Minn\\Theme\\ThemeStyles",
+                "Minn\\Theme\\UserStyles"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\Api"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Theme\\UserStyles $styles, Minn\\Theme\\ThemeStyles $theme, Minn\\Rest\\GlobalStylesObject $object, Minn\\Content\\Revisions $revisions, Minn\\Rest\\Caller $caller)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "styles",
+                        "type": "Minn\\Theme\\UserStyles",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "theme",
+                        "type": "Minn\\Theme\\ThemeStyles",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "object",
+                        "type": "Minn\\Rest\\GlobalStylesObject",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "revisions",
+                        "type": "Minn\\Content\\Revisions",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "caller",
+                        "type": "Minn\\Rest\\Caller",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 28,
+                "end": 35
+            },
+            "cases": [],
+            "constants": [
+                {
+                    "name": "CANNOT_EDIT",
+                    "value": "'Sorry, you are not allowed to edit this global style.'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "CANNOT_READ_REVISIONS",
+                    "value": "'Sorry, you are not allowed to view revisions of this post.'",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "styles",
+                    "type": "Minn\\Theme\\UserStyles",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "theme",
+                    "type": "Minn\\Theme\\ThemeStyles",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "object",
+                    "type": "Minn\\Rest\\GlobalStylesObject",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "revisions",
+                    "type": "Minn\\Content\\Revisions",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "caller",
+                    "type": "Minn\\Rest\\Caller",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [
+                        "GET /wp/v2/global-styles/{id:\\d+}"
+                    ],
+                    "name": "single",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "single(Minn\\Http\\Request $request, string $id): Minn\\Http\\Response",
+                    "doc": "The saved styles by id: anyone who edits posts may read them, editing context needs the theme.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 39,
+                    "end": 49
+                },
+                {
+                    "routes": [
+                        "POST /wp/v2/global-styles/{id:\\d+}",
+                        "PUT /wp/v2/global-styles/{id:\\d+}",
+                        "PATCH /wp/v2/global-styles/{id:\\d+}"
+                    ],
+                    "name": "update",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "update(Minn\\Http\\Request $request, string $id): Minn\\Http\\Response",
+                    "doc": "Replaces the title, settings, or styles the body names; what it leaves out stays.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 55,
+                    "end": 64
+                },
+                {
+                    "routes": [
+                        "GET /wp/v2/global-styles/themes/{stylesheet:[^/]+}"
+                    ],
+                    "name": "theme",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "theme(Minn\\Http\\Request $request, string $stylesheet): Minn\\Http\\Response",
+                    "doc": "The active theme's settings and styles, the engine's defaults underneath.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "stylesheet",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 68,
+                    "end": 72
+                },
+                {
+                    "routes": [
+                        "GET /wp/v2/global-styles/themes/{stylesheet:[^/]+}/variations"
+                    ],
+                    "name": "variations",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "variations(Minn\\Http\\Request $request, string $stylesheet): Minn\\Http\\Response",
+                    "doc": "The style variations the active theme ships.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "stylesheet",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 76,
+                    "end": 80
+                },
+                {
+                    "routes": [
+                        "GET /wp/v2/global-styles/{parent:\\d+}/revisions"
+                    ],
+                    "name": "revisions",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "revisions(Minn\\Http\\Request $request, string $parent): Minn\\Http\\Response",
+                    "doc": "The revisions of the saved styles, newest first; all of them unless per_page pages them.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "parent",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 84,
+                    "end": 95
+                },
+                {
+                    "routes": [
+                        "GET /wp/v2/global-styles/{parent:\\d+}/revisions/{id:\\d+}"
+                    ],
+                    "name": "revision",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "revision(Minn\\Http\\Request $request, string $parent, string $id): Minn\\Http\\Response",
+                    "doc": "One revision of the saved styles.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "parent",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 99,
+                    "end": 107
+                },
+                {
+                    "routes": [],
+                    "name": "post",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "post(int $id): Minn\\Content\\PostRecord",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 109,
+                    "end": 112
+                },
+                {
+                    "routes": [],
+                    "name": "requireTheme",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "requireTheme(string $stylesheet): void",
+                    "doc": "The theme routes answer only for the active stylesheet, and only to those who edit posts.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "stylesheet",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 115,
+                    "end": 123
+                },
+                {
+                    "routes": [],
+                    "name": "requireParent",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "requireParent(int $parentId): int",
+                    "doc": "Revisions are for those who edit the theme, of a parent that is a global-styles post.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "parentId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 126,
+                    "end": 136
+                },
+                {
+                    "routes": [],
+                    "name": "title",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "title(mixed $title): ?string",
+                    "doc": "A title arrives as a string or as {raw}; anything else is ignored.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "title",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 139,
+                    "end": 145
+                },
+                {
+                    "routes": [],
+                    "name": "node",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "node(array $body, string $name): ?array",
+                    "doc": "settings and styles are objects when present; a scalar is the reference's type error, null is ignored.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "body",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 148,
+                    "end": 161
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Rest\\GlobalStylesObject",
+            "short": "GlobalStylesObject",
+            "namespace": "Minn\\Rest",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Rest/GlobalStylesObject.php",
+            "lines": 87,
+            "doc": "The wp/v2/global-styles item, theme, and revision shapes.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Content\\PostRecord",
+                "Minn\\Content\\Revisions",
+                "Minn\\Content\\Texturize",
+                "Minn\\Rest\\Caller",
+                "Minn\\Rest\\Context",
+                "Minn\\Rest\\PostObject",
+                "Minn\\Rest\\RestUrl",
+                "Minn\\Theme\\StyleSettings",
+                "Minn\\Theme\\UserStyles"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\Api",
+                "Minn\\Rest\\GlobalStylesController"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Content\\Revisions $revisions, Minn\\Rest\\RestUrl $url, Minn\\Rest\\Caller $caller)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "revisions",
+                        "type": "Minn\\Content\\Revisions",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "url",
+                        "type": "Minn\\Rest\\RestUrl",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "caller",
+                        "type": "Minn\\Rest\\Caller",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 17,
+                "end": 22
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "revisions",
+                    "type": "Minn\\Content\\Revisions",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "url",
+                    "type": "Minn\\Rest\\RestUrl",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "caller",
+                    "type": "Minn\\Rest\\Caller",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "item",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "item(Minn\\Content\\PostRecord $post, Minn\\Rest\\Context $context): array",
+                    "doc": "The saved styles: the title both ways, settings by origin, styles\nwith their presets resolved, the links; in editing context the\napp's lock fields too, which a global-styles post never carries.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "Minn\\Content\\PostRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "context",
+                            "type": "Minn\\Rest\\Context",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 29,
+                    "end": 44
+                },
+                {
+                    "routes": [],
+                    "name": "theme",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "theme(array $settings, array $styles, string $stylesheet): array",
+                    "doc": "The active theme's own styles as the themes/{stylesheet} route answers them.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "settings",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "styles",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "stylesheet",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 47,
+                    "end": 54
+                },
+                {
+                    "routes": [],
+                    "name": "revision",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "revision(Minn\\Content\\PostRecord $revision): array",
+                    "doc": "One revision row: both nodes when the body holds anything at all,\nneither when it is blank, then the row's own facts; no links.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "revision",
+                            "type": "Minn\\Content\\PostRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 60,
+                    "end": 76
+                },
+                {
+                    "routes": [],
+                    "name": "links",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "links(Minn\\Content\\PostRecord $post): array",
+                    "doc": "Writing methods appear for a theme editor; the CSS action for whoever may write CSS.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "Minn\\Content\\PostRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 79,
+                    "end": 94
+                },
+                {
+                    "routes": [],
+                    "name": "node",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "node(array $node): stdClass|array",
+                    "doc": "An empty node is an object on the wire, never a list.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "node",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 97,
+                    "end": 100
                 }
             ]
         },
@@ -55993,6 +56658,7 @@
             "usedBy": [
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\CommentObject",
+                "Minn\\Rest\\GlobalStylesObject",
                 "Minn\\Rest\\MediaObject",
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\PostsWriteController",
@@ -57415,6 +58081,7 @@
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\CommentsController",
+                "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\IndexController",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenusController",
@@ -57593,6 +58260,7 @@
                 "Minn\\Engine",
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\CommentObject",
+                "Minn\\Rest\\GlobalStylesObject",
                 "Minn\\Rest\\IndexController",
                 "Minn\\Rest\\MediaObject",
                 "Minn\\Rest\\MenuItemObject",
@@ -59643,7 +60311,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/Services.php",
-            "lines": 366,
+            "lines": 380,
             "doc": "The objects one REST request shares, each made once, on first use, from\nthe database door and the request. Every getter is typed and names its\ndependencies in plain constructor calls: there is no autowiring, and\nget() knows only the names listed here, so a wrong one fails at the\nfirst call rather than deep in a handler.",
             "implements": [],
             "extends": null,
@@ -59695,7 +60363,9 @@
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Theme\\TemplateIndex",
                 "Minn\\Theme\\TemplateWriter",
-                "Minn\\Theme\\Theme"
+                "Minn\\Theme\\Theme",
+                "Minn\\Theme\\ThemeStyles",
+                "Minn\\Theme\\UserStyles"
             ],
             "usedBy": [
                 "Minn\\Rest\\Api"
@@ -59735,14 +60405,14 @@
                     }
                 ],
                 "visibility": "private",
-                "line": 101,
-                "end": 107
+                "line": 105,
+                "end": 111
             },
             "cases": [],
             "constants": [
                 {
                     "name": "NAMED",
-                    "value": "array (   'Minn\\\\Content\\\\Users' => 'users',   'Minn\\\\Content\\\\Posts' => 'posts',   'Minn\\\\Content\\\\Terms' => 'terms',   'Minn\\\\Content\\\\Comments' => 'comments',   'Minn\\\\Content\\\\Site' => 'site',   'Minn\\\\Content\\\\PostWriter' => 'writer',   'Minn\\\\Front\\\\Permalinks' => 'permalinks',   'Minn\\\\Rest\\\\RestUrl' => 'url',   'Minn\\\\Auth\\\\Capabilities' => 'capabilities',   'Minn\\\\Rest\\\\Caller' => 'caller',   'Minn\\\\Extension\\\\Loader' => 'loader',   'Minn\\\\Rest\\\\Types' => 'types',   'Minn\\\\Rest\\\\Taxonomies' => 'taxonomies',   'Minn\\\\Media\\\\Uploads' => 'uploads',   'Minn\\\\Content\\\\Inventory' => 'inventory',   'Minn\\\\Admin\\\\Packages' => 'packages',   'Minn\\\\Admin\\\\App' => 'app',   'Minn\\\\Admin\\\\Logs' => 'logs',   'Minn\\\\Admin\\\\Updates' => 'updates',   'Minn\\\\Content\\\\Menus' => 'menus',   'Minn\\\\Content\\\\Revisions' => 'revisions',   'Minn\\\\Auth\\\\Sessions' => 'sessions',   'Minn\\\\Auth\\\\ApplicationPasswords' => 'applicationPasswords',   'Minn\\\\Admin\\\\Translations' => 'translations',   'Minn\\\\Admin\\\\Appearance' => 'appearance',   'Minn\\\\Admin\\\\HiddenIntegrations' => 'hiddenIntegrations',   'Minn\\\\Admin\\\\ActivityFeed' => 'activityFeed',   'Minn\\\\Admin\\\\Dashboard' => 'dashboard',   'Minn\\\\Admin\\\\Notifications' => 'notifications',   'Minn\\\\Admin\\\\Diagnostics' => 'diagnostics',   'Minn\\\\Media\\\\Writer' => 'mediaWriter',   'Minn\\\\Rest\\\\Schema' => 'schema',   'Minn\\\\Rest\\\\PostObject' => 'postObject',   'Minn\\\\Rest\\\\TermObject' => 'termObject',   'Minn\\\\Rest\\\\UserObject' => 'userObject',   'Minn\\\\Rest\\\\MediaObject' => 'mediaObject',   'Minn\\\\Rest\\\\CommentObject' => 'commentObject', )",
+                    "value": "array (   'Minn\\\\Content\\\\Users' => 'users',   'Minn\\\\Content\\\\Posts' => 'posts',   'Minn\\\\Content\\\\Terms' => 'terms',   'Minn\\\\Content\\\\Comments' => 'comments',   'Minn\\\\Content\\\\Site' => 'site',   'Minn\\\\Content\\\\PostWriter' => 'writer',   'Minn\\\\Front\\\\Permalinks' => 'permalinks',   'Minn\\\\Rest\\\\RestUrl' => 'url',   'Minn\\\\Auth\\\\Capabilities' => 'capabilities',   'Minn\\\\Rest\\\\Caller' => 'caller',   'Minn\\\\Extension\\\\Loader' => 'loader',   'Minn\\\\Rest\\\\Types' => 'types',   'Minn\\\\Rest\\\\Taxonomies' => 'taxonomies',   'Minn\\\\Media\\\\Uploads' => 'uploads',   'Minn\\\\Content\\\\Inventory' => 'inventory',   'Minn\\\\Admin\\\\Packages' => 'packages',   'Minn\\\\Admin\\\\App' => 'app',   'Minn\\\\Admin\\\\Logs' => 'logs',   'Minn\\\\Admin\\\\Updates' => 'updates',   'Minn\\\\Content\\\\Menus' => 'menus',   'Minn\\\\Content\\\\Revisions' => 'revisions',   'Minn\\\\Auth\\\\Sessions' => 'sessions',   'Minn\\\\Auth\\\\ApplicationPasswords' => 'applicationPasswords',   'Minn\\\\Admin\\\\Translations' => 'translations',   'Minn\\\\Admin\\\\Appearance' => 'appearance',   'Minn\\\\Admin\\\\HiddenIntegrations' => 'hiddenIntegrations',   'Minn\\\\Admin\\\\ActivityFeed' => 'activityFeed',   'Minn\\\\Admin\\\\Dashboard' => 'dashboard',   'Minn\\\\Admin\\\\Notifications' => 'notifications',   'Minn\\\\Admin\\\\Diagnostics' => 'diagnostics',   'Minn\\\\Media\\\\Writer' => 'mediaWriter',   'Minn\\\\Rest\\\\Schema' => 'schema',   'Minn\\\\Rest\\\\PostObject' => 'postObject',   'Minn\\\\Rest\\\\TermObject' => 'termObject',   'Minn\\\\Rest\\\\UserObject' => 'userObject',   'Minn\\\\Rest\\\\MediaObject' => 'mediaObject',   'Minn\\\\Rest\\\\CommentObject' => 'commentObject',   'Minn\\\\Theme\\\\UserStyles' => 'userStyles',   'Minn\\\\Theme\\\\ThemeStyles' => 'themeStyles', )",
                     "doc": "",
                     "visibility": "private"
                 }
@@ -59819,8 +60489,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 110,
-                    "end": 113
+                    "line": 114,
+                    "end": 117
                 },
                 {
                     "routes": [],
@@ -59839,8 +60509,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 123,
-                    "end": 128
+                    "line": 127,
+                    "end": 132
                 },
                 {
                     "routes": [],
@@ -59851,8 +60521,8 @@
                     "doc": "The database door.",
                     "shapes": [],
                     "params": [],
-                    "line": 131,
-                    "end": 134
+                    "line": 135,
+                    "end": 138
                 },
                 {
                     "routes": [],
@@ -59863,8 +60533,8 @@
                     "doc": "The request being answered.",
                     "shapes": [],
                     "params": [],
-                    "line": 137,
-                    "end": 140
+                    "line": 141,
+                    "end": 144
                 },
                 {
                     "routes": [],
@@ -59875,8 +60545,8 @@
                     "doc": "The site root, no trailing slash.",
                     "shapes": [],
                     "params": [],
-                    "line": 143,
-                    "end": 146
+                    "line": 147,
+                    "end": 150
                 },
                 {
                     "routes": [],
@@ -59887,8 +60557,8 @@
                     "doc": "wp-content under the site root.",
                     "shapes": [],
                     "params": [],
-                    "line": 149,
-                    "end": 152
+                    "line": 153,
+                    "end": 156
                 },
                 {
                     "routes": [],
@@ -59899,8 +60569,8 @@
                     "doc": "The users repository.",
                     "shapes": [],
                     "params": [],
-                    "line": 157,
-                    "end": 160
+                    "line": 161,
+                    "end": 164
                 },
                 {
                     "routes": [],
@@ -59911,8 +60581,8 @@
                     "doc": "The posts repository.",
                     "shapes": [],
                     "params": [],
-                    "line": 163,
-                    "end": 166
+                    "line": 167,
+                    "end": 170
                 },
                 {
                     "routes": [],
@@ -59923,8 +60593,8 @@
                     "doc": "The terms repository.",
                     "shapes": [],
                     "params": [],
-                    "line": 169,
-                    "end": 172
+                    "line": 173,
+                    "end": 176
                 },
                 {
                     "routes": [],
@@ -59935,8 +60605,8 @@
                     "doc": "The comments repository.",
                     "shapes": [],
                     "params": [],
-                    "line": 175,
-                    "end": 178
+                    "line": 179,
+                    "end": 182
                 },
                 {
                     "routes": [],
@@ -59947,8 +60617,8 @@
                     "doc": "The site's options.",
                     "shapes": [],
                     "params": [],
-                    "line": 181,
-                    "end": 184
+                    "line": 185,
+                    "end": 188
                 },
                 {
                     "routes": [],
@@ -59959,8 +60629,8 @@
                     "doc": "The post writer.",
                     "shapes": [],
                     "params": [],
-                    "line": 187,
-                    "end": 190
+                    "line": 191,
+                    "end": 194
                 },
                 {
                     "routes": [],
@@ -59971,8 +60641,32 @@
                     "doc": "Revisions and autosaves.",
                     "shapes": [],
                     "params": [],
-                    "line": 193,
-                    "end": 196
+                    "line": 197,
+                    "end": 200
+                },
+                {
+                    "routes": [],
+                    "name": "userStyles",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "userStyles(): Minn\\Theme\\UserStyles",
+                    "doc": "The site editor's saved global styles.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 203,
+                    "end": 206
+                },
+                {
+                    "routes": [],
+                    "name": "themeStyles",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "themeStyles(): Minn\\Theme\\ThemeStyles",
+                    "doc": "The active theme's global styles and variations.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 209,
+                    "end": 212
                 },
                 {
                     "routes": [],
@@ -59983,8 +60677,8 @@
                     "doc": "Classic menus and their items.",
                     "shapes": [],
                     "params": [],
-                    "line": 199,
-                    "end": 202
+                    "line": 215,
+                    "end": 218
                 },
                 {
                     "routes": [],
@@ -59995,8 +60689,8 @@
                     "doc": "What wp-content holds: plugins, themes, drop-ins.",
                     "shapes": [],
                     "params": [],
-                    "line": 205,
-                    "end": 208
+                    "line": 221,
+                    "end": 224
                 },
                 {
                     "routes": [],
@@ -60007,8 +60701,8 @@
                     "doc": "Link building from the permalink structure.",
                     "shapes": [],
                     "params": [],
-                    "line": 213,
-                    "end": 216
+                    "line": 229,
+                    "end": 232
                 },
                 {
                     "routes": [],
@@ -60019,8 +60713,8 @@
                     "doc": "REST URL building.",
                     "shapes": [],
                     "params": [],
-                    "line": 219,
-                    "end": 222
+                    "line": 235,
+                    "end": 238
                 },
                 {
                     "routes": [],
@@ -60031,8 +60725,8 @@
                     "doc": "The capability engine.",
                     "shapes": [],
                     "params": [],
-                    "line": 225,
-                    "end": 228
+                    "line": 241,
+                    "end": 244
                 },
                 {
                     "routes": [],
@@ -60043,8 +60737,8 @@
                     "doc": "Who is making this call.",
                     "shapes": [],
                     "params": [],
-                    "line": 231,
-                    "end": 234
+                    "line": 247,
+                    "end": 250
                 },
                 {
                     "routes": [],
@@ -60055,8 +60749,8 @@
                     "doc": "The session store.",
                     "shapes": [],
                     "params": [],
-                    "line": 237,
-                    "end": 240
+                    "line": 253,
+                    "end": 256
                 },
                 {
                     "routes": [],
@@ -60067,8 +60761,8 @@
                     "doc": "Application passwords for Basic auth.",
                     "shapes": [],
                     "params": [],
-                    "line": 243,
-                    "end": 246
+                    "line": 259,
+                    "end": 262
                 },
                 {
                     "routes": [],
@@ -60079,8 +60773,8 @@
                     "doc": "The extension loader.",
                     "shapes": [],
                     "params": [],
-                    "line": 251,
-                    "end": 254
+                    "line": 267,
+                    "end": 270
                 },
                 {
                     "routes": [],
@@ -60091,8 +60785,8 @@
                     "doc": "The post types the REST surface knows.",
                     "shapes": [],
                     "params": [],
-                    "line": 257,
-                    "end": 260
+                    "line": 273,
+                    "end": 276
                 },
                 {
                     "routes": [],
@@ -60103,8 +60797,8 @@
                     "doc": "The taxonomies the REST surface knows.",
                     "shapes": [],
                     "params": [],
-                    "line": 263,
-                    "end": 266
+                    "line": 279,
+                    "end": 282
                 },
                 {
                     "routes": [],
@@ -60115,8 +60809,8 @@
                     "doc": "The uploads directory.",
                     "shapes": [],
                     "params": [],
-                    "line": 269,
-                    "end": 272
+                    "line": 285,
+                    "end": 288
                 },
                 {
                     "routes": [],
@@ -60127,8 +60821,8 @@
                     "doc": "Stores an upload as an attachment.",
                     "shapes": [],
                     "params": [],
-                    "line": 275,
-                    "end": 278
+                    "line": 291,
+                    "end": 294
                 },
                 {
                     "routes": [],
@@ -60139,8 +60833,8 @@
                     "doc": "The JSON Schema validator, with the reference's filters passed in.",
                     "shapes": [],
                     "params": [],
-                    "line": 281,
-                    "end": 288
+                    "line": 297,
+                    "end": 304
                 },
                 {
                     "routes": [],
@@ -60151,8 +60845,8 @@
                     "doc": "The Minn Admin bundle on disk.",
                     "shapes": [],
                     "params": [],
-                    "line": 293,
-                    "end": 296
+                    "line": 309,
+                    "end": 312
                 },
                 {
                     "routes": [],
@@ -60163,8 +60857,8 @@
                     "doc": "Installing and removing themes and extensions.",
                     "shapes": [],
                     "params": [],
-                    "line": 299,
-                    "end": 302
+                    "line": 315,
+                    "end": 318
                 },
                 {
                     "routes": [],
@@ -60175,8 +60869,8 @@
                     "doc": "The debug log reader.",
                     "shapes": [],
                     "params": [],
-                    "line": 305,
-                    "end": 308
+                    "line": 321,
+                    "end": 324
                 },
                 {
                     "routes": [],
@@ -60187,8 +60881,8 @@
                     "doc": "Update checks and offers.",
                     "shapes": [],
                     "params": [],
-                    "line": 311,
-                    "end": 314
+                    "line": 327,
+                    "end": 330
                 },
                 {
                     "routes": [],
@@ -60199,8 +60893,8 @@
                     "doc": "Locales and the app's catalogs.",
                     "shapes": [],
                     "params": [],
-                    "line": 317,
-                    "end": 320
+                    "line": 333,
+                    "end": 336
                 },
                 {
                     "routes": [],
@@ -60211,8 +60905,8 @@
                     "doc": "The app's per-user appearance.",
                     "shapes": [],
                     "params": [],
-                    "line": 323,
-                    "end": 326
+                    "line": 339,
+                    "end": 342
                 },
                 {
                     "routes": [],
@@ -60223,8 +60917,8 @@
                     "doc": "The app's per-user hidden views.",
                     "shapes": [],
                     "params": [],
-                    "line": 329,
-                    "end": 332
+                    "line": 345,
+                    "end": 348
                 },
                 {
                     "routes": [],
@@ -60235,8 +60929,8 @@
                     "doc": "What happened lately.",
                     "shapes": [],
                     "params": [],
-                    "line": 335,
-                    "end": 338
+                    "line": 351,
+                    "end": 354
                 },
                 {
                     "routes": [],
@@ -60247,8 +60941,8 @@
                     "doc": "The overview payload.",
                     "shapes": [],
                     "params": [],
-                    "line": 341,
-                    "end": 344
+                    "line": 357,
+                    "end": 360
                 },
                 {
                     "routes": [],
@@ -60259,8 +60953,8 @@
                     "doc": "The bell feed.",
                     "shapes": [],
                     "params": [],
-                    "line": 347,
-                    "end": 350
+                    "line": 363,
+                    "end": 366
                 },
                 {
                     "routes": [],
@@ -60271,8 +60965,8 @@
                     "doc": "The System view's payload.",
                     "shapes": [],
                     "params": [],
-                    "line": 353,
-                    "end": 356
+                    "line": 369,
+                    "end": 372
                 },
                 {
                     "routes": [],
@@ -60283,8 +60977,8 @@
                     "doc": "The active block theme's templates; null under a classic theme, where the routes answer as the reference does when it never registered them.",
                     "shapes": [],
                     "params": [],
-                    "line": 361,
-                    "end": 368
+                    "line": 377,
+                    "end": 384
                 },
                 {
                     "routes": [],
@@ -60295,8 +60989,8 @@
                     "doc": "Writes block templates; null under a classic theme.",
                     "shapes": [],
                     "params": [],
-                    "line": 371,
-                    "end": 375
+                    "line": 387,
+                    "end": 391
                 },
                 {
                     "routes": [],
@@ -60307,8 +61001,8 @@
                     "doc": "The wp/v2 post shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 380,
-                    "end": 383
+                    "line": 396,
+                    "end": 399
                 },
                 {
                     "routes": [],
@@ -60319,8 +61013,8 @@
                     "doc": "The wp/v2 term shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 386,
-                    "end": 389
+                    "line": 402,
+                    "end": 405
                 },
                 {
                     "routes": [],
@@ -60331,8 +61025,8 @@
                     "doc": "The wp/v2 user shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 392,
-                    "end": 395
+                    "line": 408,
+                    "end": 411
                 },
                 {
                     "routes": [],
@@ -60343,8 +61037,8 @@
                     "doc": "The wp/v2 media shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 398,
-                    "end": 401
+                    "line": 414,
+                    "end": 417
                 },
                 {
                     "routes": [],
@@ -60355,8 +61049,8 @@
                     "doc": "The wp/v2 comment shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 404,
-                    "end": 407
+                    "line": 420,
+                    "end": 423
                 },
                 {
                     "routes": [],
@@ -60384,8 +61078,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 415,
-                    "end": 419
+                    "line": 431,
+                    "end": 435
                 }
             ]
         },
@@ -79149,7 +79843,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/GlobalStyles.php",
-            "lines": 443,
+            "lines": 433,
             "doc": "theme.json to CSS. Presets become custom properties on :root and their\nhas-* utility classes; settings.layout sizes, root styles, elements, and\nper-block styles become rules; the containers, galleries, and style\nvariations the page actually rendered get their own stylesheets. The\nlayout rules themselves (flow, constrained, flex, grid, alignments) are\nthe engine's own, written to the same class hooks.",
             "implements": [],
             "extends": null,
@@ -79157,6 +79851,7 @@
                 "Minn\\Blocks\\RenderState",
                 "Minn\\Blocks\\Styles",
                 "Minn\\Theme\\StylePresets",
+                "Minn\\Theme\\StyleSettings",
                 "Minn\\Theme\\Theme"
             ],
             "usedBy": [
@@ -79252,7 +79947,7 @@
                     "shapes": [],
                     "params": [],
                     "line": 77,
-                    "end": 90
+                    "end": 80
                 },
                 {
                     "routes": [],
@@ -79263,8 +79958,8 @@
                     "doc": "The global stylesheet from theme.json and the user's styles.",
                     "shapes": [],
                     "params": [],
-                    "line": 93,
-                    "end": 124
+                    "line": 83,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -79275,8 +79970,8 @@
                     "doc": "The @font-face rules for every family that declares font files, as\nthe reference prints them in its own style element: family (quoted\nwhen it has a space), style, weight, display, then the sources with\nfile:./ resolved against the theme that carries the file and the\nformat named from the extension. Families without files print\nnothing.",
                     "shapes": [],
                     "params": [],
-                    "line": 134,
-                    "end": 162
+                    "line": 124,
+                    "end": 152
                 },
                 {
                     "routes": [],
@@ -79295,8 +79990,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 164,
-                    "end": 179
+                    "line": 154,
+                    "end": 169
                 },
                 {
                     "routes": [],
@@ -79322,8 +80017,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 182,
-                    "end": 199
+                    "line": 172,
+                    "end": 189
                 },
                 {
                     "routes": [],
@@ -79349,8 +80044,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 202,
-                    "end": 211
+                    "line": 192,
+                    "end": 201
                 },
                 {
                     "routes": [],
@@ -79369,8 +80064,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 218,
-                    "end": 230
+                    "line": 208,
+                    "end": 220
                 },
                 {
                     "routes": [],
@@ -79396,8 +80091,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 232,
-                    "end": 259
+                    "line": 222,
+                    "end": 249
                 },
                 {
                     "routes": [],
@@ -79423,8 +80118,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 261,
-                    "end": 278
+                    "line": 251,
+                    "end": 268
                 },
                 {
                     "routes": [],
@@ -79443,8 +80138,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 280,
-                    "end": 290
+                    "line": 270,
+                    "end": 280
                 },
                 {
                     "routes": [],
@@ -79470,8 +80165,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 293,
-                    "end": 312
+                    "line": 283,
+                    "end": 302
                 },
                 {
                     "routes": [],
@@ -79490,8 +80185,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 315,
-                    "end": 344
+                    "line": 305,
+                    "end": 334
                 },
                 {
                     "routes": [],
@@ -79502,8 +80197,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 346,
-                    "end": 363
+                    "line": 336,
+                    "end": 353
                 },
                 {
                     "routes": [],
@@ -79531,8 +80226,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 371,
-                    "end": 432
+                    "line": 361,
+                    "end": 422
                 },
                 {
                     "routes": [],
@@ -79554,8 +80249,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 442,
-                    "end": 459
+                    "line": 432,
+                    "end": 449
                 }
             ]
         },
@@ -81077,6 +81772,136 @@
             ]
         },
         {
+            "name": "Minn\\Theme\\StyleSettings",
+            "short": "StyleSettings",
+            "namespace": "Minn\\Theme",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Theme/StyleSettings.php",
+            "lines": 82,
+            "doc": "The settings and styles nodes as wp/v2/global-styles reports them:\npreset lists keyed by the origin that declared them, appearanceTools\nspelled out as the flags it stands for, and var:preset tokens resolved\nto the custom properties they name. Pure: a node in, a node out.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Rest\\GlobalStylesObject",
+                "Minn\\Theme\\GlobalStyles",
+                "Minn\\Theme\\ThemeStyles"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "PRESET_PATHS",
+                    "value": "array (   0 =>    array (     0 => 'color',     1 => 'palette',   ),   1 =>    array (     0 => 'color',     1 => 'gradients',   ),   2 =>    array (     0 => 'color',     1 => 'duotone',   ),   3 =>    array (     0 => 'typography',     1 => 'fontSizes',   ),   4 =>    array (     0 => 'typography',     1 => 'fontFamilies',   ),   5 =>    array (     0 => 'spacing',     1 => 'spacingSizes',   ),   6 =>    array (     0 => 'shadow',     1 => 'presets',   ),   7 =>    array (     0 => 'dimensions',     1 => 'aspectRatios',   ),   8 =>    array (     0 => 'dimensions',     1 => 'dimensionSizes',   ), )",
+                    "doc": "Where a settings node keeps preset lists, at its root and under each block.",
+                    "visibility": "private"
+                },
+                {
+                    "name": "APPEARANCE_TOOLS",
+                    "value": "array (   'background' =>    array (     0 => 'backgroundImage',     1 => 'backgroundSize',     2 => 'gradient',   ),   'border' =>    array (     0 => 'color',     1 => 'radius',     2 => 'style',     3 => 'width',   ),   'color' =>    array (     0 => 'link',     1 => 'heading',     2 => 'button',     3 => 'caption',   ),   'dimensions' =>    array (     0 => 'aspectRatio',     1 => 'height',     2 => 'minHeight',     3 => 'minWidth',     4 => 'width',   ),   'position' =>    array (     0 => 'sticky',   ),   'spacing' =>    array (     0 => 'blockGap',     1 => 'margin',     2 => 'padding',   ),   'typography' =>    array (     0 => 'lineHeight',     1 => 'textColumns',   ), )",
+                    "doc": "What appearanceTools switches on, group by group in the order the\nreference appends the groups it has to add; a group already present\nkeeps its place and gains the flags at its end.",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "normalize",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "normalize(array $settings, string $origin): array",
+                    "doc": "A settings node as written (theme.json, a variation, or the site\neditor's post) with its presets keyed by origin and appearanceTools\nexpanded.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "settings",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "origin",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": "theme for a theme's file, custom for the site editor's"
+                        }
+                    ],
+                    "line": 45,
+                    "end": 54
+                },
+                {
+                    "routes": [],
+                    "name": "resolved",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "resolved(array $node): array",
+                    "doc": "Every var:preset|kind|slug token replaced by the custom property it names.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "node",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 57,
+                    "end": 67
+                },
+                {
+                    "routes": [],
+                    "name": "presetsUnder",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "presetsUnder(array $node, string $origin): array",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "node",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "origin",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 69,
+                    "end": 78
+                },
+                {
+                    "routes": [],
+                    "name": "withAppearanceTools",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "withAppearanceTools(array $settings): array",
+                    "doc": "The flag itself goes; a flag the node already sets keeps its value.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "settings",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 81,
+                    "end": 93
+                }
+            ]
+        },
+        {
             "name": "Minn\\Theme\\TemplateIndex",
             "short": "TemplateIndex",
             "namespace": "Minn\\Theme",
@@ -82430,7 +83255,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/Templates.php",
-            "lines": 146,
+            "lines": 153,
             "doc": "Which template renders a resolution, and where its markup comes from:\na wp_template post saved from the site editor (matched by slug and the\ntheme term) wins over the theme's file. Parts resolve the same way\nthrough wp_template_part.",
             "implements": [],
             "extends": null,
@@ -82617,11 +83442,11 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "userStyles(): ?array",
-                    "doc": "The site editor's saved global styles for the active theme, when any.",
+                    "doc": "The site editor's saved global styles for the active theme, when any.\nAn emptied node is stored as [] and reads as nothing, the way the\nreference reads it; a list where a map belongs is dropped the same way.",
                     "shapes": [],
                     "params": [],
-                    "line": 135,
-                    "end": 140
+                    "line": 139,
+                    "end": 147
                 },
                 {
                     "routes": [],
@@ -82640,8 +83465,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 143,
-                    "end": 150
+                    "line": 150,
+                    "end": 157
                 },
                 {
                     "routes": [],
@@ -82719,8 +83544,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 152,
-                    "end": 164
+                    "line": 159,
+                    "end": 171
                 }
             ]
         },
@@ -82730,7 +83555,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Theme/Theme.php",
-            "lines": 318,
+            "lines": 327,
             "doc": "The active block theme on disk, read as data: theme.json, the templates\nand parts directories, and the patterns index. A child theme's files\nwin and its parent fills in what the child does not define; theme.json\nmerges the same way, with the child's preset lists replacing the\nparent's whole. The engine reads the site's installed theme the way it\nreads the site's database; it never runs the theme's PHP.",
             "implements": [],
             "extends": null,
@@ -82751,7 +83576,8 @@
                 "Minn\\Theme\\PageRenderer",
                 "Minn\\Theme\\TemplateIndex",
                 "Minn\\Theme\\TemplatePatterns",
-                "Minn\\Theme\\Templates"
+                "Minn\\Theme\\Templates",
+                "Minn\\Theme\\ThemeStyles"
             ],
             "constructor": {
                 "signature": "__construct(string $slug, string $dir, string $uri, ?Minn\\Theme\\Theme $parent = NULL)",
@@ -82788,8 +83614,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 24,
-                "end": 30
+                "line": 25,
+                "end": 31
             },
             "cases": [],
             "constants": [],
@@ -82881,8 +83707,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 33,
-                    "end": 43
+                    "line": 34,
+                    "end": 44
                 },
                 {
                     "routes": [],
@@ -82915,8 +83741,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 50,
-                    "end": 56
+                    "line": 51,
+                    "end": 57
                 },
                 {
                     "routes": [],
@@ -82927,8 +83753,8 @@
                     "doc": "The theme's own name, and the parent's, for body classes.",
                     "shapes": [],
                     "params": [],
-                    "line": 67,
-                    "end": 70
+                    "line": 68,
+                    "end": 71
                 },
                 {
                     "routes": [],
@@ -82939,8 +83765,22 @@
                     "doc": "The theme.json with the parent's merged in.",
                     "shapes": [],
                     "params": [],
-                    "line": 73,
-                    "end": 81
+                    "line": 74,
+                    "end": 82
+                },
+                {
+                    "routes": [],
+                    "name": "styleFiles",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "styleFiles(): array",
+                    "doc": "Every JSON file under styles/, the parent theme's first and each\ntheme's in path order: block style partials and style variations alike.",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [],
+                    "line": 116,
+                    "end": 123
                 },
                 {
                     "routes": [],
@@ -82966,8 +83806,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 135,
-                    "end": 144
+                    "line": 145,
+                    "end": 154
                 },
                 {
                     "routes": [],
@@ -82986,8 +83826,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 153,
-                    "end": 160
+                    "line": 163,
+                    "end": 170
                 },
                 {
                     "routes": [],
@@ -83006,8 +83846,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 163,
-                    "end": 170
+                    "line": 173,
+                    "end": 180
                 },
                 {
                     "routes": [],
@@ -83018,8 +83858,8 @@
                     "doc": "The theme's display name, as the stylesheet header states it; a child\ntheme answers with its own. Falls back to theme.json's title, then the\nfolder name.",
                     "shapes": [],
                     "params": [],
-                    "line": 177,
-                    "end": 186
+                    "line": 187,
+                    "end": 196
                 },
                 {
                     "routes": [],
@@ -83040,8 +83880,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 196,
-                    "end": 207
+                    "line": 206,
+                    "end": 217
                 },
                 {
                     "routes": [],
@@ -83060,8 +83900,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 222,
-                    "end": 230
+                    "line": 232,
+                    "end": 240
                 },
                 {
                     "routes": [],
@@ -83080,8 +83920,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 233,
-                    "end": 241
+                    "line": 243,
+                    "end": 251
                 },
                 {
                     "routes": [],
@@ -83100,8 +83940,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 244,
-                    "end": 252
+                    "line": 254,
+                    "end": 262
                 },
                 {
                     "routes": [],
@@ -83120,8 +83960,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 255,
-                    "end": 262
+                    "line": 265,
+                    "end": 272
                 },
                 {
                     "routes": [],
@@ -83142,8 +83982,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 270,
-                    "end": 284
+                    "line": 280,
+                    "end": 294
                 },
                 {
                     "routes": [],
@@ -83164,8 +84004,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 293,
-                    "end": 313
+                    "line": 303,
+                    "end": 323
                 },
                 {
                     "routes": [],
@@ -83176,8 +84016,8 @@
                     "doc": "The theme's stylesheet URL when it ships one; a child's own, else nothing (the parent's is not enqueued for it).",
                     "shapes": [],
                     "params": [],
-                    "line": 316,
-                    "end": 319
+                    "line": 326,
+                    "end": 329
                 },
                 {
                     "routes": [],
@@ -83217,8 +84057,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 58,
-                    "end": 64
+                    "line": 59,
+                    "end": 65
                 },
                 {
                     "routes": [],
@@ -83237,8 +84077,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 89,
-                    "end": 113
+                    "line": 90,
+                    "end": 108
                 },
                 {
                     "routes": [],
@@ -83259,8 +84099,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 116,
-                    "end": 129
+                    "line": 126,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -83279,8 +84119,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 147,
-                    "end": 150
+                    "line": 157,
+                    "end": 160
                 },
                 {
                     "routes": [],
@@ -83301,8 +84141,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 210,
-                    "end": 219
+                    "line": 220,
+                    "end": 229
                 },
                 {
                     "routes": [],
@@ -83315,8 +84155,483 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 322,
-                    "end": 334
+                    "line": 332,
+                    "end": 344
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Theme\\ThemeStyles",
+            "short": "ThemeStyles",
+            "namespace": "Minn\\Theme",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Theme/ThemeStyles.php",
+            "lines": 115,
+            "doc": "The active theme's global styles as wp/v2/global-styles/themes/{stylesheet}\nreports them: the engine's defaults (captured from the reference under a\ntheme with no theme.json) with the theme's own settings and styles over\nthem, and the style variations the theme ships.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Content\\Site",
+                "Minn\\Front\\Permalinks",
+                "Minn\\Theme\\StyleSettings",
+                "Minn\\Theme\\Theme"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\GlobalStylesController",
+                "Minn\\Rest\\Services"
+            ],
+            "constructor": {
+                "signature": "__construct(?Minn\\Theme\\Theme $theme, string $stylesheet)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "theme",
+                        "type": "?Minn\\Theme\\Theme",
+                        "shape": "Theme|null",
+                        "default": null,
+                        "doc": "null under a theme without theme.json: the defaults alone"
+                    },
+                    {
+                        "name": "stylesheet",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 19,
+                "end": 23
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "theme",
+                    "type": "?Minn\\Theme\\Theme",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "stylesheet",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "forSite",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "forSite(Minn\\Content\\Site $site, Minn\\Front\\Permalinks $permalinks, string $themesDir): self",
+                    "doc": "The site's active theme as styling data, whether or not it is a block theme.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "site",
+                            "type": "Minn\\Content\\Site",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "permalinks",
+                            "type": "Minn\\Front\\Permalinks",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "themesDir",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 26,
+                    "end": 29
+                },
+                {
+                    "routes": [],
+                    "name": "settings",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "settings(): array",
+                    "doc": "Settings: presets by origin, appearanceTools expanded, the defaults underneath.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 32,
+                    "end": 42
+                },
+                {
+                    "routes": [],
+                    "name": "styles",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "styles(): array",
+                    "doc": "Styles: the theme's over the defaults, block style partials and section styles in, every var:preset token resolved.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 45,
+                    "end": 52
+                },
+                {
+                    "routes": [],
+                    "name": "variations",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "variations(): array",
+                    "doc": "The style variations under styles/: every JSON file there that names\nno blockTypes (those are block style partials), the parent theme's\nfirst, in path order, $schema dropped and the nodes normalized the\nway the theme's own are.",
+                    "shapes": [
+                        "@return list<array>"
+                    ],
+                    "params": [],
+                    "line": 62,
+                    "end": 81
+                },
+                {
+                    "routes": [],
+                    "name": "withSectionStyles",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "withSectionStyles(array $styles, array $partials): array",
+                    "doc": "A root styles.variations node names section styles by the slug of\nthe block style partial that declares them; each lands under every\nblock type that partial names, the blocks it has to add in name\norder, and the root node goes.",
+                    "shapes": [
+                        "@param array<string, list<string>> $partials slug => block types"
+                    ],
+                    "params": [
+                        {
+                            "name": "styles",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "partials",
+                            "type": "array",
+                            "shape": "array<string, list<string>>",
+                            "default": null,
+                            "doc": "slug => block types"
+                        }
+                    ],
+                    "line": 91,
+                    "end": 106
+                },
+                {
+                    "routes": [],
+                    "name": "partials",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "partials(): array",
+                    "doc": "The block style partials under styles/: slug => the block types each names.",
+                    "shapes": [
+                        "@return array<string, list<string>>"
+                    ],
+                    "params": [],
+                    "line": 113,
+                    "end": 123
+                },
+                {
+                    "routes": [],
+                    "name": "defaults",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "defaults(): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array{settings: array, styles: array}"
+                    ],
+                    "params": [],
+                    "line": 126,
+                    "end": 129
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Theme\\UserStyles",
+            "short": "UserStyles",
+            "namespace": "Minn\\Theme",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Theme/UserStyles.php",
+            "lines": 106,
+            "doc": "The site editor's saved global styles: one wp_global_styles post per\ntheme, tied to it by the wp_theme term, holding a versioned JSON body\nof the settings and styles the editor wrote. Every changed save leaves\na revision behind, as a post's does.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Content\\PostRecord",
+                "Minn\\Content\\PostWriter",
+                "Minn\\Content\\Posts",
+                "Minn\\Content\\Site",
+                "Minn\\Content\\Terms",
+                "Minn\\Db"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\GlobalStylesController",
+                "Minn\\Rest\\GlobalStylesObject",
+                "Minn\\Rest\\Services"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Db $db, Minn\\Content\\Posts $posts, Minn\\Content\\PostWriter $writer, Minn\\Content\\Terms $terms, Minn\\Content\\Site $site)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "db",
+                        "type": "Minn\\Db",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "posts",
+                        "type": "Minn\\Content\\Posts",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "writer",
+                        "type": "Minn\\Content\\PostWriter",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "terms",
+                        "type": "Minn\\Content\\Terms",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "site",
+                        "type": "Minn\\Content\\Site",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 22,
+                "end": 29
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "db",
+                    "type": "Minn\\Db",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "posts",
+                    "type": "Minn\\Content\\Posts",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "writer",
+                    "type": "Minn\\Content\\PostWriter",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "terms",
+                    "type": "Minn\\Content\\Terms",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "site",
+                    "type": "Minn\\Content\\Site",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "idFor",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "idFor(string $stylesheet): ?int",
+                    "doc": "The newest published global-styles post carrying the theme's term, or null.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "stylesheet",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 32,
+                    "end": 44
+                },
+                {
+                    "routes": [],
+                    "name": "ensure",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "ensure(string $stylesheet, int $userId): int",
+                    "doc": "The theme's post, made the way the reference makes it when there is none yet.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "stylesheet",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "userId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 47,
+                    "end": 69
+                },
+                {
+                    "routes": [],
+                    "name": "find",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "find(int $id): ?Minn\\Content\\PostRecord",
+                    "doc": "The post when it is a global-styles post, else null.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 72,
+                    "end": 76
+                },
+                {
+                    "routes": [],
+                    "name": "decode",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "decode(string $json): array",
+                    "doc": "What a global-styles body holds; a missing, malformed, or list-shaped\nnode is empty, as the reference reads it.",
+                    "shapes": [
+                        "@return array{settings: array, styles: array}"
+                    ],
+                    "params": [
+                        {
+                            "name": "json",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 84,
+                    "end": 92
+                },
+                {
+                    "routes": [],
+                    "name": "isBlank",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "isBlank(string $json): bool",
+                    "doc": "True when the body carries nothing at all under settings or styles, malformed or not.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "json",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 95,
+                    "end": 99
+                },
+                {
+                    "routes": [],
+                    "name": "save",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "save(int $id, int $userId, ?string $title, ?array $settings, ?array $styles): void",
+                    "doc": "Replaces what the caller names (null keeps the stored value), stamps\nthe modified time, and snapshots a revision when anything changed.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "userId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "title",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "settings",
+                            "type": "?array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "styles",
+                            "type": "?array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 105,
+                    "end": 124
                 }
             ]
         }

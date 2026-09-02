@@ -220,9 +220,43 @@ function get_editor_stylesheets()
     return [];
 }
 
+/**
+ * The active theme's merged settings node (theme.json over the engine's
+ * defaults, plus the site editor's saved settings unless the context asks
+ * for the base origin). A path that names nothing yields the whole tree.
+ */
 function wp_get_global_settings($path = [], $context = [])
 {
-    return [];
+    $origin = is_array($context) && ($context['origin'] ?? '') === 'base' ? 'theme' : 'custom';
+    $settings = WP_Theme_JSON_Resolver::get_merged_data($origin)->get_settings();
+    foreach ((array) $path as $key) {
+        if (!is_array($settings) || !array_key_exists($key, $settings)) {
+            return WP_Theme_JSON_Resolver::get_merged_data($origin)->get_settings();
+        }
+        $settings = $settings[$key];
+    }
+    return $settings;
+}
+
+/** @internal the active theme's styles data, resolved once per request */
+function _minn_theme_styles(): Minn\Theme\ThemeStyles
+{
+    static $cached = null;
+    if ($cached === null) {
+        $runtime = Runtime::current();
+        $cached = Minn\Theme\ThemeStyles::forSite(new Minn\Content\Site($runtime->db), Minn\Front\Permalinks::fromDb($runtime->db), ABSPATH . 'wp-content/themes');
+    }
+    return $cached;
+}
+
+/** @internal the site editor's saved settings and styles for the active theme, as stored */
+function _minn_user_styles(): array
+{
+    $runtime = Runtime::current();
+    $site = new Minn\Content\Site($runtime->db);
+    $theme = Minn\Theme\Theme::forStyles($site, Minn\Front\Permalinks::fromDb($runtime->db), ABSPATH . 'wp-content/themes');
+    $saved = $theme === null ? null : (new Minn\Theme\Templates($runtime->db, new Minn\Content\Posts($runtime->db), $theme))->userStyles();
+    return Minn\Theme\UserStyles::decode($saved === null ? '' : (string) json_encode($saved));
 }
 
 /**

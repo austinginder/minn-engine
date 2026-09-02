@@ -43,6 +43,8 @@ use Minn\Media\Writer;
 use Minn\Runtime\Runtime;
 use Minn\Theme\TemplateIndex;
 use Minn\Theme\TemplateWriter;
+use Minn\Theme\ThemeStyles;
+use Minn\Theme\UserStyles;
 use Minn\Theme\Theme;
 
 /**
@@ -93,6 +95,8 @@ final class Services
         UserObject::class => 'userObject',
         MediaObject::class => 'mediaObject',
         CommentObject::class => 'commentObject',
+        UserStyles::class => 'userStyles',
+        ThemeStyles::class => 'themeStyles',
     ];
 
     /** @var array<string, object> */
@@ -193,6 +197,18 @@ final class Services
     public function revisions(): Revisions
     {
         return $this->share(Revisions::class, fn () => new Revisions($this->db, $this->writer(), $this->site()));
+    }
+
+    /** The site editor's saved global styles. */
+    public function userStyles(): UserStyles
+    {
+        return $this->share(UserStyles::class, fn () => new UserStyles($this->db, $this->posts(), $this->writer(), $this->terms(), $this->site()));
+    }
+
+    /** The active theme's global styles and variations. */
+    public function themeStyles(): ThemeStyles
+    {
+        return $this->share(ThemeStyles::class, fn () => ThemeStyles::forSite($this->site(), $this->permalinks(), $this->contentDir() . '/themes'));
     }
 
     /** Classic menus and their items. */
