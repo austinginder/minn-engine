@@ -10268,6 +10268,8 @@
                 "Minn\\Admin\\LanguageController",
                 "Minn\\Admin\\Notifications",
                 "Minn\\Cli\\Runtime",
+                "Minn\\Content\\Reader",
+                "Minn\\Context",
                 "Minn\\Engine",
                 "Minn\\Front\\AdminBar",
                 "Minn\\Front\\CommentPostController",
@@ -29425,17 +29427,19 @@
             "namespace": "Minn\\Content",
             "kind": "final class",
             "file": "public/minn/src/Minn/Content/Reader.php",
-            "lines": 54,
+            "lines": 75,
             "doc": "Who is reading this request: their user id, whether they may read\nprivate content, whether they may edit a given post, and the\npost-password cookie they carry. Set once per request by the engine\nand consulted by the resolver, the queries, and the renderers.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Auth\\Capabilities",
                 "Minn\\Content\\PostStatus"
             ],
             "usedBy": [
                 "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
                 "Minn\\Content\\PasswordGate",
                 "Minn\\Content\\Posts",
+                "Minn\\Context",
                 "Minn\\Engine",
                 "Minn\\Extension\\Seams",
                 "Minn\\Front\\CommentPostController",
@@ -29503,8 +29507,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 20,
-                "end": 30
+                "line": 21,
+                "end": 31
             },
             "cases": [],
             "constants": [],
@@ -29600,8 +29604,49 @@
                             "doc": ""
                         }
                     ],
-                    "line": 33,
-                    "end": 36
+                    "line": 34,
+                    "end": 37
+                },
+                {
+                    "routes": [],
+                    "name": "forUser",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "forUser(int $userId, Minn\\Auth\\Capabilities $capabilities, string $postPassword = '', string $sessionToken = ''): self",
+                    "doc": "The reader a signed-in user is, asked of the capability engine: what\nthey may read privately, what they may edit, and the roles they hold.\nUser 0 is nobody, whatever the capabilities say.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "userId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "capabilities",
+                            "type": "Minn\\Auth\\Capabilities",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "postPassword",
+                            "type": "string",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        },
+                        {
+                            "name": "sessionToken",
+                            "type": "string",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 44,
+                    "end": 58
                 },
                 {
                     "routes": [],
@@ -29620,8 +29665,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 39,
-                    "end": 42
+                    "line": 61,
+                    "end": 64
                 },
                 {
                     "routes": [],
@@ -29632,8 +29677,8 @@
                     "doc": "The request's reader, anonymous until one is set.",
                     "shapes": [],
                     "params": [],
-                    "line": 45,
-                    "end": 48
+                    "line": 67,
+                    "end": 70
                 },
                 {
                     "routes": [],
@@ -29644,8 +29689,8 @@
                     "doc": "Whether the reader has a session.",
                     "shapes": [],
                     "params": [],
-                    "line": 51,
-                    "end": 54
+                    "line": 73,
+                    "end": 76
                 },
                 {
                     "routes": [],
@@ -29664,8 +29709,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 57,
-                    "end": 60
+                    "line": 79,
+                    "end": 82
                 },
                 {
                     "routes": [],
@@ -29686,8 +29731,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 63,
-                    "end": 67
+                    "line": 85,
+                    "end": 89
                 }
             ]
         },
@@ -29941,6 +29986,7 @@
                 "Minn\\Content\\PostWriter",
                 "Minn\\Content\\Revisions",
                 "Minn\\Content\\SiteIcon",
+                "Minn\\Context",
                 "Minn\\Cron\\Cron",
                 "Minn\\Engine",
                 "Minn\\Extension\\Loader",
@@ -32250,6 +32296,228 @@
             ]
         },
         {
+            "name": "Minn\\Context",
+            "short": "Context",
+            "namespace": "Minn",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Context.php",
+            "lines": 41,
+            "doc": "One request, as a value: the database door, who is asking, what they\nmay do, and where the site's files are. It is built once at the front\ndoor and handed down, so nothing below has to reach for a global to\nlearn what request it is answering.\n\nThe reader is the one part that differs by surface (REST resolves it\nfrom the nonce-bound caller, the front from the session cookie), so a\ncontext is made with the reader its surface resolved.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Auth\\Capabilities",
+                "Minn\\Content\\Reader",
+                "Minn\\Content\\Site",
+                "Minn\\Db",
+                "Minn\\Http\\Request"
+            ],
+            "usedBy": [
+                "Minn\\Engine",
+                "Minn\\Runtime\\Runtime"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Db $db, Minn\\Content\\Site $site, ?Minn\\Http\\Request $request, Minn\\Content\\Reader $reader, Minn\\Auth\\Capabilities $capabilities, string $engineDir, string $absPath, string $version)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "db",
+                        "type": "Minn\\Db",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "site",
+                        "type": "Minn\\Content\\Site",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "request",
+                        "type": "?Minn\\Http\\Request",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "reader",
+                        "type": "Minn\\Content\\Reader",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "capabilities",
+                        "type": "Minn\\Auth\\Capabilities",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "engineDir",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "absPath",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "version",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 24,
+                "end": 37
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "db",
+                    "type": "Minn\\Db",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "site",
+                    "type": "Minn\\Content\\Site",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "request",
+                    "type": "?Minn\\Http\\Request",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "reader",
+                    "type": "Minn\\Content\\Reader",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "capabilities",
+                    "type": "Minn\\Auth\\Capabilities",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "engineDir",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "the minn/ folder: the engine's own files",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "absPath",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "the site root with a trailing slash, as ABSPATH holds it",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "version",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "the WordPress release whose contracts the runtime speaks",
+                    "visibility": "public",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "withReader",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "withReader(Minn\\Content\\Reader $reader): self",
+                    "doc": "The same context with another reader, for a surface that resolves one later.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "reader",
+                            "type": "Minn\\Content\\Reader",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 40,
+                    "end": 43
+                },
+                {
+                    "routes": [],
+                    "name": "contentDir",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "contentDir(): string",
+                    "doc": "wp-content under the site root.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 46,
+                    "end": 49
+                },
+                {
+                    "routes": [],
+                    "name": "themesDir",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "themesDir(): string",
+                    "doc": "The themes folder under wp-content.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 52,
+                    "end": 55
+                },
+                {
+                    "routes": [],
+                    "name": "isSecure",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "isSecure(): bool",
+                    "doc": "Whether the request is over HTTPS.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 58,
+                    "end": 61
+                }
+            ]
+        },
+        {
             "name": "Minn\\Cron\\Cron",
             "short": "Cron",
             "namespace": "Minn\\Cron",
@@ -32500,6 +32768,7 @@
                 "Minn\\Content\\Site",
                 "Minn\\Content\\Terms",
                 "Minn\\Content\\Users",
+                "Minn\\Context",
                 "Minn\\Cron\\Cron",
                 "Minn\\Engine",
                 "Minn\\Extension\\Seams",
@@ -32902,7 +33171,7 @@
             "namespace": "Minn",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Engine.php",
-            "lines": 198,
+            "lines": 192,
             "doc": "The engine's front door. An unmodified wp-config.php ends by requiring\nwp-settings.php, which is the engine's own boot file; it hands off here.\nREST is dispatched first (from the path or from ?rest_route=), then the\nadmin, the login endpoint, and finally the public site.",
             "implements": [],
             "extends": null,
@@ -32935,6 +33204,7 @@
                 "Minn\\Content\\Site",
                 "Minn\\Content\\SiteIcon",
                 "Minn\\Content\\Users",
+                "Minn\\Context",
                 "Minn\\Cron\\Cron",
                 "Minn\\Db",
                 "Minn\\Extension\\Extensions",
@@ -33051,20 +33321,13 @@
                     "name": "bootRuntimeForRest",
                     "static": false,
                     "visibility": "private",
-                    "signature": "bootRuntimeForRest(Minn\\Db $db, Minn\\Http\\Request $request, Minn\\Rest\\Api $api): void",
+                    "signature": "bootRuntimeForRest(Minn\\Context $context, Minn\\Rest\\Api $api): void",
                     "doc": "The WordPress runtime for a REST request: the caller the REST layer\nresolved is the reader, plugins load, and rest_api_init fires so\ntheir routes answer after the engine's own.",
                     "shapes": [],
                     "params": [
                         {
-                            "name": "db",
-                            "type": "Minn\\Db",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
+                            "name": "context",
+                            "type": "Minn\\Context",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -33078,7 +33341,7 @@
                         }
                     ],
                     "line": 108,
-                    "end": 135
+                    "end": 127
                 },
                 {
                     "routes": [],
@@ -33097,8 +33360,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 137,
-                    "end": 214
+                    "line": 129,
+                    "end": 208
                 },
                 {
                     "routes": [],
@@ -33215,8 +33478,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 217,
-                    "end": 266
+                    "line": 211,
+                    "end": 260
                 }
             ]
         },
@@ -33269,13 +33532,14 @@
             "namespace": "Minn\\Extension",
             "kind": "final class",
             "file": "public/minn/src/Minn/Extension/Extensions.php",
-            "lines": 24,
-            "doc": "The request's seams once the loader has filled them, and the runner the\nengine calls them through; nothing before that (REST and CLI).",
+            "lines": 14,
+            "doc": "Where the engine looks for the seams an extension registered. The\nrequest's runtime holds them, so nothing here keeps state of its own\nand a request cannot inherit the extensions of the one before it.\nBefore the front has loaded any (REST and the command line never do)\nthere are none.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Extension\\SeamRunner",
-                "Minn\\Extension\\Seams"
+                "Minn\\Extension\\Seams",
+                "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
                 "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
@@ -33288,26 +33552,7 @@
             "constructor": null,
             "cases": [],
             "constants": [],
-            "properties": [
-                {
-                    "name": "seams",
-                    "type": "?Minn\\Extension\\Seams",
-                    "readonly": false,
-                    "static": true,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": false
-                },
-                {
-                    "name": "runner",
-                    "type": "?Minn\\Extension\\SeamRunner",
-                    "readonly": false,
-                    "static": true,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": false
-                }
-            ],
+            "properties": [],
             "methods": [
                 {
                     "routes": [],
@@ -33326,20 +33571,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 17,
-                    "end": 21
-                },
-                {
-                    "routes": [],
-                    "name": "seams",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "seams(): ?Minn\\Extension\\Seams",
-                    "doc": "The registered seams, if any.",
-                    "shapes": [],
-                    "params": [],
-                    "line": 24,
-                    "end": 27
+                    "line": 19,
+                    "end": 22
                 },
                 {
                     "routes": [],
@@ -33350,8 +33583,8 @@
                     "doc": "The engine side of the seams, if any.",
                     "shapes": [],
                     "params": [],
-                    "line": 30,
-                    "end": 33
+                    "line": 25,
+                    "end": 28
                 }
             ]
         },
@@ -34013,7 +34246,8 @@
             ],
             "usedBy": [
                 "Minn\\Extension\\Extensions",
-                "Minn\\Extension\\Seams"
+                "Minn\\Extension\\Seams",
+                "Minn\\Runtime\\Runtime"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Extension\\Seams $seams, Minn\\Extension\\Registrations $registered)",
@@ -44720,6 +44954,7 @@
                 "Minn\\Auth\\Authenticator",
                 "Minn\\Auth\\SignIn",
                 "Minn\\Autoloader",
+                "Minn\\Context",
                 "Minn\\Engine",
                 "Minn\\Extension\\Seams",
                 "Minn\\Front\\AssetsController",
@@ -73995,7 +74230,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Runtime.php",
-            "lines": 210,
+            "lines": 247,
             "doc": "The WordPress runtime the engine offers plugin code: the procedural\nfacade under minn/wp-api/ plus the services it delegates to. One per\nrequest; the facade reaches it through these statics.",
             "implements": [],
             "extends": null,
@@ -74003,7 +74238,9 @@
                 "Minn\\Auth\\Capabilities",
                 "Minn\\Content\\Reader",
                 "Minn\\Content\\Site",
+                "Minn\\Context",
                 "Minn\\Db",
+                "Minn\\Extension\\SeamRunner",
                 "Minn\\Http\\Request",
                 "Minn\\Runtime\\BlockTemplates",
                 "Minn\\Runtime\\Constants",
@@ -74024,6 +74261,7 @@
                 "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
                 "Minn\\Blocks\\ImageTags",
                 "Minn\\Engine",
+                "Minn\\Extension\\Extensions",
                 "Minn\\Front\\Feeds",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Front\\PluginRules",
@@ -74050,62 +74288,13 @@
                 "Minn\\Theme\\Templates"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Db $db, Minn\\Content\\Site $site, ?Minn\\Http\\Request $request, Minn\\Content\\Reader $reader, Minn\\Auth\\Capabilities $capabilities, string $engineDir, string $absPath, string $version, bool $isAdmin = false)",
-                "doc": "",
+                "signature": "__construct(Minn\\Context $context, bool $isAdmin = false)",
+                "doc": "The runtime for one request. Everything about the request itself\ncomes from the context; the fields below it are the same values,\nkept as properties because plugin code reaches for them by name.",
                 "shapes": [],
                 "params": [
                     {
-                        "name": "db",
-                        "type": "Minn\\Db",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "site",
-                        "type": "Minn\\Content\\Site",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "request",
-                        "type": "?Minn\\Http\\Request",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "reader",
-                        "type": "Minn\\Content\\Reader",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "capabilities",
-                        "type": "Minn\\Auth\\Capabilities",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "engineDir",
-                        "type": "string",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "absPath",
-                        "type": "string",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "version",
-                        "type": "string",
+                        "name": "context",
+                        "type": "Minn\\Context",
                         "shape": "",
                         "default": null,
                         "doc": ""
@@ -74119,8 +74308,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 33,
-                "end": 44
+                "line": 59,
+                "end": 71
             },
             "cases": [],
             "constants": [],
@@ -74229,67 +74418,85 @@
                     "type": "Minn\\Db",
                     "readonly": true,
                     "static": false,
-                    "doc": "",
+                    "doc": "The database door this request answers through.",
                     "visibility": "public",
-                    "promoted": true
+                    "promoted": false
                 },
                 {
                     "name": "site",
                     "type": "Minn\\Content\\Site",
                     "readonly": true,
                     "static": false,
-                    "doc": "",
+                    "doc": "The site's options.",
                     "visibility": "public",
-                    "promoted": true
+                    "promoted": false
                 },
                 {
                     "name": "request",
                     "type": "?Minn\\Http\\Request",
                     "readonly": true,
                     "static": false,
-                    "doc": "",
+                    "doc": "The request being answered, absent on the command line.",
                     "visibility": "public",
-                    "promoted": true
+                    "promoted": false
                 },
                 {
                     "name": "reader",
                     "type": "Minn\\Content\\Reader",
                     "readonly": true,
                     "static": false,
-                    "doc": "",
+                    "doc": "Who is reading this request.",
                     "visibility": "public",
-                    "promoted": true
+                    "promoted": false
                 },
                 {
                     "name": "capabilities",
                     "type": "Minn\\Auth\\Capabilities",
                     "readonly": true,
                     "static": false,
-                    "doc": "",
+                    "doc": "The capability engine.",
                     "visibility": "public",
-                    "promoted": true
+                    "promoted": false
                 },
                 {
                     "name": "engineDir",
                     "type": "string",
                     "readonly": true,
                     "static": false,
-                    "doc": "",
+                    "doc": "The minn/ folder: the engine's own files.",
                     "visibility": "public",
-                    "promoted": true
+                    "promoted": false
                 },
                 {
                     "name": "absPath",
                     "type": "string",
                     "readonly": true,
                     "static": false,
-                    "doc": "",
+                    "doc": "The site root with a trailing slash.",
                     "visibility": "public",
-                    "promoted": true
+                    "promoted": false
                 },
                 {
                     "name": "version",
                     "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "The WordPress release whose contracts the runtime speaks.",
+                    "visibility": "public",
+                    "promoted": false
+                },
+                {
+                    "name": "seams",
+                    "type": "?Minn\\Extension\\SeamRunner",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "The extension seams this request registered, once the front has loaded them.",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "context",
+                    "type": "Minn\\Context",
                     "readonly": true,
                     "static": false,
                     "doc": "",
@@ -74309,6 +74516,38 @@
             "methods": [
                 {
                     "routes": [],
+                    "name": "useSeams",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "useSeams(Minn\\Extension\\SeamRunner $seams): void",
+                    "doc": "Holds the extension seams this request registered, so nothing static has to.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "seams",
+                            "type": "Minn\\Extension\\SeamRunner",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 74,
+                    "end": 77
+                },
+                {
+                    "routes": [],
+                    "name": "seams",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "seams(): ?Minn\\Extension\\SeamRunner",
+                    "doc": "The extension seams, or null before the front has registered any (REST and the CLI never do).",
+                    "shapes": [],
+                    "params": [],
+                    "line": 80,
+                    "end": 83
+                },
+                {
+                    "routes": [],
                     "name": "boot",
                     "static": true,
                     "visibility": "public",
@@ -74324,8 +74563,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 47,
-                    "end": 66
+                    "line": 86,
+                    "end": 105
                 },
                 {
                     "routes": [],
@@ -74336,8 +74575,8 @@
                     "doc": "The booted runtime; throws when there is none.",
                     "shapes": [],
                     "params": [],
-                    "line": 69,
-                    "end": 75
+                    "line": 108,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -74348,8 +74587,8 @@
                     "doc": "Whether the runtime is up.",
                     "shapes": [],
                     "params": [],
-                    "line": 78,
-                    "end": 81
+                    "line": 117,
+                    "end": 120
                 },
                 {
                     "routes": [],
@@ -74360,8 +74599,8 @@
                     "doc": "The hook registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 84,
-                    "end": 87
+                    "line": 123,
+                    "end": 126
                 },
                 {
                     "routes": [],
@@ -74372,8 +74611,8 @@
                     "doc": "The options store.",
                     "shapes": [],
                     "params": [],
-                    "line": 90,
-                    "end": 93
+                    "line": 129,
+                    "end": 132
                 },
                 {
                     "routes": [],
@@ -74399,8 +74638,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 104,
-                    "end": 119
+                    "line": 143,
+                    "end": 158
                 },
                 {
                     "routes": [],
@@ -74411,8 +74650,8 @@
                     "doc": "The object cache.",
                     "shapes": [],
                     "params": [],
-                    "line": 122,
-                    "end": 125
+                    "line": 161,
+                    "end": 164
                 },
                 {
                     "routes": [],
@@ -74423,8 +74662,8 @@
                     "doc": "The shortcode registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 128,
-                    "end": 131
+                    "line": 167,
+                    "end": 170
                 },
                 {
                     "routes": [],
@@ -74435,8 +74674,8 @@
                     "doc": "The script modules registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 134,
-                    "end": 140
+                    "line": 173,
+                    "end": 179
                 },
                 {
                     "routes": [],
@@ -74447,8 +74686,8 @@
                     "doc": "The interactivity API.",
                     "shapes": [],
                     "params": [],
-                    "line": 143,
-                    "end": 146
+                    "line": 182,
+                    "end": 185
                 },
                 {
                     "routes": [],
@@ -74459,8 +74698,8 @@
                     "doc": "The registered block templates.",
                     "shapes": [],
                     "params": [],
-                    "line": 149,
-                    "end": 152
+                    "line": 188,
+                    "end": 191
                 },
                 {
                     "routes": [],
@@ -74471,8 +74710,8 @@
                     "doc": "The post types, taxonomies, and statuses.",
                     "shapes": [],
                     "params": [],
-                    "line": 155,
-                    "end": 158
+                    "line": 194,
+                    "end": 197
                 },
                 {
                     "routes": [],
@@ -74483,8 +74722,8 @@
                     "doc": "A fresh post query over the runtime's registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 161,
-                    "end": 164
+                    "line": 200,
+                    "end": 203
                 },
                 {
                     "routes": [],
@@ -74510,8 +74749,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 167,
-                    "end": 170
+                    "line": 206,
+                    "end": 209
                 },
                 {
                     "routes": [],
@@ -74537,8 +74776,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 173,
-                    "end": 176
+                    "line": 212,
+                    "end": 215
                 },
                 {
                     "routes": [],
@@ -74549,8 +74788,8 @@
                     "doc": "Whether the request is over HTTPS.",
                     "shapes": [],
                     "params": [],
-                    "line": 179,
-                    "end": 182
+                    "line": 218,
+                    "end": 221
                 },
                 {
                     "routes": [],
@@ -74561,8 +74800,8 @@
                     "doc": "wp-content under the site root.",
                     "shapes": [],
                     "params": [],
-                    "line": 185,
-                    "end": 188
+                    "line": 224,
+                    "end": 227
                 },
                 {
                     "routes": [],
@@ -74581,8 +74820,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 191,
-                    "end": 211
+                    "line": 230,
+                    "end": 250
                 },
                 {
                     "routes": [],
@@ -74593,8 +74832,8 @@
                     "doc": "Fresh per-request state, for suites.",
                     "shapes": [],
                     "params": [],
-                    "line": 214,
-                    "end": 226
+                    "line": 253,
+                    "end": 265
                 }
             ]
         },

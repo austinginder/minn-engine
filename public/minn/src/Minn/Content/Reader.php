@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Content;
 
 use Closure;
+use Minn\Auth\Capabilities;
 
 /**
  * Who is reading this request: their user id, whether they may read
@@ -33,6 +34,27 @@ final class Reader
     public static function anonymous(string $postPassword = ''): self
     {
         return new self(0, false, false, static fn (int $id): bool => false, $postPassword);
+    }
+
+    /**
+     * The reader a signed-in user is, asked of the capability engine: what
+     * they may read privately, what they may edit, and the roles they hold.
+     * User 0 is nobody, whatever the capabilities say.
+     */
+    public static function forUser(int $userId, Capabilities $capabilities, string $postPassword = '', string $sessionToken = ''): self
+    {
+        if ($userId === 0) {
+            return new self(0, false, false, static fn (int $id): bool => false, $postPassword, $sessionToken);
+        }
+        return new self(
+            $userId,
+            $capabilities->can($userId, 'read_private_posts'),
+            $capabilities->can($userId, 'read_private_pages'),
+            static fn (int $postId): bool => $capabilities->can($userId, 'edit_post', $postId),
+            $postPassword,
+            $sessionToken,
+            $capabilities->rolesOf($userId),
+        );
     }
 
     /** Makes this reader the current one for the request. */

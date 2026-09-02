@@ -5,7 +5,7 @@ the extension contract and its seams
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`Extension`](#extension) | interface | 5 | What a Minn extension is: a class the engine constructs once per request |
-| [`Extensions`](#extensions) | final class | 24 | The request's seams once the loader has filled them, and the runner the |
+| [`Extensions`](#extensions) | final class | 14 | Where the engine looks for the seams an extension registered. The |
 | [`Loader`](#loader) | final class | 127 | Finds extensions under wp-content/plugins and wp-content/mu-plugins, |
 | [`Manifest`](#manifest) | final readonly class | 53 | minn.json, read as data. A folder under wp-content/plugins (or |
 | [`Registrations`](#registrations) | final readonly class | 25 | Everything the extensions registered for this request, handed from Seams to the runner once. |
@@ -32,19 +32,17 @@ Registers the extension's seams.
 
 `final class Minn\Extension\Extensions` · `public/minn/src/Minn/Extension/Extensions.php`
 
-The request's seams once the loader has filled them, and the runner the
-engine calls them through; nothing before that (REST and CLI).
+Where the engine looks for the seams an extension registered. The
+request's runtime holds them, so nothing here keeps state of its own
+and a request cannot inherit the extensions of the one before it.
+Before the front has loaded any (REST and the command line never do)
+there are none.
 
 Used by: `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Renderer`, `Minn\Engine`, `Minn\Front\Feeds`, `Minn\Theme\ClassicContent`, `Minn\Theme\PageRenderer`
-
 
 ### static `set(Minn\Extension\Seams $seams): void`
 
 Installs the seams for this request.
-
-### static `seams(): ?Minn\Extension\Seams`
-
-The registered seams, if any.
 
 ### static `runner(): ?Minn\Extension\SeamRunner`
 
@@ -196,7 +194,7 @@ The engine's side of the seams: what the loader collected, called at the
 right moment and in registration order. An extension never sees this
 class; it sees Seams, which is only the eight registrations.
 
-Used by: `Minn\Extension\Extensions`, `Minn\Extension\Seams`
+Used by: `Minn\Extension\Extensions`, `Minn\Extension\Seams`, `Minn\Runtime\Runtime`
 
 ```php
 __construct(Minn\Extension\Seams $seams, Minn\Extension\Registrations $registered)

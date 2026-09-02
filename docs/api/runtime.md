@@ -40,7 +40,7 @@ the WordPress runtime plugins load against
 | [`Recovery`](#recovery) | final readonly class | 183 | Recovery from a fatal in someone else's code. When a plugin or theme |
 | [`Refusal`](#refusal) | final readonly class | 6 | A refused operation, the way plugin code expects to read it: a code, a message, optional data. The facade turns it into WP_Error. |
 | [`Registry`](#registry) | final class | 382 | Post types, taxonomies, and statuses as plugin code registers and reads |
-| [`Runtime`](#runtime) | final class | 210 | The WordPress runtime the engine offers plugin code: the procedural |
+| [`Runtime`](#runtime) | final class | 247 | The WordPress runtime the engine offers plugin code: the procedural |
 | [`ScriptModules`](#scriptmodules) | final class | 308 | The script modules registry: registrations with typed dependencies, the |
 | [`ScriptPack`](#scriptpack) | final class | 146 | The site-supplied script pack: the `wp-*` JavaScript packages the engine |
 | [`Shortcodes`](#shortcodes) | final class | 132 | The shortcode registry plugin code fills with add_shortcode, and the |
@@ -1707,21 +1707,33 @@ The WordPress runtime the engine offers plugin code: the procedural
 facade under minn/wp-api/ plus the services it delegates to. One per
 request; the facade reaches it through these statics.
 
-Used by: `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Engine`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\PluginRules`, `Minn\Front\Resolver`, `Minn\Rest\Api`, `Minn\Rest\Services`, `Minn\Runtime\Abilities`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\Constants`, `Minn\Runtime\Interactivity`, `Minn\Runtime\NavMenu`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostQuery`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\TermWriter`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
+Used by: `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\PluginRules`, `Minn\Front\Resolver`, `Minn\Rest\Api`, `Minn\Rest\Services`, `Minn\Runtime\Abilities`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\Constants`, `Minn\Runtime\Interactivity`, `Minn\Runtime\NavMenu`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostQuery`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\TermWriter`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
 
 ```php
-__construct(Minn\Db $db, Minn\Content\Site $site, ?Minn\Http\Request $request, Minn\Content\Reader $reader, Minn\Auth\Capabilities $capabilities, string $engineDir, string $absPath, string $version, bool $isAdmin = false)
+__construct(Minn\Context $context, bool $isAdmin = false)
 ```
+The runtime for one request. Everything about the request itself
+comes from the context; the fields below it are the same values,
+kept as properties because plugin code reaches for them by name.
 
-- readonly `Minn\Db $db`
-- readonly `Minn\Content\Site $site`
-- readonly `?Minn\Http\Request $request`
-- readonly `Minn\Content\Reader $reader`
-- readonly `Minn\Auth\Capabilities $capabilities`
-- readonly `string $engineDir`
-- readonly `string $absPath`
-- readonly `string $version`
+- readonly `Minn\Db $db` — The database door this request answers through.
+- readonly `Minn\Content\Site $site` — The site's options.
+- readonly `?Minn\Http\Request $request` — The request being answered, absent on the command line.
+- readonly `Minn\Content\Reader $reader` — Who is reading this request.
+- readonly `Minn\Auth\Capabilities $capabilities` — The capability engine.
+- readonly `string $engineDir` — The minn/ folder: the engine's own files.
+- readonly `string $absPath` — The site root with a trailing slash.
+- readonly `string $version` — The WordPress release whose contracts the runtime speaks.
+- readonly `Minn\Context $context`
 - readonly `bool $isAdmin`
+
+### `useSeams(Minn\Extension\SeamRunner $seams): void`
+
+Holds the extension seams this request registered, so nothing static has to.
+
+### `seams(): ?Minn\Extension\SeamRunner`
+
+The extension seams, or null before the front has registered any (REST and the CLI never do).
 
 ### static `boot(self $runtime): self`
 

@@ -7,7 +7,9 @@ namespace Minn\Runtime;
 use Minn\Auth\Capabilities;
 use Minn\Content\Reader;
 use Minn\Content\Site;
+use Minn\Context;
 use Minn\Db;
+use Minn\Extension\SeamRunner;
 use Minn\Http\Request;
 
 /**
@@ -30,17 +32,54 @@ final class Runtime
     /** @var array<string, mixed> plugin-visible state the facade keeps between calls */
     private array $state = [];
 
+    /** The database door this request answers through. */
+    public readonly Db $db;
+    /** The site's options. */
+    public readonly Site $site;
+    /** The request being answered, absent on the command line. */
+    public readonly ?Request $request;
+    /** Who is reading this request. */
+    public readonly Reader $reader;
+    /** The capability engine. */
+    public readonly Capabilities $capabilities;
+    /** The minn/ folder: the engine's own files. */
+    public readonly string $engineDir;
+    /** The site root with a trailing slash. */
+    public readonly string $absPath;
+    /** The WordPress release whose contracts the runtime speaks. */
+    public readonly string $version;
+    /** The extension seams this request registered, once the front has loaded them. */
+    private ?SeamRunner $seams = null;
+
+    /**
+     * The runtime for one request. Everything about the request itself
+     * comes from the context; the fields below it are the same values,
+     * kept as properties because plugin code reaches for them by name.
+     */
     public function __construct(
-        public readonly Db $db,
-        public readonly Site $site,
-        public readonly ?Request $request,
-        public readonly Reader $reader,
-        public readonly Capabilities $capabilities,
-        public readonly string $engineDir,
-        public readonly string $absPath,
-        public readonly string $version,
+        public readonly Context $context,
         public readonly bool $isAdmin = false,
     ) {
+        $this->db = $context->db;
+        $this->site = $context->site;
+        $this->request = $context->request;
+        $this->reader = $context->reader;
+        $this->capabilities = $context->capabilities;
+        $this->engineDir = $context->engineDir;
+        $this->absPath = $context->absPath;
+        $this->version = $context->version;
+    }
+
+    /** Holds the extension seams this request registered, so nothing static has to. */
+    public function useSeams(SeamRunner $seams): void
+    {
+        $this->seams = $seams;
+    }
+
+    /** The extension seams, or null before the front has registered any (REST and the CLI never do). */
+    public function seams(): ?SeamRunner
+    {
+        return $this->seams;
     }
 
     /** Makes this request's runtime the one the facade sees and defines the facade. */
@@ -178,13 +217,13 @@ final class Runtime
     /** Whether the request is over HTTPS. */
     public function isSecure(): bool
     {
-        return $this->request?->secure ?? false;
+        return $this->context->isSecure();
     }
 
     /** wp-content under the site root. */
     public function contentDir(): string
     {
-        return rtrim($this->absPath, '/') . '/wp-content';
+        return $this->context->contentDir();
     }
 
     /** Defines the facade functions once; safe to call again. */

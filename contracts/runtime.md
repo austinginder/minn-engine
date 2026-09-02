@@ -30,6 +30,7 @@ skip list.
 | `Runtime\Options` | | options as PHP values (decoded without `unserialize()`, objects become `stdClass`), cached for the request so a value written then read keeps its type |
 | `Runtime\ObjectCache`, `Runtime\Shortcodes`, `Runtime\Assets` | | the per-request object cache; the shortcode registry and expansion; the script/style registry |
 | `Runtime\Constants` | | the fixed constants from `data/constants.json` (captured) plus the per-site ones computed here; never overrides wp-config.php |
+| `Minn\Context` | `src/Minn/` | one request as a value: db, site, request, reader, capabilities, and the two paths; built once at the front door, `withReader()` for the surface that resolves its reader later |
 | `Runtime\Symbols` | | the static symbol read that gates loading (below) |
 | `Runtime\Registry`, `Runtime\PostQuery` | | post types, taxonomies, statuses (data/registry.json + registrations); the SELECT behind WP_Query |
 | `Rest\RuntimeRoutes` | `src/Minn/Rest/` | plugin routes answered after the engine's own; the runtime's namespaces folded into the index |
@@ -57,6 +58,26 @@ before the engine's own extensions register. Then `Plugins::load()`:
 `minn-admin/minn-admin.php` is never loaded as code: the engine answers that
 plugin itself. Each file is included in a clean scope, once. A plugin that
 throws while loading is logged and skipped.
+
+**One context per request (2026-09-02).** `Minn\Context` is the request as a
+value: the database door, the site's options, the request, the reader, the
+capability engine, and the engine and site paths. `Engine::respond()` builds
+exactly one, before the surfaces branch; REST and the front each resolve
+their own reader (the nonce-bound caller, or the session cookie) and ask for
+`withReader()` rather than building a second graph. `Runtime` takes that
+context instead of nine loose arguments and copies its values onto the
+properties plugin code reaches for by name (`Runtime::current()->db` and the
+rest are unchanged), so the runtime and the engine cannot disagree about
+what request they are answering. `Runtime::contentDir()` and `isSecure()`
+are the context's answers.
+
+The extension seams live on the runtime too (`useSeams()` / `seams()`);
+`Extension\Extensions` is now a lookup with no state of its own, so a
+request cannot inherit the extensions of the one before it. `Reader` is
+still reachable through its own static accessor, which is the next slice to
+retire, along with `Db::shared()` at the five deep render sites and the
+render statics (`RenderState::current`, `Layout::$rootPaddingAware`,
+`Content\Blocks::$renderer`).
 
 **The symbol gate.** Before a plugin folder is included, `Runtime\Symbols`
 tokenises every PHP file in it and lists the global functions it calls and

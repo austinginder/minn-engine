@@ -105,23 +105,15 @@ final readonly class Engine
      * resolved is the reader, plugins load, and rest_api_init fires so
      * their routes answer after the engine's own.
      */
-    private function bootRuntimeForRest(Db $db, Request $request, Api $api): void
+    private function bootRuntimeForRest(Context $context, Api $api): void
     {
-        $site = new Site($db);
-        $capabilities = $api->caller()->capabilities();
-        $readerId = $api->caller()->id();
-        Reader::set(new Reader(
-            $readerId,
-            $readerId > 0 && $capabilities->can($readerId, 'read_private_posts'),
-            $readerId > 0 && $capabilities->can($readerId, 'read_private_pages'),
-            static fn (int $postId): bool => $readerId > 0 && $capabilities->can($readerId, 'edit_post', $postId),
-            '',
-            $api->caller()->session()?->token ?? '',
-            $readerId > 0 ? $capabilities->rolesOf($readerId) : [],
-        ));
+        $reader = Reader::forUser($api->caller()->id(), $context->capabilities, '', $api->caller()->session()?->token ?? '');
+        Reader::set($reader);
+        $site = $context->site;
+        $db = $context->db;
         $permalinks = \Minn\Front\Permalinks::fromDb($db);
-        $theme = Theme::active($site, $permalinks, ABSPATH . 'wp-content/themes');
-        $runtime = Runtime::boot(new Runtime($db, $site, $request, Reader::current(), $capabilities, $this->engineDir, ABSPATH, self::WP_VERSION));
+        $theme = Theme::active($site, $permalinks, $context->themesDir());
+        $runtime = Runtime::boot(new Runtime($context->withReader($reader)));
         $runtime->set('permalinks', $permalinks);
         // The active theme belongs in the container on this path too: a
         // plugin asking for the site's templates over REST gets nothing
@@ -158,42 +150,44 @@ final readonly class Engine
             error_log(sprintf('Minn Engine: paused %s %s after a second fatal error while booting; resume it with wp minn recovery resume', $blamed['kind'], $blamed['name']));
         });
 
+        // One context for the request, whichever surface answers it; each
+        // surface resolves its own reader and asks for a context carrying it.
+        $site = new Site($db);
+        $capabilities = Capabilities::fromDb($db);
+        $context = new Context($db, $site, $request, Reader::anonymous(), $capabilities, $this->engineDir, ABSPATH, self::WP_VERSION);
+
         $route = $request->query('rest_route');
         if ($route === null && str_starts_with($request->path, '/wp-json')) {
             $route = substr($request->path, strlen('/wp-json')) ?: '/';
         }
         if ($route !== null) {
             $api = Api::forRequest($db, $request);
-            $this->bootRuntimeForRest($db, $request, $api);
+            $this->bootRuntimeForRest($context, $api);
             $api->handle($route)->send();
         }
 
         $users = new Users($db);
-        $site = new Site($db);
         $sessions = new Sessions($users);
         $cookie = new Cookie($db, $users, $sessions);
         $authenticator = new Authenticator($cookie, $users);
-        $capabilities = Capabilities::fromDb($db);
         $app = new App($this->engineDir . '/admin');
 
         $session = $authenticator->session($request->cookies);
-        $readerId = $session instanceof Authenticated ? $session->id() : 0;
-        Reader::set(new Reader(
-            $readerId,
-            $readerId > 0 && $capabilities->can($readerId, 'read_private_posts'),
-            $readerId > 0 && $capabilities->can($readerId, 'read_private_pages'),
-            static fn (int $postId): bool => $readerId > 0 && $capabilities->can($readerId, 'edit_post', $postId),
+        $reader = Reader::forUser(
+            $session instanceof Authenticated ? $session->id() : 0,
+            $capabilities,
             (string) ($request->cookies['wp-postpass_' . md5((string) ($site->option('siteurl') ?? ''))] ?? ''),
             $session instanceof Authenticated ? $session->token : '',
-            $readerId > 0 ? $capabilities->rolesOf($readerId) : [],
-        ));
+        );
+        Reader::set($reader);
+        $context = $context->withReader($reader);
         $canReadUnpublished = static fn (PostRecord $post): bool => Reader::current()->canEdit((int) $post['ID']);
         $resolver = Resolver::fromDb($db, $canReadUnpublished);
         $permalinks = $resolver->permalinks();
-        $theme = Theme::active($site, $permalinks, ABSPATH . 'wp-content/themes');
+        $theme = Theme::active($site, $permalinks, $context->themesDir());
         // The WordPress runtime: the site's plugins load as code, then the
         // lifecycle actions fire, before the engine's own extensions register.
-        $runtime = Runtime::boot(new Runtime($db, $site, $request, Reader::current(), $capabilities, $this->engineDir, ABSPATH, self::WP_VERSION));
+        $runtime = Runtime::boot(new Runtime($context));
         $runtime->set('block_theme', $theme !== null);
         $runtime->set('theme', $theme);
         $runtime->set('permalinks', $permalinks);

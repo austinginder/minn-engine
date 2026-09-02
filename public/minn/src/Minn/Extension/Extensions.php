@@ -4,31 +4,26 @@ declare(strict_types=1);
 
 namespace Minn\Extension;
 
+use Minn\Runtime\Runtime;
+
 /**
- * The request's seams once the loader has filled them, and the runner the
- * engine calls them through; nothing before that (REST and CLI).
+ * Where the engine looks for the seams an extension registered. The
+ * request's runtime holds them, so nothing here keeps state of its own
+ * and a request cannot inherit the extensions of the one before it.
+ * Before the front has loaded any (REST and the command line never do)
+ * there are none.
  */
 final class Extensions
 {
-    private static ?Seams $seams = null;
-    private static ?SeamRunner $runner = null;
-
     /** Installs the seams for this request. */
     public static function set(Seams $seams): void
     {
-        self::$seams = $seams;
-        self::$runner = new SeamRunner($seams, $seams->registrations());
-    }
-
-    /** The registered seams, if any. */
-    public static function seams(): ?Seams
-    {
-        return self::$seams;
+        Runtime::current()->useSeams(new SeamRunner($seams, $seams->registrations()));
     }
 
     /** The engine side of the seams, if any. */
     public static function runner(): ?SeamRunner
     {
-        return self::$runner;
+        return Runtime::booted() ? Runtime::current()->seams() : null;
     }
 }
