@@ -74,38 +74,45 @@ if ($sessions['author'] === null || $sessions['admin'] === null) {
 }
 
 // The cases the engine still answers differently, each with what settles it:
-//   B1  the write routes state no policy yet (a bare route counts for GET only)
-//   B1  an Own policy cannot answer "missing" first (404 carries GET; the reference sends no header)
-//   B1  the reference validates arguments before it judges the caller
-//   B7  Access::Floor admits every editor, so a manage_options handler's refusal is not the policy's
+//   B1   the write routes state no policy yet, so a bare route counts for GET only and the
+//        engine lists GET where the reference lists the writes
+//   B1   an Own policy cannot answer "missing" first, so a 404/401 carries Allow: GET where
+//        the reference, refusing the caller, sends no header
+//   B1s  the reference validates arguments (and existence) before it judges the caller, so a
+//        few statuses differ too (400 vs 401, 404 vs 401, 500 vs 400)
+//   B7   Access::Floor admits every editor, so a manage_options handler's refusal is not the
+//        policy's, and the header carries the write methods the caller cannot really use
 $divergent = [
-    'anonymous GET /wp/v2/posts/10' => 'B1', 'anonymous GET /wp/v2/posts/999999' => 'B1', 'anonymous GET /wp/v2/posts/1/revisions' => 'B1',
-    'anonymous GET /wp/v2/posts/1/autosaves' => 'B1', 'anonymous GET /wp/v2/users/me/application-passwords' => 'B1',
-    'admin GET /wp/v2/posts' => 'B1', 'admin GET /wp/v2/posts/1' => 'B1', 'admin GET /wp/v2/posts/11' => 'B1', 'admin GET /wp/v2/posts/10' => 'B1',
-    'admin GET /wp/v2/posts/999999' => 'B1',
-    'admin GET /wp/v2/pages' => 'B1', 'admin GET /wp/v2/pages/2' => 'B1', 'admin GET /wp/v2/users' => 'B1', 'admin GET /wp/v2/users/me' => 'B1',
-    'admin GET /wp/v2/users/1' => 'B1', 'admin GET /wp/v2/users/2' => 'B1', 'admin GET /wp/v2/categories' => 'B1', 'admin GET /wp/v2/categories/1' => 'B1',
-    'admin GET /wp/v2/tags' => 'B1', 'admin GET /wp/v2/comments/1' => 'B1', 'admin GET /wp/v2/media' => 'B1', 'admin GET /wp/v2/blocks' => 'B1',
-    'admin GET /wp/v2/templates' => 'B1', 'admin GET /wp/v2/posts/1/autosaves' => 'B1', 'admin GET /wp/v2/users/me/application-passwords' => 'B1',
-    'admin GET /wp/v2/navigation' => 'B1',
-    'author GET /wp/v2/posts' => 'B1', 'author GET /wp/v2/posts/11' => 'B1', 'author GET /wp/v2/posts/10' => 'B1', 'author GET /wp/v2/posts/999999' => 'B1',
-    'author GET /wp/v2/users/me' => 'B1', 'author GET /wp/v2/tags' => 'B1', 'author GET /wp/v2/media' => 'B1', 'author GET /wp/v2/settings' => 'B7',
-    'author GET /wp/v2/blocks' => 'B1', 'author GET /wp/v2/posts/1/revisions' => 'B7', 'author GET /wp/v2/posts/1/autosaves' => 'B7',
-    'author GET /wp/v2/menus' => 'B1', 'author GET /wp/v2/menu-items' => 'B1', 'author GET /wp/v2/users/me/application-passwords' => 'B1',
-    'anonymous DELETE /wp/v2/posts/999999' => 'B1', 'anonymous POST /wp/v2/users' => 'B1', 'anonymous POST /wp/v2/comments' => 'B1',
-    'author POST /wp/v2/posts' => 'B1', 'author DELETE /wp/v2/posts/999999' => 'B1', 'author POST /wp/v2/settings' => 'B7', 'author POST /wp/v2/users' => 'B1',
-    'admin POST /wp/v2/posts' => 'B1', 'admin DELETE /wp/v2/posts/999999' => 'B1', 'admin POST /wp/v2/categories' => 'B1', 'admin POST /wp/v2/users' => 'B1',
+    'anonymous GET /wp/v2/posts/10' => 'B1',     'anonymous GET /wp/v2/posts/999999' => 'B1s',     'anonymous GET /wp/v2/settings' => 'B1',
+    'anonymous GET /wp/v2/templates' => 'B1',     'anonymous GET /wp/v2/posts/1/revisions' => 'B1',     'anonymous GET /wp/v2/posts/1/autosaves' => 'B1',
+    'anonymous GET /wp/v2/menus' => 'B1',     'anonymous GET /wp/v2/menu-items' => 'B1',     'anonymous GET /wp/v2/plugins' => 'B1',
+    'anonymous GET /wp/v2/users/me/application-passwords' => 'B1',     'anonymous POST /wp/v2/users' => 'B1s',     'anonymous POST /wp/v2/comments' => 'B1',
+    'anonymous DELETE /wp/v2/posts/999999' => 'B1s',     'author GET /wp/v2/posts' => 'B1',     'author GET /wp/v2/posts/11' => 'B1',
+    'author GET /wp/v2/posts/10' => 'B1',     'author GET /wp/v2/posts/999999' => 'B1s',     'author GET /wp/v2/users/me' => 'B1',
+    'author GET /wp/v2/tags' => 'B1',     'author GET /wp/v2/media' => 'B1',     'author GET /wp/v2/settings' => 'B7',
+    'author GET /wp/v2/blocks' => 'B1',     'author GET /wp/v2/posts/1/revisions' => 'B1',     'author GET /wp/v2/posts/1/autosaves' => 'B1',
+    'author GET /wp/v2/plugins' => 'B1',     'author GET /wp/v2/users/me/application-passwords' => 'B1',     'author POST /wp/v2/users' => 'B1s',
+    'author DELETE /wp/v2/posts/999999' => 'B1s',     'author POST /wp/v2/posts' => 'B1',     'admin GET /wp/v2/posts' => 'B1',
+    'admin GET /wp/v2/posts/1' => 'B1',     'admin GET /wp/v2/posts/11' => 'B1',     'admin GET /wp/v2/posts/10' => 'B1',
+    'admin GET /wp/v2/posts/999999' => 'B1s',     'admin GET /wp/v2/pages' => 'B1',     'admin GET /wp/v2/pages/2' => 'B1',
+    'admin GET /wp/v2/users' => 'B1',     'admin GET /wp/v2/users/me' => 'B1',     'admin GET /wp/v2/users/1' => 'B1',
+    'admin GET /wp/v2/users/2' => 'B1',     'admin GET /wp/v2/categories' => 'B1',     'admin GET /wp/v2/categories/1' => 'B1',
+    'admin GET /wp/v2/tags' => 'B1',     'admin GET /wp/v2/comments/1' => 'B1',     'admin GET /wp/v2/media' => 'B1',
+    'admin GET /wp/v2/blocks' => 'B1',     'admin GET /wp/v2/templates' => 'B1',     'admin GET /wp/v2/posts/1/autosaves' => 'B1',
+    'admin GET /wp/v2/users/me/application-passwords' => 'B1',     'admin GET /wp/v2/navigation' => 'B1',     'admin POST /wp/v2/users' => 'B1s',
+    'admin POST /wp/v2/categories' => 'B1s',     'admin DELETE /wp/v2/posts/999999' => 'B1s',     'admin POST /wp/v2/posts' => 'B1',
 ];
-$ceiling = 51;
+$ceiling = 54;
 
 $reads = ['/', '/wp/v2', '/wp/v2/posts', '/wp/v2/posts/1', '/wp/v2/posts/11', '/wp/v2/posts/10', '/wp/v2/posts/999999', '/wp/v2/pages', '/wp/v2/pages/2',
     '/wp/v2/users', '/wp/v2/users/me', '/wp/v2/users/1', '/wp/v2/users/2', '/wp/v2/categories', '/wp/v2/categories/1', '/wp/v2/tags', '/wp/v2/comments',
     '/wp/v2/comments/1', '/wp/v2/media', '/wp/v2/types', '/wp/v2/types/post', '/wp/v2/taxonomies', '/wp/v2/settings', '/wp/v2/search', '/wp/v2/blocks',
     '/wp/v2/templates', '/wp/v2/global-styles/themes/twentytwentyfive', '/wp/v2/posts/1/revisions', '/wp/v2/posts/1/autosaves', '/wp/v2/menus',
     '/wp/v2/menu-items', '/wp/v2/plugins', '/wp/v2/users/me/application-passwords', '/wp/v2/navigation'];
-$blogname = json_decode((string) shell_exec('wp --path=' . escapeshellarg(minn_test_site_root() . '/public') . ' option get blogname --format=json 2>/dev/null'), true);
+// Only writes that refuse without mutating shared state, plus a draft create the suite
+// cleans up. A settings write is left out: the engine stores an invalid value (B1), so
+// probing one on a shared database would dirty it for later suites.
 $writes = [
-    ['POST', '/wp/v2/settings', json_encode(['title' => (string) $blogname])],
     ['POST', '/wp/v2/users', '{}'],
     ['POST', '/wp/v2/categories', '{"name":""}'],
     ['POST', '/wp/v2/comments', '{}'],
@@ -116,6 +123,20 @@ $writes = [
 $agreed = 0;
 $differing = [];
 $created = [];
+// Whatever the run creates by name goes, on the engine (which reaches the shared row) and
+// on the reference, even if the comparison loop dies partway.
+register_shutdown_function(static function () use ($fetch, $sessions): void {
+    foreach ([$sessions['admin'], $sessions['author']] as $who) {
+        foreach (['posts', 'pages'] as $type) {
+            $list = json_decode((string) $fetch('https://minn.localhost', "/wp/v2/{$type}?status=draft&per_page=50&search=zz+allow+probe", $who)[2], true);
+            foreach (is_array($list) ? $list : [] as $item) {
+                if (is_array($item) && isset($item['id'])) {
+                    $fetch('https://minn.localhost', "/wp/v2/{$type}/{$item['id']}?force=true", $sessions['admin'], 'DELETE');
+                }
+            }
+        }
+    }
+});
 $compare = static function (string $who, string $method, string $path, string $engineAllow, int $engineStatus, string $refAllow, int $refStatus) use (&$agreed, &$differing, $divergent, $check): void {
     $key = "$who $method $path";
     $same = $engineAllow === $refAllow && $engineStatus === $refStatus;

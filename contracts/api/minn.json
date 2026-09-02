@@ -44396,7 +44396,8 @@
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
-                "Minn\\Http\\RouteMiss"
+                "Minn\\Http\\RouteMiss",
+                "Minn\\RestError"
             ],
             "usedBy": [
                 "Minn\\Engine",
@@ -44422,8 +44423,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 24,
-                "end": 26
+                "line": 25,
+                "end": 27
             },
             "cases": [],
             "constants": [],
@@ -44465,8 +44466,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 29,
-                    "end": 44
+                    "line": 30,
+                    "end": 45
                 },
                 {
                     "routes": [],
@@ -44479,8 +44480,8 @@
                         "@return array<string, list<string>>"
                     ],
                     "params": [],
-                    "line": 47,
-                    "end": 56
+                    "line": 48,
+                    "end": 57
                 },
                 {
                     "routes": [],
@@ -44493,8 +44494,8 @@
                         "@return list<array{method: string, pattern: string, policy: ?Policy, args: array<string, array<string, mixed>>, handler: string}>"
                     ],
                     "params": [],
-                    "line": 63,
-                    "end": 70
+                    "line": 64,
+                    "end": 71
                 },
                 {
                     "routes": [],
@@ -44515,8 +44516,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 81,
-                    "end": 98
+                    "line": 82,
+                    "end": 99
                 },
                 {
                     "routes": [],
@@ -44535,8 +44536,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 112,
-                    "end": 136
+                    "line": 113,
+                    "end": 137
                 },
                 {
                     "routes": [],
@@ -44571,8 +44572,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 101,
-                    "end": 109
+                    "line": 102,
+                    "end": 110
                 }
             ]
         },
@@ -52385,6 +52386,7 @@
                 "Minn\\Cli\\ThemeCommand",
                 "Minn\\Engine",
                 "Minn\\Http\\Kernel",
+                "Minn\\Http\\Router",
                 "Minn\\Media\\Uploads",
                 "Minn\\Ops\\Logs",
                 "Minn\\Ops\\Packages",

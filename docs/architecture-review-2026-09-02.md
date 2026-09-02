@@ -41,6 +41,13 @@ sharpens one and drops one:
 
 ## Functional gaps found on the way
 
+Status, same day: F1 and F2 landed in 2b46acc and cf9ae1f (the front request runs
+the job after its response, under `DOING_CRON`), F3 and F5 to F8 in 6e8fd0a, F4 in
+4004428 (`Router::allowed`, suite `allow`, whose divergent list names B1 and B7 as
+what settles each remaining case). Two things surfaced while proving them: a no-term
+`/wp/v2/search` answered 500 (fixed), and `POST wp/v2/settings` stores a value the
+reference refuses as invalid, which is B1's "args validated before the policy".
+
 These are not structure. They are things the contracts say happen and the
 code does not do, and they go first.
 

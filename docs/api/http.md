@@ -584,7 +584,7 @@ is allowed, and the header is then left out, as the reference does.
 
 Null when nothing matched, so the caller can fall through.
 
-Internals: `admits()` (private, line 101)
+Internals: `admits()` (private, line 102)
 
 
 ## TrustedProxies

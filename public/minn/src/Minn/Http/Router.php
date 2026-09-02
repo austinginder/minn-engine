@@ -7,6 +7,7 @@ namespace Minn\Http;
 use Closure;
 use ReflectionClass;
 use ReflectionMethod;
+use Minn\RestError;
 
 /**
  * Matches a request to a #[Route] on one of the registered handler
