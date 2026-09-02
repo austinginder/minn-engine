@@ -71,6 +71,8 @@ What this costs, named honestly: the engine is no longer "low tens of thousands 
 
 **Security by declaration.** Authorization in WordPress is imperative and scattered, and years of real-world extension audits show that most access-control failures are stories about exactly that. In Minn Engine, a route's capability requirement is metadata: mechanically auditable, diffable across releases, and verifiable by an agent. Prepared statements only. No unserialize of untrusted data. Escaping at defined boundaries.
 
+**Agent-first is also the product's answer to who it is for.** `docs/agent-first.md` takes the argument the rest of the way: the operator, the site owner and the agent as the three audiences in that order, the four surfaces an agent gets (a catalogue, a grant, a staging primitive, a journal), how far a WordPress plugin can be confined without breaking it, the marketplace the manifests make possible, and the WP Registry wiring.
+
 **Agent-first is a build methodology, not a feature.** The reason nobody has done the ops-compatible rewrite is that it is an enormous amount of boring, well-specified work, which is precisely what agents now do well when gated by suites. Every unit ships with a behavioral suite, the suites rather than the prose are ground truth, and contracts are machine-readable so agents can build, audit, and extend without archaeology. Agent legibility also answers the turnover argument directly: the take-over story for a customer stops being "find another WordPress freelancer" and becomes "point any coding agent at the contracts."
 
 ## 5. The license question: can a WordPress-compatible engine be MIT?
