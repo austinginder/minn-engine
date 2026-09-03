@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Http\Access;
 use Minn\Ops\Packages;
 use Minn\Content\Inventory;
 use Minn\Content\PluginState;
@@ -13,7 +14,6 @@ use Minn\Extension\Manifest;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
-use Minn\Http\Access;
 use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\RestError;

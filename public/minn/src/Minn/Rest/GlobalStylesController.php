@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Http\Subject;
+use Minn\Http\Access;
 use Minn\Content\PostRecord;
 use Minn\Content\Revisions;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
-use Minn\Http\Access;
 use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\RestError;
@@ -37,7 +38,7 @@ final readonly class GlobalStylesController
     }
 
     /** The saved styles by id: anyone who edits posts may read them, editing context needs the theme. */
-    #[Route(Method::Get, '/wp/v2/global-styles/{id:\d+}')]
+    #[Route(Method::Get, '/wp/v2/global-styles/{id:\d+}', policy: new Policy(Access::Public, subject: Subject::GlobalStyles, param: 'id'))]
     public function single(Request $request, string $id): Response
     {
         $post = $this->post((int) $id);
@@ -51,9 +52,9 @@ final readonly class GlobalStylesController
     }
 
     /** Replaces the title, settings, or styles the body names; what it leaves out stays. */
-    #[Route(Method::Post, '/wp/v2/global-styles/{id:\d+}')]
-    #[Route(Method::Put, '/wp/v2/global-styles/{id:\d+}')]
-    #[Route(Method::Patch, '/wp/v2/global-styles/{id:\d+}')]
+    #[Route(Method::Post, '/wp/v2/global-styles/{id:\d+}', policy: new Policy(Access::Cap, 'edit_theme_options', param: 'id', subject: Subject::GlobalStyles, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this global style.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this global style.'))]
+    #[Route(Method::Put, '/wp/v2/global-styles/{id:\d+}', policy: new Policy(Access::Cap, 'edit_theme_options', param: 'id', subject: Subject::GlobalStyles, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this global style.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this global style.'))]
+    #[Route(Method::Patch, '/wp/v2/global-styles/{id:\d+}', policy: new Policy(Access::Cap, 'edit_theme_options', param: 'id', subject: Subject::GlobalStyles, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this global style.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this global style.'))]
     public function update(Request $request, string $id): Response
     {
         $post = $this->post((int) $id);
@@ -82,7 +83,7 @@ final readonly class GlobalStylesController
     }
 
     /** The revisions of the saved styles, newest first; all of them unless per_page pages them. */
-    #[Route(Method::Get, '/wp/v2/global-styles/{parent:\d+}/revisions')]
+    #[Route(Method::Get, '/wp/v2/global-styles/{parent:\d+}/revisions', policy: new Policy(Access::Cap, 'edit_theme_options', param: 'parent', subject: Subject::GlobalStylesParent, signIn: 'rest_cannot_read', signInMessage: 'Sorry, you are not allowed to view revisions of this post.', refuse: 'rest_cannot_read', message: 'Sorry, you are not allowed to view revisions of this post.'))]
     public function revisions(Request $request, string $parent): Response
     {
         $rows = PostRecord::fromRows($this->revisions->revisionsOf($this->requireParent((int) $parent)));
@@ -98,7 +99,7 @@ final readonly class GlobalStylesController
     }
 
     /** One revision of the saved styles. */
-    #[Route(Method::Get, '/wp/v2/global-styles/{parent:\d+}/revisions/{id:\d+}')]
+    #[Route(Method::Get, '/wp/v2/global-styles/{parent:\d+}/revisions/{id:\d+}', policy: new Policy(Access::Cap, 'edit_theme_options', param: 'parent', subject: Subject::GlobalStylesParent, signIn: 'rest_cannot_read', signInMessage: 'Sorry, you are not allowed to view revisions of this post.', refuse: 'rest_cannot_read', message: 'Sorry, you are not allowed to view revisions of this post.'))]
     public function revision(Request $request, string $parent, string $id): Response
     {
         foreach (PostRecord::fromRows($this->revisions->revisionsOf($this->requireParent((int) $parent))) as $revision) {

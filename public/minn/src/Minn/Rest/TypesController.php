@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Minn\Rest;
 
 use Minn\Http\Args;
+use Minn\Http\Access;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
-use Minn\Http\Access;
 use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\RestError;

@@ -68,6 +68,7 @@ final class Services
         RestUrl::class => 'url',
         Capabilities::class => 'capabilities',
         Caller::class => 'caller',
+        Subjects::class => 'subjects',
         Loader::class => 'loader',
         Types::class => 'types',
         Taxonomies::class => 'taxonomies',
@@ -129,6 +130,12 @@ final class Services
         $getter = self::NAMED[$class] ?? throw new LogicException("No service is registered for {$class}; add it to Services::NAMED.");
         /** @var T */
         return $this->{$getter}();
+    }
+
+    /** The record lookups the policy gate asks before it judges a caller. */
+    public function subjects(): Subjects
+    {
+        return $this->share(Subjects::class, fn () => new Subjects($this->db()));
     }
 
     /** The database door. */

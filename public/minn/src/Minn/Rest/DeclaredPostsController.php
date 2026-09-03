@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Http\Policy;
+use Minn\Http\Access;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
@@ -26,21 +28,21 @@ final readonly class DeclaredPostsController
     }
 
     /** A declared type's list. */
-    #[Route(Method::Get, '/wp/v2/{base:[a-z0-9_-]+}')]
+    #[Route(Method::Get, '/wp/v2/{base:[a-z0-9_-]+}', policy: new Policy(Access::Type, param: 'base'))]
     public function list(Request $request, string $base): Response
     {
         return $this->reads->serveList($request, $this->slug($base));
     }
 
     /** A declared type's single post. */
-    #[Route(Method::Get, '/wp/v2/{base:[a-z0-9_-]+}/{id:\d+}')]
+    #[Route(Method::Get, '/wp/v2/{base:[a-z0-9_-]+}/{id:\d+}', policy: new Policy(Access::Type, param: 'base'))]
     public function single(Request $request, string $base, string $id): Response
     {
         return $this->reads->serveSingle($request, $this->slug($base), $id);
     }
 
     /** Creates a post of a declared type. */
-    #[Route(Method::Post, '/wp/v2/{base:[a-z0-9_-]+}')]
+    #[Route(Method::Post, '/wp/v2/{base:[a-z0-9_-]+}', policy: new Policy(Access::Type, param: 'base'))]
     public function create(Request $request, string $base): Response
     {
         $slug = $this->slug($base);
@@ -48,16 +50,16 @@ final readonly class DeclaredPostsController
     }
 
     /** Updates a post of a declared type. */
-    #[Route(Method::Post, '/wp/v2/{base:[a-z0-9_-]+}/{id:\d+}')]
-    #[Route(Method::Put, '/wp/v2/{base:[a-z0-9_-]+}/{id:\d+}')]
-    #[Route(Method::Patch, '/wp/v2/{base:[a-z0-9_-]+}/{id:\d+}')]
+    #[Route(Method::Post, '/wp/v2/{base:[a-z0-9_-]+}/{id:\d+}', policy: new Policy(Access::Type, param: 'base'))]
+    #[Route(Method::Put, '/wp/v2/{base:[a-z0-9_-]+}/{id:\d+}', policy: new Policy(Access::Type, param: 'base'))]
+    #[Route(Method::Patch, '/wp/v2/{base:[a-z0-9_-]+}/{id:\d+}', policy: new Policy(Access::Type, param: 'base'))]
     public function update(Request $request, string $base, string $id): Response
     {
         return $this->writes->serveUpdate($request, $this->slug($base), $id);
     }
 
     /** Trashes or deletes a post of a declared type. */
-    #[Route(Method::Delete, '/wp/v2/{base:[a-z0-9_-]+}/{id:\d+}')]
+    #[Route(Method::Delete, '/wp/v2/{base:[a-z0-9_-]+}/{id:\d+}', policy: new Policy(Access::Type, param: 'base'))]
     public function delete(Request $request, string $base, string $id): Response
     {
         return $this->writes->serveDelete($request, $this->slug($base), $id);

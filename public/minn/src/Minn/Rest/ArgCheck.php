@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
-use Closure;
 use Minn\Http\Args;
+use Closure;
 use Minn\Http\Request;
 use Minn\Http\Route;
 use Minn\RestError;

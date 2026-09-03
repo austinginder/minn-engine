@@ -109,7 +109,7 @@ final class Router
         try {
             ($this->gate)($policy, $request, $captures);
             return true;
-        } catch (RestError) {
+        } catch (RestError | RouteMiss) {
             return false;
         }
     }
@@ -128,8 +128,13 @@ final class Router
             if ($this->check !== null) {
                 ($this->check)($route, $request);
             }
-            if ($route->policy !== null && !$route->policy->isPublic()) {
-                ($this->gate)($route->policy, $request, $captures);
+            try {
+                if ($route->policy !== null && !$route->policy->isPublic()) {
+                    ($this->gate)($route->policy, $request, $captures);
+                }
+            } catch (RouteMiss) {
+                // The policy declined the route (a {base} naming no declared type): the next one gets its turn.
+                continue;
             }
             $wanted = array_map(static fn ($p) => $p->getName(), $method->getParameters());
             $arguments = array_intersect_key($captures, array_flip($wanted));

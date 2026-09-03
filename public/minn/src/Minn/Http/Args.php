@@ -178,6 +178,18 @@ final class Args
         'meta' => ['description' => 'Meta fields.', 'type' => 'object', 'properties' => ['show_admin_bar_front' => ['type' => 'string', 'default' => 'true']], 'required' => false],
     ];
 
+    /** Read by Rest\UsersController::delete(): the reassignment a user delete requires, and the force it insists on. */
+    public const USER_DELETE = [
+        'force' => ['type' => 'boolean', 'default' => false, 'description' => 'Required to be true, as users do not support trashing.', 'required' => false],
+        'reassign' => ['type' => 'integer', 'description' => 'Reassign the deleted user\'s posts and links to this user ID.', 'required' => true],
+    ];
+
+    /** Read by Rest\ApplicationPasswordsController::create(): the body of a new application password. */
+    public const APPLICATION_PASSWORD = [
+        'app_id' => ['description' => 'A UUID provided by the application to uniquely identify it. It is recommended to use an UUID v5 with the URL or DNS namespace.', 'type' => 'string', 'oneOf' => [['type' => 'string', 'format' => 'uuid'], ['type' => 'string', 'enum' => ['']]], 'required' => false],
+        'name' => ['description' => 'The name of the application password.', 'type' => 'string', 'minLength' => 1, 'pattern' => '.*\\S.*', 'required' => true],
+    ];
+
     /** Read by Rest\SearchController::list(): the search collection, whose context has no edit view. */
     public const SEARCH = [
         'context' => ['description' => 'Scope under which the request is made; determines fields present in response.', 'type' => 'string', 'enum' => ['view', 'embed'], 'default' => 'view', 'required' => false],

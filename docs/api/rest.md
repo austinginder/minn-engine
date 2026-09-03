@@ -7,7 +7,7 @@ the wp/v2 surface: shapes and controllers
 | [`AbilitiesController`](#abilitiescontroller) | final readonly class | 142 | wp-abilities/v1: what this site can be asked to do, and the doing of it. |
 | [`AdditionalFields`](#additionalfields) | final class | 46 | Which object type a wp/v2 route serves, so fields registered for that type can ride on the engine's own responses. |
 | [`Api`](#api) | final readonly class | 182 | The REST API: wires the controllers for one request and dispatches a |
-| [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 171 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
+| [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 170 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`ArgCheck`](#argcheck) | final readonly class | 83 | Judges a route's declared arguments against the request before the |
 | [`BatchRequest`](#batchrequest) | final class | 32 | The requests a batch payload names, normalised into descriptors the |
 | [`BlocksController`](#blockscontroller) | final readonly class | 69 | wp/v2/blocks: synced patterns and reusable blocks, stored as wp_block |
@@ -32,10 +32,10 @@ the wp/v2 surface: shapes and controllers
 | [`NavigationController`](#navigationcontroller) | final readonly class | 48 | wp/v2/navigation: the block theme's navigation menus, stored as |
 | [`ParamCheck`](#paramcheck) | final class | 75 | The required / validate / sanitize pass over a request's declared arguments. |
 | [`PluginsController`](#pluginscontroller) | final readonly class | 236 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
-| [`PolicyGate`](#policygate) | final readonly class | 58 | Judges a route's policy against the caller, with the reference's |
+| [`PolicyGate`](#policygate) | final readonly class | 91 | Judges a route's policy against the caller, with the reference's |
 | [`PostObject`](#postobject) | final readonly class | 476 | Builds the wp/v2 post and page objects in the reference's shape: the |
 | [`PostsController`](#postscontroller) | final readonly class | 182 | wp/v2 posts and pages, read side. |
-| [`PostsWriteController`](#postswritecontroller) | final readonly class | 319 | wp/v2 posts and pages, write side: create, update, trash, and force |
+| [`PostsWriteController`](#postswritecontroller) | final readonly class | 320 | wp/v2 posts and pages, write side: create, update, trash, and force |
 | [`Reply`](#reply) | final class | 47 | JSON responses in the reference's shape: its header set, its json_encode |
 | [`RestUrl`](#resturl) | final readonly class | 38 | REST URLs in the form the reference emits for the site's permalink mode: |
 | [`RevisionsController`](#revisionscontroller) | final readonly class | 142 | wp/v2 revisions and autosaves under posts, pages, and blocks. |
@@ -47,15 +47,16 @@ the wp/v2 surface: shapes and controllers
 | [`Schema`](#schema) | final readonly class | 473 | JSON-schema handling the way the REST API's argument validation does it: |
 | [`SchemaValues`](#schemavalues) | final class | 201 | The value side of JSON Schema, as the reference applies it: what counts |
 | [`SearchController`](#searchcontroller) | final readonly class | 121 | wp/v2 search over published content: id, title, url, type, and the |
-| [`Services`](#services) | final class | 380 | The objects one REST request shares, each made once, on first use, from |
+| [`Services`](#services) | final class | 387 | The objects one REST request shares, each made once, on first use, from |
 | [`Settings`](#settings) | final readonly class | 107 | The registered settings the Settings views read and write, mapped to |
 | [`SettingsController`](#settingscontroller) | final readonly class | 24 | wp/v2/settings: read and write, both behind manage_options. |
+| [`Subjects`](#subjects) | final readonly class | 41 | Whether the record a route capture names exists, for the policy gate to |
 | [`Taxonomies`](#taxonomies) | final class | 48 | The taxonomy registry the wp/v2 surface describes: the core set seeded |
 | [`TaxonomiesController`](#taxonomiescontroller) | final readonly class | 47 | wp/v2 taxonomies: the registry, whole or per type, in view or edit context. |
 | [`TemplateObject`](#templateobject) | final readonly class | 98 | The wp/v2/templates and wp/v2/template-parts resource. |
 | [`TemplatesController`](#templatescontroller) | final readonly class | 205 | wp/v2/templates and wp/v2/template-parts: the block theme's templates as |
 | [`TermObject`](#termobject) | final readonly class | 76 | The wp/v2 category and tag objects. |
-| [`TermsController`](#termscontroller) | final readonly class | 198 | wp/v2 categories, tags, and pattern categories: list, single, and the create/update/delete the taxonomy admin drives. |
+| [`TermsController`](#termscontroller) | final readonly class | 199 | wp/v2 categories, tags, and pattern categories: list, single, and the create/update/delete the taxonomy admin drives. |
 | [`Types`](#types) | final class | 97 | The engine's registry of built-in post types, seeded from the observed |
 | [`TypesController`](#typescontroller) | final readonly class | 24 | wp/v2 types. |
 | [`UserObject`](#userobject) | final readonly class | 97 | The wp/v2 user objects: the public view shape and the edit-context shape. |
@@ -229,51 +230,51 @@ __construct(Minn\Content\Users $users, Minn\Content\Site $site, Minn\Auth\Applic
 
 ### `list(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `GET /wp/v2/users/{id:\d+|me}/application-passwords`
+Route: `GET /wp/v2/users/{id:\d+|me}/application-passwords (cap edit_user on {id}; user {id} must exist)`
 
 The user's application passwords.
 
 ### `create(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `POST /wp/v2/users/{id:\d+|me}/application-passwords`
+Route: `POST /wp/v2/users/{id:\d+|me}/application-passwords (cap edit_user on {id}; user {id} must exist)`
 
 Mints one; the plain password is in this answer only.
 
 ### `deleteAll(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `DELETE /wp/v2/users/{id:\d+|me}/application-passwords`
+Route: `DELETE /wp/v2/users/{id:\d+|me}/application-passwords (cap edit_user on {id}; user {id} must exist)`
 
 Removes every one.
 
 ### `introspect(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `GET /wp/v2/users/{id:\d+|me}/application-passwords/introspect`
+Route: `GET /wp/v2/users/{id:\d+|me}/application-passwords/introspect (cap edit_user on {id}; user {id} must exist)`
 
 The password the current Basic auth session used.
 
 ### `single(Minn\Http\Request $request, string $id, string $uuid): Minn\Http\Response`
 
-Route: `GET /wp/v2/users/{id:\d+|me}/application-passwords/{uuid:[0-9a-fA-F-]+}`
+Route: `GET /wp/v2/users/{id:\d+|me}/application-passwords/{uuid:[0-9a-fA-F-]+} (cap edit_user on {id}; user {id} must exist)`
 
 One password by uuid.
 
 ### `update(Minn\Http\Request $request, string $id, string $uuid): Minn\Http\Response`
 
-Route: `POST /wp/v2/users/{id:\d+|me}/application-passwords/{uuid:[0-9a-fA-F-]+}`
+Route: `POST /wp/v2/users/{id:\d+|me}/application-passwords/{uuid:[0-9a-fA-F-]+} (cap edit_user on {id}; user {id} must exist)`
 
-Route: `PUT /wp/v2/users/{id:\d+|me}/application-passwords/{uuid:[0-9a-fA-F-]+}`
+Route: `PUT /wp/v2/users/{id:\d+|me}/application-passwords/{uuid:[0-9a-fA-F-]+} (cap edit_user on {id}; user {id} must exist)`
 
-Route: `PATCH /wp/v2/users/{id:\d+|me}/application-passwords/{uuid:[0-9a-fA-F-]+}`
+Route: `PATCH /wp/v2/users/{id:\d+|me}/application-passwords/{uuid:[0-9a-fA-F-]+} (cap edit_user on {id}; user {id} must exist)`
 
 Renames one.
 
 ### `delete(Minn\Http\Request $request, string $id, string $uuid): Minn\Http\Response`
 
-Route: `DELETE /wp/v2/users/{id:\d+|me}/application-passwords/{uuid:[0-9a-fA-F-]+}`
+Route: `DELETE /wp/v2/users/{id:\d+|me}/application-passwords/{uuid:[0-9a-fA-F-]+} (cap edit_user on {id}; user {id} must exist)`
 
 Removes one.
 
-Internals: `subject()` (private, line 129), `existing()` (private, line 154), `validate()` (private, line 163), `item()` (private, line 173), `when()` (private, line 187)
+Internals: `subject()` (private, line 133), `existing()` (private, line 157), `validate()` (private, line 166), `item()` (private, line 176), `when()` (private, line 190)
 
 
 ## ArgCheck
@@ -347,13 +348,13 @@ __construct(Minn\Rest\PostsController $reads, Minn\Rest\PostsWriteController $wr
 
 ### `list(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `GET /wp/v2/blocks`
+Route: `GET /wp/v2/blocks (public)`
 
 The blocks the caller may edit; an empty list for anyone else.
 
 ### `single(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `GET /wp/v2/blocks/{id:\d+}`
+Route: `GET /wp/v2/blocks/{id:\d+} (public; block {id} must exist)`
 
 One block. Editing context is the posts machinery's own gate
 (rest_forbidden_context); a view is refused to anyone who cannot edit
@@ -367,17 +368,17 @@ Creates a block.
 
 ### `update(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `POST /wp/v2/blocks/{id:\d+}`
+Route: `POST /wp/v2/blocks/{id:\d+} (cap edit_post on {id}; block {id} must exist)`
 
-Route: `PUT /wp/v2/blocks/{id:\d+}`
+Route: `PUT /wp/v2/blocks/{id:\d+} (cap edit_post on {id}; block {id} must exist)`
 
-Route: `PATCH /wp/v2/blocks/{id:\d+}`
+Route: `PATCH /wp/v2/blocks/{id:\d+} (cap edit_post on {id}; block {id} must exist)`
 
 Updates a block.
 
 ### `delete(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `DELETE /wp/v2/blocks/{id:\d+}`
+Route: `DELETE /wp/v2/blocks/{id:\d+} (cap delete_post on {id}; block {id} must exist)`
 
 Trashes or deletes a block.
 
@@ -478,39 +479,39 @@ __construct(Minn\Content\Comments $comments, Minn\Content\Posts $posts, Minn\Con
 
 ### `list(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `GET /wp/v2/comments`
+Route: `GET /wp/v2/comments (public)`
 
 The comments list with its status tabs and pagination headers.
 
 ### `single(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `GET /wp/v2/comments/{id:\d+}`
+Route: `GET /wp/v2/comments/{id:\d+} (public; comment {id} must exist)`
 
 One comment, if the caller may read it.
 
 ### `create(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `POST /wp/v2/comments`
+Route: `POST /wp/v2/comments (signed in)`
 
 A signed-in reply; the author fields come from the user.
 
 ### `update(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `POST /wp/v2/comments/{id:\d+}`
+Route: `POST /wp/v2/comments/{id:\d+} (cap moderate_comments; comment {id} must exist)`
 
-Route: `PUT /wp/v2/comments/{id:\d+}`
+Route: `PUT /wp/v2/comments/{id:\d+} (cap moderate_comments; comment {id} must exist)`
 
-Route: `PATCH /wp/v2/comments/{id:\d+}`
+Route: `PATCH /wp/v2/comments/{id:\d+} (cap moderate_comments; comment {id} must exist)`
 
 Status flips and content or author edits, for moderators.
 
 ### `delete(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `DELETE /wp/v2/comments/{id:\d+}`
+Route: `DELETE /wp/v2/comments/{id:\d+} (cap moderate_comments; comment {id} must exist)`
 
 Trash remembers where the comment came from; force removes it outright.
 
-Internals: `notifyModerator()` (private, line 145), `filter()` (private, line 213), `guarded()` (private, line 236), `date()` (private, line 267), `plainComment()` (private, line 282), `cleanComment()` (private, line 296)
+Internals: `notifyModerator()` (private, line 148), `filter()` (private, line 216), `guarded()` (private, line 239), `date()` (private, line 270), `plainComment()` (private, line 285), `cleanComment()` (private, line 299)
 
 
 ## Context
@@ -552,39 +553,39 @@ __construct(Minn\Rest\Types $types, Minn\Rest\PostsController $reads, Minn\Rest\
 
 ### `list(Minn\Http\Request $request, string $base): Minn\Http\Response`
 
-Route: `GET /wp/v2/{base:[a-z0-9_-]+}`
+Route: `GET /wp/v2/{base:[a-z0-9_-]+} (declared type {base})`
 
 A declared type's list.
 
 ### `single(Minn\Http\Request $request, string $base, string $id): Minn\Http\Response`
 
-Route: `GET /wp/v2/{base:[a-z0-9_-]+}/{id:\d+}`
+Route: `GET /wp/v2/{base:[a-z0-9_-]+}/{id:\d+} (declared type {base})`
 
 A declared type's single post.
 
 ### `create(Minn\Http\Request $request, string $base): Minn\Http\Response`
 
-Route: `POST /wp/v2/{base:[a-z0-9_-]+}`
+Route: `POST /wp/v2/{base:[a-z0-9_-]+} (declared type {base})`
 
 Creates a post of a declared type.
 
 ### `update(Minn\Http\Request $request, string $base, string $id): Minn\Http\Response`
 
-Route: `POST /wp/v2/{base:[a-z0-9_-]+}/{id:\d+}`
+Route: `POST /wp/v2/{base:[a-z0-9_-]+}/{id:\d+} (declared type {base})`
 
-Route: `PUT /wp/v2/{base:[a-z0-9_-]+}/{id:\d+}`
+Route: `PUT /wp/v2/{base:[a-z0-9_-]+}/{id:\d+} (declared type {base})`
 
-Route: `PATCH /wp/v2/{base:[a-z0-9_-]+}/{id:\d+}`
+Route: `PATCH /wp/v2/{base:[a-z0-9_-]+}/{id:\d+} (declared type {base})`
 
 Updates a post of a declared type.
 
 ### `delete(Minn\Http\Request $request, string $base, string $id): Minn\Http\Response`
 
-Route: `DELETE /wp/v2/{base:[a-z0-9_-]+}/{id:\d+}`
+Route: `DELETE /wp/v2/{base:[a-z0-9_-]+}/{id:\d+} (declared type {base})`
 
 Trashes or deletes a post of a declared type.
 
-Internals: `slug()` (private, line 66)
+Internals: `slug()` (private, line 68)
 
 
 ## Embed
@@ -718,17 +719,17 @@ __construct(Minn\Theme\UserStyles $styles, Minn\Theme\ThemeStyles $theme, Minn\R
 
 ### `single(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `GET /wp/v2/global-styles/{id:\d+}`
+Route: `GET /wp/v2/global-styles/{id:\d+} (public; global styles {id} must exist)`
 
 The saved styles by id: anyone who edits posts may read them, editing context needs the theme.
 
 ### `update(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `POST /wp/v2/global-styles/{id:\d+}`
+Route: `POST /wp/v2/global-styles/{id:\d+} (cap edit_theme_options; global styles {id} must exist)`
 
-Route: `PUT /wp/v2/global-styles/{id:\d+}`
+Route: `PUT /wp/v2/global-styles/{id:\d+} (cap edit_theme_options; global styles {id} must exist)`
 
-Route: `PATCH /wp/v2/global-styles/{id:\d+}`
+Route: `PATCH /wp/v2/global-styles/{id:\d+} (cap edit_theme_options; global styles {id} must exist)`
 
 Replaces the title, settings, or styles the body names; what it leaves out stays.
 
@@ -746,17 +747,17 @@ The style variations the active theme ships.
 
 ### `revisions(Minn\Http\Request $request, string $parent): Minn\Http\Response`
 
-Route: `GET /wp/v2/global-styles/{parent:\d+}/revisions`
+Route: `GET /wp/v2/global-styles/{parent:\d+}/revisions (cap edit_theme_options; global styles parent {parent} must exist)`
 
 The revisions of the saved styles, newest first; all of them unless per_page pages them.
 
 ### `revision(Minn\Http\Request $request, string $parent, string $id): Minn\Http\Response`
 
-Route: `GET /wp/v2/global-styles/{parent:\d+}/revisions/{id:\d+}`
+Route: `GET /wp/v2/global-styles/{parent:\d+}/revisions/{id:\d+} (cap edit_theme_options; global styles parent {parent} must exist)`
 
 One revision of the saved styles.
 
-Internals: `post()` (private, line 112), `requireTheme()` (private, line 118), `requireParent()` (private, line 126), `title()` (private, line 139), `node()` (private, line 148)
+Internals: `post()` (private, line 113), `requireTheme()` (private, line 119), `requireParent()` (private, line 127), `title()` (private, line 140), `node()` (private, line 149)
 
 
 ## GlobalStylesObject
@@ -943,39 +944,39 @@ __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Media\Writer $library, 
 
 ### `list(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `GET /wp/v2/media`
+Route: `GET /wp/v2/media (public)`
 
 The media library list.
 
 ### `single(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `GET /wp/v2/media/{id:\d+}`
+Route: `GET /wp/v2/media/{id:\d+} (public; attachment {id} must exist; edit context: cap edit_post on {id})`
 
 One attachment.
 
 ### `create(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `POST /wp/v2/media`
+Route: `POST /wp/v2/media (cap upload_files)`
 
 Uploads a file and creates its attachment.
 
 ### `update(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `POST /wp/v2/media/{id:\d+}`
+Route: `POST /wp/v2/media/{id:\d+} (cap edit_post on {id}; attachment {id} must exist)`
 
-Route: `PUT /wp/v2/media/{id:\d+}`
+Route: `PUT /wp/v2/media/{id:\d+} (cap edit_post on {id}; attachment {id} must exist)`
 
-Route: `PATCH /wp/v2/media/{id:\d+}`
+Route: `PATCH /wp/v2/media/{id:\d+} (cap edit_post on {id}; attachment {id} must exist)`
 
 The editable fields the app uses.
 
 ### `delete(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `DELETE /wp/v2/media/{id:\d+}`
+Route: `DELETE /wp/v2/media/{id:\d+} (cap delete_post on {id}; attachment {id} must exist)`
 
 Attachments cannot be trashed; force removes the row, its meta, and its files.
 
-Internals: `libraryClauses()` (private, line 71), `restDate()` (private, line 95), `attachment()` (private, line 207)
+Internals: `libraryClauses()` (private, line 74), `restDate()` (private, line 98), `attachment()` (private, line 210)
 
 
 ## MediaObject
@@ -1064,7 +1065,7 @@ Every classic menu.
 
 ### `singleMenu(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `GET /wp/v2/menus/{id:\d+} (cap edit_posts)`
+Route: `GET /wp/v2/menus/{id:\d+} (cap edit_posts; menu {id} must exist)`
 
 One menu.
 
@@ -1076,17 +1077,17 @@ Creates a menu.
 
 ### `updateMenu(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `POST /wp/v2/menus/{id:\d+} (cap edit_theme_options)`
+Route: `POST /wp/v2/menus/{id:\d+} (cap edit_theme_options; menu {id} must exist)`
 
-Route: `PUT /wp/v2/menus/{id:\d+} (cap edit_theme_options)`
+Route: `PUT /wp/v2/menus/{id:\d+} (cap edit_theme_options; menu {id} must exist)`
 
-Route: `PATCH /wp/v2/menus/{id:\d+} (cap edit_theme_options)`
+Route: `PATCH /wp/v2/menus/{id:\d+} (cap edit_theme_options; menu {id} must exist)`
 
 Renames or re-describes a menu.
 
 ### `deleteMenu(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `DELETE /wp/v2/menus/{id:\d+} (cap edit_theme_options)`
+Route: `DELETE /wp/v2/menus/{id:\d+} (cap edit_theme_options; menu {id} must exist)`
 
 Deletes a menu and its items.
 
@@ -1098,7 +1099,7 @@ The items of a menu.
 
 ### `singleItem(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `GET /wp/v2/menu-items/{id:\d+} (cap edit_posts)`
+Route: `GET /wp/v2/menu-items/{id:\d+} (cap edit_posts; menu item {id} must exist)`
 
 One menu item.
 
@@ -1110,17 +1111,17 @@ Creates a menu item.
 
 ### `updateItem(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `POST /wp/v2/menu-items/{id:\d+} (cap edit_theme_options)`
+Route: `POST /wp/v2/menu-items/{id:\d+} (cap edit_theme_options; menu item {id} must exist)`
 
-Route: `PUT /wp/v2/menu-items/{id:\d+} (cap edit_theme_options)`
+Route: `PUT /wp/v2/menu-items/{id:\d+} (cap edit_theme_options; menu item {id} must exist)`
 
-Route: `PATCH /wp/v2/menu-items/{id:\d+} (cap edit_theme_options)`
+Route: `PATCH /wp/v2/menu-items/{id:\d+} (cap edit_theme_options; menu item {id} must exist)`
 
 Updates a menu item.
 
 ### `deleteItem(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `DELETE /wp/v2/menu-items/{id:\d+} (cap edit_theme_options)`
+Route: `DELETE /wp/v2/menu-items/{id:\d+} (cap edit_theme_options; menu item {id} must exist)`
 
 Deletes a menu item.
 
@@ -1130,7 +1131,7 @@ Route: `GET /wp/v2/menu-locations (cap edit_posts)`
 
 The theme's menu locations.
 
-Internals: `titleFrom()` (private, line 270), `urlFrom()` (private, line 280), `refuse()` (private, line 290), `plain()` (private, line 300)
+Internals: `titleFrom()` (private, line 271), `urlFrom()` (private, line 281), `refuse()` (private, line 291), `plain()` (private, line 301)
 
 
 ## NavigationController
@@ -1154,13 +1155,13 @@ __construct(Minn\Rest\PostsController $reads, Minn\Rest\PostsWriteController $wr
 
 ### `list(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `GET /wp/v2/navigation`
+Route: `GET /wp/v2/navigation (public)`
 
 The navigation posts.
 
 ### `single(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `GET /wp/v2/navigation/{id:\d+}`
+Route: `GET /wp/v2/navigation/{id:\d+} (public; navigation {id} must exist)`
 
 One navigation post.
 
@@ -1172,17 +1173,17 @@ Creates a navigation post.
 
 ### `update(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `POST /wp/v2/navigation/{id:\d+}`
+Route: `POST /wp/v2/navigation/{id:\d+} (cap edit_post on {id}; navigation {id} must exist)`
 
-Route: `PUT /wp/v2/navigation/{id:\d+}`
+Route: `PUT /wp/v2/navigation/{id:\d+} (cap edit_post on {id}; navigation {id} must exist)`
 
-Route: `PATCH /wp/v2/navigation/{id:\d+}`
+Route: `PATCH /wp/v2/navigation/{id:\d+} (cap edit_post on {id}; navigation {id} must exist)`
 
 Updates a navigation post.
 
 ### `delete(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `DELETE /wp/v2/navigation/{id:\d+}`
+Route: `DELETE /wp/v2/navigation/{id:\d+} (cap delete_post on {id}; navigation {id} must exist)`
 
 Trashes or deletes a navigation post.
 
@@ -1278,12 +1279,14 @@ Judges a route's policy against the caller, with the reference's
 refusals: a caller who is not signed in gets the policy's sign-in code
 at 401, a bad nonce is always 403 rest_cookie_invalid_nonce, and a
 signed-in caller who lacks a capability gets the refusal code at 403.
-The edit-context policy is judged as well when the request asks for it.
+A subject the policy names is looked up first and answers its 404
+before any of those. The edit-context policy is judged as well when
+the request asks for it.
 
 Used by: `Minn\Rest\Api`
 
 ```php
-__construct(Minn\Rest\Caller $caller)
+__construct(Minn\Rest\Caller $caller, Minn\Rest\Subjects $subjects, Minn\Rest\Types $types)
 ```
 
 
@@ -1297,7 +1300,7 @@ Throws the refusal the policy names, or returns.
 
 - `@param array<string, string> $captures`
 
-Internals: `capabilities()` (private, line 50), `own()` (private, line 64)
+Internals: `subject()` (private, line 64), `type()` (private, line 77), `capabilities()` (private, line 85), `own()` (private, line 99)
 
 
 ## PostObject
@@ -1378,9 +1381,9 @@ __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Rest\PostObject $object
 
 ### `list(Minn\Http\Request $request, string $base): Minn\Http\Response`
 
-Route: `GET /wp/v2/{base:posts}`
+Route: `GET /wp/v2/{base:posts} (public)`
 
-Route: `GET /wp/v2/{base:pages}`
+Route: `GET /wp/v2/{base:pages} (public)`
 
 The posts or pages list.
 
@@ -1390,7 +1393,7 @@ The list for any post type, with the reference's status and visibility rules.
 
 ### `single(Minn\Http\Request $request, string $base, string $id): Minn\Http\Response`
 
-Route: `GET /wp/v2/{base:posts|pages}/{id:\d+}`
+Route: `GET /wp/v2/{base:posts|pages}/{id:\d+} (public; post {id} must exist; edit context: cap edit_post on {id})`
 
 One post or page.
 
@@ -1398,7 +1401,7 @@ One post or page.
 
 One post of any type, with the reference's read rules.
 
-Internals: `visibleStatuses()` (private, line 101), `visibility()` (private, line 138), `orderSql()` (private, line 152)
+Internals: `visibleStatuses()` (private, line 104), `visibility()` (private, line 141), `orderSql()` (private, line 155)
 
 
 ## PostsWriteController
@@ -1420,7 +1423,9 @@ __construct(Minn\Content\Posts $posts, Minn\Content\PostWriter $writer, Minn\Con
 
 ### `create(Minn\Http\Request $request, string $base): Minn\Http\Response`
 
-Route: `POST /wp/v2/{base:posts|pages}`
+Route: `POST /wp/v2/{base:posts} (cap edit_posts)`
+
+Route: `POST /wp/v2/{base:pages} (cap edit_pages)`
 
 Creates a post or page.
 
@@ -1430,11 +1435,11 @@ Creates a post of any type from the body.
 
 ### `update(Minn\Http\Request $request, string $base, string $id): Minn\Http\Response`
 
-Route: `POST /wp/v2/{base:posts|pages}/{id:\d+}`
+Route: `POST /wp/v2/{base:posts|pages}/{id:\d+} (cap edit_post on {id}; post {id} must exist)`
 
-Route: `PUT /wp/v2/{base:posts|pages}/{id:\d+}`
+Route: `PUT /wp/v2/{base:posts|pages}/{id:\d+} (cap edit_post on {id}; post {id} must exist)`
 
-Route: `PATCH /wp/v2/{base:posts|pages}/{id:\d+}`
+Route: `PATCH /wp/v2/{base:posts|pages}/{id:\d+} (cap edit_post on {id}; post {id} must exist)`
 
 Updates a post or page.
 
@@ -1444,7 +1449,7 @@ Updates a post of any type from the body.
 
 ### `delete(Minn\Http\Request $request, string $base, string $id): Minn\Http\Response`
 
-Route: `DELETE /wp/v2/{base:posts|pages}/{id:\d+}`
+Route: `DELETE /wp/v2/{base:posts|pages}/{id:\d+} (cap delete_post on {id}; post {id} must exist)`
 
 Trashes or deletes a post or page.
 
@@ -1456,7 +1461,7 @@ Trashes a post of any type, or deletes it with force.
 
 A field that may arrive as a scalar or as {raw: ...}.
 
-Internals: `writeNewPost()` (private, line 106), `scheduledIfFuture()` (private, line 220), `fieldColumns()` (private, line 239), `statusColumns()` (private, line 284), `checkStickyPasswordConflict()` (private, line 309), `validStatus()` (private, line 321), `clean()` (private, line 330)
+Internals: `writeNewPost()` (private, line 110), `scheduledIfFuture()` (private, line 224), `fieldColumns()` (private, line 243), `statusColumns()` (private, line 288), `checkStickyPasswordConflict()` (private, line 313), `validStatus()` (private, line 325), `clean()` (private, line 334)
 
 
 ## Reply
@@ -1536,25 +1541,25 @@ __construct(Minn\Content\Posts $posts, Minn\Content\Revisions $revisions, Minn\R
 
 ### `revisions(Minn\Http\Request $request, string $base, string $id): Minn\Http\Response`
 
-Route: `GET /wp/v2/{base:posts|pages|blocks}/{id:\d+}/revisions`
+Route: `GET /wp/v2/{base:posts|pages|blocks}/{id:\d+}/revisions (cap edit_post on {id}; post parent {id} must exist)`
 
 Real revisions, not autosaves.
 
 ### `revision(Minn\Http\Request $request, string $base, string $id, string $revisionId): Minn\Http\Response`
 
-Route: `GET /wp/v2/{base:posts|pages|blocks}/{id:\d+}/revisions/{revisionId:\d+}`
+Route: `GET /wp/v2/{base:posts|pages|blocks}/{id:\d+}/revisions/{revisionId:\d+} (cap edit_post on {id}; post parent {id} must exist)`
 
 One revision of a post, page, or block.
 
 ### `autosaves(Minn\Http\Request $request, string $base, string $id): Minn\Http\Response`
 
-Route: `GET /wp/v2/{base:posts|pages|blocks}/{id:\d+}/autosaves`
+Route: `GET /wp/v2/{base:posts|pages|blocks}/{id:\d+}/autosaves (cap edit_post on {id}; post parent {id} must exist)`
 
 The autosaves of a post.
 
 ### `createAutosave(Minn\Http\Request $request, string $base, string $id): Minn\Http\Response`
 
-Route: `POST /wp/v2/{base:posts|pages|blocks}/{id:\d+}/autosaves`
+Route: `POST /wp/v2/{base:posts|pages|blocks}/{id:\d+}/autosaves (cap edit_post on {id}; post {id} must exist)`
 
 One autosave slot per author; the reply carries a preview link.
 
@@ -1562,7 +1567,7 @@ One autosave slot per author; the reply carries a preview link.
 
 One revision row as wp/v2 serves it (autosaves and revisions alike).
 
-Internals: `clean()` (private, line 84), `withPreviewLink()` (private, line 124), `meta()` (private, line 136), `requireParent()` (private, line 148)
+Internals: `clean()` (private, line 87), `withPreviewLink()` (private, line 127), `meta()` (private, line 139), `requireParent()` (private, line 151)
 
 
 ## RouteArgs
@@ -1834,7 +1839,7 @@ dependencies in plain constructor calls: there is no autowiring, and
 get() knows only the names listed here, so a wrong one fails at the
 first call rather than deep in a handler.
 
-- const `NAMED` = `array (   'Minn\\Content\\Users' => 'users',   'Minn\\Content\\Posts' => 'posts',   'Minn\\Content\\Terms' => 'terms',   'Minn\\Content\\Comments' => 'comments',   'Minn\\Content\\Site' => 'site',   'Minn\\Content\\PostWriter' => 'writer',   'Minn\\Front\\Permalinks' => 'permalinks',   'Minn\\Rest\\RestUrl' => 'url',   'Minn\\Auth\\Capabilities' => 'capabilities',   'Minn\\Rest\\Caller' => 'caller',   'Minn\\Extension\\Loader' => 'loader',   'Minn\\Rest\\Types' => 'types',   'Minn\\Rest\\Taxonomies' => 'taxonomies',   'Minn\\Media\\Uploads' => 'uploads',   'Minn\\Content\\Inventory' => 'inventory',   'Minn\\Ops\\Packages' => 'packages',   'Minn\\Admin\\App' => 'app',   'Minn\\Ops\\Logs' => 'logs',   'Minn\\Ops\\Updates' => 'updates',   'Minn\\Content\\Menus' => 'menus',   'Minn\\Content\\Revisions' => 'revisions',   'Minn\\Auth\\Sessions' => 'sessions',   'Minn\\Auth\\ApplicationPasswords' => 'applicationPasswords',   'Minn\\Admin\\Translations' => 'translations',   'Minn\\Admin\\Appearance' => 'appearance',   'Minn\\Admin\\HiddenIntegrations' => 'hiddenIntegrations',   'Minn\\Admin\\ActivityFeed' => 'activityFeed',   'Minn\\Admin\\Dashboard' => 'dashboard',   'Minn\\Admin\\Notifications' => 'notifications',   'Minn\\Ops\\Diagnostics' => 'diagnostics',   'Minn\\Media\\Writer' => 'mediaWriter',   'Minn\\Rest\\Schema' => 'schema',   'Minn\\Rest\\PostObject' => 'postObject',   'Minn\\Rest\\TermObject' => 'termObject',   'Minn\\Rest\\UserObject' => 'userObject',   'Minn\\Rest\\MediaObject' => 'mediaObject',   'Minn\\Rest\\CommentObject' => 'commentObject',   'Minn\\Theme\\UserStyles' => 'userStyles',   'Minn\\Theme\\ThemeStyles' => 'themeStyles', )`
+- const `NAMED` = `array (   'Minn\\Content\\Users' => 'users',   'Minn\\Content\\Posts' => 'posts',   'Minn\\Content\\Terms' => 'terms',   'Minn\\Content\\Comments' => 'comments',   'Minn\\Content\\Site' => 'site',   'Minn\\Content\\PostWriter' => 'writer',   'Minn\\Front\\Permalinks' => 'permalinks',   'Minn\\Rest\\RestUrl' => 'url',   'Minn\\Auth\\Capabilities' => 'capabilities',   'Minn\\Rest\\Caller' => 'caller',   'Minn\\Rest\\Subjects' => 'subjects',   'Minn\\Extension\\Loader' => 'loader',   'Minn\\Rest\\Types' => 'types',   'Minn\\Rest\\Taxonomies' => 'taxonomies',   'Minn\\Media\\Uploads' => 'uploads',   'Minn\\Content\\Inventory' => 'inventory',   'Minn\\Ops\\Packages' => 'packages',   'Minn\\Admin\\App' => 'app',   'Minn\\Ops\\Logs' => 'logs',   'Minn\\Ops\\Updates' => 'updates',   'Minn\\Content\\Menus' => 'menus',   'Minn\\Content\\Revisions' => 'revisions',   'Minn\\Auth\\Sessions' => 'sessions',   'Minn\\Auth\\ApplicationPasswords' => 'applicationPasswords',   'Minn\\Admin\\Translations' => 'translations',   'Minn\\Admin\\Appearance' => 'appearance',   'Minn\\Admin\\HiddenIntegrations' => 'hiddenIntegrations',   'Minn\\Admin\\ActivityFeed' => 'activityFeed',   'Minn\\Admin\\Dashboard' => 'dashboard',   'Minn\\Admin\\Notifications' => 'notifications',   'Minn\\Ops\\Diagnostics' => 'diagnostics',   'Minn\\Media\\Writer' => 'mediaWriter',   'Minn\\Rest\\Schema' => 'schema',   'Minn\\Rest\\PostObject' => 'postObject',   'Minn\\Rest\\TermObject' => 'termObject',   'Minn\\Rest\\UserObject' => 'userObject',   'Minn\\Rest\\MediaObject' => 'mediaObject',   'Minn\\Rest\\CommentObject' => 'commentObject',   'Minn\\Theme\\UserStyles' => 'userStyles',   'Minn\\Theme\\ThemeStyles' => 'themeStyles', )`
 
 Used by: `Minn\Rest\Api`
 
@@ -1847,6 +1852,10 @@ The services for one request, none made yet.
 
 The service registered under a class name. Only the names in NAMED
 answer; anything else is a programming error and says so at once.
+
+### `subjects(): Minn\Rest\Subjects`
+
+The record lookups the policy gate asks before it judges a caller.
 
 ### `db(): Minn\Db`
 
@@ -2028,7 +2037,7 @@ The wp/v2 media shape.
 
 The wp/v2 comment shape.
 
-Internals: `share()` (private, line 431)
+Internals: `share()` (private, line 438)
 
 
 ## Settings
@@ -2081,6 +2090,35 @@ Route: `PUT /wp/v2/settings (signed in)`
 Route: `PATCH /wp/v2/settings (signed in)`
 
 The site settings: read, or write from the body.
+
+
+## Subjects
+
+`final readonly class Minn\Rest\Subjects` · `public/minn/src/Minn/Rest/Subjects.php`
+
+Whether the record a route capture names exists, for the policy gate to
+ask before it judges the caller. A post kind reads its type from the
+{base} capture when the route has one, a term kind its taxonomy; the
+fixed kinds name their own. Status is not consulted: a trashed post
+exists, and what the caller may do with it is the policy's question.
+
+- const `POST_TYPES` = `array (   'posts' => 'post',   'pages' => 'page',   'blocks' => 'wp_block',   'media' => 'attachment',   'navigation' => 'wp_navigation',   'menu-items' => 'nav_menu_item', )`
+- const `TAXONOMIES` = `array (   'categories' => 'category',   'tags' => 'post_tag',   'wp_pattern_category' => 'wp_pattern_category', )`
+
+Used by: `Minn\Rest\PolicyGate`, `Minn\Rest\Services`
+
+```php
+__construct(Minn\Db $db)
+```
+
+
+### `exists(Minn\Http\Subject $subject, int $id, array $captures): bool`
+
+Whether the record exists.
+
+- `@param array<string, string> $captures the route's captures, for the {base} a kind reads`
+
+Internals: `post()` (private, line 48), `term()` (private, line 53)
 
 
 ## Taxonomies
@@ -2300,35 +2338,37 @@ __construct(Minn\Db $db, Minn\Content\Terms $terms, Minn\Content\Site $site, Min
 
 ### `list(Minn\Http\Request $request, string $base): Minn\Http\Response`
 
-Route: `GET /wp/v2/{base:categories|tags|wp_pattern_category}`
+Route: `GET /wp/v2/{base:categories|tags|wp_pattern_category} (public)`
 
 The categories or tags list.
 
 ### `single(Minn\Http\Request $request, string $base, string $id): Minn\Http\Response`
 
-Route: `GET /wp/v2/{base:categories|tags|wp_pattern_category}/{id:\d+}`
+Route: `GET /wp/v2/{base:categories|tags|wp_pattern_category}/{id:\d+} (public; term {id} must exist; edit context: cap manage_categories)`
 
 One category or tag.
 
 ### `create(Minn\Http\Request $request, string $base): Minn\Http\Response`
 
-Route: `POST /wp/v2/{base:categories|tags|wp_pattern_category}`
+Route: `POST /wp/v2/{base:categories} (cap manage_categories)`
+
+Route: `POST /wp/v2/{base:tags|wp_pattern_category} (cap edit_posts)`
 
 Tags and pattern categories are open to edit_posts holders; categories need manage_categories.
 
 ### `update(Minn\Http\Request $request, string $base, string $id): Minn\Http\Response`
 
-Route: `POST /wp/v2/{base:categories|tags|wp_pattern_category}/{id:\d+}`
+Route: `POST /wp/v2/{base:categories|tags|wp_pattern_category}/{id:\d+} (cap manage_categories; term {id} must exist)`
 
-Route: `PUT /wp/v2/{base:categories|tags|wp_pattern_category}/{id:\d+}`
+Route: `PUT /wp/v2/{base:categories|tags|wp_pattern_category}/{id:\d+} (cap manage_categories; term {id} must exist)`
 
-Route: `PATCH /wp/v2/{base:categories|tags|wp_pattern_category}/{id:\d+}`
+Route: `PATCH /wp/v2/{base:categories|tags|wp_pattern_category}/{id:\d+} (cap manage_categories; term {id} must exist)`
 
 Updates a category or tag.
 
 ### `delete(Minn\Http\Request $request, string $base, string $id): Minn\Http\Response`
 
-Route: `DELETE /wp/v2/{base:categories|tags|wp_pattern_category}/{id:\d+}`
+Route: `DELETE /wp/v2/{base:categories|tags|wp_pattern_category}/{id:\d+} (cap manage_categories; term {id} must exist)`
 
 The default category is capability-denied before the force check.
 
@@ -2340,7 +2380,7 @@ The default category is capability-denied before the force check.
 The engine's registry of built-in post types, seeded from the observed
 contract (src/data/types.json) with _links attached at runtime.
 
-Used by: `Minn\Admin\AdminTypes`, `Minn\Admin\StructureController`, `Minn\Engine`, `Minn\Rest\Api`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\Embed`, `Minn\Rest\IndexController`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\TypesController`
+Used by: `Minn\Admin\AdminTypes`, `Minn\Admin\StructureController`, `Minn\Engine`, `Minn\Rest\Api`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\Embed`, `Minn\Rest\IndexController`, `Minn\Rest\PolicyGate`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\TypesController`
 
 ```php
 __construct(Minn\Rest\RestUrl $url, array $declared = array ( ))
@@ -2448,43 +2488,43 @@ __construct(Minn\Db $db, Minn\Content\Users $users, Minn\Content\Site $site, Min
 
 ### `me(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `GET /wp/v2/users/me`
+Route: `GET /wp/v2/users/me (public)`
 
 The signed-in user.
 
 ### `list(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `GET /wp/v2/users`
+Route: `GET /wp/v2/users (public)`
 
 View context lists published authors; edit context lists everyone.
 
 ### `single(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `GET /wp/v2/users/{id:\d+}`
+Route: `GET /wp/v2/users/{id:\d+} (public; user {id} must exist)`
 
 One user.
 
 ### `create(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `POST /wp/v2/users`
+Route: `POST /wp/v2/users (cap create_users)`
 
 Engine-created users carry real scheme hashes and the full default meta set.
 
 ### `update(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `POST /wp/v2/users/{id:\d+}`
+Route: `POST /wp/v2/users/{id:\d+} (cap edit_user on {id}; user {id} must exist)`
 
-Route: `PUT /wp/v2/users/{id:\d+}`
+Route: `PUT /wp/v2/users/{id:\d+} (cap edit_user on {id}; user {id} must exist)`
 
-Route: `PATCH /wp/v2/users/{id:\d+}`
+Route: `PATCH /wp/v2/users/{id:\d+} (cap edit_user on {id}; user {id} must exist)`
 
 Updates a user.
 
 ### `delete(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `DELETE /wp/v2/users/{id:\d+}`
+Route: `DELETE /wp/v2/users/{id:\d+} (cap delete_users; user {id} must exist)`
 
 reassign is REQUIRED (checked before the user lookup), and so is force.
 
-Internals: `welcome()` (private, line 142), `hasPublishedContent()` (private, line 155), `validRole()` (private, line 164), `validEmail()` (private, line 172)
+Internals: `welcome()` (private, line 145), `hasPublishedContent()` (private, line 158), `validRole()` (private, line 167), `validEmail()` (private, line 175)
 

@@ -159,6 +159,42 @@ The index is not diffed against the reference (`probes` compares the site
 keys, the namespaces, and that `/wp/v2/posts` is described), so a route
 that has not declared its arguments yet is honest rather than wrong.
 
+## The record before the caller (2026-09-02)
+
+The reference looks the record up before it looks at the caller: an
+anonymous `DELETE /wp/v2/posts/999999` is `rest_post_invalid_id` at 404,
+not a 401, and an author's `POST /wp/v2/menus/999999` is `rest_term_invalid`,
+not a 403. A policy now names the record its capture points at,
+`subject: Subject::Post, param: 'id'`, and `Rest\PolicyGate` asks
+`Rest\Subjects` for it first, answering the subject's own 404
+(`Http\Subject::missingCode()`; `missing:` overrides it, as the revision
+routes do with `rest_post_invalid_parent`). Then the sign-in check, then
+the capability. A post subject reads its type from the `{base}` capture
+(posts, pages, blocks, media, navigation, menu-items) and a term subject
+its taxonomy; `me` names the caller and is never missing, only signed out,
+which the reference refuses with its plain `rest_not_logged_in` whatever
+the route's own code is. Status is not consulted: a trashed post exists.
+
+That order gives most record routes a policy they could not state before:
+posts, pages, blocks, navigation and media edits are `Own edit_post`
+(deletes `Own delete_post`, refused `rest_cannot_delete`), comments
+`Cap moderate_comments`, terms `Cap manage_categories`, users
+`Own edit_user` (delete `Cap delete_users` behind a required `reassign`),
+revisions and autosaves `Own edit_post` on the parent, menus and menu
+items `Cap edit_theme_options` on the record, application passwords
+`Own edit_user` with the reference's code per action. A public single
+read carries the subject and its edit-context residual
+(`edit: Own edit_post` as `rest_forbidden_context`); what remains in the
+handler is the read gate on an unpublished record, which the reference
+judges per status.
+
+`Access::Type` is the declared-type catch-all's policy: the `{base}`
+capture must name a declared post type or the route declines
+(`RouteMiss`) and the next one is tried, so `/wp/v2/settings` no longer
+matches `/wp/v2/{base}` when the Allow header is built. Seven routes are
+bare now: the sign-in pages, the auto-updates toggle, and the block and
+navigation creates, whose capability is the type's.
+
 `edit_user` on oneself maps to no primitive at all, and a meta capability
 that asks nothing further is held; `Capabilities::can` returned false for an
 empty requirement before the `Own` policies used it.

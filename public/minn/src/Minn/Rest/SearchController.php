@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Http\Args;
+use Minn\Http\Access;
 use Minn\Content\PostRecord;
 use Minn\Content\Texturize;
 use Minn\Db;
 use Minn\Front\Permalinks;
-use Minn\Http\Args;
-use Minn\Http\Access;
 use Minn\Http\Method;
 use Minn\Http\Policy;
 use Minn\Http\Request;

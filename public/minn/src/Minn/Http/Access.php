@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Minn\Http;
 
 /**
- * Who a route is for. The five answers every route gives, so the
+ * Who a route is for. The six answers every route gives, so the
  * authorization surface of the engine reads as a list of these.
  */
 enum Access
@@ -20,4 +20,6 @@ enum Access
     case Floor;
     /** A signed-in caller holding a capability on the object a pattern capture names. */
     case Own;
+    /** Any caller, on a route whose {base} capture must name a declared post type; the route declines otherwise and the handler judges the rest. */
+    case Type;
 }

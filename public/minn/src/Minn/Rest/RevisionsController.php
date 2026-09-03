@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Http\Policy;
+use Minn\Http\Subject;
+use Minn\Http\Access;
 use Minn\Content\PostRecord;
 use Minn\Content\Blocks;
 use Minn\Content\Posts;
@@ -29,7 +32,7 @@ final readonly class RevisionsController
     }
 
     /** Real revisions, not autosaves. */
-    #[Route(Method::Get, '/wp/v2/{base:posts|pages|blocks}/{id:\d+}/revisions')]
+    #[Route(Method::Get, '/wp/v2/{base:posts|pages|blocks}/{id:\d+}/revisions', policy: new Policy(Access::Own, 'edit_post', param: 'id', subject: Subject::PostParent, signIn: 'rest_cannot_read', signInMessage: 'Sorry, you are not allowed to view revisions of this post.', refuse: 'rest_cannot_read', message: 'Sorry, you are not allowed to view revisions of this post.'))]
     public function revisions(Request $request, string $base, string $id): Response
     {
         $this->requireParent((int) $id, $base);
@@ -38,7 +41,7 @@ final readonly class RevisionsController
     }
 
     /** One revision of a post, page, or block. */
-    #[Route(Method::Get, '/wp/v2/{base:posts|pages|blocks}/{id:\d+}/revisions/{revisionId:\d+}')]
+    #[Route(Method::Get, '/wp/v2/{base:posts|pages|blocks}/{id:\d+}/revisions/{revisionId:\d+}', policy: new Policy(Access::Own, 'edit_post', param: 'id', subject: Subject::PostParent, signIn: 'rest_cannot_read', signInMessage: 'Sorry, you are not allowed to view revisions of this post.', refuse: 'rest_cannot_read', message: 'Sorry, you are not allowed to view revisions of this post.'))]
     public function revision(Request $request, string $base, string $id, string $revisionId): Response
     {
         $this->requireParent((int) $id, $base);
@@ -52,7 +55,7 @@ final readonly class RevisionsController
     }
 
     /** The autosaves of a post. */
-    #[Route(Method::Get, '/wp/v2/{base:posts|pages|blocks}/{id:\d+}/autosaves')]
+    #[Route(Method::Get, '/wp/v2/{base:posts|pages|blocks}/{id:\d+}/autosaves', policy: new Policy(Access::Own, 'edit_post', param: 'id', subject: Subject::PostParent, signIn: 'rest_cannot_read', signInMessage: 'Sorry, you are not allowed to view autosaves of this post.', refuse: 'rest_cannot_read', message: 'Sorry, you are not allowed to view autosaves of this post.'))]
     public function autosaves(Request $request, string $base, string $id): Response
     {
         $this->requireParent((int) $id, $base);
@@ -66,7 +69,7 @@ final readonly class RevisionsController
     }
 
     /** One autosave slot per author; the reply carries a preview link. */
-    #[Route(Method::Post, '/wp/v2/{base:posts|pages|blocks}/{id:\d+}/autosaves')]
+    #[Route(Method::Post, '/wp/v2/{base:posts|pages|blocks}/{id:\d+}/autosaves', policy: new Policy(Access::Own, 'edit_post', param: 'id', subject: Subject::Post, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this post.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this post.'))]
     public function createAutosave(Request $request, string $base, string $id): Response
     {
         $userId = $this->requireParent((int) $id, $base);

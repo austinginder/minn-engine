@@ -48,6 +48,15 @@ what settles each remaining case). Two things surfaced while proving them: a no-
 `/wp/v2/search` answered 500 (fixed), and `POST wp/v2/settings` stores a value the
 reference refuses as invalid, which is B1's "args validated before the policy".
 
+B1 status, later the same day: the argument half landed in b25b3f6 (`Rest\ArgCheck`
+before the gate, `Route::body`, per-resource `Args` sets, `Settings::SCHEMA`;
+`contracts/rest/arguments.md`) and the record half in the commit after it
+(`Http\Subject`, `Policy::subject`/`missing`, `Rest\Subjects`, `Access::Type`;
+`contracts/rest/caps.md` "The record before the caller"). Bare routes went from 84 to
+7 and the `allow` ratchet from 54 divergences to 15. Still open from B1: `Route::name`
+and `output`, the typed database-free table and the `Rest\Catalogue` that emits the
+index from it.
+
 These are not structure. They are things the contracts say happen and the
 code does not do, and they go first.
 

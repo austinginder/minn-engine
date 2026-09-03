@@ -10,7 +10,9 @@ namespace Minn\Http;
  * the authorization surface. The two refusals are the reference's: a
  * caller who is not signed in gets the sign-in code (401), a signed-in
  * caller who lacks the capability gets the refusal code (403); how a bad
- * nonce is answered belongs to whoever judges the policy.
+ * nonce is answered belongs to whoever judges the policy. A policy that
+ * names a subject has the record looked up first, and answers the
+ * record's 404 before either refusal, which is the reference's order.
  *
  * Written inline in the attribute with `new`, which is what an attribute
  * argument allows: `policy: new Policy(Access::Cap, 'upload_files',
@@ -20,8 +22,11 @@ final readonly class Policy
 {
     /**
      * @param list<string> $caps further capabilities every one of which the caller must hold
-     * @param string|null $param the pattern capture holding the object id an Own policy judges
+     * @param string|null $param the pattern capture holding the object id an Own policy judges, or the subject's id
      * @param Policy|null $edit a policy judged as well when the request asks for the edit context
+     * @param Subject|null $subject the record the capture names, looked up before the caller is judged
+     * @param string|null $missing the 404 code when the subject does not exist; the subject's own when null
+     * @param string|null $missingMessage its message; the subject's own when null
      */
     public function __construct(
         public Access $access = Access::Public,
@@ -33,13 +38,28 @@ final readonly class Policy
         public string $refuse = 'rest_forbidden',
         public string $message = 'Sorry, you are not allowed to do that.',
         public ?Policy $edit = null,
+        public ?Subject $subject = null,
+        public ?string $missing = null,
+        public ?string $missingMessage = null,
     ) {
     }
 
-    /** Whether the route is open to anyone, so the caller need not be resolved at all. */
+    /** Whether the route is open to anyone with nothing to look up, so the gate need not run at all. */
     public function isPublic(): bool
     {
-        return $this->access === Access::Public && $this->edit === null;
+        return $this->access === Access::Public && $this->edit === null && $this->subject === null;
+    }
+
+    /** The 404 code a missing subject earns. */
+    public function missingCode(): string
+    {
+        return $this->missing ?? $this->subject?->missingCode() ?? 'rest_no_route';
+    }
+
+    /** The 404 message a missing subject earns. */
+    public function missingText(): string
+    {
+        return $this->missingMessage ?? $this->subject?->missingMessage() ?? 'No route was found matching the URL and request method.';
     }
 
     /**
@@ -66,7 +86,11 @@ final readonly class Policy
             Access::Cap => 'cap ' . implode(' + ', $this->capabilities()),
             Access::Floor => 'floor ' . implode(' + ', $this->capabilities()),
             Access::Own => "cap {$this->cap} on {{$this->param}}",
+            Access::Type => 'declared type {' . $this->param . '}',
         };
+        if ($this->subject !== null) {
+            $line .= '; ' . strtolower((string) preg_replace('/(?<!^)[A-Z]/', ' $0', $this->subject->name)) . " {{$this->param}} must exist";
+        }
         return $this->edit === null ? $line : "{$line}; edit context: " . $this->edit->describe();
     }
 }

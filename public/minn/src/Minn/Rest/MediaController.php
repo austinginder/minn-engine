@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Http\Policy;
+use Minn\Http\Args;
+use Minn\Http\Subject;
+use Minn\Http\Access;
 use Minn\Content\PostRecord;
 use Minn\Content\Posts;
 use Minn\Db;
-use Minn\Http\Args;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
@@ -34,7 +37,7 @@ final readonly class MediaController
     }
 
     /** The media library list. */
-    #[Route(Method::Get, '/wp/v2/media', args: [Args::CONTEXT, Args::MEDIA])]
+    #[Route(Method::Get, '/wp/v2/media', policy: new Policy(Access::Public), args: [Args::CONTEXT, Args::MEDIA])]
     public function list(Request $request): Response
     {
         $context = Context::of($request);
@@ -104,7 +107,7 @@ final readonly class MediaController
     }
 
     /** One attachment. */
-    #[Route(Method::Get, '/wp/v2/media/{id:\d+}', args: [Args::CONTEXT])]
+    #[Route(Method::Get, '/wp/v2/media/{id:\d+}', policy: new Policy(Access::Public, subject: Subject::Attachment, param: 'id', edit: new Policy(Access::Own, 'edit_post', param: 'id', signIn: 'rest_forbidden_context', signInMessage: 'Sorry, you are not allowed to edit this post.', refuse: 'rest_forbidden_context', message: 'Sorry, you are not allowed to edit this post.')), args: [Args::CONTEXT])]
     public function single(Request $request, string $id): Response
     {
         $attachment = $this->attachment((int) $id);
@@ -117,7 +120,7 @@ final readonly class MediaController
     }
 
     /** Uploads a file and creates its attachment. */
-    #[Route(Method::Post, '/wp/v2/media')]
+    #[Route(Method::Post, '/wp/v2/media', policy: new Policy(Access::Cap, 'upload_files', signIn: 'rest_cannot_create', signInMessage: 'Sorry, you are not allowed to create posts as this user.', refuse: 'rest_cannot_create', message: 'Sorry, you are not allowed to upload media on this site.'))]
     public function create(Request $request): Response
     {
         $userId = $this->caller->require('rest_cannot_create', 'Sorry, you are not allowed to create posts as this user.')->id();
@@ -155,9 +158,9 @@ final readonly class MediaController
     }
 
     /** The editable fields the app uses. */
-    #[Route(Method::Post, '/wp/v2/media/{id:\d+}')]
-    #[Route(Method::Put, '/wp/v2/media/{id:\d+}')]
-    #[Route(Method::Patch, '/wp/v2/media/{id:\d+}')]
+    #[Route(Method::Post, '/wp/v2/media/{id:\d+}', policy: new Policy(Access::Own, 'edit_post', param: 'id', subject: Subject::Attachment, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this post.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this post.'))]
+    #[Route(Method::Put, '/wp/v2/media/{id:\d+}', policy: new Policy(Access::Own, 'edit_post', param: 'id', subject: Subject::Attachment, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this post.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this post.'))]
+    #[Route(Method::Patch, '/wp/v2/media/{id:\d+}', policy: new Policy(Access::Own, 'edit_post', param: 'id', subject: Subject::Attachment, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this post.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this post.'))]
     public function update(Request $request, string $id): Response
     {
         $attachmentId = (int) $id;
@@ -188,7 +191,7 @@ final readonly class MediaController
     }
 
     /** Attachments cannot be trashed; force removes the row, its meta, and its files. */
-    #[Route(Method::Delete, '/wp/v2/media/{id:\d+}')]
+    #[Route(Method::Delete, '/wp/v2/media/{id:\d+}', policy: new Policy(Access::Own, 'delete_post', param: 'id', subject: Subject::Attachment, signIn: 'rest_cannot_delete', signInMessage: 'Sorry, you are not allowed to delete this post.', refuse: 'rest_cannot_delete', message: 'Sorry, you are not allowed to delete this post.'))]
     public function delete(Request $request, string $id): Response
     {
         $attachmentId = (int) $id;

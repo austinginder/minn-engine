@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Http\Policy;
+use Minn\Http\Args;
+use Minn\Http\Subject;
+use Minn\Http\Access;
 use Minn\Content\UserRecord;
 use Minn\Auth\Password;
 use Minn\Auth\Roles;
 use Minn\Content\Site;
 use Minn\Content\Users;
 use Minn\Db;
-use Minn\Http\Args;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
@@ -43,7 +46,7 @@ final readonly class UsersController
     }
 
     /** The signed-in user. */
-    #[Route(Method::Get, '/wp/v2/users/me', args: [Args::CONTEXT])]
+    #[Route(Method::Get, '/wp/v2/users/me', policy: new Policy(Access::Public), args: [Args::CONTEXT])]
     public function me(Request $request): Response
     {
         $user = $this->caller->require()->user;
@@ -55,7 +58,7 @@ final readonly class UsersController
     }
 
     /** View context lists published authors; edit context lists everyone. */
-    #[Route(Method::Get, '/wp/v2/users', args: [Args::CONTEXT, Args::USERS])]
+    #[Route(Method::Get, '/wp/v2/users', policy: new Policy(Access::Public), args: [Args::CONTEXT, Args::USERS])]
     public function list(Request $request): Response
     {
         $self = $this->caller->id();
@@ -115,7 +118,7 @@ final readonly class UsersController
     }
 
     /** One user. */
-    #[Route(Method::Get, '/wp/v2/users/{id:\d+}', args: [Args::CONTEXT])]
+    #[Route(Method::Get, '/wp/v2/users/{id:\d+}', policy: new Policy(Access::Public, subject: Subject::User, param: 'id'), args: [Args::CONTEXT])]
     public function single(Request $request, string $id): Response
     {
         $userId = (int) $id;
@@ -175,7 +178,7 @@ final readonly class UsersController
     }
 
     /** Engine-created users carry real scheme hashes and the full default meta set. */
-    #[Route(Method::Post, '/wp/v2/users', body: [Args::USER_CREATE])]
+    #[Route(Method::Post, '/wp/v2/users', policy: new Policy(Access::Cap, 'create_users', signIn: 'rest_cannot_create_user', signInMessage: 'Sorry, you are not allowed to create new users.', refuse: 'rest_cannot_create_user', message: 'Sorry, you are not allowed to create new users.'), body: [Args::USER_CREATE])]
     public function create(Request $request): Response
     {
         $refusal = 'Sorry, you are not allowed to create new users.';
@@ -221,9 +224,9 @@ final readonly class UsersController
     }
 
     /** Updates a user. */
-    #[Route(Method::Post, '/wp/v2/users/{id:\d+}', body: [Args::USER_EDIT])]
-    #[Route(Method::Put, '/wp/v2/users/{id:\d+}', body: [Args::USER_EDIT])]
-    #[Route(Method::Patch, '/wp/v2/users/{id:\d+}', body: [Args::USER_EDIT])]
+    #[Route(Method::Post, '/wp/v2/users/{id:\d+}', policy: new Policy(Access::Own, 'edit_user', param: 'id', subject: Subject::User, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this user.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this user.'), body: [Args::USER_EDIT])]
+    #[Route(Method::Put, '/wp/v2/users/{id:\d+}', policy: new Policy(Access::Own, 'edit_user', param: 'id', subject: Subject::User, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this user.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this user.'), body: [Args::USER_EDIT])]
+    #[Route(Method::Patch, '/wp/v2/users/{id:\d+}', policy: new Policy(Access::Own, 'edit_user', param: 'id', subject: Subject::User, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this user.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this user.'), body: [Args::USER_EDIT])]
     public function update(Request $request, string $id): Response
     {
         $userId = (int) $id;
@@ -282,7 +285,7 @@ final readonly class UsersController
     }
 
     /** reassign is REQUIRED (checked before the user lookup), and so is force. */
-    #[Route(Method::Delete, '/wp/v2/users/{id:\d+}')]
+    #[Route(Method::Delete, '/wp/v2/users/{id:\d+}', policy: new Policy(Access::Cap, 'delete_users', param: 'id', subject: Subject::User, signIn: 'rest_user_cannot_delete', signInMessage: 'Sorry, you are not allowed to delete this user.', refuse: 'rest_user_cannot_delete', message: 'Sorry, you are not allowed to delete this user.'), args: [Args::USER_DELETE])]
     public function delete(Request $request, string $id): Response
     {
         $userId = (int) $id;

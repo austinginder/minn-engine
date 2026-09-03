@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Http\Policy;
+use Minn\Http\Args;
+use Minn\Http\Subject;
+use Minn\Http\Access;
 use Minn\Content\CommentFilter;
 use Minn\Content\CommentRecord;
 use Minn\Content\PostRecord;
 use Minn\Content\Comments;
 use Minn\Content\Posts;
 use Minn\Content\Site;
-use Minn\Http\Args;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
@@ -36,7 +39,7 @@ final readonly class CommentsController
     }
 
     /** The comments list with its status tabs and pagination headers. */
-    #[Route(Method::Get, '/wp/v2/comments', args: [Args::CONTEXT, Args::COMMENTS])]
+    #[Route(Method::Get, '/wp/v2/comments', policy: new Policy(Access::Public), args: [Args::CONTEXT, Args::COMMENTS])]
     public function list(Request $request): Response
     {
         $context = Context::of($request);
@@ -67,7 +70,7 @@ final readonly class CommentsController
     }
 
     /** One comment, if the caller may read it. */
-    #[Route(Method::Get, '/wp/v2/comments/{id:\d+}', args: [Args::CONTEXT])]
+    #[Route(Method::Get, '/wp/v2/comments/{id:\d+}', policy: new Policy(Access::Public, subject: Subject::Comment, param: 'id'), args: [Args::CONTEXT])]
     public function single(Request $request, string $id): Response
     {
         $comment = $this->plainComment((int) $id);
@@ -88,7 +91,7 @@ final readonly class CommentsController
     }
 
     /** A signed-in reply; the author fields come from the user. */
-    #[Route(Method::Post, '/wp/v2/comments')]
+    #[Route(Method::Post, '/wp/v2/comments', policy: new Policy(Access::SignedIn, signIn: 'rest_comment_login_required', signInMessage: 'Sorry, you must be logged in to comment.'))]
     public function create(Request $request): Response
     {
         $session = $this->caller->require('rest_comment_login_required', 'Sorry, you must be logged in to comment.');
@@ -149,9 +152,9 @@ final readonly class CommentsController
     }
 
     /** Status flips and content or author edits, for moderators. */
-    #[Route(Method::Post, '/wp/v2/comments/{id:\d+}')]
-    #[Route(Method::Put, '/wp/v2/comments/{id:\d+}')]
-    #[Route(Method::Patch, '/wp/v2/comments/{id:\d+}')]
+    #[Route(Method::Post, '/wp/v2/comments/{id:\d+}', policy: new Policy(Access::Cap, 'moderate_comments', param: 'id', subject: Subject::Comment, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this comment.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this comment.'))]
+    #[Route(Method::Put, '/wp/v2/comments/{id:\d+}', policy: new Policy(Access::Cap, 'moderate_comments', param: 'id', subject: Subject::Comment, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this comment.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this comment.'))]
+    #[Route(Method::Patch, '/wp/v2/comments/{id:\d+}', policy: new Policy(Access::Cap, 'moderate_comments', param: 'id', subject: Subject::Comment, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this comment.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this comment.'))]
     public function update(Request $request, string $id): Response
     {
         $commentId = (int) $id;
@@ -183,7 +186,7 @@ final readonly class CommentsController
     }
 
     /** Trash remembers where the comment came from; force removes it outright. */
-    #[Route(Method::Delete, '/wp/v2/comments/{id:\d+}')]
+    #[Route(Method::Delete, '/wp/v2/comments/{id:\d+}', policy: new Policy(Access::Cap, 'moderate_comments', param: 'id', subject: Subject::Comment, signIn: 'rest_cannot_delete', signInMessage: 'Sorry, you are not allowed to delete this comment.', refuse: 'rest_cannot_delete', message: 'Sorry, you are not allowed to delete this comment.'))]
     public function delete(Request $request, string $id): Response
     {
         $commentId = (int) $id;
