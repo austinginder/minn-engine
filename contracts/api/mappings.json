@@ -1,5 +1,5 @@
 {
-    "generated": "2026-09-02",
+    "generated": "2026-09-03",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
         "minn": 437,

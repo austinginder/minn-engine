@@ -9,7 +9,7 @@
 | [`InstalledSoftware`](#installedsoftware) | final readonly class | 59 | What is installed, as the System view lists it: every extension and |
 | [`Logs`](#logs) | final readonly class | 150 | The log files the System view can read and clear: the debug log the |
 | [`Packages`](#packages) | final readonly class | 489 | Putting themes and extensions on disk. Themes come from wordpress.org |
-| [`Updates`](#updates) | final class | 344 | Update offers from wordpress.org for the site's plugins and themes: the |
+| [`Updates`](#updates) | final class | 408 | Update offers from wordpress.org for the site's plugins and themes: the |
 
 ## CoreStatus
 
@@ -275,6 +275,13 @@ its folder untouched and is never offered anything. The per-item
 auto-update lists are the site's own auto_update_plugins and
 auto_update_themes options, in the shape the app already reads.
 
+The directory is not the only source. A plugin that hosts itself answers
+for its own version through the update transient's filter, which is where
+WordPress reads it too, so Runtime\PluginUpdates asks the runtime the same
+question and its answer is merged in. Applying such an offer goes through
+the publisher: a package outside the directory is unpacked only when
+`upgrader_pre_download` hands back a copy it verified.
+
 - const `OPTION` = `'minn_updates'`
 - const `TTL` = `43200`
 - const `PLUGINS_API` = `'https://api.wordpress.org/plugins/update-check/1.1/'`
@@ -371,5 +378,5 @@ Stylesheet => style.css headers. @return array<string, array<string, string>>
 
 - `@return array<string, array<string, string>>`
 
-Internals: `saveAuto()` (private, line 219), `install()` (private, line 301), `consume()` (private, line 318), `post()` (private, line 330), `map()` (private, line 354), `safeUrl()` (private, line 362)
+Internals: `supplied()` (private, line 132), `saveAuto()` (private, line 267), `install()` (private, line 351), `vouched()` (private, line 374), `consume()` (private, line 392), `post()` (private, line 404), `map()` (private, line 428), `safeUrl()` (private, line 436)
 

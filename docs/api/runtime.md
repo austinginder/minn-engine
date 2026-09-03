@@ -27,10 +27,12 @@ the WordPress runtime plugins load against
 | [`OEmbed`](#oembed) | final class | 92 | oEmbed as data: provider matching against the wildcard table, response parsing, and the markup an oEmbed payload becomes. |
 | [`ObjectCache`](#objectcache) | final class | 52 | The per-request object cache behind wp_cache_*: groups of keys, nothing persistent. |
 | [`Options`](#options) | final class | 175 | Options as plugin code sees them: PHP values, decoded from the stored |
+| [`PackageDownload`](#packagedownload) | final class | 32 | The publisher's say over its own download. Before fetching an update |
 | [`PageMenu`](#pagemenu) | final class | 40 | The page-list menu a classic theme falls back to when no menu is |
 | [`Pages`](#pages) | final class | 113 | get_pages() as the reference shapes it: its arguments as a post query, and the tree order of the result. |
 | [`Patterns`](#patterns) | final class | 161 | The block pattern, pattern category, and block style registries as data. |
 | [`PlaceholderTrace`](#placeholdertrace) | final class | 27 | Records every call into a generated placeholder while a site opts in by |
+| [`PluginUpdates`](#pluginupdates) | final class | 65 | The update offers the site's own plugins publish. A plugin that hosts |
 | [`Plugins`](#plugins) | final class | 192 | Loads the site's plugins into the runtime the way the reference does: |
 | [`PostInsert`](#postinsert) | final readonly class | 160 | The decisions behind wp_insert_post: which columns a postarr fills, when |
 | [`PostLookup`](#postlookup) | final readonly class | 85 | The post reads plugin code asks for by shape: a page by title, revisions, counts. |
@@ -1146,6 +1148,38 @@ A stored option value decoded the way the reference reads it.
 Internals: `switchAutoload()` (private, line 117)
 
 
+## PackageDownload
+
+`final class Minn\Runtime\PackageDownload` · `public/minn/src/Minn/Runtime/PackageDownload.php`
+
+The publisher's say over its own download. Before fetching an update
+package, the reference asks `upgrader_pre_download`: a plugin that hosts
+itself answers there, and answering is how it proves the archive is the
+one it published. Three answers, which are the reference's:
+
+a file path  the publisher fetched and verified the package itself
+a refusal    the publisher rejects this download, with its reason
+nothing      nobody vouched for it
+
+The engine asks the same question, and installs a package from outside
+the wordpress.org directory only on the first answer. That is stricter
+than the reference, which downloads whatever the offer names; here an
+archive nobody vouched for is never unpacked over a plugin folder.
+
+- const `HOOK` = `'upgrader_pre_download'`
+
+Used by: `Minn\Ops\Updates`
+
+### static `verified(string $package, array $hookExtra): Minn\Runtime\Refusal|string|null`
+
+The publisher's verified copy of the package, its refusal, or null
+when nothing answered.
+
+- `@param array<string, string> $hookExtra what is being updated, as the reference passes it ('plugin' or 'theme')`
+
+Internals: `refusal()` (private, line 45)
+
+
 ## PageMenu
 
 `final class Minn\Runtime\PageMenu` · `public/minn/src/Minn/Runtime/PageMenu.php`
@@ -1295,6 +1329,46 @@ stat per request.
 ### static `hit(string $symbol): void`
 
 Logs a placeholder symbol being called, when the trace file exists.
+
+
+## PluginUpdates
+
+`final class Minn\Runtime\PluginUpdates` · `public/minn/src/Minn/Runtime/PluginUpdates.php`
+
+The update offers the site's own plugins publish. A plugin that hosts
+itself, or sells itself, is not in the wordpress.org directory and never
+appears in the directory's answer: it publishes its offer by filtering
+the update transient WordPress reads, which is the only place anyone
+learns of it. The engine asks the same question of the runtime, in the
+shape the reference asks it, so a self-hosted plugin is offered its
+update here exactly as it would be on WordPress.
+
+The transient carries `checked` (every installed plugin and its version),
+and a plugin's updater returns early when that is empty, so the installed
+versions are what make the question answerable.
+
+- const `HOOK` = `'site_transient_update_plugins'`
+
+Used by: `Minn\Ops\Updates`
+
+### static `supplied(array $installed): array`
+
+What the site's plugins offer for themselves, empty when no runtime
+is booted or nothing filters the transient.
+
+- `@param array<string, string> $installed plugin file => installed version`
+- `@return array{plugins: array<string, array<string, mixed>>, no_update: array<string, array<string, mixed>>}`
+
+### static `fromFiltered(mixed $filtered, array $installed): array`
+
+The filtered transient as the state's two buckets: offers under
+`plugins`, plugins that answered "current" under `no_update`, both
+as arrays, and only for files this site actually has.
+
+- `@param array<string, string> $installed`
+- `@return array{plugins: array<string, array<string, mixed>>, no_update: array<string, array<string, mixed>>}`
+
+Internals: `bucket()` (private, line 68)
 
 
 ## Plugins
@@ -1624,7 +1698,7 @@ Internals: `strikes()` (private, line 130), `forgetStrikes()` (private, line 137
 
 A refused operation, the way plugin code expects to read it: a code, a message, optional data. The facade turns it into WP_Error.
 
-Used by: `Minn\Blocks\BlockName`, `Minn\Content\Menus`, `Minn\Rest\ArgCheck`, `Minn\Rest\MenusController`, `Minn\Rest\ParamCheck`, `Minn\Rest\RouteMatch`, `Minn\Rest\Schema`, `Minn\Runtime\Connectors`, `Minn\Runtime\Patterns`, `Minn\Runtime\TermWriter`, `Minn\Runtime\UserInsert`
+Used by: `Minn\Blocks\BlockName`, `Minn\Content\Menus`, `Minn\Ops\Updates`, `Minn\Rest\ArgCheck`, `Minn\Rest\MenusController`, `Minn\Rest\ParamCheck`, `Minn\Rest\RouteMatch`, `Minn\Rest\Schema`, `Minn\Runtime\Connectors`, `Minn\Runtime\PackageDownload`, `Minn\Runtime\Patterns`, `Minn\Runtime\TermWriter`, `Minn\Runtime\UserInsert`
 
 ```php
 __construct(string $code, string $message, mixed $data = NULL)
@@ -1744,7 +1818,7 @@ The WordPress runtime the engine offers plugin code: the procedural
 facade under minn/wp-api/ plus the services it delegates to. One per
 request; the facade reaches it through these statics.
 
-Used by: `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\RenderState`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\Reader`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\PluginRules`, `Minn\Front\Resolver`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\Services`, `Minn\Runtime\Abilities`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\Constants`, `Minn\Runtime\Interactivity`, `Minn\Runtime\NavMenu`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostQuery`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\TermWriter`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
+Used by: `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\RenderState`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\Reader`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\PluginRules`, `Minn\Front\Resolver`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\Services`, `Minn\Runtime\Abilities`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\Constants`, `Minn\Runtime\Interactivity`, `Minn\Runtime\NavMenu`, `Minn\Runtime\PackageDownload`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostQuery`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\TermWriter`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
 
 ```php
 __construct(Minn\Context $context, bool $isAdmin = false)

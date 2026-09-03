@@ -8,6 +8,9 @@ use Minn\Content\Inventory;
 use Minn\Content\Site;
 use Minn\RestError;
 use Minn\Support\FileHeaders;
+use Minn\Runtime\PackageDownload;
+use Minn\Runtime\PluginUpdates;
+use Minn\Runtime\Refusal;
 use Minn\Support\Serialized;
 
 /**
@@ -19,6 +22,13 @@ use Minn\Support\Serialized;
  * its folder untouched and is never offered anything. The per-item
  * auto-update lists are the site's own auto_update_plugins and
  * auto_update_themes options, in the shape the app already reads.
+ *
+ * The directory is not the only source. A plugin that hosts itself answers
+ * for its own version through the update transient's filter, which is where
+ * WordPress reads it too, so Runtime\PluginUpdates asks the runtime the same
+ * question and its answer is merged in. Applying such an offer goes through
+ * the publisher: a package outside the directory is unpacked only when
+ * `upgrader_pre_download` hands back a copy it verified.
  */
 final class Updates
 {
@@ -91,17 +101,53 @@ final class Updates
             'locale' => json_encode([$locale]),
         ]);
         $stored = json_decode((string) ($this->site->option(self::OPTION) ?? ''), true);
+        $supplied = $this->supplied(is_array($stored) ? $stored : []);
         $state = [
             'checked' => time(),
-            'plugins' => self::map($pluginAnswer['plugins'] ?? []),
-            'no_update' => self::map($pluginAnswer['no_update'] ?? []),
+            // A plugin's own answer wins over the directory's, as it does on the
+            // reference: the filter runs last there, and a plugin that hosts
+            // itself is the only one who knows its versions.
+            'plugins' => array_merge(self::map($pluginAnswer['plugins'] ?? []), $supplied['plugins']),
+            'no_update' => array_diff_key(array_merge(self::map($pluginAnswer['no_update'] ?? []), $supplied['no_update']), $supplied['plugins']),
             'themes' => self::map($themeAnswer['themes'] ?? []),
             'themes_current' => self::map($themeAnswer['no_update'] ?? []),
             // What was installed is a record, not an answer from the directory; it rides across every check.
             'archives' => is_array($stored['archives'] ?? null) ? $stored['archives'] : [],
+            // Which files answered for themselves, so a check with no runtime keeps their offers.
+            'supplied' => array_values(array_unique([...array_keys($supplied['plugins']), ...array_keys($supplied['no_update'])])),
         ];
         $this->site->setOption(self::OPTION, (string) json_encode($state, JSON_UNESCAPED_SLASHES));
         return $state;
+    }
+
+    /**
+     * What the site's own plugins offer for themselves. A check that runs
+     * without a booted runtime (a cron trigger that loads no plugins) asks
+     * nobody, so the last answer rides across rather than the offer
+     * vanishing until the next request.
+     *
+     * @param array<string, mixed> $stored the previous state
+     * @return array{plugins: array<string, array<string, mixed>>, no_update: array<string, array<string, mixed>>}
+     */
+    private function supplied(array $stored): array
+    {
+        $installed = $this->pluginVersions();
+        $supplied = PluginUpdates::supplied($installed);
+        if ($supplied['plugins'] !== [] || $supplied['no_update'] !== []) {
+            return $supplied;
+        }
+        foreach (is_array($stored['supplied'] ?? null) ? $stored['supplied'] : [] as $file) {
+            $file = (string) $file;
+            if (!isset($installed[$file])) {
+                continue;
+            }
+            foreach (['plugins', 'no_update'] as $bucket) {
+                if (is_array($stored[$bucket][$file] ?? null)) {
+                    $supplied[$bucket][$file] = $stored[$bucket][$file];
+                }
+            }
+        }
+        return $supplied;
     }
 
     /** Plugin file => offered version, only where the installed version is older. @return array<string, string> */
@@ -144,7 +190,9 @@ final class Updates
                 $out[$file] = [
                     'slug' => $slug,
                     'icon' => (string) ($icons['svg'] ?? $icons['2x'] ?? $icons['1x'] ?? ''),
-                    'url' => self::safeUrl((string) ($data['url'] ?? '')) ?: 'https://wordpress.org/plugins/' . $slug . '/',
+                    // Only a plugin the directory knows gets a directory link; a
+                    // self-hosted one that published no URL gets none.
+                    'url' => self::safeUrl((string) ($data['url'] ?? '')) ?: (str_starts_with((string) ($data['id'] ?? ''), 'w.org/') ? 'https://wordpress.org/plugins/' . $slug . '/' : ''),
                 ];
             }
         }
@@ -167,7 +215,7 @@ final class Updates
         if (!isset($this->pluginOffers()[$file])) {
             throw new RestError('no_update', 'No update available for that plugin.', 400);
         }
-        $this->install((string) ($this->state()['plugins'][$file]['package'] ?? ''), 'plugin', dirname($file));
+        $this->install((string) ($this->state()['plugins'][$file]['package'] ?? ''), 'plugin', dirname($file), $file);
         $this->consume('plugins', 'no_update', $file);
         return $this->pluginVersions()[$file] ?? '';
     }
@@ -181,7 +229,7 @@ final class Updates
         if (!isset($this->themeOffers()[$stylesheet])) {
             throw new RestError('no_update', 'No update available for that theme.', 400);
         }
-        $this->install((string) ($this->state()['themes'][$stylesheet]['package'] ?? ''), 'theme', $stylesheet);
+        $this->install((string) ($this->state()['themes'][$stylesheet]['package'] ?? ''), 'theme', $stylesheet, $stylesheet);
         $this->consume('themes', 'themes_current', $stylesheet);
         return $this->themeHeaders()[$stylesheet]['Version'] ?? '';
     }
@@ -294,16 +342,17 @@ final class Updates
     }
 
     /**
-     * Fetches and unpacks an offer's package. Every redirect hop must stay
-     * on the wordpress.org download host, and the archive's SHA-256 is kept
-     * under "archives" in the state so an audit can ask what code arrived.
+     * Fetches and unpacks an offer's package. A directory package is
+     * downloaded here, every redirect hop staying on the wordpress.org
+     * download host; anything else has to come from its publisher, verified.
+     * The archive's SHA-256 is kept under "archives" in the state either
+     * way, so an audit can ask what code arrived.
      */
-    private function install(string $package, string $kind, string $folder): void
+    private function install(string $package, string $kind, string $folder, string $asset = ''): void
     {
-        if (!str_starts_with($package, self::PACKAGE_HOST)) {
-            throw new RestError('update_failed', 'The offer carries no wordpress.org package.', 500);
-        }
-        $zip = $this->packages->fetch($package, self::PACKAGE_HOST);
+        $zip = str_starts_with($package, self::PACKAGE_HOST)
+            ? $this->packages->fetch($package, self::PACKAGE_HOST)
+            : $this->vouched($package, $kind, $asset);
         $result = $this->packages->unpackReplacing($zip, $kind);
         if ($result['folder'] !== $folder) {
             throw new RestError('update_failed', "The package unpacked as {$result['folder']}, not {$folder}.", 500);
@@ -312,6 +361,31 @@ final class Updates
         $state['archives']["{$kind}/{$folder}"] = ['sha256' => hash('sha256', $zip), 'version' => $result['version'], 'package' => $package, 'installed' => time()];
         $this->state = $state;
         $this->site->setOption(self::OPTION, (string) json_encode($state, JSON_UNESCAPED_SLASHES));
+    }
+
+    /**
+     * A package from outside the directory, and only on its publisher's
+     * word: the reference asks `upgrader_pre_download` before every
+     * download, and a plugin that hosts itself answers there with the copy
+     * it fetched and checked against the hash it publishes. No answer means
+     * nobody vouched for the archive, and the engine will not unpack code
+     * over a folder on nobody's word.
+     */
+    private function vouched(string $package, string $kind, string $asset): string
+    {
+        $verified = PackageDownload::verified($package, $asset === '' ? [] : [$kind => $asset]);
+        if ($verified instanceof Refusal) {
+            throw new RestError('update_failed', $verified->message, 500);
+        }
+        if ($verified === null) {
+            throw new RestError('update_failed', "The offer's package is not on wordpress.org and its publisher did not verify the download.", 500);
+        }
+        $zip = (string) file_get_contents($verified);
+        unlink($verified);
+        if ($zip === '') {
+            throw new RestError('update_failed', 'The publisher verified an empty package.', 500);
+        }
+        return $zip;
     }
 
     /** An applied offer moves to the current bucket so the next read agrees with the folder. */

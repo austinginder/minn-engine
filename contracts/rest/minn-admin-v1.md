@@ -353,6 +353,40 @@ dogfood site against its own reference, both freshly checked:
   `theme-{stylesheet}-{version}` of kind `updates` with the `update` payload the app
   renders its in-row button from, timed at the check.
 
+### A plugin that hosts itself (2026-09-03)
+
+The directory is not the only source of an offer. A plugin that hosts itself or
+sells itself is not on wordpress.org, and publishes its offer by filtering
+`site_transient_update_plugins`, which is where WordPress reads every plugin's
+update. `Runtime\PluginUpdates::supplied()` asks the runtime that same question
+with the transient the reference builds (`last_checked`, `checked` as file =>
+installed version, empty `response` / `no_update` / `translations`), and
+`Ops\Updates::check()` merges the answer: an entry a plugin supplies wins over the
+directory's for the same file, and a supplied offer removes that file from
+`no_update`. An empty `checked` is why this has to carry the installed versions:
+an updater returns early without them, which is exactly what the reference's does.
+
+Facts this settled, found on minn.run (2026-09-03), where Minn Admin 0.36.0 was
+installed with 0.37.0 released and nothing was offered:
+
+- The check runs where the runtime is booted. A REST request boots it, so the
+  Extensions view sees supplied offers; `wp plugin list` and a cron trigger that
+  loads no plugins do not, so `state['supplied']` records which files answered for
+  themselves and their entries ride across a check that could not ask.
+- `pluginMeta` gives a directory URL only to an entry the directory knows (its `id`
+  starts `w.org/`); a self-hosted plugin that published no URL of its own gets none,
+  rather than a link to a wordpress.org page that does not exist.
+- **Applying a supplied offer goes through its publisher.** A `downloads.wordpress.org`
+  package is downloaded by the engine as before. Anything else is asked of
+  `upgrader_pre_download`, the filter the reference runs before every download, and
+  installed only when the publisher hands back a file it fetched and verified
+  (`Runtime\PackageDownload`). A refusal is answered with the publisher's own code and
+  message at 500 `update_failed`; no answer at all is "the offer's package is not on
+  wordpress.org and its publisher did not verify the download". This is stricter than
+  the reference, which downloads whatever the offer names: here an archive nobody
+  vouched for is never unpacked over a folder. Minn Admin's own updater is the worked
+  example, checking the sha256 its release manifest publishes.
+
 ## The plugin directory (2026-08-29)
 
 WordPress plugins run on the engine, so the wordpress.org directory answers here too,
