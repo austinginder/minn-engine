@@ -13,6 +13,7 @@ against; nothing here is implementation.
 | `hooks.json` | `php tests/tools/hook-inventory.php` (scan of the firing calls) | every hook name, kind (action/filter), the largest argument count seen, the files that fire it; `{*}` marks a dynamic segment |
 | `lifecycle.json` | the `minn-hook-trace` mu-plugin in the reference | the first firing of every hook, in order, for thirteen request kinds (home, single, page, category, search, 404, feed, REST list and index, login, cron, robots, sitemap) with its argument count |
 | `meta.json` | | the reference version, PHP version, capture time |
+| `routes.json` | `php tests/tools/route-catalogue.php` (reflection over `src/Minn`, no site needed) | the engine's own route table: every `#[Route]` with its method, pattern, name, handler, docblock sentence, structured policy (access, capability, subject and its 404, sign-in and refusal codes, edit-context residual), query args and body args. The style suite fails while it is stale. This is Minn's, not the reference's: the catalogue an agent reads before it reads PHP |
 
 Re-capture after a reference upgrade. The tracer only runs when
 `MINN_HOOK_TRACE` names a file (see `tests/tools/api-inventory.php` and the

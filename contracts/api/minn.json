@@ -41598,11 +41598,11 @@
             "uses": [],
             "usedBy": [
                 "Minn\\Http\\Route",
+                "Minn\\Http\\RouteRow",
                 "Minn\\Rest\\AbilitiesController",
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\ArgCheck",
                 "Minn\\Rest\\CommentsController",
-                "Minn\\Rest\\IndexController",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\SearchController",
@@ -43142,7 +43142,7 @@
             "namespace": "Minn\\Http",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Http/Policy.php",
-            "lines": 76,
+            "lines": 103,
             "doc": "What a route requires of its caller, as data on the route: the router\nenforces it before the handler runs, so a grep over the attributes is\nthe authorization surface. The two refusals are the reference's: a\ncaller who is not signed in gets the sign-in code (401), a signed-in\ncaller who lacks the capability gets the refusal code (403); how a bad\nnonce is answered belongs to whoever judges the policy. A policy that\nnames a subject has the record looked up first, and answers the\nrecord's 404 before either refusal, which is the reference's order.\n\nWritten inline in the attribute with `new`, which is what an attribute\nargument allows: `policy: new Policy(Access::Cap, 'upload_files',\nrefuse: 'rest_cannot_create', message: '...')`.",
             "implements": [],
             "extends": null,
@@ -43174,6 +43174,7 @@
                 "Minn\\Front\\ProbeController",
                 "Minn\\Front\\SitemapController",
                 "Minn\\Http\\Route",
+                "Minn\\Http\\RouteRow",
                 "Minn\\Http\\Router",
                 "Minn\\Login\\LoginController",
                 "Minn\\Rest\\AbilitiesController",
@@ -43460,6 +43461,20 @@
                 },
                 {
                     "routes": [],
+                    "name": "toArray",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "toArray(): array",
+                    "doc": "The policy as data, for the route catalogue. @return array<string, mixed>",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [],
+                    "line": 81,
+                    "end": 105
+                },
+                {
+                    "routes": [],
                     "name": "describe",
                     "static": false,
                     "visibility": "public",
@@ -43467,8 +43482,8 @@
                     "doc": "The policy in one line, for the route index and the docs.",
                     "shapes": [],
                     "params": [],
-                    "line": 81,
-                    "end": 95
+                    "line": 108,
+                    "end": 122
                 }
             ]
         },
@@ -44335,7 +44350,7 @@
             "namespace": "Minn\\Http",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Http/Route.php",
-            "lines": 61,
+            "lines": 63,
             "doc": "Declares a handler method as a route. The policy lives here, as\nmetadata the router enforces before the handler runs, so the\nauthorization surface of the engine is a grep away; a route with no\npolicy is one the ratchet in the style suite counts down. The parameter\nsets it reads live here too, judged before the policy is (the reference\nrefuses a bad argument before it refuses a caller), so the REST index can\ntell a client what a route takes as well as what it requires of them.\n\nPatterns: \"/wp/v2/posts/{id}\" captures one segment, \"{id:\\d+}\" constrains\nit, and \"/{path*}\" captures the rest of the path (slashes included).",
             "implements": [],
             "extends": null,
@@ -44366,12 +44381,14 @@
                 "Minn\\Front\\FrontController",
                 "Minn\\Front\\ProbeController",
                 "Minn\\Front\\SitemapController",
+                "Minn\\Http\\RouteRow",
                 "Minn\\Http\\Router",
                 "Minn\\Login\\LoginController",
                 "Minn\\Rest\\AbilitiesController",
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\ArgCheck",
                 "Minn\\Rest\\BlocksController",
+                "Minn\\Rest\\Catalogue",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\DeclaredPostsController",
                 "Minn\\Rest\\GlobalStylesController",
@@ -44392,7 +44409,7 @@
                 "Minn\\Rest\\UsersController"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Http\\Method $method, string $pattern, ?Minn\\Http\\Policy $policy = NULL, array $args = array ( ), bool $index = true, array $body = array ( ))",
+                "signature": "__construct(Minn\\Http\\Method $method, string $pattern, ?Minn\\Http\\Policy $policy = NULL, array $args = array ( ), bool $index = true, array $body = array ( ), ?string $name = NULL)",
                 "doc": "",
                 "shapes": [
                     "@param list<array<string, array<string, mixed>>> $args the parameter sets this route reads, from Args",
@@ -44440,11 +44457,18 @@
                         "shape": "list<array<string, array<string, mixed>>>",
                         "default": "array ( )",
                         "doc": "the parameter sets this route reads from the JSON body, from Args or the shape that owns them"
+                    },
+                    {
+                        "name": "name",
+                        "type": "?string",
+                        "shape": "string|null",
+                        "default": "NULL",
+                        "doc": "the route's name in the catalogue; the handler's Class::method when null"
                     }
                 ],
                 "visibility": "public",
-                "line": 29,
-                "end": 37
+                "line": 30,
+                "end": 39
             },
             "cases": [],
             "constants": [],
@@ -44502,6 +44526,15 @@
                     "doc": "",
                     "visibility": "public",
                     "promoted": true
+                },
+                {
+                    "name": "name",
+                    "type": "?string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
                 }
             ],
             "methods": [
@@ -44516,8 +44549,8 @@
                         "@return array<string, array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 44,
-                    "end": 47
+                    "line": 46,
+                    "end": 49
                 },
                 {
                     "routes": [],
@@ -44530,8 +44563,8 @@
                         "@return array<string, array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 54,
-                    "end": 57
+                    "line": 56,
+                    "end": 59
                 },
                 {
                     "routes": [],
@@ -44542,8 +44575,8 @@
                     "doc": "The pattern as a regular expression with named captures.",
                     "shapes": [],
                     "params": [],
-                    "line": 60,
-                    "end": 81
+                    "line": 62,
+                    "end": 83
                 }
             ]
         },
@@ -44574,12 +44607,256 @@
             "methods": []
         },
         {
+            "name": "Minn\\Http\\RouteRow",
+            "short": "RouteRow",
+            "namespace": "Minn\\Http",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Http/RouteRow.php",
+            "lines": 61,
+            "doc": "One line of the route table: what a route is, who it is for, and what it\ntakes, read from the attribute and the handler method alone, so the table\ncan be built from the classes without a request, a database, or a site.\nThis is the row the REST index, the docs, and contracts/api/routes.json\nare written from.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http\\Args",
+                "Minn\\Http\\Policy",
+                "Minn\\Http\\Route"
+            ],
+            "usedBy": [
+                "Minn\\Http\\Router",
+                "Minn\\Rest\\Catalogue"
+            ],
+            "constructor": {
+                "signature": "__construct(string $method, string $pattern, string $name, string $handler, string $summary, ?Minn\\Http\\Policy $policy, array $args, array $body, bool $index)",
+                "doc": "",
+                "shapes": [
+                    "@param array<string, array<string, mixed>> $args the query parameters the route reads",
+                    "@param array<string, array<string, mixed>> $body the JSON body parameters it reads"
+                ],
+                "params": [
+                    {
+                        "name": "method",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "pattern",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "name",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "handler",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "summary",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "policy",
+                        "type": "?Minn\\Http\\Policy",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "args",
+                        "type": "array",
+                        "shape": "array<string, array<string, mixed>>",
+                        "default": null,
+                        "doc": "the query parameters the route reads"
+                    },
+                    {
+                        "name": "body",
+                        "type": "array",
+                        "shape": "array<string, array<string, mixed>>",
+                        "default": null,
+                        "doc": "the JSON body parameters it reads"
+                    },
+                    {
+                        "name": "index",
+                        "type": "bool",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 22,
+                "end": 33
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "method",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "pattern",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "name",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "handler",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "summary",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "policy",
+                    "type": "?Minn\\Http\\Policy",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "args",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "body",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "index",
+                    "type": "bool",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "of",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "of(Minn\\Http\\Route $route, ReflectionMethod $method): self",
+                    "doc": "The row for one attribute on one handler method; the name defaults to the handler.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "route",
+                            "type": "Minn\\Http\\Route",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "method",
+                            "type": "ReflectionMethod",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 36,
+                    "end": 50
+                },
+                {
+                    "routes": [],
+                    "name": "toArray",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "toArray(): array",
+                    "doc": "The row as data, for the JSON catalogue. @return array<string, mixed>",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [],
+                    "line": 53,
+                    "end": 66
+                },
+                {
+                    "routes": [],
+                    "name": "summary",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "summary(string $doc): string",
+                    "doc": "The first sentence of a docblock, the way the API docs read it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "doc",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 69,
+                    "end": 75
+                }
+            ]
+        },
+        {
             "name": "Minn\\Http\\Router",
             "short": "Router",
             "namespace": "Minn\\Http",
             "kind": "final class",
             "file": "public/minn/src/Minn/Http/Router.php",
-            "lines": 131,
+            "lines": 132,
             "doc": "Matches a request to a #[Route] on one of the registered handler\nobjects, has the check refuse a bad argument, has the gate judge the\nroute's policy, and invokes the method with the request plus the named\npattern captures. That order is the reference's: an invalid parameter is\nanswered before the caller is looked at. The gate is the one\nthing a router cannot be built without: a policy nobody judges is a\nroute nobody may call.",
             "implements": [],
             "extends": null,
@@ -44590,6 +44867,7 @@
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
                 "Minn\\Http\\RouteMiss",
+                "Minn\\Http\\RouteRow",
                 "Minn\\RestError"
             ],
             "usedBy": [
@@ -44699,13 +44977,13 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "table(): array",
-                    "doc": "Every registered route with its policy, for the docs and the ratchet.",
+                    "doc": "Every registered route as a row: what it is, who it is for, what it\ntakes. The same rows Rest\\Catalogue reads from the classes alone.",
                     "shapes": [
-                        "@return list<array{method: string, pattern: string, policy: ?Policy, args: array<string, array<string, mixed>>, body: array<string, array<string, mixed>>, handler: string}>"
+                        "@return list<RouteRow>"
                     ],
                     "params": [],
-                    "line": 69,
-                    "end": 76
+                    "line": 70,
+                    "end": 77
                 },
                 {
                     "routes": [],
@@ -44726,8 +45004,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 87,
-                    "end": 104
+                    "line": 88,
+                    "end": 105
                 },
                 {
                     "routes": [],
@@ -44746,8 +45024,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 118,
-                    "end": 150
+                    "line": 119,
+                    "end": 151
                 },
                 {
                     "routes": [],
@@ -44782,8 +45060,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 107,
-                    "end": 115
+                    "line": 108,
+                    "end": 116
                 }
             ]
         },
@@ -55062,6 +55340,102 @@
             ]
         },
         {
+            "name": "Minn\\Rest\\Catalogue",
+            "short": "Catalogue",
+            "namespace": "Minn\\Rest",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Rest/Catalogue.php",
+            "lines": 70,
+            "doc": "The route table read from the classes alone: every #[Route] under\nsrc/Minn, as rows, with no request, database, or site behind it. This is\nwhat contracts/api/routes.json is written from, so an agent can read\nwhich routes exist, who may call them, and what they take, without\nbooting the engine. The per-request router builds the same rows for the\nhandlers it actually registered, which is what the live index serves.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http\\Route",
+                "Minn\\Http\\RouteRow"
+            ],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "scan",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "scan(string $sourceDir): array",
+                    "doc": "Every route declared by a class under the source directory, in file\norder, then declaration order.",
+                    "shapes": [
+                        "@return list<RouteRow>"
+                    ],
+                    "params": [
+                        {
+                            "name": "sourceDir",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 28,
+                    "end": 43
+                },
+                {
+                    "routes": [],
+                    "name": "document",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "document(array $rows, string $engineVersion): array",
+                    "doc": "The rows as the JSON catalogue: a version line and one entry per route.",
+                    "shapes": [
+                        "@param list<RouteRow> $rows",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "rows",
+                            "type": "array",
+                            "shape": "list<RouteRow>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "engineVersion",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 51,
+                    "end": 60
+                },
+                {
+                    "routes": [],
+                    "name": "classes",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "classes(string $sourceDir): array",
+                    "doc": "The fully qualified names of the classes under the directory, from\ntheir paths (PSR-4: Minn\\A\\B is A/B.php), sorted.",
+                    "shapes": [
+                        "@return list<class-string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "sourceDir",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 68,
+                    "end": 88
+                }
+            ]
+        },
+        {
             "name": "Minn\\Rest\\CommentObject",
             "short": "CommentObject",
             "namespace": "Minn\\Rest",
@@ -57250,7 +57624,6 @@
                 "Minn\\Content\\Site",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Http\\Access",
-                "Minn\\Http\\Args",
                 "Minn\\Http\\Method",
                 "Minn\\Http\\Policy",
                 "Minn\\Http\\Request",
@@ -57309,8 +57682,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 28,
-                "end": 35
+                "line": 27,
+                "end": 34
             },
             "cases": [],
             "constants": [],
@@ -57381,8 +57754,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 39,
-                    "end": 60
+                    "line": 38,
+                    "end": 59
                 },
                 {
                     "routes": [
@@ -57410,8 +57783,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 69,
-                    "end": 81
+                    "line": 68,
+                    "end": 80
                 },
                 {
                     "routes": [],
@@ -57424,8 +57797,8 @@
                         "@return array{namespaces: list<string>, routes: array<string, array<string, mixed>>}"
                     ],
                     "params": [],
-                    "line": 91,
-                    "end": 120
+                    "line": 90,
+                    "end": 119
                 }
             ]
         },

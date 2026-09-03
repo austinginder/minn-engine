@@ -53,9 +53,13 @@ before the gate, `Route::body`, per-resource `Args` sets, `Settings::SCHEMA`;
 `contracts/rest/arguments.md`) and the record half in the commit after it
 (`Http\Subject`, `Policy::subject`/`missing`, `Rest\Subjects`, `Access::Type`;
 `contracts/rest/caps.md` "The record before the caller"). Bare routes went from 84 to
-7 and the `allow` ratchet from 54 divergences to 15. Still open from B1: `Route::name`
-and `output`, the typed database-free table and the `Rest\Catalogue` that emits the
-index from it.
+7 and the `allow` ratchet from 54 divergences to 15. The table half followed in the
+third commit: `Route::name`, `Http\RouteRow`, `Router::table()` as typed rows,
+`Rest\Catalogue::scan()` reading every `#[Route]` from the classes with no site behind
+it, and `contracts/api/routes.json` from `tests/tools/route-catalogue.php`, kept current
+by the style suite. Still open from B1: `Route::output`, which waits on captured item
+schemas (no shape carries one yet), and the live index being served from the catalogue
+rows rather than the router's own table.
 
 These are not structure. They are things the contracts say happen and the
 code does not do, and they go first.

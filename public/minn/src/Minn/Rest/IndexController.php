@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
-use Minn\Http\Args;
 use Minn\Http\Access;
 use Minn\Auth\Authenticator;
 use Minn\Content\Site;
@@ -95,8 +94,8 @@ final readonly class IndexController
         $namespaces = [];
         $arguments = [];
         foreach ($this->router->table() as $row) {
-            foreach (EngineRoutes::forms($row['pattern'], $bases) as $form) {
-                $arguments[$form] = array_merge($arguments[$form] ?? [], array_map(static fn (array $arg): array => array_diff_key($arg, [Args::HANDLER_VALIDATES => true]), $row['args']));
+            foreach (EngineRoutes::forms($row->pattern, $bases) as $form) {
+                $arguments[$form] = array_merge($arguments[$form] ?? [], $row->toArray()['args']);
             }
         }
         foreach ($this->router->routes() as $pattern => $methods) {

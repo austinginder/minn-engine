@@ -16,13 +16,13 @@ The engine's own classes under `public/minn/src/Minn/`, one page per namespace, 
 | [`Minn\Extension`](extension.md) | 8 | the extension contract and its seams |
 | [`Minn\Front`](front.md) | 24 | URL resolution, permalinks, feeds, sitemaps and the public page |
 | [`Minn\Html`](html.md) | 4 | the HTML tag processor |
-| [`Minn\Http`](http.md) | 17 | request, response, routing, and the outgoing client |
+| [`Minn\Http`](http.md) | 18 | request, response, routing, and the outgoing client |
 | [`Minn\Login`](login.md) | 3 | /wp-login.php and the sign-in surface |
 | [`Minn\Mail`](mail.md) | 6 | sending mail and the notices the engine sends |
 | [`Minn\Media`](media.md) | 9 | uploads, image sizes and attachment metadata |
 | [`Minn\Ops`](ops.md) | 6 |  |
 | [`Minn\Query`](query.md) | 4 | shared SQL fragments |
-| [`Minn\Rest`](rest.md) | 57 | the wp/v2 surface: shapes and controllers |
+| [`Minn\Rest`](rest.md) | 58 | the wp/v2 surface: shapes and controllers |
 | [`Minn\Runtime`](runtime.md) | 51 | the WordPress runtime plugins load against |
 | [`Minn\Support`](support.md) | 19 | escaping, serialized readers, small helpers |
 | [`Minn\Theme`](theme.md) | 24 | the block-theme reader, templates, global styles and the page renderer |

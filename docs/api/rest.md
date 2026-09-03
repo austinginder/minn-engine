@@ -12,6 +12,7 @@ the wp/v2 surface: shapes and controllers
 | [`BatchRequest`](#batchrequest) | final class | 32 | The requests a batch payload names, normalised into descriptors the |
 | [`BlocksController`](#blockscontroller) | final readonly class | 69 | wp/v2/blocks: synced patterns and reusable blocks, stored as wp_block |
 | [`Caller`](#caller) | final class | 95 | Who is making this REST call. Resolved once from the cookie and nonce; |
+| [`Catalogue`](#catalogue) | final class | 70 | The route table read from the classes alone: every #[Route] under |
 | [`CommentObject`](#commentobject) | final readonly class | 75 | The wp/v2 comment object; edit context adds the moderation-desk fields. |
 | [`CommentsController`](#commentscontroller) | final readonly class | 280 | wp/v2/comments: the status tabs with pagination headers, single, |
 | [`Context`](#context) | enum | 18 | The view a REST caller asked for. View is the public shape, edit adds the |
@@ -441,6 +442,34 @@ same rest_forbidden the reference uses. Returns the caller's id.
 Internals: `resolve()` (private, line 108)
 
 
+## Catalogue
+
+`final class Minn\Rest\Catalogue` · `public/minn/src/Minn/Rest/Catalogue.php`
+
+The route table read from the classes alone: every #[Route] under
+src/Minn, as rows, with no request, database, or site behind it. This is
+what contracts/api/routes.json is written from, so an agent can read
+which routes exist, who may call them, and what they take, without
+booting the engine. The per-request router builds the same rows for the
+handlers it actually registered, which is what the live index serves.
+
+### static `scan(string $sourceDir): array`
+
+Every route declared by a class under the source directory, in file
+order, then declaration order.
+
+- `@return list<RouteRow>`
+
+### static `document(array $rows, string $engineVersion): array`
+
+The rows as the JSON catalogue: a version line and one entry per route.
+
+- `@param list<RouteRow> $rows`
+- `@return array<string, mixed>`
+
+Internals: `classes()` (private, line 68)
+
+
 ## CommentObject
 
 `final readonly class Minn\Rest\CommentObject` · `public/minn/src/Minn/Rest/CommentObject.php`
@@ -822,7 +851,7 @@ namespace, its routes (the namespace root among them), and the link
 up to the root index. A namespace the engine does not serve is left
 to the runtime, whose plugins may own it.
 
-Internals: `catalogue()` (private, line 91)
+Internals: `catalogue()` (private, line 90)
 
 
 ## Links

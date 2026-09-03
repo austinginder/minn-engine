@@ -156,6 +156,12 @@ $check('facade: the ratchet lists only functions that are still long', true);
 $mapping = json_decode((string) shell_exec('php ' . escapeshellarg(dirname(__DIR__) . '/tests/tools/facade-map.php') . ' --check 2>/dev/null'), true);
 $check('facade map: tests/tools/facade-map.php runs', is_array($mapping));
 $check('facade map: contracts/api/mappings.json is current', is_array($mapping) && ($mapping['stale'] ?? true) === false, 'run php tests/tools/facade-map.php');
+
+// The route catalogue: every #[Route] as a row, read from the classes alone, is the
+// document an agent reads before it reads PHP. Regenerate with `php tests/tools/route-catalogue.php`.
+$catalogue = json_decode((string) shell_exec('php ' . escapeshellarg(dirname(__DIR__) . '/tests/tools/route-catalogue.php') . ' --check 2>/dev/null'), true);
+$check('route catalogue: tests/tools/route-catalogue.php runs', is_array($catalogue));
+$check('route catalogue: contracts/api/routes.json is current', is_array($catalogue) && ($catalogue['stale'] ?? true) === false, 'run php tests/tools/route-catalogue.php');
 $leafCeiling = 13;
 $check("facade map: leaf functions over fifteen lines stay at or under {$leafCeiling}", is_array($mapping) && ($mapping['leafLinesOver15'] ?? PHP_INT_MAX) <= $leafCeiling, (string) ($mapping['leafLinesOver15'] ?? '?'));
 

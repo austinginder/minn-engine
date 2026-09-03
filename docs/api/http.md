@@ -13,12 +13,13 @@ request, response, routing, and the outgoing client
 | [`Kernel`](#kernel) | final readonly class | 36 | The edge. Turns a request into a response through the router and turns |
 | [`Method`](#method) | enum | 33 |  |
 | [`Outbound`](#outbound) | final readonly class | 47 | One outgoing HTTP request, normalised: the client below needs nothing else. |
-| [`Policy`](#policy) | final readonly class | 76 | What a route requires of its caller, as data on the route: the router |
+| [`Policy`](#policy) | final readonly class | 103 | What a route requires of its caller, as data on the route: the router |
 | [`Request`](#request) | final readonly class | 128 | An immutable picture of the incoming request. Built once from the PHP |
 | [`Response`](#response) | final readonly class | 101 | What a handler returns. Nothing is written to the client until the |
-| [`Route`](#route) | final readonly class | 61 | Declares a handler method as a route. The policy lives here, as |
+| [`Route`](#route) | final readonly class | 63 | Declares a handler method as a route. The policy lives here, as |
 | [`RouteMiss`](#routemiss) | final class | 3 | A handler declining a request its pattern matched: the router swallows |
-| [`Router`](#router) | final class | 131 | Matches a request to a #[Route] on one of the registered handler |
+| [`RouteRow`](#routerow) | final readonly class | 61 | One line of the route table: what a route is, who it is for, and what it |
+| [`Router`](#router) | final class | 132 | Matches a request to a #[Route] on one of the registered handler |
 | [`Subject`](#subject) | enum | 46 | The record a route capture names, so a policy can have it looked up |
 | [`TrustedProxies`](#trustedproxies) | final readonly class | 104 | Which addresses in front of the engine may speak for the client. |
 
@@ -73,7 +74,7 @@ string here; the reference's enum is the site's installed languages, which is no
 - const `APPLICATION_PASSWORD` = `array (   'app_id' =>    array (     'description' => 'A UUID provided by the application to uniquely identify it. It is recommended to use an UUID v5 with the URL or DNS namespace.',     'type' => 'string',     'oneOf' =>      array (       0 =>        array (         'type' => 'string',         'format' => 'uuid',       ),       1 =>        array (         'type' => 'string',         'enum' =>          array (           0 => '',         ),       ),     ),     'required' => false,   ),   'name' =>    array (     'description' => 'The name of the application password.',     'type' => 'string',     'minLength' => 1,     'pattern' => '.*\\S.*',     'required' => true,   ), )` — Read by Rest\ApplicationPasswordsController::create(): the body of a new application password.
 - const `SEARCH` = `array (   'context' =>    array (     'description' => 'Scope under which the request is made; determines fields present in response.',     'type' => 'string',     'enum' =>      array (       0 => 'view',       1 => 'embed',     ),     'default' => 'view',     'required' => false,   ),   'page' =>    array (     'description' => 'Current page of the collection.',     'type' => 'integer',     'default' => 1,     'minimum' => 1,     'required' => false,   ),   'per_page' =>    array (     'description' => 'Maximum number of items to be returned in result set.',     'type' => 'integer',     'default' => 10,     'minimum' => 1,     'maximum' => 100,     'required' => false,   ),   'search' =>    array (     'description' => 'Limit results to those matching a string.',     'type' => 'string',     'required' => false,   ),   'type' =>    array (     'default' => 'post',     'description' => 'Limit results to items of an object type.',     'type' => 'string',     'enum' =>      array (       0 => 'post',       1 => 'term',       2 => 'post-format',     ),     'required' => false,   ),   'subtype' =>    array (     'default' => 'any',     'description' => 'Limit results to items of one or more object subtypes.',     'type' => 'array',     'items' =>      array (       'enum' =>        array (         0 => 'post',         1 => 'page',         2 => 'category',         3 => 'post_tag',         4 => 'any',       ),       'type' => 'string',     ),     'required' => false,   ), )` — Read by Rest\SearchController::list(): the search collection, whose context has no edit view.
 
-Used by: `Minn\Http\Route`, `Minn\Rest\AbilitiesController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\ArgCheck`, `Minn\Rest\CommentsController`, `Minn\Rest\IndexController`, `Minn\Rest\MediaController`, `Minn\Rest\PostsController`, `Minn\Rest\SearchController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TermsController`, `Minn\Rest\TypesController`, `Minn\Rest\UsersController`
+Used by: `Minn\Http\Route`, `Minn\Http\RouteRow`, `Minn\Rest\AbilitiesController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\ArgCheck`, `Minn\Rest\CommentsController`, `Minn\Rest\MediaController`, `Minn\Rest\PostsController`, `Minn\Rest\SearchController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TermsController`, `Minn\Rest\TypesController`, `Minn\Rest\UsersController`
 
 ### static `merge(array $sets): array`
 
@@ -334,7 +335,7 @@ Written inline in the attribute with `new`, which is what an attribute
 argument allows: `policy: new Policy(Access::Cap, 'upload_files',
 refuse: 'rest_cannot_create', message: '...')`.
 
-Used by: `Minn\Admin\AppController`, `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Engine`, `Minn\Front\AssetsController`, `Minn\Front\CommentPostController`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\ProbeController`, `Minn\Front\SitemapController`, `Minn\Http\Route`, `Minn\Http\Router`, `Minn\Login\LoginController`, `Minn\Rest\AbilitiesController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentsController`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\NavigationController`, `Minn\Rest\PluginsController`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\TypesController`, `Minn\Rest\UsersController`
+Used by: `Minn\Admin\AppController`, `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Engine`, `Minn\Front\AssetsController`, `Minn\Front\CommentPostController`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\ProbeController`, `Minn\Front\SitemapController`, `Minn\Http\Route`, `Minn\Http\RouteRow`, `Minn\Http\Router`, `Minn\Login\LoginController`, `Minn\Rest\AbilitiesController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentsController`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\NavigationController`, `Minn\Rest\PluginsController`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\TypesController`, `Minn\Rest\UsersController`
 
 ```php
 __construct(Minn\Http\Access $access = Minn\Http\Access::Public, ?string $cap = NULL, array $caps = array ( ), ?string $param = NULL, string $signIn = 'rest_not_logged_in', string $signInMessage = 'You are not currently logged in.', string $refuse = 'rest_forbidden', string $message = 'Sorry, you are not allowed to do that.', ?Minn\Http\Policy $edit = NULL, ?Minn\Http\Subject $subject = NULL, ?string $missing = NULL, ?string $missingMessage = NULL)
@@ -372,6 +373,12 @@ Every capability the policy asks for by name, the one on the object
 included, so a listing can show what a route takes.
 
 - `@return list<string>`
+
+### `toArray(): array`
+
+The policy as data, for the route catalogue. @return array<string, mixed>
+
+- `@return array<string, mixed>`
 
 ### `describe(): string`
 
@@ -532,10 +539,10 @@ tell a client what a route takes as well as what it requires of them.
 Patterns: "/wp/v2/posts/{id}" captures one segment, "{id:\d+}" constrains
 it, and "/{path*}" captures the rest of the path (slashes included).
 
-Used by: `Minn\Admin\AppController`, `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Front\AssetsController`, `Minn\Front\CommentPostController`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\ProbeController`, `Minn\Front\SitemapController`, `Minn\Http\Router`, `Minn\Login\LoginController`, `Minn\Rest\AbilitiesController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\ArgCheck`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentsController`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\NavigationController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\TypesController`, `Minn\Rest\UsersController`
+Used by: `Minn\Admin\AppController`, `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Front\AssetsController`, `Minn\Front\CommentPostController`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\ProbeController`, `Minn\Front\SitemapController`, `Minn\Http\RouteRow`, `Minn\Http\Router`, `Minn\Login\LoginController`, `Minn\Rest\AbilitiesController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\ArgCheck`, `Minn\Rest\BlocksController`, `Minn\Rest\Catalogue`, `Minn\Rest\CommentsController`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\NavigationController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\TypesController`, `Minn\Rest\UsersController`
 
 ```php
-__construct(Minn\Http\Method $method, string $pattern, ?Minn\Http\Policy $policy = NULL, array $args = array ( ), bool $index = true, array $body = array ( ))
+__construct(Minn\Http\Method $method, string $pattern, ?Minn\Http\Policy $policy = NULL, array $args = array ( ), bool $index = true, array $body = array ( ), ?string $name = NULL)
 ```
 - `@param list<array<string, array<string, mixed>>> $args the parameter sets this route reads, from Args`
 - `@param list<array<string, array<string, mixed>>> $body the parameter sets this route reads from the JSON body, from Args or the shape that owns them`
@@ -546,6 +553,7 @@ __construct(Minn\Http\Method $method, string $pattern, ?Minn\Http\Policy $policy
 - readonly `array $args`
 - readonly `bool $index`
 - readonly `array $body`
+- readonly `?string $name`
 
 ### `arguments(): array`
 
@@ -574,6 +582,47 @@ path it does not own to whatever registers after it (a plugin's route
 under the same namespace, say) instead of answering "no route" itself.
 
 Used by: `Minn\Http\Router`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\IndexController`, `Minn\Rest\PolicyGate`
+
+
+## RouteRow
+
+`final readonly class Minn\Http\RouteRow` · `public/minn/src/Minn/Http/RouteRow.php`
+
+One line of the route table: what a route is, who it is for, and what it
+takes, read from the attribute and the handler method alone, so the table
+can be built from the classes without a request, a database, or a site.
+This is the row the REST index, the docs, and contracts/api/routes.json
+are written from.
+
+Used by: `Minn\Http\Router`, `Minn\Rest\Catalogue`
+
+```php
+__construct(string $method, string $pattern, string $name, string $handler, string $summary, ?Minn\Http\Policy $policy, array $args, array $body, bool $index)
+```
+- `@param array<string, array<string, mixed>> $args the query parameters the route reads`
+- `@param array<string, array<string, mixed>> $body the JSON body parameters it reads`
+
+- readonly `string $method`
+- readonly `string $pattern`
+- readonly `string $name`
+- readonly `string $handler`
+- readonly `string $summary`
+- readonly `?Minn\Http\Policy $policy`
+- readonly `array $args`
+- readonly `array $body`
+- readonly `bool $index`
+
+### static `of(Minn\Http\Route $route, ReflectionMethod $method): self`
+
+The row for one attribute on one handler method; the name defaults to the handler.
+
+### `toArray(): array`
+
+The row as data, for the JSON catalogue. @return array<string, mixed>
+
+- `@return array<string, mixed>`
+
+Internals: `summary()` (private, line 69)
 
 
 ## Router
@@ -609,9 +658,10 @@ The routes that list in an index: pattern => methods. @return array<string, list
 
 ### `table(): array`
 
-Every registered route with its policy, for the docs and the ratchet.
+Every registered route as a row: what it is, who it is for, what it
+takes. The same rows Rest\Catalogue reads from the classes alone.
 
-- `@return list<array{method: string, pattern: string, policy: ?Policy, args: array<string, array<string, mixed>>, body: array<string, array<string, mixed>>, handler: string}>`
+- `@return list<RouteRow>`
 
 ### `allowed(Minn\Http\Request $request): array`
 
@@ -627,7 +677,7 @@ is allowed, and the header is then left out, as the reference does.
 
 Null when nothing matched, so the caller can fall through.
 
-Internals: `admits()` (private, line 107)
+Internals: `admits()` (private, line 108)
 
 
 ## Subject

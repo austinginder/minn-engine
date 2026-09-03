@@ -62,15 +62,16 @@ final class Router
     }
 
     /**
-     * Every registered route with its policy, for the docs and the ratchet.
+     * Every registered route as a row: what it is, who it is for, what it
+     * takes. The same rows Rest\Catalogue reads from the classes alone.
      *
-     * @return list<array{method: string, pattern: string, policy: ?Policy, args: array<string, array<string, mixed>>, body: array<string, array<string, mixed>>, handler: string}>
+     * @return list<RouteRow>
      */
     public function table(): array
     {
         $rows = [];
-        foreach ($this->routes as ['route' => $route, 'handler' => $handler, 'method' => $method]) {
-            $rows[] = ['method' => $route->method->value, 'pattern' => $route->pattern, 'policy' => $route->policy, 'args' => $route->arguments(), 'body' => $route->bodyArguments(), 'handler' => $handler::class . '::' . $method->getName()];
+        foreach ($this->routes as ['route' => $route, 'method' => $method]) {
+            $rows[] = RouteRow::of($route, $method);
         }
         return $rows;
     }

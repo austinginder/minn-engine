@@ -117,7 +117,7 @@ return [
     'the table lists every route with its policy' => static function () use ($build): bool|string {
         $judged = [];
         [$router] = $build($judged);
-        $rows = array_map(static fn (array $r): string => $r['pattern'] . ' ' . ($r['policy']?->describe() ?? '-'), $router->table());
+        $rows = array_map(static fn (\Minn\Http\RouteRow $r): string => $r->pattern . ' ' . ($r->policy?->describe() ?? '-'), $router->table());
         return $rows === ['/open -', '/public public', '/gated/{id:\d+} cap edit_post on {id}', '/{name} signed in', '/{name} -'] ? true : json_encode($rows);
     },
     'a policy names its capabilities and its context' => static function (): bool|string {

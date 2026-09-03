@@ -77,6 +77,33 @@ final readonly class Policy
         return [...$all, ...$this->caps];
     }
 
+    /** The policy as data, for the route catalogue. @return array<string, mixed> */
+    public function toArray(): array
+    {
+        $row = ['access' => $this->access->name, 'describe' => $this->describe()];
+        if ($this->cap !== null) {
+            $row['cap'] = $this->cap;
+        }
+        if ($this->caps !== []) {
+            $row['caps'] = $this->caps;
+        }
+        if ($this->param !== null) {
+            $row['param'] = $this->param;
+        }
+        if ($this->subject !== null) {
+            $row['subject'] = $this->subject->name;
+            $row['missing'] = ['code' => $this->missingCode(), 'message' => $this->missingText()];
+        }
+        if ($this->access !== Access::Public && $this->access !== Access::Type) {
+            $row['signIn'] = ['code' => $this->signIn, 'message' => $this->signInMessage];
+            $row['refuse'] = ['code' => $this->refuse, 'message' => $this->message];
+        }
+        if ($this->edit !== null) {
+            $row['edit'] = $this->edit->toArray();
+        }
+        return $row;
+    }
+
     /** The policy in one line, for the route index and the docs. */
     public function describe(): string
     {

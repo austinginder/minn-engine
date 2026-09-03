@@ -25,6 +25,7 @@ final readonly class Route
      * @param list<array<string, array<string, mixed>>> $args the parameter sets this route reads, from Args
      * @param bool $index whether the route is listed in the REST index (a route the index spells itself is not)
      * @param list<array<string, array<string, mixed>>> $body the parameter sets this route reads from the JSON body, from Args or the shape that owns them
+     * @param string|null $name the route's name in the catalogue; the handler's Class::method when null
      */
     public function __construct(
         public Method $method,
@@ -33,6 +34,7 @@ final readonly class Route
         public array $args = [],
         public bool $index = true,
         public array $body = [],
+        public ?string $name = null,
     ) {
     }
 
