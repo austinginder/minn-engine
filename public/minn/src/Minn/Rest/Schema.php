@@ -279,7 +279,9 @@ final readonly class Schema
             return new Refusal('rest_not_in_enum', sprintf('%1$s is not %2$s.', $param, $encoded[0]));
         }
         $last = array_pop($encoded);
-        return new Refusal('rest_not_in_enum', sprintf('%1$s is not one of %2$s and %3$s.', $param, implode(', ', $encoded), $last));
+        // Two options read "a and b"; three or more take the serial comma, "a, b, and c".
+        $joined = implode(', ', $encoded) . (count($encoded) > 1 ? ',' : '');
+        return new Refusal('rest_not_in_enum', sprintf('%1$s is not one of %2$s and %3$s.', $param, $joined, $last));
     }
 
     private function wrongType(string $param, string $type): Refusal

@@ -11,8 +11,10 @@ use Minn\RestError;
 
 /**
  * Matches a request to a #[Route] on one of the registered handler
- * objects, has the gate judge the route's policy, and invokes the method
- * with the request plus the named pattern captures. The gate is the one
+ * objects, has the check refuse a bad argument, has the gate judge the
+ * route's policy, and invokes the method with the request plus the named
+ * pattern captures. That order is the reference's: an invalid parameter is
+ * answered before the caller is looked at. The gate is the one
  * thing a router cannot be built without: a policy nobody judges is a
  * route nobody may call.
  */
@@ -21,8 +23,11 @@ final class Router
     /** @var list<array{route: Route, handler: object, method: ReflectionMethod}> */
     private array $routes = [];
 
-    /** @param Closure(Policy $policy, Request $request, array<string, string> $captures): void $gate throws when the policy refuses the caller */
-    public function __construct(private readonly Closure $gate)
+    /**
+     * @param Closure(Policy $policy, Request $request, array<string, string> $captures): void $gate throws when the policy refuses the caller
+     * @param Closure(Route $route, Request $request): void|null $check throws when a declared argument is missing or invalid; judged before the gate
+     */
+    public function __construct(private readonly Closure $gate, private readonly ?Closure $check = null)
     {
     }
 
@@ -59,13 +64,13 @@ final class Router
     /**
      * Every registered route with its policy, for the docs and the ratchet.
      *
-     * @return list<array{method: string, pattern: string, policy: ?Policy, args: array<string, array<string, mixed>>, handler: string}>
+     * @return list<array{method: string, pattern: string, policy: ?Policy, args: array<string, array<string, mixed>>, body: array<string, array<string, mixed>>, handler: string}>
      */
     public function table(): array
     {
         $rows = [];
         foreach ($this->routes as ['route' => $route, 'handler' => $handler, 'method' => $method]) {
-            $rows[] = ['method' => $route->method->value, 'pattern' => $route->pattern, 'policy' => $route->policy, 'args' => $route->arguments(), 'handler' => $handler::class . '::' . $method->getName()];
+            $rows[] = ['method' => $route->method->value, 'pattern' => $route->pattern, 'policy' => $route->policy, 'args' => $route->arguments(), 'body' => $route->bodyArguments(), 'handler' => $handler::class . '::' . $method->getName()];
         }
         return $rows;
     }
@@ -120,6 +125,9 @@ final class Router
                 continue;
             }
             $captures = array_filter($captures, is_string(...), ARRAY_FILTER_USE_KEY);
+            if ($this->check !== null) {
+                ($this->check)($route, $request);
+            }
             if ($route->policy !== null && !$route->policy->isPublic()) {
                 ($this->gate)($route->policy, $request, $captures);
             }

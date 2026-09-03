@@ -58,14 +58,14 @@ final class RouterPolicyProbe
 }
 
 $request = static fn (string $path): Request => new Request(Method::Get, $path, [], [], [], '', false, 'unit.test', []);
-$build = static function (array &$judged, bool $refuse = false): array {
+$build = static function (array &$judged, bool $refuse = false, ?\Closure $check = null): array {
     $probe = new RouterPolicyProbe();
     $router = new Router(static function (Policy $policy, Request $request, array $captures) use (&$judged, $refuse): void {
         $judged[] = [$policy->describe(), $captures];
         if ($refuse) {
             throw new \Minn\RestError($policy->refuse, $policy->message, 403);
         }
-    });
+    }, $check);
     $router->register($probe);
     return [$router, $probe];
 };
@@ -92,6 +92,20 @@ return [
             return 'no refusal';
         } catch (\Minn\RestError $e) {
             return $e->getMessage() === 'no' && $probe->calls === [] ? true : json_encode([$e->getMessage(), $probe->calls]);
+        }
+    },
+    'the check sees the route before the gate does, and its refusal keeps both from running' => static function () use ($build, $request): bool|string {
+        $judged = [];
+        $seen = [];
+        [$router, $probe] = $build($judged, false, static function (Route $route, Request $request) use (&$seen): void {
+            $seen[] = $route->pattern;
+            throw new \Minn\RestError('rest_invalid_param', 'Invalid parameter(s): id', 400);
+        });
+        try {
+            $router->dispatch($request('/gated/7'));
+            return 'no refusal';
+        } catch (\Minn\RestError $e) {
+            return $e->status === 400 && $seen === ['/gated/{id:\d+}'] && $judged === [] && $probe->calls === [] ? true : json_encode([$e->status, $seen, $judged, $probe->calls]);
         }
     },
     'a handler that declines leaves the request to the next route' => static function () use ($build, $request): bool|string {

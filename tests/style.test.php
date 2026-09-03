@@ -164,7 +164,7 @@ $check("facade map: leaf functions over fifteen lines stay at or under {$leafCei
 // attribute, judged by the router before the handler runs. Routes that still
 // decide inside their body are counted here, and the count only falls: lower
 // it when a controller loses its last bare route, never raise it.
-$bareRouteCeiling = 84;
+$bareRouteCeiling = 82;
 $bareRoutes = 0;
 $routesTotal = 0;
 foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root, FilesystemIterator::SKIP_DOTS)) as $file) {

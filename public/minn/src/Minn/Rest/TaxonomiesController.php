@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Http\Args;
+use Minn\Http\Access;
 use Minn\Http\Method;
+use Minn\Http\Policy;
 use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
@@ -18,7 +21,7 @@ final readonly class TaxonomiesController
     }
 
     /** A whole-payload reply like types: _fields filters the map, not its members. */
-    #[Route(Method::Get, '/wp/v2/taxonomies')]
+    #[Route(Method::Get, '/wp/v2/taxonomies', policy: new Policy(Access::Public), args: [Args::CONTEXT])]
     public function list(Request $request): Response
     {
         $edit = $this->context($request);
@@ -34,7 +37,7 @@ final readonly class TaxonomiesController
     }
 
     /** One taxonomy. */
-    #[Route(Method::Get, '/wp/v2/taxonomies/{slug:[\w-]+}')]
+    #[Route(Method::Get, '/wp/v2/taxonomies/{slug:[\w-]+}', policy: new Policy(Access::Public), args: [Args::CONTEXT])]
     public function single(Request $request, string $slug): Response
     {
         $taxonomy = $this->taxonomies->find($slug);

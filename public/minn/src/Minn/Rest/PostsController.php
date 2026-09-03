@@ -38,7 +38,8 @@ final readonly class PostsController
     }
 
     /** The posts or pages list. */
-    #[Route(Method::Get, '/wp/v2/{base:posts|pages}', args: [Args::CONTEXT, Args::FIELDS, Args::EMBED, Args::LISTING, Args::TERMS, Args::STATUS])]
+    #[Route(Method::Get, '/wp/v2/{base:posts}', args: [Args::CONTEXT, Args::POSTS])]
+    #[Route(Method::Get, '/wp/v2/{base:pages}', args: [Args::CONTEXT, Args::PAGES])]
     public function list(Request $request, string $base): Response
     {
         return $this->serveList($request, $base === 'pages' ? 'page' : 'post');
@@ -109,6 +110,13 @@ final readonly class PostsController
             $inner = ['code' => 'rest_forbidden_status', 'message' => 'Status is forbidden.', 'data' => ['status' => $this->caller->id() > 0 ? 403 : 401]];
             throw new RestError('rest_invalid_param', 'Invalid parameter(s): status', 400, ['params' => ['status' => 'Status is forbidden.'], 'details' => ['status' => $inner]]);
         }
+        // The enum is judged after the capability, and the reference always names status[0].
+        $known = Args::POSTS['status']['items']['enum'];
+        if (array_diff($requested, $known) !== []) {
+            $options = implode(', ', array_slice($known, 0, -1)) . ', and ' . end($known);
+            $inner = ['code' => 'rest_not_in_enum', 'message' => "status[0] is not one of {$options}.", 'data' => null];
+            throw new RestError('rest_invalid_param', 'Invalid parameter(s): status', 400, ['params' => ['status' => $inner['message']], 'details' => ['status' => $inner]]);
+        }
         if (!$context->isEdit() && !$beyondPublic) {
             return $publicOnly;
         }
@@ -158,7 +166,7 @@ final readonly class PostsController
     }
 
     /** One post or page. */
-    #[Route(Method::Get, '/wp/v2/{base:posts|pages}/{id:\d+}', args: [Args::CONTEXT, Args::FIELDS, Args::EMBED])]
+    #[Route(Method::Get, '/wp/v2/{base:posts|pages}/{id:\d+}', args: [Args::CONTEXT])]
     public function single(Request $request, string $base, string $id): Response
     {
         return $this->serveSingle($request, $base === 'pages' ? 'page' : 'post', $id);

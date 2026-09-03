@@ -43,7 +43,7 @@ final readonly class UsersController
     }
 
     /** The signed-in user. */
-    #[Route(Method::Get, '/wp/v2/users/me', args: [Args::CONTEXT, Args::FIELDS, Args::EMBED])]
+    #[Route(Method::Get, '/wp/v2/users/me', args: [Args::CONTEXT])]
     public function me(Request $request): Response
     {
         $user = $this->caller->require()->user;
@@ -55,7 +55,7 @@ final readonly class UsersController
     }
 
     /** View context lists published authors; edit context lists everyone. */
-    #[Route(Method::Get, '/wp/v2/users', args: [Args::CONTEXT, Args::FIELDS, Args::EMBED, Args::LISTING])]
+    #[Route(Method::Get, '/wp/v2/users', args: [Args::CONTEXT, Args::USERS])]
     public function list(Request $request): Response
     {
         $self = $this->caller->id();
@@ -115,7 +115,7 @@ final readonly class UsersController
     }
 
     /** One user. */
-    #[Route(Method::Get, '/wp/v2/users/{id:\d+}', args: [Args::CONTEXT, Args::FIELDS, Args::EMBED])]
+    #[Route(Method::Get, '/wp/v2/users/{id:\d+}', args: [Args::CONTEXT])]
     public function single(Request $request, string $id): Response
     {
         $userId = (int) $id;
@@ -175,7 +175,7 @@ final readonly class UsersController
     }
 
     /** Engine-created users carry real scheme hashes and the full default meta set. */
-    #[Route(Method::Post, '/wp/v2/users')]
+    #[Route(Method::Post, '/wp/v2/users', body: [Args::USER_CREATE])]
     public function create(Request $request): Response
     {
         $refusal = 'Sorry, you are not allowed to create new users.';
@@ -221,9 +221,9 @@ final readonly class UsersController
     }
 
     /** Updates a user. */
-    #[Route(Method::Post, '/wp/v2/users/{id:\d+}')]
-    #[Route(Method::Put, '/wp/v2/users/{id:\d+}')]
-    #[Route(Method::Patch, '/wp/v2/users/{id:\d+}')]
+    #[Route(Method::Post, '/wp/v2/users/{id:\d+}', body: [Args::USER_EDIT])]
+    #[Route(Method::Put, '/wp/v2/users/{id:\d+}', body: [Args::USER_EDIT])]
+    #[Route(Method::Patch, '/wp/v2/users/{id:\d+}', body: [Args::USER_EDIT])]
     public function update(Request $request, string $id): Response
     {
         $userId = (int) $id;

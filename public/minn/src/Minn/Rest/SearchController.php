@@ -8,7 +8,10 @@ use Minn\Content\PostRecord;
 use Minn\Content\Texturize;
 use Minn\Db;
 use Minn\Front\Permalinks;
+use Minn\Http\Args;
+use Minn\Http\Access;
 use Minn\Http\Method;
+use Minn\Http\Policy;
 use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
@@ -34,15 +37,15 @@ final readonly class SearchController
     }
 
     /** Search across post types with the reference's relevance order. */
-    #[Route(Method::Get, '/wp/v2/search')]
+    #[Route(Method::Get, '/wp/v2/search', policy: new Policy(Access::Public), args: [Args::SEARCH])]
     public function list(Request $request): Response
     {
         $type = $request->query('type') ?? 'post';
         if ($type !== 'post') {
             throw new RestError('rest_invalid_param', 'Invalid parameter(s): type', 400, ['params' => ['type' => 'type is not one of post.']]);
         }
-        $perPage = self::intParam($request, 'per_page', 10, 1, self::MAX_PER_PAGE);
-        $page = self::intParam($request, 'page', 1, 1, PHP_INT_MAX);
+        $perPage = max(1, min(self::MAX_PER_PAGE, (int) ($request->query('per_page') ?: 10)));
+        $page = max(1, (int) ($request->query('page') ?: 1));
         $subtypes = $this->subtypes($request->query('subtype') ?? 'any');
         $terms = self::terms((string) ($request->query('search') ?? ''));
 
@@ -139,21 +142,5 @@ final readonly class SearchController
     private static function escapeLike(string $value): string
     {
         return addcslashes($value, '\\%_');
-    }
-
-    private static function intParam(Request $request, string $name, int $default, int $min, int $max): int
-    {
-        $raw = $request->query($name);
-        if ($raw === null || $raw === '') {
-            return $default;
-        }
-        if (!is_numeric($raw) || (float) $raw !== (float) (int) $raw) {
-            throw new RestError('rest_invalid_param', "Invalid parameter(s): {$name}", 400, ['params' => [$name => "{$name} is not of type integer."]]);
-        }
-        $value = (int) $raw;
-        if ($value < $min || $value > $max) {
-            throw new RestError('rest_invalid_param', "Invalid parameter(s): {$name}", 400, ['params' => [$name => "{$name} must be between {$min} (inclusive) and {$max} (inclusive)"]]);
-        }
-        return $value;
     }
 }

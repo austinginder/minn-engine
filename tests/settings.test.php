@@ -153,7 +153,24 @@ check( $rs === $es && null === $d, 'unregistered keys ignored identically', (str
 $d = minn_test_diff( $rb, $eb );
 check( $rs === $es && null === $d, 'editor write refused identically', (string) $d );
 
-// 6. Restore and confirm the fixture state.
+// 6. Invalid values are refused identically, before the caller is judged (nothing is stored).
+foreach ( array(
+	array( 'admin', '{"posts_per_page":"x"}' ),
+	array( 'admin', '{"default_ping_status":"maybe"}' ),
+	array( 'admin', '{"email":"nope"}' ),
+	array( 'admin', '{"use_smilies":"maybe"}' ),
+	array( 'admin', '{"posts_per_page":"x","default_ping_status":"maybe","title":["a"]}' ),
+	array( 'anonymous', '{"posts_per_page":"x"}' ),
+	array( 'admin', 'not json' ),
+) as list( $who, $body ) ) {
+	$mint = 'admin' === $who ? $admin : null;
+	[ $rs, $rb ] = st_fetch( $REF, $mint, 'POST', $body );
+	[ $es, $eb ] = st_fetch( $ENGINE, $mint, 'POST', $body );
+	$d = minn_test_diff( $rb, $eb );
+	check( 400 === $rs && $rs === $es && null === $d, "invalid body refused identically ($who $body)", "status $rs vs $es; " . (string) $d );
+}
+
+// 7. Restore and confirm the fixture state.
 st_cleanup();
 [ , $b ] = st_fetch( $ENGINE, $admin );
 check( 'Minn' === ( $b['title'] ?? '' ) && 10 === ( $b['posts_per_page'] ?? 0 ), 'fixture options restored' );

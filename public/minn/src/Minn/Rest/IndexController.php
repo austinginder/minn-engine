@@ -7,6 +7,7 @@ namespace Minn\Rest;
 use Minn\Auth\Authenticator;
 use Minn\Content\Site;
 use Minn\Front\Permalinks;
+use Minn\Http\Args;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
@@ -95,7 +96,7 @@ final readonly class IndexController
         $arguments = [];
         foreach ($this->router->table() as $row) {
             foreach (EngineRoutes::forms($row['pattern'], $bases) as $form) {
-                $arguments[$form] = array_merge($arguments[$form] ?? [], $row['args']);
+                $arguments[$form] = array_merge($arguments[$form] ?? [], array_map(static fn (array $arg): array => array_diff_key($arg, [Args::HANDLER_VALIDATES => true]), $row['args']));
             }
         }
         foreach ($this->router->routes() as $pattern => $methods) {

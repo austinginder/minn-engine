@@ -86,12 +86,12 @@ $divergent = [
     'anonymous GET /wp/v2/posts/10' => 'B1',     'anonymous GET /wp/v2/posts/999999' => 'B1s',     'anonymous GET /wp/v2/settings' => 'B1',
     'anonymous GET /wp/v2/templates' => 'B1',     'anonymous GET /wp/v2/posts/1/revisions' => 'B1',     'anonymous GET /wp/v2/posts/1/autosaves' => 'B1',
     'anonymous GET /wp/v2/menus' => 'B1',     'anonymous GET /wp/v2/menu-items' => 'B1',     'anonymous GET /wp/v2/plugins' => 'B1',
-    'anonymous GET /wp/v2/users/me/application-passwords' => 'B1',     'anonymous POST /wp/v2/users' => 'B1s',     'anonymous POST /wp/v2/comments' => 'B1',
+    'anonymous GET /wp/v2/users/me/application-passwords' => 'B1',     'anonymous POST /wp/v2/comments' => 'B1',
     'anonymous DELETE /wp/v2/posts/999999' => 'B1s',     'author GET /wp/v2/posts' => 'B1',     'author GET /wp/v2/posts/11' => 'B1',
     'author GET /wp/v2/posts/10' => 'B1',     'author GET /wp/v2/posts/999999' => 'B1s',     'author GET /wp/v2/users/me' => 'B1',
     'author GET /wp/v2/tags' => 'B1',     'author GET /wp/v2/media' => 'B1',     'author GET /wp/v2/settings' => 'B7',
     'author GET /wp/v2/blocks' => 'B1',     'author GET /wp/v2/posts/1/revisions' => 'B1',     'author GET /wp/v2/posts/1/autosaves' => 'B1',
-    'author GET /wp/v2/plugins' => 'B1',     'author GET /wp/v2/users/me/application-passwords' => 'B1',     'author POST /wp/v2/users' => 'B1s',
+    'author GET /wp/v2/plugins' => 'B1',     'author GET /wp/v2/users/me/application-passwords' => 'B1',
     'author DELETE /wp/v2/posts/999999' => 'B1s',     'author POST /wp/v2/posts' => 'B1',     'admin GET /wp/v2/posts' => 'B1',
     'admin GET /wp/v2/posts/1' => 'B1',     'admin GET /wp/v2/posts/11' => 'B1',     'admin GET /wp/v2/posts/10' => 'B1',
     'admin GET /wp/v2/posts/999999' => 'B1s',     'admin GET /wp/v2/pages' => 'B1',     'admin GET /wp/v2/pages/2' => 'B1',
@@ -102,7 +102,7 @@ $divergent = [
     'admin GET /wp/v2/users/me/application-passwords' => 'B1',     'admin GET /wp/v2/navigation' => 'B1',     'admin POST /wp/v2/users' => 'B1s',
     'admin POST /wp/v2/categories' => 'B1s',     'admin DELETE /wp/v2/posts/999999' => 'B1s',     'admin POST /wp/v2/posts' => 'B1',
 ];
-$ceiling = 54;
+$ceiling = 52;
 
 $reads = ['/', '/wp/v2', '/wp/v2/posts', '/wp/v2/posts/1', '/wp/v2/posts/11', '/wp/v2/posts/10', '/wp/v2/posts/999999', '/wp/v2/pages', '/wp/v2/pages/2',
     '/wp/v2/users', '/wp/v2/users/me', '/wp/v2/users/1', '/wp/v2/users/2', '/wp/v2/categories', '/wp/v2/categories/1', '/wp/v2/tags', '/wp/v2/comments',

@@ -36,7 +36,7 @@ final readonly class AbilitiesController
     }
 
     /** Every registered ability, narrowed to one category when asked. */
-    #[Route(Method::Get, '/wp-abilities/v1/abilities', policy: new Policy(Access::SignedIn, signIn: self::SIGNED_IN[0], signInMessage: self::SIGNED_IN[1]), args: [Args::CONTEXT, Args::FIELDS])]
+    #[Route(Method::Get, '/wp-abilities/v1/abilities', policy: new Policy(Access::SignedIn, signIn: self::SIGNED_IN[0], signInMessage: self::SIGNED_IN[1]), args: [Args::CONTEXT])]
     public function abilities(Request $request): Response
     {
         $this->boot();
@@ -77,7 +77,7 @@ final readonly class AbilitiesController
     }
 
     /** One ability by name. */
-    #[Route(Method::Get, '/wp-abilities/v1/abilities/{name:[a-zA-Z0-9\-\/]+}', policy: new Policy(Access::SignedIn, signIn: self::SIGNED_IN[0], signInMessage: self::SIGNED_IN[1]), args: [Args::CONTEXT, Args::FIELDS])]
+    #[Route(Method::Get, '/wp-abilities/v1/abilities/{name:[a-zA-Z0-9\-\/]+}', policy: new Policy(Access::SignedIn, signIn: self::SIGNED_IN[0], signInMessage: self::SIGNED_IN[1]), args: [Args::CONTEXT])]
     public function ability(Request $request, string $name): Response
     {
         $this->boot();
@@ -85,7 +85,7 @@ final readonly class AbilitiesController
     }
 
     /** Every ability category. */
-    #[Route(Method::Get, '/wp-abilities/v1/categories', policy: new Policy(Access::SignedIn, signIn: self::SIGNED_IN[0], signInMessage: self::SIGNED_IN[1]), args: [Args::CONTEXT, Args::FIELDS])]
+    #[Route(Method::Get, '/wp-abilities/v1/categories', policy: new Policy(Access::SignedIn, signIn: self::SIGNED_IN[0], signInMessage: self::SIGNED_IN[1]), args: [Args::CONTEXT])]
     public function categories(Request $request): Response
     {
         $this->boot();
@@ -93,7 +93,7 @@ final readonly class AbilitiesController
     }
 
     /** One category by slug. */
-    #[Route(Method::Get, '/wp-abilities/v1/categories/{slug:[a-z0-9]+(?:-[a-z0-9]+)*}', policy: new Policy(Access::SignedIn, signIn: self::SIGNED_IN[0], signInMessage: self::SIGNED_IN[1]), args: [Args::CONTEXT, Args::FIELDS])]
+    #[Route(Method::Get, '/wp-abilities/v1/categories/{slug:[a-z0-9]+(?:-[a-z0-9]+)*}', policy: new Policy(Access::SignedIn, signIn: self::SIGNED_IN[0], signInMessage: self::SIGNED_IN[1]), args: [Args::CONTEXT])]
     public function category_(Request $request, string $slug): Response
     {
         $this->boot();

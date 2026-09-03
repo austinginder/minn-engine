@@ -31,7 +31,7 @@ final readonly class TermsController
     }
 
     /** The categories or tags list. */
-    #[Route(Method::Get, '/wp/v2/{base:categories|tags|wp_pattern_category}', args: [Args::CONTEXT, Args::FIELDS, Args::EMBED, Args::LISTING])]
+    #[Route(Method::Get, '/wp/v2/{base:categories|tags|wp_pattern_category}', args: [Args::CONTEXT, Args::TERMS])]
     public function list(Request $request, string $base): Response
     {
         $config = TermObject::config($base);
@@ -95,7 +95,7 @@ final readonly class TermsController
     }
 
     /** One category or tag. */
-    #[Route(Method::Get, '/wp/v2/{base:categories|tags|wp_pattern_category}/{id:\d+}', args: [Args::CONTEXT, Args::FIELDS, Args::EMBED])]
+    #[Route(Method::Get, '/wp/v2/{base:categories|tags|wp_pattern_category}/{id:\d+}', args: [Args::CONTEXT])]
     public function single(Request $request, string $base, string $id): Response
     {
         $config = TermObject::config($base);

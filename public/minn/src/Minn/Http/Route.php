@@ -11,8 +11,9 @@ use Attribute;
  * metadata the router enforces before the handler runs, so the
  * authorization surface of the engine is a grep away; a route with no
  * policy is one the ratchet in the style suite counts down. The parameter
- * sets it reads live here too, so the REST index can tell a client what a
- * route takes as well as what it requires of them.
+ * sets it reads live here too, judged before the policy is (the reference
+ * refuses a bad argument before it refuses a caller), so the REST index can
+ * tell a client what a route takes as well as what it requires of them.
  *
  * Patterns: "/wp/v2/posts/{id}" captures one segment, "{id:\d+}" constrains
  * it, and "/{path*}" captures the rest of the path (slashes included).
@@ -23,6 +24,7 @@ final readonly class Route
     /**
      * @param list<array<string, array<string, mixed>>> $args the parameter sets this route reads, from Args
      * @param bool $index whether the route is listed in the REST index (a route the index spells itself is not)
+     * @param list<array<string, array<string, mixed>>> $body the parameter sets this route reads from the JSON body, from Args or the shape that owns them
      */
     public function __construct(
         public Method $method,
@@ -30,6 +32,7 @@ final readonly class Route
         public ?Policy $policy = null,
         public array $args = [],
         public bool $index = true,
+        public array $body = [],
     ) {
     }
 
@@ -41,6 +44,16 @@ final readonly class Route
     public function arguments(): array
     {
         return Args::merge($this->args);
+    }
+
+    /**
+     * The parameters this route reads from the JSON body, validated before the caller is judged.
+     *
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyArguments(): array
+    {
+        return Args::merge($this->body);
     }
 
     /** The pattern as a regular expression with named captures. */

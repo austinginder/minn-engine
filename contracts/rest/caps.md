@@ -136,19 +136,24 @@ route's policy after its pattern.
 ## What a route takes (2026-09-02)
 
 A route also declares the parameters it reads, `args: [Args::CONTEXT,
-Args::FIELDS, Args::LISTING, ...]`, and the REST index publishes them per
-endpoint. The descriptions, types, defaults and enums in `Minn\Http\Args`
-were captured from the reference, so a client reading either index is told
-the same thing.
+Args::POSTS]` for the query and `body: [Settings::SCHEMA]` for the JSON
+body, and the REST index publishes them per endpoint. The descriptions,
+types, defaults and enums in `Minn\Http\Args` were captured from the
+reference, so a client reading either index is told the same thing, and
+since the same day the router enforces them: a declared argument that does
+not validate is refused before the policy is judged, in the reference's
+order and shape. `contracts/rest/arguments.md` is that contract.
 
 The rule is that a route declares only what its handler really reads, and
 each set in `Args` names the code that consumes it (`Rest\Context::of`,
-`Rest\Fields::fromQuery`, `Rest\ListQuery::fromRequest`, and the rest). An
-argument published for a route that ignores it would be worse than none,
-because a client would build a request around it. The core collections
-(posts and pages, media, users, comments, categories and tags, plus their
-single-item routes) declare theirs; the remaining routes publish an empty
-argument map, which is what every route did before.
+`Rest\ListQuery::fromRequest`, and the rest). An argument published for a
+route that ignores it would be worse than none, because a client would
+build a request around it. Each collection has its own set (`POSTS`,
+`PAGES`, `MEDIA`, `USERS`, `TERMS`, `COMMENTS`, `SEARCH`) because the
+reference's `orderby` enums and defaults differ per resource; the
+remaining routes publish an empty argument map, which is what every route
+did before. `_fields` and `_embed` are declared nowhere, as the reference
+lists neither.
 
 The index is not diffed against the reference (`probes` compares the site
 keys, the namespaces, and that `/wp/v2/posts` is described), so a route

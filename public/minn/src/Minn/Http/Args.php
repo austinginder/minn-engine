@@ -6,183 +6,186 @@ namespace Minn\Http;
 
 /**
  * The parameters a route accepts, as the reference describes them in the
- * REST index: name => {description, type, ...}. The descriptions and the
- * enums were captured from the reference, so a client that reads either
- * index is told the same thing.
+ * REST index: name => {description, type, ...}. The descriptions, types,
+ * enums and bounds were captured from the reference, so a client that
+ * reads either index is told the same thing, and the router refuses a
+ * value the way the reference refuses it, before it judges the caller.
  *
  * A route declares only what it really reads. An argument published here
  * that the handler ignores would be worse than none at all, because a
  * client reading the index would build a request around it, so each set
- * below names the code that consumes it.
+ * below names the code that consumes it. The sets keep the reference's
+ * order, because a refusal lists the invalid parameters in that order.
+ * `_fields` and `_embed` are read everywhere and declared nowhere, as the
+ * reference lists neither and validates neither.
  */
 final class Args
 {
+    /**
+     * The shared collection parameters, judged first: the reference answers
+     * a refusal among these alone, and reads the route's own parameters
+     * only once these pass.
+     */
+    public const SHARED = ['context', 'page', 'per_page', 'search'];
+
+    /** The key an argument carries when its handler judges it (a status the caller may not read is refused before the enum is). */
+    public const HANDLER_VALIDATES = 'handler_validates';
+
     /** Read by Rest\Context::of(): which view of a resource is wanted. */
     public const CONTEXT = [
-        'context' => [
-            'description' => 'Scope under which the request is made; determines fields present in response.',
-            'type' => 'string',
-            'enum' => ['view', 'embed', 'edit'],
-            'default' => 'view',
-            'required' => false,
-        ],
-    ];
-
-    /** Read by Rest\Fields::fromQuery(): the subset of fields to return. */
-    public const FIELDS = [
-        '_fields' => [
-            'description' => 'Limit response to specific fields.',
-            'type' => 'array',
-            'items' => ['type' => 'string'],
-            'required' => false,
-        ],
-    ];
-
-    /** Read by Rest\Embed: whether linked resources are embedded in the response. */
-    public const EMBED = [
-        '_embed' => [
-            'description' => 'Embed the resources linked to the response.',
-            'type' => 'string',
-            'required' => false,
-        ],
-    ];
-
-    /** Read by Rest\ListQuery::fromRequest(): how a collection is paged, narrowed and ordered. */
-    public const LISTING = [
-        'page' => [
-            'description' => 'Current page of the collection.',
-            'type' => 'integer',
-            'default' => 1,
-            'minimum' => 1,
-            'required' => false,
-        ],
-        'per_page' => [
-            'description' => 'Maximum number of items to be returned in result set.',
-            'type' => 'integer',
-            'default' => 10,
-            'minimum' => 1,
-            'maximum' => 100,
-            'required' => false,
-        ],
-        'search' => [
-            'description' => 'Limit results to those matching a string.',
-            'type' => 'string',
-            'required' => false,
-        ],
-        'include' => [
-            'description' => 'Limit result set to specific IDs.',
-            'type' => 'array',
-            'items' => ['type' => 'integer'],
-            'default' => [],
-            'required' => false,
-        ],
-        'exclude' => [
-            'description' => 'Ensure result set excludes specific IDs.',
-            'type' => 'array',
-            'items' => ['type' => 'integer'],
-            'default' => [],
-            'required' => false,
-        ],
-        'author' => [
-            'description' => 'Limit result set to posts assigned to specific authors.',
-            'type' => 'array',
-            'items' => ['type' => 'integer'],
-            'default' => [],
-            'required' => false,
-        ],
-        'author_exclude' => [
-            'description' => 'Ensure result set excludes posts assigned to specific authors.',
-            'type' => 'array',
-            'items' => ['type' => 'integer'],
-            'default' => [],
-            'required' => false,
-        ],
-        'parent' => [
-            'description' => 'Limit result set to items with particular parent IDs.',
-            'type' => 'array',
-            'items' => ['type' => 'integer'],
-            'default' => [],
-            'required' => false,
-        ],
-        'parent_exclude' => [
-            'description' => 'Limit result set to all items except those of a particular parent ID.',
-            'type' => 'array',
-            'items' => ['type' => 'integer'],
-            'default' => [],
-            'required' => false,
-        ],
-        'slug' => [
-            'description' => 'Limit result set to posts with one or more specific slugs.',
-            'type' => 'array',
-            'items' => ['type' => 'string'],
-            'required' => false,
-        ],
-        'order' => [
-            'description' => 'Order sort attribute ascending or descending.',
-            'type' => 'string',
-            'default' => 'desc',
-            'enum' => ['asc', 'desc'],
-            'required' => false,
-        ],
-        'orderby' => [
-            'description' => 'Sort collection by post attribute.',
-            'type' => 'string',
-            'default' => 'date',
-            'enum' => ['author', 'date', 'id', 'include', 'modified', 'parent', 'relevance', 'slug', 'include_slugs', 'title'],
-            'required' => false,
-        ],
-    ];
-
-    /** Read by Rest\ListQuery::termFilters(): the taxonomy narrowings a post collection takes. */
-    public const TERMS = [
-        'categories' => [
-            'description' => 'Limit result set to items with specific terms assigned in the categories taxonomy.',
-            'type' => 'array',
-            'items' => ['type' => 'integer'],
-            'required' => false,
-        ],
-        'categories_exclude' => [
-            'description' => 'Limit result set to items except those with specific terms assigned in the categories taxonomy.',
-            'type' => 'array',
-            'items' => ['type' => 'integer'],
-            'required' => false,
-        ],
-        'tags' => [
-            'description' => 'Limit result set to items with specific terms assigned in the tags taxonomy.',
-            'type' => 'array',
-            'items' => ['type' => 'integer'],
-            'required' => false,
-        ],
-        'tags_exclude' => [
-            'description' => 'Limit result set to items except those with specific terms assigned in the tags taxonomy.',
-            'type' => 'array',
-            'items' => ['type' => 'integer'],
-            'required' => false,
-        ],
-    ];
-
-    /** Read by Rest\PostsController::serveList(): the statuses a listing may ask for. */
-    public const STATUS = [
-        'status' => [
-            'description' => 'Limit result set to posts assigned one or more statuses.',
-            'type' => 'array',
-            'items' => [
-                'enum' => ['publish', 'future', 'draft', 'pending', 'private', 'trash', 'auto-draft', 'inherit', 'request-pending', 'request-confirmed', 'request-failed', 'request-completed', 'any'],
-                'type' => 'string',
-            ],
-            'default' => 'publish',
-            'required' => false,
-        ],
+        'context' => ['description' => 'Scope under which the request is made; determines fields present in response.', 'type' => 'string', 'enum' => ['view', 'embed', 'edit'], 'default' => 'view', 'required' => false],
     ];
 
     /** Read by Content\PostWriter: whether a delete bypasses the trash. */
     public const FORCE = [
-        'force' => [
-            'description' => 'Whether to bypass Trash and force deletion.',
-            'type' => 'boolean',
-            'default' => false,
-            'required' => false,
-        ],
+        'force' => ['description' => 'Whether to bypass Trash and force deletion.', 'type' => 'boolean', 'default' => false, 'required' => false],
+    ];
+
+    /** Read by Rest\ListQuery::fromRequest() and Rest\PostsController::serveList(): the post collection.
+     * The term filters take the id list only; the reference also takes a taxonomy query object,
+     * which the engine does not. */
+    public const POSTS = [
+        'page' => ['description' => 'Current page of the collection.', 'type' => 'integer', 'default' => 1, 'minimum' => 1, 'required' => false],
+        'per_page' => ['description' => 'Maximum number of items to be returned in result set.', 'type' => 'integer', 'default' => 10, 'minimum' => 1, 'maximum' => 100, 'required' => false],
+        'search' => ['description' => 'Limit results to those matching a string.', 'type' => 'string', 'required' => false],
+        'author' => ['description' => 'Limit result set to posts assigned to specific authors.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
+        'author_exclude' => ['description' => 'Ensure result set excludes posts assigned to specific authors.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
+        'exclude' => ['description' => 'Ensure result set excludes specific IDs.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
+        'include' => ['description' => 'Limit result set to specific IDs.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
+        'order' => ['description' => 'Order sort attribute ascending or descending.', 'type' => 'string', 'default' => 'desc', 'enum' => ['asc', 'desc'], 'required' => false],
+        'orderby' => ['description' => 'Sort collection by post attribute.', 'type' => 'string', 'default' => 'date', 'enum' => ['author', 'date', 'id', 'include', 'modified', 'parent', 'relevance', 'slug', 'include_slugs', 'title'], 'required' => false],
+        'slug' => ['description' => 'Limit result set to posts with one or more specific slugs.', 'type' => 'array', 'items' => ['type' => 'string'], 'required' => false],
+        'status' => ['default' => 'publish', 'description' => 'Limit result set to posts assigned one or more statuses.', 'type' => 'array', 'items' => ['enum' => ['publish', 'future', 'draft', 'pending', 'private', 'trash', 'auto-draft', 'inherit', 'request-pending', 'request-confirmed', 'request-failed', 'request-completed', 'any'], 'type' => 'string'], 'required' => false, self::HANDLER_VALIDATES => true],
+        'categories' => ['description' => 'Limit result set to items with specific terms assigned in the categories taxonomy.', 'type' => 'array', 'items' => ['type' => 'integer'], 'required' => false],
+        'categories_exclude' => ['description' => 'Limit result set to items except those with specific terms assigned in the categories taxonomy.', 'type' => 'array', 'items' => ['type' => 'integer'], 'required' => false],
+        'tags' => ['description' => 'Limit result set to items with specific terms assigned in the tags taxonomy.', 'type' => 'array', 'items' => ['type' => 'integer'], 'required' => false],
+        'tags_exclude' => ['description' => 'Limit result set to items except those with specific terms assigned in the tags taxonomy.', 'type' => 'array', 'items' => ['type' => 'integer'], 'required' => false],
+    ];
+
+    /** Read by Rest\ListQuery::fromRequest() and Rest\PostsController::serveList(): the page collection. */
+    public const PAGES = [
+        'page' => ['description' => 'Current page of the collection.', 'type' => 'integer', 'default' => 1, 'minimum' => 1, 'required' => false],
+        'per_page' => ['description' => 'Maximum number of items to be returned in result set.', 'type' => 'integer', 'default' => 10, 'minimum' => 1, 'maximum' => 100, 'required' => false],
+        'search' => ['description' => 'Limit results to those matching a string.', 'type' => 'string', 'required' => false],
+        'author' => ['description' => 'Limit result set to posts assigned to specific authors.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
+        'author_exclude' => ['description' => 'Ensure result set excludes posts assigned to specific authors.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
+        'exclude' => ['description' => 'Ensure result set excludes specific IDs.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
+        'include' => ['description' => 'Limit result set to specific IDs.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
+        'menu_order' => ['description' => 'Limit result set to posts with a specific menu_order value.', 'type' => 'integer', 'required' => false],
+        'order' => ['description' => 'Order sort attribute ascending or descending.', 'type' => 'string', 'default' => 'desc', 'enum' => ['asc', 'desc'], 'required' => false],
+        'orderby' => ['description' => 'Sort collection by post attribute.', 'type' => 'string', 'default' => 'date', 'enum' => ['author', 'date', 'id', 'include', 'modified', 'parent', 'relevance', 'slug', 'include_slugs', 'title', 'menu_order'], 'required' => false],
+        'parent' => ['description' => 'Limit result set to items with particular parent IDs.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
+        'parent_exclude' => ['description' => 'Limit result set to all items except those of a particular parent ID.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
+        'slug' => ['description' => 'Limit result set to posts with one or more specific slugs.', 'type' => 'array', 'items' => ['type' => 'string'], 'required' => false],
+        'status' => ['default' => 'publish', 'description' => 'Limit result set to posts assigned one or more statuses.', 'type' => 'array', 'items' => ['enum' => ['publish', 'future', 'draft', 'pending', 'private', 'trash', 'auto-draft', 'inherit', 'request-pending', 'request-confirmed', 'request-failed', 'request-completed', 'any'], 'type' => 'string'], 'required' => false, self::HANDLER_VALIDATES => true],
+    ];
+
+    /** Read by Rest\ListQuery::fromRequest() and Rest\MediaController::libraryClauses(): the media library. */
+    public const MEDIA = [
+        'page' => ['description' => 'Current page of the collection.', 'type' => 'integer', 'default' => 1, 'minimum' => 1, 'required' => false],
+        'per_page' => ['description' => 'Maximum number of items to be returned in result set.', 'type' => 'integer', 'default' => 10, 'minimum' => 1, 'maximum' => 100, 'required' => false],
+        'search' => ['description' => 'Limit results to those matching a string.', 'type' => 'string', 'required' => false],
+        'after' => ['description' => 'Limit response to posts published after a given ISO8601 compliant date.', 'type' => 'string', 'format' => 'date-time', 'required' => false],
+        'author' => ['description' => 'Limit result set to posts assigned to specific authors.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
+        'author_exclude' => ['description' => 'Ensure result set excludes posts assigned to specific authors.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
+        'before' => ['description' => 'Limit response to posts published before a given ISO8601 compliant date.', 'type' => 'string', 'format' => 'date-time', 'required' => false],
+        'exclude' => ['description' => 'Ensure result set excludes specific IDs.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
+        'include' => ['description' => 'Limit result set to specific IDs.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
+        'order' => ['description' => 'Order sort attribute ascending or descending.', 'type' => 'string', 'default' => 'desc', 'enum' => ['asc', 'desc'], 'required' => false],
+        'orderby' => ['description' => 'Sort collection by post attribute.', 'type' => 'string', 'default' => 'date', 'enum' => ['author', 'date', 'id', 'include', 'modified', 'parent', 'relevance', 'slug', 'include_slugs', 'title'], 'required' => false],
+        'parent' => ['description' => 'Limit result set to items with particular parent IDs.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
+        'parent_exclude' => ['description' => 'Limit result set to all items except those of a particular parent ID.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
+        'slug' => ['description' => 'Limit result set to posts with one or more specific slugs.', 'type' => 'array', 'items' => ['type' => 'string'], 'required' => false],
+        'media_type' => ['default' => null, 'description' => 'Limit result set to attachments of a particular media type or media types.', 'type' => 'array', 'items' => ['type' => 'string', 'enum' => ['image', 'video', 'text', 'application', 'audio']], 'required' => false],
+        'mime_type' => ['default' => null, 'description' => 'Limit result set to attachments of a particular MIME type or MIME types.', 'type' => 'array', 'items' => ['type' => 'string'], 'required' => false],
+    ];
+
+    /** Read by Rest\UsersController::list(): the user collection. */
+    public const USERS = [
+        'page' => ['description' => 'Current page of the collection.', 'type' => 'integer', 'default' => 1, 'minimum' => 1, 'required' => false],
+        'per_page' => ['description' => 'Maximum number of items to be returned in result set.', 'type' => 'integer', 'default' => 10, 'minimum' => 1, 'maximum' => 100, 'required' => false],
+        'search' => ['description' => 'Limit results to those matching a string.', 'type' => 'string', 'required' => false],
+        'exclude' => ['description' => 'Ensure result set excludes specific IDs.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
+        'include' => ['description' => 'Limit result set to specific IDs.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
+        'order' => ['default' => 'asc', 'description' => 'Order sort attribute ascending or descending.', 'enum' => ['asc', 'desc'], 'type' => 'string', 'required' => false],
+        'orderby' => ['default' => 'name', 'description' => 'Sort collection by user attribute.', 'enum' => ['id', 'include', 'name', 'registered_date', 'slug', 'include_slugs', 'email', 'url'], 'type' => 'string', 'required' => false],
+        'slug' => ['description' => 'Limit result set to users with one or more specific slugs.', 'type' => 'array', 'items' => ['type' => 'string'], 'required' => false],
+    ];
+
+    /** Read by Rest\TermsController::list(): a term collection (categories, tags, pattern categories). */
+    public const TERMS = [
+        'page' => ['description' => 'Current page of the collection.', 'type' => 'integer', 'default' => 1, 'minimum' => 1, 'required' => false],
+        'per_page' => ['description' => 'Maximum number of items to be returned in result set.', 'type' => 'integer', 'default' => 10, 'minimum' => 1, 'maximum' => 100, 'required' => false],
+        'search' => ['description' => 'Limit results to those matching a string.', 'type' => 'string', 'required' => false],
+        'exclude' => ['description' => 'Ensure result set excludes specific IDs.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
+        'include' => ['description' => 'Limit result set to specific IDs.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
+        'order' => ['description' => 'Order sort attribute ascending or descending.', 'type' => 'string', 'default' => 'asc', 'enum' => ['asc', 'desc'], 'required' => false],
+        'orderby' => ['description' => 'Sort collection by term attribute.', 'type' => 'string', 'default' => 'name', 'enum' => ['id', 'include', 'name', 'slug', 'include_slugs', 'term_group', 'description', 'count'], 'required' => false],
+        'post' => ['description' => 'Limit result set to terms assigned to a specific post.', 'type' => 'integer', 'default' => null, 'required' => false],
+        'slug' => ['description' => 'Limit result set to terms with one or more specific slugs.', 'type' => 'array', 'items' => ['type' => 'string'], 'required' => false],
+    ];
+
+    /** Read by Rest\CommentsController::list() and filter(): the comment collection. */
+    public const COMMENTS = [
+        'page' => ['description' => 'Current page of the collection.', 'type' => 'integer', 'default' => 1, 'minimum' => 1, 'required' => false],
+        'per_page' => ['description' => 'Maximum number of items to be returned in result set.', 'type' => 'integer', 'default' => 10, 'minimum' => 1, 'maximum' => 100, 'required' => false],
+        'search' => ['description' => 'Limit results to those matching a string.', 'type' => 'string', 'required' => false],
+        'after' => ['description' => 'Limit response to comments published after a given ISO8601 compliant date.', 'type' => 'string', 'format' => 'date-time', 'required' => false],
+        'author' => ['description' => 'Limit result set to comments assigned to specific user IDs. Requires authorization.', 'type' => 'array', 'items' => ['type' => 'integer'], 'required' => false],
+        'author_exclude' => ['description' => 'Ensure result set excludes comments assigned to specific user IDs. Requires authorization.', 'type' => 'array', 'items' => ['type' => 'integer'], 'required' => false],
+        'author_email' => ['default' => null, 'description' => 'Limit result set to that from a specific author email. Requires authorization.', 'format' => 'email', 'type' => 'string', 'required' => false],
+        'before' => ['description' => 'Limit response to comments published before a given ISO8601 compliant date.', 'type' => 'string', 'format' => 'date-time', 'required' => false],
+        'exclude' => ['description' => 'Ensure result set excludes specific IDs.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
+        'include' => ['description' => 'Limit result set to specific IDs.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
+        'parent' => ['default' => [], 'description' => 'Limit result set to comments of specific parent IDs.', 'type' => 'array', 'items' => ['type' => 'integer'], 'required' => false],
+        'parent_exclude' => ['default' => [], 'description' => 'Ensure result set excludes specific parent IDs.', 'type' => 'array', 'items' => ['type' => 'integer'], 'required' => false],
+        'post' => ['default' => [], 'description' => 'Limit result set to comments assigned to specific post IDs.', 'type' => 'array', 'items' => ['type' => 'integer'], 'required' => false],
+        'status' => ['default' => 'approve', 'description' => 'Limit result set to comments assigned a specific status. Requires authorization.', 'type' => 'string', 'required' => false],
+        'type' => ['default' => 'comment', 'description' => 'Limit result set to comments assigned a specific type. Requires authorization.', 'type' => 'string', 'required' => false],
+    ];
+
+    /**
+     * Read by Rest\UsersController::create(): the body of a user create. The locale takes any
+     * string here; the reference's enum is the site's installed languages, which is not a constant.
+     */
+    public const USER_CREATE = [
+        'username' => ['description' => 'Login name for the user.', 'type' => 'string', 'required' => true],
+        'name' => ['description' => 'Display name for the user.', 'type' => 'string', 'required' => false],
+        'first_name' => ['description' => 'First name for the user.', 'type' => 'string', 'required' => false],
+        'last_name' => ['description' => 'Last name for the user.', 'type' => 'string', 'required' => false],
+        'email' => ['description' => 'The email address for the user.', 'type' => 'string', 'format' => 'email', 'required' => true],
+        'url' => ['description' => 'URL of the user.', 'type' => 'string', 'format' => 'uri', 'required' => false],
+        'description' => ['description' => 'Description of the user.', 'type' => 'string', 'required' => false],
+        'locale' => ['description' => 'Locale for the user.', 'type' => 'string', 'required' => false],
+        'nickname' => ['description' => 'The nickname for the user.', 'type' => 'string', 'required' => false],
+        'roles' => ['description' => 'Roles assigned to the user.', 'type' => 'array', 'items' => ['type' => 'string'], 'required' => false],
+        'password' => ['description' => 'Password for the user (never included).', 'type' => 'string', 'required' => true],
+    ];
+
+    /** Read by Rest\UsersController::update(): the body of a user edit; nothing is required. */
+    public const USER_EDIT = [
+        'name' => ['description' => 'Display name for the user.', 'type' => 'string', 'required' => false],
+        'first_name' => ['description' => 'First name for the user.', 'type' => 'string', 'required' => false],
+        'last_name' => ['description' => 'Last name for the user.', 'type' => 'string', 'required' => false],
+        'email' => ['description' => 'The email address for the user.', 'type' => 'string', 'format' => 'email', 'required' => false],
+        'url' => ['description' => 'URL of the user.', 'type' => 'string', 'format' => 'uri', 'required' => false],
+        'description' => ['description' => 'Description of the user.', 'type' => 'string', 'required' => false],
+        'locale' => ['description' => 'Locale for the user.', 'type' => 'string', 'required' => false],
+        'nickname' => ['description' => 'The nickname for the user.', 'type' => 'string', 'required' => false],
+        'slug' => ['description' => 'An alphanumeric identifier for the user.', 'type' => 'string', 'required' => false],
+        'roles' => ['description' => 'Roles assigned to the user.', 'type' => 'array', 'items' => ['type' => 'string'], 'required' => false],
+        'password' => ['description' => 'Password for the user (never included).', 'type' => 'string', 'required' => false],
+        'meta' => ['description' => 'Meta fields.', 'type' => 'object', 'properties' => ['show_admin_bar_front' => ['type' => 'string', 'default' => 'true']], 'required' => false],
+    ];
+
+    /** Read by Rest\SearchController::list(): the search collection, whose context has no edit view. */
+    public const SEARCH = [
+        'context' => ['description' => 'Scope under which the request is made; determines fields present in response.', 'type' => 'string', 'enum' => ['view', 'embed'], 'default' => 'view', 'required' => false],
+        'page' => ['description' => 'Current page of the collection.', 'type' => 'integer', 'default' => 1, 'minimum' => 1, 'required' => false],
+        'per_page' => ['description' => 'Maximum number of items to be returned in result set.', 'type' => 'integer', 'default' => 10, 'minimum' => 1, 'maximum' => 100, 'required' => false],
+        'search' => ['description' => 'Limit results to those matching a string.', 'type' => 'string', 'required' => false],
+        'type' => ['default' => 'post', 'description' => 'Limit results to items of an object type.', 'type' => 'string', 'enum' => ['post', 'term', 'post-format'], 'required' => false],
+        'subtype' => ['default' => 'any', 'description' => 'Limit results to items of one or more object subtypes.', 'type' => 'array', 'items' => ['enum' => ['post', 'page', 'category', 'post_tag', 'any'], 'type' => 'string'], 'required' => false],
     ];
 
     /**

@@ -23,9 +23,9 @@ final readonly class SettingsController
 
     /** The site settings: read, or write from the body. */
     #[Route(Method::Get, '/wp/v2/settings', policy: new Policy(Access::SignedIn, signIn: 'rest_forbidden', signInMessage: 'Sorry, you are not allowed to do that.'))]
-    #[Route(Method::Post, '/wp/v2/settings', policy: new Policy(Access::SignedIn, signIn: 'rest_forbidden', signInMessage: 'Sorry, you are not allowed to do that.'))]
-    #[Route(Method::Put, '/wp/v2/settings', policy: new Policy(Access::SignedIn, signIn: 'rest_forbidden', signInMessage: 'Sorry, you are not allowed to do that.'))]
-    #[Route(Method::Patch, '/wp/v2/settings', policy: new Policy(Access::SignedIn, signIn: 'rest_forbidden', signInMessage: 'Sorry, you are not allowed to do that.'))]
+    #[Route(Method::Post, '/wp/v2/settings', policy: new Policy(Access::SignedIn, signIn: 'rest_forbidden', signInMessage: 'Sorry, you are not allowed to do that.'), body: [Settings::SCHEMA])]
+    #[Route(Method::Put, '/wp/v2/settings', policy: new Policy(Access::SignedIn, signIn: 'rest_forbidden', signInMessage: 'Sorry, you are not allowed to do that.'), body: [Settings::SCHEMA])]
+    #[Route(Method::Patch, '/wp/v2/settings', policy: new Policy(Access::SignedIn, signIn: 'rest_forbidden', signInMessage: 'Sorry, you are not allowed to do that.'), body: [Settings::SCHEMA])]
     public function settings(Request $request): Response
     {
         if (!$this->caller->can('manage_options')) {

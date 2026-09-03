@@ -8,6 +8,7 @@ the wp/v2 surface: shapes and controllers
 | [`AdditionalFields`](#additionalfields) | final class | 46 | Which object type a wp/v2 route serves, so fields registered for that type can ride on the engine's own responses. |
 | [`Api`](#api) | final readonly class | 182 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 171 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
+| [`ArgCheck`](#argcheck) | final readonly class | 83 | Judges a route's declared arguments against the request before the |
 | [`BatchRequest`](#batchrequest) | final class | 32 | The requests a batch payload names, normalised into descriptors the |
 | [`BlocksController`](#blockscontroller) | final readonly class | 69 | wp/v2/blocks: synced patterns and reusable blocks, stored as wp_block |
 | [`Caller`](#caller) | final class | 95 | Who is making this REST call. Resolved once from the cookie and nonce; |
@@ -16,14 +17,14 @@ the wp/v2 surface: shapes and controllers
 | [`Context`](#context) | enum | 18 | The view a REST caller asked for. View is the public shape, edit adds the |
 | [`DeclaredPostsController`](#declaredpostscontroller) | final readonly class | 56 | wp/v2/{rest_base} for extra post types declared by an active extension. |
 | [`Embed`](#embed) | final class | 180 | The _embed decoration and the embed context. Every embeddable link in an |
-| [`EngineRoutes`](#engineroutes) | final class | 65 | The engine's own REST routes in the reference's regex form, for the |
+| [`EngineRoutes`](#engineroutes) | final class | 66 | The engine's own REST routes in the reference's regex form, for the |
 | [`Fields`](#fields) | final readonly class | 92 | The _fields response filter. Dot paths descend ("title.rendered"); the |
 | [`GlobalStylesController`](#globalstylescontroller) | final readonly class | 138 | wp/v2/global-styles: the site editor's saved styles (one post per |
 | [`GlobalStylesObject`](#globalstylesobject) | final readonly class | 87 | The wp/v2/global-styles item, theme, and revision shapes. |
 | [`IndexController`](#indexcontroller) | final readonly class | 96 | The API index at /wp-json/: the site facts monitors read (name, url, |
 | [`Links`](#links) | final class | 35 | Response link relations compacted through CURIEs: a rel that matches a CURIE's template becomes `name:suffix`, and the used CURIEs ride along. |
 | [`ListQuery`](#listquery) | final readonly class | 170 | The collection parameters a wp/v2 list accepts, read once from the |
-| [`MediaController`](#mediacontroller) | final readonly class | 199 | wp/v2/media: list, single, upload on both transports (multipart field |
+| [`MediaController`](#mediacontroller) | final readonly class | 191 | wp/v2/media: list, single, upload on both transports (multipart field |
 | [`MediaObject`](#mediaobject) | final readonly class | 158 | The wp/v2 media object, view and edit context. |
 | [`MenuItemObject`](#menuitemobject) | final readonly class | 74 | The wp/v2/menu-items resource. |
 | [`MenuObject`](#menuobject) | final readonly class | 37 | The wp/v2/menus resource: a nav_menu term plus locations and auto_add. |
@@ -33,7 +34,7 @@ the wp/v2 surface: shapes and controllers
 | [`PluginsController`](#pluginscontroller) | final readonly class | 236 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
 | [`PolicyGate`](#policygate) | final readonly class | 58 | Judges a route's policy against the caller, with the reference's |
 | [`PostObject`](#postobject) | final readonly class | 476 | Builds the wp/v2 post and page objects in the reference's shape: the |
-| [`PostsController`](#postscontroller) | final readonly class | 174 | wp/v2 posts and pages, read side. |
+| [`PostsController`](#postscontroller) | final readonly class | 182 | wp/v2 posts and pages, read side. |
 | [`PostsWriteController`](#postswritecontroller) | final readonly class | 319 | wp/v2 posts and pages, write side: create, update, trash, and force |
 | [`Reply`](#reply) | final class | 47 | JSON responses in the reference's shape: its header set, its json_encode |
 | [`RestUrl`](#resturl) | final readonly class | 38 | REST URLs in the form the reference emits for the site's permalink mode: |
@@ -43,11 +44,11 @@ the wp/v2 surface: shapes and controllers
 | [`RouteMatch`](#routematch) | final class | 42 | Finds the registered handler for a method and path among the runtime's route table. |
 | [`RouteTable`](#routetable) | final class | 38 | The registered endpoints in dispatch shape: one handler list per route, methods as a set, non-numeric keys lifted into the route's options. |
 | [`RuntimeRoutes`](#runtimeroutes) | final class | 103 | Routes plugin code registered with register_rest_route(), answered |
-| [`Schema`](#schema) | final readonly class | 471 | JSON-schema handling the way the REST API's argument validation does it: |
+| [`Schema`](#schema) | final readonly class | 473 | JSON-schema handling the way the REST API's argument validation does it: |
 | [`SchemaValues`](#schemavalues) | final class | 201 | The value side of JSON Schema, as the reference applies it: what counts |
-| [`SearchController`](#searchcontroller) | final readonly class | 137 | wp/v2 search over published content: id, title, url, type, and the |
+| [`SearchController`](#searchcontroller) | final readonly class | 121 | wp/v2 search over published content: id, title, url, type, and the |
 | [`Services`](#services) | final class | 380 | The objects one REST request shares, each made once, on first use, from |
-| [`Settings`](#settings) | final readonly class | 76 | The registered settings the Settings views read and write, mapped to |
+| [`Settings`](#settings) | final readonly class | 107 | The registered settings the Settings views read and write, mapped to |
 | [`SettingsController`](#settingscontroller) | final readonly class | 24 | wp/v2/settings: read and write, both behind manage_options. |
 | [`Taxonomies`](#taxonomies) | final class | 48 | The taxonomy registry the wp/v2 surface describes: the core set seeded |
 | [`TaxonomiesController`](#taxonomiescontroller) | final readonly class | 47 | wp/v2 taxonomies: the registry, whole or per type, in view or edit context. |
@@ -273,6 +274,39 @@ Route: `DELETE /wp/v2/users/{id:\d+|me}/application-passwords/{uuid:[0-9a-fA-F-]
 Removes one.
 
 Internals: `subject()` (private, line 129), `existing()` (private, line 154), `validate()` (private, line 163), `item()` (private, line 173), `when()` (private, line 187)
+
+
+## ArgCheck
+
+`final readonly class Minn\Rest\ArgCheck` · `public/minn/src/Minn/Rest/ArgCheck.php`
+
+Judges a route's declared arguments against the request before the
+policy is judged, the way the reference does: a required parameter that
+did not arrive is rest_missing_callback_param; the shared collection
+parameters (context, page, per_page, search) are judged first and a
+refusal among them is answered alone; then every other invalid one is
+listed in rest_invalid_param, in the order the route declares them, with
+the schema's own refusal under details. The query is read against the
+route's args, the JSON body against its body set, and a JSON body that
+does not parse is refused on every route first. An argument its handler
+judges (Args::HANDLER_VALIDATES) is left to the handler.
+
+Used by: `Minn\Rest\Api`
+
+```php
+__construct(Minn\Rest\Schema $schema)
+```
+
+
+### `closure(): Closure`
+
+The check as the router takes it.
+
+### `check(Minn\Http\Route $route, Minn\Http\Request $request): void`
+
+Throws the refusal the declared arguments earn, or returns.
+
+Internals: `json()` (private, line 59), `missing()` (private, line 74), `round()` (private, line 88)
 
 
 ## BatchRequest
@@ -611,11 +645,12 @@ The router's routes as route => methods, the way the index lists them.
 
 A route attribute pattern as the reference writes routes: `{id:\d+}`
 becomes `(?P<id>\d+)`, a bare capture matches one segment, a `{rest*}`
-capture the remainder, and an alternation of literals expands to one
-route per literal. The declared-type routes are written once as a
-`{base}` catch-all; they list per declared type under its rest_base
-(as the reference lists a registered type) and not at all when no
-type is declared, so nothing listed answers no-route.
+capture the remainder, and a literal constraint (`{base:posts}`, or
+the alternation `{base:posts|pages}`) expands to one route per
+literal. The declared-type routes are written once as a `{base:[...]}`
+catch-all; they list per declared type under its rest_base (as the
+reference lists a registered type) and not at all when no type is
+declared, so nothing listed answers no-route.
 
 - `@param list<string> $declaredBases`
 - `@return list<string>`
@@ -786,7 +821,7 @@ namespace, its routes (the namespace root among them), and the link
 up to the root index. A namespace the engine does not serve is left
 to the runtime, whose plugins may own it.
 
-Internals: `catalogue()` (private, line 90)
+Internals: `catalogue()` (private, line 91)
 
 
 ## Links
@@ -940,7 +975,7 @@ Route: `DELETE /wp/v2/media/{id:\d+}`
 
 Attachments cannot be trashed; force removes the row, its meta, and its files.
 
-Internals: `libraryClauses()` (private, line 71), `restDate()` (private, line 103), `attachment()` (private, line 215)
+Internals: `libraryClauses()` (private, line 71), `restDate()` (private, line 95), `attachment()` (private, line 207)
 
 
 ## MediaObject
@@ -1343,7 +1378,9 @@ __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Rest\PostObject $object
 
 ### `list(Minn\Http\Request $request, string $base): Minn\Http\Response`
 
-Route: `GET /wp/v2/{base:posts|pages}`
+Route: `GET /wp/v2/{base:posts}`
+
+Route: `GET /wp/v2/{base:pages}`
 
 The posts or pages list.
 
@@ -1361,7 +1398,7 @@ One post or page.
 
 One post of any type, with the reference's read rules.
 
-Internals: `visibleStatuses()` (private, line 100), `visibility()` (private, line 130), `orderSql()` (private, line 144)
+Internals: `visibleStatuses()` (private, line 101), `visibility()` (private, line 138), `orderSql()` (private, line 152)
 
 
 ## PostsWriteController
@@ -1637,7 +1674,7 @@ tests the schema vocabulary needs. Behaviour pinned by contracts/fixtures/api/re
 - const `KEYWORDS` = `array (   0 => 'title',   1 => 'description',   2 => 'default',   3 => 'type',   4 => 'format',   5 => 'enum',   6 => 'items',   7 => 'properties',   8 => 'additionalProperties',   9 => 'patternProperties',   10 => 'minProperties',   11 => 'maxProperties',   12 => 'minimum',   13 => 'maximum',   14 => 'exclusiveMinimum',   15 => 'exclusiveMaximum',   16 => 'multipleOf',   17 => 'minLength',   18 => 'maxLength',   19 => 'pattern',   20 => 'minItems',   21 => 'maxItems',   22 => 'uniqueItems',   23 => 'anyOf',   24 => 'oneOf', )` — Every keyword a route schema may carry, in the reference's order; the endpoint subset drops the three descriptive ones.
 - const `ENDPOINT_KEYWORDS` = `array (   0 => 'type',   1 => 'format',   2 => 'enum',   3 => 'items',   4 => 'properties',   5 => 'additionalProperties',   6 => 'patternProperties',   7 => 'minProperties',   8 => 'maxProperties',   9 => 'minimum',   10 => 'maximum',   11 => 'exclusiveMinimum',   12 => 'exclusiveMaximum',   13 => 'multipleOf',   14 => 'minLength',   15 => 'maxLength',   16 => 'pattern',   17 => 'minItems',   18 => 'maxItems',   19 => 'uniqueItems',   20 => 'anyOf',   21 => 'oneOf', )` — An object schema that names its properties forbids the others unless it says otherwise, all the way down.
 
-Used by: `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\SchemaValues`, `Minn\Rest\Services`
+Used by: `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\ArgCheck`, `Minn\Rest\SchemaValues`, `Minn\Rest\Services`
 
 ```php
 __construct(Closure $email, Closure $number, Closure $format)
@@ -1673,7 +1710,7 @@ required flags on the create route only, and any arg_options overrides.
 
 The schema with additionalProperties closed on every object.
 
-Internals: `validateComposite()` (private, line 102), `validateString()` (private, line 128), `validateNumber()` (private, line 146), `validateArray()` (private, line 158), `validateObject()` (private, line 184), `validateFormat()` (private, line 221), `validateBounds()` (private, line 233), `enum()` (private, line 270), `wrongType()` (private, line 285)
+Internals: `validateComposite()` (private, line 102), `validateString()` (private, line 128), `validateNumber()` (private, line 146), `validateArray()` (private, line 158), `validateObject()` (private, line 184), `validateFormat()` (private, line 221), `validateBounds()` (private, line 233), `enum()` (private, line 270), `wrongType()` (private, line 287)
 
 
 ## SchemaValues
@@ -1686,7 +1723,7 @@ comparisons and date, colour, and uuid parsers the formats use, and the
 combining walk anyOf and oneOf share. Schema holds the rules; this holds
 what they are applied to.
 
-Used by: `Minn\Rest\Schema`
+Used by: `Minn\Rest\Schema`, `Minn\Rest\Settings`
 
 ### static `isBoolean(mixed $value): bool`
 
@@ -1780,11 +1817,11 @@ __construct(Minn\Db $db, Minn\Rest\Types $types, Minn\Front\Permalinks $permalin
 
 ### `list(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `GET /wp/v2/search`
+Route: `GET /wp/v2/search (public)`
 
 Search across post types with the reference's relevance order.
 
-Internals: `item()` (private, line 73), `subtypes()` (private, line 96), `rankExpression()` (private, line 111), `terms()` (private, line 122), `escapeLike()` (private, line 139), `intParam()` (private, line 144)
+Internals: `item()` (private, line 76), `subtypes()` (private, line 99), `rankExpression()` (private, line 114), `terms()` (private, line 125), `escapeLike()` (private, line 142)
 
 
 ## Services
@@ -2002,6 +2039,7 @@ The registered settings the Settings views read and write, mapped to
 the options WordPress stores. Registration order is the payload order.
 
 - const `REGISTRY` = `array (   'blog_public' =>    array (     0 => 'blog_public',     1 => 'int',   ),   'minn_admin_maintenance' =>    array (     0 => 'minn_admin_maintenance',     1 => 'bool',   ),   'users_can_register' =>    array (     0 => 'users_can_register',     1 => 'int',   ),   'default_role' =>    array (     0 => 'default_role',     1 => 'string',   ),   'comment_moderation' =>    array (     0 => 'comment_moderation',     1 => 'int',   ),   'comment_registration' =>    array (     0 => 'comment_registration',     1 => 'int',   ),   'show_avatars' =>    array (     0 => 'show_avatars',     1 => 'int',   ),   'title' =>    array (     0 => 'blogname',     1 => 'string',   ),   'description' =>    array (     0 => 'blogdescription',     1 => 'string',   ),   'url' =>    array (     0 => 'siteurl',     1 => 'string',   ),   'email' =>    array (     0 => 'admin_email',     1 => 'string',   ),   'timezone' =>    array (     0 => 'timezone_string',     1 => 'string',   ),   'date_format' =>    array (     0 => 'date_format',     1 => 'string',   ),   'time_format' =>    array (     0 => 'time_format',     1 => 'string',   ),   'start_of_week' =>    array (     0 => 'start_of_week',     1 => 'int',   ),   'language' =>    array (     0 => 'WPLANG',     1 => 'language',   ),   'use_smilies' =>    array (     0 => 'use_smilies',     1 => 'bool',   ),   'default_category' =>    array (     0 => 'default_category',     1 => 'int',   ),   'default_post_format' =>    array (     0 => 'default_post_format',     1 => 'string',   ),   'posts_per_page' =>    array (     0 => 'posts_per_page',     1 => 'int',   ),   'show_on_front' =>    array (     0 => 'show_on_front',     1 => 'string',   ),   'page_on_front' =>    array (     0 => 'page_on_front',     1 => 'int',   ),   'page_for_posts' =>    array (     0 => 'page_for_posts',     1 => 'int',   ),   'default_ping_status' =>    array (     0 => 'default_ping_status',     1 => 'string',   ),   'default_comment_status' =>    array (     0 => 'default_comment_status',     1 => 'string',   ),   'site_logo' =>    array (     0 => 'site_logo',     1 => 'int_or_null',   ),   'site_icon' =>    array (     0 => 'site_icon',     1 => 'int',   ), )` — setting key => [option name, type]
+- const `SCHEMA` = `array (   'blog_public' =>    array (     'title' => '',     'description' => '',     'type' => 'integer',     'required' => false,   ),   'minn_admin_maintenance' =>    array (     'title' => '',     'description' => '',     'type' => 'boolean',     'required' => false,   ),   'users_can_register' =>    array (     'title' => '',     'description' => '',     'type' => 'integer',     'required' => false,   ),   'default_role' =>    array (     'title' => '',     'description' => '',     'type' => 'string',     'required' => false,   ),   'comment_moderation' =>    array (     'title' => '',     'description' => '',     'type' => 'integer',     'required' => false,   ),   'comment_registration' =>    array (     'title' => '',     'description' => '',     'type' => 'integer',     'required' => false,   ),   'show_avatars' =>    array (     'title' => '',     'description' => '',     'type' => 'integer',     'required' => false,   ),   'title' =>    array (     'title' => 'Title',     'description' => 'Site title.',     'type' => 'string',     'required' => false,   ),   'description' =>    array (     'title' => 'Tagline',     'description' => 'Site tagline.',     'type' => 'string',     'required' => false,   ),   'url' =>    array (     'title' => '',     'description' => 'Site URL.',     'type' => 'string',     'format' => 'uri',     'required' => false,   ),   'email' =>    array (     'title' => '',     'description' => 'This address is used for admin purposes, like new user notification.',     'type' => 'string',     'format' => 'email',     'required' => false,   ),   'timezone' =>    array (     'title' => '',     'description' => 'A city in the same timezone as you.',     'type' => 'string',     'required' => false,   ),   'date_format' =>    array (     'title' => '',     'description' => 'A date format for all date strings.',     'type' => 'string',     'required' => false,   ),   'time_format' =>    array (     'title' => '',     'description' => 'A time format for all time strings.',     'type' => 'string',     'required' => false,   ),   'start_of_week' =>    array (     'title' => '',     'description' => 'A day number of the week that the week should start on.',     'type' => 'integer',     'required' => false,   ),   'language' =>    array (     'title' => '',     'description' => 'WordPress locale code.',     'type' => 'string',     'required' => false,   ),   'use_smilies' =>    array (     'title' => '',     'description' => 'Convert emoticons like :-) and :-P to graphics on display.',     'type' => 'boolean',     'required' => false,   ),   'default_category' =>    array (     'title' => '',     'description' => 'Default post category.',     'type' => 'integer',     'required' => false,   ),   'default_post_format' =>    array (     'title' => '',     'description' => 'Default post format.',     'type' => 'string',     'required' => false,   ),   'posts_per_page' =>    array (     'title' => 'Maximum posts per page',     'description' => 'Blog pages show at most.',     'type' => 'integer',     'required' => false,   ),   'show_on_front' =>    array (     'title' => 'Show on front',     'description' => 'What to show on the front page',     'type' => 'string',     'required' => false,   ),   'page_on_front' =>    array (     'title' => 'Page on front',     'description' => 'The ID of the page that should be displayed on the front page',     'type' => 'integer',     'required' => false,   ),   'page_for_posts' =>    array (     'title' => '',     'description' => 'The ID of the page that should display the latest posts',     'type' => 'integer',     'required' => false,   ),   'default_ping_status' =>    array (     'title' => '',     'description' => 'Allow link notifications from other blogs (pingbacks and trackbacks) on new articles.',     'type' => 'string',     'enum' =>      array (       0 => 'open',       1 => 'closed',     ),     'required' => false,   ),   'default_comment_status' =>    array (     'title' => 'Allow comments on new posts',     'description' => 'Allow people to submit comments on new posts.',     'type' => 'string',     'enum' =>      array (       0 => 'open',       1 => 'closed',     ),     'required' => false,   ),   'site_logo' =>    array (     'title' => 'Logo',     'description' => 'Site logo.',     'type' => 'integer',     'required' => false,   ),   'site_icon' =>    array (     'title' => 'Icon',     'description' => 'Site icon.',     'type' => 'integer',     'required' => false,   ), )` — The body of a write, every registered setting by its key, as the reference describes it.
 
 Used by: `Minn\Rest\Api`, `Minn\Rest\SettingsController`
 
@@ -2016,7 +2054,7 @@ Every registered setting with its current value.
 
 ### `store(array $body): void`
 
-Writes the registered keys in a body; unregistered keys are ignored.
+Writes the registered keys in a body, already validated against SCHEMA; unregistered keys are ignored.
 
 
 ## SettingsController
@@ -2096,17 +2134,17 @@ __construct(Minn\Rest\Taxonomies $taxonomies, Minn\Rest\Caller $caller)
 
 ### `list(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `GET /wp/v2/taxonomies`
+Route: `GET /wp/v2/taxonomies (public)`
 
 A whole-payload reply like types: _fields filters the map, not its members.
 
 ### `single(Minn\Http\Request $request, string $slug): Minn\Http\Response`
 
-Route: `GET /wp/v2/taxonomies/{slug:[\w-]+}`
+Route: `GET /wp/v2/taxonomies/{slug:[\w-]+} (public)`
 
 One taxonomy.
 
-Internals: `context()` (private, line 52)
+Internals: `context()` (private, line 55)
 
 
 ## TemplateObject

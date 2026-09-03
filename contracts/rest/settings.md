@@ -41,6 +41,9 @@ engine to serve false for a stored ''.
 
 ## Known gaps
 
-- Value validation (enum/range rejection with `rest_invalid_param`) is not
-  implemented; writes coerce by type instead.
+- Value validation landed 2026-09-02: the body is judged against
+  `Rest\Settings::SCHEMA` (the reference's registered types, enums and
+  formats) before the caller is, so `posts_per_page: "x"` is a 400 for
+  anyone and nothing is stored. `url` (`format: uri`) is the one key
+  neither stack refuses; see `contracts/rest/arguments.md`.
 - `site_icon`/`site_logo` side effects (favicon routes) are out of scope.

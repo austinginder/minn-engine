@@ -34,7 +34,7 @@ final readonly class MediaController
     }
 
     /** The media library list. */
-    #[Route(Method::Get, '/wp/v2/media', args: [Args::CONTEXT, Args::FIELDS, Args::EMBED, Args::LISTING])]
+    #[Route(Method::Get, '/wp/v2/media', args: [Args::CONTEXT, Args::MEDIA])]
     public function list(Request $request): Response
     {
         $context = Context::of($request);
@@ -74,14 +74,6 @@ final readonly class MediaController
         $params = [];
         $mediaType = (string) $request->query('media_type', '');
         if ($mediaType !== '') {
-            $allowed = ['image', 'video', 'text', 'application', 'audio'];
-            if (!in_array($mediaType, $allowed, true)) {
-                $message = 'media_type[0] is not one of image, video, text, application, and audio.';
-                throw new RestError('rest_invalid_param', 'Invalid parameter(s): media_type', 400, [
-                    'params' => ['media_type' => $message],
-                    'details' => ['media_type' => ['code' => 'rest_not_in_enum', 'message' => $message, 'data' => null]],
-                ]);
-            }
             $where .= ' AND post_mime_type LIKE ?';
             $params[] = $mediaType . '/%';
         }
@@ -112,7 +104,7 @@ final readonly class MediaController
     }
 
     /** One attachment. */
-    #[Route(Method::Get, '/wp/v2/media/{id:\d+}', args: [Args::CONTEXT, Args::FIELDS, Args::EMBED])]
+    #[Route(Method::Get, '/wp/v2/media/{id:\d+}', args: [Args::CONTEXT])]
     public function single(Request $request, string $id): Response
     {
         $attachment = $this->attachment((int) $id);
