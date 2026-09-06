@@ -364,6 +364,45 @@ final readonly class Posts
         return $this->latest($type, 'post_modified_gmt');
     }
 
+    /**
+     * The days of one month a published post of a type was dated on, ascending.
+     *
+     * @return list<int>
+     */
+    public function daysWithPosts(int $year, int $month, string $type): array
+    {
+        $first = new \DateTimeImmutable(sprintf('%04d-%02d-01', $year, $month));
+        $rows = $this->db->rows(
+            "SELECT DISTINCT DAYOFMONTH(post_date) AS d FROM {$this->db->table('posts')} WHERE post_type = ? AND post_status = 'publish' AND post_date BETWEEN ? AND ? ORDER BY d",
+            [$type, $first->format('Y-m-d 00:00:00'), $first->format('Y-m-t 23:59:59')],
+        );
+        return array_map(static fn (array $row): int => (int) $row['d'], $rows);
+    }
+
+    /** The nearest month before one with a published post of a type, as [year, month], or null. */
+    public function monthBefore(int $year, int $month, string $type): ?array
+    {
+        $first = new \DateTimeImmutable(sprintf('%04d-%02d-01', $year, $month));
+        return $this->monthBeside($type, 'post_date < ? ORDER BY post_date DESC', $first->format('Y-m-d 00:00:00'));
+    }
+
+    /** The nearest month after one with a published post of a type, as [year, month], or null. */
+    public function monthAfter(int $year, int $month, string $type): ?array
+    {
+        $first = new \DateTimeImmutable(sprintf('%04d-%02d-01', $year, $month));
+        return $this->monthBeside($type, 'post_date > ? ORDER BY post_date ASC', $first->format('Y-m-t 23:59:59'));
+    }
+
+    /** @return array{int, int}|null */
+    private function monthBeside(string $type, string $clause, string $edge): ?array
+    {
+        $row = $this->db->row(
+            "SELECT YEAR(post_date) AS y, MONTH(post_date) AS m FROM {$this->db->table('posts')} WHERE post_type = ? AND post_status = 'publish' AND {$clause} LIMIT 1",
+            [$type, $edge],
+        );
+        return $row === null ? null : [(int) $row['y'], (int) $row['m']];
+    }
+
     private function latest(?string $type, string $column): ?string
     {
         $sql = "SELECT MAX({$column}) FROM {$this->db->table('posts')} WHERE post_status = 'publish'";

@@ -811,6 +811,12 @@ function wp_paused_themes()
     return null;
 }
 
+function wp_popular_terms_checklist($taxonomy, $default_term = 0, $number = 10, $display = true)
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_popular_terms_checklist');
+    return null;
+}
+
 function wp_prepare_themes_for_js($themes = NULL)
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_prepare_themes_for_js');

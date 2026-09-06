@@ -643,6 +643,18 @@ function sanitize_term_field($field, $value, $term_id, $taxonomy, $context)
     return $value;
 }
 
+function wp_cache_set_terms_last_changed()
+{
+    wp_cache_set('last_changed', microtime(), 'terms');
+}
+
+function _split_shared_term($term_id, $term_taxonomy_id, $record = true)
+{
+    // A term row belongs to one taxonomy row on every site the engine can meet,
+    // so there is nothing to split and the term keeps its id.
+    return (int) $term_id;
+}
+
 function get_term_to_edit($id, $taxonomy)
 {
     return get_term($id, $taxonomy);

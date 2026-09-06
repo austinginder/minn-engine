@@ -6,6 +6,8 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 |---|---|---|---|
 | [`AdminBar`](#adminbar) | final readonly class | 318 | The Minn bar on the public site: the same server-rendered chrome the |
 | [`AssetsController`](#assetscontroller) | final readonly class | 32 | The engine's own static assets, served under a reserved path. |
+| [`Calendar`](#calendar) | final readonly class | 99 | One month as the calendar widget and block draw it: a table whose caption |
+| [`CalendarLabels`](#calendarlabels) | final readonly class | 44 | The words a calendar prints: weekday names Sunday first, the short form |
 | [`Canonical`](#canonical) | final class | 28 | Where a URL should redirect to, by the engine's own resolution: the |
 | [`CommentList`](#commentlist) | final class | 52 | The classic threaded comment walk: top-level comments in order (or |
 | [`CommentPostController`](#commentpostcontroller) | final readonly class | 139 | wp-comments-post.php: the comment form's target. The reference's |
@@ -87,6 +89,72 @@ One engine asset file.
 Route: `GET /wp-includes/js/jquery/{file:[a-z0-9.-]+\.js} (public)`
 
 The MIT libraries the engine ships, served at the paths the reference registers them under.
+
+
+## Calendar
+
+`final readonly class Minn\Front\Calendar` · `public/minn/src/Minn/Front/Calendar.php`
+
+One month as the calendar widget and block draw it: a table whose caption
+names the month, whose head lists the week from the site's first day, and
+whose cells link the days a post was published on to that day's archive;
+today's cell carries the id the stylesheet lights; the nav below links
+the nearest months with posts on either side. Markup, whitespace and the
+attribute order of the two padding cells follow the reference byte for
+byte, since themes style the table by those hooks.
+
+- const `FIXED_DATE` = `'F j, Y'`
+
+```php
+__construct(int $year, int $month, int $weekStart, Minn\Front\CalendarLabels $labels, Closure $link)
+```
+- `@param Closure(int, int, ?int): string $link the month archive URL, or the day's when a day is given`
+
+
+### `render(array $postDays, ?array $previous, ?array $next, ?array $today): string`
+
+The table and its navigation.
+
+- `@param list<int> $postDays days of the month with a published post`
+- `@param array{int, int}|null $previous the nearest earlier month with posts, as [year, month]`
+- `@param array{int, int}|null $next the nearest later month with posts`
+- `@param array{int, int, int}|null $today the site's current date, as [year, month, day]`
+
+Internals: `table()` (private, line 47), `head()` (private, line 73), `cell()` (private, line 87), `navigation()` (private, line 102), `abbreviation()` (private, line 113)
+
+
+## CalendarLabels
+
+`final readonly class Minn\Front\CalendarLabels` · `public/minn/src/Minn/Front/CalendarLabels.php`
+
+The words a calendar prints: weekday names Sunday first, the short form
+each column shows (an initial or an abbreviation), month names by number,
+and the abbreviation the month navigation uses.
+
+Used by: `Minn\Front\Calendar`
+
+```php
+__construct(array $weekdays, array $weekdayShort, array $months, array $monthAbbrev)
+```
+- `@param array<int, string> $weekdays Sunday first`
+- `@param array<string, string> $weekdayShort full weekday name to the column heading`
+- `@param array<int, string> $months 1 to 12`
+- `@param array<string, string> $monthAbbrev full month name to its abbreviation`
+
+- readonly `array $weekdays`
+- readonly `array $weekdayShort`
+- readonly `array $months`
+- readonly `array $monthAbbrev`
+
+### static `english(): self`
+
+The English tables, with weekday initials as the reference shows by default.
+
+### static `englishAbbreviated(): self`
+
+The English tables with three-letter weekday abbreviations.
+
+Internals: `fromEnglish()` (private, line 43)
 
 
 ## Canonical

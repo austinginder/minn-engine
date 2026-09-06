@@ -1,6 +1,9 @@
 <?php
 /** Template loading and the small template tags. */
 
+use Minn\Content\Posts;
+use Minn\Front\Calendar;
+use Minn\Front\CalendarLabels;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\Avatar;
 
@@ -783,4 +786,61 @@ function _minn_block_template_exists(array $templates): bool
         }
     }
     return false;
+}
+
+function get_calendar($args = [])
+{
+    // The older form, get_calendar($initial, $display), still answers.
+    if (!is_array($args)) {
+        $legacy = func_get_args();
+        $args = ['initial' => (bool) $legacy[0], 'display' => $legacy[1] ?? true];
+    }
+    $args = wp_parse_args($args, ['initial' => true, 'display' => true, 'post_type' => 'post']);
+    [$year, $month] = _minn_calendar_month();
+    $output = apply_filters('get_calendar', _minn_calendar($year, $month, (bool) $args['initial'], (string) $args['post_type']), $args);
+    if ($args['display']) {
+        echo $output;
+        return null;
+    }
+    return $output;
+}
+
+/** @internal the month the calendar shows: the query's, else the site's current one */
+function _minn_calendar_month(): array
+{
+    $query = $GLOBALS['wp_query'] ?? null;
+    $m = (string) ($GLOBALS['m'] ?? ($query instanceof WP_Query ? $query->get('m') : ''));
+    $year = (int) ($GLOBALS['year'] ?? ($query instanceof WP_Query ? $query->get('year') : 0));
+    $month = (int) ($GLOBALS['monthnum'] ?? ($query instanceof WP_Query ? $query->get('monthnum') : 0));
+    if (strlen($m) >= 6) {
+        return [(int) substr($m, 0, 4), (int) substr($m, 4, 2)];
+    }
+    if ($year > 0 && $month > 0) {
+        return [$year, $month];
+    }
+    if ($year > 0) {
+        return [$year, (int) current_time('m')];
+    }
+    return [(int) current_time('Y'), (int) current_time('m')];
+}
+
+/** @internal the rendered month, from the site's posts and locale */
+function _minn_calendar(int $year, int $month, bool $initial, string $type): string
+{
+    $locale = $GLOBALS['wp_locale'] ?? new WP_Locale();
+    $short = $initial ? $locale->weekday_initial : $locale->weekday_abbrev;
+    $months = [];
+    foreach ($locale->month as $number => $name) {
+        $months[(int) $number] = $name;
+    }
+    $labels = new CalendarLabels($locale->weekday, $short, $months, $locale->month_abbrev);
+    $link = static fn (int $y, int $m, ?int $d): string => $d === null ? get_month_link($y, $m) : get_day_link($y, $m, $d);
+    $posts = new Posts(Runtime::current()->db);
+    $today = explode('-', current_time('Y-m-d'));
+    return (new Calendar($year, $month, (int) get_option('start_of_week'), $labels, $link))->render(
+        $posts->daysWithPosts($year, $month, $type),
+        $posts->monthBefore($year, $month, $type),
+        $posts->monthAfter($year, $month, $type),
+        [(int) $today[0], (int) $today[1], (int) $today[2]],
+    );
 }

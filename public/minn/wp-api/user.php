@@ -356,3 +356,34 @@ function remove_role($role)
     wp_roles()->remove_role($role);
     return null;
 }
+
+function sanitize_user_field($field, $value, $user_id, $context)
+{
+    $field = (string) $field;
+    // The field's hooks drop its user_ prefix: user_url is filtered by user_url, not user_user_url.
+    $name = str_starts_with($field, 'user_') ? substr($field, 5) : $field;
+    if ($field === 'ID') {
+        $value = (int) $value;
+    }
+    if ($context === 'raw') {
+        return $value;
+    }
+    if ($context === 'db') {
+        return apply_filters("pre_user_{$name}", $value);
+    }
+    if ($context === 'edit') {
+        $value = apply_filters("edit_user_{$name}", $value, $user_id);
+        if ($field === 'user_url' && is_string($value)) {
+            $value = esc_url($value);
+        }
+        return is_string($value) ? esc_attr($value) : $value;
+    }
+    $value = apply_filters("user_{$name}", $value, $user_id, $context);
+    if ($context === 'attribute') {
+        return is_string($value) ? esc_attr($value) : $value;
+    }
+    if ($context === 'js') {
+        return is_string($value) ? esc_js($value) : $value;
+    }
+    return $value;
+}

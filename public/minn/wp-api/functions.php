@@ -571,6 +571,18 @@ function wp_cache_get_last_changed($group)
     return $last;
 }
 
+function _get_non_cached_ids($object_ids, $cache_group)
+{
+    $ids = [];
+    foreach ((array) $object_ids as $id) {
+        $id = (int) $id;
+        if (!in_array($id, $ids, true) && wp_cache_get($id, (string) $cache_group) === false) {
+            $ids[] = $id;
+        }
+    }
+    return $ids;
+}
+
 function wp_cache_set_last_changed($group)
 {
     $previous = wp_cache_get('last_changed', $group);

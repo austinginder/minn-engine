@@ -26611,7 +26611,7 @@
             "namespace": "Minn\\Content",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Content/Posts.php",
-            "lines": 391,
+            "lines": 430,
             "doc": "Reads over the posts table. A single post comes back as a PostRecord and\na listing as a Page of them; rendering and escaping happen elsewhere.",
             "implements": [],
             "extends": null,
@@ -27232,6 +27232,110 @@
                 },
                 {
                     "routes": [],
+                    "name": "daysWithPosts",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "daysWithPosts(int $year, int $month, string $type): array",
+                    "doc": "The days of one month a published post of a type was dated on, ascending.",
+                    "shapes": [
+                        "@return list<int>"
+                    ],
+                    "params": [
+                        {
+                            "name": "year",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "month",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 372,
+                    "end": 380
+                },
+                {
+                    "routes": [],
+                    "name": "monthBefore",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "monthBefore(int $year, int $month, string $type): ?array",
+                    "doc": "The nearest month before one with a published post of a type, as [year, month], or null.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "year",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "month",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 383,
+                    "end": 387
+                },
+                {
+                    "routes": [],
+                    "name": "monthAfter",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "monthAfter(int $year, int $month, string $type): ?array",
+                    "doc": "The nearest month after one with a published post of a type, as [year, month], or null.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "year",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "month",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 390,
+                    "end": 394
+                },
+                {
+                    "routes": [],
                     "name": "newestAutosave",
                     "static": false,
                     "visibility": "public",
@@ -27254,8 +27358,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 382,
-                    "end": 389
+                    "line": 421,
+                    "end": 428
                 },
                 {
                     "routes": [],
@@ -27274,8 +27378,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 392,
-                    "end": 403
+                    "line": 431,
+                    "end": 442
                 },
                 {
                     "routes": [],
@@ -27442,6 +27546,42 @@
                 },
                 {
                     "routes": [],
+                    "name": "monthBeside",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "monthBeside(string $type, string $clause, string $edge): ?array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array{int, int}|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "clause",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "edge",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 397,
+                    "end": 404
+                },
+                {
+                    "routes": [],
                     "name": "latest",
                     "static": false,
                     "visibility": "private",
@@ -27464,8 +27604,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 367,
-                    "end": 379
+                    "line": 406,
+                    "end": 418
                 }
             ]
         },
@@ -33893,6 +34033,446 @@
                     ],
                     "line": 38,
                     "end": 45
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Front\\Calendar",
+            "short": "Calendar",
+            "namespace": "Minn\\Front",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Front/Calendar.php",
+            "lines": 99,
+            "doc": "One month as the calendar widget and block draw it: a table whose caption\nnames the month, whose head lists the week from the site's first day, and\nwhose cells link the days a post was published on to that day's archive;\ntoday's cell carries the id the stylesheet lights; the nav below links\nthe nearest months with posts on either side. Markup, whitespace and the\nattribute order of the two padding cells follow the reference byte for\nbyte, since themes style the table by those hooks.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Front\\CalendarLabels"
+            ],
+            "usedBy": [],
+            "constructor": {
+                "signature": "__construct(int $year, int $month, int $weekStart, Minn\\Front\\CalendarLabels $labels, Closure $link)",
+                "doc": "",
+                "shapes": [
+                    "@param Closure(int, int, ?int): string $link the month archive URL, or the day's when a day is given"
+                ],
+                "params": [
+                    {
+                        "name": "year",
+                        "type": "int",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "month",
+                        "type": "int",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "weekStart",
+                        "type": "int",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "labels",
+                        "type": "Minn\\Front\\CalendarLabels",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "link",
+                        "type": "Closure",
+                        "shape": "Closure(int, int, ?int): string",
+                        "default": null,
+                        "doc": "the month archive URL, or the day's when a day is given"
+                    }
+                ],
+                "visibility": "public",
+                "line": 24,
+                "end": 31
+            },
+            "cases": [],
+            "constants": [
+                {
+                    "name": "FIXED_DATE",
+                    "value": "'F j, Y'",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "year",
+                    "type": "int",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "month",
+                    "type": "int",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "weekStart",
+                    "type": "int",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "labels",
+                    "type": "Minn\\Front\\CalendarLabels",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "link",
+                    "type": "Closure",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "render",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "render(array $postDays, ?array $previous, ?array $next, ?array $today): string",
+                    "doc": "The table and its navigation.",
+                    "shapes": [
+                        "@param list<int> $postDays days of the month with a published post",
+                        "@param array{int, int}|null $previous the nearest earlier month with posts, as [year, month]",
+                        "@param array{int, int}|null $next the nearest later month with posts",
+                        "@param array{int, int, int}|null $today the site's current date, as [year, month, day]"
+                    ],
+                    "params": [
+                        {
+                            "name": "postDays",
+                            "type": "array",
+                            "shape": "list<int>",
+                            "default": null,
+                            "doc": "days of the month with a published post"
+                        },
+                        {
+                            "name": "previous",
+                            "type": "?array",
+                            "shape": "array{int, int}|null",
+                            "default": null,
+                            "doc": "the nearest earlier month with posts, as [year, month]"
+                        },
+                        {
+                            "name": "next",
+                            "type": "?array",
+                            "shape": "array{int, int}|null",
+                            "default": null,
+                            "doc": "the nearest later month with posts"
+                        },
+                        {
+                            "name": "today",
+                            "type": "?array",
+                            "shape": "array{int, int, int}|null",
+                            "default": null,
+                            "doc": "the site's current date, as [year, month, day]"
+                        }
+                    ],
+                    "line": 41,
+                    "end": 44
+                },
+                {
+                    "routes": [],
+                    "name": "table",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "table(array $postDays, ?array $today): string",
+                    "doc": "",
+                    "shapes": [
+                        "@param list<int> $postDays"
+                    ],
+                    "params": [
+                        {
+                            "name": "postDays",
+                            "type": "array",
+                            "shape": "list<int>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "today",
+                            "type": "?array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 47,
+                    "end": 71
+                },
+                {
+                    "routes": [],
+                    "name": "head",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "head(): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 73,
+                    "end": 81
+                },
+                {
+                    "routes": [],
+                    "name": "cell",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "cell(int $day, array $postDays, ?array $today): string",
+                    "doc": "",
+                    "shapes": [
+                        "@param list<int> $postDays",
+                        "@param array{int, int, int}|null $today"
+                    ],
+                    "params": [
+                        {
+                            "name": "day",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "postDays",
+                            "type": "array",
+                            "shape": "list<int>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "today",
+                            "type": "?array",
+                            "shape": "array{int, int, int}|null",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 87,
+                    "end": 96
+                },
+                {
+                    "routes": [],
+                    "name": "navigation",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "navigation(?array $previous, ?array $next): string",
+                    "doc": "",
+                    "shapes": [
+                        "@param array{int, int}|null $previous",
+                        "@param array{int, int}|null $next"
+                    ],
+                    "params": [
+                        {
+                            "name": "previous",
+                            "type": "?array",
+                            "shape": "array{int, int}|null",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "next",
+                            "type": "?array",
+                            "shape": "array{int, int}|null",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 102,
+                    "end": 111
+                },
+                {
+                    "routes": [],
+                    "name": "abbreviation",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "abbreviation(int $month): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "month",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 113,
+                    "end": 116
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Front\\CalendarLabels",
+            "short": "CalendarLabels",
+            "namespace": "Minn\\Front",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Front/CalendarLabels.php",
+            "lines": 44,
+            "doc": "The words a calendar prints: weekday names Sunday first, the short form\neach column shows (an initial or an abbreviation), month names by number,\nand the abbreviation the month navigation uses.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Front\\Calendar"
+            ],
+            "constructor": {
+                "signature": "__construct(array $weekdays, array $weekdayShort, array $months, array $monthAbbrev)",
+                "doc": "",
+                "shapes": [
+                    "@param array<int, string> $weekdays Sunday first",
+                    "@param array<string, string> $weekdayShort full weekday name to the column heading",
+                    "@param array<int, string> $months 1 to 12",
+                    "@param array<string, string> $monthAbbrev full month name to its abbreviation"
+                ],
+                "params": [
+                    {
+                        "name": "weekdays",
+                        "type": "array",
+                        "shape": "array<int, string>",
+                        "default": null,
+                        "doc": "Sunday first"
+                    },
+                    {
+                        "name": "weekdayShort",
+                        "type": "array",
+                        "shape": "array<string, string>",
+                        "default": null,
+                        "doc": "full weekday name to the column heading"
+                    },
+                    {
+                        "name": "months",
+                        "type": "array",
+                        "shape": "array<int, string>",
+                        "default": null,
+                        "doc": "1 to 12"
+                    },
+                    {
+                        "name": "monthAbbrev",
+                        "type": "array",
+                        "shape": "array<string, string>",
+                        "default": null,
+                        "doc": "full month name to its abbreviation"
+                    }
+                ],
+                "visibility": "public",
+                "line": 22,
+                "end": 28
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "weekdays",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "weekdayShort",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "months",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "monthAbbrev",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "english",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "english(): self",
+                    "doc": "The English tables, with weekday initials as the reference shows by default.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 31,
+                    "end": 34
+                },
+                {
+                    "routes": [],
+                    "name": "englishAbbreviated",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "englishAbbreviated(): self",
+                    "doc": "The English tables with three-letter weekday abbreviations.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 37,
+                    "end": 40
+                },
+                {
+                    "routes": [],
+                    "name": "fromEnglish",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "fromEnglish(Closure $short): self",
+                    "doc": "",
+                    "shapes": [
+                        "@param Closure(string): string $short the column heading for a weekday name"
+                    ],
+                    "params": [
+                        {
+                            "name": "short",
+                            "type": "Closure",
+                            "shape": "Closure(string): string",
+                            "default": null,
+                            "doc": "the column heading for a weekday name"
+                        }
+                    ],
+                    "line": 43,
+                    "end": 56
                 }
             ]
         },

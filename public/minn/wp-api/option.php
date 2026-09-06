@@ -188,6 +188,15 @@ function wp_cache_get_multiple($keys, $group = '', $force = false)
     return $out;
 }
 
+function wp_cache_add_multiple(array $data, $group = '', $expire = 0)
+{
+    $out = [];
+    foreach ($data as $key => $value) {
+        $out[$key] = wp_cache_add($key, $value, $group, $expire);
+    }
+    return $out;
+}
+
 function wp_cache_set_multiple(array $data, $group = '', $expire = 0)
 {
     $out = [];

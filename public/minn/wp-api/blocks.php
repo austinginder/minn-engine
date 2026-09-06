@@ -266,6 +266,15 @@ function wp_get_block_default_classname($block_name)
     return apply_filters('block_default_classname', 'wp-block-' . str_replace('/', '-', (string) $block_name), $block_name);
 }
 
+function wp_apply_generated_classname_support($block_type)
+{
+    if (!$block_type instanceof WP_Block_Type || !block_has_support($block_type, 'className', true)) {
+        return [];
+    }
+    $class = wp_get_block_default_classname($block_type->name);
+    return $class === '' ? [] : ['class' => $class];
+}
+
 function wp_get_block_css_selector($block_type, $target = 'root', $fallback = false)
 {
     if (!$block_type instanceof WP_Block_Type) {

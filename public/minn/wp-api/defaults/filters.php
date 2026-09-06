@@ -12,6 +12,24 @@ add_filter('sanitize_user', 'strip_tags');
 add_filter('sanitize_user', 'trim');
 add_filter('sanitize_user', 'wp_strip_all_tags');
 add_filter('pre_kses', 'wp_pre_kses_less_than');
+// User fields, as the reference sanitises them on the way in (pre_user_*)
+// and out (user_*); sanitize_user_field() runs these by context.
+foreach (['display_name', 'first_name', 'last_name', 'nickname'] as $minnUserField) {
+    add_filter("pre_user_{$minnUserField}", 'sanitize_text_field');
+    add_filter("pre_user_{$minnUserField}", 'wp_filter_kses');
+    add_filter("pre_user_{$minnUserField}", '_wp_specialchars', 30);
+    add_filter("user_{$minnUserField}", '_wp_specialchars', 30);
+}
+unset($minnUserField);
+add_filter('pre_user_description', 'wp_filter_kses');
+add_filter('pre_user_email', 'trim');
+add_filter('pre_user_email', 'sanitize_email');
+add_filter('pre_user_email', 'wp_filter_kses');
+add_filter('user_email', 'sanitize_email');
+add_filter('pre_user_url', 'wp_strip_all_tags');
+add_filter('pre_user_url', 'sanitize_url');
+add_filter('pre_user_url', 'wp_filter_kses');
+add_filter('user_url', 'esc_url');
 add_filter('the_title', 'wptexturize');
 add_filter('the_title', 'convert_chars');
 add_filter('the_title', 'trim');

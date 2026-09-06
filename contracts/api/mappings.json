@@ -2,12 +2,12 @@
     "generated": "2026-09-06",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 438,
-        "composes": 707,
-        "leaf": 355,
-        "noop": 1247,
-        "functions": 2741,
-        "minnMethods": 416,
+        "minn": 439,
+        "composes": 716,
+        "leaf": 357,
+        "noop": 1248,
+        "functions": 2754,
+        "minnMethods": 421,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -7663,6 +7663,42 @@
                 "wp_parse_args"
             ]
         },
+        "WP_Widget_Calendar::__construct": {
+            "file": "classes/WP_Widget_Calendar.php",
+            "lines": 5,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Widget_Calendar::form": {
+            "file": "classes/WP_Widget_Calendar.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "esc_attr",
+                "wp_parse_args"
+            ]
+        },
+        "WP_Widget_Calendar::update": {
+            "file": "classes/WP_Widget_Calendar.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "sanitize_text_field"
+            ]
+        },
+        "WP_Widget_Calendar::widget": {
+            "file": "classes/WP_Widget_Calendar.php",
+            "lines": 11,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "get_calendar"
+            ]
+        },
         "WP_Widget_Custom_HTML::__construct": {
             "file": "classes/WP_Widget_Custom_HTML.php",
             "lines": 6,
@@ -8267,6 +8303,15 @@
                 "get_option"
             ]
         },
+        "_get_non_cached_ids": {
+            "file": "functions.php",
+            "lines": 8,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_cache_get"
+            ]
+        },
         "_get_term_children": {
             "file": "taxonomy.php",
             "lines": 19,
@@ -8521,6 +8566,36 @@
                 "Minn\\Support\\Url::buildQuery"
             ],
             "composes": []
+        },
+        "_minn_calendar": {
+            "file": "template.php",
+            "lines": 16,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Content\\Posts::__construct",
+                "Minn\\Content\\Posts::daysWithPosts",
+                "Minn\\Content\\Posts::monthAfter",
+                "Minn\\Content\\Posts::monthBefore",
+                "Minn\\Front\\Calendar::__construct",
+                "Minn\\Front\\CalendarLabels::__construct",
+                "Minn\\Runtime\\Runtime::current",
+                "Minn\\Runtime\\Runtime::db"
+            ],
+            "composes": [
+                "current_time",
+                "get_day_link",
+                "get_month_link",
+                "get_option"
+            ]
+        },
+        "_minn_calendar_month": {
+            "file": "template.php",
+            "lines": 14,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "current_time"
+            ]
         },
         "_minn_classic_bar_footer": {
             "file": "template.php",
@@ -9415,6 +9490,13 @@
             "composes": [
                 "update_option"
             ]
+        },
+        "_split_shared_term": {
+            "file": "taxonomy.php",
+            "lines": 3,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
         },
         "_truncate_post_slug": {
             "file": "post.php",
@@ -12032,6 +12114,18 @@
             "kind": "leaf",
             "minn": [],
             "composes": []
+        },
+        "get_calendar": {
+            "file": "template.php",
+            "lines": 13,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_calendar",
+                "_minn_calendar_month",
+                "apply_filters",
+                "wp_parse_args"
+            ]
         },
         "get_cancel_comment_reply_link": {
             "file": "comment.php",
@@ -18110,6 +18204,18 @@
                 "wp_strip_all_tags"
             ]
         },
+        "sanitize_user_field": {
+            "file": "user.php",
+            "lines": 27,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "esc_attr",
+                "esc_js",
+                "esc_url"
+            ]
+        },
         "search_theme_directories": {
             "file": "theme.php",
             "lines": 1,
@@ -19741,6 +19847,16 @@
                 "apply_filters"
             ]
         },
+        "wp_apply_generated_classname_support": {
+            "file": "blocks.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "block_has_support",
+                "wp_get_block_default_classname"
+            ]
+        },
         "wp_array_slice_assoc": {
             "file": "formatting.php",
             "lines": 7,
@@ -19880,6 +19996,15 @@
             "kind": "noop",
             "minn": [],
             "composes": []
+        },
+        "wp_cache_add_multiple": {
+            "file": "option.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_cache_add"
+            ]
         },
         "wp_cache_add_non_persistent_groups": {
             "file": "option.php",
@@ -20029,6 +20154,15 @@
             "file": "option.php",
             "lines": 5,
             "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_cache_set"
+            ]
+        },
+        "wp_cache_set_terms_last_changed": {
+            "file": "taxonomy.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": [
                 "wp_cache_set"
@@ -24982,7 +25116,7 @@
         },
         "wp_widgets_init": {
             "file": "widgets.php",
-            "lines": 2,
+            "lines": 3,
             "kind": "composes",
             "minn": [],
             "composes": [

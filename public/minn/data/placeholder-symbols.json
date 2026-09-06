@@ -141,6 +141,7 @@
         "wp_parse_widget_id",
         "wp_paused_plugins",
         "wp_paused_themes",
+        "wp_popular_terms_checklist",
         "wp_prepare_themes_for_js",
         "wp_print_admin_notice_templates",
         "wp_print_font_faces",

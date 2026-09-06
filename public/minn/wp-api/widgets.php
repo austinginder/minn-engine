@@ -218,6 +218,7 @@ function wp_convert_widget_settings($base_name, $option_name, $settings)
  */
 function wp_widgets_init()
 {
+    register_widget('WP_Widget_Calendar');
     register_widget('WP_Widget_Block');
     do_action('widgets_init');
 }
