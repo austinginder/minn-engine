@@ -6,7 +6,7 @@ request, response, routing, and the outgoing client
 |---|---|---|---|
 | [`Access`](#access) | enum | 15 | Who a route is for. The six answers every route gives, so the |
 | [`Args`](#args) | final class | 192 | The parameters a route accepts, as the reference describes them in the |
-| [`Client`](#client) | final class | 101 | The engine's outgoing HTTP transport over curl. Redirects are followed by |
+| [`Client`](#client) | final class | 100 | The engine's outgoing HTTP transport over curl. Redirects are followed by |
 | [`Download`](#download) | final class | 106 | A file the engine fetches for itself (a package, a language pack). Every |
 | [`Exchange`](#exchange) | final readonly class | 29 | What came back: the final response's status, headers (repeats as lists), Set-Cookie values, and body, or the transport error. |
 | [`Failure`](#failure) | final class | 166 | What the public sees when the engine cannot answer: a plain page with no |
@@ -108,7 +108,7 @@ A HEAD request, sent at once.
 
 Performs one outgoing request over curl and returns the exchange, a transport error included.
 
-Internals: `lastBlock()` (private, line 79)
+Internals: `lastBlock()` (private, line 78)
 
 
 ## Download

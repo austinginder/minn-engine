@@ -36,18 +36,22 @@ final readonly class Recovery
     }
 
     /**
-     * The extension a file belongs to: a plugin as its `folder/file.php`
-     * (or bare file for a single-file plugin), a theme as its slug.
-     * Anything outside the plugin and theme folders belongs to nobody, and
-     * is never paused: a fatal in the engine or in core is not a plugin's
-     * fault and pausing something would not fix it. A symlinked plugin
-     * reports its real location; the realpath map (real folder to the
-     * folder under plugins/) brings it home first.
+     * The extension a file belongs to: a plugin as the active `folder/file.php`
+     * whose folder holds the file (or the bare file of a single-file plugin),
+     * a theme as its slug. The name is the one the loader checks against the
+     * paused list, so a fatal deep inside a plugin's subfolders pauses the
+     * plugin and not a folder nothing is called by. Anything outside the
+     * plugin and theme folders belongs to nobody, and is never paused: a
+     * fatal in the engine or in core is not a plugin's fault and pausing
+     * something would not fix it. A symlinked plugin reports its real
+     * location; the realpath map (real folder to the folder under plugins/)
+     * brings it home first.
      *
      * @param array<string, string> $realpaths
+     * @param list<string>|null $active the active plugin files; read from the site when omitted
      * @return array{kind: 'plugin'|'theme', name: string}|null
      */
-    public function blame(string $file, array $realpaths = []): ?array
+    public function blame(string $file, array $realpaths = [], ?array $active = null): ?array
     {
         $file = str_replace('\\', '/', $file);
         foreach ($realpaths as $real => $expected) {
@@ -70,9 +74,36 @@ final readonly class Recovery
             if ($kind === 'theme') {
                 return ['kind' => 'theme', 'name' => $parts[0]];
             }
-            return ['kind' => 'plugin', 'name' => count($parts) > 1 ? $parts[0] . '/' . $parts[1] : $parts[0]];
+            return ['kind' => 'plugin', 'name' => $this->pluginFile($parts, $active ?? $this->activePlugins())];
         }
         return null;
+    }
+
+    /**
+     * The active plugin file a path under plugins/ belongs to: the entry in
+     * the folder the path starts with, the bare file itself for a single-file
+     * plugin, and the folder alone when no active entry claims it.
+     *
+     * @param list<string> $parts the path segments under plugins/
+     * @param list<string> $active
+     */
+    private function pluginFile(array $parts, array $active): string
+    {
+        if (count($parts) === 1) {
+            return $parts[0];
+        }
+        foreach ($active as $file) {
+            if (dirname($file) === $parts[0]) {
+                return $file;
+            }
+        }
+        return $parts[0];
+    }
+
+    /** @return list<string> */
+    private function activePlugins(): array
+    {
+        return Serialized::stringList($this->site->option('active_plugins'));
     }
 
     /**

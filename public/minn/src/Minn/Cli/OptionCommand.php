@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Cli;
 
+use Minn\Runtime\Options;
 use Minn\Support\Serialized;
 use WP_CLI;
 
@@ -83,10 +84,7 @@ final class OptionCommand
             WP_CLI::error("Could not add option '{$key}'. Does it already exist?");
         }
         $autoload = ($assocArgs['autoload'] ?? 'on') === 'off' ? 'off' : 'on';
-        $runtime->db->execute(
-            "INSERT INTO {$runtime->db->table('options')} (option_name, option_value, autoload) VALUES (?, ?, ?)",
-            [$key, self::encode($value), $autoload],
-        );
+        (new Options($runtime->db))->upsert($key, self::encode($value), $autoload);
         WP_CLI::success("Added '{$key}' option.");
     }
 
@@ -134,10 +132,7 @@ final class OptionCommand
         if ($stored === null) {
             // A first write through update autoloads on demand ("auto"), as the reference does.
             $autoload = ($assocArgs['autoload'] ?? 'auto') === 'off' ? 'off' : (($assocArgs['autoload'] ?? '') === 'on' ? 'on' : 'auto');
-            $runtime->db->execute(
-                "INSERT INTO {$runtime->db->table('options')} (option_name, option_value, autoload) VALUES (?, ?, ?)",
-                [$key, $encoded, $autoload],
-            );
+            (new Options($runtime->db))->upsert($key, $encoded, $autoload);
         } elseif (isset($assocArgs['autoload'])) {
             $runtime->db->execute(
                 "UPDATE {$runtime->db->table('options')} SET option_value = ?, autoload = ? WHERE option_name = ?",

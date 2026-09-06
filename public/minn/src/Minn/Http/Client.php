@@ -64,7 +64,6 @@ final class Client
         $errno = curl_errno($handle);
         $error = curl_error($handle);
         $code = (int) curl_getinfo($handle, CURLINFO_RESPONSE_CODE);
-        curl_close($handle);
         if ($errno !== 0 && $raw === false) {
             return new Exchange(0, [], [], '', $error !== '' ? $error : 'cURL error ' . $errno);
         }

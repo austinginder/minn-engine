@@ -26,12 +26,13 @@ the WordPress runtime plugins load against
 | [`NavMenu`](#navmenu) | final class | 303 | Nav-menu item decoration for wp_nav_menu(): the reference's class tokens |
 | [`OEmbed`](#oembed) | final class | 92 | oEmbed as data: provider matching against the wildcard table, response parsing, and the markup an oEmbed payload becomes. |
 | [`ObjectCache`](#objectcache) | final class | 52 | The per-request object cache behind wp_cache_*: groups of keys, nothing persistent. |
-| [`Options`](#options) | final class | 175 | Options as plugin code sees them: PHP values, decoded from the stored |
+| [`Options`](#options) | final class | 192 | Options as plugin code sees them: PHP values, decoded from the stored |
 | [`PackageDownload`](#packagedownload) | final class | 32 | The publisher's say over its own download. Before fetching an update |
 | [`PageMenu`](#pagemenu) | final class | 40 | The page-list menu a classic theme falls back to when no menu is |
 | [`Pages`](#pages) | final class | 113 | get_pages() as the reference shapes it: its arguments as a post query, and the tree order of the result. |
 | [`Patterns`](#patterns) | final class | 161 | The block pattern, pattern category, and block style registries as data. |
 | [`PlaceholderTrace`](#placeholdertrace) | final class | 27 | Records every call into a generated placeholder while a site opts in by |
+| [`Placeholders`](#placeholders) | final class | 49 | The printf placeholders plugin code hands wpdb::prepare, filled the way |
 | [`PluginUpdates`](#pluginupdates) | final class | 65 | The update offers the site's own plugins publish. A plugin that hosts |
 | [`Plugins`](#plugins) | final class | 192 | Loads the site's plugins into the runtime the way the reference does: |
 | [`PostInsert`](#postinsert) | final readonly class | 160 | The decisions behind wp_insert_post: which columns a postarr fills, when |
@@ -39,13 +40,13 @@ the WordPress runtime plugins load against
 | [`PostQuery`](#postquery) | final class | 383 | The query WP_Query runs: its variables become one SELECT over the posts |
 | [`QueriedObject`](#queriedobject) | final readonly class | 70 | Which object a query is "about", read from its flags and variables: a term |
 | [`QueryFlags`](#queryflags) | final readonly class | 101 | The conditional flags a set of query variables implies (is_single, is_archive, |
-| [`Recovery`](#recovery) | final readonly class | 183 | Recovery from a fatal in someone else's code. When a plugin or theme |
+| [`Recovery`](#recovery) | final readonly class | 214 | Recovery from a fatal in someone else's code. When a plugin or theme |
 | [`Refusal`](#refusal) | final readonly class | 6 | A refused operation, the way plugin code expects to read it: a code, a message, optional data. The facade turns it into WP_Error. |
 | [`Registry`](#registry) | final class | 382 | Post types, taxonomies, and statuses as plugin code registers and reads |
 | [`Runtime`](#runtime) | final class | 281 | The WordPress runtime the engine offers plugin code: the procedural |
 | [`ScriptModules`](#scriptmodules) | final class | 308 | The script modules registry: registrations with typed dependencies, the |
 | [`ScriptPack`](#scriptpack) | final class | 146 | The site-supplied script pack: the `wp-*` JavaScript packages the engine |
-| [`Shortcodes`](#shortcodes) | final class | 132 | The shortcode registry plugin code fills with add_shortcode, and the |
+| [`Shortcodes`](#shortcodes) | final class | 143 | The shortcode registry plugin code fills with add_shortcode, and the |
 | [`StoredObjects`](#storedobjects) | final class | 32 | The classes a stored blob may name and come back as. The serialized |
 | [`SymbolGap`](#symbolgap) | final readonly class | 87 | The part of the reference's interface the runtime does not answer: names in |
 | [`SymbolTable`](#symboltable) | final class | 69 | What a folder's PHP names, collected while its tokens are read: the |
@@ -1081,7 +1082,7 @@ cron lock, and the sign-in throttle rows. The facade refuses to write
 them; the engine writes them through this class directly.
 - const `GUARDED_PREFIX` = `'minn_login_throttle_'`
 
-Used by: `Minn\Runtime\Runtime`, `Minn\Runtime\Symbols`
+Used by: `Minn\Cli\OptionCommand`, `Minn\Runtime\Runtime`, `Minn\Runtime\Symbols`
 
 ```php
 __construct(Minn\Db $db)
@@ -1109,6 +1110,14 @@ Whether an option exists.
 ### `add(string $name, mixed $value, string $autoload = 'auto'): bool`
 
 Adds an option only when it is unset.
+
+### `upsert(string $name, string $stored, string $autoload): bool`
+
+Writes an option row whether or not one exists, as the reference does
+for every add: two requests that both find a transient missing and
+both add it must not fail on the unique name, so the second write lands
+over the first. True when the row was inserted or changed, false when
+the same value was already there.
 
 ### `update(string $name, mixed $value, ?string $autoload = NULL): bool`
 
@@ -1145,7 +1154,7 @@ What the reference stores: arrays and objects serialized, scalars as their strin
 
 A stored option value decoded the way the reference reads it.
 
-Internals: `switchAutoload()` (private, line 117)
+Internals: `switchAutoload()` (private, line 134)
 
 
 ## PackageDownload
@@ -1329,6 +1338,31 @@ stat per request.
 ### static `hit(string $symbol): void`
 
 Logs a placeholder symbol being called, when the trace file exists.
+
+
+## Placeholders
+
+`final class Minn\Runtime\Placeholders` · `public/minn/src/Minn/Runtime/Placeholders.php`
+
+The printf placeholders plugin code hands wpdb::prepare, filled the way
+the reference fills them: a bare %s is escaped and quoted; a numbered
+(%1$s), padded (%5s) or precise (%.2f) one is formatted and escaped but
+never quoted, so a plugin can name a table with it; %d and %f cast; %i
+backticks an identifier; %% is a literal. Numbered placeholders address
+the argument list directly while unnumbered ones count from the first
+on their own, as vsprintf does. A placeholder with no argument behind it
+empties the whole query, as the reference does.
+
+- const `SPEC` = `'/%(?:(\\d+)\\$)?([-+ 0]*)(\\d*)(?:\\.(\\d+))?([sdfFi%])/'`
+
+### static `fill(string $query, array $args, callable $escape): ?string`
+
+Fills a query's placeholders from the arguments; null when one has no argument.
+
+- `@param list<mixed> $args`
+- `@param callable(string): string $escape the connection's string escape`
+
+Internals: `quoted()` (private, line 56), `text()` (private, line 61)
 
 
 ## PluginUpdates
@@ -1638,17 +1672,21 @@ __construct(Minn\Content\Site $site, string $contentDir)
 ```
 
 
-### `blame(string $file, array $realpaths = array ( )): ?array`
+### `blame(string $file, array $realpaths = array ( ), ?array $active = NULL): ?array`
 
-The extension a file belongs to: a plugin as its `folder/file.php`
-(or bare file for a single-file plugin), a theme as its slug.
-Anything outside the plugin and theme folders belongs to nobody, and
-is never paused: a fatal in the engine or in core is not a plugin's
-fault and pausing something would not fix it. A symlinked plugin
-reports its real location; the realpath map (real folder to the
-folder under plugins/) brings it home first.
+The extension a file belongs to: a plugin as the active `folder/file.php`
+whose folder holds the file (or the bare file of a single-file plugin),
+a theme as its slug. The name is the one the loader checks against the
+paused list, so a fatal deep inside a plugin's subfolders pauses the
+plugin and not a folder nothing is called by. Anything outside the
+plugin and theme folders belongs to nobody, and is never paused: a
+fatal in the engine or in core is not a plugin's fault and pausing
+something would not fix it. A symlinked plugin reports its real
+location; the realpath map (real folder to the folder under plugins/)
+brings it home first.
 
 - `@param array<string, string> $realpaths`
+- `@param list<string>|null $active the active plugin files; read from the site when omitted`
 - `@return array{kind: 'plugin'|'theme', name: string}|null`
 
 ### `pause(array $blamed, array $error): bool`
@@ -1689,7 +1727,7 @@ Lets an extension load again. Returns false when it was not paused.
 
 Lets everything load again. Returns how many were released.
 
-Internals: `strikes()` (private, line 130), `forgetStrikes()` (private, line 137), `read()` (private, line 192), `write()` (private, line 200)
+Internals: `pluginFile()` (private, line 90), `activePlugins()` (private, line 104), `strikes()` (private, line 161), `forgetStrikes()` (private, line 168), `read()` (private, line 223), `write()` (private, line 231)
 
 
 ## Refusal
@@ -2109,6 +2147,13 @@ the literal, unregistered tags left as written.
 
 Used by: `Minn\Runtime\Runtime`
 
+
+### `tags(): array`
+
+The registry itself, by reference, so the $shortcode_tags global plugin
+code reads and copies is this array and not a snapshot of it.
+
+- `@return array<string, callable>`
 
 ### `add(string $tag, callable $callback): void`
 

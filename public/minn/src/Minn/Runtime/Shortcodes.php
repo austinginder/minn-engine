@@ -15,6 +15,17 @@ final class Shortcodes
     /** @var array<string, callable> */
     private array $tags = [];
 
+    /**
+     * The registry itself, by reference, so the $shortcode_tags global plugin
+     * code reads and copies is this array and not a snapshot of it.
+     *
+     * @return array<string, callable>
+     */
+    public function &tags(): array
+    {
+        return $this->tags;
+    }
+
     /** Registers a shortcode. */
     public function add(string $tag, callable $callback): void
     {

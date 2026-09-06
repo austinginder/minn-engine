@@ -124,6 +124,23 @@
         ]
     ],
     [
+        "prepare placeholders",
+        [
+            "'it\\'s'",
+            "a",
+            "'a'",
+            "b-a",
+            "7",
+            "12",
+            "`a``b`",
+            "`t`",
+            "    a",
+            "1.00",
+            "a 'a'",
+            "'x'"
+        ]
+    ],
+    [
         "option term and comment revive",
         [
             "WP_Term",

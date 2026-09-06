@@ -12,7 +12,7 @@ the wp verbs the engine answers itself
 | [`Installer`](#installer) | final class | 303 | The swap, both ways. Install parks WordPress's own files beside the |
 | [`MaintenanceCommand`](#maintenancecommand) | final class | 65 | `wp maintenance-mode`: the `.maintenance` marker in the webroot. The |
 | [`MinnCommand`](#minncommand) | final class | 308 | Identifies the engine. |
-| [`OptionCommand`](#optioncommand) | final class | 191 | Options, read and written straight to the options table. Serialized |
+| [`OptionCommand`](#optioncommand) | final class | 185 | Options, read and written straight to the options table. Serialized |
 | [`PluginCommand`](#plugincommand) | final class | 475 | `wp plugin list\|install\|update\|activate\|deactivate\|delete`: the inventory and the fleet's install/update/delete. |
 | [`Preflight`](#preflight) | final class | 360 | What a site will and will not get from the engine, before anything |
 | [`RewriteCommand`](#rewritecommand) | final class | 52 | `wp rewrite flush\|structure`: permalink_structure is the engine's |
@@ -486,7 +486,7 @@ Deletes an option.
 <key>...
 : Key for the option.
 
-Internals: `readValue()` (private, line 176), `decode()` (private, line 193), `encode()` (private, line 199)
+Internals: `readValue()` (private, line 171), `decode()` (private, line 188), `encode()` (private, line 194)
 
 
 ## PluginCommand

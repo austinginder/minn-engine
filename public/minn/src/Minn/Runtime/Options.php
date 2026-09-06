@@ -79,10 +79,27 @@ final class Options
             return false;
         }
         $value = $value ?? '';
-        $this->db->execute("INSERT INTO {$this->db->table('options')} (option_name, option_value, autoload) VALUES (?, ?, ?)", [$name, self::toStorage($value), $autoload]);
+        $written = $this->upsert($name, self::toStorage($value), $autoload);
         unset($this->missing[$name]);
         $this->cache[$name] = $value;
-        return true;
+        return $written;
+    }
+
+    /**
+     * Writes an option row whether or not one exists, as the reference does
+     * for every add: two requests that both find a transient missing and
+     * both add it must not fail on the unique name, so the second write lands
+     * over the first. True when the row was inserted or changed, false when
+     * the same value was already there.
+     */
+    public function upsert(string $name, string $stored, string $autoload): bool
+    {
+        $affected = $this->db->execute(
+            "INSERT INTO {$this->db->table('options')} (option_name, option_value, autoload) VALUES (?, ?, ?)"
+            . ' ON DUPLICATE KEY UPDATE option_value = VALUES(option_value), autoload = VALUES(autoload)',
+            [$name, $stored, $autoload],
+        );
+        return $affected > 0;
     }
 
     /** False when the value is unchanged, as the reference reports. */

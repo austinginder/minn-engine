@@ -1,13 +1,13 @@
 {
-    "generated": "2026-09-03",
+    "generated": "2026-09-06",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 437,
-        "composes": 708,
+        "minn": 438,
+        "composes": 707,
         "leaf": 355,
         "noop": 1247,
         "functions": 2741,
-        "minnMethods": 415,
+        "minnMethods": 416,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -8443,13 +8443,14 @@
         },
         "_minn_bind_hook_globals": {
             "file": "plugin.php",
-            "lines": 10,
+            "lines": 11,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::actionCounters",
                 "Minn\\Runtime\\Runtime::filterCounters",
                 "Minn\\Runtime\\Runtime::hooks",
                 "Minn\\Runtime\\Runtime::onNew",
+                "Minn\\Runtime\\Runtime::shortcodes",
                 "Minn\\Runtime\\Runtime::stackRef"
             ],
             "composes": [
@@ -25223,9 +25224,11 @@
         },
         "wpdb::prepare": {
             "file": "classes/wpdb.php",
-            "lines": 26,
-            "kind": "composes",
-            "minn": [],
+            "lines": 8,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Placeholders::fill"
+            ],
             "composes": [
                 "count"
             ]

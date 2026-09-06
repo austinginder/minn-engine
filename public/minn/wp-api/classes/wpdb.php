@@ -1,5 +1,6 @@
 <?php
 
+use Minn\Runtime\Placeholders;
 use Minn\Runtime\Runtime;
 
 /**
@@ -167,26 +168,8 @@ class wpdb
         if (isset($args[0]) && is_array($args[0]) && count($args) === 1) {
             $args = array_values($args[0]);
         }
-        $query = (string) $query;
-        $query = str_replace("'%s'", '%s', $query);
-        $query = str_replace('"%s"', '%s', $query);
-        $query = preg_replace('/(?<!%)%(\d+\$)?s/', '%$1s', $query);
-        $index = 0;
-        $that = $this;
-        $prepared = preg_replace_callback('/%(?:(\d+)\$)?([sdfiF%])/', static function (array $m) use (&$index, $args, $that): string {
-            if ($m[2] === '%') {
-                return '%';
-            }
-            $position = $m[1] !== '' ? (int) $m[1] - 1 : $index++;
-            $value = $args[$position] ?? '';
-            return match ($m[2]) {
-                'd' => (string) (int) $value,
-                'f', 'F' => (string) (float) $value,
-                'i' => '`' . str_replace('`', '``', (string) $value) . '`',
-                default => "'" . $that->_real_escape($value) . "'",
-            };
-        }, $query);
-        return $this->remove_placeholder_escape($prepared);
+        $filled = Placeholders::fill((string) $query, $args, fn (string $value): string => $this->_real_escape($value));
+        return $filled === null ? '' : $this->remove_placeholder_escape($filled);
     }
 
     public function query($query)

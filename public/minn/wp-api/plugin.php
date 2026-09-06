@@ -210,7 +210,7 @@ function get_dropins()
     return $out;
 }
 
-/** @internal $wp_filter, $wp_actions, $wp_filters and $wp_current_filter over the engine's registry */
+/** @internal $wp_filter, $wp_actions, $wp_filters, $wp_current_filter and $shortcode_tags over the engine's registries */
 function _minn_bind_hook_globals(): void
 {
     $hooks = Runtime::hooks();
@@ -221,6 +221,7 @@ function _minn_bind_hook_globals(): void
     $GLOBALS['wp_actions'] = &$hooks->actionCounters();
     $GLOBALS['wp_filters'] = &$hooks->filterCounters();
     $GLOBALS['wp_current_filter'] = &$hooks->stackRef();
+    $GLOBALS['shortcode_tags'] = &Runtime::shortcodes()->tags();
     $GLOBALS['wp_roles'] = wp_roles();
     $GLOBALS['wp_embed'] ??= new WP_Embed();
 }

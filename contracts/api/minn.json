@@ -18594,12 +18594,13 @@
             "namespace": "Minn\\Cli",
             "kind": "final class",
             "file": "public/minn/src/Minn/Cli/OptionCommand.php",
-            "lines": 191,
+            "lines": 185,
             "doc": "Options, read and written straight to the options table. Serialized\nvalues are decoded by the engine's own reader, and arrays written back\nin the stored form.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Cli\\Runtime",
+                "Minn\\Runtime\\Options",
                 "Minn\\Support\\Serialized"
             ],
             "usedBy": [
@@ -18634,8 +18635,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 37,
-                    "end": 45
+                    "line": 38,
+                    "end": 46
                 },
                 {
                     "routes": [],
@@ -18661,8 +18662,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 77,
-                    "end": 91
+                    "line": 78,
+                    "end": 89
                 },
                 {
                     "routes": [],
@@ -18688,8 +18689,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 123,
-                    "end": 150
+                    "line": 121,
+                    "end": 145
                 },
                 {
                     "routes": [],
@@ -18715,8 +18716,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 162,
-                    "end": 173
+                    "line": 157,
+                    "end": 168
                 },
                 {
                     "routes": [],
@@ -18742,8 +18743,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 176,
-                    "end": 190
+                    "line": 171,
+                    "end": 185
                 },
                 {
                     "routes": [],
@@ -18762,8 +18763,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 193,
-                    "end": 197
+                    "line": 188,
+                    "end": 192
                 },
                 {
                     "routes": [],
@@ -18782,8 +18783,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 199,
-                    "end": 204
+                    "line": 194,
+                    "end": 199
                 }
             ]
         },
@@ -41738,7 +41739,7 @@
             "namespace": "Minn\\Http",
             "kind": "final class",
             "file": "public/minn/src/Minn/Http/Client.php",
-            "lines": 101,
+            "lines": 100,
             "doc": "The engine's outgoing HTTP transport over curl. Redirects are followed by\ncurl, so the header lines of every hop arrive in order; only the last\nresponse's block is kept, the way plugin code expects to read it.",
             "implements": [],
             "extends": null,
@@ -41879,7 +41880,7 @@
                         }
                     ],
                     "line": 33,
-                    "end": 73
+                    "end": 72
                 },
                 {
                     "routes": [],
@@ -41901,8 +41902,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 79,
-                    "end": 111
+                    "line": 78,
+                    "end": 110
                 }
             ]
         },
@@ -73672,7 +73673,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Options.php",
-            "lines": 175,
+            "lines": 192,
             "doc": "Options as plugin code sees them: PHP values, decoded from the stored\nblob by the engine's own reader, cached for the request so a value written\nand read again in one request keeps its PHP type (an int stays an int,\nfalse stays false) exactly as the reference shows.",
             "implements": [],
             "extends": null,
@@ -73682,6 +73683,7 @@
                 "Minn\\Support\\Serialized"
             ],
             "usedBy": [
+                "Minn\\Cli\\OptionCommand",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\Symbols"
             ],
@@ -73857,6 +73859,40 @@
                 },
                 {
                     "routes": [],
+                    "name": "upsert",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "upsert(string $name, string $stored, string $autoload): bool",
+                    "doc": "Writes an option row whether or not one exists, as the reference does\nfor every add: two requests that both find a transient missing and\nboth add it must not fail on the unique name, so the second write lands\nover the first. True when the row was inserted or changed, false when\nthe same value was already there.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "stored",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "autoload",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 95,
+                    "end": 103
+                },
+                {
+                    "routes": [],
                     "name": "update",
                     "static": false,
                     "visibility": "public",
@@ -73886,8 +73922,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 89,
-                    "end": 102
+                    "line": 106,
+                    "end": 119
                 },
                 {
                     "routes": [],
@@ -73906,8 +73942,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 105,
-                    "end": 108
+                    "line": 122,
+                    "end": 125
                 },
                 {
                     "routes": [],
@@ -73926,8 +73962,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 111,
-                    "end": 114
+                    "line": 128,
+                    "end": 131
                 },
                 {
                     "routes": [],
@@ -73946,8 +73982,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 128,
-                    "end": 138
+                    "line": 145,
+                    "end": 155
                 },
                 {
                     "routes": [],
@@ -73975,8 +74011,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 146,
-                    "end": 159
+                    "line": 163,
+                    "end": 176
                 },
                 {
                     "routes": [],
@@ -73995,8 +74031,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 162,
-                    "end": 165
+                    "line": 179,
+                    "end": 182
                 },
                 {
                     "routes": [],
@@ -74015,8 +74051,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 168,
-                    "end": 177
+                    "line": 185,
+                    "end": 194
                 },
                 {
                     "routes": [],
@@ -74035,8 +74071,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 180,
-                    "end": 189
+                    "line": 197,
+                    "end": 206
                 },
                 {
                     "routes": [],
@@ -74071,8 +74107,8 @@
                             "doc": "the stored values that already mean $wanted"
                         }
                     ],
-                    "line": 117,
-                    "end": 125
+                    "line": 134,
+                    "end": 142
                 }
             ]
         },
@@ -74829,6 +74865,116 @@
                     ],
                     "line": 20,
                     "end": 39
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\Placeholders",
+            "short": "Placeholders",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/Placeholders.php",
+            "lines": 49,
+            "doc": "The printf placeholders plugin code hands wpdb::prepare, filled the way\nthe reference fills them: a bare %s is escaped and quoted; a numbered\n(%1$s), padded (%5s) or precise (%.2f) one is formatted and escaped but\nnever quoted, so a plugin can name a table with it; %d and %f cast; %i\nbackticks an identifier; %% is a literal. Numbered placeholders address\nthe argument list directly while unnumbered ones count from the first\non their own, as vsprintf does. A placeholder with no argument behind it\nempties the whole query, as the reference does.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "SPEC",
+                    "value": "'/%(?:(\\\\d+)\\\\$)?([-+ 0]*)(\\\\d*)(?:\\\\.(\\\\d+))?([sdfFi%])/'",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "fill",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "fill(string $query, array $args, callable $escape): ?string",
+                    "doc": "Fills a query's placeholders from the arguments; null when one has no argument.",
+                    "shapes": [
+                        "@param list<mixed> $args",
+                        "@param callable(string): string $escape the connection's string escape"
+                    ],
+                    "params": [
+                        {
+                            "name": "query",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "list<mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "escape",
+                            "type": "callable",
+                            "shape": "callable(string): string",
+                            "default": null,
+                            "doc": "the connection's string escape"
+                        }
+                    ],
+                    "line": 27,
+                    "end": 53
+                },
+                {
+                    "routes": [],
+                    "name": "quoted",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "quoted(string $placeholder, string $escaped): string",
+                    "doc": "A bare %s is the one placeholder the reference wraps in quotes.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "placeholder",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "escaped",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 56,
+                    "end": 59
+                },
+                {
+                    "routes": [],
+                    "name": "text",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "text(mixed $value): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 61,
+                    "end": 64
                 }
             ]
         },
@@ -76470,7 +76616,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/Recovery.php",
-            "lines": 183,
+            "lines": 214,
             "doc": "Recovery from a fatal in someone else's code. When a plugin or theme\nkills the boot of a request, the file it died in names it; a second\nsuch failure inside ten minutes records it as paused, and the next\nrequest loads without it: the site comes back on its own instead of\nstaying down until a human reads the log. One failure is only noted:\na pause is a site-wide decision, and a single request can be a\ncrafted one. Failures after boot (a route, a template) never pause\nanything; see Failure::armRecovery().\n\nThe paused list is stored where WordPress stores it, in the same shape\n(`paused_plugins` keyed by plugin file, `paused_themes` by stylesheet,\neach holding type, file, line and message), so a site that ejects back\nto WordPress finds the pause it left with. The strikes live in the\nengine's own `minn_recovery_strikes` option.",
             "implements": [],
             "extends": null,
@@ -76560,10 +76706,11 @@
                     "name": "blame",
                     "static": false,
                     "visibility": "public",
-                    "signature": "blame(string $file, array $realpaths = array ( )): ?array",
-                    "doc": "The extension a file belongs to: a plugin as its `folder/file.php`\n(or bare file for a single-file plugin), a theme as its slug.\nAnything outside the plugin and theme folders belongs to nobody, and\nis never paused: a fatal in the engine or in core is not a plugin's\nfault and pausing something would not fix it. A symlinked plugin\nreports its real location; the realpath map (real folder to the\nfolder under plugins/) brings it home first.",
+                    "signature": "blame(string $file, array $realpaths = array ( ), ?array $active = NULL): ?array",
+                    "doc": "The extension a file belongs to: a plugin as the active `folder/file.php`\nwhose folder holds the file (or the bare file of a single-file plugin),\na theme as its slug. The name is the one the loader checks against the\npaused list, so a fatal deep inside a plugin's subfolders pauses the\nplugin and not a folder nothing is called by. Anything outside the\nplugin and theme folders belongs to nobody, and is never paused: a\nfatal in the engine or in core is not a plugin's fault and pausing\nsomething would not fix it. A symlinked plugin reports its real\nlocation; the realpath map (real folder to the folder under plugins/)\nbrings it home first.",
                     "shapes": [
                         "@param array<string, string> $realpaths",
+                        "@param list<string>|null $active the active plugin files; read from the site when omitted",
                         "@return array{kind: 'plugin'|'theme', name: string}|null"
                     ],
                     "params": [
@@ -76580,10 +76727,17 @@
                             "shape": "array<string, string>",
                             "default": "array ( )",
                             "doc": ""
+                        },
+                        {
+                            "name": "active",
+                            "type": "?array",
+                            "shape": "list<string>|null",
+                            "default": "NULL",
+                            "doc": "the active plugin files; read from the site when omitted"
                         }
                     ],
-                    "line": 50,
-                    "end": 76
+                    "line": 54,
+                    "end": 80
                 },
                 {
                     "routes": [],
@@ -76612,8 +76766,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 86,
-                    "end": 102
+                    "line": 117,
+                    "end": 133
                 },
                 {
                     "routes": [],
@@ -76634,8 +76788,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 112,
-                    "end": 127
+                    "line": 143,
+                    "end": 158
                 },
                 {
                     "routes": [],
@@ -76648,8 +76802,8 @@
                         "@return array<string, array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 153,
-                    "end": 156
+                    "line": 184,
+                    "end": 187
                 },
                 {
                     "routes": [],
@@ -76662,8 +76816,8 @@
                         "@return array<string, array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 163,
-                    "end": 166
+                    "line": 194,
+                    "end": 197
                 },
                 {
                     "routes": [],
@@ -76689,8 +76843,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 169,
-                    "end": 180
+                    "line": 200,
+                    "end": 211
                 },
                 {
                     "routes": [],
@@ -76701,8 +76855,52 @@
                     "doc": "Lets everything load again. Returns how many were released.",
                     "shapes": [],
                     "params": [],
-                    "line": 183,
-                    "end": 189
+                    "line": 214,
+                    "end": 220
+                },
+                {
+                    "routes": [],
+                    "name": "pluginFile",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "pluginFile(array $parts, array $active): string",
+                    "doc": "The active plugin file a path under plugins/ belongs to: the entry in\nthe folder the path starts with, the bare file itself for a single-file\nplugin, and the folder alone when no active entry claims it.",
+                    "shapes": [
+                        "@param list<string> $parts the path segments under plugins/",
+                        "@param list<string> $active"
+                    ],
+                    "params": [
+                        {
+                            "name": "parts",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": "the path segments under plugins/"
+                        },
+                        {
+                            "name": "active",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 90,
+                    "end": 101
+                },
+                {
+                    "routes": [],
+                    "name": "activePlugins",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "activePlugins(): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [],
+                    "line": 104,
+                    "end": 107
                 },
                 {
                     "routes": [],
@@ -76715,8 +76913,8 @@
                         "@return array<string, list<int>>"
                     ],
                     "params": [],
-                    "line": 130,
-                    "end": 134
+                    "line": 161,
+                    "end": 165
                 },
                 {
                     "routes": [],
@@ -76737,8 +76935,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 137,
-                    "end": 146
+                    "line": 168,
+                    "end": 177
                 },
                 {
                     "routes": [],
@@ -76759,8 +76957,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 192,
-                    "end": 197
+                    "line": 223,
+                    "end": 228
                 },
                 {
                     "routes": [],
@@ -76788,8 +76986,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 200,
-                    "end": 207
+                    "line": 231,
+                    "end": 238
                 }
             ]
         },
@@ -78900,7 +79098,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Shortcodes.php",
-            "lines": 132,
+            "lines": 143,
             "doc": "The shortcode registry plugin code fills with add_shortcode, and the\nexpansion do_shortcode performs: [tag attrs], [tag attrs/], [tag]…[/tag]\n(the first closing tag wins; content is not expanded again), [[tag]] as\nthe literal, unregistered tags left as written.",
             "implements": [],
             "extends": null,
@@ -78925,6 +79123,20 @@
             "methods": [
                 {
                     "routes": [],
+                    "name": "tags",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "tags(): array",
+                    "doc": "The registry itself, by reference, so the $shortcode_tags global plugin\ncode reads and copies is this array and not a snapshot of it.",
+                    "shapes": [
+                        "@return array<string, callable>"
+                    ],
+                    "params": [],
+                    "line": 24,
+                    "end": 27
+                },
+                {
+                    "routes": [],
                     "name": "add",
                     "static": false,
                     "visibility": "public",
@@ -78947,8 +79159,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 19,
-                    "end": 22
+                    "line": 30,
+                    "end": 33
                 },
                 {
                     "routes": [],
@@ -78967,8 +79179,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 25,
-                    "end": 28
+                    "line": 36,
+                    "end": 39
                 },
                 {
                     "routes": [],
@@ -78979,8 +79191,8 @@
                     "doc": "Forgets every shortcode.",
                     "shapes": [],
                     "params": [],
-                    "line": 31,
-                    "end": 34
+                    "line": 42,
+                    "end": 45
                 },
                 {
                     "routes": [],
@@ -78999,8 +79211,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 37,
-                    "end": 40
+                    "line": 48,
+                    "end": 51
                 },
                 {
                     "routes": [],
@@ -79013,8 +79225,8 @@
                         "@return array<string, callable> every registered tag and its handler, to restore after a narrowed run"
                     ],
                     "params": [],
-                    "line": 47,
-                    "end": 50
+                    "line": 58,
+                    "end": 61
                 },
                 {
                     "routes": [],
@@ -79035,8 +79247,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 57,
-                    "end": 60
+                    "line": 68,
+                    "end": 71
                 },
                 {
                     "routes": [],
@@ -79049,8 +79261,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 67,
-                    "end": 70
+                    "line": 78,
+                    "end": 81
                 },
                 {
                     "routes": [],
@@ -79069,8 +79281,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 73,
-                    "end": 81
+                    "line": 84,
+                    "end": 92
                 },
                 {
                     "routes": [],
@@ -79089,8 +79301,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 84,
-                    "end": 98
+                    "line": 95,
+                    "end": 109
                 },
                 {
                     "routes": [],
@@ -79109,8 +79321,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 101,
-                    "end": 113
+                    "line": 112,
+                    "end": 124
                 },
                 {
                     "routes": [],
@@ -79131,8 +79343,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 120,
-                    "end": 143
+                    "line": 131,
+                    "end": 154
                 }
             ]
         },
