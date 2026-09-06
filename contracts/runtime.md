@@ -1864,3 +1864,110 @@ was gate-skipped and never ran. The moment it loaded, the theme enqueued
 its stylesheet and the missing inliner showed as a `<link>` the reference
 does not print. Every symbol added lets more real code run, and that code
 names the next gap.
+
+## The shop-dogfood review (2026-09-06)
+
+A walk of https://shop-dogfood.localhost against its parked WordPress on 8127
+turned up one fatal, one wrong redirect, a silent recovery, and the last
+plugin the symbol gate skipped. Every fact below was captured from the
+reference before the engine changed.
+
+**An option add is an upsert.** The reference writes every `add_option` as
+`INSERT ... ON DUPLICATE KEY UPDATE option_name, option_value, autoload`
+(read from the MariaDB general log). Two requests that both find a transient
+expired both delete it and both add it back; on the reference the second
+write lands over the first, on the engine it threw `Duplicate entry
+'_transient_timeout_coblocks_template_parts_query'`. `Runtime\Options::upsert()`
+is the one writer now (`add()` and the CLI's `option add` / first `option
+update` share it); it answers true when a row was inserted or changed, false
+when the same value was already there, which is what `add_option` reports.
+
+**`wpdb::prepare` quotes only a bare `%s`.** Captured matrix: `%s` becomes
+`'a'`; `%1$s` becomes `a` with no quotes, so a plugin's `TRUNCATE %1$s` names
+its table (Gravity SMTP's debug-log purge failed only on the engine); `'%1$s'`
+keeps the quotes it was written with; `%2$s-%1$s` addresses the list;
+`%1$s %s` gives `a 'a'` because unnumbered placeholders count on their own
+from the first argument (vsprintf's rule); `%d` casts (`12abc` is 12); `%.2f`
+keeps its precision; `%5s` pads and does not quote; `%i` and `%1$i` backtick
+an identifier; a placeholder with no argument behind it empties the whole
+query. `Runtime\Placeholders::fill()` holds the rules; the facade escapes
+through the connection and strips the placeholder marker. Not pinned: with
+`%%` and a surplus argument the reference leaks its per-site placeholder hash
+into the returned string.
+
+**`$shortcode_tags` is the registry.** The global is bound by reference to
+`Runtime\Shortcodes::tags()` in `_minn_bind_hook_globals`, so Redirection's
+`array_merge([], $shortcode_tags)` / `remove_all_shortcodes()` / restore
+sequence works (it was `array_merge` on null: `/pricing/` answered 500 where
+the reference 301s to `/plans/`).
+
+**Recovery blames the plugin file the loader checks.** `Recovery::blame()`
+used to name `folder/subfolder` for a fatal below a plugin's top level;
+`Plugins::load` compares the paused list against `active_plugins` entries, so
+`orderable/inc` and `redirection/models` sat in `paused_plugins` and paused
+nothing, and the site never came back on its own. The name is now the active
+plugin file whose folder holds the fatal's file (the bare file for a
+single-file plugin, the folder alone when no active entry claims it). The
+first fatal after the fix paused `polylang/polylang.php` on the second strike
+and the next request recovered, as designed.
+
+**Polylang loads.** Its seven missing symbols: `sanitize_user_field`
+(contexts raw/edit/db/display/attribute/js; `ID` cast to int; the field's
+hooks drop the `user_` prefix, so `user_url` is filtered by `pre_user_url` /
+`user_url`, and in edit context `user_url` passes through `esc_url` before
+`esc_attr`), the reference's default user filters (`pre_user_{display_name,
+first_name,last_name,nickname}`: sanitize_text_field + wp_filter_kses +
+_wp_specialchars at 30, and `user_*` _wp_specialchars at 30;
+`pre_user_description` wp_filter_kses; `pre_user_email` trim + sanitize_email
++ wp_filter_kses, `user_email` sanitize_email; `pre_user_url`
+wp_strip_all_tags + sanitize_url + wp_filter_kses, `user_url` esc_url),
+`_get_non_cached_ids` (ints, deduplicated, order kept, 0 kept),
+`wp_cache_add_multiple` (per-key results, an existing key false),
+`wp_cache_set_terms_last_changed`, `_split_shared_term` (the id back; a term
+row belongs to one taxonomy row on any site the engine meets),
+`wp_apply_generated_classname_support` (`[]` for core/paragraph, whose
+className support is false; `['class' => 'wp-block-x-y']` otherwise);
+`wp_popular_terms_checklist` is a placeholder (a wp-admin checklist).
+Then `_get_page_link`, which the gate had missed (below): a published page's
+pretty path, `%pagename%` with `leavename`, the slug path of an unpublished
+page with `sample`, `?page_id=N` for an unpublished page otherwise, and
+`?page_id=` for a page that does not exist; `get_page_link` answers the
+static front page with the home URL and filters `page_link` with `$sample`.
+
+**The calendar.** `WP_Widget_Calendar` was the class Polylang's own calendar
+extends. `get_calendar()` draws the month `Minn\Front\Calendar` renders:
+the month comes from the `$m` / `$year` / `$monthnum` globals (the query's
+vars; the reference ignores year and month keys in its `$args`), else the
+site's current month; the first row's padding cell is `<td colspan="N"
+class="pad">` and the last row's `<td class="pad" colspan="N">` (attribute
+order differs, themes style both); a day with a published post of the type
+links its day archive with `aria-label="Posts published on F j, Y"` in that
+fixed format whatever `date_format` says; today's cell carries
+`id="today"`; the nav links the nearest months with posts on either side as
+`&laquo; Aug` / `Aug &raquo;` and prints `&nbsp;` where there is none;
+`initial` chooses weekday initials or three-letter abbreviations; the output
+passes the `get_calendar` filter. The widget prints `<div id="calendar_wrap"
+class="calendar_wrap">` for the first instance on a page and `<div
+class="calendar_wrap">` after; `update()` keeps the old instance and sets a
+sanitize_text_field'd title; `form()` prints the title input. It is
+registered in `wp_widgets_init` before the block widget. The other thirteen
+default widgets (Pages, Archives, Media ×4, Meta, Search, Text, Categories,
+Recent Posts, Recent Comments, RSS, Tag Cloud, Nav Menu) are still missing:
+a classic sidebar holding one renders nothing for it (roadmap E5).
+
+**Two blind spots in the symbol gate.** (1) A `class_exists()` guard
+followed by `require_once ABSPATH . 'wp-includes/default-widgets.php'` is
+not a fallback: the site skeleton provides that file empty, so the require
+succeeds and the class is still missing, and the plugin fatals at load. The
+gate rightly ignores guarded names; the engine-side rule is that every class
+in the reference's interface a plugin might extend has to exist. (2) A method
+declared with the same name as a missing global function hid the call to
+that function: the verdict subtracted `declared` (every function token) from
+the calls instead of `declaredGlobal`. Fixed (`Symbols::READER` is 3, so
+cached verdicts are re-read); the sharper gate found `_get_page_link` in
+Polylang at once. Probe-runtime note: `init` never fires under
+`run-api-probe.php`, so a row that needs the widget factory calls
+`wp_widgets_init()` itself when `widgets_init` has not run.
+
+**Small:** `curl_close()` is gone from `Http\Client` (deprecated in PHP 8.5,
+a no-op since 8.0).

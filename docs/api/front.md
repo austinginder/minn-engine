@@ -18,7 +18,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`Kind`](#kind) | enum | 17 | What a public URL resolved to. |
 | [`ListingLinks`](#listinglinks) | final class | 53 | The prev/next links a paged listing prints: which page sits either side of |
 | [`Pagination`](#pagination) | final class | 62 | Numbered page links in the reference's shape: previous, the end and |
-| [`Permalinks`](#permalinks) | final readonly class | 241 | Builds public URLs from the site's permalink structure. With an empty |
+| [`Permalinks`](#permalinks) | final readonly class | 253 | Builds public URLs from the site's permalink structure. With an empty |
 | [`PluginRules`](#pluginrules) | final class | 71 | Rewrite rules a plugin registered through add_rewrite_rule(): the |
 | [`PostNavigation`](#postnavigation) | final class | 36 | The links to the posts either side of this one, and the nav block that |
 | [`ProbeController`](#probecontroller) | final readonly class | 57 | The surface monitors, crawlers, and hosting checks hit that is not a |
@@ -501,6 +501,14 @@ A page's permalink, the home for the front page.
 
 A page's own pretty path, even for the static front page (its comments feed lives there).
 
+### `pageToken(): string`
+
+A page link with the %pagename% token left in place, for a plugin that fills it itself.
+
+### `pageAsPublished(Minn\Content\PostRecord $page): string`
+
+A page's pretty path as it will read once published, for a sample of an unpublished one.
+
 ### `forAttachment(Minn\Content\PostRecord $attachment): string`
 
 An attachment's public link: its slug under the parent's permalink
@@ -533,7 +541,7 @@ A regex over the structure's tokens, so an incoming path can be
 matched back to the post it names. Null when the structure has no
 identifying token.
 
-Internals: `hasPrettyLink()` (private, line 231), `fill()` (private, line 236)
+Internals: `hasPrettyLink()` (private, line 243), `fill()` (private, line 248)
 
 
 ## PluginRules

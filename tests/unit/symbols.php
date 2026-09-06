@@ -74,6 +74,10 @@ return [
         $v = $verdict('namespaced', 'namespace Acme; class Thing extends Base {} $x = new \WP_Missing_Class();');
         return $v['classes'] === ['WP_Missing_Class'] ? true : json_encode($v);
     },
+    'a method named like a missing function does not hide a call to it' => static function () use ($verdict): bool|string {
+        $v = $verdict('masked', "class Acme { public static function wp_missing_fn() {} public function w(\$x) { return empty(\$x) ? wp_missing_fn() : self::wp_missing_fn(); } }");
+        return $v['functions'] === ['wp_missing_fn'] ? true : json_encode($v);
+    },
     'a method named like a runtime function is not a redeclaration' => static function () use ($verdict): bool|string {
         $v = $verdict('method', "class Acme { public function wp_mail(\$to) { return true; } public static function get_option() {} }\ninterface Q { public function wp_present_fn(); }\n\$o = new class { function wp_mail() {} };\n\$s = \"{\$x} \${y}\"; trait T { function wp_present_fn() {} }");
         return $v['redeclares'] === [] ? true : json_encode($v);

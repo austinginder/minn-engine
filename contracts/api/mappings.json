@@ -2,12 +2,12 @@
     "generated": "2026-09-06",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 439,
-        "composes": 716,
+        "minn": 440,
+        "composes": 717,
         "leaf": 357,
-        "noop": 1248,
-        "functions": 2754,
-        "minnMethods": 421,
+        "noop": 1247,
+        "functions": 2755,
+        "minnMethods": 424,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -8312,6 +8312,25 @@
                 "wp_cache_get"
             ]
         },
+        "_get_page_link": {
+            "file": "post.php",
+            "lines": 13,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Content\\PostRecord::fromRow",
+                "Minn\\Runtime\\Runtime::current",
+                "Minn\\Runtime\\Runtime::get",
+                "Minn\\Runtime\\Runtime::isPretty",
+                "Minn\\Runtime\\Runtime::pageAsPublished",
+                "Minn\\Runtime\\Runtime::pagePath",
+                "Minn\\Runtime\\Runtime::pageToken"
+            ],
+            "composes": [
+                "apply_filters",
+                "get_post",
+                "home_url"
+            ]
+        },
         "_get_term_children": {
             "file": "taxonomy.php",
             "lines": 19,
@@ -13202,11 +13221,15 @@
         },
         "get_page_link": {
             "file": "post.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 7,
+            "kind": "composes",
             "minn": [],
             "composes": [
-                "get_permalink"
+                "_get_page_link",
+                "apply_filters",
+                "get_option",
+                "get_post",
+                "home_url"
             ]
         },
         "get_page_statuses": {

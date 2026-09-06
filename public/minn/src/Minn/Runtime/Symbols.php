@@ -17,7 +17,7 @@ final class Symbols
     private const MAX_FILES = 6000;
     private const SKIP_DIRS = ['node_modules', 'tests', 'test', '.git'];
     /** Bumped whenever the token reader changes, so every cached scan is made again. */
-    private const READER = 2;
+    private const READER = 3;
 
     /**
      * What a plugin folder needs that the runtime lacks, cached by mtime.
@@ -82,7 +82,9 @@ final class Symbols
         $missingFunctions = [];
         foreach ($scan['calls'] as $name) {
             $lower = strtolower($name);
-            if ($gap->lacksFunction($name) && !isset($scan['declared'][$lower]) && !isset($scan['guarded'][$lower])) {
+            // Only a declaration in the global scope answers a call: a method of
+            // the same name is reached through an object and hides nothing.
+            if ($gap->lacksFunction($name) && !isset($scan['declaredGlobal'][$lower]) && !isset($scan['guarded'][$lower])) {
                 $missingFunctions[] = $name;
             }
         }

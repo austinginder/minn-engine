@@ -555,7 +555,30 @@ function get_post_permalink($post = 0, $leavename = false, $sample = false)
 
 function get_page_link($post = 0, $leavename = false, $sample = false)
 {
-    return get_permalink($post, $leavename);
+    $post = get_post($post);
+    if ($post === null) {
+        return false;
+    }
+    $front = get_option('show_on_front') === 'page' && (int) get_option('page_on_front') === $post->ID;
+    $link = $front ? home_url('/') : _get_page_link($post, $leavename, $sample);
+    return apply_filters('page_link', $link, $post->ID, $sample);
+}
+
+function _get_page_link($post = 0, $leavename = false, $sample = false)
+{
+    $post = get_post($post);
+    $permalinks = Runtime::current()->get('permalinks');
+    if ($post === null || $permalinks === null) {
+        return apply_filters('_get_page_link', home_url('/?page_id=' . ($post->ID ?? '')), $post->ID ?? 0);
+    }
+    $record = Minn\Content\PostRecord::fromRow($post->to_array());
+    $unpublished = $post->post_status !== 'publish' && !$sample;
+    $link = match (true) {
+        !$permalinks->isPretty() || $unpublished => $permalinks->pagePath($record),
+        (bool) $leavename => $permalinks->pageToken(),
+        default => $permalinks->pageAsPublished($record),
+    };
+    return apply_filters('_get_page_link', $link, $post->ID);
 }
 
 function get_attachment_link($post = null, $leavename = false)

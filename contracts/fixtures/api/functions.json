@@ -2230,5 +2230,24 @@
             "\t\t<p>\n\t\t\t<label for=\"widget-calendar--title\">Title:</label>\n\t\t\t<input class=\"widefat\" id=\"widget-calendar--title\" name=\"widget-calendar[][title]\" type=\"text\" value=\"T&lt;\" />\n\t\t</p>\n\t\t",
             "<w><t>Cal</t><div id=\"calendar_wrap\" class=\"calendar_wrap\"><table id=\"wp-calendar\" class=\"wp-calendar-table\">\n\t<caption>August 2026</caption>\n\t<thead>\n\t<tr>\n\t\t<th scope=\"col\" aria-label=\"Monday\">M</th>\n\t\t<th scope=\"col\" aria-label=\"Tuesday\">T</th>\n\t\t<th scope=\"col\" aria-label=\"Wednesday\">W</th>\n\t\t<th scope=\"col\" aria-label=\"Thursday\">T</th>\n\t\t<th scope=\"col\" aria-label=\"Friday\">F</th>\n\t\t<th scope=\"col\" aria-label=\"Saturday\">S</th>\n\t\t<th scope=\"col\" aria-label=\"Sunday\">S</th>\n\t</tr>\n\t</thead>\n\t<tbody>\n\t<tr>\n\t\t<td colspan=\"5\" class=\"pad\">&nbsp;</td><td>1</td><td>2</td>\n\t</tr>\n\t<tr>\n\t\t<td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td>\n\t</tr>\n\t<tr>\n\t\t<td>10</td><td>11</td><td>12</td><td>13</td><td>14</td><td>15</td><td>16</td>\n\t</tr>\n\t<tr>\n\t\t<td>17</td><td>18</td><td>19</td><td>20</td><td>21</td><td>22</td><td>23</td>\n\t</tr>\n\t<tr>\n\t\t<td>24</td><td>25</td><td>26</td><td>27</td><td><a href=\"https://minn.localhost/2026/08/28/\" aria-label=\"Posts published on August 28, 2026\">28</a></td><td>29</td><td>30</td>\n\t</tr>\n\t<tr>\n\t\t<td>31</td>\n\t\t<td class=\"pad\" colspan=\"6\">&nbsp;</td>\n\t</tr>\n\t</tbody>\n\t</table><nav aria-label=\"Previous and next months\" class=\"wp-calendar-nav\">\n\t\t<span class=\"wp-calendar-nav-prev\">&nbsp;</span>\n\t\t<span class=\"pad\">&nbsp;</span>\n\t\t<span class=\"wp-calendar-nav-next\">&nbsp;</span>\n\t</nav></div></w><w><div class=\"calendar_wrap\"><table id=\"wp-calendar\" class=\"wp-calendar-table\">\n\t<caption>August 2026</caption>\n\t<thead>\n\t<tr>\n\t\t<th scope=\"col\" aria-label=\"Monday\">M</th>\n\t\t<th scope=\"col\" aria-label=\"Tuesday\">T</th>\n\t\t<th scope=\"col\" aria-label=\"Wednesday\">W</th>\n\t\t<th scope=\"col\" aria-label=\"Thursday\">T</th>\n\t\t<th scope=\"col\" aria-label=\"Friday\">F</th>\n\t\t<th scope=\"col\" aria-label=\"Saturday\">S</th>\n\t\t<th scope=\"col\" aria-label=\"Sunday\">S</th>\n\t</tr>\n\t</thead>\n\t<tbody>\n\t<tr>\n\t\t<td colspan=\"5\" class=\"pad\">&nbsp;</td><td>1</td><td>2</td>\n\t</tr>\n\t<tr>\n\t\t<td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td>\n\t</tr>\n\t<tr>\n\t\t<td>10</td><td>11</td><td>12</td><td>13</td><td>14</td><td>15</td><td>16</td>\n\t</tr>\n\t<tr>\n\t\t<td>17</td><td>18</td><td>19</td><td>20</td><td>21</td><td>22</td><td>23</td>\n\t</tr>\n\t<tr>\n\t\t<td>24</td><td>25</td><td>26</td><td>27</td><td><a href=\"https://minn.localhost/2026/08/28/\" aria-label=\"Posts published on August 28, 2026\">28</a></td><td>29</td><td>30</td>\n\t</tr>\n\t<tr>\n\t\t<td>31</td>\n\t\t<td class=\"pad\" colspan=\"6\">&nbsp;</td>\n\t</tr>\n\t</tbody>\n\t</table><nav aria-label=\"Previous and next months\" class=\"wp-calendar-nav\">\n\t\t<span class=\"wp-calendar-nav-prev\">&nbsp;</span>\n\t\t<span class=\"pad\">&nbsp;</span>\n\t\t<span class=\"wp-calendar-nav-next\">&nbsp;</span>\n\t</nav></div></w>"
         ]
+    ],
+    [
+        "page links",
+        [
+            "https://minn.localhost/sample-page/",
+            "https://minn.localhost/sample-page/docs/",
+            "https://minn.localhost/?page_id=3",
+            "https://minn.localhost/%pagename%/",
+            "https://minn.localhost/%pagename%/",
+            "https://minn.localhost/privacy-policy/",
+            "https://minn.localhost/%pagename%/",
+            "https://minn.localhost/?page_id=",
+            "https://minn.localhost/sample-page/docs/",
+            "https://minn.localhost/?page_id=3",
+            "https://minn.localhost/privacy-policy/",
+            "https://minn.localhost/%pagename%/",
+            "https://minn.localhost/",
+            "https://minn.localhost/sample-page/"
+        ]
     ]
 ]

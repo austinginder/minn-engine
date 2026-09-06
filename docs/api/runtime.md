@@ -50,7 +50,7 @@ the WordPress runtime plugins load against
 | [`StoredObjects`](#storedobjects) | final class | 32 | The classes a stored blob may name and come back as. The serialized |
 | [`SymbolGap`](#symbolgap) | final readonly class | 87 | The part of the reference's interface the runtime does not answer: names in |
 | [`SymbolTable`](#symboltable) | final class | 69 | What a folder's PHP names, collected while its tokens are read: the |
-| [`Symbols`](#symbols) | final class | 273 | A static read of what a plugin's PHP calls: global functions and classes |
+| [`Symbols`](#symbols) | final class | 275 | A static read of what a plugin's PHP calls: global functions and classes |
 | [`TagEditor`](#tageditor) | final class | 149 | Edits one start tag's attributes in place the way the reference's tag |
 | [`TaxonomyClause`](#taxonomyclause) | final class | 178 | The taxonomy side of a post query: every query var the reference reads |
 | [`TermQuery`](#termquery) | final readonly class | 393 | Term reads in the shapes plugin code asks for: get_terms() arguments to |
@@ -2340,7 +2340,7 @@ modification time.
 
 - const `MAX_FILES` = `6000`
 - const `SKIP_DIRS` = `array (   0 => 'node_modules',   1 => 'tests',   2 => 'test',   3 => '.git', )`
-- const `READER` = `2` — Bumped whenever the token reader changes, so every cached scan is made again.
+- const `READER` = `3` — Bumped whenever the token reader changes, so every cached scan is made again.
 
 Used by: `Minn\Runtime\Plugins`
 
@@ -2364,7 +2364,7 @@ folder can be judged with no database, no options, and no facade loaded.
 
 - `@return array{functions: list<string>, classes: list<string>, redeclares: list<string>, files: int, truncated: bool}`
 
-Internals: `verdict()` (private, line 80), `phpFiles()` (private, line 112), `scan()` (private, line 146), `scanTokens()` (private, line 165), `noteName()` (private, line 240), `significant()` (private, line 275)
+Internals: `verdict()` (private, line 80), `phpFiles()` (private, line 114), `scan()` (private, line 148), `scanTokens()` (private, line 167), `noteName()` (private, line 242), `significant()` (private, line 277)
 
 
 ## TagEditor

@@ -127,6 +127,18 @@ final readonly class Permalinks
         return $this->url('/' . $this->posts->pathOf($page) . '/');
     }
 
+    /** A page link with the %pagename% token left in place, for a plugin that fills it itself. */
+    public function pageToken(): string
+    {
+        return $this->url('/%pagename%/');
+    }
+
+    /** A page's pretty path as it will read once published, for a sample of an unpublished one. */
+    public function pageAsPublished(PostRecord $page): string
+    {
+        return $this->url('/' . $this->posts->pathOf($page) . '/');
+    }
+
     /**
      * An attachment's public link: its slug under the parent's permalink
      * when attached, at the root when not, or the query form under plain
