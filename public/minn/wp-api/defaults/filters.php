@@ -44,6 +44,23 @@ add_action('wp_enqueue_scripts', 'wp_common_block_scripts_and_styles', 10);
 // renders them through Blocks\ImageTags on the way out instead, so adding
 // it would fit the same images twice.
 add_filter('widget_block_content', 'do_blocks', 9);
+// The text widget's content pipeline. wp_filter_content_tags stays out for the
+// reason given above; wp_replace_insecure_home_url the engine does not have.
+add_filter('widget_text', 'balanceTags');
+// The shortcodes the reference registers itself.
+add_shortcode('wp_caption', 'img_caption_shortcode');
+add_shortcode('caption', 'img_caption_shortcode');
+add_shortcode('gallery', 'gallery_shortcode');
+add_shortcode('audio', 'wp_audio_shortcode');
+add_shortcode('video', 'wp_video_shortcode');
+add_filter('widget_text_content', static fn ($content) => $GLOBALS['wp_embed']->run_shortcode($content), 8);
+add_filter('widget_text_content', static fn ($content) => $GLOBALS['wp_embed']->autoembed($content), 8);
+add_filter('widget_text_content', 'wptexturize');
+add_filter('widget_text_content', 'wpautop');
+add_filter('widget_text_content', 'shortcode_unautop');
+add_filter('widget_text_content', 'capital_P_dangit', 11);
+add_filter('widget_text_content', 'do_shortcode', 11);
+add_filter('widget_text_content', 'convert_smilies', 20);
 add_filter('widget_block_content', 'do_shortcode', 11);
 // A classic theme gets the reference's wp_head defaults, registered before its own hooks.
 add_action('setup_theme', '_minn_classic_head_defaults', 1);

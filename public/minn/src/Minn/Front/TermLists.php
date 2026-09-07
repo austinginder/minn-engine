@@ -96,7 +96,8 @@ final class TermLists
             $size = str_replace(',', '.', (string) ($smallest + (($count - $min) * $step)));
             $label = Html::attr((string) $tag['name']) . ' (' . $count . ' item' . ($count === 1 ? '' : 's') . ')';
             $links[] = '<a href="' . Html::attr((string) $tag['link']) . '" class="tag-cloud-link tag-link-' . (int) $tag['term_id'] . ' tag-link-position-' . ($i + 1)
-                . '" style="font-size: ' . $size . $unit . ';" aria-label="' . $label . '">' . Html::esc((string) $tag['name']) . '</a>';
+                . '" style="font-size: ' . $size . $unit . ';" aria-label="' . $label . '">' . Html::esc((string) $tag['name'])
+                . (!empty($args['show_count']) ? '<span class="tag-link-count"> (' . $count . ')</span>' : '') . '</a>';
         }
         if (($args['format'] ?? 'flat') === 'list') {
             return "<ul class='wp-tag-cloud' role='list'>\n\t<li>" . implode("</li>\n\t<li>", $links) . "</li>\n</ul>\n";

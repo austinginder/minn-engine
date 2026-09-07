@@ -102,7 +102,11 @@ final class Url
             return null;
         }
         $host = trim($parsed['host'], '.');
-        $ip = preg_match('#^(([1-9]?\d|1\d\d|25[0-5]|2[0-4]\d)\.){3}([1-9]?\d|1\d\d|25[0-5]|2[0-4]\d)$#', $host) ? $host : gethostbyname($host);
+        $isIp = (bool) preg_match('#^(([1-9]?\d|1\d\d|25[0-5]|2[0-4]\d)\.){3}([1-9]?\d|1\d\d|25[0-5]|2[0-4]\d)$#', $host);
+        $ip = $isIp ? $host : gethostbyname($host);
+        if (!$isIp && $ip === $host) {
+            return null; // a name that does not resolve is not a valid URL to the reference either
+        }
         if ($ip !== $host || $ip === $host && preg_match('/^\d+\.\d+\.\d+\.\d+$/', $ip)) {
             $parts = array_map('intval', explode('.', $ip));
             if (count($parts) === 4 && self::isPrivate($parts) && strtolower($host) !== strtolower($homeHost) && !$externalAllowed($host, $url)) {

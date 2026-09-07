@@ -4,6 +4,9 @@
 use Minn\Content\Posts;
 use Minn\Front\Calendar;
 use Minn\Front\CalendarLabels;
+use Minn\Front\Archives;
+use Minn\Front\ListSpacing;
+use Minn\Front\PageList;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\Avatar;
 
@@ -181,7 +184,17 @@ function get_search_form($args = [])
         load_template($template, false, $args);
         $form = (string) ob_get_clean();
     } else {
-        $form = '<form role="search" method="get" class="search-form" action="' . esc_url(home_url('/')) . '"><label><span class="screen-reader-text">Search for:</span><input type="search" class="search-field" placeholder="Search &hellip;" value="' . get_search_query() . '" name="s" /></label><input type="submit" class="search-submit" value="Search" /></form>';
+        $ariaLabel = $args['aria_label'] !== '' ? ' aria-label="' . esc_attr($args['aria_label']) . '"' : '';
+        $action = esc_url(home_url('/'));
+        $form = current_theme_supports('html5', 'search-form')
+            ? '<form role="search"' . $ariaLabel . ' method="get" class="search-form" action="' . $action . '">'
+                . "\n\t\t\t\t<label>\n\t\t\t\t\t" . '<span class="screen-reader-text">Search for:</span>'
+                . "\n\t\t\t\t\t" . '<input type="search" class="search-field" placeholder="Search &hellip;" value="' . get_search_query() . '" name="s" />'
+                . "\n\t\t\t\t</label>\n\t\t\t\t" . '<input type="submit" class="search-submit" value="Search" />' . "\n\t\t\t</form>"
+            : '<form role="search"' . $ariaLabel . ' method="get" id="searchform" class="searchform" action="' . $action . '">'
+                . "\n\t\t\t\t<div>\n\t\t\t\t\t" . '<label class="screen-reader-text" for="s">Search for:</label>'
+                . "\n\t\t\t\t\t" . '<input type="text" value="' . get_search_query() . '" name="s" id="s" />'
+                . "\n\t\t\t\t\t" . '<input type="submit" id="searchsubmit" value="Search" />' . "\n\t\t\t\t</div>\n\t\t\t</form>";
     }
     $form = apply_filters('get_search_form', $form, $args);
     if ($args['echo']) {
@@ -843,4 +856,122 @@ function _minn_calendar(int $year, int $month, bool $initial, string $type): str
         $posts->monthAfter($year, $month, $type),
         [(int) $today[0], (int) $today[1], (int) $today[2]],
     );
+}
+
+function wp_list_pages($args = '')
+{
+    $r = wp_parse_args($args, ['depth' => 0, 'show_date' => '', 'date_format' => get_option('date_format'), 'child_of' => 0, 'exclude' => '', 'title_li' => 'Pages', 'echo' => 1, 'authors' => '', 'sort_column' => 'menu_order, post_title', 'sort_order' => 'ASC', 'link_before' => '', 'link_after' => '', 'item_spacing' => 'preserve', 'walker' => '', 'include' => '', 'post_type' => 'page', 'post_status' => 'publish']);
+    $r['exclude'] = implode(',', apply_filters('wp_list_pages_excludes', wp_parse_id_list($r['exclude'])));
+    $spacing = $r['item_spacing'] === 'discard'
+        ? ListSpacing::discarded((string) $r['link_before'], (string) $r['link_after'])
+        : ListSpacing::preserved((string) $r['link_before'], (string) $r['link_after']);
+    $items = _minn_page_list($r)->items((int) $r['child_of'], (int) $r['depth'], $spacing);
+    $output = '';
+    if ($items !== '') {
+        $output = $r['title_li'] ? '<li class="pagenav">' . $r['title_li'] . '<ul>' . $items . '</ul></li>' : $items;
+    }
+    $html = apply_filters('wp_list_pages', $output, $r, []);
+    if ($r['echo']) {
+        echo $html;
+        return null;
+    }
+    return $html;
+}
+
+function wp_dropdown_pages($args = '')
+{
+    $r = wp_parse_args($args, ['depth' => 0, 'child_of' => 0, 'selected' => 0, 'echo' => 1, 'name' => 'page_id', 'id' => '', 'class' => '', 'show_option_none' => '', 'show_option_no_change' => '', 'option_none_value' => '', 'value_field' => 'ID', 'sort_column' => 'post_title', 'sort_order' => 'ASC', 'exclude' => '', 'include' => '']);
+    $field = (string) $r['value_field'];
+    $value = static fn (array $page): string => $field === 'post_name' ? esc_attr($page['name']) : (string) $page['id'];
+    $options = _minn_page_list($r)->options((int) $r['child_of'], (int) $r['depth'], (int) $r['selected'], $value);
+    $output = '';
+    if ($options !== '') {
+        $class = $r['class'] !== '' ? " class='" . esc_attr($r['class']) . "'" : '';
+        $output = "<select name='" . esc_attr($r['name']) . "'" . $class . " id='" . esc_attr($r['id'] !== '' ? $r['id'] : $r['name']) . "'>\n";
+        if ($r['show_option_no_change']) {
+            $output .= "\t<option value=\"-1\">" . $r['show_option_no_change'] . "</option>\n";
+        }
+        if ($r['show_option_none']) {
+            $output .= "\t<option value=\"" . esc_attr($r['option_none_value']) . '">' . $r['show_option_none'] . "</option>\n";
+        }
+        $output .= $options . "</select>\n";
+    }
+    $html = apply_filters('wp_dropdown_pages', $output, $r, []);
+    if ($r['echo']) {
+        echo $html;
+        return null;
+    }
+    return $html;
+}
+
+/** @internal the published pages a list or dropdown shows, nested by parent */
+function _minn_page_list(array $r): PageList
+{
+    $include = wp_parse_id_list($r['include'] ?? '');
+    $exclude = wp_parse_id_list($r['exclude'] ?? '');
+    $rows = [];
+    foreach ((new Posts(Runtime::current()->db))->pages((string) $r['sort_column'], (string) $r['sort_order']) as $page) {
+        if ($include !== [] ? !in_array($page['id'], $include, true) : in_array($page['id'], $exclude, true)) {
+            continue;
+        }
+        $title = apply_filters('the_title', $page['title'], $page['id']);
+        $rows[] = ['id' => $page['id'], 'parent' => $page['parent'], 'name' => $page['name'], 'title' => $title === '' ? '#' . $page['id'] : $title, 'link' => get_permalink($page['id'])];
+    }
+    return new PageList($rows, _minn_current_page_trail());
+}
+
+/** @internal the queried page and its ancestors, the page first; empty off a page */
+function _minn_current_page_trail(): array
+{
+    $queried = get_queried_object();
+    if (!$queried instanceof WP_Post || $queried->post_type !== 'page') {
+        return [];
+    }
+    return array_merge([$queried->ID], array_map('intval', get_post_ancestors($queried)));
+}
+
+function wp_get_archives($args = '')
+{
+    $r = wp_parse_args($args, ['type' => 'monthly', 'limit' => '', 'format' => 'html', 'before' => '', 'after' => '', 'show_post_count' => false, 'echo' => 1, 'order' => 'DESC', 'post_type' => 'post', 'year' => get_query_var('year'), 'monthnum' => get_query_var('monthnum'), 'day' => get_query_var('day'), 'w' => get_query_var('w')]);
+    $type = $r['type'] === '' ? 'monthly' : (string) $r['type'];
+    $output = '';
+    foreach (_minn_archive_rows($type, (string) $r['post_type'], (string) $r['order'], (int) $r['limit']) as $row) {
+        $after = $r['show_post_count'] && $row['count'] > 0 ? '&nbsp;(' . $row['count'] . ')' : $r['after'];
+        $output .= get_archives_link($row['url'], $row['text'], $r['format'], $r['before'], $after, _minn_archive_is_current($type, $row, $r));
+    }
+    if ($r['echo']) {
+        echo $output;
+        return null;
+    }
+    return $output;
+}
+
+/** @internal whether an archive row is the period the query is on */
+function _minn_archive_is_current(string $type, array $row, array $r): bool
+{
+    $period = $row['period'] ?? [];
+    return match ($type) {
+        'yearly' => (int) $r['year'] === ($period['year'] ?? -1),
+        'monthly' => (int) $r['year'] === ($period['year'] ?? -1) && (int) $r['monthnum'] === ($period['month'] ?? -1),
+        'daily' => (int) $r['year'] === ($period['year'] ?? -1) && (int) $r['monthnum'] === ($period['month'] ?? -1) && (int) $r['day'] === ($period['day'] ?? -1),
+        'weekly' => (int) $r['year'] === ($period['year'] ?? -1) && (int) $r['w'] === ($period['week'] ?? -1),
+        default => false,
+    };
+}
+
+/** @internal the rows wp_get_archives lists for one type */
+function _minn_archive_rows(string $type, string $postType, string $order, int $limit): array
+{
+    $archives = new Archives(
+        new Posts(Runtime::current()->db),
+        static fn (string $format, string $datetime): string => date_i18n($format, (int) strtotime($datetime)),
+        static fn (int $y, ?int $m, ?int $d): string => $d !== null ? get_day_link($y, $m, $d) : ($m !== null ? get_month_link($y, $m) : get_year_link($y)),
+        static fn (string $datetime): array => get_weekstartend($datetime, get_option('start_of_week')),
+    );
+    if ($type === 'postbypost' || $type === 'alpha') {
+        $title = static fn (int $id, string $title): string => $title !== '' ? strip_tags(apply_filters('the_title', $title, $id)) : (string) $id;
+        return $archives->posts($postType, $type === 'alpha' ? 'title' : 'date', $type === 'alpha' ? 'ASC' : $order, $limit, $title, static fn (int $id): string => (string) get_permalink($id));
+    }
+    $weekLink = static fn (int $year, int $week): string => add_query_arg(['m' => $year, 'w' => $week], home_url('/'));
+    return $archives->periods($type, $postType, $order, $limit, $weekLink);
 }

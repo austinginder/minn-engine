@@ -379,6 +379,72 @@ final readonly class Posts
         return array_map(static fn (array $row): int => (int) $row['d'], $rows);
     }
 
+    /**
+     * The published pages in a sort order, for a page list: id, parent, title.
+     *
+     * @return list<array{id: int, parent: int, name: string, title: string}>
+     */
+    public function pages(string $sortColumn, string $order): array
+    {
+        $columns = [];
+        foreach (explode(',', $sortColumn) as $column) {
+            $column = trim($column);
+            $columns[] = in_array($column, ['post_title', 'menu_order', 'ID', 'post_date', 'post_modified', 'post_author', 'post_name', 'comment_count'], true) ? $column : 'post_title';
+        }
+        $direction = strtoupper($order) === 'DESC' ? 'DESC' : 'ASC';
+        $rows = $this->db->rows(
+            "SELECT ID, post_parent, post_name, post_title FROM {$this->db->table('posts')} WHERE post_type = 'page' AND post_status = 'publish'
+             ORDER BY " . implode(' ' . $direction . ', ', array_unique($columns)) . ' ' . $direction,
+        );
+        return array_map(static fn (array $row): array => ['id' => (int) $row['ID'], 'parent' => (int) $row['post_parent'], 'name' => (string) $row['post_name'], 'title' => (string) $row['post_title']], $rows);
+    }
+
+    /**
+     * The periods holding a published post of a type, newest first by
+     * default: one row per month, year, day, or week, with the count and the
+     * earliest post date inside it.
+     *
+     * @return list<array{year: int, month: int, day: int, week: int, count: int, first: string}>
+     */
+    public function archiveBuckets(string $granularity, string $type, string $order, int $limit): array
+    {
+        $direction = strtoupper($order) === 'ASC' ? 'ASC' : 'DESC';
+        $group = match ($granularity) {
+            'yearly' => 'YEAR(post_date)',
+            'daily' => 'YEAR(post_date), MONTH(post_date), DAYOFMONTH(post_date)',
+            'weekly' => 'YEAR(post_date), WEEK(post_date, ' . $this->weekMode() . ')',
+            default => 'YEAR(post_date), MONTH(post_date)',
+        };
+        $rows = $this->db->rows(
+            "SELECT YEAR(post_date) AS y, MONTH(post_date) AS m, DAYOFMONTH(post_date) AS d, WEEK(post_date, " . $this->weekMode() . ") AS w, COUNT(ID) AS c, MIN(post_date) AS first
+             FROM {$this->db->table('posts')} WHERE post_type = ? AND post_status = 'publish'
+             GROUP BY {$group} ORDER BY MIN(post_date) {$direction}" . ($limit > 0 ? ' LIMIT ' . $limit : ''),
+            [$type],
+        );
+        return array_map(static fn (array $row): array => ['year' => (int) $row['y'], 'month' => (int) $row['m'], 'day' => (int) $row['d'], 'week' => (int) $row['w'], 'count' => (int) $row['c'], 'first' => (string) $row['first']], $rows);
+    }
+
+    /** MySQL's WEEK() mode for the site's first day of the week: 0 for Sunday, 1 for Monday. */
+    private function weekMode(): int
+    {
+        return (int) ($this->db->option('start_of_week') ?? '0') === 1 ? 1 : 0;
+    }
+
+    /**
+     * Published posts of a type for a post-by-post archive, by date or by title.
+     *
+     * @return list<PostRecord>
+     */
+    public function archiveList(string $type, string $orderBy, string $order, int $limit): array
+    {
+        $direction = strtoupper($order) === 'ASC' ? 'ASC' : 'DESC';
+        $column = $orderBy === 'title' ? 'post_title' : 'post_date';
+        return PostRecord::fromRows($this->db->rows(
+            "SELECT * FROM {$this->db->table('posts')} WHERE post_type = ? AND post_status = 'publish' ORDER BY {$column} {$direction}" . ($limit > 0 ? ' LIMIT ' . $limit : ''),
+            [$type],
+        ));
+    }
+
     /** The nearest month before one with a published post of a type, as [year, month], or null. */
     public function monthBefore(int $year, int $month, string $type): ?array
     {

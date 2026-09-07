@@ -1,0 +1,681 @@
+[
+    [
+        "factory",
+        [
+            "WP_Widget_Pages",
+            "WP_Widget_Calendar",
+            "WP_Widget_Archives",
+            "WP_Widget_Media_Audio",
+            "WP_Widget_Media_Image",
+            "WP_Widget_Media_Gallery",
+            "WP_Widget_Media_Video",
+            "WP_Widget_Meta",
+            "WP_Widget_Search",
+            "WP_Widget_Text",
+            "WP_Widget_Categories",
+            "WP_Widget_Recent_Posts",
+            "WP_Widget_Recent_Comments",
+            "WP_Widget_RSS",
+            "WP_Widget_Tag_Cloud",
+            "WP_Nav_Menu_Widget",
+            "WP_Widget_Custom_HTML",
+            "WP_Widget_Block"
+        ]
+    ],
+    [
+        "factory options",
+        {
+            "WP_Widget_Pages": [
+                "Pages",
+                "pages",
+                {
+                    "classname": "widget_pages",
+                    "customize_selective_refresh": true,
+                    "description": "A list of your site&#8217;s Pages.",
+                    "show_instance_in_rest": true
+                },
+                {
+                    "id_base": "pages"
+                }
+            ],
+            "WP_Widget_Calendar": [
+                "Calendar",
+                "calendar",
+                {
+                    "classname": "widget_calendar",
+                    "customize_selective_refresh": true,
+                    "description": "A calendar of your site\u2019s posts.",
+                    "show_instance_in_rest": true
+                },
+                {
+                    "id_base": "calendar"
+                }
+            ],
+            "WP_Widget_Archives": [
+                "Archives",
+                "archives",
+                {
+                    "classname": "widget_archive",
+                    "customize_selective_refresh": true,
+                    "description": "A monthly archive of your site&#8217;s Posts.",
+                    "show_instance_in_rest": true
+                },
+                {
+                    "id_base": "archives"
+                }
+            ],
+            "WP_Widget_Media_Audio": [
+                "Audio",
+                "media_audio",
+                {
+                    "classname": "widget_media_audio",
+                    "customize_selective_refresh": true,
+                    "description": "Displays an audio player.",
+                    "show_instance_in_rest": true,
+                    "mime_type": "audio"
+                },
+                {
+                    "id_base": "media_audio"
+                }
+            ],
+            "WP_Widget_Media_Image": [
+                "Image",
+                "media_image",
+                {
+                    "classname": "widget_media_image",
+                    "customize_selective_refresh": true,
+                    "description": "Displays an image.",
+                    "show_instance_in_rest": true,
+                    "mime_type": "image"
+                },
+                {
+                    "id_base": "media_image"
+                }
+            ],
+            "WP_Widget_Media_Gallery": [
+                "Gallery",
+                "media_gallery",
+                {
+                    "classname": "widget_media_gallery",
+                    "customize_selective_refresh": true,
+                    "description": "Displays an image gallery.",
+                    "show_instance_in_rest": true,
+                    "mime_type": "image"
+                },
+                {
+                    "id_base": "media_gallery"
+                }
+            ],
+            "WP_Widget_Media_Video": [
+                "Video",
+                "media_video",
+                {
+                    "classname": "widget_media_video",
+                    "customize_selective_refresh": true,
+                    "description": "Displays a video from the media library or from YouTube, Vimeo, or another provider.",
+                    "show_instance_in_rest": true,
+                    "mime_type": "video"
+                },
+                {
+                    "id_base": "media_video"
+                }
+            ],
+            "WP_Widget_Meta": [
+                "Meta",
+                "meta",
+                {
+                    "classname": "widget_meta",
+                    "customize_selective_refresh": true,
+                    "description": "Login, RSS, &amp; WordPress.org links.",
+                    "show_instance_in_rest": true
+                },
+                {
+                    "id_base": "meta"
+                }
+            ],
+            "WP_Widget_Search": [
+                "Search",
+                "search",
+                {
+                    "classname": "widget_search",
+                    "customize_selective_refresh": true,
+                    "description": "A search form for your site.",
+                    "show_instance_in_rest": true
+                },
+                {
+                    "id_base": "search"
+                }
+            ],
+            "WP_Widget_Text": [
+                "Text",
+                "text",
+                {
+                    "classname": "widget_text",
+                    "customize_selective_refresh": true,
+                    "description": "Arbitrary text.",
+                    "show_instance_in_rest": true
+                },
+                {
+                    "id_base": "text",
+                    "width": 400,
+                    "height": 350
+                }
+            ],
+            "WP_Widget_Categories": [
+                "Categories",
+                "categories",
+                {
+                    "classname": "widget_categories",
+                    "customize_selective_refresh": true,
+                    "description": "A list or dropdown of categories.",
+                    "show_instance_in_rest": true
+                },
+                {
+                    "id_base": "categories"
+                }
+            ],
+            "WP_Widget_Recent_Posts": [
+                "Recent Posts",
+                "recent-posts",
+                {
+                    "classname": "widget_recent_entries",
+                    "customize_selective_refresh": true,
+                    "description": "Your site&#8217;s most recent Posts.",
+                    "show_instance_in_rest": true
+                },
+                {
+                    "id_base": "recent-posts"
+                }
+            ],
+            "WP_Widget_Recent_Comments": [
+                "Recent Comments",
+                "recent-comments",
+                {
+                    "classname": "widget_recent_comments",
+                    "customize_selective_refresh": true,
+                    "description": "Your site&#8217;s most recent comments.",
+                    "show_instance_in_rest": true
+                },
+                {
+                    "id_base": "recent-comments"
+                }
+            ],
+            "WP_Widget_RSS": [
+                "RSS",
+                "rss",
+                {
+                    "classname": "widget_rss",
+                    "customize_selective_refresh": true,
+                    "description": "Entries from any RSS or Atom feed.",
+                    "show_instance_in_rest": true
+                },
+                {
+                    "id_base": "rss",
+                    "width": 400,
+                    "height": 200
+                }
+            ],
+            "WP_Widget_Tag_Cloud": [
+                "Tag Cloud",
+                "tag_cloud",
+                {
+                    "classname": "widget_tag_cloud",
+                    "customize_selective_refresh": true,
+                    "description": "A cloud of your most used tags.",
+                    "show_instance_in_rest": true
+                },
+                {
+                    "id_base": "tag_cloud"
+                }
+            ],
+            "WP_Nav_Menu_Widget": [
+                "Navigation Menu",
+                "nav_menu",
+                {
+                    "classname": "widget_nav_menu",
+                    "customize_selective_refresh": true,
+                    "description": "Add a navigation menu to your sidebar.",
+                    "show_instance_in_rest": true
+                },
+                {
+                    "id_base": "nav_menu"
+                }
+            ],
+            "WP_Widget_Custom_HTML": [
+                "Custom HTML",
+                "custom_html",
+                {
+                    "classname": "widget_custom_html",
+                    "customize_selective_refresh": true,
+                    "description": "Arbitrary HTML code.",
+                    "show_instance_in_rest": true
+                },
+                {
+                    "id_base": "custom_html",
+                    "width": 400,
+                    "height": 350
+                }
+            ],
+            "WP_Widget_Block": [
+                "Block",
+                "block",
+                {
+                    "classname": "widget_block",
+                    "customize_selective_refresh": true,
+                    "description": "A widget containing a block.",
+                    "show_instance_in_rest": true
+                },
+                {
+                    "id_base": "block",
+                    "width": 400,
+                    "height": 350
+                }
+            ]
+        }
+    ],
+    [
+        "pages default",
+        "<w class=\"widget_pages\"><t>Pages</t>\n\t\t\t<ul>\n\t\t\t\t<li class=\"page_item page-item-2 page_item_has_children\"><a href=\"https://minn.localhost/sample-page/\">Sample Page</a>\n<ul class='children'>\n\t<li class=\"page_item page-item-6\"><a href=\"https://minn.localhost/sample-page/docs/\">Docs</a></li>\n</ul>\n</li>\n\t\t\t</ul>\n\n\t\t\t</w>"
+    ],
+    [
+        "pages by title excluding",
+        "<w class=\"widget_pages\"><t>Pages</t>\n\t\t\t<ul>\n\t\t\t\t<li class=\"page_item page-item-2\"><a href=\"https://minn.localhost/sample-page/\">Sample Page</a></li>\n\t\t\t</ul>\n\n\t\t\t</w>"
+    ],
+    [
+        "pages by id",
+        "<w class=\"widget_pages\"><t>Pages</t>\n\t\t\t<ul>\n\t\t\t\t<li class=\"page_item page-item-2 page_item_has_children\"><a href=\"https://minn.localhost/sample-page/\">Sample Page</a>\n<ul class='children'>\n\t<li class=\"page_item page-item-6\"><a href=\"https://minn.localhost/sample-page/docs/\">Docs</a></li>\n</ul>\n</li>\n\t\t\t</ul>\n\n\t\t\t</w>"
+    ],
+    [
+        "wp_list_pages",
+        [
+            "<li class=\"pagenav\">Pages<ul><li class=\"page_item page-item-2 page_item_has_children\"><a href=\"https://minn.localhost/sample-page/\">Sample Page</a>\n<ul class='children'>\n\t<li class=\"page_item page-item-6\"><a href=\"https://minn.localhost/sample-page/docs/\">Docs</a></li>\n</ul>\n</li>\n</ul></li>",
+            "<li class=\"page_item page-item-2 page_item_has_children\"><a href=\"https://minn.localhost/sample-page/\">Sample Page</a></li>\n",
+            "<li class=\"page_item page-item-2 page_item_has_children\"><a href=\"https://minn.localhost/sample-page/\">Sample Page</a>\n<ul class='children'>\n\t<li class=\"page_item page-item-6\"><a href=\"https://minn.localhost/sample-page/docs/\">Docs</a></li>\n</ul>\n</li>\n",
+            "<li class=\"pagenav\">Mine<ul><li class=\"page_item page-item-6\"><a href=\"https://minn.localhost/sample-page/docs/\">Docs</a></li>\n</ul></li>"
+        ]
+    ],
+    [
+        "wp_dropdown_pages",
+        [
+            "<select name='page_id' id='page_id'>\n\t<option class=\"level-0\" value=\"2\">Sample Page</option>\n\t<option class=\"level-1\" value=\"6\">&nbsp;&nbsp;&nbsp;Docs</option>\n</select>\n",
+            "<select name='pg' class='c' id='pg-id'>\n\t<option value=\"\">None</option>\n\t<option class=\"level-0\" value=\"2\">Sample Page</option>\n\t<option class=\"level-1\" value=\"6\" selected=\"selected\">&nbsp;&nbsp;&nbsp;Docs</option>\n</select>\n"
+        ]
+    ],
+    [
+        "archives default",
+        "<w class=\"widget_archive\"><t>Archives</t>\n\t\t\t<ul>\n\t\t\t\t\t<li><a href='https://minn.localhost/2026/08/'>August 2026</a></li>\n\t\t\t</ul>\n\n\t\t\t</w>"
+    ],
+    [
+        "archives dropdown count",
+        "<w class=\"widget_archive\"><t>Archives</t>\t\t<label class=\"screen-reader-text\" for=\"archives-dropdown--1\">Archives</label>\n\t\t<select id=\"archives-dropdown--1\" name=\"archive-dropdown\">\n\t\t\t\n\t\t\t<option value=\"\">Select Month</option>\n\t\t\t\t<option value='https://minn.localhost/2026/08/'> August 2026 &nbsp;(10)</option>\n\n\t\t</select>\n\n\t\t\t<script>\n( ( dropdownId ) => {\n\tconst dropdown = document.getElementById( dropdownId );\n\tfunction onSelectChange() {\n\t\tsetTimeout( () => {\n\t\t\tif ( 'escape' === dropdown.dataset.lastkey ) {\n\t\t\t\treturn;\n\t\t\t}\n\t\t\tif ( dropdown.value ) {\n\t\t\t\tdocument.location.href = dropdown.value;\n\t\t\t}\n\t\t}, 250 );\n\t}\n\tfunction onKeyUp( event ) {\n\t\tif ( 'Escape' === event.key ) {\n\t\t\tdropdown.dataset.lastkey = 'escape';\n\t\t} else {\n\t\t\tdelete dropdown.dataset.lastkey;\n\t\t}\n\t}\n\tfunction onClick() {\n\t\tdelete dropdown.dataset.lastkey;\n\t}\n\tdropdown.addEventListener( 'keyup', onKeyUp );\n\tdropdown.addEventListener( 'click', onClick );\n\tdropdown.addEventListener( 'change', onSelectChange );\n})( \"archives-dropdown--1\" );\n\n//# sourceURL=WP_Widget_Archives%3A%3Awidget\n</script>\n</w>"
+    ],
+    [
+        "archives list count",
+        "<w class=\"widget_archive\"><t>Archives</t>\n\t\t\t<ul>\n\t\t\t\t\t<li><a href='https://minn.localhost/2026/08/'>August 2026</a>&nbsp;(10)</li>\n\t\t\t</ul>\n\n\t\t\t</w>"
+    ],
+    [
+        "wp_get_archives",
+        [
+            "\t<li><a href='https://minn.localhost/2026/08/'>August 2026</a></li>\n",
+            "\t<li><a href='https://minn.localhost/2026/'>2026</a>&nbsp;(10)</li>\n",
+            "\t<li><a href='https://minn.localhost/2026/08/28/'>August 28, 2026</a></li>\n",
+            "\t<li><a href='https://minn.localhost/zz-block-battery-dynamic/'>Block battery: dynamic</a></li>\n\t<li><a href='https://minn.localhost/zz-block-battery-layout/'>Block battery: layout</a></li>\n\t<li><a href='https://minn.localhost/zz-block-battery-media/'>Block battery: media</a></li>\n",
+            "\t<li><a href='https://minn.localhost/zz-block-battery-dynamic/'>Block battery: dynamic</a></li>\n\t<li><a href='https://minn.localhost/zz-block-battery-layout/'>Block battery: layout</a></li>\n",
+            "\t<option value='https://minn.localhost/2026/08/'> August 2026 </option>\n",
+            "\t<link rel='archives' title='August 2026' href='https://minn.localhost/2026/08/' />\n",
+            "\t[<a href='https://minn.localhost/2026/08/'>August 2026</a>]\n",
+            "\t<li><a href='https://minn.localhost/?m=2026&#038;w=35'>August 24, 2026&#8211;August 30, 2026</a></li>\n"
+        ]
+    ],
+    [
+        "categories default",
+        "<w class=\"widget_categories\"><t>Cats</t>\n\t\t\t<ul>\n\t\t\t\t\t<li class=\"cat-item cat-item-1\"><a href=\"https://minn.localhost/category/uncategorized/\">Uncategorized</a>\n</li>\n\t\t\t</ul>\n\n\t\t\t</w>"
+    ],
+    [
+        "categories dropdown",
+        "<w class=\"widget_categories\"><t>Categories</t><form action=\"https://minn.localhost\" method=\"get\"><label class=\"screen-reader-text\" for=\"cat\">Categories</label><select  name='cat' id='cat' class='postform'>\n\t<option value='-1'>Select Category</option>\n\t<option class=\"level-0\" value=\"1\">Uncategorized&nbsp;&nbsp;(10)</option>\n</select>\n</form><script>\n( ( dropdownId ) => {\n\tconst dropdown = document.getElementById( dropdownId );\n\tfunction onSelectChange() {\n\t\tsetTimeout( () => {\n\t\t\tif ( 'escape' === dropdown.dataset.lastkey ) {\n\t\t\t\treturn;\n\t\t\t}\n\t\t\tif ( dropdown.value && parseInt( dropdown.value ) > 0 && dropdown instanceof HTMLSelectElement ) {\n\t\t\t\tdropdown.parentElement.submit();\n\t\t\t}\n\t\t}, 250 );\n\t}\n\tfunction onKeyUp( event ) {\n\t\tif ( 'Escape' === event.key ) {\n\t\t\tdropdown.dataset.lastkey = 'escape';\n\t\t} else {\n\t\t\tdelete dropdown.dataset.lastkey;\n\t\t}\n\t}\n\tfunction onClick() {\n\t\tdelete dropdown.dataset.lastkey;\n\t}\n\tdropdown.addEventListener( 'keyup', onKeyUp );\n\tdropdown.addEventListener( 'click', onClick );\n\tdropdown.addEventListener( 'change', onSelectChange );\n})( \"cat\" );\n\n//# sourceURL=WP_Widget_Categories%3A%3Awidget\n</script>\n</w>"
+    ],
+    [
+        "categories count hierarchical",
+        "<w class=\"widget_categories\"><t>Categories</t>\n\t\t\t<ul>\n\t\t\t\t\t<li class=\"cat-item cat-item-1\"><a href=\"https://minn.localhost/category/uncategorized/\">Uncategorized</a> (10)\n</li>\n\t\t\t</ul>\n\n\t\t\t</w>"
+    ],
+    [
+        "meta",
+        "<w class=\"widget_meta\"><t>Meta</t>\n\t\t<ul>\n\t\t\t\t\t\t<li><a href=\"https://minn.localhost/wp-login.php\">Log in</a></li>\n\t\t\t<li><a href=\"https://minn.localhost/feed/\">Entries feed</a></li>\n\t\t\t<li><a href=\"https://minn.localhost/comments/feed/\">Comments feed</a></li>\n\n\t\t\t<li><a href=\"https://wordpress.org/\">WordPress.org</a></li>\n\t\t</ul>\n\n\t\t</w>"
+    ],
+    [
+        "meta untitled",
+        "<w class=\"widget_meta\"><t>Meta</t>\n\t\t<ul>\n\t\t\t\t\t\t<li><a href=\"https://minn.localhost/wp-login.php\">Log in</a></li>\n\t\t\t<li><a href=\"https://minn.localhost/feed/\">Entries feed</a></li>\n\t\t\t<li><a href=\"https://minn.localhost/comments/feed/\">Comments feed</a></li>\n\n\t\t\t<li><a href=\"https://wordpress.org/\">WordPress.org</a></li>\n\t\t</ul>\n\n\t\t</w>"
+    ],
+    [
+        "search",
+        "<w class=\"widget_search\"><t>Find</t><form role=\"search\" method=\"get\" class=\"search-form\" action=\"https://minn.localhost/\">\n\t\t\t\t<label>\n\t\t\t\t\t<span class=\"screen-reader-text\">Search for:</span>\n\t\t\t\t\t<input type=\"search\" class=\"search-field\" placeholder=\"Search &hellip;\" value=\"\" name=\"s\" />\n\t\t\t\t</label>\n\t\t\t\t<input type=\"submit\" class=\"search-submit\" value=\"Search\" />\n\t\t\t</form></w>"
+    ],
+    [
+        "text visual",
+        "<w class=\"widget_text\"><t>T</t>\t\t\t<div class=\"textwidget\"><p>Hello <b>x</b></p>\n<p>Para two<br />\nline </p>\n</div>\n\t\t</w>"
+    ],
+    [
+        "text legacy",
+        "<w class=\"widget_text\"><t>T</t>\t\t\t<div class=\"textwidget\">Hello <b>x</b>\n\nPara two</div>\n\t\t</w>"
+    ],
+    [
+        "text legacy filtered",
+        "<w class=\"widget_text\">\t\t\t<div class=\"textwidget\"><p>Hello</p>\n<p>Para two</p>\n</div>\n\t\t</w>"
+    ],
+    [
+        "recent posts",
+        "\n\t\t<w class=\"widget_recent_entries\">\n\t\t<t>Recent</t>\n\t\t<ul>\n\t\t\t\t\t\t\t\t\t\t\t<li>\n\t\t\t\t\t<a href=\"https://minn.localhost/zz-block-battery-dynamic/\">Block battery: dynamic</a>\n\t\t\t\t\t\t\t\t\t\t\t<span class=\"post-date\">August 28, 2026</span>\n\t\t\t\t\t\t\t\t\t</li>\n\t\t\t\t\t\t\t\t\t\t\t<li>\n\t\t\t\t\t<a href=\"https://minn.localhost/zz-block-battery-layout/\">Block battery: layout</a>\n\t\t\t\t\t\t\t\t\t\t\t<span class=\"post-date\">August 28, 2026</span>\n\t\t\t\t\t\t\t\t\t</li>\n\t\t\t\t\t\t\t\t\t\t\t<li>\n\t\t\t\t\t<a href=\"https://minn.localhost/zz-block-battery-media/\">Block battery: media</a>\n\t\t\t\t\t\t\t\t\t\t\t<span class=\"post-date\">August 28, 2026</span>\n\t\t\t\t\t\t\t\t\t</li>\n\t\t\t\t\t</ul>\n\n\t\t</w>"
+    ],
+    [
+        "recent posts default",
+        "\n\t\t<w class=\"widget_recent_entries\">\n\t\t<t>Recent Posts</t>\n\t\t<ul>\n\t\t\t\t\t\t\t\t\t\t\t<li>\n\t\t\t\t\t<a href=\"https://minn.localhost/zz-block-battery-dynamic/\">Block battery: dynamic</a>\n\t\t\t\t\t\t\t\t\t</li>\n\t\t\t\t\t\t\t\t\t\t\t<li>\n\t\t\t\t\t<a href=\"https://minn.localhost/zz-block-battery-layout/\">Block battery: layout</a>\n\t\t\t\t\t\t\t\t\t</li>\n\t\t\t\t\t\t\t\t\t\t\t<li>\n\t\t\t\t\t<a href=\"https://minn.localhost/zz-block-battery-media/\">Block battery: media</a>\n\t\t\t\t\t\t\t\t\t</li>\n\t\t\t\t\t\t\t\t\t\t\t<li>\n\t\t\t\t\t<a href=\"https://minn.localhost/zz-block-battery-text/\">Block battery: text</a>\n\t\t\t\t\t\t\t\t\t</li>\n\t\t\t\t\t\t\t\t\t\t\t<li>\n\t\t\t\t\t<a href=\"https://minn.localhost/scribe-published/\">Scribe published</a>\n\t\t\t\t\t\t\t\t\t</li>\n\t\t\t\t\t</ul>\n\n\t\t</w>"
+    ],
+    [
+        "recent comments",
+        "<w class=\"widget_recent_comments\"><t>Comments</t><ul id=\"recentcomments\"><li class=\"recentcomments\"><span class=\"comment-author-link\"><a href=\"https://wordpress.org/\" class=\"url\" rel=\"ugc external nofollow\">A WordPress Commenter</a></span> on <a href=\"https://minn.localhost/hello-world/#comment-1\">Hello world!</a></li></ul></w>"
+    ],
+    [
+        "recent comments default",
+        "<w class=\"widget_recent_comments\"><t>Recent Comments</t><ul id=\"recentcomments--1\"><li class=\"recentcomments\"><span class=\"comment-author-link\"><a href=\"https://wordpress.org/\" class=\"url\" rel=\"ugc external nofollow\">A WordPress Commenter</a></span> on <a href=\"https://minn.localhost/hello-world/#comment-1\">Hello world!</a></li></ul></w>"
+    ],
+    [
+        "tag cloud",
+        "<w class=\"widget_tag_cloud\"><t>Tags</t><div class=\"tagcloud\"><a href=\"https://minn.localhost/tag/engine/\" class=\"tag-cloud-link tag-link-2 tag-link-position-1\" style=\"font-size: 8pt;\" aria-label=\"engine (1 item)\">engine</a>\n<a href=\"https://minn.localhost/tag/parity/\" class=\"tag-cloud-link tag-link-3 tag-link-position-2\" style=\"font-size: 8pt;\" aria-label=\"parity (1 item)\">parity</a></div>\n</w>"
+    ],
+    [
+        "tag cloud count categories",
+        "<w class=\"widget_tag_cloud\"><t>Categories</t><div class=\"tagcloud\"><a href=\"https://minn.localhost/category/uncategorized/\" class=\"tag-cloud-link tag-link-1 tag-link-position-1\" style=\"font-size: 8pt;\" aria-label=\"Uncategorized (10 items)\">Uncategorized<span class=\"tag-link-count\"> (10)</span></a></div>\n</w>"
+    ],
+    [
+        "nav menu",
+        "<w class=\"widget_nav_menu\"><t>Menu</t><div class=\"menu-zz-minn-menu-container\"><ul id=\"menu-zz-minn-menu\" class=\"menu\"><li id=\"menu-item-8386\" class=\"menu-item menu-item-type-post_type menu-item-object-page menu-item-8386\"><a href=\"https://minn.localhost/sample-page/\">Sample Page</a></li>\n<li id=\"menu-item-8387\" class=\"menu-item menu-item-type-taxonomy menu-item-object-category menu-item-8387\"><a href=\"https://minn.localhost/category/uncategorized/\">Uncategorized</a></li>\n</ul></div></w>"
+    ],
+    [
+        "nav menu missing",
+        ""
+    ],
+    [
+        "custom html",
+        "<w class=\"widget_text widget_custom_html\"><t>H</t><div class=\"textwidget custom-html-widget\"><p>raw & <script>x</script></p></div></w>"
+    ],
+    [
+        "rss error",
+        "<w class=\"widget_rss\"><t><a class=\"rsswidget rss-widget-feed\" href=\"http://nonexistent.invalid/feed/\"><img class=\"rss-widget-icon\" style=\"border:0\" width=\"14\" height=\"14\" src=\"http://minn.localhost/wp-includes/images/rss.png\" alt=\"RSS feed: Feed\" loading=\"lazy\" /></a> <a class=\"rsswidget rss-widget-title\" href=\"\">Feed</a></t></w>"
+    ],
+    [
+        "rss no url",
+        ""
+    ],
+    [
+        "media image attachment",
+        "<w class=\"widget_media_image\"><t>Img</t><figure style=\"width: 150px\" class=\"wp-caption alignnone\"><a href=\"https://minn.localhost/wp-content/uploads/2026/08/minn-battery.png\"><img width=\"150\" height=\"150\" src=\"https://minn.localhost/wp-content/uploads/2026/08/minn-battery-150x150.png\" class=\"image wp-image-607  attachment-thumbnail size-thumbnail\" alt=\"\" style=\"max-width: 100%; height: auto;\" decoding=\"async\" loading=\"lazy\" /></a><figcaption class=\"wp-caption-text\">A caption</figcaption></figure></w>"
+    ],
+    [
+        "media image url",
+        "<w class=\"widget_media_image\"><a href=\"https://minn.localhost/go\" target=\"_blank\"><img class=\"image ic\" src=\"https://minn.localhost/x.png\" alt=\"alt&quot;t\" width=\"10\" height=\"5\" decoding=\"async\" loading=\"lazy\" /></a></w>"
+    ],
+    [
+        "media image empty",
+        ""
+    ],
+    [
+        "media audio url",
+        "<w class=\"widget_media_audio\"><t>Au</t><audio class=\"wp-audio-shortcode\" id=\"audio-0-1\" loop preload=\"metadata\" style=\"width: 100%;\" controls=\"controls\"><source type=\"audio/mpeg\" src=\"https://minn.localhost/a.mp3?_=1\" /><a href=\"https://minn.localhost/a.mp3\">https://minn.localhost/a.mp3</a></audio></w>"
+    ],
+    [
+        "media video url",
+        "<w class=\"widget_media_video\"><t>Vid</t></w>"
+    ],
+    [
+        "media video youtube",
+        "<w class=\"widget_media_video\"><div style=\"width:100%;\" class=\"wp-video\"><video class=\"wp-video-shortcode\" id=\"video-0-1\" preload=\"metadata\" controls=\"controls\"><source type=\"video/youtube\" src=\"https://www.youtube.com/watch?v=dQw4w9WgXcQ&#038;_=1\" /><a href=\"https://www.youtube.com/watch?v=dQw4w9WgXcQ\">https://www.youtube.com/watch?v=dQw4w9WgXcQ</a></video></div></w>"
+    ],
+    [
+        "media gallery",
+        "<w class=\"widget_media_gallery\"><t>Gal</t><div id='gallery-2' class='gallery galleryid-0 gallery-columns-2 gallery-size-thumbnail'><figure class='gallery-item'>\n\t\t\t<div class='gallery-icon landscape'>\n\t\t\t\t<img width=\"150\" height=\"150\" src=\"https://minn.localhost/wp-content/uploads/2026/08/minn-battery-150x150.png\" class=\"attachment-thumbnail size-thumbnail\" alt=\"\" decoding=\"async\" loading=\"lazy\" />\n\t\t\t</div></figure>\n\t\t</div>\n</w>"
+    ],
+    [
+        "media gallery empty",
+        ""
+    ],
+    [
+        "media schema keys",
+        {
+            "WP_Widget_Media_Audio": [
+                "preload",
+                "loop",
+                "mp3",
+                "ogg",
+                "flac",
+                "m4a",
+                "wav",
+                "attachment_id",
+                "url",
+                "title"
+            ],
+            "WP_Widget_Media_Image": [
+                "size",
+                "width",
+                "height",
+                "caption",
+                "alt",
+                "link_type",
+                "link_url",
+                "image_classes",
+                "link_classes",
+                "link_rel",
+                "link_target_blank",
+                "image_title",
+                "attachment_id",
+                "url",
+                "title"
+            ],
+            "WP_Widget_Media_Gallery": [
+                "title",
+                "ids",
+                "columns",
+                "size",
+                "link_type",
+                "orderby_random"
+            ],
+            "WP_Widget_Media_Video": [
+                "preload",
+                "loop",
+                "content",
+                "mp4",
+                "m4v",
+                "webm",
+                "ogv",
+                "flv",
+                "attachment_id",
+                "url",
+                "title"
+            ]
+        }
+    ],
+    [
+        "second instances",
+        [
+            "<w class=\"widget_categories\"><t>Categories</t><form action=\"https://minn.localhost\" method=\"get\"><label class=\"screen-reader-text\" for=\"categories-dropdown--1\">Categories</label><select  name='cat' id='categories-dropdown--1' class='postform'>\n\t<option value='-1'>Select Category</option>\n\t<option class=\"level-0\" value=\"1\">Uncategorized</option>\n</select>\n</form><script>\n( ( dropdownId ) => {\n\tconst dropdown = document.getElementById( dropdownId );\n\tfunction onSelectChange() {\n\t\tsetTimeout( () => {\n\t\t\tif ( 'escape' === dropdown.dataset.lastkey ) {\n\t\t\t\treturn;\n\t\t\t}\n\t\t\tif ( dropdown.value && parseInt( dropdown.value ) > 0 && dropdown instanceof HTMLSelectElement ) {\n\t\t\t\tdropdown.parentElement.submit();\n\t\t\t}\n\t\t}, 250 );\n\t}\n\tfunction onKeyUp( event ) {\n\t\tif ( 'Escape' === event.key ) {\n\t\t\tdropdown.dataset.lastkey = 'escape';\n\t\t} else {\n\t\t\tdelete dropdown.dataset.lastkey;\n\t\t}\n\t}\n\tfunction onClick() {\n\t\tdelete dropdown.dataset.lastkey;\n\t}\n\tdropdown.addEventListener( 'keyup', onKeyUp );\n\tdropdown.addEventListener( 'click', onClick );\n\tdropdown.addEventListener( 'change', onSelectChange );\n})( \"categories-dropdown--1\" );\n\n//# sourceURL=WP_Widget_Categories%3A%3Awidget\n</script>\n</w>",
+            "<w class=\"widget_archive\"><t>Archives</t>\t\t<label class=\"screen-reader-text\" for=\"archives-dropdown--1\">Archives</label>\n\t\t<select id=\"archives-dropdown--1\" name=\"archive-dropdown\">\n\t\t\t\n\t\t\t<option value=\"\">Select Month</option>\n\t\t\t\t<option value='https://minn.localhost/2026/08/'> August 2026 </option>\n\n\t\t</select>\n\n\t\t\t<script>\n( ( dropdownId ) => {\n\tconst dropdown = document.getElementById( dropdownId );\n\tfunction onSelectChange() {\n\t\tsetTimeout( () => {\n\t\t\tif ( 'escape' === dropdown.dataset.lastkey ) {\n\t\t\t\treturn;\n\t\t\t}\n\t\t\tif ( dropdown.value ) {\n\t\t\t\tdocument.location.href = dropdown.value;\n\t\t\t}\n\t\t}, 250 );\n\t}\n\tfunction onKeyUp( event ) {\n\t\tif ( 'Escape' === event.key ) {\n\t\t\tdropdown.dataset.lastkey = 'escape';\n\t\t} else {\n\t\t\tdelete dropdown.dataset.lastkey;\n\t\t}\n\t}\n\tfunction onClick() {\n\t\tdelete dropdown.dataset.lastkey;\n\t}\n\tdropdown.addEventListener( 'keyup', onKeyUp );\n\tdropdown.addEventListener( 'click', onClick );\n\tdropdown.addEventListener( 'change', onSelectChange );\n})( \"archives-dropdown--1\" );\n\n//# sourceURL=WP_Widget_Archives%3A%3Awidget\n</script>\n</w>",
+            "<w class=\"widget_recent_comments\"><t>Recent Comments</t><ul id=\"recentcomments--1\"><li class=\"recentcomments\"><span class=\"comment-author-link\"><a href=\"https://wordpress.org/\" class=\"url\" rel=\"ugc external nofollow\">A WordPress Commenter</a></span> on <a href=\"https://minn.localhost/hello-world/#comment-1\">Hello world!</a></li></ul></w>"
+        ]
+    ],
+    [
+        "untitled",
+        [
+            "<w class=\"widget_search\"><form role=\"search\" method=\"get\" class=\"search-form\" action=\"https://minn.localhost/\">\n\t\t\t\t<label>\n\t\t\t\t\t<span class=\"screen-reader-text\">Search for:</span>\n\t\t\t\t\t<input type=\"search\" class=\"search-field\" placeholder=\"Search &hellip;\" value=\"\" name=\"s\" />\n\t\t\t\t</label>\n\t\t\t\t<input type=\"submit\" class=\"search-submit\" value=\"Search\" />\n\t\t\t</form></w>",
+            "<w class=\"widget_tag_cloud\"><t>Tags</t><div class=\"tagcloud\"><a href=\"https://minn.localhost/tag/engine/\" class=\"tag-cloud-link tag-link-2 tag-link-position-1\" style=\"font-size: 8pt;\" aria-label=\"engine (1 item)\">engine</a>\n<a href=\"https://minn.localhost/tag/parity/\" class=\"tag-cloud-link tag-link-3 tag-link-position-2\" style=\"font-size: 8pt;\" aria-label=\"parity (1 item)\">parity</a></div>\n</w>",
+            "<w class=\"widget_text\">\t\t\t<div class=\"textwidget\"><p>x</p>\n</div>\n\t\t</w>",
+            "<w class=\"widget_pages\"><t>Pages</t>\n\t\t\t<ul>\n\t\t\t\t<li class=\"page_item page-item-2 page_item_has_children\"><a href=\"https://minn.localhost/sample-page/\">Sample Page</a>\n<ul class='children'>\n\t<li class=\"page_item page-item-6\"><a href=\"https://minn.localhost/sample-page/docs/\">Docs</a></li>\n</ul>\n</li>\n\t\t\t</ul>\n\n\t\t\t</w>",
+            "<w class=\"widget_archive\"><t>Archives</t>\n\t\t\t<ul>\n\t\t\t\t\t<li><a href='https://minn.localhost/2026/08/'>August 2026</a></li>\n\t\t\t</ul>\n\n\t\t\t</w>"
+        ]
+    ],
+    [
+        "video shortcode direct",
+        [
+            "<div style=\"width: 640px;\" class=\"wp-video\"><video class=\"wp-video-shortcode\" id=\"video-0-2\" width=\"640\" height=\"360\" preload=\"metadata\" controls=\"controls\"><source type=\"video/mp4\" src=\"https://minn.localhost/v.mp4?_=2\" /><a href=\"https://minn.localhost/v.mp4\">https://minn.localhost/v.mp4</a></video></div>",
+            "<div style=\"width: 640px;\" class=\"wp-video\"><video class=\"wp-video-shortcode\" id=\"video-0-3\" width=\"640\" height=\"360\" loop preload=\"auto\" controls=\"controls\"><source type=\"video/mp4\" src=\"https://minn.localhost/v.mp4?_=3\" /><a href=\"https://minn.localhost/v.mp4\">https://minn.localhost/v.mp4</a></video></div>"
+        ]
+    ],
+    [
+        "rss output",
+        [
+            "",
+            ""
+        ]
+    ],
+    [
+        "rss widget live",
+        "<w class=\"widget_rss\"><t><a class=\"rsswidget rss-widget-feed\" href=\"https://minn.localhost/feed/\"><img class=\"rss-widget-icon\" style=\"border:0\" width=\"14\" height=\"14\" src=\"http://minn.localhost/wp-includes/images/rss.png\" alt=\"RSS feed: Live\" loading=\"lazy\" /></a> <a class=\"rsswidget rss-widget-title\" href=\"\">Live</a></t></w>"
+    ],
+    [
+        "text update",
+        [
+            {
+                "title": "T",
+                "text": "x<p>ok</p>",
+                "filter": true,
+                "visual": true
+            },
+            {
+                "visual": false,
+                "title": "T",
+                "text": "a\nb",
+                "filter": false
+            }
+        ]
+    ],
+    [
+        "media updates",
+        [
+            {
+                "title": "t",
+                "size": "large",
+                "caption": "<em>c</em>",
+                "alt": "alt",
+                "image_classes": "a b",
+                "url": ""
+            },
+            {
+                "loop": true,
+                "content": "<track src=\"x\">",
+                "url": "https://minn.localhost/v.mp4"
+            },
+            {
+                "link_type": "post"
+            },
+            {
+                "preload": "auto",
+                "loop": false,
+                "url": "https://minn.localhost/a.mp3"
+            }
+        ]
+    ],
+    [
+        "inline script sourceURL",
+        [
+            "<script>\na;\n</script>\n",
+            "<script>\nb;\n</script>\n",
+            "<script>\nc;\n</script>\n"
+        ]
+    ],
+    [
+        "recent comments style",
+        [
+            "",
+            ""
+        ]
+    ],
+    [
+        "text video",
+        "<w class=\"widget_text\">\t\t\t<div class=\"textwidget\"><p><video src=\"v.mp4\"></video></p>\n<p>a</p>\n<p><iframe src=\"x\"></iframe></p>\n</div>\n\t\t</w>"
+    ],
+    [
+        "caption shortcode",
+        [
+            "<figure id=\"x\" aria-describedby=\"caption-x\" style=\"width: 100px\" class=\"wp-caption alignright\"><img src=\"a\"><figcaption id=\"caption-x\" class=\"wp-caption-text\">c <b>b</b></figcaption></figure>",
+            "<img src=\"a\">",
+            "<img src=\"a\">"
+        ]
+    ],
+    [
+        "audio shortcode loop",
+        [
+            "<audio class=\"wp-audio-shortcode\" id=\"audio-0-2\" loop preload=\"none\" style=\"width: 100%;\" controls=\"controls\"><source type=\"audio/mpeg\" src=\"https://minn.localhost/a.mp3?_=2\" /><a href=\"https://minn.localhost/a.mp3\">https://minn.localhost/a.mp3</a></audio>",
+            "<audio class=\"wp-audio-shortcode\" id=\"audio-0-3\" preload=\"none\" style=\"width: 100%;\" controls=\"controls\"><source type=\"audio/mpeg\" src=\"https://minn.localhost/a.mp3?_=3\" /><a href=\"https://minn.localhost/a.mp3\">https://minn.localhost/a.mp3</a></audio>"
+        ]
+    ],
+    [
+        "list pages current",
+        [
+            "<li class=\"page_item page-item-2 page_item_has_children current_page_ancestor current_page_parent\"><a href=\"https://minn.localhost/sample-page/\">Sample Page</a>\n<ul class='children'>\n\t<li class=\"page_item page-item-6 current_page_item\"><a href=\"https://minn.localhost/sample-page/docs/\" aria-current=\"page\">Docs</a></li>\n</ul>\n</li>\n",
+            "<li class=\"page_item page-item-2 page_item_has_children current_page_ancestor current_page_parent\"><a href=\"https://minn.localhost/sample-page/\"><s>Sample Page</s></a><ul class='children'><li class=\"page_item page-item-6 current_page_item\"><a href=\"https://minn.localhost/sample-page/docs/\" aria-current=\"page\"><s>Docs</s></a></li></ul></li>",
+            "<li class=\"page_item page-item-2 page_item_has_children current_page_ancestor current_page_parent\"><a href=\"https://minn.localhost/sample-page/\">Sample Page</a></li>\n<li class=\"page_item page-item-6 current_page_item\"><a href=\"https://minn.localhost/sample-page/docs/\" aria-current=\"page\">Docs</a></li>\n"
+        ]
+    ],
+    [
+        "search forms",
+        [
+            "<form role=\"search\" aria-label=\"Site search\" method=\"get\" class=\"search-form\" action=\"https://minn.localhost/\">\n\t\t\t\t<label>\n\t\t\t\t\t<span class=\"screen-reader-text\">Search for:</span>\n\t\t\t\t\t<input type=\"search\" class=\"search-field\" placeholder=\"Search &hellip;\" value=\"\" name=\"s\" />\n\t\t\t\t</label>\n\t\t\t\t<input type=\"submit\" class=\"search-submit\" value=\"Search\" />\n\t\t\t</form>",
+            "<form role=\"search\" method=\"get\" id=\"searchform\" class=\"searchform\" action=\"https://minn.localhost/\">\n\t\t\t\t<div>\n\t\t\t\t\t<label class=\"screen-reader-text\" for=\"s\">Search for:</label>\n\t\t\t\t\t<input type=\"text\" value=\"\" name=\"s\" id=\"s\" />\n\t\t\t\t\t<input type=\"submit\" id=\"searchsubmit\" value=\"Search\" />\n\t\t\t\t</div>\n\t\t\t</form>"
+        ]
+    ],
+    [
+        "updates",
+        [
+            {
+                "title": "P",
+                "sortby": "menu_order",
+                "exclude": "1, 2"
+            },
+            {
+                "x": 1,
+                "title": "A",
+                "count": 1,
+                "dropdown": 0
+            },
+            {
+                "title": "C",
+                "count": 1,
+                "hierarchical": 0,
+                "dropdown": 1
+            },
+            {
+                "title": "M"
+            },
+            {
+                "title": "S&lt;"
+            },
+            {
+                "title": "R",
+                "number": 5,
+                "show_date": true
+            },
+            {
+                "title": "RC",
+                "number": 0
+            },
+            {
+                "title": "T",
+                "count": 1,
+                "taxonomy": "category"
+            },
+            {
+                "title": "N",
+                "nav_menu": 3
+            },
+            {
+                "title": "F",
+                "url": "http://nonexistent.invalid/feed/",
+                "link": "",
+                "items": 10,
+                "error": "WP HTTP Error: A valid URL was not provided.",
+                "show_summary": 1,
+                "show_author": 0,
+                "show_date": 0
+            }
+        ]
+    ]
+]

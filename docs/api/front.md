@@ -5,6 +5,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`AdminBar`](#adminbar) | final readonly class | 318 | The Minn bar on the public site: the same server-rendered chrome the |
+| [`Archives`](#archives) | final readonly class | 62 | The archive periods wp_get_archives lists: months, years, days and weeks |
 | [`AssetsController`](#assetscontroller) | final readonly class | 32 | The engine's own static assets, served under a reserved path. |
 | [`Calendar`](#calendar) | final readonly class | 99 | One month as the calendar widget and block draw it: a table whose caption |
 | [`CalendarLabels`](#calendarlabels) | final readonly class | 44 | The words a calendar prints: weekday names Sunday first, the short form |
@@ -16,7 +17,9 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`Feeds`](#feeds) | final readonly class | 316 | The syndication feeds, byte for byte in the reference's shape: RSS 2.0 |
 | [`FrontController`](#frontcontroller) | final readonly class | 55 | The public site. One catch-all route: resolve the URL, then either |
 | [`Kind`](#kind) | enum | 17 | What a public URL resolved to. |
+| [`ListSpacing`](#listspacing) | final readonly class | 30 | How a page list is spaced: the reference's "preserve" keeps newlines and |
 | [`ListingLinks`](#listinglinks) | final class | 53 | The prev/next links a paged listing prints: which page sits either side of |
+| [`PageList`](#pagelist) | final readonly class | 96 | The page hierarchy as wp_list_pages and wp_dropdown_pages draw it: nested |
 | [`Pagination`](#pagination) | final class | 62 | Numbered page links in the reference's shape: previous, the end and |
 | [`Permalinks`](#permalinks) | final readonly class | 253 | Builds public URLs from the site's permalink structure. With an empty |
 | [`PluginRules`](#pluginrules) | final class | 71 | Rewrite rules a plugin registered through add_rewrite_rule(): the |
@@ -29,7 +32,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`SitemapController`](#sitemapcontroller) | final readonly class | 46 | The sitemap index, its pages, and the two stylesheets. |
 | [`SitemapXml`](#sitemapxml) | final class | 43 | The two sitemap documents, index and URL set, from entry maps; one builder for the engine's routes and the facade's renderer. |
 | [`Sitemaps`](#sitemaps) | final readonly class | 147 | The sitemap index and its providers (posts, pages, categories, tags, |
-| [`TermLists`](#termlists) | final class | 177 | The two term listings themes print: the nested category list and the |
+| [`TermLists`](#termlists) | final class | 178 | The two term listings themes print: the nested category list and the |
 
 ## AdminBar
 
@@ -61,6 +64,41 @@ The stylesheet link for the head.
 The bar markup, its config, and the script, for the end of the body.
 
 Internals: `markup()` (private, line 83), `siteMenu()` (private, line 136), `statusMenu()` (private, line 154), `newMenu()` (private, line 176), `notificationsMenu()` (private, line 190), `userMenu()` (private, line 203), `status()` (private, line 221), `editTarget()` (private, line 238), `commands()` (private, line 254), `searchTypes()` (private, line 279), `customSchemeStyle()` (private, line 288), `appUrl()` (private, line 307), `appPath()` (private, line 312), `assetUrl()` (private, line 317), `icon()` (private, line 322), `gridIcon()` (private, line 327), `menuItem()` (private, line 332)
+
+
+## Archives
+
+`final readonly class Minn\Front\Archives` · `public/minn/src/Minn/Front/Archives.php`
+
+The archive periods wp_get_archives lists: months, years, days and weeks
+that hold a published post of a type, newest first, each with its post
+count and archive URL, plus the post-by-post and alphabetical listings.
+Labels come from the caller's date formatter so the site's locale and
+week start apply; the week label joins the week's first and last day.
+
+```php
+__construct(Minn\Content\Posts $posts, Closure $date, Closure $dateLink, Closure $week)
+```
+- `@param Closure(string, string): string $date formats a MySQL datetime with a PHP date format`
+- `@param Closure(int, ?int, ?int): string $dateLink the year, month, or day archive URL`
+- `@param Closure(string): array{start: int, end: int} $week the week's first and last second around a datetime`
+
+
+### `periods(string $granularity, string $type, string $order, int $limit, Closure $weekLink): array`
+
+The periods of one granularity: monthly, yearly, daily, or weekly.
+
+- `@return list<array{period: array{year: int, month: int, day: int, week: int}, url: string, text: string, count: int}>`
+
+### `posts(string $type, string $orderBy, string $order, int $limit, Closure $title, Closure $link): array`
+
+The posts themselves, by date or by title.
+
+- `@param Closure(int, string): string $title the post's title as displayed (or its id when empty)`
+- `@param Closure(int): string $link`
+- `@return list<array{url: string, text: string, count: int}>`
+
+Internals: `weekPeriod()` (private, line 56)
 
 
 ## AssetsController
@@ -383,6 +421,36 @@ Cases: `Home`, `Single`, `Page`, `Category`, `Tag`, `Author`, `Date`, `Search`, 
 Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Front\AdminBar`, `Minn\Front\Canonical`, `Minn\Front\DocumentTitle`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\Renderer`, `Minn\Front\Resolution`, `Minn\Front\Resolver`, `Minn\Runtime\MainQuery`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\BodyClasses`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
 
 
+## ListSpacing
+
+`final readonly class Minn\Front\ListSpacing` · `public/minn/src/Minn/Front/ListSpacing.php`
+
+How a page list is spaced: the reference's "preserve" keeps newlines and
+one tab per level, "discard" prints the items on one line. The link
+wrappers ride along so the list has one place to read them.
+
+Used by: `Minn\Front\PageList`
+
+- readonly `string $linkBefore`
+- readonly `string $linkAfter`
+
+### static `preserved(string $linkBefore = '', string $linkAfter = ''): self`
+
+Newlines and tabs kept, the reference's default.
+
+### static `discarded(string $linkBefore = '', string $linkAfter = ''): self`
+
+Everything on one line, the reference's "discard".
+
+### `newline(): string`
+
+A newline, or nothing when spacing is discarded.
+
+### `tab(): string`
+
+One tab of indent, or nothing when spacing is discarded.
+
+
 ## ListingLinks
 
 `final class Minn\Front\ListingLinks` · `public/minn/src/Minn/Front/ListingLinks.php`
@@ -420,6 +488,37 @@ The page count is whatever the caller passed and is never filled in from
 the query: a caller that does not say how long the thread is gets no
 collapse at all under newest-first, because no page matches an unknown
 last page.
+
+
+## PageList
+
+`final readonly class Minn\Front\PageList` · `public/minn/src/Minn/Front/PageList.php`
+
+The page hierarchy as wp_list_pages and wp_dropdown_pages draw it: nested
+list items with the reference's page_item classes (has-children, current,
+ancestor, parent), children indented one tab per level under a
+<ul class='children'>, and the flat dropdown whose options carry a level
+class and three non-breaking spaces per level. A page whose parent is not
+in the set stands at the top, so include, exclude and child_of all nest
+whatever remains.
+
+```php
+__construct(array $pages, array $currentTrail)
+```
+- `@param list<array{id: int, parent: int, title: string, link: string}> $pages in display order`
+- `@param list<int> $currentTrail the queried page and its ancestors, the page first`
+
+
+### `items(int $childOf, int $depth, Minn\Front\ListSpacing $spacing): string`
+
+The list items under a page (0 for the whole tree), to a depth
+(0 unlimited, -1 flat), with whitespace the way the reference keeps it.
+
+### `options(int $childOf, int $depth, int $selected, Closure $value): string`
+
+The dropdown options under a page, to a depth, with one selected.
+
+Internals: `flat()` (private, line 51), `level()` (private, line 60), `item()` (private, line 76), `optionLevel()` (private, line 101)
 
 
 ## Pagination
@@ -986,5 +1085,5 @@ caller asked for a hierarchy.
 
 - `@param list<array<string, mixed>> $terms`
 
-Internals: `options()` (private, line 126), `sorted()` (private, line 145), `orphans()` (private, line 158), `items()` (private, line 165)
+Internals: `options()` (private, line 127), `sorted()` (private, line 146), `orphans()` (private, line 159), `items()` (private, line 166)
 

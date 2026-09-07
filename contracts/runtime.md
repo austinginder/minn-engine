@@ -1971,3 +1971,34 @@ Polylang at once. Probe-runtime note: `init` never fires under
 
 **Small:** `curl_close()` is gone from `Http\Client` (deprecated in PHP 8.5,
 a no-op since 8.0).
+
+## The default widgets (2026-09-07)
+
+Every widget the reference registers in `wp_widgets_init` now exists, in
+its order: Pages, Calendar, Archives, Audio, Image, Gallery, Video, Meta,
+Search, Text, Categories, Recent Posts, Recent Comments, RSS, Tag Cloud,
+Navigation Menu, Custom HTML, Block. `tests/tools/widgets-probe.php`
+renders each through `the_widget()` with the wrappers `<w class="%s">` /
+`<t>` and pins the output, the update() shapes, the factory's names and
+options, and the template functions behind them; fixture
+`contracts/fixtures/api/widgets.json` (55 rows), diffed by the api suite.
+The classes live in `wp-api/classes/`; the list, dropdown and archive
+markup they print comes from `Front\PageList`, `Front\ListSpacing` and
+`Front\Archives` over `Content\Posts`.
+
+**Facts the widgets settled.**
+
+- `wp_list_pages`: `<li class="page_item page-item-N[ page_item_has_children][ current_page_item|current_page_ancestor[ current_page_parent]]"><a href="…"[ aria-current="page"]>Title</a>`; children under `\n<ul class='children'>\n`, one tab per level, `</ul>\n`; `</li>\n` closes each; `title_li` wraps as `<li class="pagenav">Title<ul>…</ul></li>`; `depth` 1 keeps the has-children class, `-1` flattens; `include` keeps nesting among the included, and a page whose parent is not in the set stands at the top; `item_spacing` discard drops the whitespace. `wp_dropdown_pages`: `<select name='…'[ class='…'] id='…'>` (name, class, id), `\t<option class="level-N" value="…"[ selected="selected"]>` with three `&nbsp;` per level, `show_option_none` before the pages.
+- `wp_get_archives`: `\t<li><a href='…'>Label</a>[&nbsp;(count)]</li>\n`; option format `\t<option value='…'> Label [&nbsp;(count)]</option>\n`; monthly `F Y`, yearly `Y`, daily `F j, Y`, weekly `F j, Y&#8211;F j, Y` linking `?m=YYYY&w=N` (the query form even under pretty permalinks), postbypost by date and alpha by title with the post's link and title.
+- Widget templates keep the reference's tabs: Pages `\n\t\t\t<ul>\n\t\t\t\t` + list + `\t\t\t</ul>\n\n\t\t\t`; Archives the same with `wp_get_archives` echoing in place; Categories the same with `wp_list_categories`; Meta `\n\t\t<ul>\n\t\t\t` + register + `\t\t\t<li>` + loginout + the two feeds + `\n\n\t\t\t` + powered-by (its default ends in a newline) + `\t\t</ul>\n\n\t\t`; Text `\t\t\t<div class="textwidget">…</div>\n\t\t`; Recent Posts prints `\n\t\t` before its wrapper and eleven tabs before each `<li>`.
+- Dropdown ids: Archives `archives-dropdown-{number}`; Categories `cat` for the first instance on a page, then `categories-dropdown-{number}`; Recent Comments `recentcomments` for the first, then `recentcomments-{number}`. The dropdown script ends with `\n//# sourceURL=WP_Widget_X%3A%3Awidget` (the widgets add it themselves; `wp_print_inline_script_tag` adds none).
+- Default titles: Pages, Archives, Meta, Categories, Recent Posts, Recent Comments, Tags (or the taxonomy's name); Search, Text, Nav Menu and the media widgets have none; RSS says Unknown Feed.
+- Recent Posts iterates `$query->posts` without `the_post()`, so the global post is untouched (the reference's av ids and gallery ids after it are `…-0-…`).
+- Media widgets: `update()` validates each field against the instance schema and skips what fails (a non-integer id, a negative width, a value outside an enum, `yes` as a boolean, a comma list for an array), sanitises what passes (uri → `esc_url_raw`, so `javascript:` becomes `""`), and keeps the old instance's other keys; `''` is a valid boolean and reads false. An image by URL prints `<img class="image …" src alt width height decoding="async" loading="lazy" />`; an attachment gets `image wp-image-N {classes} attachment-{size} size-{size}` with `style="max-width: 100%; height: auto;"`, its link, then the caption figure; a video by URL renders only for YouTube or Vimeo (other URLs go to oEmbed, which is empty for a file), with `width="…" height="…"` stripped and the wrap at `width:100%;`; a gallery passes its ids as `include`.
+- The audio and video shortcodes: `id="audio-{post}-{instance}"` (post 0 outside a post; the engine had the two the wrong way round), `loop` / `autoplay` / `muted` printed bare when on, a YouTube or Vimeo source typed `video/youtube` / `video/vimeo`, and the cache buster joined with `&` when the URL already has a query. `[gallery]`, `[caption]`, `[wp_caption]`, `[audio]` and `[video]` are registered by default now, as the reference registers them.
+- `get_search_form()` prints the reference's multi-line form (tabs and all), the `searchform` variant without html5 support, and `aria_label`; `remove_theme_support()` records the feature as removed so a block theme's implied support does not return.
+- `wp_nav_menu` names its container `menu-{menu slug}-container` when `container_class` is empty (it used the theme location before).
+- `wp_tag_cloud` with `show_count` puts `<span class="tag-link-count"> (N)</span>` inside the link.
+- `img_caption_shortcode`: `<figure [id="x" ][aria-describedby="caption-x" ]style="width: Wpx" class="wp-caption align…">…<figcaption [id="caption-x" ]class="wp-caption-text">…</figcaption></figure>`; the content alone when the width is 0 or the caption empty; the `div`/`p` shape without html5 caption support.
+- `fetch_feed` fetches through the safe HTTP client and reports `WP HTTP Error: …` on a transport failure; a host that does not resolve is now `A valid URL was not provided.` in `wp_http_validate_url`, as the reference says. There is still no feed parser: the RSS widget prints its title line and no entries, and `wp_widget_rss_output` prints only the error paragraph an administrator would see.
+- The Recent Comments head style (`<style>.recentcomments a{…}</style>`) prints when the widget is active in a sidebar; the probe could not make one active in either stack, so that string is unpinned.

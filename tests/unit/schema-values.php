@@ -6,6 +6,7 @@ use Minn\Rest\SchemaValues;
 
 return [
     'booleans read the way the reference reads them' => static fn () => SchemaValues::isBoolean(true) && SchemaValues::isBoolean('false') && !SchemaValues::isBoolean('maybe') && SchemaValues::toBoolean('0') === false,
+    'an empty string is a boolean too, and reads false (a media widget update)' => static fn () => SchemaValues::isBoolean('') && SchemaValues::toBoolean('') === false,
     'integers are whole numbers, numeric strings included' => static fn () => SchemaValues::isInteger('3') && SchemaValues::isInteger(4.0) && !SchemaValues::isInteger('3.5'),
     'a comma or space separated string is a list' => static fn () => SchemaValues::toArray('a, b c') === ['a', 'b', 'c'] && SchemaValues::isArray('a,b'),
     'hex colours and uuids' => static fn () => SchemaValues::parseHexColor('#fff') === '#fff' && SchemaValues::parseHexColor('red') === false

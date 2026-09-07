@@ -45,7 +45,7 @@ final class NavMenu
             return false;
         }
         $nav = sprintf((string) $args->items_wrap, \esc_attr(self::wrapId($menu, $args)), \esc_attr((string) $args->menu_class), $markup);
-        return self::container($nav, $args);
+        return self::container($nav, $args, (string) $menu->slug);
     }
 
     /** The menu the args name: by menu, by assigned location, else the first menu that has items. */
@@ -82,7 +82,7 @@ final class NavMenu
     }
 
     /** The container wrap, when the args ask for one. */
-    private static function container(string $nav, object $args): string
+    private static function container(string $nav, object $args, string $slug): string
     {
         if (!$args->container) {
             return $nav;
@@ -92,7 +92,7 @@ final class NavMenu
             return $nav;
         }
         $attributes = $args->container_id ? ' id="' . \esc_attr((string) $args->container_id) . '"' : '';
-        $attributes .= $args->container_class ? ' class="' . \esc_attr((string) $args->container_class) . '"' : ' class="menu-' . ($args->theme_location ? $args->theme_location . '-container' : 'container') . '"';
+        $attributes .= ' class="' . \esc_attr((string) ($args->container_class ?: 'menu-' . $slug . '-container')) . '"';
         if ($args->container === 'nav' && $args->container_aria_label) {
             $attributes .= ' aria-label="' . \esc_attr((string) $args->container_aria_label) . '"';
         }

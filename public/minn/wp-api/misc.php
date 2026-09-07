@@ -536,7 +536,13 @@ function wp_embed_defaults($url = '')
 
 function fetch_feed($url)
 {
-    return new WP_Error('simplepie-error', 'A feed could not be found at the requested URL: the engine has no feed parser.');
+    // The reference fetches through its HTTP client and reports a transport
+    // failure with this prefix; a parsed feed is what the engine still lacks.
+    $response = wp_safe_remote_get((string) $url, ['timeout' => 10]);
+    if (is_wp_error($response)) {
+        return new WP_Error('simplepie-error', 'WP HTTP Error: ' . $response->get_error_message());
+    }
+    return new WP_Error('simplepie-error', 'A feed could not be found at `' . $url . '`. This does not appear to be a valid RSS or Atom feed.');
 }
 
 function wp_no_robots()

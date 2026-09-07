@@ -24,7 +24,7 @@ final class SchemaValues
             return true;
         }
         if (is_string($value)) {
-            return in_array(strtolower($value), ['false', 'true', '0', '1'], true);
+            return in_array(strtolower($value), ['false', 'true', '0', '1', ''], true);
         }
         return is_int($value) && in_array($value, [0, 1], true);
     }

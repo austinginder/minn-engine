@@ -26611,7 +26611,7 @@
             "namespace": "Minn\\Content",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Content/Posts.php",
-            "lines": 430,
+            "lines": 496,
             "doc": "Reads over the posts table. A single post comes back as a PostRecord and\na listing as a Page of them; rendering and escaping happen elsewhere.",
             "implements": [],
             "extends": null,
@@ -26636,6 +26636,7 @@
                 "Minn\\Content\\SiteIcon",
                 "Minn\\Cron\\Cron",
                 "Minn\\Engine",
+                "Minn\\Front\\Archives",
                 "Minn\\Front\\CommentPostController",
                 "Minn\\Front\\FeedController",
                 "Minn\\Front\\Feeds",
@@ -27268,6 +27269,121 @@
                 },
                 {
                     "routes": [],
+                    "name": "pages",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "pages(string $sortColumn, string $order): array",
+                    "doc": "The published pages in a sort order, for a page list: id, parent, title.",
+                    "shapes": [
+                        "@return list<array{id: int, parent: int, name: string, title: string}>"
+                    ],
+                    "params": [
+                        {
+                            "name": "sortColumn",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "order",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 387,
+                    "end": 400
+                },
+                {
+                    "routes": [],
+                    "name": "archiveBuckets",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "archiveBuckets(string $granularity, string $type, string $order, int $limit): array",
+                    "doc": "The periods holding a published post of a type, newest first by\ndefault: one row per month, year, day, or week, with the count and the\nearliest post date inside it.",
+                    "shapes": [
+                        "@return list<array{year: int, month: int, day: int, week: int, count: int, first: string}>"
+                    ],
+                    "params": [
+                        {
+                            "name": "granularity",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "order",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "limit",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 409,
+                    "end": 425
+                },
+                {
+                    "routes": [],
+                    "name": "archiveList",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "archiveList(string $type, string $orderBy, string $order, int $limit): array",
+                    "doc": "Published posts of a type for a post-by-post archive, by date or by title.",
+                    "shapes": [
+                        "@return list<PostRecord>"
+                    ],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "orderBy",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "order",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "limit",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 438,
+                    "end": 446
+                },
+                {
+                    "routes": [],
                     "name": "monthBefore",
                     "static": false,
                     "visibility": "public",
@@ -27297,8 +27413,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 383,
-                    "end": 387
+                    "line": 449,
+                    "end": 453
                 },
                 {
                     "routes": [],
@@ -27331,8 +27447,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 390,
-                    "end": 394
+                    "line": 456,
+                    "end": 460
                 },
                 {
                     "routes": [],
@@ -27358,8 +27474,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 421,
-                    "end": 428
+                    "line": 487,
+                    "end": 494
                 },
                 {
                     "routes": [],
@@ -27378,8 +27494,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 431,
-                    "end": 442
+                    "line": 497,
+                    "end": 508
                 },
                 {
                     "routes": [],
@@ -27546,6 +27662,18 @@
                 },
                 {
                     "routes": [],
+                    "name": "weekMode",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "weekMode(): int",
+                    "doc": "MySQL's WEEK() mode for the site's first day of the week: 0 for Sunday, 1 for Monday.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 428,
+                    "end": 431
+                },
+                {
+                    "routes": [],
                     "name": "monthBeside",
                     "static": false,
                     "visibility": "private",
@@ -27577,8 +27705,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 397,
-                    "end": 404
+                    "line": 463,
+                    "end": 470
                 },
                 {
                     "routes": [],
@@ -27604,8 +27732,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 406,
-                    "end": 418
+                    "line": 472,
+                    "end": 484
                 }
             ]
         },
@@ -33918,6 +34046,244 @@
             ]
         },
         {
+            "name": "Minn\\Front\\Archives",
+            "short": "Archives",
+            "namespace": "Minn\\Front",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Front/Archives.php",
+            "lines": 62,
+            "doc": "The archive periods wp_get_archives lists: months, years, days and weeks\nthat hold a published post of a type, newest first, each with its post\ncount and archive URL, plus the post-by-post and alphabetical listings.\nLabels come from the caller's date formatter so the site's locale and\nweek start apply; the week label joins the week's first and last day.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Content\\Posts"
+            ],
+            "usedBy": [],
+            "constructor": {
+                "signature": "__construct(Minn\\Content\\Posts $posts, Closure $date, Closure $dateLink, Closure $week)",
+                "doc": "",
+                "shapes": [
+                    "@param Closure(string, string): string $date formats a MySQL datetime with a PHP date format",
+                    "@param Closure(int, ?int, ?int): string $dateLink the year, month, or day archive URL",
+                    "@param Closure(string): array{start: int, end: int} $week the week's first and last second around a datetime"
+                ],
+                "params": [
+                    {
+                        "name": "posts",
+                        "type": "Minn\\Content\\Posts",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "date",
+                        "type": "Closure",
+                        "shape": "Closure(string, string): string",
+                        "default": null,
+                        "doc": "formats a MySQL datetime with a PHP date format"
+                    },
+                    {
+                        "name": "dateLink",
+                        "type": "Closure",
+                        "shape": "Closure(int, ?int, ?int): string",
+                        "default": null,
+                        "doc": "the year, month, or day archive URL"
+                    },
+                    {
+                        "name": "week",
+                        "type": "Closure",
+                        "shape": "Closure(string): array{start: int, end: int}",
+                        "default": null,
+                        "doc": "the week's first and last second around a datetime"
+                    }
+                ],
+                "visibility": "public",
+                "line": 24,
+                "end": 30
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "posts",
+                    "type": "Minn\\Content\\Posts",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "date",
+                    "type": "Closure",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "dateLink",
+                    "type": "Closure",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "week",
+                    "type": "Closure",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "periods",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "periods(string $granularity, string $type, string $order, int $limit, Closure $weekLink): array",
+                    "doc": "The periods of one granularity: monthly, yearly, daily, or weekly.",
+                    "shapes": [
+                        "@return list<array{period: array{year: int, month: int, day: int, week: int}, url: string, text: string, count: int}>"
+                    ],
+                    "params": [
+                        {
+                            "name": "granularity",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "order",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "limit",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "weekLink",
+                            "type": "Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 37,
+                    "end": 50
+                },
+                {
+                    "routes": [],
+                    "name": "posts",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "posts(string $type, string $orderBy, string $order, int $limit, Closure $title, Closure $link): array",
+                    "doc": "The posts themselves, by date or by title.",
+                    "shapes": [
+                        "@param Closure(int, string): string $title the post's title as displayed (or its id when empty)",
+                        "@param Closure(int): string $link",
+                        "@return list<array{url: string, text: string, count: int}>"
+                    ],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "orderBy",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "order",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "limit",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "title",
+                            "type": "Closure",
+                            "shape": "Closure(int, string): string",
+                            "default": null,
+                            "doc": "the post's title as displayed (or its id when empty)"
+                        },
+                        {
+                            "name": "link",
+                            "type": "Closure",
+                            "shape": "Closure(int): string",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 70,
+                    "end": 77
+                },
+                {
+                    "routes": [],
+                    "name": "weekPeriod",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "weekPeriod(array $bucket, Closure $weekLink): array",
+                    "doc": "",
+                    "shapes": [
+                        "@param array{year: int, week: int, first: string, count: int} $bucket",
+                        "@return array{url: string, text: string, count: int}"
+                    ],
+                    "params": [
+                        {
+                            "name": "bucket",
+                            "type": "array",
+                            "shape": "array{year: int, week: int, first: string, count: int}",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "weekLink",
+                            "type": "Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 56,
+                    "end": 61
+                }
+            ]
+        },
+        {
             "name": "Minn\\Front\\AssetsController",
             "short": "AssetsController",
             "namespace": "Minn\\Front",
@@ -36365,6 +36731,163 @@
             "methods": []
         },
         {
+            "name": "Minn\\Front\\ListSpacing",
+            "short": "ListSpacing",
+            "namespace": "Minn\\Front",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Front/ListSpacing.php",
+            "lines": 30,
+            "doc": "How a page list is spaced: the reference's \"preserve\" keeps newlines and\none tab per level, \"discard\" prints the items on one line. The link\nwrappers ride along so the list has one place to read them.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Front\\PageList"
+            ],
+            "constructor": {
+                "signature": "__construct(bool $preserve, string $linkBefore, string $linkAfter)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "preserve",
+                        "type": "bool",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "linkBefore",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "linkAfter",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "private",
+                "line": 14,
+                "end": 16
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "preserve",
+                    "type": "bool",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "linkBefore",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "linkAfter",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "preserved",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "preserved(string $linkBefore = '', string $linkAfter = ''): self",
+                    "doc": "Newlines and tabs kept, the reference's default.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "linkBefore",
+                            "type": "string",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        },
+                        {
+                            "name": "linkAfter",
+                            "type": "string",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 19,
+                    "end": 22
+                },
+                {
+                    "routes": [],
+                    "name": "discarded",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "discarded(string $linkBefore = '', string $linkAfter = ''): self",
+                    "doc": "Everything on one line, the reference's \"discard\".",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "linkBefore",
+                            "type": "string",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        },
+                        {
+                            "name": "linkAfter",
+                            "type": "string",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 25,
+                    "end": 28
+                },
+                {
+                    "routes": [],
+                    "name": "newline",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "newline(): string",
+                    "doc": "A newline, or nothing when spacing is discarded.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 31,
+                    "end": 34
+                },
+                {
+                    "routes": [],
+                    "name": "tab",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "tab(): string",
+                    "doc": "One tab of indent, or nothing when spacing is discarded.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 37,
+                    "end": 40
+                }
+            ]
+        },
+        {
             "name": "Minn\\Front\\ListingLinks",
             "short": "ListingLinks",
             "namespace": "Minn\\Front",
@@ -36497,6 +37020,299 @@
                     ],
                     "line": 60,
                     "end": 63
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Front\\PageList",
+            "short": "PageList",
+            "namespace": "Minn\\Front",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Front/PageList.php",
+            "lines": 96,
+            "doc": "The page hierarchy as wp_list_pages and wp_dropdown_pages draw it: nested\nlist items with the reference's page_item classes (has-children, current,\nancestor, parent), children indented one tab per level under a\n<ul class='children'>, and the flat dropdown whose options carry a level\nclass and three non-breaking spaces per level. A page whose parent is not\nin the set stands at the top, so include, exclude and child_of all nest\nwhatever remains.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Front\\ListSpacing"
+            ],
+            "usedBy": [],
+            "constructor": {
+                "signature": "__construct(array $pages, array $currentTrail)",
+                "doc": "",
+                "shapes": [
+                    "@param list<array{id: int, parent: int, title: string, link: string}> $pages in display order",
+                    "@param list<int> $currentTrail the queried page and its ancestors, the page first"
+                ],
+                "params": [
+                    {
+                        "name": "pages",
+                        "type": "array",
+                        "shape": "list<array{id: int, parent: int, title: string, link: string}>",
+                        "default": null,
+                        "doc": "in display order"
+                    },
+                    {
+                        "name": "currentTrail",
+                        "type": "array",
+                        "shape": "list<int>",
+                        "default": null,
+                        "doc": "the queried page and its ancestors, the page first"
+                    }
+                ],
+                "visibility": "public",
+                "line": 27,
+                "end": 36
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "byParent",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "currentTrail",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "items",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "items(int $childOf, int $depth, Minn\\Front\\ListSpacing $spacing): string",
+                    "doc": "The list items under a page (0 for the whole tree), to a depth\n(0 unlimited, -1 flat), with whitespace the way the reference keeps it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "childOf",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "depth",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "spacing",
+                            "type": "Minn\\Front\\ListSpacing",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 42,
+                    "end": 48
+                },
+                {
+                    "routes": [],
+                    "name": "options",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "options(int $childOf, int $depth, int $selected, Closure $value): string",
+                    "doc": "The dropdown options under a page, to a depth, with one selected.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "childOf",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "depth",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "selected",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 96,
+                    "end": 99
+                },
+                {
+                    "routes": [],
+                    "name": "flat",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "flat(int $childOf, Minn\\Front\\ListSpacing $spacing): string",
+                    "doc": "Every page under one, flattened to a single level.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "childOf",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "spacing",
+                            "type": "Minn\\Front\\ListSpacing",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 51,
+                    "end": 58
+                },
+                {
+                    "routes": [],
+                    "name": "level",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "level(int $parent, int $level, int $depth, Minn\\Front\\ListSpacing $spacing): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "parent",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "level",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "depth",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "spacing",
+                            "type": "Minn\\Front\\ListSpacing",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 60,
+                    "end": 73
+                },
+                {
+                    "routes": [],
+                    "name": "item",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "item(array $page, int $level, Minn\\Front\\ListSpacing $spacing): string",
+                    "doc": "",
+                    "shapes": [
+                        "@param array{id: int, title: string, link: string} $page"
+                    ],
+                    "params": [
+                        {
+                            "name": "page",
+                            "type": "array",
+                            "shape": "array{id: int, title: string, link: string}",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "level",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "spacing",
+                            "type": "Minn\\Front\\ListSpacing",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 76,
+                    "end": 93
+                },
+                {
+                    "routes": [],
+                    "name": "optionLevel",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "optionLevel(int $parent, int $level, int $depth, int $selected, Closure $value): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "parent",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "level",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "depth",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "selected",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 101,
+                    "end": 112
                 }
             ]
         },
@@ -39985,7 +40801,7 @@
             "namespace": "Minn\\Front",
             "kind": "final class",
             "file": "public/minn/src/Minn/Front/TermLists.php",
-            "lines": 177,
+            "lines": 178,
             "doc": "The two term listings themes print: the nested category list and the\ntag cloud, built from term rows the caller already fetched and links the\ncaller resolves.",
             "implements": [],
             "extends": null,
@@ -40129,7 +40945,7 @@
                         }
                     ],
                     "line": 78,
-                    "end": 108
+                    "end": 109
                 },
                 {
                     "routes": [],
@@ -40157,8 +40973,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 116,
-                    "end": 124
+                    "line": 117,
+                    "end": 125
                 },
                 {
                     "routes": [],
@@ -40198,8 +41014,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 126,
-                    "end": 142
+                    "line": 127,
+                    "end": 143
                 },
                 {
                     "routes": [],
@@ -40234,8 +41050,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 145,
-                    "end": 155
+                    "line": 146,
+                    "end": 156
                 },
                 {
                     "routes": [],
@@ -40261,8 +41077,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 158,
-                    "end": 162
+                    "line": 159,
+                    "end": 163
                 },
                 {
                     "routes": [],
@@ -40325,8 +41141,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 165,
-                    "end": 190
+                    "line": 166,
+                    "end": 191
                 }
             ]
         },
@@ -73718,7 +74534,7 @@
                     "name": "container",
                     "static": true,
                     "visibility": "private",
-                    "signature": "container(string $nav, object $args): string",
+                    "signature": "container(string $nav, object $args, string $slug): string",
                     "doc": "The container wrap, when the args ask for one.",
                     "shapes": [],
                     "params": [
@@ -73732,6 +74548,13 @@
                         {
                             "name": "args",
                             "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "slug",
+                            "type": "string",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -84819,7 +85642,7 @@
             "namespace": "Minn\\Support",
             "kind": "final class",
             "file": "public/minn/src/Minn/Support/Url.php",
-            "lines": 196,
+            "lines": 200,
             "doc": "URL shaping the escaping and query helpers share: the character cleanup\nesc_url applies, bracket encoding outside the authority, and query\nargument merging. Behaviour pinned by contracts/fixtures/api/functions.json.",
             "implements": [],
             "extends": null,
@@ -84965,7 +85788,7 @@
                         }
                     ],
                     "line": 95,
-                    "end": 120
+                    "end": 124
                 },
                 {
                     "routes": [],
@@ -84991,8 +85814,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 129,
-                    "end": 143
+                    "line": 133,
+                    "end": 147
                 },
                 {
                     "routes": [],
@@ -85018,8 +85841,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 146,
-                    "end": 170
+                    "line": 150,
+                    "end": 174
                 },
                 {
                     "routes": [],
@@ -85045,8 +85868,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 173,
-                    "end": 184
+                    "line": 177,
+                    "end": 188
                 },
                 {
                     "routes": [],
@@ -85074,8 +85897,8 @@
                             "doc": "the hosts allowed for the target's host"
                         }
                     ],
-                    "line": 192,
-                    "end": 208
+                    "line": 196,
+                    "end": 212
                 },
                 {
                     "routes": [],
@@ -85096,8 +85919,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 123,
-                    "end": 126
+                    "line": 127,
+                    "end": 130
                 }
             ]
         },

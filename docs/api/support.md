@@ -22,7 +22,7 @@ escaping, serialized readers, small helpers
 | [`SearchReplace`](#searchreplace) | final class | 38 | String replace that walks serialized-PHP arrays of scalars without |
 | [`Serialized`](#serialized) | final class | 202 | Tolerant readers for the serialized-PHP blobs WordPress stores. Nothing |
 | [`Time`](#time) | final class | 21 | Human-scale spans: a number of seconds as the largest whole unit it fills, rounded, never below one. |
-| [`Url`](#url) | final class | 196 | URL shaping the escaping and query helpers share: the character cleanup |
+| [`Url`](#url) | final class | 200 | URL shaping the escaping and query helpers share: the character cleanup |
 
 ## Accents
 
@@ -530,5 +530,5 @@ credentials, and a host the caller allows (local paths always pass).
 
 - `@param Closure(string): list<string> $allowedHosts the hosts allowed for the target's host`
 
-Internals: `isPrivate()` (private, line 123)
+Internals: `isPrivate()` (private, line 127)
 

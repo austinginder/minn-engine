@@ -1127,6 +1127,38 @@ function _minn_av_instance(string $kind): int
     return $n;
 }
 
+/** @internal a truthy shortcode flag (on, true, 1, or a real true) prints as a bare boolean attribute */
+function _minn_av_flags(array $attr, array $names): string
+{
+    $out = '';
+    foreach ($names as $name) {
+        $value = $attr[$name] ?? '';
+        if ($value === true || in_array(strtolower((string) $value), ['on', 'true', '1'], true)) {
+            $out .= ' ' . $name;
+        }
+    }
+    return $out;
+}
+
+/** @internal the post an av player belongs to, 0 outside a post */
+function _minn_av_post_id(): int
+{
+    $post = get_post();
+    return $post instanceof WP_Post ? (int) $post->ID : 0;
+}
+
+/** @internal the source type of an av URL: a hosted video's provider, else its file type */
+function _minn_av_source_type(string $src, string $fallback): string
+{
+    if (preg_match('#^https?://(?:www\.)?(?:youtube\.com/watch|youtu\.be/)#', $src)) {
+        return 'video/youtube';
+    }
+    if (preg_match('#^https?://(.+\.)?vimeo\.com/#', $src)) {
+        return 'video/vimeo';
+    }
+    return wp_check_filetype($src)['type'] ?: $fallback;
+}
+
 /** The captured player markup: source with a cache-busting query, the bare link as fallback. */
 function wp_audio_shortcode($attr, $content = '')
 {
@@ -1136,9 +1168,8 @@ function wp_audio_shortcode($attr, $content = '')
         return null;
     }
     $n = _minn_av_instance('audio');
-    $type = wp_check_filetype($src)['type'] ?: 'audio/mpeg';
-    $html = '<audio class="' . esc_attr($attr['class']) . '" id="audio-' . $n . '-1" preload="' . esc_attr($attr['preload']) . '" style="' . esc_attr($attr['style']) . '" controls="controls">'
-        . '<source type="' . esc_attr($type) . '" src="' . esc_url($src . '?_=' . $n) . '" />'
+    $html = '<audio class="' . esc_attr($attr['class']) . '" id="audio-' . _minn_av_post_id() . '-' . $n . '"' . _minn_av_flags($attr, ['loop', 'autoplay']) . ' preload="' . esc_attr($attr['preload']) . '" style="' . esc_attr($attr['style']) . '" controls="controls">'
+        . '<source type="' . esc_attr(_minn_av_source_type($src, 'audio/mpeg')) . '" src="' . esc_url(add_query_arg('_', $n, $src)) . '" />'
         . '<a href="' . esc_url($src) . '">' . esc_html($src) . '</a></audio>';
     return apply_filters('wp_audio_shortcode', $html, $attr, '', $n, '');
 }
@@ -1152,11 +1183,10 @@ function wp_video_shortcode($attr, $content = '')
         return null;
     }
     $n = _minn_av_instance('video');
-    $type = wp_check_filetype($src)['type'] ?: 'video/mp4';
     $poster = $attr['poster'] !== '' ? ' poster="' . esc_url((string) $attr['poster']) . '"' : '';
     $html = '<div style="width: ' . (int) $attr['width'] . 'px;" class="wp-video">'
-        . '<video class="' . esc_attr($attr['class']) . '" id="video-' . $n . '-1" width="' . (int) $attr['width'] . '" height="' . (int) $attr['height'] . '"' . $poster . ' preload="' . esc_attr($attr['preload']) . '" controls="controls">'
-        . '<source type="' . esc_attr($type) . '" src="' . esc_url($src . '?_=' . $n) . '" />'
+        . '<video class="' . esc_attr($attr['class']) . '" id="video-' . _minn_av_post_id() . '-' . $n . '" width="' . (int) $attr['width'] . '" height="' . (int) $attr['height'] . '"' . $poster . _minn_av_flags($attr, ['loop', 'autoplay', 'muted']) . ' preload="' . esc_attr($attr['preload']) . '" controls="controls">'
+        . '<source type="' . esc_attr(_minn_av_source_type($src, 'video/mp4')) . '" src="' . esc_url(add_query_arg('_', $n, $src)) . '" />'
         . '<a href="' . esc_url($src) . '">' . esc_html($src) . '</a></video></div>';
     return apply_filters('wp_video_shortcode', $html, $attr, '', $n, '');
 }
@@ -1239,8 +1269,9 @@ function gallery_shortcode($attr)
 function _minn_gallery_attachments(array $atts): array
 {
     $shared = ['post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'image', 'order' => $atts['order'], 'orderby' => $atts['orderby']];
-    if ((string) ($atts['include'] ?? '') !== '') {
-        return get_posts(['include' => $atts['include']] + $shared);
+    $include = is_array($atts['include'] ?? '') ? implode(',', $atts['include']) : (string) ($atts['include'] ?? '');
+    if ($include !== '') {
+        return get_posts(['include' => $include] + $shared);
     }
     $query = ['post_parent' => (int) $atts['id']] + $shared;
     if ((string) ($atts['exclude'] ?? '') !== '') {
@@ -1310,4 +1341,33 @@ function next_image_link($size = 'thumbnail', $text = false)
 function adjacent_image_link($prev = true, $size = 'thumbnail', $text = false)
 {
     echo get_adjacent_image_link($prev, $size, $text);
+}
+
+function img_caption_shortcode($attr, $content = '')
+{
+    if (!isset($attr['caption']) && preg_match('#((?:<a [^>]+>\s*)?<img [^>]+>(?:\s*</a>)?)(.*)#is', (string) $content, $m)) {
+        $content = $m[1];
+        $attr['caption'] = trim($m[2]);
+    }
+    $output = apply_filters('img_caption_shortcode', '', $attr, $content);
+    if ($output !== '') {
+        return $output;
+    }
+    $atts = shortcode_atts(['id' => '', 'caption_id' => '', 'align' => 'alignnone', 'width' => '', 'caption' => '', 'class' => ''], $attr, 'caption');
+    $atts['width'] = (int) $atts['width'];
+    if ($atts['width'] < 1 || trim((string) $atts['caption']) === '') {
+        return $content;
+    }
+    $captionId = $atts['caption_id'] !== '' ? $atts['caption_id'] : ($atts['id'] !== '' ? 'caption-' . str_replace('_', '-', (string) $atts['id']) : '');
+    $id = $atts['id'] !== '' ? 'id="' . esc_attr(sanitize_html_class((string) $atts['id'])) . '" ' : '';
+    $describedBy = $captionId !== '' ? 'aria-describedby="' . esc_attr($captionId) . '" ' : '';
+    $captionIdAttr = $captionId !== '' ? 'id="' . esc_attr($captionId) . '" ' : '';
+    $class = trim('wp-caption ' . $atts['align'] . ' ' . $atts['class']);
+    $html5 = current_theme_supports('html5', 'caption');
+    $width = (int) apply_filters('img_caption_shortcode_width', $html5 ? $atts['width'] : 10 + $atts['width'], $atts, $content);
+    $style = $width > 0 ? 'style="width: ' . $width . 'px" ' : '';
+    if ($html5) {
+        return '<figure ' . $id . $describedBy . $style . 'class="' . esc_attr($class) . '">' . do_shortcode($content) . '<figcaption ' . $captionIdAttr . 'class="wp-caption-text">' . $atts['caption'] . '</figcaption></figure>';
+    }
+    return '<div ' . $id . $style . 'class="' . esc_attr($class) . '">' . do_shortcode($content) . '<p ' . $captionIdAttr . 'class="wp-caption-text">' . $atts['caption'] . '</p></div>';
 }

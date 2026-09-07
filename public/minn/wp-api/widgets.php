@@ -218,8 +218,9 @@ function wp_convert_widget_settings($base_name, $option_name, $settings)
  */
 function wp_widgets_init()
 {
-    register_widget('WP_Widget_Calendar');
-    register_widget('WP_Widget_Block');
+    foreach (['WP_Widget_Pages', 'WP_Widget_Calendar', 'WP_Widget_Archives', 'WP_Widget_Media_Audio', 'WP_Widget_Media_Image', 'WP_Widget_Media_Gallery', 'WP_Widget_Media_Video', 'WP_Widget_Meta', 'WP_Widget_Search', 'WP_Widget_Text', 'WP_Widget_Categories', 'WP_Widget_Recent_Posts', 'WP_Widget_Recent_Comments', 'WP_Widget_RSS', 'WP_Widget_Tag_Cloud', 'WP_Nav_Menu_Widget', 'WP_Widget_Custom_HTML', 'WP_Widget_Block'] as $widget) {
+        register_widget($widget);
+    }
     do_action('widgets_init');
 }
 
@@ -235,4 +236,56 @@ function wp_get_widget_defaults()
         $defaults[$id] = [];
     }
     return $defaults;
+}
+
+function wp_widget_rss_output($rss, $args = [])
+{
+    if (is_string($rss)) {
+        $rss = fetch_feed($rss);
+    } elseif (is_array($rss) && isset($rss['url'])) {
+        $args = $rss;
+        $rss = fetch_feed($rss['url']);
+    } elseif (!is_object($rss)) {
+        return;
+    }
+    if (is_wp_error($rss)) {
+        if (is_admin() || current_user_can('manage_options')) {
+            echo '<p><strong>RSS Error:</strong> ' . esc_html($rss->get_error_message()) . '</p>';
+        }
+        return;
+    }
+    // The engine has no feed parser yet, so fetch_feed never hands a feed here.
+}
+
+function wp_widget_rss_process($widget_rss, $check_feed = true)
+{
+    $items = (int) ($widget_rss['items'] ?? 0);
+    if ($items < 1 || $items > 20) {
+        $items = 10;
+    }
+    $url = sanitize_url(strip_tags((string) ($widget_rss['url'] ?? '')));
+    $title = isset($widget_rss['title']) ? trim(strip_tags((string) $widget_rss['title'])) : '';
+    $show_summary = (int) ($widget_rss['show_summary'] ?? 0);
+    $show_author = (int) ($widget_rss['show_author'] ?? 0);
+    $show_date = (int) ($widget_rss['show_date'] ?? 0);
+    $error = false;
+    $link = '';
+    if ($check_feed) {
+        $rss = fetch_feed($url);
+        if (is_wp_error($rss)) {
+            $error = $rss->get_error_message();
+        }
+    }
+    return compact('title', 'url', 'link', 'items', 'error', 'show_summary', 'show_author', 'show_date');
+}
+
+function wp_widget_rss_form($args, $inputs = null)
+{
+    // The settings form belongs to wp-admin, which the engine does not serve.
+}
+
+/** @internal the script a dropdown widget prints: navigate or submit on change, unless Escape closed the list */
+function _minn_dropdown_script(string $dropdownId, string $onChange): string
+{
+    return "( ( dropdownId ) => {\n\tconst dropdown = document.getElementById( dropdownId );\n\tfunction onSelectChange() {\n\t\tsetTimeout( () => {\n\t\t\tif ( 'escape' === dropdown.dataset.lastkey ) {\n\t\t\t\treturn;\n\t\t\t}\n\t\t\t" . $onChange . "\n\t\t}, 250 );\n\t}\n\tfunction onKeyUp( event ) {\n\t\tif ( 'Escape' === event.key ) {\n\t\t\tdropdown.dataset.lastkey = 'escape';\n\t\t} else {\n\t\t\tdelete dropdown.dataset.lastkey;\n\t\t}\n\t}\n\tfunction onClick() {\n\t\tdelete dropdown.dataset.lastkey;\n\t}\n\tdropdown.addEventListener( 'keyup', onKeyUp );\n\tdropdown.addEventListener( 'click', onClick );\n\tdropdown.addEventListener( 'change', onSelectChange );\n})( " . wp_json_encode($dropdownId) . " );\n";
 }

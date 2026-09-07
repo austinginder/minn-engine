@@ -24,7 +24,8 @@ class WP_Widget_Custom_HTML extends WP_Widget
     {
         $instance = wp_parse_args($instance, $this->default_instance);
         $title = apply_filters('widget_title', (string) $instance['title'], $instance, $this->id_base);
-        echo $args['before_widget'] ?? '';
+        // The text widget's class rides along so themes style both alike.
+        echo str_replace('widget_custom_html', 'widget_text widget_custom_html', (string) ($args['before_widget'] ?? ''));
         if ($title !== '') {
             echo ($args['before_title'] ?? '') . $title . ($args['after_title'] ?? '');
         }

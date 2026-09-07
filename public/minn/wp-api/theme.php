@@ -74,7 +74,7 @@ function get_theme_support($feature, ...$args)
             $supports[$feature] = $implied[$feature];
         }
     }
-    if (!array_key_exists($feature, $supports)) {
+    if (!array_key_exists($feature, $supports) || $supports[$feature] === false) {
         return false;
     }
     if ($args === [] || $supports[$feature] === true) {
@@ -100,8 +100,9 @@ function add_theme_support($feature, ...$args)
 
 function remove_theme_support($feature)
 {
+    // Recorded as false rather than dropped, so a block theme's implied support does not come back.
     $supports = Runtime::current()->get('theme_supports', []);
-    unset($supports[$feature]);
+    $supports[$feature] = false;
     Runtime::current()->set('theme_supports', $supports);
     return true;
 }
