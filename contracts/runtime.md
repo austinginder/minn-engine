@@ -2002,3 +2002,11 @@ markup they print comes from `Front\PageList`, `Front\ListSpacing` and
 - `img_caption_shortcode`: `<figure [id="x" ][aria-describedby="caption-x" ]style="width: Wpx" class="wp-caption align…">…<figcaption [id="caption-x" ]class="wp-caption-text">…</figcaption></figure>`; the content alone when the width is 0 or the caption empty; the `div`/`p` shape without html5 caption support.
 - `fetch_feed` fetches through the safe HTTP client and reports `WP HTTP Error: …` on a transport failure; a host that does not resolve is now `A valid URL was not provided.` in `wp_http_validate_url`, as the reference says. There is still no feed parser: the RSS widget prints its title line and no entries, and `wp_widget_rss_output` prints only the error paragraph an administrator would see.
 - The Recent Comments head style (`<style>.recentcomments a{…}</style>`) prints when the widget is active in a sidebar; the probe could not make one active in either stack, so that string is unpinned.
+
+**Oracle quirk, not a gap (shop-dogfood, 2026-09-07):** the parked
+WordPress on 8127 answers `/feed/` with a 500 and a body cut off by a
+critical-error element. Advanced Responsive Video Embedder's
+`oembed_dataparse` filter fatals under PHP 8.3 when an embed's provider
+name is null (`sane_provider_name(NULL)`), mid-way through the feed's
+items. The engine renders the same feed complete; the page for the post
+with that embed cannot be compared until the plugin is fixed upstream.
