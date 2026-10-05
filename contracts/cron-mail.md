@@ -68,13 +68,21 @@ The engine does not spawn the reference's loopback and does not write its
 
 ## Mail
 
-`Minn\Mail\Mailer` sends plain-text mail through one of three transports, chosen by
-the `minn_mail` option (JSON, or a serialized array from `wp option update
---format=json`): `mail` (PHP's `mail()`, the default), `smtp` (own client: SSL or
-STARTTLS, AUTH LOGIN, `host`, `port`, `encryption`, `username`, `password`), or `log`
-(appends JSON lines to `wp-content/minn-mail.log`, for development). The sender is
-`from_name <from_email>`, defaulting to the site name at `no-reply@` the home host.
-`wp minn mail <to>` sends a test message and names the transport.
+`Minn\Mail\Mailer` sends the engine's own plain-text mail. With WordPress's
+runtime loaded it goes through `wp_mail()`, so the mail filters and the
+`phpmailer_init` hook (how an SMTP plugin takes over) apply as on the reference,
+and the sender is the reference's `WordPress <wordpress@{host}>`. The `minn_mail`
+option (JSON, or a serialized array from `wp option update --format=json`) is the
+site's own transport, applied inside `wp_mail()` before `phpmailer_init`: `mail`
+(PHP's `mail()`, the default), `smtp` (`host`, `port`, `encryption` ssl, tls or
+none, `username`, `password`; PHPMailer's SMTP client), or `log` (appends JSON
+lines to `wp-content/minn-mail.log`, for development); `from_email` and
+`from_name`, when set, replace the default sender before the `wp_mail_from`
+filters. Without the runtime, `Mailer` composes the message itself
+(`Mail\Composer`) and delivers it over the same transports, defaulting to the
+site name at `no-reply@` the home host. `wp minn mail <to>` sends a test message
+and names the transport. How a message is written and sent: `contracts/runtime.md`,
+"Sending mail".
 
 What sends mail today: the password reset link, the new-account message (login
 details plus a link to choose a password), and the moderation notice to

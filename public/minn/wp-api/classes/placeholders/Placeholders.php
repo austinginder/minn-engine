@@ -1777,22 +1777,6 @@ class WP_List_Table
     }
 }
 
-class WP_PHPMailer extends PHPMailer\PHPMailer\PHPMailer
-{
-
-    public function __construct($exceptions = false)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_PHPMailer::__construct');
-        return null;
-    }
-
-    public static function setLanguage($langcode = 'en', $lang_path = '')
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_PHPMailer::setLanguage');
-        return null;
-    }
-}
-
 class WP_Plugin_Install_List_Table extends WP_List_Table
 {
     public $order = 'ASC';

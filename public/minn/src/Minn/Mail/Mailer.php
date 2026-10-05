@@ -6,6 +6,7 @@ namespace Minn\Mail;
 
 use Minn\Content\Site;
 use Minn\Db;
+use Minn\Runtime\Runtime;
 use Throwable;
 
 /**
@@ -42,9 +43,18 @@ final readonly class Mailer
         );
     }
 
-    /** Sends one message over the configured transport; false on failure. */
+    /**
+     * Sends one message; false on failure. With WordPress's mail function
+     * loaded the message goes through wp_mail(), so its filters and the
+     * phpmailer_init hook (an SMTP plugin's way in) apply as they do on the
+     * reference; otherwise through the configured transport directly.
+     */
     public function send(Message $message): bool
     {
+        if (Runtime::booted() && function_exists('wp_mail')) {
+            $headers = $message->fromEmail !== '' ? ['From: ' . ($message->fromName !== '' ? $message->fromName . ' <' . $message->fromEmail . '>' : $message->fromEmail)] : [];
+            return (bool) \wp_mail($message->to, $message->subject, $message->body, $headers);
+        }
         $from = $message->fromEmail !== '' ? $message->fromEmail : $this->settings->fromEmail;
         $fromName = $message->fromName !== '' ? $message->fromName : $this->settings->fromName;
         $to = array_values(array_filter($message->to, static fn (string $a) => filter_var($a, FILTER_VALIDATE_EMAIL) !== false));
@@ -53,8 +63,8 @@ final readonly class Mailer
         }
         try {
             return match ($this->settings->transport) {
-                'smtp' => (new Smtp($this->settings))->send($from, $fromName, $to, $message->subject, $message->body),
-                'log' => $this->log($from, $fromName, $to, $message),
+                'smtp' => $this->viaSmtp($from, $fromName, $to, $message),
+                'log' => MailLog::write($this->logFile, $from, $fromName, $to, $message->subject, $message->body),
                 default => $this->viaMail($from, $fromName, $to, $message),
             };
         } catch (Throwable $e) {
@@ -64,38 +74,30 @@ final readonly class Mailer
     }
 
     /** @param list<string> $to */
-    private function viaMail(string $from, string $fromName, array $to, Message $message): bool
+    private function viaSmtp(string $from, string $fromName, array $to, Message $message): bool
     {
-        $headers = 'From: ' . self::address($from, $fromName) . "\r\n"
-            . "Content-Type: text/plain; charset=UTF-8\r\n"
-            . "Content-Transfer-Encoding: 8bit\r\n";
-        return mail(implode(', ', $to), self::encodeHeader($message->subject), $message->body, $headers);
+        $draft = self::draft('smtp', $from, $fromName, $to, $message);
+        $id = bin2hex(random_bytes(16));
+        $body = Composer::body($draft, $id);
+        $data = Composer::headers($draft, $id, (string) (gethostname() ?: 'localhost'), $body['encoding']) . "\r\n" . $body['body'];
+        return (new Smtp($this->settings))->sendRaw($from, $to, $data);
     }
 
     /** @param list<string> $to */
-    private function log(string $from, string $fromName, array $to, Message $message): bool
+    private function viaMail(string $from, string $fromName, array $to, Message $message): bool
     {
-        $line = json_encode([
-            'time' => gmdate('c'),
-            'from' => self::address($from, $fromName),
-            'to' => $to,
-            'subject' => $message->subject,
-            'body' => $message->body,
-        ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n";
-        return file_put_contents($this->logFile, $line, FILE_APPEND | LOCK_EX) !== false;
+        $draft = self::draft('mail', $from, $fromName, $to, $message);
+        $id = bin2hex(random_bytes(16));
+        $body = Composer::body($draft, $id);
+        $headers = Composer::headers($draft, $id, (string) (gethostname() ?: 'localhost'), $body['encoding']);
+        $subject = $draft->encodeHeader(Composer::secure($message->subject));
+        return mail(implode(', ', $to), $subject, $body['body'], rtrim($headers));
     }
 
-    /** A mail address with an optional display name, header-encoded. */
-    public static function address(string $email, string $name): string
+    /** @param list<string> $to */
+    private static function draft(string $mailer, string $from, string $fromName, array $to, Message $message): Draft
     {
-        $name = trim(str_replace(["\r", "\n"], '', $name));
-        return $name === '' ? $email : self::encodeHeader($name) . " <{$email}>";
-    }
-
-    /** A header value: no line breaks, encoded when not plain ASCII. */
-    public static function encodeHeader(string $value): string
-    {
-        $value = str_replace(["\r", "\n"], ' ', $value);
-        return preg_match('/[^\x20-\x7e]/', $value) ? '=?UTF-8?B?' . base64_encode($value) . '?=' : $value;
+        $pairs = array_map(static fn (string $address): array => [$address, ''], $to);
+        return new Draft($mailer, "\r\n", 'UTF-8', 'text/plain', '8bit', $message->subject, $message->body, '', '', $from, $fromName, $pairs, [], [], [], '', '', null, '', '', [], []);
     }
 }

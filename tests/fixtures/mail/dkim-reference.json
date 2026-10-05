@@ -1,0 +1,17 @@
+{
+    "_source": "Captured from the reference: PHPMailer::DKIM_Sign() and DKIM_Add() with tests/fixtures/mail/dkim-test.key (RSA-SHA256 signatures are deterministic, so the engine must reproduce these bytes at the same t=).",
+    "sign": {
+        "text": "from:a@b\r\nsubject:x",
+        "signature": "c4zvTy6scTLS5wKpVvb1D5EkaNbSM2bVdpgS7ux98vC5QzyBpB1w3fSvpEGWbFuXKxFB5owcZmUZyW2Ug/cSNizkyzjlcNPbjR2dEtkmuZsFkXK+9BoFVNeKrmOqZ2I4LN9PSKvXwaSlaUtsMYZuUoYQ19Lc6bjzc09RYwdaOTs="
+    },
+    "message": {
+        "headers": "Date: Mon, 5 Oct 2026 12:00:00 +0000\r\nTo: to@example.test\r\nFrom: Probe <sender@example.test>\r\nSubject: Hello\r\nMessage-ID: <x@y>\r\nX-Custom: one\r\nMIME-Version: 1.0\r\nContent-Type: text/plain; charset=iso-8859-1\r\n",
+        "subject": "Hello",
+        "body": "Body line\r\n"
+    },
+    "copied": "DKIM-Signature: v=1; d=example.test; s=sel;\r\n a=rsa-sha256; q=dns/txt; t=1791220871; c=relaxed/simple;\r\n h=Date:To:From:Subject:Message-ID:MIME-Version:Content-Type;\r\n z=Date:Mon,=205=20Oct=202026=2012:00:00=20+0000\r\n |To:to@example.test\r\n |From:Probe=20<sender@example.test>\r\n |Subject:Hello\r\n |Message-ID:<x@y>\r\n |MIME-Version:1.0\r\n |Content-Type:text/plain=3B=20charset=3Diso-8859-1;\r\n bh=WgzUh9Cj9ZxoxfDX0KmEumMyCUUcs6RcTjwCBcKBIOc=;\r\n b=Jzw/1Sh07WvBCXSJPzGLxz1hMFL0Xj3Bu/kdaAoD8Wzk3hsA03XSY6UUjT8qjr12lJ1Zm6oj7\r\n JBBhamPme/+bNl6GVFnHV4mYOssX3tsGmFvuwG3JvpDhRIRLhE9Pz5of/pKDOLGItf2H6wVY8\r\n 8WDvyRCDg01DRNO+N77Ef+fZY=",
+    "identity, not copied": {
+        "headers": "Date: Mon, 5 Oct 2026 12:00:00 +0000\r\nTo: to@example.test\r\nFrom: Probe <sender@example.test>\r\nSubject: Hello\r\nMessage-ID: <x@y>\r\nX-Custom: one\r\nMIME-Version: 1.0\r\n",
+        "signature": "DKIM-Signature: v=1; d=example.test; s=sel;\r\n a=rsa-sha256; q=dns/txt; t=1791220871; c=relaxed/simple;\r\n h=Date:To:From:Subject:Message-ID:MIME-Version;\r\n i=sender@example.test;\r\n bh=WgzUh9Cj9ZxoxfDX0KmEumMyCUUcs6RcTjwCBcKBIOc=;\r\n b=V6GLjdgUVuwTsWwXMo1nMv5MpHwQXTfIIugasHqFVp1fXMwA72XH+oZmwVnfnACGbsyxhAnmr\r\n BpBt6M3ShcTPk4GH5DaiGfhrEJP7ofumosjU5nXMcyxHnrwyVWxSGap+hkyb/jROxmT8pIyC3\r\n W4Qm/c4trZl3cJyS7OJ+QGltM="
+    }
+}

@@ -12,6 +12,7 @@ if (!is_string($dir) || !is_file("{$dir}/wp-load.php") || !is_string($probe) || 
     fwrite(STDERR, "usage: php run-reference-probe.php <wordpress dir> <probe file>\n");
     exit(2);
 }
+$probe = (string) realpath($probe);
 ini_set('display_errors', 'stderr');
 $_SERVER += ['HTTP_HOST' => 'minn.localhost', 'SERVER_NAME' => 'minn.localhost', 'REQUEST_URI' => '/', 'REQUEST_METHOD' => 'GET', 'SERVER_PROTOCOL' => 'HTTP/1.1'];
 define('WP_USE_THEMES', false);

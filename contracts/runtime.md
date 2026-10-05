@@ -937,12 +937,11 @@ the engine. Probed facts worth keeping:
   vars. WP_Ajax_Response's XML and send() envelope are pinned from
   captures. WP_Textdomain_Registry records paths and scans the language
   dir (`Support\Paths::translationDir`); the boot sets the global.
-- PHPMailer\PHPMailer\{PHPMailer,SMTP,Exception} are the engine's own:
-  state recording in the class, MIME composition in `Mail\Mime`, SMTP
-  delivery through `Mail\Smtp::sendRaw` (send() now composes onto it).
-  Gravity SMTP assigns the STATIC PHPMailer::$validator before anything
-  else, so the property must exist. Its sandbox (test_mode) short-circuits
-  before send either way.
+- PHPMailer\PHPMailer\{PHPMailer,SMTP,Exception} are the engine's own
+  (since 2026-10-05 the whole class: "Sending mail" below). Gravity SMTP
+  assigns the STATIC PHPMailer::$validator before anything else, so the
+  property must exist. Its sandbox (test_mode) short-circuits before send
+  either way.
 - WP_User_Query graduated from placeholder to real (`Runtime\UserQuery`):
   WooCommerce's sales report runs one on the front. Probed shapes: 'ID'
   fields come back as STRINGS, a column array as stdClass records holding
@@ -2626,3 +2625,120 @@ into both stacks and compares (the reference's `wp-content` is its own).
 - **Not yet**: `db-error.php` (the engine's own database-down page shows
   instead), `php-error.php` and `fatal-error-handler.php` (the engine's own
   failure page), `sunrise.php` (multisite).
+
+## Sending mail (2026-10-05)
+
+Plugins drive PHPMailer directly (SMTP plugins configure it in
+`phpmailer_init`, Gravity SMTP and WP Mail SMTP read `ErrorInfo`, call
+`preSend()` and `getSentMIMEMessage()`, swap the static `$validator`), so the
+engine has the whole of it: `PHPMailer` (99 public methods, 7.1.1's
+properties and constants), `SMTP` (32) and `Exception` in
+`wp-api/classes/PHPMailer.php`, `WP_PHPMailer` beside it, and `wp_mail()`
+rewritten to the reference's contract (`pluggable.php`, its parts in
+`wp-api/mail.php`). The work is in `Minn\Mail`: `Composer` writes the
+message from a `Draft`, `HeaderWords` encodes and decodes header text,
+`TextWrap` and `Transfer` wrap and encode bodies, `AddressRules` checks,
+parses and Punycodes addresses, `SmtpSession` speaks SMTP, `DataLines`
+cuts DATA, `Dkim` signs, `HtmlMessage` reads HTML messages, `HostEntry`
+reads the Host setting. Suite `tests/mail.test.php` diffs
+`tests/tools/phpmailer-probe.php` (71 rows, nothing sent) and
+`tests/tools/phpmailer-smtp-probe.php` (33 rows, against
+`tests/fixtures/mail/fake-smtp.php`, one server per stack, the recorded
+sessions compared line by line) on both stacks, then routes `wp_mail()`
+through the `minn_mail` SMTP setting; `tests/unit/mail.php` pins the parts,
+DKIM byte for byte against `tests/fixtures/mail/dkim-reference.json`.
+
+- **The message.** Header order: Date, To (not for `mail()`, which takes
+  To and Subject as arguments and the sent copy appends them after the MIME
+  header), From, Cc, Bcc (only for mail, sendmail and qmail), Reply-To,
+  Subject, Message-ID, X-Priority, X-Mailer, Disposition-Notification-To,
+  custom headers, MIME-Version, Content-Type, Content-Transfer-Encoding.
+  Line endings are CRLF for smtp and mail, PHP_EOL otherwise, and the
+  choice is static (it sticks to the class until the next `preSend()`).
+  No To and no Cc writes `To: undisclosed-recipients:;`; only Cc writes no
+  To; `SingleTo` writes none. A From without a name is the bare address;
+  `X-Mailer` is `PHPMailer 7.1.1 (https://github.com/PHPMailer/PHPMailer)`
+  unless set, nothing when set to blanks; `X-Priority` is written for any
+  non-null value, 0 included.
+- **Dates and ids.** `MessageDate` is kept, reformatted as
+  `D, j M Y H:i:s O` with its own offset, only when it reads as a moment
+  already past; anything else (future, `now`, unparseable) becomes the
+  current time. `MessageID` is kept when it is `<local@domain>` with no
+  space, `<` or second `@`; otherwise `<{unique id}@{host}>`, the host being
+  `Hostname`, `SERVER_NAME`, `gethostname()` or `localhost.localdomain`.
+- **Encodings.** A body declared 8bit without 8-bit bytes goes out 7bit
+  with `us-ascii` part charsets (a single-part message keeps its charset
+  and drops the transfer-encoding header); a line over 998 characters
+  forces quoted-printable unless the encoding is base64; a multipart top
+  level says `Content-Transfer-Encoding: 8bit`. Header text: quoted when a
+  phrase needs it, encoded words in B (more than a third needs encoding;
+  multibyte text cut at whole characters) or Q, folded to 63 characters
+  for `mail()`, 998 otherwise.
+- **Multipart.** `alt`, `inline`, `attach` and their combinations nest
+  `multipart/mixed` > `alternative` > `related` with boundaries
+  `b1=_{id}` to `b3=_{id}`; the alternative's HTML part is `text/html`
+  whatever `ContentType` says. A calendar part (`text/calendar;
+  method=…`, the calendar's own METHOD upper-cased when known, else
+  REQUEST) rides only in `alt` and `alt_attach`. Attachments name the file
+  `name=` and `filename=` (quoted when they hold a special, encoded words
+  when 8-bit); an identical attachment and a repeated inline content id
+  are written once; a file gone by send time fails as `File Error: Could
+  not open file: {path}`.
+- **`msgHTML()`** embeds files a `src` or `background` names relative to
+  the base directory (no scheme, no leading slash, no `../`, no query; any
+  type, an image or not; nothing at all without a base directory, so the
+  working directory is never read; a leading `./` dropped) and raster
+  `data:` URIs (not SVG), each under `{first 32 hex of SHA-256 of the URL,
+  or of the data}@phpmailer.0`, data ones named `embed{n}`; the text
+  version drops head, title, style and script, strips tags and decodes
+  entities into the charset, or is `This is an HTML-only message. To view
+  it, activate HTML in your email application.` when nothing is left.
+- **Addresses.** Duplicates (case-insensitively) are refused without an
+  error; an IDN domain is queued and Punycoded at `preSend()` (with the
+  charset as the source encoding); `setFrom()` sets `Sender` only when it
+  is empty and `$auto`. Errors read `Invalid address:  ({kind}): {address}`
+  (two spaces: the message ends in one).
+- **SMTP.** Debug levels: 1 client lines (credentials as `[credentials
+  hidden]`), 2 replies, 3 connection events, 4 raw inbound lines; `echo`
+  prints a timestamp and a tab with continuation lines indented, `html`
+  escapes and drops line breaks (the SMTP class adds a timestamp, PHPMailer
+  does not). Command failures are `{COMMAND} command failed` with the
+  reply's detail, code and enhanced code; a refused connection is `Failed
+  to connect to server` with the errno and its text. AUTH picks the named
+  mechanism when the server offers it, else CRAM-MD5, LOGIN, PLAIN in that
+  order; DATA cuts a line over 998 at its last space (or at 997), tabs
+  header continuations, then doubles leading dots. The Host setting is a
+  `;` list of `[ssl://|tls://]host[:port]`; STARTTLS runs when asked or
+  offered (`SMTPAutoTLS`). PHPMailer sends RCPT for To, Cc and Bcc, DATA
+  when at least one was accepted, RSET between keep-alive messages, QUIT
+  otherwise, then reports `SMTP Error: The following recipients failed:
+  {address}: {detail}…`; a failed connection in non-throwing mode is `SMTP
+  connect() failed. https://github.com/PHPMailer/PHPMailer/wiki/Troubleshooting`
+  plus the SMTP error's parts.
+- **DKIM** (rsa-sha256, relaxed/simple): the standard headers in message
+  order plus `DKIM_extraHeaders` that are custom headers, `i=` before
+  `z=`, the signature in 73-character pieces after the MIME header.
+- **`wp_mail()`**: `wp_mail` filter, `pre_wp_mail` (non-null returns at
+  once), the global `$phpmailer` (a throwing `WP_PHPMailer`, validator
+  `is_email`) cleared, `wp_mail_content_type` asked once before the sender
+  and once with any boundary appended, `wp_mail_from` (default
+  `wordpress@{home host without www.}`), `wp_mail_from_name` (`WordPress`),
+  `setFrom` (a refusal fires `wp_mail_failed` without the embeds), To, Cc,
+  Bcc and Reply-To split on every comma (quoted names keep their quotes;
+  a refused entry is skipped), `isMail()`, the charset (blog charset
+  unless the headers set one; a boundary leaves it empty), custom headers
+  but MIME-Version and X-Mailer (Subject and To in the headers argument are
+  just custom headers), attachments (a string key names the file, a missing
+  file is skipped) and embeds (the key is the content id), then
+  `phpmailer_init` outside the try (a hook that throws escapes), send, and
+  `wp_mail_succeeded` or `wp_mail_failed` with the arguments and
+  `phpmailer_exception_code`.
+- **Not verified against the reference**: sendmail and qmail delivery
+  (the tests send nothing through a local MTA), `SingleTo` outside SMTP,
+  S/MIME `sign()`, XOAUTH2 (an `OAuthTokenProvider`'s `getOauth64()` is
+  used when one is set), a STARTTLS that succeeds (the fake server has no
+  TLS), `needsSMTPUTF8()`, and PHPMailer's language files (`setLanguage()`
+  answers false for anything but `en`, as WordPress ships none;
+  `WP_PHPMailer` passes its messages through `__()`). The `POP3`, `OAuth`
+  and `DSNConfigurator` classes are not provided; the reference does not
+  load them either.

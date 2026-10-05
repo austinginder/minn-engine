@@ -180,18 +180,34 @@ endif;
 if (!function_exists('wp_mail')) :
 function wp_mail($to, $subject, $message, $headers = '', $attachments = [], $embeds = [])
 {
-    $atts = apply_filters('wp_mail', compact('to', 'subject', 'message', 'headers', 'attachments'));
+    $atts = apply_filters('wp_mail', compact('to', 'subject', 'message', 'headers', 'attachments', 'embeds'));
     $pre = apply_filters('pre_wp_mail', null, $atts);
     if ($pre !== null) {
         return $pre;
     }
-    $mailer = Minn\Mail\Mailer::forSite(Runtime::current()->site);
-    $to = is_array($atts['to']) ? array_values($atts['to']) : array_map('trim', explode(',', (string) $atts['to']));
-    $ok = $mailer->send(new Minn\Mail\Message($to, (string) $atts['subject'], (string) $atts['message']));
-    if ($ok) {
-        do_action('wp_mail_succeeded', $atts);
+    $args = array_merge(compact('to', 'subject', 'message', 'headers', 'attachments', 'embeds'), array_intersect_key((array) $atts, array_flip(['to', 'subject', 'message', 'headers', 'attachments', 'embeds'])));
+    $args['to'] = is_array($args['to']) ? $args['to'] : explode(',', (string) $args['to']);
+    $args['attachments'] = is_array($args['attachments']) ? $args['attachments'] : explode("\n", str_replace("\r\n", "\n", (string) $args['attachments']));
+    $parsed = Minn\Mail\MailHeaders::parse($args['headers']);
+    $data = ['to' => $args['to'], 'subject' => $args['subject'], 'message' => $args['message'], 'headers' => $parsed->custom, 'attachments' => $args['attachments'], 'embeds' => (array) $args['embeds']];
+    global $phpmailer;
+    _minn_wp_phpmailer();
+    try {
+        _minn_wp_mail_prepare($phpmailer, $parsed, $args);
+    } catch (PHPMailer\PHPMailer\Exception $e) {
+        // A refused sender reports the arguments without the embeds.
+        return _minn_wp_mail_failed($e, array_diff_key($data, ['embeds' => true]));
     }
-    return $ok;
+    do_action_ref_array('phpmailer_init', [&$phpmailer]);
+    try {
+        $sent = $phpmailer->send();
+    } catch (PHPMailer\PHPMailer\Exception $e) {
+        return _minn_wp_mail_failed($e, $data);
+    }
+    if ($sent) {
+        do_action('wp_mail_succeeded', $data);
+    }
+    return $sent;
 }
 endif;
 

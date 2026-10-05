@@ -33,16 +33,27 @@ final readonly class MailSettings
     ) {
     }
 
-    /** The site's mail settings from its minn_mail option, or the defaults. */
-    public static function fromSite(Site $site): self
+    /**
+     * What the minn_mail option holds, without defaults: empty when the site
+     * has not configured mail.
+     *
+     * @return array<string, mixed>
+     */
+    public static function stored(Site $site): array
     {
         // Stored as JSON by the engine's settings, or serialized by `wp option update --format=json`.
         $raw = (string) ($site->option(self::OPTION) ?? '');
         $stored = json_decode($raw, true);
         if (!is_array($stored)) {
             $stored = Serialized::decode($raw);
-            $stored = is_array($stored) ? $stored : [];
         }
+        return is_array($stored) ? $stored : [];
+    }
+
+    /** The site's mail settings from its minn_mail option, or the defaults. */
+    public static function fromSite(Site $site): self
+    {
+        $stored = self::stored($site);
         $host = (string) parse_url((string) ($site->option('home') ?? ''), PHP_URL_HOST) ?: 'localhost';
         $transport = (string) ($stored['transport'] ?? 'mail');
         $encryption = (string) ($stored['encryption'] ?? 'tls');

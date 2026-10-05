@@ -2,12 +2,12 @@
     "generated": "2026-10-05",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 513,
-        "composes": 783,
-        "leaf": 542,
-        "noop": 1640,
-        "functions": 3408,
-        "minnMethods": 500,
+        "minn": 537,
+        "composes": 786,
+        "leaf": 588,
+        "noop": 1727,
+        "functions": 3568,
+        "minnMethods": 544,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -491,6 +491,13 @@
         },
         "Enclosure::native_embed": {
             "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Exception::errorMessage": {
+            "file": "classes/PHPMailer.php",
             "lines": 1,
             "kind": "noop",
             "minn": [],
@@ -1105,51 +1112,187 @@
             "minn": [],
             "composes": []
         },
+        "PHPMailer::DKIM_Add": {
+            "file": "classes/PHPMailer.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::DKIM_BodyC": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Mail\\Dkim::body"
+            ],
+            "composes": []
+        },
+        "PHPMailer::DKIM_HeaderC": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Mail\\Dkim::headers"
+            ],
+            "composes": []
+        },
+        "PHPMailer::DKIM_QP": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Mail\\Dkim::quotedPrintable"
+            ],
+            "composes": []
+        },
+        "PHPMailer::DKIM_Sign": {
+            "file": "classes/PHPMailer.php",
+            "lines": 7,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "PHPMailer::__construct": {
+            "file": "classes/PHPMailer.php",
+            "lines": 3,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::__destruct": {
             "file": "classes/PHPMailer.php",
             "lines": 1,
             "kind": "noop",
             "minn": [],
             "composes": []
         },
+        "PHPMailer::_mime_types": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Mail\\MimeTypes::forExtension"
+            ],
+            "composes": []
+        },
         "PHPMailer::addAddress": {
             "file": "classes/PHPMailer.php",
-            "lines": 2,
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::addAnAddress": {
+            "file": "classes/PHPMailer.php",
+            "lines": 15,
             "kind": "leaf",
             "minn": [],
             "composes": []
         },
         "PHPMailer::addAttachment": {
             "file": "classes/PHPMailer.php",
-            "lines": 5,
+            "lines": 10,
             "kind": "leaf",
             "minn": [],
             "composes": []
         },
         "PHPMailer::addBCC": {
             "file": "classes/PHPMailer.php",
-            "lines": 2,
-            "kind": "leaf",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
         "PHPMailer::addCC": {
             "file": "classes/PHPMailer.php",
-            "lines": 2,
-            "kind": "leaf",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
         "PHPMailer::addCustomHeader": {
             "file": "classes/PHPMailer.php",
-            "lines": 5,
+            "lines": 12,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::addEmbeddedImage": {
+            "file": "classes/PHPMailer.php",
+            "lines": 10,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::addOrEnqueueAnAddress": {
+            "file": "classes/PHPMailer.php",
+            "lines": 15,
             "kind": "leaf",
             "minn": [],
             "composes": []
         },
         "PHPMailer::addReplyTo": {
             "file": "classes/PHPMailer.php",
-            "lines": 2,
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::addStringAttachment": {
+            "file": "classes/PHPMailer.php",
+            "lines": 6,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::addStringEmbeddedImage": {
+            "file": "classes/PHPMailer.php",
+            "lines": 8,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::addrAppend": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::addrFormat": {
+            "file": "classes/PHPMailer.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::alternativeExists": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::attachmentExists": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::base64EncodeWrapMB": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Mail\\HeaderWords::base64Lines"
+            ],
+            "composes": []
+        },
+        "PHPMailer::cidExists": {
+            "file": "classes/PHPMailer.php",
+            "lines": 6,
             "kind": "leaf",
             "minn": [],
             "composes": []
@@ -1163,7 +1306,7 @@
         },
         "PHPMailer::clearAllRecipients": {
             "file": "classes/PHPMailer.php",
-            "lines": 3,
+            "lines": 5,
             "kind": "leaf",
             "minn": [],
             "composes": []
@@ -1189,7 +1332,21 @@
             "minn": [],
             "composes": []
         },
+        "PHPMailer::clearCustomHeader": {
+            "file": "classes/PHPMailer.php",
+            "lines": 5,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "PHPMailer::clearCustomHeaders": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::clearQueuedAddresses": {
             "file": "classes/PHPMailer.php",
             "lines": 1,
             "kind": "noop",
@@ -1198,15 +1355,204 @@
         },
         "PHPMailer::clearReplyTos": {
             "file": "classes/PHPMailer.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::createBody": {
+            "file": "classes/PHPMailer.php",
+            "lines": 9,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Mail\\Composer::body"
+            ],
+            "composes": []
+        },
+        "PHPMailer::createHeader": {
+            "file": "classes/PHPMailer.php",
+            "lines": 5,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Mail\\Composer::headers",
+                "Minn\\Mail\\Composer::mailOnlyHeaders"
+            ],
+            "composes": []
+        },
+        "PHPMailer::decodeHeader": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Mail\\HeaderWords::decode"
+            ],
+            "composes": []
+        },
+        "PHPMailer::doCallback": {
+            "file": "classes/PHPMailer.php",
+            "lines": 3,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::edebug": {
+            "file": "classes/PHPMailer.php",
+            "lines": 3,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Mail\\DebugOutput::mailer"
+            ],
+            "composes": []
+        },
+        "PHPMailer::encodeHeader": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Mail\\HeaderWords::encode"
+            ],
+            "composes": []
+        },
+        "PHPMailer::encodeQ": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Mail\\HeaderWords::q"
+            ],
+            "composes": []
+        },
+        "PHPMailer::encodeQP": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Mail\\Transfer::quotedPrintable"
+            ],
+            "composes": []
+        },
+        "PHPMailer::encodeString": {
+            "file": "classes/PHPMailer.php",
+            "lines": 9,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Mail\\Transfer::encode"
+            ],
+            "composes": []
+        },
+        "PHPMailer::fileIsAccessible": {
+            "file": "classes/PHPMailer.php",
             "lines": 1,
             "kind": "noop",
             "minn": [],
             "composes": []
         },
-        "PHPMailer::fail": {
+        "PHPMailer::filenameToType": {
             "file": "classes/PHPMailer.php",
-            "lines": 5,
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Mail\\MimeTypes::forFilename"
+            ],
+            "composes": []
+        },
+        "PHPMailer::generateId": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::getAllRecipientAddresses": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::getAttachments": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::getBccAddresses": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::getBoundaries": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::getCcAddresses": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::getCustomHeaders": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::getLE": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::getLastMessageID": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::getMailMIME": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Mail\\Composer::mimeHeaders"
+            ],
+            "composes": []
+        },
+        "PHPMailer::getOAuth": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::getReplyToAddresses": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::getSMTPInstance": {
+            "file": "classes/PHPMailer.php",
+            "lines": 4,
             "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::getSMTPXclientAttributes": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
@@ -1217,7 +1563,83 @@
             "minn": [],
             "composes": []
         },
+        "PHPMailer::getSmtpErrorMessage": {
+            "file": "classes/PHPMailer.php",
+            "lines": 6,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "PHPMailer::getToAddresses": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::getTranslations": {
+            "file": "classes/PHPMailer.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::has8bitChars": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Mail\\Transfer::has8bit"
+            ],
+            "composes": []
+        },
+        "PHPMailer::hasLineLongerThanMax": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Mail\\Transfer::hasLongLine"
+            ],
+            "composes": []
+        },
+        "PHPMailer::hasMultiBytes": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::headerLine": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::html2text": {
+            "file": "classes/PHPMailer.php",
+            "lines": 4,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Mail\\HtmlMessage::text"
+            ],
+            "composes": []
+        },
+        "PHPMailer::idnSupported": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::inlineImageExists": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::isError": {
             "file": "classes/PHPMailer.php",
             "lines": 1,
             "kind": "noop",
@@ -1238,6 +1660,20 @@
             "minn": [],
             "composes": []
         },
+        "PHPMailer::isPermittedPath": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::isQmail": {
+            "file": "classes/PHPMailer.php",
+            "lines": 3,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "PHPMailer::isSMTP": {
             "file": "classes/PHPMailer.php",
             "lines": 1,
@@ -1245,53 +1681,510 @@
             "minn": [],
             "composes": []
         },
-        "PHPMailer::postSend": {
+        "PHPMailer::isSendmail": {
             "file": "classes/PHPMailer.php",
-            "lines": 11,
-            "kind": "minn",
+            "lines": 3,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::isShellSafe": {
+            "file": "classes/PHPMailer.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::isValidHost": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Mail\\Mailer::encodeHeader"
+                "Minn\\Mail\\HostEntry::validHost"
             ],
             "composes": []
         },
-        "PHPMailer::preSend": {
-            "file": "classes/PHPMailer.php",
-            "lines": 19,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Mail\\Mime::compose"
-            ],
-            "composes": []
-        },
-        "PHPMailer::send": {
+        "PHPMailer::lang": {
             "file": "classes/PHPMailer.php",
             "lines": 4,
             "kind": "leaf",
             "minn": [],
             "composes": []
         },
-        "PHPMailer::setFrom": {
+        "PHPMailer::mailPassthru": {
             "file": "classes/PHPMailer.php",
-            "lines": 3,
+            "lines": 7,
             "kind": "leaf",
             "minn": [],
             "composes": []
         },
-        "PHPMailer::smtp": {
+        "PHPMailer::mailSend": {
+            "file": "classes/PHPMailer.php",
+            "lines": 16,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Mail\\Transfer::stripTrailingSpace"
+            ],
+            "composes": []
+        },
+        "PHPMailer::mb_pathinfo": {
+            "file": "classes/PHPMailer.php",
+            "lines": 8,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Mail\\PathParts::of"
+            ],
+            "composes": []
+        },
+        "PHPMailer::minnAddReplyTo": {
+            "file": "classes/PHPMailer.php",
+            "lines": 5,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::minnCheckSenders": {
+            "file": "classes/PHPMailer.php",
+            "lines": 12,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::minnClearKind": {
+            "file": "classes/PHPMailer.php",
+            "lines": 5,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::minnCompose": {
+            "file": "classes/PHPMailer.php",
+            "lines": 13,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Mail\\Composer::messageId"
+            ],
+            "composes": []
+        },
+        "PHPMailer::minnDequeue": {
+            "file": "classes/PHPMailer.php",
+            "lines": 5,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::minnDkim": {
             "file": "classes/PHPMailer.php",
             "lines": 3,
             "kind": "minn",
             "minn": [
-                "Minn\\Mail\\MailSettings::__construct",
-                "Minn\\Mail\\Smtp::__construct"
+                "Minn\\Mail\\Dkim::__construct",
+                "Minn\\Mail\\Dkim::copyingHeaders"
             ],
             "composes": []
         },
-        "PHPMailer::smtpConnect": {
+        "PHPMailer::minnDraft": {
+            "file": "classes/PHPMailer.php",
+            "lines": 8,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Mail\\Draft::__construct"
+            ],
+            "composes": []
+        },
+        "PHPMailer::minnDropHeader": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::minnEmbed": {
+            "file": "classes/PHPMailer.php",
+            "lines": 14,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Mail\\HtmlMessage::cid",
+                "Minn\\Mail\\HtmlMessage::dataImage",
+                "Minn\\Mail\\HtmlMessage::localPath"
+            ],
+            "composes": []
+        },
+        "PHPMailer::minnGreet": {
+            "file": "classes/PHPMailer.php",
+            "lines": 12,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::minnMailEach": {
             "file": "classes/PHPMailer.php",
             "lines": 6,
             "kind": "leaf",
             "minn": [],
+            "composes": []
+        },
+        "PHPMailer::minnOpenSession": {
+            "file": "classes/PHPMailer.php",
+            "lines": 11,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::minnPrepare": {
+            "file": "classes/PHPMailer.php",
+            "lines": 13,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::minnRecipients": {
+            "file": "classes/PHPMailer.php",
+            "lines": 11,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::minnRefuse": {
+            "file": "classes/PHPMailer.php",
+            "lines": 6,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::minnSecurity": {
+            "file": "classes/PHPMailer.php",
+            "lines": 8,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::minnSendMethod": {
+            "file": "classes/PHPMailer.php",
+            "lines": 6,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::minnSendmailCommand": {
+            "file": "classes/PHPMailer.php",
+            "lines": 7,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::minnSmime": {
+            "file": "classes/PHPMailer.php",
+            "lines": 6,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Mail\\Smime::sign"
+            ],
+            "composes": []
+        },
+        "PHPMailer::minnSmtpDone": {
+            "file": "classes/PHPMailer.php",
+            "lines": 10,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::minnTryHost": {
+            "file": "classes/PHPMailer.php",
+            "lines": 13,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::minnlogSend": {
+            "file": "classes/PHPMailer.php",
+            "lines": 6,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Mail\\MailLog::forSite",
+                "Minn\\Mail\\MailLog::write"
+            ],
+            "composes": []
+        },
+        "PHPMailer::msgHTML": {
+            "file": "classes/PHPMailer.php",
+            "lines": 17,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Mail\\HtmlMessage::images"
+            ],
+            "composes": []
+        },
+        "PHPMailer::needsSMTPUTF8": {
+            "file": "classes/PHPMailer.php",
+            "lines": 6,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::normalizeBreaks": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Mail\\Transfer::normalizeBreaks"
+            ],
+            "composes": []
+        },
+        "PHPMailer::parseAddresses": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Mail\\AddressRules::parseList"
+            ],
+            "composes": []
+        },
+        "PHPMailer::postSend": {
+            "file": "classes/PHPMailer.php",
+            "lines": 13,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::preSend": {
+            "file": "classes/PHPMailer.php",
+            "lines": 11,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::punyencodeAddress": {
+            "file": "classes/PHPMailer.php",
+            "lines": 4,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Mail\\AddressRules::asciiDomain"
+            ],
+            "composes": []
+        },
+        "PHPMailer::quotedString": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Mail\\AddressRules::quoted"
+            ],
+            "composes": []
+        },
+        "PHPMailer::replaceCustomHeader": {
+            "file": "classes/PHPMailer.php",
+            "lines": 15,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::rfcDate": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::secureHeader": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::send": {
+            "file": "classes/PHPMailer.php",
+            "lines": 13,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::sendmailSend": {
+            "file": "classes/PHPMailer.php",
+            "lines": 16,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Mail\\Transfer::stripTrailingSpace"
+            ],
+            "composes": []
+        },
+        "PHPMailer::serverHostname": {
+            "file": "classes/PHPMailer.php",
+            "lines": 7,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::set": {
+            "file": "classes/PHPMailer.php",
+            "lines": 6,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::setBoundaries": {
+            "file": "classes/PHPMailer.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::setError": {
+            "file": "classes/PHPMailer.php",
+            "lines": 11,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::setFrom": {
+            "file": "classes/PHPMailer.php",
+            "lines": 13,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::setLE": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::setLanguage": {
+            "file": "classes/PHPMailer.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Mail\\MailerStrings::base"
+            ],
+            "composes": []
+        },
+        "PHPMailer::setMessageType": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::setOAuth": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::setSMTPInstance": {
+            "file": "classes/PHPMailer.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::setSMTPXclientAttribute": {
+            "file": "classes/PHPMailer.php",
+            "lines": 9,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::setWordWrap": {
+            "file": "classes/PHPMailer.php",
+            "lines": 8,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::sign": {
+            "file": "classes/PHPMailer.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::smtpClose": {
+            "file": "classes/PHPMailer.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::smtpConnect": {
+            "file": "classes/PHPMailer.php",
+            "lines": 21,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Mail\\HostEntry::parseAll"
+            ],
+            "composes": []
+        },
+        "PHPMailer::smtpSend": {
+            "file": "classes/PHPMailer.php",
+            "lines": 18,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Mail\\Transfer::stripTrailingSpace"
+            ],
+            "composes": []
+        },
+        "PHPMailer::stripTrailingBreaks": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Mail\\Transfer::stripTrailingBreaks"
+            ],
+            "composes": []
+        },
+        "PHPMailer::stripTrailingWSP": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Mail\\Transfer::stripTrailingSpace"
+            ],
+            "composes": []
+        },
+        "PHPMailer::textLine": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::utf8CharBoundary": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Mail\\TextWrap::utf8Boundary"
+            ],
+            "composes": []
+        },
+        "PHPMailer::validateAddress": {
+            "file": "classes/PHPMailer.php",
+            "lines": 8,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Mail\\AddressRules::valid"
+            ],
+            "composes": []
+        },
+        "PHPMailer::validateEncoding": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "PHPMailer::wrapText": {
+            "file": "classes/PHPMailer.php",
+            "lines": 3,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Mail\\TextWrap::plain",
+                "Minn\\Mail\\TextWrap::quotedPrintable"
+            ],
             "composes": []
         },
         "PasswordHash::CheckPassword": {
@@ -1472,6 +2365,255 @@
         },
         "Restriction::get_value": {
             "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SMTP::authenticate": {
+            "file": "classes/PHPMailer.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "SMTP::client_send": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SMTP::close": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SMTP::connect": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SMTP::connected": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SMTP::data": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SMTP::edebug": {
+            "file": "classes/PHPMailer.php",
+            "lines": 3,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Mail\\DebugOutput::smtp"
+            ],
+            "composes": []
+        },
+        "SMTP::getDebugLevel": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SMTP::getDebugOutput": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SMTP::getError": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SMTP::getLastReply": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SMTP::getLastTransactionID": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SMTP::getSMTPUTF8": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SMTP::getServerExt": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SMTP::getServerExtList": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SMTP::getTimeout": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SMTP::getVerp": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SMTP::hello": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SMTP::mail": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SMTP::minn": {
+            "file": "classes/PHPMailer.php",
+            "lines": 3,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Mail\\SmtpSession::__construct"
+            ],
+            "composes": []
+        },
+        "SMTP::noop": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SMTP::quit": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SMTP::recipient": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SMTP::reset": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SMTP::sendAndMail": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SMTP::sendCommand": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SMTP::setDebugLevel": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SMTP::setDebugOutput": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SMTP::setSMTPUTF8": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SMTP::setTimeout": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SMTP::setVerp": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SMTP::startTLS": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SMTP::turn": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SMTP::verify": {
+            "file": "classes/PHPMailer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SMTP::xclient": {
+            "file": "classes/PHPMailer.php",
             "lines": 1,
             "kind": "noop",
             "minn": [],
@@ -5842,6 +6984,24 @@
                 "apply_filters",
                 "wp_get_nav_menu_object",
                 "wp_nav_menu"
+            ]
+        },
+        "WP_PHPMailer::__construct": {
+            "file": "classes/WP_PHPMailer.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_PHPMailer::setLanguage": {
+            "file": "classes/WP_PHPMailer.php",
+            "lines": 3,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Mail\\MailerStrings::wordpress"
+            ],
+            "composes": [
+                "__"
             ]
         },
         "WP_Post::__construct": {
@@ -13299,6 +14459,80 @@
             "kind": "leaf",
             "minn": [],
             "composes": []
+        },
+        "_minn_wp_mail_default_from": {
+            "file": "mail.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "network_home_url",
+                "wp_parse_url"
+            ]
+        },
+        "_minn_wp_mail_failed": {
+            "file": "mail.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "do_action"
+            ]
+        },
+        "_minn_wp_mail_files": {
+            "file": "mail.php",
+            "lines": 14,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "_minn_wp_mail_prepare": {
+            "file": "mail.php",
+            "lines": 21,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Mail\\MailSettings::stored",
+                "Minn\\Runtime\\Runtime::current",
+                "Minn\\Runtime\\Runtime::site"
+            ],
+            "composes": [
+                "_minn_wp_mail_default_from",
+                "_minn_wp_mail_files",
+                "_minn_wp_mail_recipients",
+                "_minn_wp_mail_transport",
+                "apply_filters",
+                "get_bloginfo"
+            ]
+        },
+        "_minn_wp_mail_recipients": {
+            "file": "mail.php",
+            "lines": 10,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Mail\\MailHeaders::recipient"
+            ],
+            "composes": []
+        },
+        "_minn_wp_mail_transport": {
+            "file": "mail.php",
+            "lines": 13,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Mail\\MailSettings::fromSite",
+                "Minn\\Mail\\MailSettings::stored",
+                "Minn\\Runtime\\Runtime::current",
+                "Minn\\Runtime\\Runtime::site"
+            ],
+            "composes": []
+        },
+        "_minn_wp_phpmailer": {
+            "file": "mail.php",
+            "lines": 12,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "is_email"
+            ]
         },
         "_n": {
             "file": "l10n.php",
@@ -28067,18 +29301,18 @@
         },
         "wp_mail": {
             "file": "pluggable.php",
-            "lines": 12,
+            "lines": 28,
             "kind": "minn",
             "minn": [
-                "Minn\\Mail\\Mailer::forSite",
-                "Minn\\Mail\\Mailer::send",
-                "Minn\\Mail\\Message::__construct",
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::site"
+                "Minn\\Mail\\MailHeaders::parse"
             ],
             "composes": [
+                "_minn_wp_mail_failed",
+                "_minn_wp_mail_prepare",
+                "_minn_wp_phpmailer",
                 "apply_filters",
-                "do_action"
+                "do_action",
+                "do_action_ref_array"
             ]
         },
         "wp_make_link_relative": {
