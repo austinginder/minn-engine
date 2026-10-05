@@ -318,11 +318,7 @@ final class MinnCommand
     /** The WordPress the swap parked beside this webroot, when the manifest names one. */
     private static function parkedTree(): ?string
     {
-        $manifest = (defined('MINN_ENGINE_DIR') ? MINN_ENGINE_DIR : dirname(__DIR__, 3)) . '/.install.json';
-        if (!is_file($manifest)) {
-            return null;
-        }
-        $park = (array) json_decode((string) file_get_contents($manifest), true);
+        $park = Installer::record(defined('ABSPATH') ? rtrim(ABSPATH, '/') : (string) getcwd());
         $dir = is_string($park['park'] ?? null) ? $park['park'] : null;
         return $dir !== null && is_dir($dir) ? $dir : null;
     }

@@ -17974,8 +17974,8 @@
             "namespace": "Minn\\Cli",
             "kind": "final class",
             "file": "public/minn/src/Minn/Cli/Installer.php",
-            "lines": 303,
-            "doc": "The swap, both ways. Install parks WordPress's own files beside the\nwebroot, lays the engine and its shape files down, and leaves\nwp-config.php and wp-content untouched; eject puts every parked file\nback and removes what install wrote. A manifest in minn/.install.json\nis the record eject works from. Preflight says what the site will and\nwill not get before anything moves.",
+            "lines": 328,
+            "doc": "The swap, both ways. Install parks WordPress's own files beside the\nwebroot, lays the engine and its shape files down, and leaves\nwp-config.php and wp-content untouched; eject puts every parked file\nback and removes what install wrote. The install record at the webroot\n(.minn-install.php) is what eject works from. Preflight says what the site will and\nwill not get before anything moves.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -17999,15 +17999,27 @@
                     }
                 ],
                 "visibility": "private",
-                "line": 40,
-                "end": 42
+                "line": 49,
+                "end": 51
             },
             "cases": [],
             "constants": [
                 {
-                    "name": "MANIFEST",
-                    "value": "'.install.json'",
+                    "name": "RECORD",
+                    "value": "'.minn-install.php'",
+                    "doc": "The install record sits at the webroot, so every site keeps its own\n(a symlinked minn/ is shared between sites) and an engine update\ncannot take it. It is PHP that returns first, so a web request for it\nprints nothing, and it names the webroot it belongs to.",
+                    "visibility": "private"
+                },
+                {
+                    "name": "RECORD_HEAD",
+                    "value": "'<?php return; // Minn Engine\\'s install record: what `wp minn eject` puts back. ?> '",
                     "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "LEGACY_RECORD",
+                    "value": "'.install.json'",
+                    "doc": "Where installs kept it before: read from a site's own minn/ copy, never through a shared symlink.",
                     "visibility": "private"
                 },
                 {
@@ -18088,8 +18100,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 49,
-                    "end": 74
+                    "line": 58,
+                    "end": 83
                 },
                 {
                     "routes": [],
@@ -18108,8 +18120,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 77,
-                    "end": 85
+                    "line": 86,
+                    "end": 94
                 },
                 {
                     "routes": [],
@@ -18128,8 +18140,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 94,
-                    "end": 103
+                    "line": 103,
+                    "end": 112
                 },
                 {
                     "routes": [],
@@ -18157,8 +18169,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 111,
-                    "end": 165
+                    "line": 120,
+                    "end": 175
                 },
                 {
                     "routes": [],
@@ -18177,8 +18189,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 168,
-                    "end": 211
+                    "line": 178,
+                    "end": 222
                 },
                 {
                     "routes": [],
@@ -18197,8 +18209,30 @@
                             "doc": ""
                         }
                     ],
-                    "line": 214,
-                    "end": 223
+                    "line": 225,
+                    "end": 234
+                },
+                {
+                    "routes": [],
+                    "name": "record",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "record(string $root): array",
+                    "doc": "The install record for a webroot: its owner, when, the engine\nversion, the park, what moved, what was laid down. Empty when there\nis none, or when the one found names another webroot (a site that\nwas moved or copied keeps a record its own eject must not act on).",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "root",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 244,
+                    "end": 254
                 },
                 {
                     "routes": [],
@@ -18209,28 +18243,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 87,
-                    "end": 91
-                },
-                {
-                    "routes": [],
-                    "name": "manifest",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "manifest(string $root): array",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "root",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 225,
-                    "end": 229
+                    "line": 96,
+                    "end": 100
                 },
                 {
                     "routes": [],
@@ -18249,8 +18263,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 236,
-                    "end": 254
+                    "line": 261,
+                    "end": 279
                 },
                 {
                     "routes": [],
@@ -18276,8 +18290,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 257,
-                    "end": 271
+                    "line": 282,
+                    "end": 296
                 },
                 {
                     "routes": [],
@@ -18303,8 +18317,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 273,
-                    "end": 290
+                    "line": 298,
+                    "end": 315
                 },
                 {
                     "routes": [],
@@ -18323,8 +18337,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 292,
-                    "end": 307
+                    "line": 317,
+                    "end": 332
                 },
                 {
                     "routes": [],
@@ -18335,8 +18349,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 309,
-                    "end": 313
+                    "line": 334,
+                    "end": 338
                 },
                 {
                     "routes": [],
@@ -18355,8 +18369,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 315,
-                    "end": 318
+                    "line": 340,
+                    "end": 343
                 }
             ]
         },
@@ -18509,7 +18523,7 @@
             "namespace": "Minn\\Cli",
             "kind": "final class",
             "file": "public/minn/src/Minn/Cli/MinnCommand.php",
-            "lines": 308,
+            "lines": 304,
             "doc": "Identifies the engine.\n\n## EXAMPLES\n\nwp minn version\nwp minn info\nwp minn probe",
             "implements": [],
             "extends": null,
@@ -18876,7 +18890,7 @@
                     "shapes": [],
                     "params": [],
                     "line": 319,
-                    "end": 328
+                    "end": 324
                 },
                 {
                     "routes": [],
@@ -18887,8 +18901,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 330,
-                    "end": 333
+                    "line": 326,
+                    "end": 329
                 }
             ]
         },
@@ -25520,6 +25534,7 @@
                 "Minn\\Front\\Renderer",
                 "Minn\\Front\\Resolution",
                 "Minn\\Front\\Resolver",
+                "Minn\\Front\\SingleAddresses",
                 "Minn\\Front\\Sitemaps",
                 "Minn\\Media\\Writer",
                 "Minn\\Rest\\CommentsController",
@@ -27109,6 +27124,7 @@
                 "Minn\\Front\\Permalinks",
                 "Minn\\Front\\Renderer",
                 "Minn\\Front\\Resolver",
+                "Minn\\Front\\SingleAddresses",
                 "Minn\\Media\\Writer",
                 "Minn\\Rest\\BlocksController",
                 "Minn\\Rest\\CommentObject",
@@ -31722,6 +31738,7 @@
                 "Minn\\Front\\Permalinks",
                 "Minn\\Front\\Renderer",
                 "Minn\\Front\\Resolver",
+                "Minn\\Front\\SingleAddresses",
                 "Minn\\Front\\Sitemaps",
                 "Minn\\Mail\\Mailer",
                 "Minn\\Ops\\Diagnostics",
@@ -38437,6 +38454,7 @@
                 "Minn\\Front\\Renderer",
                 "Minn\\Front\\Resolution",
                 "Minn\\Front\\Resolver",
+                "Minn\\Front\\SingleAddresses",
                 "Minn\\Runtime\\MainQuery",
                 "Minn\\Theme\\ArchiveTitle",
                 "Minn\\Theme\\BodyClasses",
@@ -39290,6 +39308,7 @@
                 "Minn\\Front\\ProbeController",
                 "Minn\\Front\\Renderer",
                 "Minn\\Front\\Resolver",
+                "Minn\\Front\\SingleAddresses",
                 "Minn\\Front\\Sitemaps",
                 "Minn\\Login\\LoginController",
                 "Minn\\Media\\Uploads",
@@ -40334,7 +40353,8 @@
                 "Minn\\Http\\Method"
             ],
             "usedBy": [
-                "Minn\\Front\\Resolver"
+                "Minn\\Front\\Resolver",
+                "Minn\\Front\\SingleAddresses"
             ],
             "constructor": null,
             "cases": [
@@ -40652,6 +40672,7 @@
                 "Minn\\Front\\FrontController",
                 "Minn\\Front\\Renderer",
                 "Minn\\Front\\Resolver",
+                "Minn\\Front\\SingleAddresses",
                 "Minn\\Runtime\\MainQuery",
                 "Minn\\Theme\\ArchiveTitle",
                 "Minn\\Theme\\BodyClasses",
@@ -41217,7 +41238,7 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/Resolver.php",
-            "lines": 556,
+            "lines": 554,
             "doc": "Turns a public URL into a Resolution, following the reference's observed\nrules:\n\n- Unpaged content and archives without a trailing slash redirect to the\nslashed form, as typed (case kept); paged views, search, and 404s do not.\n- Query-var forms (?p=, ?page_id=, ?cat=, ?tag=, ?author=, ?m=, ?name=,\n?pagename=) redirect to the pretty form when the target is public.\n- Archive-shaped paths (category, tag, author, search, a four-digit year)\nare strict: a mismatch is a 404 with no guessing.\n- Plain-segment paths try the page hierarchy, then the post structure,\nthen redirect to the closest published page or post whose name starts\nwith the last segment, pages before posts, newest first.\n- Empty term and date archives are 404; an author archive is 200 for any\nname, even one that belongs to nobody.\n- Non-public posts are 404 to anonymous readers and served to a reader\nwho can edit them.",
             "implements": [],
             "extends": null,
@@ -41236,6 +41257,7 @@
                 "Minn\\Front\\PluginRules",
                 "Minn\\Front\\Redirects",
                 "Minn\\Front\\Resolution",
+                "Minn\\Front\\SingleAddresses",
                 "Minn\\Http\\Request",
                 "Minn\\Runtime\\Runtime"
             ],
@@ -41465,8 +41487,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 452,
-                    "end": 467
+                    "line": 459,
+                    "end": 474
                 },
                 {
                     "routes": [],
@@ -41515,7 +41537,7 @@
                         }
                     ],
                     "line": 143,
-                    "end": 202
+                    "end": 209
                 },
                 {
                     "routes": [],
@@ -41541,8 +41563,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 204,
-                    "end": 285
+                    "line": 211,
+                    "end": 292
                 },
                 {
                     "routes": [],
@@ -41582,8 +41604,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 287,
-                    "end": 302
+                    "line": 294,
+                    "end": 309
                 },
                 {
                     "routes": [],
@@ -41602,8 +41624,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 304,
-                    "end": 316
+                    "line": 311,
+                    "end": 323
                 },
                 {
                     "routes": [],
@@ -41631,8 +41653,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 326,
-                    "end": 358
+                    "line": 333,
+                    "end": 365
                 },
                 {
                     "routes": [],
@@ -41653,8 +41675,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 361,
-                    "end": 364
+                    "line": 368,
+                    "end": 371
                 },
                 {
                     "routes": [],
@@ -41697,8 +41719,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 370,
-                    "end": 381
+                    "line": 377,
+                    "end": 388
                 },
                 {
                     "routes": [],
@@ -41733,8 +41755,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 384,
-                    "end": 394
+                    "line": 391,
+                    "end": 401
                 },
                 {
                     "routes": [],
@@ -41767,8 +41789,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 397,
-                    "end": 404
+                    "line": 404,
+                    "end": 411
                 },
                 {
                     "routes": [],
@@ -41794,8 +41816,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 406,
-                    "end": 420
+                    "line": 413,
+                    "end": 427
                 },
                 {
                     "routes": [],
@@ -41823,8 +41845,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 423,
-                    "end": 445
+                    "line": 430,
+                    "end": 452
                 },
                 {
                     "routes": [],
@@ -41859,8 +41881,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 470,
-                    "end": 504
+                    "line": 477,
+                    "end": 515
                 },
                 {
                     "routes": [],
@@ -41895,35 +41917,20 @@
                             "doc": ""
                         }
                     ],
-                    "line": 507,
-                    "end": 542
+                    "line": 518,
+                    "end": 553
                 },
                 {
                     "routes": [],
-                    "name": "formerSlug",
+                    "name": "elsewhere",
                     "static": false,
                     "visibility": "private",
-                    "signature": "formerSlug(string $slug, int $paged = 1): ?Minn\\Front\\Resolution",
-                    "doc": "A slug a post used to have redirects to where the post lives now,\nkeeping the page number and dropping the query string; the lookup\nignores status because the reference does (unreadable posts land on\ntheir `?p=` form and answer 404 there).",
+                    "signature": "elsewhere(): Minn\\Front\\SingleAddresses",
+                    "doc": "The addresses a single answers to besides its own.",
                     "shapes": [],
-                    "params": [
-                        {
-                            "name": "slug",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "paged",
-                            "type": "int",
-                            "shape": "",
-                            "default": "1",
-                            "doc": ""
-                        }
-                    ],
-                    "line": 550,
-                    "end": 561
+                    "params": [],
+                    "line": 556,
+                    "end": 559
                 },
                 {
                     "routes": [],
@@ -41956,8 +41963,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 563,
-                    "end": 570
+                    "line": 561,
+                    "end": 568
                 },
                 {
                     "routes": [],
@@ -41976,8 +41983,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 572,
-                    "end": 587
+                    "line": 570,
+                    "end": 585
                 },
                 {
                     "routes": [],
@@ -41996,8 +42003,176 @@
                             "doc": ""
                         }
                     ],
-                    "line": 589,
-                    "end": 592
+                    "line": 587,
+                    "end": 590
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Front\\SingleAddresses",
+            "short": "SingleAddresses",
+            "namespace": "Minn\\Front",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Front/SingleAddresses.php",
+            "lines": 61,
+            "doc": "The addresses a single answers to besides its own, as the reference\ntreats them: a slug the post used to have (alone, with a page number, or\nwith an embed or trackback suffix), and its comment-page-N addresses.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Content\\PostRecord",
+                "Minn\\Content\\Posts",
+                "Minn\\Db",
+                "Minn\\Front\\Kind",
+                "Minn\\Front\\Permalinks",
+                "Minn\\Front\\Redirects",
+                "Minn\\Front\\Resolution"
+            ],
+            "usedBy": [
+                "Minn\\Front\\Resolver"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Db $db, Minn\\Content\\Posts $posts, Minn\\Front\\Permalinks $permalinks)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "db",
+                        "type": "Minn\\Db",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "posts",
+                        "type": "Minn\\Content\\Posts",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "permalinks",
+                        "type": "Minn\\Front\\Permalinks",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 18,
+                "end": 23
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "db",
+                    "type": "Minn\\Db",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "posts",
+                    "type": "Minn\\Content\\Posts",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "permalinks",
+                    "type": "Minn\\Front\\Permalinks",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "formerSlug",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "formerSlug(string $slug, int $paged = 1): ?Minn\\Front\\Resolution",
+                    "doc": "A slug a post used to have redirects to where the post lives now,\nkeeping the page number and dropping the query string; the lookup\nignores status because the reference does (unreadable posts land on\ntheir `?p=` form and answer 404 there).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "slug",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "paged",
+                            "type": "int",
+                            "shape": "",
+                            "default": "1",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 31,
+                    "end": 44
+                },
+                {
+                    "routes": [],
+                    "name": "commentPage",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "commentPage(?Minn\\Front\\Resolution $single, Minn\\Front\\Redirects $redirects): Minn\\Front\\Resolution",
+                    "doc": "A single's comment-page-N address: served as the single when the site\npages its comments, sent to the single's own address when it does\nnot, as the reference does. (The engine does not page the comment\nlist itself yet; contracts/front.)",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "single",
+                            "type": "?Minn\\Front\\Resolution",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "redirects",
+                            "type": "Minn\\Front\\Redirects",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 52,
+                    "end": 61
+                },
+                {
+                    "routes": [],
+                    "name": "formerSuffix",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "formerSuffix(Minn\\Front\\Resolution $redirect, string $suffix): Minn\\Front\\Resolution",
+                    "doc": "A former slug asked for with a suffix: embed follows the post to its\nnew embed address, trackback goes to the post itself. The front\npage's redirect to the root keeps its own handling.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "redirect",
+                            "type": "Minn\\Front\\Resolution",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "suffix",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 68,
+                    "end": 75
                 }
             ]
         },

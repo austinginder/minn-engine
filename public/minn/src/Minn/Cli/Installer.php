@@ -10,13 +10,22 @@ use Throwable;
  * The swap, both ways. Install parks WordPress's own files beside the
  * webroot, lays the engine and its shape files down, and leaves
  * wp-config.php and wp-content untouched; eject puts every parked file
- * back and removes what install wrote. A manifest in minn/.install.json
- * is the record eject works from. Preflight says what the site will and
+ * back and removes what install wrote. The install record at the webroot
+ * (.minn-install.php) is what eject works from. Preflight says what the site will and
  * will not get before anything moves.
  */
 final class Installer
 {
-    private const MANIFEST = '.install.json';
+    /**
+     * The install record sits at the webroot, so every site keeps its own
+     * (a symlinked minn/ is shared between sites) and an engine update
+     * cannot take it. It is PHP that returns first, so a web request for it
+     * prints nothing, and it names the webroot it belongs to.
+     */
+    private const RECORD = '.minn-install.php';
+    private const RECORD_HEAD = "<?php return; // Minn Engine's install record: what `wp minn eject` puts back. ?>\n";
+    /** Where installs kept it before: read from a site's own minn/ copy, never through a shared symlink. */
+    private const LEGACY_RECORD = '.install.json';
     /** The files WordPress keeps at the webroot, moved aside as a set. */
     private const CORE_ENTRIES = [
         'wp-admin', 'wp-includes', 'index.php', 'wp-activate.php', 'wp-blog-header.php', 'wp-comments-post.php',
@@ -32,7 +41,7 @@ final class Installer
      */
     private const LEGACY_PUBLISHED = ['minn-admin-asset', 'minn-engine', 'wp-includes/js/jquery'];
     /** Development-only trees inside the engine or the admin bundle that never ship. */
-    private const SKIP = ['.git', 'node_modules', 'tests', 'docs', '.DS_Store', self::MANIFEST];
+    private const SKIP = ['.git', 'node_modules', 'tests', 'docs', '.DS_Store', self::LEGACY_RECORD];
 
     /** @var list<string> */
     private array $lines = [];
@@ -96,7 +105,7 @@ final class Installer
         $state = self::state($root);
         $this->say("{$root}: {$state}");
         if ($state === 'minn') {
-            $manifest = $this->manifest($root);
+            $manifest = self::record($root);
             $this->say('  installed ' . ($manifest['installed'] ?? '?') . ', engine ' . ($manifest['engine_version'] ?? '?') . ', parked at ' . ($manifest['park'] ?? '?'));
         }
         return 0;
@@ -152,7 +161,8 @@ final class Installer
         $this->say('Wrote ' . implode(', ', self::LAYOUT));
         $placeholders = $this->writePlaceholders($root);
         $this->say("Wrote {$placeholders} require placeholders");
-        file_put_contents("{$target}/" . self::MANIFEST, json_encode([
+        file_put_contents("{$root}/" . self::RECORD, self::RECORD_HEAD . json_encode([
+            'root' => realpath($root) ?: $root,
             'installed' => gmdate('c'),
             'engine_version' => self::version(),
             'park' => $park,
@@ -171,7 +181,7 @@ final class Installer
             $this->say('Eject refused: the engine is not installed here.');
             return 1;
         }
-        $manifest = $this->manifest($root);
+        $manifest = self::record($root);
         $park = (string) ($manifest['park'] ?? '');
         if ($park === '' || !is_dir($park)) {
             $this->say("Eject refused: parked files not found at {$park}.");
@@ -205,6 +215,7 @@ final class Installer
         if (count(scandir($park) ?: []) <= 2) {
             rmdir($park);
         }
+        @unlink("{$root}/" . self::RECORD);
         $this->say("Ejected. Restored {$restored} entries; the engine and its shape files are gone; wp-config.php and wp-content were not touched.");
         $this->say('Note: a PHP opcode cache may serve the engine\'s wp-settings.php for a few seconds (opcache.revalidate_freq); clear it if the host offers a way.');
         return 0;
@@ -213,7 +224,7 @@ final class Installer
     /** What a webroot is running: minn, wordpress, or unknown. */
     public static function state(string $root): string
     {
-        if (is_file("{$root}/minn/" . self::MANIFEST) || (is_file("{$root}/minn/bootstrap.php") && !is_file("{$root}/wp-load.php"))) {
+        if (is_file("{$root}/" . self::RECORD) || self::record($root) !== [] || (is_file("{$root}/minn/bootstrap.php") && !is_file("{$root}/wp-load.php"))) {
             return 'minn';
         }
         if (is_file("{$root}/wp-load.php") && is_file("{$root}/wp-includes/version.php")) {
@@ -222,10 +233,24 @@ final class Installer
         return 'unknown';
     }
 
-    private function manifest(string $root): array
+    /**
+     * The install record for a webroot: its owner, when, the engine
+     * version, the park, what moved, what was laid down. Empty when there
+     * is none, or when the one found names another webroot (a site that
+     * was moved or copied keeps a record its own eject must not act on).
+     *
+     * @return array<string, mixed>
+     */
+    public static function record(string $root): array
     {
-        $file = "{$root}/minn/" . self::MANIFEST;
-        return is_file($file) ? (array) json_decode((string) file_get_contents($file), true) : [];
+        $file = "{$root}/" . self::RECORD;
+        if (is_file($file)) {
+            $text = (string) file_get_contents($file);
+            $record = (array) json_decode(str_starts_with($text, self::RECORD_HEAD) ? substr($text, strlen(self::RECORD_HEAD)) : '', true);
+            return in_array((string) ($record['root'] ?? ''), ['', realpath($root) ?: $root], true) ? $record : [];
+        }
+        $legacy = "{$root}/minn/" . self::LEGACY_RECORD;
+        return !is_link("{$root}/minn") && is_file($legacy) ? (array) json_decode((string) file_get_contents($legacy), true) : [];
     }
 
     /**

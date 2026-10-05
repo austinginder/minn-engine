@@ -9,9 +9,9 @@ the wp verbs the engine answers itself
 | [`Commands`](#commands) | final class | 94 | The verbs the engine answers to. Every one is registered for the |
 | [`CronCommand`](#croncommand) | final class | 277 | `wp cron`: the events, schedules, and spawn test a host and a fleet ask |
 | [`DirectorySearch`](#directorysearch) | final class | 37 | Shared wording for `wp theme search` and `wp plugin search`. The |
-| [`Installer`](#installer) | final class | 303 | The swap, both ways. Install parks WordPress's own files beside the |
+| [`Installer`](#installer) | final class | 328 | The swap, both ways. Install parks WordPress's own files beside the |
 | [`MaintenanceCommand`](#maintenancecommand) | final class | 65 | `wp maintenance-mode`: the `.maintenance` marker in the webroot. The |
-| [`MinnCommand`](#minncommand) | final class | 308 | Identifies the engine. |
+| [`MinnCommand`](#minncommand) | final class | 304 | Identifies the engine. |
 | [`OptionCommand`](#optioncommand) | final class | 185 | Options, read and written straight to the options table. Serialized |
 | [`PluginCommand`](#plugincommand) | final class | 475 | `wp plugin list\|install\|update\|activate\|deactivate\|delete`: the inventory and the fleet's install/update/delete. |
 | [`Preflight`](#preflight) | final class | 360 | What a site will and will not get from the engine, before anything |
@@ -191,11 +191,16 @@ Searches wordpress.org for one kind of asset and prints the page.
 The swap, both ways. Install parks WordPress's own files beside the
 webroot, lays the engine and its shape files down, and leaves
 wp-config.php and wp-content untouched; eject puts every parked file
-back and removes what install wrote. A manifest in minn/.install.json
-is the record eject works from. Preflight says what the site will and
+back and removes what install wrote. The install record at the webroot
+(.minn-install.php) is what eject works from. Preflight says what the site will and
 will not get before anything moves.
 
-- const `MANIFEST` = `'.install.json'`
+- const `RECORD` = `'.minn-install.php'` — The install record sits at the webroot, so every site keeps its own
+(a symlinked minn/ is shared between sites) and an engine update
+cannot take it. It is PHP that returns first, so a web request for it
+prints nothing, and it names the webroot it belongs to.
+- const `RECORD_HEAD` = `'<?php return; // Minn Engine\'s install record: what `wp minn eject` puts back. ?> '`
+- const `LEGACY_RECORD` = `'.install.json'` — Where installs kept it before: read from a site's own minn/ copy, never through a shared symlink.
 - const `CORE_ENTRIES` = `array (   0 => 'wp-admin',   1 => 'wp-includes',   2 => 'index.php',   3 => 'wp-activate.php',   4 => 'wp-blog-header.php',   5 => 'wp-comments-post.php',   6 => 'wp-config-sample.php',   7 => 'wp-cron.php',   8 => 'wp-links-opml.php',   9 => 'wp-load.php',   10 => 'wp-login.php',   11 => 'wp-mail.php',   12 => 'wp-settings.php',   13 => 'wp-signup.php',   14 => 'wp-trackback.php',   15 => 'xmlrpc.php',   16 => 'license.txt',   17 => 'readme.html', )` — The files WordPress keeps at the webroot, moved aside as a set.
 - const `LAYOUT` = `array (   0 => 'index.php',   1 => 'wp-login.php',   2 => 'wp-settings.php',   3 => 'wp-cli.yml',   4 => 'wp-includes/version.php',   5 => 'wp-admin/index.php', )`
 - const `WRITTEN_TREES` = `array (   0 => 'wp-includes',   1 => 'wp-admin', )` — Webroot trees install writes (shape files + require placeholders) and eject deletes before restoring the park.
@@ -234,7 +239,16 @@ Puts WordPress back and removes the engine's files.
 
 What a webroot is running: minn, wordpress, or unknown.
 
-Internals: `help()` (private, line 87), `manifest()` (private, line 225), `writePlaceholders()` (private, line 236), `move()` (private, line 257), `copyTree()` (private, line 273), `removeTree()` (private, line 292), `version()` (private, line 309), `say()` (private, line 315)
+### static `record(string $root): array`
+
+The install record for a webroot: its owner, when, the engine
+version, the park, what moved, what was laid down. Empty when there
+is none, or when the one found names another webroot (a site that
+was moved or copied keeps a record its own eject must not act on).
+
+- `@return array<string, mixed>`
+
+Internals: `help()` (private, line 96), `writePlaceholders()` (private, line 261), `move()` (private, line 282), `copyTree()` (private, line 298), `removeTree()` (private, line 317), `version()` (private, line 334), `say()` (private, line 340)
 
 
 ## MaintenanceCommand
@@ -387,7 +401,7 @@ resumed here.
 [--theme]
 : Treat the name as a theme rather than a plugin.
 
-Internals: `installer()` (private, line 203), `parkedTree()` (private, line 319), `engineVersion()` (private, line 330)
+Internals: `installer()` (private, line 203), `parkedTree()` (private, line 319), `engineVersion()` (private, line 326)
 
 
 ## OptionCommand

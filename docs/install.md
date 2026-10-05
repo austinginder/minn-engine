@@ -79,8 +79,13 @@ the fallback). The engine itself loads `wp-config.php` normally for CLI and web.
    `wp-admin/includes/*.php` the reference has (`data/reference-files.json`),
    so a plugin `require ABSPATH . 'wp-admin/includes/plugin.php'` resolves.
    The engine already provides those symbols; the files are the contract.
-5. Records what it did in `minn/.install.json`: the park, the entries moved,
-   the engine version.
+5. Records what it did in `.minn-install.php` at the webroot: the webroot
+   itself, the park, the entries moved, the engine version. It sits beside
+   `wp-config.php`, not inside `minn/`, so each site keeps its own (a
+   development `minn/` is often one symlinked engine shared by several
+   sites) and an engine update cannot remove it. It is PHP that returns
+   first, so a web request for it shows nothing, and eject acts only on a
+   record that names its own webroot.
 
 Static CSS and JS are served from inside `minn/` (`minn/admin/assets/`,
 `minn/assets/`). Hosts that 404 missing `.js`/`.css` find those files on

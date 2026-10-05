@@ -117,8 +117,10 @@ $check(
 );
 $check('wp-config.php is untouched', md5_file("$WEBROOT/wp-config.php") === $configBefore);
 $check('wp-content is untouched', file_exists("$WEBROOT/wp-content/uploads") && is_link("$WEBROOT/wp-content/themes") && is_file("$WEBROOT/.htaccess"));
-$manifest = json_decode((string) @file_get_contents("$WEBROOT/minn/.install.json"), true);
-$check('the manifest records the park and the moved entries', is_array($manifest) && ($manifest['park'] ?? '') === $PARK && in_array('wp-load.php', $manifest['moved'] ?? [], true) && in_array('wp-admin', $manifest['moved'] ?? [], true), json_encode($manifest));
+$record = (string) @file_get_contents("$WEBROOT/.minn-install.php");
+$manifest = json_decode((string) substr($record, (int) strpos($record, "?>\n") + 3), true);
+$check('the install record sits at the webroot, not in the (possibly shared) engine', str_starts_with($record, '<?php return;') && !file_exists("$WEBROOT/minn/.install.json"));
+$check('the record names its webroot, the park and the moved entries', is_array($manifest) && ($manifest['root'] ?? '') === realpath($WEBROOT) && ($manifest['park'] ?? '') === $PARK && in_array('wp-load.php', $manifest['moved'] ?? [], true) && in_array('wp-admin', $manifest['moved'] ?? [], true), json_encode($manifest));
 [$out, $code] = $minn('status ' . escapeshellarg($WEBROOT));
 $check('status reads the engine', $code === 0 && str_contains($out, ': minn') && str_contains($out, 'parked at'), $out);
 [$out, $code] = $minn('install ' . escapeshellarg($WEBROOT) . ' --park=' . escapeshellarg($PARK));
@@ -136,7 +138,7 @@ $check('wp minn info reports the installed engine dir', $c3 === 0 && str_contain
 $check('eject succeeds', $code === 0 && str_contains($out, 'Ejected.'), $out);
 $check('the tree is back byte for byte', $tree($WEBROOT) === $before, json_encode(array_keys($tree($WEBROOT))) . ' vs ' . json_encode(array_keys($before)));
 $check('the park is gone', !file_exists($PARK));
-$check('no engine remains', !file_exists("$WEBROOT/minn") && !file_exists("$WEBROOT/wp-cli.yml"));
+$check('no engine remains', !file_exists("$WEBROOT/minn") && !file_exists("$WEBROOT/wp-cli.yml") && !file_exists("$WEBROOT/.minn-install.php"));
 $check('published asset trees are gone', !file_exists("$WEBROOT/minn-admin-asset") && !file_exists("$WEBROOT/minn-engine") && !file_exists("$WEBROOT/wp-includes/js/jquery"));
 [$out, $code] = $minn('status ' . escapeshellarg($WEBROOT));
 $check('status reads WordPress again', $code === 0 && str_contains($out, ': wordpress'), $out);
