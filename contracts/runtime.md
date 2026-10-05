@@ -2144,3 +2144,67 @@ names; fixture `contracts/fixtures/api/kses-rules.json` (probe
   even when a filter is added before the next call. Not pinned in the
   fixture, because the engine's probe runner never fires `wp_loaded`;
   checked on both stacks by hand.
+
+## Translations (2026-10-05)
+
+Text domains load from `.l10n.php` and `.mo` files; `__()`, `_x()`,
+`_n()` and `_nx()` look them up before their filters run. `Minn\I18n`
+reads both formats (`MoFile`, `PhpFile`, both byte orders of `.mo`),
+evaluates Plural-Forms with its own parser (`PluralExpression`; nothing is
+handed to PHP to run), and keeps the request's domains (`TextDomains`,
+`Runtime::textDomains()`). The gettext classes plugins extend (`MO`,
+`Translations`, `Gettext_Translations`, `Translation_Entry`,
+`Plural_Forms`, `WP_Translation_Controller`, `WP_Translations`,
+`WP_Translation_File`) live in `wp-api/classes/POMO.php` and its
+neighbours over those classes. Fixture `contracts/fixtures/api/l10n.json`
+(probe `tests/tools/l10n-probe.php`, language files in
+`tests/fixtures/languages/`); `tests/unit/i18n.php` pins the parser.
+
+- **`load_textdomain($domain, $mofile, $locale)`** runs, in order:
+  `pre_load_textdomain` (null, domain, mofile, locale; anything else is
+  the answer), `override_load_textdomain` (false, …; true stops with
+  true), the `load_textdomain` action (domain, mofile),
+  `load_textdomain_mofile` (mofile, domain), `translation_file_format`
+  ('php', domain), then `load_translation_file` (file, domain, locale,
+  the locale defaulting to `determine_locale()`) for each candidate. With
+  the php format the candidates are `x.l10n.php` then `x.mo`, and the
+  first that reads wins: when the `.l10n.php` is there the `.mo` is never
+  read. With `mo`, only the `.mo`. A file that is not there returns false
+  after both candidates were filtered.
+- **Lookups.** Keys are `context` + `\x04` + original (no context: the
+  original alone; an empty context is no context). An empty translation
+  counts as none. Several files in one domain answer in load order, the
+  first with the message winning, each file under its own plural rule.
+  `_n()` with no translation follows English (`$number === 1`).
+- **Plural-Forms.** Without the header a file is English (two forms,
+  `n != 1`). An expression that does not parse sends every number to the
+  first form (checked with `plural=n > ;`).
+- **`unload_textdomain($domain, $reloadable)`** fires
+  `override_unload_textdomain` (false, domain, reloadable) and the
+  `unload_textdomain` action every time, and returns whether files were
+  loaded. Unloaded without `$reloadable`, a domain does not come back on
+  its own.
+- **`get_translations_for_domain`** is a `WP_Translations` for a loaded
+  domain (its `translate` and `translate_plural` fall back to the
+  original) and one shared `NOOP_Translations` otherwise.
+- **`load_plugin_textdomain($domain, false, $rel)`** reads
+  `WP_PLUGIN_DIR/$rel/{domain}-{locale}` (`.l10n.php` or `.mo`) when it
+  is there; when it is not, it returns true without loading and the
+  domain loads just in time on first use. It fires no `plugin_locale`
+  filter.
+- **Just in time.** A domain used before anyone loaded it, in any locale
+  but `en_US`, is looked for once: the folder a plugin or theme named for
+  it, then `WP_LANG_DIR/plugins/` and `WP_LANG_DIR/themes/`. The reference
+  reads the languages folder once per request, so a file copied in during
+  a request is not seen there; the engine looks at the disk.
+- **The MO class.** `import_from_file` fills `headers` (names as written)
+  and `entries` keyed like the lookups; a plural entry is keyed by its
+  singular and carries `plural`; `add_entry` takes an entry or an array;
+  `merge_with` lets the other's entries replace these;
+  `select_plural_form` and `get_plural_forms_count` follow the file's
+  Plural-Forms. `NOOP_Translations` is English throughout.
+
+Not yet: script translations (`load_script_textdomain`,
+`wp_set_script_translations`), locale switching, the core (`default`)
+domain, and the engine's own front-end strings, which are written in
+English and do not pass through `__()`.

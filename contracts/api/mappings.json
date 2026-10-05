@@ -2,15 +2,168 @@
     "generated": "2026-10-05",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 449,
-        "composes": 769,
-        "leaf": 366,
-        "noop": 1283,
-        "functions": 2861,
-        "minnMethods": 442,
+        "minn": 470,
+        "composes": 773,
+        "leaf": 397,
+        "noop": 1312,
+        "functions": 2946,
+        "minnMethods": 456,
         "leafLinesOver15": 13
     },
     "functions": {
+        "Gettext_Translations::gettext_select_plural_form": {
+            "file": "classes/POMO.php",
+            "lines": 6,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Gettext_Translations::make_headers": {
+            "file": "classes/POMO.php",
+            "lines": 8,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Gettext_Translations::make_plural_form_function": {
+            "file": "classes/POMO.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\I18n\\PluralRule::fromExpression",
+                "Minn\\I18n\\PluralRule::index"
+            ],
+            "composes": []
+        },
+        "Gettext_Translations::nplurals_and_expression_from_header": {
+            "file": "classes/POMO.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\I18n\\PluralRule::fromHeader"
+            ],
+            "composes": []
+        },
+        "Gettext_Translations::parenthesize_plural_exression": {
+            "file": "classes/POMO.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Gettext_Translations::set_header": {
+            "file": "classes/POMO.php",
+            "lines": 6,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "MO::export": {
+            "file": "classes/POMO.php",
+            "lines": 5,
+            "kind": "minn",
+            "minn": [
+                "Minn\\I18n\\MoFile::write"
+            ],
+            "composes": []
+        },
+        "MO::export_headers": {
+            "file": "classes/POMO.php",
+            "lines": 5,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "MO::export_original": {
+            "file": "classes/POMO.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\I18n\\Catalog::key"
+            ],
+            "composes": []
+        },
+        "MO::export_to_file": {
+            "file": "classes/POMO.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "MO::export_to_file_handle": {
+            "file": "classes/POMO.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "MO::export_translations": {
+            "file": "classes/POMO.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "MO::get_byteorder": {
+            "file": "classes/POMO.php",
+            "lines": 5,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "MO::get_filename": {
+            "file": "classes/POMO.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "MO::get_plural_forms_count": {
+            "file": "classes/POMO.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\I18n\\PluralRule::fromHeader"
+            ],
+            "composes": []
+        },
+        "MO::import_from_file": {
+            "file": "classes/POMO.php",
+            "lines": 10,
+            "kind": "minn",
+            "minn": [
+                "Minn\\I18n\\MoFile::read"
+            ],
+            "composes": []
+        },
+        "MO::import_from_reader": {
+            "file": "classes/POMO.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "MO::is_entry_good_for_export": {
+            "file": "classes/POMO.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "MO::make_entry": {
+            "file": "classes/POMO.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "MO::select_plural_form": {
+            "file": "classes/POMO.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "NOOP_Translations::add_entry": {
             "file": "classes/NOOP_Translations.php",
             "lines": 1,
@@ -299,6 +452,154 @@
             "file": "classes/PasswordHash.php",
             "lines": 1,
             "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Plural_Forms::__construct": {
+            "file": "classes/POMO.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Plural_Forms::execute": {
+            "file": "classes/POMO.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\I18n\\PluralExpression::evaluate"
+            ],
+            "composes": []
+        },
+        "Plural_Forms::get": {
+            "file": "classes/POMO.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Plural_Forms::parse": {
+            "file": "classes/POMO.php",
+            "lines": 5,
+            "kind": "minn",
+            "minn": [
+                "Minn\\I18n\\PluralExpression::parse"
+            ],
+            "composes": []
+        },
+        "Translation_Entry::Translation_Entry": {
+            "file": "classes/POMO.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_deprecated_constructor"
+            ]
+        },
+        "Translation_Entry::__construct": {
+            "file": "classes/POMO.php",
+            "lines": 12,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Translation_Entry::key": {
+            "file": "classes/POMO.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\I18n\\Catalog::key"
+            ],
+            "composes": []
+        },
+        "Translation_Entry::merge_with": {
+            "file": "classes/POMO.php",
+            "lines": 5,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Translations::add_entry": {
+            "file": "classes/POMO.php",
+            "lines": 7,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Translations::add_entry_or_merge": {
+            "file": "classes/POMO.php",
+            "lines": 11,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Translations::get_header": {
+            "file": "classes/POMO.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Translations::get_plural_forms_count": {
+            "file": "classes/POMO.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Translations::merge_originals_with": {
+            "file": "classes/POMO.php",
+            "lines": 7,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Translations::merge_with": {
+            "file": "classes/POMO.php",
+            "lines": 3,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Translations::select_plural_form": {
+            "file": "classes/POMO.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Translations::set_header": {
+            "file": "classes/POMO.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Translations::set_headers": {
+            "file": "classes/POMO.php",
+            "lines": 3,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Translations::translate": {
+            "file": "classes/POMO.php",
+            "lines": 3,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Translations::translate_entry": {
+            "file": "classes/POMO.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Translations::translate_plural": {
+            "file": "classes/POMO.php",
+            "lines": 5,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
@@ -7222,6 +7523,320 @@
                 "wp_set_post_terms"
             ]
         },
+        "WP_Translation_Controller::get_entries": {
+            "file": "classes/WP_Translation_Controller.php",
+            "lines": 7,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Runtime::textDomains"
+            ],
+            "composes": []
+        },
+        "WP_Translation_Controller::get_files": {
+            "file": "classes/WP_Translation_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Runtime::textDomains"
+            ],
+            "composes": []
+        },
+        "WP_Translation_Controller::get_headers": {
+            "file": "classes/WP_Translation_Controller.php",
+            "lines": 7,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Runtime::textDomains"
+            ],
+            "composes": []
+        },
+        "WP_Translation_Controller::get_instance": {
+            "file": "classes/WP_Translation_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Translation_Controller::get_locale": {
+            "file": "classes/WP_Translation_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Translation_Controller::has_translation": {
+            "file": "classes/WP_Translation_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Runtime::textDomains"
+            ],
+            "composes": []
+        },
+        "WP_Translation_Controller::is_textdomain_loaded": {
+            "file": "classes/WP_Translation_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Runtime::textDomains"
+            ],
+            "composes": []
+        },
+        "WP_Translation_Controller::load_file": {
+            "file": "classes/WP_Translation_Controller.php",
+            "lines": 6,
+            "kind": "minn",
+            "minn": [
+                "Minn\\I18n\\TranslationFiles::read",
+                "Minn\\Runtime\\Runtime::textDomains"
+            ],
+            "composes": []
+        },
+        "WP_Translation_Controller::locate_translation": {
+            "file": "classes/WP_Translation_Controller.php",
+            "lines": 6,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Runtime::textDomains"
+            ],
+            "composes": []
+        },
+        "WP_Translation_Controller::normalize_header": {
+            "file": "classes/WP_Translation_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Translation_Controller::set_locale": {
+            "file": "classes/WP_Translation_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Translation_Controller::translate": {
+            "file": "classes/WP_Translation_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\I18n\\Catalog::key",
+                "Minn\\Runtime\\Runtime::textDomains"
+            ],
+            "composes": []
+        },
+        "WP_Translation_Controller::translate_plural": {
+            "file": "classes/WP_Translation_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\I18n\\Catalog::key",
+                "Minn\\Runtime\\Runtime::textDomains"
+            ],
+            "composes": []
+        },
+        "WP_Translation_Controller::unload_file": {
+            "file": "classes/WP_Translation_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Runtime::textDomains"
+            ],
+            "composes": []
+        },
+        "WP_Translation_Controller::unload_textdomain": {
+            "file": "classes/WP_Translation_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Runtime::textDomains"
+            ],
+            "composes": []
+        },
+        "WP_Translation_File::__construct": {
+            "file": "classes/WP_Translation_File.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Translation_File::create": {
+            "file": "classes/WP_Translation_File.php",
+            "lines": 9,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Translation_File::entries": {
+            "file": "classes/WP_Translation_File.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Translation_File::error": {
+            "file": "classes/WP_Translation_File.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Translation_File::export": {
+            "file": "classes/WP_Translation_File.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Translation_File::get_file": {
+            "file": "classes/WP_Translation_File.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Translation_File::get_plural_expression_from_header": {
+            "file": "classes/WP_Translation_File.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\I18n\\PluralRule::fromHeader"
+            ],
+            "composes": []
+        },
+        "WP_Translation_File::get_plural_form": {
+            "file": "classes/WP_Translation_File.php",
+            "lines": 3,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Translation_File::headers": {
+            "file": "classes/WP_Translation_File.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Translation_File::import": {
+            "file": "classes/WP_Translation_File.php",
+            "lines": 5,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Translation_File::make_plural_form_function": {
+            "file": "classes/WP_Translation_File.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\I18n\\PluralRule::fromExpression",
+                "Minn\\I18n\\PluralRule::index"
+            ],
+            "composes": []
+        },
+        "WP_Translation_File::parse_file": {
+            "file": "classes/WP_Translation_File.php",
+            "lines": 15,
+            "kind": "minn",
+            "minn": [
+                "Minn\\I18n\\TranslationFiles::read"
+            ],
+            "composes": []
+        },
+        "WP_Translation_File::transform": {
+            "file": "classes/WP_Translation_File.php",
+            "lines": 6,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Translation_File::translate": {
+            "file": "classes/WP_Translation_File.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Translation_File_MO::detect_endian_and_validate_file": {
+            "file": "classes/WP_Translation_File.php",
+            "lines": 6,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Translation_File_MO::export": {
+            "file": "classes/WP_Translation_File.php",
+            "lines": 5,
+            "kind": "minn",
+            "minn": [
+                "Minn\\I18n\\MoFile::write"
+            ],
+            "composes": []
+        },
+        "WP_Translation_File_MO::parse_file": {
+            "file": "classes/WP_Translation_File.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Translation_File_PHP::export": {
+            "file": "classes/WP_Translation_File.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Translation_File_PHP::parse_file": {
+            "file": "classes/WP_Translation_File.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Translation_File_PHP::var_export": {
+            "file": "classes/WP_Translation_File.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Translations::__construct": {
+            "file": "classes/WP_Translations.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Translations::__get": {
+            "file": "classes/WP_Translations.php",
+            "lines": 8,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Translations::make_entry": {
+            "file": "classes/WP_Translations.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Translations::translate": {
+            "file": "classes/WP_Translations.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Translations::translate_plural": {
+            "file": "classes/WP_Translations.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "WP_User::__construct": {
             "file": "classes/WP_User.php",
             "lines": 18,
@@ -9051,6 +9666,22 @@
                 "wp_json_encode"
             ]
         },
+        "_load_textdomain_just_in_time": {
+            "file": "l10n.php",
+            "lines": 15,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Runtime::closed",
+                "Minn\\Runtime\\Runtime::firstTry",
+                "Minn\\Runtime\\Runtime::has",
+                "Minn\\Runtime\\Runtime::textDomains"
+            ],
+            "composes": [
+                "_minn_just_in_time_files",
+                "determine_locale",
+                "load_textdomain"
+            ]
+        },
         "_make_cat_compat": {
             "file": "taxonomy.php",
             "lines": 8,
@@ -9623,6 +10254,15 @@
             ],
             "composes": []
         },
+        "_minn_just_in_time_files": {
+            "file": "l10n.php",
+            "lines": 3,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Runtime::textDomains"
+            ],
+            "composes": []
+        },
         "_minn_known_entity": {
             "file": "formatting.php",
             "lines": 6,
@@ -9671,6 +10311,17 @@
                 "apply_filters",
                 "get_option",
                 "wp_parse_args"
+            ]
+        },
+        "_minn_load_from_folder": {
+            "file": "l10n.php",
+            "lines": 7,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Runtime::textDomains"
+            ],
+            "composes": [
+                "load_textdomain"
             ]
         },
         "_minn_main_query": {
@@ -9764,6 +10415,19 @@
                 "Minn\\Theme\\Theme::forStyles"
             ],
             "composes": []
+        },
+        "_minn_plural_translation": {
+            "file": "l10n.php",
+            "lines": 9,
+            "kind": "minn",
+            "minn": [
+                "Minn\\I18n\\Catalog::key",
+                "Minn\\Runtime\\Runtime::booted",
+                "Minn\\Runtime\\Runtime::textDomains"
+            ],
+            "composes": [
+                "_load_textdomain_just_in_time"
+            ]
         },
         "_minn_post_columns": {
             "file": "post.php",
@@ -10127,6 +10791,19 @@
             ],
             "composes": []
         },
+        "_minn_translation": {
+            "file": "l10n.php",
+            "lines": 6,
+            "kind": "minn",
+            "minn": [
+                "Minn\\I18n\\Catalog::key",
+                "Minn\\Runtime\\Runtime::booted",
+                "Minn\\Runtime\\Runtime::textDomains"
+            ],
+            "composes": [
+                "_load_textdomain_just_in_time"
+            ]
+        },
         "_minn_traverse_block": {
             "file": "blocks.php",
             "lines": 18,
@@ -10203,6 +10880,7 @@
             "kind": "composes",
             "minn": [],
             "composes": [
+                "_minn_plural_translation",
                 "apply_filters"
             ]
         },
@@ -10231,6 +10909,7 @@
             "kind": "composes",
             "minn": [],
             "composes": [
+                "_minn_plural_translation",
                 "apply_filters"
             ]
         },
@@ -15795,10 +16474,14 @@
         },
         "get_translations_for_domain": {
             "file": "l10n.php",
-            "lines": 1,
-            "kind": "noop",
-            "minn": [],
-            "composes": []
+            "lines": 6,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Runtime::textDomains"
+            ],
+            "composes": [
+                "_load_textdomain_just_in_time"
+            ]
         },
         "get_upload_iframe_src": {
             "file": "template.php",
@@ -16923,7 +17606,9 @@
             "file": "l10n.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\Runtime::textDomains"
+            ],
             "composes": []
         },
         "is_time": {
@@ -17085,7 +17770,10 @@
             "lines": 1,
             "kind": "noop",
             "minn": [],
-            "composes": []
+            "composes": [
+                "get_stylesheet_directory",
+                "load_theme_textdomain"
+            ]
         },
         "load_default_textdomain": {
             "file": "l10n.php",
@@ -17096,17 +17784,23 @@
         },
         "load_muplugin_textdomain": {
             "file": "l10n.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 2,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "_minn_load_from_folder",
+                "determine_locale"
+            ]
         },
         "load_plugin_textdomain": {
             "file": "l10n.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 3,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "_minn_load_from_folder",
+                "determine_locale"
+            ]
         },
         "load_template": {
             "file": "template.php",
@@ -17120,17 +17814,27 @@
         },
         "load_textdomain": {
             "file": "l10n.php",
-            "lines": 1,
-            "kind": "noop",
-            "minn": [],
-            "composes": []
+            "lines": 18,
+            "kind": "minn",
+            "minn": [
+                "Minn\\I18n\\TranslationFiles::candidates"
+            ],
+            "composes": [
+                "apply_filters",
+                "determine_locale",
+                "do_action"
+            ]
         },
         "load_theme_textdomain": {
             "file": "l10n.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 2,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "_minn_load_from_folder",
+                "determine_locale",
+                "get_template_directory"
+            ]
         },
         "locate_template": {
             "file": "template.php",
@@ -20029,10 +20733,11 @@
         },
         "translate": {
             "file": "l10n.php",
-            "lines": 2,
+            "lines": 3,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "_minn_translation",
                 "apply_filters"
             ]
         },
@@ -20057,10 +20762,11 @@
         },
         "translate_with_gettext_context": {
             "file": "l10n.php",
-            "lines": 2,
+            "lines": 3,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "_minn_translation",
                 "apply_filters"
             ]
         },
@@ -20105,10 +20811,15 @@
         },
         "unload_textdomain": {
             "file": "l10n.php",
-            "lines": 1,
-            "kind": "noop",
-            "minn": [],
-            "composes": []
+            "lines": 11,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Runtime::textDomains"
+            ],
+            "composes": [
+                "apply_filters",
+                "do_action"
+            ]
         },
         "unregister_block_bindings_source": {
             "file": "blocks.php",

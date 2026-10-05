@@ -1,0 +1,11 @@
+msgid ""
+msgstr ""
+"Language: pl_PL\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=3; plural=n > ;\n"
+
+msgid "%d cat"
+msgid_plural "%d cats"
+msgstr[0] "first %d"
+msgstr[1] "second %d"
+msgstr[2] "third %d"

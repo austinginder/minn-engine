@@ -1,6 +1,8 @@
 <?php
-/** Translation functions. English passes through; the .mo reader is a later milestone. */
+/** Translation functions over Minn\I18n: text domains loaded from .l10n.php and .mo files. Behaviour from contracts/fixtures/api/l10n.json. */
 
+use Minn\I18n\Catalog;
+use Minn\I18n\TranslationFiles;
 use Minn\Runtime\Runtime;
 
 function get_locale()
@@ -27,15 +29,42 @@ function determine_locale()
     return apply_filters('determine_locale', get_locale());
 }
 
+/** @internal a message's translation in a domain, the domain loaded just in time when it is not yet */
+function _minn_translation($domain, $text, $context = null): ?string
+{
+    if (!is_scalar($text) || !Runtime::booted()) {
+        return null;
+    }
+    $domain = (string) $domain;
+    _load_textdomain_just_in_time($domain);
+    return Runtime::textDomains()->translate($domain, Catalog::key((string) $text, $context === null ? null : (string) $context));
+}
+
+/** @internal the plural form a count takes in a domain, or English's when no file has the message */
+function _minn_plural_translation($single, $plural, $number, $domain, $context = null)
+{
+    $domain = (string) $domain;
+    if (Runtime::booted() && is_scalar($single)) {
+        _load_textdomain_just_in_time($domain);
+        $form = Runtime::textDomains()->translatePlural($domain, Catalog::key((string) $single, $context === null ? null : (string) $context), (int) $number);
+        if ($form !== null) {
+            return $form;
+        }
+    }
+    return (int) $number === 1 ? $single : $plural;
+}
+
 function translate($text, $domain = 'default')
 {
-    $translation = apply_filters('gettext', $text, $text, $domain);
+    $translation = _minn_translation($domain, $text) ?? $text;
+    $translation = apply_filters('gettext', $translation, $text, $domain);
     return apply_filters("gettext_{$domain}", $translation, $text, $domain);
 }
 
 function translate_with_gettext_context($text, $context, $domain = 'default')
 {
-    $translation = apply_filters('gettext_with_context', $text, $text, $context, $domain);
+    $translation = _minn_translation($domain, $text, $context) ?? $text;
+    $translation = apply_filters('gettext_with_context', $translation, $text, $context, $domain);
     return apply_filters("gettext_with_context_{$domain}", $translation, $text, $context, $domain);
 }
 
@@ -61,14 +90,14 @@ function _ex($text, $context, $domain = 'default')
 
 function _n($single, $plural, $number, $domain = 'default')
 {
-    $translation = (int) $number === 1 ? $single : $plural;
+    $translation = _minn_plural_translation($single, $plural, $number, $domain);
     $translation = apply_filters('ngettext', $translation, $single, $plural, $number, $domain);
     return apply_filters("ngettext_{$domain}", $translation, $single, $plural, $number, $domain);
 }
 
 function _nx($single, $plural, $number, $context, $domain = 'default')
 {
-    $translation = (int) $number === 1 ? $single : $plural;
+    $translation = _minn_plural_translation($single, $plural, $number, $domain, $context);
     $translation = apply_filters('ngettext_with_context', $translation, $single, $plural, $number, $context, $domain);
     return apply_filters("ngettext_with_context_{$domain}", $translation, $single, $plural, $number, $context, $domain);
 }
@@ -123,34 +152,109 @@ function esc_attr_x($text, $context, $domain = 'default')
     return esc_attr(translate_with_gettext_context($text, $context, $domain));
 }
 
+/** @internal loads the domain from a folder's file for the locale when there is one, or names the folder for later */
+function _minn_load_from_folder(string $domain, string $folder, string $file, string $locale): bool
+{
+    $folder = rtrim($folder, '/');
+    $mofile = "{$folder}/{$file}.mo";
+    if (is_readable($mofile) || is_readable("{$folder}/{$file}.l10n.php")) {
+        return load_textdomain($domain, $mofile, $locale);
+    }
+    Runtime::textDomains()->rememberFolder($domain, $folder);
+    return true;
+}
+
 function load_plugin_textdomain($domain, $deprecated = false, $plugin_rel_path = false)
 {
-    return true;
+    $folder = WP_PLUGIN_DIR . ($plugin_rel_path !== false ? '/' . trim((string) $plugin_rel_path, '/') : '');
+    $locale = determine_locale();
+    return _minn_load_from_folder((string) $domain, $folder, "{$domain}-{$locale}", $locale);
 }
 
 function load_muplugin_textdomain($domain, $mu_plugin_rel_path = '')
 {
-    return true;
+    $locale = determine_locale();
+    return _minn_load_from_folder((string) $domain, WPMU_PLUGIN_DIR . '/' . ltrim((string) $mu_plugin_rel_path, '/'), "{$domain}-{$locale}", $locale);
 }
 
 function load_theme_textdomain($domain, $path = false)
 {
-    return true;
+    $locale = determine_locale();
+    return _minn_load_from_folder((string) $domain, $path !== false ? (string) $path : get_template_directory(), $locale, $locale);
 }
 
 function load_child_theme_textdomain($domain, $path = false)
 {
-    return true;
+    return load_theme_textdomain($domain, $path !== false ? $path : get_stylesheet_directory());
 }
 
 function load_textdomain($domain, $mofile, $locale = null)
 {
+    $loaded = apply_filters('pre_load_textdomain', null, $domain, $mofile, $locale);
+    if ($loaded !== null) {
+        return (bool) $loaded;
+    }
+    if (apply_filters('override_load_textdomain', false, $domain, $mofile, $locale)) {
+        return true;
+    }
+    do_action('load_textdomain', $domain, $mofile);
+    $mofile = (string) apply_filters('load_textdomain_mofile', $mofile, $domain);
+    $locale ??= determine_locale();
+    $format = apply_filters('translation_file_format', 'php', $domain);
+    foreach (TranslationFiles::candidates($mofile, $format === 'mo' ? 'mo' : 'php') as $candidate) {
+        $file = (string) apply_filters('load_translation_file', $candidate, $domain, $locale);
+        if (WP_Translation_Controller::get_instance()->load_file($file, (string) $domain, (string) $locale)) {
+            return true;
+        }
+    }
     return false;
 }
 
 function unload_textdomain($domain, $reloadable = false)
 {
+    if (apply_filters('override_unload_textdomain', false, $domain, $reloadable)) {
+        if (!$reloadable) {
+            Runtime::textDomains()->close((string) $domain);
+        }
+        return true;
+    }
+    do_action('unload_textdomain', $domain, $reloadable);
+    if (!$reloadable) {
+        Runtime::textDomains()->close((string) $domain);
+    }
+    return Runtime::textDomains()->unload((string) $domain);
+}
+
+/**
+ * A domain nobody loaded yet is looked for once per locale: in the folder a
+ * plugin or theme named for it, then the site's languages folder for plugins
+ * and themes. English needs no files.
+ */
+function _load_textdomain_just_in_time($domain)
+{
+    $domains = Runtime::textDomains();
+    $domain = (string) $domain;
+    if ($domain === 'default' || $domains->has($domain) || $domains->closed($domain) || !$domains->firstTry($domain)) {
+        return false;
+    }
+    $locale = determine_locale();
+    if ($locale === 'en_US') {
+        return false;
+    }
+    foreach (_minn_just_in_time_files($domain, $locale) as $mofile) {
+        if (is_readable($mofile) || is_readable(substr($mofile, 0, -3) . '.l10n.php')) {
+            return load_textdomain($domain, $mofile, $locale);
+        }
+    }
     return false;
+}
+
+/** @internal where a domain's file may be for a locale, in the order they are tried */
+function _minn_just_in_time_files(string $domain, string $locale): array
+{
+    $folder = Runtime::textDomains()->folder($domain);
+    $files = $folder === null ? [] : ["{$folder}/{$domain}-{$locale}.mo", "{$folder}/{$locale}.mo"];
+    return [...$files, WP_LANG_DIR . "/plugins/{$domain}-{$locale}.mo", WP_LANG_DIR . "/themes/{$domain}-{$locale}.mo"];
 }
 
 function load_default_textdomain($locale = null)
@@ -160,12 +264,17 @@ function load_default_textdomain($locale = null)
 
 function is_textdomain_loaded($domain)
 {
-    return false;
+    return Runtime::textDomains()->has((string) $domain);
 }
 
 function get_translations_for_domain($domain)
 {
-    return new NOOP_Translations();
+    static $noop = null;
+    _load_textdomain_just_in_time($domain);
+    if (!Runtime::textDomains()->has((string) $domain)) {
+        return $noop ??= new NOOP_Translations();
+    }
+    return new WP_Translations(WP_Translation_Controller::get_instance(), (string) $domain);
 }
 
 function wp_set_script_translations($handle, $domain = 'default', $path = '')

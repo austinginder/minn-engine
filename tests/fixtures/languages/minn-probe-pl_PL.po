@@ -1,0 +1,44 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: minn-probe\n"
+"Language: pl_PL\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+msgid "Hello"
+msgstr "Cześć"
+
+msgid "Untranslated here"
+msgstr ""
+
+msgctxt "verb"
+msgid "Post"
+msgstr "Opublikuj"
+
+msgctxt "noun"
+msgid "Post"
+msgstr "Wpis"
+
+msgid "Post"
+msgstr "Post bez kontekstu"
+
+msgid "%d comment"
+msgid_plural "%d comments"
+msgstr[0] "%d komentarz"
+msgstr[1] "%d komentarze"
+msgstr[2] "%d komentarzy"
+
+msgctxt "files"
+msgid "%d file"
+msgid_plural "%d files"
+msgstr[0] "%d plik"
+msgstr[1] "%d pliki"
+msgstr[2] "%d plików"
+
+msgid "Only in the mo"
+msgstr "Tylko w mo"
+
+msgid "Line\nbreak"
+msgstr "Łamanie\nlinii"

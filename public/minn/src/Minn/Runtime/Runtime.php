@@ -13,6 +13,7 @@ use Minn\Blocks\RenderState;
 use Minn\Blocks\Renderer as BlockRenderer;
 use Minn\Extension\SeamRunner;
 use Minn\Http\Request;
+use Minn\I18n\TextDomains;
 
 /**
  * The WordPress runtime the engine offers plugin code: the procedural
@@ -29,6 +30,7 @@ final class Runtime
     private static ?Interactivity $interactivity = null;
     private static ?ScriptModules $scriptModules = null;
     private static ?BlockTemplates $blockTemplates = null;
+    private static ?TextDomains $textDomains = null;
     private static ?self $current = null;
     private static bool $facadeLoaded = false;
     /** @var array<string, mixed> plugin-visible state the facade keeps between calls */
@@ -198,6 +200,12 @@ final class Runtime
         return self::$cache ??= new ObjectCache();
     }
 
+    /** The text domains loaded for this request. */
+    public static function textDomains(): TextDomains
+    {
+        return self::$textDomains ??= new TextDomains();
+    }
+
     /** The shortcode registry. */
     public static function shortcodes(): Shortcodes
     {
@@ -297,6 +305,7 @@ final class Runtime
         self::$interactivity = new Interactivity();
         self::$scriptModules = null;
         self::$blockTemplates = null;
+        self::$textDomains = null;
         self::$options = self::$current === null ? null : new Options(self::$current->db);
     }
 }

@@ -46870,6 +46870,1304 @@
             ]
         },
         {
+            "name": "Minn\\I18n\\Catalog",
+            "short": "Catalog",
+            "namespace": "Minn\\I18n",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/I18n/Catalog.php",
+            "lines": 54,
+            "doc": "One translation file's contents: its headers as written, its messages\nkeyed the gettext way (the context, a 0x04 byte, then the original; the\noriginal alone without a context), each with its translated forms and,\nwhere the file says, the original plural, and the file's plural rule.\nAn empty translation counts as none.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\I18n\\PluralRule"
+            ],
+            "usedBy": [
+                "Minn\\I18n\\MoFile",
+                "Minn\\I18n\\PhpFile",
+                "Minn\\I18n\\TextDomains",
+                "Minn\\I18n\\TranslationFiles"
+            ],
+            "constructor": {
+                "signature": "__construct(array $headers, array $entries, Minn\\I18n\\PluralRule $plural)",
+                "doc": "",
+                "shapes": [
+                    "@param array<string, string> $headers",
+                    "@param array<string, array{translations: list<string>, plural: ?string}> $entries"
+                ],
+                "params": [
+                    {
+                        "name": "headers",
+                        "type": "array",
+                        "shape": "array<string, string>",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "entries",
+                        "type": "array",
+                        "shape": "array<string, array{translations: list<string>, plural: ?string}>",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "plural",
+                        "type": "Minn\\I18n\\PluralRule",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 20,
+                "end": 22
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "headers",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "entries",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "plural",
+                    "type": "Minn\\I18n\\PluralRule",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "from",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "from(array $headers, array $entries): self",
+                    "doc": "A catalog from headers and entries, its plural rule taken from the headers.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "headers",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "entries",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 25,
+                    "end": 29
+                },
+                {
+                    "routes": [],
+                    "name": "key",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "key(string $original, ?string $context): string",
+                    "doc": "The lookup key for an original in a context; an empty or missing context is no context.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "original",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "context",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 32,
+                    "end": 35
+                },
+                {
+                    "routes": [],
+                    "name": "headerValue",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "headerValue(string $name): ?string",
+                    "doc": "A header's value, its name matched without case.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 38,
+                    "end": 46
+                },
+                {
+                    "routes": [],
+                    "name": "translate",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "translate(string $key): ?string",
+                    "doc": "The translation of a message, or null when the file has none.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "key",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 49,
+                    "end": 53
+                },
+                {
+                    "routes": [],
+                    "name": "translatePlural",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "translatePlural(string $key, int $count): ?string",
+                    "doc": "The form of a message a count takes under this file's rule, or null when the file has none.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "key",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "count",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 56,
+                    "end": 60
+                },
+                {
+                    "routes": [],
+                    "name": "has",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "has(string $key): bool",
+                    "doc": "Whether the file holds a translation for the message.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "key",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 63,
+                    "end": 66
+                }
+            ]
+        },
+        {
+            "name": "Minn\\I18n\\MoFile",
+            "short": "MoFile",
+            "namespace": "Minn\\I18n",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/I18n/MoFile.php",
+            "lines": 106,
+            "doc": "The GNU gettext binary catalog (.mo), read and written. The file opens\nwith a magic number that also says its byte order, then a revision, the\nmessage count, and the offsets of two tables of (length, offset) pairs:\nthe originals, then the translations. The entry with an empty original\ncarries the headers; a plural original is \"singular NUL plural\" and its\ntranslations are NUL-separated; a context precedes the original with a\n0x04 byte.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\I18n\\Catalog"
+            ],
+            "usedBy": [
+                "Minn\\I18n\\TranslationFiles"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "MAGIC",
+                    "value": "2500072158",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "read",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "read(string $bytes): ?Minn\\I18n\\Catalog",
+                    "doc": "The catalog in a .mo file's bytes, or null when they are not one.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "bytes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 21,
+                    "end": 47
+                },
+                {
+                    "routes": [],
+                    "name": "write",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "write(array $headers, array $entries): string",
+                    "doc": "A .mo file's bytes for headers and entries, little-endian, entries in\nthe sorted order gettext expects.",
+                    "shapes": [
+                        "@param array<string, string> $headers",
+                        "@param array<string, array{translations: list<string>, plural: ?string}> $entries"
+                    ],
+                    "params": [
+                        {
+                            "name": "headers",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "entries",
+                            "type": "array",
+                            "shape": "array<string, array{translations: list<string>, plural: ?string}>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 56,
+                    "end": 77
+                },
+                {
+                    "routes": [],
+                    "name": "byteOrder",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "byteOrder(string $bytes): ?string",
+                    "doc": "\"V\" for a little-endian file, \"N\" for a big-endian one, null for anything else.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "bytes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 80,
+                    "end": 88
+                },
+                {
+                    "routes": [],
+                    "name": "string",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "string(string $bytes, string $format, int $at): ?string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "bytes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "format",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "at",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 90,
+                    "end": 97
+                },
+                {
+                    "routes": [],
+                    "name": "headers",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "headers(string $block): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array<string, string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "block",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 100,
+                    "end": 110
+                },
+                {
+                    "routes": [],
+                    "name": "headerBlock",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "headerBlock(array $headers): string",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, string> $headers"
+                    ],
+                    "params": [
+                        {
+                            "name": "headers",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 113,
+                    "end": 120
+                }
+            ]
+        },
+        {
+            "name": "Minn\\I18n\\PhpFile",
+            "short": "PhpFile",
+            "namespace": "Minn\\I18n",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/I18n/PhpFile.php",
+            "lines": 22,
+            "doc": "The PHP translation file (.l10n.php): a file that returns an array of its\nlower-cased headers and a \"messages\" map from the gettext key to the\ntranslation, plural forms joined by NUL bytes. It is the site's own data,\nread the way the reference reads it, by including it.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\I18n\\Catalog"
+            ],
+            "usedBy": [
+                "Minn\\I18n\\TranslationFiles"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "read",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "read(string $file): ?Minn\\I18n\\Catalog",
+                    "doc": "The catalog a .l10n.php file returns, or null when it returns no messages.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "file",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 16,
+                    "end": 33
+                }
+            ]
+        },
+        {
+            "name": "Minn\\I18n\\PluralExpression",
+            "short": "PluralExpression",
+            "namespace": "Minn\\I18n",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/I18n/PluralExpression.php",
+            "lines": 147,
+            "doc": "The C subset a Plural-Forms header writes its rule in: the number n,\ninteger literals, parentheses, ! and unary minus, * / %, + -, the four\ncomparisons, == and !=, && and ||, and the ternary, with C's precedence\nand the ternary binding to the right. Parsed into a small tree once and\nevaluated per number; nothing is ever handed to PHP to run.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\I18n\\PluralRule"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "TOKEN",
+                    "value": "'/\\\\G\\\\s*(\\\\d+|n|==|!=|<=|>=|&&|\\\\|\\\\||[<>!?:()+\\\\-*\\\\/%])/'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "BINARY",
+                    "value": "array (   '||' => 1,   '&&' => 2,   '==' => 3,   '!=' => 3,   '<' => 4,   '>' => 4,   '<=' => 4,   '>=' => 4,   '+' => 5,   '-' => 5,   '*' => 6,   '/' => 6,   '%' => 6, )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "parse",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "parse(string $expression): ?array",
+                    "doc": "The expression as a tree, or null when it is not a whole expression.",
+                    "shapes": [
+                        "@return array<int, mixed>|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "expression",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 26,
+                    "end": 35
+                },
+                {
+                    "routes": [],
+                    "name": "evaluate",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "evaluate(array $node, int $n): int",
+                    "doc": "The value of a parsed expression for one number; true is 1 and false 0.",
+                    "shapes": [
+                        "@param array<int, mixed> $node"
+                    ],
+                    "params": [
+                        {
+                            "name": "node",
+                            "type": "array",
+                            "shape": "array<int, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "n",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 42,
+                    "end": 54
+                },
+                {
+                    "routes": [],
+                    "name": "binary",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "binary(string $operator, int $left, int $right): int",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "operator",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "left",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "right",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 56,
+                    "end": 71
+                },
+                {
+                    "routes": [],
+                    "name": "tokens",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "tokens(string $expression): ?array",
+                    "doc": "",
+                    "shapes": [
+                        "@return list<string>|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "expression",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 74,
+                    "end": 87
+                },
+                {
+                    "routes": [],
+                    "name": "ternary",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "ternary(array $tokens, int $position): ?array",
+                    "doc": "",
+                    "shapes": [
+                        "@param list<string> $tokens",
+                        "@return array<int, mixed>|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "tokens",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "position",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 93,
+                    "end": 107
+                },
+                {
+                    "routes": [],
+                    "name": "binaryLevel",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "binaryLevel(array $tokens, int $position, int $level): ?array",
+                    "doc": "One level of left-associative binary operators, and every tighter level under it.",
+                    "shapes": [
+                        "@param list<string> $tokens",
+                        "@return array<int, mixed>|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "tokens",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "position",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "level",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 115,
+                    "end": 127
+                },
+                {
+                    "routes": [],
+                    "name": "unary",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "unary(array $tokens, int $position): ?array",
+                    "doc": "",
+                    "shapes": [
+                        "@param list<string> $tokens",
+                        "@return array<int, mixed>|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "tokens",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "position",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 133,
+                    "end": 159
+                }
+            ]
+        },
+        {
+            "name": "Minn\\I18n\\PluralRule",
+            "short": "PluralRule",
+            "namespace": "Minn\\I18n",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/I18n/PluralRule.php",
+            "lines": 35,
+            "doc": "A language's plural rule from its Plural-Forms header: how many forms it\nhas and which form a number takes. A file without the header follows\nEnglish (two forms, n != 1); an expression that does not parse sends\nevery number to the first form, as the reference does.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\I18n\\PluralExpression"
+            ],
+            "usedBy": [
+                "Minn\\I18n\\Catalog"
+            ],
+            "constructor": {
+                "signature": "__construct(int $count, string $expression, ?array $tree)",
+                "doc": "",
+                "shapes": [
+                    "@param array<int, mixed>|null $tree"
+                ],
+                "params": [
+                    {
+                        "name": "count",
+                        "type": "int",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "expression",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "tree",
+                        "type": "?array",
+                        "shape": "array<int, mixed>|null",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "private",
+                "line": 16,
+                "end": 18
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "count",
+                    "type": "int",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "expression",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "tree",
+                    "type": "?array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "english",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "english(): self",
+                    "doc": "English: one form for 1, the other for everything else.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 21,
+                    "end": 24
+                },
+                {
+                    "routes": [],
+                    "name": "fromHeader",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "fromHeader(?string $header): self",
+                    "doc": "The rule a Plural-Forms header states.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "header",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 27,
+                    "end": 34
+                },
+                {
+                    "routes": [],
+                    "name": "fromExpression",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "fromExpression(int $count, string $expression): self",
+                    "doc": "A rule from a form count and an expression in n.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "count",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "expression",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 37,
+                    "end": 40
+                },
+                {
+                    "routes": [],
+                    "name": "index",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "index(int $n): int",
+                    "doc": "The form a number takes.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "n",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 43,
+                    "end": 46
+                }
+            ]
+        },
+        {
+            "name": "Minn\\I18n\\TextDomains",
+            "short": "TextDomains",
+            "namespace": "Minn\\I18n",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/I18n/TextDomains.php",
+            "lines": 125,
+            "doc": "The text domains loaded for this request: each domain's files in the order\nthey were loaded. A lookup asks the files in that order and the first one\nwith a translation answers, each file under its own plural rule. The\nregistry also remembers the folders plugins and themes named for their\ndomains, the domains unloaded for good, and which just-in-time lookups\nhave already been tried, so a missing file is looked for once.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\I18n\\Catalog"
+            ],
+            "usedBy": [
+                "Minn\\Runtime\\Runtime"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "loaded",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "folders",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "closed",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "tried",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "add",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "add(string $domain, string $file, Minn\\I18n\\Catalog $catalog): void",
+                    "doc": "Adds a loaded file to a domain; a file already loaded there is not added twice.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "domain",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "file",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "catalog",
+                            "type": "Minn\\I18n\\Catalog",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 30,
+                    "end": 34
+                },
+                {
+                    "routes": [],
+                    "name": "has",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "has(string $domain): bool",
+                    "doc": "Whether any file is loaded for the domain.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "domain",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 37,
+                    "end": 40
+                },
+                {
+                    "routes": [],
+                    "name": "unload",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "unload(string $domain): bool",
+                    "doc": "Drops a domain's files; true when there were any.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "domain",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 43,
+                    "end": 48
+                },
+                {
+                    "routes": [],
+                    "name": "unloadFile",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "unloadFile(string $domain, string $file): bool",
+                    "doc": "Drops one file from a domain; true when it was loaded.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "domain",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "file",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 51,
+                    "end": 56
+                },
+                {
+                    "routes": [],
+                    "name": "catalogs",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "catalogs(string $domain): array",
+                    "doc": "The domain's files and catalogs, first loaded first.",
+                    "shapes": [
+                        "@return array<string, Catalog>"
+                    ],
+                    "params": [
+                        {
+                            "name": "domain",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 63,
+                    "end": 66
+                },
+                {
+                    "routes": [],
+                    "name": "translate",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "translate(string $domain, string $key): ?string",
+                    "doc": "The first loaded translation of a key in the domain, or null.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "domain",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "key",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 69,
+                    "end": 78
+                },
+                {
+                    "routes": [],
+                    "name": "translatePlural",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "translatePlural(string $domain, string $key, int $count): ?string",
+                    "doc": "The first loaded plural form of a key for a count, or null.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "domain",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "key",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "count",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 81,
+                    "end": 89
+                },
+                {
+                    "routes": [],
+                    "name": "rememberFolder",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "rememberFolder(string $domain, string $folder): void",
+                    "doc": "Records the folder a plugin or theme named for its domain's files.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "domain",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "folder",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 92,
+                    "end": 95
+                },
+                {
+                    "routes": [],
+                    "name": "folder",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "folder(string $domain): ?string",
+                    "doc": "The folder named for a domain, if any.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "domain",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 98,
+                    "end": 101
+                },
+                {
+                    "routes": [],
+                    "name": "close",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "close(string $domain): void",
+                    "doc": "Keeps an unloaded domain from loading again on its own.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "domain",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 104,
+                    "end": 107
+                },
+                {
+                    "routes": [],
+                    "name": "closed",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "closed(string $domain): bool",
+                    "doc": "Whether the domain was unloaded for good.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "domain",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 110,
+                    "end": 113
+                },
+                {
+                    "routes": [],
+                    "name": "firstTry",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "firstTry(string $domain): bool",
+                    "doc": "True the first time a domain is looked for; false after, until the locale changes.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "domain",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 116,
+                    "end": 122
+                },
+                {
+                    "routes": [],
+                    "name": "forgetTries",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "forgetTries(): void",
+                    "doc": "Forgets every lookup tried, for a new locale.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 125,
+                    "end": 128
+                },
+                {
+                    "routes": [],
+                    "name": "domains",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "domains(): array",
+                    "doc": "The domains with files loaded.",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [],
+                    "line": 135,
+                    "end": 138
+                }
+            ]
+        },
+        {
+            "name": "Minn\\I18n\\TranslationFiles",
+            "short": "TranslationFiles",
+            "namespace": "Minn\\I18n",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/I18n/TranslationFiles.php",
+            "lines": 28,
+            "doc": "Which file a request for a .mo path reads, and reading it. Asked for\n\"x.mo\", the reference reads \"x.l10n.php\" when the format is php and that\nfile is there, and the .mo only otherwise; asked for the mo format, only\nthe .mo.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\I18n\\Catalog",
+                "Minn\\I18n\\MoFile",
+                "Minn\\I18n\\PhpFile"
+            ],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "candidates",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "candidates(string $mofile, string $format): array",
+                    "doc": "The files to try for a requested .mo path, in order.",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "mofile",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "format",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 20,
+                    "end": 27
+                },
+                {
+                    "routes": [],
+                    "name": "read",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "read(string $file): ?Minn\\I18n\\Catalog",
+                    "doc": "A translation file's catalog by its extension, or null when it cannot be read as one.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "file",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 30,
+                    "end": 39
+                }
+            ]
+        },
+        {
             "name": "Minn\\Login\\LoginController",
             "short": "LoginController",
             "namespace": "Minn\\Login",
@@ -79175,7 +80473,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Runtime.php",
-            "lines": 281,
+            "lines": 289,
             "doc": "The WordPress runtime the engine offers plugin code: the procedural\nfacade under minn/wp-api/ plus the services it delegates to. One per\nrequest; the facade reaches it through these statics.",
             "implements": [],
             "extends": null,
@@ -79189,6 +80487,7 @@
                 "Minn\\Db",
                 "Minn\\Extension\\SeamRunner",
                 "Minn\\Http\\Request",
+                "Minn\\I18n\\TextDomains",
                 "Minn\\Runtime\\BlockTemplates",
                 "Minn\\Runtime\\Constants",
                 "Minn\\Runtime\\Hooks",
@@ -79263,8 +80562,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 65,
-                "end": 77
+                "line": 67,
+                "end": 79
             },
             "cases": [],
             "constants": [],
@@ -79335,6 +80634,15 @@
                 {
                     "name": "blockTemplates",
                     "type": "?Minn\\Runtime\\BlockTemplates",
+                    "readonly": false,
+                    "static": true,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "textDomains",
+                    "type": "?Minn\\I18n\\TextDomains",
                     "readonly": false,
                     "static": true,
                     "doc": "",
@@ -79504,8 +80812,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 80,
-                    "end": 83
+                    "line": 82,
+                    "end": 85
                 },
                 {
                     "routes": [],
@@ -79516,8 +80824,8 @@
                     "doc": "The extension seams, or null before the front has registered any (REST and the CLI never do).",
                     "shapes": [],
                     "params": [],
-                    "line": 86,
-                    "end": 89
+                    "line": 88,
+                    "end": 91
                 },
                 {
                     "routes": [],
@@ -79528,8 +80836,8 @@
                     "doc": "The render state for this request, made on first use: one set of counters for everything rendered.",
                     "shapes": [],
                     "params": [],
-                    "line": 92,
-                    "end": 95
+                    "line": 94,
+                    "end": 97
                 },
                 {
                     "routes": [],
@@ -79548,8 +80856,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 98,
-                    "end": 101
+                    "line": 100,
+                    "end": 103
                 },
                 {
                     "routes": [],
@@ -79560,8 +80868,8 @@
                     "doc": "The block renderer for this request, made on first use over this request's own database door.",
                     "shapes": [],
                     "params": [],
-                    "line": 104,
-                    "end": 107
+                    "line": 106,
+                    "end": 109
                 },
                 {
                     "routes": [],
@@ -79580,8 +80888,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 121,
-                    "end": 140
+                    "line": 123,
+                    "end": 142
                 },
                 {
                     "routes": [],
@@ -79592,8 +80900,8 @@
                     "doc": "The booted runtime; throws when there is none.",
                     "shapes": [],
                     "params": [],
-                    "line": 143,
-                    "end": 149
+                    "line": 145,
+                    "end": 151
                 },
                 {
                     "routes": [],
@@ -79604,8 +80912,8 @@
                     "doc": "Whether the runtime is up.",
                     "shapes": [],
                     "params": [],
-                    "line": 152,
-                    "end": 155
+                    "line": 154,
+                    "end": 157
                 },
                 {
                     "routes": [],
@@ -79616,8 +80924,8 @@
                     "doc": "The hook registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 158,
-                    "end": 161
+                    "line": 160,
+                    "end": 163
                 },
                 {
                     "routes": [],
@@ -79628,8 +80936,8 @@
                     "doc": "The options store.",
                     "shapes": [],
                     "params": [],
-                    "line": 164,
-                    "end": 167
+                    "line": 166,
+                    "end": 169
                 },
                 {
                     "routes": [],
@@ -79655,8 +80963,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 178,
-                    "end": 193
+                    "line": 180,
+                    "end": 195
                 },
                 {
                     "routes": [],
@@ -79667,8 +80975,20 @@
                     "doc": "The object cache.",
                     "shapes": [],
                     "params": [],
-                    "line": 196,
-                    "end": 199
+                    "line": 198,
+                    "end": 201
+                },
+                {
+                    "routes": [],
+                    "name": "textDomains",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "textDomains(): Minn\\I18n\\TextDomains",
+                    "doc": "The text domains loaded for this request.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 204,
+                    "end": 207
                 },
                 {
                     "routes": [],
@@ -79679,8 +80999,8 @@
                     "doc": "The shortcode registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 202,
-                    "end": 205
+                    "line": 210,
+                    "end": 213
                 },
                 {
                     "routes": [],
@@ -79691,8 +81011,8 @@
                     "doc": "The script modules registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 208,
-                    "end": 214
+                    "line": 216,
+                    "end": 222
                 },
                 {
                     "routes": [],
@@ -79703,8 +81023,8 @@
                     "doc": "The interactivity API.",
                     "shapes": [],
                     "params": [],
-                    "line": 217,
-                    "end": 220
+                    "line": 225,
+                    "end": 228
                 },
                 {
                     "routes": [],
@@ -79715,8 +81035,8 @@
                     "doc": "The registered block templates.",
                     "shapes": [],
                     "params": [],
-                    "line": 223,
-                    "end": 226
+                    "line": 231,
+                    "end": 234
                 },
                 {
                     "routes": [],
@@ -79727,8 +81047,8 @@
                     "doc": "The post types, taxonomies, and statuses.",
                     "shapes": [],
                     "params": [],
-                    "line": 229,
-                    "end": 232
+                    "line": 237,
+                    "end": 240
                 },
                 {
                     "routes": [],
@@ -79739,8 +81059,8 @@
                     "doc": "A fresh post query over the runtime's registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 235,
-                    "end": 238
+                    "line": 243,
+                    "end": 246
                 },
                 {
                     "routes": [],
@@ -79766,8 +81086,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 241,
-                    "end": 244
+                    "line": 249,
+                    "end": 252
                 },
                 {
                     "routes": [],
@@ -79793,8 +81113,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 247,
-                    "end": 250
+                    "line": 255,
+                    "end": 258
                 },
                 {
                     "routes": [],
@@ -79805,8 +81125,8 @@
                     "doc": "Whether the request is over HTTPS.",
                     "shapes": [],
                     "params": [],
-                    "line": 253,
-                    "end": 256
+                    "line": 261,
+                    "end": 264
                 },
                 {
                     "routes": [],
@@ -79817,8 +81137,8 @@
                     "doc": "wp-content under the site root.",
                     "shapes": [],
                     "params": [],
-                    "line": 259,
-                    "end": 262
+                    "line": 267,
+                    "end": 270
                 },
                 {
                     "routes": [],
@@ -79837,8 +81157,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 265,
-                    "end": 285
+                    "line": 273,
+                    "end": 293
                 },
                 {
                     "routes": [],
@@ -79849,8 +81169,8 @@
                     "doc": "Fresh per-request state, for suites.",
                     "shapes": [],
                     "params": [],
-                    "line": 288,
-                    "end": 301
+                    "line": 296,
+                    "end": 310
                 }
             ]
         },

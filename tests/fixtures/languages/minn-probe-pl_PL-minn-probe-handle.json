@@ -1,0 +1,1 @@
+{"translation-revision-date":"2026-10-05 12:00+0000","generator":"minn-fixture","domain":"messages","locale_data":{"messages":{"":{"domain":"messages","plural-forms":"nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);","lang":"pl_PL"},"Hello":["Cześć (js)"]}}}
