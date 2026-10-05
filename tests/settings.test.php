@@ -111,6 +111,14 @@ $editor = st_mint( 2 );
 $d = minn_test_diff( st_norm( $rb ), st_norm( $eb ) );
 check( 200 === $rs && $rs === $es && null === $d, 'settings payload matches', (string) $d );
 
+// 1b. An English site usually stores WPLANG as an empty string; only a missing
+// option reads as en_US. The row is deleted again right after the check.
+shell_exec( 'cd ' . escapeshellarg( minn_test_site_root() . '/public' ) . ' && wp option add WPLANG "" 2>/dev/null' );
+[ $rs, $rb ] = st_fetch( $REF, $admin );
+[ $es, $eb ] = st_fetch( $ENGINE, $admin );
+check( '' === ( $rb['language'] ?? null ) && ( $rb['language'] ?? null ) === ( $eb['language'] ?? null ), 'an empty WPLANG reads back empty on both', json_encode( array( $rb['language'] ?? null, $eb['language'] ?? null ) ) );
+shell_exec( 'cd ' . escapeshellarg( minn_test_site_root() . '/public' ) . ' && wp option delete WPLANG 2>/dev/null' );
+
 foreach ( array( 'editor' => $editor, 'anonymous' => null ) as $who => $mint ) {
 	[ $rs, $rb ] = st_fetch( $REF, $mint );
 	[ $es, $eb ] = st_fetch( $ENGINE, $mint );

@@ -90,7 +90,8 @@ final readonly class Settings
                 // empty string reads back as null: the reference stores boolean
                 // false as '' and then fails to re-type it. Kept.
                 'bool' => $raw === null ? false : ($raw === '' ? null : $raw !== '0'),
-                'language' => ($raw === null || $raw === '') ? 'en_US' : $raw,
+                // Only a missing option is filled in; an English site that stored WPLANG empty reads back empty.
+                'language' => $raw ?? 'en_US',
                 'int_or_null' => ($raw === null || $raw === '') ? null : (int) $raw,
                 default => (string) ($raw ?? ''),
             };
