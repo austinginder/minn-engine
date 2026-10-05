@@ -10,9 +10,11 @@ use Minn\Content\Users;
 /**
  * Password reset keys in the reference's storage shape: user_activation_key
  * holds "time:hash", the key itself travels in the email link and is good
- * for a day. The hash is the engine's own ($minn$ over the nonce salt); a
- * key the reference issued ($generic$) is not readable here, so it is
- * refused and the reader asks for a fresh link.
+ * for a day. The hash is the reference's own ($generic$, FastHash), so a
+ * link either stack sent works on the other. Older shapes still verify: a
+ * phpass hash (WordPress before 6.8) and the engine's former $minn$ HMAC.
+ * A matching key stored without its time is expired, as the reference
+ * treats it.
  */
 final readonly class PasswordReset
 {
@@ -36,17 +38,18 @@ final readonly class PasswordReset
         return $this->status($user, $key) === 'valid';
     }
 
-    /** "valid", "expired" (a matching key past its day), or "invalid". */
+    /** "valid", "expired" (a matching key past its day, or stored without a time), or "invalid". */
     public function status(UserRecord $user, string $key): string
     {
         $stored = $user->activationKey;
-        if ($key === '' || !preg_match('/^(\d+):(.+)$/', $stored, $m)) {
+        if ($key === '' || $stored === '') {
             return 'invalid';
         }
-        if (!hash_equals($m[2], self::hash($key))) {
+        [$time, $hash] = preg_match('/^(\d+):(.+)$/', $stored, $m) ? [(int) $m[1], $m[2]] : [null, $stored];
+        if (!self::matches($key, $hash)) {
             return 'invalid';
         }
-        return (int) $m[1] + self::LIFETIME < time() ? 'expired' : 'valid';
+        return $time === null || $time + self::LIFETIME < time() ? 'expired' : 'valid';
     }
 
     /** Forgets a user's reset key. */
@@ -55,8 +58,18 @@ final readonly class PasswordReset
         $this->users->update($user->id, ['user_activation_key' => '']);
     }
 
+    /** The stored hash for a new key: the reference's own, or phpass (which it also reads) without sodium. */
     private static function hash(string $key): string
     {
-        return '$minn$' . hash_hmac('sha256', $key, Salts::for('nonce'));
+        return FastHash::available() ? FastHash::hash($key) : Phpass::hash($key);
+    }
+
+    private static function matches(string $key, string $hash): bool
+    {
+        if (str_starts_with($hash, '$minn$')) {
+            // Issued by the engine before it wrote the reference's hash.
+            return hash_equals($hash, '$minn$' . hash_hmac('sha256', $key, Salts::for('nonce')));
+        }
+        return FastHash::verify($key, $hash) || Phpass::verify($key, $hash);
     }
 }

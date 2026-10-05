@@ -11,10 +11,11 @@ passwords, sessions, cookies, nonces, roles and capabilities
 | [`Authenticator`](#authenticator) | final readonly class | 124 | Resolves the current user two ways. A page load carries the cookie alone; |
 | [`Capabilities`](#capabilities) | final readonly class | 162 | The capability engine: a user's roles from {prefix}capabilities usermeta, |
 | [`Cookie`](#cookie) | final readonly class | 75 | The logged_in auth cookie: username\|expiration\|token\|hmac, with |
+| [`FastHash`](#fasthash) | final class | 23 | The reference's hash for high-entropy secrets ("$generic$", WordPress 6.8 |
 | [`LoginThrottle`](#loginthrottle) | final readonly class | 78 | Failed sign-ins per address, so a password guesser meets a wall: twenty |
 | [`Nonce`](#nonce) | final class | 34 | The wp_rest nonce: ten characters of HMAC-md5(tick\|wp_rest\|uid\|token) |
 | [`Password`](#password) | final class | 33 | The stored password scheme. A modern "$wp$2y$..." value is bcrypt over |
-| [`PasswordReset`](#passwordreset) | final readonly class | 46 | Password reset keys in the reference's storage shape: user_activation_key |
+| [`PasswordReset`](#passwordreset) | final readonly class | 57 | Password reset keys in the reference's storage shape: user_activation_key |
 | [`Phpass`](#phpass) | final class | 62 | The portable phpass hash ($P$), from Openwall's public description of the |
 | [`PortableHash`](#portablehash) | final class | 61 | The portable phpass hash ("$P$"), the shape the reference stores in |
 | [`Roles`](#roles) | final class | 68 | Role definitions from the site's {prefix}user_roles option, parsed by a |
@@ -30,9 +31,10 @@ passwords, sessions, cookies, nonces, roles and capabilities
 Application passwords as the reference stores them: a serialized list in
 the user's _application_passwords meta, each entry uuid, app_id, name,
 password (a hash), created, last_used, last_ip. New passwords are 24
-characters shown in groups of four; the stored hash is phpass, which the
-reference verifies too, so a password made here survives a switch back.
-A hash the reference made with its own fast scheme cannot be verified here.
+characters shown in groups of four; the stored hash is the reference's
+own ($generic$, FastHash), so a password made on either stack works on
+the other. Older hashes still verify, as the reference verifies them:
+phpass (WordPress before 6.8, and the engine before this) and $wp$.
 
 - const `META` = `'_application_passwords'`
 
@@ -89,7 +91,7 @@ Twenty-four letters and digits.
 
 The plaintext as shown once: groups of four, space separated.
 
-Internals: `change()` (private, line 143), `save()` (private, line 158), `uuid()` (private, line 163)
+Internals: `change()` (private, line 144), `save()` (private, line 159), `uuid()` (private, line 164)
 
 
 ## AuthCookies
@@ -316,6 +318,36 @@ derived from a different host.
 Internals: `signature()` (private, line 86)
 
 
+## FastHash
+
+`final class Minn\Auth\FastHash` · `public/minn/src/Minn/Auth/FastHash.php`
+
+The reference's hash for high-entropy secrets ("$generic$", WordPress 6.8
+and later): a 30-byte keyed BLAKE2b digest (sodium's generic hash, keyed
+by the scheme's fixed label) in URL-safe base64 without padding. Reset
+keys and application passwords are stored this way, so a secret minted
+on either stack verifies on the other. Pinned against hashes the
+reference made (tests/unit/auth-hashes.php). Without the sodium
+extension nothing can be hashed or verified this way.
+
+- const `PREFIX` = `'$generic$'`
+- const `KEY` = `'wp_fast_hash_6.8+'`
+
+Used by: `Minn\Auth\ApplicationPasswords`, `Minn\Auth\PasswordReset`
+
+### static `available(): bool`
+
+Whether this PHP can make and check these hashes (the sodium extension).
+
+### static `hash(string $secret): string`
+
+The "$generic$" hash of a secret.
+
+### static `verify(string $secret, string $hash): bool`
+
+Whether a secret matches a "$generic$" hash; false for any other kind of hash.
+
+
 ## LoginThrottle
 
 `final readonly class Minn\Auth\LoginThrottle` · `public/minn/src/Minn/Auth/LoginThrottle.php`
@@ -411,9 +443,11 @@ passes, so both branches are pinned by the auth suite.
 
 Password reset keys in the reference's storage shape: user_activation_key
 holds "time:hash", the key itself travels in the email link and is good
-for a day. The hash is the engine's own ($minn$ over the nonce salt); a
-key the reference issued ($generic$) is not readable here, so it is
-refused and the reader asks for a fresh link.
+for a day. The hash is the reference's own ($generic$, FastHash), so a
+link either stack sent works on the other. Older shapes still verify: a
+phpass hash (WordPress before 6.8) and the engine's former $minn$ HMAC.
+A matching key stored without its time is expired, as the reference
+treats it.
 
 - const `LIFETIME` = `86400`
 
@@ -434,13 +468,13 @@ True when the key matches the stored hash and has not expired.
 
 ### `status(Minn\Content\UserRecord $user, string $key): string`
 
-"valid", "expired" (a matching key past its day), or "invalid".
+"valid", "expired" (a matching key past its day, or stored without a time), or "invalid".
 
 ### `clear(Minn\Content\UserRecord $user): void`
 
 Forgets a user's reset key.
 
-Internals: `hash()` (private, line 58)
+Internals: `hash()` (private, line 62), `matches()` (private, line 67)
 
 
 ## Phpass
@@ -454,7 +488,7 @@ for application passwords, which makes them the portable choice.
 
 - const `ALPHABET` = `'./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'`
 
-Used by: `Minn\Auth\ApplicationPasswords`
+Used by: `Minn\Auth\ApplicationPasswords`, `Minn\Auth\PasswordReset`
 
 ### static `hash(string $password, int $log2Rounds = 11): string`
 

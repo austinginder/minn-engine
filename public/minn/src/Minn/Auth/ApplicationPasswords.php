@@ -11,9 +11,10 @@ use Minn\Support\Serialized;
  * Application passwords as the reference stores them: a serialized list in
  * the user's _application_passwords meta, each entry uuid, app_id, name,
  * password (a hash), created, last_used, last_ip. New passwords are 24
- * characters shown in groups of four; the stored hash is phpass, which the
- * reference verifies too, so a password made here survives a switch back.
- * A hash the reference made with its own fast scheme cannot be verified here.
+ * characters shown in groups of four; the stored hash is the reference's
+ * own ($generic$, FastHash), so a password made on either stack works on
+ * the other. Older hashes still verify, as the reference verifies them:
+ * phpass (WordPress before 6.8, and the engine before this) and $wp$.
  */
 final readonly class ApplicationPasswords
 {
@@ -61,7 +62,7 @@ final readonly class ApplicationPasswords
     public function create(int $userId, string $name, string $appId): array
     {
         $plain = self::generate();
-        $record = ['uuid' => self::uuid(), 'app_id' => $appId, 'name' => $name, 'password' => Phpass::hash($plain), 'created' => time(), 'last_used' => null, 'last_ip' => null];
+        $record = ['uuid' => self::uuid(), 'app_id' => $appId, 'name' => $name, 'password' => FastHash::available() ? FastHash::hash($plain) : Phpass::hash($plain), 'created' => time(), 'last_used' => null, 'last_ip' => null];
         $list = $this->all($userId);
         $list[] = $record;
         $this->save($userId, $list);
@@ -116,7 +117,7 @@ final readonly class ApplicationPasswords
         $password = str_replace(' ', '', $password);
         foreach ($this->all($userId) as $item) {
             $hash = (string) ($item['password'] ?? '');
-            if (Phpass::verify($password, $hash) || (str_starts_with($hash, '$wp$') && Password::verify($password, $hash))) {
+            if (FastHash::verify($password, $hash) || Phpass::verify($password, $hash) || (str_starts_with($hash, '$wp$') && Password::verify($password, $hash))) {
                 return $item;
             }
         }

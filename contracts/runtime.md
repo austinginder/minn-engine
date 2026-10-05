@@ -877,13 +877,17 @@ on plain HTTP.
   of `uuid, app_id, name, password, created, last_used, last_ip`, the same
   shape the reference reads. The plaintext is 24 letters and digits shown
   in groups of four.
-- **Hashes, honestly**: the reference stores its own `$generic$` fast hash
-  (BLAKE2b, unsalted, 30 bytes, base64url), whose exact construction did
-  not fall out of black-box probing; the engine cannot verify a password
-  the reference created. The engine stores phpass `$P$` hashes (a public
-  algorithm, `Auth\Phpass`), which the reference verifies too, so a
-  password created on Minn keeps working after a switch back to WordPress.
-  A site moving to Minn recreates its application passwords.
+- **Hashes**: both stacks store the reference's `$generic$` fast hash
+  (`Auth\FastHash`: a 30-byte keyed BLAKE2b in URL-safe base64, confirmed
+  by reproducing the reference's own hashes byte for byte,
+  `tests/unit/auth-hashes.php`). A password made on either stack signs in on
+  the other, and the suite proves both directions. Until 2026-10-05 the
+  engine could not verify the reference's hash, so every application
+  password a WordPress site had stopped working after a switch to Minn
+  (the first resumability break, `docs/vision.md`). Phpass `$P$` (WordPress
+  before 6.8, and the engine before this) and `$wp$` hashes still verify,
+  as the reference verifies them. Without sodium, new passwords fall back
+  to phpass.
 
 ## A plugin's rewrite rules route the front end
 

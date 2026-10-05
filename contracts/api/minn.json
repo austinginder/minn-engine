@@ -6886,10 +6886,11 @@
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Auth/ApplicationPasswords.php",
             "lines": 153,
-            "doc": "Application passwords as the reference stores them: a serialized list in\nthe user's _application_passwords meta, each entry uuid, app_id, name,\npassword (a hash), created, last_used, last_ip. New passwords are 24\ncharacters shown in groups of four; the stored hash is phpass, which the\nreference verifies too, so a password made here survives a switch back.\nA hash the reference made with its own fast scheme cannot be verified here.",
+            "doc": "Application passwords as the reference stores them: a serialized list in\nthe user's _application_passwords meta, each entry uuid, app_id, name,\npassword (a hash), created, last_used, last_ip. New passwords are 24\ncharacters shown in groups of four; the stored hash is the reference's\nown ($generic$, FastHash), so a password made on either stack works on\nthe other. Older hashes still verify, as the reference verifies them:\nphpass (WordPress before 6.8, and the engine before this) and $wp$.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Auth\\FastHash",
                 "Minn\\Auth\\Password",
                 "Minn\\Auth\\Phpass",
                 "Minn\\Content\\Users",
@@ -6914,8 +6915,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 22,
-                "end": 24
+                "line": 23,
+                "end": 25
             },
             "cases": [],
             "constants": [
@@ -6957,8 +6958,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 31,
-                    "end": 39
+                    "line": 32,
+                    "end": 40
                 },
                 {
                     "routes": [],
@@ -6986,8 +6987,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 46,
-                    "end": 54
+                    "line": 47,
+                    "end": 55
                 },
                 {
                     "routes": [],
@@ -7022,8 +7023,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 61,
-                    "end": 69
+                    "line": 62,
+                    "end": 70
                 },
                 {
                     "routes": [],
@@ -7056,8 +7057,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 72,
-                    "end": 75
+                    "line": 73,
+                    "end": 76
                 },
                 {
                     "routes": [],
@@ -7090,8 +7091,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 78,
-                    "end": 81
+                    "line": 79,
+                    "end": 82
                 },
                 {
                     "routes": [],
@@ -7117,8 +7118,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 84,
-                    "end": 99
+                    "line": 85,
+                    "end": 100
                 },
                 {
                     "routes": [],
@@ -7137,8 +7138,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 106,
-                    "end": 111
+                    "line": 107,
+                    "end": 112
                 },
                 {
                     "routes": [],
@@ -7164,8 +7165,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 114,
-                    "end": 124
+                    "line": 115,
+                    "end": 125
                 },
                 {
                     "routes": [],
@@ -7176,8 +7177,8 @@
                     "doc": "Twenty-four letters and digits.",
                     "shapes": [],
                     "params": [],
-                    "line": 127,
-                    "end": 135
+                    "line": 128,
+                    "end": 136
                 },
                 {
                     "routes": [],
@@ -7196,8 +7197,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 138,
-                    "end": 141
+                    "line": 139,
+                    "end": 142
                 },
                 {
                     "routes": [],
@@ -7230,8 +7231,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 143,
-                    "end": 156
+                    "line": 144,
+                    "end": 157
                 },
                 {
                     "routes": [],
@@ -7257,8 +7258,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 158,
-                    "end": 161
+                    "line": 159,
+                    "end": 162
                 },
                 {
                     "routes": [],
@@ -7269,8 +7270,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 163,
-                    "end": 169
+                    "line": 164,
+                    "end": 170
                 }
             ]
         },
@@ -8472,6 +8473,100 @@
             ]
         },
         {
+            "name": "Minn\\Auth\\FastHash",
+            "short": "FastHash",
+            "namespace": "Minn\\Auth",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Auth/FastHash.php",
+            "lines": 23,
+            "doc": "The reference's hash for high-entropy secrets (\"$generic$\", WordPress 6.8\nand later): a 30-byte keyed BLAKE2b digest (sodium's generic hash, keyed\nby the scheme's fixed label) in URL-safe base64 without padding. Reset\nkeys and application passwords are stored this way, so a secret minted\non either stack verifies on the other. Pinned against hashes the\nreference made (tests/unit/auth-hashes.php). Without the sodium\nextension nothing can be hashed or verified this way.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Auth\\ApplicationPasswords",
+                "Minn\\Auth\\PasswordReset"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "PREFIX",
+                    "value": "'$generic$'",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "KEY",
+                    "value": "'wp_fast_hash_6.8+'",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "available",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "available(): bool",
+                    "doc": "Whether this PHP can make and check these hashes (the sodium extension).",
+                    "shapes": [],
+                    "params": [],
+                    "line": 22,
+                    "end": 25
+                },
+                {
+                    "routes": [],
+                    "name": "hash",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "hash(string $secret): string",
+                    "doc": "The \"$generic$\" hash of a secret.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "secret",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 28,
+                    "end": 31
+                },
+                {
+                    "routes": [],
+                    "name": "verify",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "verify(string $secret, string $hash): bool",
+                    "doc": "Whether a secret matches a \"$generic$\" hash; false for any other kind of hash.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "secret",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "hash",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 34,
+                    "end": 37
+                }
+            ]
+        },
+        {
             "name": "Minn\\Auth\\LoginThrottle",
             "short": "LoginThrottle",
             "namespace": "Minn\\Auth",
@@ -8975,11 +9070,13 @@
             "namespace": "Minn\\Auth",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Auth/PasswordReset.php",
-            "lines": 46,
-            "doc": "Password reset keys in the reference's storage shape: user_activation_key\nholds \"time:hash\", the key itself travels in the email link and is good\nfor a day. The hash is the engine's own ($minn$ over the nonce salt); a\nkey the reference issued ($generic$) is not readable here, so it is\nrefused and the reader asks for a fresh link.",
+            "lines": 57,
+            "doc": "Password reset keys in the reference's storage shape: user_activation_key\nholds \"time:hash\", the key itself travels in the email link and is good\nfor a day. The hash is the reference's own ($generic$, FastHash), so a\nlink either stack sent works on the other. Older shapes still verify: a\nphpass hash (WordPress before 6.8) and the engine's former $minn$ HMAC.\nA matching key stored without its time is expired, as the reference\ntreats it.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Auth\\FastHash",
+                "Minn\\Auth\\Phpass",
                 "Minn\\Auth\\Salts",
                 "Minn\\Content\\UserRecord",
                 "Minn\\Content\\Users"
@@ -9004,8 +9101,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 21,
-                "end": 23
+                "line": 23,
+                "end": 25
             },
             "cases": [],
             "constants": [
@@ -9045,8 +9142,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 26,
-                    "end": 31
+                    "line": 28,
+                    "end": 33
                 },
                 {
                     "routes": [],
@@ -9072,8 +9169,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 34,
-                    "end": 37
+                    "line": 36,
+                    "end": 39
                 },
                 {
                     "routes": [],
@@ -9081,7 +9178,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "status(Minn\\Content\\UserRecord $user, string $key): string",
-                    "doc": "\"valid\", \"expired\" (a matching key past its day), or \"invalid\".",
+                    "doc": "\"valid\", \"expired\" (a matching key past its day, or stored without a time), or \"invalid\".",
                     "shapes": [],
                     "params": [
                         {
@@ -9099,8 +9196,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 40,
-                    "end": 50
+                    "line": 42,
+                    "end": 53
                 },
                 {
                     "routes": [],
@@ -9119,8 +9216,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 53,
-                    "end": 56
+                    "line": 56,
+                    "end": 59
                 },
                 {
                     "routes": [],
@@ -9128,7 +9225,7 @@
                     "static": true,
                     "visibility": "private",
                     "signature": "hash(string $key): string",
-                    "doc": "",
+                    "doc": "The stored hash for a new key: the reference's own, or phpass (which it also reads) without sodium.",
                     "shapes": [],
                     "params": [
                         {
@@ -9139,8 +9236,35 @@
                             "doc": ""
                         }
                     ],
-                    "line": 58,
-                    "end": 61
+                    "line": 62,
+                    "end": 65
+                },
+                {
+                    "routes": [],
+                    "name": "matches",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "matches(string $key, string $hash): bool",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "key",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "hash",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 67,
+                    "end": 74
                 }
             ]
         },
@@ -9156,7 +9280,8 @@
             "extends": null,
             "uses": [],
             "usedBy": [
-                "Minn\\Auth\\ApplicationPasswords"
+                "Minn\\Auth\\ApplicationPasswords",
+                "Minn\\Auth\\PasswordReset"
             ],
             "constructor": null,
             "cases": [],

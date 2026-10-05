@@ -137,6 +137,23 @@ foreach ( $oracleSteps as $label => $expected ) {
 	check( $got === $expected, $label, 'engine ' . json_encode( $got ) . "\n      oracle " . json_encode( $expected ) );
 }
 check( 1 === preg_match( '/^[A-Za-z0-9]{4}( [A-Za-z0-9]{4}){5}$/', $enginePlain ), 'the plaintext is six groups of four letters and digits', $enginePlain );
+// Across stacks: a password either stack made signs in on the other, so a site can switch either way.
+$refWp = 'wp --path=' . escapeshellarg( minn_test_site_root() . '/wp-reference' );
+[ , $refMade ] = ap_call( $REF, 'POST', '/wp/v2/users/me/application-passwords', array( 'name' => 'made on the reference' ) );
+$refPlain = (string) ( $refMade['password'] ?? '' );
+[ $status ] = ap_call( $ENGINE, 'GET', '/wp/v2/users/me', null, 'basic', "admin:$refPlain" );
+check( 200 === $status, 'a password the reference made signs in on the engine', (string) $status );
+[ , $engMade ] = ap_call( $ENGINE, 'POST', '/wp/v2/users/me/application-passwords', array( 'name' => 'made on the engine' ) );
+$engPlain = (string) ( $engMade['password'] ?? '' );
+[ $status ] = ap_call( $REF, 'GET', '/wp/v2/users/me', null, 'basic', "admin:$engPlain" );
+check( 200 === $status, 'a password the engine made signs in on the reference', (string) $status );
+$stored = array_column( (array) json_decode( (string) shell_exec( "$refWp user meta get 1 _application_passwords --format=json 2>/dev/null" ), true ), 'password', 'name' );
+check( 2 === count( $stored ) && 2 === count( preg_grep( '/^\$generic\$[A-Za-z0-9_-]{40}$/', $stored ) ), 'both stacks store the reference\'s own hash', json_encode( $stored ) );
+// A password stored before WordPress 6.8 (phpass) still signs in here.
+shell_exec( "$refWp eval " . escapeshellarg( 'require_once ABSPATH . WPINC . "/class-phpass.php"; $all = WP_Application_Passwords::get_user_application_passwords(1); foreach ($all as $i => $item) { if ($item["name"] === "made on the reference") { $all[$i]["password"] = (new PasswordHash(8, true))->HashPassword(str_replace(" ", "", "' . $refPlain . '")); } } update_user_meta(1, "_application_passwords", $all);' ) . ' 2>/dev/null' );
+[ $status ] = ap_call( $ENGINE, 'GET', '/wp/v2/users/me', null, 'basic', "admin:$refPlain" );
+check( 200 === $status, 'a password stored as phpass (before WordPress 6.8) still signs in on the engine', (string) $status );
+ap_call( $ENGINE, 'DELETE', '/wp/v2/users/me/application-passwords' );
 $meta = json_decode( (string) shell_exec( 'wp --path=' . escapeshellarg( minn_test_site_root() . '/wp-reference' ) . ' user meta get 1 _application_passwords --format=json 2>/dev/null' ), true );
 check( array() === $meta || null === $meta, 'nothing is left in the user meta afterwards', json_encode( $meta ) );
 

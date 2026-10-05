@@ -104,9 +104,12 @@ The reference's HTTP shapes, captured and matched:
   the `$wp$2y$` scheme, so the reference signs the user in), clears the key, ends
   every session of the user, and shows "Your password has been reset." with a 200.
 
-Storage matches the reference's shape, `user_activation_key = "time:hash"`, valid for
-a day, so a pending reset reads the same either way. The hash itself is the engine's
-(`$minn$` over the nonce salt): the reference's `$generic$` key hash could not be
-reproduced from observed output, so a key the reference issued is refused here (the
-reader requests a fresh link) rather than mis-verified, and a key the engine issued is
-refused by the reference. Recorded as a divergence; no security delta.
+Storage matches the reference's, `user_activation_key = "time:hash"`, valid for a
+day, and since 2026-10-05 the hash is the reference's own `$generic$` (`Auth\FastHash`,
+a 30-byte keyed BLAKE2b in URL-safe base64, confirmed by reproducing the reference's
+hashes byte for byte). A reset link sent by either stack works on the other: the suite
+has the reference accept a key the engine sent, and the engine open its form for a key
+the reference sent. Older keys still verify: phpass (WordPress before 6.8) and the
+engine's former `$minn$` HMAC. A matching key stored without its time is expired, as on
+the reference. Without PHP's sodium extension new keys fall back to phpass, which both
+stacks read.

@@ -12,7 +12,14 @@ declare(strict_types=1);
 $ENGINE = 'https://minn.localhost';
 $REF = 'http://127.0.0.1:8123';
 $ROOT = dirname(__DIR__);
-$MAILPIT = 'http://localhost:8025/api/v1';
+// Cove's dashboard route to Mailpit's API (it adds the credentials Mailpit's own port asks for); local only.
+$MAILPIT = getenv('MINN_MAILPIT') ?: 'https://cove.localhost/mail-api/v1';
+function mailpit(string $path): array
+{
+    global $MAILPIT;
+    $context = stream_context_create(['ssl' => ['verify_peer' => false, 'verify_peer_name' => false]]);
+    return (array) json_decode((string) @file_get_contents("$MAILPIT/$path", false, $context), true);
+}
 require_once __DIR__ . '/lib.php';
 
 [$probe] = minn_test_fetch("$REF/?rest_route=/wp/v2/posts", 3);
@@ -115,19 +122,20 @@ check(wp("db query \"SELECT COUNT(*) FROM wp_options WHERE option_name LIKE '%zz
 
 // 2. Password reset, end to end through mail.
 wp("db query \"DELETE FROM wp_options WHERE option_name LIKE 'minn_login_throttle_%'\"");
-$before = json_decode((string) file_get_contents("$MAILPIT/messages?limit=1"), true)['total'] ?? 0;
+$before = mailpit('messages?limit=1')['total'] ?? 0;
 $ask = page("$ENGINE/wp-login.php?action=lostpassword", 'user_login=editor@minn-engine.localhost');
 check($ask['status'] === '302' && str_contains($ask['headers']['location'] ?? '', 'checkemail=confirm'), 'lostpassword redirects to checkemail=confirm, as the reference', $ask['status'] . ' ' . ($ask['headers']['location'] ?? ''));
 usleep(500000);
-$latest = json_decode((string) file_get_contents("$MAILPIT/messages?limit=1"), true);
+$latest = mailpit('messages?limit=1');
 $message = $latest['messages'][0] ?? [];
 check(($latest['total'] ?? 0) === $before + 1 && str_contains($message['Subject'] ?? '', 'Password Reset') && ($message['To'][0]['Address'] ?? '') === 'editor@minn-engine.localhost', 'the reset email reaches the mailbox', json_encode([$message['Subject'] ?? null, $message['To'] ?? null]));
-$text = (string) (json_decode((string) file_get_contents("$MAILPIT/message/" . ($message['ID'] ?? '')), true)['Text'] ?? '');
+$text = (string) (mailpit('message/' . ($message['ID'] ?? ''))['Text'] ?? '');
 check(preg_match('#(https://minn\.localhost/wp-login\.php\?action=rp&key=([A-Za-z0-9]{20})&login=editor)#', $text, $m) === 1, 'the email carries the reset link in the reference\'s shape', $text);
 $link = $m[1] ?? '';
 $key = $m[2] ?? '';
 $stored = wp("db query \"SELECT user_activation_key FROM wp_users WHERE ID=2\" --skip-column-names");
-check(preg_match('/^\d+:\$minn\$[0-9a-f]{64}$/', $stored) === 1, 'user_activation_key holds time:hash, never the key itself', $stored);
+check(preg_match('/^\d+:\$generic\$[A-Za-z0-9_-]{40}$/', $stored) === 1, 'user_activation_key holds time:hash in the reference\'s own hash, never the key itself', $stored);
+check(wp('eval \'echo check_password_reset_key("' . $key . '", "editor") instanceof WP_User ? "yes" : "no";\'') === 'yes', 'the reference accepts the key the engine sent: a link survives a switch back');
 $open = page($link);
 $cookieHash = md5($ENGINE);
 check($open['status'] === '302' && str_contains($open['headers']['location'] ?? '', 'action=rp') && !str_contains($open['headers']['location'] ?? '', 'key=') && str_contains($open['headers']['set-cookie'] ?? '', "wp-resetpass-$cookieHash=editor%3A$key") && str_contains($open['headers']['set-cookie'] ?? '', 'path=/wp-login.php'), 'the link moves the key into the wp-login.php cookie and redirects without it', json_encode($open['headers']));
@@ -151,10 +159,13 @@ $reuse = page("$ENGINE/wp-login.php?action=rp", '', [$cookie]);
 check($reuse['status'] === '302' && str_contains($reuse['headers']['location'] ?? '', 'invalidkey'), 'the spent key cannot be used again');
 $unknown = page("$ENGINE/wp-login.php?action=lostpassword", 'user_login=nobody-at-all');
 check($unknown['status'] === '200' && str_contains($unknown['body'], 'no account'), 'an unknown account is refused on the form');
-// A key the reference issued is refused (its hash is not readable here) rather than mis-verified.
+// A key the reference sent opens the reset form here: a link survives a switch to the engine.
 $refKey = wp('eval \'echo get_password_reset_key(get_user_by("login","admin"));\'');
 $refTry = page("$ENGINE/wp-login.php?action=rp", '', ["Cookie: wp-resetpass-$cookieHash=admin:$refKey"]);
-check($refTry['status'] === '302' && str_contains($refTry['headers']['location'] ?? '', 'invalidkey'), 'a reference-issued key is refused, not accepted by accident');
+check($refTry['status'] === '200' && str_contains($refTry['body'], 'name="rp_key" value="' . $refKey . '"'), 'a key the reference sent opens the reset form on the engine', $refTry['status'] . ' ' . ($refTry['headers']['location'] ?? ''));
+$wrongTry = page("$ENGINE/wp-login.php?action=rp", '', ["Cookie: wp-resetpass-$cookieHash=admin:" . strrev($refKey)]);
+check($wrongTry['status'] === '302' && str_contains($wrongTry['headers']['location'] ?? '', 'invalidkey'), 'a wrong key against the reference\'s hash is still refused');
+wp("db query \"UPDATE wp_users SET user_activation_key='' WHERE user_login='admin'\"");
 
 // 3. The mail transport switch and the test command.
 check(str_contains(engineWp('minn mail cron-mail-suite@example.com'), 'Sent through the mail transport'), 'wp minn mail sends through the default transport');
