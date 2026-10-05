@@ -7,6 +7,9 @@ use Minn\Runtime\Runtime;
 
 function get_locale()
 {
+    if (Runtime::locales()->switched()) {
+        return (string) Runtime::locales()->current();
+    }
     $locale = apply_filters('pre_determine_locale', null);
     if (is_string($locale) && $locale !== '') {
         return $locale;
@@ -22,6 +25,9 @@ function get_user_locale($user = 0)
 
 function determine_locale()
 {
+    if (Runtime::locales()->switched()) {
+        return (string) Runtime::locales()->current();
+    }
     $locale = apply_filters('pre_determine_locale', null);
     if (is_string($locale) && $locale !== '') {
         return $locale;
@@ -180,7 +186,8 @@ function load_muplugin_textdomain($domain, $mu_plugin_rel_path = '')
 function load_theme_textdomain($domain, $path = false)
 {
     $locale = determine_locale();
-    return _minn_load_from_folder((string) $domain, $path !== false ? (string) $path : get_template_directory(), $locale, $locale);
+    // A folder named in code holds "{domain}-{locale}" files, inside the themes root or not; only the active theme's own folder goes by locale alone.
+    return _minn_load_from_folder((string) $domain, $path !== false ? (string) $path : get_template_directory(), "{$domain}-{$locale}", $locale);
 }
 
 function load_child_theme_textdomain($domain, $path = false)
@@ -213,53 +220,79 @@ function load_textdomain($domain, $mofile, $locale = null)
 function unload_textdomain($domain, $reloadable = false)
 {
     if (apply_filters('override_unload_textdomain', false, $domain, $reloadable)) {
-        if (!$reloadable) {
-            Runtime::textDomains()->close((string) $domain);
-        }
         return true;
     }
     do_action('unload_textdomain', $domain, $reloadable);
-    if (!$reloadable) {
+    $had = Runtime::textDomains()->unload((string) $domain);
+    // Only a domain that really had files stays closed; one merely looked for may load later.
+    if ($had && !$reloadable) {
         Runtime::textDomains()->close((string) $domain);
     }
-    return Runtime::textDomains()->unload((string) $domain);
+    return $had;
 }
 
 /**
- * A domain nobody loaded yet is looked for once per locale: in the folder a
- * plugin or theme named for it, then the site's languages folder for plugins
- * and themes. English needs no files.
+ * A domain nobody loaded or asked for yet is looked for once: the folder a
+ * plugin or theme named for it when its file is there, then the site's
+ * languages folder for plugins and themes, then the named folder's file even
+ * though it is missing. A domain unloaded for good stays out.
  */
 function _load_textdomain_just_in_time($domain)
 {
     $domains = Runtime::textDomains();
     $domain = (string) $domain;
-    if ($domain === 'default' || $domains->has($domain) || $domains->closed($domain) || !$domains->firstTry($domain)) {
+    if ($domain === 'default' || $domains->known($domain)) {
+        return false;
+    }
+    $domains->markKnown($domain);
+    if ($domains->closed($domain)) {
         return false;
     }
     $locale = determine_locale();
-    if ($locale === 'en_US') {
-        return false;
-    }
-    foreach (_minn_just_in_time_files($domain, $locale) as $mofile) {
-        if (is_readable($mofile) || is_readable(substr($mofile, 0, -3) . '.l10n.php')) {
-            return load_textdomain($domain, $mofile, $locale);
-        }
-    }
-    return false;
+    $file = _minn_textdomain_file($domain, $locale);
+    return $file !== null && load_textdomain($domain, $file, $locale);
 }
 
-/** @internal where a domain's file may be for a locale, in the order they are tried */
-function _minn_just_in_time_files(string $domain, string $locale): array
+/** @internal the .mo path a domain reads for a locale, or null when nothing names one */
+function _minn_textdomain_file(string $domain, string $locale): ?string
 {
-    $folder = Runtime::textDomains()->folder($domain);
-    $files = $folder === null ? [] : ["{$folder}/{$domain}-{$locale}.mo", "{$folder}/{$locale}.mo"];
-    return [...$files, WP_LANG_DIR . "/plugins/{$domain}-{$locale}.mo", WP_LANG_DIR . "/themes/{$domain}-{$locale}.mo"];
+    $named = Runtime::textDomains()->folderFile($domain, $locale);
+    foreach ([$named, WP_LANG_DIR . "/plugins/{$domain}-{$locale}.mo", WP_LANG_DIR . "/themes/{$domain}-{$locale}.mo"] as $mofile) {
+        if ($mofile !== null && (is_readable($mofile) || is_readable(substr($mofile, 0, -3) . '.l10n.php'))) {
+            return $mofile;
+        }
+    }
+    return $named;
+}
+
+/**
+ * @internal a locale switch: the core domain first, then every known domain
+ * in the order it appeared, unloaded and loaded again for the new locale; a
+ * domain closed for good or with nothing to read stays known and empty.
+ */
+function _minn_reload_textdomains(string $locale): void
+{
+    WP_Translation_Controller::get_instance()->set_locale($locale);
+    load_default_textdomain($locale);
+    $domains = Runtime::textDomains();
+    foreach ($domains->knownDomains() as $domain) {
+        if ($domain === 'default') {
+            continue;
+        }
+        unload_textdomain($domain, true);
+        $file = $domains->closed($domain) ? null : _minn_textdomain_file($domain, $locale);
+        if ($file === null || !load_textdomain($domain, $file, $locale)) {
+            $domains->markKnown($domain);
+        }
+    }
+    do_action('change_locale', $locale);
 }
 
 function load_default_textdomain($locale = null)
 {
-    return false;
+    $locale = (string) ($locale ?? determine_locale());
+    unload_textdomain('default', true);
+    return load_textdomain('default', WP_LANG_DIR . "/{$locale}.mo", $locale);
 }
 
 function is_textdomain_loaded($domain)
@@ -296,17 +329,39 @@ function get_available_languages($dir = null)
 
 function is_locale_switched()
 {
-    return false;
+    return Runtime::locales()->switched();
 }
 
 function switch_to_locale($locale)
 {
-    return false;
+    $locale = (string) $locale;
+    if ($locale === determine_locale() || ($locale !== 'en_US' && !in_array($locale, get_available_languages(), true))) {
+        return false;
+    }
+    Runtime::locales()->push($locale);
+    _minn_reload_textdomains($locale);
+    return true;
 }
 
 function restore_previous_locale()
 {
-    return false;
+    if (!Runtime::locales()->switched()) {
+        return false;
+    }
+    $locale = Runtime::locales()->pop() ?? determine_locale();
+    _minn_reload_textdomains($locale);
+    return $locale;
+}
+
+function restore_current_locale()
+{
+    if (!Runtime::locales()->switched()) {
+        return false;
+    }
+    Runtime::locales()->clear();
+    $locale = determine_locale();
+    _minn_reload_textdomains($locale);
+    return $locale;
 }
 
 function number_format_i18n($number, $decimals = 0)

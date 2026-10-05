@@ -47098,6 +47098,105 @@
             ]
         },
         {
+            "name": "Minn\\I18n\\LocaleStack",
+            "short": "LocaleStack",
+            "namespace": "Minn\\I18n",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/I18n/LocaleStack.php",
+            "lines": 36,
+            "doc": "The locales a request switched into, innermost last. Empty means the\nrequest speaks its own locale.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Runtime\\Runtime"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "stack",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "push",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "push(string $locale): void",
+                    "doc": "Enters a locale.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "locale",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 17,
+                    "end": 20
+                },
+                {
+                    "routes": [],
+                    "name": "pop",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "pop(): ?string",
+                    "doc": "Leaves the innermost locale; the one now in force, or null when none is switched.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 23,
+                    "end": 27
+                },
+                {
+                    "routes": [],
+                    "name": "clear",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "clear(): void",
+                    "doc": "Leaves every switched locale.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 30,
+                    "end": 33
+                },
+                {
+                    "routes": [],
+                    "name": "current",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "current(): ?string",
+                    "doc": "The innermost switched locale, or null.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 36,
+                    "end": 39
+                },
+                {
+                    "routes": [],
+                    "name": "switched",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "switched(): bool",
+                    "doc": "Whether any locale is switched in.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 42,
+                    "end": 45
+                }
+            ]
+        },
+        {
             "name": "Minn\\I18n\\MoFile",
             "short": "MoFile",
             "namespace": "Minn\\I18n",
@@ -47724,8 +47823,8 @@
             "namespace": "Minn\\I18n",
             "kind": "final class",
             "file": "public/minn/src/Minn/I18n/TextDomains.php",
-            "lines": 125,
-            "doc": "The text domains loaded for this request: each domain's files in the order\nthey were loaded. A lookup asks the files in that order and the first one\nwith a translation answers, each file under its own plural rule. The\nregistry also remembers the folders plugins and themes named for their\ndomains, the domains unloaded for good, and which just-in-time lookups\nhave already been tried, so a missing file is looked for once.",
+            "lines": 139,
+            "doc": "The text domains this request knows: each domain's files in the order they\nwere loaded, and the domains looked for and not found (known, with no\nfiles), all in the order they first appeared, which is the order a locale\nswitch reloads them in. A lookup asks a domain's files in load order and\nthe first one with a translation answers, each under its own plural rule.\nThe registry also remembers the folder a plugin or theme named for its\ndomain (and how files there are named), and the domains unloaded for good.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -47758,15 +47857,6 @@
                 },
                 {
                     "name": "closed",
-                    "type": "array",
-                    "readonly": false,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": false
-                },
-                {
-                    "name": "tried",
                     "type": "array",
                     "readonly": false,
                     "static": false,
@@ -47807,8 +47897,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 30,
-                    "end": 34
+                    "line": 28,
+                    "end": 32
                 },
                 {
                     "routes": [],
@@ -47827,8 +47917,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 37,
-                    "end": 40
+                    "line": 35,
+                    "end": 38
                 },
                 {
                     "routes": [],
@@ -47836,7 +47926,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "unload(string $domain): bool",
-                    "doc": "Drops a domain's files; true when there were any.",
+                    "doc": "Forgets a domain and its files; true when it had any.",
                     "shapes": [],
                     "params": [
                         {
@@ -47847,8 +47937,62 @@
                             "doc": ""
                         }
                     ],
-                    "line": 43,
-                    "end": 48
+                    "line": 41,
+                    "end": 46
+                },
+                {
+                    "routes": [],
+                    "name": "markKnown",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "markKnown(string $domain): void",
+                    "doc": "Records that a domain was asked for, so it is looked for once and reloaded on a switch.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "domain",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 49,
+                    "end": 52
+                },
+                {
+                    "routes": [],
+                    "name": "known",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "known(string $domain): bool",
+                    "doc": "Whether the domain was loaded or looked for.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "domain",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 55,
+                    "end": 58
+                },
+                {
+                    "routes": [],
+                    "name": "knownDomains",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "knownDomains(): array",
+                    "doc": "Every known domain, in the order it first appeared.",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [],
+                    "line": 65,
+                    "end": 68
                 },
                 {
                     "routes": [],
@@ -47874,8 +48018,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 51,
-                    "end": 56
+                    "line": 71,
+                    "end": 76
                 },
                 {
                     "routes": [],
@@ -47896,8 +48040,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 63,
-                    "end": 66
+                    "line": 83,
+                    "end": 86
                 },
                 {
                     "routes": [],
@@ -47923,8 +48067,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 69,
-                    "end": 78
+                    "line": 89,
+                    "end": 98
                 },
                 {
                     "routes": [],
@@ -47957,8 +48101,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 81,
-                    "end": 89
+                    "line": 101,
+                    "end": 109
                 },
                 {
                     "routes": [],
@@ -47966,7 +48110,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "rememberFolder(string $domain, string $folder): void",
-                    "doc": "Records the folder a plugin or theme named for its domain's files.",
+                    "doc": "Records the folder a plugin or theme named for its domain; files there are \"{domain}-{locale}\".",
                     "shapes": [],
                     "params": [
                         {
@@ -47984,16 +48128,16 @@
                             "doc": ""
                         }
                     ],
-                    "line": 92,
-                    "end": 95
+                    "line": 112,
+                    "end": 115
                 },
                 {
                     "routes": [],
-                    "name": "folder",
+                    "name": "rememberThemeFolder",
                     "static": false,
                     "visibility": "public",
-                    "signature": "folder(string $domain): ?string",
-                    "doc": "The folder named for a domain, if any.",
+                    "signature": "rememberThemeFolder(string $domain, string $folder): void",
+                    "doc": "Records the active theme's own language folder; files there are named by locale alone.",
                     "shapes": [],
                     "params": [
                         {
@@ -48002,10 +48146,44 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "folder",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
                         }
                     ],
-                    "line": 98,
-                    "end": 101
+                    "line": 118,
+                    "end": 121
+                },
+                {
+                    "routes": [],
+                    "name": "folderFile",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "folderFile(string $domain, string $locale): ?string",
+                    "doc": "The .mo path a domain's named folder would hold for a locale, if a folder was named.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "domain",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "locale",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 124,
+                    "end": 131
                 },
                 {
                     "routes": [],
@@ -48024,8 +48202,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 104,
-                    "end": 107
+                    "line": 134,
+                    "end": 137
                 },
                 {
                     "routes": [],
@@ -48044,40 +48222,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 110,
-                    "end": 113
-                },
-                {
-                    "routes": [],
-                    "name": "firstTry",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "firstTry(string $domain): bool",
-                    "doc": "True the first time a domain is looked for; false after, until the locale changes.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "domain",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 116,
-                    "end": 122
-                },
-                {
-                    "routes": [],
-                    "name": "forgetTries",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "forgetTries(): void",
-                    "doc": "Forgets every lookup tried, for a new locale.",
-                    "shapes": [],
-                    "params": [],
-                    "line": 125,
-                    "end": 128
+                    "line": 140,
+                    "end": 143
                 },
                 {
                     "routes": [],
@@ -48090,8 +48236,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 135,
-                    "end": 138
+                    "line": 150,
+                    "end": 153
                 }
             ]
         },
@@ -68370,7 +68516,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Settings.php",
-            "lines": 107,
+            "lines": 108,
             "doc": "The registered settings the Settings views read and write, mapped to\nthe options WordPress stores. Registration order is the payload order.",
             "implements": [],
             "extends": null,
@@ -68436,7 +68582,7 @@
                     "shapes": [],
                     "params": [],
                     "line": 82,
-                    "end": 99
+                    "end": 100
                 },
                 {
                     "routes": [],
@@ -68455,8 +68601,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 102,
-                    "end": 118
+                    "line": 103,
+                    "end": 119
                 }
             ]
         },
@@ -77961,7 +78107,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Plugins.php",
-            "lines": 192,
+            "lines": 210,
             "doc": "Loads the site's plugins into the runtime the way the reference does:\nmu-plugins first, then active_plugins in stored order, each file\nincluded once. A plugin loads only when the static symbol read finds\nnothing the runtime lacks; otherwise it is reported and skipped so the\nsite keeps rendering. The lifecycle actions fire between the phases.",
             "implements": [],
             "extends": null,
@@ -77971,7 +78117,8 @@
                 "Minn\\Login\\ServeLogin",
                 "Minn\\Runtime\\Recovery",
                 "Minn\\Runtime\\Runtime",
-                "Minn\\Runtime\\Symbols"
+                "Minn\\Runtime\\Symbols",
+                "Minn\\Support\\FileHeaders"
             ],
             "usedBy": [
                 "Minn\\Cli\\Runtime",
@@ -78033,8 +78180,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 50,
-                    "end": 63
+                    "line": 52,
+                    "end": 65
                 },
                 {
                     "routes": [],
@@ -78047,8 +78194,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 136,
-                    "end": 139
+                    "line": 156,
+                    "end": 159
                 },
                 {
                     "routes": [],
@@ -78061,8 +78208,8 @@
                         "@return array<string, array<string, mixed>> plugin file => why it did not load"
                     ],
                     "params": [],
-                    "line": 146,
-                    "end": 149
+                    "line": 166,
+                    "end": 169
                 },
                 {
                     "routes": [],
@@ -78081,8 +78228,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 152,
-                    "end": 155
+                    "line": 172,
+                    "end": 175
                 },
                 {
                     "routes": [],
@@ -78101,8 +78248,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 65,
-                    "end": 107
+                    "line": 67,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -78121,8 +78268,35 @@
                             "doc": ""
                         }
                     ],
-                    "line": 116,
-                    "end": 129
+                    "line": 120,
+                    "end": 136
+                },
+                {
+                    "routes": [],
+                    "name": "rememberThemeDomain",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "rememberThemeDomain(string $folder, string $slug): void",
+                    "doc": "An active theme's own text domain, named in its stylesheet header\n(the slug when it names none), reads its folder (\"Domain Path\", or\n\"/languages\") with files named by locale alone.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "folder",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "slug",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 143,
+                    "end": 149
                 },
                 {
                     "routes": [],
@@ -78155,8 +78329,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 157,
-                    "end": 180
+                    "line": 177,
+                    "end": 200
                 },
                 {
                     "routes": [],
@@ -78189,8 +78363,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 188,
-                    "end": 200
+                    "line": 208,
+                    "end": 220
                 },
                 {
                     "routes": [],
@@ -78209,8 +78383,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 203,
-                    "end": 208
+                    "line": 223,
+                    "end": 228
                 }
             ]
         },
@@ -80473,7 +80647,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Runtime.php",
-            "lines": 289,
+            "lines": 297,
             "doc": "The WordPress runtime the engine offers plugin code: the procedural\nfacade under minn/wp-api/ plus the services it delegates to. One per\nrequest; the facade reaches it through these statics.",
             "implements": [],
             "extends": null,
@@ -80487,6 +80661,7 @@
                 "Minn\\Db",
                 "Minn\\Extension\\SeamRunner",
                 "Minn\\Http\\Request",
+                "Minn\\I18n\\LocaleStack",
                 "Minn\\I18n\\TextDomains",
                 "Minn\\Runtime\\BlockTemplates",
                 "Minn\\Runtime\\Constants",
@@ -80562,8 +80737,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 67,
-                "end": 79
+                "line": 69,
+                "end": 81
             },
             "cases": [],
             "constants": [],
@@ -80643,6 +80818,15 @@
                 {
                     "name": "textDomains",
                     "type": "?Minn\\I18n\\TextDomains",
+                    "readonly": false,
+                    "static": true,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "locales",
+                    "type": "?Minn\\I18n\\LocaleStack",
                     "readonly": false,
                     "static": true,
                     "doc": "",
@@ -80812,8 +80996,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 82,
-                    "end": 85
+                    "line": 84,
+                    "end": 87
                 },
                 {
                     "routes": [],
@@ -80824,8 +81008,8 @@
                     "doc": "The extension seams, or null before the front has registered any (REST and the CLI never do).",
                     "shapes": [],
                     "params": [],
-                    "line": 88,
-                    "end": 91
+                    "line": 90,
+                    "end": 93
                 },
                 {
                     "routes": [],
@@ -80836,8 +81020,8 @@
                     "doc": "The render state for this request, made on first use: one set of counters for everything rendered.",
                     "shapes": [],
                     "params": [],
-                    "line": 94,
-                    "end": 97
+                    "line": 96,
+                    "end": 99
                 },
                 {
                     "routes": [],
@@ -80856,8 +81040,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 100,
-                    "end": 103
+                    "line": 102,
+                    "end": 105
                 },
                 {
                     "routes": [],
@@ -80868,8 +81052,8 @@
                     "doc": "The block renderer for this request, made on first use over this request's own database door.",
                     "shapes": [],
                     "params": [],
-                    "line": 106,
-                    "end": 109
+                    "line": 108,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -80888,8 +81072,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 123,
-                    "end": 142
+                    "line": 125,
+                    "end": 144
                 },
                 {
                     "routes": [],
@@ -80900,8 +81084,8 @@
                     "doc": "The booted runtime; throws when there is none.",
                     "shapes": [],
                     "params": [],
-                    "line": 145,
-                    "end": 151
+                    "line": 147,
+                    "end": 153
                 },
                 {
                     "routes": [],
@@ -80912,8 +81096,8 @@
                     "doc": "Whether the runtime is up.",
                     "shapes": [],
                     "params": [],
-                    "line": 154,
-                    "end": 157
+                    "line": 156,
+                    "end": 159
                 },
                 {
                     "routes": [],
@@ -80924,8 +81108,8 @@
                     "doc": "The hook registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 160,
-                    "end": 163
+                    "line": 162,
+                    "end": 165
                 },
                 {
                     "routes": [],
@@ -80936,8 +81120,8 @@
                     "doc": "The options store.",
                     "shapes": [],
                     "params": [],
-                    "line": 166,
-                    "end": 169
+                    "line": 168,
+                    "end": 171
                 },
                 {
                     "routes": [],
@@ -80963,8 +81147,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 180,
-                    "end": 195
+                    "line": 182,
+                    "end": 197
                 },
                 {
                     "routes": [],
@@ -80975,8 +81159,8 @@
                     "doc": "The object cache.",
                     "shapes": [],
                     "params": [],
-                    "line": 198,
-                    "end": 201
+                    "line": 200,
+                    "end": 203
                 },
                 {
                     "routes": [],
@@ -80987,8 +81171,20 @@
                     "doc": "The text domains loaded for this request.",
                     "shapes": [],
                     "params": [],
-                    "line": 204,
-                    "end": 207
+                    "line": 206,
+                    "end": 209
+                },
+                {
+                    "routes": [],
+                    "name": "locales",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "locales(): Minn\\I18n\\LocaleStack",
+                    "doc": "The locales this request switched into.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 212,
+                    "end": 215
                 },
                 {
                     "routes": [],
@@ -80999,8 +81195,8 @@
                     "doc": "The shortcode registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 210,
-                    "end": 213
+                    "line": 218,
+                    "end": 221
                 },
                 {
                     "routes": [],
@@ -81011,8 +81207,8 @@
                     "doc": "The script modules registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 216,
-                    "end": 222
+                    "line": 224,
+                    "end": 230
                 },
                 {
                     "routes": [],
@@ -81023,8 +81219,8 @@
                     "doc": "The interactivity API.",
                     "shapes": [],
                     "params": [],
-                    "line": 225,
-                    "end": 228
+                    "line": 233,
+                    "end": 236
                 },
                 {
                     "routes": [],
@@ -81035,8 +81231,8 @@
                     "doc": "The registered block templates.",
                     "shapes": [],
                     "params": [],
-                    "line": 231,
-                    "end": 234
+                    "line": 239,
+                    "end": 242
                 },
                 {
                     "routes": [],
@@ -81047,8 +81243,8 @@
                     "doc": "The post types, taxonomies, and statuses.",
                     "shapes": [],
                     "params": [],
-                    "line": 237,
-                    "end": 240
+                    "line": 245,
+                    "end": 248
                 },
                 {
                     "routes": [],
@@ -81059,8 +81255,8 @@
                     "doc": "A fresh post query over the runtime's registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 243,
-                    "end": 246
+                    "line": 251,
+                    "end": 254
                 },
                 {
                     "routes": [],
@@ -81086,8 +81282,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 249,
-                    "end": 252
+                    "line": 257,
+                    "end": 260
                 },
                 {
                     "routes": [],
@@ -81113,8 +81309,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 255,
-                    "end": 258
+                    "line": 263,
+                    "end": 266
                 },
                 {
                     "routes": [],
@@ -81125,8 +81321,8 @@
                     "doc": "Whether the request is over HTTPS.",
                     "shapes": [],
                     "params": [],
-                    "line": 261,
-                    "end": 264
+                    "line": 269,
+                    "end": 272
                 },
                 {
                     "routes": [],
@@ -81137,8 +81333,8 @@
                     "doc": "wp-content under the site root.",
                     "shapes": [],
                     "params": [],
-                    "line": 267,
-                    "end": 270
+                    "line": 275,
+                    "end": 278
                 },
                 {
                     "routes": [],
@@ -81157,8 +81353,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 273,
-                    "end": 293
+                    "line": 281,
+                    "end": 301
                 },
                 {
                     "routes": [],
@@ -81169,8 +81365,8 @@
                     "doc": "Fresh per-request state, for suites.",
                     "shapes": [],
                     "params": [],
-                    "line": 296,
-                    "end": 310
+                    "line": 304,
+                    "end": 319
                 }
             ]
         },
@@ -85304,6 +85500,7 @@
                 "Minn\\Ops\\Packages",
                 "Minn\\Ops\\Updates",
                 "Minn\\Rest\\PluginsController",
+                "Minn\\Runtime\\Plugins",
                 "Minn\\Theme\\Folder"
             ],
             "constructor": null,

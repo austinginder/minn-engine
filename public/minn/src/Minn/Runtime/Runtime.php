@@ -13,6 +13,7 @@ use Minn\Blocks\RenderState;
 use Minn\Blocks\Renderer as BlockRenderer;
 use Minn\Extension\SeamRunner;
 use Minn\Http\Request;
+use Minn\I18n\LocaleStack;
 use Minn\I18n\TextDomains;
 
 /**
@@ -31,6 +32,7 @@ final class Runtime
     private static ?ScriptModules $scriptModules = null;
     private static ?BlockTemplates $blockTemplates = null;
     private static ?TextDomains $textDomains = null;
+    private static ?LocaleStack $locales = null;
     private static ?self $current = null;
     private static bool $facadeLoaded = false;
     /** @var array<string, mixed> plugin-visible state the facade keeps between calls */
@@ -206,6 +208,12 @@ final class Runtime
         return self::$textDomains ??= new TextDomains();
     }
 
+    /** The locales this request switched into. */
+    public static function locales(): LocaleStack
+    {
+        return self::$locales ??= new LocaleStack();
+    }
+
     /** The shortcode registry. */
     public static function shortcodes(): Shortcodes
     {
@@ -306,6 +314,7 @@ final class Runtime
         self::$scriptModules = null;
         self::$blockTemplates = null;
         self::$textDomains = null;
+        self::$locales = null;
         self::$options = self::$current === null ? null : new Options(self::$current->db);
     }
 }

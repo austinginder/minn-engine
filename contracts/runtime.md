@@ -2189,14 +2189,38 @@ neighbours over those classes. Fixture `contracts/fixtures/api/l10n.json`
   original) and one shared `NOOP_Translations` otherwise.
 - **`load_plugin_textdomain($domain, false, $rel)`** reads
   `WP_PLUGIN_DIR/$rel/{domain}-{locale}` (`.l10n.php` or `.mo`) when it
-  is there; when it is not, it returns true without loading and the
-  domain loads just in time on first use. It fires no `plugin_locale`
-  filter.
-- **Just in time.** A domain used before anyone loaded it, in any locale
-  but `en_US`, is looked for once: the folder a plugin or theme named for
-  it, then `WP_LANG_DIR/plugins/` and `WP_LANG_DIR/themes/`. The reference
-  reads the languages folder once per request, so a file copied in during
-  a request is not seen there; the engine looks at the disk.
+  is there; when it is not, it names the folder and returns true without
+  loading. It fires no `plugin_locale` filter. `load_theme_textdomain`
+  and `load_muplugin_textdomain` work the same way, and a folder named in
+  code holds `{domain}-{locale}` files even inside the themes root; only
+  the active theme's own domain (its `Text Domain` header, or the slug)
+  reads its `Domain Path` (or `/languages`) by locale alone (`pl_PL.mo`).
+- **Just in time** (suite `tests/l10n.test.php`, which stages files
+  before either stack starts, because the reference reads the languages
+  folder once per request). A domain used before anyone loaded it is
+  looked for once, in any locale: its named folder when the file is
+  there, then `WP_LANG_DIR/plugins/`, then `WP_LANG_DIR/themes/`, then the
+  named folder's file even though it is missing (the load is attempted
+  and fails). A domain looked for and not found stays known and empty, so
+  the next lookup does not search again; that includes a lookup in
+  `en_US`, which keeps a later switch to another locale from finding it
+  just in time.
+- **Unloading for good** closes a domain only when it really had files:
+  it does not come back on its own, and a locale switch unloads it
+  without reloading it. Unloading a domain that was merely looked for
+  forgets it, so the next lookup searches again.
+- **The core domain** loads between `setup_theme` and `after_setup_theme`
+  from `WP_LANG_DIR/{locale}.mo` (`load_default_textdomain` unloads
+  `default` reloadably first, then loads).
+- **Locale switching.** `switch_to_locale` is false for the locale in
+  force and for one with no core file in `WP_LANG_DIR` (`en_US` always
+  qualifies); otherwise it pushes the locale, reloads the core domain,
+  then every known domain in the order it first appeared (unloaded
+  reloadably, loaded again from the resolution above, or left known and
+  empty), fires `change_locale`, and returns true. `get_locale()` and
+  `determine_locale()` answer the switched locale. `restore_previous_locale`
+  returns the locale it went back to (false when nothing was switched);
+  `restore_current_locale` goes back to the start and returns that locale.
 - **The MO class.** `import_from_file` fills `headers` (names as written)
   and `entries` keyed like the lookups; a plural entry is keyed by its
   singular and carries `plural`; `add_entry` takes an entry or an array;
@@ -2205,6 +2229,6 @@ neighbours over those classes. Fixture `contracts/fixtures/api/l10n.json`
   Plural-Forms. `NOOP_Translations` is English throughout.
 
 Not yet: script translations (`load_script_textdomain`,
-`wp_set_script_translations`), locale switching, the core (`default`)
-domain, and the engine's own front-end strings, which are written in
-English and do not pass through `__()`.
+`wp_set_script_translations`), `switch_to_user_locale`, the admin and
+network core files, and the engine's own front-end strings, which are
+written in English and do not pass through `__()`.

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Support\FileHeaders;
+
 use Minn\Content\Site;
 use Minn\Http\Failure;
 use Throwable;
@@ -100,6 +102,8 @@ final class Plugins
         $hooks->action('plugins_loaded', []);
         $hooks->action('sanitize_comment_cookies', []);
         $hooks->action('setup_theme', []);
+        // The core domain loads here, before the theme, as the reference loads it.
+        \load_default_textdomain();
         self::loadThemeFunctions($runtime);
         $hooks->action('after_setup_theme', []);
         $hooks->action('init', []);
@@ -121,11 +125,27 @@ final class Plugins
         $themes = $runtime->contentDir() . '/themes';
         $slugs = $stylesheet === $template ? [$stylesheet] : [$stylesheet, $template];
         foreach ($slugs as $slug) {
-            if (!preg_match('/^[A-Za-z0-9._-]+$/', $slug) || !is_file("{$themes}/{$slug}/functions.php")) {
+            if (!preg_match('/^[A-Za-z0-9._-]+$/', $slug)) {
                 continue;
             }
-            self::includeFile("{$themes}/{$slug}/functions.php", "theme:{$slug}", $runtime);
+            self::rememberThemeDomain("{$themes}/{$slug}", $slug);
+            if (is_file("{$themes}/{$slug}/functions.php")) {
+                self::includeFile("{$themes}/{$slug}/functions.php", "theme:{$slug}", $runtime);
+            }
         }
+    }
+
+    /**
+     * An active theme's own text domain, named in its stylesheet header
+     * (the slug when it names none), reads its folder ("Domain Path", or
+     * "/languages") with files named by locale alone.
+     */
+    private static function rememberThemeDomain(string $folder, string $slug): void
+    {
+        $headers = FileHeaders::values("{$folder}/style.css", ['Text Domain', 'Domain Path']);
+        $domain = $headers['Text Domain'] !== '' ? $headers['Text Domain'] : $slug;
+        $path = $headers['Domain Path'] !== '' ? '/' . trim($headers['Domain Path'], '/') : '/languages';
+        Runtime::textDomains()->rememberThemeFolder($domain, $folder . $path);
     }
 
     /**

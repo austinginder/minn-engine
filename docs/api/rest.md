@@ -49,7 +49,7 @@ the wp/v2 surface: shapes and controllers
 | [`SchemaValues`](#schemavalues) | final class | 201 | The value side of JSON Schema, as the reference applies it: what counts |
 | [`SearchController`](#searchcontroller) | final readonly class | 121 | wp/v2 search over published content: id, title, url, type, and the |
 | [`Services`](#services) | final class | 387 | The objects one REST request shares, each made once, on first use, from |
-| [`Settings`](#settings) | final readonly class | 107 | The registered settings the Settings views read and write, mapped to |
+| [`Settings`](#settings) | final readonly class | 108 | The registered settings the Settings views read and write, mapped to |
 | [`SettingsController`](#settingscontroller) | final readonly class | 24 | wp/v2/settings: read and write, both behind manage_options. |
 | [`Subjects`](#subjects) | final readonly class | 41 | Whether the record a route capture names exists, for the policy gate to |
 | [`Taxonomies`](#taxonomies) | final class | 48 | The taxonomy registry the wp/v2 surface describes: the core set seeded |

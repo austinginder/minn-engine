@@ -35,7 +35,7 @@ the WordPress runtime plugins load against
 | [`PlaceholderTrace`](#placeholdertrace) | final class | 27 | Records every call into a generated placeholder while a site opts in by |
 | [`Placeholders`](#placeholders) | final class | 49 | The printf placeholders plugin code hands wpdb::prepare, filled the way |
 | [`PluginUpdates`](#pluginupdates) | final class | 65 | The update offers the site's own plugins publish. A plugin that hosts |
-| [`Plugins`](#plugins) | final class | 192 | Loads the site's plugins into the runtime the way the reference does: |
+| [`Plugins`](#plugins) | final class | 210 | Loads the site's plugins into the runtime the way the reference does: |
 | [`PostInsert`](#postinsert) | final readonly class | 160 | The decisions behind wp_insert_post: which columns a postarr fills, when |
 | [`PostLookup`](#postlookup) | final readonly class | 85 | The post reads plugin code asks for by shape: a page by title, revisions, counts. |
 | [`PostQuery`](#postquery) | final class | 383 | The query WP_Query runs: its variables become one SELECT over the posts |
@@ -44,7 +44,7 @@ the WordPress runtime plugins load against
 | [`Recovery`](#recovery) | final readonly class | 214 | Recovery from a fatal in someone else's code. When a plugin or theme |
 | [`Refusal`](#refusal) | final readonly class | 6 | A refused operation, the way plugin code expects to read it: a code, a message, optional data. The facade turns it into WP_Error. |
 | [`Registry`](#registry) | final class | 382 | Post types, taxonomies, and statuses as plugin code registers and reads |
-| [`Runtime`](#runtime) | final class | 289 | The WordPress runtime the engine offers plugin code: the procedural |
+| [`Runtime`](#runtime) | final class | 297 | The WordPress runtime the engine offers plugin code: the procedural |
 | [`ScriptModules`](#scriptmodules) | final class | 308 | The script modules registry: registrations with typed dependencies, the |
 | [`ScriptPack`](#scriptpack) | final class | 146 | The site-supplied script pack: the `wp-*` JavaScript packages the engine |
 | [`Shortcodes`](#shortcodes) | final class | 143 | The shortcode registry plugin code fills with add_shortcode, and the |
@@ -1467,7 +1467,7 @@ The plugins the symbol gate refused, with what they lacked.
 
 True when the named plugin file is running as code this request.
 
-Internals: `boot()` (private, line 65), `loadThemeFunctions()` (private, line 116), `includeFile()` (private, line 157), `registerRealpath()` (private, line 188), `isolatedInclude()` (private, line 203)
+Internals: `boot()` (private, line 67), `loadThemeFunctions()` (private, line 120), `rememberThemeDomain()` (private, line 143), `includeFile()` (private, line 177), `registerRealpath()` (private, line 208), `isolatedInclude()` (private, line 223)
 
 
 ## PostInsert
@@ -1961,6 +1961,10 @@ The object cache.
 ### static `textDomains(): Minn\I18n\TextDomains`
 
 The text domains loaded for this request.
+
+### static `locales(): Minn\I18n\LocaleStack`
+
+The locales this request switched into.
 
 ### static `shortcodes(): Minn\Runtime\Shortcodes`
 

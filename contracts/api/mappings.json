@@ -2,12 +2,12 @@
     "generated": "2026-10-05",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 470,
+        "minn": 475,
         "composes": 773,
         "leaf": 397,
-        "noop": 1312,
-        "functions": 2946,
-        "minnMethods": 456,
+        "noop": 1309,
+        "functions": 2948,
+        "minnMethods": 458,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -9668,16 +9668,16 @@
         },
         "_load_textdomain_just_in_time": {
             "file": "l10n.php",
-            "lines": 15,
+            "lines": 12,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::closed",
-                "Minn\\Runtime\\Runtime::firstTry",
-                "Minn\\Runtime\\Runtime::has",
+                "Minn\\Runtime\\Runtime::known",
+                "Minn\\Runtime\\Runtime::markKnown",
                 "Minn\\Runtime\\Runtime::textDomains"
             ],
             "composes": [
-                "_minn_just_in_time_files",
+                "_minn_textdomain_file",
                 "determine_locale",
                 "load_textdomain"
             ]
@@ -10254,15 +10254,6 @@
             ],
             "composes": []
         },
-        "_minn_just_in_time_files": {
-            "file": "l10n.php",
-            "lines": 3,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\Runtime::textDomains"
-            ],
-            "composes": []
-        },
         "_minn_known_entity": {
             "file": "formatting.php",
             "lines": 6,
@@ -10562,6 +10553,24 @@
             ],
             "composes": []
         },
+        "_minn_reload_textdomains": {
+            "file": "l10n.php",
+            "lines": 14,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Runtime::closed",
+                "Minn\\Runtime\\Runtime::knownDomains",
+                "Minn\\Runtime\\Runtime::markKnown",
+                "Minn\\Runtime\\Runtime::textDomains"
+            ],
+            "composes": [
+                "_minn_textdomain_file",
+                "do_action",
+                "load_default_textdomain",
+                "load_textdomain",
+                "unload_textdomain"
+            ]
+        },
         "_minn_render_core_block": {
             "file": "blocks.php",
             "lines": 17,
@@ -10776,6 +10785,15 @@
                 "Minn\\Content\\Terms::__construct",
                 "Minn\\Runtime\\Runtime::current",
                 "Minn\\Runtime\\Runtime::db"
+            ],
+            "composes": []
+        },
+        "_minn_textdomain_file": {
+            "file": "l10n.php",
+            "lines": 7,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Runtime::textDomains"
             ],
             "composes": []
         },
@@ -12622,9 +12640,11 @@
         },
         "determine_locale": {
             "file": "l10n.php",
-            "lines": 5,
-            "kind": "composes",
-            "minn": [],
+            "lines": 8,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Runtime::locales"
+            ],
             "composes": [
                 "apply_filters",
                 "get_locale"
@@ -14467,10 +14487,11 @@
         },
         "get_locale": {
             "file": "l10n.php",
-            "lines": 6,
+            "lines": 9,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::current",
+                "Minn\\Runtime\\Runtime::locales",
                 "Minn\\Runtime\\Runtime::site->option"
             ],
             "composes": [
@@ -17238,7 +17259,9 @@
             "file": "l10n.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\Runtime::locales"
+            ],
             "composes": []
         },
         "is_main_network": {
@@ -17777,10 +17800,14 @@
         },
         "load_default_textdomain": {
             "file": "l10n.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 3,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "determine_locale",
+                "load_textdomain",
+                "unload_textdomain"
+            ]
         },
         "load_muplugin_textdomain": {
             "file": "l10n.php",
@@ -17827,7 +17854,7 @@
         },
         "load_theme_textdomain": {
             "file": "l10n.php",
-            "lines": 2,
+            "lines": 3,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -19559,12 +19586,29 @@
                 "_minn_schema_result"
             ]
         },
+        "restore_current_locale": {
+            "file": "l10n.php",
+            "lines": 7,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Runtime::locales"
+            ],
+            "composes": [
+                "_minn_reload_textdomains",
+                "determine_locale"
+            ]
+        },
         "restore_previous_locale": {
             "file": "l10n.php",
-            "lines": 1,
-            "kind": "noop",
-            "minn": [],
-            "composes": []
+            "lines": 6,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Runtime::locales"
+            ],
+            "composes": [
+                "_minn_reload_textdomains",
+                "determine_locale"
+            ]
         },
         "revoke_super_admin": {
             "file": "admin.php",
@@ -20305,10 +20349,16 @@
         },
         "switch_to_locale": {
             "file": "l10n.php",
-            "lines": 1,
-            "kind": "noop",
-            "minn": [],
-            "composes": []
+            "lines": 7,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Runtime::locales"
+            ],
+            "composes": [
+                "_minn_reload_textdomains",
+                "determine_locale",
+                "get_available_languages"
+            ]
         },
         "tag_description": {
             "file": "taxonomy.php",
@@ -20811,7 +20861,7 @@
         },
         "unload_textdomain": {
             "file": "l10n.php",
-            "lines": 11,
+            "lines": 10,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::textDomains"
