@@ -37098,6 +37098,70 @@
             ]
         },
         {
+            "name": "Minn\\Front\\Maintenance",
+            "short": "Maintenance",
+            "namespace": "Minn\\Front",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Front/Maintenance.php",
+            "lines": 28,
+            "doc": "Maintenance mode, as hosting tools and updaters switch it on: a\n.maintenance file in the webroot whose $upgrading is less than ten minutes\nold. While it holds, every request gets the site's own maintenance.php\n(which prints its page and stops) or the 503 page; an older file is ignored.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http\\Failure",
+                "Minn\\Http\\Response",
+                "Minn\\Runtime\\EarlyFilters"
+            ],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "WINDOW",
+                    "value": "600",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "answer",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "answer(string $abspath, string $contentDir, int $now): ?Minn\\Http\\Response",
+                    "doc": "The answer while maintenance holds, or null when the site is open.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "abspath",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "contentDir",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "now",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 22,
+                    "end": 43
+                }
+            ]
+        },
+        {
             "name": "Minn\\Front\\PageList",
             "short": "PageList",
             "namespace": "Minn\\Front",
@@ -43757,7 +43821,7 @@
             "namespace": "Minn\\Http",
             "kind": "final class",
             "file": "public/minn/src/Minn/Http/Failure.php",
-            "lines": 166,
+            "lines": 176,
             "doc": "What the public sees when the engine cannot answer: a plain page with no\ndetail, while the detail goes to the log. Installed once per request,\nit turns display_errors off (unless the site's own WP_DEBUG_DISPLAY asks\nfor them) and catches the fatal errors PHP would otherwise print.",
             "implements": [],
             "extends": null,
@@ -43767,6 +43831,7 @@
             ],
             "usedBy": [
                 "Minn\\Engine",
+                "Minn\\Front\\Maintenance",
                 "Minn\\Runtime\\Plugins"
             ],
             "constructor": null,
@@ -43933,6 +43998,18 @@
                 },
                 {
                     "routes": [],
+                    "name": "maintenance",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "maintenance(): Minn\\Http\\Response",
+                    "doc": "The 503 page while maintenance mode holds; monitors read the status, the retry hint, and the title.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 155,
+                    "end": 162
+                },
+                {
+                    "routes": [],
                     "name": "detailed",
                     "static": true,
                     "visibility": "public",
@@ -43969,8 +44046,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 159,
-                    "end": 165
+                    "line": 169,
+                    "end": 175
                 },
                 {
                     "routes": [],
@@ -44064,8 +44141,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 167,
-                    "end": 180
+                    "line": 177,
+                    "end": 190
                 }
             ]
         },
@@ -45504,6 +45581,7 @@
                 "Minn\\Front\\CommentPostController",
                 "Minn\\Front\\FeedController",
                 "Minn\\Front\\FrontController",
+                "Minn\\Front\\Maintenance",
                 "Minn\\Front\\ProbeController",
                 "Minn\\Front\\SitemapController",
                 "Minn\\Http\\Failure",
@@ -74602,6 +74680,61 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\EarlyFilters",
+            "short": "EarlyFilters",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/EarlyFilters.php",
+            "lines": 20,
+            "doc": "Filters that run before the runtime exists, over the hooks added that\nearly: WP-CLI's add_wp_hook writes them into $wp_filter as plain arrays\n(tag => priority => id => function and accepted_args). The reference has\nits hook API by then; the engine reads the same arrays directly.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Front\\Maintenance"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "apply",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "apply(string $tag, mixed $value, mixed ...$args): mixed",
+                    "doc": "The value through every early callback on the tag, lowest priority first; as given when there are none.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "tag",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 16,
+                    "end": 31
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\Hooks",
             "short": "Hooks",
             "namespace": "Minn\\Runtime",
@@ -80960,7 +81093,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Runtime.php",
-            "lines": 311,
+            "lines": 331,
             "doc": "The WordPress runtime the engine offers plugin code: the procedural\nfacade under minn/wp-api/ plus the services it delegates to. One per\nrequest; the facade reaches it through these statics.",
             "implements": [],
             "extends": null,
@@ -81386,7 +81519,7 @@
                         }
                     ],
                     "line": 125,
-                    "end": 144
+                    "end": 146
                 },
                 {
                     "routes": [],
@@ -81397,8 +81530,8 @@
                     "doc": "The booted runtime; throws when there is none.",
                     "shapes": [],
                     "params": [],
-                    "line": 147,
-                    "end": 153
+                    "line": 149,
+                    "end": 155
                 },
                 {
                     "routes": [],
@@ -81409,8 +81542,8 @@
                     "doc": "Whether the runtime is up.",
                     "shapes": [],
                     "params": [],
-                    "line": 156,
-                    "end": 159
+                    "line": 158,
+                    "end": 161
                 },
                 {
                     "routes": [],
@@ -81421,8 +81554,8 @@
                     "doc": "The hook registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 162,
-                    "end": 165
+                    "line": 164,
+                    "end": 167
                 },
                 {
                     "routes": [],
@@ -81433,8 +81566,8 @@
                     "doc": "The options store.",
                     "shapes": [],
                     "params": [],
-                    "line": 168,
-                    "end": 171
+                    "line": 170,
+                    "end": 173
                 },
                 {
                     "routes": [],
@@ -81460,8 +81593,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 182,
-                    "end": 197
+                    "line": 184,
+                    "end": 199
                 },
                 {
                     "routes": [],
@@ -81472,8 +81605,8 @@
                     "doc": "The object cache.",
                     "shapes": [],
                     "params": [],
-                    "line": 200,
-                    "end": 203
+                    "line": 202,
+                    "end": 205
                 },
                 {
                     "routes": [],
@@ -81484,8 +81617,8 @@
                     "doc": "The text domains loaded for this request.",
                     "shapes": [],
                     "params": [],
-                    "line": 206,
-                    "end": 209
+                    "line": 208,
+                    "end": 211
                 },
                 {
                     "routes": [],
@@ -81496,8 +81629,8 @@
                     "doc": "The locales this request switched into.",
                     "shapes": [],
                     "params": [],
-                    "line": 212,
-                    "end": 215
+                    "line": 214,
+                    "end": 217
                 },
                 {
                     "routes": [],
@@ -81508,8 +81641,8 @@
                     "doc": "The shortcode registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 218,
-                    "end": 221
+                    "line": 220,
+                    "end": 223
                 },
                 {
                     "routes": [],
@@ -81520,8 +81653,8 @@
                     "doc": "The script modules registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 224,
-                    "end": 230
+                    "line": 226,
+                    "end": 232
                 },
                 {
                     "routes": [],
@@ -81532,8 +81665,8 @@
                     "doc": "The interactivity API.",
                     "shapes": [],
                     "params": [],
-                    "line": 233,
-                    "end": 236
+                    "line": 235,
+                    "end": 238
                 },
                 {
                     "routes": [],
@@ -81544,8 +81677,8 @@
                     "doc": "The registered block templates.",
                     "shapes": [],
                     "params": [],
-                    "line": 239,
-                    "end": 242
+                    "line": 241,
+                    "end": 244
                 },
                 {
                     "routes": [],
@@ -81556,8 +81689,8 @@
                     "doc": "The post types, taxonomies, and statuses.",
                     "shapes": [],
                     "params": [],
-                    "line": 245,
-                    "end": 248
+                    "line": 247,
+                    "end": 250
                 },
                 {
                     "routes": [],
@@ -81568,8 +81701,8 @@
                     "doc": "A fresh post query over the runtime's registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 251,
-                    "end": 254
+                    "line": 253,
+                    "end": 256
                 },
                 {
                     "routes": [],
@@ -81595,8 +81728,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 257,
-                    "end": 260
+                    "line": 259,
+                    "end": 262
                 },
                 {
                     "routes": [],
@@ -81622,8 +81755,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 263,
-                    "end": 266
+                    "line": 265,
+                    "end": 268
                 },
                 {
                     "routes": [],
@@ -81634,8 +81767,8 @@
                     "doc": "Whether the request is over HTTPS.",
                     "shapes": [],
                     "params": [],
-                    "line": 269,
-                    "end": 272
+                    "line": 271,
+                    "end": 274
                 },
                 {
                     "routes": [],
@@ -81646,8 +81779,8 @@
                     "doc": "wp-content under the site root.",
                     "shapes": [],
                     "params": [],
-                    "line": 275,
-                    "end": 278
+                    "line": 277,
+                    "end": 280
                 },
                 {
                     "routes": [],
@@ -81666,8 +81799,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 281,
-                    "end": 304
+                    "line": 283,
+                    "end": 306
                 },
                 {
                     "routes": [],
@@ -81678,8 +81811,8 @@
                     "doc": "The pluggable functions, once the plugins have had their chance to\ndefine their own: each is defined only where no plugin did. The plugin\nloader calls this before plugins_loaded; a boot that loads no plugins\ncalls it straight away.",
                     "shapes": [],
                     "params": [],
-                    "line": 312,
-                    "end": 315
+                    "line": 332,
+                    "end": 335
                 },
                 {
                     "routes": [],
@@ -81690,8 +81823,28 @@
                     "doc": "Fresh per-request state, for suites.",
                     "shapes": [],
                     "params": [],
-                    "line": 318,
-                    "end": 333
+                    "line": 338,
+                    "end": 353
+                },
+                {
+                    "routes": [],
+                    "name": "loadObjectCacheDropin",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "loadObjectCacheDropin(self $runtime): void",
+                    "doc": "A site's object-cache.php drop-in, before the facade defines its own\ncache functions: the drop-in's functions and WP_Object_Cache win, and\nthe facade fills in only what it left out. Loaded once per process.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "runtime",
+                            "type": "self",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 313,
+                    "end": 324
                 }
             ]
         },

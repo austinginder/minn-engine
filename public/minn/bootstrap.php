@@ -30,4 +30,20 @@ if (defined('WP_CLI') && WP_CLI) {
 }
 
 Minn\Autoloader::register();
+
+// Before anything else, as the reference does: a fresh .maintenance answers every request.
+$minn_content_dir = defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : ABSPATH . 'wp-content';
+$minn_maintenance = Minn\Front\Maintenance::answer(ABSPATH, $minn_content_dir, time());
+if ($minn_maintenance !== null) {
+    $minn_maintenance->send();
+    return;
+}
+
+// A page cache's early file, in the global scope it expects, when WP_CACHE asks for it.
+// The hook API comes first, as the reference's does: page caches register callbacks from that file.
+if (defined('WP_CACHE') && WP_CACHE && Minn\Runtime\EarlyFilters::apply('enable_loading_advanced_cache_dropin', true) && is_file($minn_content_dir . '/advanced-cache.php')) {
+    require_once __DIR__ . '/wp-api/hooks.php';
+    include $minn_content_dir . '/advanced-cache.php';
+}
+
 (new Minn\Engine(MINN_ENGINE_VERSION, __DIR__))->serve();

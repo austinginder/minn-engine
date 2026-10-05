@@ -2329,3 +2329,42 @@ files their families belong in, since plugins call those while loading.
   still missing. The engine's own mail (password reset, moderation) is
   sent by `Minn\Mail`, not through `wp_mail`, so a plugin's replacement
   does not see it.
+
+## Drop-ins (2026-10-05)
+
+Suite `tests/dropins.test.php` stages the files in `tests/fixtures/dropins`
+into both stacks and compares (the reference's `wp-content` is its own).
+
+- **`object-cache.php`** loads before the facade (`Runtime::boot`), from a
+  function, as the reference loads it; `wp_using_ext_object_cache()` is then
+  true. Its functions and its `WP_Object_Cache` win; every facade cache
+  function is defined only where the drop-in left a gap, and the newer ones
+  (`*_multiple`, `incr`/`decr`) work through the drop-in's single-key
+  functions, while `wp_cache_supports`, `wp_cache_flush_runtime` and
+  `wp_cache_flush_group` answer false for a cache that brought none of
+  its own. Then `wp_cache_init()` runs and the reference's groups are
+  declared: 22 global (`blog-details` … `userslugs`) and the request-only
+  `counts`, `plugins`, `theme_json`, `themes`. Without a drop-in the
+  engine's own `WP_Object_Cache` (a view over `Runtime\ObjectCache`, with
+  `cache_hits`/`cache_misses`) is `$wp_object_cache`.
+- **`db.php`** is required with `$wpdb` global, so a drop-in that assigns
+  `$wpdb = new Its_DB(...)` (Query Monitor's subclass) provides the
+  database object; the facade's `wpdb` is made only when it did not.
+- **`advanced-cache.php`** loads from `bootstrap.php`, at global scope, when
+  `WP_CACHE` is true and `enable_loading_advanced_cache_dropin` (read from
+  the hooks added before the runtime, `Runtime\EarlyFilters`) allows it:
+  after the hook API, before the database and the object cache, as on the
+  reference. A page cache's top-level variables are globals there, as WP
+  Super Cache needs. WP-CLI switches the file off through that filter.
+- **Maintenance mode**: a `.maintenance` in the webroot whose `$upgrading`
+  is under 600 seconds old (and `enable_maintenance_mode`) answers every
+  request first: the site's `maintenance.php` when there is one (the
+  reference serves it with whatever status it sets, 200 by default), else
+  503 with `Retry-After: 600`, the title "Maintenance" and "Briefly
+  unavailable for scheduled maintenance. Check back in a minute." on the
+  engine's own error page. An older file is ignored. The engine used to
+  ignore `.maintenance` entirely, so `wp maintenance-mode activate` did not
+  close the site.
+- **Not yet**: `db-error.php` (the engine's own database-down page shows
+  instead), `php-error.php` and `fatal-error-handler.php` (the engine's own
+  failure page), `sunrise.php` (multisite).

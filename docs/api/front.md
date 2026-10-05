@@ -19,6 +19,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`Kind`](#kind) | enum | 17 | What a public URL resolved to. |
 | [`ListSpacing`](#listspacing) | final readonly class | 30 | How a page list is spaced: the reference's "preserve" keeps newlines and |
 | [`ListingLinks`](#listinglinks) | final class | 53 | The prev/next links a paged listing prints: which page sits either side of |
+| [`Maintenance`](#maintenance) | final class | 28 | Maintenance mode, as hosting tools and updaters switch it on: a |
 | [`PageList`](#pagelist) | final readonly class | 96 | The page hierarchy as wp_list_pages and wp_dropdown_pages draw it: nested |
 | [`Pagination`](#pagination) | final class | 62 | Numbered page links in the reference's shape: previous, the end and |
 | [`Permalinks`](#permalinks) | final readonly class | 253 | Builds public URLs from the site's permalink structure. With an empty |
@@ -488,6 +489,22 @@ The page count is whatever the caller passed and is never filled in from
 the query: a caller that does not say how long the thread is gets no
 collapse at all under newest-first, because no page matches an unknown
 last page.
+
+
+## Maintenance
+
+`final class Minn\Front\Maintenance` · `public/minn/src/Minn/Front/Maintenance.php`
+
+Maintenance mode, as hosting tools and updaters switch it on: a
+.maintenance file in the webroot whose $upgrading is less than ten minutes
+old. While it holds, every request gets the site's own maintenance.php
+(which prints its page and stops) or the 503 page; an older file is ignored.
+
+- const `WINDOW` = `600`
+
+### static `answer(string $abspath, string $contentDir, int $now): ?Minn\Http\Response`
+
+The answer while maintenance holds, or null when the site is open.
 
 
 ## PageList

@@ -126,12 +126,14 @@ final class Runtime
     {
         self::$current = $runtime;
         self::$options = new Options($runtime->db);
+        self::loadObjectCacheDropin($runtime);
         self::loadFacade($runtime->engineDir);
         _minn_bind_hook_globals();
         Constants::define($runtime);
         _minn_main_query();
         _minn_rewrite();
-        $GLOBALS['wpdb'] = new \wpdb(defined('DB_USER') ? DB_USER : '', defined('DB_PASSWORD') ? DB_PASSWORD : '', defined('DB_NAME') ? DB_NAME : '', defined('DB_HOST') ? DB_HOST : '');
+        \_minn_require_wp_db($runtime->contentDir());
+        \_minn_start_object_cache();
         $GLOBALS['wp_textdomain_registry'] = new \WP_Textdomain_Registry();
         // Plugin code reads the locale's names off the global directly
         // (WooCommerce's block settings want weekday_abbrev), so it is
@@ -301,6 +303,24 @@ final class Runtime
         foreach (glob($engineDir . '/wp-api/defaults/*.php') ?: [] as $file) {
             require_once $file;
         }
+    }
+
+    /**
+     * A site's object-cache.php drop-in, before the facade defines its own
+     * cache functions: the drop-in's functions and WP_Object_Cache win, and
+     * the facade fills in only what it left out. Loaded once per process.
+     */
+    private static function loadObjectCacheDropin(self $runtime): void
+    {
+        $file = $runtime->contentDir() . '/object-cache.php';
+        if (self::$facadeLoaded || !is_file($file)) {
+            return;
+        }
+        if (!defined('WP_CONTENT_DIR')) {
+            define('WP_CONTENT_DIR', $runtime->contentDir());
+        }
+        require_once $file;
+        $GLOBALS['_wp_using_ext_object_cache'] = true;
     }
 
     /**

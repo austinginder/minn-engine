@@ -151,6 +151,16 @@ final class Failure
             ->withHeader('Retry-After', '60');
     }
 
+    /** The 503 page while maintenance mode holds; monitors read the status, the retry hint, and the title. */
+    public static function maintenance(): Response
+    {
+        return self::page(503, 'Maintenance', 'Briefly unavailable for scheduled maintenance. Check back in a minute.')
+            ->withHeader('Content-Type', 'text/html; charset=UTF-8')
+            ->withHeader('Retry-After', '600')
+            ->withHeader('Cache-Control', 'no-cache, must-revalidate, max-age=0')
+            ->withHeader('Expires', 'Wed, 11 Jan 1984 05:00:00 GMT');
+    }
+
     /**
      * The same page with the cause on it, for a site that asked to see
      * errors. Only ever reached when WP_DEBUG_DISPLAY (or WP_DEBUG) is on:

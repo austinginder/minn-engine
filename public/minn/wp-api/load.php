@@ -211,3 +211,28 @@ function wp_is_recovery_mode()
 {
     return false;
 }
+
+/**
+ * @internal the database object: a db.php drop-in may set $wpdb itself (Query
+ * Monitor's subclass, a replication class); otherwise the facade's wpdb.
+ */
+function _minn_require_wp_db(string $contentDir): void
+{
+    global $wpdb;
+    if (is_file($contentDir . '/db.php')) {
+        require_once $contentDir . '/db.php';
+    }
+    if (!isset($wpdb)) {
+        $wpdb = new wpdb(defined('DB_USER') ? DB_USER : '', defined('DB_PASSWORD') ? DB_PASSWORD : '', defined('DB_NAME') ? DB_NAME : '', defined('DB_HOST') ? DB_HOST : '');
+    }
+}
+
+/** @internal starts the object cache (a drop-in's or the engine's) with the groups the reference declares global and runtime-only */
+function _minn_start_object_cache(): void
+{
+    wp_cache_init();
+    wp_cache_add_global_groups(['blog-details', 'blog-id-cache', 'blog-lookup', 'blog_meta', 'global-posts', 'image_editor', 'network-queries', 'networks', 'rss', 'site-details', 'site-options', 'site-queries', 'site-transient', 'sites', 'theme_files', 'translation_files', 'user-queries', 'user_meta', 'useremail', 'userlogins', 'users', 'userslugs']);
+    wp_cache_add_non_persistent_groups(['counts', 'plugins', 'theme_json']);
+    // The reference declares theme lookups request-only as soon as it builds a theme, which every boot does.
+    wp_cache_add_non_persistent_groups('themes');
+}

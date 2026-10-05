@@ -19,6 +19,7 @@ the WordPress runtime plugins load against
 | [`Constants`](#constants) | final class | 60 | The constants plugin code expects: the fixed set from data/constants.json |
 | [`CronTable`](#crontable) | final class | 131 | The cron option's shape, operated on as data: timestamp => hook => key => |
 | [`DbDelta`](#dbdelta) | final readonly class | 125 | dbDelta as the reference does it: a CREATE TABLE statement creates the |
+| [`EarlyFilters`](#earlyfilters) | final class | 20 | Filters that run before the runtime exists, over the hooks added that |
 | [`Hooks`](#hooks) | final class | 251 | The hook registry plugin code registers into and the engine fires. |
 | [`Interactivity`](#interactivity) | final class | 509 | Server-side directive processing for the Interactivity API: the state and |
 | [`MainQuery`](#mainquery) | final class | 34 | The query variables the reference's main query would carry for a URL the |
@@ -44,7 +45,7 @@ the WordPress runtime plugins load against
 | [`Recovery`](#recovery) | final readonly class | 214 | Recovery from a fatal in someone else's code. When a plugin or theme |
 | [`Refusal`](#refusal) | final readonly class | 6 | A refused operation, the way plugin code expects to read it: a code, a message, optional data. The facade turns it into WP_Error. |
 | [`Registry`](#registry) | final class | 382 | Post types, taxonomies, and statuses as plugin code registers and reads |
-| [`Runtime`](#runtime) | final class | 311 | The WordPress runtime the engine offers plugin code: the procedural |
+| [`Runtime`](#runtime) | final class | 331 | The WordPress runtime the engine offers plugin code: the procedural |
 | [`ScriptModules`](#scriptmodules) | final class | 308 | The script modules registry: registrations with typed dependencies, the |
 | [`ScriptPack`](#scriptpack) | final class | 146 | The site-supplied script pack: the `wp-*` JavaScript packages the engine |
 | [`Shortcodes`](#shortcodes) | final class | 143 | The shortcode registry plugin code fills with add_shortcode, and the |
@@ -735,6 +736,22 @@ A table's index names.
 Runs one DDL statement.
 
 Internals: `definitions()` (private, line 80)
+
+
+## EarlyFilters
+
+`final class Minn\Runtime\EarlyFilters` · `public/minn/src/Minn/Runtime/EarlyFilters.php`
+
+Filters that run before the runtime exists, over the hooks added that
+early: WP-CLI's add_wp_hook writes them into $wp_filter as plain arrays
+(tag => priority => id => function and accepted_args). The reference has
+its hook API by then; the engine reads the same arrays directly.
+
+Used by: `Minn\Front\Maintenance`
+
+### static `apply(string $tag, mixed $value, mixed ...$args): mixed`
+
+The value through every early callback on the tag, lowest priority first; as given when there are none.
 
 
 ## Hooks
@@ -2032,6 +2049,8 @@ calls it straight away.
 ### static `reset(): void`
 
 Fresh per-request state, for suites.
+
+Internals: `loadObjectCacheDropin()` (private, line 313)
 
 
 ## ScriptModules
