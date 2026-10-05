@@ -600,32 +600,6 @@ function _wp_array_set(&$input_array, $path, $value = null)
     $ref = $value;
 }
 
-function wp_rand($min = null, $max = null)
-{
-    $min = (int) ($min ?? 0);
-    $max = (int) ($max ?? 0);
-    if ($max <= $min) {
-        return $min === $max ? $min : random_int(min($min, $max), max($min, $max));
-    }
-    return random_int($min, $max);
-}
-
-function wp_generate_password($length = 12, $special_chars = true, $extra_special_chars = false)
-{
-    $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    if ($special_chars) {
-        $chars .= '!@#$%^&*()';
-    }
-    if ($extra_special_chars) {
-        $chars .= '-_ []{}<>~`+=,.;:/?|';
-    }
-    $password = '';
-    for ($i = 0; $i < (int) $length; $i++) {
-        $password .= $chars[random_int(0, strlen($chars) - 1)];
-    }
-    return apply_filters('random_password', $password, $length, $special_chars, $extra_special_chars);
-}
-
 function __checked_selected_helper($helper, $current, $display, $type)
 {
     $result = (string) $helper === (string) $current ? " {$type}='{$type}'" : '';
@@ -930,4 +904,18 @@ function convert_invalid_entities($content)
 function wp_is_valid_utf8($bytes)
 {
     return Minn\Support\Utf8::isValid((string) $bytes);
+}
+
+function sanitize_user($username, $strict = false)
+{
+    $raw = (string) $username;
+    $username = wp_strip_all_tags($raw);
+    $username = remove_accents($username);
+    $username = preg_replace('|%([a-fA-F0-9][a-fA-F0-9])|', '', $username);
+    $username = preg_replace('/&.+?;/', '', $username);
+    if ($strict) {
+        $username = preg_replace('|[^a-z0-9 _.\-@]|i', '', $username);
+    }
+    $username = trim(preg_replace('|\s+|', ' ', $username));
+    return apply_filters('sanitize_user', $username, $raw, $strict);
 }

@@ -435,5 +435,14 @@ foreach (['zz-cli-probe hello --name=Austin', 'zz-cli-probe fail', 'zz-cli-probe
 }
 $plugin($REF_DIR, 'plugin deactivate minn-test-cli');
 
+// A plugin's own pluggable functions win: the engine defines its pluggables
+// after the plugins load, each only where no plugin did, as the reference does.
+$plugin($REF_DIR, 'plugin activate minn-test-pluggable');
+$command = "eval 'echo wp_mail(\"a@b.c\", \"s\", \"m\"), \" | \", wp_generate_password(5), \" | \", strlen(wp_hash_password(\"x\")) > 20 ? \"core hash\" : \"-\";'";
+[$engineOut, $engineCode] = $plugin($ENGINE_DIR, $command);
+[$refOut, $refCode] = $plugin($REF_DIR, $command);
+$check("a plugin's pluggable functions replace the engine's", $engineOut === $refOut && $engineCode === $refCode && str_contains($engineOut, 'mail handled by the plugin'), "engine[{$engineCode}]: " . substr($engineOut, 0, 300) . "\n      ref[{$refCode}]:    " . substr($refOut, 0, 300));
+$plugin($REF_DIR, 'plugin deactivate minn-test-pluggable');
+
 echo "\n{$pass} passed, {$fail} failed\n";
 exit($fail === 0 ? 0 : 1);

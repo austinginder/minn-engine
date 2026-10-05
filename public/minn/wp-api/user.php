@@ -4,11 +4,7 @@
 use Minn\Auth\PasswordReset;
 use Minn\Runtime\Runtime;
 use Minn\Content\Users;
-
-function wp_get_current_user()
-{
-    return _wp_get_current_user();
-}
+use Minn\Auth\Sessions;
 
 function _wp_get_current_user()
 {
@@ -23,38 +19,9 @@ function _wp_get_current_user()
     return $user;
 }
 
-function wp_set_current_user($id, $name = '')
-{
-    $user = new WP_User($id, $name);
-    Runtime::current()->set('current_user', $user);
-    do_action('set_current_user');
-    return $user;
-}
-
 function get_current_user_id()
 {
     return Runtime::booted() ? wp_get_current_user()->ID : 0;
-}
-
-function is_user_logged_in()
-{
-    return wp_get_current_user()->exists();
-}
-
-function get_userdata($user_id)
-{
-    return get_user_by('id', $user_id);
-}
-
-function get_user_by($field, $value)
-{
-    $data = WP_User::get_data_by($field, $value);
-    if (!$data) {
-        return false;
-    }
-    $user = new WP_User();
-    $user->init($data);
-    return $user;
 }
 
 function get_user($user_id)
@@ -386,4 +353,25 @@ function sanitize_user_field($field, $value, $user_id, $context)
         return is_string($value) ? esc_js($value) : $value;
     }
     return $value;
+}
+
+function wp_get_session_token()
+{
+    return Runtime::current()->reader->sessionToken;
+}
+
+function wp_destroy_current_session()
+{
+    $token = wp_get_session_token();
+    $user = wp_get_current_user();
+    if ($token === '' || (int) $user->ID === 0) {
+        return;
+    }
+    (new Sessions(new Users(Runtime::current()->db)))->destroy((int) $user->ID, $token);
+}
+
+function is_user_member_of_blog($user_id = 0, $blog_id = 0)
+{
+    $user_id = $user_id ?: get_current_user_id();
+    return $user_id > 0 && get_userdata($user_id) !== false;
 }

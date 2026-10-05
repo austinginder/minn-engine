@@ -292,12 +292,26 @@ final class Runtime
             require_once $file;
         }
         foreach (glob($engineDir . '/wp-api/*.php') ?: [] as $file) {
-            require_once $file;
+            // The pluggable functions wait for the plugins (loadPluggables()).
+            if (basename($file) !== 'pluggable.php') {
+                require_once $file;
+            }
         }
         // The reference's own registrations, after every function exists.
         foreach (glob($engineDir . '/wp-api/defaults/*.php') ?: [] as $file) {
             require_once $file;
         }
+    }
+
+    /**
+     * The pluggable functions, once the plugins have had their chance to
+     * define their own: each is defined only where no plugin did. The plugin
+     * loader calls this before plugins_loaded; a boot that loads no plugins
+     * calls it straight away.
+     */
+    public static function loadPluggables(): void
+    {
+        require_once self::current()->engineDir . '/wp-api/pluggable.php';
     }
 
     /** Fresh per-request state, for suites. */

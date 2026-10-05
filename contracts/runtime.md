@@ -2304,3 +2304,28 @@ real commands on both stacks:
   over HTTP both 404 where the reference describes the route; the B1
   "Route::output" item), and Jetpack's `status`, which needs the XML-RPC
   client (Mute).
+
+## Pluggable functions (2026-10-05)
+
+The 39 functions the reference defines in `pluggable.php` (the list is
+`data/pluggable.json`, from the inventory) live in `wp-api/pluggable.php`,
+each behind `function_exists`, and that file loads after the active
+plugins and before `plugins_loaded` (`Runtime::loadPluggables()`, called by
+the plugin loader; a boot that loads no plugins calls it at once). So a
+plugin that defines its own `wp_mail`, `wp_hash_password`,
+`wp_generate_password` or `wp_new_user_notification` replaces the engine's,
+as SMTP, security and membership plugins rely on. The rest of what used to
+sit in that file (`wp_die` and its handlers, `is_wp_error`, the nonce field
+and referer helpers, `sanitize_user`, the login form tags) moved to the
+files their families belong in, since plugins call those while loading.
+
+- The symbol gate counts the deferred names as provided (they do not exist
+  yet when it runs) and never as a collision; the exported gap carries
+  them as `pluggable`.
+- A plugin must guard its override with `function_exists`, here as on the
+  reference: activation includes the plugin after the pluggables exist,
+  and the reference refuses an unguarded `wp_mail` with "Cannot redeclare".
+- Not yet: `wp_notify_postauthor` and `_wp_sanitize_utf8_in_redirect` are
+  still missing. The engine's own mail (password reset, moderation) is
+  sent by `Minn\Mail`, not through `wp_mail`, so a plugin's replacement
+  does not see it.

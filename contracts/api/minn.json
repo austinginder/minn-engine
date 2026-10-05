@@ -78420,7 +78420,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Plugins.php",
-            "lines": 212,
+            "lines": 213,
             "doc": "Loads the site's plugins into the runtime the way the reference does:\nmu-plugins first, then active_plugins in stored order, each file\nincluded once. A plugin loads only when the static symbol read finds\nnothing the runtime lacks; otherwise it is reported and skipped so the\nsite keeps rendering. The lifecycle actions fire between the phases.",
             "implements": [],
             "extends": null,
@@ -78507,8 +78507,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 158,
-                    "end": 161
+                    "line": 159,
+                    "end": 162
                 },
                 {
                     "routes": [],
@@ -78521,8 +78521,8 @@
                         "@return array<string, array<string, mixed>> plugin file => why it did not load"
                     ],
                     "params": [],
-                    "line": 168,
-                    "end": 171
+                    "line": 169,
+                    "end": 172
                 },
                 {
                     "routes": [],
@@ -78541,8 +78541,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 174,
-                    "end": 177
+                    "line": 175,
+                    "end": 178
                 },
                 {
                     "routes": [],
@@ -78562,7 +78562,7 @@
                         }
                     ],
                     "line": 67,
-                    "end": 113
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -78581,8 +78581,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 122,
-                    "end": 138
+                    "line": 123,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -78608,8 +78608,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 145,
-                    "end": 151
+                    "line": 146,
+                    "end": 152
                 },
                 {
                     "routes": [],
@@ -78642,8 +78642,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 179,
-                    "end": 202
+                    "line": 180,
+                    "end": 203
                 },
                 {
                     "routes": [],
@@ -78676,8 +78676,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 210,
-                    "end": 222
+                    "line": 211,
+                    "end": 223
                 },
                 {
                     "routes": [],
@@ -78696,8 +78696,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 225,
-                    "end": 230
+                    "line": 226,
+                    "end": 231
                 }
             ]
         },
@@ -80960,7 +80960,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Runtime.php",
-            "lines": 297,
+            "lines": 311,
             "doc": "The WordPress runtime the engine offers plugin code: the procedural\nfacade under minn/wp-api/ plus the services it delegates to. One per\nrequest; the facade reaches it through these statics.",
             "implements": [],
             "extends": null,
@@ -81667,7 +81667,19 @@
                         }
                     ],
                     "line": 281,
-                    "end": 301
+                    "end": 304
+                },
+                {
+                    "routes": [],
+                    "name": "loadPluggables",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "loadPluggables(): void",
+                    "doc": "The pluggable functions, once the plugins have had their chance to\ndefine their own: each is defined only where no plugin did. The plugin\nloader calls this before plugins_loaded; a boot that loads no plugins\ncalls it straight away.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 312,
+                    "end": 315
                 },
                 {
                     "routes": [],
@@ -81678,8 +81690,8 @@
                     "doc": "Fresh per-request state, for suites.",
                     "shapes": [],
                     "params": [],
-                    "line": 304,
-                    "end": 319
+                    "line": 318,
+                    "end": 333
                 }
             ]
         },
@@ -82844,7 +82856,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/SymbolGap.php",
-            "lines": 87,
+            "lines": 94,
             "doc": "The part of the reference's interface the runtime does not answer: names in\ndata/api-names.json that no facade file defines. It is the whole input the\nsymbol gate needs, so it can be exported to JSON and carried to a machine\nthat holds plugin source but no engine, which is how the catalogue-wide\ncompatibility scan runs.",
             "implements": [],
             "extends": null,
@@ -82853,12 +82865,13 @@
                 "Minn\\Runtime\\Symbols"
             ],
             "constructor": {
-                "signature": "__construct(array $functions, array $classes, array $known = array ( ))",
+                "signature": "__construct(array $functions, array $classes, array $known = array ( ), array $pluggable = array ( ))",
                 "doc": "",
                 "shapes": [
                     "@param array<string, true> $functions lower-cased function names the runtime lacks",
                     "@param array<string, true> $classes lower-cased class, interface, trait, and enum names it lacks",
-                    "@param array<string, true> $known lower-cased function names in the reference's interface, lacking or not"
+                    "@param array<string, true> $known lower-cased function names in the reference's interface, lacking or not",
+                    "@param array<string, true> $pluggable lower-cased pluggable functions the runtime defines after the plugins load"
                 ],
                 "params": [
                     {
@@ -82881,11 +82894,18 @@
                         "shape": "array<string, true>",
                         "default": "array ( )",
                         "doc": "lower-cased function names in the reference's interface, lacking or not"
+                    },
+                    {
+                        "name": "pluggable",
+                        "type": "array",
+                        "shape": "array<string, true>",
+                        "default": "array ( )",
+                        "doc": "lower-cased pluggable functions the runtime defines after the plugins load"
                     }
                 ],
                 "visibility": "private",
-                "line": 21,
-                "end": 23
+                "line": 22,
+                "end": 24
             },
             "cases": [],
             "constants": [],
@@ -82916,6 +82936,15 @@
                     "doc": "",
                     "visibility": "public",
                     "promoted": true
+                },
+                {
+                    "name": "pluggable",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
                 }
             ],
             "methods": [
@@ -82936,8 +82965,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 30,
-                    "end": 52
+                    "line": 31,
+                    "end": 58
                 },
                 {
                     "routes": [],
@@ -82956,8 +82985,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 55,
-                    "end": 64
+                    "line": 61,
+                    "end": 71
                 },
                 {
                     "routes": [],
@@ -82976,8 +83005,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 67,
-                    "end": 70
+                    "line": 74,
+                    "end": 77
                 },
                 {
                     "routes": [],
@@ -82985,7 +83014,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "defines(string $name): bool",
-                    "doc": "Whether the runtime already defines a function of the reference's\ninterface, so a plugin declaring it again without a guard would fail\nto compile. On the reference the pluggable functions load after the\nplugins and a plugin's own definition wins; here the facade is loaded\nfirst, so the gate reports the collision instead of the fatal.",
+                    "doc": "Whether the runtime already defines a function of the reference's\ninterface, so a plugin declaring it again without a guard would fail\nto compile. The pluggable functions are not counted: the runtime\ndefines those after the plugins load, each only where no plugin did.",
                     "shapes": [],
                     "params": [
                         {
@@ -82996,8 +83025,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 79,
-                    "end": 83
+                    "line": 85,
+                    "end": 89
                 },
                 {
                     "routes": [],
@@ -83016,8 +83045,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 86,
-                    "end": 89
+                    "line": 92,
+                    "end": 95
                 },
                 {
                     "routes": [],
@@ -83028,8 +83057,8 @@
                     "doc": "The gap as JSON.",
                     "shapes": [],
                     "params": [],
-                    "line": 92,
-                    "end": 99
+                    "line": 98,
+                    "end": 106
                 }
             ]
         },

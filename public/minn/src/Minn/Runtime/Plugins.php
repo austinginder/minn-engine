@@ -101,6 +101,7 @@ final class Plugins
                 }
             }
         }
+        Runtime::loadPluggables();
         $hooks->action('plugins_loaded', []);
         $hooks->action('sanitize_comment_cookies', []);
         $hooks->action('setup_theme', []);

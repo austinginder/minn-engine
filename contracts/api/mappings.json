@@ -9450,7 +9450,7 @@
             "composes": []
         },
         "_ajax_wp_die_handler": {
-            "file": "pluggable.php",
+            "file": "functions.php",
             "lines": 10,
             "kind": "composes",
             "minn": [],
@@ -9479,7 +9479,7 @@
             ]
         },
         "_default_wp_die_handler": {
-            "file": "pluggable.php",
+            "file": "functions.php",
             "lines": 15,
             "kind": "composes",
             "minn": [],
@@ -9672,7 +9672,7 @@
             ]
         },
         "_json_wp_die_handler": {
-            "file": "pluggable.php",
+            "file": "functions.php",
             "lines": 9,
             "kind": "composes",
             "minn": [],
@@ -10615,7 +10615,7 @@
             ]
         },
         "_minn_request_uri": {
-            "file": "pluggable.php",
+            "file": "functions.php",
             "lines": 6,
             "kind": "minn",
             "minn": [
@@ -11000,7 +11000,7 @@
             ]
         },
         "_scalar_wp_die_handler": {
-            "file": "pluggable.php",
+            "file": "functions.php",
             "lines": 4,
             "kind": "leaf",
             "minn": [],
@@ -11135,7 +11135,7 @@
             "composes": []
         },
         "_wp_die_process_input": {
-            "file": "pluggable.php",
+            "file": "functions.php",
             "lines": 24,
             "kind": "composes",
             "minn": [],
@@ -11317,7 +11317,7 @@
             ]
         },
         "_xmlrpc_wp_die_handler": {
-            "file": "pluggable.php",
+            "file": "functions.php",
             "lines": 1,
             "kind": "noop",
             "minn": [],
@@ -13536,7 +13536,7 @@
             ]
         },
         "get_avatar": {
-            "file": "template.php",
+            "file": "pluggable.php",
             "lines": 26,
             "kind": "minn",
             "minn": [
@@ -16576,7 +16576,7 @@
             ]
         },
         "get_user_by": {
-            "file": "user.php",
+            "file": "pluggable.php",
             "lines": 7,
             "kind": "leaf",
             "minn": [],
@@ -16617,7 +16617,7 @@
             ]
         },
         "get_userdata": {
-            "file": "user.php",
+            "file": "pluggable.php",
             "lines": 1,
             "kind": "noop",
             "minn": [],
@@ -17702,7 +17702,7 @@
             "composes": []
         },
         "is_user_logged_in": {
-            "file": "user.php",
+            "file": "pluggable.php",
             "lines": 1,
             "kind": "noop",
             "minn": [],
@@ -17711,7 +17711,7 @@
             ]
         },
         "is_user_member_of_blog": {
-            "file": "pluggable.php",
+            "file": "user.php",
             "lines": 2,
             "kind": "composes",
             "minn": [],
@@ -17721,7 +17721,7 @@
             ]
         },
         "is_wp_error": {
-            "file": "pluggable.php",
+            "file": "functions.php",
             "lines": 5,
             "kind": "composes",
             "minn": [],
@@ -19898,7 +19898,7 @@
             ]
         },
         "sanitize_user": {
-            "file": "pluggable.php",
+            "file": "formatting.php",
             "lines": 10,
             "kind": "composes",
             "minn": [],
@@ -22584,7 +22584,7 @@
             ]
         },
         "wp_destroy_current_session": {
-            "file": "pluggable.php",
+            "file": "user.php",
             "lines": 6,
             "kind": "minn",
             "minn": [
@@ -22599,7 +22599,7 @@
             ]
         },
         "wp_die": {
-            "file": "pluggable.php",
+            "file": "functions.php",
             "lines": 17,
             "kind": "composes",
             "minn": [],
@@ -22913,7 +22913,7 @@
             ]
         },
         "wp_generate_password": {
-            "file": "formatting.php",
+            "file": "pluggable.php",
             "lines": 12,
             "kind": "composes",
             "minn": [],
@@ -22934,7 +22934,7 @@
             ]
         },
         "wp_generate_uuid4": {
-            "file": "pluggable.php",
+            "file": "functions.php",
             "lines": 4,
             "kind": "leaf",
             "minn": [],
@@ -23234,7 +23234,7 @@
             ]
         },
         "wp_get_current_user": {
-            "file": "user.php",
+            "file": "pluggable.php",
             "lines": 1,
             "kind": "noop",
             "minn": [],
@@ -23542,7 +23542,7 @@
             ]
         },
         "wp_get_original_referer": {
-            "file": "pluggable.php",
+            "file": "functions.php",
             "lines": 2,
             "kind": "minn",
             "minn": [
@@ -23640,7 +23640,7 @@
             ]
         },
         "wp_get_raw_referer": {
-            "file": "pluggable.php",
+            "file": "functions.php",
             "lines": 9,
             "kind": "minn",
             "minn": [
@@ -23676,7 +23676,7 @@
             ]
         },
         "wp_get_referer": {
-            "file": "pluggable.php",
+            "file": "functions.php",
             "lines": 6,
             "kind": "minn",
             "minn": [
@@ -23749,7 +23749,7 @@
             "composes": []
         },
         "wp_get_session_token": {
-            "file": "pluggable.php",
+            "file": "user.php",
             "lines": 1,
             "kind": "noop",
             "minn": [
@@ -24362,7 +24362,7 @@
             ]
         },
         "wp_is_uuid": {
-            "file": "pluggable.php",
+            "file": "functions.php",
             "lines": 6,
             "kind": "leaf",
             "minn": [],
@@ -24706,7 +24706,7 @@
             ]
         },
         "wp_login_form": {
-            "file": "pluggable.php",
+            "file": "template.php",
             "lines": 29,
             "kind": "minn",
             "minn": [
@@ -24731,7 +24731,7 @@
             ]
         },
         "wp_loginout": {
-            "file": "pluggable.php",
+            "file": "template.php",
             "lines": 8,
             "kind": "composes",
             "minn": [],
@@ -24844,7 +24844,7 @@
             ]
         },
         "wp_meta": {
-            "file": "pluggable.php",
+            "file": "template.php",
             "lines": 1,
             "kind": "noop",
             "minn": [],
@@ -24943,7 +24943,7 @@
             ]
         },
         "wp_nonce_ays": {
-            "file": "pluggable.php",
+            "file": "functions.php",
             "lines": 1,
             "kind": "noop",
             "minn": [],
@@ -24952,7 +24952,7 @@
             ]
         },
         "wp_nonce_field": {
-            "file": "pluggable.php",
+            "file": "functions.php",
             "lines": 9,
             "kind": "composes",
             "minn": [],
@@ -24972,7 +24972,7 @@
             "composes": []
         },
         "wp_nonce_url": {
-            "file": "pluggable.php",
+            "file": "functions.php",
             "lines": 2,
             "kind": "composes",
             "minn": [],
@@ -25086,7 +25086,7 @@
             ]
         },
         "wp_original_referer_field": {
-            "file": "pluggable.php",
+            "file": "functions.php",
             "lines": 6,
             "kind": "composes",
             "minn": [],
@@ -25381,7 +25381,7 @@
             "composes": []
         },
         "wp_rand": {
-            "file": "formatting.php",
+            "file": "pluggable.php",
             "lines": 6,
             "kind": "leaf",
             "minn": [],
@@ -25427,7 +25427,7 @@
             ]
         },
         "wp_referer_field": {
-            "file": "pluggable.php",
+            "file": "functions.php",
             "lines": 5,
             "kind": "composes",
             "minn": [],
@@ -25438,7 +25438,7 @@
             ]
         },
         "wp_register": {
-            "file": "pluggable.php",
+            "file": "template.php",
             "lines": 12,
             "kind": "composes",
             "minn": [],
@@ -26092,7 +26092,7 @@
             ]
         },
         "wp_set_current_user": {
-            "file": "user.php",
+            "file": "pluggable.php",
             "lines": 4,
             "kind": "minn",
             "minn": [

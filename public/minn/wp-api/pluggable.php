@@ -1,5 +1,9 @@
 <?php
-/** Nonces, hashes, passwords, referers, wp_die, and mail. */
+/**
+ * The pluggable functions: loaded after the plugins (Runtime::loadPluggables),
+ * each defined only when no plugin defined it first, so a plugin's own
+ * wp_mail or wp_hash_password wins as it does on the reference.
+ */
 
 use Minn\Auth\AuthCookies;
 use Minn\Auth\Cookie;
@@ -10,19 +14,18 @@ use Minn\Auth\Sessions;
 use Minn\Content\Users;
 use Minn\Runtime\Runtime;
 use Minn\Support\Url;
+use Minn\Runtime\Avatar;
 
-function wp_get_session_token()
-{
-    return Runtime::current()->reader->sessionToken;
-}
-
+if (!function_exists('wp_create_nonce')) :
 function wp_create_nonce($action = -1)
 {
     $user = wp_get_current_user();
     $uid = (int) apply_filters('nonce_user_logged_out', $user->ID, $action);
     return Nonce::create($uid, wp_get_session_token(), (string) $action);
 }
+endif;
 
+if (!function_exists('wp_verify_nonce')) :
 function wp_verify_nonce($nonce, $action = -1)
 {
     $nonce = (string) $nonce;
@@ -42,36 +45,16 @@ function wp_verify_nonce($nonce, $action = -1)
     do_action('wp_verify_nonce_failed', $nonce, $action, $user, $token);
     return false;
 }
+endif;
 
+if (!function_exists('wp_nonce_tick')) :
 function wp_nonce_tick($action = -1)
 {
     return Nonce::tick();
 }
+endif;
 
-function wp_nonce_field($action = -1, $name = '_wpnonce', $referer = true, $display = true)
-{
-    $name = esc_attr((string) $name);
-    $field = '<input type="hidden" id="' . $name . '" name="' . $name . '" value="' . wp_create_nonce($action) . '" />';
-    if ($referer) {
-        $field .= wp_referer_field(false);
-    }
-    if ($display) {
-        echo $field;
-    }
-    return $field;
-}
-
-function wp_nonce_url($actionurl, $action = -1, $name = '_wpnonce')
-{
-    $actionurl = str_replace('&amp;', '&', (string) $actionurl);
-    return esc_html(add_query_arg($name, wp_create_nonce($action), $actionurl));
-}
-
-function wp_nonce_ays($action)
-{
-    wp_die('The link you followed has expired.', 'Something went wrong.', 403);
-}
-
+if (!function_exists('check_admin_referer')) :
 function check_admin_referer($action = -1, $query_arg = '_wpnonce')
 {
     $nonce = (string) (Runtime::current()->request?->form[$query_arg] ?? Runtime::current()->request?->query[$query_arg] ?? '');
@@ -82,7 +65,9 @@ function check_admin_referer($action = -1, $query_arg = '_wpnonce')
     }
     return $result;
 }
+endif;
 
+if (!function_exists('check_ajax_referer')) :
 function check_ajax_referer($action = -1, $query_arg = false, $stop = true)
 {
     $request = Runtime::current()->request;
@@ -100,85 +85,34 @@ function check_ajax_referer($action = -1, $query_arg = false, $stop = true)
     }
     return $result;
 }
+endif;
 
-function wp_referer_field($display = true)
-{
-    $field = '<input type="hidden" name="_wp_http_referer" value="' . esc_attr(wp_unslash(_minn_request_uri())) . '" />';
-    if ($display) {
-        echo $field;
-    }
-    return $field;
-}
-
-function wp_original_referer_field($display = true, $jump_back_to = 'current')
-{
-    $ref = wp_get_original_referer() ?: ($jump_back_to === 'previous' ? wp_get_referer() : _minn_request_uri());
-    $field = '<input type="hidden" name="_wp_original_http_referer" value="' . esc_attr((string) $ref) . '" />';
-    if ($display) {
-        echo $field;
-    }
-    return $field;
-}
-
-/** @internal the request URI as the reference sees it */
-function _minn_request_uri(): string
-{
-    $request = Runtime::current()->request;
-    if ($request === null) {
-        return '';
-    }
-    $query = http_build_query($request->query);
-    return $request->path . ($query === '' ? '' : '?' . $query);
-}
-
-function wp_get_referer()
-{
-    $request = Runtime::current()->request;
-    $ref = wp_get_raw_referer();
-    if ($ref && $ref !== _minn_request_uri() && $ref !== home_url() . _minn_request_uri()) {
-        return wp_validate_redirect($ref, false);
-    }
-    return false;
-}
-
-function wp_get_raw_referer()
-{
-    $request = Runtime::current()->request;
-    if ($request === null) {
-        return false;
-    }
-    if (!empty($request->form['_wp_http_referer'])) {
-        return wp_unslash($request->form['_wp_http_referer']);
-    }
-    $header = $request->header('referer');
-    return $header === null || $header === '' ? false : wp_unslash($header);
-}
-
-function wp_get_original_referer()
-{
-    $value = Runtime::current()->request?->form['_wp_original_http_referer'] ?? null;
-    return $value ? wp_validate_redirect(wp_unslash($value), false) : false;
-}
-
+if (!function_exists('wp_validate_redirect')) :
 function wp_validate_redirect($location, $fallback_url = '')
 {
     $location = wp_sanitize_redirect(trim((string) $location, " \t\n\r\0\x08\x0B"));
     $safe = Url::safeRedirect($location, static fn (string $host) => (array) apply_filters('allowed_redirect_hosts', [wp_parse_url(home_url())['host'] ?? ''], $host));
     return $safe ?? $fallback_url;
 }
+endif;
 
+if (!function_exists('wp_sanitize_redirect')) :
 function wp_sanitize_redirect($location)
 {
     $location = (string) $location;
     $location = preg_replace('|[^a-z0-9-~+_.?#=&;,/:%!*\[\]()@]|i', '', $location);
     return preg_replace('|%0[0-9a-f]|i', '', $location);
 }
+endif;
 
+if (!function_exists('wp_safe_redirect')) :
 function wp_safe_redirect($location, $status = 302, $x_redirect_by = 'WordPress')
 {
     return wp_redirect(wp_validate_redirect(apply_filters('wp_safe_redirect_fallback', admin_url(), $status) ? $location : $location, apply_filters('wp_safe_redirect_fallback', admin_url(), $status)), $status, $x_redirect_by);
 }
+endif;
 
+if (!function_exists('wp_redirect')) :
 function wp_redirect($location, $status = 302, $x_redirect_by = 'WordPress')
 {
     $location = apply_filters('wp_redirect', $location, $status);
@@ -197,174 +131,53 @@ function wp_redirect($location, $status = 302, $x_redirect_by = 'WordPress')
     }
     return true;
 }
+endif;
 
+if (!function_exists('wp_hash')) :
 function wp_hash($data, $scheme = 'auth', $algo = 'md5')
 {
     return hash_hmac($algo, (string) $data, wp_salt($scheme));
 }
+endif;
 
+if (!function_exists('wp_salt')) :
 function wp_salt($scheme = 'auth')
 {
     return Salts::for($scheme);
 }
+endif;
 
+if (!function_exists('wp_hash_password')) :
 function wp_hash_password($password)
 {
     return Password::hash((string) $password);
 }
+endif;
 
+if (!function_exists('wp_check_password')) :
 function wp_check_password($password, $hash, $user_id = '')
 {
     $check = Password::verify((string) $password, (string) $hash);
     return apply_filters('check_password', $check, $password, $hash, $user_id);
 }
+endif;
 
+if (!function_exists('wp_password_needs_rehash')) :
 function wp_password_needs_rehash($hash, $user_id = '')
 {
     return !str_starts_with((string) $hash, '$wp$');
 }
+endif;
 
+if (!function_exists('wp_set_password')) :
 function wp_set_password($password, $user_id)
 {
     (new Users(Runtime::current()->db))->setPassword((int) $user_id, wp_hash_password($password));
     do_action('wp_set_password', $password, $user_id);
 }
+endif;
 
-function wp_generate_uuid4()
-{
-    $bytes = random_bytes(16);
-    $bytes[6] = chr((ord($bytes[6]) & 0x0f) | 0x40);
-    $bytes[8] = chr((ord($bytes[8]) & 0x3f) | 0x80);
-    return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($bytes), 4));
-}
-
-function wp_is_uuid($uuid, $version = null)
-{
-    if (!is_string($uuid)) {
-        return false;
-    }
-    return $version === 4
-        ? preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i', $uuid) === 1
-        : preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $uuid) === 1;
-}
-
-function wp_die($message = '', $title = '', $args = [])
-{
-    if (is_int($args)) {
-        $args = ['response' => $args];
-    }
-    if (is_int($title)) {
-        $args = ['response' => $title];
-        $title = '';
-    }
-    if (wp_doing_ajax()) {
-        $callback = apply_filters('wp_die_ajax_handler', '_ajax_wp_die_handler');
-    } elseif (wp_is_json_request()) {
-        $callback = apply_filters('wp_die_json_handler', '_json_wp_die_handler');
-    } elseif (defined('XMLRPC_REQUEST') && XMLRPC_REQUEST) {
-        $callback = apply_filters('wp_die_xmlrpc_handler', '_xmlrpc_wp_die_handler');
-    } else {
-        $callback = apply_filters('wp_die_handler', '_default_wp_die_handler');
-    }
-    $callback($message, $title, $args);
-}
-
-function _wp_die_process_input($message, $title = '', $args = [])
-{
-    $defaults = ['response' => 0, 'code' => '', 'exit' => true, 'back_link' => false, 'link_url' => '', 'link_text' => '', 'text_direction' => 'ltr', 'charset' => 'utf-8', 'additional_errors' => []];
-    if (is_wp_error($message)) {
-        $errors = [];
-        foreach ($message->get_error_codes() as $code) {
-            $data = $message->get_error_data($code);
-            $errors[] = ['code' => $code, 'message' => $message->get_error_message($code), 'data' => $data];
-        }
-        $args = wp_parse_args($args, $defaults + ($errors[0]['data'] ?? []) );
-        $args['code'] = $errors[0]['code'] ?? '';
-        $message = $errors[0]['message'] ?? '';
-        if ($title === '' && isset($errors[0]['data']['title'])) {
-            $title = $errors[0]['data']['title'];
-        }
-        $args['additional_errors'] = array_slice($errors, 1);
-    } else {
-        $args = wp_parse_args($args, $defaults);
-    }
-    if ($args['response'] === 0) {
-        $args['response'] = 500;
-    }
-    if ($title === '') {
-        $title = 'WordPress &rsaquo; Error';
-    }
-    return [$message, $title, $args];
-}
-
-function _default_wp_die_handler($message, $title = '', $args = [])
-{
-    [$message, $title, $args] = _wp_die_process_input($message, $title, $args);
-    if (is_string($message) && !str_contains($message, '<p>') && $message !== '') {
-        $message = '<p>' . $message . '</p>';
-    }
-    if ($args['back_link']) {
-        $message .= '<p><a href="javascript:history.back()">&laquo; Back</a></p>';
-    }
-    if (!headers_sent()) {
-        http_response_code((int) $args['response']);
-        header('Content-Type: text/html; charset=' . $args['charset']);
-    }
-    echo '<!DOCTYPE html><html lang="en"><head><meta charset="' . esc_attr($args['charset']) . '"><meta name="viewport" content="width=device-width"><title>' . esc_html(wp_specialchars_decode($title)) . '</title><style>html{background:#f1f1f1}body{background:#fff;border:1px solid #ccd0d4;color:#3c434a;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;margin:2em auto;padding:1em 2em;max-width:700px;box-shadow:0 1px 1px rgba(0,0,0,.04)}h1{border-bottom:1px solid #dadada;font-size:24px;margin:30px 0 0;padding:0 0 7px}p{font-size:14px;line-height:1.5;margin:25px 0 20px}</style></head><body id="error-page">' . "\n" . $message . "\n" . '</body></html>' . "\n";
-    if ($args['exit']) {
-        exit;
-    }
-}
-
-function _ajax_wp_die_handler($message, $title = '', $args = [])
-{
-    [$message, $title, $args] = _wp_die_process_input($message, $title, $args);
-    if (!headers_sent() && $args['response'] !== 0) {
-        http_response_code((int) $args['response']);
-    }
-    if (is_scalar($message)) {
-        echo (string) $message;
-    }
-    if ($args['exit']) {
-        exit;
-    }
-}
-
-function _json_wp_die_handler($message, $title = '', $args = [])
-{
-    [$message, $title, $args] = _wp_die_process_input($message, $title, $args);
-    if (!headers_sent()) {
-        http_response_code((int) $args['response']);
-        header('Content-Type: application/json; charset=' . $args['charset']);
-    }
-    echo wp_json_encode(['code' => $args['code'], 'message' => $message, 'data' => ['status' => $args['response']], 'additional_errors' => $args['additional_errors']]);
-    if ($args['exit']) {
-        exit;
-    }
-}
-
-function _xmlrpc_wp_die_handler($message, $title = '', $args = [])
-{
-    _ajax_wp_die_handler($message, $title, $args);
-}
-
-function _scalar_wp_die_handler($message = '', $title = '', $args = [])
-{
-    if (is_scalar($message)) {
-        echo (string) $message;
-    }
-    exit;
-}
-
-function is_wp_error($thing)
-{
-    $is = $thing instanceof WP_Error;
-    if ($is) {
-        do_action('is_wp_error_instance', $thing);
-    }
-    return $is;
-}
-
+if (!function_exists('wp_mail')) :
 function wp_mail($to, $subject, $message, $headers = '', $attachments = [], $embeds = [])
 {
     $atts = apply_filters('wp_mail', compact('to', 'subject', 'message', 'headers', 'attachments'));
@@ -380,26 +193,36 @@ function wp_mail($to, $subject, $message, $headers = '', $attachments = [], $emb
     }
     return $ok;
 }
+endif;
 
 
+if (!function_exists('wp_notify_moderator')) :
 function wp_notify_moderator($comment_id)
 {
     return true;
 }
+endif;
 
+if (!function_exists('wp_new_user_notification')) :
 function wp_new_user_notification($user_id, $deprecated = null, $notify = '')
 {
 }
+endif;
 
+if (!function_exists('wp_text_diff')) :
 function wp_text_diff($left_string, $right_string, $args = null)
 {
     return '';
 }
+endif;
 
+if (!function_exists('cache_users')) :
 function cache_users($user_ids)
 {
 }
+endif;
 
+if (!function_exists('auth_redirect')) :
 function auth_redirect()
 {
     if (!is_user_logged_in()) {
@@ -407,7 +230,9 @@ function auth_redirect()
         exit;
     }
 }
+endif;
 
+if (!function_exists('wp_authenticate')) :
 function wp_authenticate($username, $password)
 {
     $username = sanitize_user((string) $username);
@@ -417,42 +242,30 @@ function wp_authenticate($username, $password)
     }
     return $user;
 }
+endif;
 
-function sanitize_user($username, $strict = false)
-{
-    $raw = (string) $username;
-    $username = wp_strip_all_tags($raw);
-    $username = remove_accents($username);
-    $username = preg_replace('|%([a-fA-F0-9][a-fA-F0-9])|', '', $username);
-    $username = preg_replace('/&.+?;/', '', $username);
-    if ($strict) {
-        $username = preg_replace('|[^a-z0-9 _.\-@]|i', '', $username);
-    }
-    $username = trim(preg_replace('|\s+|', ' ', $username));
-    return apply_filters('sanitize_user', $username, $raw, $strict);
-}
-
+if (!function_exists('wp_validate_auth_cookie')) :
 function wp_validate_auth_cookie($cookie = '', $scheme = '')
 {
     return Runtime::current()->reader->userId ?: false;
 }
+endif;
 
+if (!function_exists('wp_logout')) :
 function wp_logout()
 {
     do_action('wp_logout', get_current_user_id());
 }
+endif;
 
+if (!function_exists('wp_clear_auth_cookie')) :
 function wp_clear_auth_cookie()
 {
     do_action('clear_auth_cookie');
 }
+endif;
 
-function is_user_member_of_blog($user_id = 0, $blog_id = 0)
-{
-    $user_id = $user_id ?: get_current_user_id();
-    return $user_id > 0 && get_userdata($user_id) !== false;
-}
-
+if (!function_exists('wp_password_change_notification')) :
 /** Tells the site admin a user changed their password; nothing when the user is that admin. */
 function wp_password_change_notification($user)
 {
@@ -470,7 +283,9 @@ function wp_password_change_notification($user)
     wp_mail($email['to'], wp_specialchars_decode(sprintf($email['subject'], $blogname)), $email['message'], $email['headers']);
     return null;
 }
+endif;
 
+if (!function_exists('wp_set_auth_cookie')) :
 /** Mints a session and sends the three sign-in cookies, the way the login endpoint does. */
 function wp_set_auth_cookie($user_id, $remember = false, $secure = '', $token = '')
 {
@@ -502,7 +317,9 @@ function wp_set_auth_cookie($user_id, $remember = false, $secure = '', $token = 
     setcookie('wordpress_logged_in_' . $hash, $loggedIn, ['expires' => $expire, 'path' => '/', 'secure' => $secureLoggedIn, 'httponly' => true]);
     return null;
 }
+endif;
 
+if (!function_exists('wp_generate_auth_cookie')) :
 /** A cookie under the named scheme's salt; an empty token gets a fresh session, the reference's shape. */
 function wp_generate_auth_cookie($user_id, $expiration, $scheme = 'auth', $token = '')
 {
@@ -518,7 +335,9 @@ function wp_generate_auth_cookie($user_id, $expiration, $scheme = 'auth', $token
     $cookie = AuthCookies::mint($user, (int) $expiration, (string) $token, (string) $scheme);
     return apply_filters('auth_cookie', $cookie, (int) $user_id, (int) $expiration, (string) $scheme, (string) $token);
 }
+endif;
 
+if (!function_exists('wp_parse_auth_cookie')) :
 /** The four-part cookie split into its named fields plus the scheme, false when it does not parse (probed keys). */
 function wp_parse_auth_cookie($cookie = '', $scheme = '')
 {
@@ -536,79 +355,110 @@ function wp_parse_auth_cookie($cookie = '', $scheme = '')
     [$username, $expiration, $token, $hmac] = $parts;
     return ['username' => $username, 'expiration' => $expiration, 'token' => $token, 'hmac' => $hmac, 'scheme' => $scheme ?: 'auth'];
 }
+endif;
 
-function wp_login_form($args = [])
+if (!function_exists('get_avatar')) :
+function get_avatar($id_or_email, $size = 96, $default_value = '', $alt = '', $args = null)
 {
-    $defaults = [
-        'echo' => true,
-        'redirect' => (is_ssl() ? 'https://' : 'http://') . ($_SERVER['HTTP_HOST'] ?? '') . ($_SERVER['REQUEST_URI'] ?? ''),
-        'form_id' => 'loginform',
-        'label_username' => 'Username or Email Address',
-        'label_password' => 'Password',
-        'label_remember' => 'Remember Me',
-        'label_log_in' => 'Log In',
-        'id_username' => 'user_login',
-        'id_password' => 'user_pass',
-        'id_remember' => 'rememberme',
-        'id_submit' => 'wp-submit',
-        'remember' => true,
-        'value_username' => '',
-        'value_remember' => false,
-    ];
-    $args = wp_parse_args($args, apply_filters('login_form_defaults', $defaults));
-    $args['action'] = wp_login_url();
-    $form = Minn\Login\LoginForm::embedded(
-        $args,
-        (string) apply_filters('login_form_top', '', $args),
-        (string) apply_filters('login_form_middle', '', $args),
-        (string) apply_filters('login_form_bottom', '', $args),
-    );
-    if ($args['echo']) {
-        echo $form;
-        return;
+    $args = wp_parse_args($args, []);
+    $args += array_filter(['size' => $size, 'default' => $default_value, 'alt' => $alt], static fn ($v) => !empty($v));
+    $args = wp_parse_args($args, ['size' => 96, 'height' => null, 'width' => null, 'default' => get_option('avatar_default', 'mystery'), 'force_default' => false, 'rating' => get_option('avatar_rating', 'G'), 'scheme' => null, 'alt' => '', 'class' => null, 'force_display' => false, 'loading' => null, 'fetchpriority' => null, 'decoding' => null, 'extra_attr' => '']);
+    if (empty($args['default'])) {
+        $args['default'] = get_option('avatar_default', 'mystery');
     }
-    return $form;
+    $args['loading'] ??= wp_get_loading_optimization_attributes('img', ['width' => (int) $args['size'], 'height' => (int) $args['size']], 'get_avatar')['loading'] ?? null;
+    $args['decoding'] ??= 'async';
+    $args['height'] = $args['height'] ?: $args['size'];
+    $args['width'] = $args['width'] ?: $args['size'];
+    $avatar = apply_filters('pre_get_avatar', null, $id_or_email, $args);
+    if ($avatar !== null) {
+        return apply_filters('get_avatar', $avatar, $id_or_email, $args['size'], $args['default'], $args['alt'], $args);
+    }
+    if (!$args['force_display'] && !get_option('show_avatars')) {
+        return false;
+    }
+    $data = get_avatar_data($id_or_email, $args + ['size' => $args['size']]);
+    $url2x = get_avatar_url($id_or_email, array_merge($args, ['size' => $args['size'] * 2]));
+    if (empty($data['url']) || is_wp_error($data['url'])) {
+        return false;
+    }
+    $class = Avatar::classes((int) $args['size'], !$data['found_avatar'] || $args['force_default'], $args['class']);
+    $extra = Avatar::extraAttributes((string) $args['extra_attr'], $args['loading'], $args['decoding']);
+    $avatar = sprintf("<img alt='%s' src='%s' srcset='%s' class='%s' height='%d' width='%d' %s/>", esc_attr($args['alt']), esc_url($data['url']), esc_url($url2x) . ' 2x', esc_attr(implode(' ', $class)), (int) $args['height'], (int) $args['width'], $extra);
+    return apply_filters('get_avatar', $avatar, $id_or_email, $args['size'], $args['default'], $args['alt'], $args);
 }
+endif;
 
-function wp_loginout($redirect = '', $display = true)
+if (!function_exists('wp_get_current_user')) :
+function wp_get_current_user()
 {
-    $link = is_user_logged_in()
-        ? '<a href="' . esc_url(wp_logout_url($redirect)) . '">Log out</a>'
-        : '<a href="' . esc_url(wp_login_url($redirect)) . '">Log in</a>';
-    $link = apply_filters('loginout', $link);
-    if (!$display) {
-        return $link;
-    }
-    echo $link;
+    return _wp_get_current_user();
 }
+endif;
 
-function wp_register($before = '<li>', $after = '</li>', $display = true)
+if (!function_exists('wp_set_current_user')) :
+function wp_set_current_user($id, $name = '')
 {
-    if (!is_user_logged_in()) {
-        $link = get_option('users_can_register')
-            ? $before . '<a href="' . esc_url(wp_registration_url()) . '">Register</a>' . $after
-            : '';
-    } else {
-        $link = $before . '<a href="' . esc_url(admin_url()) . '">Site Admin</a>' . $after;
-    }
-    $link = apply_filters('register', $link);
-    if (!$display) {
-        return $link;
-    }
-    echo $link;
+    $user = new WP_User($id, $name);
+    Runtime::current()->set('current_user', $user);
+    do_action('set_current_user');
+    return $user;
 }
+endif;
 
-function wp_meta()
+if (!function_exists('is_user_logged_in')) :
+function is_user_logged_in()
 {
-    do_action('wp_meta');
+    return wp_get_current_user()->exists();
 }
+endif;
 
-function wp_destroy_current_session()
+if (!function_exists('get_userdata')) :
+function get_userdata($user_id)
 {
-    $token = wp_get_session_token();
-    $user = wp_get_current_user();
-    if ($token === '' || (int) $user->ID === 0) {
-        return;
-    }
-    (new Sessions(new Users(Runtime::current()->db)))->destroy((int) $user->ID, $token);
+    return get_user_by('id', $user_id);
 }
+endif;
+
+if (!function_exists('get_user_by')) :
+function get_user_by($field, $value)
+{
+    $data = WP_User::get_data_by($field, $value);
+    if (!$data) {
+        return false;
+    }
+    $user = new WP_User();
+    $user->init($data);
+    return $user;
+}
+endif;
+
+if (!function_exists('wp_rand')) :
+function wp_rand($min = null, $max = null)
+{
+    $min = (int) ($min ?? 0);
+    $max = (int) ($max ?? 0);
+    if ($max <= $min) {
+        return $min === $max ? $min : random_int(min($min, $max), max($min, $max));
+    }
+    return random_int($min, $max);
+}
+endif;
+
+if (!function_exists('wp_generate_password')) :
+function wp_generate_password($length = 12, $special_chars = true, $extra_special_chars = false)
+{
+    $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    if ($special_chars) {
+        $chars .= '!@#$%^&*()';
+    }
+    if ($extra_special_chars) {
+        $chars .= '-_ []{}<>~`+=,.;:/?|';
+    }
+    $password = '';
+    for ($i = 0; $i < (int) $length; $i++) {
+        $password .= $chars[random_int(0, strlen($chars) - 1)];
+    }
+    return apply_filters('random_password', $password, $length, $special_chars, $extra_special_chars);
+}
+endif;

@@ -9,6 +9,7 @@ use Minn\Front\ListSpacing;
 use Minn\Front\PageList;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\Avatar;
+use Minn\Auth\Password;
 
 function wp_head()
 {
@@ -356,36 +357,6 @@ function _minn_avatar_subject($id_or_email): array
 function get_avatar_url($id_or_email, $args = null)
 {
     return get_avatar_data($id_or_email, $args)['url'];
-}
-
-function get_avatar($id_or_email, $size = 96, $default_value = '', $alt = '', $args = null)
-{
-    $args = wp_parse_args($args, []);
-    $args += array_filter(['size' => $size, 'default' => $default_value, 'alt' => $alt], static fn ($v) => !empty($v));
-    $args = wp_parse_args($args, ['size' => 96, 'height' => null, 'width' => null, 'default' => get_option('avatar_default', 'mystery'), 'force_default' => false, 'rating' => get_option('avatar_rating', 'G'), 'scheme' => null, 'alt' => '', 'class' => null, 'force_display' => false, 'loading' => null, 'fetchpriority' => null, 'decoding' => null, 'extra_attr' => '']);
-    if (empty($args['default'])) {
-        $args['default'] = get_option('avatar_default', 'mystery');
-    }
-    $args['loading'] ??= wp_get_loading_optimization_attributes('img', ['width' => (int) $args['size'], 'height' => (int) $args['size']], 'get_avatar')['loading'] ?? null;
-    $args['decoding'] ??= 'async';
-    $args['height'] = $args['height'] ?: $args['size'];
-    $args['width'] = $args['width'] ?: $args['size'];
-    $avatar = apply_filters('pre_get_avatar', null, $id_or_email, $args);
-    if ($avatar !== null) {
-        return apply_filters('get_avatar', $avatar, $id_or_email, $args['size'], $args['default'], $args['alt'], $args);
-    }
-    if (!$args['force_display'] && !get_option('show_avatars')) {
-        return false;
-    }
-    $data = get_avatar_data($id_or_email, $args + ['size' => $args['size']]);
-    $url2x = get_avatar_url($id_or_email, array_merge($args, ['size' => $args['size'] * 2]));
-    if (empty($data['url']) || is_wp_error($data['url'])) {
-        return false;
-    }
-    $class = Avatar::classes((int) $args['size'], !$data['found_avatar'] || $args['force_default'], $args['class']);
-    $extra = Avatar::extraAttributes((string) $args['extra_attr'], $args['loading'], $args['decoding']);
-    $avatar = sprintf("<img alt='%s' src='%s' srcset='%s' class='%s' height='%d' width='%d' %s/>", esc_attr($args['alt']), esc_url($data['url']), esc_url($url2x) . ' 2x', esc_attr(implode(' ', $class)), (int) $args['height'], (int) $args['width'], $extra);
-    return apply_filters('get_avatar', $avatar, $id_or_email, $args['size'], $args['default'], $args['alt'], $args);
 }
 
 function wp_make_link_relative($link)
@@ -974,4 +945,70 @@ function _minn_archive_rows(string $type, string $postType, string $order, int $
     }
     $weekLink = static fn (int $year, int $week): string => add_query_arg(['m' => $year, 'w' => $week], home_url('/'));
     return $archives->periods($type, $postType, $order, $limit, $weekLink);
+}
+
+function wp_login_form($args = [])
+{
+    $defaults = [
+        'echo' => true,
+        'redirect' => (is_ssl() ? 'https://' : 'http://') . ($_SERVER['HTTP_HOST'] ?? '') . ($_SERVER['REQUEST_URI'] ?? ''),
+        'form_id' => 'loginform',
+        'label_username' => 'Username or Email Address',
+        'label_password' => 'Password',
+        'label_remember' => 'Remember Me',
+        'label_log_in' => 'Log In',
+        'id_username' => 'user_login',
+        'id_password' => 'user_pass',
+        'id_remember' => 'rememberme',
+        'id_submit' => 'wp-submit',
+        'remember' => true,
+        'value_username' => '',
+        'value_remember' => false,
+    ];
+    $args = wp_parse_args($args, apply_filters('login_form_defaults', $defaults));
+    $args['action'] = wp_login_url();
+    $form = Minn\Login\LoginForm::embedded(
+        $args,
+        (string) apply_filters('login_form_top', '', $args),
+        (string) apply_filters('login_form_middle', '', $args),
+        (string) apply_filters('login_form_bottom', '', $args),
+    );
+    if ($args['echo']) {
+        echo $form;
+        return;
+    }
+    return $form;
+}
+
+function wp_loginout($redirect = '', $display = true)
+{
+    $link = is_user_logged_in()
+        ? '<a href="' . esc_url(wp_logout_url($redirect)) . '">Log out</a>'
+        : '<a href="' . esc_url(wp_login_url($redirect)) . '">Log in</a>';
+    $link = apply_filters('loginout', $link);
+    if (!$display) {
+        return $link;
+    }
+    echo $link;
+}
+
+function wp_register($before = '<li>', $after = '</li>', $display = true)
+{
+    if (!is_user_logged_in()) {
+        $link = get_option('users_can_register')
+            ? $before . '<a href="' . esc_url(wp_registration_url()) . '">Register</a>' . $after
+            : '';
+    } else {
+        $link = $before . '<a href="' . esc_url(admin_url()) . '">Site Admin</a>' . $after;
+    }
+    $link = apply_filters('register', $link);
+    if (!$display) {
+        return $link;
+    }
+    echo $link;
+}
+
+function wp_meta()
+{
+    do_action('wp_meta');
 }

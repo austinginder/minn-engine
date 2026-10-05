@@ -35,7 +35,7 @@ the WordPress runtime plugins load against
 | [`PlaceholderTrace`](#placeholdertrace) | final class | 27 | Records every call into a generated placeholder while a site opts in by |
 | [`Placeholders`](#placeholders) | final class | 49 | The printf placeholders plugin code hands wpdb::prepare, filled the way |
 | [`PluginUpdates`](#pluginupdates) | final class | 65 | The update offers the site's own plugins publish. A plugin that hosts |
-| [`Plugins`](#plugins) | final class | 212 | Loads the site's plugins into the runtime the way the reference does: |
+| [`Plugins`](#plugins) | final class | 213 | Loads the site's plugins into the runtime the way the reference does: |
 | [`PostInsert`](#postinsert) | final readonly class | 160 | The decisions behind wp_insert_post: which columns a postarr fills, when |
 | [`PostLookup`](#postlookup) | final readonly class | 85 | The post reads plugin code asks for by shape: a page by title, revisions, counts. |
 | [`PostQuery`](#postquery) | final class | 383 | The query WP_Query runs: its variables become one SELECT over the posts |
@@ -44,12 +44,12 @@ the WordPress runtime plugins load against
 | [`Recovery`](#recovery) | final readonly class | 214 | Recovery from a fatal in someone else's code. When a plugin or theme |
 | [`Refusal`](#refusal) | final readonly class | 6 | A refused operation, the way plugin code expects to read it: a code, a message, optional data. The facade turns it into WP_Error. |
 | [`Registry`](#registry) | final class | 382 | Post types, taxonomies, and statuses as plugin code registers and reads |
-| [`Runtime`](#runtime) | final class | 297 | The WordPress runtime the engine offers plugin code: the procedural |
+| [`Runtime`](#runtime) | final class | 311 | The WordPress runtime the engine offers plugin code: the procedural |
 | [`ScriptModules`](#scriptmodules) | final class | 308 | The script modules registry: registrations with typed dependencies, the |
 | [`ScriptPack`](#scriptpack) | final class | 146 | The site-supplied script pack: the `wp-*` JavaScript packages the engine |
 | [`Shortcodes`](#shortcodes) | final class | 143 | The shortcode registry plugin code fills with add_shortcode, and the |
 | [`StoredObjects`](#storedobjects) | final class | 32 | The classes a stored blob may name and come back as. The serialized |
-| [`SymbolGap`](#symbolgap) | final readonly class | 87 | The part of the reference's interface the runtime does not answer: names in |
+| [`SymbolGap`](#symbolgap) | final readonly class | 94 | The part of the reference's interface the runtime does not answer: names in |
 | [`SymbolTable`](#symboltable) | final class | 69 | What a folder's PHP names, collected while its tokens are read: the |
 | [`Symbols`](#symbols) | final class | 275 | A static read of what a plugin's PHP calls: global functions and classes |
 | [`TagEditor`](#tageditor) | final class | 149 | Edits one start tag's attributes in place the way the reference's tag |
@@ -1479,7 +1479,7 @@ The plugins the symbol gate refused, with what they lacked.
 
 True when the named plugin file is running as code this request.
 
-Internals: `boot()` (private, line 67), `loadThemeFunctions()` (private, line 122), `rememberThemeDomain()` (private, line 145), `includeFile()` (private, line 179), `registerRealpath()` (private, line 210), `isolatedInclude()` (private, line 225)
+Internals: `boot()` (private, line 67), `loadThemeFunctions()` (private, line 123), `rememberThemeDomain()` (private, line 146), `includeFile()` (private, line 180), `registerRealpath()` (private, line 211), `isolatedInclude()` (private, line 226)
 
 
 ## PostInsert
@@ -2022,6 +2022,13 @@ wp-content under the site root.
 
 Defines the facade functions once; safe to call again.
 
+### static `loadPluggables(): void`
+
+The pluggable functions, once the plugins have had their chance to
+define their own: each is defined only where no plugin did. The plugin
+loader calls this before plugins_loaded; a boot that loads no plugins
+calls it straight away.
+
 ### static `reset(): void`
 
 Fresh per-request state, for suites.
@@ -2293,6 +2300,7 @@ Used by: `Minn\Runtime\Symbols`
 - readonly `array $functions`
 - readonly `array $classes`
 - readonly `array $known`
+- readonly `array $pluggable`
 
 ### static `ofLoadedFacade(string $engineDir): self`
 
@@ -2312,9 +2320,8 @@ Whether the runtime lacks a function.
 
 Whether the runtime already defines a function of the reference's
 interface, so a plugin declaring it again without a guard would fail
-to compile. On the reference the pluggable functions load after the
-plugins and a plugin's own definition wins; here the facade is loaded
-first, so the gate reports the collision instead of the fatal.
+to compile. The pluggable functions are not counted: the runtime
+defines those after the plugins load, each only where no plugin did.
 
 ### `lacksClass(string $name): bool`
 

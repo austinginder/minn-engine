@@ -671,3 +671,221 @@ function send_frame_options_header()
 {
     header('X-Frame-Options: SAMEORIGIN');
 }
+
+function wp_nonce_field($action = -1, $name = '_wpnonce', $referer = true, $display = true)
+{
+    $name = esc_attr((string) $name);
+    $field = '<input type="hidden" id="' . $name . '" name="' . $name . '" value="' . wp_create_nonce($action) . '" />';
+    if ($referer) {
+        $field .= wp_referer_field(false);
+    }
+    if ($display) {
+        echo $field;
+    }
+    return $field;
+}
+
+function wp_nonce_url($actionurl, $action = -1, $name = '_wpnonce')
+{
+    $actionurl = str_replace('&amp;', '&', (string) $actionurl);
+    return esc_html(add_query_arg($name, wp_create_nonce($action), $actionurl));
+}
+
+function wp_nonce_ays($action)
+{
+    wp_die('The link you followed has expired.', 'Something went wrong.', 403);
+}
+
+function wp_referer_field($display = true)
+{
+    $field = '<input type="hidden" name="_wp_http_referer" value="' . esc_attr(wp_unslash(_minn_request_uri())) . '" />';
+    if ($display) {
+        echo $field;
+    }
+    return $field;
+}
+
+function wp_original_referer_field($display = true, $jump_back_to = 'current')
+{
+    $ref = wp_get_original_referer() ?: ($jump_back_to === 'previous' ? wp_get_referer() : _minn_request_uri());
+    $field = '<input type="hidden" name="_wp_original_http_referer" value="' . esc_attr((string) $ref) . '" />';
+    if ($display) {
+        echo $field;
+    }
+    return $field;
+}
+
+/** @internal the request URI as the reference sees it */
+function _minn_request_uri(): string
+{
+    $request = Runtime::current()->request;
+    if ($request === null) {
+        return '';
+    }
+    $query = http_build_query($request->query);
+    return $request->path . ($query === '' ? '' : '?' . $query);
+}
+
+function wp_get_referer()
+{
+    $request = Runtime::current()->request;
+    $ref = wp_get_raw_referer();
+    if ($ref && $ref !== _minn_request_uri() && $ref !== home_url() . _minn_request_uri()) {
+        return wp_validate_redirect($ref, false);
+    }
+    return false;
+}
+
+function wp_get_raw_referer()
+{
+    $request = Runtime::current()->request;
+    if ($request === null) {
+        return false;
+    }
+    if (!empty($request->form['_wp_http_referer'])) {
+        return wp_unslash($request->form['_wp_http_referer']);
+    }
+    $header = $request->header('referer');
+    return $header === null || $header === '' ? false : wp_unslash($header);
+}
+
+function wp_get_original_referer()
+{
+    $value = Runtime::current()->request?->form['_wp_original_http_referer'] ?? null;
+    return $value ? wp_validate_redirect(wp_unslash($value), false) : false;
+}
+
+function wp_generate_uuid4()
+{
+    $bytes = random_bytes(16);
+    $bytes[6] = chr((ord($bytes[6]) & 0x0f) | 0x40);
+    $bytes[8] = chr((ord($bytes[8]) & 0x3f) | 0x80);
+    return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($bytes), 4));
+}
+
+function wp_is_uuid($uuid, $version = null)
+{
+    if (!is_string($uuid)) {
+        return false;
+    }
+    return $version === 4
+        ? preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i', $uuid) === 1
+        : preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $uuid) === 1;
+}
+
+function wp_die($message = '', $title = '', $args = [])
+{
+    if (is_int($args)) {
+        $args = ['response' => $args];
+    }
+    if (is_int($title)) {
+        $args = ['response' => $title];
+        $title = '';
+    }
+    if (wp_doing_ajax()) {
+        $callback = apply_filters('wp_die_ajax_handler', '_ajax_wp_die_handler');
+    } elseif (wp_is_json_request()) {
+        $callback = apply_filters('wp_die_json_handler', '_json_wp_die_handler');
+    } elseif (defined('XMLRPC_REQUEST') && XMLRPC_REQUEST) {
+        $callback = apply_filters('wp_die_xmlrpc_handler', '_xmlrpc_wp_die_handler');
+    } else {
+        $callback = apply_filters('wp_die_handler', '_default_wp_die_handler');
+    }
+    $callback($message, $title, $args);
+}
+
+function _wp_die_process_input($message, $title = '', $args = [])
+{
+    $defaults = ['response' => 0, 'code' => '', 'exit' => true, 'back_link' => false, 'link_url' => '', 'link_text' => '', 'text_direction' => 'ltr', 'charset' => 'utf-8', 'additional_errors' => []];
+    if (is_wp_error($message)) {
+        $errors = [];
+        foreach ($message->get_error_codes() as $code) {
+            $data = $message->get_error_data($code);
+            $errors[] = ['code' => $code, 'message' => $message->get_error_message($code), 'data' => $data];
+        }
+        $args = wp_parse_args($args, $defaults + ($errors[0]['data'] ?? []) );
+        $args['code'] = $errors[0]['code'] ?? '';
+        $message = $errors[0]['message'] ?? '';
+        if ($title === '' && isset($errors[0]['data']['title'])) {
+            $title = $errors[0]['data']['title'];
+        }
+        $args['additional_errors'] = array_slice($errors, 1);
+    } else {
+        $args = wp_parse_args($args, $defaults);
+    }
+    if ($args['response'] === 0) {
+        $args['response'] = 500;
+    }
+    if ($title === '') {
+        $title = 'WordPress &rsaquo; Error';
+    }
+    return [$message, $title, $args];
+}
+
+function _default_wp_die_handler($message, $title = '', $args = [])
+{
+    [$message, $title, $args] = _wp_die_process_input($message, $title, $args);
+    if (is_string($message) && !str_contains($message, '<p>') && $message !== '') {
+        $message = '<p>' . $message . '</p>';
+    }
+    if ($args['back_link']) {
+        $message .= '<p><a href="javascript:history.back()">&laquo; Back</a></p>';
+    }
+    if (!headers_sent()) {
+        http_response_code((int) $args['response']);
+        header('Content-Type: text/html; charset=' . $args['charset']);
+    }
+    echo '<!DOCTYPE html><html lang="en"><head><meta charset="' . esc_attr($args['charset']) . '"><meta name="viewport" content="width=device-width"><title>' . esc_html(wp_specialchars_decode($title)) . '</title><style>html{background:#f1f1f1}body{background:#fff;border:1px solid #ccd0d4;color:#3c434a;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;margin:2em auto;padding:1em 2em;max-width:700px;box-shadow:0 1px 1px rgba(0,0,0,.04)}h1{border-bottom:1px solid #dadada;font-size:24px;margin:30px 0 0;padding:0 0 7px}p{font-size:14px;line-height:1.5;margin:25px 0 20px}</style></head><body id="error-page">' . "\n" . $message . "\n" . '</body></html>' . "\n";
+    if ($args['exit']) {
+        exit;
+    }
+}
+
+function _ajax_wp_die_handler($message, $title = '', $args = [])
+{
+    [$message, $title, $args] = _wp_die_process_input($message, $title, $args);
+    if (!headers_sent() && $args['response'] !== 0) {
+        http_response_code((int) $args['response']);
+    }
+    if (is_scalar($message)) {
+        echo (string) $message;
+    }
+    if ($args['exit']) {
+        exit;
+    }
+}
+
+function _json_wp_die_handler($message, $title = '', $args = [])
+{
+    [$message, $title, $args] = _wp_die_process_input($message, $title, $args);
+    if (!headers_sent()) {
+        http_response_code((int) $args['response']);
+        header('Content-Type: application/json; charset=' . $args['charset']);
+    }
+    echo wp_json_encode(['code' => $args['code'], 'message' => $message, 'data' => ['status' => $args['response']], 'additional_errors' => $args['additional_errors']]);
+    if ($args['exit']) {
+        exit;
+    }
+}
+
+function _xmlrpc_wp_die_handler($message, $title = '', $args = [])
+{
+    _ajax_wp_die_handler($message, $title, $args);
+}
+
+function _scalar_wp_die_handler($message = '', $title = '', $args = [])
+{
+    if (is_scalar($message)) {
+        echo (string) $message;
+    }
+    exit;
+}
+
+function is_wp_error($thing)
+{
+    $is = $thing instanceof WP_Error;
+    if ($is) {
+        do_action('is_wp_error_instance', $thing);
+    }
+    return $is;
+}

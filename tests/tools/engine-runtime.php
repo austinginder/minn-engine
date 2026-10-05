@@ -26,6 +26,8 @@ $capabilities = Minn\Auth\Capabilities::fromDb($db);
 $context = new Minn\Context($db, $site, null, Minn\Content\Reader::anonymous(), $capabilities, MINN_ENGINE_DIR, ABSPATH, '7.1');
 $runtime = new Minn\Runtime\Runtime($context);
 Minn\Runtime\Runtime::boot($runtime);
+// No plugins load here, so the pluggable functions are defined at once.
+Minn\Runtime\Runtime::loadPluggables();
 $runtime->set('permalinks', Minn\Front\Permalinks::fromDb($db));
 $theme = Minn\Theme\Theme::active($site, Minn\Front\Permalinks::fromDb($db), ABSPATH . 'wp-content/themes');
 $runtime->set('block_theme', $theme !== null);
