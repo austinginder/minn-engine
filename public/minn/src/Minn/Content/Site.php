@@ -36,6 +36,25 @@ final readonly class Site
         $this->db->execute("DELETE FROM {$this->db->table('options')} WHERE option_name = ?", [$name]);
     }
 
+    /**
+     * A new post's comment or ping status, as the reference picks it: a post
+     * follows the site's two defaults, an attachment follows the comment
+     * default and never takes pings, a page and every other type start
+     * closed; with plugins loaded, get_default_comment_status() decides
+     * (support a plugin removed, the filter). $kind is "comment" or
+     * "pingback".
+     */
+    public function defaultDiscussion(string $type, string $kind): string
+    {
+        // With plugins loaded, their say counts: a removed comments support or the filter.
+        if (\Minn\Runtime\Runtime::booted() && \function_exists('get_default_comment_status')) {
+            return \get_default_comment_status($type, $kind) === 'open' ? 'open' : 'closed';
+        }
+        $follows = $type === 'post' || ($type === 'attachment' && $kind === 'comment');
+        $value = $this->option($kind === 'comment' ? 'default_comment_status' : 'default_ping_status') ?? 'open';
+        return $follows && $value === 'open' ? 'open' : 'closed';
+    }
+
     /** The gmt_offset option in seconds. */
     public function gmtOffset(): int
     {

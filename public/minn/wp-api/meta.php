@@ -8,6 +8,11 @@ use Minn\Runtime\Meta;
 /** @internal table, id column */
 function _minn_meta_table(string $type): ?array
 {
+    // A plugin's own meta type: the table it set on $wpdb as "{$type}meta".
+    $table = Meta::knows($type) ? null : ($GLOBALS['wpdb']->{$type . 'meta'} ?? null);
+    if (is_string($table) && $table !== '') {
+        Minn\Runtime\MetaTypes::register($type, $table);
+    }
     return Meta::knows($type) ? [$type] : null;
 }
 

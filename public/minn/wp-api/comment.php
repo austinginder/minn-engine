@@ -941,6 +941,15 @@ function _minn_comment_form_body(array $args, WP_Post $post): void
     echo '</form>';
 }
 
+function get_default_comment_status($post_type = 'post', $comment_type = 'comment')
+{
+    // A page starts closed; another type follows the site's default when it supports comments (or trackbacks, for pings).
+    $feature = in_array($comment_type, ['pingback', 'trackback'], true) ? 'trackbacks' : 'comments';
+    $option = $feature === 'comments' ? 'default_comment_status' : 'default_ping_status';
+    $status = $post_type !== 'page' && post_type_supports($post_type, $feature) && get_option($option) === 'open' ? 'open' : 'closed';
+    return apply_filters('get_default_comment_status', $status, $post_type, $comment_type);
+}
+
 function wp_blacklist_check($author, $email, $url, $comment, $user_ip, $user_agent)
 {
     _deprecated_function(__FUNCTION__, '5.5.0', 'wp_check_comment_disallowed_list()');

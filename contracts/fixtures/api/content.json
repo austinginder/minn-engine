@@ -879,6 +879,29 @@
         ]
     ],
     [
+        "wp_after_insert_post arguments",
+        [
+            [
+                "integer",
+                "WP_Post",
+                "boolean",
+                "NULL"
+            ],
+            [
+                "integer",
+                "WP_Post",
+                "boolean",
+                "NULL"
+            ],
+            [
+                "integer",
+                "WP_Post",
+                "boolean",
+                "WP_Post"
+            ]
+        ]
+    ],
+    [
         "delete hooks",
         [
             "transition_post_status",

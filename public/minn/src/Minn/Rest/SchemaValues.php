@@ -92,16 +92,21 @@ final class SchemaValues
         return is_array($value) ? $value : [];
     }
 
-    /** The one type among the candidates the value reads as, in the reference's order of preference; '' when none. */
+    /** The first of the schema's types, in the order it lists them, that the value reads as (an empty string is a string when that is allowed); '' when none. */
     public static function bestType(mixed $value, array|string $types): string
     {
         $checks = ['array' => self::isArray(...), 'object' => self::isObject(...), 'null' => static fn ($v) => $v === null, 'boolean' => self::isBoolean(...), 'integer' => self::isInteger(...), 'number' => static fn ($v) => is_numeric($v), 'string' => static fn ($v) => is_string($v)];
-        $types = array_values(array_intersect(array_keys($checks), (array) $types));
+        // The schema's own order decides (WooCommerce's "mixed" lists null, object,
+        // string, number, ...); an empty string is a string whenever that is allowed.
+        $types = array_values(array_filter((array) $types, static fn ($type) => isset($checks[$type])));
         if (count($types) === 1) {
             return $types[0];
         }
-        foreach ($checks as $type => $check) {
-            if (in_array($type, $types, true) && $check($value)) {
+        if ($value === '' && in_array('string', $types, true)) {
+            return 'string';
+        }
+        foreach ($types as $type) {
+            if ($checks[$type]($value)) {
                 return $type;
             }
         }

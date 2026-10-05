@@ -23,7 +23,7 @@ escaping, serialized readers, small helpers
 | [`Markers`](#markers) | final class | 59 | The BEGIN/END marker blocks insert_with_markers() maintains in files like |
 | [`Paths`](#paths) | final class | 64 | File-system path and permission spellings. |
 | [`SearchReplace`](#searchreplace) | final class | 38 | String replace that walks serialized-PHP arrays of scalars without |
-| [`Serialized`](#serialized) | final class | 285 | Tolerant readers for the serialized-PHP blobs WordPress stores. Nothing |
+| [`Serialized`](#serialized) | final class | 311 | Tolerant readers for the serialized-PHP blobs WordPress stores. Nothing |
 | [`Time`](#time) | final class | 21 | Human-scale spans: a number of seconds as the largest whole unit it fills, rounded, never below one. |
 | [`Url`](#url) | final class | 203 | URL shaping the escaping and query helpers share: the character cleanup |
 | [`Utf8`](#utf8) | final class | 8 | Whether bytes are well-formed UTF-8 as the reference judges them: overlong |
@@ -623,7 +623,7 @@ here executes the blob; each reader scans for the one shape it needs.
 
 - const `INVALID` = `'' . "\0" . 'minn:invalid' . "\0" . ''` — Returned by decode() when the blob is not a serialized value the reader accepts.
 
-Used by: `Minn\Admin\App`, `Minn\Admin\Appearance`, `Minn\Admin\Dashboard`, `Minn\Admin\HiddenIntegrations`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\SiteController`, `Minn\Auth\ApplicationPasswords`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Cli\OptionCommand`, `Minn\Cli\Preflight`, `Minn\Content\Inventory`, `Minn\Content\Menus`, `Minn\Content\PluginState`, `Minn\Content\PostWriter`, `Minn\Engine`, `Minn\Extension\Loader`, `Minn\Mail\MailSettings`, `Minn\Ops\CoreStatus`, `Minn\Ops\Updates`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Runtime\CronTable`, `Minn\Runtime\Options`, `Minn\Runtime\Recovery`, `Minn\Support\SearchReplace`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Admin\App`, `Minn\Admin\Appearance`, `Minn\Admin\Dashboard`, `Minn\Admin\HiddenIntegrations`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\SiteController`, `Minn\Auth\ApplicationPasswords`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Cli\OptionCommand`, `Minn\Cli\Preflight`, `Minn\Content\Inventory`, `Minn\Content\Menus`, `Minn\Content\PluginState`, `Minn\Content\PostWriter`, `Minn\Content\Terms`, `Minn\Engine`, `Minn\Extension\Loader`, `Minn\Mail\MailSettings`, `Minn\Ops\CoreStatus`, `Minn\Ops\Updates`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Runtime\CronTable`, `Minn\Runtime\Options`, `Minn\Runtime\Recovery`, `Minn\Support\SearchReplace`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`
 
 
 ### static `stringList(?string $blob): array`
@@ -662,7 +662,7 @@ float, string, arrays of those, and objects written as their class.
 
 The integer values of a serialized list such as sticky_posts.
 
-Internals: `read()` (private, line 77), `readObject()` (private, line 133), `encodeRecord()` (private, line 187), `encodeWrapper()` (private, line 204), `expect()` (private, line 211), `until()` (private, line 219), `encodeObject()` (private, line 274)
+Internals: `read()` (private, line 79), `readObject()` (private, line 135), `encodeRecord()` (private, line 189), `encodeWrapper()` (private, line 206), `expect()` (private, line 213), `until()` (private, line 221), `encodeValue()` (private, line 254), `encodeObject()` (private, line 294)
 
 
 ## Time

@@ -117,8 +117,8 @@ final readonly class PostsWriteController
             'post_title' => $this->clean($title),
             'post_excerpt' => $this->clean(self::field($body['excerpt'] ?? '')),
             'post_status' => $status,
-            'comment_status' => in_array($body['comment_status'] ?? '', ['open', 'closed'], true) ? $body['comment_status'] : 'open',
-            'ping_status' => in_array($body['ping_status'] ?? '', ['open', 'closed'], true) ? $body['ping_status'] : 'open',
+            'comment_status' => in_array($body['comment_status'] ?? '', ['open', 'closed'], true) ? $body['comment_status'] : $this->site->defaultDiscussion($type, 'comment'),
+            'ping_status' => in_array($body['ping_status'] ?? '', ['open', 'closed'], true) ? $body['ping_status'] : $this->site->defaultDiscussion($type, 'pingback'),
             'post_password' => (string) ($body['password'] ?? ''),
             'post_name' => $slug,
             'post_parent' => $type === 'page' ? (int) ($body['parent'] ?? 0) : 0,
@@ -167,7 +167,7 @@ final readonly class PostsWriteController
 
         $body = $this->scheduledIfFuture($request->json(), $post);
         $this->checkStickyPasswordConflict($body, $post);
-        $columns = [...$this->fieldColumns($body, $post, $type), ...$this->statusColumns($body, $post, $type)];
+        $columns = [...$this->floatingDate($body, $post), ...$this->fieldColumns($body, $post, $type), ...$this->statusColumns($body, $post, $type)];
         $columns['post_modified'] = $this->site->localNow();
         $columns['post_modified_gmt'] = gmdate('Y-m-d H:i:s');
         $this->writer->update($postId, $columns);
@@ -242,6 +242,22 @@ final readonly class PostsWriteController
         if ($before->status === PostStatus::Publish->value) {
             $this->writer->rememberOld($after->id, '_wp_old_date', substr($before->date, 0, 10), substr($after->date, 0, 10));
         }
+    }
+
+    /**
+     * A draft that was never given a date (its GMT date is zero) has a
+     * floating one: every save moves it to now, and the GMT date stays zero
+     * until the post leaves draft or pending, as on the reference.
+     *
+     * @return array<string, string>
+     */
+    private function floatingDate(array $body, PostRecord $post): array
+    {
+        if (isset($body['date']) || !PostWriter::floating($post)) {
+            return [];
+        }
+        $status = (string) ($body['status'] ?? $post->status);
+        return ['post_date' => $this->site->localNow(), 'post_date_gmt' => in_array($status, PostWriter::FLOATING, true) ? PostWriter::ZERO_DATE : gmdate('Y-m-d H:i:s')];
     }
 
     /** A date in the future turns a publish into a schedule, whether the status was sent or kept. */

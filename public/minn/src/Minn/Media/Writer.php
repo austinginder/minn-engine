@@ -48,7 +48,7 @@ final readonly class Writer
             'post_title' => $title,
             'post_excerpt' => '',
             'post_status' => 'inherit',
-            'comment_status' => 'open',
+            'comment_status' => $this->site->defaultDiscussion('attachment', 'comment'),
             'ping_status' => 'closed',
             'post_password' => '',
             'post_name' => Slug::sanitize($title),

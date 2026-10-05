@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Content;
 
 use Minn\Db;
+use Minn\Support\Serialized;
 
 final readonly class Terms
 {
@@ -94,6 +95,9 @@ final readonly class Terms
                 "INSERT INTO {$this->db->table('term_taxonomy')} (term_id, taxonomy, description, parent, count) VALUES (?, ?, ?, ?, 0)",
                 [$termId, $taxonomy, $description, $parent],
             );
+            if ($parent > 0 || $this->keepsHierarchy($taxonomy)) {
+                $this->refreshHierarchy($taxonomy);
+            }
             return $termId;
         });
     }
@@ -111,6 +115,9 @@ final readonly class Terms
             "UPDATE {$this->db->table('term_taxonomy')} SET description = ?, parent = ? WHERE term_id = ? AND taxonomy = ?",
             [$description, $parent, $termId, $taxonomy],
         );
+        if ($parent > 0 || $this->keepsHierarchy($taxonomy)) {
+            $this->refreshHierarchy($taxonomy);
+        }
     }
 
     /** Reparents children to the grandparent, detaches relationships, drops the rows. */
@@ -128,7 +135,38 @@ final readonly class Terms
             $this->db->execute("DELETE FROM {$this->db->table('term_relationships')} WHERE term_taxonomy_id = ?", [$ttid]);
             $this->db->execute("DELETE FROM {$this->db->table('term_taxonomy')} WHERE term_taxonomy_id = ?", [$ttid]);
             $this->db->execute("DELETE FROM {$this->db->table('terms')} WHERE term_id = ?", [$termId]);
+            if ($hierarchical || $this->keepsHierarchy((string) $term['taxonomy'])) {
+                $this->refreshHierarchy((string) $term['taxonomy']);
+            }
         });
+    }
+
+    /**
+     * The reference keeps "{taxonomy}_children" (each parent's child term
+     * ids, by id) for a hierarchical taxonomy and rewrites it on every term
+     * change; one left stale hides new children from WordPress after a
+     * switch back. Callers take a taxonomy as hierarchical when the change
+     * has a parent, they know it is, or the option is already there.
+     */
+    private function refreshHierarchy(string $taxonomy): void
+    {
+        $name = $taxonomy . '_children';
+        $options = $this->db->table('options');
+        $children = [];
+        foreach ($this->db->rows("SELECT term_id, parent FROM {$this->db->table('term_taxonomy')} WHERE taxonomy = ? AND parent > 0 ORDER BY term_id ASC", [$taxonomy]) as $row) {
+            $children[(int) $row['parent']][] = (int) $row['term_id'];
+        }
+        $this->db->execute("DELETE FROM {$options} WHERE option_name = ?", [$name]);
+        $this->db->execute("INSERT INTO {$options} (option_name, option_value, autoload) VALUES (?, ?, 'auto')", [$name, Serialized::encode($children)]);
+        if (\Minn\Runtime\Runtime::booted()) {
+            \Minn\Runtime\Runtime::options()->forget($name);
+        }
+    }
+
+    /** Whether the taxonomy already has its children option, the mark of a hierarchical one. */
+    private function keepsHierarchy(string $taxonomy): bool
+    {
+        return $this->db->value("SELECT option_id FROM {$this->db->table('options')} WHERE option_name = ? LIMIT 1", [$taxonomy . '_children']) !== null;
     }
 
     /** "parent/child" for hierarchical taxonomies, the bare slug otherwise. */

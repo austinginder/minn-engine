@@ -2,12 +2,12 @@
     "generated": "2026-10-05",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 545,
-        "composes": 787,
+        "minn": 548,
+        "composes": 789,
         "leaf": 627,
-        "noop": 1782,
-        "functions": 3671,
-        "minnMethods": 555,
+        "noop": 1781,
+        "functions": 3675,
+        "minnMethods": 557,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -14574,10 +14574,11 @@
         },
         "_minn_meta_table": {
             "file": "meta.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 6,
+            "kind": "minn",
             "minn": [
-                "Minn\\Runtime\\Meta::knows"
+                "Minn\\Runtime\\Meta::knows",
+                "Minn\\Runtime\\MetaTypes::register"
             ],
             "composes": []
         },
@@ -18879,6 +18880,17 @@
                 "home_url",
                 "user_trailingslashit",
                 "zeroise"
+            ]
+        },
+        "get_default_comment_status": {
+            "file": "comment.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "get_option",
+                "post_type_supports"
             ]
         },
         "get_default_feed": {
@@ -26792,7 +26804,7 @@
         },
         "wp_after_insert_post": {
             "file": "post.php",
-            "lines": 10,
+            "lines": 15,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -27262,6 +27274,32 @@
             "minn": [],
             "composes": [
                 "wp_check_filetype"
+            ]
+        },
+        "wp_check_for_changed_dates": {
+            "file": "post.php",
+            "lines": 5,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Content\\PostWriter::rememberOld"
+            ],
+            "composes": [
+                "_minn_post_writer",
+                "is_post_type_hierarchical",
+                "wp_cache_delete"
+            ]
+        },
+        "wp_check_for_changed_slugs": {
+            "file": "post.php",
+            "lines": 5,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Content\\PostWriter::rememberOld"
+            ],
+            "composes": [
+                "_minn_post_writer",
+                "is_post_type_hierarchical",
+                "wp_cache_delete"
             ]
         },
         "wp_check_invalid_utf8": {
@@ -29332,7 +29370,7 @@
         },
         "wp_insert_post": {
             "file": "post.php",
-            "lines": 30,
+            "lines": 28,
             "kind": "minn",
             "minn": [
                 "Minn\\Content\\PostWriter::recountTaxonomiesOf",
@@ -29349,10 +29387,8 @@
                 "do_action",
                 "get_post",
                 "home_url",
-                "post_type_supports",
                 "wp_after_insert_post",
                 "wp_cache_delete",
-                "wp_save_post_revision",
                 "wp_unslash"
             ]
         },
@@ -30649,7 +30685,7 @@
         },
         "wp_publish_post": {
             "file": "post.php",
-            "lines": 16,
+            "lines": 17,
             "kind": "minn",
             "minn": [
                 "Minn\\Content\\PostWriter::recountTaxonomiesOf",
@@ -31222,7 +31258,7 @@
         },
         "wp_save_post_revision": {
             "file": "post.php",
-            "lines": 19,
+            "lines": 22,
             "kind": "minn",
             "minn": [
                 "Minn\\Content\\PostWriter::maybeSaveRevision"
@@ -31230,10 +31266,22 @@
             "composes": [
                 "_minn_post_writer",
                 "do_action",
+                "doing_action",
                 "get_current_user_id",
                 "get_post",
                 "wp_get_post_revisions",
                 "wp_transition_post_status"
+            ]
+        },
+        "wp_save_post_revision_on_insert": {
+            "file": "post.php",
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "has_action",
+                "post_type_supports",
+                "wp_save_post_revision"
             ]
         },
         "wp_schedule_event": {

@@ -24,16 +24,16 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`PostFilter`](#postfilter) | final readonly class | 55 | What a listing is narrowed to. Every field is optional and the object is |
 | [`PostRecord`](#postrecord) | final readonly class | 156 | One row of the posts table, read by name. The columns keep their |
 | [`PostStatus`](#poststatus) | enum | 42 | The statuses a post row can hold; the value is the column's own spelling. |
-| [`PostWriter`](#postwriter) | final readonly class | 386 | Every write to the posts table and its satellites: rows, meta, term |
+| [`PostWriter`](#postwriter) | final readonly class | 400 | Every write to the posts table and its satellites: rows, meta, term |
 | [`Posts`](#posts) | final readonly class | 496 | Reads over the posts table. A single post comes back as a PostRecord and |
 | [`Reader`](#reader) | final class | 72 | Who is reading this request: their user id, whether they may read |
 | [`Revisions`](#revisions) | final readonly class | 86 | Revision rows: the plain snapshots and the per-author autosave slots. |
-| [`Site`](#site) | final readonly class | 54 | Site-wide options and the site's clock. |
+| [`Site`](#site) | final readonly class | 73 | Site-wide options and the site's clock. |
 | [`SiteIcon`](#siteicon) | final readonly class | 50 | The site icon: the attachment the site_icon option names, as the file |
 | [`Slug`](#slug) | final class | 56 |  |
 | [`TermLinks`](#termlinks) | final class | 39 | A post's terms rendered as links, in the two shapes the reference |
 | [`TermRecord`](#termrecord) | final readonly class | 88 | One term with its taxonomy row, read by name: $term->name, ->slug, |
-| [`Terms`](#terms) | final readonly class | 141 |  |
+| [`Terms`](#terms) | final readonly class | 178 |  |
 | [`Texturize`](#texturize) | final class | 51 | The texturize subset the reference applies to rendered text: straight |
 | [`UserRecord`](#userrecord) | final readonly class | 96 | One row of the users table, read by name. Columns keep their WordPress |
 | [`Users`](#users) | final readonly class | 236 |  |
@@ -1004,6 +1004,9 @@ Every write to the posts table and its satellites: rows, meta, term
 links with the published counts the reference trusts on read, sticky
 and format side effects, and revision snapshots.
 
+- const `FLOATING` = `array (   0 => 'draft',   1 => 'pending',   2 => 'auto-draft', )` — The statuses whose post may have a floating date (no GMT date yet).
+- const `ZERO_DATE` = `'0000-00-00 00:00:00'`
+
 Used by: `Minn\Admin\EditorController`, `Minn\Content\Menus`, `Minn\Content\Revisions`, `Minn\Cron\Cron`, `Minn\Media\Writer`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Services`, `Minn\Runtime\PostInsert`, `Minn\Runtime\TermWriter`, `Minn\Theme\TemplateWriter`, `Minn\Theme\UserStyles`
 
 ```php
@@ -1034,6 +1037,10 @@ Moves a post to another type, leaving it alone when it is already there.
 ### `setMeta(int $id, string $key, string $value): void`
 
 Sets one meta value, inserting the row when the key is new.
+
+### static `floating(Minn\Content\PostRecord $post): bool`
+
+Whether a post's date floats: never given one, it is still a draft or pending with no GMT date.
 
 ### `addMeta(int $id, string $key, string $value): void`
 
@@ -1132,7 +1139,7 @@ The database door this writer writes through, for a caller wrapping several of i
 
 Hard-deletes a post with its revisions and its meta.
 
-Internals: `saveSticky()` (private, line 242)
+Internals: `saveSticky()` (private, line 256)
 
 
 ## Posts
@@ -1418,6 +1425,15 @@ Writes an option, inserting it as autoloaded when it does not exist.
 
 Removes an option row.
 
+### `defaultDiscussion(string $type, string $kind): string`
+
+A new post's comment or ping status, as the reference picks it: a post
+follows the site's two defaults, an attachment follows the comment
+default and never takes pings, a page and every other type start
+closed; with plugins loaded, get_default_comment_status() decides
+(support a plugin removed, the filter). $kind is "comment" or
+"pingback".
+
 ### `gmtOffset(): int`
 
 The gmt_offset option in seconds.
@@ -1626,7 +1642,7 @@ Reparents children to the grandparent, detaches relationships, drops the rows.
 
 "parent/child" for hierarchical taxonomies, the bare slug otherwise.
 
-Internals: `record()` (private, line 16)
+Internals: `record()` (private, line 17), `refreshHierarchy()` (private, line 151), `keepsHierarchy()` (private, line 167)
 
 
 ## Texturize

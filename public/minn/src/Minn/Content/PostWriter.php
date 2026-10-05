@@ -14,6 +14,10 @@ use Minn\Support\Serialized;
  */
 final readonly class PostWriter
 {
+    /** The statuses whose post may have a floating date (no GMT date yet). */
+    public const FLOATING = ['draft', 'pending', 'auto-draft'];
+    public const ZERO_DATE = '0000-00-00 00:00:00';
+
     public function __construct(
         private Db $db,
         private Posts $posts,
@@ -75,6 +79,12 @@ final readonly class PostWriter
         }
     }
 
+    /** Whether a post's date floats: never given one, it is still a draft or pending with no GMT date. */
+    public static function floating(PostRecord $post): bool
+    {
+        return in_array($post->status, self::FLOATING, true) && in_array($post->dateGmt, [self::ZERO_DATE, ''], true);
+    }
+
     /** Adds a meta row even when the key already has one (a non-unique key). */
     public function addMeta(int $id, string $key, string $value): void
     {
@@ -122,7 +132,11 @@ final readonly class PostWriter
     public function trash(PostRecord $post, int $userId): void
     {
         $id = $post->id;
-        $this->update($id, ['post_status' => 'trash', 'post_name' => $post->slug . '__trashed', 'post_modified' => $this->site->localNow(), 'post_modified_gmt' => gmdate('Y-m-d H:i:s')]);
+        $local = $this->site->localNow();
+        $gmt = gmdate('Y-m-d H:i:s');
+        // A floating draft's date settles on now as it leaves for the trash.
+        $settled = self::floating($post) ? ['post_date' => $local, 'post_date_gmt' => $gmt] : [];
+        $this->update($id, ['post_status' => 'trash', 'post_name' => $post->slug . '__trashed'] + $settled + ['post_modified' => $local, 'post_modified_gmt' => $gmt]);
         $this->setMeta($id, '_wp_trash_meta_status', $post->status);
         $this->setMeta($id, '_wp_trash_meta_time', (string) time());
         $this->setMeta($id, '_wp_desired_post_slug', $post->slug);

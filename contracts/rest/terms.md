@@ -42,6 +42,16 @@ Delete requires force (`501 rest_trash_not_supported`); children are
 reparented to the deleted term's parent, relationships are detached,
 response `{ deleted: true, previous }`.
 
+## The children option
+
+A hierarchical taxonomy keeps `{taxonomy}_children` in options: each
+parent's child term ids, by id, rewritten (autoload `auto`) on every term
+create, update and delete, the facade's included (captured 2026-10-05:
+`a:1:{i:6;a:2:{i:0;i:7;i:1;i:8;}}` for two children of term 6). Left stale,
+it hides new children from WordPress after a switch back. A taxonomy is
+taken as hierarchical when the change has a parent, the caller knows it
+is, or the option is already there; tags have none.
+
 ## Known gaps
 
 - No `hide_empty` or `parent` list filters.

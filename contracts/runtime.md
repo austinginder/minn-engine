@@ -2909,3 +2909,36 @@ loaded, it found these, each now matched to the oracle:
   `attach_session_information` survives an engine sign-in. A new session
   from a request without a User-Agent has no `ua` key, as on the
   reference.
+- **A post save fires the reference's hooks with the reference's
+  arguments, in its order.** `wp_after_insert_post` takes four (`$post_id`,
+  `$post`, `$update`, `$post_before`); the facade passed three in the
+  wrong order, so Seriously Simple Podcasting's callback threw and every
+  WooCommerce order made on shop-dogfood was a 500. An update now fires
+  `edit_post_{type}`, `edit_post` and `post_updated` before `save_post`,
+  and the defaults the reference registers are registered here: the
+  revision of an update is saved from `wp_after_insert_post` at priority 9
+  (`wp_save_post_revision_on_insert`), `wp_save_post_revision` stays on
+  `post_updated` at 10 as the switch a plugin unhooks to turn revisions
+  off, and `wp_check_for_changed_slugs` / `wp_check_for_changed_dates` at
+  12 keep `_wp_old_slug` and `_wp_old_date`. Probe row
+  `wp_after_insert_post arguments`.
+- **A plugin's own meta types work.** WooCommerce keeps order item meta in
+  `woocommerce_order_itemmeta`, named on `$wpdb` as `order_itemmeta`; the
+  metadata API knew only post, user, term and comment meta, so every
+  order item lost its product, quantity and totals. Any type whose table
+  is set on `$wpdb` as `{$type}meta` is now read and written with
+  `{$type}_id` and `meta_id` (`Runtime\MetaTypes`).
+- **A multi-type schema takes the first listed type the value fits.**
+  WooCommerce declares a line item's `product_id` as `mixed`, which the
+  REST server spells out as every type, null first and array last. The
+  engine tried array before anything else, so `92048` became `["92048"]`,
+  WooCommerce cast it to product 1, and every order line lost its
+  product. The schema's own order now decides, and an empty string is a
+  string whenever that is allowed. Probe row `a multi-type schema takes
+  the first listed type the value fits` (150 combinations matched).
+- **`get_default_comment_status()`**: a page starts closed; another type
+  follows the site default when it supports comments (trackbacks, for
+  pings); then the `get_default_comment_status` filter.
+- **An object that holds itself** is encoded by PHP's own serializer
+  (back-references and all) instead of recursing until the worker dies.
+

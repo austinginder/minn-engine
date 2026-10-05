@@ -80,6 +80,7 @@ $say('an object of no known class is written back as it was read', (static funct
     $blob = 'a:1:{s:4:"plan";O:14:"FS_Plugin_Plan":2:{s:2:"id";s:3:"123";s:9:"' . "\0*\0" . 'secret";s:1:"x";}}';
     return maybe_serialize(maybe_unserialize($blob)) === $blob;
 })());
+$say('a multi-type schema takes the first listed type the value fits', (static function () { $out = []; foreach ([['null', 'object', 'string', 'number', 'boolean', 'integer', 'array'], ['array', 'integer', 'string'], ['string', 'integer'], ['boolean', 'string']] as $types) { foreach ([92048, '92048', '', 'a,b', '0', [1, 2]] as $value) { $out[] = rest_get_best_type_for_value($value, $types) . ':' . json_encode(rest_sanitize_value_from_schema($value, ['type' => $types], 'x')); } } return $out; })());
 // Transients.
 delete_transient('minn_probe_t');
 $say('transient missing', get_transient('minn_probe_t'));

@@ -12,6 +12,8 @@ final class Serialized
 {
     /** @var \WeakMap<object, array{class: string, keys: array<string, int|string>, hidden: list<array{0: int|string, 1: mixed}>}>|null records read back as a stdClass, by object */
     private static ?\WeakMap $records = null;
+    /** The objects being encoded right now, outermost first, so a loop is seen. */
+    private static ?\SplObjectStorage $open = null;
 
     /** The string values of a serialized string list. */
     public static function stringList(?string $blob): array
@@ -233,6 +235,24 @@ final class Serialized
      */
     public static function encode(mixed $value): string
     {
+        if (self::$open !== null) {
+            return self::encodeValue($value);
+        }
+        // A graph that loops back on itself (an object holding itself, or an
+        // ancestor) has no form but PHP's own, which writes the loop as a
+        // back-reference; the whole value goes through it then.
+        self::$open = new \SplObjectStorage();
+        try {
+            return self::encodeValue($value);
+        } catch (\UnexpectedValueException) {
+            return serialize($value);
+        } finally {
+            self::$open = null;
+        }
+    }
+
+    private static function encodeValue(mixed $value): string
+    {
         if ($value === null) {
             return 'N;';
         }
@@ -273,15 +293,21 @@ final class Serialized
      */
     private static function encodeObject(object $value): string
     {
-        if (self::$records !== null && isset(self::$records[$value])) {
-            return self::encodeRecord($value, self::$records[$value]);
-        }
         $class = get_class($value);
-        if ($class === \stdClass::class) {
-            return self::encodeRecord($value, ['class' => $class, 'keys' => [], 'hidden' => []]);
-        }
+        $record = self::$records !== null && isset(self::$records[$value]) ? self::$records[$value] : null;
         $plainWrapper = in_array($class, [\ArrayObject::class, \ArrayIterator::class, \RecursiveArrayIterator::class], true) && get_object_vars($value) === [];
-        return $plainWrapper ? self::encodeWrapper($value) : serialize($value);
+        if ($record === null && $class !== \stdClass::class && !$plainWrapper) {
+            return serialize($value);
+        }
+        if (self::$open !== null && self::$open->contains($value)) {
+            throw new \UnexpectedValueException('cycle');
+        }
+        self::$open?->attach($value);
+        try {
+            return $plainWrapper ? self::encodeWrapper($value) : self::encodeRecord($value, $record ?? ['class' => $class, 'keys' => [], 'hidden' => []]);
+        } finally {
+            self::$open?->detach($value);
+        }
     }
 
     /** The integer values of a serialized list such as sticky_posts. */

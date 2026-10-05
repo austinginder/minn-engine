@@ -138,3 +138,9 @@ add_action('init', '_wp_connectors_pass_default_keys_to_ai_client', 20);
 
 // The REST API's own filters go on when the server starts, after the plugins' (see rest_api_default_filters).
 add_action('rest_api_init', 'rest_api_default_filters', 10, 1);
+// Revisions and the old-address records hang off the update hooks, as on the reference: a plugin that
+// unhooks wp_save_post_revision from post_updated turns revisions off.
+add_action('post_updated', 'wp_save_post_revision', 10, 1);
+add_action('post_updated', 'wp_check_for_changed_slugs', 12, 3);
+add_action('post_updated', 'wp_check_for_changed_dates', 12, 3);
+add_action('wp_after_insert_post', 'wp_save_post_revision_on_insert', 9, 3);

@@ -36,7 +36,7 @@ the wp/v2 surface: shapes and controllers
 | [`PolicyGate`](#policygate) | final readonly class | 91 | Judges a route's policy against the caller, with the reference's |
 | [`PostObject`](#postobject) | final readonly class | 482 | Builds the wp/v2 post and page objects in the reference's shape: the |
 | [`PostsController`](#postscontroller) | final readonly class | 182 | wp/v2 posts and pages, read side. |
-| [`PostsWriteController`](#postswritecontroller) | final readonly class | 349 | wp/v2 posts and pages, write side: create, update, trash, and force |
+| [`PostsWriteController`](#postswritecontroller) | final readonly class | 365 | wp/v2 posts and pages, write side: create, update, trash, and force |
 | [`Reply`](#reply) | final class | 47 | JSON responses in the reference's shape: its header set, its json_encode |
 | [`RestUrl`](#resturl) | final readonly class | 38 | REST URLs in the form the reference emits for the site's permalink mode: |
 | [`RevisionsController`](#revisionscontroller) | final readonly class | 142 | wp/v2 revisions and autosaves under posts, pages, and blocks. |
@@ -46,7 +46,7 @@ the wp/v2 surface: shapes and controllers
 | [`RouteTable`](#routetable) | final class | 38 | The registered endpoints in dispatch shape: one handler list per route, methods as a set, non-numeric keys lifted into the route's options. |
 | [`RuntimeRoutes`](#runtimeroutes) | final class | 103 | Routes plugin code registered with register_rest_route(), answered |
 | [`Schema`](#schema) | final readonly class | 473 | JSON-schema handling the way the REST API's argument validation does it: |
-| [`SchemaValues`](#schemavalues) | final class | 201 | The value side of JSON Schema, as the reference applies it: what counts |
+| [`SchemaValues`](#schemavalues) | final class | 206 | The value side of JSON Schema, as the reference applies it: what counts |
 | [`SearchController`](#searchcontroller) | final readonly class | 121 | wp/v2 search over published content: id, title, url, type, and the |
 | [`Services`](#services) | final class | 387 | The objects one REST request shares, each made once, on first use, from |
 | [`Settings`](#settings) | final readonly class | 108 | The registered settings the Settings views read and write, mapped to |
@@ -1494,7 +1494,7 @@ Trashes a post of any type, or deletes it with force.
 
 A field that may arrive as a scalar or as {raw: ...}.
 
-Internals: `writeNewPost()` (private, line 110), `rememberOld()` (private, line 230), `scheduledIfFuture()` (private, line 248), `fieldColumns()` (private, line 267), `statusColumns()` (private, line 312), `checkStickyPasswordConflict()` (private, line 342), `validStatus()` (private, line 354), `clean()` (private, line 363)
+Internals: `writeNewPost()` (private, line 110), `rememberOld()` (private, line 230), `floatingDate()` (private, line 254), `scheduledIfFuture()` (private, line 264), `fieldColumns()` (private, line 283), `statusColumns()` (private, line 328), `checkStickyPasswordConflict()` (private, line 358), `validStatus()` (private, line 370), `clean()` (private, line 379)
 
 
 ## Reply
@@ -1803,7 +1803,7 @@ The object a value reads as, as an array.
 
 ### static `bestType(mixed $value, array|string $types): string`
 
-The one type among the candidates the value reads as, in the reference's order of preference; '' when none.
+The first of the schema's types, in the order it lists them, that the value reads as (an empty string is a string when that is allowed); '' when none.
 
 ### static `valuesEqual(mixed $a, mixed $b): bool`
 

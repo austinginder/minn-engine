@@ -26,6 +26,12 @@ capability engine from `caps.md` gates every operation.
   body's own terms are applied after**, so no `categories` keeps the default
   and `categories: []` leaves the post in none, both as the reference does.
   Pages get none.
+- Comment and ping status not given in the body start at the site's
+  defaults the reference's way: a post follows `default_comment_status`
+  and `default_ping_status`, an attachment the first and never pings, a
+  page and any other type closed; with plugins loaded,
+  `get_default_comment_status()` decides, so a plugin that removed
+  comments support (or filters it) closes them here too.
 - Responds `201 Created` with a `Location: …/wp/v2/posts/{id}` header and the
   edit-context body.
 
@@ -42,6 +48,9 @@ capability engine from `caps.md` gates every operation.
   rest_cannot_publish`.
 - Every save of a post (type `post`) that has no category puts it in the
   `default_category` before the body's terms land.
+- A draft never given a date (zero `post_date_gmt`) has a floating date:
+  every save, a trash included, moves `post_date` to now, and the GMT date
+  stays zero until the post leaves draft or pending.
 - A published post (not a page) whose slug changes keeps the old one as a
   `_wp_old_slug` row (one per old slug; moving back to an old slug removes
   that row), and one that stays published while its date changes keeps the

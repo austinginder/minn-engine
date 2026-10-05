@@ -169,6 +169,35 @@
         true
     ],
     [
+        "a multi-type schema takes the first listed type the value fits",
+        [
+            "number:92048",
+            "string:\"92048\"",
+            "string:\"\"",
+            "string:\"a,b\"",
+            "string:\"0\"",
+            "object:[1,2]",
+            "array:[\"92048\"]",
+            "array:[\"92048\"]",
+            "string:\"\"",
+            "array:[\"a\",\"b\"]",
+            "array:[\"0\"]",
+            "array:[1,2]",
+            "integer:92048",
+            "string:\"92048\"",
+            "string:\"\"",
+            "string:\"a,b\"",
+            "string:\"0\"",
+            ":null",
+            ":null",
+            "string:\"92048\"",
+            "string:\"\"",
+            "string:\"a,b\"",
+            "boolean:false",
+            ":null"
+        ]
+    ],
+    [
         "transient missing",
         false
     ],

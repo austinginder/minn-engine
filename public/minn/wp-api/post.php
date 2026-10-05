@@ -867,10 +867,8 @@ function wp_insert_post($postarr, $wp_error = false, $fire_after_hooks = true)
     _minn_post_inputs($id, $postarr, $type, $columns['post_status'], $update);
     _minn_post_writer()->recountTaxonomiesOf($id);
     if ($fire_after_hooks) {
+        // The revision is saved from wp_after_insert_post (priority 9), as on the reference.
         wp_after_insert_post($post, $update, $existing);
-    }
-    if ($update && in_array($type, ['post', 'page'], true) && post_type_supports($type, 'revisions')) {
-        wp_save_post_revision($id);
     }
     return $id;
 }
@@ -908,10 +906,44 @@ function wp_after_insert_post($post, $update, $post_before)
     }
     $previous = $post_before instanceof WP_Post ? $post_before->post_status : 'new';
     wp_transition_post_status($post->post_status, $previous, $post);
+    if ($update && $post_before instanceof WP_Post) {
+        do_action("edit_post_{$post->post_type}", $post->ID, $post);
+        do_action('edit_post', $post->ID, $post);
+        do_action('post_updated', $post->ID, $post, $post_before);
+    }
     do_action("save_post_{$post->post_type}", $post->ID, $post, $update);
     do_action('save_post', $post->ID, $post, $update);
     do_action('wp_insert_post', $post->ID, $post, $update);
-    do_action('wp_after_insert_post', $post, $update, $post_before);
+    do_action('wp_after_insert_post', $post->ID, $post, $update, $post_before);
+}
+
+/** The revision of an update, saved after the update's terms and meta, unless the site unhooked revisions from post_updated. */
+function wp_save_post_revision_on_insert($post_id, $post, $update)
+{
+    if (!$update || !has_action('post_updated', 'wp_save_post_revision') || !in_array($post->post_type, ['post', 'page'], true) || !post_type_supports($post->post_type, 'revisions')) {
+        return;
+    }
+    wp_save_post_revision($post_id);
+}
+
+/** A published post that changed its slug keeps the old one on record (_wp_old_slug), as the REST writer does. */
+function wp_check_for_changed_slugs($post_id, $post, $post_before)
+{
+    if ($post->post_status !== 'publish' || is_post_type_hierarchical($post->post_type)) {
+        return;
+    }
+    _minn_post_writer()->rememberOld((int) $post_id, '_wp_old_slug', (string) $post_before->post_name, (string) $post->post_name);
+    wp_cache_delete((int) $post_id, 'post_meta');
+}
+
+/** A post that stayed published while its day changed keeps the old day on record (_wp_old_date). */
+function wp_check_for_changed_dates($post_id, $post, $post_before)
+{
+    if ($post->post_status !== 'publish' || $post_before->post_status !== 'publish' || is_post_type_hierarchical($post->post_type)) {
+        return;
+    }
+    _minn_post_writer()->rememberOld((int) $post_id, '_wp_old_date', substr((string) $post_before->post_date, 0, 10), substr((string) $post->post_date, 0, 10));
+    wp_cache_delete((int) $post_id, 'post_meta');
 }
 
 function wp_transition_post_status($new_status, $old_status, $post)
@@ -923,7 +955,10 @@ function wp_transition_post_status($new_status, $old_status, $post)
 
 function wp_save_post_revision($post_id)
 {
-    $post = get_post($post_id);
+    // Hooked to post_updated, it stands aside: the revision of an update is
+    // saved from wp_after_insert_post, once the terms and meta are in.
+    // Unhooking it from post_updated is how a site turns revisions off.
+    $post = doing_action('post_updated') ? null : get_post($post_id);
     if ($post === null) {
         return null;
     }
@@ -939,7 +974,7 @@ function wp_save_post_revision($post_id)
     do_action('save_post_revision', $revision->ID, $revision, false);
     do_action('save_post', $revision->ID, $revision, false);
     do_action('wp_insert_post', $revision->ID, $revision, false);
-    do_action('wp_after_insert_post', $revision, false, null);
+    do_action('wp_after_insert_post', $revision->ID, $revision, false, null);
     do_action('_wp_put_post_revision', $revision->ID, $revision);
     return $revision->ID;
 }
@@ -981,6 +1016,7 @@ function wp_publish_post($post)
         return;
     }
     $old = $post->post_status;
+    $before = $post;
     _minn_post_writer()->update($post->ID, ['post_status' => 'publish']);
     wp_cache_delete($post->ID, 'posts');
     $post = get_post($post->ID);
@@ -991,7 +1027,7 @@ function wp_publish_post($post)
     do_action("save_post_{$post->post_type}", $post->ID, $post, true);
     do_action('save_post', $post->ID, $post, true);
     do_action('wp_insert_post', $post->ID, $post, true);
-    do_action('wp_after_insert_post', $post, true, null);
+    do_action('wp_after_insert_post', $post->ID, $post, true, $before);
 }
 
 function wp_trash_post($post_id = 0)

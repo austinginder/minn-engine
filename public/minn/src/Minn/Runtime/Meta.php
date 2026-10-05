@@ -15,10 +15,20 @@ final readonly class Meta
     {
     }
 
+    /** The table, object column, and row id column of a meta type. @return array{0: string, 1: string, 2: string} */
+    private function spec(string $type): array
+    {
+        if (isset(self::TABLES[$type])) {
+            [$table, $column, $id] = self::TABLES[$type];
+            return [$this->db->table($table), $column, $id];
+        }
+        return [(string) MetaTypes::table($type), "{$type}_id", 'meta_id'];
+    }
+
     /** Whether an object type has a meta table. */
     public static function knows(string $type): bool
     {
-        return isset(self::TABLES[$type]);
+        return isset(self::TABLES[$type]) || MetaTypes::table($type) !== null;
     }
 
     /**
@@ -53,9 +63,9 @@ final readonly class Meta
     /** Every row of an object's meta, values as stored, grouped by key in id order. @return array<string, list<string>> */
     public function all(string $type, int $objectId): array
     {
-        [$table, $column, $id] = self::TABLES[$type];
+        [$table, $column, $id] = $this->spec($type);
         $out = [];
-        foreach ($this->db->rows("SELECT meta_key, meta_value FROM {$this->db->table($table)} WHERE {$column} = ? ORDER BY {$id} ASC", [$objectId]) as $row) {
+        foreach ($this->db->rows("SELECT meta_key, meta_value FROM {$table} WHERE {$column} = ? ORDER BY {$id} ASC", [$objectId]) as $row) {
             $out[(string) $row['meta_key']][] = (string) $row['meta_value'];
         }
         return $out;
@@ -64,16 +74,16 @@ final readonly class Meta
     /** Inserts a meta row and returns its id. */
     public function add(string $type, int $objectId, string $key, string $stored): int
     {
-        [$table, $column] = self::TABLES[$type];
-        $this->db->execute("INSERT INTO {$this->db->table($table)} ({$column}, meta_key, meta_value) VALUES (?, ?, ?)", [$objectId, $key, $stored]);
+        [$table, $column] = $this->spec($type);
+        $this->db->execute("INSERT INTO {$table} ({$column}, meta_key, meta_value) VALUES (?, ?, ?)", [$objectId, $key, $stored]);
         return $this->db->insertId();
     }
 
     /** The rows of one key on one object, in id order. @return list<array{meta_id: int, meta_value: string}> */
     public function matching(string $type, int $objectId, string $key): array
     {
-        [$table, $column, $id] = self::TABLES[$type];
-        return array_map(static fn (array $r) => ['meta_id' => (int) $r['meta_id'], 'meta_value' => (string) $r['meta_value']], $this->db->rows("SELECT {$id} AS meta_id, meta_value FROM {$this->db->table($table)} WHERE {$column} = ? AND meta_key = ? ORDER BY {$id} ASC", [$objectId, $key]));
+        [$table, $column, $id] = $this->spec($type);
+        return array_map(static fn (array $r) => ['meta_id' => (int) $r['meta_id'], 'meta_value' => (string) $r['meta_value']], $this->db->rows("SELECT {$id} AS meta_id, meta_value FROM {$table} WHERE {$column} = ? AND meta_key = ? ORDER BY {$id} ASC", [$objectId, $key]));
     }
 
     /** @param list<int> $ids */
@@ -105,15 +115,15 @@ final readonly class Meta
         if ($ids === []) {
             return;
         }
-        [$table, , $id] = self::TABLES[$type];
-        $this->db->execute("UPDATE {$this->db->table($table)} SET meta_value = ? WHERE {$id} IN (" . implode(',', array_map('intval', $ids)) . ')', [$stored]);
+        [$table, , $id] = $this->spec($type);
+        $this->db->execute("UPDATE {$table} SET meta_value = ? WHERE {$id} IN (" . implode(',', array_map('intval', $ids)) . ')', [$stored]);
     }
 
     /** The rows a delete would take: by key, for one object or all, optionally only a stored value. @return list<array{meta_id: int, object_id: int}> */
     public function find(string $type, ?int $objectId, string $key, ?string $stored): array
     {
-        [$table, $column, $id] = self::TABLES[$type];
-        $sql = "SELECT {$id} AS meta_id, {$column} AS object_id FROM {$this->db->table($table)} WHERE meta_key = ?";
+        [$table, $column, $id] = $this->spec($type);
+        $sql = "SELECT {$id} AS meta_id, {$column} AS object_id FROM {$table} WHERE meta_key = ?";
         $params = [$key];
         if ($objectId !== null) {
             $sql .= " AND {$column} = ?";
@@ -136,7 +146,7 @@ final readonly class Meta
         if ($ids === []) {
             return;
         }
-        [$table, , $id] = self::TABLES[$type];
-        $this->db->execute("DELETE FROM {$this->db->table($table)} WHERE {$id} IN (" . implode(',', array_map('intval', $ids)) . ')');
+        [$table, , $id] = $this->spec($type);
+        $this->db->execute("DELETE FROM {$table} WHERE {$id} IN (" . implode(',', array_map('intval', $ids)) . ')');
     }
 }
