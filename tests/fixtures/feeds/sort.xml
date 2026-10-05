@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"><channel><title>Sort</title><link>https://sort.example.test/</link><description>Order</description>
+<item><title>D1</title><link>https://sort.example.test/D1</link><pubDate>Mon, 05 Oct 2026 10:00:00 +0000</pubDate></item>
+<item><title>U1</title><link>https://sort.example.test/U1</link></item>
+<item><title>D2</title><link>https://sort.example.test/D2</link><pubDate>Mon, 05 Oct 2026 10:00:00 +0000</pubDate></item>
+<item><title>U2</title><link>https://sort.example.test/U2</link></item>
+<item><title>D3</title><link>https://sort.example.test/D3</link><pubDate>Tue, 06 Oct 2026 10:00:00 +0000</pubDate></item>
+<item><title>D4</title><link>https://sort.example.test/D4</link><pubDate>Mon, 05 Oct 2026 10:00:00 +0000</pubDate></item>
+<item><title>U3</title><link>https://sort.example.test/U3</link></item>
+<item><title>D5</title><link>https://sort.example.test/D5</link><pubDate>Sun, 04 Oct 2026 10:00:00 +0000</pubDate></item>
+<item><title>D6</title><link>https://sort.example.test/D6</link><pubDate>Mon, 05 Oct 2026 10:00:00 +0000</pubDate></item>
+</channel></rss>

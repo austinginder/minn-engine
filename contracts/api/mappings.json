@@ -2,15 +2,583 @@
     "generated": "2026-10-05",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 482,
-        "composes": 775,
-        "leaf": 402,
-        "noop": 1328,
-        "functions": 2979,
-        "minnMethods": 469,
+        "minn": 492,
+        "composes": 786,
+        "leaf": 475,
+        "noop": 1571,
+        "functions": 3315,
+        "minnMethods": 479,
         "leafLinesOver15": 13
     },
     "functions": {
+        "Author::__construct": {
+            "file": "simplepie/Parts.php",
+            "lines": 3,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Author::__toString": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Author::get_email": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Author::get_link": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Author::get_name": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Cache::get_handler": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Caption::__construct": {
+            "file": "simplepie/Parts.php",
+            "lines": 5,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Caption::__toString": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Caption::get_endtime": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Caption::get_language": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Caption::get_starttime": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Caption::get_text": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Caption::get_type": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Category::__construct": {
+            "file": "simplepie/Parts.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Category::__toString": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Category::get_label": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Category::get_scheme": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Category::get_term": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Category::get_type": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Copyright::__construct": {
+            "file": "simplepie/Parts.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Copyright::__toString": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Copyright::get_attribution": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Copyright::get_url": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Credit::__construct": {
+            "file": "simplepie/Parts.php",
+            "lines": 3,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Credit::__toString": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Credit::get_name": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Credit::get_role": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Credit::get_scheme": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Enclosure::__construct": {
+            "file": "simplepie/Parts.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Enclosure::__toString": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Enclosure::embed": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Enclosure::get_bitrate": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Enclosure::get_caption": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Enclosure::get_captions": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Enclosure::get_categories": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Enclosure::get_category": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Enclosure::get_channels": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Enclosure::get_copyright": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Enclosure::get_credit": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Enclosure::get_credits": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Enclosure::get_description": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Enclosure::get_duration": {
+            "file": "simplepie/Parts.php",
+            "lines": 5,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Enclosure::get_expression": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Enclosure::get_extension": {
+            "file": "simplepie/Parts.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "parse_url"
+            ]
+        },
+        "Enclosure::get_framerate": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Enclosure::get_handler": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Enclosure::get_hash": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Enclosure::get_hashes": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Enclosure::get_height": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Enclosure::get_keyword": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Enclosure::get_keywords": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Enclosure::get_language": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Enclosure::get_length": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Enclosure::get_link": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Enclosure::get_medium": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Enclosure::get_player": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Enclosure::get_rating": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Enclosure::get_ratings": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Enclosure::get_real_type": {
+            "file": "simplepie/Parts.php",
+            "lines": 14,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Enclosure::get_restriction": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Enclosure::get_restrictions": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Enclosure::get_sampling_rate": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Enclosure::get_size": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Enclosure::get_thumbnail": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Enclosure::get_thumbnails": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Enclosure::get_title": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Enclosure::get_type": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Enclosure::get_width": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Enclosure::native_embed": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "File::__construct": {
+            "file": "simplepie/Parts.php",
+            "lines": 21,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "is_wp_error",
+                "wp_remote_retrieve_body",
+                "wp_remote_retrieve_headers",
+                "wp_remote_retrieve_response_code",
+                "wp_safe_remote_request"
+            ]
+        },
+        "File::get_body_content": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "File::get_final_requested_uri": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "File::get_header": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "File::get_header_line": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "File::get_headers": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "File::get_permanent_uri": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "File::get_status_code": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "File::has_header": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "File::minn_named": {
+            "file": "simplepie/Parts.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "File::with_header": {
+            "file": "simplepie/Parts.php",
+            "lines": 3,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "Gettext_Translations::gettext_select_plural_form": {
             "file": "classes/POMO.php",
             "lines": 6,
@@ -55,6 +623,309 @@
             "file": "classes/POMO.php",
             "lines": 6,
             "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Item::__construct": {
+            "file": "simplepie/Item.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Item::__destruct": {
+            "file": "simplepie/Item.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Item::__toString": {
+            "file": "simplepie/Item.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Item::get_author": {
+            "file": "simplepie/Item.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Item::get_authors": {
+            "file": "simplepie/Item.php",
+            "lines": 12,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Item::get_base": {
+            "file": "simplepie/Item.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Item::get_categories": {
+            "file": "simplepie/Item.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Item::get_category": {
+            "file": "simplepie/Item.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Item::get_content": {
+            "file": "simplepie/Item.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Item::get_contributor": {
+            "file": "simplepie/Item.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Item::get_contributors": {
+            "file": "simplepie/Item.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Item::get_copyright": {
+            "file": "simplepie/Item.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Item::get_date": {
+            "file": "simplepie/Item.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Item::get_description": {
+            "file": "simplepie/Item.php",
+            "lines": 7,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Item::get_enclosure": {
+            "file": "simplepie/Item.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Item::get_enclosures": {
+            "file": "simplepie/Item.php",
+            "lines": 7,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Item::get_feed": {
+            "file": "simplepie/Item.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Item::get_gmdate": {
+            "file": "simplepie/Item.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Item::get_id": {
+            "file": "simplepie/Item.php",
+            "lines": 12,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Item::get_item_tags": {
+            "file": "simplepie/Item.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Item::get_latitude": {
+            "file": "simplepie/Item.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Item::get_link": {
+            "file": "simplepie/Item.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Item::get_links": {
+            "file": "simplepie/Item.php",
+            "lines": 10,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Item::get_local_date": {
+            "file": "simplepie/Item.php",
+            "lines": 7,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Item::get_longitude": {
+            "file": "simplepie/Item.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Item::get_permalink": {
+            "file": "simplepie/Item.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Item::get_source": {
+            "file": "simplepie/Item.php",
+            "lines": 6,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Item::get_thumbnail": {
+            "file": "simplepie/Item.php",
+            "lines": 9,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Item::get_title": {
+            "file": "simplepie/Item.php",
+            "lines": 5,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Item::get_updated_date": {
+            "file": "simplepie/Item.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Item::get_updated_gmdate": {
+            "file": "simplepie/Item.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Item::minn_children": {
+            "file": "simplepie/Item.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Item::minn_collect_enclosures": {
+            "file": "simplepie/Item.php",
+            "lines": 12,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Feed\\Parts::enclosures"
+            ],
+            "composes": []
+        },
+        "Item::minn_coordinate": {
+            "file": "simplepie/Item.php",
+            "lines": 6,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Item::minn_enclosure": {
+            "file": "simplepie/Item.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Item::minn_feed": {
+            "file": "simplepie/Item.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Item::minn_format": {
+            "file": "simplepie/Item.php",
+            "lines": 7,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Item::minn_raw_base": {
+            "file": "simplepie/Item.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Item::minn_stamp": {
+            "file": "simplepie/Item.php",
+            "lines": 6,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Item::minn_tags": {
+            "file": "simplepie/Item.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Item::sanitize": {
+            "file": "simplepie/Item.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Item::set_registry": {
+            "file": "simplepie/Item.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Item::set_sanitize": {
+            "file": "simplepie/Item.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
@@ -485,6 +1356,1265 @@
             "minn": [
                 "Minn\\I18n\\PluralExpression::parse"
             ],
+            "composes": []
+        },
+        "Rating::__construct": {
+            "file": "simplepie/Parts.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Rating::__toString": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Rating::get_scheme": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Rating::get_value": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Registry::__construct": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Registry::call": {
+            "file": "simplepie/Parts.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Registry::create": {
+            "file": "simplepie/Parts.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Registry::get_class": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Registry::kind": {
+            "file": "simplepie/Parts.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Registry::register": {
+            "file": "simplepie/Parts.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Restriction::__construct": {
+            "file": "simplepie/Parts.php",
+            "lines": 3,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Restriction::__toString": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Restriction::get_relationship": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Restriction::get_type": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Restriction::get_value": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Sanitize::add_attributes": {
+            "file": "simplepie/Parts.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Sanitize::encode_instead_of_strip": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Sanitize::minn_html": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "wp_kses_post"
+            ]
+        },
+        "Sanitize::pass_cache_data": {
+            "file": "simplepie/Parts.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Sanitize::pass_file_data": {
+            "file": "simplepie/Parts.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Sanitize::remove_div": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Sanitize::rename_attributes": {
+            "file": "simplepie/Parts.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Sanitize::sanitize": {
+            "file": "simplepie/Parts.php",
+            "lines": 19,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Feed\\Iri::clean",
+                "Minn\\Feed\\Iri::resolve"
+            ],
+            "composes": []
+        },
+        "Sanitize::set_https_domains": {
+            "file": "simplepie/Parts.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Sanitize::set_image_handler": {
+            "file": "simplepie/Parts.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Sanitize::set_output_encoding": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Sanitize::set_registry": {
+            "file": "simplepie/Parts.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Sanitize::set_url_replacements": {
+            "file": "simplepie/Parts.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Sanitize::strip_attributes": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Sanitize::strip_comments": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Sanitize::strip_htmltags": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::__call": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "SimplePie::__construct": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::__destruct": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::__toString": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::add_attributes": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::enable_cache": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::enable_exceptions": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::enable_order_by_date": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::encode_instead_of_strip": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::error": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::force_cache_fallback": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::force_feed": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::force_fsockopen": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::get_all_discovered_feeds": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::get_author": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::get_authors": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::get_base": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::get_cache_filename": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::get_categories": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::get_category": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::get_channel_tags": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::get_contributor": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::get_contributors": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::get_copyright": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::get_description": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 6,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::get_encoding": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::get_favicon": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::get_feed_tags": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::get_image_height": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::get_image_link": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::get_image_tags": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::get_image_title": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::get_image_url": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 3,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::get_image_width": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::get_item": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::get_item_quantity": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "count"
+            ]
+        },
+        "SimplePie::get_items": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::get_language": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 6,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::get_latitude": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::get_link": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::get_links": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 5,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::get_longitude": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::get_permalink": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::get_raw_data": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::get_registry": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::get_title": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 5,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::get_type": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::handle_content_type": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "header"
+            ]
+        },
+        "SimplePie::init": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 25,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Feed\\Document::fromTree"
+            ],
+            "composes": []
+        },
+        "SimplePie::merge_items": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 7,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::minn_channel_link": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 14,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Feed\\Iri::resolve"
+            ],
+            "composes": []
+        },
+        "SimplePie::minn_children": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::minn_class": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::minn_coordinate": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 6,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::minn_feed": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::minn_fetch": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 20,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Feed\\Locator::alternates",
+                "Minn\\Feed\\Locator::looksLikeFeed"
+            ],
+            "composes": []
+        },
+        "SimplePie::minn_fix_protocol": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 9,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::minn_get": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 8,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::minn_image_text": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 7,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::minn_init_multifeed": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 10,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::minn_item_base": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::minn_items": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 9,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::minn_itunes_image": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::minn_make_cache": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::minn_raw_base": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::minn_read": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 14,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Feed\\Document::parse"
+            ],
+            "composes": []
+        },
+        "SimplePie::minn_set_class": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 5,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::minn_sort": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::minn_tags": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::remove_div": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::rename_attributes": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::sanitize": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::set_author_class": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::set_autodiscovery_cache_duration": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::set_autodiscovery_level": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::set_cache": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::set_cache_class": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::set_cache_duration": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::set_cache_location": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::set_cache_name_function": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::set_cache_namefilter": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::set_caption_class": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::set_category_class": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::set_content_type_sniffer_class": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::set_copyright_class": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::set_credit_class": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::set_curl_options": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::set_enclosure_class": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::set_favicon_handler": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::set_feed_url": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 7,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::set_file": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 7,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::set_file_class": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::set_http_client": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::set_https_domains": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::set_image_handler": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::set_input_encoding": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::set_item_class": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::set_item_limit": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::set_locator_class": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::set_max_checked_feeds": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::set_output_encoding": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::set_parser_class": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::set_rating_class": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::set_raw_data": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::set_restriction_class": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::set_sanitize_class": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 5,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::set_source_class": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::set_stupidly_fast": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 6,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::set_timeout": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::set_url_replacements": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::set_useragent": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::sort_items": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::status_code": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::strip_attributes": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::strip_comments": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::strip_htmltags": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "SimplePie::subscribe_url": {
+            "file": "simplepie/SimplePie.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Sniffer::__construct": {
+            "file": "simplepie/Sniffer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Sniffer::get_type": {
+            "file": "simplepie/Sniffer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Source::__construct": {
+            "file": "simplepie/Parts.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Source::__toString": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Source::get_author": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Source::get_authors": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Source::get_base": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Source::get_categories": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Source::get_category": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Source::get_contributor": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Source::get_contributors": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Source::get_copyright": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Source::get_description": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Source::get_image_url": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Source::get_item": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Source::get_language": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Source::get_latitude": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Source::get_link": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Source::get_links": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Source::get_longitude": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Source::get_permalink": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Source::get_source_tags": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Source::get_title": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Source::minn_children": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Source::minn_feed": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Source::minn_raw_base": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Source::minn_tags": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Source::sanitize": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Source::set_registry": {
+            "file": "simplepie/Parts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
             "composes": []
         },
         "Translation_Entry::Translation_Entry": {
@@ -2152,6 +4282,60 @@
             "kind": "noop",
             "minn": [],
             "composes": []
+        },
+        "WP_Feed_Cache_Transient::__construct": {
+            "file": "simplepie/Wp.php",
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters"
+            ]
+        },
+        "WP_Feed_Cache_Transient::load": {
+            "file": "simplepie/Wp.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "get_site_transient"
+            ]
+        },
+        "WP_Feed_Cache_Transient::mtime": {
+            "file": "simplepie/Wp.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "get_site_transient"
+            ]
+        },
+        "WP_Feed_Cache_Transient::save": {
+            "file": "simplepie/Wp.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "set_site_transient"
+            ]
+        },
+        "WP_Feed_Cache_Transient::touch": {
+            "file": "simplepie/Wp.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "set_site_transient"
+            ]
+        },
+        "WP_Feed_Cache_Transient::unlink": {
+            "file": "simplepie/Wp.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "delete_site_transient"
+            ]
         },
         "WP_Filesystem": {
             "file": "admin.php",
@@ -8863,16 +11047,18 @@
         },
         "WP_Widget_RSS::widget": {
             "file": "classes/WP_Widget_RSS.php",
-            "lines": 27,
+            "lines": 33,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "__",
                 "apply_filters",
                 "esc_attr",
                 "esc_html",
                 "esc_url",
                 "fetch_feed",
                 "includes_url",
+                "is_wp_error",
                 "wp_widget_rss_output"
             ]
         },
@@ -9397,6 +11583,15 @@
                 "translate"
             ]
         },
+        "__callStatic": {
+            "file": "simplepie/Interfaces.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
         "__checked_selected_helper": {
             "file": "formatting.php",
             "lines": 5,
@@ -9405,14 +11600,11 @@
             "composes": []
         },
         "__construct": {
-            "file": "classes/WP_Object_Cache.php",
-            "lines": 2,
-            "kind": "composes",
+            "file": "simplepie/Interfaces.php",
+            "lines": 0,
+            "kind": "noop",
             "minn": [],
-            "composes": [
-                "get_current_blog_id",
-                "is_multisite"
-            ]
+            "composes": []
         },
         "__get": {
             "file": "classes/WP_Object_Cache.php",
@@ -10369,6 +12561,13 @@
                 "load_textdomain"
             ]
         },
+        "_minn_load_simplepie": {
+            "file": "feed.php",
+            "lines": 8,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "_minn_main_query": {
             "file": "query.php",
             "lines": 9,
@@ -10599,6 +12798,15 @@
             "minn": [],
             "composes": []
         },
+        "_minn_register_core_rss_block": {
+            "file": "feed.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_bridge_dynamic_block"
+            ]
+        },
         "_minn_registered_block_template": {
             "file": "blocks.php",
             "lines": 15,
@@ -10684,6 +12892,36 @@
             "kind": "leaf",
             "minn": [],
             "composes": []
+        },
+        "_minn_rss_block_item": {
+            "file": "feed.php",
+            "lines": 22,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "esc_attr",
+                "esc_html",
+                "esc_url",
+                "get_option",
+                "wp_date",
+                "wp_trim_words"
+            ]
+        },
+        "_minn_rss_widget_item": {
+            "file": "widgets.php",
+            "lines": 16,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "date_i18n",
+                "esc_attr",
+                "esc_html",
+                "esc_url",
+                "get_option",
+                "wp_trim_words"
+            ]
         },
         "_minn_run_cron": {
             "file": "cron.php",
@@ -11387,6 +13625,15 @@
             "minn": [],
             "composes": []
         },
+        "absolutize_url": {
+            "file": "simplepie/Interfaces.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Feed\\Iri::resolve"
+            ],
+            "composes": []
+        },
         "activate_plugin": {
             "file": "admin.php",
             "lines": 20,
@@ -11985,6 +14232,13 @@
                 "user_can"
             ]
         },
+        "autoload": {
+            "file": "simplepie/Interfaces.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "balanceTags": {
             "file": "formatting.php",
             "lines": 1,
@@ -12129,6 +14383,13 @@
                 "term_description"
             ]
         },
+        "change_encoding": {
+            "file": "simplepie/Interfaces.php",
+            "lines": 5,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "check_admin_referer": {
             "file": "pluggable.php",
             "lines": 7,
@@ -12220,6 +14481,13 @@
                 "do_action",
                 "wp_cache_delete"
             ]
+        },
+        "codepoint_to_utf8": {
+            "file": "simplepie/Interfaces.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
         },
         "comment_ID": {
             "file": "comment.php",
@@ -13002,10 +15270,24 @@
                 "get_user_by"
             ]
         },
+        "encoding": {
+            "file": "simplepie/Interfaces.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "ent2ncr": {
             "file": "formatting.php",
             "lines": 4,
             "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "entities_decode": {
+            "file": "simplepie/Interfaces.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
@@ -13228,13 +15510,15 @@
             ]
         },
         "fetch_feed": {
-            "file": "misc.php",
-            "lines": 7,
+            "file": "feed.php",
+            "lines": 14,
             "kind": "composes",
             "minn": [],
             "composes": [
-                "is_wp_error",
-                "wp_safe_remote_get"
+                "_minn_load_simplepie",
+                "apply_filters",
+                "do_action_ref_array",
+                "get_bloginfo"
             ]
         },
         "file_is_displayable_image": {
@@ -13279,6 +15563,13 @@
             "composes": [
                 "wp_kses"
             ]
+        },
+        "fix_protocol": {
+            "file": "simplepie/Interfaces.php",
+            "lines": 5,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
         },
         "flush": {
             "file": "classes/WP_Object_Cache.php",
@@ -13748,7 +16039,7 @@
         },
         "get_block_wrapper_attributes": {
             "file": "blocks.php",
-            "lines": 23,
+            "lines": 26,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -13812,6 +16103,13 @@
             "file": "link-template.php",
             "lines": 12,
             "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "get_build": {
+            "file": "simplepie/Interfaces.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
@@ -14326,6 +16624,13 @@
             "composes": [
                 "apply_filters"
             ]
+        },
+        "get_default_useragent": {
+            "file": "simplepie/Interfaces.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
         },
         "get_delete_post_link": {
             "file": "post.php",
@@ -17689,6 +19994,13 @@
             "minn": [],
             "composes": []
         },
+        "is_remote_uri": {
+            "file": "simplepie/Interfaces.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "is_robots": {
             "file": "query.php",
             "lines": 1,
@@ -18280,6 +20592,68 @@
                 "get_metadata_raw"
             ]
         },
+        "minn_atom_type": {
+            "file": "simplepie/Fields.php",
+            "lines": 11,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "minn_category_list": {
+            "file": "simplepie/Fields.php",
+            "lines": 3,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Feed\\Parts::categories"
+            ],
+            "composes": []
+        },
+        "minn_creators": {
+            "file": "simplepie/Fields.php",
+            "lines": 10,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "minn_date": {
+            "file": "simplepie/Fields.php",
+            "lines": 7,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Feed\\Dates::parse"
+            ],
+            "composes": []
+        },
+        "minn_link_map": {
+            "file": "simplepie/Fields.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Feed\\Parts::links"
+            ],
+            "composes": []
+        },
+        "minn_people": {
+            "file": "simplepie/Fields.php",
+            "lines": 10,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "minn_person": {
+            "file": "simplepie/Fields.php",
+            "lines": 8,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "minn_text": {
+            "file": "simplepie/Fields.php",
+            "lines": 9,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "mysql2date": {
             "file": "functions.php",
             "lines": 14,
@@ -18466,6 +20840,15 @@
             "kind": "minn",
             "minn": [
                 "Minn\\Blocks\\Parser::parse"
+            ],
+            "composes": []
+        },
+        "parse_date": {
+            "file": "simplepie/Interfaces.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Feed\\Dates::parse"
             ],
             "composes": []
         },
@@ -19254,6 +21637,20 @@
             "composes": [
                 "apply_filters",
                 "get_post"
+            ]
+        },
+        "render_block_core_rss": {
+            "file": "feed.php",
+            "lines": 19,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "_minn_rss_block_item",
+                "esc_html",
+                "fetch_feed",
+                "get_block_wrapper_attributes",
+                "is_wp_error"
             ]
         },
         "render_block_core_template_part": {
@@ -20527,6 +22924,13 @@
                 "number_format_i18n"
             ]
         },
+        "space_separated_tokens": {
+            "file": "simplepie/Interfaces.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "spawn_cron": {
             "file": "cron.php",
             "lines": 1,
@@ -20559,6 +22963,13 @@
                 "get_option",
                 "update_option"
             ]
+        },
+        "strip_comments": {
+            "file": "simplepie/Interfaces.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
         },
         "strip_core_block_namespace": {
             "file": "blocks.php",
@@ -21020,6 +23431,13 @@
                 "do_action",
                 "wp_parse_args"
             ]
+        },
+        "time_hms": {
+            "file": "simplepie/Interfaces.php",
+            "lines": 3,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
         },
         "timer_start": {
             "file": "load.php",
@@ -21491,6 +23909,13 @@
             "minn": [],
             "composes": []
         },
+        "url_remove_credentials": {
+            "file": "simplepie/Interfaces.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "url_to_postid": {
             "file": "post.php",
             "lines": 32,
@@ -21676,6 +24101,13 @@
             "file": "misc.php",
             "lines": 5,
             "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "windows_1252_to_utf8": {
+            "file": "simplepie/Interfaces.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
@@ -24172,7 +26604,7 @@
         },
         "wp_http_validate_url": {
             "file": "http.php",
-            "lines": 9,
+            "lines": 15,
             "kind": "minn",
             "minn": [
                 "Minn\\Support\\Url::validateForHttp"
@@ -27215,23 +29647,27 @@
         },
         "wp_widget_rss_output": {
             "file": "widgets.php",
-            "lines": 15,
+            "lines": 28,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "__",
+                "_minn_rss_widget_item",
                 "current_user_can",
                 "esc_html",
                 "fetch_feed",
                 "is_admin",
-                "is_wp_error"
+                "is_wp_error",
+                "wp_parse_args"
             ]
         },
         "wp_widget_rss_process": {
             "file": "widgets.php",
-            "lines": 18,
+            "lines": 20,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "esc_url",
                 "fetch_feed",
                 "is_wp_error",
                 "sanitize_url"

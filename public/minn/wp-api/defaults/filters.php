@@ -13,6 +13,7 @@ add_filter('sanitize_user', 'trim');
 add_filter('sanitize_user', 'wp_strip_all_tags');
 add_filter('pre_kses', 'wp_pre_kses_less_than');
 add_filter('pre_kses', 'wp_pre_kses_block_attributes', 10, 3);
+add_action('init', '_minn_register_core_rss_block');
 // User fields, as the reference sanitises them on the way in (pre_user_*)
 // and out (user_*); sanitize_user_field() runs these by context.
 foreach (['display_name', 'first_name', 'last_name', 'nickname'] as $minnUserField) {

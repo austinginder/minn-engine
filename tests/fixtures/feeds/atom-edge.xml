@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title type="xhtml"><div xmlns="http://www.w3.org/1999/xhtml">X<b>HTML</b> title</div></title>
+  <link href="https://atom-edge.example.test/"/>
+  <author><name>Feed Author</name></author>
+  <entry>
+    <title type="text">Text &lt;b&gt;title&lt;/b&gt; &amp; more</title>
+    <link href="relative/entry"/>
+    <id>urn:edge:1</id>
+    <published>2026-10-01T00:00:00Z</published>
+    <content type="text">Text &lt;b&gt;content&lt;/b&gt;</content>
+    <summary type="xhtml"><div xmlns="http://www.w3.org/1999/xhtml"><p>Sum</p></div></summary>
+    <contributor><name>Helper</name></contributor>
+  </entry>
+  <entry>
+    <title>No id entry</title>
+    <link rel="alternate" href="https://atom-edge.example.test/two"/>
+    <link rel="related" href="https://atom-edge.example.test/related"/>
+    <updated>2026-09-29T12:00:00+00:00</updated>
+    <summary>Plain summary &amp; ampersand</summary>
+  </entry>
+</feed>

@@ -288,8 +288,11 @@ function get_block_wrapper_attributes($extra_attributes = [])
         return '';
     }
     foreach (['class', 'style'] as $attribute) {
-        if (!empty($extra_attributes[$attribute]) && !empty($new_attributes[$attribute])) {
-            $new_attributes[$attribute] = $extra_attributes[$attribute] . ' ' . $new_attributes[$attribute];
+        if (!empty($new_attributes[$attribute]) && array_key_exists($attribute, $extra_attributes)) {
+            // An empty class or style from the caller leaves the block's own in place.
+            if (!empty($extra_attributes[$attribute])) {
+                $new_attributes[$attribute] = $extra_attributes[$attribute] . ' ' . $new_attributes[$attribute];
+            }
             unset($extra_attributes[$attribute]);
         }
     }

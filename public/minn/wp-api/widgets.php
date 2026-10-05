@@ -250,11 +250,45 @@ function wp_widget_rss_output($rss, $args = [])
     }
     if (is_wp_error($rss)) {
         if (is_admin() || current_user_can('manage_options')) {
-            echo '<p><strong>RSS Error:</strong> ' . esc_html($rss->get_error_message()) . '</p>';
+            echo '<p><strong>' . __('RSS Error:') . '</strong> ' . esc_html($rss->get_error_message()) . '</p>';
         }
         return;
     }
-    // The engine has no feed parser yet, so fetch_feed never hands a feed here.
+    $args = wp_parse_args($args, ['show_author' => 0, 'show_date' => 0, 'show_summary' => 0, 'items' => 0]);
+    $items = (int) $args['items'];
+    if ($items < 1 || $items > 20) {
+        $items = 10;
+    }
+    if (!$rss->get_item_quantity()) {
+        echo '<ul><li>' . __('An error has occurred, which probably means the feed is down. Try again later.') . '</li></ul>';
+        return;
+    }
+    echo '<ul>';
+    foreach ($rss->get_items(0, $items) as $item) {
+        echo _minn_rss_widget_item($item, $args);
+    }
+    echo '</ul>';
+}
+
+/** @internal one entry of the RSS widget: the title (linked when the item has a link), then date, summary and author as asked */
+function _minn_rss_widget_item($item, array $args): string
+{
+    $link = esc_url(strip_tags((string) $item->get_link()));
+    $title = esc_html(trim(strip_tags((string) $item->get_title())));
+    $title = $title === '' ? __('Untitled') : $title;
+    $summary = '';
+    if (!empty($args['show_summary'])) {
+        $text = html_entity_decode((string) $item->get_description(), ENT_QUOTES, get_option('blog_charset'));
+        $summary = '<div class="rssSummary">' . esc_attr(wp_trim_words($text, 55, ' [&hellip;]')) . '</div>';
+    }
+    $stamp = $item->get_date('U');
+    $date = !empty($args['show_date']) && $stamp ? ' <span class="rss-date">' . date_i18n(get_option('date_format'), $stamp) . '</span>' : '';
+    $author = '';
+    if (!empty($args['show_author']) && is_object($item->get_author())) {
+        $author = ' <cite>' . esc_html(strip_tags((string) $item->get_author()->get_name())) . '</cite>';
+    }
+    $heading = $link === '' ? $title : "<a class='rsswidget' href='{$link}'>{$title}</a>";
+    return "<li>{$heading}{$date}{$summary}{$author}</li>";
 }
 
 function wp_widget_rss_process($widget_rss, $check_feed = true)
@@ -274,6 +308,8 @@ function wp_widget_rss_process($widget_rss, $check_feed = true)
         $rss = fetch_feed($url);
         if (is_wp_error($rss)) {
             $error = $rss->get_error_message();
+        } else {
+            $link = esc_url(strip_tags((string) $rss->get_permalink()));
         }
     }
     return compact('title', 'url', 'link', 'items', 'error', 'show_summary', 'show_author', 'show_date');

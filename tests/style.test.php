@@ -132,7 +132,7 @@ $facadeBodies = static function (string $src): array {
     }
     return $bodies;
 };
-foreach ([...glob("{$facadeDir}/*.php"), ...glob("{$facadeDir}/classes/*.php")] as $file) {
+foreach ([...glob("{$facadeDir}/*.php"), ...glob("{$facadeDir}/classes/*.php"), ...glob("{$facadeDir}/simplepie/*.php")] as $file) {
     $name = str_replace("{$facadeDir}/", '', $file);
     if (str_contains($name, 'placeholders')) {
         continue;

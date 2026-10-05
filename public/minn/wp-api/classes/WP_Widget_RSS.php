@@ -1,8 +1,8 @@
 <?php
 /**
- * The RSS widget: a feed's title line with its icon, and the entries
- * wp_widget_rss_output prints. The engine fetches but does not yet parse a
- * feed, so the entries are the part still missing.
+ * The RSS widget: a feed's title line with its icon (the feed's own title
+ * and link when the instance gives no title), and the entries
+ * wp_widget_rss_output prints.
  */
 class WP_Widget_RSS extends WP_Widget
 {
@@ -26,8 +26,14 @@ class WP_Widget_RSS extends WP_Widget
         $rss = fetch_feed($url);
         $title = (string) ($instance['title'] ?? '');
         $link = '';
+        if (!is_wp_error($rss)) {
+            $link = strip_tags((string) $rss->get_permalink());
+            if ($title === '') {
+                $title = strip_tags((string) $rss->get_title());
+            }
+        }
         if (empty($title)) {
-            $title = 'Unknown Feed';
+            $title = __('Unknown Feed');
         }
         $title = apply_filters('widget_title', $title, $instance, $this->id_base);
         if ($title) {

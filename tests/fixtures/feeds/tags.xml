@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:x="https://x.example.test/ns">
+<channel>
+  <title>T &amp; &lt;b&gt;</title>
+  <link>https://tags.example.test/?a=1&amp;b=2</link>
+  <description>D &amp; &lt;b&gt;</description>
+  <image><url>https://tags.example.test/i.png?a=1&amp;b=2</url><title>IT &amp; &lt;b&gt;</title><link>https://tags.example.test/</link></image>
+  <x:title>XT &amp; &lt;b&gt;</x:title>
+  <foo>F &amp; &lt;b&gt;</foo>
+  <item>
+    <title>T &amp; &lt;b&gt;</title>
+    <link>https://tags.example.test/i?a=1&amp;b=2</link>
+    <guid>G &amp; &lt;b&gt;</guid>
+    <author>A &amp; &lt;b&gt;</author>
+    <category>C &amp; &lt;b&gt;</category>
+    <comments>https://tags.example.test/c?a=1&amp;b=2</comments>
+    <dc:title>DT &amp; &lt;b&gt;</dc:title>
+    <dc:creator>DC &amp; &lt;b&gt;</dc:creator>
+    <dc:subject>DS &amp; &lt;b&gt;</dc:subject>
+    <x:title>XT &amp; &lt;b&gt;</x:title>
+    <bar>B &amp; &lt;b&gt;</bar>
+    <description>D &amp; &lt;b&gt;</description>
+  </item>
+  <item>
+    <title>Odd link</title>
+    <link>HTTP://Tags.Example.TEST:80/a/./b/../c d?x=1&amp;y=é#frag</link>
+    <guid isPermaLink="false">odd-1</guid>
+    <enclosure url="relative/file.mp3" type="audio/mpeg" length="x" />
+  </item>
+</channel>
+</rss>

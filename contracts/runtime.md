@@ -1065,7 +1065,7 @@ All twenty-five of the dogfood site's plugins load as code now
 (`runtime-report.php`), and the nine dogfood pages render at parity with
 them running, Jetpack included. Remaining Speak / Hear gaps, in order:
 `WP_HTML_Processor` (the tag processor exists; the tree-aware one does
-not); `.mo` translations; `fetch_feed`; `WP_Term_Query` as a real query
+not); `WP_Term_Query` as a real query
 object; a front-end main query fed from the engine's own resolution
 (conditional tags on the command line only). Mute, and staying mute:
 `WP_List_Table`, screens and screen options, `iframe_header`, upgrader
@@ -2002,7 +2002,7 @@ markup they print comes from `Front\PageList`, `Front\ListSpacing` and
 - `wp_nav_menu` names its container `menu-{menu slug}-container` when `container_class` is empty (it used the theme location before).
 - `wp_tag_cloud` with `show_count` puts `<span class="tag-link-count"> (N)</span>` inside the link.
 - `img_caption_shortcode`: `<figure [id="x" ][aria-describedby="caption-x" ]style="width: Wpx" class="wp-caption align…">…<figcaption [id="caption-x" ]class="wp-caption-text">…</figcaption></figure>`; the content alone when the width is 0 or the caption empty; the `div`/`p` shape without html5 caption support.
-- `fetch_feed` fetches through the safe HTTP client and reports `WP HTTP Error: …` on a transport failure; a host that does not resolve is now `A valid URL was not provided.` in `wp_http_validate_url`, as the reference says. There is still no feed parser: the RSS widget prints its title line and no entries, and `wp_widget_rss_output` prints only the error paragraph an administrator would see.
+- `fetch_feed` fetches through the safe HTTP client and reports `WP HTTP Error: …` on a transport failure; a host that does not resolve is now `A valid URL was not provided.` in `wp_http_validate_url`, as the reference says. (Since 2026-10-05 the engine parses feeds too: "Reading feeds" below.)
 - The Recent Comments head style (`<style>.recentcomments a{…}</style>`) prints when the widget is active in a sidebar; the probe could not make one active in either stack, so that string is unpinned.
 
 **Oracle quirk, not a gap (shop-dogfood, 2026-09-07):** the parked
@@ -2146,6 +2146,114 @@ names; fixture `contracts/fixtures/api/kses-rules.json` (probe
   even when a filter is added before the next call. Not pinned in the
   fixture, because the engine's probe runner never fires `wp_loaded`;
   checked on both stacks by hand.
+
+## Reading feeds (2026-10-05)
+
+`fetch_feed()` returns a feed object with the SimplePie API plugins call
+(`SimplePie\SimplePie`, `Item`, `Author`, `Category`, `Enclosure`,
+`Source`, the captions, credits, ratings and the rest, the `Cache\Base`,
+`HTTP\Response` and `RegistryAware` interfaces, `Misc`, and the
+pre-namespace names `SimplePie`, `SimplePie_Item`, ... as aliases), plus
+`WP_Feed_Cache_Transient`, `WP_SimplePie_File` and
+`WP_SimplePie_Sanitize_KSES`. None of it is SimplePie: `Minn\Feed` reads
+the bytes (`Charset`, `Tree`, `Document`, `Locator`, `Iri`, `Dates`,
+`Parts`) and `wp-api/simplepie/` maps the API onto it. The classes load the
+first time anything names them, as the reference loads them only inside
+`fetch_feed()`. The RSS widget (`wp_widget_rss_output`,
+`wp_widget_rss_process`, `WP_Widget_RSS`) and the `core/rss` block
+(`render_block_core_rss`) print the items. Suite `tests/feeds.test.php`
+stages `tests/fixtures/feeds` in the test site's uploads and diffs
+`tests/tools/feeds-probe.php` on both stacks, 120 rows.
+
+- `fetch_feed($url)`: `wp_feed_cache_transient_lifetime` sees `(43200,
+  $url)`, then `wp_feed_options` sees `($feed, $url)` by reference, then
+  the cache asks the same filter again with `(43200, md5($url))`. The
+  parsed feed is cached in the site transients `feed_{md5(url)}` (the tree
+  under `child`, with `type`, `headers`, `build`) and `feed_mod_{md5(url)}`
+  (the time); a second fetch sends no request. The engine reads a cache the
+  reference wrote; the reference refetches over one the engine wrote (its
+  cache records a build number particular to the install). `fetch_feed('')`
+  is a feed with no items and no error.
+- Errors, as `simplepie-error`: `WP HTTP Error: …`; `Retrieved unsupported
+  status code "404"`; `{url} is invalid XML, likely due to invalid
+  characters. XML error: Mismatched tag at line 3, column 58` (the XML
+  parser's own message; lines count one more than the document's when it
+  has an XML declaration, because the reference reads the document with a
+  line added after it); `A feed could not be found at `{url}`; the status
+  code is `200` and content-type is `text/plain; charset=UTF-8``.
+- An HTML page is searched for `<link rel="alternate">` feeds (RSS, Atom,
+  RDF, XML types), resolved against the page; the first that is a feed is
+  read, `subscribe_url()` names it, `get_all_discovered_feeds()` lists all.
+- Encodings: a byte-order mark, then the XML declaration, then the
+  Content-Type charset; ISO-8859-1 and Windows-1252 read as Windows-1252;
+  everything comes back UTF-8. Named HTML references (`&mdash;`) read as
+  characters unless the document carries its own DOCTYPE (then they are an
+  `Undeclared entity error`, as on the reference).
+- The tree (`$feed->data['child']`, `get_item_tags()`, `get_channel_tags()`,
+  `get_feed_tags()`, `get_image_tags()`): every element is `data` (its own
+  text, the whitespace between children included), `attribs` by namespace,
+  `xml_base`, `xml_base_explicit`, `xml_lang`, and `child` when it has
+  children. An Atom text construct of type `xhtml` keeps its markup as text
+  (`<div>X<b>HTML</b> title</div>`, the xhtml namespace dropped); a `title`
+  in RSS 2.0, 1.0 or 0.90 is stored escaped (`&amp;`, `&lt;`, `&quot;`,
+  `&#039;`), a namespaced one (`dc:title`) is not.
+- Values come back sanitized by construct: text escaped (double quotes,
+  not single), HTML through `wp_kses_post` (a `<script>` loses its tags,
+  keeps its text; relative URLs stay relative), URLs resolved and normalized
+  (scheme and host lower case, default port dropped, dot segments removed,
+  spaces and non-ASCII percent-encoded) then escaped. RSS titles and
+  descriptions are HTML; an RSS image title is text (so it is escaped
+  twice); Atom follows its `type`. A value that is only whitespace is
+  absent.
+- Relative URLs resolve against an explicit `xml:base`, else the channel's
+  own link, else the feed URL; `get_base()` on an item is its permalink.
+- Items: undated items first, as they came, then the dated ones newest
+  first (equal dates in the reverse of document order). `get_id()`: Atom
+  id, guid, dc:identifier, `rdf:about`, else `md5(permalink . title .
+  content)` over the sanitized values (also what `get_id(true)` returns).
+  Dates: Atom published, Atom updated, `pubDate`, `dc:date`;
+  `get_updated_date()` only Atom updated. `get_date()` defaults to
+  `j F Y, g:i a` and formats in PHP's time zone (UTC under WordPress);
+  `'U'` gives the integer.
+- Links: Atom links by `rel` (alternate by default; IANA URIs answer to the
+  short name too), RSS `<link>`, and a guid unless `isPermaLink="false"`;
+  `get_permalink()` falls back to the first enclosure. Authors: Atom
+  authors, the RSS `<author>` as an email, `dc:creator` as a name; an item
+  with none takes the feed's (Atom). Categories: Atom (term, scheme,
+  label), RSS (text, `domain` as scheme), `dc:subject` (type `subject`);
+  `get_label()` falls back to the term. Enclosures: Media RSS contents
+  (with the item's thumbnails), Atom enclosure links, RSS enclosures;
+  `get_length()` is an integer (`"x"` is 0), `get_size()` megabytes to two
+  places, `get_real_type()` the type or one guessed from the extension.
+- Channel: `get_language()` is the channel's language, else the root's
+  `xml:lang` for Atom and RSS 1.0 (an empty string), else null; an RSS image
+  with no size is 88 by 31.
+- Several URLs (`fetch_feed([...])`): each read on its own, the items merged
+  and sorted the same way, `get_title()` null, each item's `get_feed()` its
+  own feed.
+- The RSS widget output: `<li><a class='rsswidget' href='…'>title</a>`
+  (plain title when the item has no link, `Untitled` without a title),
+  then ` <span class="rss-date">` (the date format, the timestamp as
+  given, not moved to the site's zone), `<div class="rssSummary">` (the
+  description decoded, stripped, 55 words and ` [&hellip;]`, attribute
+  escaped; empty div without one), ` <cite>` (the author's name, empty
+  when there is only an email). No items: `<ul><li>An error has occurred,
+  which probably means the feed is down. Try again later.</li></ul>`.
+- The `core/rss` block: `<ul class="[is-grid columns-N ][has-dates
+  ][has-authors ][has-excerpts ]{supports} wp-block-rss">`, each
+  `<li class='wp-block-rss__item'>` with the title decoded, stripped and
+  escaped (`(no title)` when empty; linked with `target="_blank"` and
+  `rel` when set), `<time datetime="{c}" …>{date}</time> ` in the site's
+  zone, `<span class="wp-block-rss__item-author">by {name}</span>`, and the
+  excerpt (`excerptLength` words). An error is the placeholder notice with
+  `<strong>RSS Error:</strong>`; no items, the "An error has occurred"
+  notice.
+- `wp_http_validate_url` now asks `http_allowed_safe_ports` (`[80, 443,
+  8080]`, host, URL) for a URL that names a port, as the reference does.
+- Not done: error columns on the line the reference fills with its entity
+  declarations (a document with no line break after its XML declaration);
+  autodiscovery through plain `<a>` links; the Flash-era `embed()` players
+  (empty); `get_local_date()` converts the common strftime codes only.
 
 ## The kses tag pass (2026-10-05)
 

@@ -87,12 +87,14 @@ final class Url
     /**
      * The checks wp_http_validate_url makes on a URL whose protocol already
      * passed: an http(s) scheme, a host without credentials or a colon, no
-     * private address unless it is this site or allowed, only the usual
-     * ports (or the site's own). Returns the URL, or null when refused.
+     * private address unless it is this site or allowed, only the safe
+     * ports (80, 443 and 8080 unless the caller's list says otherwise; the
+     * site's own always). Returns the URL, or null when refused.
      *
      * @param Closure(string, string): bool $externalAllowed whether a private host may be fetched anyway
+     * @param (Closure(list<int>, string, string): array)|null $safePorts the port list for a URL that names a port
      */
-    public static function validateForHttp(string $url, string $homeHost, int $homePort, Closure $externalAllowed): ?string
+    public static function validateForHttp(string $url, string $homeHost, int $homePort, Closure $externalAllowed, ?Closure $safePorts = null): ?string
     {
         $parsed = parse_url($url);
         if ($parsed === false || !isset($parsed['host'], $parsed['scheme']) || !in_array(strtolower($parsed['scheme']), ['http', 'https'], true)) {
@@ -117,10 +119,11 @@ final class Url
             return $url;
         }
         $port = (int) $parsed['port'];
-        if (in_array($port, [80, 443, 8080], true) || ($parsed['host'] === $homeHost && $port === $homePort)) {
+        if ($parsed['host'] === $homeHost && $port === $homePort) {
             return $url;
         }
-        return null;
+        $allowed = $safePorts === null ? [80, 443, 8080] : (array) $safePorts([80, 443, 8080], $host, $url);
+        return in_array($port, array_map('intval', $allowed), true) ? $url : null;
     }
 
     /** @param list<int> $p */

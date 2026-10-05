@@ -24,7 +24,7 @@ $facadeDir = "{$root}/public/minn/wp-api";
 $leavesOnly = in_array('--leaves', $argv, true);
 $checkOnly = in_array('--check', $argv, true);
 
-$files = [...glob("{$facadeDir}/*.php"), ...glob("{$facadeDir}/classes/*.php")];
+$files = [...glob("{$facadeDir}/*.php"), ...glob("{$facadeDir}/classes/*.php"), ...glob("{$facadeDir}/simplepie/*.php")];
 $files = array_filter($files, static fn (string $f) => !str_contains($f, 'placeholders'));
 
 /** @return list<array{name: string, owner: ?string, body: string, lines: int, file: string}> */

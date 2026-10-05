@@ -147,7 +147,13 @@ function wp_http_validate_url($url)
         return false;
     }
     $home = parse_url(home_url());
-    return Url::validateForHttp($checked, (string) ($home['host'] ?? ''), (int) ($home['port'] ?? 0), static fn (string $host, string $url): bool => (bool) apply_filters('http_request_host_is_external', false, $host, $url)) ?? false;
+    return Url::validateForHttp(
+        $checked,
+        (string) ($home['host'] ?? ''),
+        (int) ($home['port'] ?? 0),
+        static fn (string $host, string $url): bool => (bool) apply_filters('http_request_host_is_external', false, $host, $url),
+        static fn (array $ports, string $host, string $url): array => (array) apply_filters('http_allowed_safe_ports', $ports, $host, $url),
+    ) ?? false;
 }
 
 function get_http_origin()

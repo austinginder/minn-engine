@@ -25,7 +25,7 @@ escaping, serialized readers, small helpers
 | [`SearchReplace`](#searchreplace) | final class | 38 | String replace that walks serialized-PHP arrays of scalars without |
 | [`Serialized`](#serialized) | final class | 202 | Tolerant readers for the serialized-PHP blobs WordPress stores. Nothing |
 | [`Time`](#time) | final class | 21 | Human-scale spans: a number of seconds as the largest whole unit it fills, rounded, never below one. |
-| [`Url`](#url) | final class | 200 | URL shaping the escaping and query helpers share: the character cleanup |
+| [`Url`](#url) | final class | 203 | URL shaping the escaping and query helpers share: the character cleanup |
 | [`Utf8`](#utf8) | final class | 8 | Whether bytes are well-formed UTF-8 as the reference judges them: overlong |
 | [`WebServer`](#webserver) | final class | 8 | What the SERVER_SOFTWARE string says about the web server in front of the site. |
 
@@ -378,7 +378,7 @@ The named references kses keeps as written: the list captured from the
 reference (data/kses.json) plus the five XML ones. Any other name is
 stored as "&amp;name;".
 
-Used by: `Minn\Support\Kses`, `Minn\Support\KsesPolicy`
+Used by: `Minn\Feed\Tree`, `Minn\Support\Kses`, `Minn\Support\KsesPolicy`
 
 
 ### static `known(string $name): bool`
@@ -702,14 +702,16 @@ fragment kept, a bare query string treated as such.
 - `@param Closure(array): array $encode encodes the existing arguments the way the reference does`
 - `@param Closure(array): string $build builds the query string`
 
-### static `validateForHttp(string $url, string $homeHost, int $homePort, Closure $externalAllowed): ?string`
+### static `validateForHttp(string $url, string $homeHost, int $homePort, Closure $externalAllowed, ?Closure $safePorts = NULL): ?string`
 
 The checks wp_http_validate_url makes on a URL whose protocol already
 passed: an http(s) scheme, a host without credentials or a colon, no
-private address unless it is this site or allowed, only the usual
-ports (or the site's own). Returns the URL, or null when refused.
+private address unless it is this site or allowed, only the safe
+ports (80, 443 and 8080 unless the caller's list says otherwise; the
+site's own always). Returns the URL, or null when refused.
 
 - `@param Closure(string, string): bool $externalAllowed whether a private host may be fetched anyway`
+- `@param (Closure(list<int>, string, string): array)|null $safePorts the port list for a URL that names a port`
 
 ### static `buildQuery(array $data, string $prefix = ''): string`
 
@@ -730,7 +732,7 @@ credentials, and a host the caller allows (local paths always pass).
 
 - `@param Closure(string): list<string> $allowedHosts the hosts allowed for the target's host`
 
-Internals: `isPrivate()` (private, line 127)
+Internals: `isPrivate()` (private, line 130)
 
 
 ## Utf8

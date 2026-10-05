@@ -33621,6 +33621,1274 @@
             ]
         },
         {
+            "name": "Minn\\Feed\\Charset",
+            "short": "Charset",
+            "namespace": "Minn\\Feed",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Feed/Charset.php",
+            "lines": 45,
+            "doc": "A feed document as UTF-8. The encoding comes from a byte-order mark,\nthen the XML declaration, then the Content-Type charset, then UTF-8; a\ndocument in another encoding is converted and its declaration rewritten,\nso the parser only ever reads UTF-8.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Feed\\Document"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "toUtf8",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "toUtf8(string $body, string $contentType = ''): string",
+                    "doc": "The document converted to UTF-8, with no byte-order mark.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "body",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "contentType",
+                            "type": "string",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 16,
+                    "end": 24
+                },
+                {
+                    "routes": [],
+                    "name": "declared",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "declared(string $body): ?string",
+                    "doc": "The encoding the XML declaration names, if it names one.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "body",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 27,
+                    "end": 33
+                },
+                {
+                    "routes": [],
+                    "name": "fromContentType",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "fromContentType(string $contentType): ?string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "contentType",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 35,
+                    "end": 38
+                },
+                {
+                    "routes": [],
+                    "name": "convert",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "convert(string $body, string $encoding): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "body",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "encoding",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 40,
+                    "end": 56
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Feed\\Dates",
+            "short": "Dates",
+            "namespace": "Minn\\Feed",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Feed/Dates.php",
+            "lines": 16,
+            "doc": "Feed dates (RFC 822, W3C, and the looser forms feeds carry) as Unix timestamps; a date without a zone is UTC.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "parse",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "parse(?string $text): ?int",
+                    "doc": "The timestamp, or null when the text names no date.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "text",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 15,
+                    "end": 26
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Feed\\Document",
+            "short": "Document",
+            "namespace": "Minn\\Feed",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Feed/Document.php",
+            "lines": 114,
+            "doc": "A parsed feed: the tree and the format it was recognized as (the\nreference's type bits: RSS 0.90 1, the 0.9x versions 2 to 32, RSS 1.0 64,\nRSS 2.0 128, Atom 0.3 256, Atom 1.0 512), with the lookups the feed\nobject is built on: the root's children, the channel's, the image's, and\nthe items of every format the document carries.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Feed\\Charset",
+                "Minn\\Feed\\Tree"
+            ],
+            "usedBy": [],
+            "constructor": {
+                "signature": "__construct(array $tree, int $type)",
+                "doc": "",
+                "shapes": [
+                    "@param array{child?: array<string, mixed>} $tree"
+                ],
+                "params": [
+                    {
+                        "name": "tree",
+                        "type": "array",
+                        "shape": "array{child?: array<string, mixed>}",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "type",
+                        "type": "int",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 26,
+                "end": 28
+            },
+            "cases": [],
+            "constants": [
+                {
+                    "name": "NONE",
+                    "value": "0",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "RSS_090",
+                    "value": "1",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "RSS_10",
+                    "value": "64",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "RSS_20",
+                    "value": "128",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "ATOM_03",
+                    "value": "256",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "ATOM_10",
+                    "value": "512",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "RDF",
+                    "value": "'http://www.w3.org/1999/02/22-rdf-syntax-ns#'",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "RSS_VERSIONS",
+                    "value": "array (   '0.91' => 4,   '0.92' => 8,   '0.93' => 16,   '0.94' => 32, )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "tree",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "type",
+                    "type": "int",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "parse",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "parse(string $body, string $contentType = ''): self",
+                    "doc": "A document read from bytes; the type is NONE when it parsed but is no feed.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "body",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "contentType",
+                            "type": "string",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 35,
+                    "end": 38
+                },
+                {
+                    "routes": [],
+                    "name": "fromTree",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "fromTree(array $tree): self",
+                    "doc": "A document over a tree already parsed (a cached feed), its type read from the root.",
+                    "shapes": [
+                        "@param array{child?: array<string, mixed>} $tree"
+                    ],
+                    "params": [
+                        {
+                            "name": "tree",
+                            "type": "array",
+                            "shape": "array{child?: array<string, mixed>}",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 45,
+                    "end": 59
+                },
+                {
+                    "routes": [],
+                    "name": "root",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "root(): ?array",
+                    "doc": "The root element (rss, rdf:RDF or feed), or null.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 62,
+                    "end": 70
+                },
+                {
+                    "routes": [],
+                    "name": "channel",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "channel(): ?array",
+                    "doc": "The channel element: an RSS channel, or the Atom feed itself.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 73,
+                    "end": 81
+                },
+                {
+                    "routes": [],
+                    "name": "image",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "image(): ?array",
+                    "doc": "The image element: inside an RSS 2.0 channel, beside an RSS 1.0 one.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 84,
+                    "end": 89
+                },
+                {
+                    "routes": [],
+                    "name": "feedTags",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "feedTags(string $ns, string $tag): ?array",
+                    "doc": "Children of the root element by namespace and name, or null.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "ns",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "tag",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 92,
+                    "end": 95
+                },
+                {
+                    "routes": [],
+                    "name": "channelTags",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "channelTags(string $ns, string $tag): ?array",
+                    "doc": "Children of the channel by namespace and name, or null.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "ns",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "tag",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 98,
+                    "end": 101
+                },
+                {
+                    "routes": [],
+                    "name": "imageTags",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "imageTags(string $ns, string $tag): ?array",
+                    "doc": "Children of the image by namespace and name, or null.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "ns",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "tag",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 104,
+                    "end": 107
+                },
+                {
+                    "routes": [],
+                    "name": "items",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "items(): array",
+                    "doc": "Every item node, in document order: Atom 1.0 and 0.3 entries, RSS 1.0\nand 0.90 items beside the channel, RSS 2.0 items inside it.",
+                    "shapes": [
+                        "@return list<array<string, mixed>>"
+                    ],
+                    "params": [],
+                    "line": 115,
+                    "end": 126
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Feed\\FeedError",
+            "short": "FeedError",
+            "namespace": "Minn\\Feed",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Feed/FeedError.php",
+            "lines": 3,
+            "doc": "A feed that could not be read: the message is the one the reference reports.",
+            "implements": [
+                "Stringable",
+                "Throwable"
+            ],
+            "extends": "RuntimeException",
+            "uses": [],
+            "usedBy": [
+                "Minn\\Feed\\Tree"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": []
+        },
+        {
+            "name": "Minn\\Feed\\Iri",
+            "short": "Iri",
+            "namespace": "Minn\\Feed",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Feed/Iri.php",
+            "lines": 109,
+            "doc": "URLs in feeds: a reference resolved against its base (RFC 3986), then\nnormalized the way the reference prints them: scheme and host in lower\ncase, the default port dropped, dot segments removed, and every byte a\nURL may not carry (spaces, angle brackets, non-ASCII) percent-encoded.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Feed\\Locator",
+                "Minn\\Feed\\Tree"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "DEFAULT_PORTS",
+                    "value": "array (   'http' => 80,   'https' => 443,   'ftp' => 21, )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "resolve",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "resolve(string $base, string $reference): ?string",
+                    "doc": "The reference resolved against the base and normalized; null when neither is absolute.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "base",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "reference",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 18,
+                    "end": 40
+                },
+                {
+                    "routes": [],
+                    "name": "clean",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "clean(string $url): string",
+                    "doc": "An absolute URL normalized; anything else returned as given.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "url",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 43,
+                    "end": 47
+                },
+                {
+                    "routes": [],
+                    "name": "split",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "split(string $url): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array{scheme: ?string, authority: ?string, path: string, query: ?string, fragment: ?string}"
+                    ],
+                    "params": [
+                        {
+                            "name": "url",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 50,
+                    "end": 54
+                },
+                {
+                    "routes": [],
+                    "name": "merge",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "merge(array $base, string $path): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "base",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "path",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 56,
+                    "end": 63
+                },
+                {
+                    "routes": [],
+                    "name": "normalize",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "normalize(array $parts): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "parts",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 65,
+                    "end": 89
+                },
+                {
+                    "routes": [],
+                    "name": "removeDots",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "removeDots(string $path): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "path",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 91,
+                    "end": 114
+                },
+                {
+                    "routes": [],
+                    "name": "encode",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "encode(string $text, string $allowed): string",
+                    "doc": "Percent-encodes every byte outside the unreserved and sub-delimiter sets and the extra characters a component allows.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "allowed",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 117,
+                    "end": 120
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Feed\\Locator",
+            "short": "Locator",
+            "namespace": "Minn\\Feed",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Feed/Locator.php",
+            "lines": 54,
+            "doc": "Feed autodiscovery: the feeds an HTML page names in its\n<link rel=\"alternate\"> elements with a feed type, in page order, each\nresolved against the page (or its <base href>).",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Feed\\Iri"
+            ],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "TYPES",
+                    "value": "array (   0 => 'application/rss+xml',   1 => 'application/atom+xml',   2 => 'application/rdf+xml',   3 => 'application/xml',   4 => 'text/xml', )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "looksLikeFeed",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "looksLikeFeed(string $body, string $contentType): bool",
+                    "doc": "Whether a response looks like a feed document rather than a page or text.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "body",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "contentType",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 17,
+                    "end": 25
+                },
+                {
+                    "routes": [],
+                    "name": "alternates",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "alternates(string $html, string $pageUrl): array",
+                    "doc": "The feed URLs a page names, resolved, in page order, each once.",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "html",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "pageUrl",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 32,
+                    "end": 53
+                },
+                {
+                    "routes": [],
+                    "name": "attributes",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "attributes(string $raw): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array<string, string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "raw",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 56,
+                    "end": 64
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Feed\\Parts",
+            "short": "Parts",
+            "namespace": "Minn\\Feed",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Feed/Parts.php",
+            "lines": 140,
+            "doc": "The repeating parts of a feed element read out of the tree as raw\nvalues: links by relation, categories, and enclosures (Media RSS\ncontents, Atom enclosure links, RSS enclosures). The feed object\nsanitizes and wraps them; each raw value travels with the node it came\nfrom, so a relative URL resolves against that node's base.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Feed\\Tree"
+            ],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "IANA",
+                    "value": "'http://www.iana.org/assignments/relation/'",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "MEDIA",
+                    "value": "'http://search.yahoo.com/mrss/'",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "DC",
+                    "value": "array (   0 => 'http://purl.org/dc/elements/1.1/',   1 => 'http://purl.org/dc/elements/1.0/', )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "links",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "links(array $child, array $plain, array $more, Closure $iri): array",
+                    "doc": "Links by relation: Atom links (rel defaults to alternate, IANA names\nanswer to both spellings), then the RSS-style link elements and the\ngiven extra alternates.",
+                    "shapes": [
+                        "@param array<string, array<string, list<array<string, mixed>>>> $child the element's children",
+                        "@param list<array{0: string, 1: string}> $plain RSS-style link tags, by namespace and name",
+                        "@param list<string> $more alternates already in their final form",
+                        "@param Closure(string, array<string, mixed>): string $iri a URL as the feed hands it out, given its node",
+                        "@return array<string, list<string>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "child",
+                            "type": "array",
+                            "shape": "array<string, array<string, list<array<string, mixed>>>>",
+                            "default": null,
+                            "doc": "the element's children"
+                        },
+                        {
+                            "name": "plain",
+                            "type": "array",
+                            "shape": "list<array{0: string, 1: string}>",
+                            "default": null,
+                            "doc": "RSS-style link tags, by namespace and name"
+                        },
+                        {
+                            "name": "more",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": "alternates already in their final form"
+                        },
+                        {
+                            "name": "iri",
+                            "type": "Closure",
+                            "shape": "Closure(string, array<string, mixed>): string",
+                            "default": null,
+                            "doc": "a URL as the feed hands it out, given its node"
+                        }
+                    ],
+                    "line": 33,
+                    "end": 58
+                },
+                {
+                    "routes": [],
+                    "name": "categories",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "categories(array $child): array",
+                    "doc": "Categories as raw text: Atom (term, scheme, label), RSS 2.0 (the text,\nthe domain as scheme), Dublin Core subjects.",
+                    "shapes": [
+                        "@param array<string, array<string, list<array<string, mixed>>>> $child",
+                        "@return list<array{term: ?string, scheme: ?string, label: ?string, type: string}>"
+                    ],
+                    "params": [
+                        {
+                            "name": "child",
+                            "type": "array",
+                            "shape": "array<string, array<string, list<array<string, mixed>>>>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 67,
+                    "end": 85
+                },
+                {
+                    "routes": [],
+                    "name": "enclosures",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "enclosures(array $item): array",
+                    "doc": "An item's enclosures as raw fields, Media RSS contents first (with the\nitem's thumbnails when a content has none of its own), then Atom\nenclosure links, then RSS enclosures. \"node\" is where the URL came from.",
+                    "shapes": [
+                        "@param array<string, mixed> $item the item's node",
+                        "@return list<array<string, mixed>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "item",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the item's node"
+                        }
+                    ],
+                    "line": 95,
+                    "end": 121
+                },
+                {
+                    "routes": [],
+                    "name": "thumbnails",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "thumbnails(array $node): array",
+                    "doc": "The media:thumbnail URLs directly under an element, each with its node.",
+                    "shapes": [
+                        "@param array<string, mixed> $node",
+                        "@return list<array{0: string, 1: array<string, mixed>}>"
+                    ],
+                    "params": [
+                        {
+                            "name": "node",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 129,
+                    "end": 138
+                },
+                {
+                    "routes": [],
+                    "name": "media",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "media(array $node, array $thumbnails): array",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, mixed> $node a media:content element",
+                        "@param list<array{0: string, 1: array<string, mixed>}> $thumbnails",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "node",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "a media:content element"
+                        },
+                        {
+                            "name": "thumbnails",
+                            "type": "array",
+                            "shape": "list<array{0: string, 1: array<string, mixed>}>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 145,
+                    "end": 154
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Feed\\Tree",
+            "short": "Tree",
+            "namespace": "Minn\\Feed",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Feed/Tree.php",
+            "lines": 146,
+            "doc": "A feed document parsed into the nested arrays plugin code reads through\nget_item_tags() and friends: each element is a node holding its own text\n(\"data\", whitespace between children included), its attributes grouped\nby namespace, the xml:base and xml:lang in force, and its children by\nnamespace and local name. Two shapes differ from plain XML: an Atom text\nconstruct of type \"xhtml\" keeps its markup as text, and an RSS title is\nstored HTML-escaped. Named HTML references are read as characters unless\nthe document brings its own DOCTYPE.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Feed\\FeedError",
+                "Minn\\Feed\\Iri",
+                "Minn\\Support\\KsesEntities"
+            ],
+            "usedBy": [
+                "Minn\\Feed\\Document",
+                "Minn\\Feed\\Parts"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "XML",
+                    "value": "'http://www.w3.org/XML/1998/namespace'",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "ATOM_10",
+                    "value": "'http://www.w3.org/2005/Atom'",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "ATOM_03",
+                    "value": "'http://purl.org/atom/ns#'",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "RSS_10",
+                    "value": "'http://purl.org/rss/1.0/'",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "RSS_090",
+                    "value": "'http://my.netscape.com/rdf/simple/0.9/'",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "SEPARATOR",
+                    "value": "'\u001f'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "VOID",
+                    "value": "array (   0 => 'area',   1 => 'base',   2 => 'br',   3 => 'col',   4 => 'embed',   5 => 'hr',   6 => 'img',   7 => 'input',   8 => 'link',   9 => 'meta',   10 => 'param',   11 => 'source',   12 => 'track',   13 => 'wbr', )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "stack",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "root",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "xhtmlDepth",
+                    "type": "int",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "parse",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "parse(string $utf8): array",
+                    "doc": "The document's elements under a root holding only \"child\".",
+                    "shapes": [
+                        "@return array{child: array<string, array<string, list<array<string, mixed>>>>}"
+                    ],
+                    "params": [
+                        {
+                            "name": "utf8",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 42,
+                    "end": 45
+                },
+                {
+                    "routes": [],
+                    "name": "prepare",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "prepare(string $xml): string",
+                    "doc": "The document as the parser reads it: HTML references made numeric, the declaration on a line of its own.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "xml",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 48,
+                    "end": 62
+                },
+                {
+                    "routes": [],
+                    "name": "build",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "build(string $xml): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array{child: array<string, array<string, list<array<string, mixed>>>>}"
+                    ],
+                    "params": [
+                        {
+                            "name": "xml",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 65,
+                    "end": 77
+                },
+                {
+                    "routes": [],
+                    "name": "open",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "open(XMLParser $parser, string $name, array $attributes): void",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "parser",
+                            "type": "XMLParser",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "attributes",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 79,
+                    "end": 110
+                },
+                {
+                    "routes": [],
+                    "name": "close",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "close(XMLParser $parser, string $name): void",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "parser",
+                            "type": "XMLParser",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 112,
+                    "end": 136
+                },
+                {
+                    "routes": [],
+                    "name": "text",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "text(XMLParser $parser, string $text): void",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "parser",
+                            "type": "XMLParser",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 138,
+                    "end": 141
+                },
+                {
+                    "routes": [],
+                    "name": "append",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "append(string $text): void",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 143,
+                    "end": 148
+                },
+                {
+                    "routes": [],
+                    "name": "split",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "split(string $name): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array{0: string, 1: string} namespace and local name"
+                    ],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 151,
+                    "end": 155
+                },
+                {
+                    "routes": [],
+                    "name": "markupAttributes",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "markupAttributes(array $attributes): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "attributes",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 157,
+                    "end": 164
+                }
+            ]
+        },
+        {
             "name": "Minn\\Front\\AdminBar",
             "short": "AdminBar",
             "namespace": "Minn\\Front",
@@ -87405,6 +88673,7 @@
             "extends": null,
             "uses": [],
             "usedBy": [
+                "Minn\\Feed\\Tree",
                 "Minn\\Support\\Kses",
                 "Minn\\Support\\KsesPolicy"
             ],
@@ -88781,7 +90050,7 @@
             "namespace": "Minn\\Support",
             "kind": "final class",
             "file": "public/minn/src/Minn/Support/Url.php",
-            "lines": 200,
+            "lines": 203,
             "doc": "URL shaping the escaping and query helpers share: the character cleanup\nesc_url applies, bracket encoding outside the authority, and query\nargument merging. Behaviour pinned by contracts/fixtures/api/functions.json.",
             "implements": [],
             "extends": null,
@@ -88891,10 +90160,11 @@
                     "name": "validateForHttp",
                     "static": true,
                     "visibility": "public",
-                    "signature": "validateForHttp(string $url, string $homeHost, int $homePort, Closure $externalAllowed): ?string",
-                    "doc": "The checks wp_http_validate_url makes on a URL whose protocol already\npassed: an http(s) scheme, a host without credentials or a colon, no\nprivate address unless it is this site or allowed, only the usual\nports (or the site's own). Returns the URL, or null when refused.",
+                    "signature": "validateForHttp(string $url, string $homeHost, int $homePort, Closure $externalAllowed, ?Closure $safePorts = NULL): ?string",
+                    "doc": "The checks wp_http_validate_url makes on a URL whose protocol already\npassed: an http(s) scheme, a host without credentials or a colon, no\nprivate address unless it is this site or allowed, only the safe\nports (80, 443 and 8080 unless the caller's list says otherwise; the\nsite's own always). Returns the URL, or null when refused.",
                     "shapes": [
-                        "@param Closure(string, string): bool $externalAllowed whether a private host may be fetched anyway"
+                        "@param Closure(string, string): bool $externalAllowed whether a private host may be fetched anyway",
+                        "@param (Closure(list<int>, string, string): array)|null $safePorts the port list for a URL that names a port"
                     ],
                     "params": [
                         {
@@ -88924,10 +90194,17 @@
                             "shape": "Closure(string, string): bool",
                             "default": null,
                             "doc": "whether a private host may be fetched anyway"
+                        },
+                        {
+                            "name": "safePorts",
+                            "type": "?Closure",
+                            "shape": "(Closure(list<int>, string, string): array)|null",
+                            "default": "NULL",
+                            "doc": "the port list for a URL that names a port"
                         }
                     ],
-                    "line": 95,
-                    "end": 124
+                    "line": 97,
+                    "end": 127
                 },
                 {
                     "routes": [],
@@ -88953,8 +90230,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 133,
-                    "end": 147
+                    "line": 136,
+                    "end": 150
                 },
                 {
                     "routes": [],
@@ -88980,8 +90257,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 150,
-                    "end": 174
+                    "line": 153,
+                    "end": 177
                 },
                 {
                     "routes": [],
@@ -89007,8 +90284,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 177,
-                    "end": 188
+                    "line": 180,
+                    "end": 191
                 },
                 {
                     "routes": [],
@@ -89036,8 +90313,8 @@
                             "doc": "the hosts allowed for the target's host"
                         }
                     ],
-                    "line": 196,
-                    "end": 212
+                    "line": 199,
+                    "end": 215
                 },
                 {
                     "routes": [],
@@ -89058,8 +90335,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 127,
-                    "end": 130
+                    "line": 130,
+                    "end": 133
                 }
             ]
         },

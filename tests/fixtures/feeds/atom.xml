@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:base="https://atom.example.test/">
+  <title type="text">Atom Probe</title>
+  <subtitle type="html">An &lt;em&gt;atom&lt;/em&gt; feed</subtitle>
+  <link href="https://atom.example.test/" rel="alternate" type="text/html"/>
+  <link href="https://atom.example.test/atom.xml" rel="self"/>
+  <id>urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6</id>
+  <updated>2026-10-05T12:00:00Z</updated>
+  <entry>
+    <title type="html">Atom &amp;amp; entry one</title>
+    <link href="/entries/one" rel="alternate"/>
+    <link href="/files/one.pdf" rel="enclosure" type="application/pdf" length="2048"/>
+    <id>tag:atom.example.test,2026:1</id>
+    <published>2026-10-01T09:15:00+02:00</published>
+    <updated>2026-10-02T09:15:00+02:00</updated>
+    <author><name>Katherine Johnson</name><email>kj@example.test</email></author>
+    <category term="space" label="Space"/>
+    <summary type="text">Entry one summary.</summary>
+    <content type="html">&lt;p&gt;Entry one &lt;em&gt;content&lt;/em&gt; with &lt;a href="/relative/link"&gt;a relative link&lt;/a&gt;.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <title>Atom entry two</title>
+    <link href="https://elsewhere.test/two"/>
+    <id>tag:atom.example.test,2026:2</id>
+    <updated>2026-09-30T23:59:59Z</updated>
+    <content type="xhtml"><div xmlns="http://www.w3.org/1999/xhtml"><p>XHTML <b>content</b>.</p></div></content>
+  </entry>
+</feed>
