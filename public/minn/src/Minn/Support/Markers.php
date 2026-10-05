@@ -37,4 +37,35 @@ final class Markers
         }
         return file_put_contents($file, $updated) !== false;
     }
+
+    /**
+     * The lines between a marker's begin and end comments, every block of it
+     * in order. A line opens or closes a block when it contains the comment
+     * anywhere (case-sensitive); lines that start with "#" are left out, so
+     * the preamble and any nested markers are, while indented comments stay.
+     * Lines split on "\n" only, and a block left open at the end of the file
+     * keeps the empty line after its final newline.
+     *
+     * @return list<string>
+     */
+    public static function read(string $file, string $marker): array
+    {
+        if (!is_file($file) || !is_readable($file)) {
+            return [];
+        }
+        $lines = [];
+        $inside = false;
+        foreach (explode("\n", (string) file_get_contents($file)) as $line) {
+            if (str_contains($line, "# END {$marker}")) {
+                $inside = false;
+            }
+            if ($inside && !str_starts_with($line, '#')) {
+                $lines[] = $line;
+            }
+            if (str_contains($line, "# BEGIN {$marker}")) {
+                $inside = true;
+            }
+        }
+        return $lines;
+    }
 }

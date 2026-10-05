@@ -85,4 +85,15 @@ final class Html
         }
         return $found ? trim((string) preg_replace('/ +/', ' ', $filtered)) : $filtered;
     }
+
+    /**
+     * The code inside markup that is exactly one bare script element once the
+     * surrounding whitespace is gone, or null for anything else: a tag with
+     * attributes, an empty element, a missing end. The tag names match in any
+     * case and the code is returned as written.
+     */
+    public static function scriptBody(string $markup): ?string
+    {
+        return preg_match('#^<script>(.+)</script>$#is', trim($markup), $m) === 1 ? $m[1] : null;
+    }
 }

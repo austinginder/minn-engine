@@ -349,7 +349,12 @@ function wp_trigger_error($function_name, $message, $error_level = E_USER_NOTICE
 
 function apache_mod_loaded($mod, $default_value = false)
 {
-    return $default_value;
+    // Off Apache no module is loaded, whatever default the caller offers.
+    $software = Minn\Runtime\Runtime::current()->context->request?->server['software'] ?? '';
+    if (!Minn\Support\WebServer::isApache((string) $software)) {
+        return false;
+    }
+    return function_exists('apache_get_modules') ? in_array($mod, apache_get_modules(), true) : $default_value;
 }
 
 function iis7_supports_permalinks()

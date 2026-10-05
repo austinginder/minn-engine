@@ -2010,3 +2010,97 @@ critical-error element. Advanced Responsive Video Embedder's
 name is null (`sane_provider_name(NULL)`), mid-way through the feed's
 items. The engine renders the same feed complete; the page for the post
 with that embed cannot be compared until the plugin is fixed upstream.
+
+## The top of the catalogue (2026-10-05)
+
+The plugins with the most installs that the gate still skipped were each
+one or two names short. This round takes the names that block every
+wp.org plugin above a million installs, judged against the plugins as
+they ship today (not the September mirror scan: Jetpack now asks for
+`WP_Admin_Bar` where it asked for `wp_supports_ai`, AIOSEO for
+`WP_Block_Parser`, WPForms for `wp_kses_uri_attributes`).
+
+**Placeholders (Mute, `data/placeholder-symbols.json`).** The importer's
+upload screen and cleanup (`wp_import_upload_form`,
+`wp_import_handle_upload`, `wp_import_cleanup`), the image editor's
+actions (`stream_preview_image`, `wp_save_image`, `wp_restore_image`),
+`wp_category_checklist`, `wp_plupload_default_settings`,
+`wp_heartbeat_settings`, `wp_admin_bar_render`, `_unzip_file_pclzip`, and
+the classes `WP_Admin_Bar`, `WP_Recovery_Mode_Link_Service` (its two
+constants are what All-In-One Security reads) and `WP_Translations`
+(Loco Translate only tests `instanceof`; translations themselves are a
+separate gap). Every caller of these is a wp-admin screen or an upgrader
+path.
+
+**The helpers (fixture `contracts/fixtures/api/plugin-symbols3.json`).**
+
+- `convert_invalid_entities`: only the exact unpadded decimal references
+  `&#128;` to `&#159;` change, each to the Unicode reference its
+  Windows-1252 character meant; the five codes Windows-1252 leaves
+  unassigned (129, 141, 143, 144, 157) are removed. Hex spellings,
+  padded spellings and references without a semicolon stay as written.
+- `wp_is_valid_utf8`: well-formed UTF-8. Overlong forms, surrogates, code
+  points past U+10FFFF, stray continuation bytes, truncated sequences and
+  the bytes F5 to FF fail; NUL, noncharacters and a byte order mark pass.
+- `wp_remove_surrounding_empty_script_tags`: the trimmed input must be
+  `<script>` + at least one character + `</script>`, tag names in any
+  case, no attributes; the code comes back untrimmed (`<script>a</script><script>b</script>`
+  gives `a</script><script>b`). Anything else fires `_doing_it_wrong`
+  (version `6.4`) and returns a `console.error("Function …() used incorrectly in PHP. …")`
+  line in place of the script.
+- `wp_autoload_values_to_autoload`: `yes`, `on`, `auto-on`, `auto`. The
+  filter can only narrow it: its result is intersected with that list
+  with the filtered keys kept (`['no', 'yes']` gives `{"1": "yes"}`). A
+  filter that returns a string fatals the reference.
+- `wp_get_comment_fields_max_lengths` reads the comments table as it is:
+  a character column allows its declared length, a text column ten fewer
+  than it holds (tinytext 245, text 65525, mediumtext 16777205). Checked
+  on an altered table, where both stacks gave the same numbers.
+- `wp_kses_uri_attributes`: seventeen names (`action` to `xmlns`),
+  filterable.
+- `wp_high_priority_element_flag`: true until something takes high fetch
+  priority. Only a real boolean moves it (0, 1, `'yes'`, null and arrays
+  just read it), and the setter returns the value after the call. An
+  image that asks for `fetchpriority="high"` always keeps it and closes
+  the flag; an eager image (`loading` false) takes it only while the
+  flag is open. The flag is the same state the engine's own block images
+  claim, so a plugin that closes it (Elementor does, to place its own)
+  leaves every later image without the attribute.
+- `_get_dropins`: on a single site, the eight files from `advanced-cache.php`
+  to `fatal-error-handler.php`, each with its description and `WP_CACHE`
+  or `true`.
+- `get_post_mime_types`: six groups (image, audio, video, documents,
+  spreadsheets, archives), each `[label, manage label, _n_noop count
+  label]`, through `post_mime_types`.
+- `extract_from_markers`: every block's lines in order. A line opens or
+  closes a block when it contains `# BEGIN {marker}` / `# END {marker}`
+  anywhere, case-sensitive (so `# BEGIN GG` opens `G`); lines that start
+  with `#` are dropped (the preamble, nested markers) while indented
+  comments stay; lines split on `\n` only, keeping `\r`; a block still
+  open at the end keeps the empty line after the final newline.
+- `apache_mod_loaded` is false off Apache whatever default it is handed
+  (the engine returned the default), so `got_mod_rewrite` is false under
+  FrankenPHP, nginx and the command line. Apache and LiteSpeed fall to
+  `apache_get_modules()` or the default; that branch is not probed.
+- `saveDomDocument` writes `saveXML()` with every `\n` as `\r\n` and
+  returns nothing. An unwritable target fatals the reference, so it is
+  not pinned.
+- `add_allowed_options` appends each new name to its group once, creating
+  groups; a group handed as a string adds nothing (the reference warns).
+  With no list it works on the global `$allowed_options` and returns it.
+  `add_option_whitelist` is the deprecated name (5.5.0).
+- `wp_is_recovery_mode` is false: the engine keeps no recovery-mode
+  session, its own recovery pauses the failing plugin.
+- `wp_supports_ai`: false without running the filter when `WP_AI_SUPPORT`
+  is defined and falsy; otherwise `(bool) apply_filters('wp_supports_ai', true)`
+  (a filter returning `'yes'` reads true).
+
+**Gate blind spot this round hit.** A `function_exists('x')` anywhere in a
+folder excuses every call to `x()` in it. Jetpack 16.2 guards
+`wp_supports_ai()` in its search package and calls it bare in
+`_inc/lib/class-jetpack-ai-settings.php`, so once the other two names it
+lacked existed, the gate passed it and it fatalled at boot on the dogfood
+site until `wp_supports_ai` was written (recovery paused it after the
+second failure, as designed). Guards that count per file would have caught
+it, at the price of skipping plugins that guard in a loader and call from
+an included file.

@@ -1147,3 +1147,8 @@ function comment_time($format = '', $comment_id = 0)
 {
     echo get_comment_time($format);
 }
+
+function wp_get_comment_fields_max_lengths()
+{
+    return apply_filters('wp_get_comment_fields_max_lengths', _minn_comments()->fieldLengths());
+}

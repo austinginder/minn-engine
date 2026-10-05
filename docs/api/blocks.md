@@ -13,7 +13,7 @@ the block parser and renderer
 | [`Layout`](#layout) | final class | 124 | The layout-support classes the reference adds at render time. Every |
 | [`Parser`](#parser) | final class | 91 | Parses block markup into a tree. The grammar is the delimiter comment: |
 | [`QueryVars`](#queryvars) | final class | 80 | The query variables a Query Loop block's context asks for, the way the reference's query block builds them. |
-| [`RenderState`](#renderstate) | final class | 284 | Per-request rendering state, owned by the renderer. The reference numbers |
+| [`RenderState`](#renderstate) | final class | 302 | Per-request rendering state, owned by the renderer. The reference numbers |
 | [`Renderer`](#renderer) | final class | 228 | Renders a block tree the way the reference renders post_content: |
 | [`Selector`](#selector) | final class | 42 | The CSS selector a block type declares for its root or for one feature, from its `selectors` map or the older per-support keys. |
 | [`Styles`](#styles) | final class | 155 | The inline style and class names a block's "style" and preset |
@@ -321,6 +321,18 @@ back, so the next image still counts as if the hidden ones never rendered.
 ### `claimPriority(): bool`
 
 True once, for the image that gets fetchpriority="high".
+
+### `priorityAvailable(): bool`
+
+Whether no element has taken high fetch priority yet on this page.
+
+### `closePriority(): void`
+
+Takes high fetch priority off the table for the rest of the page; a plugin prioritising its own element does this.
+
+### `reopenPriority(): void`
+
+Puts high fetch priority back on offer, so the next large enough image takes it.
 
 ### `recordContainer(string $class, string $declarations): void`
 

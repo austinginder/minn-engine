@@ -89,3 +89,12 @@ function wp_connectors_get_application_password_credentials(array $auth): array
 {
     return Connectors::credentials($auth, static fn (string $name): mixed => get_option($name, ''), static fn (string $text): string => sanitize_text_field($text));
 }
+
+/** A site that defines WP_AI_SUPPORT as false has opted out, and no filter can opt it back in. */
+function wp_supports_ai()
+{
+    if (defined('WP_AI_SUPPORT') && !WP_AI_SUPPORT) {
+        return false;
+    }
+    return (bool) apply_filters('wp_supports_ai', true);
+}

@@ -5,6 +5,7 @@ the WordPress runtime plugins load against
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`Abilities`](#abilities) | final class | 151 | The abilities registry behind the wp_*_ability facade: categories and |
+| [`AllowedOptions`](#allowedoptions) | final class | 26 | The settings-page allowlist plugins extend: option group => the option |
 | [`Assets`](#assets) | final class | 292 | The registry behind wp_register_/wp_enqueue_ for scripts and styles: |
 | [`Avatar`](#avatar) | final class | 62 | Avatars the way get_avatar_data and get_avatar decide them: the argument |
 | [`BlockFilters`](#blockfilters) | final class | 82 | The block-level filters plugin code hooks (pre_render_block, |
@@ -26,7 +27,7 @@ the WordPress runtime plugins load against
 | [`NavMenu`](#navmenu) | final class | 303 | Nav-menu item decoration for wp_nav_menu(): the reference's class tokens |
 | [`OEmbed`](#oembed) | final class | 92 | oEmbed as data: provider matching against the wildcard table, response parsing, and the markup an oEmbed payload becomes. |
 | [`ObjectCache`](#objectcache) | final class | 52 | The per-request object cache behind wp_cache_*: groups of keys, nothing persistent. |
-| [`Options`](#options) | final class | 192 | Options as plugin code sees them: PHP values, decoded from the stored |
+| [`Options`](#options) | final class | 196 | Options as plugin code sees them: PHP values, decoded from the stored |
 | [`PackageDownload`](#packagedownload) | final class | 32 | The publisher's say over its own download. Before fetching an update |
 | [`PageMenu`](#pagemenu) | final class | 40 | The page-list menu a classic theme falls back to when no menu is |
 | [`Pages`](#pages) | final class | 113 | get_pages() as the reference shapes it: its arguments as a post query, and the tree order of the result. |
@@ -128,6 +129,24 @@ Whether an ability is marked read-only, which decides the method its run endpoin
 Every category.
 
 Internals: `state()` (private, line 18), `save()` (private, line 24), `forget()` (private, line 77)
+
+
+## AllowedOptions
+
+`final class Minn\Runtime\AllowedOptions` · `public/minn/src/Minn/Runtime/AllowedOptions.php`
+
+The settings-page allowlist plugins extend: option group => the option
+names a settings form in that group may save. The engine renders no
+settings pages, so the list is only recorded, never enforced.
+
+### static `merge(array $add, array $into): array`
+
+The allowlist with each new name appended to its group once, groups
+created as needed. A group handed as anything but a list adds nothing.
+
+- `@param array<string, mixed> $add`
+- `@param array<string, list<string>> $into`
+- `@return array<string, list<string>>`
 
 
 ## Assets
@@ -1081,6 +1100,7 @@ could otherwise rewrite to pass its own gate, the recovery strikes, the
 cron lock, and the sign-in throttle rows. The facade refuses to write
 them; the engine writes them through this class directly.
 - const `GUARDED_PREFIX` = `'minn_login_throttle_'`
+- const `AUTOLOAD_VALUES` = `array (   0 => 'yes',   1 => 'on',   2 => 'auto-on',   3 => 'auto', )` — The autoload column values that load an option with every request, in the reference's order.
 
 Used by: `Minn\Cli\OptionCommand`, `Minn\Runtime\Runtime`, `Minn\Runtime\Symbols`
 
@@ -1154,7 +1174,7 @@ What the reference stores: arrays and objects serialized, scalars as their strin
 
 A stored option value decoded the way the reference reads it.
 
-Internals: `switchAutoload()` (private, line 134)
+Internals: `switchAutoload()` (private, line 138)
 
 
 ## PackageDownload

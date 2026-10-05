@@ -702,3 +702,19 @@ function wp_opcache_invalidate($filepath, $force = false)
     }
     return opcache_invalidate($filepath, (bool) $force);
 }
+
+function extract_from_markers($filename, $marker)
+{
+    return \Minn\Support\Markers::read((string) $filename, (string) $marker);
+}
+
+function got_mod_rewrite()
+{
+    return apply_filters('got_rewrite', apache_mod_loaded('mod_rewrite', true));
+}
+
+/** Writes the document with Windows line endings, the way an IIS web.config is kept. */
+function saveDomDocument($doc, $filename)
+{
+    file_put_contents($filename, str_replace("\n", "\r\n", (string) $doc->saveXML()));
+}

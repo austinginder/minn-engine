@@ -55,6 +55,12 @@ final class Kses
 
     private const GLOBAL_ATTRIBUTES = ['class', 'id', 'style', 'title', 'role', 'dir', 'lang', 'xml:lang', 'hidden', 'tabindex'];
     private const URL_ATTRIBUTES = ['href', 'src', 'cite', 'poster', 'longdesc', 'usemap'];
+
+    /** Every attribute the reference treats as holding a URI, so its scheme is judged wherever the attribute is allowed. */
+    public const URI_ATTRIBUTES = [
+        'action', 'archive', 'background', 'cite', 'classid', 'codebase', 'data', 'formaction', 'href',
+        'icon', 'longdesc', 'manifest', 'poster', 'profile', 'src', 'usemap', 'xmlns',
+    ];
     private const SCHEMES = ['http', 'https', 'ftp', 'ftps', 'mailto', 'news', 'irc', 'gopher', 'nntp', 'feed', 'telnet', 'mms', 'rtsp', 'sms', 'svn', 'tel', 'fax', 'xmpp', 'webcal', 'urn'];
     private const CSS_PROPERTIES = [
         'background', 'background-color', 'background-image', 'background-position', 'background-repeat', 'background-size', 'background-attachment', 'background-blend-mode',

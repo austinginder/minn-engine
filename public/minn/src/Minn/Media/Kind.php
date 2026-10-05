@@ -10,6 +10,28 @@ final class Kind
     private const IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'jpe', 'gif', 'png', 'webp', 'avif', 'heic'];
 
     /**
+     * The media library's filter groups: a MIME pattern (a top-level type, or
+     * a comma list of full types) => its plural label, its manage label, and
+     * the singular and plural count labels.
+     */
+    public const POST_MIME_TYPES = [
+        'image' => ['Images', 'Manage Images', 'Image <span class="count">(%s)</span>', 'Images <span class="count">(%s)</span>'],
+        'audio' => ['Audio', 'Manage Audio', 'Audio <span class="count">(%s)</span>', 'Audio <span class="count">(%s)</span>'],
+        'video' => ['Video', 'Manage Video', 'Video <span class="count">(%s)</span>', 'Video <span class="count">(%s)</span>'],
+        'application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,'
+            . 'application/vnd.ms-word.document.macroEnabled.12,application/vnd.ms-word.template.macroEnabled.12,'
+            . 'application/vnd.oasis.opendocument.text,application/vnd.apple.pages,application/pdf,application/vnd.ms-xpsdocument,'
+            . 'application/oxps,application/rtf,application/wordperfect,application/octet-stream'
+            => ['Documents', 'Manage Documents', 'Document <span class="count">(%s)</span>', 'Documents <span class="count">(%s)</span>'],
+        'application/vnd.apple.numbers,application/vnd.oasis.opendocument.spreadsheet,application/vnd.ms-excel,'
+            . 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel.sheet.macroEnabled.12,'
+            . 'application/vnd.ms-excel.sheet.binary.macroEnabled.12'
+            => ['Spreadsheets', 'Manage Spreadsheets', 'Spreadsheet <span class="count">(%s)</span>', 'Spreadsheets <span class="count">(%s)</span>'],
+        'application/x-gzip,application/rar,application/x-tar,application/zip,application/x-7z-compressed'
+            => ['Archives', 'Manage Archives', 'Archive <span class="count">(%s)</span>', 'Archives <span class="count">(%s)</span>'],
+    ];
+
+    /**
      * @param list<string> $audioExtensions
      * @param list<string> $videoExtensions
      */

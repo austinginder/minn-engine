@@ -186,6 +186,34 @@ final readonly class Comments
         }
     }
 
+    /** The comment form fields whose length the table limits, with the length a stock table gives each. */
+    private const FIELD_LENGTHS = ['comment_author' => 245, 'comment_author_email' => 100, 'comment_author_url' => 200, 'comment_content' => 65525];
+
+    /**
+     * How long each comment form field may be, read from the table as it is:
+     * a character column allows its declared length, a text column ten bytes
+     * fewer than it holds. A column the schema does not describe keeps the
+     * stock table's length.
+     *
+     * @return array<string, int>
+     */
+    public function fieldLengths(): array
+    {
+        $lengths = self::FIELD_LENGTHS;
+        $rows = $this->db->rows(
+            'SELECT COLUMN_NAME AS name, DATA_TYPE AS type, CHARACTER_MAXIMUM_LENGTH AS length FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ?',
+            [$this->db->table('comments')],
+        );
+        foreach ($rows as $row) {
+            $name = (string) $row['name'];
+            if (!isset($lengths[$name]) || $row['length'] === null) {
+                continue;
+            }
+            $lengths[$name] = str_ends_with(strtolower((string) $row['type']), 'text') ? (int) $row['length'] - 10 : (int) $row['length'];
+        }
+        return $lengths;
+    }
+
     /** A deleted comment's replies move up to its parent. */
     public function orphanReplies(int $id, int $parent): void
     {

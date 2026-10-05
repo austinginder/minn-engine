@@ -28,6 +28,22 @@ final readonly class Inventory
         'sunrise.php',
     ];
 
+    /**
+     * The drop-ins a single site recognises, in the reference's order: the
+     * file => its description and the constant that must be true for it to
+     * load (true when nothing gates it).
+     */
+    public const KNOWN_DROPINS = [
+        'advanced-cache.php' => ['Advanced caching plugin.', 'WP_CACHE'],
+        'db.php' => ['Custom database class.', true],
+        'db-error.php' => ['Custom database error message.', true],
+        'install.php' => ['Custom installation script.', true],
+        'maintenance.php' => ['Custom maintenance message.', true],
+        'object-cache.php' => ['External object cache.', true],
+        'php-error.php' => ['Custom PHP error message.', true],
+        'fatal-error-handler.php' => ['Custom PHP fatal error handler.', true],
+    ];
+
     public function __construct(private string $contentDir, private Site $site)
     {
     }

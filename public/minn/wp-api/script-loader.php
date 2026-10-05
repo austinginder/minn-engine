@@ -454,3 +454,14 @@ function wp_maybe_inline_styles()
     }
     Runtime::current()->set('inline_style_sources', $sources);
 }
+
+function wp_remove_surrounding_empty_script_tags($contents)
+{
+    $body = Minn\Support\Html::scriptBody((string) $contents);
+    if ($body !== null) {
+        return $body;
+    }
+    $message = __('Expected string to start with script tag (without attributes) and end with script tag, with optional whitespace.');
+    _doing_it_wrong(__FUNCTION__, $message, '6.4');
+    return 'console.error(' . wp_json_encode(sprintf(__('Function %1$s used incorrectly in PHP.'), __FUNCTION__ . '()') . ' ' . $message) . ')';
+}

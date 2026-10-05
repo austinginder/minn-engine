@@ -463,3 +463,9 @@ function delete_expired_transients($force_db = false)
         delete_option('_site_transient_' . $name);
     }
 }
+
+function wp_autoload_values_to_autoload()
+{
+    // A filter may narrow the list, never widen it: what it returns is kept only where core knows the value, keys and all.
+    return array_intersect(apply_filters('wp_autoload_values_to_autoload', Minn\Runtime\Options::AUTOLOAD_VALUES), Minn\Runtime\Options::AUTOLOAD_VALUES);
+}

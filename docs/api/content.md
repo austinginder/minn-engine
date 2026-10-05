@@ -10,10 +10,10 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`CommentFilter`](#commentfilter) | final readonly class | 46 | What a comment listing is narrowed to. Every field is optional; the id |
 | [`CommentModeration`](#commentmoderation) | final readonly class | 43 | Whether a comment may be stored and in what state: the duplicate and |
 | [`CommentRecord`](#commentrecord) | final readonly class | 114 | One row of the comments table, read by name: $comment->author, ->content, |
-| [`Comments`](#comments) | final readonly class | 255 | Reads and writes over the comments table. |
+| [`Comments`](#comments) | final readonly class | 283 | Reads and writes over the comments table. |
 | [`ContentScan`](#contentscan) | final class | 196 | What a site's stored content asks of the engine: shortcodes, block |
 | [`Excerpt`](#excerpt) | final class | 101 | The reference's generated excerpt, as captured from probe posts: |
-| [`Inventory`](#inventory) | final readonly class | 237 | Plugins, themes, must-use plugins, and drop-ins as they sit on disk. |
+| [`Inventory`](#inventory) | final readonly class | 253 | Plugins, themes, must-use plugins, and drop-ins as they sit on disk. |
 | [`MenuItem`](#menuitem) | final readonly class | 22 | One classic nav_menu_item, fields resolved from the post, its |
 | [`Menus`](#menus) | final readonly class | 485 | Classic nav_menu terms and nav_menu_item posts. The front uses these |
 | [`MoreTag`](#moretag) | final class | 20 | The `<!--more-->` marker that splits a post into the part a listing shows |
@@ -253,6 +253,7 @@ Records are read-only; writes go through the repository.
 Reads and writes over the comments table.
 
 - const `UPDATABLE` = `array (   0 => 'comment_post_ID',   1 => 'comment_author',   2 => 'comment_author_email',   3 => 'comment_author_url',   4 => 'comment_author_IP',   5 => 'comment_date',   6 => 'comment_date_gmt',   7 => 'comment_content',   8 => 'comment_karma',   9 => 'comment_approved',   10 => 'comment_agent',   11 => 'comment_type',   12 => 'comment_parent',   13 => 'user_id', )`
+- const `FIELD_LENGTHS` = `array (   'comment_author' => 245,   'comment_author_email' => 100,   'comment_author_url' => 200,   'comment_content' => 65525, )` — The comment form fields whose length the table limits, with the length a stock table gives each.
 
 Used by: `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Content\CommentModeration`, `Minn\Engine`, `Minn\Front\CommentPostController`, `Minn\Front\Feeds`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\Services`, `Minn\Theme\PageRenderer`
 
@@ -312,6 +313,15 @@ Inserts a row from column => value pairs and returns the new id.
 Sets the given columns on one comment.
 
 - `@param array<string, mixed> $columns`
+
+### `fieldLengths(): array`
+
+How long each comment form field may be, read from the table as it is:
+a character column allows its declared length, a text column ten bytes
+fewer than it holds. A column the schema does not describe keeps the
+stock table's length.
+
+- `@return array<string, int>`
 
 ### `orphanReplies(int $id, int $parent): void`
 
@@ -462,6 +472,9 @@ reference: name is the directory (or the drop-in filename), title and
 version come from the file headers, status from the options.
 
 - const `DROPINS` = `array (   0 => 'advanced-cache.php',   1 => 'db.php',   2 => 'db-error.php',   3 => 'fatal-error-handler.php',   4 => 'install.php',   5 => 'maintenance.php',   6 => 'object-cache.php',   7 => 'php-error.php',   8 => 'sunrise.php', )` — Drop-in filenames at wp-content/ that hosting tools treat as WordPress drop-ins.
+- const `KNOWN_DROPINS` = `array (   'advanced-cache.php' =>    array (     0 => 'Advanced caching plugin.',     1 => 'WP_CACHE',   ),   'db.php' =>    array (     0 => 'Custom database class.',     1 => true,   ),   'db-error.php' =>    array (     0 => 'Custom database error message.',     1 => true,   ),   'install.php' =>    array (     0 => 'Custom installation script.',     1 => true,   ),   'maintenance.php' =>    array (     0 => 'Custom maintenance message.',     1 => true,   ),   'object-cache.php' =>    array (     0 => 'External object cache.',     1 => true,   ),   'php-error.php' =>    array (     0 => 'Custom PHP error message.',     1 => true,   ),   'fatal-error-handler.php' =>    array (     0 => 'Custom PHP fatal error handler.',     1 => true,   ), )` — The drop-ins a single site recognises, in the reference's order: the
+file => its description and the constant that must be true for it to
+load (true when nothing gates it).
 
 Used by: `Minn\Cli\AssetUpdate`, `Minn\Cli\MinnCommand`, `Minn\Cli\PluginCommand`, `Minn\Cli\ThemeCommand`, `Minn\Content\PluginState`, `Minn\Cron\Cron`, `Minn\Ops\InstalledSoftware`, `Minn\Ops\Packages`, `Minn\Ops\Updates`, `Minn\Rest\PluginsController`, `Minn\Rest\Services`
 
@@ -501,7 +514,7 @@ Every regular plugin's main file: relative "dir/file.php" (or
 
 - `@return array<string, string>`
 
-Internals: `regularPlugins()` (private, line 145), `mainPluginFile()` (private, line 220), `item()` (private, line 240)
+Internals: `regularPlugins()` (private, line 161), `mainPluginFile()` (private, line 236), `item()` (private, line 256)
 
 
 ## MenuItem

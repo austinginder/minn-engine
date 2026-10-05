@@ -109,6 +109,24 @@ final class RenderState
         return $this->priorityClaimed = true;
     }
 
+    /** Whether no element has taken high fetch priority yet on this page. */
+    public function priorityAvailable(): bool
+    {
+        return !$this->priorityClaimed;
+    }
+
+    /** Takes high fetch priority off the table for the rest of the page; a plugin prioritising its own element does this. */
+    public function closePriority(): void
+    {
+        $this->priorityClaimed = true;
+    }
+
+    /** Puts high fetch priority back on offer, so the next large enough image takes it. */
+    public function reopenPriority(): void
+    {
+        $this->priorityClaimed = false;
+    }
+
     /** A container stylesheet this page needs: the class and its declarations. */
     public function recordContainer(string $class, string $declarations): void
     {

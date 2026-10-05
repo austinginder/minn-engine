@@ -351,16 +351,18 @@ function wp_get_loading_optimization_attributes($tag_name, $attr, $context)
     if ($tag_name !== 'img' && $tag_name !== 'iframe') {
         return $optimization;
     }
-    $runtime = Runtime::current();
     if ($tag_name === 'img') {
         $optimization['decoding'] = 'async';
     }
     $explicitLoading = array_key_exists('loading', $attr) && !$attr['loading'];
     $explicitPriority = array_key_exists('fetchpriority', $attr) && $attr['fetchpriority'] === 'high';
-    if ($explicitLoading || $explicitPriority) {
-        if (!$runtime->get('high_priority_used', false)) {
+    if ($explicitPriority) {
+        // A caller that asks for high priority keeps it, and no later image competes.
+        $optimization['fetchpriority'] = 'high';
+        RenderState::current()->closePriority();
+    } elseif ($explicitLoading) {
+        if (RenderState::current()->claimPriority()) {
             $optimization['fetchpriority'] = 'high';
-            $runtime->set('high_priority_used', true);
         }
     } elseif ($tag_name === 'img' && (RenderState::current()->depth() > 0 || (in_the_loop() && is_main_query())) && !(defined('REST_REQUEST') && REST_REQUEST) && RenderState::current()->nextImage() <= 3) {
         // Inside a page render the plugin's image shares the engine's budget:
@@ -370,12 +372,22 @@ function wp_get_loading_optimization_attributes($tag_name, $attr, $context)
         $pixels = (int) ($attr['width'] ?? 0) * (int) ($attr['height'] ?? 0);
         if ($pixels >= (int) apply_filters('wp_min_priority_img_pixels', 50000) && RenderState::current()->claimPriority()) {
             $optimization['fetchpriority'] = 'high';
-            $runtime->set('high_priority_used', true);
         }
     } elseif (wp_lazy_loading_enabled($tag_name, $context)) {
         $optimization['loading'] = 'lazy';
     }
     return apply_filters('wp_get_loading_optimization_attributes', $optimization, $tag_name, $attr, $context);
+}
+
+function wp_high_priority_element_flag($value = null)
+{
+    // Only a real boolean moves the flag; anything else just reads it.
+    if ($value === true) {
+        RenderState::current()->reopenPriority();
+    } elseif ($value === false) {
+        RenderState::current()->closePriority();
+    }
+    return RenderState::current()->priorityAvailable();
 }
 
 function wp_lazy_loading_enabled($tag_name, $context)

@@ -237,3 +237,24 @@ function get_plugin_updates()
     }
     return $out;
 }
+
+function _get_dropins()
+{
+    return array_map(static fn (array $dropin): array => [__($dropin[0]), $dropin[1]], Minn\Content\Inventory::KNOWN_DROPINS);
+}
+
+function add_allowed_options($new_options, $options = '')
+{
+    if ($options === '') {
+        global $allowed_options;
+        $allowed_options = Minn\Runtime\AllowedOptions::merge((array) $new_options, (array) ($allowed_options ?? []));
+        return $allowed_options;
+    }
+    return Minn\Runtime\AllowedOptions::merge((array) $new_options, (array) $options);
+}
+
+function add_option_whitelist($new_options, $options = '')
+{
+    _deprecated_function(__FUNCTION__, '5.5.0', 'add_allowed_options()');
+    return add_allowed_options($new_options, $options);
+}

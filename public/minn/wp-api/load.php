@@ -195,3 +195,14 @@ function wp_is_jsonp_request()
 {
     return isset($_GET['_jsonp']);
 }
+
+function wp_clone($input_object)
+{
+    return clone $input_object;
+}
+
+/** The engine keeps no recovery-mode session: its own recovery pauses the failing plugin instead. */
+function wp_is_recovery_mode()
+{
+    return false;
+}

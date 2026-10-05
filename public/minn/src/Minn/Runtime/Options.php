@@ -29,6 +29,9 @@ final class Options
     public const GUARDED = ['minn_runtime_symbols', 'minn_recovery_strikes', 'minn_cron_lock'];
     private const GUARDED_PREFIX = 'minn_login_throttle_';
 
+    /** The autoload column values that load an option with every request, in the reference's order. */
+    public const AUTOLOAD_VALUES = ['yes', 'on', 'auto-on', 'auto'];
+
     public function __construct(private readonly Db $db)
     {
     }
@@ -43,7 +46,8 @@ final class Options
     public function autoloaded(): array
     {
         $out = [];
-        foreach ($this->db->rows("SELECT option_name, option_value FROM {$this->db->table('options')} WHERE autoload IN ('yes', 'on', 'auto', 'auto-on')") as $row) {
+        $in = implode(', ', array_fill(0, count(self::AUTOLOAD_VALUES), '?'));
+        foreach ($this->db->rows("SELECT option_name, option_value FROM {$this->db->table('options')} WHERE autoload IN ({$in})", self::AUTOLOAD_VALUES) as $row) {
             $out[(string) $row['option_name']] = (string) $row['option_value'];
         }
         return $out;

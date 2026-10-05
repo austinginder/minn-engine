@@ -259,3 +259,8 @@ function kses_init()
         kses_init_filters();
     }
 }
+
+function wp_kses_uri_attributes()
+{
+    return apply_filters('wp_kses_uri_attributes', Kses::URI_ATTRIBUTES);
+}

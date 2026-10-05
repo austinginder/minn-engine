@@ -921,3 +921,13 @@ function wp_privacy_anonymize_data($type, $data = '')
     };
     return apply_filters('wp_privacy_anonymize_data', $anonymous, $type, $data);
 }
+
+function convert_invalid_entities($content)
+{
+    return Entities::convertInvalid((string) $content);
+}
+
+function wp_is_valid_utf8($bytes)
+{
+    return Minn\Support\Utf8::isValid((string) $bytes);
+}

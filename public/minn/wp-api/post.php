@@ -1695,3 +1695,12 @@ function walk_page_tree($pages, $depth, $current_page, $args)
     $walker = empty($args['walker']) ? new Walker_Page() : $args['walker'];
     return $walker->walk($pages, $depth, $args, $current_page);
 }
+
+function get_post_mime_types()
+{
+    $types = [];
+    foreach (Minn\Media\Kind::POST_MIME_TYPES as $pattern => [$label, $manage, $singular, $plural]) {
+        $types[$pattern] = [__($label), __($manage), _n_noop($singular, $plural)];
+    }
+    return apply_filters('post_mime_types', $types);
+}

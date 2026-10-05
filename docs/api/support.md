@@ -7,22 +7,24 @@ escaping, serialized readers, small helpers
 | [`Accents`](#accents) | final class | 22 | Accented and special Latin characters to their plain ASCII spelling; a character with no ASCII form stays as it is. |
 | [`DirectoryListing`](#directorylisting) | final class | 34 | Walks a directory the way the filesystem API lists it: named entries, dot entries skipped, hidden ones optional, recursion optional. |
 | [`Email`](#email) | final class | 69 | The address rules the reference applies: a local part from a fixed |
-| [`Entities`](#entities) | final class | 54 | HTML special-character encoding with the reference's quote styles and its |
+| [`Entities`](#entities) | final class | 77 | HTML special-character encoding with the reference's quote styles and its |
 | [`FileHeaders`](#fileheaders) | final class | 27 | Header values from a plugin or theme file. The labels (Plugin Name, |
 | [`FileTree`](#filetree) | final class | 70 | Whole-directory reads and copies. The engine's own installer, the update |
 | [`Files`](#files) | final class | 61 | Recursive filesystem work behind WP_Filesystem_Direct: best-effort tree |
-| [`Html`](#html) | final class | 80 |  |
+| [`Html`](#html) | final class | 91 |  |
 | [`Ip`](#ip) | final class | 22 | Addresses with their identifying tail removed, for logs and analytics that |
 | [`Json`](#json) | final class | 19 | Makes a value encodable: strings that are not valid UTF-8 get their high bytes replaced, recursively. |
-| [`Kses`](#kses) | final class | 332 | The HTML a user without unfiltered_html may store. Tags outside the |
+| [`Kses`](#kses) | final class | 338 | The HTML a user without unfiltered_html may store. Tags outside the |
 | [`Lists`](#lists) | final class | 90 | List shaping behind the facade's array utilities: the multi-field sort |
 | [`Locale`](#locale) | final class | 31 | The locale's calendar and number vocabulary as data: the names a site |
-| [`Markers`](#markers) | final class | 28 | The BEGIN/END marker blocks insert_with_markers() maintains in files like |
+| [`Markers`](#markers) | final class | 59 | The BEGIN/END marker blocks insert_with_markers() maintains in files like |
 | [`Paths`](#paths) | final class | 64 | File-system path and permission spellings. |
 | [`SearchReplace`](#searchreplace) | final class | 38 | String replace that walks serialized-PHP arrays of scalars without |
 | [`Serialized`](#serialized) | final class | 202 | Tolerant readers for the serialized-PHP blobs WordPress stores. Nothing |
 | [`Time`](#time) | final class | 21 | Human-scale spans: a number of seconds as the largest whole unit it fills, rounded, never below one. |
 | [`Url`](#url) | final class | 200 | URL shaping the escaping and query helpers share: the character cleanup |
+| [`Utf8`](#utf8) | final class | 8 | Whether bytes are well-formed UTF-8 as the reference judges them: overlong |
+| [`WebServer`](#webserver) | final class | 8 | What the SERVER_SOFTWARE string says about the web server in front of the site. |
 
 ## Accents
 
@@ -86,6 +88,10 @@ named or numeric entity stays as it is.
 - const `DECODE` = `array (   '&amp;' => '&',   '&#038;' => '&',   '&#x26;' => '&',   '&lt;' => '<',   '&#060;' => '<',   '&#x3C;' => '<',   '&gt;' => '>',   '&#062;' => '>',   '&#x3E;' => '>', )`
 - const `DOUBLE_QUOTES` = `array (   '&quot;' => '"',   '&#034;' => '"',   '&#x22;' => '"', )`
 - const `SINGLE_QUOTES` = `array (   '&#039;' => '\'',   '&#x27;' => '\'',   '&#39;' => '\'',   '&apos;' => '\'', )`
+- const `WINDOWS_1252` = `array (   '&#128;' => '&#8364;',   '&#129;' => '',   '&#130;' => '&#8218;',   '&#131;' => '&#402;',   '&#132;' => '&#8222;',   '&#133;' => '&#8230;',   '&#134;' => '&#8224;',   '&#135;' => '&#8225;',   '&#136;' => '&#710;',   '&#137;' => '&#8240;',   '&#138;' => '&#352;',   '&#139;' => '&#8249;',   '&#140;' => '&#338;',   '&#141;' => '',   '&#142;' => '&#381;',   '&#143;' => '',   '&#144;' => '',   '&#145;' => '&#8216;',   '&#146;' => '&#8217;',   '&#147;' => '&#8220;',   '&#148;' => '&#8221;',   '&#149;' => '&#8226;',   '&#150;' => '&#8211;',   '&#151;' => '&#8212;',   '&#152;' => '&#732;',   '&#153;' => '&#8482;',   '&#154;' => '&#353;',   '&#155;' => '&#8250;',   '&#156;' => '&#339;',   '&#157;' => '',   '&#158;' => '&#382;',   '&#159;' => '&#376;', )` — Decimal references 128 to 159 name Windows-1252 characters, not the C1
+controls Unicode puts there; each becomes the reference to the Unicode
+character it meant, and the five codes Windows-1252 leaves unassigned
+are removed. Only the exact unpadded decimal spelling is touched.
 
 ### static `specialchars(string $text, string|int|false $quoteStyle, bool $doubleEncode, callable $knownEntity): string`
 
@@ -96,6 +102,10 @@ The reference's special-characters escaping, with its quote styles and double-en
 ### static `decode(string $text, string|int $quoteStyle): string`
 
 The reverse of specialchars: the five characters back, with the quote pairs the style asks for.
+
+### static `convertInvalid(string $text): string`
+
+Windows-1252 numeric references rewritten as the Unicode references they meant.
 
 Internals: `encodeStrayAmpersands()` (private, line 40)
 
@@ -204,6 +214,13 @@ UTF-8 check and less-than encoder so its filters keep applying.
 
 - `@param Closure(string): string $validUtf8 @param Closure(string): string $encodeLessThan`
 
+### static `scriptBody(string $markup): ?string`
+
+The code inside markup that is exactly one bare script element once the
+surrounding whitespace is gone, or null for anything else: a tag with
+attributes, an empty element, a missing end. The tag names match in any
+case and the code is returned as written.
+
 
 ## Ip
 
@@ -247,6 +264,7 @@ Comments (the block delimiters) pass through untouched.
 - const `COMMENT` = `array (   'a' =>    array (     0 => 'href',     1 => 'title',     2 => 'rel',   ),   'abbr' =>    array (     0 => 'title',   ),   'acronym' =>    array (     0 => 'title',   ),   'b' =>    array (   ),   'blockquote' =>    array (     0 => 'cite',   ),   'cite' =>    array (   ),   'code' =>    array (   ),   'del' =>    array (     0 => 'datetime',   ),   'em' =>    array (   ),   'i' =>    array (   ),   'q' =>    array (     0 => 'cite',   ),   's' =>    array (   ),   'strike' =>    array (   ),   'strong' =>    array (   ), )`
 - const `GLOBAL_ATTRIBUTES` = `array (   0 => 'class',   1 => 'id',   2 => 'style',   3 => 'title',   4 => 'role',   5 => 'dir',   6 => 'lang',   7 => 'xml:lang',   8 => 'hidden',   9 => 'tabindex', )`
 - const `URL_ATTRIBUTES` = `array (   0 => 'href',   1 => 'src',   2 => 'cite',   3 => 'poster',   4 => 'longdesc',   5 => 'usemap', )`
+- const `URI_ATTRIBUTES` = `array (   0 => 'action',   1 => 'archive',   2 => 'background',   3 => 'cite',   4 => 'classid',   5 => 'codebase',   6 => 'data',   7 => 'formaction',   8 => 'href',   9 => 'icon',   10 => 'longdesc',   11 => 'manifest',   12 => 'poster',   13 => 'profile',   14 => 'src',   15 => 'usemap',   16 => 'xmlns', )` — Every attribute the reference treats as holding a URI, so its scheme is judged wherever the attribute is allowed.
 - const `SCHEMES` = `array (   0 => 'http',   1 => 'https',   2 => 'ftp',   3 => 'ftps',   4 => 'mailto',   5 => 'news',   6 => 'irc',   7 => 'gopher',   8 => 'nntp',   9 => 'feed',   10 => 'telnet',   11 => 'mms',   12 => 'rtsp',   13 => 'sms',   14 => 'svn',   15 => 'tel',   16 => 'fax',   17 => 'xmpp',   18 => 'webcal',   19 => 'urn', )`
 - const `CSS_PROPERTIES` = `array (   0 => 'background',   1 => 'background-color',   2 => 'background-image',   3 => 'background-position',   4 => 'background-repeat',   5 => 'background-size',   6 => 'background-attachment',   7 => 'background-blend-mode',   8 => 'border',   9 => 'border-radius',   10 => 'border-width',   11 => 'border-color',   12 => 'border-style',   13 => 'border-spacing',   14 => 'border-collapse',   15 => 'border-top',   16 => 'border-right',   17 => 'border-bottom',   18 => 'border-left',   19 => 'border-top-color',   20 => 'border-right-color',   21 => 'border-bottom-color',   22 => 'border-left-color',   23 => 'border-top-width',   24 => 'border-right-width',   25 => 'border-bottom-width',   26 => 'border-left-width',   27 => 'border-top-style',   28 => 'border-right-style',   29 => 'border-bottom-style',   30 => 'border-left-style',   31 => 'border-top-left-radius',   32 => 'border-top-right-radius',   33 => 'border-bottom-right-radius',   34 => 'border-bottom-left-radius',   35 => 'caption-side',   36 => 'clear',   37 => 'color',   38 => 'columns',   39 => 'column-count',   40 => 'column-gap',   41 => 'column-width',   42 => 'column-span',   43 => 'column-rule',   44 => 'cursor',   45 => 'direction',   46 => 'display',   47 => 'filter',   48 => 'float',   49 => 'flex',   50 => 'flex-basis',   51 => 'flex-direction',   52 => 'flex-flow',   53 => 'flex-grow',   54 => 'flex-shrink',   55 => 'flex-wrap',   56 => 'font',   57 => 'font-family',   58 => 'font-size',   59 => 'font-style',   60 => 'font-variant',   61 => 'font-weight',   62 => 'font-display',   63 => 'gap',   64 => 'row-gap',   65 => 'column-gap',   66 => 'grid',   67 => 'grid-area',   68 => 'grid-auto-columns',   69 => 'grid-auto-flow',   70 => 'grid-auto-rows',   71 => 'grid-column',   72 => 'grid-column-end',   73 => 'grid-column-gap',   74 => 'grid-column-start',   75 => 'grid-gap',   76 => 'grid-row',   77 => 'grid-row-end',   78 => 'grid-row-gap',   79 => 'grid-row-start',   80 => 'grid-template',   81 => 'grid-template-areas',   82 => 'grid-template-columns',   83 => 'grid-template-rows',   84 => 'height',   85 => 'min-height',   86 => 'max-height',   87 => 'width',   88 => 'min-width',   89 => 'max-width',   90 => 'justify-content',   91 => 'justify-items',   92 => 'justify-self',   93 => 'align-content',   94 => 'align-items',   95 => 'align-self',   96 => 'letter-spacing',   97 => 'line-height',   98 => 'list-style',   99 => 'list-style-image',   100 => 'list-style-position',   101 => 'list-style-type',   102 => 'margin',   103 => 'margin-top',   104 => 'margin-right',   105 => 'margin-bottom',   106 => 'margin-left',   107 => 'margin-block',   108 => 'margin-block-start',   109 => 'margin-block-end',   110 => 'margin-inline',   111 => 'margin-inline-start',   112 => 'margin-inline-end',   113 => 'object-fit',   114 => 'object-position',   115 => 'opacity',   116 => 'order',   117 => 'overflow',   118 => 'overflow-wrap',   119 => 'overflow-x',   120 => 'overflow-y',   121 => 'padding',   122 => 'padding-top',   123 => 'padding-right',   124 => 'padding-bottom',   125 => 'padding-left',   126 => 'padding-block',   127 => 'padding-block-start',   128 => 'padding-block-end',   129 => 'padding-inline',   130 => 'padding-inline-start',   131 => 'padding-inline-end',   132 => 'position',   133 => 'resize',   134 => 'table-layout',   135 => 'text-align',   136 => 'text-decoration',   137 => 'text-indent',   138 => 'text-shadow',   139 => 'text-transform',   140 => 'text-wrap',   141 => 'vertical-align',   142 => 'visibility',   143 => 'white-space',   144 => 'word-break',   145 => 'word-spacing',   146 => 'word-wrap',   147 => 'writing-mode',   148 => 'aspect-ratio',   149 => 'box-shadow',   150 => 'box-sizing',   151 => 'z-index', )`
 - const `REFERENCE` = `'/&(#[0-9]+|#[xX][0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]{0,31});/'`
@@ -282,7 +300,7 @@ same way. A value with a good scheme is returned as given.
 
 A style attribute's value with only the listed properties kept.
 
-Internals: `deepDecode()` (private, line 163), `visible()` (private, line 176), `normalizeText()` (private, line 191), `normalizeAttribute()` (private, line 214), `unquoted()` (private, line 234), `named()` (private, line 244), `codePoint()` (private, line 251), `attributes()` (private, line 261), `srcset()` (private, line 298), `css()` (private, line 321)
+Internals: `deepDecode()` (private, line 169), `visible()` (private, line 182), `normalizeText()` (private, line 197), `normalizeAttribute()` (private, line 220), `unquoted()` (private, line 240), `named()` (private, line 250), `codePoint()` (private, line 257), `attributes()` (private, line 267), `srcset()` (private, line 304), `css()` (private, line 327)
 
 
 ## Lists
@@ -373,6 +391,17 @@ do-not-edit preamble ahead of the inserted lines.
 Replaces the lines between a marker's begin and end comments in a file.
 
 - `@param list<string> $lines`
+
+### static `read(string $file, string $marker): array`
+
+The lines between a marker's begin and end comments, every block of it
+in order. A line opens or closes a block when it contains the comment
+anywhere (case-sensitive); lines that start with "#" are left out, so
+the preamble and any nested markers are, while indented comments stay.
+Lines split on "\n" only, and a block left open at the end of the file
+keeps the empty line after its final newline.
+
+- `@return list<string>`
 
 
 ## Paths
@@ -531,4 +560,28 @@ credentials, and a host the caller allows (local paths always pass).
 - `@param Closure(string): list<string> $allowedHosts the hosts allowed for the target's host`
 
 Internals: `isPrivate()` (private, line 127)
+
+
+## Utf8
+
+`final class Minn\Support\Utf8` · `public/minn/src/Minn/Support/Utf8.php`
+
+Whether bytes are well-formed UTF-8 as the reference judges them: overlong
+forms, surrogates, code points past U+10FFFF, stray continuation bytes and
+truncated sequences fail; noncharacters, NUL and a byte order mark pass.
+
+### static `isValid(string $bytes): bool`
+
+True for well-formed UTF-8, including the empty string.
+
+
+## WebServer
+
+`final class Minn\Support\WebServer` · `public/minn/src/Minn/Support/WebServer.php`
+
+What the SERVER_SOFTWARE string says about the web server in front of the site.
+
+### static `isApache(string $software): bool`
+
+Whether the server speaks Apache's module and .htaccess conventions: Apache itself, or LiteSpeed.
 
