@@ -42,11 +42,13 @@ final class Runtime
         if (self::$shared !== null) {
             return self::$shared;
         }
-        $root = defined('ABSPATH') ? ABSPATH : rtrim(WP_CLI::get_runner()->find_wp_root(), '/') . '/';
-        if (!is_file($root . 'wp-config.php')) {
-            WP_CLI::error("No wp-config.php found at {$root}.");
+        if (!defined('DB_NAME')) {
+            $root = defined('ABSPATH') ? ABSPATH : rtrim(WP_CLI::get_runner()->find_wp_root(), '/') . '/';
+            if (!is_file($root . 'wp-config.php')) {
+                WP_CLI::error("No wp-config.php found at {$root}.");
+            }
+            self::loadConfig($root . 'wp-config.php');
         }
-        self::loadConfig($root . 'wp-config.php');
         $db = Db::shared();
         return self::$shared = new self($db, new Site($db), new Users($db), Capabilities::fromDb($db), Permalinks::fromDb($db));
     }
@@ -74,6 +76,20 @@ final class Runtime
         $runtime->set('theme', $theme);
         Plugins::load($runtime);
         return self::$engine = $runtime;
+    }
+
+    /**
+     * The runtime for a command WP-CLI loads WordPress for: WP-CLI has already
+     * run wp-config.php, so the engine boots from the constants it defined,
+     * loads the site's plugins as code (their commands register as they load),
+     * and hands control back for WP-CLI to run the command.
+     */
+    public static function standIn(): void
+    {
+        if (!defined('MINN_CLI_RUNTIME')) {
+            define('MINN_CLI_RUNTIME', true);
+        }
+        self::bootEngine();
     }
 
     /** wp-config.php sets $table_prefix as a variable; the engine reads it as a global. */

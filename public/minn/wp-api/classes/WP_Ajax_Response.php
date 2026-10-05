@@ -4,6 +4,7 @@
  * reference: each add() renders one <response action='{action}_{id}'>
  * element; send() wraps them in the <wp_ajax> document and dies.
  */
+#[AllowDynamicProperties]
 class WP_Ajax_Response
 {
     public $responses = [];

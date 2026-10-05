@@ -3,6 +3,7 @@
 use Minn\Runtime\TermQuery;
 
 /** Term queries as an object; the work is get_terms(), so both agree by construction. */
+#[AllowDynamicProperties]
 class WP_Term_Query
 {
     public $request;

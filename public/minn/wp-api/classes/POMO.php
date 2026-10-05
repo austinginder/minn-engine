@@ -11,6 +11,7 @@ use Minn\I18n\MoFile;
 use Minn\I18n\PluralExpression;
 use Minn\I18n\PluralRule;
 
+#[AllowDynamicProperties]
 class Translation_Entry
 {
     public $is_plural = false;
@@ -60,6 +61,7 @@ class Translation_Entry
     }
 }
 
+#[AllowDynamicProperties]
 class Translations
 {
     public $entries = [];
@@ -315,6 +317,7 @@ class MO extends Gettext_Translations
     }
 }
 
+#[AllowDynamicProperties]
 class Plural_Forms
 {
     const OP_CHARS = '|&><!=%?:';

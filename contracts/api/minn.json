@@ -19830,7 +19830,7 @@
             "namespace": "Minn\\Cli",
             "kind": "final class",
             "file": "public/minn/src/Minn/Cli/Runtime.php",
-            "lines": 64,
+            "lines": 80,
             "doc": "The engine, booted for a command: reads the site's wp-config.php (which\nends in wp-settings.php, whose engine boot stops short of serving under\nWP-CLI) so the database constants and table prefix are known.",
             "implements": [],
             "extends": null,
@@ -19983,7 +19983,7 @@
                     "shapes": [],
                     "params": [],
                     "line": 40,
-                    "end": 52
+                    "end": 54
                 },
                 {
                     "routes": [],
@@ -19994,8 +19994,20 @@
                     "doc": "The full WordPress runtime for a command, booted once: the facade is\ndefined, the site's plugins load as code, and the lifecycle actions\nfire, so a verb can fire a scheduled hook whose callback a plugin\nregistered. The lighter boot() does none of this; only a command that\nneeds the runtime (cron) asks for this, since it loads every plugin.",
                     "shapes": [],
                     "params": [],
-                    "line": 61,
-                    "end": 77
+                    "line": 63,
+                    "end": 79
+                },
+                {
+                    "routes": [],
+                    "name": "standIn",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "standIn(): void",
+                    "doc": "The runtime for a command WP-CLI loads WordPress for: WP-CLI has already\nrun wp-config.php, so the engine boots from the constants it defined,\nloads the site's plugins as code (their commands register as they load),\nand hands control back for WP-CLI to run the command.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 87,
+                    "end": 93
                 },
                 {
                     "routes": [],
@@ -20014,8 +20026,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 80,
-                    "end": 87
+                    "line": 96,
+                    "end": 103
                 }
             ]
         },
@@ -66392,7 +66404,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/RouteMatch.php",
-            "lines": 42,
+            "lines": 68,
             "doc": "Finds the registered handler for a method and path among the runtime's route table.",
             "implements": [],
             "extends": null,
@@ -66448,7 +66460,45 @@
                         }
                     ],
                     "line": 19,
-                    "end": 50
+                    "end": 51
+                },
+                {
+                    "routes": [],
+                    "name": "route",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "route(array $namespaces, callable $routesFor, string $path): ?array",
+                    "doc": "The first registered route whose pattern matches a path, whatever the\nmethod, with its handlers; null when none does. An OPTIONS request is\nanswered from this.",
+                    "shapes": [
+                        "@param list<string> $namespaces",
+                        "@param callable(string): array<string, list<array<string, mixed>>> $routesFor",
+                        "@return array{route: string, handlers: list<array<string, mixed>>}|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "namespaces",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "routesFor",
+                            "type": "callable",
+                            "shape": "callable(string): array<string, list<array<string, mixed>>>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "path",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 62,
+                    "end": 76
                 }
             ]
         },
@@ -73944,7 +73994,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Constants.php",
-            "lines": 56,
+            "lines": 60,
             "doc": "The constants plugin code expects: the fixed set from data/constants.json\n(captured from the reference) and the per-site ones computed here. Nothing\nalready defined is touched, so wp-config.php keeps the last word.",
             "implements": [],
             "extends": null,
@@ -73977,7 +74027,7 @@
                         }
                     ],
                     "line": 15,
-                    "end": 66
+                    "end": 70
                 }
             ]
         },
@@ -78370,7 +78420,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Plugins.php",
-            "lines": 210,
+            "lines": 212,
             "doc": "Loads the site's plugins into the runtime the way the reference does:\nmu-plugins first, then active_plugins in stored order, each file\nincluded once. A plugin loads only when the static symbol read finds\nnothing the runtime lacks; otherwise it is reported and skipped so the\nsite keeps rendering. The lifecycle actions fire between the phases.",
             "implements": [],
             "extends": null,
@@ -78457,8 +78507,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 156,
-                    "end": 159
+                    "line": 158,
+                    "end": 161
                 },
                 {
                     "routes": [],
@@ -78471,8 +78521,8 @@
                         "@return array<string, array<string, mixed>> plugin file => why it did not load"
                     ],
                     "params": [],
-                    "line": 166,
-                    "end": 169
+                    "line": 168,
+                    "end": 171
                 },
                 {
                     "routes": [],
@@ -78491,8 +78541,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 172,
-                    "end": 175
+                    "line": 174,
+                    "end": 177
                 },
                 {
                     "routes": [],
@@ -78512,7 +78562,7 @@
                         }
                     ],
                     "line": 67,
-                    "end": 111
+                    "end": 113
                 },
                 {
                     "routes": [],
@@ -78531,8 +78581,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 120,
-                    "end": 136
+                    "line": 122,
+                    "end": 138
                 },
                 {
                     "routes": [],
@@ -78558,8 +78608,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 143,
-                    "end": 149
+                    "line": 145,
+                    "end": 151
                 },
                 {
                     "routes": [],
@@ -78592,8 +78642,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 177,
-                    "end": 200
+                    "line": 179,
+                    "end": 202
                 },
                 {
                     "routes": [],
@@ -78626,8 +78676,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 208,
-                    "end": 220
+                    "line": 210,
+                    "end": 222
                 },
                 {
                     "routes": [],
@@ -78646,8 +78696,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 223,
-                    "end": 228
+                    "line": 225,
+                    "end": 230
                 }
             ]
         },

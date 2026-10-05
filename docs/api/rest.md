@@ -42,7 +42,7 @@ the wp/v2 surface: shapes and controllers
 | [`RevisionsController`](#revisionscontroller) | final readonly class | 142 | wp/v2 revisions and autosaves under posts, pages, and blocks. |
 | [`RouteArgs`](#routeargs) | final class | 36 | The argument groups a route registers with, filled the way register_rest_route fills them. |
 | [`RouteIndex`](#routeindex) | final class | 61 | The description of one route the REST index publishes: namespace, methods, endpoints with their argument schemas, self link. |
-| [`RouteMatch`](#routematch) | final class | 42 | Finds the registered handler for a method and path among the runtime's route table. |
+| [`RouteMatch`](#routematch) | final class | 68 | Finds the registered handler for a method and path among the runtime's route table. |
 | [`RouteTable`](#routetable) | final class | 38 | The registered endpoints in dispatch shape: one handler list per route, methods as a set, non-numeric keys lifted into the route's options. |
 | [`RuntimeRoutes`](#runtimeroutes) | final class | 103 | Routes plugin code registered with register_rest_route(), answered |
 | [`Schema`](#schema) | final readonly class | 473 | JSON-schema handling the way the REST API's argument validation does it: |
@@ -1646,6 +1646,16 @@ The handler for a method and path across the registered namespaces, or the refus
 - `@param list<string> $namespaces the registered namespaces`
 - `@param callable(string): array<string, list<array<string, mixed>>> $routesFor the (filtered) routes of one namespace, or all when given ''`
 - `@return array{route: string, handler: array<string, mixed>, params: array<string, string>, defaults: array<string, mixed>}|Refusal`
+
+### static `route(array $namespaces, callable $routesFor, string $path): ?array`
+
+The first registered route whose pattern matches a path, whatever the
+method, with its handlers; null when none does. An OPTIONS request is
+answered from this.
+
+- `@param list<string> $namespaces`
+- `@param callable(string): array<string, list<array<string, mixed>>> $routesFor`
+- `@return array{route: string, handlers: list<array<string, mixed>>}|null`
 
 
 ## RouteTable

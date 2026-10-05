@@ -2261,3 +2261,46 @@ neighbours over those classes. Fixture `contracts/fixtures/api/l10n.json`
 Not yet: `switch_to_user_locale`, the admin and network core files, and
 the engine's own front-end strings, which are written in English and do
 not pass through `__()`.
+
+## WP-CLI on the runtime (2026-10-05)
+
+A WP-CLI command the engine does not answer itself no longer stops at
+"This command needs WordPress itself": the engine's WordPress runtime
+stands in (`contracts/layout.md`). What that took, each found by running
+real commands on both stacks:
+
+- **Hooks added before the runtime existed.** WP-CLI's `add_wp_hook`
+  writes `$wp_filter[$tag][$priority][$id] = ['function', 'accepted_args']`
+  when `add_filter` does not exist yet (that is how `--user`,
+  `--skip-plugins` and `--skip-themes` work). `_minn_bind_hook_globals()`
+  now adopts those plain-array entries into the registry instead of
+  resetting `$wp_filter` over them.
+- **The plugin and theme lists go through `get_option`.** WP-CLI skips
+  plugins by filtering `pre_option_active_plugins` / `option_active_plugins`
+  (removed again at `plugins_loaded`) and themes by filtering
+  `option_template` / `option_stylesheet` from `setup_theme`; a plugin that
+  switches others off per request does the same. `Plugins::load` read the
+  raw rows before.
+- **`$_wp_using_ext_object_cache`** exists from the start (null) and
+  `wp_using_ext_object_cache($using)` stores into it and returns the
+  previous value; WP-CLI reads the global after loading.
+- **Dynamic properties.** The 96 classes the reference marks
+  `#[AllowDynamicProperties]` (read by reflection into
+  `data/dynamic-properties.json`) are marked here too, placeholders
+  included; WP-CLI's own `post list` sets `$post->url`. The api suite fails
+  if one is missing.
+- **REST, for WooCommerce's CLI** (fixture `contracts/fixtures/api/rest-options.json`).
+  `rest_handle_options_request` answers an OPTIONS request to a plugin's
+  route with the route's help-context description (namespace, methods,
+  endpoints and their arguments, the schema when the route declares one,
+  the self link for a route without parameters) and one no route matches
+  with `[]` (200). It is added by `rest_api_default_filters` on
+  `rest_api_init`, after the plugins' own `rest_pre_dispatch` callbacks:
+  ACF's returns nothing at the same priority and would swallow the answer
+  if it ran later. A HEAD request is served by the route's GET handler
+  (`wp wc … --format=count` sends HEAD). WooCommerce passes its REST field
+  list as `WP_Query`'s `fields`; anything but a string reads as `all`.
+- **Not yet:** OPTIONS on the engine's own `wp/v2` routes (in-process and
+  over HTTP both 404 where the reference describes the route; the B1
+  "Route::output" item), and Jetpack's `status`, which needs the XML-RPC
+  client (Mute).

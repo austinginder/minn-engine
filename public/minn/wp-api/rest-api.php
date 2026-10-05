@@ -29,8 +29,15 @@ function rest_api_register_rewrites()
 {
 }
 
+/**
+ * The REST API's own filters, added when the server starts, after every
+ * plugin has hooked in: a plugin's rest_pre_dispatch callback at the same
+ * priority runs first (ACF's returns nothing there, which would otherwise
+ * swallow the OPTIONS answer).
+ */
 function rest_api_default_filters()
 {
+    add_filter('rest_pre_dispatch', 'rest_handle_options_request', 10, 3);
 }
 
 function register_rest_route($route_namespace, $route, $args = [], $override = false)
@@ -118,9 +125,29 @@ function rest_convert_error_to_response($error)
     return new WP_REST_Response($data, $status);
 }
 
+/**
+ * An OPTIONS request to a route a plugin registered is answered with the
+ * route's description in the help context (namespace, methods, endpoints with
+ * their arguments, the schema, the self link), and one no route matches with
+ * an empty description. The engine answers its own routes itself, so those
+ * pass through.
+ */
 function rest_handle_options_request($response, $handler, $request)
 {
-    return $response;
+    if (!empty($response) || !$request instanceof WP_REST_Request || $request->get_method() !== 'OPTIONS' || !$handler instanceof WP_REST_Server) {
+        return $response;
+    }
+    $found = Minn\Rest\RouteMatch::route($handler->get_namespaces(), static fn (string $namespace) => $handler->get_routes($namespace), (string) $request->get_route());
+    if ($found !== null && $handler->engine_route($found['route'])) {
+        return $response;
+    }
+    // A path no route matches is still answered, with nothing to describe.
+    if ($found === null) {
+        return new WP_REST_Response([]);
+    }
+    $answer = new WP_REST_Response($handler->get_data_for_route($found['route'], $found['handlers'], 'help'));
+    $answer->set_matched_route($found['route']);
+    return $answer;
 }
 
 function rest_send_cors_headers($value)

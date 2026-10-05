@@ -5,6 +5,7 @@
  * locale's .mo actually exists (en_US included), a set() path wins, and
  * has('default') is true regardless.
  */
+#[AllowDynamicProperties]
 class WP_Textdomain_Registry
 {
     protected $all = [];

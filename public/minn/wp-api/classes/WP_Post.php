@@ -1,6 +1,7 @@
 <?php
 
 /** A post row as an object. */
+#[AllowDynamicProperties]
 final class WP_Post
 {
     public $ID;

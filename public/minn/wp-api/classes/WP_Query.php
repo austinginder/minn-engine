@@ -173,7 +173,7 @@ class WP_Query
         $q = &$this->query_vars;
         $result = Runtime::postQuery()->run($q, $this->is_home);
         $rows = $result['rows'];
-        $fields = (string) ($q['fields'] ?? 'all');
+        $fields = is_string($q['fields'] ?? null) ? $q['fields'] : 'all';
         if ($result['sticky'] !== [] && $fields === 'all') {
             $types = $q['post_type'] === '' || $q['post_type'] === null ? ['post'] : ($q['post_type'] === 'any' ? null : (array) $q['post_type']);
             $result['sticky'] = $types === null ? $result['sticky'] : array_values(array_filter($result['sticky'], static fn (array $p) => in_array($p['post_type'], $types, true)));

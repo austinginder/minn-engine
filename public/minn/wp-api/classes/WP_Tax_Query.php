@@ -4,6 +4,7 @@ use Minn\Query\TaxSql;
 use Minn\Runtime\Runtime;
 
 /** A taxonomy query: the clauses as given, the SQL fragments from Minn\Query\TaxSql. */
+#[AllowDynamicProperties]
 class WP_Tax_Query
 {
     public $queries = [];

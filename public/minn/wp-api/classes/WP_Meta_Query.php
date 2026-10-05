@@ -4,6 +4,7 @@ use Minn\Query\MetaSql;
 use Minn\Runtime\Runtime;
 
 /** A meta query: the clauses as given, the SQL fragments from Minn\Query\MetaSql. */
+#[AllowDynamicProperties]
 class WP_Meta_Query
 {
     public $queries = [];

@@ -4,6 +4,7 @@
  * db_fields parent/id pair, displayed depth-first through the four
  * element methods subclasses override. Traversal lives in Minn\Runtime\TreeWalk.
  */
+#[AllowDynamicProperties]
 class Walker
 {
     public $tree_type;

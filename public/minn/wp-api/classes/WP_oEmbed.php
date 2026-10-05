@@ -3,6 +3,7 @@
 use Minn\Runtime\OEmbed;
 
 /** The oEmbed provider table (data/oembed-providers.json) and the lookup; fetching is left to wp_remote_get. */
+#[AllowDynamicProperties]
 class WP_oEmbed
 {
     public $providers = [];

@@ -13,6 +13,7 @@ use Minn\Theme\UserStyles;
  * closed discussion, versioned JSON body) and linked to the theme term so
  * the next call finds it.
  */
+#[AllowDynamicProperties]
 final class WP_Theme_JSON_Resolver
 {
     public static function get_user_global_styles_post_id(): int

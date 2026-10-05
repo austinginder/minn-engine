@@ -1,6 +1,7 @@
 <?php
 
 /** A comment row as an object. */
+#[AllowDynamicProperties]
 final class WP_Comment
 {
     public $comment_ID;

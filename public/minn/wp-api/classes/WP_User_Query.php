@@ -4,6 +4,7 @@
  * this shapes results the probed way: WP_User objects for 'all', STRING ids
  * for 'ID', stdClass records holding just the named columns for an array.
  */
+#[AllowDynamicProperties]
 class WP_User_Query
 {
     public $query_vars = [];

@@ -2,12 +2,12 @@
     "generated": "2026-10-05",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 477,
+        "minn": 478,
         "composes": 776,
-        "leaf": 397,
-        "noop": 1309,
-        "functions": 2953,
-        "minnMethods": 463,
+        "leaf": 398,
+        "noop": 1308,
+        "functions": 2954,
+        "minnMethods": 464,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -4872,6 +4872,13 @@
                 "home_url",
                 "parse_url"
             ]
+        },
+        "WP_REST_Server::engine_route": {
+            "file": "classes/WP_REST_Server.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
         },
         "WP_REST_Server::envelope_response": {
             "file": "classes/WP_REST_Server.php",
@@ -9874,7 +9881,7 @@
         },
         "_minn_bind_hook_globals": {
             "file": "plugin.php",
-            "lines": 11,
+            "lines": 24,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::actionCounters",
@@ -9885,6 +9892,7 @@
                 "Minn\\Runtime\\Runtime::stackRef"
             ],
             "composes": [
+                "add_filter",
                 "wp_roles"
             ]
         },
@@ -19157,10 +19165,12 @@
         },
         "rest_api_default_filters": {
             "file": "rest-api.php",
-            "lines": 0,
+            "lines": 1,
             "kind": "noop",
             "minn": [],
-            "composes": []
+            "composes": [
+                "add_filter"
+            ]
         },
         "rest_api_init": {
             "file": "rest-api.php",
@@ -19450,9 +19460,11 @@
         },
         "rest_handle_options_request": {
             "file": "rest-api.php",
-            "lines": 1,
-            "kind": "noop",
-            "minn": [],
+            "lines": 14,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Rest\\RouteMatch::route"
+            ],
             "composes": []
         },
         "rest_is_array": {
@@ -26889,8 +26901,8 @@
         },
         "wp_using_ext_object_cache": {
             "file": "load.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 6,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },

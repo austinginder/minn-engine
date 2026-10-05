@@ -3,6 +3,7 @@
 use Minn\Runtime\Assets;
 
 /** A read view of the asset registry in the shape plugins inspect: $wp_scripts->registered[$handle]->src and friends. */
+#[AllowDynamicProperties]
 class WP_Dependencies
 {
     public $registered = [];
@@ -169,6 +170,7 @@ class WP_Styles extends WP_Dependencies
     }
 }
 
+#[AllowDynamicProperties]
 class _WP_Dependency
 {
     public $handle;

@@ -31,7 +31,8 @@ final class RouteMatch
             }
             $params = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
             foreach ($handlers as $handler) {
-                if (empty($handler['methods'][$method])) {
+                // A HEAD request is served by the handler that answers GET.
+                if (empty($handler['methods'][$method]) && !($method === 'HEAD' && !empty($handler['methods']['GET']))) {
                     continue;
                 }
                 if (!is_callable($handler['callback'])) {
@@ -47,5 +48,30 @@ final class RouteMatch
             }
         }
         return new Refusal('rest_no_route', 'No route was found matching the URL and request method.', ['status' => 404]);
+    }
+
+    /**
+     * The first registered route whose pattern matches a path, whatever the
+     * method, with its handlers; null when none does. An OPTIONS request is
+     * answered from this.
+     *
+     * @param list<string> $namespaces
+     * @param callable(string): array<string, list<array<string, mixed>>> $routesFor
+     * @return array{route: string, handlers: list<array<string, mixed>>}|null
+     */
+    public static function route(array $namespaces, callable $routesFor, string $path): ?array
+    {
+        $tables = [];
+        foreach ($namespaces as $namespace) {
+            if (str_starts_with(trim($path, '/'), $namespace)) {
+                $tables[] = $routesFor($namespace);
+            }
+        }
+        foreach ($tables === [] ? $routesFor('') : array_merge(...$tables) as $route => $handlers) {
+            if (preg_match('@^' . $route . '$@i', $path) === 1) {
+                return ['route' => (string) $route, 'handlers' => array_values($handlers)];
+            }
+        }
+        return null;
     }
 }

@@ -19,13 +19,12 @@ require_once __DIR__ . '/src/Minn/Autoloader.php';
 if (defined('WP_CLI') && WP_CLI) {
     // The engine's own commands boot through Minn\Cli\Runtime and set this
     // constant first. Reaching here without it means WP-CLI is loading
-    // WordPress for a command the engine does not answer.
+    // WordPress for a command the engine does not answer itself (a plugin's
+    // command, wp eval, a bundled command): the engine's WordPress runtime
+    // stands in, plugins loaded, and WP-CLI runs the command against it.
     if (!defined('MINN_CLI_RUNTIME')) {
-        WP_CLI::error(
-            "This command needs WordPress itself, which Minn Engine does not contain.\n"
-            . 'The engine answers: option get/add/update/delete/set, user list/get/login/create/update/delete, plugin list/install/update/activate/deactivate/delete/is-installed/is-active/search, theme list/install/update/activate/delete/is-installed/is-active/search, cache flush, rewrite flush/structure, search-replace, maintenance-mode, minn version/info/probe, '
-            . "and WP-CLI's own config and db commands."
-        );
+        Minn\Autoloader::register();
+        Minn\Cli\Runtime::standIn();
     }
     return;
 }

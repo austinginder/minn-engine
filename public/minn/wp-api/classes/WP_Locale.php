@@ -9,6 +9,7 @@ use Minn\Support\Locale as MinnLocale;
  * the captured shape; the engine renders no core translations yet, and
  * every string passes through the translation filters on the way out.
  */
+#[AllowDynamicProperties]
 class WP_Locale
 {
     public $weekday = [];

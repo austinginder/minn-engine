@@ -1,5 +1,6 @@
 <?php
 
+#[AllowDynamicProperties]
 class NOOP_Translations
 {
     public $entries = [];

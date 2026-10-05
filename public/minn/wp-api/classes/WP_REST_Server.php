@@ -16,6 +16,7 @@ use Minn\Runtime\Runtime;
  * The route registry and dispatcher plugin code registers into. Routes it
  * does not hold are answered by the engine's own REST layer.
  */
+#[AllowDynamicProperties]
 class WP_REST_Server
 {
     const READABLE = 'GET';
@@ -107,6 +108,12 @@ class WP_REST_Server
             }
         }
         return $namespaces;
+    }
+
+    /** Whether a route pattern is one of the engine's own, which the engine answers itself. */
+    public function engine_route(string $route): bool
+    {
+        return isset($this->engine_endpoints()[$route]) && !isset($this->endpoints[$route]);
     }
 
     /** The engine's own routes as table entries, so plugin code that reads the table sees the whole site; each answers through the engine. */

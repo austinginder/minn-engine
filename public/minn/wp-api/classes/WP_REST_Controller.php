@@ -3,6 +3,7 @@
 use Minn\Rest\Fields;
 
 /** The controller base plugin code extends. Defaults from contracts/fixtures/api/rest.json. */
+#[AllowDynamicProperties]
 abstract class WP_REST_Controller
 {
     protected $namespace;

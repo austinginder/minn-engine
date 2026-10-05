@@ -152,6 +152,7 @@ class WP_Block
 }
 
 /** The inner blocks of a block, with the context their parent provides. */
+#[AllowDynamicProperties]
 class WP_Block_List implements Iterator, ArrayAccess, Countable
 {
     protected $blocks;
@@ -229,6 +230,7 @@ class WP_Block_List implements Iterator, ArrayAccess, Countable
 }
 
 /** The block being rendered, for get_block_wrapper_attributes(), and the supports that shape its wrapper. */
+#[AllowDynamicProperties]
 final class WP_Block_Supports
 {
     public static $block_to_render = null;

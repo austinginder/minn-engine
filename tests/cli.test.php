@@ -395,5 +395,45 @@ $run($ENGINE_DIR, "rewrite structure '/%postname%/'");
 @unlink("$ENGINE_DIR/.maintenance");
 @unlink("$REF_DIR/.maintenance");
 
+// Commands WP-CLI loads WordPress for: the engine's runtime stands in, so
+// WP-CLI's bundled commands and wp eval run against the facade.
+foreach ([
+    'post list --format=json --fields=ID,post_title,post_status --orderby=ID --order=ASC',
+    'post get 1 --fields=ID,post_title,post_name,post_status --format=json',
+    'post meta list 5 --format=json',
+    'post url 1',
+    'post exists 1',
+    'term list category --format=json --fields=term_id,name,slug,count',
+    'comment list --format=json --fields=comment_ID,comment_author,comment_approved',
+    'user meta get 1 nickname',
+    'role list --format=json --fields=name,role',
+    'cap list editor --format=json',
+    'post-type list --format=json --fields=name,public',
+    'taxonomy list --format=json --fields=name,public',
+    'menu list --format=json --fields=term_id,name,slug',
+    "eval 'echo get_option(\"home\"), \" \", wp_count_posts()->publish;'",
+] as $command) {
+    $same("wp {$command} runs on the engine's runtime", $command);
+}
+
+// A plugin's own command registers as the plugin loads and runs against the
+// engine; the fixture plugin is switched on for both stacks (one database).
+$plugin = static function (string $dir, string $command): array {
+    $descriptors = [0 => ['pipe', 'r'], 1 => ['pipe', 'w'], 2 => ['pipe', 'w']];
+    $process = proc_open("wp {$command} --no-color", $descriptors, $pipes, $dir);
+    fclose($pipes[0]);
+    $out = stream_get_contents($pipes[1]) . preg_replace('/^(Notice|Deprecated|Warning): .*$\n?/m', '', (string) stream_get_contents($pipes[2]));
+    fclose($pipes[1]);
+    fclose($pipes[2]);
+    return [rtrim($out), proc_close($process)];
+};
+$plugin($REF_DIR, 'plugin activate minn-test-cli');
+foreach (['zz-cli-probe hello --name=Austin', 'zz-cli-probe fail', 'zz-cli-probe hello --skip-plugins', "eval 'echo get_current_user_id(), \" \", current_user_can(\"manage_options\") ? \"admin\" : \"-\";' --user=admin", "eval 'echo get_option(\"stylesheet\"), \" \", did_action(\"after_setup_theme\");' --skip-themes"] as $command) {
+    [$engineOut, $engineCode] = $plugin($ENGINE_DIR, $command);
+    [$refOut, $refCode] = $plugin($REF_DIR, $command);
+    $check("a plugin's command: wp {$command}", $engineOut === $refOut && $engineCode === $refCode, "engine[{$engineCode}]: " . substr($engineOut, 0, 300) . "\n      ref[{$refCode}]:    " . substr($refOut, 0, 300));
+}
+$plugin($REF_DIR, 'plugin deactivate minn-test-cli');
+
 echo "\n{$pass} passed, {$fail} failed\n";
 exit($fail === 0 ? 0 : 1);

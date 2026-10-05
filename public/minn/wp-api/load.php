@@ -144,7 +144,12 @@ function absint($maybeint)
 
 function wp_using_ext_object_cache($using = null)
 {
-    return null;
+    global $_wp_using_ext_object_cache;
+    $current = $_wp_using_ext_object_cache;
+    if ($using !== null) {
+        $_wp_using_ext_object_cache = $using;
+    }
+    return $current;
 }
 
 function wp_debug_mode()

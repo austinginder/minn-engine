@@ -58,6 +58,7 @@ namespace {
     use Minn\Http\Exchange;
     use Minn\Http\Outbound;
 
+    #[AllowDynamicProperties]
     class WP_HTTP_Response
     {
         public $data;
@@ -153,6 +154,7 @@ namespace {
         }
     }
 
+    #[AllowDynamicProperties]
     class WP_Http_Cookie
     {
         public $name;
@@ -201,6 +203,7 @@ namespace {
     }
 
     /** The HTTP client behind wp_remote_*: curl, with the reference's response shape. */
+    #[AllowDynamicProperties]
     class WP_Http
     {
         const HEAD = 'HEAD';

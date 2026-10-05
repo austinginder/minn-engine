@@ -1,5 +1,6 @@
 <?php
 /** The style engine's declaration and rule holders; css strings match the probed shapes. */
+#[AllowDynamicProperties]
 class WP_Style_Engine_CSS_Declarations
 {
     protected $declarations = [];
@@ -70,6 +71,7 @@ class WP_Style_Engine_CSS_Declarations
     }
 }
 
+#[AllowDynamicProperties]
 class WP_Style_Engine_CSS_Rule
 {
     protected $selector = '';

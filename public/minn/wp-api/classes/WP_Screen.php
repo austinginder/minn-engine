@@ -1,6 +1,7 @@
 <?php
 
 /** The admin screen object, enough for plugins to read id/base/post_type and register options. */
+#[AllowDynamicProperties]
 final class WP_Screen
 {
     public $action = '';

@@ -5,6 +5,7 @@
  * unless the site's own config says so, and a request to the local host never
  * goes through a proxy even when one is.
  */
+#[AllowDynamicProperties]
 class WP_HTTP_Proxy
 {
     public function is_enabled()

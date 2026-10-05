@@ -14,7 +14,7 @@ copies them over; `minn eject` reverses it (`docs/install.md`, `tests/install.te
 |---|---|---|
 | `index.php` | Web server, WP-CLI (`extract_subdir_path`) | The stock front controller shape: defines `ABSPATH` (WordPress does this before `wp-config.php` runs), then requires `wp-config.php`. |
 | `wp-config.php` | Every backup/migration tool (regex), WP-CLI (`config` and `db` commands eval it with the trailing require stripped) | Never shipped, never edited: the file WordPress generated stays. |
-| `wp-settings.php` | `wp-config.php` (its last line), WP-CLI when loading WordPress | Two lines: `require minn/bootstrap.php`. Under WP-CLI the boot stops after the autoloader; reached for a command the engine does not answer it prints the engine's refusal (below). |
+| `wp-settings.php` | `wp-config.php` (its last line), WP-CLI when loading WordPress | Two lines: `require minn/bootstrap.php`. Under WP-CLI the boot stops after the autoloader for the engine's own verbs; reached for a command the engine does not answer, it boots the engine's WordPress runtime in WordPress's place (below). |
 | `wp-cli.yml` | WP-CLI (project config) | `require: minn/cli.php`, the engine's verbs. |
 | `wp-includes/version.php` | WP-CLI (`wp_exists()` is `file_exists` on it; `check_wp_version()` includes it and wants `$wp_version >= 3.7`; `core version` parses `$wp_version`, `$wp_db_version`, `$tinymce_version`, `$wp_local_package` by string search), hosting panels, backup tools | The release whose contracts the engine speaks (`7.1`, db revision `61833`), as plain assignments in the shape readers expect. No WordPress code. |
 | `wp-login.php` | nginx (a missing `.php` is a 404 before PHP runs), hide-login plugins that `require ABSPATH . 'wp-login.php'` | Boots the engine the way `index.php` does, or throws `ServeLogin` when required mid-request. |
@@ -39,7 +39,7 @@ missing files through `index.php`. Nothing extra is copied to the webroot.
 |---|---|---|
 | `before_wp_load` | nothing on disk | The engine's verbs (`contracts/cli.md`); WP-CLI's own `config get/list/path`, `core version [--extra]`, `cli …`. |
 | `after_wp_config_load` | `wp-includes/version.php` + `wp-config.php` | WP-CLI's `db query/export/import/check/optimize/repair/reset/drop/create`, straight to MySQL with the config's credentials. |
-| `after_wp_load` | WordPress | Refused: `Error: This command needs WordPress itself, which Minn Engine does not contain.` followed by the list of verbs that do work. Covers leftover bundle leaves (`post`, `core is-installed/update`, `language *`, `db tables/size`), not the engine's own plugin/theme/rewrite/cache/maintenance verbs. |
+| `after_wp_load` | WordPress | The engine's WordPress runtime stands in (`Minn\Cli\Runtime::standIn()`): booted from the constants WP-CLI already read, the site's plugins loaded as code through `wp_loaded`, then WP-CLI runs the command against the facade. So `wp eval` / `eval-file`, WP-CLI's bundled commands (`post`, `term`, `comment`, `menu`, `role`, `cap`, `core is-installed`, `db tables/size`, …) and a plugin's own commands (`WP_CLI::add_command` as the plugin loads) run; the cli and layout suites diff them against the reference. Until 2026-10-05 this phase was refused with "This command needs WordPress itself". |
 
 ## Deliberately absent
 

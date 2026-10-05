@@ -214,10 +214,23 @@ function get_dropins()
 function _minn_bind_hook_globals(): void
 {
     $hooks = Runtime::hooks();
+    // Hooks added before the runtime existed sit in $wp_filter as plain arrays
+    // (WP-CLI's add_wp_hook writes --user, --skip-plugins and --skip-themes
+    // there); they join the registry instead of being dropped.
+    $early = array_filter((array) ($GLOBALS['wp_filter'] ?? []), 'is_array');
     $GLOBALS['wp_filter'] = [];
     $hooks->onNew(static function (string $name): void {
         $GLOBALS['wp_filter'][$name] = WP_Hook::bound($name);
     });
+    foreach ($early as $tag => $priorities) {
+        foreach ($priorities as $priority => $callbacks) {
+            foreach ((array) $callbacks as $callback) {
+                if (is_array($callback) && isset($callback['function'])) {
+                    add_filter((string) $tag, $callback['function'], (int) $priority, (int) ($callback['accepted_args'] ?? 1));
+                }
+            }
+        }
+    }
     $GLOBALS['wp_actions'] = &$hooks->actionCounters();
     $GLOBALS['wp_filters'] = &$hooks->filterCounters();
     $GLOBALS['wp_current_filter'] = &$hooks->stackRef();

@@ -153,6 +153,7 @@ class WP_Block_Type
 }
 
 /** The registry, seeded lazily with the core blocks captured from the reference. */
+#[AllowDynamicProperties]
 final class WP_Block_Type_Registry
 {
     private $registered_block_types = [];

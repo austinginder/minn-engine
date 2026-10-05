@@ -3,6 +3,7 @@
 use Minn\Runtime\Patterns;
 
 /** Block patterns, their categories, and block styles: three registries over one Minn\Runtime\Patterns store; the engine renders none of them. */
+#[AllowDynamicProperties]
 final class WP_Block_Patterns_Registry
 {
     private static $instance = null;
@@ -80,6 +81,7 @@ final class WP_Block_Patterns_Registry
     }
 }
 
+#[AllowDynamicProperties]
 final class WP_Block_Pattern_Categories_Registry
 {
     private static $instance = null;
@@ -124,6 +126,7 @@ final class WP_Block_Pattern_Categories_Registry
     }
 }
 
+#[AllowDynamicProperties]
 final class WP_Block_Styles_Registry
 {
     private static $instance = null;

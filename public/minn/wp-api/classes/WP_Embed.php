@@ -6,6 +6,7 @@ use Minn\Runtime\Runtime;
  * The [embed] shortcode and the URL-on-its-own-line embeds: handlers a
  * plugin registers by regex, then the oEmbed providers, then a plain link.
  */
+#[AllowDynamicProperties]
 class WP_Embed
 {
     public $handlers = [];

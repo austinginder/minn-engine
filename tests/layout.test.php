@@ -72,10 +72,11 @@ foreach ([
 }
 
 @unlink('/tmp/minn-layout-probe.sql');
-// db tables/size/optimize run after WordPress loads on the reference; they refuse cleanly here.
-foreach (['post list', 'core is-installed', 'db tables', 'db size'] as $command) {
-    [$out, $code] = $run($PUBLIC, $command);
-    $check("wp $command fails with the engine's message", $code === 1 && str_contains($out, 'needs WordPress itself'), "[$code] " . substr($out, 0, 200));
+// Commands WP-CLI loads WordPress for run on the engine's runtime, which stands in for it.
+foreach (['post list --format=count', 'core is-installed', 'db tables --format=csv', 'db size --size_format=b'] as $command) {
+    [$engineOut, $engineCode] = $run($PUBLIC, $command);
+    [$refOut, $refCode] = $run($REF_DIR, $command);
+    $check("wp $command runs on the engine's runtime as on the reference", $engineOut === $refOut && $engineCode === $refCode, "engine[$engineCode]: " . substr($engineOut, 0, 200) . "\n      ref[$refCode]:    " . substr($refOut, 0, 200));
 }
 
 echo "\n{$pass} passed, {$fail} failed\n";

@@ -62,6 +62,10 @@ final class Constants
             define('object', 'OBJECT');
         }
         $GLOBALS['wp_version'] = $runtime->version;
+        // Whether an object-cache drop-in took over; it exists, unset, from the start (WP-CLI reads it).
+        if (!array_key_exists('_wp_using_ext_object_cache', $GLOBALS)) {
+            $GLOBALS['_wp_using_ext_object_cache'] = null;
+        }
         $GLOBALS['table_prefix'] = $runtime->db->prefix();
     }
 }

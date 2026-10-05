@@ -74,8 +74,12 @@ reaches `minn/bootstrap.php`, which under WP-CLI only registers the autoloader.
 - `wp db …` and `wp config …` are WP-CLI's own and read `wp-config.php` directly.
 - `wp core update` and `wp core verify-checksums` wait until Minn has a release
   of its own. They become the engine's updater and integrity check, not a
-  rewrite of WordPress core commands. Until then the bundle's copies refuse
-  because they need WordPress.
-- `post` is absent; the list grows from what the fleet actually invokes.
+  rewrite of WordPress core commands. Until then the bundle's copies run on
+  the engine's runtime (`contracts/layout.md`), where `core update` has no
+  WordPress to update.
+- WP-CLI's bundled commands that load WordPress (`post`, `term`, `comment`,
+  `menu`, `eval`, …) run on the engine's runtime rather than as engine verbs;
+  so do a plugin's own commands. Their output is the facade's, diffed in the
+  cli suite.
 - `wp language core/plugin/theme update` is still the bundle. CaptainCore's update script calls them after plugin/theme update; they wait on a language-pack reader.
 - `option get` of an option holding a serialized object prints the raw blob.

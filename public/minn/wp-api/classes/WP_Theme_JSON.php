@@ -6,6 +6,7 @@
  * every other method keeps its inert placeholder, so a call still traces
  * as a gap instead of failing.
  */
+#[AllowDynamicProperties]
 class WP_Theme_JSON
 {
     const ROOT_CSS_PROPERTIES_SELECTOR = ':root';

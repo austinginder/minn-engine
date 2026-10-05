@@ -16,7 +16,7 @@ the wp verbs the engine answers itself
 | [`PluginCommand`](#plugincommand) | final class | 475 | `wp plugin list\|install\|update\|activate\|deactivate\|delete`: the inventory and the fleet's install/update/delete. |
 | [`Preflight`](#preflight) | final class | 360 | What a site will and will not get from the engine, before anything |
 | [`RewriteCommand`](#rewritecommand) | final class | 52 | `wp rewrite flush\|structure`: permalink_structure is the engine's |
-| [`Runtime`](#runtime) | final class | 64 | The engine, booted for a command: reads the site's wp-config.php (which |
+| [`Runtime`](#runtime) | final class | 80 | The engine, booted for a command: reads the site's wp-config.php (which |
 | [`SearchReplaceCommand`](#searchreplacecommand) | final class | 143 | `wp search-replace`: walks every string column, including serialized |
 | [`ThemeCommand`](#themecommand) | final class | 425 | `wp theme list\|install\|update\|activate\|delete`: the inventory CaptainCore |
 | [`UserCommand`](#usercommand) | final class | 366 | Users: the list and get views, and the one-time login link. |
@@ -772,7 +772,14 @@ fire, so a verb can fire a scheduled hook whose callback a plugin
 registered. The lighter boot() does none of this; only a command that
 needs the runtime (cron) asks for this, since it loads every plugin.
 
-Internals: `loadConfig()` (private, line 80)
+### static `standIn(): void`
+
+The runtime for a command WP-CLI loads WordPress for: WP-CLI has already
+run wp-config.php, so the engine boots from the constants it defined,
+loads the site's plugins as code (their commands register as they load),
+and hands control back for WP-CLI to run the command.
+
+Internals: `loadConfig()` (private, line 96)
 
 
 ## SearchReplaceCommand

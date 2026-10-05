@@ -1,6 +1,7 @@
 <?php
 
 /** The widget base and registry. Shapes from contracts/fixtures/api/media.json. */
+#[AllowDynamicProperties]
 class WP_Widget
 {
     public $id_base;
@@ -168,6 +169,7 @@ class WP_Widget
     }
 }
 
+#[AllowDynamicProperties]
 final class WP_Widget_Factory
 {
     public $widgets = [];

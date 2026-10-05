@@ -1,5 +1,6 @@
 <?php
 /** The $matches[N] substitution rewrite rules use; substituted values are urlencoded (probed: 'ab c' becomes 'ab+c'). */
+#[AllowDynamicProperties]
 class WP_MatchesMapRegex
 {
     private $_matches;

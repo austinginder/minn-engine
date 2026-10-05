@@ -185,6 +185,7 @@ class IXR_Request
     }
 }
 
+#[AllowDynamicProperties]
 class POMO_Reader
 {
     public $endian = 'little';
@@ -827,6 +828,7 @@ class WP_Admin_Bar
     }
 }
 
+#[AllowDynamicProperties]
 class WP_Application_Passwords
 {
     const USERMETA_KEY_APPLICATION_PASSWORDS = '_application_passwords';
@@ -995,6 +997,7 @@ class WP_Automatic_Updater
     }
 }
 
+#[AllowDynamicProperties]
 class WP_Block_Editor_Context
 {
     public $name = 'core/edit-post';
@@ -1471,6 +1474,7 @@ class WP_Importer
     }
 }
 
+#[AllowDynamicProperties]
 class WP_List_Table
 {
     public $items = NULL;
@@ -2724,6 +2728,7 @@ class WP_REST_Users_Controller extends WP_REST_Controller
     }
 }
 
+#[AllowDynamicProperties]
 class WP_Recovery_Mode_Link_Service
 {
     const LOGIN_ACTION_ENTER = 'enter_recovery_mode';
@@ -2756,6 +2761,7 @@ class WP_Recovery_Mode_Link_Service
     }
 }
 
+#[AllowDynamicProperties]
 abstract class WP_Session_Tokens
 {
     protected $user_id = NULL;
@@ -2875,6 +2881,7 @@ abstract class WP_Session_Tokens
     }
 }
 
+#[AllowDynamicProperties]
 class WP_Site_Health
 {
     private static $instance = NULL;
@@ -3218,6 +3225,7 @@ class WP_Site_Health
     }
 }
 
+#[AllowDynamicProperties]
 class WP_Style_Engine
 {
     const BLOCK_STYLE_DEFINITIONS_METADATA = ['background' => ['backgroundImage' => ['property_keys' => ['default' => 'background-image'], 'value_func' => ['WP_Style_Engine', 'get_url_or_value_css_declaration'], 'path' => ['background', 'backgroundImage']], 'backgroundPosition' => ['property_keys' => ['default' => 'background-position'], 'path' => ['background', 'backgroundPosition']], 'backgroundRepeat' => ['property_keys' => ['default' => 'background-repeat'], 'path' => ['background', 'backgroundRepeat']], 'backgroundSize' => ['property_keys' => ['default' => 'background-size'], 'path' => ['background', 'backgroundSize']], 'backgroundAttachment' => ['property_keys' => ['default' => 'background-attachment'], 'path' => ['background', 'backgroundAttachment']], 'gradient' => ['property_keys' => ['default' => 'background-image'], 'css_vars' => ['gradient' => '--wp--preset--gradient--$slug'], 'path' => ['background', 'gradient'], 'classnames' => ['has-background' => true]]], 'color' => ['text' => ['property_keys' => ['default' => 'color'], 'path' => ['color', 'text'], 'css_vars' => ['color' => '--wp--preset--color--$slug'], 'classnames' => ['has-text-color' => true, 'has-$slug-color' => 'color']], 'background' => ['property_keys' => ['default' => 'background-color'], 'path' => ['color', 'background'], 'css_vars' => ['color' => '--wp--preset--color--$slug'], 'classnames' => ['has-background' => true, 'has-$slug-background-color' => 'color']], 'gradient' => ['property_keys' => ['default' => 'background'], 'path' => ['color', 'gradient'], 'css_vars' => ['gradient' => '--wp--preset--gradient--$slug'], 'classnames' => ['has-background' => true, 'has-$slug-gradient-background' => 'gradient']]], 'border' => ['color' => ['property_keys' => ['default' => 'border-color', 'individual' => 'border-%s-color'], 'path' => ['border', 'color'], 'classnames' => ['has-border-color' => true, 'has-$slug-border-color' => 'color']], 'radius' => ['property_keys' => ['default' => 'border-radius', 'individual' => 'border-%s-radius'], 'path' => ['border', 'radius'], 'css_vars' => ['border-radius' => '--wp--preset--border-radius--$slug']], 'style' => ['property_keys' => ['default' => 'border-style', 'individual' => 'border-%s-style'], 'path' => ['border', 'style']], 'width' => ['property_keys' => ['default' => 'border-width', 'individual' => 'border-%s-width'], 'path' => ['border', 'width']], 'top' => ['value_func' => ['WP_Style_Engine', 'get_individual_property_css_declarations'], 'path' => ['border', 'top'], 'css_vars' => ['color' => '--wp--preset--color--$slug']], 'right' => ['value_func' => ['WP_Style_Engine', 'get_individual_property_css_declarations'], 'path' => ['border', 'right'], 'css_vars' => ['color' => '--wp--preset--color--$slug']], 'bottom' => ['value_func' => ['WP_Style_Engine', 'get_individual_property_css_declarations'], 'path' => ['border', 'bottom'], 'css_vars' => ['color' => '--wp--preset--color--$slug']], 'left' => ['value_func' => ['WP_Style_Engine', 'get_individual_property_css_declarations'], 'path' => ['border', 'left'], 'css_vars' => ['color' => '--wp--preset--color--$slug']]], 'shadow' => ['shadow' => ['property_keys' => ['default' => 'box-shadow'], 'path' => ['shadow'], 'css_vars' => ['shadow' => '--wp--preset--shadow--$slug']]], 'dimensions' => ['aspectRatio' => ['property_keys' => ['default' => 'aspect-ratio'], 'path' => ['dimensions', 'aspectRatio'], 'classnames' => ['has-aspect-ratio' => true]], 'height' => ['property_keys' => ['default' => 'height'], 'path' => ['dimensions', 'height'], 'css_vars' => ['dimension' => '--wp--preset--dimension--$slug']], 'minHeight' => ['property_keys' => ['default' => 'min-height'], 'path' => ['dimensions', 'minHeight'], 'css_vars' => ['dimension' => '--wp--preset--dimension--$slug']], 'minWidth' => ['property_keys' => ['default' => 'min-width'], 'path' => ['dimensions', 'minWidth'], 'css_vars' => ['dimension' => '--wp--preset--dimension--$slug']], 'objectFit' => ['property_keys' => ['default' => 'object-fit'], 'path' => ['dimensions', 'objectFit']], 'width' => ['property_keys' => ['default' => 'width'], 'path' => ['dimensions', 'width'], 'css_vars' => ['dimension' => '--wp--preset--dimension--$slug']]], 'spacing' => ['padding' => ['property_keys' => ['default' => 'padding', 'individual' => 'padding-%s'], 'path' => ['spacing', 'padding'], 'css_vars' => ['spacing' => '--wp--preset--spacing--$slug']], 'margin' => ['property_keys' => ['default' => 'margin', 'individual' => 'margin-%s'], 'path' => ['spacing', 'margin'], 'css_vars' => ['spacing' => '--wp--preset--spacing--$slug']]], 'typography' => ['fontSize' => ['property_keys' => ['default' => 'font-size'], 'path' => ['typography', 'fontSize'], 'css_vars' => ['font-size' => '--wp--preset--font-size--$slug'], 'classnames' => ['has-$slug-font-size' => 'font-size']], 'fontFamily' => ['property_keys' => ['default' => 'font-family'], 'css_vars' => ['font-family' => '--wp--preset--font-family--$slug'], 'path' => ['typography', 'fontFamily'], 'classnames' => ['has-$slug-font-family' => 'font-family']], 'fontStyle' => ['property_keys' => ['default' => 'font-style'], 'path' => ['typography', 'fontStyle']], 'fontWeight' => ['property_keys' => ['default' => 'font-weight'], 'path' => ['typography', 'fontWeight']], 'lineHeight' => ['property_keys' => ['default' => 'line-height'], 'path' => ['typography', 'lineHeight']], 'textColumns' => ['property_keys' => ['default' => 'column-count'], 'path' => ['typography', 'textColumns']], 'textDecoration' => ['property_keys' => ['default' => 'text-decoration'], 'path' => ['typography', 'textDecoration']], 'textIndent' => ['property_keys' => ['default' => 'text-indent'], 'path' => ['typography', 'textIndent']], 'textTransform' => ['property_keys' => ['default' => 'text-transform'], 'path' => ['typography', 'textTransform']], 'letterSpacing' => ['property_keys' => ['default' => 'letter-spacing'], 'path' => ['typography', 'letterSpacing']], 'writingMode' => ['property_keys' => ['default' => 'writing-mode'], 'path' => ['typography', 'writingMode']]]];

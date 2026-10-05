@@ -3,6 +3,7 @@
 use Minn\Front\SitemapXml;
 
 /** The sitemaps server: registry, renderer, index. URLs come from the engine's own sitemap routes. */
+#[AllowDynamicProperties]
 class WP_Sitemaps
 {
     public $index;
@@ -56,6 +57,7 @@ class WP_Sitemaps
     }
 }
 
+#[AllowDynamicProperties]
 class WP_Sitemaps_Registry
 {
     private $providers = [];
@@ -84,6 +86,7 @@ class WP_Sitemaps_Registry
     }
 }
 
+#[AllowDynamicProperties]
 class WP_Sitemaps_Index
 {
     private $registry;
@@ -117,6 +120,7 @@ class WP_Sitemaps_Index
     }
 }
 
+#[AllowDynamicProperties]
 class WP_Sitemaps_Renderer
 {
     protected $stylesheet = '';
@@ -163,6 +167,7 @@ class WP_Sitemaps_Renderer
     }
 }
 
+#[AllowDynamicProperties]
 abstract class WP_Sitemaps_Provider
 {
     protected $name = '';

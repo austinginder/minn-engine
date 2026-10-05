@@ -4,6 +4,7 @@ use Minn\Query\DateSql;
 use Minn\Runtime\Runtime;
 
 /** A date query: the clauses as given, the WHERE fragment from Minn\Query\DateSql. */
+#[AllowDynamicProperties]
 class WP_Date_Query
 {
     public $queries = [];

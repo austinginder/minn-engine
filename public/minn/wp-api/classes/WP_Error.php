@@ -1,6 +1,7 @@
 <?php
 
 /** The error object plugin code passes around; shape from contracts/fixtures/api/functions.json. */
+#[AllowDynamicProperties]
 class WP_Error
 {
     public $errors = [];

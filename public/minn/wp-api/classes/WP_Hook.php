@@ -8,6 +8,7 @@ use Minn\Runtime\Runtime;
  * so what a plugin edits in place the engine runs. A hook made with new
  * WP_Hook() stands alone and runs its own callbacks.
  */
+#[AllowDynamicProperties]
 final class WP_Hook implements Iterator, ArrayAccess
 {
     public $callbacks = [];

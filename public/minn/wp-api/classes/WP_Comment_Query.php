@@ -4,6 +4,7 @@ use Minn\Runtime\CommentQuery;
 use Minn\Runtime\Runtime;
 
 /** The comment query object: vars in the reference's order, rows from Minn\Runtime\CommentQuery. */
+#[AllowDynamicProperties]
 class WP_Comment_Query
 {
     public $request;

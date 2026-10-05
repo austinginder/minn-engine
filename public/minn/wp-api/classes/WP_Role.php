@@ -2,6 +2,7 @@
 
 use Minn\Runtime\Runtime;
 
+#[AllowDynamicProperties]
 class WP_Role
 {
     public $name;
@@ -32,6 +33,7 @@ class WP_Role
     }
 }
 
+#[AllowDynamicProperties]
 class WP_Roles
 {
     public $roles = [];
