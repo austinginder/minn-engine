@@ -979,6 +979,134 @@ class Translation_Entry
     }
 }
 
+class WP_Admin_Bar
+{
+    private $nodes = [];
+    private $bound = false;
+    public $user = NULL;
+    public $menu = [];
+
+    public function initialize()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Admin_Bar::initialize');
+        return null;
+    }
+
+    public function add_menu($node)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Admin_Bar::add_menu');
+        return null;
+    }
+
+    public function remove_menu($id)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Admin_Bar::remove_menu');
+        return null;
+    }
+
+    public function add_node($args)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Admin_Bar::add_node');
+        return null;
+    }
+
+    protected function _set_node($args)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Admin_Bar::_set_node');
+        return null;
+    }
+
+    public function get_node($id)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Admin_Bar::get_node');
+        return null;
+    }
+
+    protected function _get_node($id)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Admin_Bar::_get_node');
+        return null;
+    }
+
+    public function get_nodes()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Admin_Bar::get_nodes');
+        return null;
+    }
+
+    protected function _get_nodes()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Admin_Bar::_get_nodes');
+        return null;
+    }
+
+    public function add_group($args)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Admin_Bar::add_group');
+        return null;
+    }
+
+    public function remove_node($id)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Admin_Bar::remove_node');
+        return null;
+    }
+
+    protected function _unset_node($id)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Admin_Bar::_unset_node');
+        return null;
+    }
+
+    public function render()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Admin_Bar::render');
+        return null;
+    }
+
+    protected function _bind()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Admin_Bar::_bind');
+        return null;
+    }
+
+    protected function _render($root)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Admin_Bar::_render');
+        return null;
+    }
+
+    protected function _render_container($node)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Admin_Bar::_render_container');
+        return null;
+    }
+
+    protected function _render_group($node, $menu_title = false)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Admin_Bar::_render_group');
+        return null;
+    }
+
+    protected function _render_item($node)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Admin_Bar::_render_item');
+        return null;
+    }
+
+    public function recursive_render($id, $node)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Admin_Bar::recursive_render');
+        return null;
+    }
+
+    public function add_menus()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Admin_Bar::add_menus');
+        return null;
+    }
+}
+
 class WP_Application_Passwords
 {
     const USERMETA_KEY_APPLICATION_PASSWORDS = '_application_passwords';
@@ -2876,6 +3004,38 @@ class WP_REST_Users_Controller extends WP_REST_Controller
     }
 }
 
+class WP_Recovery_Mode_Link_Service
+{
+    const LOGIN_ACTION_ENTER = 'enter_recovery_mode';
+    const LOGIN_ACTION_ENTERED = 'entered_recovery_mode';
+    private $key_service = NULL;
+    private $cookie_service = NULL;
+
+    public function __construct($cookie_service, $key_service)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode_Link_Service::__construct');
+        return null;
+    }
+
+    public function generate_url()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode_Link_Service::generate_url');
+        return null;
+    }
+
+    public function handle_begin_link($ttl)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode_Link_Service::handle_begin_link');
+        return null;
+    }
+
+    private function get_recovery_mode_begin_url($token, $key)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode_Link_Service::get_recovery_mode_begin_url');
+        return null;
+    }
+}
+
 abstract class WP_Session_Tokens
 {
     protected $user_id = NULL;
@@ -3505,6 +3665,42 @@ abstract class WP_Translation_File
     public function export()
     {
         \Minn\Runtime\PlaceholderTrace::hit('WP_Translation_File::export');
+        return null;
+    }
+}
+
+class WP_Translations
+{
+    protected $textdomain = 'default';
+    protected $controller = NULL;
+
+    public function __construct($controller, $textdomain = 'default')
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Translations::__construct');
+        return null;
+    }
+
+    public function __get($name)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Translations::__get');
+        return null;
+    }
+
+    private function make_entry($original, $translations)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Translations::make_entry');
+        return null;
+    }
+
+    public function translate_plural($singular, $plural, $count = 1, $context = '')
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Translations::translate_plural');
+        return null;
+    }
+
+    public function translate($singular, $context = '')
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Translations::translate');
         return null;
     }
 }
