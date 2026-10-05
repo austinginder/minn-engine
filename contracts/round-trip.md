@@ -31,18 +31,31 @@ How the first copy was made, so the next one can be:
    `public/wp-content`, and give it a `router.php`.
 3. Set a local password for an administrator, write it to
    `private/round-trip.json` (`user`, `password`, `url`, `oracle`), and
-   export the starting point to `private/baseline.sql`.
+   make the starting point: `php tests/round-trip.test.php --set-baseline`
+   copies the site's database to `{database}_rtbase` on the same server.
 
-Nothing from the site enters this repository: the sign-in, the baseline,
-and the report stay in the site's `private/` folder.
+Nothing from the site enters this repository: the sign-in and the report
+stay in the site's `private/` folder, the baseline in its own database.
+
+Snapshots and restores never dump the database. Which tables changed comes
+from InnoDB's update times; which rows differ, MariaDB works out itself by
+primary key and a hash of each row; a restore puts back only those rows and
+the next ids (`RtDatabase` in `tests/tools/round-trip.php`). Update times
+are kept in memory, so the baseline records when the copy was last clean,
+and after a server restart every table is compared by checksum instead. A
+two-gigabyte site snapshots in seconds.
 
 Two pieces make the copy fit to test on:
 
-- **It runs offline.** `wp-content/mu-plugins/zz-round-trip-offline.php`
+- **It runs offline.** The suite writes
+  `wp-content/mu-plugins/zz-round-trip-offline.php` on every run: it
   refuses outbound HTTP to anything but this machine (spam checks, license
-  pings and update checks never leave) and defines `DISABLE_WP_CRON`, so
-  page loads run no scheduled jobs. Both stacks load it, so a day's
-  footprint is the work and nothing else.
+  pings and update checks never leave), defines `DISABLE_WP_CRON` so page
+  loads run no scheduled jobs, and sends every message to the local mail
+  catcher (Mailpit on 127.0.0.1:1025) from `phpmailer_init`, whatever SMTP
+  server or mail plugin the site is set up with: a copy of a live site
+  keeps its live mail settings. Both stacks load it, so a day's footprint is
+  the work and nothing else.
 - **The oracle stands in for the site over HTTPS.** `php -S 127.0.0.1:8129
   router.php` serves a request as HTTPS when it carries `X-Forwarded-Proto:
   https`, and the suite sends `Host: cove-minn.localhost` with it, so
@@ -52,8 +65,8 @@ Two pieces make the copy fit to test on:
 
 ## The day
 
-1. Restore `baseline.sql` (tables a day created are dropped) and take a
-   snapshot.
+1. Restore whatever changed since the copy was last clean (tables a day
+   created are dropped).
 2. **WordPress has the day.** A visitor browses (the front page, a post
    and one of its comment pages, the feed, a search, a missing page, the
    REST posts index, the sign-in page). Then the owner signs in through

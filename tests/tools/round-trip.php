@@ -157,7 +157,7 @@ final class RtClient {
 	}
 }
 
-/** The site's database connection and table prefix, read through WP-CLI from the parked copy's wp-config.php. @return array{0: mysqli, 1: string} */
+/** The site's database connection, table prefix and database name, read through WP-CLI from the parked copy's wp-config.php. @return array{0: mysqli, 1: string, 2: string} */
 function rt_connect( string $root ): array {
 	$list = json_decode( (string) shell_exec( 'wp --path=' . escapeshellarg( "$root/wp-reference" ) . ' config list DB_NAME DB_USER DB_PASSWORD DB_HOST table_prefix --strict --format=json 2>/dev/null' ), true );
 	$conf = array_column( (array) $list, 'value', 'name' );
@@ -167,27 +167,231 @@ function rt_connect( string $root ): array {
 	[ $host, $port ] = array_pad( explode( ':', (string) $conf['DB_HOST'], 2 ), 2, null );
 	$db              = new mysqli( $host, (string) $conf['DB_USER'], (string) $conf['DB_PASSWORD'], (string) $conf['DB_NAME'], null !== $port && ctype_digit( $port ) ? (int) $port : null, null !== $port && ! ctype_digit( $port ) ? $port : null );
 	$db->set_charset( 'utf8mb4' );
-	return array( $db, (string) $conf['table_prefix'] );
+	return array( $db, (string) $conf['table_prefix'], (string) $conf['DB_NAME'] );
 }
 
-/** Every table with the site's prefix, rows keyed by what they are. @return array<string, array{pk: list<string>, rows: array<string, array<string, ?string>>}> */
-function rt_snapshot( mysqli $db, string $prefix ): array {
-	$tables = array();
-	$like   = $db->real_escape_string( addcslashes( $prefix, '_%\\' ) );
-	foreach ( $db->query( "SHOW TABLES LIKE '$like%'" )->fetch_all() as [ $name ] ) {
-		$short = substr( $name, strlen( $prefix ) );
-		$pk    = array_column( $db->query( "SHOW KEYS FROM `$name` WHERE Key_name = 'PRIMARY'" )->fetch_all( MYSQLI_ASSOC ), 'Column_name' );
-		$order = $pk ? ' ORDER BY ' . implode( ', ', array_map( static fn ( $c ) => "`$c`", $pk ) ) : '';
-		$rows  = array();
-		$seen  = array();
-		foreach ( $db->query( "SELECT * FROM `$name`$order" )->fetch_all( MYSQLI_ASSOC ) as $row ) {
+/**
+ * A site's database beside a baseline copy of it on the same server
+ * ({database}_rtbase, made once with `--set-baseline`). Which tables a day
+ * touched comes from InnoDB's in-memory update times; which rows differ
+ * comes from MariaDB itself, by primary key and a hash of each row, so only
+ * those rows reach PHP; restoring puts back only those rows. A two-gigabyte
+ * site snapshots in seconds.
+ *
+ * Update times live in memory, so a marker in the baseline records when the
+ * copy was last made clean: when the server has not restarted since, every
+ * change since is in the update times; otherwise every table is compared by
+ * checksum, the slow way.
+ */
+final class RtDatabase {
+	/** @var array<string, array{pk: list<string>, cols: list<string>}> */
+	private array $shape = array();
+
+	public function __construct( public readonly mysqli $db, public readonly string $live, public readonly string $base, public readonly string $prefix ) {
+		if ( $base === $live || ! str_ends_with( $base, '_rtbase' ) ) {
+			throw new RuntimeException( "refusing baseline database $base for $live" );
+		}
+	}
+
+	public static function open( string $root ): self {
+		[ $db, $prefix, $name ] = rt_connect( $root );
+		return new self( $db, $name, $name . '_rtbase', $prefix );
+	}
+
+	public function hasBaseline(): bool {
+		return null !== $this->value( 'SELECT SCHEMA_NAME FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = ?', array( $this->base ) );
+	}
+
+	/** Replaces the baseline with a copy of every table in the live database, and records the copy as clean. */
+	public function setBaseline(): void {
+		[ $charset, $collation ] = $this->db->execute_query( 'SELECT DEFAULT_CHARACTER_SET_NAME, DEFAULT_COLLATION_NAME FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = ?', array( $this->live ) )->fetch_row();
+		$this->db->query( "DROP DATABASE IF EXISTS `{$this->base}`" );
+		$this->db->query( "CREATE DATABASE `{$this->base}` CHARACTER SET $charset COLLATE $collation" );
+		foreach ( $this->tables( $this->live ) as $table ) {
+			$this->copy( $this->live, $this->base, $table );
+		}
+		$this->db->query( "CREATE TABLE `{$this->base}`.`__round_trip` (name VARCHAR(64) PRIMARY KEY, value VARCHAR(64))" );
+		$this->markClean();
+	}
+
+	/** The server's clock, which update times are read against. */
+	public function mark(): string {
+		return (string) $this->value( 'SELECT NOW()' );
+	}
+
+	/** When the copy was last made clean, if every change since then is still in the update times. */
+	public function cleanSince(): ?string {
+		$clean   = $this->value( "SELECT value FROM `{$this->base}`.`__round_trip` WHERE name = 'clean'" );
+		$started = $this->value( "SELECT NOW() - INTERVAL VARIABLE_VALUE SECOND FROM information_schema.GLOBAL_STATUS WHERE VARIABLE_NAME = 'UPTIME'" );
+		return null !== $clean && null !== $started && (string) $started < (string) $clean ? (string) $clean : null;
+	}
+
+	/** Tables that may differ from the baseline: updated since the mark (every table when there is none), or created or dropped. @return list<string> */
+	public function touched( ?string $since ): array {
+		$live = $this->tables( $this->live );
+		$base = $this->tables( $this->base );
+		if ( null === $since ) {
+			$updated = array_filter( array_intersect( $live, $base ), fn ( $t ) => $this->checksum( $this->live, $t ) !== $this->checksum( $this->base, $t ) );
+		} else {
+			$updated = array_column( $this->db->execute_query( 'SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = ? AND UPDATE_TIME >= ?', array( $this->live, $since ) )->fetch_all(), 0 );
+		}
+		return array_values( array_unique( array_merge( $updated, array_diff( $live, $base ), array_diff( $base, $live ) ) ) );
+	}
+
+	/**
+	 * The rows that differ from the baseline in every table touched since the
+	 * mark, as two partial snapshots (before, after) in rt_footprint's form:
+	 * rows keyed by what they are, tables named without the site's prefix.
+	 *
+	 * @return array{0: array<string, array{pk: list<string>, rows: array}>, 1: array<string, array{pk: list<string>, rows: array}>}
+	 */
+	public function snapshot( ?string $since ): array {
+		$before = array();
+		$after  = array();
+		$base   = $this->tables( $this->base );
+		$live   = $this->tables( $this->live );
+		foreach ( $this->touched( $since ) as $table ) {
+			[ $was, $now ] = $this->diff( $table, in_array( $table, $base, true ), in_array( $table, $live, true ) );
+			$short         = str_starts_with( $table, $this->prefix ) ? substr( $table, strlen( $this->prefix ) ) : $table;
+			$pk            = in_array( $table, $base, true ) ? $this->shape( $this->base, $table )['pk'] : $this->shape( $this->live, $table )['pk'];
+			if ( in_array( $table, $base, true ) ) {
+				$before[ $short ] = array( 'pk' => $pk, 'rows' => self::keyed( $short, $was, $pk ) );
+			}
+			if ( in_array( $table, $live, true ) ) {
+				$after[ $short ] = array( 'pk' => $pk, 'rows' => self::keyed( $short, $now, $pk ) );
+			}
+		}
+		return array( $before, $after );
+	}
+
+	/** Puts back every row that differs (everything touched since the mark, or since the copy was last clean), drops what was created, and records the copy as clean. */
+	public function restore( ?string $since ): void {
+		$base = $this->tables( $this->base );
+		$live = $this->tables( $this->live );
+		foreach ( $this->touched( $since ) as $table ) {
+			if ( ! in_array( $table, $base, true ) ) {
+				$this->db->query( "DROP TABLE `{$this->live}`.`$table`" );
+			} elseif ( ! in_array( $table, $live, true ) || ! $this->sameShape( $table ) || $this->shape( $this->base, $table )['pk'] === array() ) {
+				$this->db->query( "DROP TABLE IF EXISTS `{$this->live}`.`$table`" );
+				$this->copy( $this->base, $this->live, $table );
+			} else {
+				$this->putBack( $table );
+			}
+		}
+		$this->markClean();
+	}
+
+	/** Puts a keyed table's differing rows back from the baseline, and its next id where it was. */
+	private function putBack( string $table ): void {
+		$shape  = $this->shape( $this->base, $table );
+		$on     = implode( ' AND ', array_map( static fn ( $c ) => "l.`$c` <=> b.`$c`", $shape['pk'] ) );
+		$first  = $shape['pk'][0];
+		$differ = self::hash( 'l', $shape['cols'] ) . ' <> ' . self::hash( 'b', $shape['cols'] );
+		$cols   = implode( ', ', array_map( static fn ( $c ) => "`$c`", $shape['cols'] ) );
+		$this->db->query( "DELETE l FROM `{$this->live}`.`$table` l LEFT JOIN `{$this->base}`.`$table` b ON $on WHERE b.`$first` IS NULL OR $differ" );
+		$this->db->query( "INSERT INTO `{$this->live}`.`$table` ($cols) SELECT " . implode( ', ', array_map( static fn ( $c ) => "b.`$c`", $shape['cols'] ) ) . " FROM `{$this->base}`.`$table` b LEFT JOIN `{$this->live}`.`$table` l ON $on WHERE l.`$first` IS NULL" );
+		$next = $this->value( 'SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?', array( $this->base, $table ) );
+		if ( null !== $next ) {
+			$this->db->query( "ALTER TABLE `{$this->live}`.`$table` AUTO_INCREMENT = " . (int) $next );
+		}
+	}
+
+	/** One table's differing rows: [baseline side, live side]. @return array{0: list<array>, 1: list<array>} */
+	private function diff( string $table, bool $inBase, bool $inLive ): array {
+		if ( ! $inBase || ! $inLive || ! $this->sameShape( $table ) || $this->shape( $this->base, $table )['pk'] === array() ) {
+			$was = $inBase ? $this->db->query( "SELECT * FROM `{$this->base}`.`$table`" )->fetch_all( MYSQLI_ASSOC ) : array();
+			$now = $inLive ? $this->db->query( "SELECT * FROM `{$this->live}`.`$table`" )->fetch_all( MYSQLI_ASSOC ) : array();
+			return $inBase && $inLive && $this->sameShape( $table ) ? self::minus( $was, $now ) : array( $was, $now );
+		}
+		$shape  = $this->shape( $this->base, $table );
+		$on     = implode( ' AND ', array_map( static fn ( $c ) => "l.`$c` <=> b.`$c`", $shape['pk'] ) );
+		$first  = $shape['pk'][0];
+		$differ = self::hash( 'l', $shape['cols'] ) . ' <> ' . self::hash( 'b', $shape['cols'] );
+		$was    = $this->db->query( "SELECT b.* FROM `{$this->base}`.`$table` b LEFT JOIN `{$this->live}`.`$table` l ON $on WHERE l.`$first` IS NULL OR $differ" )->fetch_all( MYSQLI_ASSOC );
+		$now    = $this->db->query( "SELECT l.* FROM `{$this->live}`.`$table` l LEFT JOIN `{$this->base}`.`$table` b ON $on WHERE b.`$first` IS NULL OR $differ" )->fetch_all( MYSQLI_ASSOC );
+		return array( $was, $now );
+	}
+
+	/** Two full row lists less the rows they share (a table without a primary key, compared whole). @return array{0: list<array>, 1: list<array>} */
+	private static function minus( array $was, array $now ): array {
+		$count = array();
+		foreach ( $was as $row ) {
+			$count[ serialize( $row ) ] = ( $count[ serialize( $row ) ] ?? 0 ) + 1;
+		}
+		$added = array();
+		foreach ( $now as $row ) {
+			$key = serialize( $row );
+			if ( ( $count[ $key ] ?? 0 ) > 0 ) {
+				$count[ $key ]--;
+			} else {
+				$added[] = $row;
+			}
+		}
+		$removed = array();
+		foreach ( $count as $key => $left ) {
+			for ( $i = 0; $i < $left; $i++ ) {
+				$removed[] = unserialize( $key );
+			}
+		}
+		return array( $removed, $added );
+	}
+
+	/** Rows keyed by what they are, repeats counted. @return array<string, array> */
+	private static function keyed( string $short, array $rows, array $pk ): array {
+		$out  = array();
+		$seen = array();
+		foreach ( $rows as $row ) {
 			$key          = rt_raw_key( $short, $row, $pk );
 			$seen[ $key ] = ( $seen[ $key ] ?? 0 ) + 1;
-			$rows[ $seen[ $key ] > 1 ? $key . "\x1f" . $seen[ $key ] : $key ] = $row;
+			$out[ $seen[ $key ] > 1 ? $key . "\x1f" . $seen[ $key ] : $key ] = $row;
 		}
-		$tables[ $short ] = array( 'pk' => $pk, 'rows' => $rows );
+		return $out;
 	}
-	return $tables;
+
+	/** A hash of a row's stored columns, nulls told apart from empty strings. */
+	private static function hash( string $alias, array $cols ): string {
+		return 'MD5(CONCAT_WS(0x1f, ' . implode( ', ', array_map( static fn ( $c ) => "IF($alias.`$c` IS NULL, 0x00, CONCAT(0x01, $alias.`$c`))", $cols ) ) . '))';
+	}
+
+	/** @return list<string> */
+	private function tables( string $schema ): array {
+		$rows = $this->db->execute_query( "SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = ? AND TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME <> '__round_trip'", array( $schema ) )->fetch_all();
+		return array_column( $rows, 0 );
+	}
+
+	/** A table's primary key and its stored (not generated) columns. @return array{pk: list<string>, cols: list<string>} */
+	private function shape( string $schema, string $table ): array {
+		return $this->shape[ "$schema.$table" ] ??= array(
+			'pk'   => array_column( $this->db->execute_query( "SELECT COLUMN_NAME FROM information_schema.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ? AND CONSTRAINT_NAME = 'PRIMARY' ORDER BY ORDINAL_POSITION", array( $schema, $table ) )->fetch_all(), 0 ),
+			'cols' => array_column( $this->db->execute_query( "SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ? AND EXTRA NOT LIKE '%GENERATED%' ORDER BY ORDINAL_POSITION", array( $schema, $table ) )->fetch_all(), 0 ),
+		);
+	}
+
+	/** Whether a table has the same definition on both sides (a day may alter one). */
+	private function sameShape( string $table ): bool {
+		$definition = fn ( string $schema ): string => (string) preg_replace( '/ AUTO_INCREMENT=\d+/', '', (string) ( $this->db->query( "SHOW CREATE TABLE `$schema`.`$table`" )->fetch_row()[1] ?? '' ) );
+		return $definition( $this->live ) === $definition( $this->base );
+	}
+
+	private function copy( string $from, string $to, string $table ): void {
+		$cols = implode( ', ', array_map( static fn ( $c ) => "`$c`", $this->shape( $from, $table )['cols'] ) );
+		$this->db->query( "CREATE TABLE `$to`.`$table` LIKE `$from`.`$table`" );
+		$this->db->query( "INSERT INTO `$to`.`$table` ($cols) SELECT $cols FROM `$from`.`$table`" );
+		unset( $this->shape[ "$to.$table" ] );
+	}
+
+	private function checksum( string $schema, string $table ): string {
+		return (string) ( $this->db->query( "CHECKSUM TABLE `$schema`.`$table`" )->fetch_row()[1] ?? '' );
+	}
+
+	private function markClean(): void {
+		$this->db->query( "REPLACE INTO `{$this->base}`.`__round_trip` (name, value) VALUES ('clean', NOW())" );
+	}
+
+	private function value( string $sql, array $params = array() ): mixed {
+		$row = ( $params ? $this->db->execute_query( $sql, $params ) : $this->db->query( $sql ) )->fetch_row();
+		return $row[0] ?? null;
+	}
 }
 
 /** Options by name, meta by owner and key, the rest by primary key (or by content when there is none). */
@@ -459,16 +663,58 @@ function rt_remove_added( string $dir, array $before, array $after ): void {
 	}
 }
 
-/** Puts the database back to the baseline dump and drops any table a day created. */
-function rt_restore( string $root, string $dump, mysqli $db, string $prefix, array $keep ): void {
-	exec( 'wp --path=' . escapeshellarg( "$root/wp-reference" ) . ' db import ' . escapeshellarg( $dump ) . ' 2>&1', $output, $code );
-	if ( 0 !== $code ) {
-		throw new RuntimeException( 'restore failed: ' . implode( "\n", $output ) );
-	}
-	$like = $db->real_escape_string( addcslashes( $prefix, '_%\\' ) );
-	foreach ( $db->query( "SHOW TABLES LIKE '$like%'" )->fetch_all() as [ $name ] ) {
-		if ( ! in_array( substr( $name, strlen( $prefix ) ), $keep, true ) ) {
-			$db->query( "DROP TABLE `$name`" );
+/**
+ * The guard every round-trip copy runs under, on both stacks: no outbound
+ * HTTP but to this machine, no cron on page loads, and every message any
+ * mailer sends goes to the local mail catcher (Mailpit on 127.0.0.1:1025)
+ * whatever SMTP server or API the site is set up with. A copy of a live
+ * site keeps the live site's mail settings, so without it a day of work
+ * mails real people.
+ */
+const RT_GUARD = <<<'PHP'
+<?php
+/**
+ * Plugin Name: Round trip: offline copy
+ * Description: Written by Minn Engine's tests/round-trip.test.php. This is a local copy: outbound HTTP to anything but this machine is refused, scheduled jobs do not run on page loads, and all mail goes to the local catcher on 127.0.0.1:1025, whatever the site's own mail settings say. Loaded by WordPress and by Minn alike.
+ */
+defined( 'DISABLE_WP_CRON' ) || define( 'DISABLE_WP_CRON', true );
+
+add_filter(
+	'pre_http_request',
+	static function ( $pre, $args, $url ) {
+		$host = strtolower( (string) parse_url( (string) $url, PHP_URL_HOST ) );
+		if ( 'localhost' === $host || '127.0.0.1' === $host || str_ends_with( $host, '.localhost' ) ) {
+			return $pre;
+		}
+		return new WP_Error( 'http_request_failed', 'Offline copy: outbound HTTP is switched off.' );
+	},
+	1,
+	3
+);
+
+add_action(
+	'phpmailer_init',
+	static function ( $mailer ) {
+		$mailer->isSMTP();
+		$mailer->Host        = '127.0.0.1';
+		$mailer->Port        = 1025;
+		$mailer->SMTPAuth    = false;
+		$mailer->SMTPSecure  = '';
+		$mailer->SMTPAutoTLS = false;
+	},
+	PHP_INT_MAX
+);
+PHP;
+
+/** Writes the guard into the site's mu-plugins (and the parked copy's, when it has its own wp-content). */
+function rt_guard( string $root ): void {
+	foreach ( array_unique( array( realpath( "$root/public/wp-content" ) ?: "$root/public/wp-content", realpath( "$root/wp-reference/wp-content" ) ?: "$root/wp-reference/wp-content" ) ) as $content ) {
+		if ( ! is_dir( $content ) ) {
+			continue;
+		}
+		@mkdir( "$content/mu-plugins", 0755, true );
+		if ( ( @file_get_contents( "$content/mu-plugins/zz-round-trip-offline.php" ) ) !== RT_GUARD . "\n" ) {
+			file_put_contents( "$content/mu-plugins/zz-round-trip-offline.php", RT_GUARD . "\n" );
 		}
 	}
 }

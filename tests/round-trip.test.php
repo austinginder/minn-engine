@@ -3,7 +3,7 @@
  * The round trip (docs/vision.md §3): a real site, the same day of work on
  * each stack, and WordPress taking the result back.
  *
- *   1. Restore the site from its baseline dump.
+ *   1. Restore the site to its baseline.
  *   2. WordPress (the parked copy) has the day: a visitor browses, then the
  *      owner signs in and revises, uploads, files, publishes, comments, adds
  *      an editor, trashes a draft. Its footprint (the rows and uploaded files
@@ -22,12 +22,17 @@
  * (cd wp-reference && php -S 127.0.0.1:8129 router.php; the router serves a
  * request as HTTPS when it carries X-Forwarded-Proto: https). The site's
  * private/ folder holds round-trip.json (the owner's sign-in, the site URL,
- * the oracle URL), baseline.sql (the starting point) and, after a run, the
- * full report. Nothing from the site is written into this repository. The
- * copy runs offline: wp-content/mu-plugins/zz-round-trip-offline.php refuses
- * outbound HTTP and keeps cron off page loads, on both stacks.
+ * the oracle URL) and, after a run, the full report. The baseline is a copy
+ * of the site's database beside it ({database}_rtbase), made once with
+ * --set-baseline when the copy is as it should start; snapshots and restores
+ * compare against it inside MariaDB (tests/tools/round-trip.php, RtDatabase),
+ * so a site of any size takes seconds. Nothing from the site is written into
+ * this repository. The copy runs offline under a guard the suite writes into
+ * wp-content/mu-plugins on every run (no outbound HTTP, no cron on page
+ * loads, every message to the local mail catcher), on both stacks.
  *
  *   php tests/round-trip.test.php
+ *   php tests/round-trip.test.php --set-baseline          (the copy as it is now becomes the starting point)
  *   MINN_ROUNDTRIP_KEEP=1 php tests/round-trip.test.php   (leave the site as the swap back left it)
  */
 require __DIR__ . '/lib.php';
@@ -35,9 +40,19 @@ require __DIR__ . '/tools/round-trip.php';
 
 $ROOT = rtrim( getenv( 'MINN_ROUNDTRIP_ROOT' ) ?: '~/Cove/Sites/cove-minn.localhost', '/' );
 $cfg  = json_decode( (string) @file_get_contents( "$ROOT/private/round-trip.json" ), true );
-$DUMP = "$ROOT/private/baseline.sql";
-if ( ! is_array( $cfg ) || ! is_file( $DUMP ) ) {
-	echo "SKIP: no round-trip site at $ROOT (needs private/round-trip.json and private/baseline.sql)\n";
+if ( ! is_array( $cfg ) ) {
+	echo "SKIP: no round-trip site at $ROOT (needs private/round-trip.json)\n";
+	exit( 0 );
+}
+rt_guard( $ROOT );
+$rt = RtDatabase::open( $ROOT );
+if ( in_array( '--set-baseline', $argv, true ) ) {
+	$rt->setBaseline();
+	echo "The baseline is now {$rt->base}, a copy of {$rt->live} as it stands.\n";
+	exit( 0 );
+}
+if ( ! $rt->hasBaseline() ) {
+	echo "SKIP: no baseline for $ROOT yet (php tests/round-trip.test.php --set-baseline, once the copy is as it should start)\n";
 	exit( 0 );
 }
 $REF     = rtrim( getenv( 'MINN_ROUNDTRIP_REF' ) ?: $cfg['oracle'], '/' );
@@ -134,7 +149,6 @@ function rt_describe( string $key, array $pair ): string {
 	return "$key\n        WordPress: " . rt_show( $w, $m ) . '  (Minn)';
 }
 
-[ $db, $prefix ] = rt_connect( $ROOT );
 // A run that kept its state (MINN_ROUNDTRIP_KEEP) left its uploads behind; they go first.
 $kept = json_decode( (string) @file_get_contents( "$ROOT/private/round-trip-kept-files.json" ), true );
 foreach ( is_array( $kept ) ? $kept : array() as $rel => $stamp ) {
@@ -146,47 +160,47 @@ $explainedBrowse = array();
 $started         = time();
 $cleaned         = false;
 $files0          = rt_files( $UPLOADS );
-$cleanup         = static function () use ( &$cleaned, &$files0, $ROOT, $DUMP, $UPLOADS, &$db, $prefix, &$tables0 ): void {
+$cleanup         = static function () use ( &$cleaned, &$files0, $UPLOADS, $rt ): void {
 	if ( $cleaned ) {
 		return;
 	}
 	$cleaned = true;
 	rt_remove_added( $UPLOADS, $files0, rt_files( $UPLOADS ) );
-	rt_restore( $ROOT, $DUMP, $db, $prefix, $tables0 ?? array() );
+	$rt->restore( $rt->cleanSince() );
 };
 
-rt_restore( $ROOT, $DUMP, $db, $prefix, array_keys( rt_snapshot( $db, $prefix ) ) );
-$base    = rt_snapshot( $db, $prefix );
-$tables0 = array_keys( $base );
+// Whatever changed since the copy was last clean (a killed run, a look around) goes back first.
+$rt->restore( $rt->cleanSince() );
 register_shutdown_function( $cleanup );
-$zone   = (string) ( $base['options']['rows']['timezone_string']['option_value'] ?? '' );
-$zone   = '' !== $zone ? $zone : sprintf( '%+03d:00', (int) ( $base['options']['rows']['gmt_offset']['option_value'] ?? 0 ) );
+$option = static fn ( string $name ): string => (string) $rt->db->execute_query( "SELECT option_value FROM `{$rt->prefix}options` WHERE option_name = ?", array( $name ) )->fetch_row()[0];
+$zone   = $option( 'timezone_string' );
+$zone   = '' !== $zone ? $zone : sprintf( '%+03d:00', (int) $option( 'gmt_offset' ) );
 $photo  = rt_photo();
 $window = static fn () => rt_window( $started, time(), $zone );
 
 echo "\nThe control: WordPress has the day\n";
+$mark      = $rt->mark();
 $wpBrowse  = rt_browse( new RtClient( $REF, $AS_SITE ), $URL );
-$wpAfterB  = rt_snapshot( $db, $prefix );
+$wpBrowseF = rt_quiet( rt_footprint( ...$rt->snapshot( $mark ), window: $window() ) );
 $wpDay     = rt_day( $wp = new RtClient( $REF, $AS_SITE ), $cfg, $photo );
-$wpAfter   = rt_snapshot( $db, $prefix );
+[ $wpBefore, $wpAfter ] = $rt->snapshot( $mark );
+$wpDayF    = rt_quiet( rt_footprint( $wpBefore, $wpAfter, $window() ) );
 $wpFiles   = rt_file_footprint( $UPLOADS, $files0, rt_files( $UPLOADS ) );
-$wpBrowseF = rt_quiet( rt_footprint( $base, $wpAfterB, $window() ) );
-$wpDayF    = rt_quiet( rt_footprint( $wpAfterB, $wpAfter, $window() ) );
 $failed    = array_keys( array_filter( $wpDay['steps'], static fn ( $s ) => ! $s['ok'] ) );
 check( ! $failed, 'WordPress gets through the whole day', 'steps that failed: ' . implode( ', ', $failed ) );
 check( count( $wpDayF ) > 0, 'the day leaves a footprint (' . count( $wpDayF ) . ' rows, ' . count( $wpFiles ) . ' files)' );
 rt_remove_added( $UPLOADS, $files0, rt_files( $UPLOADS ) );
-rt_restore( $ROOT, $DUMP, $db, $prefix, $tables0 );
-check( ! rt_footprint( $base, rt_snapshot( $db, $prefix ), $window() ), 'the baseline restores row for row' );
+$rt->restore( $mark );
+check( ! rt_footprint( ...$rt->snapshot( $mark ), window: $window() ), 'the baseline restores row for row' );
 
 echo "\nMinn has the same day\n";
+$mark      = $rt->mark();
 $mnBrowse  = rt_browse( new RtClient( $URL ), $URL );
-$mnAfterB  = rt_snapshot( $db, $prefix );
+$mnBrowseF = rt_quiet( rt_footprint( ...$rt->snapshot( $mark ), window: $window() ) );
 $mnDay     = rt_day( $minn = new RtClient( $URL ), $cfg, $photo );
-$mnAfter   = rt_snapshot( $db, $prefix );
+[ $mnBefore, $mnAfter ] = $rt->snapshot( $mark );
+$mnDayF    = rt_quiet( rt_footprint( $mnBefore, $mnAfter, $window() ) );
 $mnFiles   = rt_file_footprint( $UPLOADS, $files0, rt_files( $UPLOADS ) );
-$mnBrowseF = rt_quiet( rt_footprint( $base, $mnAfterB, $window() ) );
-$mnDayF    = rt_quiet( rt_footprint( $mnAfterB, $mnAfter, $window() ) );
 foreach ( $wpBrowse as $path => $answer ) {
 	$mine = $mnBrowse[ $path ] ?? '';
 	$why  = ( $EXPLAINED_PAGES[ $path ][0] ?? null ) === $mine ? $EXPLAINED_PAGES[ $path ][1] : null;
@@ -214,7 +228,7 @@ if ( count( $diffs ) > 40 ) {
 }
 $fileDiffs = rt_compare( $wpFiles, $mnFiles );
 check( ! $fileDiffs, 'Minn writes the same files at the same sizes (' . count( $mnFiles ) . ')', implode( "\n      ", array_map( 'rt_describe', array_keys( $fileDiffs ), $fileDiffs ) ) );
-$broken = rt_broken_serialized( $mnAfterB, $mnAfter );
+$broken = rt_broken_serialized( $mnBefore, $mnAfter );
 check( ! $broken, 'every serialized value Minn wrote reads back', implode( ', ', $broken ) );
 
 echo "\nWordPress takes it back\n";
@@ -275,7 +289,7 @@ if ( getenv( 'MINN_ROUNDTRIP_KEEP' ) ) {
 } else {
 	$cleanup();
 	$files0 = rt_files( $UPLOADS );
-	check( ! rt_footprint( $base, rt_snapshot( $db, $prefix ), $window() ), 'the site is back at its baseline' );
+	check( ! rt_footprint( ...$rt->snapshot( $mark ), window: $window() ), 'the site is back at its baseline' );
 }
 
 $lines = array( '# Round trip ' . gmdate( 'c' ), '', '## Differences', '' );
