@@ -2742,3 +2742,79 @@ DKIM byte for byte against `tests/fixtures/mail/dkim-reference.json`.
   `WP_PHPMailer` passes its messages through `__()`). The `POP3`, `OAuth`
   and `DSNConfigurator` classes are not provided; the reference does not
   load them either.
+
+## The HTML processor (2026-10-05)
+
+`WP_HTML_Processor` was a placeholder; core blocks and plugins (Interactivity
+API directives, block supports, Jetpack, Site Kit) walk markup with it to
+know where a tag sits. The engine now builds the tree the reference builds:
+`Minn\Html\Tree\Builder` runs the WHATWG tree construction algorithm over the
+engine's tokenizer (insertion modes in `HeadRules`, `BodyRules`,
+`TableRules`, foreign content in `ForeignRules`), and every node opened or
+closed becomes an `Event` with its breadcrumbs. The facade
+(`wp-api/classes/WP_HTML_Processor.php`) reports those events as tokens;
+`WP_HTML_Token.php`, `WP_HTML_Decoder.php` and `WP_Token_Map.php` hold the
+helper classes. Suite `tests/html-api.test.php` diffs
+`tests/tools/html-processor-probe.php` on both stacks (31 rows: about 350
+fragments and documents walked token by token, normalize, queries,
+bookmarks, edits, the helper classes, the tag processor underneath);
+`tests/unit/html-tree.php` pins the parts. Outside the suite the walk was
+checked against 1,306 real posts from two other local sites, all equal.
+
+- **Walking.** A fragment (`create_fragment`, BODY context only: any
+  other context, or an encoding other than exactly `UTF-8`, returns null)
+  starts under `HTML>BODY`; a document (`create_full_parser`, or the
+  constructor, which `_doing_it_wrong`s without the unlock code) reports
+  `HTML`, `HEAD` and `BODY` too, the doctype as a top-level `html` token.
+  Implied elements are virtual tokens (no attributes, no edits, no
+  bookmarks). Text arrives one kind at a time (a run of NUL bytes, dropped
+  in HTML; a run of white space; the rest), so `" a"` is two text tokens;
+  the line break after `<pre>`/`<listing>` is dropped from the first. Void
+  elements, elements read whole (SCRIPT, STYLE, TEXTAREA, TITLE, XMP,
+  IFRAME, NOEMBED, NOFRAMES) and self-closed foreign elements have no
+  closer. At the end of the input every open element closes and nothing
+  implied is added (a lone doctype stays alone).
+- **Where the reference stops** (`get_last_error()` is `unsupported`, the
+  exception names the token, its offset and text, the stack and the
+  formatting list): foster parenting (non-white-space text or most elements
+  directly in a table), the adoption agency when a special element sits
+  inside the formatting element ("Cannot extract common ancestor") or the
+  closer names no active one ("any other end tag"), reopening a formatting
+  element, PLAINTEXT, a comment after `</body>` or `</html>`, text in a
+  frameset. `normalize()` and `serialize()` return null there.
+- **Current spec, not the old one.** `select` is handled in body (no "in
+  select" mode): DIV, B and HR may sit inside it, a second SELECT or an
+  INPUT closes it, TEXTAREA and KEYGEN do not. Scripting is off, so
+  NOSCRIPT is ordinary markup. Quirks mode (missing or legacy doctype in a
+  document) lets a TABLE open inside a P.
+- **Queries.** `next_tag()` takes `breadcrumbs` (`*` matches one level,
+  names compared case-insensitively); `match_offset` counts only among
+  breadcrumb matches. Bookmarks mark real tokens, closers included; a seek
+  re-walks from the start, and a failed seek leaves the processor at its
+  end.
+- **Serializing.** Tag names lower-cased (SVG's `foreignObject`,
+  `viewBox` and the rest restored), attributes double-quoted with the first
+  of a repeated name kept, `& < > " '` escaped in text and values, RCDATA
+  escaped, raw text left alone, a line break after the PRE, LISTING and
+  TEXTAREA openers, ` />` on self-closed foreign elements, comments from
+  their whole text, funky comments and a body's doctype dropped.
+- **The tag processor**, found through this work and now as the reference:
+  `</>` is a presumptuous tag token; `<?target …?>` is a processing
+  instruction when the target is alphanumeric and not `xml` (it may end at
+  `>`), a PI lookalike comment for another XML name, an invalid comment
+  otherwise; text keeps a `<` that opens nothing (`a < b` is one token) and
+  a `<` ending the input pauses; one leading line break is dropped from a
+  TEXTAREA and from the text after PRE or LISTING; only the HTML standard's
+  106 legacy names decode without a semicolon (`&level` stays, it was `≤vel`);
+  `set_modifiable_text()` escapes all five characters in text and only the
+  element's own closer in TITLE and TEXTAREA (which it had refused);
+  `change_parsing_namespace()` takes effect (CDATA sections and no raw text
+  outside HTML); `WP_HTML_Doctype_Info` reports
+  `indicated_compatibility_mode`.
+- **Not the same yet**: `_doing_it_wrong()` fires its action but raises no
+  notice on the engine (the reference raises an E_USER_NOTICE when
+  WP_DEBUG is on), so the direct constructor is silent; the tag processor's
+  protected properties (`$html`, `$parser_state`, ...) are not there for a
+  subclass to read; `WP_HTML_Processor` declares its own
+  `set_modifiable_text()` (implied tokens refuse edits); the reference's
+  `MAX_SEEK_OPS` limit is not enforced.

@@ -26,6 +26,41 @@ final class Decoder
         return self::decode($raw, true);
     }
 
+    /**
+     * The character reference at $at in a context ("data" or "attribute"):
+     * its text and how many bytes it spans, or null when none decodes there.
+     *
+     * @return array{0: string, 1: int}|null
+     */
+    public static function reference(string $context, string $text, int $at): ?array
+    {
+        if (($text[$at] ?? '') !== '&') {
+            return null;
+        }
+        if (preg_match('/\G&#(?:[xX]([0-9a-fA-F]+)|([0-9]+));?/', $text, $m, 0, $at) === 1) {
+            return [self::codePoint(($m[1] ?? '') !== '' ? (int) hexdec($m[1]) : (int) $m[2]), strlen($m[0])];
+        }
+        if (preg_match('/\G&([a-zA-Z][a-zA-Z0-9]*);/', $text, $m, 0, $at) === 1) {
+            $entity = html_entity_decode($m[0], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+            if ($entity !== $m[0]) {
+                return [$entity, strlen($m[0])];
+            }
+        }
+        foreach (self::legacy() as $name => $char) {
+            if (substr($text, $at + 1, strlen($name)) === $name) {
+                $after = $text[$at + 1 + strlen($name)] ?? '';
+                return $context === 'attribute' && ($after === '=' || ($after !== '' && ctype_alnum($after))) ? null : [$char, strlen($name) + 1];
+            }
+        }
+        return null;
+    }
+
+    /** The UTF-8 text for a code point, U+FFFD for one that cannot be a character, Windows-1252's for the C1 range. */
+    public static function char(int $code): string
+    {
+        return self::codePoint($code);
+    }
+
     private static function decode(string $raw, bool $inAttribute): string
     {
         if (!str_contains($raw, '&')) {
@@ -78,6 +113,17 @@ final class Decoder
         return mb_chr($code, 'UTF-8') ?: "\u{FFFD}";
     }
 
+    /** The named references that decode without a semicolon (the HTML standard's legacy list). */
+    private const LEGACY = [
+        'AElig', 'AMP', 'Aacute', 'Acirc', 'Agrave', 'Aring', 'Atilde', 'Auml', 'COPY', 'Ccedil', 'ETH', 'Eacute', 'Ecirc', 'Egrave', 'Euml', 'GT',
+        'Iacute', 'Icirc', 'Igrave', 'Iuml', 'LT', 'Ntilde', 'Oacute', 'Ocirc', 'Ograve', 'Oslash', 'Otilde', 'Ouml', 'QUOT', 'REG', 'THORN', 'Uacute',
+        'Ucirc', 'Ugrave', 'Uuml', 'Yacute', 'aacute', 'acirc', 'acute', 'aelig', 'agrave', 'amp', 'aring', 'atilde', 'auml', 'brvbar', 'ccedil', 'cedil',
+        'cent', 'copy', 'curren', 'deg', 'divide', 'eacute', 'ecirc', 'egrave', 'eth', 'euml', 'frac12', 'frac14', 'frac34', 'gt', 'iacute', 'icirc',
+        'iexcl', 'igrave', 'iquest', 'iuml', 'laquo', 'lt', 'macr', 'micro', 'middot', 'nbsp', 'not', 'ntilde', 'oacute', 'ocirc', 'ograve', 'ordf',
+        'ordm', 'oslash', 'otilde', 'ouml', 'para', 'plusmn', 'pound', 'quot', 'raquo', 'reg', 'sect', 'shy', 'sup1', 'sup2', 'sup3', 'szlig', 'thorn',
+        'times', 'uacute', 'ucirc', 'ugrave', 'uml', 'uuml', 'yacute', 'yen', 'yuml',
+    ];
+
     /** @return array<string, string> longest names first */
     private static function legacy(): array
     {
@@ -85,11 +131,8 @@ final class Decoder
             return self::$legacy;
         }
         $names = [];
-        foreach (get_html_translation_table(HTML_ENTITIES, ENT_QUOTES | ENT_HTML401, 'UTF-8') as $char => $entity) {
-            $name = substr($entity, 1, -1);
-            if (ctype_alpha($name[0])) {
-                $names[$name] = $char;
-            }
+        foreach (self::LEGACY as $name) {
+            $names[$name] = html_entity_decode('&' . $name . ';', ENT_QUOTES | ENT_HTML5, 'UTF-8');
         }
         uksort($names, static fn (string $a, string $b) => strlen($b) <=> strlen($a) ?: strcmp($a, $b));
         return self::$legacy = $names;

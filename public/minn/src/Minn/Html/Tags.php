@@ -20,6 +20,7 @@ final class Tags
     public const PI = '#processing-instruction';
     public const FUNKY = '#funky-comment';
     public const CDATA = '#cdata-section';
+    public const PRESUMPTUOUS = '#presumptuous-tag';
 
     public const COMMENT_HTML = 'COMMENT_AS_HTML_COMMENT';
     public const COMMENT_ABRUPT = 'COMMENT_AS_ABRUPTLY_CLOSED_COMMENT';
@@ -49,6 +50,13 @@ final class Tags
     private int $textStart = 0;
     private int $textLength = 0;
     private ?string $commentType = null;
+    private ?string $commentTarget = null;
+    private string $namespace = 'html';
+    private string $tagBodies = 'html';
+    private int $maxBookmarks = self::MAX_BOOKMARKS;
+    /** Whether a text token here drops one leading line break (it follows a PRE or LISTING opener). */
+    private bool $afterPre = false;
+    private bool $textAfterPre = false;
     private int $fullTextStart = 0;
     private int $fullTextLength = 0;
 
@@ -69,7 +77,10 @@ final class Tags
         if ($this->ended || $this->paused) {
             return false;
         }
+        $afterPre = $this->afterPre;
+        $this->afterPre = false;
         $this->resetToken();
+        $this->textAfterPre = $afterPre;
         $html = $this->html;
         $length = strlen($html);
         $at = $this->cursor;
@@ -77,14 +88,21 @@ final class Tags
             $this->ended = true;
             return false;
         }
-        if ($html[$at] !== '<') {
-            $lt = strpos($html, '<', $at);
-            $end = $lt === false ? $length : $lt;
+        if ($html[$at] !== '<' || !Scanner::opensMarkup($html, $at)) {
+            if ($at === $length - 1 && $html[$at] === '<') {
+                // A "<" ending the input may yet open a tag.
+                $this->paused = true;
+                return false;
+            }
+            $end = Scanner::textEnd($html, $at);
             $this->setToken(self::TEXT, '#text', $at, $end, $at, $end - $at);
             $this->cursor = $end;
             return true;
         }
         $next = $html[$at + 1] ?? '';
+        if ($next === '!' && $this->namespace !== 'html' && substr($html, $at, 9) === '<![CDATA[') {
+            return $this->take(Scanner::cdata($html, $at));
+        }
         if ($next === '!') {
             return $this->take(Scanner::markupDeclaration($html, $at));
         }
@@ -97,9 +115,9 @@ final class Tags
                 return $this->takeTag($at, true);
             }
             if ($third === '>') {
-                // "</>" is nothing at all: skip it.
+                $this->setToken(self::PRESUMPTUOUS, '#presumptuous-tag', $at, $at + 3, $at + 2, 0);
                 $this->cursor = $at + 3;
-                return $this->nextToken();
+                return true;
             }
             $gt = strpos($html, '>', $at + 2);
             if ($gt === false) {
@@ -110,15 +128,7 @@ final class Tags
             $this->cursor = $gt + 1;
             return true;
         }
-        if ($next !== '' && ctype_alpha($next)) {
-            return $this->takeTag($at, false);
-        }
-        // A lone "<" is text.
-        $lt = strpos($html, '<', $at + 1);
-        $end = $lt === false ? $length : $lt;
-        $this->setToken(self::TEXT, '#text', $at, $end, $at, $end - $at);
-        $this->cursor = $end;
-        return true;
+        return $this->takeTag($at, false);
     }
 
     private function setToken(string $type, string $name, int $start, int $end, int $textStart, int $textLength): void
@@ -139,6 +149,7 @@ final class Tags
         $this->selfClosing = false;
         $this->attributes = [];
         $this->commentType = null;
+        $this->commentTarget = null;
         $this->textLength = 0;
         $this->fullTextLength = 0;
     }
@@ -157,7 +168,8 @@ final class Tags
         $this->selfClosing = $tag['selfClosing'];
         $this->attributes = $closer ? [] : $tag['attributes'];
         $this->cursor = $tag['end'];
-        if (!$closer && in_array($tag['name'], self::RAW_TEXT, true)) {
+        $this->afterPre = !$closer && $this->tagBodies === 'html' && in_array($tag['name'], ['pre', 'listing'], true);
+        if (!$closer && $this->tagBodies === 'html' && in_array($tag['name'], self::RAW_TEXT, true)) {
             $raw = Scanner::rawText($this->html, $tag['name'], $tag['end']);
             if ($raw === null) {
                 $this->paused = true;
@@ -179,15 +191,16 @@ final class Tags
             $this->paused = true;
             return false;
         }
-        $type = match ($found['kind']) { 'comment' => self::COMMENT, 'doctype' => self::DOCTYPE, default => self::PI };
-        $name = match ($found['kind']) { 'comment' => '#comment', 'doctype' => 'html', default => '#processing-instruction' };
+        $type = match ($found['kind']) { 'comment' => self::COMMENT, 'doctype' => self::DOCTYPE, 'cdata' => self::CDATA, default => self::PI };
+        $name = match ($found['kind']) { 'comment' => '#comment', 'doctype' => 'html', 'cdata' => '#cdata-section', default => '#processing-instruction' };
         $this->setToken($type, $name, $found['start'], $found['end'], $found['textStart'], $found['textLength']);
         if ($found['kind'] === 'comment') {
             $this->commentType = $found['commentType'];
+            $this->commentTarget = $found['target'] ?? null;
             $this->fullTextStart = $found['fullStart'];
             $this->fullTextLength = $found['fullLength'];
         } elseif ($found['kind'] === 'pi') {
-            $this->name = 'php';
+            $this->name = $found['target'];
         }
         $this->cursor = $found['end'];
         return true;
@@ -200,29 +213,14 @@ final class Tags
      */
     public function nextTag(array $query): bool
     {
-        $tagName = isset($query['tag_name']) ? strtoupper((string) $query['tag_name']) : null;
-        $className = $query['class_name'] ?? null;
-        $offset = max(0, (int) ($query['match_offset'] ?? 1));
-        $visitClosers = ($query['tag_closers'] ?? 'skip') === 'visit';
-        if ($offset === 0) {
+        $query = TagQuery::from($query);
+        if ($query->offset === 0) {
             $this->flush();
             return false;
         }
         $seen = 0;
         while ($this->nextToken()) {
-            if ($this->type !== self::TAG) {
-                continue;
-            }
-            if ($this->closer && !$visitClosers) {
-                continue;
-            }
-            if ($tagName !== null && $tagName !== $this->name) {
-                continue;
-            }
-            if ($className !== null && !$this->hasClass((string) $className)) {
-                continue;
-            }
-            if (++$seen === $offset) {
+            if ($this->type === self::TAG && $query->matches((string) $this->name, $this->closer ? 1 : 0, $this->hasClass(...)) && ++$seen === $query->offset) {
                 return true;
             }
         }
@@ -252,11 +250,12 @@ final class Tags
         };
     }
 
-    /** The current tag name, upper-cased. */
+    /** The current tag name, upper-cased; a processing instruction's target, or a PI lookalike's, as written. */
     public function tag(): ?string
     {
         return match ($this->type) {
             self::TAG, self::PI => $this->name,
+            self::COMMENT => $this->commentTarget,
             default => null,
         };
     }
@@ -279,10 +278,14 @@ final class Tags
         return $this->type === self::COMMENT ? $this->commentType : null;
     }
 
-    /** The current comment's whole text. */
+    /** The current comment's whole text (a funky comment's is its text). */
     public function fullCommentText(): ?string
     {
-        return $this->type === self::COMMENT ? substr($this->html, $this->fullTextStart, $this->fullTextLength) : null;
+        return match ($this->type) {
+            self::COMMENT => substr($this->html, $this->fullTextStart, $this->fullTextLength),
+            self::FUNKY => substr($this->html, $this->textStart, $this->textLength),
+            default => null,
+        };
     }
 
     /** The current token's text as a reader sees it. */
@@ -292,7 +295,11 @@ final class Tags
             return '';
         }
         $raw = substr($this->html, $this->textStart, $this->textLength);
-        if ($this->type === self::TEXT || ($this->type === self::TAG && in_array(strtolower((string) $this->name), self::RAW_DECODED, true))) {
+        $tagName = $this->type === self::TAG ? strtolower((string) $this->name) : '';
+        if (($this->type === self::TEXT && $this->textAfterPre) || $tagName === 'textarea') {
+            $raw = (string) preg_replace('/^(?:\r\n|\r|\n)/', '', $raw);
+        }
+        if ($this->type === self::TEXT || in_array($tagName, self::RAW_DECODED, true)) {
             return Decoder::text($raw);
         }
         return $raw;
@@ -318,16 +325,7 @@ final class Tags
             $list = $this->classes();
             return $list === [] ? null : implode(' ', $list);
         }
-        $pending = $this->edits->attribute($lower);
-        if ($pending !== null) {
-            return $pending['value'];
-        }
-        foreach ($this->attributes as $attr) {
-            if ($attr['lower'] === $lower) {
-                return $attr['value'] === null ? true : Decoder::attribute($attr['value']);
-            }
-        }
-        return null;
+        return $this->edits->attribute($lower)['value'] ?? Scanner::attributeValue($this->attributes, $lower);
     }
 
     /**
@@ -372,26 +370,12 @@ final class Tags
     /** @return list<string> */
     private function baseClassList(): array
     {
-        $value = $this->baseClassValue();
-        if ($value === null || $value === '') {
-            return [];
-        }
-        return preg_split('/[ \t\n\r\f]+/', trim($value), -1, PREG_SPLIT_NO_EMPTY) ?: [];
+        return Edits::classList($this->edits->attribute('class'), $this->attributes);
     }
 
-    /** The class attribute's decoded value before class edits: a pending set, else the source. */
     private function baseClassValue(): ?string
     {
-        $pending = $this->edits->attribute('class');
-        if ($pending !== null) {
-            return $pending['value'] === true ? '' : $pending['value'];
-        }
-        foreach ($this->attributes as $attr) {
-            if ($attr['lower'] === 'class') {
-                return $attr['value'] === null ? '' : Decoder::attribute($attr['value']);
-            }
-        }
-        return null;
+        return Edits::classValue($this->edits->attribute('class'), $this->attributes);
     }
 
     /** Sets an attribute on the current tag. */
@@ -416,15 +400,7 @@ final class Tags
         if ($this->type !== self::TAG || $this->closer) {
             return false;
         }
-        $lower = strtolower($name);
-        $exists = false;
-        foreach ($this->attributes as $attr) {
-            if ($attr['lower'] === $lower) {
-                $exists = true;
-                break;
-            }
-        }
-        if (!$exists) {
+        if (Scanner::attributeValue($this->attributes, strtolower($name)) === null) {
             // Only a pending addition: cancelling it is not a removal.
             $this->edits->cancelAttribute($name);
             return false;
@@ -465,7 +441,7 @@ final class Tags
         if ($this->type === null || $this->paused) {
             return false;
         }
-        if (!isset($this->bookmarks[$name]) && count($this->bookmarks) >= self::MAX_BOOKMARKS) {
+        if (!isset($this->bookmarks[$name]) && count($this->bookmarks) >= $this->maxBookmarks) {
             return false;
         }
         $this->bookmarks[$name] = [$this->start, $this->end];
@@ -501,6 +477,61 @@ final class Tags
         return $this->nextToken();
     }
 
+    /**
+     * Reads what follows as content of a namespace: outside HTML "<![CDATA["
+     * opens a CDATA section. Tag bodies are read as HTML ("html": SCRIPT,
+     * STYLE and the other raw text elements take their text whole) unless
+     * the start tags here are foreign content ("foreign").
+     */
+    public function parseAs(string $namespace, string $tagBodies = 'html'): void
+    {
+        $this->namespace = $namespace;
+        $this->tagBodies = $namespace === 'html' ? 'html' : $tagBodies;
+    }
+
+    /** Raises how many bookmarks may be held at once. */
+    public function allowBookmarks(int $max): void
+    {
+        $this->maxBookmarks = $max;
+    }
+
+    /** Back to the start of the document, with every update written in and the bookmarks kept. */
+    public function rewind(): void
+    {
+        $this->flush();
+        $this->resetToken();
+        $this->cursor = 0;
+        $this->ended = false;
+        $this->paused = false;
+        $this->afterPre = false;
+        $this->namespace = 'html';
+        $this->tagBodies = 'html';
+    }
+
+    /** Where the current token sits in the document: [start, end]. */
+    public function tokenSpan(): array
+    {
+        return [$this->start, $this->end];
+    }
+
+    /** Where the current text token's text sits: [start, length]. */
+    public function textSpan(): array
+    {
+        return [$this->textStart, $this->textLength];
+    }
+
+    /** The source between two offsets, updates written in. */
+    public function source(int $start, int $length): string
+    {
+        return substr($this->html, $start, $length);
+    }
+
+    /** Where a bookmark starts, or null when there is none of that name. */
+    public function bookmarkStart(string $name): ?int
+    {
+        return $this->bookmarks[$name][0] ?? null;
+    }
+
     /** The document with every update written in. */
     public function html(): string
     {
@@ -529,35 +560,10 @@ final class Tags
         $this->rescanCurrent();
     }
 
-    /**
-     * Splices the edits into the source, ascending, and moves the bookmarks
-     * and the cursor by what the token gained or lost.
-     *
-     * @param list<array{int, int, string}> $replacements
-     */
+    /** @param list<array{int, int, string}> $replacements */
     private function applyReplacements(array $replacements): void
     {
-        usort($replacements, static fn (array $a, array $b) => $a[0] <=> $b[0] ?: $a[1] <=> $b[1]);
-        $out = '';
-        $cursor = 0;
-        $delta = 0;
-        foreach ($replacements as [$start, $end, $text]) {
-            $out .= substr($this->html, $cursor, $start - $cursor) . $text;
-            $cursor = $end;
-            $delta += strlen($text) - ($end - $start);
-        }
-        $out .= substr($this->html, $cursor);
-        $tokenStart = $this->start;
-        $tokenEnd = $this->end;
-        foreach ($this->bookmarks as $name => [$bStart, $bEnd]) {
-            if ($bStart > $tokenStart) {
-                $this->bookmarks[$name] = [$bStart + $delta, $bEnd + $delta];
-            } elseif ($bStart === $tokenStart) {
-                $this->bookmarks[$name] = [$bStart, $tokenEnd + $delta];
-            }
-        }
-        $this->html = $out;
-        $this->cursor = $tokenEnd + $delta;
+        [$this->html, $this->bookmarks, $this->cursor] = Edits::splice($this->html, $replacements, $this->bookmarks, $this->start, $this->end);
     }
 
     /** Re-reads the current token so attribute offsets match the new source. */

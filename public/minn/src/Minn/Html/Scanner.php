@@ -131,10 +131,12 @@ final class Scanner
     }
 
     /**
-     * What "<?" opens at $at: a PHP tag as a processing instruction, another
-     * PI-shaped run as a comment lookalike, or a plain bogus comment.
+     * What "<?" opens at $at: a processing instruction when an ASCII
+     * alphanumeric target (not "xml") is followed by space, "?" or ">"
+     * (its text after the space, up to "?>" or ">"); a PI lookalike comment
+     * for another XML name closed by "?>"; otherwise an invalid comment.
      *
-     * @return array{kind: string, start: int, end: int, textStart: int, textLength: int, commentType?: string, fullStart?: int, fullLength?: int}|null
+     * @return array{kind: string, start: int, end: int, textStart: int, textLength: int, target?: string, commentType?: string, fullStart?: int, fullLength?: int}|null
      */
     public static function question(string $html, int $at): ?array
     {
@@ -142,19 +144,70 @@ final class Scanner
         if ($gt === false) {
             return null;
         }
-        if (strtolower(substr($html, $at, 5)) === '<?php' && substr($html, $gt - 1, 1) === '?') {
-            // PHP tags read as processing instructions with a "php" target.
-            $bodyStart = $at + 5;
-            if ($bodyStart < $gt - 1 && self::isSpace($html[$bodyStart])) {
-                $bodyStart++;
+        $closedByQuestion = $gt - 1 >= $at + 2 && $html[$gt - 1] === '?';
+        if (preg_match('/\G[A-Za-z_:][A-Za-z0-9_:.\-]*/', $html, $m, 0, $at + 2) === 1 && $at + 2 + strlen($m[0]) <= $gt) {
+            $after = $at + 2 + strlen($m[0]);
+            $next = $html[$after];
+            $textEnd = $closedByQuestion ? $gt - 1 : $gt;
+            if (preg_match('/^[A-Za-z][A-Za-z0-9]*$/', $m[0]) === 1 && strtolower($m[0]) !== 'xml' && ($next === '?' || $next === '>' || self::isSpace($next))) {
+                $textStart = $after;
+                while ($textStart < $textEnd && self::isSpace($html[$textStart])) {
+                    $textStart++;
+                }
+                return ['kind' => 'pi', 'start' => $at, 'end' => $gt + 1, 'textStart' => $textStart, 'textLength' => max(0, $textEnd - $textStart), 'target' => $m[0]];
             }
-            return ['kind' => 'pi', 'start' => $at, 'end' => $gt + 1, 'textStart' => $bodyStart, 'textLength' => max(0, $gt - 1 - $bodyStart)];
+            if ($closedByQuestion) {
+                return self::comment($at, $gt + 1, $after, max(0, $gt - 1 - $after), Tags::COMMENT_PI, $at + 1, $gt - $at - 1) + ['target' => $m[0]];
+            }
         }
-        if ($html[$gt - 1] === '?' && preg_match('/^<\?([a-zA-Z][a-zA-Z0-9]*)/', substr($html, $at, min(64, $gt - $at)), $m)) {
-            $bodyStart = $at + 2 + strlen($m[1]);
-            return self::comment($at, $gt + 1, $bodyStart, max(0, $gt - 1 - $bodyStart), Tags::COMMENT_PI, $at + 1, $gt - $at - 1);
+        return self::comment($at, $gt + 1, $at + 2, $gt - $at - 2, Tags::COMMENT_INVALID, $at + 1, $gt - $at - 1);
+    }
+
+    /**
+     * A source attribute's decoded value (true when it has none), or null when the tag lacks it.
+     *
+     * @param list<array{lower: string, value: ?string}> $attributes
+     */
+    public static function attributeValue(array $attributes, string $lower): string|true|null
+    {
+        foreach ($attributes as $attr) {
+            if ($attr['lower'] === $lower) {
+                return $attr['value'] === null ? true : Decoder::attribute($attr['value']);
+            }
         }
-        return self::comment($at, $gt + 1, $at + 2, $gt - $at - 2, Tags::COMMENT_HTML, $at + 2, $gt - $at - 2);
+        return null;
+    }
+
+    /** Whether the "<" at $at opens markup: a tag, a closer, "<!" or "<?". */
+    public static function opensMarkup(string $html, int $at): bool
+    {
+        $next = $html[$at + 1] ?? '';
+        return $next === '!' || $next === '?' || $next === '/' || ($next !== '' && ctype_alpha($next));
+    }
+
+    /** Where text starting at $at ends: at the next "<" that opens markup, before a "<" ending the input, or at the end. */
+    public static function textEnd(string $html, int $at): int
+    {
+        $length = strlen($html);
+        $from = $at + 1;
+        while (($lt = strpos($html, '<', $from)) !== false) {
+            if ($lt === $length - 1 || self::opensMarkup($html, $lt)) {
+                return $lt;
+            }
+            $from = $lt + 1;
+        }
+        return $length;
+    }
+
+    /**
+     * A CDATA section in foreign content, "<![CDATA[" to "]]>"; null when it does not close.
+     *
+     * @return array{kind: string, start: int, end: int, textStart: int, textLength: int}|null
+     */
+    public static function cdata(string $html, int $at): ?array
+    {
+        $close = strpos($html, ']]>', $at + 9);
+        return $close === false ? null : ['kind' => 'cdata', 'start' => $at, 'end' => $close + 3, 'textStart' => $at + 9, 'textLength' => $close - $at - 9];
     }
 
     /**

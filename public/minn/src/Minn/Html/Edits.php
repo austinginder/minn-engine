@@ -127,7 +127,7 @@ final class Edits
     public function setTextFor(?string $type, ?string $tagName, ?string $commentType, string $text): bool
     {
         if ($type === Tags::TEXT) {
-            $this->text = strtr($text, ['&' => '&amp;', '<' => '&lt;']);
+            $this->text = htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8');
             return true;
         }
         if ($type === Tags::COMMENT) {
@@ -140,6 +140,11 @@ final class Edits
         if ($type === Tags::TAG && $tagName !== null) {
             if ($tagName === 'script' || $tagName === 'style') {
                 $this->text = preg_replace_callback('#</(' . $tagName[0] . ')(?=' . substr($tagName, 1) . ')#i', static fn (array $m) => '</\\u00' . dechex(ord($m[1])), $text) ?? $text;
+                return true;
+            }
+            if ($tagName === 'title' || $tagName === 'textarea') {
+                // Only the element's own closer would end it early; that is all the text escapes.
+                $this->text = preg_replace('#</(' . $tagName . ')#i', '&lt;/$1', $text) ?? $text;
                 return true;
             }
             if (in_array($tagName, Tags::RAW_TEXT, true)) {
@@ -260,5 +265,67 @@ final class Edits
     private static function escape(string $value): string
     {
         return htmlspecialchars($value, ENT_QUOTES | ENT_HTML5 | ENT_SUBSTITUTE, 'UTF-8', true);
+    }
+
+    /**
+     * Splices replacements into the source, ascending, and moves the bookmarks
+     * and the cursor by what the token at [$tokenStart, $tokenEnd] gained or lost.
+     *
+     * @param list<array{int, int, string}> $replacements
+     * @param array<string, array{0: int, 1: int}> $bookmarks
+     * @return array{0: string, 1: array<string, array{0: int, 1: int}>, 2: int} the source, the bookmarks, the cursor
+     */
+    public static function splice(string $html, array $replacements, array $bookmarks, int $tokenStart, int $tokenEnd): array
+    {
+        usort($replacements, static fn (array $a, array $b) => $a[0] <=> $b[0] ?: $a[1] <=> $b[1]);
+        $out = '';
+        $cursor = 0;
+        $delta = 0;
+        foreach ($replacements as [$start, $end, $text]) {
+            $out .= substr($html, $cursor, $start - $cursor) . $text;
+            $cursor = $end;
+            $delta += strlen($text) - ($end - $start);
+        }
+        $out .= substr($html, $cursor);
+        foreach ($bookmarks as $name => [$bStart, $bEnd]) {
+            if ($bStart > $tokenStart) {
+                $bookmarks[$name] = [$bStart + $delta, $bEnd + $delta];
+            } elseif ($bStart === $tokenStart) {
+                $bookmarks[$name] = [$bStart, $tokenEnd + $delta];
+            }
+        }
+        return [$out, $bookmarks, $tokenEnd + $delta];
+    }
+
+    /**
+     * The class attribute's decoded value before class edits: a pending set, else the source's; null when there is none.
+     *
+     * @param array{value: string|true}|null $pending
+     * @param list<array{lower: string, value: ?string}> $attributes
+     */
+    public static function classValue(?array $pending, array $attributes): ?string
+    {
+        if ($pending !== null) {
+            return $pending['value'] === true ? '' : $pending['value'];
+        }
+        foreach ($attributes as $attr) {
+            if ($attr['lower'] === 'class') {
+                return $attr['value'] === null ? '' : Decoder::attribute($attr['value']);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * The class names before class edits.
+     *
+     * @param array{value: string|true}|null $pending
+     * @param list<array{lower: string, value: ?string}> $attributes
+     * @return list<string>
+     */
+    public static function classList(?array $pending, array $attributes): array
+    {
+        $value = self::classValue($pending, $attributes);
+        return $value === null || $value === '' ? [] : (preg_split('/[ \t\n\r\f]+/', trim($value), -1, PREG_SPLIT_NO_EMPTY) ?: []);
     }
 }

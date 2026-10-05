@@ -4,10 +4,12 @@ the HTML tag processor
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Decoder`](#decoder) | final class | 86 | Character reference decoding for text and attribute values: numeric and |
-| [`Edits`](#edits) | final class | 252 | The edits pending on the current token: attribute sets and removals, |
-| [`Scanner`](#scanner) | final class | 238 | Reads one token's shape out of raw HTML at an offset: a tag with its |
-| [`Tags`](#tags) | final class | 581 | A streaming HTML tokenizer with in-place edits: tags, text, comments, |
+| [`Decoder`](#decoder) | final class | 129 | Character reference decoding for text and attribute values: numeric and |
+| [`Edits`](#edits) | final class | 319 | The edits pending on the current token: attribute sets and removals, |
+| [`Scanner`](#scanner) | final class | 291 | Reads one token's shape out of raw HTML at an offset: a tag with its |
+| [`TagQuery`](#tagquery) | final readonly class | 37 | A tag processor's next_tag() query: a tag name (any case), a class, the |
+| [`Tags`](#tags) | final class | 587 | A streaming HTML tokenizer with in-place edits: tags, text, comments, |
+| [`TokenMap`](#tokenmap) | final class | 87 | A map from words to replacements that reads the longest word at a place |
 
 ## Decoder
 
@@ -17,7 +19,9 @@ Character reference decoding for text and attribute values: numeric and
 named references, the legacy names that work without a semicolon (not in
 an attribute when an "=" or alphanumeric follows), unknown ones left as is.
 
-Used by: `Minn\Html\Tags`, `Minn\Support\Kses`
+- const `LEGACY` = `array (   0 => 'AElig',   1 => 'AMP',   2 => 'Aacute',   3 => 'Acirc',   4 => 'Agrave',   5 => 'Aring',   6 => 'Atilde',   7 => 'Auml',   8 => 'COPY',   9 => 'Ccedil',   10 => 'ETH',   11 => 'Eacute',   12 => 'Ecirc',   13 => 'Egrave',   14 => 'Euml',   15 => 'GT',   16 => 'Iacute',   17 => 'Icirc',   18 => 'Igrave',   19 => 'Iuml',   20 => 'LT',   21 => 'Ntilde',   22 => 'Oacute',   23 => 'Ocirc',   24 => 'Ograve',   25 => 'Oslash',   26 => 'Otilde',   27 => 'Ouml',   28 => 'QUOT',   29 => 'REG',   30 => 'THORN',   31 => 'Uacute',   32 => 'Ucirc',   33 => 'Ugrave',   34 => 'Uuml',   35 => 'Yacute',   36 => 'aacute',   37 => 'acirc',   38 => 'acute',   39 => 'aelig',   40 => 'agrave',   41 => 'amp',   42 => 'aring',   43 => 'atilde',   44 => 'auml',   45 => 'brvbar',   46 => 'ccedil',   47 => 'cedil',   48 => 'cent',   49 => 'copy',   50 => 'curren',   51 => 'deg',   52 => 'divide',   53 => 'eacute',   54 => 'ecirc',   55 => 'egrave',   56 => 'eth',   57 => 'euml',   58 => 'frac12',   59 => 'frac14',   60 => 'frac34',   61 => 'gt',   62 => 'iacute',   63 => 'icirc',   64 => 'iexcl',   65 => 'igrave',   66 => 'iquest',   67 => 'iuml',   68 => 'laquo',   69 => 'lt',   70 => 'macr',   71 => 'micro',   72 => 'middot',   73 => 'nbsp',   74 => 'not',   75 => 'ntilde',   76 => 'oacute',   77 => 'ocirc',   78 => 'ograve',   79 => 'ordf',   80 => 'ordm',   81 => 'oslash',   82 => 'otilde',   83 => 'ouml',   84 => 'para',   85 => 'plusmn',   86 => 'pound',   87 => 'quot',   88 => 'raquo',   89 => 'reg',   90 => 'sect',   91 => 'shy',   92 => 'sup1',   93 => 'sup2',   94 => 'sup3',   95 => 'szlig',   96 => 'thorn',   97 => 'times',   98 => 'uacute',   99 => 'ucirc',   100 => 'ugrave',   101 => 'uml',   102 => 'uuml',   103 => 'yacute',   104 => 'yen',   105 => 'yuml', )` — The named references that decode without a semicolon (the HTML standard's legacy list).
+
+Used by: `Minn\Html\Edits`, `Minn\Html\Scanner`, `Minn\Html\Tags`, `Minn\Html\Tree\Builder`, `Minn\Support\Kses`
 
 
 ### static `text(string $raw): string`
@@ -28,7 +32,18 @@ Text with its character references decoded.
 
 An attribute value with its character references decoded.
 
-Internals: `decode()` (private, line 29), `codePoint()` (private, line 69), `legacy()` (private, line 82)
+### static `reference(string $context, string $text, int $at): ?array`
+
+The character reference at $at in a context ("data" or "attribute"):
+its text and how many bytes it spans, or null when none decodes there.
+
+- `@return array{0: string, 1: int}|null`
+
+### static `char(int $code): string`
+
+The UTF-8 text for a code point, U+FFFD for one that cannot be a character, Windows-1252's for the C1 range.
+
+Internals: `decode()` (private, line 64), `codePoint()` (private, line 104), `legacy()` (private, line 128)
 
 
 ## Edits
@@ -113,7 +128,31 @@ removed), a removed one is cut, a new one is inserted after the tag name.
 
 Forgets everything pending.
 
-Internals: `rebuiltClassValue()` (private, line 223), `existingName()` (private, line 250), `escape()` (private, line 260)
+### static `splice(string $html, array $replacements, array $bookmarks, int $tokenStart, int $tokenEnd): array`
+
+Splices replacements into the source, ascending, and moves the bookmarks
+and the cursor by what the token at [$tokenStart, $tokenEnd] gained or lost.
+
+- `@param list<array{int, int, string}> $replacements`
+- `@param array<string, array{0: int, 1: int}> $bookmarks`
+- `@return array{0: string, 1: array<string, array{0: int, 1: int}>, 2: int} the source, the bookmarks, the cursor`
+
+### static `classValue(?array $pending, array $attributes): ?string`
+
+The class attribute's decoded value before class edits: a pending set, else the source's; null when there is none.
+
+- `@param array{value: string|true}|null $pending`
+- `@param list<array{lower: string, value: ?string}> $attributes`
+
+### static `classList(?array $pending, array $attributes): array`
+
+The class names before class edits.
+
+- `@param array{value: string|true}|null $pending`
+- `@param list<array{lower: string, value: ?string}> $attributes`
+- `@return list<string>`
+
+Internals: `rebuiltClassValue()` (private, line 228), `existingName()` (private, line 255), `escape()` (private, line 265)
 
 
 ## Scanner
@@ -125,7 +164,7 @@ name and attributes, a comment of one of the reference's kinds, a
 doctype, or a processing instruction. Pure and stateless; null means the
 input ends before the token does, which is where a streaming reader pauses.
 
-Used by: `Minn\Html\Tags`
+Used by: `Minn\Html\Tags`, `Minn\Html\Tree\Builder`
 
 ### static `tag(string $html, int $at, int $nameStart): ?array`
 
@@ -151,10 +190,32 @@ doctype, a CDATA lookalike, or a bogus comment.
 
 ### static `question(string $html, int $at): ?array`
 
-What "<?" opens at $at: a PHP tag as a processing instruction, another
-PI-shaped run as a comment lookalike, or a plain bogus comment.
+What "<?" opens at $at: a processing instruction when an ASCII
+alphanumeric target (not "xml") is followed by space, "?" or ">"
+(its text after the space, up to "?>" or ">"); a PI lookalike comment
+for another XML name closed by "?>"; otherwise an invalid comment.
 
-- `@return array{kind: string, start: int, end: int, textStart: int, textLength: int, commentType?: string, fullStart?: int, fullLength?: int}|null`
+- `@return array{kind: string, start: int, end: int, textStart: int, textLength: int, target?: string, commentType?: string, fullStart?: int, fullLength?: int}|null`
+
+### static `attributeValue(array $attributes, string $lower): string|true|null`
+
+A source attribute's decoded value (true when it has none), or null when the tag lacks it.
+
+- `@param list<array{lower: string, value: ?string}> $attributes`
+
+### static `opensMarkup(string $html, int $at): bool`
+
+Whether the "<" at $at opens markup: a tag, a closer, "<!" or "<?".
+
+### static `textEnd(string $html, int $at): int`
+
+Where text starting at $at ends: at the next "<" that opens markup, before a "<" ending the input, or at the end.
+
+### static `cdata(string $html, int $at): ?array`
+
+A CDATA section in foreign content, "<![CDATA[" to "]]>"; null when it does not close.
+
+- `@return array{kind: string, start: int, end: int, textStart: int, textLength: int}|null`
 
 ### static `doctype(string $body): array`
 
@@ -166,7 +227,32 @@ A doctype's body split into its name and public and system identifiers.
 
 Whether a byte is HTML whitespace.
 
-Internals: `attribute()` (private, line 197), `comment()` (private, line 246)
+Internals: `attribute()` (private, line 250), `comment()` (private, line 299)
+
+
+## TagQuery
+
+`final readonly class Minn\Html\TagQuery` · `public/minn/src/Minn/Html/TagQuery.php`
+
+A tag processor's next_tag() query: a tag name (any case), a class, the
+nth match to stop at, and whether closers count.
+
+Used by: `Minn\Html\Tags`
+
+- readonly `?string $tagName`
+- readonly `?string $className`
+- readonly `int $offset`
+- readonly `string $closers`
+
+### static `from(array $query): self`
+
+The query read from the array a caller passes.
+
+- `@param array{tag_name?: ?string, class_name?: ?string, match_offset?: int, tag_closers?: string} $query`
+
+### `matches(string $name, int $closer, callable $hasClass): bool`
+
+Whether a tag (by name, closer or not, and a class test) matches, before the offset is counted.
 
 
 ## Tags
@@ -186,6 +272,7 @@ Behaviour pinned by the html-tag-processor probe fixture.
 - const `PI` = `'#processing-instruction'`
 - const `FUNKY` = `'#funky-comment'`
 - const `CDATA` = `'#cdata-section'`
+- const `PRESUMPTUOUS` = `'#presumptuous-tag'`
 - const `COMMENT_HTML` = `'COMMENT_AS_HTML_COMMENT'`
 - const `COMMENT_ABRUPT` = `'COMMENT_AS_ABRUPTLY_CLOSED_COMMENT'`
 - const `COMMENT_INVALID` = `'COMMENT_AS_INVALID_HTML'`
@@ -195,7 +282,7 @@ Behaviour pinned by the html-tag-processor probe fixture.
 - const `RAW_DECODED` = `array (   0 => 'textarea',   1 => 'title', )`
 - const `MAX_BOOKMARKS` = `10`
 
-Used by: `Minn\Html\Edits`, `Minn\Html\Scanner`
+Used by: `Minn\Html\Edits`, `Minn\Html\Scanner`, `Minn\Html\Tree\Builder`
 
 ```php
 __construct(string $html)
@@ -226,7 +313,7 @@ The current token's name.
 
 ### `tag(): ?string`
 
-The current tag name, upper-cased.
+The current tag name, upper-cased; a processing instruction's target, or a PI lookalike's, as written.
 
 ### `isCloser(): bool`
 
@@ -242,7 +329,7 @@ The current comment's kind.
 
 ### `fullCommentText(): ?string`
 
-The current comment's whole text.
+The current comment's whole text (a funky comment's is its text).
 
 ### `modifiableText(): string`
 
@@ -310,9 +397,78 @@ Whether a bookmark exists.
 
 Moves to a bookmark.
 
+### `parseAs(string $namespace, string $tagBodies = 'html'): void`
+
+Reads what follows as content of a namespace: outside HTML "<![CDATA["
+opens a CDATA section. Tag bodies are read as HTML ("html": SCRIPT,
+STYLE and the other raw text elements take their text whole) unless
+the start tags here are foreign content ("foreign").
+
+### `allowBookmarks(int $max): void`
+
+Raises how many bookmarks may be held at once.
+
+### `rewind(): void`
+
+Back to the start of the document, with every update written in and the bookmarks kept.
+
+### `tokenSpan(): array`
+
+Where the current token sits in the document: [start, end].
+
+### `textSpan(): array`
+
+Where the current text token's text sits: [start, length].
+
+### `source(int $start, int $length): string`
+
+The source between two offsets, updates written in.
+
+### `bookmarkStart(string $name): ?int`
+
+Where a bookmark starts, or null when there is none of that name.
+
 ### `html(): string`
 
 The document with every update written in.
 
-Internals: `setToken()` (private, line 124), `resetToken()` (private, line 134), `takeTag()` (private, line 147), `take()` (private, line 176), `baseClassList()` (private, line 373), `baseClassValue()` (private, line 383), `flush()` (private, line 512), `applyReplacements()` (private, line 538), `rescanCurrent()` (private, line 564), `rescan()` (private, line 580)
+Internals: `setToken()` (private, line 134), `resetToken()` (private, line 144), `takeTag()` (private, line 158), `take()` (private, line 188), `baseClassList()` (private, line 371), `baseClassValue()` (private, line 376), `flush()` (private, line 543), `applyReplacements()` (private, line 564), `rescanCurrent()` (private, line 570), `rescan()` (private, line 586)
+
+
+## TokenMap
+
+`final class Minn\Html\TokenMap` · `public/minn/src/Minn/Html/TokenMap.php`
+
+A map from words to replacements that reads the longest word at a place
+in a text (as character reference names are read): words shorter than
+the key length stand alone, the others are grouped by their first bytes,
+longest first.
+
+```php
+__construct(array $mappings, int $keyLength)
+```
+- `@param array<string, string> $mappings`
+
+
+### `keyLength(): int`
+
+How many leading bytes group the words.
+
+### `contains(string $word, string $caseSensitivity): bool`
+
+Whether the word is in the map ("case-sensitive" or "ascii-case-insensitive").
+
+### `read(string $text, int $offset, string $caseSensitivity): ?array`
+
+The replacement for the longest word at $offset, and the word's length; null when none starts there.
+
+- `@return array{0: string, 1: int}|null`
+
+### `toArray(): array`
+
+Every word and its replacement: the short words first, then each group longest first.
+
+- `@return array<string, string>`
+
+Internals: `same()` (private, line 95)
 

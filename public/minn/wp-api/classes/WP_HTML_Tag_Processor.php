@@ -5,7 +5,35 @@ use Minn\Html\Tags;
 /** The HTML API's tag processor; every method maps onto Minn\Html\Tags. */
 class WP_HTML_Tag_Processor
 {
+    const MAX_BOOKMARKS = 10;
+    const MAX_SEEK_OPS = 1000;
+    const ADD_CLASS = true;
+    const REMOVE_CLASS = false;
+    const SKIP_CLASS = null;
+    const STATE_READY = 'STATE_READY';
+    const STATE_COMPLETE = 'STATE_COMPLETE';
+    const STATE_INCOMPLETE_INPUT = 'STATE_INCOMPLETE_INPUT';
+    const STATE_MATCHED_TAG = 'STATE_MATCHED_TAG';
+    const STATE_TEXT_NODE = 'STATE_TEXT_NODE';
+    const STATE_CDATA_NODE = 'STATE_CDATA_NODE';
+    const STATE_COMMENT = 'STATE_COMMENT';
+    const STATE_DOCTYPE = 'STATE_DOCTYPE';
+    const STATE_PRESUMPTUOUS_TAG = 'STATE_PRESUMPTUOUS_TAG';
+    const STATE_FUNKY_COMMENT = 'STATE_WP_FUNKY';
+    const STATE_PROCESSING_INSTRUCTION = 'STATE_PROCESSING_INSTRUCTION';
+    const COMMENT_AS_ABRUPTLY_CLOSED_COMMENT = 'COMMENT_AS_ABRUPTLY_CLOSED_COMMENT';
+    const COMMENT_AS_CDATA_LOOKALIKE = 'COMMENT_AS_CDATA_LOOKALIKE';
+    const COMMENT_AS_HTML_COMMENT = 'COMMENT_AS_HTML_COMMENT';
+    const COMMENT_AS_PI_NODE_LOOKALIKE = 'COMMENT_AS_PI_NODE_LOOKALIKE';
+    const COMMENT_AS_INVALID_HTML = 'COMMENT_AS_INVALID_HTML';
+    const NO_QUIRKS_MODE = 'no-quirks-mode';
+    const QUIRKS_MODE = 'quirks-mode';
+    const TEXT_IS_GENERIC = 'TEXT_IS_GENERIC';
+    const TEXT_IS_NULL_SEQUENCE = 'TEXT_IS_null_SEQUENCE';
+    const TEXT_IS_WHITESPACE = 'TEXT_IS_WHITESPACE';
+
     protected Tags $tags;
+    private string $minnNamespace = 'html';
 
     public function __construct($html)
     {
@@ -14,7 +42,12 @@ class WP_HTML_Tag_Processor
 
     public function change_parsing_namespace(string $new_namespace): bool
     {
-        return in_array($new_namespace, ['html', 'svg', 'math'], true);
+        if (!in_array($new_namespace, ['html', 'svg', 'math'], true)) {
+            return false;
+        }
+        $this->minnNamespace = $new_namespace;
+        $this->tags->parseAs($new_namespace, $new_namespace === 'html' ? 'html' : 'foreign');
+        return true;
     }
 
     public function next_tag($query = null): bool
@@ -82,7 +115,7 @@ class WP_HTML_Tag_Processor
 
     public function get_namespace(): string
     {
-        return 'html';
+        return $this->minnNamespace;
     }
 
     public function get_tag(): ?string
@@ -184,8 +217,11 @@ class WP_HTML_Tag_Processor
 
     public function get_doctype_info(): ?WP_HTML_Doctype_Info
     {
-        $doctype = $this->tags->doctype();
-        return $doctype === null ? null : new WP_HTML_Doctype_Info($doctype['name'], $doctype['public'], $doctype['system']);
+        if ($this->tags->tokenType() !== Tags::DOCTYPE) {
+            return null;
+        }
+        [$start, $end] = $this->tags->tokenSpan();
+        return WP_HTML_Doctype_Info::from_doctype_token($this->tags->source($start, $end - $start));
     }
 
     public function __wakeup()
@@ -194,19 +230,25 @@ class WP_HTML_Tag_Processor
     }
 }
 
-/** The pieces of a doctype token. */
+/** The pieces of a doctype token and the compatibility mode it indicates. */
 class WP_HTML_Doctype_Info
 {
-    public function __construct(public ?string $name, public ?string $public_identifier, public ?string $system_identifier)
+    public $name;
+    public $public_identifier;
+    public $system_identifier;
+    public $indicated_compatibility_mode;
+
+    private function __construct(?string $name, ?string $public_identifier, ?string $system_identifier, string $indicated_compatibility_mode)
     {
+        $this->name = $name;
+        $this->public_identifier = $public_identifier;
+        $this->system_identifier = $system_identifier;
+        $this->indicated_compatibility_mode = $indicated_compatibility_mode;
     }
 
-    public static function from_doctype_token(string $doctype_html): ?self
+    public static function from_doctype_token($doctype_html)
     {
-        $p = new WP_HTML_Tag_Processor($doctype_html);
-        if (!$p->next_token() || $p->get_token_type() !== '#doctype') {
-            return null;
-        }
-        return $p->get_doctype_info();
+        $doctype = \Minn\Html\Tree\Compat::read((string) $doctype_html);
+        return $doctype === null ? null : new self($doctype['name'], $doctype['public'], $doctype['system'], $doctype['mode']);
     }
 }

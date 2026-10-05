@@ -2,12 +2,12 @@
     "generated": "2026-10-05",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 537,
+        "minn": 545,
         "composes": 786,
-        "leaf": 588,
-        "noop": 1727,
-        "functions": 3568,
-        "minnMethods": 544,
+        "leaf": 627,
+        "noop": 1782,
+        "functions": 3670,
+        "minnMethods": 554,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -5986,16 +5986,671 @@
             "minn": [],
             "composes": []
         },
+        "WP_HTML_Active_Formatting_Elements::clear_up_to_last_marker": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Active_Formatting_Elements::contains_node": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Active_Formatting_Elements::count": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Active_Formatting_Elements::current_node": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Active_Formatting_Elements::insert_marker": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Active_Formatting_Elements::push": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Active_Formatting_Elements::remove_node": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 6,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Active_Formatting_Elements::walk_down": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 3,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Active_Formatting_Elements::walk_up": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 3,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Attribute_Token::__construct": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 6,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Decoder::attribute_starts_with": {
+            "file": "classes/WP_HTML_Decoder.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Html\\Decoder::attribute"
+            ],
+            "composes": []
+        },
+        "WP_HTML_Decoder::code_point_to_utf8_bytes": {
+            "file": "classes/WP_HTML_Decoder.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Html\\Decoder::char"
+            ],
+            "composes": []
+        },
+        "WP_HTML_Decoder::decode": {
+            "file": "classes/WP_HTML_Decoder.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Html\\Decoder::attribute",
+                "Minn\\Html\\Decoder::text"
+            ],
+            "composes": []
+        },
+        "WP_HTML_Decoder::decode_attribute": {
+            "file": "classes/WP_HTML_Decoder.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Html\\Decoder::attribute"
+            ],
+            "composes": []
+        },
+        "WP_HTML_Decoder::decode_text_node": {
+            "file": "classes/WP_HTML_Decoder.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Html\\Decoder::text"
+            ],
+            "composes": []
+        },
+        "WP_HTML_Decoder::read_character_reference": {
+            "file": "classes/WP_HTML_Decoder.php",
+            "lines": 6,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Html\\Decoder::reference"
+            ],
+            "composes": []
+        },
         "WP_HTML_Doctype_Info::__construct": {
             "file": "classes/WP_HTML_Tag_Processor.php",
-            "lines": 0,
-            "kind": "noop",
+            "lines": 4,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
         "WP_HTML_Doctype_Info::from_doctype_token": {
             "file": "classes/WP_HTML_Tag_Processor.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Html\\Tree\\Compat::read"
+            ],
+            "composes": []
+        },
+        "WP_HTML_Open_Elements::__wakeup": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Open_Elements::after_element_pop": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 3,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Open_Elements::after_element_push": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 3,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Open_Elements::at": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Open_Elements::clear_to_table_body_context": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Open_Elements::clear_to_table_context": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Open_Elements::clear_to_table_row_context": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Open_Elements::contains": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Open_Elements::contains_node": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Open_Elements::count": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Open_Elements::current_node": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Open_Elements::current_node_is": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Open_Elements::has_element_in_button_scope": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Open_Elements::has_element_in_list_item_scope": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Open_Elements::has_element_in_scope": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Open_Elements::has_element_in_select_scope": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 9,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Open_Elements::has_element_in_specific_scope": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 10,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Open_Elements::has_element_in_table_scope": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Open_Elements::has_p_in_button_scope": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Open_Elements::minnClearTo": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 3,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Open_Elements::pop": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 6,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Open_Elements::pop_until": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 7,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Open_Elements::push": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Open_Elements::remove_node": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 7,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Open_Elements::set_pop_handler": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Open_Elements::set_push_handler": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Open_Elements::walk_down": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 3,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Open_Elements::walk_up": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 8,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Processor::__construct": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 6,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Html\\Tree\\Builder::__construct"
+            ],
+            "composes": [
+                "_doing_it_wrong"
+            ]
+        },
+        "WP_HTML_Processor::add_class": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Processor::class_list": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Processor::create_fragment": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 6,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Html\\Tree\\Builder::__construct"
+            ],
+            "composes": []
+        },
+        "WP_HTML_Processor::create_full_parser": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Processor::expects_closer": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Processor::get_attribute": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Processor::get_attribute_names_with_prefix": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Processor::get_breadcrumbs": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Processor::get_comment_type": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Processor::get_current_depth": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Processor::get_encoding": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Processor::get_last_error": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Processor::get_modifiable_text": {
+            "file": "classes/WP_HTML_Processor.php",
             "lines": 5,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Processor::get_namespace": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Processor::get_tag": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Processor::get_token_name": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Processor::get_token_type": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Processor::get_unsupported_exception": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Processor::has_bookmark": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Processor::has_class": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Processor::has_self_closing_flag": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Processor::is_special": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Processor::is_tag_closer": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Processor::is_void": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Processor::matches_breadcrumbs": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 12,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Processor::minnAttributes": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 8,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Processor::minnMatches": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 7,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Processor::minnOpener": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Processor::minnReal": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Processor::next_tag": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 14,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Processor::next_token": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 7,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Processor::normalize": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Processor::release_bookmark": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Processor::remove_attribute": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Processor::remove_class": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Processor::seek": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 14,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Processor::serialize": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 5,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Processor::serialize_token": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 12,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Html\\Tree\\Serializer::close",
+                "Minn\\Html\\Tree\\Serializer::leaf",
+                "Minn\\Html\\Tree\\Serializer::open"
+            ],
+            "composes": []
+        },
+        "WP_HTML_Processor::set_attribute": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Processor::set_bookmark": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 5,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Processor::set_modifiable_text": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Processor::step": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Processor_State::__construct": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Span::__construct": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Stack_Event::__construct": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 3,
             "kind": "leaf",
             "minn": [],
             "composes": []
@@ -6032,8 +6687,8 @@
         },
         "WP_HTML_Tag_Processor::change_parsing_namespace": {
             "file": "classes/WP_HTML_Tag_Processor.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 6,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
@@ -6067,7 +6722,7 @@
         },
         "WP_HTML_Tag_Processor::get_doctype_info": {
             "file": "classes/WP_HTML_Tag_Processor.php",
-            "lines": 2,
+            "lines": 5,
             "kind": "leaf",
             "minn": [],
             "composes": []
@@ -6239,6 +6894,41 @@
             "file": "classes/WP_HTML_Tag_Processor.php",
             "lines": 1,
             "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Text_Replacement::__construct": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 3,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Token::__construct": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Token::__destruct": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 3,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Token::__wakeup": {
+            "file": "classes/WP_HTML_Token.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_HTML_Unsupported_Exception::__construct": {
+            "file": "classes/WP_HTML_Processor.php",
+            "lines": 6,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
@@ -10908,6 +11598,59 @@
                 "wp_insert_post",
                 "wp_set_post_terms"
             ]
+        },
+        "WP_Token_Map::__construct": {
+            "file": "classes/WP_Token_Map.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Token_Map::contains": {
+            "file": "classes/WP_Token_Map.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Token_Map::from_array": {
+            "file": "classes/WP_Token_Map.php",
+            "lines": 6,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Html\\TokenMap::__construct"
+            ],
+            "composes": []
+        },
+        "WP_Token_Map::from_precomputed_table": {
+            "file": "classes/WP_Token_Map.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Html\\TokenMap::__construct"
+            ],
+            "composes": []
+        },
+        "WP_Token_Map::precomputed_php_source_table": {
+            "file": "classes/WP_Token_Map.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Token_Map::read_token": {
+            "file": "classes/WP_Token_Map.php",
+            "lines": 6,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Token_Map::to_array": {
+            "file": "classes/WP_Token_Map.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
         },
         "WP_Translation_Controller::get_entries": {
             "file": "classes/WP_Translation_Controller.php",
