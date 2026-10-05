@@ -44690,12 +44690,107 @@
             ]
         },
         {
+            "name": "Minn\\Http\\CertificateName",
+            "short": "CertificateName",
+            "namespace": "Minn\\Http",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Http/CertificateName.php",
+            "lines": 56,
+            "doc": "Whether a TLS certificate names a host: a wildcard only as a whole first\nlabel with at least two labels after it, matching exactly one label; an\nIP address never matches by name; the subjectAltName DNS entries win over\nthe common name when present.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "valid",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "valid(string $reference): bool",
+                    "doc": "Whether a certificate's reference name is one a host can match.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "reference",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 16,
+                    "end": 29
+                },
+                {
+                    "routes": [],
+                    "name": "matches",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "matches(string $host, string $reference): bool",
+                    "doc": "Whether the host matches the reference name.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "host",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "reference",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 32,
+                    "end": 46
+                },
+                {
+                    "routes": [],
+                    "name": "certificateMatches",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "certificateMatches(string $host, array $certificate): bool",
+                    "doc": "Whether a parsed certificate (openssl_x509_parse) names the host.",
+                    "shapes": [
+                        "@param array<string, mixed> $certificate"
+                    ],
+                    "params": [
+                        {
+                            "name": "host",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "certificate",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 53,
+                    "end": 67
+                }
+            ]
+        },
+        {
             "name": "Minn\\Http\\Client",
             "short": "Client",
             "namespace": "Minn\\Http",
             "kind": "final class",
             "file": "public/minn/src/Minn/Http/Client.php",
-            "lines": 100,
+            "lines": 123,
             "doc": "The engine's outgoing HTTP transport over curl. Redirects are followed by\ncurl, so the header lines of every hop arrive in order; only the last\nresponse's block is kept, the way plugin code expects to read it.",
             "implements": [],
             "extends": null,
@@ -44836,7 +44931,30 @@
                         }
                     ],
                     "line": 33,
-                    "end": 72
+                    "end": 75
+                },
+                {
+                    "routes": [],
+                    "name": "lastHead",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "lastHead(array $lines): array",
+                    "doc": "The last response's status line and header lines, line endings removed.",
+                    "shapes": [
+                        "@param list<string> $lines",
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "lines",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 83,
+                    "end": 95
                 },
                 {
                     "routes": [],
@@ -44858,8 +44976,191 @@
                             "doc": ""
                         }
                     ],
-                    "line": 78,
-                    "end": 110
+                    "line": 101,
+                    "end": 133
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Http\\CookieText",
+            "short": "CookieText",
+            "namespace": "Minn\\Http",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Http/CookieText.php",
+            "lines": 94,
+            "doc": "Set-Cookie text and the matching rules a cookie jar applies: parsing a\nheader into name, value and attributes; normalizing attributes (expires\nand max-age as timestamps, the domain without its leading dot); whether\na cookie belongs to a domain and a path (RFC 6265).",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "parse",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "parse(string $header, string $name = ''): array",
+                    "doc": "A Set-Cookie value split up. With a name given, the first part is\nall value; a first part without \"=\" is a value with an empty name.",
+                    "shapes": [
+                        "@return array{name: string, value: string, attributes: array<string, string|true>}"
+                    ],
+                    "params": [
+                        {
+                            "name": "header",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 21,
+                    "end": 38
+                },
+                {
+                    "routes": [],
+                    "name": "normalizeAttribute",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "normalizeAttribute(string $name, mixed $value, int $referenceTime): mixed",
+                    "doc": "One attribute normalized, or null when it should go: dates become timestamps, the domain loses its leading dot.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "referenceTime",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 41,
+                    "end": 64
+                },
+                {
+                    "routes": [],
+                    "name": "hostMatches",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "hostMatches(?string $cookieDomain, string $domain): bool",
+                    "doc": "Whether a host-only cookie with this domain attribute (none means any) belongs to the domain: the same text only.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "cookieDomain",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "domain",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 67,
+                    "end": 70
+                },
+                {
+                    "routes": [],
+                    "name": "domainMatches",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "domainMatches(?string $cookieDomain, string $domain): bool",
+                    "doc": "Whether a cookie with this domain attribute (none means any) belongs to the domain or one of its subdomains (never an IP address).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "cookieDomain",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "domain",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 73,
+                    "end": 83
+                },
+                {
+                    "routes": [],
+                    "name": "pathMatches",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "pathMatches(?string $cookiePath, string $requestPath): bool",
+                    "doc": "Whether a cookie with this path attribute (none means any) is sent for the request path.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "cookiePath",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "requestPath",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 86,
+                    "end": 96
+                },
+                {
+                    "routes": [],
+                    "name": "defaultPath",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "defaultPath(string $requestPath): string",
+                    "doc": "The path a cookie without one gets: the request path up to its last slash, or \"/\".",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "requestPath",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 99,
+                    "end": 105
                 }
             ]
         },
@@ -45061,20 +45362,22 @@
             "namespace": "Minn\\Http",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Http/Exchange.php",
-            "lines": 29,
+            "lines": 30,
             "doc": "What came back: the final response's status, headers (repeats as lists), Set-Cookie values, and body, or the transport error.",
             "implements": [],
             "extends": null,
             "uses": [],
             "usedBy": [
-                "Minn\\Http\\Client"
+                "Minn\\Http\\Client",
+                "Minn\\Http\\RawResponse"
             ],
             "constructor": {
-                "signature": "__construct(int $code, array $headers, array $cookies, string $body, ?string $error = NULL)",
+                "signature": "__construct(int $code, array $headers, array $cookies, string $body, ?string $error = NULL, array $head = array ( ), int $errno = 0)",
                 "doc": "",
                 "shapes": [
                     "@param array<string, string|list<string>> $headers",
-                    "@param list<string> $cookies raw Set-Cookie header values"
+                    "@param list<string> $cookies raw Set-Cookie header values",
+                    "@param list<string> $head the final response's status line and header lines as they came"
                 ],
                 "params": [
                     {
@@ -45111,11 +45414,25 @@
                         "shape": "",
                         "default": "NULL",
                         "doc": ""
+                    },
+                    {
+                        "name": "head",
+                        "type": "array",
+                        "shape": "list<string>",
+                        "default": "array ( )",
+                        "doc": "the final response's status line and header lines as they came"
+                    },
+                    {
+                        "name": "errno",
+                        "type": "int",
+                        "shape": "",
+                        "default": "0",
+                        "doc": ""
                     }
                 ],
                 "visibility": "public",
-                "line": 14,
-                "end": 16
+                "line": 15,
+                "end": 17
             },
             "cases": [],
             "constants": [],
@@ -45164,6 +45481,24 @@
                     "doc": "",
                     "visibility": "public",
                     "promoted": true
+                },
+                {
+                    "name": "head",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "errno",
+                    "type": "int",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
                 }
             ],
             "methods": [
@@ -45176,8 +45511,8 @@
                     "doc": "Whether the transport failed before any status came back.",
                     "shapes": [],
                     "params": [],
-                    "line": 19,
-                    "end": 22
+                    "line": 20,
+                    "end": 23
                 },
                 {
                     "routes": [],
@@ -45188,8 +45523,8 @@
                     "doc": "A response arrived and it was a 2xx.",
                     "shapes": [],
                     "params": [],
-                    "line": 25,
-                    "end": 28
+                    "line": 26,
+                    "end": 29
                 },
                 {
                     "routes": [],
@@ -45200,8 +45535,8 @@
                     "doc": "The body decoded as JSON, or null when it is not JSON.",
                     "shapes": [],
                     "params": [],
-                    "line": 31,
-                    "end": 35
+                    "line": 32,
+                    "end": 36
                 }
             ]
         },
@@ -45537,6 +45872,443 @@
             ]
         },
         {
+            "name": "Minn\\Http\\Ipv6",
+            "short": "Ipv6",
+            "namespace": "Minn\\Http",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Http/Ipv6.php",
+            "lines": 62,
+            "doc": "IPv6 addresses as text: written out in full (eight groups, or six and an\nIPv4 tail), compressed (\"::\" for the longest run of zero groups, the\nfirst when two tie), and checked. Zone suffixes (\"%eth0\") do not pass.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "expand",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "expand(string $ip): string",
+                    "doc": "The address with \"::\" expanded into zero groups.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "ip",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 15,
+                    "end": 25
+                },
+                {
+                    "routes": [],
+                    "name": "compress",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "compress(string $ip): string",
+                    "doc": "The address with leading zeros dropped from all-digit groups and the longest zero run as \"::\".",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "ip",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 28,
+                    "end": 48
+                },
+                {
+                    "routes": [],
+                    "name": "valid",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "valid(string $ip): bool",
+                    "doc": "Whether the text is an IPv6 address (with an optional IPv4 tail).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "ip",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 51,
+                    "end": 72
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Http\\IriParts",
+            "short": "IriParts",
+            "namespace": "Minn\\Http",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Http/IriParts.php",
+            "lines": 138,
+            "doc": "An IRI (a URL that may carry non-ASCII text) split into its parts and\nwritten back normalized: scheme and host in lower case, a scheme's\ndefault port dropped, dot segments removed, and every character a URL\nmay not hold percent-encoded. The IRI form keeps non-ASCII characters;\nthe URI form encodes them too.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": {
+                "signature": "__construct(?string $scheme, ?string $userinfo, ?string $host, ?int $port, string $path, ?string $query, ?string $fragment)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "scheme",
+                        "type": "?string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "userinfo",
+                        "type": "?string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "host",
+                        "type": "?string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "port",
+                        "type": "?int",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "path",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "query",
+                        "type": "?string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "fragment",
+                        "type": "?string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 18,
+                "end": 27
+            },
+            "cases": [],
+            "constants": [
+                {
+                    "name": "PORTS",
+                    "value": "array (   'acap' => 674,   'dict' => 2628,   'file' => NULL,   'http' => 80,   'https' => 443, )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "scheme",
+                    "type": "?string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "userinfo",
+                    "type": "?string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "host",
+                    "type": "?string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "port",
+                    "type": "?int",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "path",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "query",
+                    "type": "?string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "fragment",
+                    "type": "?string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "parse",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "parse(string $iri): self",
+                    "doc": "The parts of an IRI (RFC 3986 appendix B).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "iri",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 30,
+                    "end": 46
+                },
+                {
+                    "routes": [],
+                    "name": "valid",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "valid(): bool",
+                    "doc": "Whether the parts make a well-formed IRI: a valid scheme when there is one, no \"//\" path without an authority.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 49,
+                    "end": 55
+                },
+                {
+                    "routes": [],
+                    "name": "resolve",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "resolve(self $ref): ?self",
+                    "doc": "The reference resolved against this base (RFC 3986 section 5.2), or null when the base has no scheme.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "ref",
+                            "type": "self",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 58,
+                    "end": 74
+                },
+                {
+                    "routes": [],
+                    "name": "withHost",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "withHost(?string $host): self",
+                    "doc": "The same IRI with another host.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "host",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 77,
+                    "end": 80
+                },
+                {
+                    "routes": [],
+                    "name": "withPath",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "withPath(string $path): self",
+                    "doc": "The same IRI with another path.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "path",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 83,
+                    "end": 86
+                },
+                {
+                    "routes": [],
+                    "name": "toIri",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "toIri(): string",
+                    "doc": "The normalized IRI: non-ASCII characters stay as they are.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 89,
+                    "end": 92
+                },
+                {
+                    "routes": [],
+                    "name": "toUri",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "toUri(): string",
+                    "doc": "The normalized URI: non-ASCII characters percent-encoded too.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 95,
+                    "end": 98
+                },
+                {
+                    "routes": [],
+                    "name": "write",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "write(string $keep): string",
+                    "doc": "The text, with $keep naming the extra byte ranges left unencoded.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "keep",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 101,
+                    "end": 115
+                },
+                {
+                    "routes": [],
+                    "name": "mergePath",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "mergePath(string $path): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "path",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 117,
+                    "end": 124
+                },
+                {
+                    "routes": [],
+                    "name": "removeDots",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "removeDots(string $path): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "path",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 126,
+                    "end": 144
+                },
+                {
+                    "routes": [],
+                    "name": "encode",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "encode(string $text, string $allowed, string $keep): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "allowed",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "keep",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 146,
+                    "end": 150
+                }
+            ]
+        },
+        {
             "name": "Minn\\Http\\Kernel",
             "short": "Kernel",
             "namespace": "Minn\\Http",
@@ -45804,7 +46576,7 @@
             "namespace": "Minn\\Http",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Http/Outbound.php",
-            "lines": 47,
+            "lines": 53,
             "doc": "One outgoing HTTP request, normalised: the client below needs nothing else.",
             "implements": [],
             "extends": null,
@@ -45813,10 +46585,11 @@
                 "Minn\\Http\\Client"
             ],
             "constructor": {
-                "signature": "__construct(string $method, string $url, array $headers = array ( ), ?string $body = NULL, float $timeout = 5.0, int $redirects = 5, bool $verifySsl = true, string $userAgent = '', ?string $caInfo = NULL, bool $blocking = true)",
+                "signature": "__construct(string $method, string $url, array $headers = array ( ), ?string $body = NULL, float $timeout = 5.0, int $redirects = 5, bool $verifySsl = true, string $userAgent = '', ?string $caInfo = NULL, bool $blocking = true, ?Closure $prepare = NULL, ?float $connectTimeout = NULL)",
                 "doc": "",
                 "shapes": [
-                    "@param list<string> $headers \"Name: value\" lines"
+                    "@param list<string> $headers \"Name: value\" lines",
+                    "@param (Closure(\\CurlHandle): void)|null $prepare a last word on the curl handle before it is sent"
                 ],
                 "params": [
                     {
@@ -45888,11 +46661,25 @@
                         "shape": "",
                         "default": "true",
                         "doc": ""
+                    },
+                    {
+                        "name": "prepare",
+                        "type": "?Closure",
+                        "shape": "(Closure(\\CurlHandle): void)|null",
+                        "default": "NULL",
+                        "doc": "a last word on the curl handle before it is sent"
+                    },
+                    {
+                        "name": "connectTimeout",
+                        "type": "?float",
+                        "shape": "float|null",
+                        "default": "NULL",
+                        "doc": "seconds to connect, when not the whole timeout"
                     }
                 ],
                 "visibility": "public",
-                "line": 11,
-                "end": 23
+                "line": 17,
+                "end": 31
             },
             "cases": [],
             "constants": [],
@@ -45986,6 +46773,24 @@
                     "doc": "",
                     "visibility": "public",
                     "promoted": true
+                },
+                {
+                    "name": "prepare",
+                    "type": "?Closure",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "connectTimeout",
+                    "type": "?float",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
                 }
             ],
             "methods": [
@@ -46022,8 +46827,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 30,
-                    "end": 33
+                    "line": 38,
+                    "end": 41
                 },
                 {
                     "routes": [],
@@ -46065,8 +46870,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 40,
-                    "end": 43
+                    "line": 48,
+                    "end": 51
                 },
                 {
                     "routes": [],
@@ -46101,8 +46906,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 50,
-                    "end": 53
+                    "line": 58,
+                    "end": 61
                 }
             ]
         },
@@ -46454,6 +47259,346 @@
                     "params": [],
                     "line": 108,
                     "end": 122
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Http\\Punycode",
+            "short": "Punycode",
+            "namespace": "Minn\\Http",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Http/Punycode.php",
+            "lines": 103,
+            "doc": "Internationalized host names in ASCII: each label that is not ASCII is\nwritten as \"xn--\" plus its Punycode (RFC 3492) and must stay under 64\nbytes. Labels keep their case: there is no Nameprep step, as on the\nreference (\"Bücher\" becomes \"xn--Bcher-kva\").",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "PREFIX",
+                    "value": "'xn--'",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "MAX_LENGTH",
+                    "value": "64",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "BASE",
+                    "value": "36",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "TMIN",
+                    "value": "1",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "TMAX",
+                    "value": "26",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "SKEW",
+                    "value": "38",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "DAMP",
+                    "value": "700",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "INITIAL_BIAS",
+                    "value": "72",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "INITIAL_N",
+                    "value": "128",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "host",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "host(string $hostname): string",
+                    "doc": "A whole host name, label by label.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "hostname",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 28,
+                    "end": 31
+                },
+                {
+                    "routes": [],
+                    "name": "label",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "label(string $text): string",
+                    "doc": "One label in ASCII.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 38,
+                    "end": 51
+                },
+                {
+                    "routes": [],
+                    "name": "encode",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "encode(string $input): string",
+                    "doc": "The Punycode of a UTF-8 string (without the prefix).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "input",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 54,
+                    "end": 83
+                },
+                {
+                    "routes": [],
+                    "name": "digits",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "digits(int $q, int $bias): string",
+                    "doc": "One delta as variable-length digits.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "q",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "bias",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 86,
+                    "end": 98
+                },
+                {
+                    "routes": [],
+                    "name": "digit",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "digit(int $d): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "d",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 100,
+                    "end": 103
+                },
+                {
+                    "routes": [],
+                    "name": "adapt",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "adapt(int $delta, int $points, int $damp): int",
+                    "doc": "The next bias; the first delta is damped by DAMP, later ones by 2.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "delta",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "points",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "damp",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 106,
+                    "end": 116
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Http\\RawResponse",
+            "short": "RawResponse",
+            "namespace": "Minn\\Http",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Http/RawResponse.php",
+            "lines": 82,
+            "doc": "An HTTP response as text, the way the Requests library hands it from\ntransport to parser: the status line and headers, a blank line, the\nbody. Built from an exchange, split back up, chunked bodies joined and\ncompressed ones inflated.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http\\Exchange"
+            ],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "fromExchange",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "fromExchange(Minn\\Http\\Exchange $exchange): string",
+                    "doc": "The exchange as raw response text: its status line, header lines, a blank line, the body.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "exchange",
+                            "type": "Minn\\Http\\Exchange",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 18,
+                    "end": 22
+                },
+                {
+                    "routes": [],
+                    "name": "parse",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "parse(string $raw): array",
+                    "doc": "The text split into protocol, status, header pairs (folded lines\njoined) and body.",
+                    "shapes": [
+                        "@return array{protocol: float, status: int, headers: list<array{0: string, 1: string}>, body: string}"
+                    ],
+                    "params": [
+                        {
+                            "name": "raw",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 31,
+                    "end": 38
+                },
+                {
+                    "routes": [],
+                    "name": "parseHead",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "parseHead(string $head): array",
+                    "doc": "A head alone (the body went to a file): protocol, status, header pairs, and an empty body.",
+                    "shapes": [
+                        "@return array{protocol: float, status: int, headers: list<array{0: string, 1: string}>, body: string}"
+                    ],
+                    "params": [
+                        {
+                            "name": "head",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 46,
+                    "end": 61
+                },
+                {
+                    "routes": [],
+                    "name": "unchunk",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "unchunk(string $body): string",
+                    "doc": "A chunked body joined; text that is not chunked comes back as it was.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "body",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 64,
+                    "end": 77
+                },
+                {
+                    "routes": [],
+                    "name": "inflate",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "inflate(string $data): string",
+                    "doc": "A gzip or zlib body inflated; anything else (raw deflate included) comes back as it was.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "data",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 80,
+                    "end": 95
                 }
             ]
         },
@@ -46934,6 +48079,52 @@
                     ],
                     "line": 133,
                     "end": 137
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Http\\RequestsNames",
+            "short": "RequestsNames",
+            "namespace": "Minn\\Http",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Http/RequestsNames.php",
+            "lines": 18,
+            "doc": "The Requests library's PSR-0 class names (Requests_Exception_HTTP_404,\nRequests_IDNAEncoder, ...) mapped to the PSR-4 names they stand for.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "SEGMENTS",
+                    "value": "array (   'http' => 'Http',   'idnaencoder' => 'IdnaEncoder',   'ipv6' => 'Ipv6',   'iri' => 'Iri',   'ssl' => 'Ssl',   'curl' => 'Curl',   'fsockopen' => 'Fsockopen',   'hooker' => 'HookManager',   'casesensitivedictionary' => 'CaseInsensitiveDictionary',   'caseinsensitivedictionary' => 'CaseInsensitiveDictionary',   'filterediterator' => 'FilteredIterator', )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "modern",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "modern(string $legacy): ?string",
+                    "doc": "The namespaced name for a Requests_* name, or null when it is not one.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "legacy",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 16,
+                    "end": 27
                 }
             ]
         },

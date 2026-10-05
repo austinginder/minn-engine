@@ -42,7 +42,7 @@ final class Client
             CURLOPT_CUSTOMREQUEST => $request->method,
             CURLOPT_NOBODY => $request->method === 'HEAD',
             CURLOPT_TIMEOUT_MS => $request->blocking ? $milliseconds : 1000,
-            CURLOPT_CONNECTTIMEOUT_MS => $milliseconds,
+            CURLOPT_CONNECTTIMEOUT_MS => $request->connectTimeout === null ? $milliseconds : (int) ($request->connectTimeout * 1000),
             CURLOPT_FOLLOWLOCATION => $request->redirects > 0,
             CURLOPT_MAXREDIRS => max(0, $request->redirects),
             CURLOPT_SSL_VERIFYPEER => $request->verifySsl,
@@ -60,15 +60,38 @@ final class Client
         if ($request->caInfo !== null && is_file($request->caInfo)) {
             curl_setopt($handle, CURLOPT_CAINFO, $request->caInfo);
         }
+        if ($request->prepare !== null) {
+            ($request->prepare)($handle);
+        }
         $raw = curl_exec($handle);
         $errno = curl_errno($handle);
         $error = curl_error($handle);
         $code = (int) curl_getinfo($handle, CURLINFO_RESPONSE_CODE);
         if ($errno !== 0 && $raw === false) {
-            return new Exchange(0, [], [], '', $error !== '' ? $error : 'cURL error ' . $errno);
+            return new Exchange(0, [], [], '', $error !== '' ? $error : 'cURL error ' . $errno, [], $errno);
         }
         [$headers, $cookies] = self::lastBlock($lines);
-        return new Exchange($code, $headers, $cookies, $request->method === 'HEAD' ? '' : (string) $raw);
+        return new Exchange($code, $headers, $cookies, $request->method === 'HEAD' ? '' : (string) $raw, null, self::lastHead($lines));
+    }
+
+    /**
+     * The last response's status line and header lines, line endings removed.
+     *
+     * @param list<string> $lines
+     * @return list<string>
+     */
+    private static function lastHead(array $lines): array
+    {
+        $head = [];
+        foreach ($lines as $line) {
+            $line = rtrim($line, "\r\n");
+            if (str_starts_with($line, 'HTTP/')) {
+                $head = [$line];
+            } elseif ($line !== '' && $head !== []) {
+                $head[] = $line;
+            }
+        }
+        return $head;
     }
 
     /**

@@ -105,24 +105,27 @@ function rest_ensure_response($response)
 function rest_convert_error_to_response($error)
 {
     $status = array_reduce($error->get_all_error_data(), static fn ($status, $error_data) => is_array($error_data) && isset($error_data['status']) ? $error_data['status'] : $status, 500);
-    $errors = [];
-    foreach ((array) $error->errors as $code => $messages) {
-        $all_data = $error->get_all_error_data($code);
-        $last_data = array_pop($all_data);
-        foreach ((array) $messages as $message) {
-            $formatted = ['code' => $code, 'message' => $message, 'data' => $last_data];
-            if ($all_data) {
-                $formatted['additional_data'] = $all_data;
-            }
-            $errors[] = $formatted;
-        }
-    }
+    $errors = _minn_rest_error_entries($error);
     $data = $errors[0];
     if (count($errors) > 1) {
         array_shift($errors);
         $data['additional_errors'] = $errors;
     }
     return new WP_REST_Response($data, $status);
+}
+
+/** @internal each message of a WP_Error as a REST error entry: code, message, the code's last data, and its earlier data when there is any */
+function _minn_rest_error_entries(WP_Error $error): array
+{
+    $entries = [];
+    foreach ((array) $error->errors as $code => $messages) {
+        $all_data = $error->get_all_error_data($code);
+        $last_data = array_pop($all_data);
+        foreach ((array) $messages as $message) {
+            $entries[] = ['code' => $code, 'message' => $message, 'data' => $last_data] + ($all_data ? ['additional_data' => $all_data] : []);
+        }
+    }
+    return $entries;
 }
 
 /**

@@ -6,15 +6,22 @@ request, response, routing, and the outgoing client
 |---|---|---|---|
 | [`Access`](#access) | enum | 15 | Who a route is for. The six answers every route gives, so the |
 | [`Args`](#args) | final class | 192 | The parameters a route accepts, as the reference describes them in the |
-| [`Client`](#client) | final class | 100 | The engine's outgoing HTTP transport over curl. Redirects are followed by |
+| [`CertificateName`](#certificatename) | final class | 56 | Whether a TLS certificate names a host: a wildcard only as a whole first |
+| [`Client`](#client) | final class | 123 | The engine's outgoing HTTP transport over curl. Redirects are followed by |
+| [`CookieText`](#cookietext) | final class | 94 | Set-Cookie text and the matching rules a cookie jar applies: parsing a |
 | [`Download`](#download) | final class | 106 | A file the engine fetches for itself (a package, a language pack). Every |
-| [`Exchange`](#exchange) | final readonly class | 29 | What came back: the final response's status, headers (repeats as lists), Set-Cookie values, and body, or the transport error. |
+| [`Exchange`](#exchange) | final readonly class | 30 | What came back: the final response's status, headers (repeats as lists), Set-Cookie values, and body, or the transport error. |
 | [`Failure`](#failure) | final class | 176 | What the public sees when the engine cannot answer: a plain page with no |
+| [`Ipv6`](#ipv6) | final class | 62 | IPv6 addresses as text: written out in full (eight groups, or six and an |
+| [`IriParts`](#iriparts) | final readonly class | 138 | An IRI (a URL that may carry non-ASCII text) split into its parts and |
 | [`Kernel`](#kernel) | final readonly class | 36 | The edge. Turns a request into a response through the router and turns |
 | [`Method`](#method) | enum | 33 |  |
-| [`Outbound`](#outbound) | final readonly class | 47 | One outgoing HTTP request, normalised: the client below needs nothing else. |
+| [`Outbound`](#outbound) | final readonly class | 53 | One outgoing HTTP request, normalised: the client below needs nothing else. |
 | [`Policy`](#policy) | final readonly class | 103 | What a route requires of its caller, as data on the route: the router |
+| [`Punycode`](#punycode) | final class | 103 | Internationalized host names in ASCII: each label that is not ASCII is |
+| [`RawResponse`](#rawresponse) | final class | 82 | An HTTP response as text, the way the Requests library hands it from |
 | [`Request`](#request) | final readonly class | 128 | An immutable picture of the incoming request. Built once from the PHP |
+| [`RequestsNames`](#requestsnames) | final class | 18 | The Requests library's PSR-0 class names (Requests_Exception_HTTP_404, |
 | [`Response`](#response) | final readonly class | 101 | What a handler returns. Nothing is written to the client until the |
 | [`Route`](#route) | final readonly class | 63 | Declares a handler method as a route. The policy lives here, as |
 | [`RouteMiss`](#routemiss) | final class | 3 | A handler declining a request its pattern matched: the router swallows |
@@ -84,6 +91,30 @@ The sets merged into one map, as a route's endpoint publishes them.
 - `@return array<string, array<string, mixed>>`
 
 
+## CertificateName
+
+`final class Minn\Http\CertificateName` · `public/minn/src/Minn/Http/CertificateName.php`
+
+Whether a TLS certificate names a host: a wildcard only as a whole first
+label with at least two labels after it, matching exactly one label; an
+IP address never matches by name; the subjectAltName DNS entries win over
+the common name when present.
+
+### static `valid(string $reference): bool`
+
+Whether a certificate's reference name is one a host can match.
+
+### static `matches(string $host, string $reference): bool`
+
+Whether the host matches the reference name.
+
+### static `certificateMatches(string $host, array $certificate): bool`
+
+Whether a parsed certificate (openssl_x509_parse) names the host.
+
+- `@param array<string, mixed> $certificate`
+
+
 ## Client
 
 `final class Minn\Http\Client` · `public/minn/src/Minn/Http/Client.php`
@@ -108,7 +139,44 @@ A HEAD request, sent at once.
 
 Performs one outgoing request over curl and returns the exchange, a transport error included.
 
-Internals: `lastBlock()` (private, line 78)
+Internals: `lastHead()` (private, line 83), `lastBlock()` (private, line 101)
+
+
+## CookieText
+
+`final class Minn\Http\CookieText` · `public/minn/src/Minn/Http/CookieText.php`
+
+Set-Cookie text and the matching rules a cookie jar applies: parsing a
+header into name, value and attributes; normalizing attributes (expires
+and max-age as timestamps, the domain without its leading dot); whether
+a cookie belongs to a domain and a path (RFC 6265).
+
+### static `parse(string $header, string $name = ''): array`
+
+A Set-Cookie value split up. With a name given, the first part is
+all value; a first part without "=" is a value with an empty name.
+
+- `@return array{name: string, value: string, attributes: array<string, string|true>}`
+
+### static `normalizeAttribute(string $name, mixed $value, int $referenceTime): mixed`
+
+One attribute normalized, or null when it should go: dates become timestamps, the domain loses its leading dot.
+
+### static `hostMatches(?string $cookieDomain, string $domain): bool`
+
+Whether a host-only cookie with this domain attribute (none means any) belongs to the domain: the same text only.
+
+### static `domainMatches(?string $cookieDomain, string $domain): bool`
+
+Whether a cookie with this domain attribute (none means any) belongs to the domain or one of its subdomains (never an IP address).
+
+### static `pathMatches(?string $cookiePath, string $requestPath): bool`
+
+Whether a cookie with this path attribute (none means any) is sent for the request path.
+
+### static `defaultPath(string $requestPath): string`
+
+The path a cookie without one gets: the request path up to its last slash, or "/".
 
 
 ## Download
@@ -140,19 +208,22 @@ Internals: `allow()` (private, line 60), `status()` (private, line 77), `locatio
 
 What came back: the final response's status, headers (repeats as lists), Set-Cookie values, and body, or the transport error.
 
-Used by: `Minn\Http\Client`
+Used by: `Minn\Http\Client`, `Minn\Http\RawResponse`
 
 ```php
-__construct(int $code, array $headers, array $cookies, string $body, ?string $error = NULL)
+__construct(int $code, array $headers, array $cookies, string $body, ?string $error = NULL, array $head = array ( ), int $errno = 0)
 ```
 - `@param array<string, string|list<string>> $headers`
 - `@param list<string> $cookies raw Set-Cookie header values`
+- `@param list<string> $head the final response's status line and header lines as they came`
 
 - readonly `int $code`
 - readonly `array $headers`
 - readonly `array $cookies`
 - readonly `string $body`
 - readonly `?string $error`
+- readonly `array $head`
+- readonly `int $errno`
 
 ### `failed(): bool`
 
@@ -236,6 +307,82 @@ a site that has not asked never learns this much from a response.
 Internals: `discardOutput()` (private, line 82), `note()` (private, line 111), `record()` (private, line 125), `page()` (private, line 177)
 
 
+## Ipv6
+
+`final class Minn\Http\Ipv6` · `public/minn/src/Minn/Http/Ipv6.php`
+
+IPv6 addresses as text: written out in full (eight groups, or six and an
+IPv4 tail), compressed ("::" for the longest run of zero groups, the
+first when two tie), and checked. Zone suffixes ("%eth0") do not pass.
+
+### static `expand(string $ip): string`
+
+The address with "::" expanded into zero groups.
+
+### static `compress(string $ip): string`
+
+The address with leading zeros dropped from all-digit groups and the longest zero run as "::".
+
+### static `valid(string $ip): bool`
+
+Whether the text is an IPv6 address (with an optional IPv4 tail).
+
+
+## IriParts
+
+`final readonly class Minn\Http\IriParts` · `public/minn/src/Minn/Http/IriParts.php`
+
+An IRI (a URL that may carry non-ASCII text) split into its parts and
+written back normalized: scheme and host in lower case, a scheme's
+default port dropped, dot segments removed, and every character a URL
+may not hold percent-encoded. The IRI form keeps non-ASCII characters;
+the URI form encodes them too.
+
+- const `PORTS` = `array (   'acap' => 674,   'dict' => 2628,   'file' => NULL,   'http' => 80,   'https' => 443, )`
+
+```php
+__construct(?string $scheme, ?string $userinfo, ?string $host, ?int $port, string $path, ?string $query, ?string $fragment)
+```
+
+- readonly `?string $scheme`
+- readonly `?string $userinfo`
+- readonly `?string $host`
+- readonly `?int $port`
+- readonly `string $path`
+- readonly `?string $query`
+- readonly `?string $fragment`
+
+### static `parse(string $iri): self`
+
+The parts of an IRI (RFC 3986 appendix B).
+
+### `valid(): bool`
+
+Whether the parts make a well-formed IRI: a valid scheme when there is one, no "//" path without an authority.
+
+### `resolve(self $ref): ?self`
+
+The reference resolved against this base (RFC 3986 section 5.2), or null when the base has no scheme.
+
+### `withHost(?string $host): self`
+
+The same IRI with another host.
+
+### `withPath(string $path): self`
+
+The same IRI with another path.
+
+### `toIri(): string`
+
+The normalized IRI: non-ASCII characters stay as they are.
+
+### `toUri(): string`
+
+The normalized URI: non-ASCII characters percent-encoded too.
+
+Internals: `write()` (private, line 101), `mergePath()` (private, line 117), `removeDots()` (private, line 126), `encode()` (private, line 146)
+
+
 ## Kernel
 
 `final readonly class Minn\Http\Kernel` · `public/minn/src/Minn/Http/Kernel.php`
@@ -288,9 +435,10 @@ One outgoing HTTP request, normalised: the client below needs nothing else.
 Used by: `Minn\Http\Client`
 
 ```php
-__construct(string $method, string $url, array $headers = array ( ), ?string $body = NULL, float $timeout = 5.0, int $redirects = 5, bool $verifySsl = true, string $userAgent = '', ?string $caInfo = NULL, bool $blocking = true)
+__construct(string $method, string $url, array $headers = array ( ), ?string $body = NULL, float $timeout = 5.0, int $redirects = 5, bool $verifySsl = true, string $userAgent = '', ?string $caInfo = NULL, bool $blocking = true, ?Closure $prepare = NULL, ?float $connectTimeout = NULL)
 ```
 - `@param list<string> $headers "Name: value" lines`
+- `@param (Closure(\CurlHandle): void)|null $prepare a last word on the curl handle before it is sent`
 
 - readonly `string $method`
 - readonly `string $url`
@@ -302,6 +450,8 @@ __construct(string $method, string $url, array $headers = array ( ), ?string $bo
 - readonly `string $userAgent`
 - readonly `?string $caInfo`
 - readonly `bool $blocking`
+- readonly `?Closure $prepare`
+- readonly `?float $connectTimeout`
 
 ### static `get(string $url, array $headers = array ( ), float $timeout = 5.0): self`
 
@@ -389,6 +539,75 @@ The policy as data, for the route catalogue. @return array<string, mixed>
 The policy in one line, for the route index and the docs.
 
 
+## Punycode
+
+`final class Minn\Http\Punycode` · `public/minn/src/Minn/Http/Punycode.php`
+
+Internationalized host names in ASCII: each label that is not ASCII is
+written as "xn--" plus its Punycode (RFC 3492) and must stay under 64
+bytes. Labels keep their case: there is no Nameprep step, as on the
+reference ("Bücher" becomes "xn--Bcher-kva").
+
+- const `PREFIX` = `'xn--'`
+- const `MAX_LENGTH` = `64`
+- const `BASE` = `36`
+- const `TMIN` = `1`
+- const `TMAX` = `26`
+- const `SKEW` = `38`
+- const `DAMP` = `700`
+- const `INITIAL_BIAS` = `72`
+- const `INITIAL_N` = `128`
+
+### static `host(string $hostname): string`
+
+A whole host name, label by label.
+
+### static `label(string $text): string`
+
+One label in ASCII.
+
+### static `encode(string $input): string`
+
+The Punycode of a UTF-8 string (without the prefix).
+
+Internals: `digits()` (private, line 86), `digit()` (private, line 100), `adapt()` (private, line 106)
+
+
+## RawResponse
+
+`final class Minn\Http\RawResponse` · `public/minn/src/Minn/Http/RawResponse.php`
+
+An HTTP response as text, the way the Requests library hands it from
+transport to parser: the status line and headers, a blank line, the
+body. Built from an exchange, split back up, chunked bodies joined and
+compressed ones inflated.
+
+### static `fromExchange(Minn\Http\Exchange $exchange): string`
+
+The exchange as raw response text: its status line, header lines, a blank line, the body.
+
+### static `parse(string $raw): array`
+
+The text split into protocol, status, header pairs (folded lines
+joined) and body.
+
+- `@return array{protocol: float, status: int, headers: list<array{0: string, 1: string}>, body: string}`
+
+### static `parseHead(string $head): array`
+
+A head alone (the body went to a file): protocol, status, header pairs, and an empty body.
+
+- `@return array{protocol: float, status: int, headers: list<array{0: string, 1: string}>, body: string}`
+
+### static `unchunk(string $body): string`
+
+A chunked body joined; text that is not chunked comes back as it was.
+
+### static `inflate(string $data): string`
+
+A gzip or zlib body inflated; anything else (raw deflate included) comes back as it was.
+
+
 ## Request
 
 `final readonly class Minn\Http\Request` · `public/minn/src/Minn/Http/Request.php`
@@ -459,6 +678,20 @@ The path split into non-empty segments: "/a/b/" becomes ["a", "b"].
 ### `queryStringWithout(string ...$keys): string`
 
 The query string with the given keys removed, ready to append to a redirect.
+
+
+## RequestsNames
+
+`final class Minn\Http\RequestsNames` · `public/minn/src/Minn/Http/RequestsNames.php`
+
+The Requests library's PSR-0 class names (Requests_Exception_HTTP_404,
+Requests_IDNAEncoder, ...) mapped to the PSR-4 names they stand for.
+
+- const `SEGMENTS` = `array (   'http' => 'Http',   'idnaencoder' => 'IdnaEncoder',   'ipv6' => 'Ipv6',   'iri' => 'Iri',   'ssl' => 'Ssl',   'curl' => 'Curl',   'fsockopen' => 'Fsockopen',   'hooker' => 'HookManager',   'casesensitivedictionary' => 'CaseInsensitiveDictionary',   'caseinsensitivedictionary' => 'CaseInsensitiveDictionary',   'filterediterator' => 'FilteredIterator', )`
+
+### static `modern(string $legacy): ?string`
+
+The namespaced name for a Requests_* name, or null when it is not one.
 
 
 ## Response

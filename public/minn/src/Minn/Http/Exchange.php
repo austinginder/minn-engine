@@ -10,8 +10,9 @@ final readonly class Exchange
     /**
      * @param array<string, string|list<string>> $headers
      * @param list<string> $cookies raw Set-Cookie header values
+     * @param list<string> $head the final response's status line and header lines as they came
      */
-    public function __construct(public int $code, public array $headers, public array $cookies, public string $body, public ?string $error = null)
+    public function __construct(public int $code, public array $headers, public array $cookies, public string $body, public ?string $error = null, public array $head = [], public int $errno = 0)
     {
     }
 

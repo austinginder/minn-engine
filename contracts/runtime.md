@@ -2261,6 +2261,94 @@ stages `tests/fixtures/feeds` in the test site's uploads and diffs
   autodiscovery through plain `<a>` links; the Flash-era `embed()` players
   (empty); `get_local_date()` converts the common strftime codes only.
 
+## The Requests library (2026-10-05)
+
+Plugins call the Requests library directly (`WpOrg\Requests\Requests::request`
+and `request_multiple` in All-In-One Security and Jetpack, `IdnaEncoder` in
+Elementor and Site Kit, `Ipv6::check_ipv6`, `Exception\Http\Status403`,
+`Cookie`), so the engine has its own: 64 classes under the reference's names
+in `wp-api/requests/`, the work in `Minn\Http` (`Punycode`, `Ipv6`,
+`CookieText`, `CertificateName`, `IriParts`, `RawResponse`,
+`RequestsNames`), sending through the engine's curl client. Suite
+`tests/requests.test.php` stages `tests/fixtures/requests/echo.php` (it
+answers with the request it saw) and diffs `tests/tools/requests-probe.php`
+on both stacks, 71 rows. The reference side runs inside WordPress without
+WP-CLI (`tests/tools/run-reference-probe.php`): WP-CLI ships its own copy of
+the library and registers it first, so under WP-CLI that copy answers on
+both stacks, and the engine adds only `Requests` and
+`WP_HTTP_Requests_Hooks` around it.
+
+- On the wire: `User-Agent: php-requests/2.0.17` (the `useragent` option),
+  `Accept: */*`, `Accept-Encoding: deflate, gzip, br, zstd` (curl
+  negotiates and decodes), `Connection: close`; a header whose value is an
+  array is sent as `Array`. GET, HEAD and DELETE carry data in the query
+  string; other methods send it as a form body (curl labels it
+  `application/x-www-form-urlencoded`) or as the string given.
+- Responses: `status_code`, `protocol_version` (1.1), `success` (2xx),
+  `raw` (status line, headers, blank line, body), headers by lower-case
+  name with every value kept (`$headers['x'] ` joins them with a bare
+  comma, `getValues()` lists them), the `Connection` header dropped, a
+  chunked body joined and a compressed one inflated. A request that is not
+  blocking returns an empty Response; with `filename` the body goes to the
+  file and `body` stays empty.
+- Redirects are followed by the library, up to `redirects` (10): the
+  method and data stay for 301, 302 and 307, a 303 becomes GET; `history`
+  holds the earlier responses, the latest first; past the limit,
+  `Too many redirects` (`toomanyredirects`). `follow_redirects` false
+  returns the 3xx itself.
+- Hooks, in order: `requests.before_request` (5 arguments, by reference;
+  a hook can add headers), `curl.before_request` and `curl.before_send`
+  (the curl handle), `curl.after_send`, `curl.after_request` (the raw
+  response and info), `requests.before_parse` (6),
+  `requests.before_redirect_check` (4), `requests.before_redirect` (5)
+  for each hop, and `requests.after_request` (4) once, for the final
+  answer. Priorities run lowest first.
+- Errors: a transport failure is `cURL error {n}: {curl's message}` of type
+  `curlerror` (inside `request_multiple`, an `Exception\Transport\Curl` of
+  type `cURLEasy` in that request's slot); a non-http(s) URL is `Only
+  HTTP(S) requests are handled.` (`nonhttp`); wrong argument types are
+  `Exception\InvalidArgument` naming the caller, the position, the expected
+  type and `gettype()` of what came (`integer`, not `int`), a plain
+  function written `::name()`. `throw_for_status()`: a redirect only when
+  redirects are refused (`Redirection not allowed`), otherwise the status's
+  class (`404 Not Found`, `418 I'm A Teapot`, `StatusUnknown` with the
+  response's code); `Http::get_class()` returns a known class with a
+  leading backslash. `decode_body()` raises `Unable to parse JSON data:
+  {json_last_error_msg}` (`response.invalid`).
+- Cookies: `Set-Cookie` answers fill the response's jar, a cookie without
+  a domain taking the request's host (host-only) and without a path the
+  request path up to its last slash; attributes normalize (expires and
+  max-age as timestamps, max-age counted from the reference time, the
+  domain without its leading dot, case kept); a host-only cookie matches
+  only the same text. `cookies` sent as `name=value; ...`.
+  `format_for_set_cookie()` writes `secure=1` for a flag and ends in `"; "`
+  when there are no attributes. The jar returns what it was given (a
+  string stays a string until a request needs it).
+- `IdnaEncoder::encode()` writes Punycode without Nameprep (case kept); a
+  label of 64 bytes or more is refused (`idna.provided_too_long`,
+  `idna.encoded_too_long`). `Ipv6::compress()` strips leading zeros only
+  from groups that continue with a digit (`0db8` stays) and folds the first
+  longest zero run. `Iri` normalizes as the feed reader does but keeps
+  non-ASCII text (`->uri` encodes it); `->port` keeps a default port the
+  text drops.
+- `Session`: relative URLs resolve against the session's, its headers and
+  data go under the request's (GET data after the request's own query),
+  `useragent` and other names set on the session become options.
+- The deprecated `Requests_*` names load as aliases of the namespaced
+  classes, with the reference's one `E_USER_DEPRECATED` notice the first
+  time one is used. `Requests::get_certificate_path()` is
+  `wp-includes/certificates/ca-bundle.crt`; the engine verifies against the
+  system's certificates when that file is absent.
+- `wp_remote_*` (the engine's own `WP_Http`) now sends the same
+  `Accept-Encoding` and `Connection: close`, fires `http_api_curl` with the
+  curl handle, the parsed arguments and the URL, and adds no Content-Type
+  of its own to a form body (it had added `; charset=UTF-8`). Not done: the
+  `requests-{$hook}` actions `wp_remote_*` fires on the reference (it goes
+  through Requests there; the engine's `WP_Http` does not), the
+  `_redirection` key in the arguments `http_api_curl` sees, and
+  `curl_multi` (`request_multiple` sends one after another; the answers
+  come back in input order, the reference's in completion order).
+
 ## The kses tag pass (2026-10-05)
 
 How `wp_kses` reads markup, captured input by input (224 `wp_kses_post`

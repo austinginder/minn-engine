@@ -4,10 +4,16 @@ declare(strict_types=1);
 
 namespace Minn\Http;
 
+use Closure;
+
 /** One outgoing HTTP request, normalised: the client below needs nothing else. */
 final readonly class Outbound
 {
-    /** @param list<string> $headers "Name: value" lines */
+    /**
+     * @param list<string> $headers "Name: value" lines
+     * @param (Closure(\CurlHandle): void)|null $prepare a last word on the curl handle before it is sent
+     * @param float|null $connectTimeout seconds to connect, when not the whole timeout
+     */
     public function __construct(
         public string $method,
         public string $url,
@@ -19,6 +25,8 @@ final readonly class Outbound
         public string $userAgent = '',
         public ?string $caInfo = null,
         public bool $blocking = true,
+        public ?Closure $prepare = null,
+        public ?float $connectTimeout = null,
     ) {
     }
 

@@ -1,8 +1,56 @@
 <?php
-/** The HTTP API over WP_Http. */
+/** The HTTP API over WP_Http, and the Requests library (wp-api/requests/) plugins call directly. */
 
 use Minn\Runtime\Runtime;
 use Minn\Support\Url;
+
+// The Requests classes load the first time anything names them; the
+// pre-namespace Requests_* names become aliases, with the one deprecation
+// notice the reference gives the first time one is used.
+spl_autoload_register(static function (string $class): void {
+    $class = ltrim($class, '\\');
+    if (str_starts_with($class, 'WpOrg\\Requests\\') || $class === 'Requests' || $class === 'WP_HTTP_Requests_Hooks') {
+        _minn_load_requests();
+    } elseif (str_starts_with($class, 'Requests_')) {
+        _minn_alias_requests_class($class);
+    }
+});
+
+/**
+ * @internal defines the Requests library classes, once. When another copy
+ * is already loaded (WP-CLI ships one and registers it first), that copy
+ * answers and only the WordPress classes around it are added.
+ */
+function _minn_load_requests(): void
+{
+    static $loaded = false;
+    if ($loaded) {
+        return;
+    }
+    $loaded = true;
+    $files = class_exists('WpOrg\\Requests\\Autoload', false) ? ['Legacy'] : ['Exceptions', 'Utility', 'Parts', 'Core', 'Legacy'];
+    foreach ($files as $file) {
+        require_once __DIR__ . '/requests/' . $file . '.php';
+    }
+}
+
+/** @internal a PSR-0 Requests_* name as an alias of its WpOrg\Requests class */
+function _minn_alias_requests_class(string $legacy): void
+{
+    static $warned = false;
+    $target = Minn\Http\RequestsNames::modern($legacy);
+    if ($target === null) {
+        return;
+    }
+    _minn_load_requests();
+    if (!$warned) {
+        $warned = true;
+        trigger_error('The PSR-0 `Requests_...` class names in the Requests library are deprecated. Switch to the PSR-4 `WpOrg\\Requests\\...` class names at your earliest convenience.', E_USER_DEPRECATED);
+    }
+    if ((class_exists($target) || interface_exists($target)) && !class_exists($legacy, false) && !interface_exists($legacy, false)) {
+        class_alias($target, $legacy);
+    }
+}
 
 function _wp_http_get_object()
 {

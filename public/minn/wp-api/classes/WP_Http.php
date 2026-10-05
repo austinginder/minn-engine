@@ -1,58 +1,5 @@
 <?php
 
-namespace WpOrg\Requests\Utility {
-    /** The header dictionary shape plugin code reads from a response. */
-    final class CaseInsensitiveDictionary implements \ArrayAccess, \IteratorAggregate, \Countable
-    {
-        private array $data = [];
-
-        public function __construct(array $data = [])
-        {
-            foreach ($data as $key => $value) {
-                $this->offsetSet($key, $value);
-            }
-        }
-
-        public function offsetExists($offset): bool
-        {
-            return isset($this->data[strtolower((string) $offset)]);
-        }
-
-        public function offsetGet($offset): mixed
-        {
-            return $this->data[strtolower((string) $offset)] ?? null;
-        }
-
-        public function offsetSet($offset, $value): void
-        {
-            if ($offset === null) {
-                throw new \InvalidArgumentException('Object is a dictionary, not a list');
-            }
-            $this->data[strtolower((string) $offset)] = $value;
-        }
-
-        public function offsetUnset($offset): void
-        {
-            unset($this->data[strtolower((string) $offset)]);
-        }
-
-        public function getIterator(): \ArrayIterator
-        {
-            return new \ArrayIterator($this->data);
-        }
-
-        public function count(): int
-        {
-            return count($this->data);
-        }
-
-        public function getAll()
-        {
-            return $this->data;
-        }
-    }
-}
-
 namespace {
     use Minn\Http\Client;
     use Minn\Http\Exchange;
@@ -168,11 +115,11 @@ namespace {
         public function __construct($data, $requested_url = '')
         {
             if (is_string($data)) {
-                $pairs = explode(';', $data);
-                [$this->name, $this->value] = array_map('trim', explode('=', array_shift($pairs), 2) + ['', '']);
-                foreach ($pairs as $pair) {
-                    [$key, $val] = array_map('trim', explode('=', $pair, 2) + ['', '']);
-                    $key = strtolower($key);
+                $parsed = \Minn\Http\CookieText::parse($data);
+                [$this->name, $this->value] = [$parsed['name'], $parsed['value']];
+                foreach ($parsed['attributes'] as $key => $val) {
+                    $key = strtolower((string) $key);
+                    $val = $val === true ? '' : (string) $val;
                     if (in_array($key, ['expires', 'path', 'domain', 'port'], true)) {
                         $this->{$key} = $key === 'expires' ? strtotime($val) : $val;
                     }
@@ -281,10 +228,11 @@ namespace {
             }
             $body = $args['body'];
             if (is_array($body) || is_object($body)) {
+                // curl labels a form body application/x-www-form-urlencoded, as on the reference; nothing is added here.
                 $body = http_build_query((array) $body, '', '&');
-                if (!array_filter($headers, static fn ($h) => stripos($h, 'content-type:') === 0)) {
-                    $headers[] = 'Content-Type: application/x-www-form-urlencoded; charset=' . get_option('blog_charset');
-                }
+            }
+            if (!array_filter($headers, static fn ($h) => stripos($h, 'connection:') === 0)) {
+                $headers[] = 'Connection: close';
             }
             return new Outbound(
                 method: strtoupper((string) $args['method']),
@@ -297,7 +245,19 @@ namespace {
                 userAgent: (string) $args['user-agent'],
                 caInfo: !empty($args['sslcertificates']) ? (string) $args['sslcertificates'] : null,
                 blocking: (bool) $args['blocking'],
+                prepare: self::curl_prepare($args, $url),
             );
+        }
+
+        /** As the reference's transport does: curl negotiates compression, and plugins tune the handle through http_api_curl. */
+        private static function curl_prepare(array $args, string $url): \Closure
+        {
+            return static function (\CurlHandle $handle) use ($args, $url): void {
+                if (!empty($args['decompress'])) {
+                    curl_setopt($handle, CURLOPT_ENCODING, '');
+                }
+                do_action_ref_array('http_api_curl', [&$handle, $args, $url]);
+            };
         }
 
         private function shape(Exchange $exchange, string $url, array $args): array

@@ -340,20 +340,22 @@ class wpdb
                 $out[$field] = $value;
                 continue;
             }
-            $entry = ['value' => $value, 'format' => '%s'];
-            if ($formats !== []) {
-                $entry['format'] = array_shift($formats);
-                if ($formats === [] && count($original) === 1) {
-                    $formats = $original;
-                }
-            } elseif (is_int($value)) {
-                $entry['format'] = '%d';
-            } elseif (is_float($value)) {
-                $entry['format'] = '%f';
-            }
-            $out[$field] = $entry;
+            $out[$field] = ['value' => $value, 'format' => $this->next_format($formats, $original, $value)];
         }
         return $out;
+    }
+
+    /** The next given format (a single one repeats for every field), else one read from the value's type. */
+    private function next_format(array &$formats, array $original, $value): string
+    {
+        if ($formats === []) {
+            return is_int($value) ? '%d' : (is_float($value) ? '%f' : '%s');
+        }
+        $format = (string) array_shift($formats);
+        if ($formats === [] && count($original) === 1) {
+            $formats = $original;
+        }
+        return $format;
     }
 
     public function flush()

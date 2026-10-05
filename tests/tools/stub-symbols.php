@@ -17,7 +17,7 @@ $classes = json_decode((string) file_get_contents($root . '/contracts/api/classe
 $declared = ['functions' => [], 'classes' => []];
 $declaredParents = [];
 $declaredMethods = [];
-foreach (array_merge(glob($root . '/public/minn/wp-api/*.php'), glob($root . '/public/minn/wp-api/classes/*.php'), glob($root . '/public/minn/wp-api/simplepie/*.php')) as $file) {
+foreach (array_merge(glob($root . '/public/minn/wp-api/*.php'), glob($root . '/public/minn/wp-api/classes/*.php'), glob($root . '/public/minn/wp-api/simplepie/*.php'), glob($root . '/public/minn/wp-api/requests/*.php')) as $file) {
     if (basename($file) === 'placeholders.php') {
         continue;
     }
