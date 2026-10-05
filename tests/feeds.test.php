@@ -77,7 +77,9 @@ foreach ($expected as [$label, $value]) {
     $have = array_key_exists($label, $byLabel);
     $check($label, $have && json_encode($byLabel[$label]) === json_encode($value), $have ? substr(json_encode($byLabel[$label], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), 0, 600) . ' vs ' . substr(json_encode($value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), 0, 600) : 'missing');
 }
-$check('the feed cache is left empty on both stacks', trim((string) shell_exec('cd ' . escapeshellarg("{$site}/public") . " && wp db query \"SELECT COUNT(*) FROM wp_options WHERE option_name LIKE '%transient%feed%'\" --skip-column-names 2>/dev/null")) === '0');
+$names = implode(',', array_map(static fn (string $file): string => "'_site_transient_feed_" . md5("{$base}/" . basename($file)) . "'", glob("{$root}/tests/fixtures/feeds/*") ?: []));
+$left = trim((string) shell_exec('cd ' . escapeshellarg("{$site}/public") . " && wp db query \"SELECT COUNT(*) FROM wp_options WHERE option_name IN ({$names})\" --skip-column-names 2>/dev/null"));
+$check('the probe leaves no cached feed behind on either stack', $left === '0', $left);
 
 echo "\n{$pass} passed, {$fail} failed\n";
 exit($fail === 0 ? 0 : 1);

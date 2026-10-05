@@ -520,17 +520,6 @@
         ]
     ],
     [
-        "rss output",
-        [
-            "",
-            ""
-        ]
-    ],
-    [
-        "rss widget live",
-        "<w class=\"widget_rss\"><t><a class=\"rsswidget rss-widget-feed\" href=\"https://minn.localhost/feed/\"><img class=\"rss-widget-icon\" style=\"border:0\" width=\"14\" height=\"14\" src=\"http://minn.localhost/wp-includes/images/rss.png\" alt=\"RSS feed: Live\" loading=\"lazy\" /></a> <a class=\"rsswidget rss-widget-title\" href=\"\">Live</a></t></w>"
-    ],
-    [
         "text update",
         [
             {

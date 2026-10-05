@@ -2250,6 +2250,12 @@ stages `tests/fixtures/feeds` in the test site's uploads and diffs
   notice.
 - `wp_http_validate_url` now asks `http_allowed_safe_ports` (`[80, 443,
   8080]`, host, URL) for a URL that names a port, as the reference does.
+- TLS trust: the reference verifies against the certificate list it ships
+  (`wp-includes/certificates/ca-bundle.crt`), the engine against the
+  system's. A certificate only the system trusts (a local development CA,
+  such as the test site's own) is fetched by the engine and refused by the
+  reference, so the widgets probe no longer reads the test site's own
+  HTTPS feed; the staged feeds suite covers the widget instead.
 - Not done: error columns on the line the reference fills with its entity
   declarations (a document with no line break after its XML declaration);
   autodiscovery through plain `<a>` links; the Flash-era `embed()` players
