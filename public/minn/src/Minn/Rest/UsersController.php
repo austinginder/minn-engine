@@ -20,8 +20,6 @@ use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\RestError;
 use Minn\Support\Kses;
-use Minn\Auth\PasswordReset;
-use Minn\Mail\Mailer;
 
 /** wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives. */
 final readonly class UsersController
@@ -55,6 +53,15 @@ final readonly class UsersController
             Context::of($request)->isEdit() ? $this->object->edit($user) : $this->object->view($user),
             $fields,
         );
+    }
+
+    /** Updates the signed-in user; signed out there is no such user (404). */
+    #[Route(Method::Post, '/wp/v2/users/me', policy: new Policy(Access::Public), body: [Args::USER_EDIT])]
+    #[Route(Method::Put, '/wp/v2/users/me', policy: new Policy(Access::Public), body: [Args::USER_EDIT])]
+    #[Route(Method::Patch, '/wp/v2/users/me', policy: new Policy(Access::Public), body: [Args::USER_EDIT])]
+    public function updateMe(Request $request): Response
+    {
+        return $this->update($request, (string) $this->caller->id());
     }
 
     /** View context lists published authors; edit context lists everyone. */
@@ -141,20 +148,6 @@ final readonly class UsersController
         return Reply::item($this->object->view($user), $fields);
     }
 
-    /** A new account hears about itself with a link to choose a password. */
-    private function welcome(?UserRecord $user): void
-    {
-        if ($user === null) {
-            return;
-        }
-        $key = (new PasswordReset($this->users))->issue($user);
-        $home = rtrim((string) ($this->site->option('home') ?? ''), '/');
-        $link = $home . '/wp-login.php?action=rp&key=' . rawurlencode($key) . '&login=' . rawurlencode($user->login);
-        Mailer::forSite($this->site)->send(
-            Mailer::noticesFor($this->site)->loginDetails($user->login, $user->email, $link),
-        );
-    }
-
     private function hasPublishedContent(int $userId): bool
     {
         return (int) $this->db->value(
@@ -209,7 +202,7 @@ final readonly class UsersController
             'email' => $email,
             'password' => (string) $body['password'],
             'role' => $role,
-            'display_name' => (string) ($body['name'] ?? '') !== '' ? (string) $body['name'] : $login,
+            'display_name' => (string) ($body['name'] ?? ''),
             'url' => (string) ($body['url'] ?? ''),
             'nickname' => (string) ($body['nickname'] ?? $login),
             'first_name' => (string) ($body['first_name'] ?? ''),
@@ -217,8 +210,9 @@ final readonly class UsersController
             'description' => (string) ($body['description'] ?? ''),
             'locale' => (string) ($body['locale'] ?? ''),
         ]);
+        // The reference's REST create sends no mail and leaves no reset key:
+        // the caller chose the password.
         $created = $this->users->find($newId);
-        $this->welcome($created);
         return Reply::item($this->object->edit($created), Fields::fromQuery($request->query), 201)
             ->withHeader('Location', $this->url->to('/wp/v2/users/' . $newId));
     }

@@ -253,9 +253,15 @@ final readonly class LoginController
         if ($wait !== null) {
             return $this->tooManyAttempts($request, $wait);
         }
-        $user = $this->authenticator->login((string) ($request->form['log'] ?? ''), (string) ($request->form['pwd'] ?? ''));
+        $login = (string) ($request->form['log'] ?? '');
+        $password = (string) ($request->form['pwd'] ?? '');
+        $user = $this->authenticator->login($login, $password);
+        $hooks = new LoginHooks($this->users, $this->site);
         if ($user === null) {
             $this->signIn->recordFailure($request->remoteAddress);
+            if ($login !== '' && $password !== '') {
+                $hooks->attempted($login, null);
+            }
             return Response::html($this->render($request, 'Error: The username or password you entered is incorrect.'));
         }
         // Remember me extends the session from two days to fourteen and keeps
@@ -264,7 +270,9 @@ final readonly class LoginController
         $remember = !empty($request->form['rememberme']);
         $redirect = $this->safeRedirect((string) ($request->form['redirect_to'] ?? ''));
         $response = Response::redirect($redirect, 302);
-        return $remember ? $this->signIn->remember($response, $user, $request) : $this->signIn->establish($response, $user, $request);
+        $response = $remember ? $this->signIn->remember($response, $user, $request) : $this->signIn->establish($response, $user, $request);
+        $hooks->attempted($login, $user);
+        return $response;
     }
 
     /**
@@ -306,7 +314,9 @@ final readonly class LoginController
                 . '<p>Do you really want to <a href="' . Html::attr($link) . '">log out</a>?</p></body></html>',
             );
         }
-        return $this->signIn->end($signedOut, $session);
+        $response = $this->signIn->end($signedOut, $session);
+        (new LoginHooks($this->users, $this->site))->signedOut($session->id());
+        return $response;
     }
 
     /**

@@ -78,7 +78,29 @@ final readonly class Users
      */
     public function createAccount(array $fields): int
     {
-        return $this->db->transaction(fn (): int => $this->writeAccount($fields));
+        $id = $this->db->transaction(fn (): int => $this->writeAccount($fields));
+        $this->refreshCount();
+        return $id;
+    }
+
+    /**
+     * The display name an account gets when none is given, as the reference
+     * picks it: first and last name, whichever of the two there is, or the
+     * login. The nickname plays no part.
+     */
+    public static function defaultDisplayName(string $first, string $last, string $login): string
+    {
+        $name = trim($first . ' ' . $last);
+        return $name !== '' ? $name : $login;
+    }
+
+    /**
+     * The user_count option, which the reference keeps current as accounts
+     * come and go. A site without the row is left without it.
+     */
+    private function refreshCount(): void
+    {
+        $this->db->execute("UPDATE {$this->db->table('options')} SET option_value = ? WHERE option_name = 'user_count'", [(string) $this->count()]);
     }
 
     /**
@@ -99,7 +121,7 @@ final readonly class Users
             'user_registered' => gmdate('Y-m-d H:i:s'),
             'user_activation_key' => '',
             'user_status' => 0,
-            'display_name' => $fields['display_name'] !== '' ? $fields['display_name'] : $login,
+            'display_name' => $fields['display_name'] !== '' ? $fields['display_name'] : self::defaultDisplayName(Kses::text($fields['first_name'] ?? ''), Kses::text($fields['last_name'] ?? ''), $login),
         ]);
         $prefix = $this->db->prefix();
         $role = $fields['role'];
@@ -154,6 +176,7 @@ final readonly class Users
     {
         $this->db->execute("DELETE FROM {$this->db->table('usermeta')} WHERE user_id = ?", [$id]);
         $this->db->execute("DELETE FROM {$this->db->table('users')} WHERE ID = ?", [$id]);
+        $this->refreshCount();
     }
 
     /** User ids in login order, optionally the first N. @return list<int> */

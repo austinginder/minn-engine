@@ -48,6 +48,13 @@ final class Constants
         if ($runtime->request?->path === '/wp-cron.php') {
             $computed['DOING_CRON'] = true;
         }
+        // admin-ajax.php declares DOING_AJAX before anything loads, so plugins
+        // know it is no page view. is_admin() stays false there: the endpoint
+        // answers only rest-nonce, and a plugin's admin code (which a true
+        // is_admin() loads) reaches for the admin host Minn does not keep.
+        if ($runtime->request?->path === '/wp-admin/admin-ajax.php') {
+            $computed['DOING_AJAX'] = true;
+        }
         foreach ($fixed + $computed as $name => $value) {
             if (!defined($name)) {
                 define($name, $value);

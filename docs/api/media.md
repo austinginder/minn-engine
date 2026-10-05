@@ -6,13 +6,13 @@ uploads, image sizes and attachment metadata
 |---|---|---|---|
 | [`Canvas`](#canvas) | final readonly class | 141 | One GD bitmap and the operations the media layer needs on it. Every |
 | [`Gallery`](#gallery) | final class | 54 | The classic `[gallery]` shortcode's markup. Every gallery on a page is |
-| [`Images`](#images) | final readonly class | 67 | GD sub-size generation from the size options the site stores. |
+| [`Images`](#images) | final readonly class | 105 | GD sub-size generation for the sizes the site has. |
 | [`Kind`](#kind) | final class | 75 | Whether an attachment is an image, audio, video, or a given extension, judged by its MIME type first and its file extension second. |
 | [`Metadata`](#metadata) | final class | 111 | The _wp_attachment_metadata blob: parsed by scanning for the shapes it |
 | [`Sizing`](#sizing) | final class | 207 | The image size arithmetic the media functions share: the crop or scale a |
 | [`Upload`](#upload) | final readonly class | 76 | One file arriving for the library, on either transport: a multipart |
 | [`Uploads`](#uploads) | final readonly class | 172 | The uploads directory: paths, URLs, the allowed types, and landing a file. |
-| [`Writer`](#writer) | final readonly class | 96 | The writes the media library makes. An Upload becomes an attachment: the |
+| [`Writer`](#writer) | final readonly class | 90 | The writes the media library makes. An Upload becomes an attachment: the |
 
 ## Canvas
 
@@ -98,7 +98,7 @@ Internals: `caption()` (private, line 49), `tag()` (private, line 59), `token()`
 
 `final readonly class Minn\Media\Images` · `public/minn/src/Minn/Media/Images.php`
 
-GD sub-size generation from the size options the site stores.
+GD sub-size generation for the sizes the site has.
 
 Used by: `Minn\Media\Writer`, `Minn\Rest\Services`
 
@@ -109,7 +109,10 @@ __construct(Minn\Content\Site $site)
 
 ### `ladder(): array`
 
-The registered sizes from the site's options, largest last.
+The sizes an upload is cut into, in the order the reference writes
+them to the metadata: the four from the site's options, the two big
+ones every site has, then any a theme or plugin registered with
+add_image_size this request.
 
 - `@return array<string, array{0: int, 1: int, 2: bool}> name => [max width, max height, crop]`
 
@@ -117,9 +120,14 @@ The registered sizes from the site's options, largest last.
 
 Fits (w, h) inside (maxW, maxH); 0 means unconstrained. One rule with the facade's wp_constrain_dimensions.
 
-### `makeSubsizes(string $path, string $mime): array`
+### `makeSubsizes(string $path, string $mime, array $imageMeta = array ( )): array`
 
 Generates the sub-sizes for one image; returns the sizes metadata map.
+The image's metadata so far rides along for the size filter.
+
+- `@param array<string, mixed> $imageMeta`
+
+Internals: `filtered()` (private, line 51)
 
 
 ## Kind

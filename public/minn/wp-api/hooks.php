@@ -56,7 +56,7 @@ function apply_filters_ref_array($hook_name, $args)
 
 function do_action_ref_array($hook_name, $args)
 {
-    Runtime::hooks()->action((string) $hook_name, array_values((array) $args));
+    Runtime::hooks()->actionRef((string) $hook_name, array_values((array) $args));
 }
 
 function current_filter()

@@ -1,7 +1,7 @@
 {
     "engine": "0.0.1",
-    "routes": 232,
-    "withPolicy": 225,
+    "routes": 235,
+    "withPolicy": 228,
     "entries": [
         {
             "method": "GET",
@@ -6413,6 +6413,264 @@
                 }
             },
             "body": [],
+            "index": true
+        },
+        {
+            "method": "POST",
+            "pattern": "/wp/v2/users/me",
+            "name": "Minn\\Rest\\UsersController::updateMe",
+            "handler": "Minn\\Rest\\UsersController::updateMe",
+            "summary": "Updates the signed-in user; signed out there is no such user (404).",
+            "policy": {
+                "access": "Public",
+                "describe": "public"
+            },
+            "args": [],
+            "body": {
+                "name": {
+                    "description": "Display name for the user.",
+                    "type": "string",
+                    "required": false
+                },
+                "first_name": {
+                    "description": "First name for the user.",
+                    "type": "string",
+                    "required": false
+                },
+                "last_name": {
+                    "description": "Last name for the user.",
+                    "type": "string",
+                    "required": false
+                },
+                "email": {
+                    "description": "The email address for the user.",
+                    "type": "string",
+                    "format": "email",
+                    "required": false
+                },
+                "url": {
+                    "description": "URL of the user.",
+                    "type": "string",
+                    "format": "uri",
+                    "required": false
+                },
+                "description": {
+                    "description": "Description of the user.",
+                    "type": "string",
+                    "required": false
+                },
+                "locale": {
+                    "description": "Locale for the user.",
+                    "type": "string",
+                    "required": false
+                },
+                "nickname": {
+                    "description": "The nickname for the user.",
+                    "type": "string",
+                    "required": false
+                },
+                "slug": {
+                    "description": "An alphanumeric identifier for the user.",
+                    "type": "string",
+                    "required": false
+                },
+                "roles": {
+                    "description": "Roles assigned to the user.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "required": false
+                },
+                "password": {
+                    "description": "Password for the user (never included).",
+                    "type": "string",
+                    "required": false
+                },
+                "meta": {
+                    "description": "Meta fields.",
+                    "type": "object",
+                    "properties": {
+                        "show_admin_bar_front": {
+                            "type": "string",
+                            "default": "true"
+                        }
+                    },
+                    "required": false
+                }
+            },
+            "index": true
+        },
+        {
+            "method": "PUT",
+            "pattern": "/wp/v2/users/me",
+            "name": "Minn\\Rest\\UsersController::updateMe",
+            "handler": "Minn\\Rest\\UsersController::updateMe",
+            "summary": "Updates the signed-in user; signed out there is no such user (404).",
+            "policy": {
+                "access": "Public",
+                "describe": "public"
+            },
+            "args": [],
+            "body": {
+                "name": {
+                    "description": "Display name for the user.",
+                    "type": "string",
+                    "required": false
+                },
+                "first_name": {
+                    "description": "First name for the user.",
+                    "type": "string",
+                    "required": false
+                },
+                "last_name": {
+                    "description": "Last name for the user.",
+                    "type": "string",
+                    "required": false
+                },
+                "email": {
+                    "description": "The email address for the user.",
+                    "type": "string",
+                    "format": "email",
+                    "required": false
+                },
+                "url": {
+                    "description": "URL of the user.",
+                    "type": "string",
+                    "format": "uri",
+                    "required": false
+                },
+                "description": {
+                    "description": "Description of the user.",
+                    "type": "string",
+                    "required": false
+                },
+                "locale": {
+                    "description": "Locale for the user.",
+                    "type": "string",
+                    "required": false
+                },
+                "nickname": {
+                    "description": "The nickname for the user.",
+                    "type": "string",
+                    "required": false
+                },
+                "slug": {
+                    "description": "An alphanumeric identifier for the user.",
+                    "type": "string",
+                    "required": false
+                },
+                "roles": {
+                    "description": "Roles assigned to the user.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "required": false
+                },
+                "password": {
+                    "description": "Password for the user (never included).",
+                    "type": "string",
+                    "required": false
+                },
+                "meta": {
+                    "description": "Meta fields.",
+                    "type": "object",
+                    "properties": {
+                        "show_admin_bar_front": {
+                            "type": "string",
+                            "default": "true"
+                        }
+                    },
+                    "required": false
+                }
+            },
+            "index": true
+        },
+        {
+            "method": "PATCH",
+            "pattern": "/wp/v2/users/me",
+            "name": "Minn\\Rest\\UsersController::updateMe",
+            "handler": "Minn\\Rest\\UsersController::updateMe",
+            "summary": "Updates the signed-in user; signed out there is no such user (404).",
+            "policy": {
+                "access": "Public",
+                "describe": "public"
+            },
+            "args": [],
+            "body": {
+                "name": {
+                    "description": "Display name for the user.",
+                    "type": "string",
+                    "required": false
+                },
+                "first_name": {
+                    "description": "First name for the user.",
+                    "type": "string",
+                    "required": false
+                },
+                "last_name": {
+                    "description": "Last name for the user.",
+                    "type": "string",
+                    "required": false
+                },
+                "email": {
+                    "description": "The email address for the user.",
+                    "type": "string",
+                    "format": "email",
+                    "required": false
+                },
+                "url": {
+                    "description": "URL of the user.",
+                    "type": "string",
+                    "format": "uri",
+                    "required": false
+                },
+                "description": {
+                    "description": "Description of the user.",
+                    "type": "string",
+                    "required": false
+                },
+                "locale": {
+                    "description": "Locale for the user.",
+                    "type": "string",
+                    "required": false
+                },
+                "nickname": {
+                    "description": "The nickname for the user.",
+                    "type": "string",
+                    "required": false
+                },
+                "slug": {
+                    "description": "An alphanumeric identifier for the user.",
+                    "type": "string",
+                    "required": false
+                },
+                "roles": {
+                    "description": "Roles assigned to the user.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "required": false
+                },
+                "password": {
+                    "description": "Password for the user (never included).",
+                    "type": "string",
+                    "required": false
+                },
+                "meta": {
+                    "description": "Meta fields.",
+                    "type": "object",
+                    "properties": {
+                        "show_admin_bar_front": {
+                            "type": "string",
+                            "default": "true"
+                        }
+                    },
+                    "required": false
+                }
+            },
             "index": true
         },
         {

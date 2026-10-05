@@ -23,7 +23,7 @@ escaping, serialized readers, small helpers
 | [`Markers`](#markers) | final class | 59 | The BEGIN/END marker blocks insert_with_markers() maintains in files like |
 | [`Paths`](#paths) | final class | 64 | File-system path and permission spellings. |
 | [`SearchReplace`](#searchreplace) | final class | 38 | String replace that walks serialized-PHP arrays of scalars without |
-| [`Serialized`](#serialized) | final class | 202 | Tolerant readers for the serialized-PHP blobs WordPress stores. Nothing |
+| [`Serialized`](#serialized) | final class | 207 | Tolerant readers for the serialized-PHP blobs WordPress stores. Nothing |
 | [`Time`](#time) | final class | 21 | Human-scale spans: a number of seconds as the largest whole unit it fills, rounded, never below one. |
 | [`Url`](#url) | final class | 203 | URL shaping the escaping and query helpers share: the character cleanup |
 | [`Utf8`](#utf8) | final class | 8 | Whether bytes are well-formed UTF-8 as the reference judges them: overlong |
@@ -189,7 +189,7 @@ Apply a mode to every FILE under a directory (the directories themselves keep th
 
 `final class Minn\Support\Html` · `public/minn/src/Minn/Support/Html.php`
 
-Used by: `Minn\Admin\AppController`, `Minn\Admin\LanguageChoices`, `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Renderer`, `Minn\Blocks\Wrapper`, `Minn\Content\Menus`, `Minn\Content\PasswordGate`, `Minn\Content\TermLinks`, `Minn\Front\AdminBar`, `Minn\Front\CommentPostController`, `Minn\Front\Feeds`, `Minn\Front\PostNavigation`, `Minn\Front\Renderer`, `Minn\Front\SitemapXml`, `Minn\Front\TermLists`, `Minn\Http\Failure`, `Minn\Login\LoginController`, `Minn\Login\LoginForm`, `Minn\Rest\MediaObject`, `Minn\Rest\PluginsController`, `Minn\Runtime\PageMenu`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Admin\AppController`, `Minn\Admin\LanguageChoices`, `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Renderer`, `Minn\Blocks\Wrapper`, `Minn\Content\Menus`, `Minn\Content\PasswordGate`, `Minn\Content\TermLinks`, `Minn\Front\AdminBar`, `Minn\Front\CommentPostController`, `Minn\Front\Feeds`, `Minn\Front\PostNavigation`, `Minn\Front\Renderer`, `Minn\Front\SitemapXml`, `Minn\Front\TermLists`, `Minn\Http\Failure`, `Minn\Login\LoginController`, `Minn\Login\LoginForm`, `Minn\Login\LoginHooks`, `Minn\Rest\MediaObject`, `Minn\Rest\PluginsController`, `Minn\Runtime\PageMenu`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\PageRenderer`
 
 ### static `esc(?string $value): string`
 
@@ -657,7 +657,7 @@ float, string, arrays of those, and objects written as their class.
 
 The integer values of a serialized list such as sticky_posts.
 
-Internals: `read()` (private, line 74), `expect()` (private, line 145), `until()` (private, line 153)
+Internals: `read()` (private, line 74), `expect()` (private, line 150), `until()` (private, line 158)
 
 
 ## Time

@@ -85,8 +85,12 @@ and names the transport. How a message is written and sent: `contracts/runtime.m
 "Sending mail".
 
 What sends mail today: the password reset link, the new-account message (login
-details plus a link to choose a password), and the moderation notice to
-`admin_email` when a comment lands in the queue and `moderation_notify` is on.
+details plus a link to choose a password) from `wp user create
+--send-email`, and the moderation notice to `admin_email` when a comment
+lands in the queue and `moderation_notify` is on. A user made over REST
+(`POST /wp/v2/users`, Minn Admin's add-user form) gets no mail and no reset
+key, as on the reference: the caller set the password (round trip,
+2026-10-05).
 
 ## Password reset
 

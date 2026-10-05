@@ -34,9 +34,9 @@ the wp/v2 surface: shapes and controllers
 | [`ParamCheck`](#paramcheck) | final class | 75 | The required / validate / sanitize pass over a request's declared arguments. |
 | [`PluginsController`](#pluginscontroller) | final readonly class | 236 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
 | [`PolicyGate`](#policygate) | final readonly class | 91 | Judges a route's policy against the caller, with the reference's |
-| [`PostObject`](#postobject) | final readonly class | 476 | Builds the wp/v2 post and page objects in the reference's shape: the |
+| [`PostObject`](#postobject) | final readonly class | 482 | Builds the wp/v2 post and page objects in the reference's shape: the |
 | [`PostsController`](#postscontroller) | final readonly class | 182 | wp/v2 posts and pages, read side. |
-| [`PostsWriteController`](#postswritecontroller) | final readonly class | 320 | wp/v2 posts and pages, write side: create, update, trash, and force |
+| [`PostsWriteController`](#postswritecontroller) | final readonly class | 349 | wp/v2 posts and pages, write side: create, update, trash, and force |
 | [`Reply`](#reply) | final class | 47 | JSON responses in the reference's shape: its header set, its json_encode |
 | [`RestUrl`](#resturl) | final readonly class | 38 | REST URLs in the form the reference emits for the site's permalink mode: |
 | [`RevisionsController`](#revisionscontroller) | final readonly class | 142 | wp/v2 revisions and autosaves under posts, pages, and blocks. |
@@ -61,7 +61,7 @@ the wp/v2 surface: shapes and controllers
 | [`Types`](#types) | final class | 97 | The engine's registry of built-in post types, seeded from the observed |
 | [`TypesController`](#typescontroller) | final readonly class | 24 | wp/v2 types. |
 | [`UserObject`](#userobject) | final readonly class | 97 | The wp/v2 user objects: the public view shape and the edit-context shape. |
-| [`UsersController`](#userscontroller) | final readonly class | 301 | wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives. |
+| [`UsersController`](#userscontroller) | final readonly class | 297 | wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives. |
 
 ## AbilitiesController
 
@@ -1350,6 +1350,10 @@ __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Content\Users $users, M
 ```
 
 
+### `permalink(Minn\Content\PostRecord $p): string`
+
+A post's permalink as of now: pretty once live with a slug, ?p= (or ?page_id=) before.
+
 ### static `restBase(string $type): string`
 
 The rest_base of a type.
@@ -1390,7 +1394,7 @@ The view links plus the caller's verbs and cap-gated wp:action-* entries.
 
 A MySQL datetime in the reference's ISO form.
 
-Internals: `navigationView()` (private, line 60), `blockView()` (private, line 90), `viewTerms()` (private, line 155), `typeFields()` (private, line 171), `classList()` (private, line 201), `format()` (private, line 223), `termLinks()` (private, line 267), `allow()` (private, line 467), `gmt()` (private, line 486)
+Internals: `navigationView()` (private, line 66), `blockView()` (private, line 96), `viewTerms()` (private, line 161), `typeFields()` (private, line 177), `classList()` (private, line 207), `format()` (private, line 229), `termLinks()` (private, line 273), `allow()` (private, line 473), `gmt()` (private, line 492)
 
 
 ## PostsController
@@ -1490,7 +1494,7 @@ Trashes a post of any type, or deletes it with force.
 
 A field that may arrive as a scalar or as {raw: ...}.
 
-Internals: `writeNewPost()` (private, line 110), `scheduledIfFuture()` (private, line 224), `fieldColumns()` (private, line 243), `statusColumns()` (private, line 288), `checkStickyPasswordConflict()` (private, line 313), `validStatus()` (private, line 325), `clean()` (private, line 334)
+Internals: `writeNewPost()` (private, line 110), `rememberOld()` (private, line 230), `scheduledIfFuture()` (private, line 248), `fieldColumns()` (private, line 267), `statusColumns()` (private, line 312), `checkStickyPasswordConflict()` (private, line 342), `validStatus()` (private, line 354), `clean()` (private, line 363)
 
 
 ## Reply
@@ -2531,6 +2535,16 @@ Route: `GET /wp/v2/users/me (public)`
 
 The signed-in user.
 
+### `updateMe(Minn\Http\Request $request): Minn\Http\Response`
+
+Route: `POST /wp/v2/users/me (public)`
+
+Route: `PUT /wp/v2/users/me (public)`
+
+Route: `PATCH /wp/v2/users/me (public)`
+
+Updates the signed-in user; signed out there is no such user (404).
+
 ### `list(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `GET /wp/v2/users (public)`
@@ -2565,5 +2579,5 @@ Route: `DELETE /wp/v2/users/{id:\d+} (cap delete_users; user {id} must exist)`
 
 reassign is REQUIRED (checked before the user lookup), and so is force.
 
-Internals: `welcome()` (private, line 145), `hasPublishedContent()` (private, line 158), `validRole()` (private, line 167), `validEmail()` (private, line 175)
+Internals: `hasPublishedContent()` (private, line 151), `validRole()` (private, line 160), `validEmail()` (private, line 168)
 

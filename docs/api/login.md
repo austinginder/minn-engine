@@ -4,8 +4,9 @@
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`LoginController`](#logincontroller) | final readonly class | 329 | Signing in. The page people see is /minn-admin/login: the form, the |
+| [`LoginController`](#logincontroller) | final readonly class | 339 | Signing in. The page people see is /minn-admin/login: the form, the |
 | [`LoginForm`](#loginform) | final class | 137 | The sign-in page markup. |
+| [`LoginHooks`](#loginhooks) | final readonly class | 46 | What the reference tells plugins about a sign-in, when plugins are loaded: |
 | [`ServeLogin`](#servelogin) | final class | 3 | Thrown by the wp-login.php shape file when plugin code require's it |
 
 ## LoginController
@@ -50,7 +51,7 @@ Route: `POST /wp-login.php (public)`
 
 Handles the posted form for each of those pages.
 
-Internals: `lostPassword()` (private, line 99), `openResetLink()` (private, line 141), `resetSession()` (private, line 158), `savePassword()` (private, line 173), `tokenLogin()` (private, line 206), `safeRedirect()` (private, line 274), `logout()` (private, line 293), `action()` (private, line 317), `actionUrl()` (private, line 328), `base()` (private, line 338), `tooManyAttempts()` (private, line 344), `render()` (private, line 351)
+Internals: `lostPassword()` (private, line 99), `openResetLink()` (private, line 141), `resetSession()` (private, line 158), `savePassword()` (private, line 173), `tokenLogin()` (private, line 206), `safeRedirect()` (private, line 282), `logout()` (private, line 301), `action()` (private, line 327), `actionUrl()` (private, line 338), `base()` (private, line 348), `tooManyAttempts()` (private, line 354), `render()` (private, line 361)
 
 
 ## LoginForm
@@ -88,6 +89,35 @@ The new-password form; the key rides in a hidden field as on the reference.
 A message with a link back to sign-in.
 
 Internals: `page()` (private, line 110)
+
+
+## LoginHooks
+
+`final readonly class Minn\Login\LoginHooks` · `public/minn/src/Minn/Login/LoginHooks.php`
+
+What the reference tells plugins about a sign-in, when plugins are loaded:
+wp_login with the user after a good one, wp_login_failed with the reason
+after a bad one (security and logging plugins read it), wp_logout with the
+user id after a sign-out. A form with an empty field is turned away before
+any of it, as there. The authenticate filter, through which a plugin may
+refuse a sign-in, is not run yet (contracts/runtime.md).
+
+Used by: `Minn\Login\LoginController`
+
+```php
+__construct(Minn\Content\Users $users, Minn\Content\Site $site)
+```
+
+
+### `attempted(string $login, ?Minn\Content\UserRecord $user): void`
+
+After a sign-in attempt with both fields filled: the user signed in, or null.
+
+### `signedOut(int $userId): void`
+
+After a sign-out ended the session.
+
+Internals: `reason()` (private, line 51)
 
 
 ## ServeLogin

@@ -941,6 +941,12 @@ function _minn_comment_form_body(array $args, WP_Post $post): void
     echo '</form>';
 }
 
+function wp_blacklist_check($author, $email, $url, $comment, $user_ip, $user_agent)
+{
+    _deprecated_function(__FUNCTION__, '5.5.0', 'wp_check_comment_disallowed_list()');
+    return wp_check_comment_disallowed_list($author, $email, $url, $comment, $user_ip, $user_agent);
+}
+
 /** True when any line of the disallowed_keys option appears in the comment's fields (a word match, or an IP prefix). */
 function wp_check_comment_disallowed_list($author, $email, $url, $comment, $user_ip, $user_agent)
 {

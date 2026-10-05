@@ -132,13 +132,14 @@ final readonly class PostsWriteController
             'post_content_filtered' => '',
         ]);
         $this->writer->applyExtendedFields($id, $body, $type);
-        // The GUID is set from the id after insert, as the reference does.
-        $this->writer->update($id, ['guid' => $this->url->home('/?' . ($type === 'page' ? 'page_id' : 'p') . '=' . $id)]);
-        $this->writer->applyTerms($id, $body);
-        // A post with no category given gets the site's default category.
-        if ($type === 'post' && (!isset($body['categories']) || $body['categories'] === [])) {
-            $this->writer->setTerms($id, 'category', [(int) ($this->site->option('default_category') ?? 1)]);
+        // Inside the insert a post lands in the default category and the guid
+        // becomes the permalink as of now (pretty only when live); the body's
+        // own terms are applied after, so categories: [] leaves none.
+        if ($type === 'post') {
+            $this->writer->ensureCategory($id);
         }
+        $this->writer->update($id, ['guid' => $this->object->permalink($this->posts->find($id))]);
+        $this->writer->applyTerms($id, $body);
         return $id;
     }
 
@@ -171,8 +172,12 @@ final readonly class PostsWriteController
         $columns['post_modified_gmt'] = gmdate('Y-m-d H:i:s');
         $this->writer->update($postId, $columns);
 
+        if ($type === 'post') {
+            $this->writer->ensureCategory($postId);
+        }
         $this->writer->applyTerms($postId, $body);
         $this->writer->applyExtendedFields($postId, $body, $type);
+        $this->rememberOld($post, $this->posts->find($postId));
         // A publish/unpublish transition changes the terms' published counts.
         if (array_key_exists('status', $body) && $body['status'] !== $post->status) {
             $this->writer->recountTaxonomiesOf($postId);
@@ -207,17 +212,36 @@ final readonly class PostsWriteController
             if ($post->isTrashed()) {
                 throw new RestError('rest_already_trashed', 'The post has already been deleted.', 410);
             }
-            $this->writer->setStatus($postId, 'trash');
-            // The pre-trash status is kept the way the reference stores it.
-            $this->writer->setMeta($postId, '_wp_trash_meta_status', $post->status);
-            $this->writer->setMeta($postId, '_wp_trash_meta_time', (string) time());
-            $this->writer->recountTaxonomiesOf($postId);
+            $this->writer->trash($post, $userId);
             return Reply::item($this->object->edit($this->posts->find($postId), $userId), $fields);
         }
 
         $previous = $this->object->edit($post, $userId);
         $this->writer->destroy($postId);
         return Reply::item(['deleted' => true, 'previous' => $previous], $fields);
+    }
+
+    /**
+     * After a save: a published post (not a page) that moved keeps its old
+     * slug on record, and one that stayed published keeps its old date; one
+     * brought back from the trash has its wanted slug back and stops waiting
+     * for it.
+     */
+    private function rememberOld(PostRecord $before, ?PostRecord $after): void
+    {
+        if ($after === null) {
+            return;
+        }
+        if ($before->isTrashed() && !$after->isTrashed() && $after->slug !== $before->slug) {
+            $this->writer->deleteMeta($after->id, '_wp_desired_post_slug');
+        }
+        if ($after->status !== PostStatus::Publish->value || $after->type === 'page') {
+            return;
+        }
+        $this->writer->rememberOld($after->id, '_wp_old_slug', $before->slug, $after->slug);
+        if ($before->status === PostStatus::Publish->value) {
+            $this->writer->rememberOld($after->id, '_wp_old_date', substr($before->date, 0, 10), substr($after->date, 0, 10));
+        }
     }
 
     /** A date in the future turns a publish into a schedule, whether the status was sent or kept. */
@@ -296,6 +320,11 @@ final readonly class PostsWriteController
             throw new RestError('rest_cannot_publish', 'Sorry, you are not allowed to publish posts in this post type.', 403);
         }
         $columns = ['post_status' => $status];
+        // Back from the trash into the open, a post takes the slug it had.
+        $desired = $post->isTrashed() && $live && !array_key_exists('slug', $body) ? (string) ($this->posts->meta($post->id, '_wp_desired_post_slug') ?? '') : '';
+        if ($desired !== '' && str_ends_with($post->slug, '__trashed')) {
+            $columns += ['post_name' => $this->writer->uniqueSlug($desired, $post->id)];
+        }
         if ($live && $post->slug === '' && !array_key_exists('slug', $body)) {
             $title = array_key_exists('title', $body) ? self::field($body['title']) : $post->title;
             if ($title !== '') {

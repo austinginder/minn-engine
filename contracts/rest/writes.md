@@ -17,10 +17,15 @@ capability engine from `caps.md` gates every operation.
   rest_cannot_create`; an authenticated user without the primitive is `403`.
 - Publishing (`status` of `publish`/`future`/`private`) additionally requires
   `publish_posts` / `publish_pages`.
-- Inserts the row, then sets `guid` to `?p={id}` from the new id (a second
-  update, as the reference does), then assigns terms.
-- **A post with no category given gets the site `default_category`**, exactly
-  as the reference assigns Uncategorized on create. Pages get none.
+- Inserts the row, then sets `guid` to the post's permalink as of that
+  moment (a second update, as the reference does): the pretty address for
+  `publish` and `private`, `?p={id}` (`?page_id={id}` for a page) for
+  `draft`, `pending` and `future`. The guid never changes after, so a draft
+  published later keeps `?p=` (round trip, 2026-10-05).
+- **A post lands in the site `default_category` inside the insert, and the
+  body's own terms are applied after**, so no `categories` keeps the default
+  and `categories: []` leaves the post in none, both as the reference does.
+  Pages get none.
 - Responds `201 Created` with a `Location: …/wp/v2/posts/{id}` header and the
   edit-context body.
 
@@ -35,13 +40,32 @@ capability engine from `caps.md` gates every operation.
   `post_modified`/`post_modified_gmt`.
 - Changing to a published status without the publish cap is `403
   rest_cannot_publish`.
+- Every save of a post (type `post`) that has no category puts it in the
+  `default_category` before the body's terms land.
+- A published post (not a page) whose slug changes keeps the old one as a
+  `_wp_old_slug` row (one per old slug; moving back to an old slug removes
+  that row), and one that stays published while its date changes keeps the
+  old day as `_wp_old_date` (`Y-m-d`). Drafts and pages record neither.
+  The reference answers the old address with a 301 to the new one; the
+  engine records the rows but does not redirect yet.
+- A trashed post saved into a live status takes back the slug in
+  `_wp_desired_post_slug` (then deleted, and the `__trashed` slug becomes an
+  old slug); saved as a draft it keeps `__trashed` and the meta. The trash
+  meta (`_wp_trash_meta_status`/`_time`) stays either way.
 
 ## Delete — `DELETE /wp/v2/{posts|pages}/{id}`
 
 - `delete_post` (meta cap) gates it.
-- Without `force`, trashes the post (`post_status` → `trash`, stores
-  `_wp_trash_meta_status`/`_wp_trash_meta_time`) and returns the trashed
-  object. Trashing an already-trashed post is `410 rest_already_trashed`.
+- Without `force`, trashes the post the way the reference's own save does:
+  `post_status` → `trash`, the slug gains `__trashed` (an empty one becomes
+  `__trashed`), `_wp_trash_meta_status`, `_wp_trash_meta_time` and
+  `_wp_desired_post_slug` (the slug it had, empty included) are stored,
+  `post_modified` moves, a post keeps a category, and the save takes a
+  revision under the usual rule (a post with none gets its first). Returns
+  the trashed object. Trashing an already-trashed post is `410
+  rest_already_trashed`. The facade's `wp_trash_post` writes the same, and
+  `wp_untrash_post` puts the wanted slug back whatever status it returns to,
+  deleting the desired-slug and trash meta.
 - With `force=true`, removes the row, its term relationships, and its
   postmeta, and returns `{ "deleted": true, "previous": {…} }`.
 

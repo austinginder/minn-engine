@@ -1005,11 +1005,10 @@ function wp_trash_post($post_id = 0)
         return $check;
     }
     do_action('wp_trash_post', $post->ID, $post->post_status);
-    add_post_meta($post->ID, '_wp_trash_meta_status', $post->post_status);
-    add_post_meta($post->ID, '_wp_trash_meta_time', (string) time());
-    _minn_post_writer()->update($post->ID, ['post_status' => 'trash']);
+    // The slug gains __trashed, the status and time are kept, a revision is taken: Content\PostWriter::trash.
+    _minn_post_writer()->trash(_minn_posts()->find($post->ID), get_current_user_id());
     wp_cache_delete($post->ID, 'posts');
-    _minn_post_writer()->recountTaxonomiesOf($post->ID);
+    wp_cache_delete($post->ID, 'post_meta');
     wp_transition_post_status('trash', $post->post_status, get_post($post->ID));
     do_action('trashed_post', $post->ID, $post->post_status);
     return $post;
@@ -1030,7 +1029,14 @@ function wp_untrash_post($post_id = 0)
     $new = $previous === 'attachment' ? 'inherit' : apply_filters('wp_untrash_post_status', 'draft', $post->ID, $previous);
     delete_post_meta($post->ID, '_wp_trash_meta_status');
     delete_post_meta($post->ID, '_wp_trash_meta_time');
-    _minn_post_writer()->update($post->ID, ['post_status' => $new]);
+    // The slug it had comes back, whatever status it returns to.
+    $desired = (string) get_post_meta($post->ID, '_wp_desired_post_slug', true);
+    $columns = ['post_status' => $new];
+    if ($desired !== '' && str_ends_with((string) $post->post_name, '__trashed')) {
+        $columns['post_name'] = _minn_post_writer()->uniqueSlug($desired, $post->ID);
+    }
+    delete_post_meta($post->ID, '_wp_desired_post_slug');
+    _minn_post_writer()->update($post->ID, $columns);
     wp_cache_delete($post->ID, 'posts');
     _minn_post_writer()->recountTaxonomiesOf($post->ID);
     wp_transition_post_status($new, 'trash', get_post($post->ID));

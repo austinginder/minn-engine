@@ -33,8 +33,12 @@ Body `username`/`email`/`password` required (aggregated
 `last_name`, `nickname`, `description`, `url`, `locale`. Writes:
 
 - The users row: unique sanitized `user_nicename` (-2, -3 … on
-  collision), display_name defaulting to the login, `user_registered`
-  GMT now.
+  collision), `user_registered` GMT now, `user_activation_key` empty. The
+  display name is `name` when given, otherwise first and last name, either
+  one alone, or the login; `nickname` plays no part (captured 2026-10-05).
+- Nothing is mailed and no reset key is minted: the caller chose the
+  password. `user_count` is refreshed on every create and delete (the row
+  is left alone on a site without one).
 - `user_pass` = `"$wp" + bcrypt(base64(hmac_sha384(password, "wp-sha384")))`,
   cost 10 — the inverse of the verify scheme in contracts/rest/caps.md;
   WordPress's own login accepts it (suite-proven).
@@ -54,7 +58,9 @@ email surfaces as core's bare WP_Error — HTTP **500**, `data: null`
 
 ## Update
 
-Self, or `edit_users`. Fields: name, email, url, slug, password
+`POST|PUT|PATCH /wp/v2/users/{id}`, and `/wp/v2/users/me` for the signed-in
+user (signed out, that is `404 rest_user_invalid_id`, as on the
+reference). Self, or `edit_users`. Fields: name, email, url, slug, password
 (re-hashed), first/last/nickname/description/locale meta,
 `meta.show_admin_bar_front`, and `roles` (needs `promote_users`; rewrites
 the capabilities meta + user_level). Response: fresh edit object.

@@ -2822,3 +2822,68 @@ checked against 1,306 real posts from two other local sites, all equal.
   subclass to read; `WP_HTML_Processor` declares its own
   `set_modifiable_text()` (implied tokens refuse edits); the reference's
   `MAX_SEEK_OPS` limit is not enforced.
+
+## What the round trip turned up in the runtime (2026-10-05)
+
+`tests/round-trip.test.php` (`contracts/round-trip.md`) runs one day of
+work on a copy of a real site, once on WordPress and once on the engine,
+and compares what each left in the database. With the site's own plugins
+loaded, it found these, each now matched to the oracle:
+
+- **An action fired with nothing hands its callbacks one empty string.**
+  `do_action('wp_enqueue_scripts')` calls a callback registered for one
+  argument with `''`; `do_action_ref_array($hook, [])` calls it with none.
+  CleanTalk's `ct_enqueue_scripts_public($_hook)` requires its parameter,
+  so the engine's zero-argument call was an ArgumentCountError and a 500 on
+  every page. `Hooks::action()` now supplies the `''` (engine-fired
+  lifecycle actions included); `Hooks::actionRef()` is the array form.
+- **PHP's array wrappers read back as themselves.** `ArrayObject`,
+  `ArrayIterator` and `RecursiveArrayIterator` serialize their state as
+  numbered parts (`O:11:"ArrayObject":4:{i:0;flags;i:1;storage;i:2;members;
+  i:3;iterator class}`). The reader refused integer property keys, so
+  CleanTalk's `cleantalk_data` (which nests two of them) came back as the
+  raw string; the plugin took its settings for missing, rebuilt defaults,
+  and saved over the account name and every counter. The reader now takes
+  integer keys, and `StoredObjects::reviver()` rebuilds the three wrappers
+  through their constructors (nothing else runs); written back with PHP's
+  own serializer they are the same bytes. A wrapper carrying member
+  properties, or wrapping an object, stays a record of its parts. Unit
+  rows in `tests/unit/stored-objects.php`. Still open: a record naming a
+  class the plugin has loaded comes back a stdClass where the reference
+  instantiates it, and written back it is stored as `stdClass`.
+- **`wp_blacklist_check`** (deprecated in 5.5) is the one symbol that kept
+  CleanTalk from loading: `_deprecated_function(…, '5.5.0',
+  'wp_check_comment_disallowed_list()')`, then that check's answer.
+- **A sign-in tells plugins.** `Login\LoginHooks` fires `wp_login($login,
+  WP_User)` after a good sign-in, `wp_login_failed($login, WP_Error)` after
+  a bad one with both fields filled (`incorrect_password` worded for the
+  username or the email address, `invalid_username`, `invalid_email`, the
+  reference's messages), and `wp_logout($id)` after a sign-out. CleanTalk
+  records the sign-in address in `_cleantalk_ip_keeper_data` on
+  `wp_login`. Not run yet: the `authenticate` and `wp_authenticate_user`
+  filters (a plugin cannot refuse or add a factor to an engine sign-in),
+  `wp_authenticate`, and the cookie actions (`set_auth_cookie`,
+  `set_logged_in_cookie`, `attach_session_information`).
+- **`/wp-admin/admin-ajax.php` declares `DOING_AJAX`** before anything
+  loads, as the reference's own file does; CleanTalk counted the Minn Admin
+  nonce refresh as a page view without it. `is_admin()` and `WP_ADMIN` stay
+  false there, where the reference makes them true: the endpoint answers
+  only `rest-nonce`, and a true `is_admin()` loads a plugin's admin code,
+  which reaches for the admin host Minn does not keep (Modula fataled on
+  `WP_Posts_List_Table` in the dogfood run). A plugin's `wp_ajax_*` actions
+  are not dispatched.
+- **Uploads are cut into every size the site has.** `Media\Images::ladder()`
+  is the four sizes from the options, `1536x1536` and `2048x2048` (every
+  site has them; the round trip's 1600-wide photo was missing its 1536),
+  then any `add_image_size` registrations, in the metadata order the
+  reference writes. `intermediate_image_sizes_advanced` filters the list
+  when plugins are loaded: Gravity Forms registers three image-choice sizes
+  and takes them back out there for every upload but its own. The engine
+  cuts the sizes before the attachment row exists, so the filter's
+  attachment id is 0 where the reference passes the new id.
+- **Stored sessions are written back as they were read.** `Sessions` keeps
+  each entry's serialized text and re-emits it untouched when another
+  session is added or removed, so data a plugin attached through
+  `attach_session_information` survives an engine sign-in. A new session
+  from a request without a User-Agent has no `ua` key, as on the
+  reference.

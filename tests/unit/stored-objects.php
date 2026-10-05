@@ -41,6 +41,25 @@ return [
         $value = Serialized::decode($private);
         return $value instanceof stdClass && $value->inner === 'x' && $value->prot === 2;
     },
+    "PHP's array wrappers come back as themselves and write back byte for byte" => static function (): bool {
+        $blobs = [
+            'O:11:"ArrayObject":4:{i:0;i:0;i:1;a:1:{s:1:"a";i:1;}i:2;a:0:{}i:3;N;}',
+            'O:11:"ArrayObject":4:{i:0;i:2;i:1;a:1:{s:1:"x";i:1;}i:2;a:0:{}i:3;N;}',
+            'O:13:"ArrayIterator":4:{i:0;i:0;i:1;a:2:{i:0;i:1;i:1;i:2;}i:2;a:0:{}i:3;N;}',
+            'a:1:{s:4:"vars";O:11:"ArrayObject":4:{i:0;i:0;i:1;a:1:{s:6:"apikey";s:3:"abc";}i:2;a:0:{}i:3;N;}}',
+        ];
+        foreach ($blobs as $blob) {
+            if (Serialized::encode(Serialized::decode($blob, StoredObjects::reviver())) !== $blob) {
+                return false;
+            }
+        }
+        $value = Serialized::decode($blobs[0], StoredObjects::reviver());
+        return $value instanceof ArrayObject && $value['a'] === 1;
+    },
+    'a wrapper carrying member properties stays a record of its numbered parts' => static function (): bool {
+        $value = Serialized::decode('O:11:"ArrayObject":4:{i:0;i:0;i:1;a:0:{}i:2;a:1:{s:1:"m";i:5;}i:3;N;}', StoredObjects::reviver());
+        return $value instanceof stdClass && $value->{'2'} === ['m' => 5];
+    },
     'the registry says what it knows' => static fn (): bool => StoredObjects::knows('wp_post') && !StoredObjects::knows('WP_User'),
     'an object is written as its class, nested or not' => static fn (): bool => Serialized::encode(['p' => (object) ['a' => 1]]) === 'a:1:{s:1:"p";O:8:"stdClass":1:{s:1:"a";i:1;}}' && Serialized::encode((object) ['a' => 1]) === 'O:8:"stdClass":1:{s:1:"a";i:1;}',
 ];

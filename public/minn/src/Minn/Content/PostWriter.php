@@ -75,6 +75,64 @@ final readonly class PostWriter
         }
     }
 
+    /** Adds a meta row even when the key already has one (a non-unique key). */
+    public function addMeta(int $id, string $key, string $value): void
+    {
+        $this->db->execute("INSERT INTO {$this->db->table('postmeta')} (post_id, meta_key, meta_value) VALUES (?, ?, ?)", [$id, $key, $value]);
+    }
+
+    /**
+     * Keeps a published post's previous slug or date on record
+     * (_wp_old_slug, _wp_old_date) so its old address still finds it: the
+     * value it moves to stops being an old one, the value it leaves becomes
+     * one, once.
+     */
+    public function rememberOld(int $id, string $key, string $was, string $now): void
+    {
+        if ($was === '' || $was === $now) {
+            return;
+        }
+        $table = $this->db->table('postmeta');
+        $this->db->execute("DELETE FROM {$table} WHERE post_id = ? AND meta_key = ? AND meta_value = ?", [$id, $key, $now]);
+        if ($this->db->value("SELECT meta_id FROM {$table} WHERE post_id = ? AND meta_key = ? AND meta_value = ? LIMIT 1", [$id, $key, $was]) === null) {
+            $this->addMeta($id, $key, $was);
+        }
+    }
+
+    /** Gives a post the site's default category when it has none, as every save of a post does in the reference. */
+    public function ensureCategory(int $id): void
+    {
+        $has = $this->db->value(
+            "SELECT tr.object_id FROM {$this->db->table('term_relationships')} tr
+             JOIN {$this->db->table('term_taxonomy')} tt ON tt.term_taxonomy_id = tr.term_taxonomy_id
+             WHERE tr.object_id = ? AND tt.taxonomy = 'category' LIMIT 1",
+            [$id],
+        );
+        if ($has === null) {
+            $this->setTerms($id, 'category', [(int) ($this->site->option('default_category') ?? 1)]);
+        }
+    }
+
+    /**
+     * Moves a post to the trash as the reference does: the slug gains
+     * __trashed (the one it had waits in _wp_desired_post_slug), the status
+     * it had and the time are kept, the modified time moves, a post keeps a
+     * category, and the save is a revision like any other.
+     */
+    public function trash(PostRecord $post, int $userId): void
+    {
+        $id = $post->id;
+        $this->update($id, ['post_status' => 'trash', 'post_name' => $post->slug . '__trashed', 'post_modified' => $this->site->localNow(), 'post_modified_gmt' => gmdate('Y-m-d H:i:s')]);
+        $this->setMeta($id, '_wp_trash_meta_status', $post->status);
+        $this->setMeta($id, '_wp_trash_meta_time', (string) time());
+        $this->setMeta($id, '_wp_desired_post_slug', $post->slug);
+        if ($post->type === 'post') {
+            $this->ensureCategory($id);
+        }
+        $this->recountTaxonomiesOf($id);
+        $this->maybeSaveRevision($id, $userId);
+    }
+
     /** Removes every meta row with this key from a post. */
     public function deleteMeta(int $id, string $key): void
     {

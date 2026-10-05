@@ -20,7 +20,7 @@ passwords, sessions, cookies, nonces, roles and capabilities
 | [`PortableHash`](#portablehash) | final class | 61 | The portable phpass hash ("$P$"), the shape the reference stores in |
 | [`Roles`](#roles) | final class | 68 | Role definitions from the site's {prefix}user_roles option, parsed by a |
 | [`Salts`](#salts) | final class | 35 | The site's own secret material, read from the constants wp-config.php |
-| [`Sessions`](#sessions) | final readonly class | 160 | The session_tokens usermeta store: {sha256(token): {expiration, ip, ua, |
+| [`Sessions`](#sessions) | final readonly class | 166 | The session_tokens usermeta store: {sha256(token): {expiration, ip, ua, |
 | [`SignIn`](#signin) | final readonly class | 70 | The door itself: what a sign-in surface needs beyond checking a |
 | [`TypeCapabilities`](#typecapabilities) | final readonly class | 41 | The capability names a post type's permissions are built from. Posts and |
 
@@ -451,7 +451,7 @@ treats it.
 
 - const `LIFETIME` = `86400`
 
-Used by: `Minn\Cli\UserCommand`, `Minn\Engine`, `Minn\Login\LoginController`, `Minn\Rest\UsersController`
+Used by: `Minn\Cli\UserCommand`, `Minn\Engine`, `Minn\Login\LoginController`
 
 ```php
 __construct(Minn\Content\Users $users)
@@ -635,15 +635,18 @@ Ends every session of the user except the one stored under the given key.
 
 ### `read(int $userId): array`
 
-Every stored session of a user, keyed by token hash.
+Every stored session of a user, keyed by token hash. Each entry keeps
+its stored text under raw, so writing the store back leaves sessions
+this request did not make exactly as they were, including anything a
+plugin attached to them.
 
-- `@return array<string, array{expiration: int, ip: string, ua: string, login: int}>`
+- `@return array<string, array{expiration: int, ip: string, ua: string, login: int, raw: string}>`
 
 ### static `serialize(array $sessions): string`
 
-The map in PHP's serialized form, entry keys in the order given.
+The map in PHP's serialized form: stored entries as they were read, new ones key by key in the order given.
 
-Internals: `parseEntry()` (private, line 125), `prune()` (private, line 143), `write()` (private, line 149), `string()` (private, line 169)
+Internals: `parseEntry()` (private, line 126), `prune()` (private, line 144), `write()` (private, line 150), `entry()` (private, line 166), `string()` (private, line 175)
 
 
 ## SignIn

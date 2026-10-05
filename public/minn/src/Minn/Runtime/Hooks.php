@@ -140,11 +140,24 @@ final class Hooks
     }
 
     /**
-     * Runs an action.
+     * Runs an action. With no arguments its callbacks still get one, an
+     * empty string, as do_action() gives them in the reference (a callback
+     * that requires a parameter is not short of one).
      *
      * @param list<mixed> $args
      */
     public function action(string $hook, array $args): void
+    {
+        $this->actionRef($hook, $args === [] ? [''] : $args);
+    }
+
+    /**
+     * Runs an action with exactly the arguments given, none included
+     * (do_action_ref_array).
+     *
+     * @param list<mixed> $args
+     */
+    public function actionRef(string $hook, array $args): void
     {
         $this->actionsDone[$hook] = ($this->actionsDone[$hook] ?? 0) + 1;
         $this->run($hook, $args, false);

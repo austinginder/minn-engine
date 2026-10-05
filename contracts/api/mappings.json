@@ -3,11 +3,11 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
         "minn": 545,
-        "composes": 786,
+        "composes": 787,
         "leaf": 627,
         "noop": 1782,
-        "functions": 3670,
-        "minnMethods": 554,
+        "functions": 3671,
+        "minnMethods": 555,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -26969,6 +26969,16 @@
             "minn": [],
             "composes": []
         },
+        "wp_blacklist_check": {
+            "file": "comment.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_deprecated_function",
+                "wp_check_comment_disallowed_list"
+            ]
+        },
         "wp_body_open": {
             "file": "template.php",
             "lines": 1,
@@ -31805,17 +31815,18 @@
         },
         "wp_trash_post": {
             "file": "post.php",
-            "lines": 17,
+            "lines": 16,
             "kind": "minn",
             "minn": [
-                "Minn\\Content\\PostWriter::recountTaxonomiesOf",
-                "Minn\\Content\\PostWriter::update"
+                "Minn\\Content\\PostWriter::trash",
+                "Minn\\Content\\Posts::find"
             ],
             "composes": [
                 "_minn_post_writer",
-                "add_post_meta",
+                "_minn_posts",
                 "apply_filters",
                 "do_action",
+                "get_current_user_id",
                 "get_post",
                 "wp_cache_delete",
                 "wp_transition_post_status"
@@ -31984,10 +31995,11 @@
         },
         "wp_untrash_post": {
             "file": "post.php",
-            "lines": 19,
+            "lines": 26,
             "kind": "minn",
             "minn": [
                 "Minn\\Content\\PostWriter::recountTaxonomiesOf",
+                "Minn\\Content\\PostWriter::uniqueSlug",
                 "Minn\\Content\\PostWriter::update"
             ],
             "composes": [

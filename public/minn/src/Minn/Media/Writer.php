@@ -103,13 +103,7 @@ final readonly class Writer
     {
         $path = $this->uploads->pathFor($relative);
         [$width, $height] = getimagesize($path) ?: [0, 0];
-        return [
-            'width' => (int) $width,
-            'height' => (int) $height,
-            'file' => $relative,
-            'filesize' => (int) filesize($path),
-            'sizes' => $this->images->makeSubsizes($path, $mime),
-            'image_meta' => Metadata::blankImageMeta(),
-        ];
+        $meta = ['width' => (int) $width, 'height' => (int) $height, 'file' => $relative, 'filesize' => (int) filesize($path)];
+        return $meta + ['sizes' => $this->images->makeSubsizes($path, $mime, $meta), 'image_meta' => Metadata::blankImageMeta()];
     }
 }

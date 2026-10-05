@@ -16,11 +16,11 @@ the WordPress runtime plugins load against
 | [`CommentCloser`](#commentcloser) | final readonly class | 22 | The Discussion setting that closes comments on old posts. Observed on the |
 | [`CommentQuery`](#commentquery) | final readonly class | 117 | Comment reads in the get_comments() shape: arguments to rows or a count, and the approval breakdown wp_count_comments reports. |
 | [`Connectors`](#connectors) | final class | 212 | The connectors registry: the external services a site talks to (AI |
-| [`Constants`](#constants) | final class | 60 | The constants plugin code expects: the fixed set from data/constants.json |
+| [`Constants`](#constants) | final class | 67 | The constants plugin code expects: the fixed set from data/constants.json |
 | [`CronTable`](#crontable) | final class | 131 | The cron option's shape, operated on as data: timestamp => hook => key => |
 | [`DbDelta`](#dbdelta) | final readonly class | 125 | dbDelta as the reference does it: a CREATE TABLE statement creates the |
 | [`EarlyFilters`](#earlyfilters) | final class | 20 | Filters that run before the runtime exists, over the hooks added that |
-| [`Hooks`](#hooks) | final class | 251 | The hook registry plugin code registers into and the engine fires. |
+| [`Hooks`](#hooks) | final class | 264 | The hook registry plugin code registers into and the engine fires. |
 | [`Interactivity`](#interactivity) | final class | 509 | Server-side directive processing for the Interactivity API: the state and |
 | [`MainQuery`](#mainquery) | final class | 34 | The query variables the reference's main query would carry for a URL the |
 | [`Meta`](#meta) | final readonly class | 133 | The four meta tables behind get_metadata and friends: reads by object, and the row-level writes the update and delete rules need. |
@@ -49,7 +49,7 @@ the WordPress runtime plugins load against
 | [`ScriptModules`](#scriptmodules) | final class | 308 | The script modules registry: registrations with typed dependencies, the |
 | [`ScriptPack`](#scriptpack) | final class | 146 | The site-supplied script pack: the `wp-*` JavaScript packages the engine |
 | [`Shortcodes`](#shortcodes) | final class | 143 | The shortcode registry plugin code fills with add_shortcode, and the |
-| [`StoredObjects`](#storedobjects) | final class | 32 | The classes a stored blob may name and come back as. The serialized |
+| [`StoredObjects`](#storedobjects) | final class | 64 | The classes a stored blob may name and come back as. The serialized |
 | [`SymbolGap`](#symbolgap) | final readonly class | 94 | The part of the reference's interface the runtime does not answer: names in |
 | [`SymbolTable`](#symboltable) | final class | 69 | What a folder's PHP names, collected while its tokens are read: the |
 | [`Symbols`](#symbols) | final class | 275 | A static read of what a plugin's PHP calls: global functions and classes |
@@ -817,7 +817,16 @@ Runs a filter and returns the value.
 
 ### `action(string $hook, array $args): void`
 
-Runs an action.
+Runs an action. With no arguments its callbacks still get one, an
+empty string, as do_action() gives them in the reference (a callback
+that requires a parameter is not short of one).
+
+- `@param list<mixed> $args`
+
+### `actionRef(string $hook, array $args): void`
+
+Runs an action with exactly the arguments given, none included
+(do_action_ref_array).
 
 - `@param list<mixed> $args`
 
@@ -843,7 +852,7 @@ Every hook with callbacks, by name.
 
 - `@return array<string, array<int, list<callable>>> a read-only view for diagnostics`
 
-Internals: `run()` (private, line 195), `nextPriority()` (private, line 231), `fireAll()` (private, line 243), `id()` (private, line 257)
+Internals: `run()` (private, line 208), `nextPriority()` (private, line 244), `fireAll()` (private, line 256), `id()` (private, line 270)
 
 
 ## Interactivity
@@ -1905,7 +1914,7 @@ The WordPress runtime the engine offers plugin code: the procedural
 facade under minn/wp-api/ plus the services it delegates to. One per
 request; the facade reaches it through these statics.
 
-Used by: `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\RenderState`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\Reader`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\PluginRules`, `Minn\Front\Resolver`, `Minn\Mail\Mailer`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\Services`, `Minn\Runtime\Abilities`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\Constants`, `Minn\Runtime\Interactivity`, `Minn\Runtime\NavMenu`, `Minn\Runtime\PackageDownload`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostQuery`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\TermWriter`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
+Used by: `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\RenderState`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\Reader`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\PluginRules`, `Minn\Front\Resolver`, `Minn\Login\LoginHooks`, `Minn\Mail\Mailer`, `Minn\Media\Images`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\Services`, `Minn\Runtime\Abilities`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\Constants`, `Minn\Runtime\Interactivity`, `Minn\Runtime\NavMenu`, `Minn\Runtime\PackageDownload`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostQuery`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\TermWriter`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
 
 ```php
 __construct(Minn\Context $context, bool $isAdmin = false)
@@ -2284,6 +2293,8 @@ class it owns (WP_Post, WP_Term, WP_Comment) and a record naming any
 other class stays a stdClass of its properties. That is what lets a
 transient the reference wrote, holding post objects, read back typed.
 
+- const `WRAPPERS` = `array (   'arrayobject' => 'ArrayObject',   'arrayiterator' => 'ArrayIterator',   'recursivearrayiterator' => 'RecursiveArrayIterator', )` — PHP's array wrappers a stored record may name, by lower-cased class name.
+
 Used by: `Minn\Runtime\Options`
 
 
@@ -2293,7 +2304,7 @@ Registers what a record naming this class becomes.
 
 ### static `reviver(): Closure`
 
-The reviver the serialized reader takes: a factory's object, or the properties as they are.
+The reviver the serialized reader takes: PHP's array wrappers rebuilt, a factory's object, or the properties as they are.
 
 ### static `knows(string $class): bool`
 
@@ -2302,6 +2313,8 @@ Whether a factory is registered for the class.
 ### static `reset(): void`
 
 Forgets every factory, for suites.
+
+Internals: `arrayWrapper()` (private, line 52)
 
 
 ## SymbolGap

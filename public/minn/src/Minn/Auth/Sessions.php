@@ -61,12 +61,10 @@ final readonly class Sessions
         // The store is read back by shape, so the request-supplied fields carry
         // nothing that looks like the shape.
         $plain = static fn (string $v): string => substr((string) preg_replace('/[^\x20-\x7e]|["{};]/', '', $v), 0, 255);
-        $sessions[hash('sha256', $token)] = [
-            'expiration' => $expiration,
-            'ip' => $plain($ip),
-            'ua' => $plain($userAgent),
-            'login' => time(),
-        ];
+        // A request without a User-Agent stores no ua key, as the reference does.
+        $sessions[hash('sha256', $token)] = ['expiration' => $expiration, 'ip' => $plain($ip)]
+            + ($userAgent === '' ? [] : ['ua' => $plain($userAgent)])
+            + ['login' => time()];
         $this->write($userId, $sessions);
         return $token;
     }
@@ -103,9 +101,12 @@ final readonly class Sessions
     }
 
     /**
-     * Every stored session of a user, keyed by token hash.
+     * Every stored session of a user, keyed by token hash. Each entry keeps
+     * its stored text under raw, so writing the store back leaves sessions
+     * this request did not make exactly as they were, including anything a
+     * plugin attached to them.
      *
-     * @return array<string, array{expiration: int, ip: string, ua: string, login: int}>
+     * @return array<string, array{expiration: int, ip: string, ua: string, login: int, raw: string}>
      */
     public function read(int $userId): array
     {
@@ -114,9 +115,9 @@ final readonly class Sessions
             return [];
         }
         $sessions = [];
-        if (preg_match_all('/s:64:"([0-9a-f]{64})";a:\d+:\{(.*?)\}(?=s:64:|\}$)/s', $blob, $matches, PREG_SET_ORDER)) {
+        if (preg_match_all('/s:64:"([0-9a-f]{64})";(a:\d+:\{(.*?)\})(?=s:64:|\}$)/s', $blob, $matches, PREG_SET_ORDER)) {
             foreach ($matches as $entry) {
-                $sessions[$entry[1]] = self::parseEntry($entry[2]);
+                $sessions[$entry[1]] = self::parseEntry($entry[3]) + ['raw' => $entry[2]];
             }
         }
         return $sessions;
@@ -151,19 +152,24 @@ final readonly class Sessions
         $this->users->setMeta($userId, 'session_tokens', self::serialize($sessions));
     }
 
-    /** The map in PHP's serialized form, entry keys in the order given. */
+    /** The map in PHP's serialized form: stored entries as they were read, new ones key by key in the order given. */
     public static function serialize(array $sessions): string
     {
         $out = 'a:' . count($sessions) . ':{';
         foreach ($sessions as $key => $entry) {
-            $out .= self::string((string) $key) . 'a:4:{'
-                . self::string('expiration') . 'i:' . (int) $entry['expiration'] . ';'
-                . self::string('ip') . self::string((string) $entry['ip'])
-                . self::string('ua') . self::string((string) $entry['ua'])
-                . self::string('login') . 'i:' . (int) $entry['login'] . ';'
-                . '}';
+            $out .= self::string((string) $key) . ($entry['raw'] ?? self::entry($entry));
         }
         return $out . '}';
+    }
+
+    /** One new session: integers for the times, strings for the rest. @param array<string, int|string> $entry */
+    private static function entry(array $entry): string
+    {
+        $fields = '';
+        foreach ($entry as $name => $value) {
+            $fields .= self::string((string) $name) . (is_int($value) ? 'i:' . $value . ';' : self::string((string) $value));
+        }
+        return 'a:' . count($entry) . ':{' . $fields . '}';
     }
 
     private static function string(string $value): string

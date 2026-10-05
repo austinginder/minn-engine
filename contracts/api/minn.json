@@ -9084,8 +9084,7 @@
             "usedBy": [
                 "Minn\\Cli\\UserCommand",
                 "Minn\\Engine",
-                "Minn\\Login\\LoginController",
-                "Minn\\Rest\\UsersController"
+                "Minn\\Login\\LoginController"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Content\\Users $users)",
@@ -9792,7 +9791,7 @@
             "namespace": "Minn\\Auth",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Auth/Sessions.php",
-            "lines": 160,
+            "lines": 166,
             "doc": "The session_tokens usermeta store: {sha256(token): {expiration, ip, ua,\nlogin}}. Read by a bounded scan of the serialized blob and written by\nserializing it ourselves, so stored data is never executed.",
             "implements": [],
             "extends": null,
@@ -9916,7 +9915,7 @@
                         }
                     ],
                     "line": 57,
-                    "end": 72
+                    "end": 70
                 },
                 {
                     "routes": [],
@@ -9935,8 +9934,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 75,
-                    "end": 78
+                    "line": 73,
+                    "end": 76
                 },
                 {
                     "routes": [],
@@ -9962,8 +9961,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 81,
-                    "end": 84
+                    "line": 79,
+                    "end": 82
                 },
                 {
                     "routes": [],
@@ -9989,8 +9988,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 87,
-                    "end": 96
+                    "line": 85,
+                    "end": 94
                 },
                 {
                     "routes": [],
@@ -10016,8 +10015,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 99,
-                    "end": 103
+                    "line": 97,
+                    "end": 101
                 },
                 {
                     "routes": [],
@@ -10025,9 +10024,9 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "read(int $userId): array",
-                    "doc": "Every stored session of a user, keyed by token hash.",
+                    "doc": "Every stored session of a user, keyed by token hash. Each entry keeps\nits stored text under raw, so writing the store back leaves sessions\nthis request did not make exactly as they were, including anything a\nplugin attached to them.",
                     "shapes": [
-                        "@return array<string, array{expiration: int, ip: string, ua: string, login: int}>"
+                        "@return array<string, array{expiration: int, ip: string, ua: string, login: int, raw: string}>"
                     ],
                     "params": [
                         {
@@ -10038,8 +10037,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 110,
-                    "end": 123
+                    "line": 111,
+                    "end": 124
                 },
                 {
                     "routes": [],
@@ -10047,7 +10046,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "serialize(array $sessions): string",
-                    "doc": "The map in PHP's serialized form, entry keys in the order given.",
+                    "doc": "The map in PHP's serialized form: stored entries as they were read, new ones key by key in the order given.",
                     "shapes": [],
                     "params": [
                         {
@@ -10058,8 +10057,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 155,
-                    "end": 167
+                    "line": 156,
+                    "end": 163
                 },
                 {
                     "routes": [],
@@ -10078,8 +10077,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 125,
-                    "end": 141
+                    "line": 126,
+                    "end": 142
                 },
                 {
                     "routes": [],
@@ -10098,8 +10097,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 143,
-                    "end": 147
+                    "line": 144,
+                    "end": 148
                 },
                 {
                     "routes": [],
@@ -10125,8 +10124,30 @@
                             "doc": ""
                         }
                     ],
-                    "line": 149,
-                    "end": 152
+                    "line": 150,
+                    "end": 153
+                },
+                {
+                    "routes": [],
+                    "name": "entry",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "entry(array $entry): string",
+                    "doc": "One new session: integers for the times, strings for the rest. @param array<string, int|string> $entry",
+                    "shapes": [
+                        "@param array<string, int|string> $entry"
+                    ],
+                    "params": [
+                        {
+                            "name": "entry",
+                            "type": "array",
+                            "shape": "array<string, int|string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 166,
+                    "end": 173
                 },
                 {
                     "routes": [],
@@ -10145,8 +10166,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 169,
-                    "end": 172
+                    "line": 175,
+                    "end": 178
                 }
             ]
         },
@@ -25488,6 +25509,7 @@
                 "Minn\\Content\\Page",
                 "Minn\\Content\\PasswordGate",
                 "Minn\\Content\\PostStatus",
+                "Minn\\Content\\PostWriter",
                 "Minn\\Content\\Posts",
                 "Minn\\Engine",
                 "Minn\\Extension\\SeamRunner",
@@ -26256,11 +26278,12 @@
             "namespace": "Minn\\Content",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Content/PostWriter.php",
-            "lines": 328,
+            "lines": 386,
             "doc": "Every write to the posts table and its satellites: rows, meta, term\nlinks with the published counts the reference trusts on read, sticky\nand format side effects, and revision snapshots.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Content\\PostRecord",
                 "Minn\\Content\\Posts",
                 "Minn\\Content\\Site",
                 "Minn\\Content\\Slug",
@@ -26484,6 +26507,128 @@
                 },
                 {
                     "routes": [],
+                    "name": "addMeta",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "addMeta(int $id, string $key, string $value): void",
+                    "doc": "Adds a meta row even when the key already has one (a non-unique key).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "key",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 79,
+                    "end": 82
+                },
+                {
+                    "routes": [],
+                    "name": "rememberOld",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "rememberOld(int $id, string $key, string $was, string $now): void",
+                    "doc": "Keeps a published post's previous slug or date on record\n(_wp_old_slug, _wp_old_date) so its old address still finds it: the\nvalue it moves to stops being an old one, the value it leaves becomes\none, once.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "key",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "was",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "now",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 90,
+                    "end": 100
+                },
+                {
+                    "routes": [],
+                    "name": "ensureCategory",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "ensureCategory(int $id): void",
+                    "doc": "Gives a post the site's default category when it has none, as every save of a post does in the reference.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 103,
+                    "end": 114
+                },
+                {
+                    "routes": [],
+                    "name": "trash",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "trash(Minn\\Content\\PostRecord $post, int $userId): void",
+                    "doc": "Moves a post to the trash as the reference does: the slug gains\n__trashed (the one it had waits in _wp_desired_post_slug), the status\nit had and the time are kept, the modified time moves, a post keeps a\ncategory, and the save is a revision like any other.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "Minn\\Content\\PostRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "userId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 122,
+                    "end": 134
+                },
+                {
+                    "routes": [],
                     "name": "deleteMeta",
                     "static": false,
                     "visibility": "public",
@@ -26506,8 +26651,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 79,
-                    "end": 82
+                    "line": 137,
+                    "end": 140
                 },
                 {
                     "routes": [],
@@ -26533,8 +26678,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 85,
-                    "end": 98
+                    "line": 143,
+                    "end": 156
                 },
                 {
                     "routes": [],
@@ -26567,8 +26712,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 101,
-                    "end": 122
+                    "line": 159,
+                    "end": 180
                 },
                 {
                     "routes": [],
@@ -26589,8 +26734,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 129,
-                    "end": 138
+                    "line": 187,
+                    "end": 196
                 },
                 {
                     "routes": [],
@@ -26609,8 +26754,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 141,
-                    "end": 146
+                    "line": 199,
+                    "end": 204
                 },
                 {
                     "routes": [],
@@ -26629,8 +26774,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 149,
-                    "end": 159
+                    "line": 207,
+                    "end": 217
                 },
                 {
                     "routes": [],
@@ -26649,8 +26794,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 162,
-                    "end": 165
+                    "line": 220,
+                    "end": 223
                 },
                 {
                     "routes": [],
@@ -26669,8 +26814,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 168,
-                    "end": 175
+                    "line": 226,
+                    "end": 233
                 },
                 {
                     "routes": [],
@@ -26689,8 +26834,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 178,
-                    "end": 181
+                    "line": 236,
+                    "end": 239
                 },
                 {
                     "routes": [],
@@ -26716,8 +26861,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 194,
-                    "end": 216
+                    "line": 252,
+                    "end": 274
                 },
                 {
                     "routes": [],
@@ -26750,8 +26895,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 219,
-                    "end": 241
+                    "line": 277,
+                    "end": 299
                 },
                 {
                     "routes": [],
@@ -26777,8 +26922,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 244,
-                    "end": 251
+                    "line": 302,
+                    "end": 309
                 },
                 {
                     "routes": [],
@@ -26804,8 +26949,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 259,
-                    "end": 302
+                    "line": 317,
+                    "end": 360
                 },
                 {
                     "routes": [],
@@ -26840,8 +26985,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 306,
-                    "end": 311
+                    "line": 364,
+                    "end": 369
                 },
                 {
                     "routes": [],
@@ -26867,8 +27012,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 314,
-                    "end": 317
+                    "line": 372,
+                    "end": 375
                 },
                 {
                     "routes": [],
@@ -26879,8 +27024,8 @@
                     "doc": "The database door this writer writes through, for a caller wrapping several of its verbs in one transaction.",
                     "shapes": [],
                     "params": [],
-                    "line": 320,
-                    "end": 323
+                    "line": 378,
+                    "end": 381
                 },
                 {
                     "routes": [],
@@ -26899,8 +27044,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 326,
-                    "end": 341
+                    "line": 384,
+                    "end": 399
                 },
                 {
                     "routes": [],
@@ -26921,8 +27066,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 184,
-                    "end": 191
+                    "line": 242,
+                    "end": 249
                 }
             ]
         },
@@ -28603,6 +28748,7 @@
                 "Minn\\Front\\ProbeController",
                 "Minn\\Front\\Sitemaps",
                 "Minn\\Login\\LoginController",
+                "Minn\\Login\\LoginHooks",
                 "Minn\\Mail\\MailSettings",
                 "Minn\\Mail\\Mailer",
                 "Minn\\Media\\Images",
@@ -30032,6 +30178,7 @@
                 "Minn\\Front\\Resolution",
                 "Minn\\Front\\Resolver",
                 "Minn\\Front\\Sitemaps",
+                "Minn\\Login\\LoginHooks",
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\UserObject",
                 "Minn\\Rest\\UsersController"
@@ -30412,7 +30559,7 @@
             "namespace": "Minn\\Content",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Content/Users.php",
-            "lines": 213,
+            "lines": 236,
             "doc": "",
             "implements": [],
             "extends": null,
@@ -30445,6 +30592,7 @@
                 "Minn\\Engine",
                 "Minn\\Front\\Feeds",
                 "Minn\\Login\\LoginController",
+                "Minn\\Login\\LoginHooks",
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\PostObject",
                 "Minn\\Rest\\Services",
@@ -30610,7 +30758,41 @@
                         }
                     ],
                     "line": 79,
-                    "end": 82
+                    "end": 84
+                },
+                {
+                    "routes": [],
+                    "name": "defaultDisplayName",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "defaultDisplayName(string $first, string $last, string $login): string",
+                    "doc": "The display name an account gets when none is given, as the reference\npicks it: first and last name, whichever of the two there is, or the\nlogin. The nickname plays no part.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "first",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "last",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "login",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 91,
+                    "end": 95
                 },
                 {
                     "routes": [],
@@ -30631,8 +30813,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 133,
-                    "end": 138
+                    "line": 155,
+                    "end": 160
                 },
                 {
                     "routes": [],
@@ -30660,8 +30842,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 145,
-                    "end": 150
+                    "line": 167,
+                    "end": 172
                 },
                 {
                     "routes": [],
@@ -30680,8 +30862,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 153,
-                    "end": 157
+                    "line": 175,
+                    "end": 180
                 },
                 {
                     "routes": [],
@@ -30702,8 +30884,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 160,
-                    "end": 163
+                    "line": 183,
+                    "end": 186
                 },
                 {
                     "routes": [],
@@ -30722,8 +30904,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 166,
-                    "end": 169
+                    "line": 189,
+                    "end": 192
                 },
                 {
                     "routes": [],
@@ -30749,8 +30931,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 172,
-                    "end": 175
+                    "line": 195,
+                    "end": 198
                 },
                 {
                     "routes": [],
@@ -30761,8 +30943,8 @@
                     "doc": "How many users the site has.",
                     "shapes": [],
                     "params": [],
-                    "line": 178,
-                    "end": 181
+                    "line": 201,
+                    "end": 204
                 },
                 {
                     "routes": [],
@@ -30790,8 +30972,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 188,
-                    "end": 195
+                    "line": 211,
+                    "end": 218
                 },
                 {
                     "routes": [],
@@ -30817,8 +30999,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 198,
-                    "end": 201
+                    "line": 221,
+                    "end": 224
                 },
                 {
                     "routes": [],
@@ -30844,8 +31026,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 204,
-                    "end": 211
+                    "line": 227,
+                    "end": 234
                 },
                 {
                     "routes": [],
@@ -30878,8 +31060,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 218,
-                    "end": 223
+                    "line": 241,
+                    "end": 246
                 },
                 {
                     "routes": [],
@@ -30905,6 +31087,18 @@
                 },
                 {
                     "routes": [],
+                    "name": "refreshCount",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "refreshCount(): void",
+                    "doc": "The user_count option, which the reference keeps current as accounts\ncome and go. A site without the row is left without it.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 101,
+                    "end": 104
+                },
+                {
+                    "routes": [],
                     "name": "writeAccount",
                     "static": false,
                     "visibility": "private",
@@ -30922,8 +31116,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 90,
-                    "end": 126
+                    "line": 112,
+                    "end": 148
                 }
             ]
         },
@@ -57247,7 +57441,7 @@
             "namespace": "Minn\\Login",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Login/LoginController.php",
-            "lines": 329,
+            "lines": 339,
             "doc": "Signing in. The page people see is /minn-admin/login: the form, the\nlost-password and reset flows, and logout all live there and link there.\n/wp-login.php stays as the address tooling knows (one-time login links,\nuptime probes, scripted sign-ins) and answers in place with the same\nshapes; a bare GET of it sends a browser to the clean page. Sessions\nand cookies validate on the engine AND on WordPress either way.",
             "implements": [],
             "extends": null,
@@ -57269,6 +57463,7 @@
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
                 "Minn\\Login\\LoginForm",
+                "Minn\\Login\\LoginHooks",
                 "Minn\\Mail\\Mailer",
                 "Minn\\Support\\Html"
             ],
@@ -57467,7 +57662,7 @@
                         }
                     ],
                     "line": 243,
-                    "end": 268
+                    "end": 276
                 },
                 {
                     "routes": [],
@@ -57588,8 +57783,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 274,
-                    "end": 286
+                    "line": 282,
+                    "end": 294
                 },
                 {
                     "routes": [],
@@ -57608,8 +57803,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 293,
-                    "end": 310
+                    "line": 301,
+                    "end": 320
                 },
                 {
                     "routes": [],
@@ -57628,8 +57823,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 317,
-                    "end": 325
+                    "line": 327,
+                    "end": 335
                 },
                 {
                     "routes": [],
@@ -57662,8 +57857,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 328,
-                    "end": 335
+                    "line": 338,
+                    "end": 345
                 },
                 {
                     "routes": [],
@@ -57682,8 +57877,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 338,
-                    "end": 341
+                    "line": 348,
+                    "end": 351
                 },
                 {
                     "routes": [],
@@ -57709,8 +57904,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 344,
-                    "end": 349
+                    "line": 354,
+                    "end": 359
                 },
                 {
                     "routes": [],
@@ -57743,8 +57938,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 351,
-                    "end": 361
+                    "line": 361,
+                    "end": 371
                 }
             ]
         },
@@ -58051,6 +58246,142 @@
                     ],
                     "line": 110,
                     "end": 120
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Login\\LoginHooks",
+            "short": "LoginHooks",
+            "namespace": "Minn\\Login",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Login/LoginHooks.php",
+            "lines": 46,
+            "doc": "What the reference tells plugins about a sign-in, when plugins are loaded:\nwp_login with the user after a good one, wp_login_failed with the reason\nafter a bad one (security and logging plugins read it), wp_logout with the\nuser id after a sign-out. A form with an empty field is turned away before\nany of it, as there. The authenticate filter, through which a plugin may\nrefuse a sign-in, is not run yet (contracts/runtime.md).",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Content\\Site",
+                "Minn\\Content\\UserRecord",
+                "Minn\\Content\\Users",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Support\\Html"
+            ],
+            "usedBy": [
+                "Minn\\Login\\LoginController"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Content\\Users $users, Minn\\Content\\Site $site)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "users",
+                        "type": "Minn\\Content\\Users",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "site",
+                        "type": "Minn\\Content\\Site",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 23,
+                "end": 27
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "users",
+                    "type": "Minn\\Content\\Users",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "site",
+                    "type": "Minn\\Content\\Site",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "attempted",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "attempted(string $login, ?Minn\\Content\\UserRecord $user): void",
+                    "doc": "After a sign-in attempt with both fields filled: the user signed in, or null.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "login",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "user",
+                            "type": "?Minn\\Content\\UserRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 30,
+                    "end": 40
+                },
+                {
+                    "routes": [],
+                    "name": "signedOut",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "signedOut(int $userId): void",
+                    "doc": "After a sign-out ended the session.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "userId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 43,
+                    "end": 48
+                },
+                {
+                    "routes": [],
+                    "name": "reason",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "reason(string $login): WP_Error",
+                    "doc": "The reference's refusal: nobody by that name or address, or the wrong password for someone.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "login",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 51,
+                    "end": 65
                 }
             ]
         },
@@ -60992,8 +61323,7 @@
                 "Minn\\Front\\CommentPostController",
                 "Minn\\Login\\LoginController",
                 "Minn\\Mail\\Composer",
-                "Minn\\Rest\\CommentsController",
-                "Minn\\Rest\\UsersController"
+                "Minn\\Rest\\CommentsController"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Mail\\MailSettings $settings, string $logFile)",
@@ -63944,14 +64274,15 @@
             "namespace": "Minn\\Media",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Media/Images.php",
-            "lines": 67,
-            "doc": "GD sub-size generation from the size options the site stores.",
+            "lines": 105,
+            "doc": "GD sub-size generation for the sizes the site has.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Content\\Site",
                 "Minn\\Media\\Canvas",
-                "Minn\\Media\\Sizing"
+                "Minn\\Media\\Sizing",
+                "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
                 "Minn\\Media\\Writer",
@@ -63971,8 +64302,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 12,
-                "end": 14
+                "line": 13,
+                "end": 15
             },
             "cases": [],
             "constants": [],
@@ -63994,13 +64325,13 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "ladder(): array",
-                    "doc": "The registered sizes from the site's options, largest last.",
+                    "doc": "The sizes an upload is cut into, in the order the reference writes\nthem to the metadata: the four from the site's options, the two big\nones every site has, then any a theme or plugin registered with\nadd_image_size this request.",
                     "shapes": [
                         "@return array<string, array{0: int, 1: int, 2: bool}> name => [max width, max height, crop]"
                     ],
                     "params": [],
-                    "line": 21,
-                    "end": 30
+                    "line": 25,
+                    "end": 40
                 },
                 {
                     "routes": [],
@@ -64040,17 +64371,19 @@
                             "doc": ""
                         }
                     ],
-                    "line": 33,
-                    "end": 36
+                    "line": 67,
+                    "end": 70
                 },
                 {
                     "routes": [],
                     "name": "makeSubsizes",
                     "static": false,
                     "visibility": "public",
-                    "signature": "makeSubsizes(string $path, string $mime): array",
-                    "doc": "Generates the sub-sizes for one image; returns the sizes metadata map.",
-                    "shapes": [],
+                    "signature": "makeSubsizes(string $path, string $mime, array $imageMeta = array ( )): array",
+                    "doc": "Generates the sub-sizes for one image; returns the sizes metadata map.\nThe image's metadata so far rides along for the size filter.",
+                    "shapes": [
+                        "@param array<string, mixed> $imageMeta"
+                    ],
                     "params": [
                         {
                             "name": "path",
@@ -64065,10 +64398,47 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "imageMeta",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": "array ( )",
+                            "doc": ""
                         }
                     ],
-                    "line": 39,
-                    "end": 75
+                    "line": 78,
+                    "end": 114
+                },
+                {
+                    "routes": [],
+                    "name": "filtered",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "filtered(array $ladder, array $imageMeta): array",
+                    "doc": "The ladder after intermediate_image_sizes_advanced when plugins are\nloaded, so a plugin can drop sizes it registered but wants only for\nits own uploads (Gravity Forms does). The sizes are cut before the\nattachment row exists, so the filter's attachment id is 0.",
+                    "shapes": [
+                        "@param array<string, array{0: int, 1: int, 2: bool}> $ladder @param array<string, mixed> $imageMeta",
+                        "@return array<string, array{0: int, 1: int, 2: bool}>"
+                    ],
+                    "params": [
+                        {
+                            "name": "ladder",
+                            "type": "array",
+                            "shape": "array<string, array{0: int, 1: int, 2: bool}>",
+                            "default": null,
+                            "doc": "@param array<string, mixed> $imageMeta"
+                        },
+                        {
+                            "name": "imageMeta",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 51,
+                    "end": 64
                 }
             ]
         },
@@ -65129,7 +65499,7 @@
             "namespace": "Minn\\Media",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Media/Writer.php",
-            "lines": 96,
+            "lines": 90,
             "doc": "The writes the media library makes. An Upload becomes an attachment: the\nfile lands in the dated uploads directory under a unique name, the row is\ninserted with the stored name as its title and slug, and an image gets\nits sub-sizes and the serialized metadata blob. Edits stamp the row\nmodified; removal takes the files with the row.",
             "implements": [],
             "extends": null,
@@ -65371,7 +65741,7 @@
                         }
                     ],
                     "line": 102,
-                    "end": 114
+                    "end": 108
                 }
             ]
         },
@@ -76733,7 +77103,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/PostObject.php",
-            "lines": 476,
+            "lines": 482,
             "doc": "Builds the wp/v2 post and page objects in the reference's shape: the\nview context, the edit context (raw+rendered dual fields, editor-only\nfields, and cap-gated wp:action-* links), and their _links blocks.",
             "implements": [],
             "extends": null,
@@ -76890,6 +77260,26 @@
             "methods": [
                 {
                     "routes": [],
+                    "name": "permalink",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "permalink(Minn\\Content\\PostRecord $p): string",
+                    "doc": "A post's permalink as of now: pretty once live with a slug, ?p= (or ?page_id=) before.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "p",
+                            "type": "Minn\\Content\\PostRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 43,
+                    "end": 46
+                },
+                {
+                    "routes": [],
                     "name": "restBase",
                     "static": true,
                     "visibility": "public",
@@ -76905,8 +77295,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 43,
-                    "end": 52
+                    "line": 49,
+                    "end": 58
                 },
                 {
                     "routes": [],
@@ -76925,8 +77315,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 116,
-                    "end": 147
+                    "line": 122,
+                    "end": 153
                 },
                 {
                     "routes": [],
@@ -76945,8 +77335,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 229,
-                    "end": 264
+                    "line": 235,
+                    "end": 270
                 },
                 {
                     "routes": [],
@@ -76972,8 +77362,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 286,
-                    "end": 339
+                    "line": 292,
+                    "end": 345
                 },
                 {
                     "routes": [],
@@ -76992,8 +77382,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 346,
-                    "end": 361
+                    "line": 352,
+                    "end": 367
                 },
                 {
                     "routes": [],
@@ -77019,8 +77409,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 364,
-                    "end": 374
+                    "line": 370,
+                    "end": 380
                 },
                 {
                     "routes": [],
@@ -77046,8 +77436,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 377,
-                    "end": 393
+                    "line": 383,
+                    "end": 399
                 },
                 {
                     "routes": [],
@@ -77073,8 +77463,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 396,
-                    "end": 458
+                    "line": 402,
+                    "end": 464
                 },
                 {
                     "routes": [],
@@ -77093,8 +77483,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 496,
-                    "end": 499
+                    "line": 502,
+                    "end": 505
                 },
                 {
                     "routes": [],
@@ -77113,8 +77503,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 60,
-                    "end": 82
+                    "line": 66,
+                    "end": 88
                 },
                 {
                     "routes": [],
@@ -77133,8 +77523,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 90,
-                    "end": 113
+                    "line": 96,
+                    "end": 119
                 },
                 {
                     "routes": [],
@@ -77155,8 +77545,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 155,
-                    "end": 162
+                    "line": 161,
+                    "end": 168
                 },
                 {
                     "routes": [],
@@ -77185,8 +77575,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 171,
-                    "end": 192
+                    "line": 177,
+                    "end": 198
                 },
                 {
                     "routes": [],
@@ -77222,8 +77612,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 201,
-                    "end": 220
+                    "line": 207,
+                    "end": 226
                 },
                 {
                     "routes": [],
@@ -77244,8 +77634,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 223,
-                    "end": 226
+                    "line": 229,
+                    "end": 232
                 },
                 {
                     "routes": [],
@@ -77271,8 +77661,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 267,
-                    "end": 279
+                    "line": 273,
+                    "end": 285
                 },
                 {
                     "routes": [],
@@ -77300,8 +77690,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 467,
-                    "end": 479
+                    "line": 473,
+                    "end": 485
                 },
                 {
                     "routes": [],
@@ -77327,8 +77717,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 486,
-                    "end": 493
+                    "line": 492,
+                    "end": 499
                 }
             ]
         },
@@ -77690,7 +78080,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/PostsWriteController.php",
-            "lines": 320,
+            "lines": 349,
             "doc": "wp/v2 posts and pages, write side: create, update, trash, and force\ndelete, each gated by the capability engine and answering with the\nedit-context object the reference returns.",
             "implements": [],
             "extends": null,
@@ -77941,8 +78331,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 149,
-                    "end": 152
+                    "line": 150,
+                    "end": 153
                 },
                 {
                     "routes": [],
@@ -77975,8 +78365,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 155,
-                    "end": 183
+                    "line": 156,
+                    "end": 188
                 },
                 {
                     "routes": [
@@ -78011,8 +78401,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 187,
-                    "end": 190
+                    "line": 192,
+                    "end": 195
                 },
                 {
                     "routes": [],
@@ -78045,8 +78435,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 193,
-                    "end": 221
+                    "line": 198,
+                    "end": 222
                 },
                 {
                     "routes": [],
@@ -78065,8 +78455,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 340,
-                    "end": 346
+                    "line": 369,
+                    "end": 375
                 },
                 {
                     "routes": [],
@@ -78151,7 +78541,34 @@
                         }
                     ],
                     "line": 110,
-                    "end": 143
+                    "end": 144
+                },
+                {
+                    "routes": [],
+                    "name": "rememberOld",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "rememberOld(Minn\\Content\\PostRecord $before, ?Minn\\Content\\PostRecord $after): void",
+                    "doc": "After a save: a published post (not a page) that moved keeps its old\nslug on record, and one that stayed published keeps its old date; one\nbrought back from the trash has its wanted slug back and stops waiting\nfor it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "before",
+                            "type": "Minn\\Content\\PostRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "after",
+                            "type": "?Minn\\Content\\PostRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 230,
+                    "end": 245
                 },
                 {
                     "routes": [],
@@ -78177,8 +78594,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 224,
-                    "end": 234
+                    "line": 248,
+                    "end": 258
                 },
                 {
                     "routes": [],
@@ -78213,8 +78630,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 243,
-                    "end": 279
+                    "line": 267,
+                    "end": 303
                 },
                 {
                     "routes": [],
@@ -78249,8 +78666,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 288,
-                    "end": 310
+                    "line": 312,
+                    "end": 339
                 },
                 {
                     "routes": [],
@@ -78276,8 +78693,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 313,
-                    "end": 322
+                    "line": 342,
+                    "end": 351
                 },
                 {
                     "routes": [],
@@ -78296,8 +78713,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 325,
-                    "end": 331
+                    "line": 354,
+                    "end": 360
                 },
                 {
                     "routes": [],
@@ -78316,8 +78733,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 334,
-                    "end": 337
+                    "line": 363,
+                    "end": 366
                 }
             ]
         },
@@ -83907,13 +84324,12 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/UsersController.php",
-            "lines": 301,
+            "lines": 297,
             "doc": "wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Auth\\Password",
-                "Minn\\Auth\\PasswordReset",
                 "Minn\\Auth\\Roles",
                 "Minn\\Content\\Site",
                 "Minn\\Content\\UserRecord",
@@ -83927,7 +84343,6 @@
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
                 "Minn\\Http\\Subject",
-                "Minn\\Mail\\Mailer",
                 "Minn\\RestError",
                 "Minn\\Rest\\Caller",
                 "Minn\\Rest\\Context",
@@ -83996,8 +84411,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 37,
-                "end": 46
+                "line": 35,
+                "end": 44
             },
             "cases": [],
             "constants": [
@@ -84093,8 +84508,32 @@
                             "doc": ""
                         }
                     ],
-                    "line": 50,
-                    "end": 58
+                    "line": 48,
+                    "end": 56
+                },
+                {
+                    "routes": [
+                        "POST /wp/v2/users/me (public)",
+                        "PUT /wp/v2/users/me (public)",
+                        "PATCH /wp/v2/users/me (public)"
+                    ],
+                    "name": "updateMe",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "updateMe(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "Updates the signed-in user; signed out there is no such user (404).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 62,
+                    "end": 65
                 },
                 {
                     "routes": [
@@ -84115,8 +84554,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 62,
-                    "end": 118
+                    "line": 69,
+                    "end": 125
                 },
                 {
                     "routes": [
@@ -84144,8 +84583,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 122,
-                    "end": 142
+                    "line": 129,
+                    "end": 149
                 },
                 {
                     "routes": [
@@ -84166,8 +84605,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 182,
-                    "end": 224
+                    "line": 175,
+                    "end": 218
                 },
                 {
                     "routes": [
@@ -84197,8 +84636,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 230,
-                    "end": 285
+                    "line": 224,
+                    "end": 279
                 },
                 {
                     "routes": [
@@ -84226,28 +84665,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 289,
-                    "end": 326
-                },
-                {
-                    "routes": [],
-                    "name": "welcome",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "welcome(?Minn\\Content\\UserRecord $user): void",
-                    "doc": "A new account hears about itself with a link to choose a password.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "user",
-                            "type": "?Minn\\Content\\UserRecord",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 145,
-                    "end": 156
+                    "line": 283,
+                    "end": 320
                 },
                 {
                     "routes": [],
@@ -84266,8 +84685,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 158,
-                    "end": 164
+                    "line": 151,
+                    "end": 157
                 },
                 {
                     "routes": [],
@@ -84286,8 +84705,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 167,
-                    "end": 173
+                    "line": 160,
+                    "end": 166
                 },
                 {
                     "routes": [],
@@ -84306,8 +84725,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 175,
-                    "end": 178
+                    "line": 168,
+                    "end": 171
                 }
             ]
         },
@@ -86784,7 +87203,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Constants.php",
-            "lines": 60,
+            "lines": 67,
             "doc": "The constants plugin code expects: the fixed set from data/constants.json\n(captured from the reference) and the per-site ones computed here. Nothing\nalready defined is touched, so wp-config.php keeps the last word.",
             "implements": [],
             "extends": null,
@@ -86817,7 +87236,7 @@
                         }
                     ],
                     "line": 15,
-                    "end": 70
+                    "end": 77
                 }
             ]
         },
@@ -87452,7 +87871,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Hooks.php",
-            "lines": 251,
+            "lines": 264,
             "doc": "The hook registry plugin code registers into and the engine fires.\nSemantics come from contracts/fixtures/api/hooks.json: callbacks run\nby ascending priority then insertion order; a callback added at a\nhigher priority during a run takes part in that run, one added at the\ncurrent or a lower priority waits for the next; a callback removed\nbefore its turn is skipped; the \"all\" hook sees every firing with the\nhook name first and every argument regardless of its accepted count.",
             "implements": [],
             "extends": null,
@@ -87772,7 +88191,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "action(string $hook, array $args): void",
-                    "doc": "Runs an action.",
+                    "doc": "Runs an action. With no arguments its callbacks still get one, an\nempty string, as do_action() gives them in the reference (a callback\nthat requires a parameter is not short of one).",
                     "shapes": [
                         "@param list<mixed> $args"
                     ],
@@ -87792,8 +88211,37 @@
                             "doc": ""
                         }
                     ],
-                    "line": 147,
-                    "end": 151
+                    "line": 149,
+                    "end": 152
+                },
+                {
+                    "routes": [],
+                    "name": "actionRef",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "actionRef(string $hook, array $args): void",
+                    "doc": "Runs an action with exactly the arguments given, none included\n(do_action_ref_array).",
+                    "shapes": [
+                        "@param list<mixed> $args"
+                    ],
+                    "params": [
+                        {
+                            "name": "hook",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "list<mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 160,
+                    "end": 164
                 },
                 {
                     "routes": [],
@@ -87812,8 +88260,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 154,
-                    "end": 157
+                    "line": 167,
+                    "end": 170
                 },
                 {
                     "routes": [],
@@ -87832,8 +88280,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 160,
-                    "end": 163
+                    "line": 173,
+                    "end": 176
                 },
                 {
                     "routes": [],
@@ -87844,8 +88292,8 @@
                     "doc": "The hook running now, or false.",
                     "shapes": [],
                     "params": [],
-                    "line": 166,
-                    "end": 169
+                    "line": 179,
+                    "end": 182
                 },
                 {
                     "routes": [],
@@ -87864,8 +88312,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 172,
-                    "end": 175
+                    "line": 185,
+                    "end": 188
                 },
                 {
                     "routes": [],
@@ -87878,8 +88326,8 @@
                         "@return array<string, array<int, list<callable>>> a read-only view for diagnostics"
                     ],
                     "params": [],
-                    "line": 182,
-                    "end": 192
+                    "line": 195,
+                    "end": 205
                 },
                 {
                     "routes": [],
@@ -87914,8 +88362,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 195,
-                    "end": 229
+                    "line": 208,
+                    "end": 242
                 },
                 {
                     "routes": [],
@@ -87941,8 +88389,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 231,
-                    "end": 240
+                    "line": 244,
+                    "end": 253
                 },
                 {
                     "routes": [],
@@ -87970,8 +88418,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 243,
-                    "end": 254
+                    "line": 256,
+                    "end": 267
                 },
                 {
                     "routes": [],
@@ -87990,8 +88438,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 257,
-                    "end": 267
+                    "line": 270,
+                    "end": 280
                 }
             ]
         },
@@ -93850,7 +94298,9 @@
                 "Minn\\Front\\Permalinks",
                 "Minn\\Front\\PluginRules",
                 "Minn\\Front\\Resolver",
+                "Minn\\Login\\LoginHooks",
                 "Minn\\Mail\\Mailer",
+                "Minn\\Media\\Images",
                 "Minn\\Rest\\AbilitiesController",
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\Services",
@@ -95620,7 +96070,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/StoredObjects.php",
-            "lines": 32,
+            "lines": 64,
             "doc": "The classes a stored blob may name and come back as. The serialized\nreader never instantiates; the facade registers one factory per value\nclass it owns (WP_Post, WP_Term, WP_Comment) and a record naming any\nother class stays a stdClass of its properties. That is what lets a\ntransient the reference wrote, holding post objects, read back typed.",
             "implements": [],
             "extends": null,
@@ -95630,7 +96080,14 @@
             ],
             "constructor": null,
             "cases": [],
-            "constants": [],
+            "constants": [
+                {
+                    "name": "WRAPPERS",
+                    "value": "array (   'arrayobject' => 'ArrayObject',   'arrayiterator' => 'ArrayIterator',   'recursivearrayiterator' => 'RecursiveArrayIterator', )",
+                    "doc": "PHP's array wrappers a stored record may name, by lower-cased class name.",
+                    "visibility": "private"
+                }
+            ],
             "properties": [
                 {
                     "name": "factories",
@@ -95667,8 +96124,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 20,
-                    "end": 23
+                    "line": 23,
+                    "end": 26
                 },
                 {
                     "routes": [],
@@ -95676,11 +96133,11 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "reviver(): Closure",
-                    "doc": "The reviver the serialized reader takes: a factory's object, or the properties as they are.",
+                    "doc": "The reviver the serialized reader takes: PHP's array wrappers rebuilt, a factory's object, or the properties as they are.",
                     "shapes": [],
                     "params": [],
-                    "line": 26,
-                    "end": 32
+                    "line": 29,
+                    "end": 40
                 },
                 {
                     "routes": [],
@@ -95699,8 +96156,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 35,
-                    "end": 38
+                    "line": 67,
+                    "end": 70
                 },
                 {
                     "routes": [],
@@ -95711,8 +96168,35 @@
                     "doc": "Forgets every factory, for suites.",
                     "shapes": [],
                     "params": [],
-                    "line": 41,
-                    "end": 44
+                    "line": 73,
+                    "end": 76
+                },
+                {
+                    "routes": [],
+                    "name": "arrayWrapper",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "arrayWrapper(string $class, stdClass $properties): ?object",
+                    "doc": "PHP's own array wrappers, stored as their four numbered parts (flags,\nstorage, member properties, iterator class), rebuilt through their\nconstructors so nothing else runs. Plugins keep settings in them\n(CleanTalk does), and the reference reads them back as the real class;\nwritten back, they serialize to the same bytes. One wrapping an object,\nor carrying member properties, stays a record of its parts.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "class",
+                            "type": "string",
+                            "shape": "class-string<\\ArrayObject|\\ArrayIterator>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "properties",
+                            "type": "stdClass",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 52,
+                    "end": 64
                 }
             ]
         },
@@ -98976,6 +99460,7 @@
                 "Minn\\Http\\Failure",
                 "Minn\\Login\\LoginController",
                 "Minn\\Login\\LoginForm",
+                "Minn\\Login\\LoginHooks",
                 "Minn\\Rest\\MediaObject",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Runtime\\PageMenu",
@@ -101032,7 +101517,7 @@
             "namespace": "Minn\\Support",
             "kind": "final class",
             "file": "public/minn/src/Minn/Support/Serialized.php",
-            "lines": 202,
+            "lines": 207,
             "doc": "Tolerant readers for the serialized-PHP blobs WordPress stores. Nothing\nhere executes the blob; each reader scans for the one shape it needs.",
             "implements": [],
             "extends": null,
@@ -101192,8 +101677,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 168,
-                    "end": 202
+                    "line": 173,
+                    "end": 207
                 },
                 {
                     "routes": [],
@@ -101212,8 +101697,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 205,
-                    "end": 211
+                    "line": 210,
+                    "end": 216
                 },
                 {
                     "routes": [],
@@ -101247,7 +101732,7 @@
                         }
                     ],
                     "line": 74,
-                    "end": 143
+                    "end": 148
                 },
                 {
                     "routes": [],
@@ -101280,8 +101765,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 145,
-                    "end": 151
+                    "line": 150,
+                    "end": 156
                 },
                 {
                     "routes": [],
@@ -101314,8 +101799,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 153,
-                    "end": 162
+                    "line": 158,
+                    "end": 167
                 }
             ]
         },

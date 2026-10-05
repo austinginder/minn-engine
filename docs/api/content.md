@@ -24,7 +24,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`PostFilter`](#postfilter) | final readonly class | 55 | What a listing is narrowed to. Every field is optional and the object is |
 | [`PostRecord`](#postrecord) | final readonly class | 156 | One row of the posts table, read by name. The columns keep their |
 | [`PostStatus`](#poststatus) | enum | 42 | The statuses a post row can hold; the value is the column's own spelling. |
-| [`PostWriter`](#postwriter) | final readonly class | 328 | Every write to the posts table and its satellites: rows, meta, term |
+| [`PostWriter`](#postwriter) | final readonly class | 386 | Every write to the posts table and its satellites: rows, meta, term |
 | [`Posts`](#posts) | final readonly class | 496 | Reads over the posts table. A single post comes back as a PostRecord and |
 | [`Reader`](#reader) | final class | 72 | Who is reading this request: their user id, whether they may read |
 | [`Revisions`](#revisions) | final readonly class | 86 | Revision rows: the plain snapshots and the per-author autosave slots. |
@@ -36,7 +36,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`Terms`](#terms) | final readonly class | 141 |  |
 | [`Texturize`](#texturize) | final class | 51 | The texturize subset the reference applies to rendered text: straight |
 | [`UserRecord`](#userrecord) | final readonly class | 96 | One row of the users table, read by name. Columns keep their WordPress |
-| [`Users`](#users) | final readonly class | 213 |  |
+| [`Users`](#users) | final readonly class | 236 |  |
 
 ## Autop
 
@@ -875,7 +875,7 @@ Array access is the migration bridge: code that still reads
 $post['post_title'] keeps working while it is moved over. New code
 reads the properties. The style suite counts the bracket reads down.
 
-Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\Excerpt`, `Minn\Content\Page`, `Minn\Content\PasswordGate`, `Minn\Content\PostStatus`, `Minn\Content\Posts`, `Minn\Engine`, `Minn\Extension\SeamRunner`, `Minn\Front\Canonical`, `Minn\Front\CommentPostController`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\Renderer`, `Minn\Front\Resolution`, `Minn\Front\Resolver`, `Minn\Front\Sitemaps`, `Minn\Media\Writer`, `Minn\Rest\CommentsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Runtime\CommentCloser`, `Minn\Theme\ClassicContent`, `Minn\Theme\HeadLinks`, `Minn\Theme\UserStyles`
+Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\Excerpt`, `Minn\Content\Page`, `Minn\Content\PasswordGate`, `Minn\Content\PostStatus`, `Minn\Content\PostWriter`, `Minn\Content\Posts`, `Minn\Engine`, `Minn\Extension\SeamRunner`, `Minn\Front\Canonical`, `Minn\Front\CommentPostController`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\Renderer`, `Minn\Front\Resolution`, `Minn\Front\Resolver`, `Minn\Front\Sitemaps`, `Minn\Media\Writer`, `Minn\Rest\CommentsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Runtime\CommentCloser`, `Minn\Theme\ClassicContent`, `Minn\Theme\HeadLinks`, `Minn\Theme\UserStyles`
 
 - readonly `int $id`
 - readonly `int $authorId`
@@ -1035,6 +1035,28 @@ Moves a post to another type, leaving it alone when it is already there.
 
 Sets one meta value, inserting the row when the key is new.
 
+### `addMeta(int $id, string $key, string $value): void`
+
+Adds a meta row even when the key already has one (a non-unique key).
+
+### `rememberOld(int $id, string $key, string $was, string $now): void`
+
+Keeps a published post's previous slug or date on record
+(_wp_old_slug, _wp_old_date) so its old address still finds it: the
+value it moves to stops being an old one, the value it leaves becomes
+one, once.
+
+### `ensureCategory(int $id): void`
+
+Gives a post the site's default category when it has none, as every save of a post does in the reference.
+
+### `trash(Minn\Content\PostRecord $post, int $userId): void`
+
+Moves a post to the trash as the reference does: the slug gains
+__trashed (the one it had waits in _wp_desired_post_slug), the status
+it had and the time are kept, the modified time moves, a post keeps a
+category, and the save is a revision like any other.
+
 ### `deleteMeta(int $id, string $key): void`
 
 Removes every meta row with this key from a post.
@@ -1110,7 +1132,7 @@ The database door this writer writes through, for a caller wrapping several of i
 
 Hard-deletes a post with its revisions and its meta.
 
-Internals: `saveSticky()` (private, line 184)
+Internals: `saveSticky()` (private, line 242)
 
 
 ## Posts
@@ -1377,7 +1399,7 @@ Internals: `named()` (private, line 35)
 
 Site-wide options and the site's clock.
 
-Used by: `Minn\Admin\ActivityChart`, `Minn\Admin\App`, `Minn\Admin\BootPayload`, `Minn\Admin\Dashboard`, `Minn\Admin\LanguageController`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Admin\ThemesController`, `Minn\Admin\Translations`, `Minn\Blocks\Dynamic\Dates`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Cli\MinnCommand`, `Minn\Cli\Runtime`, `Minn\Content\Inventory`, `Minn\Content\Menus`, `Minn\Content\PluginState`, `Minn\Content\PostWriter`, `Minn\Content\Revisions`, `Minn\Content\SiteIcon`, `Minn\Context`, `Minn\Cron\Cron`, `Minn\Engine`, `Minn\Extension\Loader`, `Minn\Extension\Seams`, `Minn\Front\AdminBar`, `Minn\Front\CommentPostController`, `Minn\Front\FeedController`, `Minn\Front\Feeds`, `Minn\Front\ProbeController`, `Minn\Front\Sitemaps`, `Minn\Login\LoginController`, `Minn\Mail\MailSettings`, `Minn\Mail\Mailer`, `Minn\Media\Images`, `Minn\Media\Uploads`, `Minn\Media\Writer`, `Minn\Ops\CoreStatus`, `Minn\Ops\Diagnostics`, `Minn\Ops\InstalledSoftware`, `Minn\Ops\Packages`, `Minn\Ops\Updates`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\CommentsController`, `Minn\Rest\IndexController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Services`, `Minn\Rest\Settings`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Runtime\Plugins`, `Minn\Runtime\Recovery`, `Minn\Runtime\Runtime`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\ClassicTheme`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\TemplateIndex`, `Minn\Theme\TemplateWriter`, `Minn\Theme\Theme`, `Minn\Theme\ThemeStyles`, `Minn\Theme\UserStyles`
+Used by: `Minn\Admin\ActivityChart`, `Minn\Admin\App`, `Minn\Admin\BootPayload`, `Minn\Admin\Dashboard`, `Minn\Admin\LanguageController`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Admin\ThemesController`, `Minn\Admin\Translations`, `Minn\Blocks\Dynamic\Dates`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Cli\MinnCommand`, `Minn\Cli\Runtime`, `Minn\Content\Inventory`, `Minn\Content\Menus`, `Minn\Content\PluginState`, `Minn\Content\PostWriter`, `Minn\Content\Revisions`, `Minn\Content\SiteIcon`, `Minn\Context`, `Minn\Cron\Cron`, `Minn\Engine`, `Minn\Extension\Loader`, `Minn\Extension\Seams`, `Minn\Front\AdminBar`, `Minn\Front\CommentPostController`, `Minn\Front\FeedController`, `Minn\Front\Feeds`, `Minn\Front\ProbeController`, `Minn\Front\Sitemaps`, `Minn\Login\LoginController`, `Minn\Login\LoginHooks`, `Minn\Mail\MailSettings`, `Minn\Mail\Mailer`, `Minn\Media\Images`, `Minn\Media\Uploads`, `Minn\Media\Writer`, `Minn\Ops\CoreStatus`, `Minn\Ops\Diagnostics`, `Minn\Ops\InstalledSoftware`, `Minn\Ops\Packages`, `Minn\Ops\Updates`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\CommentsController`, `Minn\Rest\IndexController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Services`, `Minn\Rest\Settings`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Runtime\Plugins`, `Minn\Runtime\Recovery`, `Minn\Runtime\Runtime`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\ClassicTheme`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\TemplateIndex`, `Minn\Theme\TemplateWriter`, `Minn\Theme\Theme`, `Minn\Theme\ThemeStyles`, `Minn\Theme\UserStyles`
 
 ```php
 __construct(Minn\Db $db)
@@ -1638,7 +1660,7 @@ spelling in row(); here they are $user->login, ->email, ->displayName.
 Array access is the migration bridge, read-only; new code reads the
 properties.
 
-Used by: `Minn\Auth\AuthCookies`, `Minn\Auth\Authenticated`, `Minn\Auth\Authenticator`, `Minn\Auth\Cookie`, `Minn\Auth\PasswordReset`, `Minn\Auth\SignIn`, `Minn\Cli\UserCommand`, `Minn\Content\Users`, `Minn\Front\AdminBar`, `Minn\Front\CommentPostController`, `Minn\Front\Permalinks`, `Minn\Front\Resolution`, `Minn\Front\Resolver`, `Minn\Front\Sitemaps`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`
+Used by: `Minn\Auth\AuthCookies`, `Minn\Auth\Authenticated`, `Minn\Auth\Authenticator`, `Minn\Auth\Cookie`, `Minn\Auth\PasswordReset`, `Minn\Auth\SignIn`, `Minn\Cli\UserCommand`, `Minn\Content\Users`, `Minn\Front\AdminBar`, `Minn\Front\CommentPostController`, `Minn\Front\Permalinks`, `Minn\Front\Resolution`, `Minn\Front\Resolver`, `Minn\Front\Sitemaps`, `Minn\Login\LoginHooks`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`
 
 - readonly `int $id`
 - readonly `string $login`
@@ -1698,7 +1720,7 @@ Records are read-only; writes go through the repository.
 
 `final readonly class Minn\Content\Users` · `public/minn/src/Minn/Content/Users.php`
 
-Used by: `Minn\Admin\ActivityFeed`, `Minn\Admin\Appearance`, `Minn\Admin\Dashboard`, `Minn\Admin\HiddenIntegrations`, `Minn\Admin\LanguageController`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\SessionsController`, `Minn\Admin\Translations`, `Minn\Auth\ApplicationPasswords`, `Minn\Auth\Authenticator`, `Minn\Auth\Capabilities`, `Minn\Auth\Cookie`, `Minn\Auth\PasswordReset`, `Minn\Auth\Sessions`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Cli\Runtime`, `Minn\Engine`, `Minn\Front\Feeds`, `Minn\Login\LoginController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\PostObject`, `Minn\Rest\Services`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Admin\ActivityFeed`, `Minn\Admin\Appearance`, `Minn\Admin\Dashboard`, `Minn\Admin\HiddenIntegrations`, `Minn\Admin\LanguageController`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\SessionsController`, `Minn\Admin\Translations`, `Minn\Auth\ApplicationPasswords`, `Minn\Auth\Authenticator`, `Minn\Auth\Capabilities`, `Minn\Auth\Cookie`, `Minn\Auth\PasswordReset`, `Minn\Auth\Sessions`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Cli\Runtime`, `Minn\Engine`, `Minn\Front\Feeds`, `Minn\Login\LoginController`, `Minn\Login\LoginHooks`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\PostObject`, `Minn\Rest\Services`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Theme\PageRenderer`
 
 ```php
 __construct(Minn\Db $db)
@@ -1744,6 +1766,12 @@ locale?: string,
 } $fields
 
 - `@param array{`
+
+### static `defaultDisplayName(string $first, string $last, string $login): string`
+
+The display name an account gets when none is given, as the reference
+picks it: first and last name, whichever of the two there is, or the
+login. The nickname plays no part.
 
 ### `insert(array $columns): int`
 
@@ -1799,5 +1827,5 @@ Replaces one usermeta row. The (user_id, meta_key) pair carries no
 unique index on the stock schema, so this is a delete plus insert
 rather than an upsert.
 
-Internals: `record()` (private, line 19), `writeAccount()` (private, line 90)
+Internals: `record()` (private, line 19), `refreshCount()` (private, line 101), `writeAccount()` (private, line 112)
 

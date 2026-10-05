@@ -112,7 +112,12 @@ final class Serialized
                 self::expect($blob, $offset, '{');
                 $object = new \stdClass();
                 for ($i = 0; $i < $count; $i++) {
+                    // A class with its own serialization (ArrayObject, ArrayIterator)
+                    // numbers its parts: i:0 the flags, i:1 the storage, and so on.
                     $key = self::read($blob, $offset, $revive);
+                    if (is_int($key)) {
+                        $key = (string) $key;
+                    }
                     if (!is_string($key)) {
                         throw new \ValueError('key');
                     }

@@ -39,6 +39,12 @@ final readonly class PostObject
     ) {
     }
 
+    /** A post's permalink as of now: pretty once live with a slug, ?p= (or ?page_id=) before. */
+    public function permalink(PostRecord $p): string
+    {
+        return $this->permalinks->forPost($p);
+    }
+
     /** The rest_base of a type. */
     public static function restBase(string $type): string
     {
