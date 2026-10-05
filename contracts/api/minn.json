@@ -84522,12 +84522,14 @@
             "namespace": "Minn\\Support",
             "kind": "final class",
             "file": "public/minn/src/Minn/Support/Kses.php",
-            "lines": 338,
+            "lines": 382,
             "doc": "The HTML a user without unfiltered_html may store. Tags outside the\nallowlist are removed and their text kept; attributes outside the tag's\nlist (and the global set) are dropped; URL attributes lose unsafe\nschemes; style attributes keep only listed properties and no code.\nComments (the block delimiters) pass through untouched.",
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Html\\Decoder"
+                "Minn\\Html\\Decoder",
+                "Minn\\Support\\KsesPolicy",
+                "Minn\\Support\\KsesValues"
             ],
             "usedBy": [
                 "Minn\\Blocks\\Dynamic\\LatestComments",
@@ -84542,7 +84544,8 @@
                 "Minn\\Rest\\PostsWriteController",
                 "Minn\\Rest\\RevisionsController",
                 "Minn\\Rest\\TermsController",
-                "Minn\\Rest\\UsersController"
+                "Minn\\Rest\\UsersController",
+                "Minn\\Support\\KsesPolicy"
             ],
             "constructor": null,
             "cases": [],
@@ -84562,14 +84565,8 @@
                 {
                     "name": "GLOBAL_ATTRIBUTES",
                     "value": "array (   0 => 'class',   1 => 'id',   2 => 'style',   3 => 'title',   4 => 'role',   5 => 'dir',   6 => 'lang',   7 => 'xml:lang',   8 => 'hidden',   9 => 'tabindex', )",
-                    "doc": "",
-                    "visibility": "private"
-                },
-                {
-                    "name": "URL_ATTRIBUTES",
-                    "value": "array (   0 => 'href',   1 => 'src',   2 => 'cite',   3 => 'poster',   4 => 'longdesc',   5 => 'usemap', )",
-                    "doc": "",
-                    "visibility": "private"
+                    "doc": "The attributes every post-content tag takes besides its own.",
+                    "visibility": "public"
                 },
                 {
                     "name": "URI_ATTRIBUTES",
@@ -84580,8 +84577,8 @@
                 {
                     "name": "SCHEMES",
                     "value": "array (   0 => 'http',   1 => 'https',   2 => 'ftp',   3 => 'ftps',   4 => 'mailto',   5 => 'news',   6 => 'irc',   7 => 'gopher',   8 => 'nntp',   9 => 'feed',   10 => 'telnet',   11 => 'mms',   12 => 'rtsp',   13 => 'sms',   14 => 'svn',   15 => 'tel',   16 => 'fax',   17 => 'xmpp',   18 => 'webcal',   19 => 'urn', )",
-                    "doc": "",
-                    "visibility": "private"
+                    "doc": "The URI schemes allowed by default.",
+                    "visibility": "public"
                 },
                 {
                     "name": "CSS_PROPERTIES",
@@ -84612,14 +84609,52 @@
             "methods": [
                 {
                     "routes": [],
+                    "name": "post",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "post(string $html): string",
+                    "doc": "Post content as an author without unfiltered_html may store it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "html",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 92,
+                    "end": 95
+                },
+                {
+                    "routes": [],
+                    "name": "comment",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "comment(string $html): string",
+                    "doc": "A comment, profile or term description as anyone without unfiltered_html may store it: listed attributes only.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "html",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 98,
+                    "end": 101
+                },
+                {
+                    "routes": [],
                     "name": "filter",
                     "static": true,
                     "visibility": "public",
-                    "signature": "filter(string $html, array $allowed): string",
-                    "doc": "HTML with only the allowed tags and attributes kept.",
-                    "shapes": [
-                        "@param array<string, list<string>> $allowed"
-                    ],
+                    "signature": "filter(string $html, Minn\\Support\\KsesPolicy $policy): string",
+                    "doc": "HTML with only what the policy allows kept.",
+                    "shapes": [],
                     "params": [
                         {
                             "name": "html",
@@ -84629,15 +84664,15 @@
                             "doc": ""
                         },
                         {
-                            "name": "allowed",
-                            "type": "array",
-                            "shape": "array<string, list<string>>",
+                            "name": "policy",
+                            "type": "Minn\\Support\\KsesPolicy",
+                            "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 95,
-                    "end": 121
+                    "line": 104,
+                    "end": 130
                 },
                 {
                     "routes": [],
@@ -84656,8 +84691,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 124,
-                    "end": 130
+                    "line": 133,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -84676,16 +84711,45 @@
                             "doc": ""
                         }
                     ],
-                    "line": 133,
-                    "end": 140
+                    "line": 142,
+                    "end": 149
                 },
                 {
                     "routes": [],
                     "name": "attributeUrl",
                     "static": true,
                     "visibility": "public",
-                    "signature": "attributeUrl(string $url): string",
+                    "signature": "attributeUrl(string $url, array $schemes = self::SCHEMES): string",
                     "doc": "A URL inside markup: whatever stands before the first colon, once\nevery character reference and percent escape is decoded as deep as it\ngoes and the invisible characters are dropped, must be an allowed\nscheme, or it is cut off and the rest is judged again. The reference\ncuts \"?q=a:b\" to \"b\" and \"javascript:alert(1)//http://\" to \"//\" the\nsame way. A value with a good scheme is returned as given.",
+                    "shapes": [
+                        "@param list<string> $schemes"
+                    ],
+                    "params": [
+                        {
+                            "name": "url",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "schemes",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": "self::SCHEMES",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 161,
+                    "end": 177
+                },
+                {
+                    "routes": [],
+                    "name": "pdfObject",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "pdfObject(string $url, string $uploadsUrl): bool",
+                    "doc": "Whether a URL may be an object's data in post content: an http or https\nURL on the uploads host and port, no credentials, query or fragment,\nwhose path ends in \".pdf\".",
                     "shapes": [],
                     "params": [
                         {
@@ -84694,10 +84758,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "uploadsUrl",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
                         }
                     ],
-                    "line": 150,
-                    "end": 166
+                    "line": 331,
+                    "end": 345
                 },
                 {
                     "routes": [],
@@ -84716,8 +84787,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 316,
-                    "end": 319
+                    "line": 360,
+                    "end": 363
                 },
                 {
                     "routes": [],
@@ -84736,8 +84807,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 169,
-                    "end": 179
+                    "line": 180,
+                    "end": 190
                 },
                 {
                     "routes": [],
@@ -84756,8 +84827,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 182,
-                    "end": 186
+                    "line": 193,
+                    "end": 197
                 },
                 {
                     "routes": [],
@@ -84776,8 +84847,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 197,
-                    "end": 212
+                    "line": 208,
+                    "end": 223
                 },
                 {
                     "routes": [],
@@ -84796,8 +84867,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 220,
-                    "end": 237
+                    "line": 231,
+                    "end": 248
                 },
                 {
                     "routes": [],
@@ -84816,8 +84887,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 240,
-                    "end": 247
+                    "line": 251,
+                    "end": 258
                 },
                 {
                     "routes": [],
@@ -84836,8 +84907,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 250,
-                    "end": 254
+                    "line": 261,
+                    "end": 265
                 },
                 {
                     "routes": [],
@@ -84856,19 +84927,17 @@
                             "doc": ""
                         }
                     ],
-                    "line": 257,
-                    "end": 264
+                    "line": 268,
+                    "end": 275
                 },
                 {
                     "routes": [],
                     "name": "attributes",
                     "static": true,
                     "visibility": "private",
-                    "signature": "attributes(string $raw, array $allowedForTag): string",
-                    "doc": "",
-                    "shapes": [
-                        "@param list<string> $allowedForTag"
-                    ],
+                    "signature": "attributes(string $raw, string $tag, Minn\\Support\\KsesPolicy $policy): string",
+                    "doc": "The attributes the policy allows, in the order written: a value must\nmeet its rules, a URI keeps only an allowed scheme, srcset and style are\njudged on their own terms. A tag that loses a required attribute keeps\nnone at all.",
+                    "shapes": [],
                     "params": [
                         {
                             "name": "raw",
@@ -84878,15 +84947,56 @@
                             "doc": ""
                         },
                         {
-                            "name": "allowedForTag",
-                            "type": "array",
-                            "shape": "list<string>",
+                            "name": "tag",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "policy",
+                            "type": "Minn\\Support\\KsesPolicy",
+                            "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 267,
-                    "end": 301
+                    "line": 283,
+                    "end": 307
+                },
+                {
+                    "routes": [],
+                    "name": "rendered",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "rendered(string $name, ?string $value, Minn\\Support\\KsesPolicy $policy): ?string",
+                    "doc": "One allowed attribute as stored, or null when its value is judged away entirely.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "policy",
+                            "type": "Minn\\Support\\KsesPolicy",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 310,
+                    "end": 324
                 },
                 {
                     "routes": [],
@@ -84905,8 +85015,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 304,
-                    "end": 313
+                    "line": 348,
+                    "end": 357
                 },
                 {
                     "routes": [],
@@ -84925,8 +85035,381 @@
                             "doc": ""
                         }
                     ],
-                    "line": 327,
-                    "end": 352
+                    "line": 371,
+                    "end": 396
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Support\\KsesPolicy",
+            "short": "KsesPolicy",
+            "namespace": "Minn\\Support",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Support/KsesPolicy.php",
+            "lines": 120,
+            "doc": "What one kses pass allows: the tags, each tag's attributes (allowed\nplainly or with value rules), the attribute-name prefixes a tag accepts,\nwhich attributes hold URIs, and the schemes those URIs may use.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Support\\Kses"
+            ],
+            "usedBy": [
+                "Minn\\Support\\Kses"
+            ],
+            "constructor": {
+                "signature": "__construct(array $tags, array $prefixes, array $uriAttributes, array $schemes)",
+                "doc": "",
+                "shapes": [
+                    "@param array<string, array<string, mixed>> $tags tag => attribute => true, or a list of value rules",
+                    "@param array<string, list<string>> $prefixes tag (or \"*\" for every tag) => attribute-name prefixes it accepts",
+                    "@param list<string> $uriAttributes",
+                    "@param list<string> $schemes"
+                ],
+                "params": [
+                    {
+                        "name": "tags",
+                        "type": "array",
+                        "shape": "array<string, array<string, mixed>>",
+                        "default": null,
+                        "doc": "tag => attribute => true, or a list of value rules"
+                    },
+                    {
+                        "name": "prefixes",
+                        "type": "array",
+                        "shape": "array<string, list<string>>",
+                        "default": null,
+                        "doc": "tag (or \"*\" for every tag) => attribute-name prefixes it accepts"
+                    },
+                    {
+                        "name": "uriAttributes",
+                        "type": "array",
+                        "shape": "list<string>",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "schemes",
+                        "type": "array",
+                        "shape": "list<string>",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "private",
+                "line": 20,
+                "end": 26
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "tags",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "prefixes",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "uriAttributes",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "schemes",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "post",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "post(): self",
+                    "doc": "Post content from an author without unfiltered_html: each tag's attributes, the global ones, and any aria- or data- name.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 29,
+                    "end": 36
+                },
+                {
+                    "routes": [],
+                    "name": "comment",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "comment(): self",
+                    "doc": "Comments, profiles and term descriptions: only the attributes each tag lists, nothing global.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 39,
+                    "end": 46
+                },
+                {
+                    "routes": [],
+                    "name": "fromAllowlist",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "fromAllowlist(array $allowedHtml, array $schemes, array $uriAttributes): self",
+                    "doc": "A caller's own allowlist taken literally: a listed attribute is allowed\nwhatever it maps to (false included, as the reference only asks whether\nthe name is there), an array carries value rules, and \"data-*\" lets the\ntag take any data- name. Nothing else is implied.",
+                    "shapes": [
+                        "@param array<array-key, mixed> $allowedHtml",
+                        "@param list<string> $schemes",
+                        "@param list<string> $uriAttributes"
+                    ],
+                    "params": [
+                        {
+                            "name": "allowedHtml",
+                            "type": "array",
+                            "shape": "array<array-key, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "schemes",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "uriAttributes",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 58,
+                    "end": 82
+                },
+                {
+                    "routes": [],
+                    "name": "allowsTag",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "allowsTag(string $tag): bool",
+                    "doc": "Whether the tag may appear at all.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "tag",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 85,
+                    "end": 88
+                },
+                {
+                    "routes": [],
+                    "name": "rules",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "rules(string $tag, string $name): ?array",
+                    "doc": "The rules an attribute carries on a tag: an empty list when it is\nallowed plainly, null when it is not allowed.",
+                    "shapes": [
+                        "@return array<array-key, mixed>|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "tag",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 96,
+                    "end": 108
+                },
+                {
+                    "routes": [],
+                    "name": "required",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "required(string $tag): array",
+                    "doc": "The attributes a tag must keep: lose one and the tag keeps none.",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "tag",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 115,
+                    "end": 124
+                },
+                {
+                    "routes": [],
+                    "name": "holdsUri",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "holdsUri(string $name): bool",
+                    "doc": "Whether the attribute holds a URI whose scheme must be judged.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 127,
+                    "end": 130
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Support\\KsesValues",
+            "short": "KsesValues",
+            "namespace": "Minn\\Support",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Support/KsesValues.php",
+            "lines": 38,
+            "doc": "The value rules an allowlist attribute may carry, as the reference judges\nthem: lengths count bytes, bounds need a whole number (up to six digits,\nup to six spaces either side), \"valueless\" compares the attribute's form,\n\"values\" compares without case, and a callback decides for itself. A rule\nthe reference does not know passes. Where the reference fatals (a values\nrule that is not a list, a callback that does not exist) the value fails.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Support\\Kses"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "satisfies",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "satisfies(string $value, string $valueless, array $rules): bool",
+                    "doc": "Whether a value meets every rule its attribute carries; \"required\" is\nthe tag's concern, so it is skipped here.",
+                    "shapes": [
+                        "@param array<array-key, mixed> $rules"
+                    ],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "valueless",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "rules",
+                            "type": "array",
+                            "shape": "array<array-key, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 23,
+                    "end": 31
+                },
+                {
+                    "routes": [],
+                    "name": "check",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "check(string $value, string $valueless, string $rule, mixed $expected): bool",
+                    "doc": "One rule against one value; $valueless is \"y\" for a bare attribute and \"n\" for one with a value.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "valueless",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "rule",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "expected",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 34,
+                    "end": 46
+                },
+                {
+                    "routes": [],
+                    "name": "wholeNumber",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "wholeNumber(string $value): bool",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 48,
+                    "end": 51
                 }
             ]
         },

@@ -269,7 +269,7 @@ final readonly class UsersController
         $this->users->update($userId, $columns);
         foreach (['first_name', 'last_name', 'description', 'nickname', 'locale'] as $key) {
             if (isset($body[$key])) {
-                $value = $key === 'description' ? Kses::filter((string) $body[$key], Kses::COMMENT) : Kses::text((string) $body[$key]);
+                $value = $key === 'description' ? Kses::comment((string) $body[$key]) : Kses::text((string) $body[$key]);
                 $this->users->setMeta($userId, $key, $value);
             }
         }

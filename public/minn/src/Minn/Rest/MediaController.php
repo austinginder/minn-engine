@@ -173,7 +173,7 @@ final readonly class MediaController
         foreach (['title' => 'post_title', 'caption' => 'post_excerpt', 'description' => 'post_content'] as $field => $column) {
             if (isset($body[$field])) {
                 $markup = PostsWriteController::field($body[$field]);
-                $columns[$column] = $this->caller->can('unfiltered_html') ? $markup : Kses::filter($markup, Kses::POST);
+                $columns[$column] = $this->caller->can('unfiltered_html') ? $markup : Kses::post($markup);
             }
         }
         if (array_key_exists('post', $body)) {

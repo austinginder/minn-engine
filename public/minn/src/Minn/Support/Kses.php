@@ -53,15 +53,16 @@ final class Kses
         'q' => ['cite'], 's' => [], 'strike' => [], 'strong' => [],
     ];
 
-    private const GLOBAL_ATTRIBUTES = ['class', 'id', 'style', 'title', 'role', 'dir', 'lang', 'xml:lang', 'hidden', 'tabindex'];
-    private const URL_ATTRIBUTES = ['href', 'src', 'cite', 'poster', 'longdesc', 'usemap'];
+    /** The attributes every post-content tag takes besides its own. */
+    public const GLOBAL_ATTRIBUTES = ['class', 'id', 'style', 'title', 'role', 'dir', 'lang', 'xml:lang', 'hidden', 'tabindex'];
 
     /** Every attribute the reference treats as holding a URI, so its scheme is judged wherever the attribute is allowed. */
     public const URI_ATTRIBUTES = [
         'action', 'archive', 'background', 'cite', 'classid', 'codebase', 'data', 'formaction', 'href',
         'icon', 'longdesc', 'manifest', 'poster', 'profile', 'src', 'usemap', 'xmlns',
     ];
-    private const SCHEMES = ['http', 'https', 'ftp', 'ftps', 'mailto', 'news', 'irc', 'gopher', 'nntp', 'feed', 'telnet', 'mms', 'rtsp', 'sms', 'svn', 'tel', 'fax', 'xmpp', 'webcal', 'urn'];
+    /** The URI schemes allowed by default. */
+    public const SCHEMES = ['http', 'https', 'ftp', 'ftps', 'mailto', 'news', 'irc', 'gopher', 'nntp', 'feed', 'telnet', 'mms', 'rtsp', 'sms', 'svn', 'tel', 'fax', 'xmpp', 'webcal', 'urn'];
     private const CSS_PROPERTIES = [
         'background', 'background-color', 'background-image', 'background-position', 'background-repeat', 'background-size', 'background-attachment', 'background-blend-mode',
         'border', 'border-radius', 'border-width', 'border-color', 'border-style', 'border-spacing', 'border-collapse',
@@ -87,16 +88,24 @@ final class Kses
         'aspect-ratio', 'box-shadow', 'box-sizing', 'z-index',
     ];
 
-    /**
-     * HTML with only the allowed tags and attributes kept.
-     *
-     * @param array<string, list<string>> $allowed
-     */
-    public static function filter(string $html, array $allowed): string
+    /** Post content as an author without unfiltered_html may store it. */
+    public static function post(string $html): string
+    {
+        return self::filter($html, KsesPolicy::post());
+    }
+
+    /** A comment, profile or term description as anyone without unfiltered_html may store it: listed attributes only. */
+    public static function comment(string $html): string
+    {
+        return self::filter($html, KsesPolicy::comment());
+    }
+
+    /** HTML with only what the policy allows kept. */
+    public static function filter(string $html, KsesPolicy $policy): string
     {
         return (string) preg_replace_callback(
             '/<!--.*?-->|<\/?([a-zA-Z][a-zA-Z0-9-]*)((?:\s+[^\s=>\/]+(?:\s*=\s*(?:"[^"]*"|\'[^\']*\'|[^\s"\'>]+))?)*)\s*(\/?)>|<[^>]*>?|[^<]+/s',
-            static function (array $m) use ($allowed): string {
+            static function (array $m) use ($policy): string {
                 if (str_starts_with($m[0], '<!--')) {
                     return $m[0];
                 }
@@ -108,13 +117,13 @@ final class Kses
                     // A "<" that starts no tag is text (the reference keeps "a &lt; b").
                     return '&lt;' . self::normalizeText(substr($m[0], 1));
                 }
-                if (!isset($allowed[$tag])) {
+                if (!$policy->allowsTag($tag)) {
                     return '';
                 }
                 if (str_starts_with($m[0], '</')) {
                     return "</{$tag}>";
                 }
-                return '<' . $tag . self::attributes($m[2] ?? '', $allowed[$tag]) . (($m[3] ?? '') === '/' ? ' />' : '>');
+                return '<' . $tag . self::attributes($m[2] ?? '', $tag, $policy) . (($m[3] ?? '') === '/' ? ' />' : '>');
             },
             $html,
         );
@@ -146,8 +155,10 @@ final class Kses
      * scheme, or it is cut off and the rest is judged again. The reference
      * cuts "?q=a:b" to "b" and "javascript:alert(1)//http://" to "//" the
      * same way. A value with a good scheme is returned as given.
+     *
+     * @param list<string> $schemes
      */
-    public static function attributeUrl(string $url): string
+    public static function attributeUrl(string $url, array $schemes = self::SCHEMES): string
     {
         $url = trim($url);
         for ($round = 0; $round < 8; $round++) {
@@ -157,7 +168,7 @@ final class Kses
                 return $url;
             }
             $scheme = strtolower(self::visible(substr($decoded, 0, $colon)));
-            if (in_array($scheme, self::SCHEMES, true)) {
+            if (in_array($scheme, $schemes, true)) {
                 return $url;
             }
             $url = self::normalizeAttribute(substr($decoded, $colon + 1));
@@ -263,41 +274,74 @@ final class Kses
         return $code >= 0x20 || in_array($code, [0x09, 0x0A, 0x0D], true) ? $code : null;
     }
 
-    /** @param list<string> $allowedForTag */
-    private static function attributes(string $raw, array $allowedForTag): string
+    /**
+     * The attributes the policy allows, in the order written: a value must
+     * meet its rules, a URI keeps only an allowed scheme, srcset and style are
+     * judged on their own terms. A tag that loses a required attribute keeps
+     * none at all.
+     */
+    private static function attributes(string $raw, string $tag, KsesPolicy $policy): string
     {
         $out = '';
+        $kept = [];
         preg_match_all('/([a-zA-Z_:][-a-zA-Z0-9_:.]*)(?:\s*=\s*("[^"]*"|\'[^\']*\'|[^\s"\'>]+))?/', $raw, $matches, PREG_SET_ORDER);
         foreach ($matches as $attribute) {
             $name = strtolower($attribute[1]);
+            $rules = $policy->rules($tag, $name);
             $value = isset($attribute[2]) ? self::normalizeAttribute(self::unquoted($attribute[2])) : null;
-            $permitted = in_array($name, $allowedForTag, true)
-                || in_array($name, self::GLOBAL_ATTRIBUTES, true)
-                || str_starts_with($name, 'aria-')
-                || str_starts_with($name, 'data-');
-            if (!$permitted) {
+            if ($rules === null || !KsesValues::satisfies($value ?? '', $value === null ? 'y' : 'n', $rules)) {
                 continue;
             }
-            if ($value === null) {
-                $out .= ' ' . $name;
-                continue;
+            $rendered = self::rendered($name, $value, $policy);
+            if ($rendered !== null) {
+                $kept[$name] = true;
+                $out .= $rendered;
             }
-            if (in_array($name, self::URL_ATTRIBUTES, true)) {
-                $value = self::attributeUrl($value);
-            } elseif ($name === 'srcset') {
-                $value = self::srcset($value);
-                if ($value === '') {
-                    continue;
-                }
-            } elseif ($name === 'style') {
-                $value = self::css($value);
-                if ($value === '') {
-                    continue;
-                }
+        }
+        foreach ($policy->required($tag) as $name) {
+            if (!isset($kept[$name])) {
+                return '';
             }
-            $out .= ' ' . $name . '="' . $value . '"';
         }
         return $out;
+    }
+
+    /** One allowed attribute as stored, or null when its value is judged away entirely. */
+    private static function rendered(string $name, ?string $value, KsesPolicy $policy): ?string
+    {
+        if ($value === null) {
+            return ' ' . $name;
+        }
+        if ($policy->holdsUri($name)) {
+            $value = self::attributeUrl($value, $policy->schemes);
+        } elseif ($name === 'srcset' || $name === 'style') {
+            $value = $name === 'srcset' ? self::srcset($value) : self::css($value);
+            if ($value === '') {
+                return null;
+            }
+        }
+        return ' ' . $name . '="' . $value . '"';
+    }
+
+    /**
+     * Whether a URL may be an object's data in post content: an http or https
+     * URL on the uploads host and port, no credentials, query or fragment,
+     * whose path ends in ".pdf".
+     */
+    public static function pdfObject(string $url, string $uploadsUrl): bool
+    {
+        $target = parse_url($uploadsUrl);
+        $parts = parse_url($url);
+        if (!is_array($parts) || !is_array($target) || !isset($target['host']) || !in_array($parts['scheme'] ?? '', ['http', 'https'], true)) {
+            return false;
+        }
+        foreach (['user', 'pass', 'query', 'fragment'] as $part) {
+            if (isset($parts[$part])) {
+                return false;
+            }
+        }
+        $sameHost = ($parts['host'] ?? null) === $target['host'] && ($parts['port'] ?? null) === ($target['port'] ?? null);
+        return $sameHost && str_ends_with($parts['path'] ?? '', '.pdf');
     }
 
     /** Every candidate must be an absolute URL with a safe scheme, or the attribute goes. */

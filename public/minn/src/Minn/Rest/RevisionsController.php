@@ -86,7 +86,7 @@ final readonly class RevisionsController
 
     private function clean(string $markup): string
     {
-        return $this->caller->can('unfiltered_html') ? $markup : Kses::filter($markup, Kses::POST);
+        return $this->caller->can('unfiltered_html') ? $markup : Kses::post($markup);
     }
 
     /** One revision row as wp/v2 serves it (autosaves and revisions alike). */

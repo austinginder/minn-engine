@@ -92,7 +92,7 @@ final readonly class CommentPostController
         if ($this->comments->flooding($email, $request->remoteAddress, self::FLOOD_SECONDS)) {
             return self::refusal('You are posting comments too quickly. Slow down.', 429);
         }
-        $content = Kses::filter($content, Kses::COMMENT);
+        $content = Kses::comment($content);
         $content = (string) preg_replace_callback('/<a\s([^>]*)>/i', static function (array $m): string {
             $attributes = preg_replace('/\s*\brel\s*=\s*("[^"]*"|\'[^\']*\'|[^\s>]+)/i', '', $m[1]);
             return '<a ' . trim((string) $attributes) . ' rel="nofollow ugc">';

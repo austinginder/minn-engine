@@ -2,12 +2,12 @@
     "generated": "2026-10-05",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 447,
-        "composes": 770,
+        "minn": 449,
+        "composes": 769,
         "leaf": 366,
-        "noop": 1282,
-        "functions": 2859,
-        "minnMethods": 438,
+        "noop": 1283,
+        "functions": 2861,
+        "minnMethods": 442,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -9633,13 +9633,16 @@
             ],
             "composes": []
         },
-        "_minn_kses_normalize": {
+        "_minn_kses_policy": {
             "file": "kses.php",
-            "lines": 19,
-            "kind": "composes",
-            "minn": [],
+            "lines": 4,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Support\\KsesPolicy::fromAllowlist"
+            ],
             "composes": [
-                "wp_kses_allowed_html"
+                "wp_kses_allowed_html",
+                "wp_kses_uri_attributes"
             ]
         },
         "_minn_kses_table": {
@@ -10472,6 +10475,17 @@
             "composes": [
                 "apply_filters",
                 "wp_cache_get"
+            ]
+        },
+        "_wp_kses_allow_pdf_objects": {
+            "file": "kses.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\Kses::pdfObject"
+            ],
+            "composes": [
+                "wp_upload_dir"
             ]
         },
         "_wp_make_subsizes": {
@@ -20713,12 +20727,13 @@
         },
         "wp_allowed_protocols": {
             "file": "kses.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 6,
+            "kind": "composes",
             "minn": [],
             "composes": [
                 "_minn_kses_table",
-                "apply_filters"
+                "apply_filters",
+                "did_action"
             ]
         },
         "wp_apply_generated_classname_support": {
@@ -23577,7 +23592,7 @@
                 "Minn\\Support\\Kses::filter"
             ],
             "composes": [
-                "_minn_kses_normalize",
+                "_minn_kses_policy",
                 "_minn_kses_text_brackets",
                 "wp_allowed_protocols",
                 "wp_kses_hook",
@@ -23605,10 +23620,13 @@
         "wp_kses_attr_check": {
             "file": "kses.php",
             "lines": 2,
-            "kind": "composes",
-            "minn": [],
+            "kind": "minn",
+            "minn": [
+                "Minn\\Support\\KsesValues::satisfies"
+            ],
             "composes": [
-                "_minn_kses_normalize"
+                "_minn_kses_policy",
+                "wp_allowed_protocols"
             ]
         },
         "wp_kses_attr_parse": {
@@ -23636,6 +23654,15 @@
             "composes": [
                 "wp_kses_decode_entities"
             ]
+        },
+        "wp_kses_check_attr_val": {
+            "file": "kses.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\KsesValues::check"
+            ],
+            "composes": []
         },
         "wp_kses_data": {
             "file": "kses.php",
@@ -23719,7 +23746,7 @@
                 "Minn\\Support\\Kses::filter"
             ],
             "composes": [
-                "_minn_kses_normalize",
+                "_minn_kses_policy",
                 "_minn_kses_text_brackets"
             ]
         },

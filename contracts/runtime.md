@@ -2104,3 +2104,43 @@ site until `wp_supports_ai` was written (recovery paused it after the
 second failure, as designed). Guards that count per file would have caught
 it, at the price of skipping plugins that guard in a loader and call from
 an included file.
+
+## kses past the attribute names (2026-10-05)
+
+What `wp_kses` does with the parts of an allowlist beyond tag and attribute
+names; fixture `contracts/fixtures/api/kses-rules.json` (probe
+`tests/tools/kses-rules-probe.php`), and the security record in
+`docs/security-review-2026-10-05.md`.
+
+- A caller's allowlist is literal. Only the attributes it lists are kept
+  (nothing global is implied), a listed attribute is allowed whatever it
+  maps to (even `false`: the reference only asks whether the name is
+  there), an array is a list of value rules, and `data-*` lets the tag take
+  any `data-` name. The post table already lists its global attributes per
+  tag; the comment table (`data`) lists none.
+- Value rules: `maxlen` / `minlen` count bytes; `maxval` / `minval` need a
+  whole number of one to six digits with up to six spaces either side;
+  `valueless` compares the attribute's form (`y` bare, `n` with a value);
+  `values` compares without case; `value_callback` decides; an unknown rule
+  passes. A rule that fails drops the attribute. A `values` rule that is
+  not a list, or a callback that does not exist, fatals the reference; the
+  engine just drops the value.
+- `required`: if a required attribute is missing or was dropped, the tag
+  keeps none of its attributes (`<object class="x">` gives `<object>`).
+- `_wp_kses_allow_pdf_objects` (the post table's `object[data]` rule): an
+  `http` or `https` URL (scheme lowercase) whose host and port equal those
+  of `wp_upload_dir()['url']`, the current month's folder (not `baseurl`,
+  not the home or site URL), with no credentials, query or fragment, and a
+  path ending in `.pdf` (case-sensitive). `object[type]` must be
+  `application/pdf` in any case.
+- `a[download]` in post content is valueless: `<a download>` stays, any
+  value drops it.
+- The caller's `$allowed_protocols` decide which schemes survive in every
+  URI attribute (`wp_kses_uri_attributes()`, filterable); an empty list
+  means the default list. A cut scheme leaves the rest of the value
+  (`http://x` becomes `//x`, `mailto:a@b` becomes `a@b`).
+- `wp_allowed_protocols` follows `kses_allowed_protocols` on every call
+  until `wp_loaded` starts; from then on the last list it computed stands,
+  even when a filter is added before the next call. Not pinned in the
+  fixture, because the engine's probe runner never fires `wp_loaded`;
+  checked on both stacks by hand.

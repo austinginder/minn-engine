@@ -299,7 +299,7 @@ final readonly class CommentsController
     private function cleanComment(string $content): string
     {
         if (!$this->caller->can('unfiltered_html')) {
-            $content = Kses::filter($content, Kses::COMMENT);
+            $content = Kses::comment($content);
         }
         return (string) preg_replace_callback('/<a\s([^>]*)>/i', static function (array $m): string {
             $attributes = preg_replace('/\s*\brel\s*=\s*("[^"]*"|\'[^\']*\'|[^\s>]+)/i', '', $m[1]);

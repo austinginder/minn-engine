@@ -9,7 +9,7 @@ use Minn\Support\Kses;
  * wp_kses($html, 'data') and wp_kses_post($html); the two agreed on all of
  * them. The URL cases are the ones an encoding could hide a scheme behind.
  */
-$comment = static fn (string $html): string => Kses::filter($html, Kses::COMMENT);
+$comment = static fn (string $html): string => Kses::comment($html);
 
 $hrefs = [
     '&#106;avascript:alert(1)' => 'alert(1)',
@@ -113,15 +113,15 @@ $cases['tags outside the list go, their text stays, event attributes go'] = stat
     return $got === '<a href="alert(1)">x</a>bad()<a href="http://ok/">y</a>' ? true : $got;
 };
 $cases['a data attribute is decoded like any other under the post list'] = static function (): bool|string {
-    $got = Kses::filter('<a href="http://x.test/" data-x="&#106;avascript:1" aria-label="a&b">t</a>', Kses::POST);
+    $got = Kses::post('<a href="http://x.test/" data-x="&#106;avascript:1" aria-label="a&b">t</a>');
     return $got === '<a href="http://x.test/" data-x="javascript:1" aria-label="a&amp;b">t</a>' ? true : $got;
 };
 $cases['srcset candidates are judged decoded'] = static function (): bool|string {
-    $got = Kses::filter('<img src="http://x/a.png" srcset="&#106;avascript:1 1x">', Kses::POST);
+    $got = Kses::post('<img src="http://x/a.png" srcset="&#106;avascript:1 1x">');
     return $got === '<img src="http://x/a.png">' ? true : $got;
 };
 $cases['a style value is judged decoded'] = static function (): bool|string {
-    $got = Kses::filter('<p style="color:red;background:url(&#106;avascript:1)">t</p>', Kses::POST);
+    $got = Kses::post('<p style="color:red;background:url(&#106;avascript:1)">t</p>');
     return $got === '<p style="color:red">t</p>' ? true : $got;
 };
 return $cases;

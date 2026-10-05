@@ -3,6 +3,8 @@
 
 use Minn\Runtime\Runtime;
 use Minn\Support\Kses;
+use Minn\Support\KsesPolicy;
+use Minn\Support\KsesValues;
 
 /** @internal */
 function _minn_kses_table(): array
@@ -28,31 +30,21 @@ function wp_kses_allowed_html($context = '')
 
 function wp_allowed_protocols()
 {
-    return apply_filters('kses_allowed_protocols', _minn_kses_table()['protocols']);
+    // The list follows its filter on every call until wp_loaded starts; from then on the last list computed stands.
+    static $protocols = null;
+    if ($protocols === null || !did_action('wp_loaded')) {
+        $protocols = array_values(array_unique((array) apply_filters('kses_allowed_protocols', _minn_kses_table()['protocols'])));
+    }
+    return $protocols;
 }
 
-/** @internal a caller's allowed_html in any of its shapes as tag => list of attribute names */
-function _minn_kses_normalize(array|string $allowed_html): array
+/** @internal a caller's allowed_html in any of its shapes, with the protocols and URI attributes in force */
+function _minn_kses_policy(array|string $allowed_html, array $allowed_protocols): KsesPolicy
 {
     if (is_string($allowed_html)) {
         $allowed_html = wp_kses_allowed_html($allowed_html);
     }
-    $out = [];
-    foreach ($allowed_html as $tag => $attributes) {
-        if (is_int($tag)) {
-            continue; // a list of values, not tags: nothing is allowed
-        }
-        $names = [];
-        if (is_array($attributes)) {
-            foreach ($attributes as $name => $allowed) {
-                if (is_string($name) && $allowed) {
-                    $names[] = strtolower($name);
-                }
-            }
-        }
-        $out[strtolower((string) $tag)] = $names;
-    }
-    return $out;
+    return KsesPolicy::fromAllowlist((array) $allowed_html, array_values($allowed_protocols), (array) wp_kses_uri_attributes());
 }
 
 function wp_kses($content, $allowed_html, $allowed_protocols = [])
@@ -64,7 +56,7 @@ function wp_kses($content, $allowed_html, $allowed_protocols = [])
     $content = wp_kses_no_null($content, ['slash_zero' => 'keep']);
     $content = wp_kses_normalize_entities($content);
     $content = wp_kses_hook($content, $allowed_html, $allowed_protocols);
-    return _minn_kses_text_brackets(Kses::filter($content, _minn_kses_normalize($allowed_html)));
+    return _minn_kses_text_brackets(Kses::filter($content, _minn_kses_policy($allowed_html, (array) $allowed_protocols)));
 }
 
 /** @internal a stray < or > in text is escaped, as the reference does after splitting */
@@ -179,7 +171,7 @@ function wp_kses_decode_entities($content)
 
 function wp_kses_split($content, $allowed_html, $allowed_protocols)
 {
-    return _minn_kses_text_brackets(Kses::filter((string) $content, _minn_kses_normalize($allowed_html)));
+    return _minn_kses_text_brackets(Kses::filter((string) $content, _minn_kses_policy($allowed_html, (array) $allowed_protocols)));
 }
 
 function wp_kses_version()
@@ -189,8 +181,19 @@ function wp_kses_version()
 
 function wp_kses_attr_check(&$name, &$value, &$whole, $vless, $element, $allowed_html)
 {
-    $allowed = _minn_kses_normalize($allowed_html);
-    return in_array(strtolower($name), $allowed[strtolower($element)] ?? [], true);
+    $rules = _minn_kses_policy($allowed_html, wp_allowed_protocols())->rules(strtolower((string) $element), strtolower((string) $name));
+    return $rules !== null && KsesValues::satisfies((string) $value, (string) $vless, $rules);
+}
+
+function wp_kses_check_attr_val($value, $vless, $checkname, $checkvalue)
+{
+    return KsesValues::check((string) $value, (string) $vless, (string) $checkname, $checkvalue);
+}
+
+/** The value rule behind the post allowlist's object element: a PDF on the uploads host. */
+function _wp_kses_allow_pdf_objects($url)
+{
+    return Kses::pdfObject((string) $url, (string) (wp_upload_dir(null, false)['url'] ?? ''));
 }
 
 function safecss_filter_attr($css, $deprecated = '')

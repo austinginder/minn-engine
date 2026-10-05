@@ -333,7 +333,7 @@ final readonly class PostsWriteController
     /** Markup from a caller without unfiltered_html goes through the allowlist filter. */
     private function clean(string $markup): string
     {
-        return $this->caller->can('unfiltered_html') ? $markup : Kses::filter($markup, Kses::POST);
+        return $this->caller->can('unfiltered_html') ? $markup : Kses::post($markup);
     }
 
     /** A field that may arrive as a scalar or as {raw: ...}. */

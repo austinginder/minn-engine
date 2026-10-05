@@ -152,7 +152,7 @@ final readonly class TermsController
             $name,
             $slug,
             $taxonomy,
-            Kses::filter((string) ($body['description'] ?? ''), Kses::COMMENT),
+            Kses::comment((string) ($body['description'] ?? '')),
             $config['has_parent'] ? (int) ($body['parent'] ?? 0) : 0,
         );
         return Reply::item($this->object->view($this->terms->row($termId, $taxonomy), $base), Fields::fromQuery($request->query), 201)
@@ -187,7 +187,7 @@ final readonly class TermsController
             $this->terms->describe(
                 $termId,
                 $taxonomy,
-                isset($body['description']) ? Kses::filter((string) $body['description'], Kses::COMMENT) : (string) $term['description'],
+                isset($body['description']) ? Kses::comment((string) $body['description']) : (string) $term['description'],
                 $config['has_parent'] && isset($body['parent']) ? (int) $body['parent'] : (int) $term['parent'],
             );
         }

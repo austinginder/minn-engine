@@ -107,7 +107,7 @@ final readonly class Users
             'nickname' => Kses::text($fields['nickname'] ?? $login),
             'first_name' => Kses::text($fields['first_name'] ?? ''),
             'last_name' => Kses::text($fields['last_name'] ?? ''),
-            'description' => Kses::filter($fields['description'] ?? '', Kses::COMMENT),
+            'description' => Kses::comment($fields['description'] ?? ''),
             'rich_editing' => 'true',
             'syntax_highlighting' => 'true',
             'infinite_scrolling' => 'true',
