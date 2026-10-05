@@ -69,7 +69,7 @@ $EXPLAINED = array(
 );
 /** Pages a visitor gets differently on purpose. */
 $EXPLAINED_PAGES = array(
-	'/wp-login.php' => array( 302, "Minn's sign-in page is Minn Admin's (/minn-admin/login): wp-login.php sends a visitor there, and still takes the sign-in form's post" ),
+	'/wp-login.php' => array( '302 /minn-admin/login', "Minn's sign-in page is Minn Admin's (/minn-admin/login): wp-login.php sends a visitor there, and still takes the sign-in form's post" ),
 );
 
 $pass = 0;
@@ -165,7 +165,7 @@ $photo  = rt_photo();
 $window = static fn () => rt_window( $started, time(), $zone );
 
 echo "\nThe control: WordPress has the day\n";
-$wpBrowse  = rt_browse( new RtClient( $REF, $AS_SITE ) );
+$wpBrowse  = rt_browse( new RtClient( $REF, $AS_SITE ), $URL );
 $wpAfterB  = rt_snapshot( $db, $prefix );
 $wpDay     = rt_day( $wp = new RtClient( $REF, $AS_SITE ), $cfg, $photo );
 $wpAfter   = rt_snapshot( $db, $prefix );
@@ -180,17 +180,17 @@ rt_restore( $ROOT, $DUMP, $db, $prefix, $tables0 );
 check( ! rt_footprint( $base, rt_snapshot( $db, $prefix ), $window() ), 'the baseline restores row for row' );
 
 echo "\nMinn has the same day\n";
-$mnBrowse  = rt_browse( new RtClient( $URL ) );
+$mnBrowse  = rt_browse( new RtClient( $URL ), $URL );
 $mnAfterB  = rt_snapshot( $db, $prefix );
 $mnDay     = rt_day( $minn = new RtClient( $URL ), $cfg, $photo );
 $mnAfter   = rt_snapshot( $db, $prefix );
 $mnFiles   = rt_file_footprint( $UPLOADS, $files0, rt_files( $UPLOADS ) );
 $mnBrowseF = rt_quiet( rt_footprint( $base, $mnAfterB, $window() ) );
 $mnDayF    = rt_quiet( rt_footprint( $mnAfterB, $mnAfter, $window() ) );
-foreach ( $wpBrowse as $path => $status ) {
-	$mine = $mnBrowse[ $path ] ?? 0;
+foreach ( $wpBrowse as $path => $answer ) {
+	$mine = $mnBrowse[ $path ] ?? '';
 	$why  = ( $EXPLAINED_PAGES[ $path ][0] ?? null ) === $mine ? $EXPLAINED_PAGES[ $path ][1] : null;
-	check( $status === $mine || null !== $why, "a visitor gets $path ($status" . ( null !== $why ? ", Minn $mine: explained" : '' ) . ')', "Minn answered $mine" );
+	check( $answer === $mine || null !== $why, "a visitor gets $path ($answer" . ( null !== $why ? "; Minn $mine, explained" : '' ) . ')', "Minn answered $mine" );
 }
 $browseDiffs = rt_explain( rt_compare( $wpBrowseF, $mnBrowseF ), $EXPLAINED, $explainedBrowse );
 check( ! $browseDiffs, 'browsing writes what WordPress writes (' . count( $mnBrowseF ) . ' rows, ' . count( $explainedBrowse ) . ' differences explained)', implode( "\n      ", array_map( 'rt_describe', array_keys( $browseDiffs ), $browseDiffs ) ) );
@@ -234,6 +234,8 @@ check( 200 === $s && 'A harbor at dusk, the sun low over the water' === ( $m['al
 check( count( $sizes ) >= 4 && ! $missing, '…and finds every size on disk (' . implode( ', ', array_keys( $sizes ) ) . ')', 'missing: ' . implode( ', ', array_keys( $missing ) ) );
 [ $s, $r ] = $wb->rest( 'GET', "/wp/v2/posts/{$ids['revised']}?context=edit" );
 check( str_ends_with( (string) ( $r['title']['raw'] ?? '' ), ' (revised)' ) && str_contains( (string) ( $r['content']['raw'] ?? '' ), 'Revised on the round trip.' ), 'reads the revised post' );
+$moved = '301 ' . $ids['new_path'];
+check( rt_answer( new RtClient( $REF, $AS_SITE ), $ids['old_path'], $URL ) === $moved, "…sends its old address on to the new one ({$ids['old_path']} → {$ids['new_path']})" );
 [ $s, $revs ] = $wb->rest( 'GET', "/wp/v2/posts/{$ids['revised']}/revisions?context=edit" );
 check( 200 === $s && count( (array) $revs ) > 0, '…and its revisions (' . count( (array) $revs ) . ')' );
 [ $s, $c ] = $wb->rest( 'GET', "/wp/v2/comments?post={$ids['post']}&context=edit&orderby=id&order=asc" );
@@ -262,6 +264,7 @@ check( 201 === $s, '…and answers the reply' );
 [ $s, $again ] = $minn->rest( 'GET', "/wp/v2/posts/{$ids['post']}?context=edit" );
 [ , $thread ]  = $minn->rest( 'GET', "/wp/v2/comments?post={$ids['post']}" );
 check( str_contains( (string) ( $again['content']['raw'] ?? '' ), 'Back on WordPress.' ) && 3 === count( (array) $thread ), 'and Minn reads what WordPress wrote' );
+check( rt_answer( $minn, $ids['old_path'], $URL ) === $moved, 'and Minn sends the old address on too' );
 
 if ( getenv( 'MINN_ROUNDTRIP_KEEP' ) ) {
 	$cleaned = true;

@@ -170,9 +170,16 @@ final readonly class Resolver
             $paged = max(1, (int) $segments[$count - 1]);
             array_splice($segments, -2);
         }
+        if ($segments !== [] && preg_match('/^comment-page-\d+$/', (string) end($segments)) === 1) {
+            array_pop($segments);
+            return $this->elsewhere()->commentPage($this->resolveSingle($segments, 1, $redirects), $redirects);
+        }
         if ($segments !== [] && in_array(end($segments), ['embed', 'trackback'], true)) {
             $suffix = array_pop($segments);
             $single = $this->resolveSingle($segments, 1, $redirects);
+            if ($single !== null && $single->kind === Kind::Redirect) {
+                return $this->elsewhere()->formerSuffix($single, $suffix);
+            }
             if ($suffix === 'trackback' && $single !== null) {
                 return Resolution::redirect($this->permalinks->forPost($single->record), 302);
             }
@@ -232,7 +239,7 @@ final readonly class Resolver
         if ($request->has('name')) {
             $post = $this->posts->findByName((string) $request->query('name'), ['post']);
             if ($post === null) {
-                return $this->formerSlug((string) $request->query('name')) ?? Resolution::notFound();
+                return $this->elsewhere()->formerSlug((string) $request->query('name')) ?? Resolution::notFound();
             }
             return $this->singleOrRedirect($post, 1, $redirects);
         }
@@ -479,6 +486,10 @@ final readonly class Resolver
         $number = '';
         if (count($segments) >= 2 && ctype_digit(end($segments))) {
             $parent = $this->resolveSingle(array_slice($segments, 0, -1), 1, $redirects);
+            if ($parent !== null && $parent->kind === Kind::Redirect) {
+                // A former slug with a page number goes to the post's plain address.
+                return $canonical ? $parent : Resolution::notFound();
+            }
             if ($parent !== null) {
                 return $canonical ? Resolution::redirect($this->permalinks->forPost($parent->record)) : Resolution::notFound();
             }
@@ -535,29 +546,16 @@ final readonly class Resolver
                 return Resolution::single($post, $paged);
             }
             if ($post === null && isset($m['postname'])) {
-                return $this->formerSlug($m['postname'], $paged);
+                return $this->elsewhere()->formerSlug($m['postname'], $paged);
             }
         }
         return null;
     }
 
-    /**
-     * A slug a post used to have redirects to where the post lives now,
-     * keeping the page number and dropping the query string; the lookup
-     * ignores status because the reference does (unreadable posts land on
-     * their `?p=` form and answer 404 there).
-     */
-    private function formerSlug(string $slug, int $paged = 1): ?Resolution
+    /** The addresses a single answers to besides its own. */
+    private function elsewhere(): SingleAddresses
     {
-        $former = $this->posts->byOldSlug($slug, ['post']);
-        if ($former === null) {
-            return null;
-        }
-        $link = $this->permalinks->forPost($former);
-        if ($paged > 1 && !str_contains($link, '?')) {
-            $link = rtrim($link, '/') . "/page/{$paged}/";
-        }
-        return Resolution::redirect($link);
+        return new SingleAddresses($this->db, $this->posts, $this->permalinks);
     }
 
     private function singleOrRedirect(PostRecord $post, int $paged, Redirects $redirects): Resolution

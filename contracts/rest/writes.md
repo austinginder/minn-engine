@@ -46,8 +46,8 @@ capability engine from `caps.md` gates every operation.
   `_wp_old_slug` row (one per old slug; moving back to an old slug removes
   that row), and one that stays published while its date changes keeps the
   old day as `_wp_old_date` (`Y-m-d`). Drafts and pages record neither.
-  The reference answers the old address with a 301 to the new one; the
-  engine records the rows but does not redirect yet.
+  Both stacks answer the old address with a 301 to the new one
+  (`contracts/front/permalinks.md`).
 - A trashed post saved into a live status takes back the slug in
   `_wp_desired_post_slug` (then deleted, and the `__trashed` slug becomes an
   old slug); saved as a draft it keeps `__trashed` and the meta. The trash

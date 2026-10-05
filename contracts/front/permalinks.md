@@ -63,6 +63,19 @@ pretty paths through `index.php`:
 - `/{single}/page/N/` is 200 for any N with `paged-N` and `single-paged-N`
   (or `page-paged-N`) tokens. `/{single}/embed/` renders the single;
   `/{single}/trackback/` is a 302 to it.
+- `/{single}/comment-page-N/` is a 301 to the single when the site does not
+  page its comments (`page_comments` off, the default) and the single
+  itself when it does (the engine does not page the comment list yet). The
+  reference drops the segment only when the request's host is the site's,
+  so this oracle (reached as 127.0.0.1) answers 200; the round trip
+  (`tests/round-trip.test.php`) checks it with the site's own host.
+- A slug a post used to have (`_wp_old_slug`) is a 301 to the post: alone,
+  with a trailing number, `trackback` or `comment-page-N` (all to the plain
+  address), with `page/N` (kept), and with `embed` (to the new embed
+  address). A post that is not published (private included) is sent to its
+  `?p=` form. The engine writes the rows too (`contracts/rest/writes.md`).
+  Not matched: the reference answers `/{old slug}/feed/` (like any
+  `/{missing}/feed/`) with a 200 comments feed of nothing; the engine 404s.
 - Non-public posts are 404 to anonymous readers by every route. A reader
   who can edit the post sees it by slug or by `?p=`; `?p=` on a private post
   redirects to its pretty link, on a draft it renders in place.

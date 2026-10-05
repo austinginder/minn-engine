@@ -283,6 +283,33 @@
             "error404"
         ]
     },
+    "/old-hello/2/": {
+        "status": 301,
+        "location": "/hello-world/",
+        "classes": []
+    },
+    "/old-hello/trackback/": {
+        "status": 301,
+        "location": "/hello-world/",
+        "classes": []
+    },
+    "/old-hello/embed/": {
+        "status": 301,
+        "location": "/hello-world/embed/",
+        "classes": []
+    },
+    "/old-hello/comment-page-2/": {
+        "status": 301,
+        "location": "/hello-world/",
+        "classes": []
+    },
+    "/nonexistent/comment-page-2/": {
+        "status": 404,
+        "location": null,
+        "classes": [
+            "error404"
+        ]
+    },
     "/?p=1": {
         "status": 301,
         "location": "/hello-world/",

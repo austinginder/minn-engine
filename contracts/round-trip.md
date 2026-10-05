@@ -54,26 +54,28 @@ Two pieces make the copy fit to test on:
 
 1. Restore `baseline.sql` (tables a day created are dropped) and take a
    snapshot.
-2. **WordPress has the day.** A visitor browses (the front page, a post,
-   the feed, a search, a missing page, the REST posts index, the sign-in
-   page). Then the owner signs in through `wp-login.php`, changes the
-   tagline, revises the oldest post, uploads a photo (made on the spot, the
-   same bytes every run) and describes it, adds a category and a tag,
-   publishes a post that uses all of them with the photo featured and in
-   the content, comments and replies, revises a page, updates the profile
-   through `/wp/v2/users/me`, adds an editor, and trashes a draft. The
-   snapshot after is WordPress's footprint; the files it uploaded are
-   removed.
-3. Restore, and **Minn has the same day**, request for request.
+2. **WordPress has the day.** A visitor browses (the front page, a post
+   and one of its comment pages, the feed, a search, a missing page, the
+   REST posts index, the sign-in page). Then the owner signs in through
+   `wp-login.php`, changes the tagline, revises the oldest post and renames
+   it, uploads a photo (made on the spot, the same bytes every run) and
+   describes it, adds a category and a tag, publishes a post that uses all
+   of them with the photo featured and in the content, comments and
+   replies, revises a page, updates the profile through
+   `/wp/v2/users/me`, adds an editor, and trashes a draft. The snapshot
+   after is WordPress's footprint; the files it uploaded are removed.
+3. Restore, and **Minn has the same day**, request for request. Browsing
+   compares each answer's status and where it redirects.
 4. **WordPress takes it back**, on Minn's database: signs the owner in with
    the same password, reads the new post (title, status, category, tag,
-   featured photo, the photo in the content), renders it, reads the photo's
-   description and finds every size on disk, reads the revised post and its
-   revisions, the comment thread, the tagline, the page, the profile and the
-   trashed draft, signs Minn's new editor in as an editor, accepts the
-   session Minn signed in without a second sign-in, then keeps working
-   (revises Minn's post, answers the reply), and Minn reads what WordPress
-   wrote.
+   featured photo, the photo in the content), renders it, sends the
+   renamed post's old address on to the new one (Minn does too), reads the
+   photo's description and finds every size on disk, reads the revised
+   post and its revisions, the comment thread, the tagline, the page, the
+   profile and the trashed draft, signs Minn's new editor in as an editor,
+   accepts the session Minn signed in without a second sign-in, then keeps
+   working (revises Minn's post, answers the reply), and Minn reads what
+   WordPress wrote.
 5. Restore, remove every uploaded file, and check the site is back at its
    baseline.
 
@@ -141,8 +143,8 @@ The first runs, and what each became (each matched to the oracle):
 
 Found by the round trip and not done yet:
 
-- The front end does not redirect an old slug to the post's new address
-  (the rows are now written; the 301 is not served).
+- Comments are not paged: with `page_comments` on, `comment-page-N`
+  serves the post with every comment.
 - `authenticate` and the other sign-in filters do not run, so a plugin
   cannot refuse a sign-in or add a second factor.
 - `admin-ajax.php` answers only `rest-nonce`; a plugin's `wp_ajax_*` and

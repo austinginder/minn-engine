@@ -498,23 +498,32 @@ function rt_show( string $a, string $b = '', int $width = 160 ): string {
 }
 
 /**
- * A visitor's half hour: the front page, a post, the feed, a search, a page
- * that is not there, the REST index of posts, the sign-in form. Nothing here
- * should write. @return array<string, int> path => status
+ * A visitor's half hour: the front page, a post and one of its comment
+ * pages, the feed, a search, a page that is not there, the REST index of
+ * posts, the sign-in form. Nothing here should write.
+ *
+ * @return array<string, string> path => "status" or "status location" (on the site, from its root)
  */
-function rt_browse( RtClient $c ): array {
+function rt_browse( RtClient $c, string $site ): array {
 	[ , $posts ] = $c->rest( 'GET', '/wp/v2/posts?per_page=1&orderby=id&order=asc' );
 	$post        = (string) parse_url( (string) ( $posts[0]['link'] ?? '/' ), PHP_URL_PATH );
 	$seen        = array();
-	foreach ( array( '/', $post, '/feed/', '/?s=harbor', '/no-such-page/', '/wp-json/wp/v2/posts', '/wp-login.php' ) as $path ) {
-		[ $seen[ $path ] ] = $c->request( 'GET', $path );
+	foreach ( array( '/', $post, rtrim( $post, '/' ) . '/comment-page-2/', '/feed/', '/?s=harbor', '/no-such-page/', '/wp-json/wp/v2/posts', '/wp-login.php' ) as $path ) {
+		$seen[ $path ] = rt_answer( $c, $path, $site );
 	}
 	return $seen;
 }
 
+/** A GET's status, with where it redirects to (from the site's root) when it does. */
+function rt_answer( RtClient $c, string $path, string $site ): string {
+	[ $status, $headers ] = $c->request( 'GET', $path );
+	$location             = (string) ( $headers['location'][0] ?? '' );
+	return trim( $status . ' ' . ( str_starts_with( $location, $site ) ? substr( $location, strlen( $site ) ) : $location ) );
+}
+
 /**
  * The owner's day, the same requests on either stack: sign in, change the
- * tagline, revise the oldest post, upload a photo and describe it, file a
+ * tagline, revise the oldest post and rename it, upload a photo and describe it, file a
  * category and a tag, publish a post that uses all of them, comment and
  * reply, revise a page, update the profile, add an editor, trash a draft.
  *
@@ -540,6 +549,10 @@ function rt_day( RtClient $c, array $cfg, string $photo ): array {
 	$ids['revised'] = (int) $post['id'];
 	[ $s ]      = $c->rest( 'POST', "/wp/v2/posts/{$post['id']}", array( 'title' => $post['title']['raw'] . ' (revised)', 'content' => $post['content']['raw'] . "\n\n<!-- wp:paragraph -->\n<p>Revised on the round trip.</p>\n<!-- /wp:paragraph -->" ) );
 	$step( 'revises the oldest post', $s, 200 === $s );
+	$ids['old_path'] = (string) parse_url( (string) ( $post['link'] ?? '' ), PHP_URL_PATH );
+	[ $s, $renamed ] = $c->rest( 'POST', "/wp/v2/posts/{$post['id']}", array( 'slug' => ( $post['slug'] ?? 'post' ) . '-revised' ) );
+	$ids['new_path'] = (string) parse_url( (string) ( $renamed['link'] ?? '' ), PHP_URL_PATH );
+	$step( 'gives it a new slug', $s, 200 === $s && $ids['new_path'] !== $ids['old_path'] );
 
 	[ $s, $media ] = $c->upload( 'round-trip-harbor.jpg', 'image/jpeg', $photo );
 	$ids['photo']  = (int) ( $media['id'] ?? 0 );

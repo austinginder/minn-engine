@@ -26,6 +26,9 @@ $cases = [
     '/docs/', '/docs', '/docs/2/', '/hello-world/docs/', '/sample-page/nope/',
     '/privacy-policy/', '/nonexistent/', '/nonexistent', '/uncategorized/',
     '/old-hello/', '/old-hello', '/old-hello-two/', '/old-hello/page/2/', '/old-hello/?x=1', '/old-sample/', '/2024/old-hello/', '/?name=old-hello', '/?pagename=old-sample',
+    // A live single's comment-page-N is left to tests/round-trip.test.php: the reference drops the
+    // segment only when the request's host is the site's, and this oracle is reached as 127.0.0.1.
+    '/old-hello/2/', '/old-hello/trackback/', '/old-hello/embed/', '/old-hello/comment-page-2/', '/nonexistent/comment-page-2/',
     '/?p=1', '/?p=5', '/?p=2', '/?page_id=2', '/?page_id=6', '/?page_id=1', '/?p=10', '/?p=3', '/?p=999',
     '/?name=hello-world', '/?pagename=docs', '/?pagename=sample-page/docs',
     '/?cat=1', '/?tag=engine', '/?author=1', '/?m=202608', '/?year=2026',
