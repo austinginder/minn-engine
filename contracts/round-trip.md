@@ -14,11 +14,25 @@ back, is my site whole?
 ## The site
 
 A local copy of a production site, with Minn installed in `public/` and
-WordPress parked in `wp-reference/` (`wp minn install --park`). The first
-one is `cove-minn.localhost`, a copy of cove.run (a classic PHP theme,
-Gravity Forms, CleanTalk, CoBlocks, Code Snippets, Minn Admin, a WP
-Freighter tenant with the `stacked_15_` prefix). `MINN_ROUNDTRIP_ROOT`
-points the suite elsewhere.
+WordPress parked in `wp-reference/` (`wp minn install --park`).
+`MINN_ROUNDTRIP_ROOT` picks the site; there are two so far:
+
+- `cove-minn.localhost`, a copy of cove.run: a classic PHP theme, Gravity
+  Forms, CleanTalk, CoBlocks, Code Snippets, Minn Admin, a WP Freighter
+  tenant with the `stacked_15_` prefix. Its oracle is on 8129, and
+  `run-all.sh` runs it.
+- `shop-dogfood.localhost`, a copy of a production shop: WooCommerce (orders as
+  posts), Gravity Forms and Gravity SMTP, Rank Math, Smush, Stripe, Xero,
+  CaptainCore and about forty more plugins, 201 tables, two gigabytes.
+  perfmatters moves its sign-in page to `/hideme/`. Its oracle is on 8127;
+  `MINN_ROUNDTRIP_ROOT=~/Cove/Sites/shop-dogfood.localhost php
+  tests/round-trip.test.php` runs it (about two and a half minutes).
+
+`private/round-trip.json` also takes `login_path` (where a hide-login
+plugin moved the sign-in page) and `skip_tables` (big tables the day has no
+business touching, left out of the baseline to spare a full disk: the
+baseline records them, a restore never touches them, and a day that writes
+to one fails).
 
 How the first copy was made, so the next one can be:
 
@@ -75,7 +89,11 @@ Two pieces make the copy fit to test on:
    describes it, adds a category and a tag, publishes a post that uses all
    of them with the photo featured and in the content, comments and
    replies, revises a page, updates the profile through
-   `/wp/v2/users/me`, adds an editor, and trashes a draft. The snapshot
+   `/wp/v2/users/me`, adds an editor, and trashes a draft. On a shop
+   (`/wp-json/wc/v3` answers) it also edits the oldest simple product's
+   price and stock, adds a coupon where the shop takes them, takes an
+   order for two of the product (with the coupon), notes it, and completes
+   it. Comments are made only where the new post takes them. The snapshot
    after is WordPress's footprint; the files it uploaded are removed.
 3. Restore, and **Minn has the same day**, request for request. Browsing
    compares each answer's status and where it redirects.
@@ -88,7 +106,9 @@ Two pieces make the copy fit to test on:
    profile and the trashed draft, signs Minn's new editor in as an editor,
    accepts the session Minn signed in without a second sign-in, then keeps
    working (revises Minn's post, answers the reply), and Minn reads what
-   WordPress wrote.
+   WordPress wrote. On a shop it reads Minn's order (completed, for the
+   product, at the total WordPress's own day reached) and the product (the
+   new price, the stock WordPress's own day left).
 5. Restore, remove every uploaded file, and check the site is back at its
    baseline.
 
@@ -152,9 +172,38 @@ The first runs, and what each became (each matched to the oracle):
 | Plugins heard nothing of a sign-in (`wp_login`, `wp_login_failed`, `wp_logout`) | `contracts/runtime.md` |
 | `admin-ajax.php` did not declare `DOING_AJAX`, so a plugin took the nonce refresh for a page view | `contracts/runtime.md` |
 
+shop-dogfood's first days added these:
+
+| Finding | Where it is now |
+|---|---|
+| Every WooCommerce order made on Minn answered 500: `wp_after_insert_post` got three arguments in the wrong order | `contracts/runtime.md` |
+| Order items lost their product, quantity and totals: the metadata API knew only the four core meta types | `contracts/runtime.md` |
+| Order lines pointed at product 1: a multi-type schema took `array` before the type it listed first | `contracts/runtime.md` |
+| A plugin's own objects (Freemius licenses, among others) were saved back as `stdClass` | `contracts/runtime.md` |
+| A plugin that changed an object held in an option had the change skipped | `contracts/runtime.md` |
+| New posts and attachments opened comments the site keeps closed | `contracts/rest/writes.md` |
+| A floating draft kept its old date through a save or a trash | `contracts/rest/writes.md` |
+| `category_children` was never rewritten, so WordPress would miss new child categories | `contracts/rest/terms.md` |
+| Old addresses with a page number or trackback answered 500; comment-page addresses 404'd | `contracts/front/permalinks.md` |
+
 ## Open
 
 Found by the round trip and not done yet:
+
+- **The engine's own REST writes do not tell plugins.** Posts, media,
+  users and terms saved through Minn's `/wp/v2` controllers (which Minn
+  Admin uses) fire none of `transition_post_status`, `save_post`,
+  `add_attachment`, `profile_update` and the rest, so plugins that react to
+  an edit do nothing on Minn. On shop-dogfood that is 51 new-post
+  notifications Better Notifications never queued, Smush never compressing
+  the upload, CaptainCore's newsletter not sent, WooCommerce's
+  `last_update` not stamped: almost all of the day's remaining
+  differences. The facade's own `wp_insert_post` path does fire them.
+- Plugin work WordPress does on `admin-ajax.php` and in `admin_init`
+  (update checkers, Action Scheduler's async runner) does not happen on
+  Minn, where that endpoint is not an admin request.
+- Gravity Forms counts a form view on Minn where WordPress does not (one
+  row on shop-dogfood), not yet looked into.
 
 - Comments are not paged: with `page_comments` on, `comment-page-N`
   serves the post with every comment.

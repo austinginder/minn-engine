@@ -113,11 +113,11 @@ final class RtClient {
 		return array( $status, json_decode( $raw, true ) );
 	}
 
-	/** Signs in through wp-login.php and fetches a REST nonce; true when both worked. */
-	public function signIn( string $user, string $password, string $site ): bool {
+	/** Signs in through the sign-in page (wp-login.php, or where a hide-login plugin moved it) and fetches a REST nonce; true when both worked. */
+	public function signIn( string $user, string $password, string $site, string $path = '/wp-login.php' ): bool {
 		$this->cookies['wordpress_test_cookie'] = 'WP%20Cookie%20check';
 		$form       = http_build_query( array( 'log' => $user, 'pwd' => $password, 'rememberme' => 'forever', 'wp-submit' => 'Log In', 'redirect_to' => "$site/wp-admin/", 'testcookie' => '1' ) );
-		[ $status ] = $this->request( 'POST', '/wp-login.php', $form, array( 'Content-Type: application/x-www-form-urlencoded' ) );
+		[ $status ] = $this->request( 'POST', $path, $form, array( 'Content-Type: application/x-www-form-urlencoded' ) );
 		if ( 302 !== $status || ! $this->hasCookie( 'wordpress_logged_in_' ) ) {
 			return false;
 		}
@@ -186,6 +186,8 @@ function rt_connect( string $root ): array {
 final class RtDatabase {
 	/** @var array<string, array{pk: list<string>, cols: list<string>}> */
 	private array $shape = array();
+	/** @var list<string>|null tables left out of the baseline, as recorded in it */
+	private ?array $skipped = null;
 
 	public function __construct( public readonly mysqli $db, public readonly string $live, public readonly string $base, public readonly string $prefix ) {
 		if ( $base === $live || ! str_ends_with( $base, '_rtbase' ) ) {
@@ -202,15 +204,26 @@ final class RtDatabase {
 		return null !== $this->value( 'SELECT SCHEMA_NAME FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = ?', array( $this->base ) );
 	}
 
-	/** Replaces the baseline with a copy of every table in the live database, and records the copy as clean. */
-	public function setBaseline(): void {
+	/**
+	 * Replaces the baseline with a copy of every table in the live database
+	 * but the ones named to leave out (big tables a day has no business
+	 * touching, on a disk that has no room for them), and records the copy
+	 * as clean. What was left out is recorded in the baseline: a restore
+	 * never touches those tables, and a day that writes to one fails.
+	 *
+	 * @param list<string> $skip
+	 */
+	public function setBaseline( array $skip = array() ): void {
 		[ $charset, $collation ] = $this->db->execute_query( 'SELECT DEFAULT_CHARACTER_SET_NAME, DEFAULT_COLLATION_NAME FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = ?', array( $this->live ) )->fetch_row();
 		$this->db->query( "DROP DATABASE IF EXISTS `{$this->base}`" );
 		$this->db->query( "CREATE DATABASE `{$this->base}` CHARACTER SET $charset COLLATE $collation" );
+		$this->db->query( "CREATE TABLE `{$this->base}`.`__round_trip` (name VARCHAR(64) PRIMARY KEY, value TEXT)" );
+		$skip = array_values( array_intersect( $skip, $this->tables( $this->live ) ) );
+		$this->db->execute_query( "INSERT INTO `{$this->base}`.`__round_trip` (name, value) VALUES ('skip', ?)", array( json_encode( $skip ) ) );
+		$this->skipped = $skip;
 		foreach ( $this->tables( $this->live ) as $table ) {
 			$this->copy( $this->live, $this->base, $table );
 		}
-		$this->db->query( "CREATE TABLE `{$this->base}`.`__round_trip` (name VARCHAR(64) PRIMARY KEY, value VARCHAR(64))" );
 		$this->markClean();
 	}
 
@@ -224,6 +237,17 @@ final class RtDatabase {
 		$clean   = $this->value( "SELECT value FROM `{$this->base}`.`__round_trip` WHERE name = 'clean'" );
 		$started = $this->value( "SELECT NOW() - INTERVAL VARIABLE_VALUE SECOND FROM information_schema.GLOBAL_STATUS WHERE VARIABLE_NAME = 'UPTIME'" );
 		return null !== $clean && null !== $started && (string) $started < (string) $clean ? (string) $clean : null;
+	}
+
+	/** Tables left out of the baseline that were written since the mark: a day must not touch them, since nothing can put them back. @return list<string> */
+	public function touchedSkipped( string $since ): array {
+		$updated = array_column( $this->db->execute_query( 'SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = ? AND UPDATE_TIME >= ?', array( $this->live, $since ) )->fetch_all(), 0 );
+		return array_values( array_intersect( $updated, $this->skipped() ) );
+	}
+
+	/** @return list<string> */
+	public function skipped(): array {
+		return $this->skipped ??= (array) json_decode( (string) $this->value( "SELECT value FROM `{$this->base}`.`__round_trip` WHERE name = 'skip'" ), true );
 	}
 
 	/** Tables that may differ from the baseline: updated since the mark (every table when there is none), or created or dropped. @return list<string> */
@@ -356,7 +380,8 @@ final class RtDatabase {
 	/** @return list<string> */
 	private function tables( string $schema ): array {
 		$rows = $this->db->execute_query( "SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = ? AND TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME <> '__round_trip'", array( $schema ) )->fetch_all();
-		return array_column( $rows, 0 );
+		// A table left out of the baseline is neither created nor dropped as far as the comparison goes.
+		return array_values( array_diff( array_column( $rows, 0 ), $this->skipped ?? ( $schema === $this->base ? array() : $this->skipped() ) ) );
 	}
 
 	/** A table's primary key and its stored (not generated) columns. @return array{pk: list<string>, cols: list<string>} */
@@ -782,7 +807,7 @@ function rt_day( RtClient $c, array $cfg, string $photo ): array {
 		$steps[ $name ] = array( 'status' => $status, 'ok' => $ok );
 		return $ok;
 	};
-	if ( ! $step( 'signs in', 302, $c->signIn( $cfg['user'], $cfg['password'], $cfg['url'] ) ) ) {
+	if ( ! $step( 'signs in', 302, $c->signIn( $cfg['user'], $cfg['password'], $cfg['url'], $cfg['login_path'] ) ) ) {
 		return array( 'steps' => $steps, 'ids' => $ids );
 	}
 
@@ -820,12 +845,17 @@ function rt_day( RtClient $c, array $cfg, string $photo ): array {
 	$ids['post']   = (int) ( $new['id'] ?? 0 );
 	$step( 'publishes a post', $s, 201 === $s && 'publish' === ( $new['status'] ?? null ) );
 
-	[ $s, $comment ] = $c->rest( 'POST', '/wp/v2/comments', array( 'post' => $ids['post'], 'content' => 'Saving this one for later.' ) );
-	$ids['comment']  = (int) ( $comment['id'] ?? 0 );
-	$step( 'comments', $s, 201 === $s );
-	[ $s, $reply ]   = $c->rest( 'POST', '/wp/v2/comments', array( 'post' => $ids['post'], 'parent' => $ids['comment'], 'content' => 'Me too.' ) );
-	$ids['reply']    = (int) ( $reply['id'] ?? 0 );
-	$step( 'replies', $s, 201 === $s );
+	// A site that starts posts with comments closed refuses both; the day comments where it can.
+	$ids['comment'] = 0;
+	$ids['reply']   = 0;
+	if ( 'open' === ( $new['comment_status'] ?? 'open' ) ) {
+		[ $s, $comment ] = $c->rest( 'POST', '/wp/v2/comments', array( 'post' => $ids['post'], 'content' => 'Saving this one for later.' ) );
+		$ids['comment']  = (int) ( $comment['id'] ?? 0 );
+		$step( 'comments', $s, 201 === $s );
+		[ $s, $reply ]   = $c->rest( 'POST', '/wp/v2/comments', array( 'post' => $ids['post'], 'parent' => $ids['comment'], 'content' => 'Me too.' ) );
+		$ids['reply']    = (int) ( $reply['id'] ?? 0 );
+		$step( 'replies', $s, 201 === $s );
+	}
 
 	[ , $pages ]  = $c->rest( 'GET', '/wp/v2/pages?per_page=100&orderby=id&order=asc&context=edit' );
 	$pages        = array_values( array_filter( (array) $pages, static fn ( $p ) => (int) $p['id'] !== $front ) );
@@ -841,10 +871,50 @@ function rt_day( RtClient $c, array $cfg, string $photo ): array {
 	$ids['editor'] = (int) ( $user['id'] ?? 0 );
 	$step( 'adds an editor', $s, 201 === $s );
 
+	rt_commerce( $c, $step, $ids );
+
 	[ , $drafts ]  = $c->rest( 'GET', '/wp/v2/posts?status=draft&per_page=1&orderby=id&order=asc&context=edit' );
 	$ids['draft']  = (int) ( $drafts[0]['id'] ?? 0 );
 	[ $s, $gone ]  = $c->rest( 'DELETE', "/wp/v2/posts/{$ids['draft']}" );
 	$step( 'trashes a draft', $s, 200 === $s && 'trash' === ( $gone['status'] ?? null ) );
 
 	return array( 'steps' => $steps, 'ids' => $ids );
+}
+
+/**
+ * A shop's part of the day, on a site that answers wc/v3: edit the oldest
+ * simple product (price up by one, stock managed at 50), add a coupon where
+ * the shop takes them, take an order for two of the product (with the
+ * coupon), note it, complete it.
+ */
+function rt_commerce( RtClient $c, Closure $step, array &$ids ): void {
+	[ $s ] = $c->rest( 'GET', '/wc/v3' );
+	if ( 200 !== $s ) {
+		return;
+	}
+	[ , $products ]   = $c->rest( 'GET', '/wc/v3/products?per_page=1&orderby=id&order=asc&status=publish&type=simple' );
+	$product          = $products[0] ?? array( 'id' => 0, 'regular_price' => '' );
+	$ids['product']   = (int) $product['id'];
+	$ids['price']     = number_format( (float) ( '' !== $product['regular_price'] ? $product['regular_price'] : 10 ) + 1, 2, '.', '' );
+	[ $s, $edited ]   = $c->rest( 'PUT', "/wc/v3/products/{$ids['product']}", array( 'regular_price' => $ids['price'], 'manage_stock' => true, 'stock_quantity' => 50 ) );
+	$step( 'edits a product', $s, 200 === $s && $ids['price'] === ( $edited['regular_price'] ?? null ) );
+	// A shop that has coupons switched off refuses both the coupon and an order naming one.
+	[ , $setting ]    = $c->rest( 'GET', '/wc/v3/settings/general/woocommerce_enable_coupons' );
+	$ids['coupon']    = 0;
+	if ( 'yes' === ( $setting['value'] ?? 'no' ) ) {
+		[ $s, $coupon ] = $c->rest( 'POST', '/wc/v3/coupons', array( 'code' => 'roundtrip10', 'discount_type' => 'percent', 'amount' => '10', 'individual_use' => true, 'usage_limit' => 5, 'description' => 'Made on the round trip.' ) );
+		$ids['coupon']  = (int) ( $coupon['id'] ?? 0 );
+		$step( 'adds a coupon', $s, 201 === $s );
+	}
+	$billing          = array( 'first_name' => 'Round', 'last_name' => 'Trip', 'address_1' => '1 Harbor Way', 'city' => 'Lancaster', 'state' => 'PA', 'postcode' => '17601', 'country' => 'US', 'email' => 'roundtrip-buyer@example.com', 'phone' => '555-0100' );
+	[ $s, $order ]    = $c->rest( 'POST', '/wc/v3/orders', array( 'status' => 'processing', 'payment_method' => 'bacs', 'payment_method_title' => 'Direct bank transfer', 'set_paid' => false, 'billing' => $billing, 'line_items' => array( array( 'product_id' => $ids['product'], 'quantity' => 2 ) ), 'coupon_lines' => $ids['coupon'] > 0 ? array( array( 'code' => 'roundtrip10' ) ) : array(), 'customer_note' => 'Leave it at the dock.' ) );
+	$ids['order']     = (int) ( $order['id'] ?? 0 );
+	$ids['total']     = (string) ( $order['total'] ?? '' );
+	$step( 'takes an order', $s, 201 === $s && $ids['order'] > 0 );
+	[ $s ]            = $c->rest( 'POST', "/wc/v3/orders/{$ids['order']}/notes", array( 'note' => 'Packed on the round trip.' ) );
+	$step( 'notes the order', $s, 201 === $s );
+	[ $s, $done ]     = $c->rest( 'PUT', "/wc/v3/orders/{$ids['order']}", array( 'status' => 'completed' ) );
+	$step( 'completes the order', $s, 200 === $s && 'completed' === ( $done['status'] ?? null ) );
+	[ , $after ]      = $c->rest( 'GET', "/wc/v3/products/{$ids['product']}" );
+	$ids['stock']     = $after['stock_quantity'] ?? null;
 }
