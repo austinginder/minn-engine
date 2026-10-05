@@ -6,14 +6,14 @@ namespace Minn\Support;
 
 /**
  * What one kses pass allows: the tags, each tag's attributes (allowed
- * plainly or with value rules), the attribute-name prefixes a tag accepts,
+ * plainly or with value rules), whether a tag takes data- attributes,
  * which attributes hold URIs, and the schemes those URIs may use.
  */
 final readonly class KsesPolicy
 {
     /**
      * @param array<string, array<string, mixed>> $tags tag => attribute => true, or a list of value rules
-     * @param array<string, list<string>> $prefixes tag (or "*" for every tag) => attribute-name prefixes it accepts
+     * @param array<string, list<string>> $prefixes tag => attribute-name prefixes it accepts (only "data-")
      * @param list<string> $uriAttributes
      * @param list<string> $schemes
      */
@@ -25,14 +25,10 @@ final readonly class KsesPolicy
     ) {
     }
 
-    /** Post content from an author without unfiltered_html: each tag's attributes, the global ones, and any aria- or data- name. */
+    /** Post content from an author without unfiltered_html: the reference's post allowlist as captured. */
     public static function post(): self
     {
-        $tags = [];
-        foreach (Kses::POST as $tag => $attributes) {
-            $tags[$tag] = array_fill_keys([...$attributes, ...Kses::GLOBAL_ATTRIBUTES], true);
-        }
-        return new self($tags, ['*' => ['aria-', 'data-']], Kses::URI_ATTRIBUTES, Kses::SCHEMES);
+        return self::fromAllowlist(KsesEntities::allowlist('post'), Kses::SCHEMES, Kses::URI_ATTRIBUTES);
     }
 
     /** Comments, profiles and term descriptions: only the attributes each tag lists, nothing global. */
@@ -99,10 +95,9 @@ final readonly class KsesPolicy
             $rules = $this->tags[$tag][$name];
             return is_array($rules) ? $rules : [];
         }
-        foreach ([...($this->prefixes['*'] ?? []), ...($this->prefixes[$tag] ?? [])] as $prefix) {
-            if (str_starts_with($name, $prefix)) {
-                return [];
-            }
+        // "data-*" admits a data- name with at least one letter, digit, "_" or "-" after it.
+        if (in_array('data-', $this->prefixes[$tag] ?? [], true) && preg_match('/^data-[a-z0-9_-]+$/', $name)) {
+            return [];
         }
         return null;
     }

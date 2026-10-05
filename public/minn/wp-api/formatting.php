@@ -11,6 +11,7 @@ use Minn\Support\Email;
 use Minn\Support\Entities;
 use Minn\Support\Html;
 use Minn\Support\Json;
+use Minn\Support\Kses;
 use Minn\Support\Paths;
 use Minn\Support\Time;
 use Minn\Support\Url;
@@ -119,12 +120,7 @@ function esc_sql($data)
 
 function wp_pre_kses_less_than($content)
 {
-    return preg_replace_callback('%<[^>]*?((?=<)|>|$)%', static function (array $m): string {
-        if (str_contains($m[0], '>')) {
-            return $m[0];
-        }
-        return str_replace('<', '&lt;', $m[0]);
-    }, (string) $content);
+    return Kses::lessThan((string) $content, static fn (string $text): string => esc_html($text));
 }
 
 function _sanitize_text_fields($str, $keep_newlines = false)

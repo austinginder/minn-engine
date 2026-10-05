@@ -16,6 +16,7 @@ the block parser and renderer
 | [`RenderState`](#renderstate) | final class | 302 | Per-request rendering state, owned by the renderer. The reference numbers |
 | [`Renderer`](#renderer) | final class | 228 | Renders a block tree the way the reference renders post_content: |
 | [`Selector`](#selector) | final class | 42 | The CSS selector a block type declares for its root or for one feature, from its `selectors` map or the older per-support keys. |
+| [`Serializer`](#serializer) | final class | 46 | Parsed blocks back to markup. A core block is written by its short name; |
 | [`Styles`](#styles) | final class | 155 | The inline style and class names a block's "style" and preset |
 | [`Supports`](#supports) | final class | 72 | The wrapper attributes a block's supports declaration earns from its |
 | [`Wrapper`](#wrapper) | final class | 60 | The opening tag of a dynamic block's wrapper, in the reference's class |
@@ -43,7 +44,7 @@ One parsed block. A null name is freeform HTML between blocks. The
 innerContent list holds the block's own HTML chunks in order, with a
 null placeholder wherever an inner block sits.
 
-Used by: `Minn\Blocks\Dynamic\Archives`, `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Parser`, `Minn\Blocks\Renderer`, `Minn\Blocks\Wrapper`, `Minn\Content\ContentScan`, `Minn\Content\Excerpt`, `Minn\Content\Menus`, `Minn\Extension\SeamRunner`, `Minn\Runtime\BlockFilters`, `Minn\Theme\TemplatePatterns`
+Used by: `Minn\Blocks\Dynamic\Archives`, `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Parser`, `Minn\Blocks\Renderer`, `Minn\Blocks\Serializer`, `Minn\Blocks\Wrapper`, `Minn\Content\ContentScan`, `Minn\Content\Excerpt`, `Minn\Content\Menus`, `Minn\Extension\SeamRunner`, `Minn\Runtime\BlockFilters`, `Minn\Support\Kses`, `Minn\Theme\TemplatePatterns`
 
 ```php
 __construct(?string $name, array $attrs, array $innerBlocks, string $innerHtml, array $innerContent)
@@ -240,7 +241,7 @@ block is a freeform block that renders as-is.
 
 - const `TOKEN` = `'/<!--\\s+(?P<closer>\\/)?wp:(?P<namespace>[a-z][a-z0-9_-]*\\/)?(?P<name>[a-z][a-z0-9_-]*)\\s+(?P<attrs>\\{(?:(?!\\}\\s+\\/?-->).)*+\\}\\s+)?(?P<void>\\/)?-->/s'`
 
-Used by: `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Content\ContentScan`, `Minn\Content\Excerpt`, `Minn\Theme\PageRenderer`, `Minn\Theme\TemplatePatterns`
+Used by: `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Content\ContentScan`, `Minn\Content\Excerpt`, `Minn\Support\Kses`, `Minn\Theme\PageRenderer`, `Minn\Theme\TemplatePatterns`
 
 ### static `parse(string $markup): array`
 
@@ -522,6 +523,36 @@ The CSS selector a block's style targets, or null.
 - `@param string|list<string>|null $target 'root', a dotted feature path, or a path list`
 
 Internals: `at()` (private, line 39)
+
+
+## Serializer
+
+`final class Minn\Blocks\Serializer` · `public/minn/src/Minn/Blocks/Serializer.php`
+
+Parsed blocks back to markup. A core block is written by its short name;
+attributes are JSON with every character that could end the comment or
+open a tag spelled as an escape ("<" "<", "--" "--", a
+backslash "\"), so a value can never break out of its delimiter.
+
+Used by: `Minn\Support\Kses`
+
+### static `blocks(array $blocks): string`
+
+A list of parsed blocks back to markup, freeform runs as written.
+
+- `@param list<Block> $blocks`
+
+### static `block(Minn\Blocks\Block $block): string`
+
+One block with its inner blocks, as the delimiter comments the parser reads.
+
+### static `delimited(?string $name, array $attrs, string $content): string`
+
+Content wrapped in a block's delimiters; a block with no content is written self-closing.
+
+### static `attributes(array $attrs): string`
+
+Block attributes as the delimiter carries them.
 
 
 ## Styles

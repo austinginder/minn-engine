@@ -5,6 +5,8 @@ use Minn\Blocks\Block as MinnBlock;
 use Minn\Blocks\Parser;
 use Minn\Blocks\QueryVars;
 use Minn\Blocks\Selector;
+use Minn\Blocks\Serializer;
+use Minn\Support\Kses;
 use Minn\Content\Blocks as MinnBlocks;
 use Minn\Runtime\BlockMetadata;
 use Minn\Runtime\Runtime;
@@ -143,11 +145,7 @@ function _minn_pattern_markup(string $slug): ?string
 
 function serialize_block_attributes($block_attributes)
 {
-    $encoded = wp_json_encode($block_attributes, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-    $encoded = (string) preg_replace('/--/', '\\u002d\\u002d', (string) $encoded);
-    // The reference emits lower-case hex escapes.
-    $encoded = (string) preg_replace_callback('/\\\\u00([0-9A-F]{2})/', static fn (array $m) => '\\u00' . strtolower($m[1]), $encoded);
-    return $encoded;
+    return Serializer::attributes((array) $block_attributes);
 }
 
 function strip_core_block_namespace($block_name = null)
@@ -390,15 +388,7 @@ function filter_block_kses_value($value, $allowed_html, $allowed_protocols = [],
 
 function filter_block_content($text, $allowed_html = 'post', $allowed_protocols = [])
 {
-    $result = '';
-    if (str_contains((string) $text, '<!--') && str_contains((string) $text, '--->')) {
-        $text = preg_replace_callback('%<!--(.*?)--->%', '_filter_block_content_callback', (string) $text);
-    }
-    foreach (parse_blocks((string) $text) as $block) {
-        $block = filter_block_kses($block, $allowed_html, $allowed_protocols);
-        $result .= serialize_block($block);
-    }
-    return $result;
+    return Kses::blockAttributes((string) $text, static fn (string $value): string => wp_kses($value, $allowed_html, (array) $allowed_protocols));
 }
 
 function _filter_block_content_callback($matches)

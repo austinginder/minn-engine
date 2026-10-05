@@ -2,12 +2,12 @@
     "generated": "2026-10-05",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 481,
-        "composes": 778,
-        "leaf": 405,
-        "noop": 1323,
+        "minn": 482,
+        "composes": 775,
+        "leaf": 402,
+        "noop": 1328,
         "functions": 2979,
-        "minnMethods": 464,
+        "minnMethods": 469,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -10347,13 +10347,6 @@
             ],
             "composes": []
         },
-        "_minn_kses_text_brackets": {
-            "file": "kses.php",
-            "lines": 7,
-            "kind": "leaf",
-            "minn": [],
-            "composes": []
-        },
         "_minn_list_comments_args": {
             "file": "comment.php",
             "lines": 10,
@@ -13260,13 +13253,13 @@
         },
         "filter_block_content": {
             "file": "blocks.php",
-            "lines": 9,
-            "kind": "composes",
-            "minn": [],
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\Kses::blockAttributes"
+            ],
             "composes": [
-                "filter_block_kses",
-                "parse_blocks",
-                "serialize_block"
+                "wp_kses"
             ]
         },
         "filter_block_kses": {
@@ -20186,12 +20179,12 @@
         },
         "serialize_block_attributes": {
             "file": "blocks.php",
-            "lines": 5,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "wp_json_encode"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Blocks\\Serializer::attributes"
+            ],
+            "composes": []
         },
         "serialize_blocks": {
             "file": "blocks.php",
@@ -24640,7 +24633,6 @@
             ],
             "composes": [
                 "_minn_kses_policy",
-                "_minn_kses_text_brackets",
                 "wp_allowed_protocols",
                 "wp_kses_hook",
                 "wp_kses_no_null",
@@ -24730,10 +24722,15 @@
         },
         "wp_kses_hair": {
             "file": "kses.php",
-            "lines": 8,
-            "kind": "leaf",
-            "minn": [],
-            "composes": []
+            "lines": 9,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Support\\Kses::attributeList"
+            ],
+            "composes": [
+                "wp_kses_bad_protocol",
+                "wp_kses_uri_attributes"
+            ]
         },
         "wp_kses_hook": {
             "file": "kses.php",
@@ -24753,12 +24750,12 @@
         },
         "wp_kses_normalize_entities": {
             "file": "kses.php",
-            "lines": 11,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_minn_known_entity"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\Kses::normalizeEntities"
+            ],
+            "composes": []
         },
         "wp_kses_one_attr": {
             "file": "kses.php",
@@ -24793,8 +24790,7 @@
                 "Minn\\Support\\Kses::filter"
             ],
             "composes": [
-                "_minn_kses_policy",
-                "_minn_kses_text_brackets"
+                "_minn_kses_policy"
             ]
         },
         "wp_kses_stripslashes": {
@@ -25433,12 +25429,27 @@
                 "wp_is_post_revision"
             ]
         },
+        "wp_pre_kses_block_attributes": {
+            "file": "kses.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\Kses::blockAttributes"
+            ],
+            "composes": [
+                "wp_kses"
+            ]
+        },
         "wp_pre_kses_less_than": {
             "file": "formatting.php",
-            "lines": 6,
-            "kind": "leaf",
-            "minn": [],
-            "composes": []
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\Kses::lessThan"
+            ],
+            "composes": [
+                "esc_html"
+            ]
         },
         "wp_prepare_attachment_for_js": {
             "file": "media.php",

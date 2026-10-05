@@ -271,8 +271,10 @@ instead. Known gap.
 - **kses**: stray `<` and `>` in text become entities; `<script>` loses its
   tags but keeps its text; `style` keeps only the listed properties (the
   engine's own `Support\Kses`); the allowed-tag table is
-  `data/kses.json`, captured from `wp_kses_allowed_html('post')`; numeric
-  entities normalise to at least three digits (`&#65;` → `&#065;`).
+  `data/kses.json`, captured from `wp_kses_allowed_html('post')`, for the
+  facade and the REST write paths alike; numeric entities normalise to at
+  least three digits (`&#65;` → `&#065;`). The tag pass in detail: "The
+  kses tag pass" below.
 - **URLs**: `home_url`/`site_url` honour `http`, `https`, and `relative`;
   `admin_url` is https when the stored siteurl is (`FORCE_SSL_ADMIN` is
   defined true then); `content_url`, `plugins_url`, and the theme URIs take
@@ -2144,6 +2146,60 @@ names; fixture `contracts/fixtures/api/kses-rules.json` (probe
   even when a filter is added before the next call. Not pinned in the
   fixture, because the engine's probe runner never fires `wp_loaded`;
   checked on both stacks by hand.
+
+## The kses tag pass (2026-10-05)
+
+How `wp_kses` reads markup, captured input by input (224 `wp_kses_post`
+cases, `wp_kses_split`, `wp_pre_kses_less_than`,
+`wp_pre_kses_block_attributes`, `serialize_block_attributes`); fixture
+`contracts/fixtures/api/kses-split.json` (probe
+`tests/tools/kses-split-probe.php`). `Support\Kses::sanitize()` is the
+whole default pass and is what the REST write paths call, so a save through
+`wp/v2` and `wp_kses_post()` give the same bytes.
+
+- Order: control characters out, references normalized in one pass (a
+  known name or an accepted code point stays, decimal padded to three
+  digits, `&#X24;` written `&#x24;`, anything else `&amp;`), then the
+  `pre_kses` filters (`wp_pre_kses_less_than`, then
+  `wp_pre_kses_block_attributes`), then the tag pass.
+- `wp_pre_kses_less_than`: a `<` that reaches the next `<` or the end
+  without a `>` is run through `esc_html` (quotes become `&quot;` and
+  `&#039;`): `<p title='x'` gives `&lt;p title=&#039;x&#039;`.
+- Block delimiters are parsed, each attribute key and string value goes
+  through the same `wp_kses` call, and the blocks are written back:
+  `core/` dropped, spacing canonical, an unclosed block closed, `--->` read
+  as `-->`, JSON with `\u003c`, `\u003e`, `\u0026`, `\u0022`, `\u005c`
+  and `\u002d\u002d`, `{}` written `[]`, `1.0` written `1`. Because the
+  less-than pass runs first, a raw `<` inside a delimiter's JSON breaks the
+  delimiter into escaped text instead. URL-looking values are text here
+  (`javascript:` in a block attribute stays).
+- The tag pass splits on `<` to the next `>`. A comment keeps its body as
+  text with every `--` collapsed to `-` (`<!-- a -- b -->` gives
+  `<!-- a - b -->`; `<!---->` disappears; `<!-->` gives `<!--&gt;-->`).
+  `</` before a non-letter (`</ b>`, `</1>`) and `<!` before a lower-case
+  letter (`<!x>`, `<!doctype html>`) are inert bogus comments and stay as
+  written; `</>`, `<!X>`, `<!DOCTYPE html>`, `<! x>`, `<![CDATA[x]]>`,
+  `<?php ?>` and any run whose name is not allowed (`<6>`, `< 6 & 7 >`,
+  `<x->`) go entirely. Whitespace may follow `<` and the `/` of a closing
+  tag (`< /b >` gives `</b>`).
+- A tag keeps the case it was written in (`<B CLASS="y">` gives
+  `<B class="y">`); attribute names are lowercased. A closing tag never
+  keeps attributes.
+- Attributes: a name runs to whitespace, `=`, a quote or `/` (so
+  `@class="x"` is the name `@class`, never `class`); `=` may have spaces
+  around it; a bare value runs to whitespace and may hold quotes
+  (`class=x"` gives `class="x&quot;"`); an empty value is kept
+  (`title=` gives `title=""`); junk between attributes (stray quotes, `=`,
+  `/`) is skipped, and no space is needed after a quoted value; the first
+  of two same-named attributes wins. A quoted value that never closes (the
+  run ended at a `>` inside it) costs the tag every attribute:
+  `<p class="x" title="y>z">` gives `<p>` and the text `z"&gt;`. A
+  trailing `/` (`<br/ >`, `<p class="x"// >`) writes ` />`.
+- `data-` names need a letter, digit, `_` or `-` after the dash
+  (`data-a.b`, `data-a:b` and `data-` go); `aria-` names are only the nine
+  the table lists.
+- `wp_kses_split` on its own (no less-than pass) reads a last `<` with no
+  `>` as a tag: `x <p title="q"` gives `x <p title="q">`.
 
 ## Translations (2026-10-05)
 

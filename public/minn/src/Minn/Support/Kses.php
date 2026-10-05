@@ -4,57 +4,27 @@ declare(strict_types=1);
 
 namespace Minn\Support;
 
+use Closure;
+use Minn\Blocks\Block;
+use Minn\Blocks\Parser;
+use Minn\Blocks\Serializer;
 use Minn\Html\Decoder;
 
 /**
  * The HTML a user without unfiltered_html may store. Tags outside the
  * allowlist are removed and their text kept; attributes outside the tag's
- * list (and the global set) are dropped; URL attributes lose unsafe
- * schemes; style attributes keep only listed properties and no code.
- * Comments (the block delimiters) pass through untouched.
+ * list are dropped; URL attributes lose unsafe schemes; style attributes
+ * keep only listed properties and no code. Comments keep their text, and
+ * block delimiters are written back with their attribute values filtered.
  */
 final class Kses
 {
-    /** @var array<string, list<string>> tag => attributes, for post content */
-    public const POST = [
-        'a' => ['href', 'rel', 'rev', 'name', 'target', 'download'],
-        'abbr' => [], 'acronym' => [], 'address' => [], 'article' => [], 'aside' => [],
-        'audio' => ['autoplay', 'controls', 'loop', 'muted', 'preload', 'src'],
-        'b' => [], 'bdi' => [], 'bdo' => [], 'big' => [],
-        'blockquote' => ['cite'], 'br' => [], 'button' => ['disabled', 'name', 'type', 'value'],
-        'caption' => ['align'], 'cite' => [], 'code' => [], 'col' => ['align', 'span', 'valign', 'width'],
-        'colgroup' => ['align', 'span', 'valign', 'width'], 'dd' => [], 'del' => ['datetime'],
-        'details' => ['open'], 'dfn' => [], 'div' => ['align'], 'dl' => [], 'dt' => [], 'em' => [],
-        'fieldset' => [], 'figcaption' => [], 'figure' => ['align'], 'font' => ['color', 'face', 'size'],
-        'footer' => [], 'h1' => ['align'], 'h2' => ['align'], 'h3' => ['align'], 'h4' => ['align'],
-        'h5' => ['align'], 'h6' => ['align'], 'header' => [], 'hgroup' => [], 'hr' => ['align', 'noshade', 'size', 'width'],
-        'i' => [],
-        'img' => ['alt', 'align', 'border', 'decoding', 'fetchpriority', 'height', 'hspace', 'loading', 'longdesc', 'sizes', 'src', 'srcset', 'usemap', 'vspace', 'width'],
-        'ins' => ['cite', 'datetime'], 'kbd' => [], 'label' => ['for'], 'legend' => ['align'],
-        'li' => ['align', 'value'], 'main' => ['align'], 'map' => ['name'], 'mark' => [], 'menu' => ['type'],
-        'nav' => ['align'], 'object' => [], 'ol' => ['reversed', 'start', 'type'], 'p' => ['align'],
-        'picture' => [], 'pre' => ['width'], 'q' => ['cite'], 'rb' => [], 'rp' => [], 'rt' => [], 'rtc' => [], 'ruby' => [],
-        's' => [], 'samp' => [], 'section' => ['align'], 'small' => [],
-        'source' => ['height', 'media', 'sizes', 'src', 'srcset', 'type', 'width'],
-        'span' => ['align'], 'strike' => [], 'strong' => [], 'sub' => [], 'summary' => ['align'], 'sup' => [],
-        'table' => ['align', 'bgcolor', 'border', 'cellpadding', 'cellspacing', 'rules', 'summary', 'width'],
-        'tbody' => ['align', 'valign'], 'td' => ['abbr', 'align', 'axis', 'bgcolor', 'colspan', 'headers', 'height', 'nowrap', 'rowspan', 'scope', 'valign', 'width'],
-        'textarea' => ['cols', 'disabled', 'name', 'readonly', 'rows'], 'tfoot' => ['align', 'valign'],
-        'th' => ['abbr', 'align', 'axis', 'bgcolor', 'colspan', 'headers', 'height', 'nowrap', 'rowspan', 'scope', 'valign', 'width'],
-        'thead' => ['align', 'valign'], 'title' => [], 'tr' => ['align', 'bgcolor', 'valign'],
-        'track' => ['default', 'kind', 'label', 'src', 'srclang'], 'tt' => [], 'u' => [], 'ul' => ['type'], 'var' => [],
-        'video' => ['autoplay', 'controls', 'height', 'loop', 'muted', 'playsinline', 'poster', 'preload', 'src', 'width'],
-    ];
-
     /** @var array<string, list<string>> the smaller set for comments and descriptions */
     public const COMMENT = [
         'a' => ['href', 'title', 'rel'], 'abbr' => ['title'], 'acronym' => ['title'], 'b' => [],
         'blockquote' => ['cite'], 'cite' => [], 'code' => [], 'del' => ['datetime'], 'em' => [], 'i' => [],
         'q' => ['cite'], 's' => [], 'strike' => [], 'strong' => [],
     ];
-
-    /** The attributes every post-content tag takes besides its own. */
-    public const GLOBAL_ATTRIBUTES = ['class', 'id', 'style', 'title', 'role', 'dir', 'lang', 'xml:lang', 'hidden', 'tabindex'];
 
     /** Every attribute the reference treats as holding a URI, so its scheme is judged wherever the attribute is allowed. */
     public const URI_ATTRIBUTES = [
@@ -91,42 +61,212 @@ final class Kses
     /** Post content as an author without unfiltered_html may store it. */
     public static function post(string $html): string
     {
-        return self::filter($html, KsesPolicy::post());
+        return self::sanitize($html, KsesPolicy::post());
     }
 
     /** A comment, profile or term description as anyone without unfiltered_html may store it: listed attributes only. */
     public static function comment(string $html): string
     {
-        return self::filter($html, KsesPolicy::comment());
+        return self::sanitize($html, KsesPolicy::comment());
     }
 
-    /** HTML with only what the policy allows kept. */
+    /**
+     * The whole pass wp_kses makes with its default hooks: control
+     * characters out, references normalized, a "<" that opens no tag
+     * escaped, block attribute values filtered the same way, then the tags.
+     */
+    public static function sanitize(string $html, KsesPolicy $policy): string
+    {
+        $html = self::normalizeEntities(self::withoutControls($html));
+        $html = self::blockAttributes(self::lessThan($html), static fn (string $value): string => self::sanitize($value, $policy));
+        return self::filter($html, $policy);
+    }
+
+    /** The control characters kses removes (tab, newline and carriage return stay). */
+    public static function withoutControls(string $html): string
+    {
+        return (string) preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F]/', '', $html);
+    }
+
+    /**
+     * Every "&" made a reference, in one pass: a known name or a code point
+     * kses accepts stays one (decimal padded to three digits, hex with a
+     * lower-case x), anything else becomes "&amp;".
+     */
+    public static function normalizeEntities(string $html): string
+    {
+        return (string) preg_replace_callback('/&(?:([A-Za-z]{2,8}[0-9]{0,8});|#(0*[0-9]{1,7});|#([Xx]0*[0-9A-Fa-f]{1,6});)?/', static function (array $m): string {
+            if (($m[1] ?? '') !== '') {
+                return KsesEntities::known($m[1]) ? $m[0] : '&amp;' . substr($m[0], 1);
+            }
+            if (($m[2] ?? '') !== '') {
+                $code = self::codePoint('#' . $m[2]);
+                return $code === null ? '&amp;' . substr($m[0], 1) : '&#' . str_pad((string) $code, 3, '0', STR_PAD_LEFT) . ';';
+            }
+            if (($m[3] ?? '') !== '') {
+                return self::codePoint('#' . $m[3]) === null ? '&amp;' . substr($m[0], 1) : '&#x' . substr($m[3], 1) . ';';
+            }
+            return '&amp;';
+        }, $html);
+    }
+
+    /**
+     * A "<" that reaches the next "<" or the end without a ">" is text: the
+     * run is escaped the way esc_html escapes it (quotes included).
+     *
+     * @param (Closure(string): string)|null $escape
+     */
+    public static function lessThan(string $html, ?Closure $escape = null): string
+    {
+        $escape ??= self::escapeHtml(...);
+        return (string) preg_replace_callback('%<[^>]*?((?=<)|>|$)%', static fn (array $m): string => str_contains($m[0], '>') ? $m[0] : $escape($m[0]), $html);
+    }
+
+    /** Text escaped for HTML with references kept: invalid UTF-8 gives nothing, quotes become &quot; and &#039;. */
+    public static function escapeHtml(string $text): string
+    {
+        if (!Utf8::isValid($text)) {
+            return '';
+        }
+        return Entities::specialchars(self::normalizeEntities($text), ENT_QUOTES, false, KsesEntities::known(...));
+    }
+
+    /**
+     * Block markup with every attribute key and string value passed through
+     * the same filter, and the delimiters written back in their canonical
+     * form ("--->" read as "-->"). Markup without a comment is left alone.
+     *
+     * @param Closure(string): string $clean
+     */
+    public static function blockAttributes(string $html, Closure $clean): string
+    {
+        if (!str_contains($html, '<!--')) {
+            return $html;
+        }
+        if (str_contains($html, '--->')) {
+            $html = (string) preg_replace_callback('%<!--(.*?)--->%', static fn (array $m): string => '<!--' . rtrim($m[1], '-') . '-->', $html);
+        }
+        $filter = static function (Block $block) use (&$filter, $clean): Block {
+            return new Block($block->name, self::cleanValue($block->attrs, $clean), array_map($filter, $block->innerBlocks), $block->innerHtml, $block->innerContent);
+        };
+        return Serializer::blocks(array_map($filter, Parser::parse($html)));
+    }
+
+    /** @param Closure(string): string $clean */
+    private static function cleanValue(mixed $value, Closure $clean): mixed
+    {
+        if (is_string($value)) {
+            return $clean($value);
+        }
+        if (!is_array($value)) {
+            return $value;
+        }
+        $out = [];
+        foreach ($value as $key => $inner) {
+            $out[is_string($key) ? $clean($key) : $key] = self::cleanValue($inner, $clean);
+        }
+        return $out;
+    }
+
+    /**
+     * The tag pass: each run from "<" to the next ">" (or the end) is a
+     * comment, an inert bogus comment ("</" before a non-letter, "<!"
+     * before a lower-case letter), or an element judged by the policy;
+     * anything else in angle brackets goes. Text between keeps its
+     * references, with stray ones escaped. Run alone (wp_kses_split), a
+     * last "<" with no ">" still reads as a tag; inside sanitize() the
+     * less-than pass has already escaped it.
+     */
     public static function filter(string $html, KsesPolicy $policy): string
     {
         return (string) preg_replace_callback(
-            '/<!--.*?-->|<\/?([a-zA-Z][a-zA-Z0-9-]*)((?:\s+[^\s=>\/]+(?:\s*=\s*(?:"[^"]*"|\'[^\']*\'|[^\s"\'>]+))?)*)\s*(\/?)>|<[^>]*>?|[^<]+/s',
-            static function (array $m) use ($policy): string {
-                if (str_starts_with($m[0], '<!--')) {
-                    return $m[0];
-                }
-                if ($m[0][0] !== '<') {
-                    return self::normalizeText($m[0]);
-                }
-                $tag = strtolower($m[1] ?? '');
-                if ($tag === '') {
-                    // A "<" that starts no tag is text (the reference keeps "a &lt; b").
-                    return '&lt;' . self::normalizeText(substr($m[0], 1));
-                }
-                if (!$policy->allowsTag($tag)) {
-                    return '';
-                }
-                if (str_starts_with($m[0], '</')) {
-                    return "</{$tag}>";
-                }
-                return '<' . $tag . self::attributes($m[2] ?? '', $tag, $policy) . (($m[3] ?? '') === '/' ? ' />' : '>');
-            },
+            '/<[^>]*(?:>|$)|[^<]+/',
+            static fn (array $m): string => $m[0][0] === '<' ? self::run($m[0], $policy) : self::normalizeText($m[0]),
             $html,
         );
+    }
+
+    /** One bracketed run as the tag pass keeps it, or nothing. */
+    private static function run(string $run, KsesPolicy $policy): string
+    {
+        $closed = str_ends_with($run, '>');
+        if ($closed && str_starts_with($run, '<!--')) {
+            return self::htmlComment(substr($run, 4));
+        }
+        if ($closed && (preg_match('#^</[^a-zA-Z>]#', $run) || preg_match('#^<![a-z]#', $run))) {
+            return substr($run, 0, 2) . self::normalizeText(substr($run, 2, -1)) . '>';
+        }
+        if (!preg_match('%^<\s*(/\s*)?([a-zA-Z0-9-]+)([^>]*)>?$%', $run, $m)) {
+            return '';
+        }
+        [, $closing, $name, $rest] = $m;
+        $tag = strtolower($name);
+        if (!$policy->allowsTag($tag)) {
+            return '';
+        }
+        if ($closing !== '') {
+            return "</{$name}>";
+        }
+        return '<' . $name . self::attributes($rest, $tag, $policy) . (str_ends_with(rtrim($rest), '/') ? ' />' : '>');
+    }
+
+    /** A comment kept with its body as text: no "--" inside, an empty one dropped. */
+    private static function htmlComment(string $body): string
+    {
+        if (str_ends_with($body, '-->')) {
+            $body = substr($body, 0, -3);
+        }
+        while (str_contains($body, '--')) {
+            $body = str_replace('--', '-', $body);
+        }
+        $body = self::normalizeText($body);
+        return $body === '' ? '' : '<!--' . $body . '-->';
+    }
+
+    /**
+     * The attributes written inside a tag, read the way kses reads them: a
+     * name, then "=" and a quoted or bare value, or no value at all; junk
+     * between (stray quotes, "=", "/") is skipped; the first of two
+     * same-named attributes wins. Null when a quoted value never closes,
+     * which costs the tag every attribute.
+     *
+     * @return array<string, array{name: string, value: ?string, whole: string}>|null
+     */
+    public static function attributeList(string $raw): ?array
+    {
+        $out = [];
+        $rest = $raw;
+        while (($rest = ltrim($rest)) !== '') {
+            // A name runs to whitespace, "=", a quote or "/", so "@class" is one name and never "class".
+            if (!preg_match('#^[^\\s"\'=/]+#', $rest, $m)) {
+                $rest = (string) preg_replace('/^(?:"[^"]*(?:"|$)|\'[^\']*(?:\'|$)|\S)/', '', $rest, 1);
+                continue;
+            }
+            $name = strtolower($m[0]);
+            $whole = $m[0];
+            $rest = substr($rest, strlen($m[0]));
+            $value = null;
+            if (preg_match('/^\s*=\s*/', $rest, $eq)) {
+                $rest = substr($rest, strlen($eq[0]));
+                $quote = $rest[0] ?? '';
+                if ($quote === '"' || $quote === "'") {
+                    $close = strpos($rest, $quote, 1);
+                    if ($close === false) {
+                        return null;
+                    }
+                    $value = substr($rest, 1, $close - 1);
+                    $whole .= $eq[0] . substr($rest, 0, $close + 1);
+                    $rest = substr($rest, $close + 1);
+                } else {
+                    preg_match('/^\S*/', $rest, $bare);
+                    $value = $bare[0];
+                    $whole .= $eq[0] . $value;
+                    $rest = substr($rest, strlen($value));
+                }
+            }
+            $out[$name] ??= ['name' => $name, 'value' => $value, 'whole' => $whole];
+        }
+        return $out;
     }
 
     /** Plain text: tags gone, whitespace collapsed, control characters dropped. */
@@ -247,16 +387,6 @@ final class Kses
         return str_replace(['"', "'"], ['&quot;', '&apos;'], $value);
     }
 
-    /** An attribute value without the one pair of quotes that wrapped it; a value may itself end in the other quote. */
-    private static function unquoted(string $value): string
-    {
-        $first = $value[0] ?? '';
-        if (($first === '"' || $first === "'") && strlen($value) >= 2 && str_ends_with($value, $first)) {
-            return substr($value, 1, -1);
-        }
-        return $value;
-    }
-
     /** What a named reference stands for, or null when the name is not one. */
     private static function named(string $name): ?string
     {
@@ -284,11 +414,9 @@ final class Kses
     {
         $out = '';
         $kept = [];
-        preg_match_all('/([a-zA-Z_:][-a-zA-Z0-9_:.]*)(?:\s*=\s*("[^"]*"|\'[^\']*\'|[^\s"\'>]+))?/', $raw, $matches, PREG_SET_ORDER);
-        foreach ($matches as $attribute) {
-            $name = strtolower($attribute[1]);
+        foreach (self::attributeList($raw) ?? [] as $name => $attribute) {
             $rules = $policy->rules($tag, $name);
-            $value = isset($attribute[2]) ? self::normalizeAttribute(self::unquoted($attribute[2])) : null;
+            $value = $attribute['value'] === null ? null : self::normalizeAttribute($attribute['value']);
             if ($rules === null || !KsesValues::satisfies($value ?? '', $value === null ? 'y' : 'n', $rules)) {
                 continue;
             }

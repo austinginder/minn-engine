@@ -10622,12 +10622,14 @@
                 "Minn\\Blocks\\Dynamic\\Theme\\Structure",
                 "Minn\\Blocks\\Parser",
                 "Minn\\Blocks\\Renderer",
+                "Minn\\Blocks\\Serializer",
                 "Minn\\Blocks\\Wrapper",
                 "Minn\\Content\\ContentScan",
                 "Minn\\Content\\Excerpt",
                 "Minn\\Content\\Menus",
                 "Minn\\Extension\\SeamRunner",
                 "Minn\\Runtime\\BlockFilters",
+                "Minn\\Support\\Kses",
                 "Minn\\Theme\\TemplatePatterns"
             ],
             "constructor": {
@@ -14738,6 +14740,7 @@
                 "Minn\\Blocks\\Renderer",
                 "Minn\\Content\\ContentScan",
                 "Minn\\Content\\Excerpt",
+                "Minn\\Support\\Kses",
                 "Minn\\Theme\\PageRenderer",
                 "Minn\\Theme\\TemplatePatterns"
             ],
@@ -16130,6 +16133,125 @@
                     ],
                     "line": 39,
                     "end": 48
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Blocks\\Serializer",
+            "short": "Serializer",
+            "namespace": "Minn\\Blocks",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Blocks/Serializer.php",
+            "lines": 46,
+            "doc": "Parsed blocks back to markup. A core block is written by its short name;\nattributes are JSON with every character that could end the comment or\nopen a tag spelled as an escape (\"<\" \"<\", \"--\" \"--\", a\nbackslash \"\\\"), so a value can never break out of its delimiter.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Blocks\\Block"
+            ],
+            "usedBy": [
+                "Minn\\Support\\Kses"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "blocks",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "blocks(array $blocks): string",
+                    "doc": "A list of parsed blocks back to markup, freeform runs as written.",
+                    "shapes": [
+                        "@param list<Block> $blocks"
+                    ],
+                    "params": [
+                        {
+                            "name": "blocks",
+                            "type": "array",
+                            "shape": "list<Block>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 20,
+                    "end": 23
+                },
+                {
+                    "routes": [],
+                    "name": "block",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "block(Minn\\Blocks\\Block $block): string",
+                    "doc": "One block with its inner blocks, as the delimiter comments the parser reads.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "block",
+                            "type": "Minn\\Blocks\\Block",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 26,
+                    "end": 34
+                },
+                {
+                    "routes": [],
+                    "name": "delimited",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "delimited(?string $name, array $attrs, string $content): string",
+                    "doc": "Content wrapped in a block's delimiters; a block with no content is written self-closing.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "attrs",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "content",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 37,
+                    "end": 48
+                },
+                {
+                    "routes": [],
+                    "name": "attributes",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "attributes(array $attrs): string",
+                    "doc": "Block attributes as the delimiter carries them.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "attrs",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 51,
+                    "end": 57
                 }
             ]
         },
@@ -85825,7 +85947,9 @@
             "implements": [],
             "extends": null,
             "uses": [],
-            "usedBy": [],
+            "usedBy": [
+                "Minn\\Support\\Kses"
+            ],
             "constructor": null,
             "cases": [],
             "constants": [
@@ -86534,14 +86658,20 @@
             "namespace": "Minn\\Support",
             "kind": "final class",
             "file": "public/minn/src/Minn/Support/Kses.php",
-            "lines": 382,
-            "doc": "The HTML a user without unfiltered_html may store. Tags outside the\nallowlist are removed and their text kept; attributes outside the tag's\nlist (and the global set) are dropped; URL attributes lose unsafe\nschemes; style attributes keep only listed properties and no code.\nComments (the block delimiters) pass through untouched.",
+            "lines": 506,
+            "doc": "The HTML a user without unfiltered_html may store. Tags outside the\nallowlist are removed and their text kept; attributes outside the tag's\nlist are dropped; URL attributes lose unsafe schemes; style attributes\nkeep only listed properties and no code. Comments keep their text, and\nblock delimiters are written back with their attribute values filtered.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Blocks\\Block",
+                "Minn\\Blocks\\Parser",
+                "Minn\\Blocks\\Serializer",
                 "Minn\\Html\\Decoder",
+                "Minn\\Support\\Entities",
+                "Minn\\Support\\KsesEntities",
                 "Minn\\Support\\KsesPolicy",
-                "Minn\\Support\\KsesValues"
+                "Minn\\Support\\KsesValues",
+                "Minn\\Support\\Utf8"
             ],
             "usedBy": [
                 "Minn\\Blocks\\Dynamic\\LatestComments",
@@ -86563,21 +86693,9 @@
             "cases": [],
             "constants": [
                 {
-                    "name": "POST",
-                    "value": "array (   'a' =>    array (     0 => 'href',     1 => 'rel',     2 => 'rev',     3 => 'name',     4 => 'target',     5 => 'download',   ),   'abbr' =>    array (   ),   'acronym' =>    array (   ),   'address' =>    array (   ),   'article' =>    array (   ),   'aside' =>    array (   ),   'audio' =>    array (     0 => 'autoplay',     1 => 'controls',     2 => 'loop',     3 => 'muted',     4 => 'preload',     5 => 'src',   ),   'b' =>    array (   ),   'bdi' =>    array (   ),   'bdo' =>    array (   ),   'big' =>    array (   ),   'blockquote' =>    array (     0 => 'cite',   ),   'br' =>    array (   ),   'button' =>    array (     0 => 'disabled',     1 => 'name',     2 => 'type',     3 => 'value',   ),   'caption' =>    array (     0 => 'align',   ),   'cite' =>    array (   ),   'code' =>    array (   ),   'col' =>    array (     0 => 'align',     1 => 'span',     2 => 'valign',     3 => 'width',   ),   'colgroup' =>    array (     0 => 'align',     1 => 'span',     2 => 'valign',     3 => 'width',   ),   'dd' =>    array (   ),   'del' =>    array (     0 => 'datetime',   ),   'details' =>    array (     0 => 'open',   ),   'dfn' =>    array (   ),   'div' =>    array (     0 => 'align',   ),   'dl' =>    array (   ),   'dt' =>    array (   ),   'em' =>    array (   ),   'fieldset' =>    array (   ),   'figcaption' =>    array (   ),   'figure' =>    array (     0 => 'align',   ),   'font' =>    array (     0 => 'color',     1 => 'face',     2 => 'size',   ),   'footer' =>    array (   ),   'h1' =>    array (     0 => 'align',   ),   'h2' =>    array (     0 => 'align',   ),   'h3' =>    array (     0 => 'align',   ),   'h4' =>    array (     0 => 'align',   ),   'h5' =>    array (     0 => 'align',   ),   'h6' =>    array (     0 => 'align',   ),   'header' =>    array (   ),   'hgroup' =>    array (   ),   'hr' =>    array (     0 => 'align',     1 => 'noshade',     2 => 'size',     3 => 'width',   ),   'i' =>    array (   ),   'img' =>    array (     0 => 'alt',     1 => 'align',     2 => 'border',     3 => 'decoding',     4 => 'fetchpriority',     5 => 'height',     6 => 'hspace',     7 => 'loading',     8 => 'longdesc',     9 => 'sizes',     10 => 'src',     11 => 'srcset',     12 => 'usemap',     13 => 'vspace',     14 => 'width',   ),   'ins' =>    array (     0 => 'cite',     1 => 'datetime',   ),   'kbd' =>    array (   ),   'label' =>    array (     0 => 'for',   ),   'legend' =>    array (     0 => 'align',   ),   'li' =>    array (     0 => 'align',     1 => 'value',   ),   'main' =>    array (     0 => 'align',   ),   'map' =>    array (     0 => 'name',   ),   'mark' =>    array (   ),   'menu' =>    array (     0 => 'type',   ),   'nav' =>    array (     0 => 'align',   ),   'object' =>    array (   ),   'ol' =>    array (     0 => 'reversed',     1 => 'start',     2 => 'type',   ),   'p' =>    array (     0 => 'align',   ),   'picture' =>    array (   ),   'pre' =>    array (     0 => 'width',   ),   'q' =>    array (     0 => 'cite',   ),   'rb' =>    array (   ),   'rp' =>    array (   ),   'rt' =>    array (   ),   'rtc' =>    array (   ),   'ruby' =>    array (   ),   's' =>    array (   ),   'samp' =>    array (   ),   'section' =>    array (     0 => 'align',   ),   'small' =>    array (   ),   'source' =>    array (     0 => 'height',     1 => 'media',     2 => 'sizes',     3 => 'src',     4 => 'srcset',     5 => 'type',     6 => 'width',   ),   'span' =>    array (     0 => 'align',   ),   'strike' =>    array (   ),   'strong' =>    array (   ),   'sub' =>    array (   ),   'summary' =>    array (     0 => 'align',   ),   'sup' =>    array (   ),   'table' =>    array (     0 => 'align',     1 => 'bgcolor',     2 => 'border',     3 => 'cellpadding',     4 => 'cellspacing',     5 => 'rules',     6 => 'summary',     7 => 'width',   ),   'tbody' =>    array (     0 => 'align',     1 => 'valign',   ),   'td' =>    array (     0 => 'abbr',     1 => 'align',     2 => 'axis',     3 => 'bgcolor',     4 => 'colspan',     5 => 'headers',     6 => 'height',     7 => 'nowrap',     8 => 'rowspan',     9 => 'scope',     10 => 'valign',     11 => 'width',   ),   'textarea' =>    array (     0 => 'cols',     1 => 'disabled',     2 => 'name',     3 => 'readonly',     4 => 'rows',   ),   'tfoot' =>    array (     0 => 'align',     1 => 'valign',   ),   'th' =>    array (     0 => 'abbr',     1 => 'align',     2 => 'axis',     3 => 'bgcolor',     4 => 'colspan',     5 => 'headers',     6 => 'height',     7 => 'nowrap',     8 => 'rowspan',     9 => 'scope',     10 => 'valign',     11 => 'width',   ),   'thead' =>    array (     0 => 'align',     1 => 'valign',   ),   'title' =>    array (   ),   'tr' =>    array (     0 => 'align',     1 => 'bgcolor',     2 => 'valign',   ),   'track' =>    array (     0 => 'default',     1 => 'kind',     2 => 'label',     3 => 'src',     4 => 'srclang',   ),   'tt' =>    array (   ),   'u' =>    array (   ),   'ul' =>    array (     0 => 'type',   ),   'var' =>    array (   ),   'video' =>    array (     0 => 'autoplay',     1 => 'controls',     2 => 'height',     3 => 'loop',     4 => 'muted',     5 => 'playsinline',     6 => 'poster',     7 => 'preload',     8 => 'src',     9 => 'width',   ), )",
-                    "doc": "",
-                    "visibility": "public"
-                },
-                {
                     "name": "COMMENT",
                     "value": "array (   'a' =>    array (     0 => 'href',     1 => 'title',     2 => 'rel',   ),   'abbr' =>    array (     0 => 'title',   ),   'acronym' =>    array (     0 => 'title',   ),   'b' =>    array (   ),   'blockquote' =>    array (     0 => 'cite',   ),   'cite' =>    array (   ),   'code' =>    array (   ),   'del' =>    array (     0 => 'datetime',   ),   'em' =>    array (   ),   'i' =>    array (   ),   'q' =>    array (     0 => 'cite',   ),   's' =>    array (   ),   'strike' =>    array (   ),   'strong' =>    array (   ), )",
                     "doc": "",
-                    "visibility": "public"
-                },
-                {
-                    "name": "GLOBAL_ATTRIBUTES",
-                    "value": "array (   0 => 'class',   1 => 'id',   2 => 'style',   3 => 'title',   4 => 'role',   5 => 'dir',   6 => 'lang',   7 => 'xml:lang',   8 => 'hidden',   9 => 'tabindex', )",
-                    "doc": "The attributes every post-content tag takes besides its own.",
                     "visibility": "public"
                 },
                 {
@@ -86636,8 +86754,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 92,
-                    "end": 95
+                    "line": 62,
+                    "end": 65
                 },
                 {
                     "routes": [],
@@ -86656,16 +86774,16 @@
                             "doc": ""
                         }
                     ],
-                    "line": 98,
-                    "end": 101
+                    "line": 68,
+                    "end": 71
                 },
                 {
                     "routes": [],
-                    "name": "filter",
+                    "name": "sanitize",
                     "static": true,
                     "visibility": "public",
-                    "signature": "filter(string $html, Minn\\Support\\KsesPolicy $policy): string",
-                    "doc": "HTML with only what the policy allows kept.",
+                    "signature": "sanitize(string $html, Minn\\Support\\KsesPolicy $policy): string",
+                    "doc": "The whole pass wp_kses makes with its default hooks: control\ncharacters out, references normalized, a \"<\" that opens no tag\nescaped, block attribute values filtered the same way, then the tags.",
                     "shapes": [],
                     "params": [
                         {
@@ -86683,8 +86801,175 @@
                             "doc": ""
                         }
                     ],
-                    "line": 104,
-                    "end": 130
+                    "line": 78,
+                    "end": 83
+                },
+                {
+                    "routes": [],
+                    "name": "withoutControls",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "withoutControls(string $html): string",
+                    "doc": "The control characters kses removes (tab, newline and carriage return stay).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "html",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 86,
+                    "end": 89
+                },
+                {
+                    "routes": [],
+                    "name": "normalizeEntities",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "normalizeEntities(string $html): string",
+                    "doc": "Every \"&\" made a reference, in one pass: a known name or a code point\nkses accepts stays one (decimal padded to three digits, hex with a\nlower-case x), anything else becomes \"&amp;\".",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "html",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 96,
+                    "end": 111
+                },
+                {
+                    "routes": [],
+                    "name": "lessThan",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "lessThan(string $html, ?Closure $escape = NULL): string",
+                    "doc": "A \"<\" that reaches the next \"<\" or the end without a \">\" is text: the\nrun is escaped the way esc_html escapes it (quotes included).",
+                    "shapes": [
+                        "@param (Closure(string): string)|null $escape"
+                    ],
+                    "params": [
+                        {
+                            "name": "html",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "escape",
+                            "type": "?Closure",
+                            "shape": "(Closure(string): string)|null",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 119,
+                    "end": 123
+                },
+                {
+                    "routes": [],
+                    "name": "escapeHtml",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "escapeHtml(string $text): string",
+                    "doc": "Text escaped for HTML with references kept: invalid UTF-8 gives nothing, quotes become &quot; and &#039;.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 126,
+                    "end": 132
+                },
+                {
+                    "routes": [],
+                    "name": "blockAttributes",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "blockAttributes(string $html, Closure $clean): string",
+                    "doc": "Block markup with every attribute key and string value passed through\nthe same filter, and the delimiters written back in their canonical\nform (\"--->\" read as \"-->\"). Markup without a comment is left alone.",
+                    "shapes": [
+                        "@param Closure(string): string $clean"
+                    ],
+                    "params": [
+                        {
+                            "name": "html",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "clean",
+                            "type": "Closure",
+                            "shape": "Closure(string): string",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 141,
+                    "end": 153
+                },
+                {
+                    "routes": [],
+                    "name": "filter",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "filter(string $html, Minn\\Support\\KsesPolicy $policy): string",
+                    "doc": "The tag pass: each run from \"<\" to the next \">\" (or the end) is a\ncomment, an inert bogus comment (\"</\" before a non-letter, \"<!\"\nbefore a lower-case letter), or an element judged by the policy;\nanything else in angle brackets goes. Text between keeps its\nreferences, with stray ones escaped. Run alone (wp_kses_split), a\nlast \"<\" with no \">\" still reads as a tag; inside sanitize() the\nless-than pass has already escaped it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "html",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "policy",
+                            "type": "Minn\\Support\\KsesPolicy",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 180,
+                    "end": 187
+                },
+                {
+                    "routes": [],
+                    "name": "attributeList",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "attributeList(string $raw): ?array",
+                    "doc": "The attributes written inside a tag, read the way kses reads them: a\nname, then \"=\" and a quoted or bare value, or no value at all; junk\nbetween (stray quotes, \"=\", \"/\") is skipped; the first of two\nsame-named attributes wins. Null when a quoted value never closes,\nwhich costs the tag every attribute.",
+                    "shapes": [
+                        "@return array<string, array{name: string, value: ?string, whole: string}>|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "raw",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 235,
+                    "end": 270
                 },
                 {
                     "routes": [],
@@ -86703,8 +86988,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 133,
-                    "end": 139
+                    "line": 273,
+                    "end": 279
                 },
                 {
                     "routes": [],
@@ -86723,8 +87008,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 142,
-                    "end": 149
+                    "line": 282,
+                    "end": 289
                 },
                 {
                     "routes": [],
@@ -86752,8 +87037,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 161,
-                    "end": 177
+                    "line": 301,
+                    "end": 317
                 },
                 {
                     "routes": [],
@@ -86779,8 +87064,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 331,
-                    "end": 345
+                    "line": 459,
+                    "end": 473
                 },
                 {
                     "routes": [],
@@ -86799,8 +87084,84 @@
                             "doc": ""
                         }
                     ],
-                    "line": 360,
-                    "end": 363
+                    "line": 488,
+                    "end": 491
+                },
+                {
+                    "routes": [],
+                    "name": "cleanValue",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "cleanValue(mixed $value, Closure $clean): mixed",
+                    "doc": "",
+                    "shapes": [
+                        "@param Closure(string): string $clean"
+                    ],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "clean",
+                            "type": "Closure",
+                            "shape": "Closure(string): string",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 156,
+                    "end": 169
+                },
+                {
+                    "routes": [],
+                    "name": "run",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "run(string $run, Minn\\Support\\KsesPolicy $policy): string",
+                    "doc": "One bracketed run as the tag pass keeps it, or nothing.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "run",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "policy",
+                            "type": "Minn\\Support\\KsesPolicy",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 190,
+                    "end": 211
+                },
+                {
+                    "routes": [],
+                    "name": "htmlComment",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "htmlComment(string $body): string",
+                    "doc": "A comment kept with its body as text: no \"--\" inside, an empty one dropped.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "body",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 214,
+                    "end": 224
                 },
                 {
                     "routes": [],
@@ -86819,8 +87180,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 180,
-                    "end": 190
+                    "line": 320,
+                    "end": 330
                 },
                 {
                     "routes": [],
@@ -86839,8 +87200,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 193,
-                    "end": 197
+                    "line": 333,
+                    "end": 337
                 },
                 {
                     "routes": [],
@@ -86859,8 +87220,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 208,
-                    "end": 223
+                    "line": 348,
+                    "end": 363
                 },
                 {
                     "routes": [],
@@ -86879,28 +87240,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 231,
-                    "end": 248
-                },
-                {
-                    "routes": [],
-                    "name": "unquoted",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "unquoted(string $value): string",
-                    "doc": "An attribute value without the one pair of quotes that wrapped it; a value may itself end in the other quote.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "value",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 251,
-                    "end": 258
+                    "line": 371,
+                    "end": 388
                 },
                 {
                     "routes": [],
@@ -86919,8 +87260,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 261,
-                    "end": 265
+                    "line": 391,
+                    "end": 395
                 },
                 {
                     "routes": [],
@@ -86939,8 +87280,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 268,
-                    "end": 275
+                    "line": 398,
+                    "end": 405
                 },
                 {
                     "routes": [],
@@ -86973,8 +87314,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 283,
-                    "end": 307
+                    "line": 413,
+                    "end": 435
                 },
                 {
                     "routes": [],
@@ -87007,8 +87348,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 310,
-                    "end": 324
+                    "line": 438,
+                    "end": 452
                 },
                 {
                     "routes": [],
@@ -87027,8 +87368,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 348,
-                    "end": 357
+                    "line": 476,
+                    "end": 485
                 },
                 {
                     "routes": [],
@@ -87047,8 +87388,105 @@
                             "doc": ""
                         }
                     ],
-                    "line": 371,
-                    "end": 396
+                    "line": 499,
+                    "end": 524
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Support\\KsesEntities",
+            "short": "KsesEntities",
+            "namespace": "Minn\\Support",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Support/KsesEntities.php",
+            "lines": 30,
+            "doc": "The named references kses keeps as written: the list captured from the\nreference (data/kses.json) plus the five XML ones. Any other name is\nstored as \"&amp;name;\".",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Support\\Kses",
+                "Minn\\Support\\KsesPolicy"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "table",
+                    "type": "?array",
+                    "readonly": false,
+                    "static": true,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "known",
+                    "type": "?array",
+                    "readonly": false,
+                    "static": true,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "known",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "known(string $name): bool",
+                    "doc": "Whether \"&name;\" is a reference kses leaves alone.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 20,
+                    "end": 24
+                },
+                {
+                    "routes": [],
+                    "name": "allowlist",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "allowlist(string $context): array",
+                    "doc": "An allowlist the reference ships, by context (\"post\" or \"data\").",
+                    "shapes": [
+                        "@return array<string, array<string, mixed>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "context",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 31,
+                    "end": 34
+                },
+                {
+                    "routes": [],
+                    "name": "table",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "table(): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [],
+                    "line": 37,
+                    "end": 40
                 }
             ]
         },
@@ -87058,12 +87496,13 @@
             "namespace": "Minn\\Support",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Support/KsesPolicy.php",
-            "lines": 120,
-            "doc": "What one kses pass allows: the tags, each tag's attributes (allowed\nplainly or with value rules), the attribute-name prefixes a tag accepts,\nwhich attributes hold URIs, and the schemes those URIs may use.",
+            "lines": 115,
+            "doc": "What one kses pass allows: the tags, each tag's attributes (allowed\nplainly or with value rules), whether a tag takes data- attributes,\nwhich attributes hold URIs, and the schemes those URIs may use.",
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Support\\Kses"
+                "Minn\\Support\\Kses",
+                "Minn\\Support\\KsesEntities"
             ],
             "usedBy": [
                 "Minn\\Support\\Kses"
@@ -87073,7 +87512,7 @@
                 "doc": "",
                 "shapes": [
                     "@param array<string, array<string, mixed>> $tags tag => attribute => true, or a list of value rules",
-                    "@param array<string, list<string>> $prefixes tag (or \"*\" for every tag) => attribute-name prefixes it accepts",
+                    "@param array<string, list<string>> $prefixes tag => attribute-name prefixes it accepts (only \"data-\")",
                     "@param list<string> $uriAttributes",
                     "@param list<string> $schemes"
                 ],
@@ -87090,7 +87529,7 @@
                         "type": "array",
                         "shape": "array<string, list<string>>",
                         "default": null,
-                        "doc": "tag (or \"*\" for every tag) => attribute-name prefixes it accepts"
+                        "doc": "tag => attribute-name prefixes it accepts (only \"data-\")"
                     },
                     {
                         "name": "uriAttributes",
@@ -87158,11 +87597,11 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "post(): self",
-                    "doc": "Post content from an author without unfiltered_html: each tag's attributes, the global ones, and any aria- or data- name.",
+                    "doc": "Post content from an author without unfiltered_html: the reference's post allowlist as captured.",
                     "shapes": [],
                     "params": [],
                     "line": 29,
-                    "end": 36
+                    "end": 32
                 },
                 {
                     "routes": [],
@@ -87173,8 +87612,8 @@
                     "doc": "Comments, profiles and term descriptions: only the attributes each tag lists, nothing global.",
                     "shapes": [],
                     "params": [],
-                    "line": 39,
-                    "end": 46
+                    "line": 35,
+                    "end": 42
                 },
                 {
                     "routes": [],
@@ -87211,8 +87650,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 58,
-                    "end": 82
+                    "line": 54,
+                    "end": 78
                 },
                 {
                     "routes": [],
@@ -87231,8 +87670,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 85,
-                    "end": 88
+                    "line": 81,
+                    "end": 84
                 },
                 {
                     "routes": [],
@@ -87260,8 +87699,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 96,
-                    "end": 108
+                    "line": 92,
+                    "end": 103
                 },
                 {
                     "routes": [],
@@ -87282,8 +87721,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 115,
-                    "end": 124
+                    "line": 110,
+                    "end": 119
                 },
                 {
                     "routes": [],
@@ -87302,8 +87741,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 127,
-                    "end": 130
+                    "line": 122,
+                    "end": 125
                 }
             ]
         },
@@ -88635,7 +89074,9 @@
             "implements": [],
             "extends": null,
             "uses": [],
-            "usedBy": [],
+            "usedBy": [
+                "Minn\\Support\\Kses"
+            ],
             "constructor": null,
             "cases": [],
             "constants": [],

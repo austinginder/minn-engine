@@ -56,19 +56,7 @@ function wp_kses($content, $allowed_html, $allowed_protocols = [])
     $content = wp_kses_no_null($content, ['slash_zero' => 'keep']);
     $content = wp_kses_normalize_entities($content);
     $content = wp_kses_hook($content, $allowed_html, $allowed_protocols);
-    return _minn_kses_text_brackets(Kses::filter($content, _minn_kses_policy($allowed_html, (array) $allowed_protocols)));
-}
-
-/** @internal a stray < or > in text is escaped, as the reference does after splitting */
-function _minn_kses_text_brackets(string $html): string
-{
-    $parts = preg_split('/(<!--.*?-->|<[^>]*>)/s', $html, -1, PREG_SPLIT_DELIM_CAPTURE);
-    foreach ($parts as $i => $part) {
-        if ($i % 2 === 0) {
-            $parts[$i] = str_replace(['<', '>'], ['&lt;', '&gt;'], $part);
-        }
-    }
-    return implode('', $parts);
+    return Kses::filter((string) $content, _minn_kses_policy($allowed_html, (array) $allowed_protocols));
 }
 
 function wp_kses_hook($content, $allowed_html, $allowed_protocols)
@@ -117,17 +105,7 @@ function wp_kses_no_null($content, $options = null)
 
 function wp_kses_normalize_entities($content, $context = 'html')
 {
-    $content = str_replace('&', '&amp;', (string) $content);
-    $content = preg_replace_callback('/&amp;([A-Za-z]{2,8}[0-9]{0,8});/', static fn (array $m) => _minn_known_entity($m[1]) ? '&' . $m[1] . ';' : '&amp;' . $m[1] . ';', $content);
-    $content = preg_replace_callback('/&amp;#(0*[0-9]{1,7});/', static function (array $m): string {
-        $code = (int) $m[1];
-        return $code > 0 && $code <= 0x10FFFF && !($code >= 0xD800 && $code <= 0xDFFF) ? '&#' . str_pad((string) $code, 3, '0', STR_PAD_LEFT) . ';' : '&amp;#' . $m[1] . ';';
-    }, $content);
-    $content = preg_replace_callback('/&amp;#[Xx](0*[0-9A-Fa-f]{1,6});/', static function (array $m): string {
-        $code = hexdec($m[1]);
-        return $code > 0 && $code <= 0x10FFFF && !($code >= 0xD800 && $code <= 0xDFFF) ? '&#x' . $m[1] . ';' : '&amp;#x' . $m[1] . ';';
-    }, $content);
-    return $content;
+    return Kses::normalizeEntities((string) $content);
 }
 
 function wp_kses_bad_protocol($content, $allowed_protocols)
@@ -171,7 +149,13 @@ function wp_kses_decode_entities($content)
 
 function wp_kses_split($content, $allowed_html, $allowed_protocols)
 {
-    return _minn_kses_text_brackets(Kses::filter((string) $content, _minn_kses_policy($allowed_html, (array) $allowed_protocols)));
+    return Kses::filter((string) $content, _minn_kses_policy($allowed_html, (array) $allowed_protocols));
+}
+
+/** Block delimiters written back with every attribute key and string value run through the same kses pass. */
+function wp_pre_kses_block_attributes($content, $allowed_html, $allowed_protocols)
+{
+    return Kses::blockAttributes((string) $content, static fn (string $value): string => wp_kses($value, $allowed_html, $allowed_protocols));
 }
 
 function wp_kses_version()
@@ -204,11 +188,12 @@ function safecss_filter_attr($css, $deprecated = '')
 function wp_kses_hair($attr, $allowed_protocols)
 {
     $out = [];
-    preg_match_all('/([a-zA-Z0-9_:-]+)(?:\s*=\s*(?:"([^"]*)"|\'([^\']*)\'|([^\s"\'>]+)))?/', (string) $attr, $m, PREG_SET_ORDER);
-    foreach ($m as $hit) {
-        $name = strtolower($hit[1]);
-        $value = $hit[2] ?? $hit[3] ?? $hit[4] ?? null;
-        $out[$name] = ['name' => $name, 'value' => $value ?? '', 'whole' => $hit[0], 'vless' => $value === null ? 'y' : 'n'];
+    foreach (Kses::attributeList((string) $attr) ?? [] as $name => $attribute) {
+        $value = $attribute['value'] ?? '';
+        if ($attribute['value'] !== null && in_array($name, wp_kses_uri_attributes(), true)) {
+            $value = wp_kses_bad_protocol($value, $allowed_protocols);
+        }
+        $out[$name] = ['name' => $name, 'value' => $value, 'whole' => $attribute['whole'], 'vless' => $attribute['value'] === null ? 'y' : 'n'];
     }
     return $out;
 }

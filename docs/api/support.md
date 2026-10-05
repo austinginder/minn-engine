@@ -14,8 +14,9 @@ escaping, serialized readers, small helpers
 | [`Html`](#html) | final class | 91 |  |
 | [`Ip`](#ip) | final class | 22 | Addresses with their identifying tail removed, for logs and analytics that |
 | [`Json`](#json) | final class | 19 | Makes a value encodable: strings that are not valid UTF-8 get their high bytes replaced, recursively. |
-| [`Kses`](#kses) | final class | 382 | The HTML a user without unfiltered_html may store. Tags outside the |
-| [`KsesPolicy`](#ksespolicy) | final readonly class | 120 | What one kses pass allows: the tags, each tag's attributes (allowed |
+| [`Kses`](#kses) | final class | 506 | The HTML a user without unfiltered_html may store. Tags outside the |
+| [`KsesEntities`](#ksesentities) | final class | 30 | The named references kses keeps as written: the list captured from the |
+| [`KsesPolicy`](#ksespolicy) | final readonly class | 115 | What one kses pass allows: the tags, each tag's attributes (allowed |
 | [`KsesValues`](#ksesvalues) | final class | 38 | The value rules an allowlist attribute may carry, as the reference judges |
 | [`Lists`](#lists) | final class | 90 | List shaping behind the facade's array utilities: the multi-field sort |
 | [`Locale`](#locale) | final class | 31 | The locale's calendar and number vocabulary as data: the names a site |
@@ -94,6 +95,8 @@ named or numeric entity stays as it is.
 controls Unicode puts there; each becomes the reference to the Unicode
 character it meant, and the five codes Windows-1252 leaves unassigned
 are removed. Only the exact unpadded decimal spelling is touched.
+
+Used by: `Minn\Support\Kses`
 
 ### static `specialchars(string $text, string|int|false $quoteStyle, bool $doubleEncode, callable $knownEntity): string`
 
@@ -258,13 +261,11 @@ A value with every string made valid UTF-8, ready to encode.
 
 The HTML a user without unfiltered_html may store. Tags outside the
 allowlist are removed and their text kept; attributes outside the tag's
-list (and the global set) are dropped; URL attributes lose unsafe
-schemes; style attributes keep only listed properties and no code.
-Comments (the block delimiters) pass through untouched.
+list are dropped; URL attributes lose unsafe schemes; style attributes
+keep only listed properties and no code. Comments keep their text, and
+block delimiters are written back with their attribute values filtered.
 
-- const `POST` = `array (   'a' =>    array (     0 => 'href',     1 => 'rel',     2 => 'rev',     3 => 'name',     4 => 'target',     5 => 'download',   ),   'abbr' =>    array (   ),   'acronym' =>    array (   ),   'address' =>    array (   ),   'article' =>    array (   ),   'aside' =>    array (   ),   'audio' =>    array (     0 => 'autoplay',     1 => 'controls',     2 => 'loop',     3 => 'muted',     4 => 'preload',     5 => 'src',   ),   'b' =>    array (   ),   'bdi' =>    array (   ),   'bdo' =>    array (   ),   'big' =>    array (   ),   'blockquote' =>    array (     0 => 'cite',   ),   'br' =>    array (   ),   'button' =>    array (     0 => 'disabled',     1 => 'name',     2 => 'type',     3 => 'value',   ),   'caption' =>    array (     0 => 'align',   ),   'cite' =>    array (   ),   'code' =>    array (   ),   'col' =>    array (     0 => 'align',     1 => 'span',     2 => 'valign',     3 => 'width',   ),   'colgroup' =>    array (     0 => 'align',     1 => 'span',     2 => 'valign',     3 => 'width',   ),   'dd' =>    array (   ),   'del' =>    array (     0 => 'datetime',   ),   'details' =>    array (     0 => 'open',   ),   'dfn' =>    array (   ),   'div' =>    array (     0 => 'align',   ),   'dl' =>    array (   ),   'dt' =>    array (   ),   'em' =>    array (   ),   'fieldset' =>    array (   ),   'figcaption' =>    array (   ),   'figure' =>    array (     0 => 'align',   ),   'font' =>    array (     0 => 'color',     1 => 'face',     2 => 'size',   ),   'footer' =>    array (   ),   'h1' =>    array (     0 => 'align',   ),   'h2' =>    array (     0 => 'align',   ),   'h3' =>    array (     0 => 'align',   ),   'h4' =>    array (     0 => 'align',   ),   'h5' =>    array (     0 => 'align',   ),   'h6' =>    array (     0 => 'align',   ),   'header' =>    array (   ),   'hgroup' =>    array (   ),   'hr' =>    array (     0 => 'align',     1 => 'noshade',     2 => 'size',     3 => 'width',   ),   'i' =>    array (   ),   'img' =>    array (     0 => 'alt',     1 => 'align',     2 => 'border',     3 => 'decoding',     4 => 'fetchpriority',     5 => 'height',     6 => 'hspace',     7 => 'loading',     8 => 'longdesc',     9 => 'sizes',     10 => 'src',     11 => 'srcset',     12 => 'usemap',     13 => 'vspace',     14 => 'width',   ),   'ins' =>    array (     0 => 'cite',     1 => 'datetime',   ),   'kbd' =>    array (   ),   'label' =>    array (     0 => 'for',   ),   'legend' =>    array (     0 => 'align',   ),   'li' =>    array (     0 => 'align',     1 => 'value',   ),   'main' =>    array (     0 => 'align',   ),   'map' =>    array (     0 => 'name',   ),   'mark' =>    array (   ),   'menu' =>    array (     0 => 'type',   ),   'nav' =>    array (     0 => 'align',   ),   'object' =>    array (   ),   'ol' =>    array (     0 => 'reversed',     1 => 'start',     2 => 'type',   ),   'p' =>    array (     0 => 'align',   ),   'picture' =>    array (   ),   'pre' =>    array (     0 => 'width',   ),   'q' =>    array (     0 => 'cite',   ),   'rb' =>    array (   ),   'rp' =>    array (   ),   'rt' =>    array (   ),   'rtc' =>    array (   ),   'ruby' =>    array (   ),   's' =>    array (   ),   'samp' =>    array (   ),   'section' =>    array (     0 => 'align',   ),   'small' =>    array (   ),   'source' =>    array (     0 => 'height',     1 => 'media',     2 => 'sizes',     3 => 'src',     4 => 'srcset',     5 => 'type',     6 => 'width',   ),   'span' =>    array (     0 => 'align',   ),   'strike' =>    array (   ),   'strong' =>    array (   ),   'sub' =>    array (   ),   'summary' =>    array (     0 => 'align',   ),   'sup' =>    array (   ),   'table' =>    array (     0 => 'align',     1 => 'bgcolor',     2 => 'border',     3 => 'cellpadding',     4 => 'cellspacing',     5 => 'rules',     6 => 'summary',     7 => 'width',   ),   'tbody' =>    array (     0 => 'align',     1 => 'valign',   ),   'td' =>    array (     0 => 'abbr',     1 => 'align',     2 => 'axis',     3 => 'bgcolor',     4 => 'colspan',     5 => 'headers',     6 => 'height',     7 => 'nowrap',     8 => 'rowspan',     9 => 'scope',     10 => 'valign',     11 => 'width',   ),   'textarea' =>    array (     0 => 'cols',     1 => 'disabled',     2 => 'name',     3 => 'readonly',     4 => 'rows',   ),   'tfoot' =>    array (     0 => 'align',     1 => 'valign',   ),   'th' =>    array (     0 => 'abbr',     1 => 'align',     2 => 'axis',     3 => 'bgcolor',     4 => 'colspan',     5 => 'headers',     6 => 'height',     7 => 'nowrap',     8 => 'rowspan',     9 => 'scope',     10 => 'valign',     11 => 'width',   ),   'thead' =>    array (     0 => 'align',     1 => 'valign',   ),   'title' =>    array (   ),   'tr' =>    array (     0 => 'align',     1 => 'bgcolor',     2 => 'valign',   ),   'track' =>    array (     0 => 'default',     1 => 'kind',     2 => 'label',     3 => 'src',     4 => 'srclang',   ),   'tt' =>    array (   ),   'u' =>    array (   ),   'ul' =>    array (     0 => 'type',   ),   'var' =>    array (   ),   'video' =>    array (     0 => 'autoplay',     1 => 'controls',     2 => 'height',     3 => 'loop',     4 => 'muted',     5 => 'playsinline',     6 => 'poster',     7 => 'preload',     8 => 'src',     9 => 'width',   ), )`
 - const `COMMENT` = `array (   'a' =>    array (     0 => 'href',     1 => 'title',     2 => 'rel',   ),   'abbr' =>    array (     0 => 'title',   ),   'acronym' =>    array (     0 => 'title',   ),   'b' =>    array (   ),   'blockquote' =>    array (     0 => 'cite',   ),   'cite' =>    array (   ),   'code' =>    array (   ),   'del' =>    array (     0 => 'datetime',   ),   'em' =>    array (   ),   'i' =>    array (   ),   'q' =>    array (     0 => 'cite',   ),   's' =>    array (   ),   'strike' =>    array (   ),   'strong' =>    array (   ), )`
-- const `GLOBAL_ATTRIBUTES` = `array (   0 => 'class',   1 => 'id',   2 => 'style',   3 => 'title',   4 => 'role',   5 => 'dir',   6 => 'lang',   7 => 'xml:lang',   8 => 'hidden',   9 => 'tabindex', )` — The attributes every post-content tag takes besides its own.
 - const `URI_ATTRIBUTES` = `array (   0 => 'action',   1 => 'archive',   2 => 'background',   3 => 'cite',   4 => 'classid',   5 => 'codebase',   6 => 'data',   7 => 'formaction',   8 => 'href',   9 => 'icon',   10 => 'longdesc',   11 => 'manifest',   12 => 'poster',   13 => 'profile',   14 => 'src',   15 => 'usemap',   16 => 'xmlns', )` — Every attribute the reference treats as holding a URI, so its scheme is judged wherever the attribute is allowed.
 - const `SCHEMES` = `array (   0 => 'http',   1 => 'https',   2 => 'ftp',   3 => 'ftps',   4 => 'mailto',   5 => 'news',   6 => 'irc',   7 => 'gopher',   8 => 'nntp',   9 => 'feed',   10 => 'telnet',   11 => 'mms',   12 => 'rtsp',   13 => 'sms',   14 => 'svn',   15 => 'tel',   16 => 'fax',   17 => 'xmpp',   18 => 'webcal',   19 => 'urn', )` — The URI schemes allowed by default.
 - const `CSS_PROPERTIES` = `array (   0 => 'background',   1 => 'background-color',   2 => 'background-image',   3 => 'background-position',   4 => 'background-repeat',   5 => 'background-size',   6 => 'background-attachment',   7 => 'background-blend-mode',   8 => 'border',   9 => 'border-radius',   10 => 'border-width',   11 => 'border-color',   12 => 'border-style',   13 => 'border-spacing',   14 => 'border-collapse',   15 => 'border-top',   16 => 'border-right',   17 => 'border-bottom',   18 => 'border-left',   19 => 'border-top-color',   20 => 'border-right-color',   21 => 'border-bottom-color',   22 => 'border-left-color',   23 => 'border-top-width',   24 => 'border-right-width',   25 => 'border-bottom-width',   26 => 'border-left-width',   27 => 'border-top-style',   28 => 'border-right-style',   29 => 'border-bottom-style',   30 => 'border-left-style',   31 => 'border-top-left-radius',   32 => 'border-top-right-radius',   33 => 'border-bottom-right-radius',   34 => 'border-bottom-left-radius',   35 => 'caption-side',   36 => 'clear',   37 => 'color',   38 => 'columns',   39 => 'column-count',   40 => 'column-gap',   41 => 'column-width',   42 => 'column-span',   43 => 'column-rule',   44 => 'cursor',   45 => 'direction',   46 => 'display',   47 => 'filter',   48 => 'float',   49 => 'flex',   50 => 'flex-basis',   51 => 'flex-direction',   52 => 'flex-flow',   53 => 'flex-grow',   54 => 'flex-shrink',   55 => 'flex-wrap',   56 => 'font',   57 => 'font-family',   58 => 'font-size',   59 => 'font-style',   60 => 'font-variant',   61 => 'font-weight',   62 => 'font-display',   63 => 'gap',   64 => 'row-gap',   65 => 'column-gap',   66 => 'grid',   67 => 'grid-area',   68 => 'grid-auto-columns',   69 => 'grid-auto-flow',   70 => 'grid-auto-rows',   71 => 'grid-column',   72 => 'grid-column-end',   73 => 'grid-column-gap',   74 => 'grid-column-start',   75 => 'grid-gap',   76 => 'grid-row',   77 => 'grid-row-end',   78 => 'grid-row-gap',   79 => 'grid-row-start',   80 => 'grid-template',   81 => 'grid-template-areas',   82 => 'grid-template-columns',   83 => 'grid-template-rows',   84 => 'height',   85 => 'min-height',   86 => 'max-height',   87 => 'width',   88 => 'min-width',   89 => 'max-width',   90 => 'justify-content',   91 => 'justify-items',   92 => 'justify-self',   93 => 'align-content',   94 => 'align-items',   95 => 'align-self',   96 => 'letter-spacing',   97 => 'line-height',   98 => 'list-style',   99 => 'list-style-image',   100 => 'list-style-position',   101 => 'list-style-type',   102 => 'margin',   103 => 'margin-top',   104 => 'margin-right',   105 => 'margin-bottom',   106 => 'margin-left',   107 => 'margin-block',   108 => 'margin-block-start',   109 => 'margin-block-end',   110 => 'margin-inline',   111 => 'margin-inline-start',   112 => 'margin-inline-end',   113 => 'object-fit',   114 => 'object-position',   115 => 'opacity',   116 => 'order',   117 => 'overflow',   118 => 'overflow-wrap',   119 => 'overflow-x',   120 => 'overflow-y',   121 => 'padding',   122 => 'padding-top',   123 => 'padding-right',   124 => 'padding-bottom',   125 => 'padding-left',   126 => 'padding-block',   127 => 'padding-block-start',   128 => 'padding-block-end',   129 => 'padding-inline',   130 => 'padding-inline-start',   131 => 'padding-inline-end',   132 => 'position',   133 => 'resize',   134 => 'table-layout',   135 => 'text-align',   136 => 'text-decoration',   137 => 'text-indent',   138 => 'text-shadow',   139 => 'text-transform',   140 => 'text-wrap',   141 => 'vertical-align',   142 => 'visibility',   143 => 'white-space',   144 => 'word-break',   145 => 'word-spacing',   146 => 'word-wrap',   147 => 'writing-mode',   148 => 'aspect-ratio',   149 => 'box-shadow',   150 => 'box-sizing',   151 => 'z-index', )`
@@ -282,9 +283,60 @@ Post content as an author without unfiltered_html may store it.
 
 A comment, profile or term description as anyone without unfiltered_html may store it: listed attributes only.
 
+### static `sanitize(string $html, Minn\Support\KsesPolicy $policy): string`
+
+The whole pass wp_kses makes with its default hooks: control
+characters out, references normalized, a "<" that opens no tag
+escaped, block attribute values filtered the same way, then the tags.
+
+### static `withoutControls(string $html): string`
+
+The control characters kses removes (tab, newline and carriage return stay).
+
+### static `normalizeEntities(string $html): string`
+
+Every "&" made a reference, in one pass: a known name or a code point
+kses accepts stays one (decimal padded to three digits, hex with a
+lower-case x), anything else becomes "&amp;".
+
+### static `lessThan(string $html, ?Closure $escape = NULL): string`
+
+A "<" that reaches the next "<" or the end without a ">" is text: the
+run is escaped the way esc_html escapes it (quotes included).
+
+- `@param (Closure(string): string)|null $escape`
+
+### static `escapeHtml(string $text): string`
+
+Text escaped for HTML with references kept: invalid UTF-8 gives nothing, quotes become &quot; and &#039;.
+
+### static `blockAttributes(string $html, Closure $clean): string`
+
+Block markup with every attribute key and string value passed through
+the same filter, and the delimiters written back in their canonical
+form ("--->" read as "-->"). Markup without a comment is left alone.
+
+- `@param Closure(string): string $clean`
+
 ### static `filter(string $html, Minn\Support\KsesPolicy $policy): string`
 
-HTML with only what the policy allows kept.
+The tag pass: each run from "<" to the next ">" (or the end) is a
+comment, an inert bogus comment ("</" before a non-letter, "<!"
+before a lower-case letter), or an element judged by the policy;
+anything else in angle brackets goes. Text between keeps its
+references, with stray ones escaped. Run alone (wp_kses_split), a
+last "<" with no ">" still reads as a tag; inside sanitize() the
+less-than pass has already escaped it.
+
+### static `attributeList(string $raw): ?array`
+
+The attributes written inside a tag, read the way kses reads them: a
+name, then "=" and a quoted or bare value, or no value at all; junk
+between (stray quotes, "=", "/") is skipped; the first of two
+same-named attributes wins. Null when a quoted value never closes,
+which costs the tag every attribute.
+
+- `@return array<string, array{name: string, value: ?string, whole: string}>|null`
 
 ### static `text(string $value): string`
 
@@ -315,7 +367,31 @@ whose path ends in ".pdf".
 
 A style attribute's value with only the listed properties kept.
 
-Internals: `deepDecode()` (private, line 180), `visible()` (private, line 193), `normalizeText()` (private, line 208), `normalizeAttribute()` (private, line 231), `unquoted()` (private, line 251), `named()` (private, line 261), `codePoint()` (private, line 268), `attributes()` (private, line 283), `rendered()` (private, line 310), `srcset()` (private, line 348), `css()` (private, line 371)
+Internals: `cleanValue()` (private, line 156), `run()` (private, line 190), `htmlComment()` (private, line 214), `deepDecode()` (private, line 320), `visible()` (private, line 333), `normalizeText()` (private, line 348), `normalizeAttribute()` (private, line 371), `named()` (private, line 391), `codePoint()` (private, line 398), `attributes()` (private, line 413), `rendered()` (private, line 438), `srcset()` (private, line 476), `css()` (private, line 499)
+
+
+## KsesEntities
+
+`final class Minn\Support\KsesEntities` · `public/minn/src/Minn/Support/KsesEntities.php`
+
+The named references kses keeps as written: the list captured from the
+reference (data/kses.json) plus the five XML ones. Any other name is
+stored as "&amp;name;".
+
+Used by: `Minn\Support\Kses`, `Minn\Support\KsesPolicy`
+
+
+### static `known(string $name): bool`
+
+Whether "&name;" is a reference kses leaves alone.
+
+### static `allowlist(string $context): array`
+
+An allowlist the reference ships, by context ("post" or "data").
+
+- `@return array<string, array<string, mixed>>`
+
+Internals: `table()` (private, line 37)
 
 
 ## KsesPolicy
@@ -323,7 +399,7 @@ Internals: `deepDecode()` (private, line 180), `visible()` (private, line 193), 
 `final readonly class Minn\Support\KsesPolicy` · `public/minn/src/Minn/Support/KsesPolicy.php`
 
 What one kses pass allows: the tags, each tag's attributes (allowed
-plainly or with value rules), the attribute-name prefixes a tag accepts,
+plainly or with value rules), whether a tag takes data- attributes,
 which attributes hold URIs, and the schemes those URIs may use.
 
 Used by: `Minn\Support\Kses`
@@ -332,7 +408,7 @@ Used by: `Minn\Support\Kses`
 
 ### static `post(): self`
 
-Post content from an author without unfiltered_html: each tag's attributes, the global ones, and any aria- or data- name.
+Post content from an author without unfiltered_html: the reference's post allowlist as captured.
 
 ### static `comment(): self`
 
@@ -664,6 +740,8 @@ Internals: `isPrivate()` (private, line 127)
 Whether bytes are well-formed UTF-8 as the reference judges them: overlong
 forms, surrogates, code points past U+10FFFF, stray continuation bytes and
 truncated sequences fail; noncharacters, NUL and a byte order mark pass.
+
+Used by: `Minn\Support\Kses`
 
 ### static `isValid(string $bytes): bool`
 
