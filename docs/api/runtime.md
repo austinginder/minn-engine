@@ -6,7 +6,7 @@ the WordPress runtime plugins load against
 |---|---|---|---|
 | [`Abilities`](#abilities) | final class | 151 | The abilities registry behind the wp_*_ability facade: categories and |
 | [`AllowedOptions`](#allowedoptions) | final class | 26 | The settings-page allowlist plugins extend: option group => the option |
-| [`Assets`](#assets) | final class | 292 | The registry behind wp_register_/wp_enqueue_ for scripts and styles: |
+| [`Assets`](#assets) | final class | 328 | The registry behind wp_register_/wp_enqueue_ for scripts and styles: |
 | [`Avatar`](#avatar) | final class | 62 | Avatars the way get_avatar_data and get_avatar decide them: the argument |
 | [`BlockFilters`](#blockfilters) | final class | 82 | The block-level filters plugin code hooks (pre_render_block, |
 | [`BlockHooks`](#blockhooks) | final class | 69 | The Block Hooks API on the engine's own front end: a plugin asks for its |
@@ -217,6 +217,10 @@ Attaches inline code to an asset.
 
 Attaches a data key to an asset.
 
+### `setTranslations(string $handle, string $domain, string $path): bool`
+
+Names the text domain and folder a script's translations come from, and makes the script depend on wp-i18n.
+
 ### `data(string $handle, string $key): mixed`
 
 A data key of an asset, or false.
@@ -228,6 +232,14 @@ Attaches a localized object to a script.
 ### `toPrint(?bool $footer = NULL): array`
 
 Every queued handle not yet printed, dependencies first, filtered to the group (footer or not).
+
+### `toPrintHandles(array $handles): array`
+
+Named handles and everything they depend on, in printing order, whether
+or not they were queued; what already printed is left out.
+
+- `@param list<string> $handles`
+- `@return list<string>`
 
 ### `withPath(): array`
 
@@ -265,7 +277,7 @@ The handles queued.
 
 Whether these are scripts or styles.
 
-Internals: `changed()` (private, line 41)
+Internals: `changed()` (private, line 41), `ordered()` (private, line 249)
 
 
 ## Avatar

@@ -2,6 +2,7 @@
 /** Translation functions over Minn\I18n: text domains loaded from .l10n.php and .mo files. Behaviour from contracts/fixtures/api/l10n.json. */
 
 use Minn\I18n\Catalog;
+use Minn\I18n\ScriptTranslations;
 use Minn\I18n\TranslationFiles;
 use Minn\Runtime\Runtime;
 
@@ -312,7 +313,51 @@ function get_translations_for_domain($domain)
 
 function wp_set_script_translations($handle, $domain = 'default', $path = '')
 {
-    return true;
+    return wp_scripts()->set_translations((string) $handle, (string) $domain, (string) $path);
+}
+
+/**
+ * A registered script's JSON translations: by handle in the folder given,
+ * then by the md5 of its path in that folder, then in the site's languages
+ * folder for its plugin, theme or the site; false when none is found.
+ */
+function load_script_textdomain($handle, $domain = 'default', $path = '')
+{
+    $item = _minn_assets('script')->item((string) $handle);
+    if ($item === null) {
+        return false;
+    }
+    $prefix = ScriptTranslations::prefix((string) $domain, determine_locale());
+    $path = rtrim((string) $path, '/');
+    if ($path !== '' && ($found = load_script_translations("{$path}/{$prefix}-{$handle}.json", $handle, $domain)) !== false) {
+        return $found;
+    }
+    $src = ScriptTranslations::absolute((string) $item['src'], site_url());
+    [$relative, $folder] = ScriptTranslations::place($src, site_url(), plugins_url(), get_theme_root_uri());
+    $relative = apply_filters('load_script_textdomain_relative_path', $relative, $src, false);
+    if (!is_string($relative) || $relative === '') {
+        return load_script_translations(false, $handle, $domain);
+    }
+    $file = $prefix . '-' . ScriptTranslations::fileHash($relative) . '.json';
+    foreach ([...($path !== '' ? ["{$path}/{$file}"] : []), rtrim(WP_LANG_DIR . '/' . $folder, '/') . '/' . $file] as $candidate) {
+        if (($found = load_script_translations($candidate, $handle, $domain)) !== false) {
+            return $found;
+        }
+    }
+    return load_script_translations(false, $handle, $domain);
+}
+
+function load_script_translations($file, $handle, $domain)
+{
+    $translations = apply_filters('pre_load_script_translations', null, $file, $handle, $domain);
+    if ($translations !== null) {
+        return $translations;
+    }
+    $file = apply_filters('load_script_translation_file', $file, $handle, $domain);
+    if (!$file || !is_readable((string) $file)) {
+        return false;
+    }
+    return apply_filters('load_script_translations', (string) file_get_contents((string) $file), $file, $handle, $domain);
 }
 
 function get_available_languages($dir = null)

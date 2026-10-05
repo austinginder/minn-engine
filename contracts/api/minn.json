@@ -47818,6 +47818,189 @@
             ]
         },
         {
+            "name": "Minn\\I18n\\ScriptTranslations",
+            "short": "ScriptTranslations",
+            "namespace": "Minn\\I18n",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/I18n/ScriptTranslations.php",
+            "lines": 60,
+            "doc": "Where a script's JSON translations are found, and how they reach the\npage. A script is placed by its URL: inside a plugin or a theme, its path\nthere; elsewhere on the site, its path from the site root; off the site,\nnowhere. The JSON files are named by the md5 of that path (with \".min.js\"\nread as \".js\"), or by the script's handle in a folder a plugin names.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "place",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "place(string $src, string $siteUrl, string $pluginsUrl, string $themesUrl): array",
+                    "doc": "A script's path inside its plugin, theme or site, and the languages\nsubfolder for it (\"plugins\", \"themes\", or \"\" for the site); the path\nis false for a script off the site.",
+                    "shapes": [
+                        "@return array{0: string|false, 1: string}"
+                    ],
+                    "params": [
+                        {
+                            "name": "src",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "siteUrl",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "pluginsUrl",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "themesUrl",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 23,
+                    "end": 38
+                },
+                {
+                    "routes": [],
+                    "name": "absolute",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "absolute(string $src, string $siteUrl): string",
+                    "doc": "The script made absolute the way place() reads it, for the filter that may move it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "src",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "siteUrl",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 41,
+                    "end": 44
+                },
+                {
+                    "routes": [],
+                    "name": "fileHash",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "fileHash(string $relative): string",
+                    "doc": "The md5 a translation file is named by: a minified script shares its source's file.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "relative",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 47,
+                    "end": 50
+                },
+                {
+                    "routes": [],
+                    "name": "prefix",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "prefix(string $domain, string $locale): string",
+                    "doc": "The start of a translation file's name: the core domain goes by locale alone.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "domain",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "locale",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 53,
+                    "end": 56
+                },
+                {
+                    "routes": [],
+                    "name": "block",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "block(string $domain, string $json): string",
+                    "doc": "The inline script that hands a script's translations to wp.i18n before the script runs.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "domain",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "json",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 59,
+                    "end": 66
+                },
+                {
+                    "routes": [],
+                    "name": "origin",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "origin(string $siteUrl): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "siteUrl",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 68,
+                    "end": 72
+                }
+            ]
+        },
+        {
             "name": "Minn\\I18n\\TextDomains",
             "short": "TextDomains",
             "namespace": "Minn\\I18n",
@@ -71676,7 +71859,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Assets.php",
-            "lines": 292,
+            "lines": 328,
             "doc": "The registry behind wp_register_/wp_enqueue_ for scripts and styles:\nhandles, sources, dependencies, versions, inline additions, localized\ndata, and the head/footer split. Printing follows the reference's tag\nshapes as far as captured; see contracts/runtime.md.",
             "implements": [],
             "extends": null,
@@ -72049,6 +72232,40 @@
                 },
                 {
                     "routes": [],
+                    "name": "setTranslations",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "setTranslations(string $handle, string $domain, string $path): bool",
+                    "doc": "Names the text domain and folder a script's translations come from, and makes the script depend on wp-i18n.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "handle",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "domain",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "path",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 185,
+                    "end": 196
+                },
+                {
+                    "routes": [],
                     "name": "data",
                     "static": false,
                     "visibility": "public",
@@ -72071,8 +72288,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 185,
-                    "end": 188
+                    "line": 199,
+                    "end": 202
                 },
                 {
                     "routes": [],
@@ -72105,8 +72322,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 191,
-                    "end": 207
+                    "line": 205,
+                    "end": 221
                 },
                 {
                     "routes": [],
@@ -72125,8 +72342,31 @@
                             "doc": ""
                         }
                     ],
-                    "line": 210,
-                    "end": 236
+                    "line": 224,
+                    "end": 231
+                },
+                {
+                    "routes": [],
+                    "name": "toPrintHandles",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "toPrintHandles(array $handles): array",
+                    "doc": "Named handles and everything they depend on, in printing order, whether\nor not they were queued; what already printed is left out.",
+                    "shapes": [
+                        "@param list<string> $handles",
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "handles",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 240,
+                    "end": 243
                 },
                 {
                     "routes": [],
@@ -72139,8 +72379,8 @@
                         "@return array<string, string> handle => path"
                     ],
                     "params": [],
-                    "line": 245,
-                    "end": 255
+                    "line": 281,
+                    "end": 291
                 },
                 {
                     "routes": [],
@@ -72159,8 +72399,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 258,
-                    "end": 264
+                    "line": 294,
+                    "end": 300
                 },
                 {
                     "routes": [],
@@ -72179,8 +72419,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 267,
-                    "end": 271
+                    "line": 303,
+                    "end": 307
                 },
                 {
                     "routes": [],
@@ -72199,8 +72439,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 274,
-                    "end": 277
+                    "line": 310,
+                    "end": 313
                 },
                 {
                     "routes": [],
@@ -72213,8 +72453,8 @@
                         "@return array<string, array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 284,
-                    "end": 287
+                    "line": 320,
+                    "end": 323
                 },
                 {
                     "routes": [],
@@ -72227,8 +72467,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 294,
-                    "end": 297
+                    "line": 330,
+                    "end": 333
                 },
                 {
                     "routes": [],
@@ -72239,8 +72479,8 @@
                     "doc": "Whether these are scripts or styles.",
                     "shapes": [],
                     "params": [],
-                    "line": 300,
-                    "end": 303
+                    "line": 336,
+                    "end": 339
                 },
                 {
                     "routes": [],
@@ -72253,6 +72493,29 @@
                     "params": [],
                     "line": 41,
                     "end": 46
+                },
+                {
+                    "routes": [],
+                    "name": "ordered",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "ordered(array $start): array",
+                    "doc": "",
+                    "shapes": [
+                        "@param list<string> $start",
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "start",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 249,
+                    "end": 272
                 }
             ]
         },

@@ -35,6 +35,9 @@ class WP_Dependencies
         foreach ($this->assets->items() as $handle => $item) {
             $dep = new _WP_Dependency($handle, $item['src'], $item['deps'], $item['ver'], $item['extra']);
             $dep->extra = ['data' => implode("\n", $item['localized']), 'before' => $item['inline']['before'], 'after' => $item['inline']['after']] + $item['data'];
+            if (isset($item['translations'])) {
+                $dep->set_translations($item['translations']['domain'], $item['translations']['path']);
+            }
             $this->registered[$handle] = $dep;
         }
         $this->queue = $this->assets->queue();
@@ -126,16 +129,22 @@ class WP_Scripts extends WP_Dependencies
         return $item === null ? '' : implode("\n", $item['inline'][$position === 'before' ? 'before' : 'after']);
     }
 
-    /**
-     * The `wp.i18n.setLocaleData` call a handle's translations would need.
-     * The engine carries no core JavaScript translations yet, so there is
-     * nothing to print and this answers false the way the reference does
-     * for an untranslated handle. Plugin code calls it while rendering
-     * (WooCommerce's blocks do), so it must exist and stay quiet.
-     */
+    public function set_translations($handle, $domain = 'default', $path = '')
+    {
+        return $this->assets?->setTranslations((string) $handle, (string) $domain, (string) $path) ?? false;
+    }
+
+    /** The translations block printed before a script, or false when it has none. */
     public function print_translations($handle, $display = true)
     {
-        return false;
+        $block = _minn_script_translations_block((string) $handle);
+        if ($block === null) {
+            return false;
+        }
+        if ($display) {
+            echo $block;
+        }
+        return $block;
     }
 }
 

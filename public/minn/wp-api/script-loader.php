@@ -1,6 +1,7 @@
 <?php
 /** Script and style registration and printing. */
 
+use Minn\I18n\ScriptTranslations;
 use Minn\Runtime\Assets;
 use Minn\Runtime\Runtime;
 
@@ -194,12 +195,32 @@ function wp_print_styles($handles = false)
     return $list;
 }
 
+/** @internal the translations a script was given, as the block printed before it, or null when it has none */
+function _minn_script_translations_block(string $handle): ?string
+{
+    $item = _minn_assets('script')->item($handle);
+    if (!isset($item['translations'])) {
+        return null;
+    }
+    $json = load_script_textdomain($handle, $item['translations']['domain'], $item['translations']['path']);
+    if (!is_string($json) || $json === '') {
+        return null;
+    }
+    $id = $handle . '-js-translations';
+    return '<script id="' . esc_attr($id) . '">' . "\n" . ScriptTranslations::block($item['translations']['domain'], $json) . _minn_source_url($id) . "\n</script>\n";
+}
+
 /** @internal prints the scripts of one group */
 function _minn_print_scripts(bool $footer): array
 {
-    $assets = _minn_assets('script');
     wp_scripts()->push();
-    $list = $assets->toPrint($footer);
+    return _minn_print_script_list(_minn_assets('script')->toPrint($footer));
+}
+
+/** @internal prints the given scripts, each with its inline blocks, and marks them done */
+function _minn_print_script_list(array $list): array
+{
+    $assets = _minn_assets('script');
     foreach ($list as $handle) {
         $item = $assets->item($handle);
         if ($item === null) {
@@ -208,6 +229,7 @@ function _minn_print_scripts(bool $footer): array
         if ($item['localized'] !== []) {
             echo '<script id="' . esc_attr($handle) . '-js-extra">' . "\n" . implode("\n", $item['localized']) . _minn_source_url($handle . '-js-extra') . "\n</script>\n";
         }
+        echo _minn_script_translations_block($handle) ?? '';
         foreach ($item['inline']['before'] as $js) {
             echo '<script id="' . esc_attr($handle) . '-js-before">' . "\n" . $js . _minn_source_url($handle . '-js-before') . "\n</script>\n";
         }
@@ -241,7 +263,12 @@ function wp_print_head_scripts()
 function wp_print_scripts($handles = false)
 {
     do_action('wp_print_scripts');
-    return _minn_print_scripts(false);
+    if ($handles === false || $handles === '' || $handles === []) {
+        return _minn_print_scripts(false);
+    }
+    // Named handles print now, with what they depend on, whether or not they were queued.
+    wp_scripts()->push();
+    return _minn_print_script_list(_minn_assets('script')->toPrintHandles((array) $handles));
 }
 
 /**

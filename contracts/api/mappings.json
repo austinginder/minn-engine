@@ -2,12 +2,12 @@
     "generated": "2026-10-05",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 475,
-        "composes": 773,
+        "minn": 477,
+        "composes": 776,
         "leaf": 397,
         "noop": 1309,
-        "functions": 2948,
-        "minnMethods": 458,
+        "functions": 2953,
+        "minnMethods": 463,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -1927,7 +1927,7 @@
         },
         "WP_Dependencies::sync": {
             "file": "classes/WP_Scripts.php",
-            "lines": 10,
+            "lines": 13,
             "kind": "leaf",
             "minn": [],
             "composes": []
@@ -5824,6 +5824,15 @@
             "composes": []
         },
         "WP_Scripts::print_translations": {
+            "file": "classes/WP_Scripts.php",
+            "lines": 8,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_script_translations_block"
+            ]
+        },
+        "WP_Scripts::set_translations": {
             "file": "classes/WP_Scripts.php",
             "lines": 1,
             "kind": "noop",
@@ -10512,18 +10521,29 @@
             ],
             "composes": []
         },
-        "_minn_print_scripts": {
+        "_minn_print_script_list": {
             "file": "script-loader.php",
-            "lines": 27,
+            "lines": 26,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "_minn_asset_url",
                 "_minn_assets",
+                "_minn_script_translations_block",
                 "_minn_source_url",
                 "apply_filters",
                 "esc_attr",
-                "esc_url",
+                "esc_url"
+            ]
+        },
+        "_minn_print_scripts": {
+            "file": "script-loader.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_assets",
+                "_minn_print_script_list",
                 "wp_scripts"
             ]
         },
@@ -10668,6 +10688,20 @@
             "composes": [
                 "add_query_arg",
                 "esc_url"
+            ]
+        },
+        "_minn_script_translations_block": {
+            "file": "script-loader.php",
+            "lines": 10,
+            "kind": "minn",
+            "minn": [
+                "Minn\\I18n\\ScriptTranslations::block"
+            ],
+            "composes": [
+                "_minn_assets",
+                "_minn_source_url",
+                "esc_attr",
+                "load_script_textdomain"
             ]
         },
         "_minn_seed_main_query": {
@@ -17827,6 +17861,35 @@
             "composes": [
                 "_minn_load_from_folder",
                 "determine_locale"
+            ]
+        },
+        "load_script_textdomain": {
+            "file": "l10n.php",
+            "lines": 22,
+            "kind": "minn",
+            "minn": [
+                "Minn\\I18n\\ScriptTranslations::absolute",
+                "Minn\\I18n\\ScriptTranslations::fileHash",
+                "Minn\\I18n\\ScriptTranslations::place",
+                "Minn\\I18n\\ScriptTranslations::prefix"
+            ],
+            "composes": [
+                "_minn_assets",
+                "apply_filters",
+                "determine_locale",
+                "get_theme_root_uri",
+                "load_script_translations",
+                "plugins_url",
+                "site_url"
+            ]
+        },
+        "load_script_translations": {
+            "file": "l10n.php",
+            "lines": 9,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters"
             ]
         },
         "load_template": {
@@ -25222,12 +25285,15 @@
         },
         "wp_print_scripts": {
             "file": "script-loader.php",
-            "lines": 2,
+            "lines": 7,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "_minn_assets",
+                "_minn_print_script_list",
                 "_minn_print_scripts",
-                "do_action"
+                "do_action",
+                "wp_scripts"
             ]
         },
         "wp_print_speculation_rules": {
@@ -26121,7 +26187,9 @@
             "lines": 1,
             "kind": "noop",
             "minn": [],
-            "composes": []
+            "composes": [
+                "wp_scripts"
+            ]
         },
         "wp_set_sidebars_widgets": {
             "file": "widgets.php",

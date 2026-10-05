@@ -181,6 +181,20 @@ final class Assets
         $this->changed();
     }
 
+    /** Names the text domain and folder a script's translations come from, and makes the script depend on wp-i18n. */
+    public function setTranslations(string $handle, string $domain, string $path): bool
+    {
+        if (!isset($this->items[$handle])) {
+            return false;
+        }
+        if (!in_array('wp-i18n', $this->items[$handle]['deps'], true)) {
+            $this->items[$handle]['deps'][] = 'wp-i18n';
+        }
+        $this->items[$handle]['translations'] = ['domain' => $domain, 'path' => $path];
+        $this->changed();
+        return true;
+    }
+
     /** A data key of an asset, or false. */
     public function data(string $handle, string $key): mixed
     {
@@ -209,6 +223,31 @@ final class Assets
     /** Every queued handle not yet printed, dependencies first, filtered to the group (footer or not). */
     public function toPrint(?bool $footer = null): array
     {
+        $order = $this->ordered($this->queue);
+        if ($footer === null) {
+            return $order;
+        }
+        return array_values(array_filter($order, fn (string $h) => (bool) ($this->items[$h]['data']['group'] ?? false) === $footer));
+    }
+
+    /**
+     * Named handles and everything they depend on, in printing order, whether
+     * or not they were queued; what already printed is left out.
+     *
+     * @param list<string> $handles
+     * @return list<string>
+     */
+    public function toPrintHandles(array $handles): array
+    {
+        return $this->ordered(array_map('strval', $handles));
+    }
+
+    /**
+     * @param list<string> $start
+     * @return list<string>
+     */
+    private function ordered(array $start): array
+    {
         $order = [];
         // A handle whose dependency is unregistered never prints, nor does anything that depends on it.
         $visit = function (string $handle) use (&$order, &$visit): bool {
@@ -226,13 +265,10 @@ final class Assets
             $order[] = $handle;
             return true;
         };
-        foreach ($this->queue as $handle) {
+        foreach ($start as $handle) {
             $visit($handle);
         }
-        if ($footer === null) {
-            return $order;
-        }
-        return array_values(array_filter($order, fn (string $h) => (bool) ($this->items[$h]['data']['group'] ?? false) === $footer));
+        return $order;
     }
 
     /**

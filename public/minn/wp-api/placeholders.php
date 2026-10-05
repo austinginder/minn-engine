@@ -433,12 +433,6 @@ function list_meta($meta)
     return null;
 }
 
-function load_script_textdomain($handle, $domain = 'default', $path = '')
-{
-    \Minn\Runtime\PlaceholderTrace::hit('load_script_textdomain');
-    return null;
-}
-
 function media_send_to_editor($html)
 {
     \Minn\Runtime\PlaceholderTrace::hit('media_send_to_editor');

@@ -2228,7 +2228,36 @@ neighbours over those classes. Fixture `contracts/fixtures/api/l10n.json`
   `select_plural_form` and `get_plural_forms_count` follow the file's
   Plural-Forms. `NOOP_Translations` is English throughout.
 
-Not yet: script translations (`load_script_textdomain`,
-`wp_set_script_translations`), `switch_to_user_locale`, the admin and
-network core files, and the engine's own front-end strings, which are
-written in English and do not pass through `__()`.
+- **Script translations** (fixture `contracts/fixtures/api/script-l10n.json`).
+  `load_script_textdomain($handle, $domain, $path)` is false for an
+  unregistered handle (no filters run). With a folder it tries
+  `{path}/{prefix}-{handle}.json` first; then it places the script by its
+  URL (made absolute from the site's origin when it starts with `/`, the
+  query dropped): inside a plugin or theme, its path there and the
+  `plugins` or `themes` languages subfolder; elsewhere on the site, its path
+  from the site root and the languages folder itself; off the site, false.
+  `load_script_textdomain_relative_path` (path, src, false) may change or
+  refuse it. The md5 of that path names the file, `.min.js` read as `.js`
+  after the filter: `{path}/{prefix}-{md5}.json`, then
+  `{lang}[/plugins|/themes]/{prefix}-{md5}.json`; the prefix is
+  `{domain}-{locale}`, or the locale alone for `default`. Nothing found,
+  or the path refused, ends in one more `load_script_translations(false,
+  …)`. Each candidate runs `pre_load_script_translations` (null, file,
+  handle, domain), `load_script_translation_file`, then
+  `load_script_translations` (the file's contents, as written).
+- `wp_set_script_translations` is false for an unregistered handle;
+  otherwise it records the domain and folder on the script and adds
+  `wp-i18n` to its dependencies. The script prints its blocks in the order
+  `-js-extra`, `-js-translations`, `-js-before`, the script, `-js-after`;
+  the translations block hands the file to `wp.i18n.setLocaleData`, and
+  is left out when no file is found.
+- `wp_print_scripts($handles)` prints the named handles and what they
+  depend on at once, queued or not, and fires `wp_print_scripts` either way
+  (it used to print only the head queue whatever it was handed).
+- The engine's own `wp.i18n` (`assets/wp/i18n.js`) evaluates Plural-Forms
+  with the same parser as the server, ported to JavaScript; it no longer
+  builds a function from the translation file's text.
+
+Not yet: `switch_to_user_locale`, the admin and network core files, and
+the engine's own front-end strings, which are written in English and do
+not pass through `__()`.
