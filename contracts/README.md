@@ -21,6 +21,9 @@ Planned layout:
   local versus GMT datetime columns).
 - `rest/` — the `wp/v2` route contract: routes, params, response shapes,
   captured as fixtures from a live WordPress instance.
+- `round-trip.md` — the second definition of done: a real site's day of
+  work on WordPress and on Minn, compared row by row, then handed back to
+  WordPress (`tests/round-trip.test.php`).
 - `blocks.md` + `fixtures/blocks/` — block rendering: the per-family battery,
   render-time additions, dynamic blocks, generated excerpts.
 - `front/` — the public-site contract: permalink structures, URL resolution

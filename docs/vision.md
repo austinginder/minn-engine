@@ -77,6 +77,8 @@ A ladder makes "usable" precise. Every kind of data sits on a rung: **preserved*
 
 The first breaks this goal found were small and real. Password reset keys and application passwords were stored under hashes only one stack could read: a reset link sent before a switch died after it, and every application password made on WordPress stopped working on Minn. Both now use WordPress's own hash, and the suites prove each direction (2026-10-05).
 
+The round trip now runs (`tests/round-trip.test.php`, `contracts/round-trip.md`) on a copy of a real site with its plugins loaded. Its first day found fourteen differences. The worst would have lost data without anyone noticing. A spam plugin's settings, kept in a PHP object inside an option, read back on Minn as a string, so the plugin took them for missing and saved its defaults over them. A sign-in rewrote every stored session with only the four keys Minn knew. Trashing a post skipped what WordPress uses to restore it. Profile edits through `/wp/v2/users/me` went nowhere. All fourteen now match WordPress, and what is left differs on purpose, each with a written reason: Minn sends no pingbacks, so it queues none, and Minn keeps its own bookkeeping in options of its own.
+
 Phase one and resumability answer different people. Phase one is the hosting stack unable to tell. Resumability is the site owner never losing anything.
 
 ## 4. The engine
