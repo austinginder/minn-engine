@@ -90451,8 +90451,8 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Options.php",
-            "lines": 196,
-            "doc": "Options as plugin code sees them: PHP values, decoded from the stored\nblob by the engine's own reader, cached for the request so a value written\nand read again in one request keeps its PHP type (an int stays an int,\nfalse stays false) exactly as the reference shows.",
+            "lines": 224,
+            "doc": "Options as plugin code sees them: PHP values, decoded from the stored\nblob by the engine's own reader, cached for the request so a value written\nand read again in one request keeps its PHP type (an int stays an int,\nfalse stays false) exactly as the reference shows. A value holding an\nobject is kept as its stored text and decoded afresh on every read, as\nthe reference does: a plugin that changes the object it was handed and\nsaves it must find the stored copy still different, or its change is\nnever written.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -90479,8 +90479,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 35,
-                "end": 37
+                "line": 41,
+                "end": 43
             },
             "cases": [],
             "constants": [
@@ -90523,6 +90523,15 @@
                     "promoted": false
                 },
                 {
+                    "name": "stored",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
                     "name": "db",
                     "type": "Minn\\Db",
                     "readonly": true,
@@ -90550,8 +90559,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 40,
-                    "end": 43
+                    "line": 46,
+                    "end": 49
                 },
                 {
                     "routes": [],
@@ -90564,8 +90573,8 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 46,
-                    "end": 54
+                    "line": 52,
+                    "end": 60
                 },
                 {
                     "routes": [],
@@ -90584,8 +90593,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 57,
-                    "end": 71
+                    "line": 63,
+                    "end": 84
                 },
                 {
                     "routes": [],
@@ -90604,8 +90613,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 74,
-                    "end": 77
+                    "line": 87,
+                    "end": 90
                 },
                 {
                     "routes": [],
@@ -90638,8 +90647,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 80,
-                    "end": 90
+                    "line": 93,
+                    "end": 103
                 },
                 {
                     "routes": [],
@@ -90672,8 +90681,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 99,
-                    "end": 107
+                    "line": 112,
+                    "end": 120
                 },
                 {
                     "routes": [],
@@ -90706,8 +90715,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 110,
-                    "end": 123
+                    "line": 123,
+                    "end": 136
                 },
                 {
                     "routes": [],
@@ -90726,8 +90735,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 126,
-                    "end": 129
+                    "line": 158,
+                    "end": 161
                 },
                 {
                     "routes": [],
@@ -90746,8 +90755,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 132,
-                    "end": 135
+                    "line": 164,
+                    "end": 167
                 },
                 {
                     "routes": [],
@@ -90766,8 +90775,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 149,
-                    "end": 159
+                    "line": 181,
+                    "end": 191
                 },
                 {
                     "routes": [],
@@ -90795,8 +90804,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 167,
-                    "end": 180
+                    "line": 199,
+                    "end": 212
                 },
                 {
                     "routes": [],
@@ -90815,8 +90824,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 183,
-                    "end": 186
+                    "line": 215,
+                    "end": 218
                 },
                 {
                     "routes": [],
@@ -90835,8 +90844,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 189,
-                    "end": 198
+                    "line": 221,
+                    "end": 230
                 },
                 {
                     "routes": [],
@@ -90855,8 +90864,55 @@
                             "doc": ""
                         }
                     ],
-                    "line": 201,
-                    "end": 210
+                    "line": 233,
+                    "end": 242
+                },
+                {
+                    "routes": [],
+                    "name": "remember",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "remember(string $name, mixed $value): void",
+                    "doc": "Caches a value just written: as given, or as stored when it holds an object.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 139,
+                    "end": 149
+                },
+                {
+                    "routes": [],
+                    "name": "holdsObject",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "holdsObject(string $stored): bool",
+                    "doc": "Whether a stored value has an object record in it (a string that only mentions one decodes afresh too, which is harmless).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "stored",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 152,
+                    "end": 155
                 },
                 {
                     "routes": [],
@@ -90891,8 +90947,8 @@
                             "doc": "the stored values that already mean $wanted"
                         }
                     ],
-                    "line": 138,
-                    "end": 146
+                    "line": 170,
+                    "end": 178
                 }
             ]
         },
@@ -101692,7 +101748,7 @@
             "namespace": "Minn\\Support",
             "kind": "final class",
             "file": "public/minn/src/Minn/Support/Serialized.php",
-            "lines": 207,
+            "lines": 285,
             "doc": "Tolerant readers for the serialized-PHP blobs WordPress stores. Nothing\nhere executes the blob; each reader scans for the one shape it needs.",
             "implements": [],
             "extends": null,
@@ -101737,7 +101793,17 @@
                     "visibility": "public"
                 }
             ],
-            "properties": [],
+            "properties": [
+                {
+                    "name": "records",
+                    "type": "?WeakMap",
+                    "readonly": false,
+                    "static": true,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                }
+            ],
             "methods": [
                 {
                     "routes": [],
@@ -101756,8 +101822,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 14,
-                    "end": 21
+                    "line": 17,
+                    "end": 24
                 },
                 {
                     "routes": [],
@@ -101776,8 +101842,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 24,
-                    "end": 32
+                    "line": 27,
+                    "end": 35
                 },
                 {
                     "routes": [],
@@ -101803,8 +101869,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 35,
-                    "end": 45
+                    "line": 38,
+                    "end": 48
                 },
                 {
                     "routes": [],
@@ -101832,8 +101898,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 60,
-                    "end": 72
+                    "line": 63,
+                    "end": 75
+                },
+                {
+                    "routes": [],
+                    "name": "storedClass",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "storedClass(object $object): ?string",
+                    "doc": "The class an object was stored as, when it came back as a stdClass of its properties.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "object",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 174,
+                    "end": 177
                 },
                 {
                     "routes": [],
@@ -101852,8 +101938,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 173,
-                    "end": 207
+                    "line": 234,
+                    "end": 264
                 },
                 {
                     "routes": [],
@@ -101872,8 +101958,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 210,
-                    "end": 216
+                    "line": 288,
+                    "end": 294
                 },
                 {
                     "routes": [],
@@ -101906,8 +101992,91 @@
                             "doc": ""
                         }
                     ],
-                    "line": 74,
-                    "end": 148
+                    "line": 77,
+                    "end": 123
+                },
+                {
+                    "routes": [],
+                    "name": "readObject",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "readObject(string $blob, int $offset, ?Closure $revive): object",
+                    "doc": "An object record. The properties land on a plain stdClass; only the\nreviver may turn that into something else, and only for a class it\nknows. A record it leaves alone keeps its class name and its stored\nproperty names (visibility markers, numbered parts, a private name a\nparent class shares) on the side, so encode() writes it back as it\nwas read instead of as a stdClass.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "blob",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "offset",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "revive",
+                            "type": "?Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 133,
+                    "end": 171
+                },
+                {
+                    "routes": [],
+                    "name": "encodeRecord",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "encodeRecord(object $object, array $record): string",
+                    "doc": "A stdClass, or a record read back as one, in PHP's own form: the\nstored class name and property names where there are some, property\nnames as strings otherwise, each value through encode() so a record\nnested inside keeps its class too.",
+                    "shapes": [
+                        "@param array{class: string, keys: array<string, int|string>, hidden: list<array{0: int|string, 1: mixed}>} $record"
+                    ],
+                    "params": [
+                        {
+                            "name": "object",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "record",
+                            "type": "array",
+                            "shape": "array{class: string, keys: array<string, int|string>, hidden: list<array{0: int|string, 1: mixed}>}",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 187,
+                    "end": 201
+                },
+                {
+                    "routes": [],
+                    "name": "encodeWrapper",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "encodeWrapper(ArrayObject|ArrayIterator $wrapper): string",
+                    "doc": "PHP's array wrappers in their own form (flags, storage, members, iterator class), the storage through encode().",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "wrapper",
+                            "type": "ArrayObject|ArrayIterator",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 204,
+                    "end": 209
                 },
                 {
                     "routes": [],
@@ -101940,8 +102109,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 150,
-                    "end": 156
+                    "line": 211,
+                    "end": 217
                 },
                 {
                     "routes": [],
@@ -101974,8 +102143,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 158,
-                    "end": 167
+                    "line": 219,
+                    "end": 228
+                },
+                {
+                    "routes": [],
+                    "name": "encodeObject",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "encodeObject(object $value): string",
+                    "doc": "Plugin code stores objects (maybe_serialize's contract). A record read\nback as a stdClass is written under the class it was stored as; a\nstdClass and PHP's array wrappers are written here so a record inside\nthem keeps its class too; any other object goes through PHP's own\nserializer, which runs nothing and matches the reference byte for\nbyte. Only reading is the hazard, and reads stay on decode().",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 274,
+                    "end": 285
                 }
             ]
         },

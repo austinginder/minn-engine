@@ -59,6 +59,27 @@ $say('prepare placeholders', (static function () { $out = []; foreach ([['%s', "
 $say('option term and comment revive', (static function () { $back = maybe_unserialize(serialize(['t' => get_term(1), 'c' => get_comment(1), 'o' => (object) ['a' => 1]])); return [get_class($back['t']), $back['t']->term_id, $back['t']->taxonomy, get_class($back['c']), $back['c']->comment_ID, get_class($back['o']), $back['o']->a]; })());
 // The reference hands back an incomplete class here and the engine a stdClass; both stacks agree it is an object of no known class.
 $say('unknown class stays unknown', (static function () { $back = maybe_unserialize('O:12:"Not_A_Class_":1:{s:1:"k";s:1:"v";}'); return [is_object($back), $back instanceof WP_Post, $back instanceof WP_Term]; })());
+// A plugin's own object, stored by WordPress, read back, changed and saved: the bytes keep the class
+// and the property visibility on both stacks (the reference revives the class, the engine keeps the record).
+if (!class_exists('Minn_Probe_Box', false)) {
+    eval('class Minn_Probe_Box { public $a = 1; protected $b = 2; private $c = 3; }');
+}
+$say('a plugin object saved back keeps its class', (static function () {
+    global $wpdb;
+    $wpdb->replace($wpdb->options, ['option_name' => 'minn_probe_box', 'option_value' => serialize(['box' => new Minn_Probe_Box()]), 'autoload' => 'off']);
+    wp_cache_delete('minn_probe_box', 'options');
+    wp_cache_delete('notoptions', 'options');
+    $value = get_option('minn_probe_box');
+    $value['box']->a = 9;
+    update_option('minn_probe_box', $value);
+    $raw = (string) $wpdb->get_var("SELECT option_value FROM {$wpdb->options} WHERE option_name = 'minn_probe_box'");
+    delete_option('minn_probe_box');
+    return str_replace("\0", '\0', $raw);
+})());
+$say('an object of no known class is written back as it was read', (static function () {
+    $blob = 'a:1:{s:4:"plan";O:14:"FS_Plugin_Plan":2:{s:2:"id";s:3:"123";s:9:"' . "\0*\0" . 'secret";s:1:"x";}}';
+    return maybe_serialize(maybe_unserialize($blob)) === $blob;
+})());
 // Transients.
 delete_transient('minn_probe_t');
 $say('transient missing', get_transient('minn_probe_t'));

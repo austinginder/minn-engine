@@ -161,6 +161,14 @@
         ]
     ],
     [
+        "a plugin object saved back keeps its class",
+        "a:1:{s:3:\"box\";O:14:\"Minn_Probe_Box\":3:{s:1:\"a\";i:9;s:4:\"\\0*\\0b\";i:2;s:17:\"\\0Minn_Probe_Box\\0c\";i:3;}}"
+    ],
+    [
+        "an object of no known class is written back as it was read",
+        true
+    ],
+    [
         "transient missing",
         false
     ],

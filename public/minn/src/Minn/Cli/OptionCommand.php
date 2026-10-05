@@ -194,7 +194,7 @@ final class OptionCommand
     private static function encode(mixed $value): string
     {
         return is_array($value) || is_bool($value) || is_int($value) || is_float($value) || $value === null
-            ? (is_string($value) ? $value : serialize($value))
+            ? (is_string($value) ? $value : Serialized::encode($value))
             : (string) $value;
     }
 }

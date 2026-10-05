@@ -28,7 +28,7 @@ the WordPress runtime plugins load against
 | [`NavMenu`](#navmenu) | final class | 303 | Nav-menu item decoration for wp_nav_menu(): the reference's class tokens |
 | [`OEmbed`](#oembed) | final class | 92 | oEmbed as data: provider matching against the wildcard table, response parsing, and the markup an oEmbed payload becomes. |
 | [`ObjectCache`](#objectcache) | final class | 52 | The per-request object cache behind wp_cache_*: groups of keys, nothing persistent. |
-| [`Options`](#options) | final class | 196 | Options as plugin code sees them: PHP values, decoded from the stored |
+| [`Options`](#options) | final class | 224 | Options as plugin code sees them: PHP values, decoded from the stored |
 | [`PackageDownload`](#packagedownload) | final class | 32 | The publisher's say over its own download. Before fetching an update |
 | [`PageMenu`](#pagemenu) | final class | 40 | The page-list menu a classic theme falls back to when no menu is |
 | [`Pages`](#pages) | final class | 113 | get_pages() as the reference shapes it: its arguments as a post query, and the tree order of the result. |
@@ -1131,7 +1131,11 @@ Empties one group.
 Options as plugin code sees them: PHP values, decoded from the stored
 blob by the engine's own reader, cached for the request so a value written
 and read again in one request keeps its PHP type (an int stays an int,
-false stays false) exactly as the reference shows.
+false stays false) exactly as the reference shows. A value holding an
+object is kept as its stored text and decoded afresh on every read, as
+the reference does: a plugin that changes the object it was handed and
+saves it must find the stored copy still different, or its change is
+never written.
 
 - const `GUARDED` = `array (   0 => 'minn_runtime_symbols',   1 => 'minn_recovery_strikes',   2 => 'minn_cron_lock', )` — The options the engine keeps for itself: the symbol-gate cache a plugin
 could otherwise rewrite to pass its own gate, the recovery strikes, the
@@ -1212,7 +1216,7 @@ What the reference stores: arrays and objects serialized, scalars as their strin
 
 A stored option value decoded the way the reference reads it.
 
-Internals: `switchAutoload()` (private, line 138)
+Internals: `remember()` (private, line 139), `holdsObject()` (private, line 152), `switchAutoload()` (private, line 170)
 
 
 ## PackageDownload

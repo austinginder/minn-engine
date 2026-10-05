@@ -2848,9 +2848,31 @@ loaded, it found these, each now matched to the oracle:
   through their constructors (nothing else runs); written back with PHP's
   own serializer they are the same bytes. A wrapper carrying member
   properties, or wrapping an object, stays a record of its parts. Unit
-  rows in `tests/unit/stored-objects.php`. Still open: a record naming a
-  class the plugin has loaded comes back a stdClass where the reference
-  instantiates it, and written back it is stored as `stdClass`.
+  rows in `tests/unit/stored-objects.php`.
+- **A plugin's own objects keep their class when written back.** A record
+  of a class no reviver knows (Freemius keeps `FS_Plugin`, `FS_Plugin_Plan`,
+  `FS_Site`, `FS_User` and `FS_Plugin_License` in its accounts option;
+  Gravity Forms, Elementor, Google Analytics and SiteGround's migrator
+  store their own) still comes back a stdClass of its properties, but
+  `Serialized` keeps its class name and stored property names (visibility
+  markers, numbered parts, a private name a parent class shares) beside it,
+  and `encode()` writes it back under them: unchanged it is the same bytes,
+  changed it is still its class. A stdClass and PHP's array wrappers are
+  encoded the same way so a record inside them keeps its class too. Before
+  this, a plugin that read such an option on the engine and saved it back
+  turned every object in it into `stdClass` for good. Probe rows `a plugin
+  object saved back keeps its class` and `an object of no known class is
+  written back as it was read` match the reference byte for byte. Still
+  open: the reference instantiates a class the plugin has loaded, so plugin
+  code calling its methods works there and fails on the engine.
+- **An option holding an object is decoded afresh on every read.** The
+  option cache handed back the same decoded object each time; a plugin that
+  changed it and called `update_option` had the engine compare the object
+  with itself, find no change, and skip the write. The reference caches the
+  stored text and decodes on each read, so the change is saved; the engine
+  now does the same for any value with an object in it (scalars and plain
+  arrays stay cached as decoded values). Post, user, term and comment meta
+  already decoded on every read.
 - **`wp_blacklist_check`** (deprecated in 5.5) is the one symbol that kept
   CleanTalk from loading: `_deprecated_function(…, '5.5.0',
   'wp_check_comment_disallowed_list()')`, then that check's answer.

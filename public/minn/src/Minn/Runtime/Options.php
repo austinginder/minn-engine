@@ -11,7 +11,11 @@ use Minn\Support\Serialized;
  * Options as plugin code sees them: PHP values, decoded from the stored
  * blob by the engine's own reader, cached for the request so a value written
  * and read again in one request keeps its PHP type (an int stays an int,
- * false stays false) exactly as the reference shows.
+ * false stays false) exactly as the reference shows. A value holding an
+ * object is kept as its stored text and decoded afresh on every read, as
+ * the reference does: a plugin that changes the object it was handed and
+ * saves it must find the stored copy still different, or its change is
+ * never written.
  */
 final class Options
 {
@@ -19,6 +23,8 @@ final class Options
     private array $cache = [];
     /** @var array<string, true> */
     private array $missing = [];
+    /** @var array<string, string> values holding an object, as stored */
+    private array $stored = [];
 
     /**
      * The options the engine keeps for itself: the symbol-gate cache a plugin
@@ -59,6 +65,9 @@ final class Options
         if (array_key_exists($name, $this->cache)) {
             return $this->cache[$name];
         }
+        if (isset($this->stored[$name])) {
+            return self::fromStorage($this->stored[$name]);
+        }
         if (isset($this->missing[$name])) {
             return null;
         }
@@ -66,6 +75,10 @@ final class Options
         if ($raw === null) {
             $this->missing[$name] = true;
             return null;
+        }
+        if (self::holdsObject($raw)) {
+            $this->stored[$name] = $raw;
+            return self::fromStorage($raw);
         }
         return $this->cache[$name] = self::fromStorage($raw);
     }
@@ -79,13 +92,13 @@ final class Options
     /** Adds an option only when it is unset. */
     public function add(string $name, mixed $value, string $autoload = 'auto'): bool
     {
-        if (array_key_exists($name, $this->cache) || $this->db->option($name) !== null) {
+        if (array_key_exists($name, $this->cache) || isset($this->stored[$name]) || $this->db->option($name) !== null) {
             return false;
         }
         $value = $value ?? '';
         $written = $this->upsert($name, self::toStorage($value), $autoload);
         unset($this->missing[$name]);
-        $this->cache[$name] = $value;
+        $this->remember($name, $value);
         return $written;
     }
 
@@ -111,15 +124,34 @@ final class Options
     {
         $value = $value ?? '';
         $old = $this->get($name);
-        if ($old === null && !array_key_exists($name, $this->cache)) {
+        if ($old === null && !array_key_exists($name, $this->cache) && !isset($this->stored[$name])) {
             return $this->add($name, $value, $autoload ?? 'auto');
         }
         if ($old === $value || self::toStorage($old) === self::toStorage($value)) {
             return false;
         }
         $this->db->execute("UPDATE {$this->db->table('options')} SET option_value = ? WHERE option_name = ?", [self::toStorage($value), $name]);
-        $this->cache[$name] = $value;
+        $this->remember($name, $value);
         return true;
+    }
+
+    /** Caches a value just written: as given, or as stored when it holds an object. */
+    private function remember(string $name, mixed $value): void
+    {
+        $stored = is_array($value) || is_object($value) ? self::toStorage($value) : '';
+        if (is_object($value) || self::holdsObject($stored)) {
+            unset($this->cache[$name]);
+            $this->stored[$name] = $stored;
+            return;
+        }
+        unset($this->stored[$name]);
+        $this->cache[$name] = $value;
+    }
+
+    /** Whether a stored value has an object record in it (a string that only mentions one decodes afresh too, which is harmless). */
+    private static function holdsObject(string $stored): bool
+    {
+        return preg_match('/(?:^|[;{}])O:\d+:"/', $stored) === 1;
     }
 
     /** Flips the autoload column; false when the option is missing or already so. */
@@ -149,7 +181,7 @@ final class Options
     public function delete(string $name): bool
     {
         $existed = $this->get($name) !== null;
-        unset($this->cache[$name]);
+        unset($this->cache[$name], $this->stored[$name]);
         $this->missing[$name] = true;
         if (!$existed) {
             return false;
@@ -182,7 +214,7 @@ final class Options
     /** Drops an option from the cache. */
     public function forget(string $name): void
     {
-        unset($this->cache[$name], $this->missing[$name]);
+        unset($this->cache[$name], $this->stored[$name], $this->missing[$name]);
     }
 
     /** What the reference stores: arrays and objects serialized, scalars as their string form. */

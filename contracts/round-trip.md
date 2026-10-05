@@ -149,8 +149,10 @@ Found by the round trip and not done yet:
   cannot refuse a sign-in or add a second factor.
 - `admin-ajax.php` answers only `rest-nonce`; a plugin's `wp_ajax_*` and
   `wp_ajax_nopriv_*` actions are not dispatched.
-- A stored object of a class a plugin has loaded comes back a stdClass and
-  is written back as one (`contracts/runtime.md`).
+- A stored object of a class a plugin has loaded comes back a plain object
+  where the reference instantiates the class, so plugin code calling its
+  methods fails on Minn. Written back it now keeps its class
+  (`contracts/runtime.md`).
 - Scheduled jobs are off in the copy; whether the site's cron keeps
   running on Minn is a second day to write.
 

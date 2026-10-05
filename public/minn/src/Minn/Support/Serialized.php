@@ -10,6 +10,9 @@ namespace Minn\Support;
  */
 final class Serialized
 {
+    /** @var \WeakMap<object, array{class: string, keys: array<string, int|string>, hidden: list<array{0: int|string, 1: mixed}>}>|null records read back as a stdClass, by object */
+    private static ?\WeakMap $records = null;
+
     /** The string values of a serialized string list. */
     public static function stringList(?string $blob): array
     {
@@ -99,35 +102,7 @@ final class Serialized
                 self::expect($blob, $offset, ';');
                 return $string;
             case 'O':
-                // The properties land on a plain stdClass; only the reviver may
-                // turn that into something else, and only for a class it knows.
-                self::expect($blob, $offset, ':');
-                $nameLength = (int) self::until($blob, $offset, ':');
-                self::expect($blob, $offset, '"');
-                $class = substr($blob, $offset, $nameLength);
-                $offset += $nameLength;
-                self::expect($blob, $offset, '"');
-                self::expect($blob, $offset, ':');
-                $count = (int) self::until($blob, $offset, ':');
-                self::expect($blob, $offset, '{');
-                $object = new \stdClass();
-                for ($i = 0; $i < $count; $i++) {
-                    // A class with its own serialization (ArrayObject, ArrayIterator)
-                    // numbers its parts: i:0 the flags, i:1 the storage, and so on.
-                    $key = self::read($blob, $offset, $revive);
-                    if (is_int($key)) {
-                        $key = (string) $key;
-                    }
-                    if (!is_string($key)) {
-                        throw new \ValueError('key');
-                    }
-                    if (str_starts_with($key, "\0")) {
-                        $key = (string) substr($key, (int) strrpos($key, "\0") + 1);
-                    }
-                    $object->{$key} = self::read($blob, $offset, $revive);
-                }
-                self::expect($blob, $offset, '}');
-                return $revive === null ? $object : $revive($class, $object);
+                return self::readObject($blob, $offset, $revive);
             case 'a':
                 self::expect($blob, $offset, ':');
                 $count = (int) self::until($blob, $offset, ':');
@@ -145,6 +120,92 @@ final class Serialized
             default:
                 throw new \ValueError('type');
         }
+    }
+
+    /**
+     * An object record. The properties land on a plain stdClass; only the
+     * reviver may turn that into something else, and only for a class it
+     * knows. A record it leaves alone keeps its class name and its stored
+     * property names (visibility markers, numbered parts, a private name a
+     * parent class shares) on the side, so encode() writes it back as it
+     * was read instead of as a stdClass.
+     */
+    private static function readObject(string $blob, int &$offset, ?\Closure $revive): object
+    {
+        self::expect($blob, $offset, ':');
+        $nameLength = (int) self::until($blob, $offset, ':');
+        self::expect($blob, $offset, '"');
+        $class = substr($blob, $offset, $nameLength);
+        $offset += $nameLength;
+        self::expect($blob, $offset, '"');
+        self::expect($blob, $offset, ':');
+        $count = (int) self::until($blob, $offset, ':');
+        self::expect($blob, $offset, '{');
+        $object = new \stdClass();
+        $keys = [];
+        $hidden = [];
+        for ($i = 0; $i < $count; $i++) {
+            $raw = self::read($blob, $offset, $revive);
+            if (!is_string($raw) && !is_int($raw)) {
+                throw new \ValueError('key');
+            }
+            // A class with its own serialization (ArrayObject) numbers its parts: i:0 the flags, i:1 the storage.
+            $name = is_int($raw) ? (string) $raw : (str_starts_with($raw, "\0") ? (string) substr($raw, (int) strrpos($raw, "\0") + 1) : $raw);
+            $value = self::read($blob, $offset, $revive);
+            if (property_exists($object, $name)) {
+                $hidden[] = [$raw, $value];
+                continue;
+            }
+            $object->{$name} = $value;
+            if ($raw !== $name) {
+                $keys[$name] = $raw;
+            }
+        }
+        self::expect($blob, $offset, '}');
+        $result = $revive === null ? $object : $revive($class, $object);
+        if ($result === $object && $class !== 'stdClass') {
+            self::$records ??= new \WeakMap();
+            self::$records[$object] = ['class' => $class, 'keys' => $keys, 'hidden' => $hidden];
+        }
+        return $result;
+    }
+
+    /** The class an object was stored as, when it came back as a stdClass of its properties. */
+    public static function storedClass(object $object): ?string
+    {
+        return self::$records !== null && isset(self::$records[$object]) ? self::$records[$object]['class'] : null;
+    }
+
+    /**
+     * A stdClass, or a record read back as one, in PHP's own form: the
+     * stored class name and property names where there are some, property
+     * names as strings otherwise, each value through encode() so a record
+     * nested inside keeps its class too.
+     *
+     * @param array{class: string, keys: array<string, int|string>, hidden: list<array{0: int|string, 1: mixed}>} $record
+     */
+    private static function encodeRecord(object $object, array $record): string
+    {
+        $body = '';
+        $count = 0;
+        foreach (get_object_vars($object) as $name => $item) {
+            $key = $record['keys'][(string) $name] ?? (string) $name;
+            $body .= self::encode($key) . self::encode($item);
+            $count++;
+        }
+        foreach ($record['hidden'] as [$key, $item]) {
+            $body .= self::encode($key) . self::encode($item);
+            $count++;
+        }
+        return 'O:' . strlen($record['class']) . ':"' . $record['class'] . '":' . $count . ':{' . $body . '}';
+    }
+
+    /** PHP's array wrappers in their own form (flags, storage, members, iterator class), the storage through encode(). */
+    private static function encodeWrapper(\ArrayObject|\ArrayIterator $wrapper): string
+    {
+        $iterator = $wrapper instanceof \ArrayObject && $wrapper->getIteratorClass() !== \ArrayIterator::class ? self::encode($wrapper->getIteratorClass()) : 'N;';
+        $class = get_class($wrapper);
+        return 'O:' . strlen($class) . ':"' . $class . '":4:{i:0;i:' . $wrapper->getFlags() . ';i:1;' . self::encode($wrapper->getArrayCopy()) . 'i:2;a:0:{}i:3;' . $iterator . '}';
     }
 
     private static function expect(string $blob, int &$offset, string $char): void
@@ -197,13 +258,30 @@ final class Serialized
             return 'a:' . count($value) . ':{' . $body . '}';
         }
         if (is_object($value)) {
-            // Plugin code stores objects (maybe_serialize's contract); WRITING
-            // them with PHP's own serializer runs nothing and matches the
-            // reference byte for byte. Only the reverse direction is the
-            // hazard, and reads stay on the tolerant decoders.
-            return serialize($value);
+            return self::encodeObject($value);
         }
         throw new \ValueError('encode');
+    }
+
+    /**
+     * Plugin code stores objects (maybe_serialize's contract). A record read
+     * back as a stdClass is written under the class it was stored as; a
+     * stdClass and PHP's array wrappers are written here so a record inside
+     * them keeps its class too; any other object goes through PHP's own
+     * serializer, which runs nothing and matches the reference byte for
+     * byte. Only reading is the hazard, and reads stay on decode().
+     */
+    private static function encodeObject(object $value): string
+    {
+        if (self::$records !== null && isset(self::$records[$value])) {
+            return self::encodeRecord($value, self::$records[$value]);
+        }
+        $class = get_class($value);
+        if ($class === \stdClass::class) {
+            return self::encodeRecord($value, ['class' => $class, 'keys' => [], 'hidden' => []]);
+        }
+        $plainWrapper = in_array($class, [\ArrayObject::class, \ArrayIterator::class, \RecursiveArrayIterator::class], true) && get_object_vars($value) === [];
+        return $plainWrapper ? self::encodeWrapper($value) : serialize($value);
     }
 
     /** The integer values of a serialized list such as sticky_posts. */
