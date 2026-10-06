@@ -16904,6 +16904,390 @@
             ]
         },
         {
+            "name": "Minn\\Blocks\\StyleEngine",
+            "short": "StyleEngine",
+            "namespace": "Minn\\Blocks",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Blocks/StyleEngine.php",
+            "lines": 147,
+            "doc": "What a block's style object comes to, as the reference's style engine\nreads it (probe style-engine): the declarations each style property\nmakes and the class names a preset or a set colour earns.\n\n- Groups in the order background, colour, border, shadow, dimensions,\nspacing, typography, and properties in their order within a group.\n- A value goes into the declarations as given. Whether it makes CSS is\nfor the declarations holder to judge.\n- A preset (\"var:preset|color|base\") becomes a custom property only\nwhere the definition names one for its kind (a colour, a gradient,\nspacing, a font size or family, a shadow, a dimension, a border radius,\na border side's colour). Elsewhere it makes nothing, and with presets\nturned into class names it makes none anywhere.\n- Sides and corners (\"padding\" => [\"top\" => ...]) name their own\nproperties in the order given. Border sides come after the whole\nborder.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "DEFINITIONS",
+                    "value": "array (   'background' =>    array (     'backgroundImage' =>      array (       'property_keys' =>        array (         'default' => 'background-image',       ),       'value_func' =>        array (         0 => 'WP_Style_Engine',         1 => 'get_url_or_value_css_declaration',       ),       'path' =>        array (         0 => 'background',         1 => 'backgroundImage',       ),     ),     'backgroundPosition' =>      array (       'property_keys' =>        array (         'default' => 'background-position',       ),       'path' =>        array (         0 => 'background',         1 => 'backgroundPosition',       ),     ),     'backgroundRepeat' =>      array (       'property_keys' =>        array (         'default' => 'background-repeat',       ),       'path' =>        array (         0 => 'background',         1 => 'backgroundRepeat',       ),     ),     'backgroundSize' =>      array (       'property_keys' =>        array (         'default' => 'background-size',       ),       'path' =>        array (         0 => 'background',         1 => 'backgroundSize',       ),     ),     'backgroundAttachment' =>      array (       'property_keys' =>        array (         'default' => 'background-attachment',       ),       'path' =>        array (         0 => 'background',         1 => 'backgroundAttachment',       ),     ),     'gradient' =>      array (       'property_keys' =>        array (         'default' => 'background-image',       ),       'css_vars' =>        array (         'gradient' => '--wp--preset--gradient--$slug',       ),       'path' =>        array (         0 => 'background',         1 => 'gradient',       ),       'classnames' =>        array (         'has-background' => true,       ),     ),   ),   'color' =>    array (     'text' =>      array (       'property_keys' =>        array (         'default' => 'color',       ),       'path' =>        array (         0 => 'color',         1 => 'text',       ),       'css_vars' =>        array (         'color' => '--wp--preset--color--$slug',       ),       'classnames' =>        array (         'has-text-color' => true,         'has-$slug-color' => 'color',       ),     ),     'background' =>      array (       'property_keys' =>        array (         'default' => 'background-color',       ),       'path' =>        array (         0 => 'color',         1 => 'background',       ),       'css_vars' =>        array (         'color' => '--wp--preset--color--$slug',       ),       'classnames' =>        array (         'has-background' => true,         'has-$slug-background-color' => 'color',       ),     ),     'gradient' =>      array (       'property_keys' =>        array (         'default' => 'background',       ),       'path' =>        array (         0 => 'color',         1 => 'gradient',       ),       'css_vars' =>        array (         'gradient' => '--wp--preset--gradient--$slug',       ),       'classnames' =>        array (         'has-background' => true,         'has-$slug-gradient-background' => 'gradient',       ),     ),   ),   'border' =>    array (     'color' =>      array (       'property_keys' =>        array (         'default' => 'border-color',         'individual' => 'border-%s-color',       ),       'path' =>        array (         0 => 'border',         1 => 'color',       ),       'classnames' =>        array (         'has-border-color' => true,         'has-$slug-border-color' => 'color',       ),     ),     'radius' =>      array (       'property_keys' =>        array (         'default' => 'border-radius',         'individual' => 'border-%s-radius',       ),       'path' =>        array (         0 => 'border',         1 => 'radius',       ),       'css_vars' =>        array (         'border-radius' => '--wp--preset--border-radius--$slug',       ),     ),     'style' =>      array (       'property_keys' =>        array (         'default' => 'border-style',         'individual' => 'border-%s-style',       ),       'path' =>        array (         0 => 'border',         1 => 'style',       ),     ),     'width' =>      array (       'property_keys' =>        array (         'default' => 'border-width',         'individual' => 'border-%s-width',       ),       'path' =>        array (         0 => 'border',         1 => 'width',       ),     ),     'top' =>      array (       'value_func' =>        array (         0 => 'WP_Style_Engine',         1 => 'get_individual_property_css_declarations',       ),       'path' =>        array (         0 => 'border',         1 => 'top',       ),       'css_vars' =>        array (         'color' => '--wp--preset--color--$slug',       ),     ),     'right' =>      array (       'value_func' =>        array (         0 => 'WP_Style_Engine',         1 => 'get_individual_property_css_declarations',       ),       'path' =>        array (         0 => 'border',         1 => 'right',       ),       'css_vars' =>        array (         'color' => '--wp--preset--color--$slug',       ),     ),     'bottom' =>      array (       'value_func' =>        array (         0 => 'WP_Style_Engine',         1 => 'get_individual_property_css_declarations',       ),       'path' =>        array (         0 => 'border',         1 => 'bottom',       ),       'css_vars' =>        array (         'color' => '--wp--preset--color--$slug',       ),     ),     'left' =>      array (       'value_func' =>        array (         0 => 'WP_Style_Engine',         1 => 'get_individual_property_css_declarations',       ),       'path' =>        array (         0 => 'border',         1 => 'left',       ),       'css_vars' =>        array (         'color' => '--wp--preset--color--$slug',       ),     ),   ),   'shadow' =>    array (     'shadow' =>      array (       'property_keys' =>        array (         'default' => 'box-shadow',       ),       'path' =>        array (         0 => 'shadow',       ),       'css_vars' =>        array (         'shadow' => '--wp--preset--shadow--$slug',       ),     ),   ),   'dimensions' =>    array (     'aspectRatio' =>      array (       'property_keys' =>        array (         'default' => 'aspect-ratio',       ),       'path' =>        array (         0 => 'dimensions',         1 => 'aspectRatio',       ),       'classnames' =>        array (         'has-aspect-ratio' => true,       ),     ),     'height' =>      array (       'property_keys' =>        array (         'default' => 'height',       ),       'path' =>        array (         0 => 'dimensions',         1 => 'height',       ),       'css_vars' =>        array (         'dimension' => '--wp--preset--dimension--$slug',       ),     ),     'minHeight' =>      array (       'property_keys' =>        array (         'default' => 'min-height',       ),       'path' =>        array (         0 => 'dimensions',         1 => 'minHeight',       ),       'css_vars' =>        array (         'dimension' => '--wp--preset--dimension--$slug',       ),     ),     'minWidth' =>      array (       'property_keys' =>        array (         'default' => 'min-width',       ),       'path' =>        array (         0 => 'dimensions',         1 => 'minWidth',       ),       'css_vars' =>        array (         'dimension' => '--wp--preset--dimension--$slug',       ),     ),     'objectFit' =>      array (       'property_keys' =>        array (         'default' => 'object-fit',       ),       'path' =>        array (         0 => 'dimensions',         1 => 'objectFit',       ),     ),     'width' =>      array (       'property_keys' =>        array (         'default' => 'width',       ),       'path' =>        array (         0 => 'dimensions',         1 => 'width',       ),       'css_vars' =>        array (         'dimension' => '--wp--preset--dimension--$slug',       ),     ),   ),   'spacing' =>    array (     'padding' =>      array (       'property_keys' =>        array (         'default' => 'padding',         'individual' => 'padding-%s',       ),       'path' =>        array (         0 => 'spacing',         1 => 'padding',       ),       'css_vars' =>        array (         'spacing' => '--wp--preset--spacing--$slug',       ),     ),     'margin' =>      array (       'property_keys' =>        array (         'default' => 'margin',         'individual' => 'margin-%s',       ),       'path' =>        array (         0 => 'spacing',         1 => 'margin',       ),       'css_vars' =>        array (         'spacing' => '--wp--preset--spacing--$slug',       ),     ),   ),   'typography' =>    array (     'fontSize' =>      array (       'property_keys' =>        array (         'default' => 'font-size',       ),       'path' =>        array (         0 => 'typography',         1 => 'fontSize',       ),       'css_vars' =>        array (         'font-size' => '--wp--preset--font-size--$slug',       ),       'classnames' =>        array (         'has-$slug-font-size' => 'font-size',       ),     ),     'fontFamily' =>      array (       'property_keys' =>        array (         'default' => 'font-family',       ),       'css_vars' =>        array (         'font-family' => '--wp--preset--font-family--$slug',       ),       'path' =>        array (         0 => 'typography',         1 => 'fontFamily',       ),       'classnames' =>        array (         'has-$slug-font-family' => 'font-family',       ),     ),     'fontStyle' =>      array (       'property_keys' =>        array (         'default' => 'font-style',       ),       'path' =>        array (         0 => 'typography',         1 => 'fontStyle',       ),     ),     'fontWeight' =>      array (       'property_keys' =>        array (         'default' => 'font-weight',       ),       'path' =>        array (         0 => 'typography',         1 => 'fontWeight',       ),     ),     'lineHeight' =>      array (       'property_keys' =>        array (         'default' => 'line-height',       ),       'path' =>        array (         0 => 'typography',         1 => 'lineHeight',       ),     ),     'textColumns' =>      array (       'property_keys' =>        array (         'default' => 'column-count',       ),       'path' =>        array (         0 => 'typography',         1 => 'textColumns',       ),     ),     'textDecoration' =>      array (       'property_keys' =>        array (         'default' => 'text-decoration',       ),       'path' =>        array (         0 => 'typography',         1 => 'textDecoration',       ),     ),     'textIndent' =>      array (       'property_keys' =>        array (         'default' => 'text-indent',       ),       'path' =>        array (         0 => 'typography',         1 => 'textIndent',       ),     ),     'textTransform' =>      array (       'property_keys' =>        array (         'default' => 'text-transform',       ),       'path' =>        array (         0 => 'typography',         1 => 'textTransform',       ),     ),     'letterSpacing' =>      array (       'property_keys' =>        array (         'default' => 'letter-spacing',       ),       'path' =>        array (         0 => 'typography',         1 => 'letterSpacing',       ),     ),     'writingMode' =>      array (       'property_keys' =>        array (         'default' => 'writing-mode',       ),       'path' =>        array (         0 => 'typography',         1 => 'writingMode',       ),     ),   ), )",
+                    "doc": "The reference's style definitions, by group and property (WP_Style_Engine::BLOCK_STYLE_DEFINITIONS_METADATA).",
+                    "visibility": "public"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "parse",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "parse(array $styles, array $options = array ( )): array",
+                    "doc": "A style object's declarations and class names.",
+                    "shapes": [
+                        "@param array<string, mixed> $styles",
+                        "@param array<string, mixed> $options convert_vars_to_classnames turns presets into class names alone",
+                        "@return array{declarations: array<string, mixed>, classnames: list<string>}"
+                    ],
+                    "params": [
+                        {
+                            "name": "styles",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "options",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": "array ( )",
+                            "doc": "convert_vars_to_classnames turns presets into class names alone"
+                        }
+                    ],
+                    "line": 37,
+                    "end": 54
+                },
+                {
+                    "routes": [],
+                    "name": "slug",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "slug(mixed $value, string $kind): ?string",
+                    "doc": "A preset's slug for a kind (\"var:preset|color|base\" for color is \"base\"), or null.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "kind",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 57,
+                    "end": 64
+                },
+                {
+                    "routes": [],
+                    "name": "var",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "var(mixed $value, array $vars): ?string",
+                    "doc": "A preset as the custom property the definition names for its kind, or null. @param array<string, string> $vars",
+                    "shapes": [
+                        "@param array<string, string> $vars"
+                    ],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "vars",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 67,
+                    "end": 76
+                },
+                {
+                    "routes": [],
+                    "name": "at",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "at(array $styles, array $path): mixed",
+                    "doc": "",
+                    "shapes": [
+                        "@param list<string> $path"
+                    ],
+                    "params": [
+                        {
+                            "name": "styles",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "path",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 79,
+                    "end": 89
+                },
+                {
+                    "routes": [],
+                    "name": "present",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "present(mixed $value): bool",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 91,
+                    "end": 94
+                },
+                {
+                    "routes": [],
+                    "name": "classes",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "classes(mixed $value, array $names): array",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, string|bool> $names @return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "names",
+                            "type": "array",
+                            "shape": "array<string, string|bool>",
+                            "default": null,
+                            "doc": "@return list<string>"
+                        }
+                    ],
+                    "line": 97,
+                    "end": 108
+                },
+                {
+                    "routes": [],
+                    "name": "declarations",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "declarations(mixed $value, array $definition, array $vars): array",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, mixed> $definition @param array<string, string> $vars the custom properties presets may become @return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "definition",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "@param array<string, string> $vars the custom properties presets may become @return array<string, mixed>"
+                        },
+                        {
+                            "name": "vars",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 111,
+                    "end": 121
+                },
+                {
+                    "routes": [],
+                    "name": "one",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "one(mixed $value, string $property, array $vars): array",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, string> $vars @return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "property",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "vars",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": null,
+                            "doc": "@return array<string, mixed>"
+                        }
+                    ],
+                    "line": 124,
+                    "end": 131
+                },
+                {
+                    "routes": [],
+                    "name": "sides",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "sides(array $value, string $pattern, array $vars): array",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string|int, mixed> $value @param array<string, string> $vars @return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "array",
+                            "shape": "array<string|int, mixed>",
+                            "default": null,
+                            "doc": "@param array<string, string> $vars @return array<string, mixed>"
+                        },
+                        {
+                            "name": "pattern",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "vars",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 134,
+                    "end": 143
+                },
+                {
+                    "routes": [],
+                    "name": "side",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "side(array $value, string $side, array $vars): array",
+                    "doc": "A border side's parts in the order given, the colour taking a preset. @param array<string|int, mixed> $value @param array<string, string> $vars @return array<string, mixed>",
+                    "shapes": [
+                        "@param array<string|int, mixed> $value @param array<string, string> $vars @return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "array",
+                            "shape": "array<string|int, mixed>",
+                            "default": null,
+                            "doc": "@param array<string, string> $vars @return array<string, mixed>"
+                        },
+                        {
+                            "name": "side",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "vars",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 146,
+                    "end": 155
+                },
+                {
+                    "routes": [],
+                    "name": "url",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "url(mixed $value, string $property): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "property",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 158,
+                    "end": 164
+                },
+                {
+                    "routes": [],
+                    "name": "kebab",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "kebab(string $text): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 166,
+                    "end": 170
+                }
+            ]
+        },
+        {
             "name": "Minn\\Blocks\\Styles",
             "short": "Styles",
             "namespace": "Minn\\Blocks",

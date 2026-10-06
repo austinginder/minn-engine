@@ -655,18 +655,6 @@ function wp_should_load_block_editor_scripts_and_styles()
     return null;
 }
 
-function wp_style_engine_get_styles($block_styles, $options = [])
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_style_engine_get_styles');
-    return null;
-}
-
-function wp_style_engine_get_stylesheet_from_context($context, $options = [])
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_style_engine_get_stylesheet_from_context');
-    return null;
-}
-
 function wp_templating_constants()
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_templating_constants');

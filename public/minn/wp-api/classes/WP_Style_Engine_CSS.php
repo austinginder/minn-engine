@@ -14,7 +14,8 @@ class WP_Style_Engine_CSS_Declarations
     public function add_declaration($property, $value)
     {
         $property = strtolower(trim((string) $property));
-        if ($property === '' || !is_scalar($value) || trim((string) $value) === '') {
+        // Only a string value makes CSS (probe style-engine): a number stays in the declarations it came from.
+        if ($property === '' || !is_string($value) || trim($value) === '') {
             return $this;
         }
         $filtered = safecss_filter_attr($property . ':' . trim((string) $value));
@@ -118,19 +119,20 @@ class WP_Style_Engine_CSS_Rule
         return $this->selector;
     }
 
+    /** A grouped rule nests a level deeper inside its group, both indented from $indent_count (probe style-engine). */
     public function get_css($should_prettify = false, $indent_count = 0)
     {
-        $indent = $should_prettify ? str_repeat("\t", (int) $indent_count) : '';
-        $open = $should_prettify ? " {\n" : '{';
-        $close = $should_prettify ? "\n" . $indent . '}' : '}';
-        $body = $this->declarations->get_declarations_string($should_prettify, (int) $indent_count + 1);
+        $depth = (int) $indent_count + ($this->rules_group !== '' ? 1 : 0);
+        $indent = $should_prettify ? str_repeat("\t", $depth) : '';
+        $body = $this->declarations->get_declarations_string($should_prettify, $depth + 1);
         if ($body === '') {
             return '';
         }
-        $css = $indent . $this->selector . $open . $body . $close;
-        if ($this->rules_group !== '') {
-            $css = $this->rules_group . ($should_prettify ? " {\n" : '{') . $css . ($should_prettify ? "\n}" : '}');
+        $css = $should_prettify ? "{$indent}{$this->selector} {\n{$body}\n{$indent}}" : "{$this->selector}{{$body}}";
+        if ($this->rules_group === '') {
+            return $css;
         }
-        return $css;
+        $outer = $should_prettify ? str_repeat("\t", (int) $indent_count) : '';
+        return $should_prettify ? "{$outer}{$this->rules_group} {\n{$css}\n{$outer}}" : "{$this->rules_group}{{$css}}";
     }
 }

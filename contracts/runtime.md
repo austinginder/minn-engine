@@ -4302,3 +4302,28 @@ neither registered nor one of these waits for its registration.
   a dependency. So a plugin's script that depends on it prints, as it does on
   the reference. Before, such a script never printed. (Where the engine
   ships no copy of that library, the script prints without it.)
+
+## The style engine (2026-10-06)
+
+`wp_style_engine_get_styles`, `wp_style_engine_get_stylesheet_from_css_rules`
+and `wp_style_engine_get_stylesheet_from_context` work as the reference's do
+(probe `style-engine`). They were placeholders.
+- **Parsing.** A block's style object is parsed (`Blocks\StyleEngine`) by
+  the reference's own definitions table,
+  `WP_Style_Engine::BLOCK_STYLE_DEFINITIONS_METADATA`, captured with the
+  inventory. The groups and properties go in its order.
+  - A value goes into the declarations as given.
+  - A preset becomes a custom property only where its definition names one
+    for that kind. Turning presets into class names drops them from the
+    CSS.
+  - Sides and corners name their own properties.
+  - A colour, a font size or family, a border colour, a gradient and an
+    aspect ratio earn their class names.
+- **CSS.** Only string values make CSS: a number stays in the declarations
+  without CSS. A rule with a selector is kept in a context's store
+  (`WP_Style_Engine_CSS_Rules_Store`).
+- **Stylesheets.** The processor (`WP_Style_Engine_Processor`) merges a
+  selector's rules and writes rules groups around them. Prettified, the
+  rules are indented and nested.
+- **Fixes.** `WP_Style_Engine_CSS_Declarations` now makes CSS of string
+  values only, and a grouped rule's prettified CSS nests a level deeper.

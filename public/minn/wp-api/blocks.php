@@ -1225,3 +1225,47 @@ function get_block_categories($post_or_block_editor_context)
     }
     return $categories;
 }
+
+/** A block style object's CSS, declarations and class names (WP_Style_Engine); kept in a store when a context and a selector are given. */
+function wp_style_engine_get_styles($block_styles, $options = [])
+{
+    $options = wp_parse_args($options, ['selector' => null, 'context' => null, 'convert_vars_to_classnames' => false]);
+    $parsed = WP_Style_Engine::parse_block_styles($block_styles, $options);
+    $out = [];
+    if (!empty($parsed['declarations'])) {
+        $out['css'] = WP_Style_Engine::compile_css($parsed['declarations'], $options['selector']);
+        $out['declarations'] = $parsed['declarations'];
+        if (!empty($options['context'])) {
+            WP_Style_Engine::store_css_rule($options['context'], $options['selector'], $parsed['declarations']);
+        }
+    }
+    if (!empty($parsed['classnames'])) {
+        $out['classnames'] = implode(' ', array_unique($parsed['classnames']));
+    }
+    return array_filter($out);
+}
+
+/** A stylesheet from rules ({selector, declarations, rules_group}), a selector's merged; kept in a store when a context is given. */
+function wp_style_engine_get_stylesheet_from_css_rules($css_rules, $options = [])
+{
+    $options = wp_parse_args($options, ['context' => null]);
+    $objects = [];
+    foreach (empty($css_rules) ? [] : (array) $css_rules as $rule) {
+        if (empty($rule['selector']) || empty($rule['declarations']) || !is_array($rule['declarations'])) {
+            continue;
+        }
+        $group = (string) ($rule['rules_group'] ?? '');
+        if (!empty($options['context'])) {
+            WP_Style_Engine::store_css_rule($options['context'], $rule['selector'], $rule['declarations'], $group);
+        }
+        $objects[] = new WP_Style_Engine_CSS_Rule($rule['selector'], $rule['declarations'], $group);
+    }
+    return $objects === [] ? '' : WP_Style_Engine::compile_stylesheet_from_css_rules($objects, $options);
+}
+
+/** The stylesheet of the rules a context's store keeps. */
+function wp_style_engine_get_stylesheet_from_context($context, $options = [])
+{
+    return WP_Style_Engine::compile_stylesheet_from_css_rules(WP_Style_Engine::get_store($context)->get_all_rules(), $options);
+}
+

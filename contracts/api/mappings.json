@@ -3,11 +3,11 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
         "minn": 636,
-        "composes": 898,
-        "leaf": 643,
-        "noop": 1828,
-        "functions": 3935,
-        "minnMethods": 657,
+        "composes": 902,
+        "leaf": 649,
+        "noop": 1840,
+        "functions": 3957,
+        "minnMethods": 660,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -10908,6 +10908,68 @@
                 "wp_sitemaps_get_max_urls"
             ]
         },
+        "WP_Style_Engine::compile_css": {
+            "file": "classes/WP_Style_Engine.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Style_Engine::compile_stylesheet_from_css_rules": {
+            "file": "classes/WP_Style_Engine.php",
+            "lines": 3,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Style_Engine::get_css_var_value": {
+            "file": "classes/WP_Style_Engine.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Blocks\\StyleEngine::var"
+            ],
+            "composes": []
+        },
+        "WP_Style_Engine::get_slug_from_preset_value": {
+            "file": "classes/WP_Style_Engine.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Blocks\\StyleEngine::slug"
+            ],
+            "composes": []
+        },
+        "WP_Style_Engine::get_store": {
+            "file": "classes/WP_Style_Engine.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Style_Engine::is_valid_style_value": {
+            "file": "classes/WP_Style_Engine.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Style_Engine::parse_block_styles": {
+            "file": "classes/WP_Style_Engine.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Blocks\\StyleEngine::parse"
+            ],
+            "composes": []
+        },
+        "WP_Style_Engine::store_css_rule": {
+            "file": "classes/WP_Style_Engine.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "WP_Style_Engine_CSS_Declarations::__construct": {
             "file": "classes/WP_Style_Engine_CSS.php",
             "lines": 1,
@@ -10917,7 +10979,7 @@
         },
         "WP_Style_Engine_CSS_Declarations::add_declaration": {
             "file": "classes/WP_Style_Engine_CSS.php",
-            "lines": 13,
+            "lines": 14,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -11014,6 +11076,88 @@
             "kind": "leaf",
             "minn": [],
             "composes": []
+        },
+        "WP_Style_Engine_CSS_Rules_Store::add_rule": {
+            "file": "classes/WP_Style_Engine_CSS_Rules_Store.php",
+            "lines": 8,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Style_Engine_CSS_Rules_Store::get_all_rules": {
+            "file": "classes/WP_Style_Engine_CSS_Rules_Store.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Style_Engine_CSS_Rules_Store::get_name": {
+            "file": "classes/WP_Style_Engine_CSS_Rules_Store.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Style_Engine_CSS_Rules_Store::get_store": {
+            "file": "classes/WP_Style_Engine_CSS_Rules_Store.php",
+            "lines": 8,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Style_Engine_CSS_Rules_Store::get_stores": {
+            "file": "classes/WP_Style_Engine_CSS_Rules_Store.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Style_Engine_CSS_Rules_Store::remove_all_stores": {
+            "file": "classes/WP_Style_Engine_CSS_Rules_Store.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Style_Engine_CSS_Rules_Store::remove_rule": {
+            "file": "classes/WP_Style_Engine_CSS_Rules_Store.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Style_Engine_CSS_Rules_Store::set_name": {
+            "file": "classes/WP_Style_Engine_CSS_Rules_Store.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Style_Engine_Processor::add_rules": {
+            "file": "classes/WP_Style_Engine_Processor.php",
+            "lines": 13,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Style_Engine_Processor::add_store": {
+            "file": "classes/WP_Style_Engine_Processor.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "_doing_it_wrong"
+            ]
+        },
+        "WP_Style_Engine_Processor::get_css": {
+            "file": "classes/WP_Style_Engine_Processor.php",
+            "lines": 9,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_parse_args"
+            ]
         },
         "WP_Styles::__construct": {
             "file": "classes/WP_Scripts.php",
@@ -34371,6 +34515,31 @@
             "minn": [],
             "composes": [
                 "_minn_assets"
+            ]
+        },
+        "wp_style_engine_get_styles": {
+            "file": "blocks.php",
+            "lines": 14,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_parse_args"
+            ]
+        },
+        "wp_style_engine_get_stylesheet_from_context": {
+            "file": "blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "wp_style_engine_get_stylesheet_from_css_rules": {
+            "file": "blocks.php",
+            "lines": 13,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_parse_args"
             ]
         },
         "wp_style_is": {
