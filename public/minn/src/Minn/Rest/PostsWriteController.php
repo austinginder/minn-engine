@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Runtime\PostSave;
 use Minn\Http\Policy;
 use Minn\Http\Subject;
 use Minn\Http\Access;
@@ -96,6 +97,7 @@ final readonly class PostsWriteController
         }
 
         $columns = $this->newColumns($body, $type, $author, $status, $slug, $date, $dateGmt, $modified, $modifiedGmt, $title);
+        $columns = PostSave::filter($columns, null, $body, $request, $type, $this->writer->uniqueSlug(...));
         $events = $this->events();
         $events->beforeSave($columns, null);
         // The row, its default category and its guid are the post the save
@@ -196,6 +198,7 @@ final readonly class PostsWriteController
         $columns = [...$this->floatingDate($body, $post), ...$this->fieldColumns($body, $post, $type), ...$this->statusColumns($body, $post, $type)];
         $columns['post_modified'] = $this->site->localNow();
         $columns['post_modified_gmt'] = gmdate('Y-m-d H:i:s');
+        $columns = PostSave::filter($columns, $post, $body, $request, $type, $this->writer->uniqueSlug(...));
         $events = $this->events();
         $events->beforeSave($columns, $post);
         $this->writer->update($postId, $columns);

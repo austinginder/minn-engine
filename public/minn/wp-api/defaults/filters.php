@@ -143,6 +143,20 @@ add_action('comment_post', 'wp_new_comment_notify_moderator');
 add_action('comment_post', 'wp_new_comment_notify_postauthor');
 add_action('set_comment_cookies', 'wp_set_comment_cookies', 10, 3);
 add_action('comment_form', 'wp_comment_form_unfiltered_html_nonce');
+// A post's columns on the way in, as the reference registers them (probe post-insert-filters); kses and the custom-CSS strip come from kses_init.
+add_filter('content_save_pre', 'convert_invalid_entities');
+add_filter('content_save_pre', 'balanceTags', 50);
+add_filter('title_save_pre', 'trim');
+add_filter('excerpt_save_pre', 'convert_invalid_entities');
+add_filter('excerpt_save_pre', 'balanceTags', 50);
+add_filter('pre_post_status', 'sanitize_key');
+add_filter('pre_post_guid', 'wp_strip_all_tags');
+add_filter('pre_post_guid', 'sanitize_url');
+add_filter('pre_post_guid', 'wp_filter_kses');
+add_filter('pre_post_mime_type', 'sanitize_mime_type');
+add_filter('wp_insert_post_data', '_wp_customize_changeset_filter_insert_post_data', 10, 2);
+add_filter('wp_insert_post_parent', 'wp_check_post_hierarchy_for_loops', 10, 2);
+add_filter('pre_wp_unique_post_slug', 'wp_filter_wp_template_unique_post_slug', 10, 5);
 // What a user may post unfiltered is settled once WordPress is up and again whenever the user changes.
 add_action('init', 'kses_init');
 add_action('set_current_user', 'kses_init');

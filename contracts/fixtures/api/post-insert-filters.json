@@ -1,0 +1,91 @@
+[
+    [
+        "a draft",
+        {
+            "result": "id",
+            "filters": [
+                "content_save_pre('Body \\\\\"quoted\\\\\"')",
+                "pre_post_title('zz insert probe draft')",
+                "title_save_pre('zz insert probe draft')",
+                "excerpt_save_pre('')",
+                "pre_post_status('draft')",
+                "status_save_pre('draft')",
+                "wp_insert_post_empty_content(false | 'array[ID,comment_status,context,filter,guid,import_id,menu_order,ping_status,pinged,post_author,post_content,post_content_filtered,post_date,post_date_gmt,post_excerpt,post_parent,post_password,post_status,post_title,post_type,to_ping]')",
+                "wp_insert_post_parent(0 | 0 | 'array[ID,comment_status,guid,import_id,menu_order,ping_status,pinged,post_author,post_content,post_content_filtered,post_date,post_date_gmt,post_excerpt,post_parent,post_password,post_status,post_title,post_type,to_ping]' | 'array[ID,comment_status,context,filter,guid,import_id,menu_order,ping_status,pinged,post_author,post_content,post_content_filtered,post_date,post_date_gmt,post_excerpt,post_parent,post_password,post_status,post_title,post_type,to_ping]')",
+                "wp_insert_post_data('array[comment_status,guid,menu_order,ping_status,pinged,post_author,post_content,post_content_filtered,post_date,post_date_gmt,post_excerpt,post_mime_type,post_modified,post_modified_gmt,post_name,post_parent,post_password,post_status,post_title,post_type,to_ping]' | 'array[ID,comment_status,context,filter,guid,import_id,menu_order,ping_status,pinged,post_author,post_content,post_content_filtered,post_date,post_date_gmt,post_excerpt,post_parent,post_password,post_status,post_title,post_type,to_ping]' | 'array[post_content,post_status,post_title,post_type]' | false)"
+            ]
+        }
+    ],
+    [
+        "a publish with no slug",
+        {
+            "result": "id",
+            "filters": [
+                "content_save_pre('Body')",
+                "pre_post_title('zz insert probe live')",
+                "title_save_pre('zz insert probe live')",
+                "excerpt_save_pre('')",
+                "pre_post_status('publish')",
+                "status_save_pre('publish')",
+                "wp_insert_post_empty_content(false | 'array[ID,comment_status,context,filter,guid,import_id,menu_order,ping_status,pinged,post_author,post_content,post_content_filtered,post_date,post_date_gmt,post_excerpt,post_parent,post_password,post_status,post_title,post_type,to_ping]')",
+                "wp_insert_post_parent(0 | 0 | 'array[ID,comment_status,guid,import_id,menu_order,ping_status,pinged,post_author,post_content,post_content_filtered,post_date,post_date_gmt,post_excerpt,post_parent,post_password,post_status,post_title,post_type,to_ping]' | 'array[ID,comment_status,context,filter,guid,import_id,menu_order,ping_status,pinged,post_author,post_content,post_content_filtered,post_date,post_date_gmt,post_excerpt,post_parent,post_password,post_status,post_title,post_type,to_ping]')",
+                "pre_wp_unique_post_slug(NULL | 'zz-insert-probe-live' | 0 | 'publish' | 'post' | 0)",
+                "wp_unique_post_slug_is_bad_flat_slug(false | 'zz-insert-probe-live' | 'post')",
+                "wp_unique_post_slug('zz-insert-probe-live' | 0 | 'publish' | 'post' | 0 | 'zz-insert-probe-live')",
+                "wp_insert_post_data('array[comment_status,guid,menu_order,ping_status,pinged,post_author,post_content,post_content_filtered,post_date,post_date_gmt,post_excerpt,post_mime_type,post_modified,post_modified_gmt,post_name,post_parent,post_password,post_status,post_title,post_type,to_ping]' | 'array[ID,comment_status,context,filter,guid,import_id,menu_order,ping_status,pinged,post_author,post_content,post_content_filtered,post_date,post_date_gmt,post_excerpt,post_parent,post_password,post_status,post_title,post_type,to_ping]' | 'array[post_content,post_status,post_title,post_type]' | false)"
+            ]
+        }
+    ],
+    [
+        "an edit",
+        {
+            "result": "id",
+            "filters": [
+                "content_save_pre('Body')",
+                "pre_post_title('zz insert probe live edited')",
+                "title_save_pre('zz insert probe live edited')",
+                "excerpt_save_pre('')",
+                "pre_post_status('publish')",
+                "status_save_pre('publish')",
+                "pre_post_name('zz-insert-probe-live')",
+                "name_save_pre('zz-insert-probe-live')",
+                "wp_insert_post_empty_content(false | 'array[ID,ancestors,comment_count,comment_status,context,filter,guid,import_id,menu_order,page_template,ping_status,pinged,post_author,post_category,post_content,post_content_filtered,post_date,post_date_gmt,post_excerpt,post_mime_type,post_modified,post_modified_gmt,post_name,post_parent,post_password,post_status,post_title,post_type,to_ping]')",
+                "wp_insert_post_parent(0 | {id} | 'array[ID,comment_status,guid,import_id,menu_order,ping_status,pinged,post_author,post_content,post_content_filtered,post_date,post_date_gmt,post_excerpt,post_parent,post_password,post_status,post_title,post_type,to_ping]' | 'array[ID,ancestors,comment_count,comment_status,context,filter,guid,import_id,menu_order,page_template,ping_status,pinged,post_author,post_category,post_content,post_content_filtered,post_date,post_date_gmt,post_excerpt,post_mime_type,post_modified,post_modified_gmt,post_name,post_parent,post_password,post_status,post_title,post_type,to_ping]')",
+                "pre_wp_unique_post_slug(NULL | 'zz-insert-probe-live' | {id} | 'publish' | 'post' | 0)",
+                "wp_unique_post_slug_is_bad_flat_slug(false | 'zz-insert-probe-live' | 'post')",
+                "wp_unique_post_slug('zz-insert-probe-live' | {id} | 'publish' | 'post' | 0 | 'zz-insert-probe-live')",
+                "wp_insert_post_data('array[comment_status,guid,menu_order,ping_status,pinged,post_author,post_content,post_content_filtered,post_date,post_date_gmt,post_excerpt,post_mime_type,post_modified,post_modified_gmt,post_name,post_parent,post_password,post_status,post_title,post_type,to_ping]' | 'array[ID,ancestors,comment_count,comment_status,context,filter,guid,import_id,menu_order,page_template,ping_status,pinged,post_author,post_category,post_content,post_content_filtered,post_date,post_date_gmt,post_excerpt,post_mime_type,post_modified,post_modified_gmt,post_name,post_parent,post_password,post_status,post_title,post_type,to_ping]' | 'array[ID,ancestors,comment_count,comment_status,filter,guid,menu_order,page_template,ping_status,pinged,post_author,post_category,post_content,post_content_filtered,post_date,post_date_gmt,post_excerpt,post_mime_type,post_modified,post_modified_gmt,post_name,post_parent,post_password,post_status,post_title,post_type,to_ping]' | true)"
+            ]
+        }
+    ],
+    [
+        "nothing at all",
+        {
+            "result": "empty_content",
+            "filters": [
+                "content_save_pre('')",
+                "pre_post_title('')",
+                "title_save_pre('')",
+                "excerpt_save_pre('')",
+                "pre_post_status('draft')",
+                "status_save_pre('draft')",
+                "wp_insert_post_empty_content(true | 'array[ID,comment_status,context,filter,guid,import_id,menu_order,ping_status,pinged,post_author,post_content,post_content_filtered,post_date,post_date_gmt,post_excerpt,post_parent,post_password,post_status,post_title,post_type,to_ping]')"
+            ]
+        }
+    ],
+    [
+        "a plugin changes the save",
+        [
+            "zz insert probe changed (saved)",
+            "zz-insert-probe-changed-saved-zz",
+            "set by wp_insert_post_data"
+        ]
+    ],
+    [
+        "wp_insert_post_empty_content refuses",
+        [
+            "empty_content",
+            "Content, title, and excerpt are empty."
+        ]
+    ]
+]

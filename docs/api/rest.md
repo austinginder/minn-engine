@@ -36,7 +36,7 @@ the wp/v2 surface: shapes and controllers
 | [`PolicyGate`](#policygate) | final readonly class | 91 | Judges a route's policy against the caller, with the reference's |
 | [`PostObject`](#postobject) | final readonly class | 482 | Builds the wp/v2 post and page objects in the reference's shape: the |
 | [`PostsController`](#postscontroller) | final readonly class | 182 | wp/v2 posts and pages, read side. |
-| [`PostsWriteController`](#postswritecontroller) | final readonly class | 424 | wp/v2 posts and pages, write side: create, update, trash, and force |
+| [`PostsWriteController`](#postswritecontroller) | final readonly class | 426 | wp/v2 posts and pages, write side: create, update, trash, and force |
 | [`Reply`](#reply) | final class | 47 | JSON responses in the reference's shape: its header set, its json_encode |
 | [`RestUrl`](#resturl) | final readonly class | 38 | REST URLs in the form the reference emits for the site's permalink mode: |
 | [`RevisionsController`](#revisionscontroller) | final readonly class | 142 | wp/v2 revisions and autosaves under posts, pages, and blocks. |
@@ -1506,7 +1506,7 @@ Trashes a post of any type, or deletes it with force.
 
 A field that may arrive as a scalar or as {raw: ...}.
 
-Internals: `events()` (private, line 120), `newColumns()` (private, line 131), `writeNewPost()` (private, line 165), `trash()` (private, line 270), `rememberOld()` (private, line 289), `floatingDate()` (private, line 314), `scheduledIfFuture()` (private, line 324), `fieldColumns()` (private, line 343), `statusColumns()` (private, line 388), `checkStickyPasswordConflict()` (private, line 418), `validStatus()` (private, line 430), `clean()` (private, line 439)
+Internals: `events()` (private, line 122), `newColumns()` (private, line 133), `writeNewPost()` (private, line 167), `trash()` (private, line 273), `rememberOld()` (private, line 292), `floatingDate()` (private, line 317), `scheduledIfFuture()` (private, line 327), `fieldColumns()` (private, line 346), `statusColumns()` (private, line 391), `checkStickyPasswordConflict()` (private, line 421), `validStatus()` (private, line 433), `clean()` (private, line 442)
 
 
 ## Reply
@@ -1731,7 +1731,7 @@ their turn; the runtime's say before the engine answers at all (an
 authentication refusal, a pre-dispatch answer, a removed endpoint);
 and the runtime's namespaces folded into the index.
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\RuntimeEnvelope`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\TermEvents`, `Minn\Runtime\UserEvents`
+Used by: `Minn\Rest\Api`, `Minn\Rest\RuntimeEnvelope`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Runtime\TermEvents`, `Minn\Runtime\UserEvents`
 
 
 ### static `gate(Minn\Http\Request $request): ?Minn\Http\Response`

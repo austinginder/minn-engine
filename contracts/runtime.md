@@ -3438,3 +3438,37 @@ required-fields note and no fields; a user who may post unfiltered HTML
 gets `wp_comment_form_unfiltered_html_nonce` on `comment_form` (the nonce,
 renamed by an inline script only outside a frame). The suite compares the
 form for all three readers (97).
+
+## Saves plugins can change (2026-10-06)
+
+A post saved through Minn's REST routes, or through `wp_insert_post` by a
+plugin, now passes the filters the reference's save runs before it writes,
+in its order (probe `post-insert-filters`, every filter's arguments
+compared; suite `rest-envelope`'s save cases): `rest_pre_insert_{type}`
+over the prepared post (the REST fields the request named, its ID on an
+edit, its type on a create; an error refuses with its status); every
+column through its db context, on slashed text, as `sanitize_post` runs it
+(`pre_post_*` then `*_save_pre`, a column named without the prefix
+`pre_post_*` then `*_pre`); `wp_insert_post_empty_content`, which refuses
+a post of a type with an editor, a title and an excerpt that has none of
+them (400 `empty_content`); `wp_insert_post_parent` (default
+`wp_check_post_hierarchy_for_loops`: no parent that would make the post
+its own ancestor); for a post that is not a draft, pending or an
+auto-draft, the slug, made from the title the filters left when the
+request gave none, through `pre_wp_unique_post_slug`, the bad-slug filter
+(the next free number) and `wp_unique_post_slug`; then
+`wp_insert_post_data` over the 21 columns, handed the sanitized array, what
+was given (a create's own fields and type; an update's whole merged post,
+its categories among them) and whether it updates. What any of them
+changes is what is written (`Runtime\PostSave`, shared by the REST
+controller and the facade).
+
+The reference's defaults are registered with it: `content_save_pre`
+`convert_invalid_entities` and `balanceTags` at 50 (and, for a user who may
+not post unfiltered HTML, kses and `wp_strip_custom_css_from_blocks` at 8,
+which takes a block's `style.css` out), `title_save_pre` `trim`,
+`excerpt_save_pre` entities and `balanceTags`, `pre_post_status`
+`sanitize_key`, `pre_post_guid` tags out, `sanitize_url` and kses,
+`pre_post_mime_type` `sanitize_mime_type`, and the template and changeset
+callbacks, which hand Minn's values back (it keeps template slugs itself and
+has no changesets).

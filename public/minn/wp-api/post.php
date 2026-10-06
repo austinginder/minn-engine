@@ -1,6 +1,7 @@
 <?php
 /** Posts: reads, the lists, the writers, post types, statuses. Behaviour from contracts/fixtures/api/content.json. */
 
+use Minn\Runtime\PostSave;
 use Minn\Content\Excerpt;
 use Minn\Content\Posts;
 use Minn\Content\PostWriter;
@@ -848,25 +849,33 @@ function _minn_post_columns(array $postarr, ?WP_Post $existing): array
 
 function wp_insert_post($postarr, $wp_error = false, $fire_after_hooks = true)
 {
-    $postarr = wp_unslash((array) $postarr);
-    $insert = _minn_post_insert();
-    $update = !empty($postarr['ID']);
-    $existing = $update ? get_post((int) $postarr['ID']) : null;
+    $given = (array) $postarr;
+    $update = !empty($given['ID']);
+    $existing = $update ? get_post((int) $given['ID']) : null;
     if ($update && $existing === null) {
         return $wp_error ? new WP_Error('invalid_post', 'Invalid post ID.') : 0;
     }
+    // The reference's order (probe post-insert-filters): each column through its db context, the empty check,
+    // the parent, the post's own dates, status and slug, the slug's filters, wp_insert_post_data.
+    $sanitized = PostSave::sanitized($given);
+    $insert = _minn_post_insert();
     $before = $existing?->to_array();
-    $postarr = apply_filters('wp_insert_post_data', $postarr, $postarr, $postarr, $update);
-    $columns = $insert->columns($postarr, $before);
-    if (apply_filters('wp_insert_post_empty_content', $insert->isEmpty($columns, $before), $postarr)) {
+    $columns = $insert->columns((array) wp_unslash($sanitized), $before);
+    $type = (string) ($columns['post_type'] ?? $existing->post_type);
+    if (PostSave::refusesEmpty($sanitized, $type)) {
         return $wp_error ? new WP_Error('empty_content', 'Content, title, and excerpt are empty.') : 0;
     }
+    $postId = (int) ($existing?->ID ?? 0);
+    $columns['post_parent'] = (string) PostSave::parent($sanitized, $postId);
     $columns = $insert->resolve($columns, $before);
-    _minn_post_before_save($columns, $update ? $existing->ID : 0);
+    if (!in_array($columns['post_status'], ['draft', 'pending', 'auto-draft'], true)) {
+        $columns['post_name'] = PostSave::slugFilters((string) $columns['post_name'], $postId, (string) $columns['post_status'], $type, (int) $columns['post_parent'], static fn (string $desired, int $exclude): string => _minn_post_writer()->uniqueSlug($desired, $exclude));
+    }
+    $columns = array_replace($columns, PostSave::data($columns, $sanitized, $given, $postId));
+    _minn_post_before_save($columns, $postId);
     $id = $insert->persist($columns, $existing?->ID, static fn (int $id): string => home_url('/?p=' . $id));
     wp_cache_delete($id, 'posts');
-    $type = $columns['post_type'] ?? $existing->post_type;
-    _minn_post_inputs($id, $postarr, $type, $columns['post_status'], $update);
+    _minn_post_inputs($id, (array) wp_unslash($given), $type, $columns['post_status'], $update);
     _minn_post_writer()->recountTaxonomiesOf($id);
     $post = _minn_post_saved($id, $update, $existing);
     if ($fire_after_hooks) {
@@ -1019,11 +1028,8 @@ function wp_update_post($postarr = [], $wp_error = false, $fire_after_hooks = tr
         return $wp_error ? new WP_Error('invalid_post', 'Invalid post ID.') : 0;
     }
     $existing = $post->to_array();
+    // The stored post under the given fields, its categories among them, as the reference merges it.
     $merged = array_merge($existing, wp_unslash($postarr));
-    $merged['post_category'] = $postarr['post_category'] ?? null;
-    if ($merged['post_category'] === null) {
-        unset($merged['post_category']);
-    }
     if (isset($merged['tags_input'])) {
         // Given explicitly by the caller only.
     } else {
@@ -1933,4 +1939,38 @@ function get_post_mime_types()
         $types[$pattern] = [__($label), __($manage), _n_noop($singular, $plural)];
     }
     return apply_filters('post_mime_types', $types);
+}
+
+/** wp_insert_post_parent's default: no parent that would make the post its own ancestor (0 instead). */
+function wp_check_post_hierarchy_for_loops($post_parent, $post_id)
+{
+    $post_parent = (int) $post_parent;
+    $post_id = (int) $post_id;
+    if ($post_parent === 0 || $post_id === 0) {
+        return $post_parent;
+    }
+    $seen = [];
+    for ($ancestor = $post_parent; $ancestor > 0 && !isset($seen[$ancestor]); $ancestor = (int) wp_get_post_parent_id($ancestor)) {
+        if ($ancestor === $post_id) {
+            return 0;
+        }
+        $seen[$ancestor] = true;
+    }
+    return $post_parent;
+}
+
+/**
+ * pre_wp_unique_post_slug's default: a template's slug is the engine's own
+ * concern (Minn\Rest\TemplatesController keeps it unique per theme), so
+ * this hands every slug back as it came.
+ */
+function wp_filter_wp_template_unique_post_slug($override_slug, $slug, $post_id, $post_status, $post_type)
+{
+    return $override_slug;
+}
+
+/** wp_insert_post_data's default, for the customizer's changesets, which Minn does not keep: the data as it came. */
+function _wp_customize_changeset_filter_insert_post_data($post_data, $supplied_post_data)
+{
+    return $post_data;
 }

@@ -26244,6 +26244,7 @@
                 "Minn\\Rest\\SearchController",
                 "Minn\\Runtime\\CommentCloser",
                 "Minn\\Runtime\\PostEvents",
+                "Minn\\Runtime\\PostSave",
                 "Minn\\Theme\\ClassicContent",
                 "Minn\\Theme\\HeadLinks",
                 "Minn\\Theme\\UserStyles"
@@ -56987,6 +56988,7 @@
                 "Minn\\Runtime\\AjaxController",
                 "Minn\\Runtime\\CommentEvents",
                 "Minn\\Runtime\\PostEvents",
+                "Minn\\Runtime\\PostSave",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\TermEvents",
                 "Minn\\Runtime\\UserEvents"
@@ -73200,7 +73202,8 @@
                 "Minn\\Rest\\TemplatesController",
                 "Minn\\Rest\\TermsController",
                 "Minn\\Rest\\TypesController",
-                "Minn\\Rest\\UsersController"
+                "Minn\\Rest\\UsersController",
+                "Minn\\Runtime\\PostSave"
             ],
             "constructor": {
                 "signature": "__construct(string $errorCode, string $message, int $status, array $extra = array ( ), array $topLevel = array ( ), bool $bare = false)",
@@ -81913,7 +81916,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/PostsWriteController.php",
-            "lines": 424,
+            "lines": 426,
             "doc": "wp/v2 posts and pages, write side: create, update, trash, and force\ndelete, each gated by the capability engine and answering with the\nedit-context object the reference returns.",
             "implements": [],
             "extends": null,
@@ -81938,6 +81941,7 @@
                 "Minn\\Rest\\Reply",
                 "Minn\\Rest\\RestUrl",
                 "Minn\\Runtime\\PostEvents",
+                "Minn\\Runtime\\PostSave",
                 "Minn\\Support\\Kses"
             ],
             "usedBy": [
@@ -81997,8 +82001,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 34,
-                "end": 42
+                "line": 35,
+                "end": 43
             },
             "cases": [],
             "constants": [
@@ -82093,8 +82097,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 47,
-                    "end": 50
+                    "line": 48,
+                    "end": 51
                 },
                 {
                     "routes": [],
@@ -82127,8 +82131,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 53,
-                    "end": 117
+                    "line": 54,
+                    "end": 119
                 },
                 {
                     "routes": [
@@ -82165,8 +82169,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 176,
-                    "end": 179
+                    "line": 178,
+                    "end": 181
                 },
                 {
                     "routes": [],
@@ -82199,8 +82203,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 182,
-                    "end": 223
+                    "line": 184,
+                    "end": 226
                 },
                 {
                     "routes": [
@@ -82235,8 +82239,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 227,
-                    "end": 230
+                    "line": 230,
+                    "end": 233
                 },
                 {
                     "routes": [],
@@ -82269,8 +82273,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 233,
-                    "end": 263
+                    "line": 236,
+                    "end": 266
                 },
                 {
                     "routes": [],
@@ -82289,8 +82293,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 445,
-                    "end": 451
+                    "line": 448,
+                    "end": 454
                 },
                 {
                     "routes": [],
@@ -82301,8 +82305,8 @@
                     "doc": "Tells plugins about the writes, through the runtime's lifecycle.",
                     "shapes": [],
                     "params": [],
-                    "line": 120,
-                    "end": 123
+                    "line": 122,
+                    "end": 125
                 },
                 {
                     "routes": [],
@@ -82387,8 +82391,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 131,
-                    "end": 155
+                    "line": 133,
+                    "end": 157
                 },
                 {
                     "routes": [],
@@ -82409,8 +82413,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 165,
-                    "end": 170
+                    "line": 167,
+                    "end": 172
                 },
                 {
                     "routes": [],
@@ -82436,8 +82440,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 270,
-                    "end": 281
+                    "line": 273,
+                    "end": 284
                 },
                 {
                     "routes": [],
@@ -82463,8 +82467,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 289,
-                    "end": 305
+                    "line": 292,
+                    "end": 308
                 },
                 {
                     "routes": [],
@@ -82492,8 +82496,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 314,
-                    "end": 321
+                    "line": 317,
+                    "end": 324
                 },
                 {
                     "routes": [],
@@ -82519,8 +82523,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 324,
-                    "end": 334
+                    "line": 327,
+                    "end": 337
                 },
                 {
                     "routes": [],
@@ -82555,8 +82559,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 343,
-                    "end": 379
+                    "line": 346,
+                    "end": 382
                 },
                 {
                     "routes": [],
@@ -82591,8 +82595,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 388,
-                    "end": 415
+                    "line": 391,
+                    "end": 418
                 },
                 {
                     "routes": [],
@@ -82618,8 +82622,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 418,
-                    "end": 427
+                    "line": 421,
+                    "end": 430
                 },
                 {
                     "routes": [],
@@ -82638,8 +82642,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 430,
-                    "end": 436
+                    "line": 433,
+                    "end": 439
                 },
                 {
                     "routes": [],
@@ -82658,8 +82662,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 439,
-                    "end": 442
+                    "line": 442,
+                    "end": 445
                 }
             ]
         },
@@ -83975,6 +83979,7 @@
                 "Minn\\Rest\\RuntimeEnvelope",
                 "Minn\\Runtime\\CommentEvents",
                 "Minn\\Runtime\\PostEvents",
+                "Minn\\Runtime\\PostSave",
                 "Minn\\Runtime\\TermEvents",
                 "Minn\\Runtime\\UserEvents"
             ],
@@ -97907,7 +97912,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/PostInsert.php",
-            "lines": 160,
+            "lines": 166,
             "doc": "The decisions behind wp_insert_post: which columns a postarr fills, when\nthe post counts as empty, the status a publish request lands in, the dates\nand the slug, the categories a new post gets. The rows are written by\nContent\\PostWriter; the facade fires the hooks around each step.",
             "implements": [],
             "extends": null,
@@ -98083,7 +98088,7 @@
                         }
                     ],
                     "line": 33,
-                    "end": 63
+                    "end": 69
                 },
                 {
                     "routes": [],
@@ -98111,8 +98116,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 66,
-                    "end": 73
+                    "line": 72,
+                    "end": 79
                 },
                 {
                     "routes": [],
@@ -98141,8 +98146,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 83,
-                    "end": 133
+                    "line": 89,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -98175,8 +98180,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 136,
-                    "end": 147
+                    "line": 142,
+                    "end": 153
                 },
                 {
                     "routes": [],
@@ -98233,8 +98238,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 157,
-                    "end": 170
+                    "line": 163,
+                    "end": 176
                 },
                 {
                     "routes": [],
@@ -98260,8 +98265,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 172,
-                    "end": 175
+                    "line": 178,
+                    "end": 181
                 }
             ]
         },
@@ -98813,6 +98818,404 @@
                     ],
                     "line": 342,
                     "end": 396
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\PostSave",
+            "short": "PostSave",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/PostSave.php",
+            "lines": 182,
+            "doc": "A REST save's columns through the filters the reference's save runs\nbefore it writes, in its order (probe post-insert-filters,\ncontracts/runtime.md \"Saves plugins can change\"): rest_pre_insert_{type}\nover the prepared post; every column through its db context\n(pre_post_* and *_save_pre, where kses and the custom-CSS strip sit) on\nslashed text; wp_insert_post_empty_content, which refuses a post with no\ncontent, title or excerpt; wp_insert_post_parent; for a post that is live,\nthe slug, made again from the filtered title when the request gave none,\nthrough pre_wp_unique_post_slug, the bad-slug check and\nwp_unique_post_slug; and wp_insert_post_data over the row. What a filter\nchanges is written. Without plugins loaded the columns are as given.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Content\\PostRecord",
+                "Minn\\Http\\Request",
+                "Minn\\RestError",
+                "Minn\\Rest\\RuntimeRoutes",
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\PostsWriteController"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "DATA",
+                    "value": "array (   0 => 'post_author',   1 => 'post_date',   2 => 'post_date_gmt',   3 => 'post_content',   4 => 'post_content_filtered',   5 => 'post_title',   6 => 'post_excerpt',   7 => 'post_status',   8 => 'post_type',   9 => 'comment_status',   10 => 'ping_status',   11 => 'post_password',   12 => 'post_name',   13 => 'to_ping',   14 => 'pinged',   15 => 'post_modified',   16 => 'post_modified_gmt',   17 => 'post_parent',   18 => 'menu_order',   19 => 'post_mime_type',   20 => 'guid', )",
+                    "doc": "The row wp_insert_post_data is handed, in its keys.",
+                    "visibility": "private"
+                },
+                {
+                    "name": "FIELDS",
+                    "value": "array (   'title' => 'post_title',   'content' => 'post_content',   'excerpt' => 'post_excerpt',   'status' => 'post_status',   'date' => 'post_date',   'date_gmt' => 'post_date_gmt',   'slug' => 'post_name',   'password' => 'post_password',   'author' => 'post_author',   'parent' => 'post_parent',   'menu_order' => 'menu_order',   'comment_status' => 'comment_status',   'ping_status' => 'ping_status', )",
+                    "doc": "A REST field and the column it fills in the prepared post.",
+                    "visibility": "private"
+                },
+                {
+                    "name": "UNSLUGGED",
+                    "value": "array (   0 => 'draft',   1 => 'pending',   2 => 'auto-draft', )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "PARENT",
+                    "value": "'post_parent'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "NEW_POSTARR",
+                    "value": "array (   0 => 'ID',   1 => 'post_author',   2 => 'post_date',   3 => 'post_date_gmt',   4 => 'post_content',   5 => 'post_content_filtered',   6 => 'post_title',   7 => 'post_excerpt',   8 => 'post_status',   9 => 'post_type',   10 => 'comment_status',   11 => 'ping_status',   12 => 'post_password',   13 => 'to_ping',   14 => 'pinged',   15 => 'post_parent',   16 => 'menu_order',   17 => 'guid',   18 => 'import_id', )",
+                    "doc": "The new post array wp_insert_post_parent is handed beside the whole one.",
+                    "visibility": "private"
+                },
+                {
+                    "name": "DEFAULTS",
+                    "value": "array (   'post_author' => 0,   'post_content' => '',   'post_content_filtered' => '',   'post_title' => '',   'post_excerpt' => '',   'post_status' => 'draft',   'post_type' => 'post',   'comment_status' => '',   'ping_status' => '',   'post_password' => '',   'to_ping' => '',   'pinged' => '',   'post_parent' => 0,   'menu_order' => 0,   'guid' => '',   'import_id' => 0,   'context' => '',   'post_date' => '',   'post_date_gmt' => '', )",
+                    "doc": "wp_insert_post's defaults, in its order (the order its filters run in).",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "filter",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "filter(array $columns, ?Minn\\Content\\PostRecord $before, array $body, Minn\\Http\\Request $request, string $type, Closure $unique): array",
+                    "doc": "The columns to write after the filters.",
+                    "shapes": [
+                        "@param array<string, mixed> $columns what the engine settled: a new post's whole row, or an update's changes",
+                        "@param array<string, mixed> $body the request's fields",
+                        "@param Closure(string $desired, int $excludeId): string $unique the engine's unique slug for a desired one",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "columns",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "what the engine settled: a new post's whole row, or an update's changes"
+                        },
+                        {
+                            "name": "before",
+                            "type": "?Minn\\Content\\PostRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "body",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the request's fields"
+                        },
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "unique",
+                            "type": "Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 52,
+                    "end": 77
+                },
+                {
+                    "routes": [],
+                    "name": "sanitized",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "sanitized(array $postarr): array",
+                    "doc": "wp_insert_post's array with its defaults filled in (ID 0 for a new\npost), through sanitize_post's db context: slashed in, slashed out.",
+                    "shapes": [
+                        "@param array<string, mixed> $postarr",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "postarr",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 86,
+                    "end": 91
+                },
+                {
+                    "routes": [],
+                    "name": "refusesEmpty",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "refusesEmpty(array $sanitized, string $type): bool",
+                    "doc": "wp_insert_post_empty_content over whether a type with an editor, a title and an excerpt has none of them. @param array<string, mixed> $sanitized",
+                    "shapes": [
+                        "@param array<string, mixed> $sanitized"
+                    ],
+                    "params": [
+                        {
+                            "name": "sanitized",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 94,
+                    "end": 100
+                },
+                {
+                    "routes": [],
+                    "name": "parent",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "parent(array $sanitized, int $id): int",
+                    "doc": "The parent through wp_insert_post_parent (whose default refuses a loop). @param array<string, mixed> $sanitized",
+                    "shapes": [
+                        "@param array<string, mixed> $sanitized"
+                    ],
+                    "params": [
+                        {
+                            "name": "sanitized",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 103,
+                    "end": 107
+                },
+                {
+                    "routes": [],
+                    "name": "slugFilters",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "slugFilters(string $slug, int $id, string $status, string $type, int $parent, Closure $unique): string",
+                    "doc": "A live post's slug through the reference's three filters:\npre_wp_unique_post_slug may settle it, a slug the bad-slug filter\nnames takes the next free number, and wp_unique_post_slug has the\nlast word.",
+                    "shapes": [
+                        "@param Closure(string, int): string $unique"
+                    ],
+                    "params": [
+                        {
+                            "name": "slug",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "status",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "parent",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "unique",
+                            "type": "Closure",
+                            "shape": "Closure(string, int): string",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 117,
+                    "end": 132
+                },
+                {
+                    "routes": [],
+                    "name": "data",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "data(array $row, array $sanitized, array $unsanitized, int $postId): array",
+                    "doc": "The row through wp_insert_post_data, handed slashed as the reference\nhands it and unslashed back.",
+                    "shapes": [
+                        "@param array<string, mixed> $row the row, unslashed",
+                        "@param array<string, mixed> $sanitized",
+                        "@param array<string, mixed> $unsanitized",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "row",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the row, unslashed"
+                        },
+                        {
+                            "name": "sanitized",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "unsanitized",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "postId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": "the post an update saves, 0 for a new one"
+                        }
+                    ],
+                    "line": 144,
+                    "end": 148
+                },
+                {
+                    "routes": [],
+                    "name": "prepared",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "prepared(array $columns, ?Minn\\Content\\PostRecord $before, array $body, Minn\\Http\\Request $request, string $type): array",
+                    "doc": "rest_pre_insert_{type} over the prepared post: the columns the request\nnamed, its id when it edits, its type when it creates. What the filter\nchanges or adds is kept; an error refuses the save.",
+                    "shapes": [
+                        "@param array<string, mixed> $columns",
+                        "@param array<string, mixed> $body",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "columns",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "before",
+                            "type": "?Minn\\Content\\PostRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "body",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 159,
+                    "end": 184
+                },
+                {
+                    "routes": [],
+                    "name": "changed",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "changed(array $columns, array $data, ?Minn\\Content\\PostRecord $before): array",
+                    "doc": "The columns to write: a new post's whole row as the filters left it;\nan update's own changes plus whatever a filter changed from the row.",
+                    "shapes": [
+                        "@param array<string, mixed> $columns",
+                        "@param array<string, mixed> $data",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "columns",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "data",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "before",
+                            "type": "?Minn\\Content\\PostRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 194,
+                    "end": 206
                 }
             ]
         },
@@ -100234,6 +100637,7 @@
                 "Minn\\Runtime\\Plugins",
                 "Minn\\Runtime\\PostEvents",
                 "Minn\\Runtime\\PostQuery",
+                "Minn\\Runtime\\PostSave",
                 "Minn\\Runtime\\ScriptModules",
                 "Minn\\Runtime\\TermEvents",
                 "Minn\\Runtime\\TermWriter",

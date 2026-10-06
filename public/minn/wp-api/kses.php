@@ -228,6 +228,9 @@ function kses_init_filters()
     add_filter('pre_comment_author_name', 'wp_filter_kses');
     add_filter('pre_term_description', 'wp_filter_kses');
     add_filter('pre_link_description', 'wp_filter_kses');
+    // Custom CSS on a block is theirs to write who may write HTML unfiltered.
+    add_filter('content_save_pre', 'wp_strip_custom_css_from_blocks', 8);
+    add_filter('content_filtered_save_pre', 'wp_strip_custom_css_from_blocks', 8);
 }
 
 function kses_remove_filters()
@@ -238,6 +241,8 @@ function kses_remove_filters()
     remove_filter('pre_comment_content', 'wp_filter_post_kses');
     remove_filter('pre_comment_content', 'wp_filter_kses');
     remove_filter('title_save_pre', 'wp_filter_kses');
+    remove_filter('content_save_pre', 'wp_strip_custom_css_from_blocks', 8);
+    remove_filter('content_filtered_save_pre', 'wp_strip_custom_css_from_blocks', 8);
 }
 
 function kses_init()
@@ -251,4 +256,26 @@ function kses_init()
 function wp_kses_uri_attributes()
 {
     return apply_filters('wp_kses_uri_attributes', Kses::URI_ATTRIBUTES);
+}
+
+/** Block content without the custom CSS a block's style may carry (style.css; a style left empty goes too): slashed text in, slashed out. */
+function wp_strip_custom_css_from_blocks($content)
+{
+    $plain = wp_unslash((string) $content);
+    if (!str_contains($plain, '"css"')) {
+        return $content;
+    }
+    $strip = static function (array $blocks) use (&$strip): array {
+        foreach ($blocks as $i => $block) {
+            if (isset($block['attrs']['style']['css'])) {
+                unset($blocks[$i]['attrs']['style']['css']);
+                if ($blocks[$i]['attrs']['style'] === []) {
+                    unset($blocks[$i]['attrs']['style']);
+                }
+            }
+            $blocks[$i]['innerBlocks'] = $strip((array) ($block['innerBlocks'] ?? []));
+        }
+        return $blocks;
+    };
+    return wp_slash(serialize_blocks($strip(parse_blocks($plain))));
 }

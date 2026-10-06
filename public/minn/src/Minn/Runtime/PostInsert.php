@@ -59,6 +59,12 @@ final readonly class PostInsert
                 'post_mime_type' => '',
             ];
         }
+        // An empty comment or ping status means the default: the site's for a new post, closed for an update.
+        foreach (['comment_status' => 'default_comment_status', 'ping_status' => 'default_ping_status'] as $column => $option) {
+            if (($columns[$column] ?? null) === '') {
+                $columns[$column] = $existing === null ? (string) (($this->option)($option) ?: 'open') : 'closed';
+            }
+        }
         return $columns;
     }
 
