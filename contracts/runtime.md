@@ -3752,3 +3752,22 @@ limit removed through `wp_delete_post_revision`, after
 `wp_save_post_revision_revisions_before_deletion`. `wp_get_post_revisions`
 answers nothing while revisions are off and takes `order`. Without plugins
 Minn's own revisions follow `WP_POST_REVISIONS`.
+
+## REST comments plugins can change (2026-10-06)
+
+A comment created over REST with plugins loaded skipped what the reference's
+controller runs before the save. It now follows it (probe
+`rest-comment-save`, six cases with every hook compared): the request's
+fields through `rest_preprocess_comment`, the signed-in author filled in,
+`allow_empty_comment`, the date, `wp_get_comment_fields_max_lengths`,
+`wp_allow_comment` (a duplicate is a 409 with the id as the database gives
+it, a flood a 400, then `pre_comment_approved`), `rest_pre_insert_comment`
+(an error refuses with its status), and `wp_insert_comment` over
+`wp_filter_comment`. An edit runs `rest_preprocess_comment`, the content
+check when it sends content, the length check, `wp_update_comment` (now the
+stored comment under the change through `wp_filter_comment` and
+`comment_save_pre`, `wp_update_comment_data` handed the data, the stored
+comment and the change, `edit_comment` with the columns), then the status as
+the controller changes it (approve and hold through `wp_set_comment_status`
+with that word). `pre_wp_update_comment_count_now` may supply a post's count.
+A REST comment's rendered content passes `comment_text`.

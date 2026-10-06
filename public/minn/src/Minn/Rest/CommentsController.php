@@ -111,6 +111,16 @@ final readonly class CommentsController
         if ($post->commentStatus !== 'open') {
             throw new RestError('rest_comment_closed', 'Sorry, comments are closed for this item.', 403);
         }
+        $events = $this->events();
+        if ($events->live()) {
+            $id = $events->restCreate(['comment_post_ID' => $postId, 'comment_parent' => (int) ($body['parent'] ?? 0)] + $this->prepared($body, $request), $request);
+            if (isset($body['status']) && $this->caller->can('moderate_comments')) {
+                CommentEvents::changeStatus($id, (string) $body['status']);
+            }
+            $events->restSaved($id, $request, null);
+            return Reply::item($this->object->build($this->comments->find($id), Context::Edit), Fields::fromQuery($request->query), 201)
+                ->withHeader('Location', $this->object->url()->to('/wp/v2/comments/' . $id));
+        }
         if (trim($content) === '') {
             throw new RestError('rest_comment_content_invalid', 'Invalid comment content.', 400);
         }
@@ -137,7 +147,6 @@ final readonly class CommentsController
         ];
         // Through REST the reference writes the comment with wp_insert_comment,
         // which sends no notice: a held comment waits in the queue unannounced.
-        $events = $this->events();
         $events->allow($request->remoteAddress, $user->email, $now);
         $id = $events->insert($columns);
         $events->restSaved($id, $request, null);
@@ -171,6 +180,12 @@ final readonly class CommentsController
             }
             $status = $tokens[0];
         }
+        $events = $this->events();
+        if ($events->live()) {
+            $events->restUpdate($comment, $this->prepared($body, $request), isset($body['status']) ? (string) $body['status'] : null, $request);
+            $events->restSaved($commentId, $request, $comment);
+            return Reply::item($this->object->build($this->comments->find($commentId), Context::Edit), Fields::fromQuery($request->query));
+        }
         $columns = [];
         $fields = ['author_name' => 'comment_author', 'author_email' => 'comment_author_email', 'author_url' => 'comment_author_url'];
         if (isset($body['content'])) {
@@ -182,7 +197,6 @@ final readonly class CommentsController
                 $columns[$column] = $column === 'comment_author_url' ? Kses::url((string) $body[$field]) : Kses::text((string) $body[$field]);
             }
         }
-        $events = $this->events();
         $events->update($comment, $columns, $status);
         $events->restSaved($commentId, $request, $comment);
         return Reply::item($this->object->build($this->comments->find($commentId), Context::Edit), Fields::fromQuery($request->query));
@@ -299,6 +313,34 @@ final readonly class CommentsController
      * unfiltered_html, and every link marked nofollow ugc, as the
      * reference stores it.
      */
+    /**
+     * The fields a request sends, as the reference's controller prepares
+     * them for the runtime: the content, the author fields, the address (a
+     * moderator may name one) and the browser.
+     *
+     * @param array<string, mixed> $body
+     * @return array<string, mixed>
+     */
+    private function prepared(array $body, Request $request): array
+    {
+        $prepared = [];
+        if (isset($body['content'])) {
+            $prepared += ['comment_content' => is_array($body['content']) ? (string) ($body['content']['raw'] ?? '') : (string) $body['content']];
+        }
+        if (isset($body['author'])) {
+            $prepared += ['user_id' => (int) $body['author']];
+        }
+        foreach (['author_name' => 'comment_author', 'author_email' => 'comment_author_email', 'author_url' => 'comment_author_url'] as $field => $column) {
+            if (isset($body[$field])) {
+                $prepared[$column] = (string) $body[$field];
+            }
+        }
+        $address = isset($body['author_ip']) && $this->caller->can('moderate_comments') ? (string) $body['author_ip'] : $request->remoteAddress;
+        $prepared += ['comment_author_IP' => filter_var($address, FILTER_VALIDATE_IP) !== false ? $address : '127.0.0.1'];
+        $agent = (string) ($body['author_user_agent'] ?? '') !== '' ? (string) $body['author_user_agent'] : (string) ($request->header('user-agent') ?? '');
+        return $agent === '' ? $prepared : $prepared + ['comment_agent' => $agent];
+    }
+
     private function cleanComment(string $content): string
     {
         if (!$this->caller->can('unfiltered_html')) {

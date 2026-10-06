@@ -1,0 +1,175 @@
+[
+    [
+        "a new comment",
+        {
+            "status": "201",
+            "answer": {
+                "parent": "0",
+                "author_name": "admin",
+                "author_url": "https://minn.localhost",
+                "content": {
+                    "rendered": "<p>Hello <b>there</b> <script>x()</script> &#038; co</p>\n",
+                    "raw": "Hello <b>there</b> <script>x()</script> & co"
+                },
+                "status": "approved"
+            },
+            "steps": [
+                "rest_preprocess_comment [\"array[comment_agent,comment_author_IP,comment_content,comment_parent,comment_post_ID]\",\"object:WP_REST_Request\"]",
+                "allow_empty_comment [false,\"array[comment_agent,comment_author,comment_author_IP,comment_author_email,comment_author_url,comment_content,comment_parent,comment_post_ID,comment_type,user_id]\"]",
+                "wp_get_comment_fields_max_lengths [\"array[comment_author,comment_author_email,comment_author_url,comment_content]\"]",
+                "duplicate_comment_id [null,\"array[comment_agent,comment_author,comment_author_IP,comment_author_email,comment_author_url,comment_content,comment_date_gmt,comment_parent,comment_post_ID,comment_type,user_id]\"]",
+                "check_comment_flood [\"127.0.0.1\",\"admin@minn-engine.localhost\",\"{date}\",true]",
+                "wp_is_comment_flood [false,\"127.0.0.1\",\"admin@minn-engine.localhost\",\"{date}\",true]",
+                "pre_comment_approved [1,\"array[comment_agent,comment_author,comment_author_IP,comment_author_email,comment_author_url,comment_content,comment_date_gmt,comment_parent,comment_post_ID,comment_type,user_id]\"]",
+                "rest_pre_insert_comment [\"array[comment_agent,comment_approved,comment_author,comment_author_IP,comment_author_email,comment_author_url,comment_content,comment_date_gmt,comment_parent,comment_post_ID,comment_type,user_id]\",\"object:WP_REST_Request\"]",
+                "pre_user_id [1]",
+                "pre_comment_user_agent [\"zz-probe-agent\"]",
+                "pre_comment_author_name [\"admin\"]",
+                "pre_comment_content [\"Hello <b>there</b> <script>x()</script> & co\"]",
+                "pre_comment_user_ip [\"127.0.0.1\"]",
+                "pre_comment_author_url [\"https://minn.localhost\"]",
+                "pre_comment_author_email [\"admin@minn-engine.localhost\"]",
+                "pre_wp_update_comment_count_now [null,0,{post}]",
+                "wp_update_comment_count [{post},1,0]",
+                "wp_insert_comment [{comment0},\"object:WP_Comment\"]",
+                "rest_insert_comment [\"object:WP_Comment\",\"object:WP_REST_Request\",true]",
+                "rest_after_insert_comment [\"object:WP_Comment\",\"object:WP_REST_Request\",true]"
+            ]
+        }
+    ],
+    [
+        "the same again",
+        {
+            "status": "409",
+            "answer": {
+                "code": "comment_duplicate",
+                "message": "Duplicate comment detected; it looks as though you&#8217;ve already said that!",
+                "data": {
+                    "status": "409"
+                }
+            },
+            "steps": [
+                "rest_preprocess_comment [\"array[comment_agent,comment_author_IP,comment_content,comment_parent,comment_post_ID]\",\"object:WP_REST_Request\"]",
+                "allow_empty_comment [false,\"array[comment_agent,comment_author,comment_author_IP,comment_author_email,comment_author_url,comment_content,comment_parent,comment_post_ID,comment_type,user_id]\"]",
+                "wp_get_comment_fields_max_lengths [\"array[comment_author,comment_author_email,comment_author_url,comment_content]\"]",
+                "duplicate_comment_id [\"{comment0}\",\"array[comment_agent,comment_author,comment_author_IP,comment_author_email,comment_author_url,comment_content,comment_date_gmt,comment_parent,comment_post_ID,comment_type,user_id]\"]",
+                "comment_duplicate_trigger [\"array[comment_agent,comment_author,comment_author_IP,comment_author_email,comment_author_url,comment_content,comment_date_gmt,comment_parent,comment_post_ID,comment_type,user_id]\"]"
+            ]
+        }
+    ],
+    [
+        "no content",
+        {
+            "status": "400",
+            "answer": {
+                "code": "rest_comment_content_invalid",
+                "message": "Invalid comment content.",
+                "data": {
+                    "status": "400"
+                }
+            },
+            "steps": [
+                "rest_preprocess_comment [\"array[comment_agent,comment_author_IP,comment_content,comment_parent,comment_post_ID]\",\"object:WP_REST_Request\"]",
+                "allow_empty_comment [false,\"array[comment_agent,comment_author,comment_author_IP,comment_author_email,comment_author_url,comment_content,comment_parent,comment_post_ID,comment_type,user_id]\"]"
+            ]
+        }
+    ],
+    [
+        "a plugin changes it",
+        {
+            "status": "201",
+            "answer": {
+                "parent": "0",
+                "author_name": "admin",
+                "author_url": "https://minn.localhost",
+                "content": {
+                    "rendered": "<p>Second comment (changed)</p>\n",
+                    "raw": "Second comment (changed)"
+                },
+                "status": "approved"
+            },
+            "steps": [
+                "rest_preprocess_comment [\"array[comment_agent,comment_author_IP,comment_content,comment_parent,comment_post_ID]\",\"object:WP_REST_Request\"]",
+                "allow_empty_comment [false,\"array[comment_agent,comment_author,comment_author_IP,comment_author_email,comment_author_url,comment_content,comment_parent,comment_post_ID,comment_type,user_id]\"]",
+                "wp_get_comment_fields_max_lengths [\"array[comment_author,comment_author_email,comment_author_url,comment_content]\"]",
+                "duplicate_comment_id [null,\"array[comment_agent,comment_author,comment_author_IP,comment_author_email,comment_author_url,comment_content,comment_date_gmt,comment_parent,comment_post_ID,comment_type,user_id]\"]",
+                "check_comment_flood [\"127.0.0.1\",\"admin@minn-engine.localhost\",\"{date}\",true]",
+                "wp_is_comment_flood [false,\"127.0.0.1\",\"admin@minn-engine.localhost\",\"{date}\",true]",
+                "pre_comment_approved [1,\"array[comment_agent,comment_author,comment_author_IP,comment_author_email,comment_author_url,comment_content,comment_date_gmt,comment_parent,comment_post_ID,comment_type,user_id]\"]",
+                "rest_pre_insert_comment [\"array[comment_agent,comment_approved,comment_author,comment_author_IP,comment_author_email,comment_author_url,comment_content,comment_date_gmt,comment_parent,comment_post_ID,comment_type,user_id]\",\"object:WP_REST_Request\"]",
+                "pre_user_id [1]",
+                "pre_comment_user_agent [\"zz-probe-agent\"]",
+                "pre_comment_author_name [\"admin\"]",
+                "pre_comment_content [\"Second comment (changed)\"]",
+                "pre_comment_user_ip [\"127.0.0.1\"]",
+                "pre_comment_author_url [\"https://minn.localhost\"]",
+                "pre_comment_author_email [\"admin@minn-engine.localhost\"]",
+                "pre_wp_update_comment_count_now [null,1,{post}]",
+                "wp_update_comment_count [{post},2,1]",
+                "wp_insert_comment [{comment1},\"object:WP_Comment\"]",
+                "rest_insert_comment [\"object:WP_Comment\",\"object:WP_REST_Request\",true]",
+                "rest_after_insert_comment [\"object:WP_Comment\",\"object:WP_REST_Request\",true]"
+            ]
+        }
+    ],
+    [
+        "a plugin refuses it",
+        {
+            "status": "418",
+            "answer": {
+                "code": "zz_refused",
+                "message": "Refused by a plugin.",
+                "data": {
+                    "status": "418"
+                }
+            },
+            "steps": [
+                "rest_preprocess_comment [\"array[comment_agent,comment_author_IP,comment_content,comment_parent,comment_post_ID]\",\"object:WP_REST_Request\"]",
+                "allow_empty_comment [false,\"array[comment_agent,comment_author,comment_author_IP,comment_author_email,comment_author_url,comment_content,comment_parent,comment_post_ID,comment_type,user_id]\"]",
+                "wp_get_comment_fields_max_lengths [\"array[comment_author,comment_author_email,comment_author_url,comment_content]\"]",
+                "duplicate_comment_id [null,\"array[comment_agent,comment_author,comment_author_IP,comment_author_email,comment_author_url,comment_content,comment_date_gmt,comment_parent,comment_post_ID,comment_type,user_id]\"]",
+                "check_comment_flood [\"127.0.0.1\",\"admin@minn-engine.localhost\",\"{date}\",true]",
+                "wp_is_comment_flood [false,\"127.0.0.1\",\"admin@minn-engine.localhost\",\"{date}\",true]",
+                "pre_comment_approved [1,\"array[comment_agent,comment_author,comment_author_IP,comment_author_email,comment_author_url,comment_content,comment_date_gmt,comment_parent,comment_post_ID,comment_type,user_id]\"]",
+                "rest_pre_insert_comment [\"array[comment_agent,comment_approved,comment_author,comment_author_IP,comment_author_email,comment_author_url,comment_content,comment_date_gmt,comment_parent,comment_post_ID,comment_type,user_id]\",\"object:WP_REST_Request\"]"
+            ]
+        }
+    ],
+    [
+        "an edit",
+        {
+            "status": "200",
+            "answer": {
+                "parent": "0",
+                "author_name": "admin",
+                "author_url": "https://minn.localhost",
+                "content": {
+                    "rendered": "<p>Edited <em>words</em></p>\n",
+                    "raw": "Edited <em>words</em>"
+                },
+                "status": "hold"
+            },
+            "steps": [
+                "rest_preprocess_comment [\"array[comment_agent,comment_author_IP,comment_content]\",\"object:WP_REST_Request\"]",
+                "allow_empty_comment [false,\"array[comment_agent,comment_author,comment_author_IP,comment_author_email,comment_author_url,comment_content,comment_parent,comment_post_ID,user_id]\"]",
+                "wp_get_comment_fields_max_lengths [\"array[comment_author,comment_author_email,comment_author_url,comment_content]\"]",
+                "pre_user_id [\"1\"]",
+                "pre_comment_user_agent [\"zz-probe-agent\"]",
+                "pre_comment_author_name [\"admin\"]",
+                "pre_comment_content [\"Edited <em>words</em>\"]",
+                "pre_comment_user_ip [\"127.0.0.1\"]",
+                "pre_comment_author_url [\"https://minn.localhost\"]",
+                "pre_comment_author_email [\"admin@minn-engine.localhost\"]",
+                "comment_save_pre [\"Edited <em>words</em>\"]",
+                "wp_update_comment_data [\"array[children,comment_ID,comment_agent,comment_approved,comment_author,comment_author_IP,comment_author_email,comment_author_url,comment_content,comment_date,comment_date_gmt,comment_karma,comment_parent,comment_post_ID,comment_type,filtered,populated_children,post_fields,user_id]\",\"array[children,comment_ID,comment_agent,comment_approved,comment_author,comment_author_IP,comment_author_email,comment_author_url,comment_content,comment_date,comment_date_gmt,comment_karma,comment_parent,comment_post_ID,comment_type,populated_children,post_fields,user_id]\",\"array[children,comment_ID,comment_agent,comment_approved,comment_author,comment_author_IP,comment_author_email,comment_author_url,comment_content,comment_date,comment_date_gmt,comment_karma,comment_parent,comment_post_ID,comment_type,filtered,populated_children,post_fields,user_id]\"]",
+                "pre_wp_update_comment_count_now [null,2,{post}]",
+                "wp_update_comment_count [{post},2,2]",
+                "edit_comment [\"{comment0}\",\"array[comment_agent,comment_approved,comment_author,comment_author_IP,comment_author_email,comment_author_url,comment_content,comment_date,comment_date_gmt,comment_karma,comment_parent,comment_post_ID,comment_type,user_id]\"]",
+                "pre_wp_update_comment_count_now [null,2,{post}]",
+                "wp_update_comment_count [{post},1,2]",
+                "rest_insert_comment [\"object:WP_Comment\",\"object:WP_REST_Request\",false]",
+                "rest_after_insert_comment [\"object:WP_Comment\",\"object:WP_REST_Request\",false]"
+            ]
+        }
+    ]
+]

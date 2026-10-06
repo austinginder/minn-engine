@@ -3,8 +3,8 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
         "minn": 626,
-        "composes": 862,
-        "leaf": 635,
+        "composes": 863,
+        "leaf": 634,
         "noop": 1790,
         "functions": 3843,
         "minnMethods": 598,
@@ -28193,7 +28193,7 @@
         },
         "wp_allow_comment": {
             "file": "comment.php",
-            "lines": 14,
+            "lines": 16,
             "kind": "minn",
             "minn": [
                 "Minn\\Content\\Comments::duplicateId"
@@ -28637,10 +28637,12 @@
         },
         "wp_check_comment_data_max_lengths": {
             "file": "comment.php",
-            "lines": 7,
-            "kind": "leaf",
+            "lines": 8,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "wp_get_comment_fields_max_lengths"
+            ]
         },
         "wp_check_comment_disallowed_list": {
             "file": "comment.php",
@@ -33850,7 +33852,7 @@
         },
         "wp_update_comment": {
             "file": "comment.php",
-            "lines": 19,
+            "lines": 23,
             "kind": "minn",
             "minn": [
                 "Minn\\Content\\Comments::changedColumns",
@@ -33864,6 +33866,7 @@
                 "do_action",
                 "get_comment",
                 "is_wp_error",
+                "wp_filter_comment",
                 "wp_transition_comment_status",
                 "wp_unslash",
                 "wp_update_comment_count"
@@ -33880,13 +33883,16 @@
         },
         "wp_update_comment_count_now": {
             "file": "comment.php",
-            "lines": 13,
+            "lines": 15,
             "kind": "minn",
             "minn": [
-                "Minn\\Content\\Comments::recount"
+                "Minn\\Content\\Comments::recount",
+                "Minn\\Content\\PostWriter::update"
             ],
             "composes": [
                 "_minn_comments",
+                "_minn_post_writer",
+                "apply_filters",
                 "clean_post_cache",
                 "do_action",
                 "get_post"

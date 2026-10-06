@@ -13,8 +13,8 @@ the wp/v2 surface: shapes and controllers
 | [`BlocksController`](#blockscontroller) | final readonly class | 69 | wp/v2/blocks: synced patterns and reusable blocks, stored as wp_block |
 | [`Caller`](#caller) | final class | 103 | Who is making this REST call. Resolved once from the cookie and nonce; |
 | [`Catalogue`](#catalogue) | final class | 70 | The route table read from the classes alone: every #[Route] under |
-| [`CommentObject`](#commentobject) | final readonly class | 82 | The wp/v2 comment object; edit context adds the moderation-desk fields. |
-| [`CommentsController`](#commentscontroller) | final readonly class | 284 | wp/v2/comments: the status tabs with pagination headers, single, |
+| [`CommentObject`](#commentobject) | final readonly class | 83 | The wp/v2 comment object; edit context adds the moderation-desk fields. |
+| [`CommentsController`](#commentscontroller) | final readonly class | 326 | wp/v2/comments: the status tabs with pagination headers, single, |
 | [`Context`](#context) | enum | 18 | The view a REST caller asked for. View is the public shape, edit adds the |
 | [`DeclaredPostsController`](#declaredpostscontroller) | final readonly class | 56 | wp/v2/{rest_base} for extra post types declared by an active extension. |
 | [`Embed`](#embed) | final class | 180 | The _embed decoration and the embed context. Every embeddable link in an |
@@ -497,7 +497,7 @@ A comment in the context asked for, through rest_prepare_comment when a plugin h
 
 The REST URL builder.
 
-Internals: `buildFields()` (private, line 39)
+Internals: `buildFields()` (private, line 40)
 
 
 ## CommentsController
@@ -548,7 +548,7 @@ Route: `DELETE /wp/v2/comments/{id:[\d]+} (cap moderate_comments; comment {id} m
 
 Trash remembers where the comment came from; force removes it outright.
 
-Internals: `events()` (private, line 149), `filter()` (private, line 219), `guarded()` (private, line 242), `date()` (private, line 273), `plainComment()` (private, line 288), `cleanComment()` (private, line 302)
+Internals: `events()` (private, line 158), `filter()` (private, line 233), `guarded()` (private, line 256), `date()` (private, line 287), `plainComment()` (private, line 302), `prepared()` (private, line 324), `cleanComment()` (private, line 344)
 
 
 ## Context

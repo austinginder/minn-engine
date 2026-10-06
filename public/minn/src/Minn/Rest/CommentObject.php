@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Runtime\Runtime;
 use Minn\Content\CommentRecord;
 use Minn\Content\Blocks;
 use Minn\Content\Comments;
@@ -42,7 +43,8 @@ final readonly class CommentObject
         $id = $c->id;
         $postId = $c->postId;
         $post = $this->posts->find($postId);
-        $rendered = Blocks::paragraphs($c->content);
+        // With plugins loaded the content passes comment_text, as the reference renders it; without, Minn's own paragraphs.
+        $rendered = Runtime::booted() ? (string) \apply_filters('comment_text', $c->content, \get_comment($c->id), []) : Blocks::paragraphs($c->content);
 
         $object = [
             'id' => $id,

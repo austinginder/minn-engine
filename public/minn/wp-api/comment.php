@@ -141,7 +141,9 @@ function wp_update_comment_count_now($post_id)
         return false;
     }
     $old = (int) $post->comment_count;
-    _minn_comments()->recount($post_id);
+    // A plugin may supply the count itself (pre_wp_update_comment_count_now); otherwise it is counted.
+    $given = apply_filters('pre_wp_update_comment_count_now', null, $old, $post_id);
+    $given === null ? _minn_comments()->recount($post_id) : _minn_post_writer()->update($post_id, ['comment_count' => (int) $given]);
     clean_post_cache($post_id);
     $new = (int) get_post($post_id)->comment_count;
     do_action('wp_update_comment_count', $post_id, $new, $old);
@@ -150,27 +152,39 @@ function wp_update_comment_count_now($post_id)
     return true;
 }
 
+/**
+ * A comment changed as the reference changes one (probe rest-comment-save):
+ * the stored comment under the change, through wp_filter_comment and
+ * comment_save_pre, then wp_update_comment_data (handed the data, the
+ * stored comment and the change); the columns written, the post's count,
+ * edit_comment with the columns, and the status transition. 0 when
+ * nothing changed.
+ */
 function wp_update_comment($commentarr, $wp_error = false)
 {
-    $data = wp_unslash((array) $commentarr);
-    $comment = get_comment((int) ($data['comment_ID'] ?? 0));
+    $given = wp_unslash((array) $commentarr);
+    $comment = get_comment((int) ($given['comment_ID'] ?? 0));
     if ($comment === null) {
         return $wp_error ? new WP_Error('invalid_comment_id', 'Invalid comment ID.') : false;
     }
-    $columns = apply_filters('wp_update_comment_data', Comments::changedColumns($data, $comment->to_array()), $comment->to_array(), $data);
-    if (is_wp_error($columns)) {
-        return $wp_error ? $columns : 0;
+    $stored = $comment->to_array();
+    $commentarr = wp_filter_comment(array_merge($stored, $given));
+    $commentarr['comment_content'] = apply_filters('comment_save_pre', $commentarr['comment_content']);
+    $data = apply_filters('wp_update_comment_data', $commentarr, $stored, $commentarr);
+    if (is_wp_error($data)) {
+        return $wp_error ? $data : 0;
     }
-    // The reference writes and tells plugins even when nothing changed, and answers 0 then.
-    if ($columns !== []) {
-        _minn_comments()->update($comment->comment_ID, $columns);
+    $columns = array_intersect_key((array) $data, array_flip(['comment_post_ID', 'comment_author', 'comment_author_email', 'comment_author_url', 'comment_author_IP', 'comment_date', 'comment_date_gmt', 'comment_content', 'comment_karma', 'comment_approved', 'comment_agent', 'comment_type', 'comment_parent', 'user_id']));
+    $changed = Comments::changedColumns($columns, $stored);
+    if ($changed !== []) {
+        _minn_comments()->update($comment->comment_ID, $changed);
     }
     clean_comment_cache($comment->comment_ID);
     wp_update_comment_count((int) $comment->comment_post_ID);
+    do_action('edit_comment', $comment->comment_ID, $columns);
     $updated = get_comment($comment->comment_ID);
-    do_action('edit_comment', $comment->comment_ID, $updated->to_array());
     wp_transition_comment_status(_minn_comment_status_word($updated->comment_approved), _minn_comment_status_word($comment->comment_approved), $updated);
-    return $columns === [] ? 0 : 1;
+    return $changed === [] ? 0 : 1;
 }
 
 function wp_set_comment_status($comment_id, $comment_status, $wp_error = false)
@@ -485,9 +499,10 @@ function comment_class($css_class = '', $comment = null, $post = null, $display 
 /** The column limits a comment must fit: author 245, email 100, url 200, content 65525. */
 function wp_check_comment_data_max_lengths($comment_data)
 {
-    $limits = ['comment_author' => [245, 'comment_author_column_length', 'Your name is too long.'], 'comment_author_email' => [100, 'comment_author_email_column_length', 'Your email address is too long.'], 'comment_author_url' => [200, 'comment_author_url_column_length', 'Your URL is too long.'], 'comment_content' => [65525, 'comment_content_column_length', 'Your comment is too long.']];
-    foreach ($limits as $field => [$max, $code, $message]) {
-        if (isset($comment_data[$field]) && mb_strlen((string) $comment_data[$field], '8bit') > $max) {
+    $max = wp_get_comment_fields_max_lengths();
+    $limits = ['comment_author' => ['comment_author_column_length', 'Your name is too long.'], 'comment_author_email' => ['comment_author_email_column_length', 'Your email address is too long.'], 'comment_author_url' => ['comment_author_url_column_length', 'Your URL is too long.'], 'comment_content' => ['comment_content_column_length', 'Your comment is too long.']];
+    foreach ($limits as $field => [$code, $message]) {
+        if (isset($comment_data[$field], $max[$field]) && mb_strlen((string) $comment_data[$field], '8bit') > (int) $max[$field]) {
             return new WP_Error($code, '<strong>Error:</strong> ' . $message, 200);
         }
     }
@@ -524,7 +539,9 @@ function wp_allow_comment($commentdata, $wp_error = false)
 {
     $data = (array) $commentdata;
     $field = static fn (string $key): string => (string) wp_unslash($data[$key] ?? '');
-    $dupe = apply_filters('duplicate_comment_id', _minn_comments()->duplicateId((int) ($data['comment_post_ID'] ?? 0), $field('comment_author'), $field('comment_author_email'), $field('comment_content'), (int) ($data['user_id'] ?? 0)), $data);
+    $found = _minn_comments()->duplicateId((int) ($data['comment_post_ID'] ?? 0), $field('comment_author'), $field('comment_author_email'), $field('comment_content'), (int) ($data['user_id'] ?? 0));
+    // The id as the database answers it: a string.
+    $dupe = apply_filters('duplicate_comment_id', $found === null ? null : (string) $found, $data);
     if ($dupe) {
         do_action('comment_duplicate_trigger', $data);
         $message = apply_filters('comment_duplicate_message', 'Duplicate comment detected; it looks as though you&#8217;ve already said that!');

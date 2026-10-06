@@ -74016,6 +74016,7 @@
                 "Minn\\Rest\\TermsController",
                 "Minn\\Rest\\TypesController",
                 "Minn\\Rest\\UsersController",
+                "Minn\\Runtime\\CommentEvents",
                 "Minn\\Runtime\\PostSave",
                 "Minn\\Runtime\\TermEvents",
                 "Minn\\Runtime\\UserEvents"
@@ -76440,7 +76441,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/CommentObject.php",
-            "lines": 82,
+            "lines": 83,
             "doc": "The wp/v2 comment object; edit context adds the moderation-desk fields.",
             "implements": [],
             "extends": null,
@@ -76455,7 +76456,8 @@
                 "Minn\\Rest\\PostObject",
                 "Minn\\Rest\\RestUrl",
                 "Minn\\Rest\\RuntimePrepare",
-                "Minn\\Rest\\UserObject"
+                "Minn\\Rest\\UserObject",
+                "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
                 "Minn\\Rest\\CommentsController",
@@ -76503,8 +76505,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 16,
-                "end": 23
+                "line": 17,
+                "end": 24
             },
             "cases": [],
             "constants": [],
@@ -76580,8 +76582,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 27,
-                    "end": 30
+                    "line": 28,
+                    "end": 31
                 },
                 {
                     "routes": [],
@@ -76592,8 +76594,8 @@
                     "doc": "The REST URL builder.",
                     "shapes": [],
                     "params": [],
-                    "line": 33,
-                    "end": 36
+                    "line": 34,
+                    "end": 37
                 },
                 {
                     "routes": [],
@@ -76619,8 +76621,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 39,
-                    "end": 94
+                    "line": 40,
+                    "end": 96
                 }
             ]
         },
@@ -76630,7 +76632,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/CommentsController.php",
-            "lines": 284,
+            "lines": 326,
             "doc": "wp/v2/comments: the status tabs with pagination headers, single,\nsigned-in replies, moderation updates, trash, and force delete.",
             "implements": [],
             "extends": null,
@@ -76828,7 +76830,7 @@
                         }
                     ],
                     "line": 94,
-                    "end": 146
+                    "end": 155
                 },
                 {
                     "routes": [
@@ -76858,8 +76860,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 158,
-                    "end": 189
+                    "line": 167,
+                    "end": 203
                 },
                 {
                     "routes": [
@@ -76887,8 +76889,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 193,
-                    "end": 216
+                    "line": 207,
+                    "end": 230
                 },
                 {
                     "routes": [],
@@ -76899,8 +76901,8 @@
                     "doc": "Tells plugins about the writes, through the runtime's comment functions.",
                     "shapes": [],
                     "params": [],
-                    "line": 149,
-                    "end": 152
+                    "line": 158,
+                    "end": 161
                 },
                 {
                     "routes": [],
@@ -76919,8 +76921,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 219,
-                    "end": 235
+                    "line": 233,
+                    "end": 249
                 },
                 {
                     "routes": [],
@@ -76939,8 +76941,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 242,
-                    "end": 270
+                    "line": 256,
+                    "end": 284
                 },
                 {
                     "routes": [],
@@ -76966,8 +76968,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 273,
-                    "end": 285
+                    "line": 287,
+                    "end": 299
                 },
                 {
                     "routes": [],
@@ -76986,8 +76988,38 @@
                             "doc": ""
                         }
                     ],
-                    "line": 288,
-                    "end": 295
+                    "line": 302,
+                    "end": 309
+                },
+                {
+                    "routes": [],
+                    "name": "prepared",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "prepared(array $body, Minn\\Http\\Request $request): array",
+                    "doc": "The fields a request sends, as the reference's controller prepares\nthem for the runtime: the content, the author fields, the address (a\nmoderator may name one) and the browser.",
+                    "shapes": [
+                        "@param array<string, mixed> $body",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "body",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 324,
+                    "end": 342
                 },
                 {
                     "routes": [],
@@ -76995,7 +77027,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "cleanComment(string $content): string",
-                    "doc": "Comment markup: the comment allowlist unless the caller has\nunfiltered_html, and every link marked nofollow ugc, as the\nreference stores it.",
+                    "doc": "",
                     "shapes": [],
                     "params": [
                         {
@@ -77006,8 +77038,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 302,
-                    "end": 311
+                    "line": 344,
+                    "end": 353
                 }
             ]
         },
@@ -92650,7 +92682,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/CommentEvents.php",
-            "lines": 110,
+            "lines": 250,
             "doc": "What the reference's REST comments controller tells plugins, for the\nengine's own: with plugins loaded every change goes through the\nruntime's comment functions (wp_insert_comment, wp_update_comment,\nwp_set_comment_status, wp_trash_comment, wp_delete_comment), which fire\nthe reference's actions in its order, and the REST actions follow.\nWithout a booted runtime the rows are written as before and nothing is\ntold.",
             "implements": [],
             "extends": null,
@@ -92658,6 +92690,7 @@
                 "Minn\\Content\\CommentRecord",
                 "Minn\\Content\\Comments",
                 "Minn\\Http\\Request",
+                "Minn\\RestError",
                 "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Runtime\\Runtime"
             ],
@@ -92678,8 +92711,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 23,
-                "end": 25
+                "line": 24,
+                "end": 26
             },
             "cases": [],
             "constants": [],
@@ -92704,8 +92737,8 @@
                     "doc": "Whether plugins are loaded to be told anything.",
                     "shapes": [],
                     "params": [],
-                    "line": 28,
-                    "end": 31
+                    "line": 29,
+                    "end": 32
                 },
                 {
                     "routes": [],
@@ -92738,8 +92771,107 @@
                             "doc": ""
                         }
                     ],
-                    "line": 34,
-                    "end": 39
+                    "line": 35,
+                    "end": 40
+                },
+                {
+                    "routes": [],
+                    "name": "restCreate",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "restCreate(array $prepared, Minn\\Http\\Request $request): int",
+                    "doc": "A comment created over REST with plugins loaded, as the reference's\ncontroller creates one (probe rest-comment-save): the request's\nfields through rest_preprocess_comment, the signed-in author filled\nin, the content check (allow_empty_comment), the date, the length\ncheck, wp_allow_comment (a duplicate is a 409, a flood a 400),\nrest_pre_insert_comment, then wp_insert_comment over\nwp_filter_comment; a refusal is its REST error.",
+                    "shapes": [
+                        "@param array<string, mixed> $prepared the request's fields as the controller prepares them"
+                    ],
+                    "params": [
+                        {
+                            "name": "prepared",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the request's fields as the controller prepares them"
+                        },
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 53,
+                    "end": 79
+                },
+                {
+                    "routes": [],
+                    "name": "restUpdate",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "restUpdate(Minn\\Content\\CommentRecord $comment, array $prepared, ?string $status, Minn\\Http\\Request $request): void",
+                    "doc": "A comment changed over REST with plugins loaded: the request's fields\nthrough rest_preprocess_comment, the content and length checks,\nwp_update_comment, then the status, as the reference's controller\nchanges one.",
+                    "shapes": [
+                        "@param array<string, mixed> $prepared"
+                    ],
+                    "params": [
+                        {
+                            "name": "comment",
+                            "type": "Minn\\Content\\CommentRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "prepared",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "status",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 89,
+                    "end": 106
+                },
+                {
+                    "routes": [],
+                    "name": "changeStatus",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "changeStatus(int $id, string $asked): void",
+                    "doc": "A REST status asked for, as the reference's controller changes it:\nnothing when it is already so; approve and hold through\nwp_set_comment_status with that word, spam, unspam, trash and untrash\nthrough their own functions.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "asked",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 114,
+                    "end": 128
                 },
                 {
                     "routes": [],
@@ -92760,8 +92892,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 42,
-                    "end": 53
+                    "line": 183,
+                    "end": 194
                 },
                 {
                     "routes": [],
@@ -92796,8 +92928,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 62,
-                    "end": 86
+                    "line": 203,
+                    "end": 227
                 },
                 {
                     "routes": [],
@@ -92816,8 +92948,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 89,
-                    "end": 99
+                    "line": 230,
+                    "end": 240
                 },
                 {
                     "routes": [],
@@ -92836,8 +92968,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 102,
-                    "end": 110
+                    "line": 243,
+                    "end": 251
                 },
                 {
                     "routes": [],
@@ -92870,8 +93002,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 113,
-                    "end": 121
+                    "line": 254,
+                    "end": 262
                 },
                 {
                     "routes": [],
@@ -92906,8 +93038,131 @@
                             "doc": ""
                         }
                     ],
-                    "line": 124,
-                    "end": 129
+                    "line": 265,
+                    "end": 270
+                },
+                {
+                    "routes": [],
+                    "name": "preprocessed",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "preprocessed(array $prepared, WP_REST_Request $request): array",
+                    "doc": "rest_preprocess_comment over the prepared comment.",
+                    "shapes": [
+                        "@param array<string, mixed> $prepared",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "prepared",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "WP_REST_Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 136,
+                    "end": 143
+                },
+                {
+                    "routes": [],
+                    "name": "requireContent",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "requireContent(array $prepared): void",
+                    "doc": "The reference's content check: allow_empty_comment, handed the comment\nwith the author, parent, post and user filled in; empty content is a 400.",
+                    "shapes": [
+                        "@param array<string, mixed> $prepared"
+                    ],
+                    "params": [
+                        {
+                            "name": "prepared",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 151,
+                    "end": 158
+                },
+                {
+                    "routes": [],
+                    "name": "field",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "field(array $row, string $key): mixed",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, mixed> $row"
+                    ],
+                    "params": [
+                        {
+                            "name": "row",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "key",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 161,
+                    "end": 164
+                },
+                {
+                    "routes": [],
+                    "name": "requireLengths",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "requireLengths(array $prepared): void",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, mixed> $prepared"
+                    ],
+                    "params": [
+                        {
+                            "name": "prepared",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 167,
+                    "end": 173
+                },
+                {
+                    "routes": [],
+                    "name": "refusal",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "refusal(WP_Error $error): Minn\\RestError",
+                    "doc": "A plugin's error as REST serves it: its own status, or 500.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "error",
+                            "type": "WP_Error",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 176,
+                    "end": 180
                 }
             ]
         },
@@ -102430,6 +102685,7 @@
                 "Minn\\Rest\\AbilitiesController",
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\Caller",
+                "Minn\\Rest\\CommentObject",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\RenderedFields",
                 "Minn\\Rest\\RuntimeEnvelope",
