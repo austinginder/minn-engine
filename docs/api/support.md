@@ -4,7 +4,7 @@ escaping, serialized readers, small helpers
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Accents`](#accents) | final class | 22 | Accented and special Latin characters to their plain ASCII spelling; a character with no ASCII form stays as it is. |
+| [`Accents`](#accents) | final class | 35 | Accented and special characters to their plain spelling, from the |
 | [`DirectoryListing`](#directorylisting) | final class | 34 | Walks a directory the way the filesystem API lists it: named entries, dot entries skipped, hidden ones optional, recursion optional. |
 | [`Email`](#email) | final class | 69 | The address rules the reference applies: a local part from a fixed |
 | [`Entities`](#entities) | final class | 77 | HTML special-character encoding with the reference's quote styles and its |
@@ -33,13 +33,21 @@ escaping, serialized readers, small helpers
 
 `final class Minn\Support\Accents` · `public/minn/src/Minn/Support/Accents.php`
 
-Accented and special Latin characters to their plain ASCII spelling; a character with no ASCII form stays as it is.
+Accented and special characters to their plain spelling, from the
+reference's own table (data/accents.json, captured with
+tests/tools/accents-capture.php): text is put in composed form first, a
+locale with spellings of its own (German, Danish, Catalan, Serbian,
+Bosnian) has them, and a string that is not UTF-8 is read as Latin-1.
+Anything the table does not name stays as it is.
 
-- const `SPELLINGS` = `array (   'ß' => 'ss',   'Æ' => 'AE',   'æ' => 'ae',   'Œ' => 'OE',   'œ' => 'oe',   'Ø' => 'O',   'ø' => 'o',   'Đ' => 'D',   'đ' => 'd',   'Ł' => 'L',   'ł' => 'l',   'Þ' => 'TH',   'þ' => 'th',   'Ð' => 'D',   'ð' => 'd',   '€' => 'E',   '£' => '',   '“' => '',   '”' => '',   '‘' => '',   '’' => '',   '–' => '-',   '—' => '-',   '…' => '', )`
+Used by: `Minn\Content\Slug`
 
-### static `strip(string $text): string`
 
-The text with accented letters replaced by their plain forms.
+### static `strip(string $text, string $locale = ''): string`
+
+The text with its accented characters spelled plainly, as the locale spells them.
+
+Internals: `data()` (private, line 43)
 
 
 ## DirectoryListing
@@ -273,7 +281,7 @@ block delimiters are written back with their attribute values filtered.
 - const `STRAY_AMPERSAND` = `'/&(?!(?:#[0-9]+|#[xX][0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]{0,31});)/'`
 - const `MARKUP` = `array (   '&' => '&amp;',   '<' => '&lt;',   '>' => '&gt;',   '"' => '&quot;',   '\'' => '&apos;', )`
 
-Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Content\Users`, `Minn\Front\CommentPostController`, `Minn\Rest\CommentsController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Support\KsesPolicy`
+Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Content\Users`, `Minn\Front\CommentPostController`, `Minn\Media\Writer`, `Minn\Rest\CommentsController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Support\KsesPolicy`
 
 ### static `post(string $html): string`
 

@@ -3634,3 +3634,67 @@ filters. Now (`Runtime\TermFields`, `Runtime\TermSave`):
   not there is `rest_term_invalid` before anything is saved, on both paths.
   A plugin's in-process `rest_do_request` runs as the current user (one it
   switched to included), and a form-encoded body reads as its fields.
+
+## Images as WordPress makes them (2026-10-06)
+
+An upload's sizes were cut, but nothing else the reference does on the way
+happened: a phone photo past 2560 pixels kept its full size as the attached
+file, a photo taken turned stayed turned, `wp_read_image_metadata` answered
+blank, and no editor filter ran, so a plugin that writes WebP through
+`image_editor_output_format` had no effect. Now (probe `image-pipeline`, five
+uploads with every image filter and its arguments compared, both stacks held
+to GD; probe `image-meta`, 30 crafted photos):
+
+- `wp_read_image_metadata` reads IPTC, then EXIF for what IPTC left empty
+  (`Media\PhotoMeta`): headline or object name, caption, credit or byline or
+  artist, copyright, keywords, the IPTC date and time (offset applied) or the
+  EXIF digitized time, model, aperture to two places, focal length and
+  exposure as plain decimals, ISO, orientation. A short description is the
+  title and the comment the caption; a description that is not the title
+  runs on into the comment; a short caption doubles as the title. Latin-1
+  text is converted and everything passes `wp_kses_post`; every value is a
+  string. `wp_read_image_metadata_types` and `wp_read_image_metadata` run.
+- `wp_create_image_subsizes`, in the reference's order: past
+  `big_image_size_threshold` the upload is scaled to it (and turned upright)
+  and saved `-scaled`; otherwise one a JPEG's EXIF says is turned is saved
+  upright `-rotated`, and one `image_editor_output_format` maps to another
+  type is converted; that file becomes the attached file, the upload kept as
+  `original_image` (orientation then reads 1). The metadata is stored, then
+  each size is cut from the upload (turned upright first), medium and large
+  first, and stored as it lands.
+- The editor: `wp_get_image_editor` asks `image_editor_output_format` and
+  chooses through `wp_image_editors`; quality is set through
+  `wp_editor_set_quality` (86 for WebP, 82 otherwise) and, for a JPEG,
+  `jpeg_quality`, on load, after each resize and when a save writes another
+  type; a save asks `image_editor_output_format` (a size's name is null) and
+  `image_save_progressive`; `maybe_exif_rotate` asks
+  `wp_image_maybe_exif_rotate`; `make_subsize` cuts one size and puts the
+  editor back. `flip()` flips along the horizontal axis for `$horz`, as
+  documented.
+- Without plugins, Minn's own upload does the same: EXIF and IPTC in
+  `image_meta`, a `-scaled` or `-rotated` stand-in, sizes from the upright
+  upload, WebP sizes at 86.
+
+## Slugs and accents (2026-10-06)
+
+`remove_accents` folded far more than the reference (Greek and Cyrillic were
+transliterated where the reference leaves them to be percent-encoded) and
+missed some of what it does fold; Minn's own slugs dropped entities' letters
+in and turned a colon into a dash. Now `Support\Accents` is the reference's
+table, captured (`data/accents.json`, `tests/tools/accents-capture.php`):
+composed form first, the German, Danish, Catalan, Serbian and Bosnian
+spellings in those locales, Latin-1 bytes when the text is not UTF-8.
+`utf8_uri_encode` cuts at its length without splitting a character and
+encodes ASCII when asked; `Content\Slug::sanitize` is the reference's
+save-time `sanitize_title` (the times sign reads as an x), and a post saved
+through the runtime gets its slug from `sanitize_title` itself, filters
+included (probe `slugs`).
+
+## Site Health (2026-10-06)
+
+`WP_Site_Health::get_instance()` was a placeholder answering null, so the
+WPMU DEV dashboard recorded no memory limit. The instance is now built while
+loading, as on the reference: the memory limit PHP started with, the cron
+timeouts (looser under `DISABLE_WP_CRON`), its four hooks, and the weekly
+`wp_site_health_scheduled_check` scheduled a day out when missing. The tests
+stay placeholders. `WP_MAX_MEMORY_LIMIT` follows the starting limit too.

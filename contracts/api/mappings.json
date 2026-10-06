@@ -2,12 +2,12 @@
     "generated": "2026-10-06",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 571,
-        "composes": 843,
-        "leaf": 635,
-        "noop": 1789,
-        "functions": 3768,
-        "minnMethods": 596,
+        "minn": 623,
+        "composes": 853,
+        "leaf": 633,
+        "noop": 1791,
+        "functions": 3830,
+        "minnMethods": 597,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -7194,7 +7194,7 @@
         },
         "WP_Image_Editor::get_extension": {
             "file": "classes/WP_Image_Editor.php",
-            "lines": 7,
+            "lines": 8,
             "kind": "leaf",
             "minn": [],
             "composes": []
@@ -7210,10 +7210,13 @@
         },
         "WP_Image_Editor::get_output_format": {
             "file": "classes/WP_Image_Editor.php",
-            "lines": 12,
-            "kind": "leaf",
+            "lines": 22,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "trailingslashit",
+                "wp_get_image_editor_output_format"
+            ]
         },
         "WP_Image_Editor::get_quality": {
             "file": "classes/WP_Image_Editor.php",
@@ -7236,6 +7239,13 @@
             "minn": [],
             "composes": []
         },
+        "WP_Image_Editor::keep": {
+            "file": "classes/WP_Image_Editor.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "WP_Image_Editor::make_image": {
             "file": "classes/WP_Image_Editor.php",
             "lines": 2,
@@ -7245,7 +7255,26 @@
                 "wp_mkdir_p"
             ]
         },
+        "WP_Image_Editor::make_subsize": {
+            "file": "classes/WP_Image_Editor.php",
+            "lines": 11,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "is_wp_error"
+            ]
+        },
         "WP_Image_Editor::maybe_exif_rotate": {
+            "file": "classes/WP_Image_Editor.php",
+            "lines": 25,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "is_wp_error"
+            ]
+        },
+        "WP_Image_Editor::restore": {
             "file": "classes/WP_Image_Editor.php",
             "lines": 1,
             "kind": "noop",
@@ -7254,10 +7283,12 @@
         },
         "WP_Image_Editor::set_quality": {
             "file": "classes/WP_Image_Editor.php",
-            "lines": 2,
-            "kind": "leaf",
+            "lines": 16,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "apply_filters"
+            ]
         },
         "WP_Image_Editor::supports_mime_type": {
             "file": "classes/WP_Image_Editor.php",
@@ -7301,9 +7332,16 @@
             "minn": [],
             "composes": []
         },
+        "WP_Image_Editor_GD::keep": {
+            "file": "classes/WP_Image_Editor.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "WP_Image_Editor_GD::load": {
             "file": "classes/WP_Image_Editor.php",
-            "lines": 12,
+            "lines": 13,
             "kind": "minn",
             "minn": [
                 "Minn\\Media\\Canvas::open"
@@ -7323,12 +7361,19 @@
         },
         "WP_Image_Editor_GD::resize": {
             "file": "classes/WP_Image_Editor.php",
-            "lines": 8,
+            "lines": 9,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "image_resize_dimensions"
             ]
+        },
+        "WP_Image_Editor_GD::restore": {
+            "file": "classes/WP_Image_Editor.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
         },
         "WP_Image_Editor_GD::rotate": {
             "file": "classes/WP_Image_Editor.php",
@@ -7339,7 +7384,7 @@
         },
         "WP_Image_Editor_GD::save": {
             "file": "classes/WP_Image_Editor.php",
-            "lines": 5,
+            "lines": 7,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -9912,6 +9957,494 @@
             "lines": 1,
             "kind": "noop",
             "minn": [],
+            "composes": []
+        },
+        "WP_Site_Health::__construct": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 11,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "add_action",
+                "add_filter",
+                "wp_installing",
+                "wp_next_scheduled",
+                "wp_schedule_event"
+            ]
+        },
+        "WP_Site_Health::admin_body_class": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_current_screen"
+            ]
+        },
+        "WP_Site_Health::available_object_cache_services": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::can_perform_loopback": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::check_for_page_caching": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::check_wp_version_check_exists": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::detect_plugin_theme_auto_update_issues": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::enqueue_scripts": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::get_autoloaded_options_size": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::get_cron_tasks": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::get_good_response_time_threshold": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::get_instance": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Site_Health::get_page_cache_detail": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::get_page_cache_headers": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::get_test_authorization_header": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::get_test_autoloaded_options": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::get_test_available_updates_disk_space": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::get_test_background_updates": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::get_test_dotorg_communication": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::get_test_file_uploads": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::get_test_http_requests": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::get_test_https_status": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::get_test_insecure_registration": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::get_test_is_in_debug_mode": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::get_test_loopback_requests": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::get_test_opcode_cache": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::get_test_page_cache": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::get_test_persistent_object_cache": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::get_test_php_default_timezone": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::get_test_php_extensions": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::get_test_php_sessions": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::get_test_php_version": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::get_test_plugin_theme_auto_updates": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::get_test_plugin_version": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::get_test_rest_availability": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::get_test_scheduled_events": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::get_test_search_engine_visibility": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::get_test_sql_server": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::get_test_ssl_support": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::get_test_theme_version": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::get_test_update_temp_backup_writable": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::get_test_wordpress_version": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::get_tests": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::has_late_cron": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::has_missed_cron": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::is_development_environment": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::maybe_create_scheduled_event": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::perform_test": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::prepare_sql_data": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::should_suggest_persistent_object_cache": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::show_site_health_tab": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::test_php_extension_availability": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::wp_cron_scheduled_check": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Site_Health::wp_schedule_test_init": {
+            "file": "classes/WP_Site_Health.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
             "composes": []
         },
         "WP_Sitemaps::__construct": {
@@ -14529,6 +15062,17 @@
                 "get_comment_time"
             ]
         },
+        "_minn_image_scaled": {
+            "file": "media.php",
+            "lines": 21,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_wp_image_meta_replace_original",
+                "is_wp_error",
+                "wp_get_image_editor"
+            ]
+        },
         "_minn_image_sizes": {
             "file": "media.php",
             "lines": 10,
@@ -14537,6 +15081,18 @@
             "composes": [
                 "get_option",
                 "wp_get_additional_image_sizes"
+            ]
+        },
+        "_minn_image_upright": {
+            "file": "media.php",
+            "lines": 22,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_wp_image_meta_replace_original",
+                "is_wp_error",
+                "wp_get_image_editor",
+                "wp_get_image_editor_output_format"
             ]
         },
         "_minn_inline_style_sources": {
@@ -15466,13 +16022,6 @@
             ],
             "composes": []
         },
-        "_minn_utf8_uri_encode": {
-            "file": "formatting.php",
-            "lines": 5,
-            "kind": "leaf",
-            "minn": [],
-            "composes": []
-        },
         "_minn_widget_factory": {
             "file": "widgets.php",
             "lines": 4,
@@ -15954,6 +16503,18 @@
                 "wp_cache_get"
             ]
         },
+        "_wp_image_meta_replace_original": {
+            "file": "media.php",
+            "lines": 8,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_wp_relative_upload_path",
+                "update_attached_file",
+                "wp_basename",
+                "wp_filesize"
+            ]
+        },
         "_wp_kses_allow_pdf_objects": {
             "file": "kses.php",
             "lines": 1,
@@ -15976,7 +16537,7 @@
         },
         "_wp_make_subsizes": {
             "file": "media.php",
-            "lines": 34,
+            "lines": 24,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -24614,7 +25175,9 @@
             "minn": [
                 "Minn\\Support\\Accents::strip"
             ],
-            "composes": []
+            "composes": [
+                "get_locale"
+            ]
         },
         "remove_action": {
             "file": "hooks.php",
@@ -25636,7 +26199,7 @@
                 "Minn\\Content\\Slug::dashes"
             ],
             "composes": [
-                "_minn_utf8_uri_encode"
+                "utf8_uri_encode"
             ]
         },
         "sanitize_url": {
@@ -27341,10 +27904,10 @@
             "file": "formatting.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "_minn_utf8_uri_encode"
-            ]
+            "minn": [
+                "Minn\\Content\\Slug::uriEncode"
+            ],
+            "composes": []
         },
         "validate_active_plugins": {
             "file": "admin.php",
@@ -28315,13 +28878,16 @@
         },
         "wp_create_image_subsizes": {
             "file": "media.php",
-            "lines": 24,
+            "lines": 19,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "_minn_image_scaled",
+                "_minn_image_upright",
                 "_wp_make_subsizes",
                 "_wp_relative_upload_path",
                 "apply_filters",
+                "wp_filesize",
                 "wp_get_registered_image_subsizes",
                 "wp_getimagesize",
                 "wp_read_image_metadata",
@@ -29484,13 +30050,24 @@
         },
         "wp_get_image_editor": {
             "file": "media.php",
-            "lines": 13,
+            "lines": 15,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "_wp_image_editor_choose",
                 "is_wp_error",
                 "wp_check_filetype",
+                "wp_get_image_editor_output_format",
                 "wp_get_image_mime"
+            ]
+        },
+        "wp_get_image_editor_output_format": {
+            "file": "media.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters"
             ]
         },
         "wp_get_image_mime": {
@@ -31629,12 +32206,15 @@
         },
         "wp_read_image_metadata": {
             "file": "media.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 9,
+            "kind": "minn",
             "minn": [
-                "Minn\\Media\\Metadata::blankImageMeta"
+                "Minn\\Media\\PhotoMeta::read"
             ],
-            "composes": []
+            "composes": [
+                "apply_filters",
+                "wp_kses_post"
+            ]
         },
         "wp_readonly": {
             "file": "formatting.php",

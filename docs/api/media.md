@@ -4,16 +4,17 @@ uploads, image sizes and attachment metadata
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Canvas`](#canvas) | final readonly class | 141 | One GD bitmap and the operations the media layer needs on it. Every |
+| [`Canvas`](#canvas) | final readonly class | 149 | One GD bitmap and the operations the media layer needs on it. Every |
 | [`Gallery`](#gallery) | final class | 54 | The classic `[gallery]` shortcode's markup. Every gallery on a page is |
-| [`Images`](#images) | final readonly class | 104 | GD sub-size generation for the sizes the site has. |
+| [`Images`](#images) | final readonly class | 163 | GD sub-size generation for the sizes the site has. |
 | [`Kind`](#kind) | final class | 75 | Whether an attachment is an image, audio, video, or a given extension, judged by its MIME type first and its file extension second. |
 | [`Metadata`](#metadata) | final class | 111 | The _wp_attachment_metadata blob: parsed by scanning for the shapes it |
+| [`PhotoMeta`](#photometa) | final class | 165 | A photo's own description, read as the reference's wp_read_image_metadata |
 | [`PreparedUpload`](#preparedupload) | final readonly class | 13 | An upload made ready for its attachment: the file stored, its sizes cut, |
 | [`Sizing`](#sizing) | final class | 207 | The image size arithmetic the media functions share: the crop or scale a |
 | [`Upload`](#upload) | final readonly class | 76 | One file arriving for the library, on either transport: a multipart |
 | [`Uploads`](#uploads) | final readonly class | 179 | The uploads directory: paths, URLs, the allowed types, and landing a file. |
-| [`Writer`](#writer) | final readonly class | 154 | The writes the media library makes. An Upload becomes an attachment: the |
+| [`Writer`](#writer) | final readonly class | 175 | The writes the media library makes. An Upload becomes an attachment: the |
 
 ## Canvas
 
@@ -65,11 +66,15 @@ An untouched copy of the canvas.
 
 Writes the bitmap in the given format; the directory is created when missing.
 
+### `interlaced(bool $on): self`
+
+The same bitmap written progressively (an interlaced JPEG) or not.
+
 ### `stream(string $mime, int $quality): bool`
 
 Writes the image to the output in a format, at a quality.
 
-Internals: `affordable()` (private, line 48), `memoryLimit()` (private, line 60), `flipped()` (private, line 122), `encode()` (private, line 145)
+Internals: `affordable()` (private, line 48), `memoryLimit()` (private, line 60), `flipped()` (private, line 122), `encode()` (private, line 152)
 
 
 ## Gallery
@@ -101,6 +106,9 @@ Internals: `caption()` (private, line 49), `tag()` (private, line 59), `token()`
 
 GD sub-size generation for the sizes the site has.
 
+- const `BIG` = `2560` — Past this width or height an upload is scaled down to it, as the reference's big_image_size_threshold default.
+- const `SIZED` = `array (   0 => 'image/png',   1 => 'image/jpeg',   2 => 'image/gif',   3 => 'image/webp', )`
+
 Used by: `Minn\Media\Writer`, `Minn\Rest\Services`
 
 ```php
@@ -121,14 +129,24 @@ site has first (without plugins, just those two).
 
 Fits (w, h) inside (maxW, maxH); 0 means unconstrained. One rule with the facade's wp_constrain_dimensions.
 
-### `makeSubsizes(string $path, string $mime, array $imageMeta = array ( )): array`
+### `standIn(string $path, string $mime, int $orientation): ?array`
 
-Generates the sub-sizes for one image; returns the sizes metadata map.
+The upload's stand-in, as the reference saves one (probe
+image-pipeline): one past BIG scaled to fit it and saved "-scaled",
+one a JPEG's EXIF says was taken turned saved upright "-rotated"
+(both when both). Null when the upload is kept as it is.
+
+- `@return array{path: string, width: int, height: int, filesize: int, rotated: bool}|null`
+
+### `makeSubsizes(string $path, string $mime, array $imageMeta = array ( ), int $orientation = 1): array`
+
+Generates the sub-sizes for one image, cut from the upload turned
+upright when a JPEG's EXIF says so; returns the sizes metadata map.
 The image's metadata so far rides along for the size filter.
 
 - `@param array<string, mixed> $imageMeta`
 
-Internals: `filtered()` (private, line 50)
+Internals: `filtered()` (private, line 50), `upright()` (private, line 104), `quality()` (private, line 121)
 
 
 ## Kind
@@ -167,7 +185,7 @@ image_meta as a:13 with alt last.
 
 - const `IMAGE_META_KEYS` = `array (   0 => 'aperture',   1 => 'credit',   2 => 'camera',   3 => 'caption',   4 => 'created_timestamp',   5 => 'copyright',   6 => 'focal_length',   7 => 'iso',   8 => 'shutter_speed',   9 => 'title',   10 => 'orientation', )`
 
-Used by: `Minn\Admin\SiteController`, `Minn\Blocks\ImageTags`, `Minn\Content\SiteIcon`, `Minn\Media\Writer`, `Minn\Rest\MediaObject`
+Used by: `Minn\Admin\SiteController`, `Minn\Blocks\ImageTags`, `Minn\Content\SiteIcon`, `Minn\Media\PhotoMeta`, `Minn\Media\Writer`, `Minn\Rest\MediaObject`
 
 ### static `parse(?string $blob): array`
 
@@ -182,6 +200,36 @@ The metadata as the reference's serialized blob, without unserialize ever being 
 ### static `blankImageMeta(): array`
 
 The image_meta block a fresh upload carries.
+
+
+## PhotoMeta
+
+`final class Minn\Media\PhotoMeta` · `public/minn/src/Minn/Media/PhotoMeta.php`
+
+A photo's own description, read as the reference's wp_read_image_metadata
+reads it (probe image-meta): IPTC first (headline or object name for the
+title, caption, credit or byline, copyright, keywords, the date and time
+it was made), then EXIF for what IPTC left empty (a short description as
+the title, the user comment or description as the caption, the artist,
+copyright, model, the digitized time, aperture, focal length, ISO,
+exposure, orientation). Text that is not UTF-8 is read as Latin-1, and
+every value is cleaned (the reference runs wp_kses_post) and made a
+string; a short caption doubles as the title.
+
+- const `EXIF_TYPES` = `array (   0 => 2,   1 => 7,   2 => 8, )` — EXIF is read for these image types only: JPEG and TIFF, both byte orders.
+
+Used by: `Minn\Media\Writer`
+
+### static `read(string $file, array $exifTypes, Closure $clean): ?array`
+
+The metadata, the image type, the IPTC and EXIF it came from; null
+when there is no such file.
+
+- `@param list<int> $exifTypes`
+- `@param Closure(string): string $clean`
+- `@return array{meta: array<string, mixed>, type: int|null, iptc: array<string, mixed>, exif: array<string, mixed>}|null`
+
+Internals: `fromIptc()` (private, line 62), `fromExif()` (private, line 91), `described()` (private, line 134), `fraction()` (private, line 151), `exifTime()` (private, line 162), `cleaned()` (private, line 176)
 
 
 ## PreparedUpload
@@ -460,5 +508,5 @@ Sets an attachment's alt text.
 
 Removes an attachment: its files, every generated size, its meta, and its row.
 
-Internals: `imageMetadata()` (private, line 166)
+Internals: `imageMetadata()` (private, line 178)
 

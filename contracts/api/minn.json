@@ -30020,26 +30020,27 @@
             "namespace": "Minn\\Content",
             "kind": "final class",
             "file": "public/minn/src/Minn/Content/Slug.php",
-            "lines": 56,
+            "lines": 81,
             "doc": "",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Support\\Accents"
+            ],
             "usedBy": [
                 "Minn\\Content\\PostWriter",
                 "Minn\\Content\\Terms",
                 "Minn\\Content\\Users",
                 "Minn\\Media\\Writer",
                 "Minn\\Rest\\MediaObject",
-                "Minn\\Rest\\PostObject",
-                "Minn\\Runtime\\PostInsert"
+                "Minn\\Rest\\PostObject"
             ],
             "constructor": null,
             "cases": [],
             "constants": [
                 {
                     "name": "SAVE_DASHES",
-                    "value": "array (   0 => '%c2%a0',   1 => '%e2%80%93',   2 => '%e2%80%94',   3 => '&nbsp;',   4 => '&#160;',   5 => '&ndash;',   6 => '&#8211;',   7 => '&mdash;',   8 => '&#8212;',   9 => '/',   10 => '×',   11 => '%c3%97', )",
+                    "value": "array (   0 => '%c2%a0',   1 => '%e2%80%93',   2 => '%e2%80%94',   3 => '&nbsp;',   4 => '&#160;',   5 => '&ndash;',   6 => '&#8211;',   7 => '&mdash;',   8 => '&#8212;',   9 => '/', )",
                     "doc": "",
                     "visibility": "private"
                 },
@@ -30057,8 +30058,8 @@
                     "name": "sanitize",
                     "static": true,
                     "visibility": "public",
-                    "signature": "sanitize(string $text): string",
-                    "doc": "Lower-case, hyphen-separated, ASCII only: the shape post_name takes.",
+                    "signature": "sanitize(string $text, string $locale = ''): string",
+                    "doc": "A title as the reference's sanitize_title makes a slug of it when\nsaving, without the filters (the runtime's sanitize_title adds those):\naccents spelled plainly, then the dash form, non-ASCII percent-encoded\nup to 200 bytes.",
                     "shapes": [],
                     "params": [
                         {
@@ -30067,10 +30068,53 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "locale",
+                            "type": "string",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
                         }
                     ],
-                    "line": 12,
-                    "end": 18
+                    "line": 18,
+                    "end": 21
+                },
+                {
+                    "routes": [],
+                    "name": "uriEncode",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "uriEncode(string $text, int $length, Closure $ascii): string",
+                    "doc": "Non-ASCII characters as lower-case percent escapes, a whole character\nat a time, stopping before one would take the text past $length bytes\n(0 for no limit); each ASCII character goes through $ascii (as it is,\nor rawurlencode).",
+                    "shapes": [
+                        "@param Closure(string): string $ascii"
+                    ],
+                    "params": [
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "length",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "ascii",
+                            "type": "Closure",
+                            "shape": "Closure(string): string",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 31,
+                    "end": 42
                 },
                 {
                     "routes": [],
@@ -30096,8 +30140,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 34,
-                    "end": 41
+                    "line": 58,
+                    "end": 65
                 },
                 {
                     "routes": [],
@@ -30130,8 +30174,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 44,
-                    "end": 63
+                    "line": 68,
+                    "end": 89
                 }
             ]
         },
@@ -67558,7 +67602,7 @@
             "namespace": "Minn\\Media",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Media/Canvas.php",
-            "lines": 141,
+            "lines": 149,
             "doc": "One GD bitmap and the operations the media layer needs on it. Every\noperation returns a new canvas; alpha is preserved throughout, which is\nwhat makes PNG and WebP sub-sizes match the reference's.",
             "implements": [],
             "extends": null,
@@ -67818,6 +67862,26 @@
                 },
                 {
                     "routes": [],
+                    "name": "interlaced",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "interlaced(bool $on): self",
+                    "doc": "The same bitmap written progressively (an interlaced JPEG) or not.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "on",
+                            "type": "bool",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 140,
+                    "end": 144
+                },
+                {
+                    "routes": [],
                     "name": "stream",
                     "static": false,
                     "visibility": "public",
@@ -67840,8 +67904,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 140,
-                    "end": 143
+                    "line": 147,
+                    "end": 150
                 },
                 {
                     "routes": [],
@@ -67933,8 +67997,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 145,
-                    "end": 153
+                    "line": 152,
+                    "end": 161
                 }
             ]
         },
@@ -68083,7 +68147,7 @@
             "namespace": "Minn\\Media",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Media/Images.php",
-            "lines": 104,
+            "lines": 163,
             "doc": "GD sub-size generation for the sizes the site has.",
             "implements": [],
             "extends": null,
@@ -68115,7 +68179,20 @@
                 "end": 15
             },
             "cases": [],
-            "constants": [],
+            "constants": [
+                {
+                    "name": "BIG",
+                    "value": "2560",
+                    "doc": "Past this width or height an upload is scaled down to it, as the reference's big_image_size_threshold default.",
+                    "visibility": "public"
+                },
+                {
+                    "name": "SIZED",
+                    "value": "array (   0 => 'image/png',   1 => 'image/jpeg',   2 => 'image/gif',   3 => 'image/webp', )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
             "properties": [
                 {
                     "name": "site",
@@ -68185,11 +68262,47 @@
                 },
                 {
                     "routes": [],
+                    "name": "standIn",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "standIn(string $path, string $mime, int $orientation): ?array",
+                    "doc": "The upload's stand-in, as the reference saves one (probe\nimage-pipeline): one past BIG scaled to fit it and saved \"-scaled\",\none a JPEG's EXIF says was taken turned saved upright \"-rotated\"\n(both when both). Null when the upload is kept as it is.",
+                    "shapes": [
+                        "@return array{path: string, width: int, height: int, filesize: int, rotated: bool}|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "path",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "mime",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "orientation",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 82,
+                    "end": 101
+                },
+                {
+                    "routes": [],
                     "name": "makeSubsizes",
                     "static": false,
                     "visibility": "public",
-                    "signature": "makeSubsizes(string $path, string $mime, array $imageMeta = array ( )): array",
-                    "doc": "Generates the sub-sizes for one image; returns the sizes metadata map.\nThe image's metadata so far rides along for the size filter.",
+                    "signature": "makeSubsizes(string $path, string $mime, array $imageMeta = array ( ), int $orientation = 1): array",
+                    "doc": "Generates the sub-sizes for one image, cut from the upload turned\nupright when a JPEG's EXIF says so; returns the sizes metadata map.\nThe image's metadata so far rides along for the size filter.",
                     "shapes": [
                         "@param array<string, mixed> $imageMeta"
                     ],
@@ -68214,10 +68327,17 @@
                             "shape": "array<string, mixed>",
                             "default": "array ( )",
                             "doc": ""
+                        },
+                        {
+                            "name": "orientation",
+                            "type": "int",
+                            "shape": "",
+                            "default": "1",
+                            "doc": ""
                         }
                     ],
-                    "line": 77,
-                    "end": 113
+                    "line": 135,
+                    "end": 172
                 },
                 {
                     "routes": [],
@@ -68248,6 +68368,53 @@
                     ],
                     "line": 50,
                     "end": 63
+                },
+                {
+                    "routes": [],
+                    "name": "upright",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "upright(Minn\\Media\\Canvas $canvas, int $orientation): Minn\\Media\\Canvas",
+                    "doc": "The image turned as its EXIF orientation says: a rotation counter-clockwise, then a mirror left to right.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "canvas",
+                            "type": "Minn\\Media\\Canvas",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "orientation",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 104,
+                    "end": 118
+                },
+                {
+                    "routes": [],
+                    "name": "quality",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "quality(string $mime): int",
+                    "doc": "The quality a size is written at: 86 for WebP, 82 otherwise, the reference's defaults.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "mime",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 121,
+                    "end": 124
                 }
             ]
         },
@@ -68377,6 +68544,7 @@
                 "Minn\\Admin\\SiteController",
                 "Minn\\Blocks\\ImageTags",
                 "Minn\\Content\\SiteIcon",
+                "Minn\\Media\\PhotoMeta",
                 "Minn\\Media\\Writer",
                 "Minn\\Rest\\MediaObject"
             ],
@@ -68445,6 +68613,251 @@
                     "params": [],
                     "line": 105,
                     "end": 122
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Media\\PhotoMeta",
+            "short": "PhotoMeta",
+            "namespace": "Minn\\Media",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Media/PhotoMeta.php",
+            "lines": 165,
+            "doc": "A photo's own description, read as the reference's wp_read_image_metadata\nreads it (probe image-meta): IPTC first (headline or object name for the\ntitle, caption, credit or byline, copyright, keywords, the date and time\nit was made), then EXIF for what IPTC left empty (a short description as\nthe title, the user comment or description as the caption, the artist,\ncopyright, model, the digitized time, aperture, focal length, ISO,\nexposure, orientation). Text that is not UTF-8 is read as Latin-1, and\nevery value is cleaned (the reference runs wp_kses_post) and made a\nstring; a short caption doubles as the title.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Media\\Metadata"
+            ],
+            "usedBy": [
+                "Minn\\Media\\Writer"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "EXIF_TYPES",
+                    "value": "array (   0 => 2,   1 => 7,   2 => 8, )",
+                    "doc": "EXIF is read for these image types only: JPEG and TIFF, both byte orders.",
+                    "visibility": "public"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "read",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "read(string $file, array $exifTypes, Closure $clean): ?array",
+                    "doc": "The metadata, the image type, the IPTC and EXIF it came from; null\nwhen there is no such file.",
+                    "shapes": [
+                        "@param list<int> $exifTypes",
+                        "@param Closure(string): string $clean",
+                        "@return array{meta: array<string, mixed>, type: int|null, iptc: array<string, mixed>, exif: array<string, mixed>}|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "file",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "exifTypes",
+                            "type": "array",
+                            "shape": "list<int>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "clean",
+                            "type": "Closure",
+                            "shape": "Closure(string): string",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 33,
+                    "end": 55
+                },
+                {
+                    "routes": [],
+                    "name": "fromIptc",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "fromIptc(array $meta, array $iptc): array",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, mixed> $meta",
+                        "@param array<string, mixed> $iptc",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "meta",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "iptc",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 62,
+                    "end": 84
+                },
+                {
+                    "routes": [],
+                    "name": "fromExif",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "fromExif(array $meta, array $exif): array",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, mixed> $meta",
+                        "@param array<string, mixed> $exif",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "meta",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "exif",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 91,
+                    "end": 122
+                },
+                {
+                    "routes": [],
+                    "name": "described",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "described(array $meta, string $description, string $comment, string $comments): array",
+                    "doc": "The title and caption EXIF gives when IPTC left them empty: a short\ndescription is the title, and the user comment (else the description)\nthe caption; a description that is not the title runs on into the\ncomment; a comment alone is the caption; a short caption doubles as the\ntitle.",
+                    "shapes": [
+                        "@param array<string, mixed> $meta",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "meta",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "description",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "comment",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "comments",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 134,
+                    "end": 148
+                },
+                {
+                    "routes": [],
+                    "name": "fraction",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "fraction(mixed $value): float",
+                    "doc": "\"28/10\" as 2.8; a zero denominator reads 0.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 151,
+                    "end": 159
+                },
+                {
+                    "routes": [],
+                    "name": "exifTime",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "exifTime(string $time): string",
+                    "doc": "An EXIF time (\"2024:05:06 07:08:09\") as a Unix time read as UTC.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "time",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 162,
+                    "end": 167
+                },
+                {
+                    "routes": [],
+                    "name": "cleaned",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "cleaned(array $meta, Closure $clean): array",
+                    "doc": "Text made UTF-8 (Latin-1 read as such) and cleaned, every value a string.",
+                    "shapes": [
+                        "@param array<string, mixed> $meta",
+                        "@param Closure(string): string $clean",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "meta",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "clean",
+                            "type": "Closure",
+                            "shape": "Closure(string): string",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 176,
+                    "end": 183
                 }
             ]
         },
@@ -69411,7 +69824,7 @@
             "namespace": "Minn\\Media",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Media/Writer.php",
-            "lines": 154,
+            "lines": 175,
             "doc": "The writes the media library makes. An Upload becomes an attachment: the\nfile lands in the dated uploads directory under a unique name, the row is\ninserted with the stored name as its title and slug, and an image gets\nits sub-sizes and the serialized metadata blob. Edits stamp the row\nmodified; removal takes the files with the row.",
             "implements": [],
             "extends": null,
@@ -69423,9 +69836,11 @@
                 "Minn\\Content\\Slug",
                 "Minn\\Media\\Images",
                 "Minn\\Media\\Metadata",
+                "Minn\\Media\\PhotoMeta",
                 "Minn\\Media\\PreparedUpload",
                 "Minn\\Media\\Upload",
-                "Minn\\Media\\Uploads"
+                "Minn\\Media\\Uploads",
+                "Minn\\Support\\Kses"
             ],
             "usedBy": [
                 "Minn\\Rest\\MediaController",
@@ -69474,8 +69889,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 22,
-                "end": 29
+                "line": 23,
+                "end": 30
             },
             "cases": [],
             "constants": [],
@@ -69551,8 +69966,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 32,
-                    "end": 41
+                    "line": 33,
+                    "end": 42
                 },
                 {
                     "routes": [],
@@ -69578,8 +69993,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 47,
-                    "end": 52
+                    "line": 48,
+                    "end": 53
                 },
                 {
                     "routes": [],
@@ -69619,8 +70034,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 59,
-                    "end": 64
+                    "line": 60,
+                    "end": 69
                 },
                 {
                     "routes": [],
@@ -69660,8 +70075,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 71,
-                    "end": 101
+                    "line": 76,
+                    "end": 106
                 },
                 {
                     "routes": [],
@@ -69680,8 +70095,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 104,
-                    "end": 107
+                    "line": 109,
+                    "end": 112
                 },
                 {
                     "routes": [],
@@ -69700,8 +70115,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 110,
-                    "end": 113
+                    "line": 115,
+                    "end": 118
                 },
                 {
                     "routes": [],
@@ -69720,8 +70135,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 116,
-                    "end": 119
+                    "line": 121,
+                    "end": 124
                 },
                 {
                     "routes": [],
@@ -69747,8 +70162,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 122,
-                    "end": 125
+                    "line": 127,
+                    "end": 130
                 },
                 {
                     "routes": [],
@@ -69776,8 +70191,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 128,
-                    "end": 131
+                    "line": 133,
+                    "end": 136
                 },
                 {
                     "routes": [],
@@ -69803,8 +70218,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 134,
-                    "end": 139
+                    "line": 139,
+                    "end": 144
                 },
                 {
                     "routes": [],
@@ -69832,8 +70247,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 142,
-                    "end": 147
+                    "line": 147,
+                    "end": 152
                 },
                 {
                     "routes": [],
@@ -69859,8 +70274,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 150,
-                    "end": 153
+                    "line": 155,
+                    "end": 158
                 },
                 {
                     "routes": [],
@@ -69879,8 +70294,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 156,
-                    "end": 163
+                    "line": 161,
+                    "end": 168
                 },
                 {
                     "routes": [],
@@ -69888,7 +70303,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "imageMetadata(string $relative, string $mime): array",
-                    "doc": "",
+                    "doc": "An image's metadata as the reference makes it without plugins: its\nown description (Media\\PhotoMeta), a stand-in when it is big or taken\nturned (which becomes the attached file, the upload kept as\noriginal_image), and the sizes cut from the upload.",
                     "shapes": [
                         "@return array<string, mixed>"
                     ],
@@ -69908,8 +70323,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 166,
-                    "end": 172
+                    "line": 178,
+                    "end": 194
                 }
             ]
         },
@@ -98973,8 +99388,7 @@
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Content\\PostWriter",
-                "Minn\\Content\\Slug"
+                "Minn\\Content\\PostWriter"
             ],
             "usedBy": [],
             "constructor": {
@@ -99039,8 +99453,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 28,
-                "end": 30
+                "line": 27,
+                "end": 29
             },
             "cases": [],
             "constants": [
@@ -99143,8 +99557,8 @@
                             "doc": "@return array<string, string>"
                         }
                     ],
-                    "line": 33,
-                    "end": 69
+                    "line": 32,
+                    "end": 68
                 },
                 {
                     "routes": [],
@@ -99172,8 +99586,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 72,
-                    "end": 79
+                    "line": 71,
+                    "end": 78
                 },
                 {
                     "routes": [],
@@ -99202,8 +99616,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 89,
-                    "end": 139
+                    "line": 88,
+                    "end": 138
                 },
                 {
                     "routes": [],
@@ -99236,8 +99650,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 142,
-                    "end": 153
+                    "line": 141,
+                    "end": 152
                 },
                 {
                     "routes": [],
@@ -99294,8 +99708,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 163,
-                    "end": 176
+                    "line": 162,
+                    "end": 175
                 },
                 {
                     "routes": [],
@@ -99321,8 +99735,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 178,
-                    "end": 181
+                    "line": 177,
+                    "end": 180
                 }
             ]
         },
@@ -107414,31 +107828,36 @@
             "namespace": "Minn\\Support",
             "kind": "final class",
             "file": "public/minn/src/Minn/Support/Accents.php",
-            "lines": 22,
-            "doc": "Accented and special Latin characters to their plain ASCII spelling; a character with no ASCII form stays as it is.",
+            "lines": 35,
+            "doc": "Accented and special characters to their plain spelling, from the\nreference's own table (data/accents.json, captured with\ntests/tools/accents-capture.php): text is put in composed form first, a\nlocale with spellings of its own (German, Danish, Catalan, Serbian,\nBosnian) has them, and a string that is not UTF-8 is read as Latin-1.\nAnything the table does not name stays as it is.",
             "implements": [],
             "extends": null,
             "uses": [],
-            "usedBy": [],
+            "usedBy": [
+                "Minn\\Content\\Slug"
+            ],
             "constructor": null,
             "cases": [],
-            "constants": [
+            "constants": [],
+            "properties": [
                 {
-                    "name": "SPELLINGS",
-                    "value": "array (   'ß' => 'ss',   'Æ' => 'AE',   'æ' => 'ae',   'Œ' => 'OE',   'œ' => 'oe',   'Ø' => 'O',   'ø' => 'o',   'Đ' => 'D',   'đ' => 'd',   'Ł' => 'L',   'ł' => 'l',   'Þ' => 'TH',   'þ' => 'th',   'Ð' => 'D',   'ð' => 'd',   '€' => 'E',   '£' => '',   '“' => '',   '”' => '',   '‘' => '',   '’' => '',   '–' => '-',   '—' => '-',   '…' => '', )",
+                    "name": "data",
+                    "type": "?array",
+                    "readonly": false,
+                    "static": true,
                     "doc": "",
-                    "visibility": "private"
+                    "visibility": "private",
+                    "promoted": false
                 }
             ],
-            "properties": [],
             "methods": [
                 {
                     "routes": [],
                     "name": "strip",
                     "static": true,
                     "visibility": "public",
-                    "signature": "strip(string $text): string",
-                    "doc": "The text with accented letters replaced by their plain forms.",
+                    "signature": "strip(string $text, string $locale = ''): string",
+                    "doc": "The text with its accented characters spelled plainly, as the locale spells them.",
                     "shapes": [],
                     "params": [
                         {
@@ -107447,10 +107866,31 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "locale",
+                            "type": "string",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
                         }
                     ],
-                    "line": 15,
-                    "end": 30
+                    "line": 23,
+                    "end": 40
+                },
+                {
+                    "routes": [],
+                    "name": "data",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "data(): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array{table: array<string, string>, locales: array<string, array<string, string>>, latin1: array<string, string>}"
+                    ],
+                    "params": [],
+                    "line": 43,
+                    "end": 50
                 }
             ]
         },
@@ -108338,6 +108778,7 @@
                 "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
                 "Minn\\Content\\Users",
                 "Minn\\Front\\CommentPostController",
+                "Minn\\Media\\Writer",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenusController",

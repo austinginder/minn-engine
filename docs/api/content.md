@@ -31,7 +31,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`Revisions`](#revisions) | final readonly class | 86 | Revision rows: the plain snapshots and the per-author autosave slots. |
 | [`Site`](#site) | final readonly class | 73 | Site-wide options and the site's clock. |
 | [`SiteIcon`](#siteicon) | final readonly class | 50 | The site icon: the attachment the site_icon option names, as the file |
-| [`Slug`](#slug) | final class | 56 |  |
+| [`Slug`](#slug) | final class | 81 |  |
 | [`TagBalancer`](#tagbalancer) | final class | 82 | Closes what markup leaves open and drops what it closes without opening, |
 | [`TermLinks`](#termlinks) | final class | 39 | A post's terms rendered as links, in the two shapes the reference |
 | [`TermRecord`](#termrecord) | final readonly class | 88 | One term with its taxonomy row, read by name: $term->name, ->slug, |
@@ -1576,14 +1576,26 @@ The icon's URL, empty when the site has none.
 
 `final class Minn\Content\Slug` · `public/minn/src/Minn/Content/Slug.php`
 
-- const `SAVE_DASHES` = `array (   0 => '%c2%a0',   1 => '%e2%80%93',   2 => '%e2%80%94',   3 => '&nbsp;',   4 => '&#160;',   5 => '&ndash;',   6 => '&#8211;',   7 => '&mdash;',   8 => '&#8212;',   9 => '/',   10 => '×',   11 => '%c3%97', )`
+- const `SAVE_DASHES` = `array (   0 => '%c2%a0',   1 => '%e2%80%93',   2 => '%e2%80%94',   3 => '&nbsp;',   4 => '&#160;',   5 => '&ndash;',   6 => '&#8211;',   7 => '&mdash;',   8 => '&#8212;',   9 => '/', )`
 - const `SAVE_DROPPED` = `array (   0 => '%c2%ad',   1 => '%c2%a1',   2 => '%c2%bf',   3 => '%c2%ab',   4 => '%c2%bb',   5 => '%e2%80%b9',   6 => '%e2%80%ba',   7 => '%e2%80%98',   8 => '%e2%80%99',   9 => '%e2%80%9c',   10 => '%e2%80%9d',   11 => '%e2%80%9a',   12 => '%e2%80%9b',   13 => '%e2%80%9e',   14 => '%e2%80%9f',   15 => '%e2%80%a2',   16 => '%c2%a9',   17 => '%c2%ae',   18 => '%c2%b0',   19 => '%e2%80%a6',   20 => '%e2%84%a2',   21 => '%c2%b4',   22 => '%cb%8a',   23 => '%cc%81',   24 => '%cd%81',   25 => '%cc%80',   26 => '%cc%84',   27 => '%cc%8c',   28 => '%e2%82%ac',   29 => '%c2%a3',   30 => '%e2%80%80',   31 => '%e2%80%81',   32 => '%e2%80%82',   33 => '%e2%80%83',   34 => '%e2%80%84',   35 => '%e2%80%85',   36 => '%e2%80%86',   37 => '%e2%80%87',   38 => '%e2%80%88',   39 => '%e2%80%89',   40 => '%e2%80%8a',   41 => '%e2%80%8b',   42 => '%e2%80%8c',   43 => '%e2%80%8d',   44 => '%e2%80%8e',   45 => '%e2%80%8f',   46 => '%e2%80%aa',   47 => '%e2%80%ab',   48 => '%e2%80%ac',   49 => '%e2%80%ad',   50 => '%e2%80%ae',   51 => '%e2%80%af',   52 => '%e2%81%9f',   53 => '%e3%80%80',   54 => '%ef%bb%bf', )`
 
-Used by: `Minn\Content\PostWriter`, `Minn\Content\Terms`, `Minn\Content\Users`, `Minn\Media\Writer`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Runtime\PostInsert`
+Used by: `Minn\Content\PostWriter`, `Minn\Content\Terms`, `Minn\Content\Users`, `Minn\Media\Writer`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`
 
-### static `sanitize(string $text): string`
+### static `sanitize(string $text, string $locale = ''): string`
 
-Lower-case, hyphen-separated, ASCII only: the shape post_name takes.
+A title as the reference's sanitize_title makes a slug of it when
+saving, without the filters (the runtime's sanitize_title adds those):
+accents spelled plainly, then the dash form, non-ASCII percent-encoded
+up to 200 bytes.
+
+### static `uriEncode(string $text, int $length, Closure $ascii): string`
+
+Non-ASCII characters as lower-case percent escapes, a whole character
+at a time, stopping before one would take the text past $length bytes
+(0 for no limit); each ASCII character goes through $ascii (as it is,
+or rawurlencode).
+
+- `@param Closure(string): string $ascii`
 
 ### static `truncate(string $slug, int $length): string`
 

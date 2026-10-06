@@ -1913,7 +1913,7 @@ nothing should change.
 - `@param list<string> $taxonomies the type's taxonomies`
 - `@return list<int>|null`
 
-Internals: `type()` (private, line 178)
+Internals: `type()` (private, line 177)
 
 
 ## PostLookup
