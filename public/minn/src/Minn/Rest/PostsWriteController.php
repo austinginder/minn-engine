@@ -173,6 +173,11 @@ final readonly class PostsWriteController
     private function writeNewPost(array $columns): int
     {
         $id = $this->writer->insert($columns);
+        // A live post left without a slug (no title to make one from) takes its id, made free (probe editor-styles).
+        ['post_name' => $name, 'post_status' => $status, 'post_type' => $type, 'post_parent' => $parent] = $columns + ['post_name' => '', 'post_status' => 'draft', 'post_type' => 'post', 'post_parent' => 0];
+        if ($name === '' && in_array($status, self::LIVE, true)) {
+            $this->writer->update($id, ['post_name' => $this->writer->uniqueSlug((string) $id, $id, (string) $type, (int) $parent)]);
+        }
         $this->writer->update($id, ['guid' => $this->object->permalink($this->posts->find($id))]);
         return $id;
     }

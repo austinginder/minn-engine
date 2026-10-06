@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Runtime\Runtime;
+
 /**
  * The engine's registry of built-in post types, seeded from the observed
  * contract (src/data/types.json) with _links attached at runtime.
@@ -27,6 +29,12 @@ final class Types
      * @return array<string, array> keyed by type slug
      */
     public function all(): array
+    {
+        return Runtime::booted() ? $this->core() + $this->registered() : $this->core();
+    }
+
+    /** The built-in types and the ones extensions declare. @return array<string, array> */
+    private function core(): array
     {
         if ($this->types === null) {
             $types = (array) json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/types.json'), true);
@@ -58,6 +66,50 @@ final class Types
             $this->types = $types;
         }
         return $this->types;
+    }
+
+    /**
+     * The types plugin code registered to show in REST (probe
+     * rest-types-edit), in registration order, as the reference describes
+     * them: their label, icon, the taxonomies they show in REST.
+     *
+     * @return array<string, array>
+     */
+    private function registered(): array
+    {
+        $registry = Runtime::registry();
+        $out = [];
+        foreach ($registry->postTypes() as $slug => $row) {
+            if (empty($row['show_in_rest']) || !empty($row['_builtin'])) {
+                continue;
+            }
+            $base = (string) ($row['rest_base'] ?: $slug);
+            $taxonomies = [];
+            foreach ($registry->taxonomies() as $taxonomy => $taxonomyRow) {
+                if (!empty($taxonomyRow['show_in_rest']) && in_array((string) $slug, (array) ($taxonomyRow['object_type'] ?? []), true)) {
+                    $taxonomies[] = (string) $taxonomy;
+                }
+            }
+            $out[(string) $slug] = [
+                'description' => (string) ($row['description'] ?? ''),
+                'hierarchical' => (bool) ($row['hierarchical'] ?? false),
+                'has_archive' => $row['has_archive'] ?? false,
+                'name' => (string) ($row['label'] ?? $slug),
+                'slug' => (string) $slug,
+                'icon' => $row['menu_icon'] ?? null,
+                'taxonomies' => $taxonomies,
+                'rest_base' => $base,
+                'rest_namespace' => (string) ($row['rest_namespace'] ?: 'wp/v2'),
+                'template' => (array) ($row['template'] ?? []),
+                'template_lock' => $row['template_lock'] ?? false,
+                '_links' => [
+                    'collection' => [['href' => $this->url->to('/wp/v2/types')]],
+                    'wp:items' => [['href' => $this->url->to('/' . ($row['rest_namespace'] ?: 'wp/v2') . '/' . $base)]],
+                    'curies' => RestUrl::curies(),
+                ],
+            ];
+        }
+        return $out;
     }
 
     /** One post type by slug, or null. */

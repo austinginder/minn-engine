@@ -2,11 +2,11 @@
     "generated": "2026-10-06",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 636,
-        "composes": 902,
-        "leaf": 649,
-        "noop": 1840,
-        "functions": 3957,
+        "minn": 638,
+        "composes": 912,
+        "leaf": 651,
+        "noop": 1832,
+        "functions": 3963,
         "minnMethods": 660,
         "leafLinesOver15": 12
     },
@@ -9079,18 +9079,26 @@
         },
         "WP_REST_Server::engine_endpoints": {
             "file": "classes/WP_REST_Server.php",
-            "lines": 17,
+            "lines": 19,
             "kind": "minn",
             "minn": [
+                "Minn\\Http\\Request::__construct",
+                "Minn\\Rest\\Api::forRequest",
                 "Minn\\Runtime\\Runtime::booted",
                 "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::get"
+                "Minn\\Runtime\\Runtime::db",
+                "Minn\\Runtime\\Runtime::get",
+                "Minn\\Runtime\\Runtime::isSecure"
             ],
-            "composes": []
+            "composes": [
+                "home_url",
+                "parse_url",
+                "request"
+            ]
         },
         "WP_REST_Server::engine_response": {
             "file": "classes/WP_REST_Server.php",
-            "lines": 35,
+            "lines": 36,
             "kind": "minn",
             "minn": [
                 "Minn\\Http\\Method::tryFrom",
@@ -16000,6 +16008,20 @@
                 "wp_transition_post_status"
             ]
         },
+        "_minn_post_slug_from_id": {
+            "file": "post.php",
+            "lines": 5,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Content\\PostWriter::update",
+                "Minn\\Runtime\\PostSave::keepsSlug"
+            ],
+            "composes": [
+                "_minn_post_writer",
+                "sanitize_title",
+                "wp_unique_post_slug"
+            ]
+        },
         "_minn_post_writer": {
             "file": "post.php",
             "lines": 1,
@@ -17382,10 +17404,13 @@
         },
         "add_editor_style": {
             "file": "theme.php",
-            "lines": 0,
-            "kind": "noop",
+            "lines": 6,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "add_theme_support",
+                "is_rtl"
+            ]
         },
         "add_feed": {
             "file": "misc.php",
@@ -20959,10 +20984,18 @@
         },
         "get_editor_stylesheets": {
             "file": "theme.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 18,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "apply_filters",
+                "get_stylesheet_directory",
+                "get_stylesheet_directory_uri",
+                "get_template_directory",
+                "get_template_directory_uri",
+                "is_child_theme",
+                "sanitize_url"
+            ]
         },
         "get_extended": {
             "file": "post.php",
@@ -22031,6 +22064,15 @@
                 "wp_timezone"
             ]
         },
+        "get_post_timestamp": {
+            "file": "post.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_post_datetime"
+            ]
+        },
         "get_post_type": {
             "file": "post.php",
             "lines": 2,
@@ -22194,6 +22236,18 @@
             ],
             "composes": [
                 "get_query_template"
+            ]
+        },
+        "get_privacy_policy_url": {
+            "file": "link-template.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "get_option",
+                "get_permalink",
+                "get_post_status"
             ]
         },
         "get_queried_object": {
@@ -23165,6 +23219,20 @@
                 "_navigation_markup",
                 "paginate_links",
                 "wp_parse_args"
+            ]
+        },
+        "get_the_privacy_policy_link": {
+            "file": "link-template.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "esc_html",
+                "esc_url",
+                "get_option",
+                "get_privacy_policy_url",
+                "get_the_title"
             ]
         },
         "get_the_tag_list": {
@@ -24469,8 +24537,8 @@
         },
         "is_rtl": {
             "file": "load.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 2,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
@@ -26112,10 +26180,12 @@
         },
         "register_theme_directory": {
             "file": "theme.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 13,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "untrailingslashit"
+            ]
         },
         "register_theme_feature": {
             "file": "theme.php",
@@ -26227,10 +26297,14 @@
         },
         "remove_editor_styles": {
             "file": "theme.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 8,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "current_theme_supports",
+                "is_admin",
+                "remove_theme_support"
+            ]
         },
         "remove_filter": {
             "file": "hooks.php",
@@ -26844,6 +26918,15 @@
             ],
             "composes": []
         },
+        "rest_parse_embed_param": {
+            "file": "rest-api.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_parse_list"
+            ]
+        },
         "rest_parse_hex_color": {
             "file": "rest-api.php",
             "lines": 1,
@@ -26866,10 +26949,19 @@
         },
         "rest_preload_api_request": {
             "file": "rest-api.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 29,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "apply_filters",
+                "parse_url",
+                "reset",
+                "rest_do_request",
+                "rest_ensure_response",
+                "rest_get_server",
+                "rest_parse_embed_param",
+                "untrailingslashit"
+            ]
         },
         "rest_sanitize_array": {
             "file": "rest-api.php",
@@ -27251,8 +27343,8 @@
         },
         "search_theme_directories": {
             "file": "theme.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 9,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
@@ -28185,6 +28277,15 @@
             "minn": [],
             "composes": [
                 "get_the_posts_pagination"
+            ]
+        },
+        "the_privacy_policy_link": {
+            "file": "link-template.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "get_the_privacy_policy_link"
             ]
         },
         "the_search_query": {
@@ -30493,10 +30594,19 @@
         },
         "wp_enqueue_block_style": {
             "file": "script-loader.php",
-            "lines": 0,
-            "kind": "noop",
+            "lines": 17,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "add_action",
+                "add_filter",
+                "did_action",
+                "wp_enqueue_style",
+                "wp_parse_args",
+                "wp_register_style",
+                "wp_should_load_separate_core_block_assets",
+                "wp_style_add_data"
+            ]
         },
         "wp_enqueue_classic_theme_styles": {
             "file": "script-loader.php",
@@ -31156,9 +31266,18 @@
         },
         "wp_get_global_stylesheet": {
             "file": "theme.php",
-            "lines": 1,
-            "kind": "noop",
-            "minn": [],
+            "lines": 8,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Content\\Posts::__construct",
+                "Minn\\Content\\Site::__construct",
+                "Minn\\Front\\Permalinks::fromDb",
+                "Minn\\Runtime\\Runtime::current",
+                "Minn\\Theme\\GlobalStyles::__construct",
+                "Minn\\Theme\\Templates::__construct",
+                "Minn\\Theme\\Templates::userStyles",
+                "Minn\\Theme\\Theme::forStyles"
+            ],
             "composes": []
         },
         "wp_get_http_headers": {
@@ -31932,7 +32051,7 @@
         },
         "wp_insert_post": {
             "file": "post.php",
-            "lines": 35,
+            "lines": 36,
             "kind": "minn",
             "minn": [
                 "Minn\\Content\\PostWriter::recountTaxonomiesOf",
@@ -31952,6 +32071,7 @@
                 "_minn_post_inputs",
                 "_minn_post_insert",
                 "_minn_post_saved",
+                "_minn_post_slug_from_id",
                 "_minn_post_writer",
                 "get_permalink",
                 "get_post",

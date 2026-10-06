@@ -11,7 +11,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`ClassicRenderer`](#classicrenderer) | final readonly class | 139 | A whole page from the active classic theme: the reference's PHP template |
 | [`ClassicTheme`](#classictheme) | final readonly class | 31 | The active classic (PHP-template) theme on disk. A theme is classic when |
 | [`Folder`](#folder) | final readonly class | 77 | A theme folder read from disk: its style.css headers, which folder its templates come from, its screenshot, whether it is a block theme. |
-| [`GlobalStyles`](#globalstyles) | final readonly class | 433 | theme.json to CSS. Presets become custom properties on :root and their |
+| [`GlobalStyles`](#globalstyles) | final readonly class | 555 | theme.json to CSS. Presets become custom properties on :root and their |
 | [`HeadLinks`](#headlinks) | final readonly class | 114 | The links the reference puts in every head: the site and comments |
 | [`Hierarchy`](#hierarchy) | final class | 146 | The classic template hierarchy: the candidate file names each template |
 | [`MainQueryBridge`](#mainquerybridge) | final readonly class | 67 | Stands the main query for a themed page: a plugin's archive runs through |
@@ -245,7 +245,15 @@ data expects (the CSS writer resolves them on the way out instead).
 
 ### `css(): string`
 
-The global stylesheet from theme.json and the user's styles.
+The global stylesheet from theme.json and the user's styles, as a page prints it: only the core blocks it rendered.
+
+### `stylesheet(array $types): string`
+
+The stylesheet wp_get_global_stylesheet answers (probe editor-styles),
+by type: the custom properties, the styles (every block's, rendered or
+not), the preset classes; in that order.
+
+- `@param list<string> $types`
 
 ### `fontFaces(): string`
 
@@ -256,7 +264,7 @@ file:./ resolved against the theme that carries the file and the
 format named from the extension. Families without files print
 nothing.
 
-Internals: `fontUrl()` (private, line 154), `structuralRules()` (private, line 172), `gapRules()` (private, line 192), `rootStyles()` (private, line 208), `elementStyles()` (private, line 222), `blockStyles()` (private, line 251), `withoutEmpty()` (private, line 270), `scopedCss()` (private, line 283), `variationStyles()` (private, line 305), `containerStyles()` (private, line 336), `declarations()` (private, line 361), `ordered()` (private, line 432)
+Internals: `parts()` (private, line 129), `fontUrl()` (private, line 185), `structuralRules()` (private, line 203), `gapRules()` (private, line 223), `rootStyles()` (private, line 239), `elementStyles()` (private, line 253), `blockStyles()` (private, line 292), `selectorsOf()` (private, line 320), `byFeature()` (private, line 335), `withoutEmpty()` (private, line 362), `scopedCss()` (private, line 382), `scope()` (private, line 406), `append()` (private, line 419), `variationStyles()` (private, line 425), `containerStyles()` (private, line 456), `declarations()` (private, line 481), `ordered()` (private, line 554)
 
 
 ## HeadLinks

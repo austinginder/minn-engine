@@ -143,6 +143,8 @@ final class Runtime
         // bound with the runtime, not built on first use.
         $GLOBALS['wp_locale'] = new \WP_Locale();
         \_minn_locale_switcher();
+        // The theme folder registered as the reference registers it while loading.
+        \register_theme_directory(\get_theme_root());
         register_shutdown_function(static function (): void {
             self::hooks()->action('shutdown', []);
         });

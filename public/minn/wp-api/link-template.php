@@ -751,3 +751,27 @@ function get_bookmark($bookmark, $output = OBJECT, $filter = 'raw')
     }
     return $link;
 }
+
+/** The privacy policy page's address, or nothing when no published page is set, through privacy_policy_url. */
+function get_privacy_policy_url()
+{
+    $id = (int) get_option('wp_page_for_privacy_policy');
+    $url = $id > 0 && get_post_status($id) === 'publish' ? (string) get_permalink($id) : '';
+    return apply_filters('privacy_policy_url', $url, $id);
+}
+
+/** A link to the privacy policy page, when it has an address and a title, through the_privacy_policy_link. */
+function get_the_privacy_policy_link($before = '', $after = '')
+{
+    $url = get_privacy_policy_url();
+    $id = (int) get_option('wp_page_for_privacy_policy');
+    $title = $id > 0 ? get_the_title($id) : '';
+    $link = $url !== '' && $title !== '' ? sprintf('<a class="privacy-policy-link" href="%s" rel="privacy-policy">%s</a>', esc_url($url), esc_html($title)) : '';
+    $link = apply_filters('the_privacy_policy_link', $link, $url);
+    return $link ? $before . $link . $after : '';
+}
+
+function the_privacy_policy_link($before = '', $after = '')
+{
+    echo get_the_privacy_policy_link($before, $after);
+}

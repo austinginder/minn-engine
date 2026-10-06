@@ -6,7 +6,7 @@ the wp/v2 surface: shapes and controllers
 |---|---|---|---|
 | [`AbilitiesController`](#abilitiescontroller) | final readonly class | 142 | wp-abilities/v1: what this site can be asked to do, and the doing of it. |
 | [`AdditionalFields`](#additionalfields) | final class | 46 | Which object type a wp/v2 route serves, so fields registered for that type can ride on the engine's own responses. |
-| [`Api`](#api) | final readonly class | 227 | The REST API: wires the controllers for one request and dispatches a |
+| [`Api`](#api) | final readonly class | 228 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 170 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`ArgCheck`](#argcheck) | final readonly class | 83 | Judges a route's declared arguments against the request before the |
 | [`BatchController`](#batchcontroller) | final readonly class | 159 | batch/v1 as the reference answers it (probe rest-batch): up to 25 |
@@ -42,7 +42,7 @@ the wp/v2 surface: shapes and controllers
 | [`PolicyGate`](#policygate) | final readonly class | 91 | Judges a route's policy against the caller, with the reference's |
 | [`PostObject`](#postobject) | final readonly class | 494 | Builds the wp/v2 post and page objects in the reference's shape: the |
 | [`PostsController`](#postscontroller) | final readonly class | 182 | wp/v2 posts and pages, read side. |
-| [`PostsWriteController`](#postswritecontroller) | final readonly class | 431 | wp/v2 posts and pages, write side: create, update, trash, and force |
+| [`PostsWriteController`](#postswritecontroller) | final readonly class | 436 | wp/v2 posts and pages, write side: create, update, trash, and force |
 | [`RenderedFields`](#renderedfields) | final class | 49 | A post's rendered title, content and excerpt as a REST response carries |
 | [`Reply`](#reply) | final class | 47 | JSON responses in the reference's shape: its header set, its json_encode |
 | [`RestUrl`](#resturl) | final readonly class | 38 | REST URLs in the form the reference emits for the site's permalink mode: |
@@ -70,8 +70,8 @@ the wp/v2 surface: shapes and controllers
 | [`TemplatesController`](#templatescontroller) | final readonly class | 249 | wp/v2/templates and wp/v2/template-parts: the block theme's templates as |
 | [`TermObject`](#termobject) | final readonly class | 84 | The wp/v2 category and tag objects. |
 | [`TermsController`](#termscontroller) | final readonly class | 215 | wp/v2 categories, tags, and pattern categories: list, single, and the create/update/delete the taxonomy admin drives. |
-| [`Types`](#types) | final class | 97 | The engine's registry of built-in post types, seeded from the observed |
-| [`TypesController`](#typescontroller) | final readonly class | 24 | wp/v2 types. |
+| [`Types`](#types) | final class | 147 | The engine's registry of built-in post types, seeded from the observed |
+| [`TypesController`](#typescontroller) | final readonly class | 70 | wp/v2 types. In the edit context (probe rest-types-edit) a type adds its |
 | [`UserObject`](#userobject) | final readonly class | 106 | The wp/v2 user objects: the public view shape and the edit-context shape. |
 | [`UsersController`](#userscontroller) | final readonly class | 338 | wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives. |
 | [`WidgetObject`](#widgetobject) | final readonly class | 55 | A widget as wp/v2/widgets shows it (probe rest-widgets): its id and base, |
@@ -221,7 +221,7 @@ runtime's server calls for a core route, so a route the engine
 declines cannot bounce between the two. $as is the caller's own
 request object, which the route's parameters are set on.
 
-Internals: `controllers()` (private, line 73), `engineResponse()` (private, line 229), `options()` (private, line 245), `withAllow()` (private, line 258)
+Internals: `controllers()` (private, line 73), `engineResponse()` (private, line 230), `options()` (private, line 246), `withAllow()` (private, line 259)
 
 
 ## ApplicationPasswordsController
@@ -691,7 +691,7 @@ a linked resource carries when it rides inside another response.
 
 Cases: `View` = `'view'`, `Edit` = `'edit'`, `Embed` = `'embed'`
 
-Used by: `Minn\Rest\BlocksController`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenusController`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostsController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetObject`, `Minn\Rest\WidgetsController`
+Used by: `Minn\Rest\BlocksController`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenusController`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostsController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\TypesController`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetObject`, `Minn\Rest\WidgetsController`
 
 ### static `of(Minn\Http\Request $request): self`
 
@@ -1759,7 +1759,7 @@ Trashes a post of any type, or deletes it with force.
 
 A field that may arrive as a scalar or as {raw: ...}.
 
-Internals: `events()` (private, line 128), `newColumns()` (private, line 139), `writeNewPost()` (private, line 173), `trash()` (private, line 279), `rememberOld()` (private, line 298), `floatingDate()` (private, line 323), `scheduledIfFuture()` (private, line 333), `fieldColumns()` (private, line 352), `statusColumns()` (private, line 397), `checkStickyPasswordConflict()` (private, line 427), `validStatus()` (private, line 439), `clean()` (private, line 448)
+Internals: `events()` (private, line 128), `newColumns()` (private, line 139), `writeNewPost()` (private, line 173), `trash()` (private, line 284), `rememberOld()` (private, line 303), `floatingDate()` (private, line 328), `scheduledIfFuture()` (private, line 338), `fieldColumns()` (private, line 357), `statusColumns()` (private, line 402), `checkStickyPasswordConflict()` (private, line 432), `validStatus()` (private, line 444), `clean()` (private, line 453)
 
 
 ## RenderedFields
@@ -3035,12 +3035,19 @@ Whether an extension declared this type.
 
 The rest_base of a type slug.
 
+Internals: `core()` (private, line 37), `registered()` (private, line 78)
+
 
 ## TypesController
 
 `final readonly class Minn\Rest\TypesController` · `public/minn/src/Minn/Rest/TypesController.php`
 
-wp/v2 types.
+wp/v2 types. In the edit context (probe rest-types-edit) a type adds its
+capabilities, visibility, viewability, labels and supports, for a caller
+who may edit its posts: the list leaves out the types the caller may
+not, and refuses a caller who may edit none; one type refuses outright.
+
+- const `EDIT_REFUSAL` = `'Sorry, you are not allowed to edit posts in this post type.'`
 
 Used by: `Minn\Rest\Api`
 
@@ -3060,6 +3067,8 @@ Deliberately a whole-payload reply: _fields strips every type key, yielding [].
 Route: `GET /wp/v2/types/{type:[\w-]+} (public)`
 
 One post type.
+
+Internals: `embedded()` (private, line 63), `mayEdit()` (private, line 68), `withEditFields()` (private, line 75)
 
 
 ## UserObject

@@ -97,7 +97,8 @@ final class Registry
      */
     public function registerPostType(string $name, array $args): array
     {
-        $post = $this->postTypes['post'];
+        // A hierarchical type starts from the page labels, any other from the post labels (probe rest-types-edit).
+        $post = $this->postTypes[!empty($args['hierarchical']) ? 'page' : 'post'];
         $label = (string) ($args['label'] ?? ($args['labels']['name'] ?? $name));
         $labels = $post['labels'];
         $labels['name'] = $label;
@@ -109,6 +110,8 @@ final class Registry
         foreach ((array) ($args['labels'] ?? []) as $key => $value) {
             $labels[$key] = $value;
         }
+        // A plugin's type also names its single-item template, last (probe rest-types-edit).
+        $labels['template_name'] ??= sprintf(\function_exists('__') ? \__('Single item: %s') : 'Single item: %s', (string) $labels['singular_name']);
         $public = (bool) ($args['public'] ?? false);
         $capabilityType = $args['capability_type'] ?? 'post';
         $hasArchive = $args['has_archive'] ?? false;

@@ -88,19 +88,23 @@
             "revisions_rest_controller_class": false,
             "autosave_rest_controller_class": false,
             "late_route_registration": false,
-            "supports": [
-                "title",
-                "editor",
-                "author",
-                "thumbnail",
-                "excerpt",
-                "trackbacks",
-                "custom-fields",
-                "comments",
-                "revisions",
-                "post-formats",
-                "autosave"
-            ]
+            "supports": {
+                "title": true,
+                "editor": [
+                    {
+                        "notes": true
+                    }
+                ],
+                "author": true,
+                "thumbnail": true,
+                "excerpt": true,
+                "trackbacks": true,
+                "custom-fields": true,
+                "comments": true,
+                "revisions": true,
+                "post-formats": true,
+                "autosave": true
+            }
         },
         "page": {
             "name": "page",
@@ -190,17 +194,21 @@
             "revisions_rest_controller_class": false,
             "autosave_rest_controller_class": false,
             "late_route_registration": false,
-            "supports": [
-                "title",
-                "editor",
-                "author",
-                "thumbnail",
-                "page-attributes",
-                "custom-fields",
-                "comments",
-                "revisions",
-                "autosave"
-            ]
+            "supports": {
+                "title": true,
+                "editor": [
+                    {
+                        "notes": true
+                    }
+                ],
+                "author": true,
+                "thumbnail": true,
+                "page-attributes": true,
+                "custom-fields": true,
+                "comments": true,
+                "revisions": true,
+                "autosave": true
+            }
         },
         "attachment": {
             "name": "attachment",

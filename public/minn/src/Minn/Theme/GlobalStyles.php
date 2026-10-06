@@ -79,8 +79,54 @@ final readonly class GlobalStyles
         return StyleSettings::resolved($this->styles());
     }
 
-    /** The global stylesheet from theme.json and the user's styles. */
+    /** The global stylesheet from theme.json and the user's styles, as a page prints it: only the core blocks it rendered. */
     public function css(): string
+    {
+        ['variables' => $variables, 'base' => $base, 'presets' => $presets, 'blocks' => $blocks] = $this->parts();
+        $styles = $this->styles();
+        $out = $variables . $base . $presets;
+        if (is_string($styles['css'] ?? null) && $styles['css'] !== '') {
+            // The theme's (or the site editor's) own CSS, printed as written between the preset classes and the block styles.
+            $out .= str_ireplace('</style', '', $styles['css']);
+        }
+        $rendered = RenderState::current()->blocks();
+        foreach ($blocks as $name => $blockStyles) {
+            $core = str_starts_with((string) $name, 'core/');
+            if (!$core || isset($rendered[$name]) && !in_array($name, self::STYLESHEET_LESS, true)) {
+                $out .= $this->blockStyles((string) $name, (array) $blockStyles);
+            }
+        }
+        $out .= $this->variationStyles($blocks);
+        $out .= $this->containerStyles();
+        return $out;
+    }
+
+    /**
+     * The stylesheet wp_get_global_stylesheet answers (probe editor-styles),
+     * by type: the custom properties, the styles (every block's, rendered or
+     * not), the preset classes; in that order.
+     *
+     * @param list<string> $types
+     */
+    public function stylesheet(array $types): string
+    {
+        ['variables' => $variables, 'base' => $base, 'presets' => $presets, 'blocks' => $blocks] = $this->parts();
+        $out = in_array('variables', $types, true) ? $variables : '';
+        if (in_array('styles', $types, true)) {
+            $out .= $base;
+            // The blocks in the reference's merged order: its own theme.json and the blocks' defaults (data/global-styles.json), then the theme's.
+            $core = (array) json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/global-styles.json'), true);
+            $blocks = Theme::merge((array) ($core['styles']['blocks'] ?? []), $blocks);
+            foreach ($blocks as $name => $blockStyles) {
+                $out .= $this->blockStyles((string) $name, (array) $blockStyles);
+            }
+            $out .= $this->variationStyles($blocks);
+        }
+        return $out . (in_array('presets', $types, true) ? $presets : '');
+    }
+
+    /** @return array{variables: string, base: string, presets: string, blocks: array<string, mixed>} */
+    private function parts(): array
     {
         $json = $this->user === null ? $this->theme->json() : Theme::merge($this->theme->json(), $this->user);
         $settings = (array) ($json['settings'] ?? []);
@@ -88,29 +134,14 @@ final readonly class GlobalStyles
         // defaults print for every theme, each key replaceable by the theme.
         $styles = $this->styles();
         $presets = StylePresets::presets($settings);
-
-        $out = ':root{' . StylePresets::presetProperties($presets) . '}';
-        $out .= '.wp-block-button{--wp--preset--dimension--25: 25%;--wp--preset--dimension--50: 50%;--wp--preset--dimension--75: 75%;--wp--preset--dimension--100: 100%;}';
+        $variables = ':root{' . StylePresets::presetProperties($presets) . '}';
+        $variables .= '.wp-block-button{--wp--preset--dimension--25: 25%;--wp--preset--dimension--50: 50%;--wp--preset--dimension--75: 75%;--wp--preset--dimension--100: 100%;}';
         $layout = (array) ($settings['layout'] ?? []);
-        $out .= ':root { --wp--style--global--content-size: ' . ($layout['contentSize'] ?? '620px') . ';--wp--style--global--wide-size: ' . ($layout['wideSize'] ?? '1000px') . '; }';
-        $out .= self::structuralRules((string) Styles::value((string) ($styles['spacing']['blockGap'] ?? '24px')), (bool) ($this->theme->json()['settings']['useRootPaddingAwareAlignments'] ?? false));
-        $out .= $this->rootStyles($styles);
-        $out .= $this->elementStyles((array) ($styles['elements'] ?? []), '');
-        $out .= StylePresets::presetClasses($presets);
-        if (is_string($styles['css'] ?? null) && $styles['css'] !== '') {
-            // The theme's (or the site editor's) own CSS, printed as written between the preset classes and the block styles.
-            $out .= str_ireplace('</style', '', $styles['css']);
-        }
-        $rendered = RenderState::current()->blocks();
-        foreach ((array) ($styles['blocks'] ?? []) as $name => $blockStyles) {
-            $core = str_starts_with((string) $name, 'core/');
-            if (!$core || isset($rendered[$name]) && !in_array($name, self::STYLESHEET_LESS, true)) {
-                $out .= $this->blockStyles((string) $name, (array) $blockStyles);
-            }
-        }
-        $out .= $this->variationStyles((array) ($styles['blocks'] ?? []));
-        $out .= $this->containerStyles();
-        return $out;
+        $base = ':root { --wp--style--global--content-size: ' . ($layout['contentSize'] ?? '620px') . ';--wp--style--global--wide-size: ' . ($layout['wideSize'] ?? '1000px') . '; }';
+        $base .= self::structuralRules((string) Styles::value((string) ($styles['spacing']['blockGap'] ?? '24px')), (bool) ($this->theme->json()['settings']['useRootPaddingAwareAlignments'] ?? false));
+        $base .= $this->rootStyles($styles);
+        $base .= $this->elementStyles((array) ($styles['elements'] ?? []), '');
+        return ['variables' => $variables, 'base' => $base, 'presets' => StylePresets::presetClasses($presets), 'blocks' => (array) ($styles['blocks'] ?? [])];
     }
 
     /**
@@ -233,38 +264,99 @@ final readonly class GlobalStyles
                     $states[$state] = (array) $rules[$state];
                 }
             }
+            $full = $scope === '' ? $selector : implode(', ', array_map(static fn (string $s) => "{$scope} {$s}", explode(', ', $selector)));
             foreach ($states as $state => $stateRules) {
                 $declarations = self::declarations($stateRules, []);
                 if ($declarations === []) {
                     continue;
                 }
-                $full = $scope === '' ? $selector : implode(', ', array_map(static fn (string $s) => "{$scope} {$s}", explode(', ', $selector)));
                 $wrapped = $state === '' && $scope === '' && !in_array($element, ['button', 'caption'], true)
                     ? $full
                     : ':root :where(' . ($state === '' ? $full : implode(', ', array_map(static fn (string $s) => $s . $state, explode(', ', $full)))) . ')';
                 $out .= $wrapped . '{' . implode(';', $declarations) . ';}';
             }
+            // An element's own CSS, under the element's selector (probe editor-styles).
+            if (is_string($rules['css'] ?? null) && $rules['css'] !== '') {
+                $out .= self::scopedCss($rules['css'], $full);
+            }
         }
         return $out;
     }
 
+    /**
+     * A block's rules: its root rule, its layout gap rules, then a rule for
+     * each feature its metadata gives a selector of its own (the avatar's
+     * border on its image), its own CSS and its elements (probe
+     * editor-styles).
+     */
     private function blockStyles(string $name, array $blockStyles): string
     {
         $slug = str_starts_with($name, 'core/') ? substr($name, 5) : str_replace('/', '-', $name);
-        $selector = self::BLOCK_SELECTORS[$name] ?? ".wp-block-{$slug}";
+        $selectors = self::selectorsOf($name);
+        $selector = is_string($selectors['root'] ?? null) ? $selectors['root'] : (self::BLOCK_SELECTORS[$name] ?? ".wp-block-{$slug}");
+        [$rootStyles, $features] = self::byFeature($blockStyles, $selectors);
         $out = '';
-        $declarations = self::declarations($blockStyles, ['blockGap']);
+        $declarations = self::declarations($rootStyles, ['blockGap']);
         if ($declarations !== []) {
             $out .= ":root :where({$selector}){" . implode(';', $declarations) . ';}';
         }
         if (isset($blockStyles['spacing']['blockGap'])) {
             $out .= self::gapRules("wp-block-{$slug}", Styles::value((string) $blockStyles['spacing']['blockGap']));
         }
+        foreach ($features as $featureSelector => $featureStyles) {
+            $featureDeclarations = self::declarations($featureStyles, ['blockGap']);
+            if ($featureDeclarations !== []) {
+                $out .= ":root :where({$featureSelector}){" . implode(';', $featureDeclarations) . ';}';
+            }
+        }
         if (isset($blockStyles['css'])) {
             $out .= self::scopedCss((string) $blockStyles['css'], $selector);
         }
         $out .= $this->elementStyles((array) ($blockStyles['elements'] ?? []), $selector);
         return $out;
+    }
+
+    /** A core block's selectors from its metadata (data/blocks.json). @return array<string, mixed> */
+    private static function selectorsOf(string $name): array
+    {
+        static $blocks = null;
+        $blocks ??= (array) json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/blocks.json'), true);
+        return (array) ($blocks[$name]['selectors'] ?? []);
+    }
+
+    /**
+     * A block's styles split between its root selector and the features (or
+     * a feature's single properties) its metadata selects elsewhere.
+     *
+     * @param array<string, mixed> $styles
+     * @param array<string, mixed> $selectors
+     * @return array{0: array<string, mixed>, 1: array<string, array<string, mixed>>}
+     */
+    private static function byFeature(array $styles, array $selectors): array
+    {
+        $features = [];
+        foreach (['border', 'color', 'typography', 'spacing', 'dimensions', 'shadow'] as $feature) {
+            $where = $selectors[$feature] ?? null;
+            if ($where === null || !isset($styles[$feature])) {
+                continue;
+            }
+            if (is_string($where)) {
+                $features[$where] = array_merge_recursive($features[$where] ?? [], [$feature => $styles[$feature]]);
+                unset($styles[$feature]);
+                continue;
+            }
+            foreach ((array) $where as $property => $propertySelector) {
+                if ($property !== 'root' && is_array($styles[$feature]) && array_key_exists($property, $styles[$feature])) {
+                    $features[$propertySelector][$feature][$property] = $styles[$feature][$property];
+                    unset($styles[$feature][$property]);
+                }
+            }
+            if (isset($where['root']) && is_array($styles[$feature]) && $styles[$feature] !== []) {
+                $features[$where['root']][$feature] = $styles[$feature];
+                unset($styles[$feature]);
+            }
+        }
+        return [$styles, $features];
     }
 
     private static function withoutEmpty(array $styles): array
@@ -280,25 +372,53 @@ final readonly class GlobalStyles
     }
 
     /** Custom "css" blocks in theme.json use "&" for the block selector. */
+    /**
+     * A block's own CSS under its selector (probe editor-styles), split at
+     * each ampersand: a part with no rule applies to the block itself; a
+     * nested selector that starts with a space is scoped, every comma part
+     * after the block's selector; any other is appended to it; a pseudo
+     * element moves to the end, outside :where().
+     */
     private static function scopedCss(string $css, string $selector): string
     {
         $out = '';
-        foreach (preg_split('/(?<=\})/', $css, -1, PREG_SPLIT_NO_EMPTY) as $rule) {
-            $rule = trim($rule);
-            if ($rule === '') {
+        foreach (explode('&', $css) as $part) {
+            if (!str_contains($part, '{')) {
+                if (trim($part) !== '') {
+                    $out .= ':root :where(' . trim($selector) . '){' . trim($part) . '}';
+                }
                 continue;
             }
-            if (!str_contains($rule, '{')) {
-                $out .= ":root :where({$selector}){{$rule}}";
+            $pieces = explode('{', str_replace('}', '', $part));
+            if (count($pieces) !== 2) {
                 continue;
             }
-            [$sel, $body] = explode('{', $rule, 2);
-            // Without an ampersand the reference simply prefixes the block selector: no space, and the
-            // selector text keeps its own trailing whitespace.
-            $sel = str_contains($sel, '&') ? str_replace('&', $selector, trim($sel)) : $selector . ltrim($sel);
-            $out .= ":root :where({$sel}){{$body}";
+            [$nested, $body] = $pieces;
+            $pseudo = preg_match('/([>+~\s]*::[a-zA-Z-]+)/', $nested, $m) ? $m[1] : '';
+            $nested = $pseudo !== '' ? str_replace($pseudo, '', $nested) : $nested;
+            $scoped = str_starts_with($nested, ' ') ? self::scope($selector, $nested) : self::append($selector, $nested);
+            $out .= ":root :where({$scoped}){$pseudo}{" . trim($body) . '}';
         }
         return $out;
+    }
+
+    /** Every comma part of a selector list after every part of the scope. */
+    private static function scope(string $scope, string $selector): string
+    {
+        $scoped = [];
+        foreach (explode(',', $scope) as $outer) {
+            foreach (explode(',', $selector) as $inner) {
+                [$outer, $inner] = [trim($outer), trim($inner)];
+                $scoped[] = $outer === '' ? $inner : ($inner === '' ? $outer : "{$outer} {$inner}");
+            }
+        }
+        return implode(', ', $scoped);
+    }
+
+    /** Text appended to every comma part of a selector list. */
+    private static function append(string $selector, string $suffix): string
+    {
+        return implode(',', array_map(static fn (string $part): string => $part . $suffix, explode(',', $selector)));
     }
 
     /** Style variations the page rendered, one rule set per numbered instance. */
@@ -410,8 +530,10 @@ final readonly class GlobalStyles
         if (isset($styles['shadow'])) {
             $out[] = 'box-shadow: ' . $value($styles['shadow']);
         }
-        if (isset($styles['dimensions']['minHeight'])) {
-            $out[] = 'min-height: ' . $value($styles['dimensions']['minHeight']);
+        foreach (['aspectRatio' => 'aspect-ratio', 'height' => 'height', 'minHeight' => 'min-height', 'minWidth' => 'min-width', 'width' => 'width'] as $key => $property) {
+            if (isset($styles['dimensions'][$key])) {
+                $out[] = "{$property}: " . $value($styles['dimensions'][$key]);
+            }
         }
         foreach (['color', 'offset', 'style', 'width'] as $property) {
             if (isset($styles['outline'][$property])) {

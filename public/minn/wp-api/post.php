@@ -844,6 +844,16 @@ function get_post_thumbnail_id($post = null)
     return $id === '' ? 0 : (int) $id;
 }
 
+/** @internal a live post left without a slug (no title to make one from) takes its id, made free (probe editor-styles) */
+function _minn_post_slug_from_id(int $id, array $columns, string $type): void
+{
+    if ((string) ($columns['post_name'] ?? '') !== '' || PostSave::keepsSlug((string) $columns['post_status'], $type)) {
+        return;
+    }
+    $slug = wp_unique_post_slug((string) sanitize_title((string) ($columns['post_title'] ?? ''), (string) $id), $id, (string) $columns['post_status'], $type, (int) ($columns['post_parent'] ?? 0));
+    _minn_post_writer()->update($id, ['post_name' => $slug]);
+}
+
 /** The links between a split post's pages (Front\PageLinks), through wp_link_pages_args, wp_link_pages_link and wp_link_pages; echoed and returned. */
 function wp_link_pages($args = '')
 {
@@ -1041,6 +1051,7 @@ function wp_insert_post($postarr, $wp_error = false, $fire_after_hooks = true)
     _minn_post_before_save($columns, $postId);
     // A new post without a guid takes its address as it stands (probe insert-defaults): pretty when live, ?p= or ?page_id= when not.
     $id = $insert->persist($columns, $existing?->ID, static fn (int $id): string => (string) get_permalink($id));
+    _minn_post_slug_from_id($id, $columns, $type);
     wp_cache_delete($id, 'posts');
     _minn_post_inputs($id, (array) wp_unslash($given), $type, $columns['post_status'], $update);
     _minn_post_writer()->recountTaxonomiesOf($id);
@@ -2179,4 +2190,11 @@ function _count_posts_cache_key($type = 'post', $perm = '')
         $key .= '_' . $perm . '_' . get_current_user_id();
     }
     return $key;
+}
+
+/** A post's date (or modified date) as a Unix timestamp, or false. */
+function get_post_timestamp($post = null, $field = 'date')
+{
+    $datetime = get_post_datetime($post, $field);
+    return $datetime === false ? false : $datetime->getTimestamp();
 }

@@ -365,8 +365,30 @@ function wp_common_block_scripts_and_styles()
     do_action('enqueue_block_assets');
 }
 
+/**
+ * A block's own stylesheet (probe editor-styles): registered and enqueued
+ * when the block renders where core blocks load their assets one by one,
+ * otherwise on the page's asset hooks.
+ */
 function wp_enqueue_block_style($block_name, $args)
 {
+    $args = wp_parse_args($args, ['handle' => '', 'src' => '', 'deps' => [], 'ver' => false, 'media' => 'all']);
+    $enqueue = static function ($content = '') use ($args) {
+        if (!empty($args['src'])) {
+            wp_register_style($args['handle'], $args['src'], $args['deps'], $args['ver'], $args['media']);
+        }
+        if (!empty($args['path'])) {
+            wp_style_add_data($args['handle'], 'path', $args['path']);
+        }
+        wp_enqueue_style($args['handle']);
+        return $content;
+    };
+    if (wp_should_load_separate_core_block_assets()) {
+        add_filter("render_block_{$block_name}", static fn ($content) => $enqueue($content), 10, 1);
+        return;
+    }
+    add_filter(did_action('wp_enqueue_scripts') ? 'wp_footer' : 'wp_enqueue_scripts', $enqueue);
+    add_action('enqueue_block_assets', $enqueue);
 }
 
 function wp_enqueue_global_styles()

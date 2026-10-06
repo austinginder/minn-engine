@@ -199,21 +199,9 @@ function get_post_parent($post = NULL)
     return null;
 }
 
-function get_post_timestamp($post = NULL, $field = 'date')
-{
-    \Minn\Runtime\PlaceholderTrace::hit('get_post_timestamp');
-    return null;
-}
-
 function get_preferred_from_update_core()
 {
     \Minn\Runtime\PlaceholderTrace::hit('get_preferred_from_update_core');
-    return null;
-}
-
-function get_privacy_policy_url()
-{
-    \Minn\Runtime\PlaceholderTrace::hit('get_privacy_policy_url');
     return null;
 }
 
@@ -232,12 +220,6 @@ function get_term_feed_link($term, $taxonomy = '', $feed = '')
 function get_the_block_template_html()
 {
     \Minn\Runtime\PlaceholderTrace::hit('get_the_block_template_html');
-    return null;
-}
-
-function get_the_privacy_policy_link($before = '', $after = '')
-{
-    \Minn\Runtime\PlaceholderTrace::hit('get_the_privacy_policy_link');
     return null;
 }
 

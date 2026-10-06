@@ -75990,7 +75990,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Api.php",
-            "lines": 227,
+            "lines": 228,
             "doc": "The REST API: wires the controllers for one request and dispatches a\nroute. Errors thrown anywhere underneath become the reference's error\npayload under the reference's headers.",
             "implements": [],
             "extends": null,
@@ -76326,7 +76326,7 @@
                         }
                     ],
                     "line": 216,
-                    "end": 227
+                    "end": 228
                 },
                 {
                     "routes": [],
@@ -76374,8 +76374,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 229,
-                    "end": 236
+                    "line": 230,
+                    "end": 237
                 },
                 {
                     "routes": [],
@@ -76394,8 +76394,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 245,
-                    "end": 252
+                    "line": 246,
+                    "end": 253
                 },
                 {
                     "routes": [],
@@ -76421,8 +76421,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 258,
-                    "end": 262
+                    "line": 259,
+                    "end": 263
                 }
             ]
         },
@@ -79284,6 +79284,7 @@
                 "Minn\\Rest\\TemplateObject",
                 "Minn\\Rest\\TemplatesController",
                 "Minn\\Rest\\TermsController",
+                "Minn\\Rest\\TypesController",
                 "Minn\\Rest\\UsersController",
                 "Minn\\Rest\\WidgetObject",
                 "Minn\\Rest\\WidgetsController"
@@ -85817,7 +85818,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/PostsWriteController.php",
-            "lines": 431,
+            "lines": 436,
             "doc": "wp/v2 posts and pages, write side: create, update, trash, and force\ndelete, each gated by the capability engine and answering with the\nedit-context object the reference returns.",
             "implements": [],
             "extends": null,
@@ -86071,8 +86072,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 184,
-                    "end": 187
+                    "line": 189,
+                    "end": 192
                 },
                 {
                     "routes": [],
@@ -86105,8 +86106,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 190,
-                    "end": 232
+                    "line": 195,
+                    "end": 237
                 },
                 {
                     "routes": [
@@ -86141,8 +86142,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 236,
-                    "end": 239
+                    "line": 241,
+                    "end": 244
                 },
                 {
                     "routes": [],
@@ -86175,8 +86176,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 242,
-                    "end": 272
+                    "line": 247,
+                    "end": 277
                 },
                 {
                     "routes": [],
@@ -86195,8 +86196,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 454,
-                    "end": 460
+                    "line": 459,
+                    "end": 465
                 },
                 {
                     "routes": [],
@@ -86316,7 +86317,7 @@
                         }
                     ],
                     "line": 173,
-                    "end": 178
+                    "end": 183
                 },
                 {
                     "routes": [],
@@ -86342,8 +86343,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 279,
-                    "end": 290
+                    "line": 284,
+                    "end": 295
                 },
                 {
                     "routes": [],
@@ -86369,8 +86370,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 298,
-                    "end": 314
+                    "line": 303,
+                    "end": 319
                 },
                 {
                     "routes": [],
@@ -86398,8 +86399,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 323,
-                    "end": 330
+                    "line": 328,
+                    "end": 335
                 },
                 {
                     "routes": [],
@@ -86425,8 +86426,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 333,
-                    "end": 343
+                    "line": 338,
+                    "end": 348
                 },
                 {
                     "routes": [],
@@ -86461,8 +86462,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 352,
-                    "end": 388
+                    "line": 357,
+                    "end": 393
                 },
                 {
                     "routes": [],
@@ -86497,8 +86498,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 397,
-                    "end": 424
+                    "line": 402,
+                    "end": 429
                 },
                 {
                     "routes": [],
@@ -86524,8 +86525,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 427,
-                    "end": 436
+                    "line": 432,
+                    "end": 441
                 },
                 {
                     "routes": [],
@@ -86544,8 +86545,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 439,
-                    "end": 445
+                    "line": 444,
+                    "end": 450
                 },
                 {
                     "routes": [],
@@ -86564,8 +86565,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 448,
-                    "end": 451
+                    "line": 453,
+                    "end": 456
                 }
             ]
         },
@@ -93490,12 +93491,13 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/Types.php",
-            "lines": 97,
+            "lines": 147,
             "doc": "The engine's registry of built-in post types, seeded from the observed\ncontract (src/data/types.json) with _links attached at runtime.",
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Rest\\RestUrl"
+                "Minn\\Rest\\RestUrl",
+                "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
                 "Minn\\Admin\\AdminTypes",
@@ -93535,8 +93537,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 18,
-                "end": 22
+                "line": 20,
+                "end": 24
             },
             "cases": [],
             "constants": [],
@@ -93581,8 +93583,8 @@
                         "@return array<string, array> keyed by type slug"
                     ],
                     "params": [],
-                    "line": 29,
-                    "end": 61
+                    "line": 31,
+                    "end": 34
                 },
                 {
                     "routes": [],
@@ -93601,8 +93603,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 64,
-                    "end": 67
+                    "line": 116,
+                    "end": 119
                 },
                 {
                     "routes": [],
@@ -93621,8 +93623,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 70,
-                    "end": 78
+                    "line": 122,
+                    "end": 130
                 },
                 {
                     "routes": [],
@@ -93635,8 +93637,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 81,
-                    "end": 88
+                    "line": 133,
+                    "end": 140
                 },
                 {
                     "routes": [],
@@ -93655,8 +93657,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 91,
-                    "end": 94
+                    "line": 143,
+                    "end": 146
                 },
                 {
                     "routes": [],
@@ -93675,8 +93677,36 @@
                             "doc": ""
                         }
                     ],
-                    "line": 97,
-                    "end": 106
+                    "line": 149,
+                    "end": 158
+                },
+                {
+                    "routes": [],
+                    "name": "core",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "core(): array",
+                    "doc": "The built-in types and the ones extensions declare. @return array<string, array>",
+                    "shapes": [
+                        "@return array<string, array>"
+                    ],
+                    "params": [],
+                    "line": 37,
+                    "end": 69
+                },
+                {
+                    "routes": [],
+                    "name": "registered",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "registered(): array",
+                    "doc": "The types plugin code registered to show in REST (probe\nrest-types-edit), in registration order, as the reference describes\nthem: their label, icon, the taxonomies they show in REST.",
+                    "shapes": [
+                        "@return array<string, array>"
+                    ],
+                    "params": [],
+                    "line": 78,
+                    "end": 113
                 }
             ]
         },
@@ -93686,8 +93716,8 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/TypesController.php",
-            "lines": 24,
-            "doc": "wp/v2 types.",
+            "lines": 70,
+            "doc": "wp/v2 types. In the edit context (probe rest-types-edit) a type adds its\ncapabilities, visibility, viewability, labels and supports, for a caller\nwho may edit its posts: the list leaves out the types the caller may\nnot, and refuses a caller who may edit none; one type refuses outright.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -93699,9 +93729,11 @@
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
                 "Minn\\RestError",
+                "Minn\\Rest\\Context",
                 "Minn\\Rest\\Fields",
                 "Minn\\Rest\\Reply",
-                "Minn\\Rest\\Types"
+                "Minn\\Rest\\Types",
+                "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
                 "Minn\\Rest\\Api"
@@ -93720,11 +93752,18 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 19,
-                "end": 21
+                "line": 27,
+                "end": 29
             },
             "cases": [],
-            "constants": [],
+            "constants": [
+                {
+                    "name": "EDIT_REFUSAL",
+                    "value": "'Sorry, you are not allowed to edit posts in this post type.'",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
             "properties": [
                 {
                     "name": "types",
@@ -93756,8 +93795,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 25,
-                    "end": 28
+                    "line": 33,
+                    "end": 43
                 },
                 {
                     "routes": [
@@ -93785,8 +93824,79 @@
                             "doc": ""
                         }
                     ],
-                    "line": 32,
-                    "end": 39
+                    "line": 47,
+                    "end": 60
+                },
+                {
+                    "routes": [],
+                    "name": "embedded",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "embedded(array $type): array",
+                    "doc": "A type as an embed shows it: its name, slug, icon, REST base and namespace, template. @param array<string, mixed> $type @return array<string, mixed>",
+                    "shapes": [
+                        "@param array<string, mixed> $type @return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "@return array<string, mixed>"
+                        }
+                    ],
+                    "line": 63,
+                    "end": 66
+                },
+                {
+                    "routes": [],
+                    "name": "mayEdit",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "mayEdit(string $type): bool",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 68,
+                    "end": 72
+                },
+                {
+                    "routes": [],
+                    "name": "withEditFields",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "withEditFields(string $slug, array $type): array",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, mixed> $type @return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "slug",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "type",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "@return array<string, mixed>"
+                        }
+                    ],
+                    "line": 75,
+                    "end": 91
                 }
             ]
         },
@@ -107510,7 +107620,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Registry.php",
-            "lines": 387,
+            "lines": 390,
             "doc": "Post types, taxonomies, and statuses as plugin code registers and reads\nthem. The built-in set is data/registry.json, captured from the\nreference; registrations derive their defaults the way the content\nprobe observed (contracts/fixtures/api/content.json).",
             "implements": [],
             "extends": null,
@@ -107732,7 +107842,7 @@
                         }
                     ],
                     "line": 98,
-                    "end": 175
+                    "end": 178
                 },
                 {
                     "routes": [],
@@ -107751,8 +107861,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 223,
-                    "end": 233
+                    "line": 226,
+                    "end": 236
                 },
                 {
                     "routes": [],
@@ -107785,8 +107895,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 240,
-                    "end": 248
+                    "line": 243,
+                    "end": 251
                 },
                 {
                     "routes": [],
@@ -107812,8 +107922,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 251,
-                    "end": 254
+                    "line": 254,
+                    "end": 257
                 },
                 {
                     "routes": [],
@@ -107834,8 +107944,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 261,
-                    "end": 264
+                    "line": 264,
+                    "end": 267
                 },
                 {
                     "routes": [],
@@ -107870,8 +107980,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 271,
-                    "end": 331
+                    "line": 274,
+                    "end": 334
                 },
                 {
                     "routes": [],
@@ -107882,8 +107992,8 @@
                     "doc": "Whether a registered rewrite settles into its full form: with pretty permalinks or in the admin; otherwise it stays as given.",
                     "shapes": [],
                     "params": [],
-                    "line": 334,
-                    "end": 337
+                    "line": 337,
+                    "end": 340
                 },
                 {
                     "routes": [],
@@ -107902,8 +108012,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 340,
-                    "end": 347
+                    "line": 343,
+                    "end": 350
                 },
                 {
                     "routes": [],
@@ -107929,8 +108039,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 350,
-                    "end": 359
+                    "line": 353,
+                    "end": 362
                 },
                 {
                     "routes": [],
@@ -107956,8 +108066,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 362,
-                    "end": 369
+                    "line": 365,
+                    "end": 372
                 },
                 {
                     "routes": [],
@@ -107985,8 +108095,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 376,
-                    "end": 398
+                    "line": 379,
+                    "end": 401
                 },
                 {
                     "routes": [],
@@ -108007,8 +108117,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 178,
-                    "end": 189
+                    "line": 181,
+                    "end": 192
                 },
                 {
                     "routes": [],
@@ -108043,8 +108153,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 192,
-                    "end": 220
+                    "line": 195,
+                    "end": 223
                 }
             ]
         },
@@ -108054,7 +108164,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Runtime.php",
-            "lines": 358,
+            "lines": 360,
             "doc": "The WordPress runtime the engine offers plugin code: the procedural\nfacade under minn/wp-api/ plus the services it delegates to. One per\nrequest; the facade reaches it through these statics.",
             "implements": [],
             "extends": null,
@@ -108131,6 +108241,8 @@
                 "Minn\\Rest\\SidebarsController",
                 "Minn\\Rest\\StatusesController",
                 "Minn\\Rest\\TemplatesController",
+                "Minn\\Rest\\Types",
+                "Minn\\Rest\\TypesController",
                 "Minn\\Rest\\UsersController",
                 "Minn\\Rest\\WidgetsController",
                 "Minn\\Runtime\\Abilities",
@@ -108530,7 +108642,7 @@
                         }
                     ],
                     "line": 125,
-                    "end": 150
+                    "end": 152
                 },
                 {
                     "routes": [],
@@ -108541,8 +108653,8 @@
                     "doc": "The booted runtime; throws when there is none.",
                     "shapes": [],
                     "params": [],
-                    "line": 153,
-                    "end": 159
+                    "line": 155,
+                    "end": 161
                 },
                 {
                     "routes": [],
@@ -108553,8 +108665,8 @@
                     "doc": "Whether the runtime is up.",
                     "shapes": [],
                     "params": [],
-                    "line": 162,
-                    "end": 165
+                    "line": 164,
+                    "end": 167
                 },
                 {
                     "routes": [],
@@ -108565,8 +108677,8 @@
                     "doc": "The hook registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 168,
-                    "end": 171
+                    "line": 170,
+                    "end": 173
                 },
                 {
                     "routes": [],
@@ -108577,8 +108689,8 @@
                     "doc": "The options store.",
                     "shapes": [],
                     "params": [],
-                    "line": 174,
-                    "end": 177
+                    "line": 176,
+                    "end": 179
                 },
                 {
                     "routes": [],
@@ -108604,8 +108716,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 188,
-                    "end": 203
+                    "line": 190,
+                    "end": 205
                 },
                 {
                     "routes": [],
@@ -108624,8 +108736,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 223,
-                    "end": 226
+                    "line": 225,
+                    "end": 228
                 },
                 {
                     "routes": [],
@@ -108636,8 +108748,8 @@
                     "doc": "The object cache.",
                     "shapes": [],
                     "params": [],
-                    "line": 229,
-                    "end": 232
+                    "line": 231,
+                    "end": 234
                 },
                 {
                     "routes": [],
@@ -108648,8 +108760,8 @@
                     "doc": "The text domains loaded for this request.",
                     "shapes": [],
                     "params": [],
-                    "line": 235,
-                    "end": 238
+                    "line": 237,
+                    "end": 240
                 },
                 {
                     "routes": [],
@@ -108660,8 +108772,8 @@
                     "doc": "The locales this request switched into.",
                     "shapes": [],
                     "params": [],
-                    "line": 241,
-                    "end": 244
+                    "line": 243,
+                    "end": 246
                 },
                 {
                     "routes": [],
@@ -108672,8 +108784,8 @@
                     "doc": "The shortcode registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 247,
-                    "end": 250
+                    "line": 249,
+                    "end": 252
                 },
                 {
                     "routes": [],
@@ -108684,8 +108796,8 @@
                     "doc": "The script modules registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 253,
-                    "end": 259
+                    "line": 255,
+                    "end": 261
                 },
                 {
                     "routes": [],
@@ -108696,8 +108808,8 @@
                     "doc": "The interactivity API.",
                     "shapes": [],
                     "params": [],
-                    "line": 262,
-                    "end": 265
+                    "line": 264,
+                    "end": 267
                 },
                 {
                     "routes": [],
@@ -108708,8 +108820,8 @@
                     "doc": "The registered block templates.",
                     "shapes": [],
                     "params": [],
-                    "line": 268,
-                    "end": 271
+                    "line": 270,
+                    "end": 273
                 },
                 {
                     "routes": [],
@@ -108720,8 +108832,8 @@
                     "doc": "The post types, taxonomies, and statuses.",
                     "shapes": [],
                     "params": [],
-                    "line": 274,
-                    "end": 277
+                    "line": 276,
+                    "end": 279
                 },
                 {
                     "routes": [],
@@ -108732,8 +108844,8 @@
                     "doc": "A fresh post query over the runtime's registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 280,
-                    "end": 283
+                    "line": 282,
+                    "end": 285
                 },
                 {
                     "routes": [],
@@ -108759,8 +108871,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 286,
-                    "end": 289
+                    "line": 288,
+                    "end": 291
                 },
                 {
                     "routes": [],
@@ -108786,8 +108898,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 292,
-                    "end": 295
+                    "line": 294,
+                    "end": 297
                 },
                 {
                     "routes": [],
@@ -108798,8 +108910,8 @@
                     "doc": "Whether the request is over HTTPS.",
                     "shapes": [],
                     "params": [],
-                    "line": 298,
-                    "end": 301
+                    "line": 300,
+                    "end": 303
                 },
                 {
                     "routes": [],
@@ -108810,8 +108922,8 @@
                     "doc": "wp-content under the site root.",
                     "shapes": [],
                     "params": [],
-                    "line": 304,
-                    "end": 307
+                    "line": 306,
+                    "end": 309
                 },
                 {
                     "routes": [],
@@ -108830,8 +108942,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 310,
-                    "end": 333
+                    "line": 312,
+                    "end": 335
                 },
                 {
                     "routes": [],
@@ -108842,8 +108954,8 @@
                     "doc": "The pluggable functions, once the plugins have had their chance to\ndefine their own: each is defined only where no plugin did. The plugin\nloader calls this before plugins_loaded; a boot that loads no plugins\ncalls it straight away.",
                     "shapes": [],
                     "params": [],
-                    "line": 359,
-                    "end": 362
+                    "line": 361,
+                    "end": 364
                 },
                 {
                     "routes": [],
@@ -108854,8 +108966,8 @@
                     "doc": "Fresh per-request state, for suites.",
                     "shapes": [],
                     "params": [],
-                    "line": 365,
-                    "end": 380
+                    "line": 367,
+                    "end": 382
                 },
                 {
                     "routes": [],
@@ -108874,8 +108986,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 340,
-                    "end": 351
+                    "line": 342,
+                    "end": 353
                 }
             ]
         },
@@ -119085,7 +119197,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/GlobalStyles.php",
-            "lines": 433,
+            "lines": 555,
             "doc": "theme.json to CSS. Presets become custom properties on :root and their\nhas-* utility classes; settings.layout sizes, root styles, elements, and\nper-block styles become rules; the containers, galleries, and style\nvariations the page actually rendered get their own stylesheets. The\nlayout rules themselves (flow, constrained, flex, grid, alignments) are\nthe engine's own, written to the same class hooks.",
             "implements": [],
             "extends": null,
@@ -119197,11 +119309,33 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "css(): string",
-                    "doc": "The global stylesheet from theme.json and the user's styles.",
+                    "doc": "The global stylesheet from theme.json and the user's styles, as a page prints it: only the core blocks it rendered.",
                     "shapes": [],
                     "params": [],
                     "line": 83,
-                    "end": 114
+                    "end": 102
+                },
+                {
+                    "routes": [],
+                    "name": "stylesheet",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "stylesheet(array $types): string",
+                    "doc": "The stylesheet wp_get_global_stylesheet answers (probe editor-styles),\nby type: the custom properties, the styles (every block's, rendered or\nnot), the preset classes; in that order.",
+                    "shapes": [
+                        "@param list<string> $types"
+                    ],
+                    "params": [
+                        {
+                            "name": "types",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 111,
+                    "end": 126
                 },
                 {
                     "routes": [],
@@ -119212,8 +119346,22 @@
                     "doc": "The @font-face rules for every family that declares font files, as\nthe reference prints them in its own style element: family (quoted\nwhen it has a space), style, weight, display, then the sources with\nfile:./ resolved against the theme that carries the file and the\nformat named from the extension. Families without files print\nnothing.",
                     "shapes": [],
                     "params": [],
-                    "line": 124,
-                    "end": 152
+                    "line": 155,
+                    "end": 183
+                },
+                {
+                    "routes": [],
+                    "name": "parts",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "parts(): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array{variables: string, base: string, presets: string, blocks: array<string, mixed>}"
+                    ],
+                    "params": [],
+                    "line": 129,
+                    "end": 145
                 },
                 {
                     "routes": [],
@@ -119232,8 +119380,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 154,
-                    "end": 169
+                    "line": 185,
+                    "end": 200
                 },
                 {
                     "routes": [],
@@ -119259,8 +119407,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 172,
-                    "end": 189
+                    "line": 203,
+                    "end": 220
                 },
                 {
                     "routes": [],
@@ -119286,8 +119434,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 192,
-                    "end": 201
+                    "line": 223,
+                    "end": 232
                 },
                 {
                     "routes": [],
@@ -119306,8 +119454,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 208,
-                    "end": 220
+                    "line": 239,
+                    "end": 251
                 },
                 {
                     "routes": [],
@@ -119333,8 +119481,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 222,
-                    "end": 249
+                    "line": 253,
+                    "end": 284
                 },
                 {
                     "routes": [],
@@ -119342,7 +119490,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "blockStyles(string $name, array $blockStyles): string",
-                    "doc": "",
+                    "doc": "A block's rules: its root rule, its layout gap rules, then a rule for\neach feature its metadata gives a selector of its own (the avatar's\nborder on its image), its own CSS and its elements (probe\neditor-styles).",
                     "shapes": [],
                     "params": [
                         {
@@ -119360,8 +119508,61 @@
                             "doc": ""
                         }
                     ],
-                    "line": 251,
-                    "end": 268
+                    "line": 292,
+                    "end": 317
+                },
+                {
+                    "routes": [],
+                    "name": "selectorsOf",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "selectorsOf(string $name): array",
+                    "doc": "A core block's selectors from its metadata (data/blocks.json). @return array<string, mixed>",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 320,
+                    "end": 325
+                },
+                {
+                    "routes": [],
+                    "name": "byFeature",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "byFeature(array $styles, array $selectors): array",
+                    "doc": "A block's styles split between its root selector and the features (or\na feature's single properties) its metadata selects elsewhere.",
+                    "shapes": [
+                        "@param array<string, mixed> $styles",
+                        "@param array<string, mixed> $selectors",
+                        "@return array{0: array<string, mixed>, 1: array<string, array<string, mixed>>}"
+                    ],
+                    "params": [
+                        {
+                            "name": "styles",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "selectors",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 335,
+                    "end": 360
                 },
                 {
                     "routes": [],
@@ -119380,8 +119581,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 270,
-                    "end": 280
+                    "line": 362,
+                    "end": 372
                 },
                 {
                     "routes": [],
@@ -119389,7 +119590,7 @@
                     "static": true,
                     "visibility": "private",
                     "signature": "scopedCss(string $css, string $selector): string",
-                    "doc": "Custom \"css\" blocks in theme.json use \"&\" for the block selector.",
+                    "doc": "A block's own CSS under its selector (probe editor-styles), split at\neach ampersand: a part with no rule applies to the block itself; a\nnested selector that starts with a space is scoped, every comma part\nafter the block's selector; any other is appended to it; a pseudo\nelement moves to the end, outside :where().",
                     "shapes": [],
                     "params": [
                         {
@@ -119407,8 +119608,62 @@
                             "doc": ""
                         }
                     ],
-                    "line": 283,
-                    "end": 302
+                    "line": 382,
+                    "end": 403
+                },
+                {
+                    "routes": [],
+                    "name": "scope",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "scope(string $scope, string $selector): string",
+                    "doc": "Every comma part of a selector list after every part of the scope.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "scope",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "selector",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 406,
+                    "end": 416
+                },
+                {
+                    "routes": [],
+                    "name": "append",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "append(string $selector, string $suffix): string",
+                    "doc": "Text appended to every comma part of a selector list.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "selector",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "suffix",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 419,
+                    "end": 422
                 },
                 {
                     "routes": [],
@@ -119427,8 +119682,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 305,
-                    "end": 334
+                    "line": 425,
+                    "end": 454
                 },
                 {
                     "routes": [],
@@ -119439,8 +119694,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 336,
-                    "end": 353
+                    "line": 456,
+                    "end": 473
                 },
                 {
                     "routes": [],
@@ -119468,8 +119723,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 361,
-                    "end": 422
+                    "line": 481,
+                    "end": 544
                 },
                 {
                     "routes": [],
@@ -119491,8 +119746,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 432,
-                    "end": 449
+                    "line": 554,
+                    "end": 571
                 }
             ]
         },

@@ -4327,3 +4327,64 @@ and `wp_style_engine_get_stylesheet_from_context` work as the reference's do
   rules are indented and nested.
 - **Fixes.** `WP_Style_Engine_CSS_Declarations` now makes CSS of string
   values only, and a grouped rule's prettified CSS nests a level deeper.
+
+## Editor styles, the global stylesheet, and types in the edit context (2026-10-06)
+
+Functions the engine answered with a constant, now as the reference answers
+them (probe `editor-styles`).
+- **Privacy policy.** `get_privacy_policy_url`,
+  `get_the_privacy_policy_link` and `the_privacy_policy_link`. The link
+  needs a published page with a title.
+- **Small functions.**
+  - `get_post_timestamp`, and `is_rtl` from the locale.
+  - `rest_parse_embed_param`.
+  - The editor stylesheets: `add_editor_style`, `get_editor_stylesheets`
+    (external addresses first, then the theme's files that exist) and
+    `remove_editor_styles`.
+  - `search_theme_directories`, over the theme folder now registered at
+    boot (`$wp_theme_directories`).
+- **wp_enqueue_block_style.** Where core blocks load their assets one by
+  one, the style is registered and enqueued when the block renders.
+- **rest_preload_api_request.** Only a 200 is kept, its data through
+  `rest_post_dispatch`, with OPTIONS answers under their own key.
+- **In-process engine answers.** A `rest_do_request` to an engine route
+  now carries the route's headers (`Allow` among them) and not the
+  transport's. The facade server reads the engine's route table off the API
+  where no web request handed it over (WP-CLI, probes), so OPTIONS reach the
+  engine there too.
+- **wp_get_global_stylesheet** writes the variables, the styles and the
+  preset classes by type, byte for byte as the reference does for the test
+  theme. Before, it returned nothing.
+  - The styles carry every block's rules, in the reference's merged order:
+    its own theme.json and the blocks' defaults first
+    (`data/global-styles.json`), then the theme's.
+  - Fixed for the page's stylesheet too:
+    - A block's features with a selector of their own in its metadata (the
+      avatar's border on `.wp-block-avatar img`) get their own rule.
+    - Block and element CSS is split at each ampersand. A nested selector
+      starting with a space is scoped to every comma part of the block's
+      selector; any other is appended; a pseudo element goes outside
+      `:where()`.
+    - An element's own CSS is scoped to it.
+    - The dimensions (`width`, `height`, `aspectRatio`, `minWidth`) print.
+- **An untitled post that goes live** takes its id for a slug, made free in
+  its scope (so `{id}-2` where numbers are reserved), in both the facade's
+  save and REST's.
+
+wp/v2/types serves the edit context (probe `rest-types-edit`):
+- **Edit fields.** Each type adds its capabilities, visibility,
+  viewability, labels and supports there.
+- **Who may ask.** The list leaves out the types the caller may not edit
+  and refuses one who may edit none (`rest_cannot_view`). A single type
+  refuses outright (`rest_forbidden_context`, 401 signed out, 403 signed in).
+- **Embed context.** A type shows its name, slug, icon, REST base and
+  namespace, and template.
+- **Plugin types.** The list now includes the types plugin code registers
+  to show in REST, which it lacked before (on a WooCommerce site,
+  `product`).
+- **Fixes along the way.**
+  - The post and page `editor` support carries `notes`.
+  - A hierarchical plugin type starts from the page labels.
+  - A plugin type's labels gain `template_name`.
+- **Not done.** A plugin type's own REST routes (`/wp/v2/product`) are
+  still not served. That is the next unit.

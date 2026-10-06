@@ -112,14 +112,36 @@ function get_theme_roots()
     return '/themes';
 }
 
+/** Adds a folder themes are looked for in (relative to the content folder when it does not exist as given); false when it is not there. */
 function register_theme_directory($directory)
 {
+    $directory = (string) $directory;
+    if (!file_exists($directory)) {
+        $directory = WP_CONTENT_DIR . '/' . $directory;
+        if (!file_exists($directory)) {
+            return false;
+        }
+    }
+    $directory = untrailingslashit($directory);
+    $GLOBALS['wp_theme_directories'] ??= [];
+    if (!in_array($directory, $GLOBALS['wp_theme_directories'], true)) {
+        $GLOBALS['wp_theme_directories'][] = $directory;
+    }
     return true;
 }
 
+/** The themes in the registered theme folders, stylesheet => its style.css and root, in folder order. */
 function search_theme_directories($force = false)
 {
-    return false;
+    $found = [];
+    foreach ((array) ($GLOBALS['wp_theme_directories'] ?? []) as $root) {
+        foreach (is_dir($root) ? (scandir($root) ?: []) : [] as $entry) {
+            if ($entry[0] !== '.' && is_file("{$root}/{$entry}/style.css")) {
+                $found[$entry] ??= ['theme_file' => "{$entry}/style.css", 'theme_root' => $root];
+            }
+        }
+    }
+    return $found === [] ? false : $found;
 }
 
 function get_raw_theme_root($stylesheet_or_template, $skip_cache = false)
@@ -198,18 +220,51 @@ function has_nav_menu($location)
     return !empty(get_nav_menu_locations()[$location]);
 }
 
+/** Stylesheets the editor shows the theme's content with; the theme then supports editor styles. */
 function add_editor_style($stylesheet = 'editor-style.css')
 {
+    add_theme_support('editor-style');
+    $sheets = (array) $stylesheet;
+    if (is_rtl() && isset($sheets[0])) {
+        $sheets[] = str_replace('.css', '-rtl.css', (string) $sheets[0]);
+    }
+    $GLOBALS['editor_styles'] = array_merge((array) ($GLOBALS['editor_styles'] ?? []), $sheets);
 }
 
+/** Withdraws the theme's support for editor styles (the list empties only in the admin); false when it had none. */
 function remove_editor_styles()
 {
+    if (!current_theme_supports('editor-style')) {
+        return false;
+    }
+    remove_theme_support('editor-style');
+    if (is_admin()) {
+        $GLOBALS['editor_styles'] = [];
+    }
     return true;
 }
 
+/** The editor stylesheets' addresses: external ones first, then the theme's files that exist (a parent's before the child's), through editor_stylesheets. */
 function get_editor_stylesheets()
 {
-    return [];
+    $sheets = [];
+    $styles = array_unique(array_filter((array) ($GLOBALS['editor_styles'] ?? [])));
+    foreach ($styles as $key => $file) {
+        if (preg_match('~^(https?:)?//~', (string) $file)) {
+            $sheets[] = sanitize_url((string) $file);
+            unset($styles[$key]);
+        }
+    }
+    $folders = is_child_theme() ? [[get_template_directory(), get_template_directory_uri()]] : [];
+    $folders[] = [get_stylesheet_directory(), get_stylesheet_directory_uri()];
+    foreach ($folders as [$dir, $uri]) {
+        foreach ($styles as $file) {
+            if (file_exists("{$dir}/{$file}")) {
+                $sheets[] = "{$uri}/{$file}";
+            }
+        }
+    }
+    return apply_filters('editor_stylesheets', $sheets);
 }
 
 /**
@@ -286,9 +341,17 @@ function _minn_global_styles(): array
     return $cached = (new Minn\Theme\GlobalStyles($theme, $templates->userStyles()))->resolvedStyles();
 }
 
+/** The global stylesheet by type (variables, styles, presets; all three when none is named), as Theme\GlobalStyles writes it. */
 function wp_get_global_stylesheet($types = [])
 {
-    return '';
+    $types = (array) $types === [] ? ['variables', 'styles', 'presets'] : array_map('strval', (array) $types);
+    $runtime = Runtime::current();
+    $theme = Minn\Theme\Theme::forStyles(new Minn\Content\Site($runtime->db), Minn\Front\Permalinks::fromDb($runtime->db), ABSPATH . 'wp-content/themes');
+    if ($theme === null) {
+        return '';
+    }
+    $templates = new Minn\Theme\Templates($runtime->db, new Minn\Content\Posts($runtime->db), $theme);
+    return (new Minn\Theme\GlobalStyles($theme, $templates->userStyles()))->stylesheet($types);
 }
 
 function the_custom_logo($blog_id = 0)

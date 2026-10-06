@@ -449,8 +449,42 @@ function rest_filter_response_fields($response, $server, $request)
     return $response;
 }
 
+/**
+ * A REST answer kept for the editor to read without asking again: a GET
+ * (or OPTIONS, given as [path, method]) dispatched in process; only a 200
+ * is kept, its data through rest_post_dispatch with its headers, OPTIONS
+ * answers under their own key.
+ */
 function rest_preload_api_request($memo, $path)
 {
+    $memo = is_array($memo) ? $memo : [];
+    $method = 'GET';
+    if (is_array($path) && count($path) === 2) {
+        $method = in_array(end($path), ['GET', 'OPTIONS'], true) ? (string) end($path) : 'GET';
+        $path = reset($path);
+    }
+    $path = untrailingslashit((string) $path) ?: '/';
+    $parts = parse_url($path);
+    if ($parts === false || $path === '') {
+        return $memo;
+    }
+    $request = new WP_REST_Request($method, (string) ($parts['path'] ?? '/'));
+    if (!empty($parts['query'])) {
+        parse_str($parts['query'], $query);
+        $request->set_query_params($query);
+    }
+    $response = rest_do_request($request);
+    if ($response->get_status() !== 200) {
+        return $memo;
+    }
+    $server = rest_get_server();
+    $response = apply_filters('rest_post_dispatch', rest_ensure_response($response), $server, $request);
+    $entry = ['body' => (array) $server->response_to_data($response, $request->has_param('_embed') ? rest_parse_embed_param($request['_embed']) : false), 'headers' => $response->get_headers()];
+    if ($method === 'OPTIONS') {
+        $memo[$method][$path] = $entry;
+    } else {
+        $memo[$path] = $entry;
+    }
     return $memo;
 }
 
@@ -521,3 +555,14 @@ function rest_get_combining_operation_error($value, $param, $errors)
     }
     return new WP_Error('rest_no_matching_schema', $message, ['details' => $details]);
 }
+
+/** What an _embed value asks for: every link (true), or the named relations. */
+function rest_parse_embed_param($embed)
+{
+    if (!$embed || $embed === 'true' || $embed === '1') {
+        return true;
+    }
+    $rels = wp_parse_list($embed);
+    return $rels === [] ? true : $rels;
+}
+

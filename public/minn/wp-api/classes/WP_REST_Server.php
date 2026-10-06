@@ -125,6 +125,8 @@ class WP_REST_Server
         }
         $this->engine_endpoints = [];
         $map = Runtime::booted() ? Runtime::current()->get('engine_routes') : null;
+        // Outside a web request (WP-CLI, a probe) nothing handed the table over: it is read off the API directly.
+        $map ??= Runtime::booted() ? Api::forRequest(Runtime::current()->db, new Request(Method::Get, '/wp-json/', [], [], [], '', Runtime::current()->isSecure(), (string) parse_url(home_url(), PHP_URL_HOST)))->routes() : null;
         $map = $map instanceof Closure ? $map() : $map;
         foreach (is_array($map) ? $map : [] as $route => $methods) {
             if ($route === '/' || isset($this->endpoints[$route])) {
@@ -289,7 +291,8 @@ class WP_REST_Server
             return null;
         }
         $data = self::attach_additional_fields($route, $data);
-        $out = new WP_REST_Response($data, $response->status, $response->headers);
+        // The route's own headers (Allow, X-WP-Total, Location...), not the transport's, which serving adds.
+        $out = new WP_REST_Response($data, $response->status, array_diff_key($response->headers, Minn\Rest\Reply::HEADERS, ['Vary' => true, 'X-Robots-Tag' => true]));
         $out->set_matched_route($route);
         return $out;
     }

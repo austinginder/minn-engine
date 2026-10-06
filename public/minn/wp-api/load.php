@@ -95,9 +95,11 @@ function is_ssl()
     return Runtime::current()->isSecure();
 }
 
+/** Whether the site's locale writes right to left. */
 function is_rtl()
 {
-    return false;
+    $locale = $GLOBALS['wp_locale'] ?? null;
+    return $locale instanceof WP_Locale && $locale->is_rtl();
 }
 
 function is_customize_preview()

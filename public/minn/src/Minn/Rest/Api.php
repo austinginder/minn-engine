@@ -220,9 +220,10 @@ final readonly class Api
             RuntimeRoutes::adopt($request, $as);
         }
         try {
-            return $this->engineResponse($request);
+            $response = $this->engineResponse($request);
+            return $response === null ? null : $this->withAllow($request, $response);
         } catch (RestError $error) {
-            return Reply::error($error);
+            return $this->withAllow($request, Reply::error($error));
         }
     }
 
