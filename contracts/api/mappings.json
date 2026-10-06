@@ -4,9 +4,9 @@
     "summary": {
         "minn": 566,
         "composes": 840,
-        "leaf": 632,
+        "leaf": 635,
         "noop": 1792,
-        "functions": 3760,
+        "functions": 3763,
         "minnMethods": 587,
         "leafLinesOver15": 13
     },
@@ -30911,6 +30911,27 @@
             "composes": [
                 "apply_filters"
             ]
+        },
+        "wp_maybe_grant_install_languages_cap": {
+            "file": "user.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "wp_maybe_grant_resume_extensions_caps": {
+            "file": "user.php",
+            "lines": 7,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "wp_maybe_grant_site_health_caps": {
+            "file": "user.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
         },
         "wp_maybe_inline_styles": {
             "file": "script-loader.php",

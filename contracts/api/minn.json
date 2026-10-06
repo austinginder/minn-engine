@@ -8093,13 +8093,14 @@
             "namespace": "Minn\\Auth",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Auth/Capabilities.php",
-            "lines": 162,
+            "lines": 215,
             "doc": "The capability engine: a user's roles from {prefix}capabilities usermeta,\nthe primitives those roles grant, and the meta-capability mapping for\nedit_post, delete_post, and read_post.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Auth\\Roles",
                 "Minn\\Auth\\TypeCapabilities",
+                "Minn\\Content\\PostRecord",
                 "Minn\\Content\\Users",
                 "Minn\\Db"
             ],
@@ -8151,8 +8152,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 17,
-                "end": 22
+                "line": 18,
+                "end": 23
             },
             "cases": [],
             "constants": [],
@@ -8203,8 +8204,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 25,
-                    "end": 28
+                    "line": 26,
+                    "end": 29
                 },
                 {
                     "routes": [],
@@ -8215,8 +8216,8 @@
                     "doc": "The role definitions.",
                     "shapes": [],
                     "params": [],
-                    "line": 31,
-                    "end": 34
+                    "line": 32,
+                    "end": 35
                 },
                 {
                     "routes": [],
@@ -8237,8 +8238,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 41,
-                    "end": 52
+                    "line": 42,
+                    "end": 53
                 },
                 {
                     "routes": [],
@@ -8259,8 +8260,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 59,
-                    "end": 71
+                    "line": 60,
+                    "end": 72
                 },
                 {
                     "routes": [],
@@ -8293,8 +8294,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 74,
-                    "end": 88
+                    "line": 75,
+                    "end": 89
                 },
                 {
                     "routes": [],
@@ -8329,8 +8330,73 @@
                             "doc": ""
                         }
                     ],
-                    "line": 95,
+                    "line": 96,
                     "end": 112
+                },
+                {
+                    "routes": [],
+                    "name": "mapMore",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "mapMore(string $capability, int $userId, ?int $objectId): array",
+                    "doc": "The rest of the reference's meta capabilities (captured with\nmap_meta_cap for an administrator, an editor and an author): each\nnames the primitive that decides it, refuses outright, or maps\nthrough the object it is about. A name it does not know is its own\nprimitive.",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "capability",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "userId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "objectId",
+                            "type": "?int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 123,
+                    "end": 148
+                },
+                {
+                    "routes": [],
+                    "name": "mapCommentCapability",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "mapCommentCapability(int $userId, int $commentId): array",
+                    "doc": "A comment is edited as its post is (as editing posts, when the post is gone); a comment that does not exist, by no one. @return list<string>",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "userId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "commentId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 151,
+                    "end": 159
                 },
                 {
                     "routes": [],
@@ -8338,7 +8404,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "mapPostCapability(string $capability, int $userId, int $postId): array",
-                    "doc": "",
+                    "doc": "A post's meta capability as the reference maps it (probe post-caps):\nread_post needs read for a published post or one's own, the private\nread for a private one, and what editing needs for anything else\n(future, draft, pending, trash). Editing or deleting one's own post\nneeds the published capability while it is published or scheduled (or\nwas, before the trash), the plain one otherwise; someone else's, the\nothers capability, with the published one while it is published or\nscheduled and the private one while it is private. The privacy policy\npage needs manage_options as well.",
                     "shapes": [
                         "@return list<string>"
                     ],
@@ -8365,8 +8431,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 115,
-                    "end": 157
+                    "line": 174,
+                    "end": 211
                 },
                 {
                     "routes": [],
@@ -8395,8 +8461,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 163,
-                    "end": 166
+                    "line": 217,
+                    "end": 220
                 },
                 {
                     "routes": [],
@@ -8415,8 +8481,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 168,
-                    "end": 175
+                    "line": 222,
+                    "end": 229
                 }
             ]
         },
@@ -26210,6 +26276,7 @@
                 "Minn\\Content\\PostStatus"
             ],
             "usedBy": [
+                "Minn\\Auth\\Capabilities",
                 "Minn\\Blocks\\Context",
                 "Minn\\Blocks\\Dynamic\\LatestPosts",
                 "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
@@ -93169,6 +93236,297 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\FileTypeCheck",
+            "short": "FileTypeCheck",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/FileTypeCheck.php",
+            "lines": 78,
+            "doc": "A file's type from its content as much as its name, as the reference's\nwp_check_filetype_and_ext decides it (probe upload-filters): an image the\nserver can measure is what its bytes say, and a name with the wrong image\nextension is corrected (a.png holding a JPEG becomes a.jpg); anything\nclaiming to be such an image and not being one has no type; any other\ntype must match what the content is, plain text standing for a few text\ntypes and an office or archive container for the document types; and\nthe type must be one the site allows.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "IMAGES",
+                    "value": "array (   'image/jpeg' => 'jpg',   'image/png' => 'png',   'image/gif' => 'gif',   'image/bmp' => 'bmp',   'image/tiff' => 'tif',   'image/webp' => 'webp',   'image/avif' => 'avif',   'image/heic' => 'heic', )",
+                    "doc": "The image types measured by their bytes, and the extension each takes.",
+                    "visibility": "public"
+                },
+                {
+                    "name": "TEXT_TYPES",
+                    "value": "array (   0 => 'text/plain',   1 => 'text/csv',   2 => 'application/csv',   3 => 'text/richtext',   4 => 'text/tsv',   5 => 'text/vtt', )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "CONTAINERS",
+                    "value": "array (   0 => 'application/octet-stream',   1 => 'application/encrypted',   2 => 'application/CDFV2-encrypted',   3 => 'application/zip', )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "check",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "check(string $file, string $filename, ?array $mimes, array $images): array",
+                    "doc": "ext, type, proper_filename, and the content's own type (real_mime).",
+                    "shapes": [
+                        "@param array<string, string>|null $mimes",
+                        "@param array<string, string> $images getimagesize_mimes_to_exts",
+                        "@return array{ext: string|false, type: string|false, proper_filename: string|false, real_mime: string|false}"
+                    ],
+                    "params": [
+                        {
+                            "name": "file",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "filename",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "mimes",
+                            "type": "?array",
+                            "shape": "array<string, string>|null",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "images",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": null,
+                            "doc": "getimagesize_mimes_to_exts"
+                        }
+                    ],
+                    "line": 33,
+                    "end": 65
+                },
+                {
+                    "routes": [],
+                    "name": "imageMime",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "imageMime(string $file): string|false",
+                    "doc": "What an image's bytes say it is, or false when they are not an image.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "file",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 68,
+                    "end": 72
+                },
+                {
+                    "routes": [],
+                    "name": "contentFits",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "contentFits(string $type, string $real): bool",
+                    "doc": "Whether content of the real type may carry a name of the given type.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "real",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 75,
+                    "end": 93
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\FileUpload",
+            "short": "FileUpload",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/FileUpload.php",
+            "lines": 105,
+            "doc": "A file a plugin hands to wp_handle_upload or wp_handle_sideload, taken in\nthe reference's order (probe upload-filters, contracts/runtime.md\n\"Uploads\"): the action's prefilter, where a plugin sanitizes the file or\nrefuses it with an error; its overrides; the upload's own errors, an\nempty file and, for a form upload, the form and the upload itself; the\ntype, from the file's content as much as its name\n(wp_check_filetype_and_ext), refused unless the site allows it or the\nuser may upload anything; the uploads folder; a unique, clean name\n(wp_unique_filename); pre_move_uploaded_file, where a plugin may move it\nitself; the move; and wp_handle_upload over the result.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "UPLOAD_ERRORS",
+                    "value": "array (   1 => 'The uploaded file exceeds the upload_max_filesize directive in php.ini.',   2 => 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form.',   3 => 'The uploaded file was only partially uploaded.',   4 => 'No file was uploaded.',   6 => 'Missing a temporary folder.',   7 => 'Failed to write file to disk.',   8 => 'A PHP extension stopped the file upload.', )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "handle",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "handle(array $file, array|false $overrides, ?string $time, string $action): array",
+                    "doc": "The stored file (file, url, type) or ['error' => message].",
+                    "shapes": [
+                        "@param array<string, mixed> $file name, type, tmp_name, size, error",
+                        "@param array<string, mixed>|false $overrides",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "file",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "name, type, tmp_name, size, error"
+                        },
+                        {
+                            "name": "overrides",
+                            "type": "array|false",
+                            "shape": "array<string, mixed>|false",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "time",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "action",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": "wp_handle_upload or wp_handle_sideload"
+                        }
+                    ],
+                    "line": 39,
+                    "end": 66
+                },
+                {
+                    "routes": [],
+                    "name": "refusal",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "refusal(array $file, array $options, string $action): ?string",
+                    "doc": "Why the upload stops before its type is looked at: a plugin's error\nfrom the prefilter, PHP's upload error, a form that is not the\naction's, an empty file, a form upload that did not arrive by POST.",
+                    "shapes": [
+                        "@param array<string, mixed> $file",
+                        "@param array<string, mixed> $options"
+                    ],
+                    "params": [
+                        {
+                            "name": "file",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "options",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "action",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 76,
+                    "end": 97
+                },
+                {
+                    "routes": [],
+                    "name": "move",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "move(array $file, string $target, string $type, string $url, string $action): array",
+                    "doc": "pre_move_uploaded_file, then the move (a form upload's own move, a\nsideload's copy), the folder's permissions, and wp_handle_upload.",
+                    "shapes": [
+                        "@param array<string, mixed> $file",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "file",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "target",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "url",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "action",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 106,
+                    "end": 122
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\Hooks",
             "short": "Hooks",
             "namespace": "Minn\\Runtime",
@@ -100913,6 +101271,7 @@
                 "Minn\\Runtime\\BlockHooks",
                 "Minn\\Runtime\\CommentEvents",
                 "Minn\\Runtime\\Constants",
+                "Minn\\Runtime\\FileUpload",
                 "Minn\\Runtime\\Interactivity",
                 "Minn\\Runtime\\NavMenu",
                 "Minn\\Runtime\\PackageDownload",

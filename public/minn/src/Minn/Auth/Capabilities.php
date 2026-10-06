@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Auth;
 
+use Minn\Content\PostRecord;
 use Minn\Content\Users;
 use Minn\Db;
 
@@ -105,13 +106,71 @@ final readonly class Capabilities
             'edit_term', 'delete_term' => ['manage_categories'],
             'edit_user' => $postId !== null && $postId === $userId ? [] : ['edit_users'],
             'edit_css' => ['unfiltered_html'],
-            'update_languages' => ['update_core'],
             'assign_term' => ['edit_posts'],
+            default => $this->mapMore($capability, $userId, $postId),
+        };
+    }
+
+    /**
+     * The rest of the reference's meta capabilities (captured with
+     * map_meta_cap for an administrator, an editor and an author): each
+     * names the primitive that decides it, refuses outright, or maps
+     * through the object it is about. A name it does not know is its own
+     * primitive.
+     *
+     * @return list<string>
+     */
+    private function mapMore(string $capability, int $userId, ?int $objectId): array
+    {
+        return match ($capability) {
+            // Only a site that defines ALLOW_UNFILTERED_UPLOADS lets anyone upload any file type.
+            'unfiltered_upload' => \defined('ALLOW_UNFILTERED_UPLOADS') && \constant('ALLOW_UNFILTERED_UPLOADS') ? ['unfiltered_upload'] : ['do_not_allow'],
+            'upload_plugins' => ['install_plugins'],
+            'upload_themes' => ['install_themes'],
+            'update_languages' => ['install_languages'],
+            'deactivate_plugins', 'activate_plugin', 'deactivate_plugin' => ['activate_plugins'],
+            'resume_plugin' => ['resume_plugins'],
+            'resume_theme' => ['resume_themes'],
+            'delete_user' => ['delete_users'],
+            'promote_user', 'add_users' => ['promote_users'],
+            'remove_user' => ['remove_users'],
+            'export_others_personal_data', 'erase_others_personal_data', 'manage_privacy_options', 'setup_network' => ['manage_options'],
+            'customize' => ['edit_theme_options'],
+            'update_https' => ['manage_options', 'update_core'],
+            'delete_site', 'edit_block_binding' => ['do_not_allow'],
+            'manage_links' => ($this->db->option('link_manager_enabled') ?? '0') === '1' ? ['manage_links'] : ['do_not_allow'],
+            // One's own application passwords need nothing more; anyone else's, editing that user.
+            'create_app_password', 'list_app_passwords', 'read_app_password', 'edit_app_password', 'delete_app_passwords', 'delete_app_password' => $objectId !== null && $objectId === $userId ? [] : ['edit_users'],
+            'edit_comment' => $this->mapCommentCapability($userId, (int) $objectId),
+            'edit_post_meta', 'delete_post_meta', 'add_post_meta' => $objectId === null ? ['do_not_allow'] : $this->mapPostCapability('edit_post', $userId, $objectId),
             default => [$capability],
         };
     }
 
-    /** @return list<string> */
+    /** A comment is edited as its post is (as editing posts, when the post is gone); a comment that does not exist, by no one. @return list<string> */
+    private function mapCommentCapability(int $userId, int $commentId): array
+    {
+        $postId = $this->db->value("SELECT comment_post_ID FROM {$this->db->table('comments')} WHERE comment_ID = ? LIMIT 1", [$commentId]);
+        if ($postId === null) {
+            return ['do_not_allow'];
+        }
+        $exists = $this->db->value("SELECT ID FROM {$this->db->table('posts')} WHERE ID = ? LIMIT 1", [(int) $postId]) !== null;
+        return $exists ? $this->mapPostCapability('edit_post', $userId, (int) $postId) : ['edit_posts'];
+    }
+
+    /**
+     * A post's meta capability as the reference maps it (probe post-caps):
+     * read_post needs read for a published post or one's own, the private
+     * read for a private one, and what editing needs for anything else
+     * (future, draft, pending, trash). Editing or deleting one's own post
+     * needs the published capability while it is published or scheduled (or
+     * was, before the trash), the plain one otherwise; someone else's, the
+     * others capability, with the published one while it is published or
+     * scheduled and the private one while it is private. The privacy policy
+     * page needs manage_options as well.
+     *
+     * @return list<string>
+     */
     private function mapPostCapability(string $capability, int $userId, int $postId): array
     {
         $post = $this->db->row(
@@ -121,39 +180,34 @@ final readonly class Capabilities
         if ($post === null) {
             return ['do_not_allow'];
         }
-        $isAuthor = (int) $post['post_author'] === $userId;
-        $status = (string) $post['post_status'];
-        if ($status === 'trash') {
-            // A trashed post keeps the rules of the status it was trashed from.
-            $status = $this->trashedFrom($postId);
-        }
-        $type = (string) $post['post_type'];
-        $plural = TypeCapabilities::plural($type);
-        $published = in_array($status, ['publish', 'future', 'private'], true);
-
+        $record = PostRecord::fromRow($post + ['ID' => $postId]);
+        $isAuthor = $record->authorId > 0 && $record->authorId === $userId;
+        $plural = TypeCapabilities::plural($record->type);
         if ($capability === 'read_post') {
-            return $status === 'publish' || $isAuthor ? ['read'] : [TypeCapabilities::of($type, "read_private_{$plural}")];
+            if ($record->status === 'publish' || $isAuthor) {
+                return ['read'];
+            }
+            if ($record->status === 'private') {
+                return [TypeCapabilities::of($record->type, "read_private_{$plural}")];
+            }
+            $capability = 'edit_post';
         }
-
         $verb = $capability === 'edit_post' ? 'edit' : 'delete';
-        $required = [];
+        $live = ['publish', 'future'];
         if ($isAuthor) {
-            $required[] = "{$verb}_{$plural}";
-            if ($published) {
+            $was = $record->status === 'trash' ? $this->trashedFrom($postId) : $record->status;
+            $required = [in_array($was, $live, true) ? "{$verb}_published_{$plural}" : "{$verb}_{$plural}"];
+        } else {
+            $required = ["{$verb}_others_{$plural}"];
+            if (in_array($record->status, $live, true)) {
                 $required[] = "{$verb}_published_{$plural}";
-            } elseif ($status === 'private') {
+            } elseif ($record->status === 'private') {
                 $required[] = "{$verb}_private_{$plural}";
             }
-            return self::fold($type, $required);
         }
-        $required[] = "{$verb}_others_{$plural}";
-        if ($published) {
-            $required[] = "{$verb}_published_{$plural}";
-        }
-        if ($status === 'private') {
-            $required[] = "{$verb}_private_{$plural}";
-        }
-        return self::fold($type, $required);
+        $required = self::fold($record->type, $required);
+        // The privacy policy page is the privacy settings' too.
+        return (int) ($this->db->option('wp_page_for_privacy_policy') ?? 0) === $postId ? [...$required, 'manage_options'] : $required;
     }
 
     /**

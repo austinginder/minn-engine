@@ -3483,3 +3483,38 @@ filter is handed the item as a response object with its links on it, the
 request; a link it adds is compacted with its CURIE as the reference's are.
 With nothing hooked, or the response handed back untouched, the item is
 Minn's own, byte for byte. Suite `rest-envelope` (42) checks each.
+
+## Capabilities (2026-10-06)
+
+`map_meta_cap` answered with the capability's own name for 32 meta
+capabilities the reference maps, so no role held them (an administrator
+could not `delete_user`, `promote_user`, `edit_comment`, `customize`,
+`activate_plugin` or create their own application password) or the role's
+own primitive decided where the reference refuses (`unfiltered_upload`,
+`manage_links`). Probe `meta-caps` (402 rows: `map_meta_cap` and
+`user_can` for an administrator, an editor and an author) and probe
+`post-caps` (144 rows: `edit_post`, `delete_post` and `read_post` over
+posts of every status by two authors) now agree throughout.
+
+The rules, as captured: `unfiltered_upload` is refused unless
+`ALLOW_UNFILTERED_UPLOADS` is set; the plugin, theme, language, user,
+privacy, customizer and HTTPS capabilities name their primitive
+(`upload_plugins` → `install_plugins`, `delete_user` → `delete_users`,
+`customize` → `edit_theme_options`, `update_https` → `manage_options` and
+`update_core`, and so on); `delete_site` and `edit_block_binding` (without
+a block context) are refused; `manage_links` needs the link manager on;
+one's own application passwords need nothing more and anyone else's need
+`edit_users`; `edit_comment` and the post-meta capabilities map through
+their post. A post's own capabilities: `read_post` needs `read` for a
+published post or one's own, the private read for a private one, and what
+editing needs otherwise (future, draft, pending, trash: a trashed post is no
+longer readable by anyone who may only read); editing or deleting one's own
+post needs the published capability while it is published or scheduled (or
+was, before the trash) and the plain one otherwise; someone else's needs the
+others capability, plus the published one while published or scheduled or
+the private one while private; the privacy policy page needs
+`manage_options` as well. `user_has_cap` carries the reference's three
+defaults at priority 1: `install_languages` for whoever may update core or
+install plugins or themes, `resume_plugins` and `resume_themes` for whoever
+may activate plugins or switch themes, `view_site_health_checks` for whoever
+may install plugins.

@@ -412,3 +412,33 @@ function get_user_setting($name, $default_value = false)
 {
     return get_all_user_settings()[$name] ?? $default_value;
 }
+
+/** user_has_cap's default: a user who may update core or install plugins or themes may install languages. */
+function wp_maybe_grant_install_languages_cap($allcaps)
+{
+    if (!empty($allcaps['update_core']) || !empty($allcaps['install_plugins']) || !empty($allcaps['install_themes'])) {
+        $allcaps['install_languages'] = true;
+    }
+    return $allcaps;
+}
+
+/** user_has_cap's default: whoever may activate plugins may resume a paused one; whoever may switch themes, a paused theme. */
+function wp_maybe_grant_resume_extensions_caps($allcaps)
+{
+    if (!empty($allcaps['activate_plugins'])) {
+        $allcaps['resume_plugins'] = true;
+    }
+    if (!empty($allcaps['switch_themes'])) {
+        $allcaps['resume_themes'] = true;
+    }
+    return $allcaps;
+}
+
+/** user_has_cap's default: whoever may install plugins may see the site health checks. */
+function wp_maybe_grant_site_health_caps($allcaps, $caps, $args, $user)
+{
+    if (!empty($allcaps['install_plugins'])) {
+        $allcaps['view_site_health_checks'] = true;
+    }
+    return $allcaps;
+}

@@ -1,0 +1,902 @@
+[
+    [
+        "edit_post post publish by 1 as user 1",
+        [
+            "edit_published_posts"
+        ]
+    ],
+    [
+        "delete_post post publish by 1 as user 1",
+        [
+            "delete_published_posts"
+        ]
+    ],
+    [
+        "read_post post publish by 1 as user 1",
+        [
+            "read"
+        ]
+    ],
+    [
+        "edit_post post publish by 1 as user 2",
+        [
+            "edit_others_posts",
+            "edit_published_posts"
+        ]
+    ],
+    [
+        "delete_post post publish by 1 as user 2",
+        [
+            "delete_others_posts",
+            "delete_published_posts"
+        ]
+    ],
+    [
+        "read_post post publish by 1 as user 2",
+        [
+            "read"
+        ]
+    ],
+    [
+        "edit_post post publish by 1 as user 3",
+        [
+            "edit_others_posts",
+            "edit_published_posts"
+        ]
+    ],
+    [
+        "delete_post post publish by 1 as user 3",
+        [
+            "delete_others_posts",
+            "delete_published_posts"
+        ]
+    ],
+    [
+        "read_post post publish by 1 as user 3",
+        [
+            "read"
+        ]
+    ],
+    [
+        "edit_post post future by 1 as user 1",
+        [
+            "edit_published_posts"
+        ]
+    ],
+    [
+        "delete_post post future by 1 as user 1",
+        [
+            "delete_published_posts"
+        ]
+    ],
+    [
+        "read_post post future by 1 as user 1",
+        [
+            "read"
+        ]
+    ],
+    [
+        "edit_post post future by 1 as user 2",
+        [
+            "edit_others_posts",
+            "edit_published_posts"
+        ]
+    ],
+    [
+        "delete_post post future by 1 as user 2",
+        [
+            "delete_others_posts",
+            "delete_published_posts"
+        ]
+    ],
+    [
+        "read_post post future by 1 as user 2",
+        [
+            "edit_others_posts",
+            "edit_published_posts"
+        ]
+    ],
+    [
+        "edit_post post future by 1 as user 3",
+        [
+            "edit_others_posts",
+            "edit_published_posts"
+        ]
+    ],
+    [
+        "delete_post post future by 1 as user 3",
+        [
+            "delete_others_posts",
+            "delete_published_posts"
+        ]
+    ],
+    [
+        "read_post post future by 1 as user 3",
+        [
+            "edit_others_posts",
+            "edit_published_posts"
+        ]
+    ],
+    [
+        "edit_post post draft by 1 as user 1",
+        [
+            "edit_posts"
+        ]
+    ],
+    [
+        "delete_post post draft by 1 as user 1",
+        [
+            "delete_posts"
+        ]
+    ],
+    [
+        "read_post post draft by 1 as user 1",
+        [
+            "read"
+        ]
+    ],
+    [
+        "edit_post post draft by 1 as user 2",
+        [
+            "edit_others_posts"
+        ]
+    ],
+    [
+        "delete_post post draft by 1 as user 2",
+        [
+            "delete_others_posts"
+        ]
+    ],
+    [
+        "read_post post draft by 1 as user 2",
+        [
+            "edit_others_posts"
+        ]
+    ],
+    [
+        "edit_post post draft by 1 as user 3",
+        [
+            "edit_others_posts"
+        ]
+    ],
+    [
+        "delete_post post draft by 1 as user 3",
+        [
+            "delete_others_posts"
+        ]
+    ],
+    [
+        "read_post post draft by 1 as user 3",
+        [
+            "edit_others_posts"
+        ]
+    ],
+    [
+        "edit_post post pending by 1 as user 1",
+        [
+            "edit_posts"
+        ]
+    ],
+    [
+        "delete_post post pending by 1 as user 1",
+        [
+            "delete_posts"
+        ]
+    ],
+    [
+        "read_post post pending by 1 as user 1",
+        [
+            "read"
+        ]
+    ],
+    [
+        "edit_post post pending by 1 as user 2",
+        [
+            "edit_others_posts"
+        ]
+    ],
+    [
+        "delete_post post pending by 1 as user 2",
+        [
+            "delete_others_posts"
+        ]
+    ],
+    [
+        "read_post post pending by 1 as user 2",
+        [
+            "edit_others_posts"
+        ]
+    ],
+    [
+        "edit_post post pending by 1 as user 3",
+        [
+            "edit_others_posts"
+        ]
+    ],
+    [
+        "delete_post post pending by 1 as user 3",
+        [
+            "delete_others_posts"
+        ]
+    ],
+    [
+        "read_post post pending by 1 as user 3",
+        [
+            "edit_others_posts"
+        ]
+    ],
+    [
+        "edit_post post private by 1 as user 1",
+        [
+            "edit_posts"
+        ]
+    ],
+    [
+        "delete_post post private by 1 as user 1",
+        [
+            "delete_posts"
+        ]
+    ],
+    [
+        "read_post post private by 1 as user 1",
+        [
+            "read"
+        ]
+    ],
+    [
+        "edit_post post private by 1 as user 2",
+        [
+            "edit_others_posts",
+            "edit_private_posts"
+        ]
+    ],
+    [
+        "delete_post post private by 1 as user 2",
+        [
+            "delete_others_posts",
+            "delete_private_posts"
+        ]
+    ],
+    [
+        "read_post post private by 1 as user 2",
+        [
+            "read_private_posts"
+        ]
+    ],
+    [
+        "edit_post post private by 1 as user 3",
+        [
+            "edit_others_posts",
+            "edit_private_posts"
+        ]
+    ],
+    [
+        "delete_post post private by 1 as user 3",
+        [
+            "delete_others_posts",
+            "delete_private_posts"
+        ]
+    ],
+    [
+        "read_post post private by 1 as user 3",
+        [
+            "read_private_posts"
+        ]
+    ],
+    [
+        "edit_post post trash-live by 1 as user 1",
+        [
+            "edit_published_posts"
+        ]
+    ],
+    [
+        "delete_post post trash-live by 1 as user 1",
+        [
+            "delete_published_posts"
+        ]
+    ],
+    [
+        "read_post post trash-live by 1 as user 1",
+        [
+            "read"
+        ]
+    ],
+    [
+        "edit_post post trash-live by 1 as user 2",
+        [
+            "edit_others_posts"
+        ]
+    ],
+    [
+        "delete_post post trash-live by 1 as user 2",
+        [
+            "delete_others_posts"
+        ]
+    ],
+    [
+        "read_post post trash-live by 1 as user 2",
+        [
+            "edit_others_posts"
+        ]
+    ],
+    [
+        "edit_post post trash-live by 1 as user 3",
+        [
+            "edit_others_posts"
+        ]
+    ],
+    [
+        "delete_post post trash-live by 1 as user 3",
+        [
+            "delete_others_posts"
+        ]
+    ],
+    [
+        "read_post post trash-live by 1 as user 3",
+        [
+            "edit_others_posts"
+        ]
+    ],
+    [
+        "edit_post post trash-draft by 1 as user 1",
+        [
+            "edit_posts"
+        ]
+    ],
+    [
+        "delete_post post trash-draft by 1 as user 1",
+        [
+            "delete_posts"
+        ]
+    ],
+    [
+        "read_post post trash-draft by 1 as user 1",
+        [
+            "read"
+        ]
+    ],
+    [
+        "edit_post post trash-draft by 1 as user 2",
+        [
+            "edit_others_posts"
+        ]
+    ],
+    [
+        "delete_post post trash-draft by 1 as user 2",
+        [
+            "delete_others_posts"
+        ]
+    ],
+    [
+        "read_post post trash-draft by 1 as user 2",
+        [
+            "edit_others_posts"
+        ]
+    ],
+    [
+        "edit_post post trash-draft by 1 as user 3",
+        [
+            "edit_others_posts"
+        ]
+    ],
+    [
+        "delete_post post trash-draft by 1 as user 3",
+        [
+            "delete_others_posts"
+        ]
+    ],
+    [
+        "read_post post trash-draft by 1 as user 3",
+        [
+            "edit_others_posts"
+        ]
+    ],
+    [
+        "edit_post page private by 1 as user 1",
+        [
+            "edit_pages"
+        ]
+    ],
+    [
+        "delete_post page private by 1 as user 1",
+        [
+            "delete_pages"
+        ]
+    ],
+    [
+        "read_post page private by 1 as user 1",
+        [
+            "read"
+        ]
+    ],
+    [
+        "edit_post page private by 1 as user 2",
+        [
+            "edit_others_pages",
+            "edit_private_pages"
+        ]
+    ],
+    [
+        "delete_post page private by 1 as user 2",
+        [
+            "delete_others_pages",
+            "delete_private_pages"
+        ]
+    ],
+    [
+        "read_post page private by 1 as user 2",
+        [
+            "read_private_pages"
+        ]
+    ],
+    [
+        "edit_post page private by 1 as user 3",
+        [
+            "edit_others_pages",
+            "edit_private_pages"
+        ]
+    ],
+    [
+        "delete_post page private by 1 as user 3",
+        [
+            "delete_others_pages",
+            "delete_private_pages"
+        ]
+    ],
+    [
+        "read_post page private by 1 as user 3",
+        [
+            "read_private_pages"
+        ]
+    ],
+    [
+        "edit_post post publish by 3 as user 1",
+        [
+            "edit_others_posts",
+            "edit_published_posts"
+        ]
+    ],
+    [
+        "delete_post post publish by 3 as user 1",
+        [
+            "delete_others_posts",
+            "delete_published_posts"
+        ]
+    ],
+    [
+        "read_post post publish by 3 as user 1",
+        [
+            "read"
+        ]
+    ],
+    [
+        "edit_post post publish by 3 as user 2",
+        [
+            "edit_others_posts",
+            "edit_published_posts"
+        ]
+    ],
+    [
+        "delete_post post publish by 3 as user 2",
+        [
+            "delete_others_posts",
+            "delete_published_posts"
+        ]
+    ],
+    [
+        "read_post post publish by 3 as user 2",
+        [
+            "read"
+        ]
+    ],
+    [
+        "edit_post post publish by 3 as user 3",
+        [
+            "edit_published_posts"
+        ]
+    ],
+    [
+        "delete_post post publish by 3 as user 3",
+        [
+            "delete_published_posts"
+        ]
+    ],
+    [
+        "read_post post publish by 3 as user 3",
+        [
+            "read"
+        ]
+    ],
+    [
+        "edit_post post future by 3 as user 1",
+        [
+            "edit_others_posts",
+            "edit_published_posts"
+        ]
+    ],
+    [
+        "delete_post post future by 3 as user 1",
+        [
+            "delete_others_posts",
+            "delete_published_posts"
+        ]
+    ],
+    [
+        "read_post post future by 3 as user 1",
+        [
+            "edit_others_posts",
+            "edit_published_posts"
+        ]
+    ],
+    [
+        "edit_post post future by 3 as user 2",
+        [
+            "edit_others_posts",
+            "edit_published_posts"
+        ]
+    ],
+    [
+        "delete_post post future by 3 as user 2",
+        [
+            "delete_others_posts",
+            "delete_published_posts"
+        ]
+    ],
+    [
+        "read_post post future by 3 as user 2",
+        [
+            "edit_others_posts",
+            "edit_published_posts"
+        ]
+    ],
+    [
+        "edit_post post future by 3 as user 3",
+        [
+            "edit_published_posts"
+        ]
+    ],
+    [
+        "delete_post post future by 3 as user 3",
+        [
+            "delete_published_posts"
+        ]
+    ],
+    [
+        "read_post post future by 3 as user 3",
+        [
+            "read"
+        ]
+    ],
+    [
+        "edit_post post draft by 3 as user 1",
+        [
+            "edit_others_posts"
+        ]
+    ],
+    [
+        "delete_post post draft by 3 as user 1",
+        [
+            "delete_others_posts"
+        ]
+    ],
+    [
+        "read_post post draft by 3 as user 1",
+        [
+            "edit_others_posts"
+        ]
+    ],
+    [
+        "edit_post post draft by 3 as user 2",
+        [
+            "edit_others_posts"
+        ]
+    ],
+    [
+        "delete_post post draft by 3 as user 2",
+        [
+            "delete_others_posts"
+        ]
+    ],
+    [
+        "read_post post draft by 3 as user 2",
+        [
+            "edit_others_posts"
+        ]
+    ],
+    [
+        "edit_post post draft by 3 as user 3",
+        [
+            "edit_posts"
+        ]
+    ],
+    [
+        "delete_post post draft by 3 as user 3",
+        [
+            "delete_posts"
+        ]
+    ],
+    [
+        "read_post post draft by 3 as user 3",
+        [
+            "read"
+        ]
+    ],
+    [
+        "edit_post post pending by 3 as user 1",
+        [
+            "edit_others_posts"
+        ]
+    ],
+    [
+        "delete_post post pending by 3 as user 1",
+        [
+            "delete_others_posts"
+        ]
+    ],
+    [
+        "read_post post pending by 3 as user 1",
+        [
+            "edit_others_posts"
+        ]
+    ],
+    [
+        "edit_post post pending by 3 as user 2",
+        [
+            "edit_others_posts"
+        ]
+    ],
+    [
+        "delete_post post pending by 3 as user 2",
+        [
+            "delete_others_posts"
+        ]
+    ],
+    [
+        "read_post post pending by 3 as user 2",
+        [
+            "edit_others_posts"
+        ]
+    ],
+    [
+        "edit_post post pending by 3 as user 3",
+        [
+            "edit_posts"
+        ]
+    ],
+    [
+        "delete_post post pending by 3 as user 3",
+        [
+            "delete_posts"
+        ]
+    ],
+    [
+        "read_post post pending by 3 as user 3",
+        [
+            "read"
+        ]
+    ],
+    [
+        "edit_post post private by 3 as user 1",
+        [
+            "edit_others_posts",
+            "edit_private_posts"
+        ]
+    ],
+    [
+        "delete_post post private by 3 as user 1",
+        [
+            "delete_others_posts",
+            "delete_private_posts"
+        ]
+    ],
+    [
+        "read_post post private by 3 as user 1",
+        [
+            "read_private_posts"
+        ]
+    ],
+    [
+        "edit_post post private by 3 as user 2",
+        [
+            "edit_others_posts",
+            "edit_private_posts"
+        ]
+    ],
+    [
+        "delete_post post private by 3 as user 2",
+        [
+            "delete_others_posts",
+            "delete_private_posts"
+        ]
+    ],
+    [
+        "read_post post private by 3 as user 2",
+        [
+            "read_private_posts"
+        ]
+    ],
+    [
+        "edit_post post private by 3 as user 3",
+        [
+            "edit_posts"
+        ]
+    ],
+    [
+        "delete_post post private by 3 as user 3",
+        [
+            "delete_posts"
+        ]
+    ],
+    [
+        "read_post post private by 3 as user 3",
+        [
+            "read"
+        ]
+    ],
+    [
+        "edit_post post trash-live by 3 as user 1",
+        [
+            "edit_others_posts"
+        ]
+    ],
+    [
+        "delete_post post trash-live by 3 as user 1",
+        [
+            "delete_others_posts"
+        ]
+    ],
+    [
+        "read_post post trash-live by 3 as user 1",
+        [
+            "edit_others_posts"
+        ]
+    ],
+    [
+        "edit_post post trash-live by 3 as user 2",
+        [
+            "edit_others_posts"
+        ]
+    ],
+    [
+        "delete_post post trash-live by 3 as user 2",
+        [
+            "delete_others_posts"
+        ]
+    ],
+    [
+        "read_post post trash-live by 3 as user 2",
+        [
+            "edit_others_posts"
+        ]
+    ],
+    [
+        "edit_post post trash-live by 3 as user 3",
+        [
+            "edit_published_posts"
+        ]
+    ],
+    [
+        "delete_post post trash-live by 3 as user 3",
+        [
+            "delete_published_posts"
+        ]
+    ],
+    [
+        "read_post post trash-live by 3 as user 3",
+        [
+            "read"
+        ]
+    ],
+    [
+        "edit_post post trash-draft by 3 as user 1",
+        [
+            "edit_others_posts"
+        ]
+    ],
+    [
+        "delete_post post trash-draft by 3 as user 1",
+        [
+            "delete_others_posts"
+        ]
+    ],
+    [
+        "read_post post trash-draft by 3 as user 1",
+        [
+            "edit_others_posts"
+        ]
+    ],
+    [
+        "edit_post post trash-draft by 3 as user 2",
+        [
+            "edit_others_posts"
+        ]
+    ],
+    [
+        "delete_post post trash-draft by 3 as user 2",
+        [
+            "delete_others_posts"
+        ]
+    ],
+    [
+        "read_post post trash-draft by 3 as user 2",
+        [
+            "edit_others_posts"
+        ]
+    ],
+    [
+        "edit_post post trash-draft by 3 as user 3",
+        [
+            "edit_posts"
+        ]
+    ],
+    [
+        "delete_post post trash-draft by 3 as user 3",
+        [
+            "delete_posts"
+        ]
+    ],
+    [
+        "read_post post trash-draft by 3 as user 3",
+        [
+            "read"
+        ]
+    ],
+    [
+        "edit_post page private by 3 as user 1",
+        [
+            "edit_others_pages",
+            "edit_private_pages"
+        ]
+    ],
+    [
+        "delete_post page private by 3 as user 1",
+        [
+            "delete_others_pages",
+            "delete_private_pages"
+        ]
+    ],
+    [
+        "read_post page private by 3 as user 1",
+        [
+            "read_private_pages"
+        ]
+    ],
+    [
+        "edit_post page private by 3 as user 2",
+        [
+            "edit_others_pages",
+            "edit_private_pages"
+        ]
+    ],
+    [
+        "delete_post page private by 3 as user 2",
+        [
+            "delete_others_pages",
+            "delete_private_pages"
+        ]
+    ],
+    [
+        "read_post page private by 3 as user 2",
+        [
+            "read_private_pages"
+        ]
+    ],
+    [
+        "edit_post page private by 3 as user 3",
+        [
+            "edit_pages"
+        ]
+    ],
+    [
+        "delete_post page private by 3 as user 3",
+        [
+            "delete_pages"
+        ]
+    ],
+    [
+        "read_post page private by 3 as user 3",
+        [
+            "read"
+        ]
+    ]
+]

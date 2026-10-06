@@ -157,6 +157,10 @@ add_filter('pre_post_mime_type', 'sanitize_mime_type');
 add_filter('wp_insert_post_data', '_wp_customize_changeset_filter_insert_post_data', 10, 2);
 add_filter('wp_insert_post_parent', 'wp_check_post_hierarchy_for_loops', 10, 2);
 add_filter('pre_wp_unique_post_slug', 'wp_filter_wp_template_unique_post_slug', 10, 5);
+// The capabilities no role lists, granted from the ones that imply them (probe: the reference's user_has_cap defaults).
+add_filter('user_has_cap', 'wp_maybe_grant_install_languages_cap', 1);
+add_filter('user_has_cap', 'wp_maybe_grant_resume_extensions_caps', 1);
+add_filter('user_has_cap', 'wp_maybe_grant_site_health_caps', 1, 4);
 // What a user may post unfiltered is settled once WordPress is up and again whenever the user changes.
 add_action('init', 'kses_init');
 add_action('set_current_user', 'kses_init');
