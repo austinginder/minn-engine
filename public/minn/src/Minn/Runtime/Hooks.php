@@ -129,6 +129,25 @@ final class Hooks
     }
 
     /**
+     * Whether anything is hooked besides the callbacks the engine does the
+     * work of itself (named function => priority), as filterWithout skips them.
+     *
+     * @param array<string, int> $done
+     */
+    public function hasBeyond(string $hook, array $done): bool
+    {
+        foreach ($this->hooks[$hook] ?? [] as $priority => $callbacks) {
+            foreach ($callbacks as $callback) {
+                $name = $callback['function'] ?? null;
+                if (!is_string($name) || ($done[$name] ?? null) !== (int) $priority) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * Runs a filter and returns the value.
      *
      * @param list<mixed> $args the value first

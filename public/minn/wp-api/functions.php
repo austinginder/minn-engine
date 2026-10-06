@@ -1,6 +1,7 @@
 <?php
 /** Dates, files, mime types, and the odds and ends of wp-includes/functions.php. */
 
+use Minn\Runtime\Deferrals;
 use Minn\Runtime\Runtime;
 
 function wp_timezone_string()
@@ -322,9 +323,14 @@ function wp_scheduled_delete()
 }
 
 
+/** A URL's body through wp_safe_remote_get (ten seconds), whatever its status; false when it could not be fetched. */
 function wp_remote_fopen($uri)
 {
-    return false;
+    if (!is_array(parse_url((string) $uri))) {
+        return false;
+    }
+    $response = wp_safe_remote_get($uri, ['timeout' => 10]);
+    return is_wp_error($response) ? false : wp_remote_retrieve_body($response);
 }
 
 function is_blog_installed()
@@ -407,9 +413,10 @@ function wp_guess_url()
     return home_url();
 }
 
+/** Whether wp_cache_add is refused for now (Runtime\Deferrals). */
 function wp_suspend_cache_addition($suspend = null)
 {
-    return false;
+    return Deferrals::cacheAddition($suspend);
 }
 
 function wp_suspend_cache_invalidation($suspend = true)

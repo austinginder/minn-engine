@@ -12,6 +12,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`Canonical`](#canonical) | final class | 28 | Where a URL should redirect to, by the engine's own resolution: the |
 | [`CommentList`](#commentlist) | final class | 52 | The classic threaded comment walk: top-level comments in order (or |
 | [`CommentPostController`](#commentpostcontroller) | final readonly class | 174 | wp-comments-post.php: the comment form's target. The reference's |
+| [`CustomLogo`](#customlogo) | final class | 27 | The site logo a theme prints, as get_custom_logo builds it (probe |
 | [`DocumentTitle`](#documenttitle) | final class | 47 | The document title as parts (title, tagline, page, site) in the order the |
 | [`FeedController`](#feedcontroller) | final readonly class | 94 | The feeds: the site's, the comments', a post's or an archive's by the |
 | [`Feeds`](#feeds) | final readonly class | 316 | The syndication feeds, byte for byte in the reference's shape: RSS 2.0 |
@@ -259,6 +260,24 @@ Route: `* /wp-comments-post.php (public)`
 The comment form's target.
 
 Internals: `postWithoutPlugins()` (private, line 62), `postWithPlugins()` (private, line 150), `approval()` (private, line 171), `rememberAuthor()` (private, line 178), `moderationHash()` (private, line 188), `notifyModerator()` (private, line 193), `refusal()` (private, line 200)
+
+
+## CustomLogo
+
+`final class Minn\Front\CustomLogo` · `public/minn/src/Minn/Front/CustomLogo.php`
+
+The site logo a theme prints, as get_custom_logo builds it (probe
+plugin-helpers): the custom_logo theme mod's image at full size, never
+lazy, its alt its own or else the site's name, linked home (marked the
+current page on the front page). A theme that unlinks the home page logo
+gets a plain span there, the image then decorative (an empty alt). The
+image's attributes go through get_custom_logo_image_attributes and the
+whole through get_custom_logo; no logo is an empty string, or in the
+Customizer a hidden placeholder it can fill in.
+
+### static `html(int $blogId): string`
+
+The logo's markup, through get_custom_logo; empty when the site has none.
 
 
 ## DocumentTitle

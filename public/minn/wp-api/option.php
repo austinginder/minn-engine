@@ -171,6 +171,9 @@ endif;
 if (!function_exists('wp_cache_add')) :
 function wp_cache_add($key, $data, $group = '', $expire = 0)
 {
+    if (wp_suspend_cache_addition()) {
+        return false;
+    }
     return Runtime::cache()->add((string) $key, $data, $group === '' ? 'default' : (string) $group);
 }
 endif;

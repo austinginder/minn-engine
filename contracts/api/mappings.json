@@ -2,12 +2,12 @@
     "generated": "2026-10-06",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 627,
-        "composes": 864,
-        "leaf": 634,
-        "noop": 1793,
+        "minn": 632,
+        "composes": 867,
+        "leaf": 635,
+        "noop": 1784,
         "functions": 3848,
-        "minnMethods": 605,
+        "minnMethods": 614,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -20070,7 +20070,9 @@
             "file": "theme.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Front\\CustomLogo::html"
+            ],
             "composes": []
         },
         "get_dashboard_url": {
@@ -25591,8 +25593,8 @@
         },
         "rest_api_default_filters": {
             "file": "rest-api.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 2,
+            "kind": "composes",
             "minn": [],
             "composes": [
                 "add_filter"
@@ -25696,10 +25698,14 @@
         },
         "rest_filter_response_fields": {
             "file": "rest-api.php",
-            "lines": 1,
-            "kind": "noop",
-            "minn": [],
-            "composes": []
+            "lines": 6,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Rest\\Fields::fromQuery"
+            ],
+            "composes": [
+                "wp_is_numeric_array"
+            ]
         },
         "rest_find_any_matching_schema": {
             "file": "rest-api.php",
@@ -27386,17 +27392,19 @@
         },
         "timer_start": {
             "file": "load.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 2,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
         "timer_stop": {
             "file": "load.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 6,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "number_format_i18n"
+            ]
         },
         "to_array": {
             "file": "classes/WP_Http.php",
@@ -27718,10 +27726,16 @@
         },
         "update_meta_cache": {
             "file": "meta.php",
-            "lines": 1,
-            "kind": "noop",
-            "minn": [],
-            "composes": []
+            "lines": 9,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Meta::knows",
+                "Minn\\Runtime\\Meta::prime"
+            ],
+            "composes": [
+                "_minn_meta",
+                "apply_filters"
+            ]
         },
         "update_metadata": {
             "file": "meta.php",
@@ -28433,12 +28447,14 @@
         },
         "wp_cache_add": {
             "file": "option.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 4,
+            "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::cache"
             ],
-            "composes": []
+            "composes": [
+                "wp_suspend_cache_addition"
+            ]
         },
         "wp_cache_add_global_groups": {
             "file": "option.php",
@@ -29156,14 +29172,18 @@
             "file": "comment.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\Deferrals::comments"
+            ],
             "composes": []
         },
         "wp_defer_term_counting": {
             "file": "taxonomy.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\Deferrals::terms"
+            ],
             "composes": []
         },
         "wp_delete_attachment": {
@@ -30268,7 +30288,7 @@
         },
         "wp_get_loading_optimization_attributes": {
             "file": "media.php",
-            "lines": 30,
+            "lines": 32,
             "kind": "minn",
             "minn": [
                 "Minn\\Blocks\\RenderState::current"
@@ -31791,7 +31811,9 @@
             "file": "media.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Media\\Icons::forType"
+            ],
             "composes": []
         },
         "wp_mkdir_p": {
@@ -32003,7 +32025,9 @@
             "lines": 1,
             "kind": "noop",
             "minn": [],
-            "composes": []
+            "composes": [
+                "_wp_oembed_get_object"
+            ]
         },
         "wp_oembed_remove_provider": {
             "file": "misc.php",
@@ -32365,10 +32389,14 @@
         },
         "wp_raise_memory_limit": {
             "file": "load.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 14,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "apply_filters",
+                "wp_convert_hr_to_bytes",
+                "wp_is_ini_value_changeable"
+            ]
         },
         "wp_rand": {
             "file": "pluggable.php",
@@ -32562,10 +32590,15 @@
         },
         "wp_remote_fopen": {
             "file": "functions.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 5,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "is_wp_error",
+                "parse_url",
+                "wp_remote_retrieve_body",
+                "wp_safe_remote_get"
+            ]
         },
         "wp_remote_get": {
             "file": "http.php",
@@ -33517,7 +33550,9 @@
             "file": "functions.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\Deferrals::cacheAddition"
+            ],
             "composes": []
         },
         "wp_suspend_cache_invalidation": {
@@ -33916,10 +33951,14 @@
         },
         "wp_update_comment_count": {
             "file": "comment.php",
-            "lines": 1,
-            "kind": "noop",
-            "minn": [],
+            "lines": 5,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Deferrals::comments",
+                "Minn\\Runtime\\Deferrals::putOffComments"
+            ],
             "composes": [
+                "wp_defer_comment_counting",
                 "wp_update_comment_count_now"
             ]
         },
@@ -33999,10 +34038,14 @@
         },
         "wp_update_term_count": {
             "file": "taxonomy.php",
-            "lines": 5,
-            "kind": "composes",
-            "minn": [],
+            "lines": 9,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Deferrals::putOffTerms",
+                "Minn\\Runtime\\Deferrals::terms"
+            ],
             "composes": [
+                "wp_defer_term_counting",
                 "wp_update_term_count_now"
             ]
         },

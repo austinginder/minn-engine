@@ -7,6 +7,7 @@ namespace Minn\Rest;
 use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\RestError;
+use Minn\Runtime\Runtime;
 
 /**
  * Routes plugin code registered with register_rest_route(), answered
@@ -17,6 +18,9 @@ use Minn\RestError;
  */
 final class RuntimeRoutes
 {
+    /** rest_post_dispatch's defaults the engine does itself: every answer is cut to its _fields before it is served. */
+    private const DISPATCH_DONE = ['rest_filter_response_fields' => 10];
+
     /**
      * What plugin code decides before any route runs, engine routes
      * included, in the reference's order: rest_authentication_errors may
@@ -52,7 +56,12 @@ final class RuntimeRoutes
             return null;
         }
         self::matched($request, (string) $matched[0], (array) $matched[1]);
-        return self::toResponse(self::ensure($server->dispatch($wpRequest)));
+        $result = self::ensure($server->dispatch($wpRequest));
+        // A plugin's answer keeps only its _fields, as the engine's own do (serve() then skips the filter).
+        if (\has_filter('rest_post_dispatch', 'rest_filter_response_fields') === self::DISPATCH_DONE['rest_filter_response_fields']) {
+            $result = \rest_filter_response_fields($result, $server, $wpRequest);
+        }
+        return self::toResponse(self::ensure($result));
     }
 
     /** The engine's index plus the namespaces and routes the runtime holds. */
@@ -181,7 +190,7 @@ final class RuntimeRoutes
      */
     public static function serve(Request $request, Response $response): Response
     {
-        if (!\has_filter('rest_post_dispatch') && !\has_filter('rest_pre_serve_request') && !\has_filter('rest_pre_echo_response')) {
+        if (!Runtime::hooks()->hasBeyond('rest_post_dispatch', self::DISPATCH_DONE) && !\has_filter('rest_pre_serve_request') && !\has_filter('rest_pre_echo_response')) {
             return $response;
         }
         $data = self::decode($response->body);
@@ -200,7 +209,7 @@ final class RuntimeRoutes
         [$route, $handler] = self::$matches[$request] ?? [null, null];
         $result->set_matched_route($route);
         $result->set_matched_handler($handler);
-        $result = \rest_ensure_response(\apply_filters('rest_post_dispatch', \rest_ensure_response($result), $server, $wpRequest));
+        $result = \rest_ensure_response(Runtime::hooks()->filterWithout('rest_post_dispatch', [\rest_ensure_response($result), $server, $wpRequest], self::DISPATCH_DONE));
         $result = $result instanceof \WP_Error ? \rest_convert_error_to_response($result) : $result;
         $headers = Reply::HEADERS;
         foreach ((array) $result->get_headers() as $name => $value) {

@@ -3849,3 +3849,41 @@ in REST (`Rest\LiveSettings`), a plugin's beside core's:
 
 Without plugins the fixed table in `Rest\Settings` still answers. The route's
 OPTIONS schema is not served yet.
+
+## Helpers plugins call (2026-10-06)
+
+Helpers that once returned a constant now do what the reference does (probe
+`plugin-helpers`):
+- **Switches.** `wp_defer_term_counting`, `wp_defer_comment_counting` and
+  `wp_suspend_cache_addition` remember what they are told for the request
+  (`Runtime\Deferrals`). A non-boolean only asks. Turning deferral off counts
+  what was put off, and `wp_cache_add` is refused while additions are
+  suspended.
+- **Timer and memory.** `timer_start` sets `$timestart` for `timer_stop`.
+  `wp_raise_memory_limit` raises PHP's limit, never lowers it: to what
+  `{$context}_memory_limit` asks when that is unlimited or higher than both
+  the most WordPress allows and the current limit, otherwise to the most
+  WordPress allows.
+- **Fetching and embeds.** `wp_remote_fopen` returns the body from
+  `wp_safe_remote_get` (ten seconds), whatever the status.
+  `wp_oembed_get` goes through `WP_oEmbed` (`pre_oembed_result`, then the
+  provider).
+- **Icons.** `wp_mime_type_icon` reads the icon folders once a request,
+  preferring the first caller's kind of file (`Media\Icons`), then finds the
+  first name the type answers to. For an attachment that is its extension
+  and the kind of file that is. Otherwise it is the type, either half of it,
+  or the type with an underscore for the slash.
+- **Meta cache.** `update_meta_cache` reads the uncached objects' meta in one
+  query into the cache and answers by id.
+- **Custom logo.** `get_custom_logo` (`Front\CustomLogo`) links the
+  `custom_logo` image home, `aria-current` on the front page. Its alt is the
+  image's own or the site's name; a theme that unlinks the home logo gets a
+  span with an empty alt there. An image with `loading` set false now takes
+  `fetchpriority="high"` only when it is large enough
+  (`wp_min_priority_img_pixels`).
+- **REST fields.** `rest_filter_response_fields` cuts an answer to `_fields`
+  (each item of a list on its own) and is hooked on `rest_post_dispatch`
+  when the server starts. A plugin route's answer now keeps only its
+  `_fields`, as the engine's own routes always have; the engine skips the
+  filter where it has already done the work (`Hooks::hasBeyond`,
+  `filterWithout`).

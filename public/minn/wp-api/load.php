@@ -162,14 +162,22 @@ function wp_get_server_protocol()
     return 'HTTP/1.1';
 }
 
+/** Starts the page timer timer_stop reads ($timestart). */
 function timer_start()
 {
+    $GLOBALS['timestart'] = microtime(true);
     return true;
 }
 
+/** Seconds since timer_start (or since the request began), formatted, and echoed when asked. */
 function timer_stop($display = 0, $precision = 3)
 {
-    return number_format(microtime(true) - (defined('WP_START_TIMESTAMP') ? WP_START_TIMESTAMP : microtime(true)), $precision);
+    $start = $GLOBALS['timestart'] ?? (defined('WP_START_TIMESTAMP') ? WP_START_TIMESTAMP : microtime(true));
+    $total = function_exists('number_format_i18n') ? number_format_i18n(microtime(true) - $start, $precision) : number_format(microtime(true) - $start, $precision);
+    if ($display) {
+        echo $total;
+    }
+    return $total;
 }
 
 function wp_convert_hr_to_bytes($value)
@@ -191,9 +199,28 @@ function wp_is_ini_value_changeable($setting)
     return true;
 }
 
+/**
+ * Raises PHP's memory limit for a heavy task, never lowering it: to what
+ * {$context}_memory_limit asks when that is unlimited or above both the
+ * most WordPress allows and the current limit, else to the most WordPress
+ * allows when that is higher. The new limit, or false when it stayed.
+ */
 function wp_raise_memory_limit($context = 'admin')
 {
-    return false;
+    $current = wp_convert_hr_to_bytes(ini_get('memory_limit'));
+    if (!wp_is_ini_value_changeable('memory_limit') || $current === -1) {
+        return false;
+    }
+    $max = WP_MAX_MEMORY_LIMIT;
+    $wanted = apply_filters("{$context}_memory_limit", $max);
+    $wantedBytes = wp_convert_hr_to_bytes($wanted);
+    $maxBytes = wp_convert_hr_to_bytes($max);
+    $limit = match (true) {
+        $wantedBytes === -1 || ($wantedBytes > $maxBytes && $wantedBytes > $current) => $wanted,
+        $maxBytes === -1 || $maxBytes > $current => $max,
+        default => false,
+    };
+    return $limit !== false && ini_set('memory_limit', (string) $limit) !== false ? $limit : false;
 }
 
 /** A JSONP request names its callback in `_jsonp`; the value is not checked here. */

@@ -1,5 +1,6 @@
 <?php
 
+use Minn\Runtime\Deferrals;
 use Minn\Content\TermLinks;
 /** Terms and taxonomies. Behaviour from contracts/fixtures/api/content.json. */
 
@@ -621,11 +622,15 @@ function clean_object_term_cache($object_ids, $object_type)
 
 function wp_update_term_count($terms, $taxonomy, $do_deferred = false)
 {
+    if ($do_deferred) {
+        return Deferrals::terms(false);
+    }
     $terms = array_values(array_filter(array_map('intval', (array) $terms)));
     if ($terms === []) {
         return false;
     }
-    return wp_update_term_count_now($terms, $taxonomy);
+    // While counting is deferred the recount waits for wp_defer_term_counting(false).
+    return Deferrals::putOffTerms($terms, (string) $taxonomy) || wp_update_term_count_now($terms, $taxonomy);
 }
 
 /** Recounts terms by term_taxonomy id through the taxonomy's count callback, then lets their caches go. */
@@ -642,9 +647,10 @@ function wp_update_term_count_now($terms, $taxonomy)
     return true;
 }
 
+/** Whether term counts are put off (Runtime\Deferrals); turning it off counts what was. */
 function wp_defer_term_counting($defer = null)
 {
-    return false;
+    return Deferrals::terms($defer);
 }
 
 /** A field of a term in a context (display by default); '' for a field it does not have. */

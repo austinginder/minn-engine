@@ -1,6 +1,7 @@
 <?php
 /** The REST route API over WP_REST_Server. Behaviour from contracts/fixtures/api/rest.json. */
 
+use Minn\Rest\Fields;
 use Minn\Rest\Schema;
 use Minn\Rest\SchemaValues;
 use Minn\Runtime\Refusal;
@@ -37,6 +38,7 @@ function rest_api_register_rewrites()
  */
 function rest_api_default_filters()
 {
+    add_filter('rest_post_dispatch', 'rest_filter_response_fields', 10, 3);
     add_filter('rest_pre_dispatch', 'rest_handle_options_request', 10, 3);
 }
 
@@ -434,8 +436,14 @@ function rest_default_additional_properties_to_false($schema)
     return Schema::closeObjects((array) $schema);
 }
 
+/** An answer cut to the request's _fields (dot paths descend), each item of a list on its own; an error is left whole. */
 function rest_filter_response_fields($response, $server, $request)
 {
+    $fields = $request instanceof WP_REST_Request ? Fields::fromQuery(['_fields' => $request->get_param('_fields')]) : null;
+    if (!$response instanceof WP_REST_Response || $response->is_error() || $fields === null || !is_array($data = $response->get_data())) {
+        return $response;
+    }
+    $response->set_data(wp_is_numeric_array($data) ? array_map(static fn ($item) => is_array($item) ? $fields->apply($item) : $item, $data) : $fields->apply($data));
     return $response;
 }
 

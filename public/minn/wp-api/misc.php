@@ -638,9 +638,10 @@ function wp_embed_unregister_handler($id, $priority = 10)
     Runtime::current()->set('embed_handlers', $handlers);
 }
 
+/** A URL's embed HTML through WP_oEmbed (pre_oembed_result first, then the provider), or false. */
 function wp_oembed_get($url, $args = '')
 {
-    return false;
+    return _wp_oembed_get_object()->get_html($url, $args);
 }
 
 function wp_embed_defaults($url = '')

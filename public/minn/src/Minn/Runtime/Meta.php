@@ -71,6 +71,40 @@ final readonly class Meta
         return $out;
     }
 
+    /**
+     * update_meta_cache: each object's meta as all() gives it, the cached
+     * ones from the object cache and the rest read in one query and cached;
+     * an object with none has an empty list.
+     *
+     * @param list<int> $objectIds
+     * @return array<int, array<string, list<string>>>
+     */
+    public function prime(string $type, array $objectIds): array
+    {
+        $cache = [];
+        $missing = [];
+        foreach ($objectIds as $objectId) {
+            $cached = \wp_cache_get($objectId, "{$type}_meta", false, $found);
+            if ($found) {
+                $cache[$objectId] = $cached;
+            } else {
+                $missing[$objectId] = [];
+            }
+        }
+        if ($missing !== []) {
+            [$table, $column, $id] = $this->spec($type);
+            $in = implode(', ', array_fill(0, count($missing), '?'));
+            foreach ($this->db->rows("SELECT {$column} AS object_id, meta_key, meta_value FROM {$table} WHERE {$column} IN ({$in}) ORDER BY {$id} ASC", array_keys($missing)) as $row) {
+                $missing[(int) $row['object_id']][(string) $row['meta_key']][] = (string) $row['meta_value'];
+            }
+            foreach ($missing as $objectId => $meta) {
+                \wp_cache_set($objectId, $meta, "{$type}_meta");
+                $cache[$objectId] = $meta;
+            }
+        }
+        return $cache;
+    }
+
     /** Every row of an object's meta in id order, for removing them one by one. @return list<array{meta_id: int, meta_key: string, meta_value: string}> */
     public function rowsOf(string $type, int $objectId): array
     {

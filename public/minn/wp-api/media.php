@@ -1,6 +1,7 @@
 <?php
 /** Attachments, image sizes, and the media helpers. Behaviour from contracts/fixtures/api/media.json. */
 
+use Minn\Media\Icons;
 use Minn\Blocks\RenderState;
 use Minn\Media\Kind;
 use Minn\Media\Metadata;
@@ -299,9 +300,10 @@ function wp_get_attachment_image_url($attachment_id, $size = 'thumbnail', $icon 
     return $image ? $image[0] : false;
 }
 
+/** The icon a type or attachment is shown with (Media\Icons), through wp_mime_type_icon. */
 function wp_mime_type_icon($mime = 0, $preferred_ext = '.png')
 {
-    return false;
+    return Icons::forType(is_int($mime) || is_string($mime) ? $mime : 0, (string) $preferred_ext);
 }
 
 function wp_get_attachment_image($attachment_id, $size = 'thumbnail', $icon = false, $attr = '')
@@ -378,7 +380,9 @@ function wp_get_loading_optimization_attributes($tag_name, $attr, $context)
         $optimization['fetchpriority'] = 'high';
         RenderState::current()->closePriority();
     } elseif ($explicitLoading) {
-        if (RenderState::current()->claimPriority()) {
+        // Never lazy, and high priority only for an image large enough to deserve it (a logo usually is not).
+        $pixels = (int) ($attr['width'] ?? 0) * (int) ($attr['height'] ?? 0);
+        if ($pixels >= (int) apply_filters('wp_min_priority_img_pixels', 50000) && RenderState::current()->claimPriority()) {
             $optimization['fetchpriority'] = 'high';
         }
     } elseif ($tag_name === 'img' && (RenderState::current()->depth() > 0 || (in_the_loop() && is_main_query())) && !(defined('REST_REQUEST') && REST_REQUEST) && RenderState::current()->nextImage() <= 3) {

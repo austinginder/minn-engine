@@ -1,6 +1,7 @@
 <?php
 /** Comments: reads, counts, the writers. Behaviour from contracts/fixtures/api/media.json. */
 
+use Minn\Runtime\Deferrals;
 use Minn\Content\CommentClasses;
 use Minn\Content\CommentModeration;
 use Minn\Content\Comments;
@@ -129,7 +130,11 @@ function wp_insert_comment($commentdata)
 
 function wp_update_comment_count($post_id, $do_deferred = false)
 {
-    return wp_update_comment_count_now($post_id);
+    if ($do_deferred) {
+        return Deferrals::comments(false);
+    }
+    // While counting is deferred the recount waits for wp_defer_comment_counting(false).
+    return Deferrals::putOffComments((int) $post_id) || wp_update_comment_count_now($post_id);
 }
 
 /** Recounts a post's approved comments now, telling plugins the old and new counts. */
@@ -408,9 +413,10 @@ function wp_comment_reply($position = 1, $checkbox = false, $mode = 'single', $t
     return '';
 }
 
+/** Whether comment counts are put off (Runtime\Deferrals); turning it off counts what was. */
 function wp_defer_comment_counting($defer = null)
 {
-    return false;
+    return Deferrals::comments($defer);
 }
 
 function get_comment_count($post_id = 0)

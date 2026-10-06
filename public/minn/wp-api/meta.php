@@ -213,9 +213,18 @@ function _minn_registered_meta($object_type, $meta_key, $object_subtype = '')
     return $all[$object_type][(string) $object_subtype][$meta_key] ?? $all[$object_type][''][$meta_key] ?? null;
 }
 
+/** Objects' meta read into the cache at once (Runtime\Meta::prime), and answered by id; false for no type or no ids. */
 function update_meta_cache($meta_type, $object_ids)
 {
-    return [];
+    if (!$meta_type || !$object_ids || !Meta::knows((string) $meta_type)) {
+        return false;
+    }
+    $ids = array_map('intval', is_array($object_ids) ? $object_ids : explode(',', (string) preg_replace('|[^0-9,]|', '', (string) $object_ids)));
+    $check = apply_filters("update_{$meta_type}_metadata_cache", null, $ids);
+    if ($check !== null) {
+        return (bool) $check;
+    }
+    return _minn_meta()->prime((string) $meta_type, $ids);
 }
 
 function get_post_meta($post_id, $key = '', $single = false)

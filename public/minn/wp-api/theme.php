@@ -1,6 +1,7 @@
 <?php
 /** Theme lookups and theme mods. */
 
+use Minn\Front\CustomLogo;
 use Minn\Runtime\Runtime;
 
 function wp_get_theme($stylesheet = '', $theme_root = '')
@@ -167,9 +168,10 @@ function has_custom_logo($blog_id = 0)
     return (int) get_theme_mod('custom_logo') > 0 || (int) get_option('site_logo') > 0;
 }
 
+/** The site logo linked home (Front\CustomLogo), through get_custom_logo. */
 function get_custom_logo($blog_id = 0)
 {
-    return '';
+    return CustomLogo::html((int) $blog_id);
 }
 
 function register_nav_menus($locations = [])
