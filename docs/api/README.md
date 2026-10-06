@@ -5,7 +5,7 @@ The engine's own classes under `public/minn/src/Minn/`, one page per namespace, 
 | Namespace | Classes | What lives there |
 |---|---|---|
 | [`Minn`](minn.md) | 6 | the front door, the autoloader, the one database door, the REST error |
-| [`Minn\Admin`](admin.md) | 27 | the minn-admin/v1 namespace and serving the Minn Admin app |
+| [`Minn\Admin`](admin.md) | 28 | the minn-admin/v1 namespace and serving the Minn Admin app |
 | [`Minn\Auth`](auth.md) | 19 | passwords, sessions, cookies, nonces, roles and capabilities |
 | [`Minn\Blocks`](blocks.md) | 16 | the block parser and renderer |
 | [`Minn\Blocks\Dynamic`](blocks-dynamic.md) | 9 | dynamic core blocks that render from data |
@@ -18,14 +18,14 @@ The engine's own classes under `public/minn/src/Minn/`, one page per namespace, 
 | [`Minn\Front`](front.md) | 31 | URL resolution, permalinks, feeds, sitemaps and the public page |
 | [`Minn\Html`](html.md) | 6 | the HTML tag processor |
 | [`Minn\Html\Tree`](html-tree.md) | 13 |  |
-| [`Minn\Http`](http.md) | 29 | request, response, routing, and the outgoing client |
+| [`Minn\Http`](http.md) | 31 | request, response, routing, and the outgoing client |
 | [`Minn\I18n`](i18n.md) | 9 |  |
 | [`Minn\Login`](login.md) | 4 | /wp-login.php and the sign-in surface |
 | [`Minn\Mail`](mail.md) | 24 | sending mail and the notices the engine sends |
 | [`Minn\Media`](media.md) | 10 | uploads, image sizes and attachment metadata |
 | [`Minn\Ops`](ops.md) | 6 |  |
 | [`Minn\Query`](query.md) | 4 | shared SQL fragments |
-| [`Minn\Rest`](rest.md) | 58 | the wp/v2 surface: shapes and controllers |
+| [`Minn\Rest`](rest.md) | 59 | the wp/v2 surface: shapes and controllers |
 | [`Minn\Runtime`](runtime.md) | 62 | the WordPress runtime plugins load against |
 | [`Minn\Support`](support.md) | 24 | escaping, serialized readers, small helpers |
 | [`Minn\Theme`](theme.md) | 24 | the block-theme reader, templates, global styles and the page renderer |

@@ -28,13 +28,13 @@ final readonly class TypesController
     }
 
     /** One post type. */
-    #[Route(Method::Get, '/wp/v2/types/{slug:[\w-]+}', policy: new Policy(Access::Public), args: [Args::CONTEXT])]
-    public function single(Request $request, string $slug): Response
+    #[Route(Method::Get, '/wp/v2/types/{type:[\w-]+}', policy: new Policy(Access::Public), args: [Args::CONTEXT])]
+    public function single(Request $request, string $type): Response
     {
-        $type = $this->types->find($slug);
-        if ($type === null) {
+        $found = $this->types->find($type);
+        if ($found === null) {
             throw new RestError('rest_type_invalid', 'Invalid post type.', 404);
         }
-        return Reply::item($type, Fields::fromQuery($request->query));
+        return Reply::item($found, Fields::fromQuery($request->query));
     }
 }

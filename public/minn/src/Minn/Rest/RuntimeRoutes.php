@@ -6,6 +6,7 @@ namespace Minn\Rest;
 
 use Minn\Http\Request;
 use Minn\Http\Response;
+use Minn\RestError;
 
 /**
  * Routes plugin code registered with register_rest_route(), answered
@@ -50,6 +51,7 @@ final class RuntimeRoutes
         if ($matched instanceof \WP_Error) {
             return null;
         }
+        self::matched($request, (string) $matched[0], (array) $matched[1]);
         return self::toResponse(self::ensure($server->dispatch($wpRequest)));
     }
 
@@ -83,8 +85,186 @@ final class RuntimeRoutes
         return new Response($response->status, $response->headers, (string) json_encode($data));
     }
 
-    /** The request as the runtime's server reads it, and as a REST action hands it to plugins. */
+    /** @var \WeakMap<Request, \WP_REST_Request>|null the one request object plugins see for one request, filters and actions alike */
+    private static ?\WeakMap $requests = null;
+
+    /** @var \WeakMap<Request, array{0: string, 1: array<string, mixed>}>|null the route and handler a request matched */
+    private static ?\WeakMap $matches = null;
+
+    /** @var \WeakMap<object, array{0: mixed, 1: Response|RestError}>|null what each object handed to plugins was made from, and how it looked */
+    private static ?\WeakMap $origins = null;
+
+    /** The request as the runtime's server reads it, and as a REST filter or action hands it to plugins: the same object each time. */
     public static function wpRequest(Request $request): \WP_REST_Request
+    {
+        self::$requests ??= new \WeakMap();
+        return self::$requests[$request] ??= self::newWpRequest($request);
+    }
+
+    /**
+     * Keeps the route and handler a request matched, for the response plugins see at serving.
+     *
+     * @param array<string, mixed> $handler
+     */
+    public static function matched(Request $request, string $route, array $handler): void
+    {
+        self::$matches ??= new \WeakMap();
+        self::$matches[$request] = [$route, $handler];
+    }
+
+    /** An engine refusal as plugins handle one. */
+    public static function toWpError(RestError $error): \WP_Error
+    {
+        $payload = $error->payload();
+        $wpError = new \WP_Error($error->errorCode, $error->getMessage(), $payload['data']);
+        self::remember($wpError, $error, [$wpError->errors, $wpError->error_data]);
+        return $wpError;
+    }
+
+    /**
+     * An engine answer as plugins handle one: its data decoded (an empty
+     * object stays one), its links on the response rather than in the data,
+     * its status and headers.
+     */
+    public static function toWp(Response $response): \WP_REST_Response
+    {
+        $data = self::decode($response->body);
+        $links = [];
+        if (is_array($data) && isset($data['_links']) && is_array($data['_links'])) {
+            $links = self::expand($data['_links']);
+            unset($data['_links']);
+        }
+        $headers = $response->headers;
+        foreach (array_keys(Reply::HEADERS) as $name) {
+            unset($headers[$name]);
+        }
+        $wpResponse = new \WP_REST_Response($data, $response->status, $headers);
+        $wpResponse->add_links($links);
+        self::remember($wpResponse, $response, self::look($wpResponse));
+        return $wpResponse;
+    }
+
+    /** Whatever the filters left, as the engine sends it; what they handed back untouched is the engine's own answer, byte for byte. */
+    public static function fromWp(mixed $result): Response
+    {
+        if (is_object($result) && isset(self::$origins[$result])) {
+            [$look, $origin] = self::$origins[$result];
+            $now = $result instanceof \WP_Error ? [$result->errors, $result->error_data] : self::look($result);
+            if ($look === $now) {
+                return $origin instanceof RestError ? Reply::error($origin) : $origin;
+            }
+        }
+        return self::toResponse(self::ensure($result));
+    }
+
+    /**
+     * The server's last word on any REST answer, engine or plugin route,
+     * as the reference serves one: rest_post_dispatch may change it,
+     * rest_pre_serve_request may serve it itself (what it prints is the
+     * body), and rest_pre_echo_response may rewrite the data echoed. With
+     * nothing hooked, the answer goes out as it is.
+     */
+    public static function serve(Request $request, Response $response): Response
+    {
+        if (!\has_filter('rest_post_dispatch') && !\has_filter('rest_pre_serve_request') && !\has_filter('rest_pre_echo_response')) {
+            return $response;
+        }
+        $data = self::decode($response->body);
+        if ($response->body === '' || ($data === null && trim($response->body) !== 'null')) {
+            return $response;
+        }
+        $embedded = is_array($data) && array_key_exists('_embedded', $data) ? $data['_embedded'] : null;
+        $wpRequest = self::wpRequest($request);
+        $server = \rest_get_server();
+        $result = self::toWp($response);
+        if ($embedded !== null) {
+            $plain = $result->get_data();
+            unset($plain['_embedded']);
+            $result->set_data($plain);
+        }
+        [$route, $handler] = self::$matches[$request] ?? [null, null];
+        $result->set_matched_route($route);
+        $result->set_matched_handler($handler);
+        $result = \rest_ensure_response(\apply_filters('rest_post_dispatch', \rest_ensure_response($result), $server, $wpRequest));
+        $result = $result instanceof \WP_Error ? \rest_convert_error_to_response($result) : $result;
+        $headers = Reply::HEADERS;
+        foreach ((array) $result->get_headers() as $name => $value) {
+            $headers[$name] = (string) $value;
+        }
+        ob_start();
+        $served = \apply_filters('rest_pre_serve_request', false, $result, $wpRequest, $server);
+        $printed = (string) ob_get_clean();
+        if ($served) {
+            return new Response($result->get_status(), $headers, $printed, $response->cookies, $response->afterSend);
+        }
+        $out = $server->response_to_data($result, false);
+        if ($embedded !== null && is_array($out)) {
+            $out['_embedded'] = $embedded;
+        }
+        $out = \apply_filters('rest_pre_echo_response', $out, $server, $wpRequest);
+        return new Response($result->get_status(), $headers, (string) json_encode($out), $response->cookies, $response->afterSend);
+    }
+
+    /** What a response looks like to the code that may change it. @return array<int, mixed> */
+    private static function look(\WP_REST_Response $response): array
+    {
+        return [$response->get_data(), $response->get_status(), $response->get_headers(), $response->get_links()];
+    }
+
+    private static function remember(object $made, Response|RestError $origin, array $look): void
+    {
+        self::$origins ??= new \WeakMap();
+        self::$origins[$made] = [$look, $origin];
+    }
+
+    /** JSON as arrays, as plugins read REST data, with an empty object kept an object so it is sent back as one. */
+    private static function decode(string $json): mixed
+    {
+        $convert = static function (mixed $value) use (&$convert): mixed {
+            if ($value instanceof \stdClass) {
+                $vars = get_object_vars($value);
+                return $vars === [] ? $value : array_map($convert, $vars);
+            }
+            return is_array($value) ? array_map($convert, $value) : $value;
+        };
+        return $convert(json_decode($json, false));
+    }
+
+    /**
+     * Compacted link relations ("wp:term") back to the relations a response
+     * holds ("https://api.w.org/term"); the CURIE list itself is rebuilt
+     * when the response is compacted again.
+     *
+     * @param array<string, mixed> $links
+     * @return array<string, list<array<string, mixed>>>
+     */
+    private static function expand(array $links): array
+    {
+        $curies = [];
+        foreach ((array) ($links['curies'] ?? []) as $curie) {
+            if (is_array($curie) && isset($curie['name'], $curie['href'])) {
+                $curies[(string) $curie['name']] = (string) $curie['href'];
+            }
+        }
+        unset($links['curies']);
+        $out = [];
+        foreach ($links as $rel => $items) {
+            $rel = (string) $rel;
+            $colon = strpos($rel, ':');
+            if ($colon !== false && isset($curies[substr($rel, 0, $colon)])) {
+                $rel = str_replace('{rel}', substr($rel, $colon + 1), $curies[substr($rel, 0, $colon)]);
+            }
+            foreach ((array) $items as $item) {
+                $item = (array) $item;
+                $href = (string) ($item['href'] ?? '');
+                unset($item['href']);
+                $out[$rel][] = ['href' => $href, 'attributes' => $item];
+            }
+        }
+        return $out;
+    }
+
+    private static function newWpRequest(Request $request): \WP_REST_Request
     {
         $wpRequest = new \WP_REST_Request($request->method->value, $request->path);
         $wpRequest->set_query_params($request->query);
@@ -100,7 +280,7 @@ final class RuntimeRoutes
     }
 
     /** A callback's return as a response object, an error converted. */
-    private static function ensure(mixed $result): \WP_REST_Response
+    public static function ensure(mixed $result): \WP_REST_Response
     {
         $response = \rest_ensure_response($result);
         return $response instanceof \WP_Error ? \rest_convert_error_to_response($response) : $response;

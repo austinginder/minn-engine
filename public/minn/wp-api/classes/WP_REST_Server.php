@@ -321,9 +321,7 @@ class WP_REST_Server
         foreach ($links as $rel => $items) {
             $data[$rel] = [];
             foreach ($items as $item) {
-                $attributes = $item['attributes'];
-                $attributes['href'] = $item['href'];
-                $data[$rel][] = $attributes;
+                $data[$rel][] = Links::item((string) $rel, (string) $item['href'], (array) $item['attributes']);
             }
         }
         return $data;

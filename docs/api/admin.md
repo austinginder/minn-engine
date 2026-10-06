@@ -9,10 +9,10 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`AdminTypes`](#admintypes) | final class | 85 | Admin-facing type facts (viewable, labels, supports, the edit gate) live |
 | [`App`](#app) | final readonly class | 98 | The Minn Admin app on disk: the symlinked dev copy the engine serves the |
 | [`AppController`](#appcontroller) | final readonly class | 118 | Serves Minn Admin from the engine: the path-routed shell (every |
-| [`Appearance`](#appearance) | final readonly class | 79 | A person's Minn Admin appearance: the colour scheme and its custom |
+| [`Appearance`](#appearance) | final readonly class | 82 | A person's Minn Admin appearance: the colour scheme and its custom |
 | [`BootPayload`](#bootpayload) | final readonly class | 234 | The window.MINN boot payload, assembled from the engine: the keys app.js |
 | [`BundleController`](#bundlecontroller) | final readonly class | 36 | What the app bundle carries: the changelog, the user guide, and the |
-| [`Dashboard`](#dashboard) | final readonly class | 290 | The overview payload: stat cards, the activity chart, and the recent |
+| [`Dashboard`](#dashboard) | final readonly class | 273 | The overview payload: stat cards, the activity chart, and the recent |
 | [`EditorController`](#editorcontroller) | final readonly class | 45 | The editor's helpers in minn-admin/v1: the edit lock, and the template |
 | [`Format`](#format) | final class | 51 | The dashboard's number, size, age, and title formatting. |
 | [`HiddenIntegrations`](#hiddenintegrations) | final readonly class | 94 | What a person hid from their own Minn Admin: the app's per-user map |
@@ -30,6 +30,7 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`ThemesController`](#themescontroller) | final readonly class | 95 | The theme inventory of minn-admin/v1: every theme on disk with its |
 | [`Translations`](#translations) | final readonly class | 236 | Languages for the admin. A person's locale is their `locale` user meta, |
 | [`UpdatesController`](#updatescontroller) | final readonly class | 117 | The minn-admin/v1 update routes: offers, directory meta, the check, the installs, the auto-update lists. |
+| [`UploadsSize`](#uploadssize) | final readonly class | 93 | How much the uploads folder holds, as Minn Admin 0.43 works it out and |
 | [`V1Controller`](#v1controller) | final readonly class | 59 | The boot burst of minn-admin/v1: the bell feed and its read marker, the |
 
 ## ActivityChart
@@ -267,7 +268,7 @@ __construct(Minn\Content\Users $users)
 
 A user's saved appearance, normalised.
 
-- `@return array{scheme: string, custom: array, defaultAdmin: bool, frontBar: bool}`
+- `@return array{scheme: string, custom: array, defaultAdmin: bool, frontBar: bool, font: string}`
 
 ### `save(int $userId, array $raw): array`
 
@@ -380,7 +381,7 @@ At most six unique sanitize_key metric ids; anything else drops.
 
 The events behind one chart bar, (from, to] GMT.
 
-Internals: `postsCard()` (private, line 68), `pagesCard()` (private, line 85), `usersCard()` (private, line 90), `commentsCard()` (private, line 96), `mediaCard()` (private, line 112), `metricCatalog()` (private, line 129), `overlayMetricKeys()` (private, line 223), `statusCounts()` (private, line 265), `commentCounts()` (private, line 276), `uploadsSize()` (private, line 290)
+Internals: `postsCard()` (private, line 68), `pagesCard()` (private, line 85), `usersCard()` (private, line 90), `commentsCard()` (private, line 96), `mediaCard()` (private, line 112), `metricCatalog()` (private, line 130), `overlayMetricKeys()` (private, line 224), `statusCounts()` (private, line 266), `commentCounts()` (private, line 277)
 
 
 ## EditorController
@@ -428,7 +429,7 @@ Theme patterns are GPL theme content the engine does not carry.
 
 The dashboard's number, size, age, and title formatting.
 
-Used by: `Minn\Admin\ActivityFeed`, `Minn\Admin\Dashboard`, `Minn\Admin\Notifications`
+Used by: `Minn\Admin\ActivityFeed`, `Minn\Admin\Dashboard`, `Minn\Admin\Notifications`, `Minn\Admin\UploadsSize`
 
 ### static `number(int|float $value, int $decimals = 0): string`
 
@@ -1131,6 +1132,42 @@ Updates one theme.
 Route: `POST /minn-admin/v1/auto-updates`
 
 Turns auto-updates on or off for one asset.
+
+
+## UploadsSize
+
+`final readonly class Minn\Admin\UploadsSize` · `public/minn/src/Minn/Admin/UploadsSize.php`
+
+How much the uploads folder holds, as Minn Admin 0.43 works it out and
+shares it through the minn_admin_uploads_size transient: the cached
+figure in either shape it has had ({bytes, partial}, or a bare count from
+before the budget), else a walk only an administrator may start, one at a
+time behind a two-minute lock, stopped after four seconds and kept as
+partial for an hour instead of twelve.
+
+- const `CACHE` = `'_transient_minn_admin_uploads_size'`
+- const `EXPIRES` = `'_transient_timeout_minn_admin_uploads_size'`
+- const `LOCK` = `'minn_admin_uploads_size_lock'`
+- const `BUDGET` = `4.0`
+
+Used by: `Minn\Admin\Dashboard`
+
+```php
+__construct(Minn\Content\Site $site, Minn\Auth\Capabilities $capabilities, string $dir)
+```
+
+
+### `label(int $userId): string`
+
+The Media card's "N used" line, "over N used" for a walk cut short, or "" when the size is not known.
+
+### `measure(int $userId): ?array`
+
+The uploads size, cached or walked now.
+
+- `@return array{bytes: int, partial: bool}|null null when nothing is known and this caller may not find out`
+
+Internals: `cached()` (private, line 62), `lock()` (private, line 77), `walk()` (private, line 88)
 
 
 ## V1Controller

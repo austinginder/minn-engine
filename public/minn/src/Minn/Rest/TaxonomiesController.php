@@ -37,10 +37,11 @@ final readonly class TaxonomiesController
     }
 
     /** One taxonomy. */
-    #[Route(Method::Get, '/wp/v2/taxonomies/{slug:[\w-]+}', policy: new Policy(Access::Public), args: [Args::CONTEXT])]
-    public function single(Request $request, string $slug): Response
+    #[Route(Method::Get, '/wp/v2/taxonomies/{taxonomy:[\w-]+}', policy: new Policy(Access::Public), args: [Args::CONTEXT])]
+    public function single(Request $request, string $taxonomy): Response
     {
-        $taxonomy = $this->taxonomies->find($slug);
+        $name = $taxonomy;
+        $taxonomy = $this->taxonomies->find($name);
         if ($taxonomy === null) {
             throw new RestError('rest_taxonomy_invalid', 'Invalid taxonomy.', 404);
         }

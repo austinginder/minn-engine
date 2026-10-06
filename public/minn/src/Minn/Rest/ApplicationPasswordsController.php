@@ -42,17 +42,17 @@ final readonly class ApplicationPasswordsController
     }
 
     /** The user's application passwords. */
-    #[Route(Method::Get, '/wp/v2/users/{id:\d+|me}/application-passwords', policy: new Policy(Access::Own, 'edit_user', param: 'id', subject: Subject::User, signIn: 'rest_cannot_list_application_passwords', signInMessage: 'Sorry, you are not allowed to list application passwords for this user.', refuse: 'rest_cannot_list_application_passwords', message: 'Sorry, you are not allowed to list application passwords for this user.'))]
-    public function list(Request $request, string $id): Response
+    #[Route(Method::Get, '/wp/v2/users/{user_id:(?:[\d]+|me)}/application-passwords', policy: new Policy(Access::Own, 'edit_user', param: 'user_id', subject: Subject::User, signIn: 'rest_cannot_list_application_passwords', signInMessage: 'Sorry, you are not allowed to list application passwords for this user.', refuse: 'rest_cannot_list_application_passwords', message: 'Sorry, you are not allowed to list application passwords for this user.'))]
+    public function list(Request $request, string $userId): Response
     {
-        $user = $this->subject($request, $id, 'rest_cannot_list_application_passwords', 'Sorry, you are not allowed to list application passwords for this user.');
+        $user = $this->subject($request, $userId, 'rest_cannot_list_application_passwords', 'Sorry, you are not allowed to list application passwords for this user.');
         $items = array_map(fn (array $r) => $this->item($user, $r), $this->passwords->all($user->id));
         return Reply::item($items, Fields::fromQuery($request->query));
     }
 
     /** Mints one; the plain password is in this answer only. */
-    #[Route(Method::Post, '/wp/v2/users/{id:\d+|me}/application-passwords', policy: new Policy(Access::Own, 'edit_user', param: 'id', subject: Subject::User, signIn: 'rest_cannot_create_application_passwords', signInMessage: 'Sorry, you are not allowed to create application passwords for this user.', refuse: 'rest_cannot_create_application_passwords', message: 'Sorry, you are not allowed to create application passwords for this user.'), body: [Args::APPLICATION_PASSWORD])]
-    public function create(Request $request, string $id): Response
+    #[Route(Method::Post, '/wp/v2/users/{user_id:(?:[\d]+|me)}/application-passwords', policy: new Policy(Access::Own, 'edit_user', param: 'user_id', subject: Subject::User, signIn: 'rest_cannot_create_application_passwords', signInMessage: 'Sorry, you are not allowed to create application passwords for this user.', refuse: 'rest_cannot_create_application_passwords', message: 'Sorry, you are not allowed to create application passwords for this user.'), body: [Args::APPLICATION_PASSWORD])]
+    public function create(Request $request, string $userId): Response
     {
         $body = $request->json() + $request->form;
         if (!array_key_exists('name', $body)) {
@@ -63,7 +63,7 @@ final readonly class ApplicationPasswordsController
         if (array_key_exists('app_id', $body)) {
             $this->validate('app_id', $body['app_id'], self::APP_ID_SCHEMA);
         }
-        $user = $this->subject($request, $id, 'rest_cannot_create_application_passwords', 'Sorry, you are not allowed to create application passwords for this user.');
+        $user = $this->subject($request, $userId, 'rest_cannot_create_application_passwords', 'Sorry, you are not allowed to create application passwords for this user.');
         [$record, $plain] = $this->passwords->create($user->id, (string) $body['name'], $appId);
         $item = $this->item($user, $record);
         $item = ['uuid' => $item['uuid'], 'app_id' => $item['app_id'], 'name' => $item['name'], 'created' => $item['created'], 'last_used' => $item['last_used'], 'last_ip' => $item['last_ip'], 'password' => $plain, '_links' => $item['_links']];
@@ -71,18 +71,18 @@ final readonly class ApplicationPasswordsController
     }
 
     /** Removes every one. */
-    #[Route(Method::Delete, '/wp/v2/users/{id:\d+|me}/application-passwords', policy: new Policy(Access::Own, 'edit_user', param: 'id', subject: Subject::User, signIn: 'rest_cannot_delete_application_passwords', signInMessage: 'Sorry, you are not allowed to delete application passwords for this user.', refuse: 'rest_cannot_delete_application_passwords', message: 'Sorry, you are not allowed to delete application passwords for this user.'))]
-    public function deleteAll(Request $request, string $id): Response
+    #[Route(Method::Delete, '/wp/v2/users/{user_id:(?:[\d]+|me)}/application-passwords', policy: new Policy(Access::Own, 'edit_user', param: 'user_id', subject: Subject::User, signIn: 'rest_cannot_delete_application_passwords', signInMessage: 'Sorry, you are not allowed to delete application passwords for this user.', refuse: 'rest_cannot_delete_application_passwords', message: 'Sorry, you are not allowed to delete application passwords for this user.'))]
+    public function deleteAll(Request $request, string $userId): Response
     {
-        $user = $this->subject($request, $id, 'rest_cannot_delete_application_passwords', 'Sorry, you are not allowed to delete application passwords for this user.');
+        $user = $this->subject($request, $userId, 'rest_cannot_delete_application_passwords', 'Sorry, you are not allowed to delete application passwords for this user.');
         return Reply::item(['deleted' => true, 'count' => $this->passwords->deleteAll($user->id)], null);
     }
 
     /** The password the current Basic auth session used. */
-    #[Route(Method::Get, '/wp/v2/users/{id:\d+|me}/application-passwords/introspect', policy: new Policy(Access::Own, 'edit_user', param: 'id', subject: Subject::User, signIn: 'rest_cannot_introspect_app_password_for_non_authenticated_user', signInMessage: 'The authenticated application password can only be introspected for the current user.', refuse: 'rest_cannot_introspect_app_password_for_non_authenticated_user', message: 'The authenticated application password can only be introspected for the current user.'))]
-    public function introspect(Request $request, string $id): Response
+    #[Route(Method::Get, '/wp/v2/users/{user_id:(?:[\d]+|me)}/application-passwords/introspect', policy: new Policy(Access::Own, 'edit_user', param: 'user_id', subject: Subject::User, signIn: 'rest_cannot_introspect_app_password_for_non_authenticated_user', signInMessage: 'The authenticated application password can only be introspected for the current user.', refuse: 'rest_cannot_introspect_app_password_for_non_authenticated_user', message: 'The authenticated application password can only be introspected for the current user.'))]
+    public function introspect(Request $request, string $userId): Response
     {
-        $user = $this->subject($request, $id, 'rest_cannot_introspect_app_password_for_non_authenticated_user', 'The authenticated application password can only be introspected for the current user.');
+        $user = $this->subject($request, $userId, 'rest_cannot_introspect_app_password_for_non_authenticated_user', 'The authenticated application password can only be introspected for the current user.');
         $record = $this->caller->session()?->applicationPassword;
         if ($record === null) {
             throw new RestError('rest_no_authenticated_app_password', 'Cannot introspect application password.', 404);
@@ -92,24 +92,24 @@ final readonly class ApplicationPasswordsController
     }
 
     /** One password by uuid. */
-    #[Route(Method::Get, '/wp/v2/users/{id:\d+|me}/application-passwords/{uuid:[0-9a-fA-F-]+}', policy: new Policy(Access::Own, 'edit_user', param: 'id', subject: Subject::User, signIn: 'rest_cannot_read_application_password', signInMessage: 'Sorry, you are not allowed to read this application password.', refuse: 'rest_cannot_read_application_password', message: 'Sorry, you are not allowed to read this application password.'))]
-    public function single(Request $request, string $id, string $uuid): Response
+    #[Route(Method::Get, '/wp/v2/users/{user_id:(?:[\d]+|me)}/application-passwords/{uuid:[\w\-]+}', policy: new Policy(Access::Own, 'edit_user', param: 'user_id', subject: Subject::User, signIn: 'rest_cannot_read_application_password', signInMessage: 'Sorry, you are not allowed to read this application password.', refuse: 'rest_cannot_read_application_password', message: 'Sorry, you are not allowed to read this application password.'))]
+    public function single(Request $request, string $userId, string $uuid): Response
     {
-        $user = $this->subject($request, $id, 'rest_cannot_read_application_password', 'Sorry, you are not allowed to read this application password.');
+        $user = $this->subject($request, $userId, 'rest_cannot_read_application_password', 'Sorry, you are not allowed to read this application password.');
         return Reply::item($this->item($user, $this->existing($user, $uuid)), Fields::fromQuery($request->query));
     }
 
     /** Renames one. */
-    #[Route(Method::Post, '/wp/v2/users/{id:\d+|me}/application-passwords/{uuid:[0-9a-fA-F-]+}', policy: new Policy(Access::Own, 'edit_user', param: 'id', subject: Subject::User, signIn: 'rest_cannot_edit_application_password', signInMessage: 'Sorry, you are not allowed to edit this application password.', refuse: 'rest_cannot_edit_application_password', message: 'Sorry, you are not allowed to edit this application password.'))]
-    #[Route(Method::Put, '/wp/v2/users/{id:\d+|me}/application-passwords/{uuid:[0-9a-fA-F-]+}', policy: new Policy(Access::Own, 'edit_user', param: 'id', subject: Subject::User, signIn: 'rest_cannot_edit_application_password', signInMessage: 'Sorry, you are not allowed to edit this application password.', refuse: 'rest_cannot_edit_application_password', message: 'Sorry, you are not allowed to edit this application password.'))]
-    #[Route(Method::Patch, '/wp/v2/users/{id:\d+|me}/application-passwords/{uuid:[0-9a-fA-F-]+}', policy: new Policy(Access::Own, 'edit_user', param: 'id', subject: Subject::User, signIn: 'rest_cannot_edit_application_password', signInMessage: 'Sorry, you are not allowed to edit this application password.', refuse: 'rest_cannot_edit_application_password', message: 'Sorry, you are not allowed to edit this application password.'))]
-    public function update(Request $request, string $id, string $uuid): Response
+    #[Route(Method::Post, '/wp/v2/users/{user_id:(?:[\d]+|me)}/application-passwords/{uuid:[\w\-]+}', policy: new Policy(Access::Own, 'edit_user', param: 'user_id', subject: Subject::User, signIn: 'rest_cannot_edit_application_password', signInMessage: 'Sorry, you are not allowed to edit this application password.', refuse: 'rest_cannot_edit_application_password', message: 'Sorry, you are not allowed to edit this application password.'))]
+    #[Route(Method::Put, '/wp/v2/users/{user_id:(?:[\d]+|me)}/application-passwords/{uuid:[\w\-]+}', policy: new Policy(Access::Own, 'edit_user', param: 'user_id', subject: Subject::User, signIn: 'rest_cannot_edit_application_password', signInMessage: 'Sorry, you are not allowed to edit this application password.', refuse: 'rest_cannot_edit_application_password', message: 'Sorry, you are not allowed to edit this application password.'))]
+    #[Route(Method::Patch, '/wp/v2/users/{user_id:(?:[\d]+|me)}/application-passwords/{uuid:[\w\-]+}', policy: new Policy(Access::Own, 'edit_user', param: 'user_id', subject: Subject::User, signIn: 'rest_cannot_edit_application_password', signInMessage: 'Sorry, you are not allowed to edit this application password.', refuse: 'rest_cannot_edit_application_password', message: 'Sorry, you are not allowed to edit this application password.'))]
+    public function update(Request $request, string $userId, string $uuid): Response
     {
         $body = $request->json() + $request->form;
         if (array_key_exists('name', $body)) {
             $this->validate('name', $body['name'], self::NAME_SCHEMA);
         }
-        $user = $this->subject($request, $id, 'rest_cannot_edit_application_password', 'Sorry, you are not allowed to edit this application password.');
+        $user = $this->subject($request, $userId, 'rest_cannot_edit_application_password', 'Sorry, you are not allowed to edit this application password.');
         $record = $this->existing($user, $uuid);
         if (array_key_exists('name', $body)) {
             $record = $this->passwords->rename($user->id, $uuid, (string) $body['name']) ?? $record;
@@ -118,10 +118,10 @@ final readonly class ApplicationPasswordsController
     }
 
     /** Removes one. */
-    #[Route(Method::Delete, '/wp/v2/users/{id:\d+|me}/application-passwords/{uuid:[0-9a-fA-F-]+}', policy: new Policy(Access::Own, 'edit_user', param: 'id', subject: Subject::User, signIn: 'rest_cannot_delete_application_password', signInMessage: 'Sorry, you are not allowed to delete this application password.', refuse: 'rest_cannot_delete_application_password', message: 'Sorry, you are not allowed to delete this application password.'))]
-    public function delete(Request $request, string $id, string $uuid): Response
+    #[Route(Method::Delete, '/wp/v2/users/{user_id:(?:[\d]+|me)}/application-passwords/{uuid:[\w\-]+}', policy: new Policy(Access::Own, 'edit_user', param: 'user_id', subject: Subject::User, signIn: 'rest_cannot_delete_application_password', signInMessage: 'Sorry, you are not allowed to delete this application password.', refuse: 'rest_cannot_delete_application_password', message: 'Sorry, you are not allowed to delete this application password.'))]
+    public function delete(Request $request, string $userId, string $uuid): Response
     {
-        $user = $this->subject($request, $id, 'rest_cannot_delete_application_password', 'Sorry, you are not allowed to delete this application password.');
+        $user = $this->subject($request, $userId, 'rest_cannot_delete_application_password', 'Sorry, you are not allowed to delete this application password.');
         $this->existing($user, $uuid);
         $previous = $this->passwords->delete($user->id, $uuid) ?? [];
         $item = $this->item($user, $previous);

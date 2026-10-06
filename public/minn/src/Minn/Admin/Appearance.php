@@ -46,7 +46,7 @@ final readonly class Appearance
     /**
      * A user's saved appearance, normalised.
      *
-     * @return array{scheme: string, custom: array, defaultAdmin: bool, frontBar: bool}
+     * @return array{scheme: string, custom: array, defaultAdmin: bool, frontBar: bool, font: string}
      */
     public function read(int $userId): array
     {
@@ -61,6 +61,7 @@ final readonly class Appearance
         $merged = self::normalise([
             'scheme' => array_key_exists('scheme', $raw) ? $raw['scheme'] : $current['scheme'],
             'custom' => array_key_exists('custom', $raw) ? $raw['custom'] : $current['custom'],
+            'font' => array_key_exists('font', $raw) ? $raw['font'] : $current['font'],
         ]);
         $this->users->setMeta($userId, self::META, Serialized::encode($merged));
         return $merged;
@@ -82,7 +83,9 @@ final readonly class Appearance
                 $custom[$mode][$slot] = $hex === '' ? self::BASE[$mode][$slot] : $hex;
             }
         }
-        return ['scheme' => $scheme, 'custom' => $custom, 'defaultAdmin' => true, 'frontBar' => true];
+        // The look: Minn's type and density, or WordPress's admin type, size and corners (Minn Admin 0.43).
+        $font = strtolower((string) preg_replace('/[^A-Za-z0-9_\-]/', '', (string) ($raw['font'] ?? 'minn'))) === 'wordpress' ? 'wordpress' : 'minn';
+        return ['scheme' => $scheme, 'custom' => $custom, 'defaultAdmin' => true, 'frontBar' => true, 'font' => $font];
     }
 
     /** #rgb or #rrggbb to lowercase #rrggbb, or '' for anything else. */

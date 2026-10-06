@@ -43,7 +43,7 @@ final readonly class Dashboard
             ($comments['approved'] === 0 && $comments['moderated'] === 0 && $this->capabilities->can($userId, 'list_users'))
                 ? $this->usersCard()
                 : $this->commentsCard($comments, $userId),
-            $this->mediaCard($media),
+            $this->mediaCard($media, $userId),
         ];
         $catalog = $this->metricCatalog($userId, $stats, $posts, $pages, $comments, $media);
         $layout = $this->metricLayout($userId, $catalog, $stats);
@@ -109,9 +109,10 @@ final readonly class Dashboard
     }
 
     /** @param array<string, int> $media */
-    private function mediaCard(array $media): array
+    private function mediaCard(array $media, int $userId): array
     {
-        return ['key' => 'media', 'group' => 'content', 'label' => 'Media files', 'value' => Format::number($media['inherit'] ?? 0), 'delta' => Format::size($this->uploadsSize()) . ' used', 'up' => null, 'goto' => 'media'];
+        $used = (new UploadsSize($this->site, $this->capabilities, $this->uploadsDir))->label($userId);
+        return ['key' => 'media', 'group' => 'content', 'label' => 'Media files', 'value' => Format::number($media['inherit'] ?? 0), 'delta' => $used, 'up' => null, 'goto' => 'media'];
     }
 
     /**
@@ -153,7 +154,7 @@ final readonly class Dashboard
         if ($moderates) {
             $add(['key' => 'comments_pending', 'group' => 'content', 'label' => 'Pending comments', 'value' => Format::number($comments['moderated']), 'delta' => 'awaiting review', 'up' => $comments['moderated'] > 0 ? 'warn' : null, 'goto' => 'comments:hold']);
         }
-        $add($this->mediaCard($media));
+        $add($this->mediaCard($media, $userId));
         if ($this->capabilities->can($userId, 'list_users')) {
             $add($this->usersCard());
         }
@@ -284,23 +285,5 @@ final readonly class Dashboard
             }
         }
         return $counts;
-    }
-
-    /** The uploads footprint: the plugin's cached transient when fresh, else a walk. */
-    private function uploadsSize(): int
-    {
-        $cached = $this->site->option('_transient_minn_admin_uploads_size');
-        $timeout = $this->site->option('_transient_timeout_minn_admin_uploads_size');
-        if ($cached !== null && ($timeout === null || (int) $timeout >= time())) {
-            return (int) $cached;
-        }
-        $size = 0;
-        if (is_dir($this->uploadsDir)) {
-            $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->uploadsDir, \FilesystemIterator::SKIP_DOTS));
-            foreach ($iterator as $file) {
-                $size += $file->getSize();
-            }
-        }
-        return $size;
     }
 }

@@ -2135,15 +2135,15 @@
         },
         {
             "method": "GET",
-            "pattern": "/wp/v2/users/{id:\\d+|me}/application-passwords",
+            "pattern": "/wp/v2/users/{user_id:(?:[\\d]+|me)}/application-passwords",
             "name": "Minn\\Rest\\ApplicationPasswordsController::list",
             "handler": "Minn\\Rest\\ApplicationPasswordsController::list",
             "summary": "The user's application passwords.",
             "policy": {
                 "access": "Own",
-                "describe": "cap edit_user on {id}; user {id} must exist",
+                "describe": "cap edit_user on {user_id}; user {user_id} must exist",
                 "cap": "edit_user",
-                "param": "id",
+                "param": "user_id",
                 "subject": "User",
                 "missing": {
                     "code": "rest_user_invalid_id",
@@ -2164,15 +2164,15 @@
         },
         {
             "method": "POST",
-            "pattern": "/wp/v2/users/{id:\\d+|me}/application-passwords",
+            "pattern": "/wp/v2/users/{user_id:(?:[\\d]+|me)}/application-passwords",
             "name": "Minn\\Rest\\ApplicationPasswordsController::create",
             "handler": "Minn\\Rest\\ApplicationPasswordsController::create",
             "summary": "Mints one; the plain password is in this answer only.",
             "policy": {
                 "access": "Own",
-                "describe": "cap edit_user on {id}; user {id} must exist",
+                "describe": "cap edit_user on {user_id}; user {user_id} must exist",
                 "cap": "edit_user",
-                "param": "id",
+                "param": "user_id",
                 "subject": "User",
                 "missing": {
                     "code": "rest_user_invalid_id",
@@ -2218,15 +2218,15 @@
         },
         {
             "method": "DELETE",
-            "pattern": "/wp/v2/users/{id:\\d+|me}/application-passwords",
+            "pattern": "/wp/v2/users/{user_id:(?:[\\d]+|me)}/application-passwords",
             "name": "Minn\\Rest\\ApplicationPasswordsController::deleteAll",
             "handler": "Minn\\Rest\\ApplicationPasswordsController::deleteAll",
             "summary": "Removes every one.",
             "policy": {
                 "access": "Own",
-                "describe": "cap edit_user on {id}; user {id} must exist",
+                "describe": "cap edit_user on {user_id}; user {user_id} must exist",
                 "cap": "edit_user",
-                "param": "id",
+                "param": "user_id",
                 "subject": "User",
                 "missing": {
                     "code": "rest_user_invalid_id",
@@ -2247,15 +2247,15 @@
         },
         {
             "method": "GET",
-            "pattern": "/wp/v2/users/{id:\\d+|me}/application-passwords/introspect",
+            "pattern": "/wp/v2/users/{user_id:(?:[\\d]+|me)}/application-passwords/introspect",
             "name": "Minn\\Rest\\ApplicationPasswordsController::introspect",
             "handler": "Minn\\Rest\\ApplicationPasswordsController::introspect",
             "summary": "The password the current Basic auth session used.",
             "policy": {
                 "access": "Own",
-                "describe": "cap edit_user on {id}; user {id} must exist",
+                "describe": "cap edit_user on {user_id}; user {user_id} must exist",
                 "cap": "edit_user",
-                "param": "id",
+                "param": "user_id",
                 "subject": "User",
                 "missing": {
                     "code": "rest_user_invalid_id",
@@ -2276,15 +2276,15 @@
         },
         {
             "method": "GET",
-            "pattern": "/wp/v2/users/{id:\\d+|me}/application-passwords/{uuid:[0-9a-fA-F-]+}",
+            "pattern": "/wp/v2/users/{user_id:(?:[\\d]+|me)}/application-passwords/{uuid:[\\w\\-]+}",
             "name": "Minn\\Rest\\ApplicationPasswordsController::single",
             "handler": "Minn\\Rest\\ApplicationPasswordsController::single",
             "summary": "One password by uuid.",
             "policy": {
                 "access": "Own",
-                "describe": "cap edit_user on {id}; user {id} must exist",
+                "describe": "cap edit_user on {user_id}; user {user_id} must exist",
                 "cap": "edit_user",
-                "param": "id",
+                "param": "user_id",
                 "subject": "User",
                 "missing": {
                     "code": "rest_user_invalid_id",
@@ -2305,15 +2305,15 @@
         },
         {
             "method": "POST",
-            "pattern": "/wp/v2/users/{id:\\d+|me}/application-passwords/{uuid:[0-9a-fA-F-]+}",
+            "pattern": "/wp/v2/users/{user_id:(?:[\\d]+|me)}/application-passwords/{uuid:[\\w\\-]+}",
             "name": "Minn\\Rest\\ApplicationPasswordsController::update",
             "handler": "Minn\\Rest\\ApplicationPasswordsController::update",
             "summary": "Renames one.",
             "policy": {
                 "access": "Own",
-                "describe": "cap edit_user on {id}; user {id} must exist",
+                "describe": "cap edit_user on {user_id}; user {user_id} must exist",
                 "cap": "edit_user",
-                "param": "id",
+                "param": "user_id",
                 "subject": "User",
                 "missing": {
                     "code": "rest_user_invalid_id",
@@ -2334,15 +2334,15 @@
         },
         {
             "method": "PUT",
-            "pattern": "/wp/v2/users/{id:\\d+|me}/application-passwords/{uuid:[0-9a-fA-F-]+}",
+            "pattern": "/wp/v2/users/{user_id:(?:[\\d]+|me)}/application-passwords/{uuid:[\\w\\-]+}",
             "name": "Minn\\Rest\\ApplicationPasswordsController::update",
             "handler": "Minn\\Rest\\ApplicationPasswordsController::update",
             "summary": "Renames one.",
             "policy": {
                 "access": "Own",
-                "describe": "cap edit_user on {id}; user {id} must exist",
+                "describe": "cap edit_user on {user_id}; user {user_id} must exist",
                 "cap": "edit_user",
-                "param": "id",
+                "param": "user_id",
                 "subject": "User",
                 "missing": {
                     "code": "rest_user_invalid_id",
@@ -2363,15 +2363,15 @@
         },
         {
             "method": "PATCH",
-            "pattern": "/wp/v2/users/{id:\\d+|me}/application-passwords/{uuid:[0-9a-fA-F-]+}",
+            "pattern": "/wp/v2/users/{user_id:(?:[\\d]+|me)}/application-passwords/{uuid:[\\w\\-]+}",
             "name": "Minn\\Rest\\ApplicationPasswordsController::update",
             "handler": "Minn\\Rest\\ApplicationPasswordsController::update",
             "summary": "Renames one.",
             "policy": {
                 "access": "Own",
-                "describe": "cap edit_user on {id}; user {id} must exist",
+                "describe": "cap edit_user on {user_id}; user {user_id} must exist",
                 "cap": "edit_user",
-                "param": "id",
+                "param": "user_id",
                 "subject": "User",
                 "missing": {
                     "code": "rest_user_invalid_id",
@@ -2392,15 +2392,15 @@
         },
         {
             "method": "DELETE",
-            "pattern": "/wp/v2/users/{id:\\d+|me}/application-passwords/{uuid:[0-9a-fA-F-]+}",
+            "pattern": "/wp/v2/users/{user_id:(?:[\\d]+|me)}/application-passwords/{uuid:[\\w\\-]+}",
             "name": "Minn\\Rest\\ApplicationPasswordsController::delete",
             "handler": "Minn\\Rest\\ApplicationPasswordsController::delete",
             "summary": "Removes one.",
             "policy": {
                 "access": "Own",
-                "describe": "cap edit_user on {id}; user {id} must exist",
+                "describe": "cap edit_user on {user_id}; user {user_id} must exist",
                 "cap": "edit_user",
-                "param": "id",
+                "param": "user_id",
                 "subject": "User",
                 "missing": {
                     "code": "rest_user_invalid_id",
@@ -2435,7 +2435,7 @@
         },
         {
             "method": "GET",
-            "pattern": "/wp/v2/blocks/{id:\\d+}",
+            "pattern": "/wp/v2/blocks/{id:[\\d]+}",
             "name": "Minn\\Rest\\BlocksController::single",
             "handler": "Minn\\Rest\\BlocksController::single",
             "summary": "One block.",
@@ -2466,7 +2466,7 @@
         },
         {
             "method": "POST",
-            "pattern": "/wp/v2/blocks/{id:\\d+}",
+            "pattern": "/wp/v2/blocks/{id:[\\d]+}",
             "name": "Minn\\Rest\\BlocksController::update",
             "handler": "Minn\\Rest\\BlocksController::update",
             "summary": "Updates a block.",
@@ -2495,7 +2495,7 @@
         },
         {
             "method": "PUT",
-            "pattern": "/wp/v2/blocks/{id:\\d+}",
+            "pattern": "/wp/v2/blocks/{id:[\\d]+}",
             "name": "Minn\\Rest\\BlocksController::update",
             "handler": "Minn\\Rest\\BlocksController::update",
             "summary": "Updates a block.",
@@ -2524,7 +2524,7 @@
         },
         {
             "method": "PATCH",
-            "pattern": "/wp/v2/blocks/{id:\\d+}",
+            "pattern": "/wp/v2/blocks/{id:[\\d]+}",
             "name": "Minn\\Rest\\BlocksController::update",
             "handler": "Minn\\Rest\\BlocksController::update",
             "summary": "Updates a block.",
@@ -2553,7 +2553,7 @@
         },
         {
             "method": "DELETE",
-            "pattern": "/wp/v2/blocks/{id:\\d+}",
+            "pattern": "/wp/v2/blocks/{id:[\\d]+}",
             "name": "Minn\\Rest\\BlocksController::delete",
             "handler": "Minn\\Rest\\BlocksController::delete",
             "summary": "Trashes or deletes a block.",
@@ -2720,7 +2720,7 @@
         },
         {
             "method": "GET",
-            "pattern": "/wp/v2/comments/{id:\\d+}",
+            "pattern": "/wp/v2/comments/{id:[\\d]+}",
             "name": "Minn\\Rest\\CommentsController::single",
             "handler": "Minn\\Rest\\CommentsController::single",
             "summary": "One comment, if the caller may read it.",
@@ -2774,7 +2774,7 @@
         },
         {
             "method": "POST",
-            "pattern": "/wp/v2/comments/{id:\\d+}",
+            "pattern": "/wp/v2/comments/{id:[\\d]+}",
             "name": "Minn\\Rest\\CommentsController::update",
             "handler": "Minn\\Rest\\CommentsController::update",
             "summary": "Status flips and content or author edits, for moderators.",
@@ -2803,7 +2803,7 @@
         },
         {
             "method": "PUT",
-            "pattern": "/wp/v2/comments/{id:\\d+}",
+            "pattern": "/wp/v2/comments/{id:[\\d]+}",
             "name": "Minn\\Rest\\CommentsController::update",
             "handler": "Minn\\Rest\\CommentsController::update",
             "summary": "Status flips and content or author edits, for moderators.",
@@ -2832,7 +2832,7 @@
         },
         {
             "method": "PATCH",
-            "pattern": "/wp/v2/comments/{id:\\d+}",
+            "pattern": "/wp/v2/comments/{id:[\\d]+}",
             "name": "Minn\\Rest\\CommentsController::update",
             "handler": "Minn\\Rest\\CommentsController::update",
             "summary": "Status flips and content or author edits, for moderators.",
@@ -2861,7 +2861,7 @@
         },
         {
             "method": "DELETE",
-            "pattern": "/wp/v2/comments/{id:\\d+}",
+            "pattern": "/wp/v2/comments/{id:[\\d]+}",
             "name": "Minn\\Rest\\CommentsController::delete",
             "handler": "Minn\\Rest\\CommentsController::delete",
             "summary": "Trash remembers where the comment came from; force removes it outright.",
@@ -2905,7 +2905,7 @@
         },
         {
             "method": "GET",
-            "pattern": "/wp/v2/{base:[a-z0-9_-]+}/{id:\\d+}",
+            "pattern": "/wp/v2/{base:[a-z0-9_-]+}/{id:[\\d]+}",
             "name": "Minn\\Rest\\DeclaredPostsController::single",
             "handler": "Minn\\Rest\\DeclaredPostsController::single",
             "summary": "A declared type's single post.",
@@ -2935,7 +2935,7 @@
         },
         {
             "method": "POST",
-            "pattern": "/wp/v2/{base:[a-z0-9_-]+}/{id:\\d+}",
+            "pattern": "/wp/v2/{base:[a-z0-9_-]+}/{id:[\\d]+}",
             "name": "Minn\\Rest\\DeclaredPostsController::update",
             "handler": "Minn\\Rest\\DeclaredPostsController::update",
             "summary": "Updates a post of a declared type.",
@@ -2950,7 +2950,7 @@
         },
         {
             "method": "PUT",
-            "pattern": "/wp/v2/{base:[a-z0-9_-]+}/{id:\\d+}",
+            "pattern": "/wp/v2/{base:[a-z0-9_-]+}/{id:[\\d]+}",
             "name": "Minn\\Rest\\DeclaredPostsController::update",
             "handler": "Minn\\Rest\\DeclaredPostsController::update",
             "summary": "Updates a post of a declared type.",
@@ -2965,7 +2965,7 @@
         },
         {
             "method": "PATCH",
-            "pattern": "/wp/v2/{base:[a-z0-9_-]+}/{id:\\d+}",
+            "pattern": "/wp/v2/{base:[a-z0-9_-]+}/{id:[\\d]+}",
             "name": "Minn\\Rest\\DeclaredPostsController::update",
             "handler": "Minn\\Rest\\DeclaredPostsController::update",
             "summary": "Updates a post of a declared type.",
@@ -2980,7 +2980,7 @@
         },
         {
             "method": "DELETE",
-            "pattern": "/wp/v2/{base:[a-z0-9_-]+}/{id:\\d+}",
+            "pattern": "/wp/v2/{base:[a-z0-9_-]+}/{id:[\\d]+}",
             "name": "Minn\\Rest\\DeclaredPostsController::delete",
             "handler": "Minn\\Rest\\DeclaredPostsController::delete",
             "summary": "Trashes or deletes a post of a declared type.",
@@ -2995,7 +2995,7 @@
         },
         {
             "method": "GET",
-            "pattern": "/wp/v2/global-styles/{id:\\d+}",
+            "pattern": "/wp/v2/global-styles/{id:[\\/\\d+]+}",
             "name": "Minn\\Rest\\GlobalStylesController::single",
             "handler": "Minn\\Rest\\GlobalStylesController::single",
             "summary": "The saved styles by id: anyone who edits posts may read them, editing context needs the theme.",
@@ -3015,7 +3015,7 @@
         },
         {
             "method": "POST",
-            "pattern": "/wp/v2/global-styles/{id:\\d+}",
+            "pattern": "/wp/v2/global-styles/{id:[\\/\\d+]+}",
             "name": "Minn\\Rest\\GlobalStylesController::update",
             "handler": "Minn\\Rest\\GlobalStylesController::update",
             "summary": "Replaces the title, settings, or styles the body names; what it leaves out stays.",
@@ -3044,7 +3044,7 @@
         },
         {
             "method": "PUT",
-            "pattern": "/wp/v2/global-styles/{id:\\d+}",
+            "pattern": "/wp/v2/global-styles/{id:[\\/\\d+]+}",
             "name": "Minn\\Rest\\GlobalStylesController::update",
             "handler": "Minn\\Rest\\GlobalStylesController::update",
             "summary": "Replaces the title, settings, or styles the body names; what it leaves out stays.",
@@ -3073,7 +3073,7 @@
         },
         {
             "method": "PATCH",
-            "pattern": "/wp/v2/global-styles/{id:\\d+}",
+            "pattern": "/wp/v2/global-styles/{id:[\\/\\d+]+}",
             "name": "Minn\\Rest\\GlobalStylesController::update",
             "handler": "Minn\\Rest\\GlobalStylesController::update",
             "summary": "Replaces the title, settings, or styles the body names; what it leaves out stays.",
@@ -3102,7 +3102,30 @@
         },
         {
             "method": "GET",
-            "pattern": "/wp/v2/global-styles/themes/{stylesheet:[^/]+}",
+            "pattern": "/wp/v2/global-styles/themes/{stylesheet:[\\/\\s%\\w\\.\\(\\)\\[\\]\\@_\\-]+}/variations",
+            "name": "Minn\\Rest\\GlobalStylesController::variations",
+            "handler": "Minn\\Rest\\GlobalStylesController::variations",
+            "summary": "The style variations the active theme ships; listed ahead of the theme's own route, whose pattern would take this path too.",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap edit_posts",
+                "cap": "edit_posts",
+                "signIn": {
+                    "code": "rest_cannot_read_global_styles",
+                    "message": "Sorry, you are not allowed to access the global styles on this site."
+                },
+                "refuse": {
+                    "code": "rest_cannot_read_global_styles",
+                    "message": "Sorry, you are not allowed to access the global styles on this site."
+                }
+            },
+            "args": [],
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "GET",
+            "pattern": "/wp/v2/global-styles/themes/{stylesheet:[^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?}",
             "name": "Minn\\Rest\\GlobalStylesController::theme",
             "handler": "Minn\\Rest\\GlobalStylesController::theme",
             "summary": "The active theme's settings and styles, the engine's defaults underneath.",
@@ -3125,30 +3148,7 @@
         },
         {
             "method": "GET",
-            "pattern": "/wp/v2/global-styles/themes/{stylesheet:[^/]+}/variations",
-            "name": "Minn\\Rest\\GlobalStylesController::variations",
-            "handler": "Minn\\Rest\\GlobalStylesController::variations",
-            "summary": "The style variations the active theme ships.",
-            "policy": {
-                "access": "Cap",
-                "describe": "cap edit_posts",
-                "cap": "edit_posts",
-                "signIn": {
-                    "code": "rest_cannot_read_global_styles",
-                    "message": "Sorry, you are not allowed to access the global styles on this site."
-                },
-                "refuse": {
-                    "code": "rest_cannot_read_global_styles",
-                    "message": "Sorry, you are not allowed to access the global styles on this site."
-                }
-            },
-            "args": [],
-            "body": [],
-            "index": true
-        },
-        {
-            "method": "GET",
-            "pattern": "/wp/v2/global-styles/{parent:\\d+}/revisions",
+            "pattern": "/wp/v2/global-styles/{parent:[\\d]+}/revisions",
             "name": "Minn\\Rest\\GlobalStylesController::revisions",
             "handler": "Minn\\Rest\\GlobalStylesController::revisions",
             "summary": "The revisions of the saved styles, newest first; all of them unless per_page pages them.",
@@ -3177,7 +3177,7 @@
         },
         {
             "method": "GET",
-            "pattern": "/wp/v2/global-styles/{parent:\\d+}/revisions/{id:\\d+}",
+            "pattern": "/wp/v2/global-styles/{parent:[\\d]+}/revisions/{id:[\\d]+}",
             "name": "Minn\\Rest\\GlobalStylesController::revision",
             "handler": "Minn\\Rest\\GlobalStylesController::revision",
             "summary": "One revision of the saved styles.",
@@ -3407,7 +3407,7 @@
         },
         {
             "method": "GET",
-            "pattern": "/wp/v2/media/{id:\\d+}",
+            "pattern": "/wp/v2/media/{id:[\\d]+}",
             "name": "Minn\\Rest\\MediaController::single",
             "handler": "Minn\\Rest\\MediaController::single",
             "summary": "One attachment.",
@@ -3476,7 +3476,7 @@
         },
         {
             "method": "POST",
-            "pattern": "/wp/v2/media/{id:\\d+}",
+            "pattern": "/wp/v2/media/{id:[\\d]+}",
             "name": "Minn\\Rest\\MediaController::update",
             "handler": "Minn\\Rest\\MediaController::update",
             "summary": "The editable fields the app uses.",
@@ -3505,7 +3505,7 @@
         },
         {
             "method": "PUT",
-            "pattern": "/wp/v2/media/{id:\\d+}",
+            "pattern": "/wp/v2/media/{id:[\\d]+}",
             "name": "Minn\\Rest\\MediaController::update",
             "handler": "Minn\\Rest\\MediaController::update",
             "summary": "The editable fields the app uses.",
@@ -3534,7 +3534,7 @@
         },
         {
             "method": "PATCH",
-            "pattern": "/wp/v2/media/{id:\\d+}",
+            "pattern": "/wp/v2/media/{id:[\\d]+}",
             "name": "Minn\\Rest\\MediaController::update",
             "handler": "Minn\\Rest\\MediaController::update",
             "summary": "The editable fields the app uses.",
@@ -3563,7 +3563,7 @@
         },
         {
             "method": "DELETE",
-            "pattern": "/wp/v2/media/{id:\\d+}",
+            "pattern": "/wp/v2/media/{id:[\\d]+}",
             "name": "Minn\\Rest\\MediaController::delete",
             "handler": "Minn\\Rest\\MediaController::delete",
             "summary": "Attachments cannot be trashed; force removes the row, its meta, and its files.",
@@ -3615,7 +3615,7 @@
         },
         {
             "method": "GET",
-            "pattern": "/wp/v2/menus/{id:\\d+}",
+            "pattern": "/wp/v2/menus/{id:[\\d]+}",
             "name": "Minn\\Rest\\MenusController::singleMenu",
             "handler": "Minn\\Rest\\MenusController::singleMenu",
             "summary": "One menu.",
@@ -3667,7 +3667,7 @@
         },
         {
             "method": "POST",
-            "pattern": "/wp/v2/menus/{id:\\d+}",
+            "pattern": "/wp/v2/menus/{id:[\\d]+}",
             "name": "Minn\\Rest\\MenusController::updateMenu",
             "handler": "Minn\\Rest\\MenusController::updateMenu",
             "summary": "Renames or re-describes a menu.",
@@ -3696,7 +3696,7 @@
         },
         {
             "method": "PUT",
-            "pattern": "/wp/v2/menus/{id:\\d+}",
+            "pattern": "/wp/v2/menus/{id:[\\d]+}",
             "name": "Minn\\Rest\\MenusController::updateMenu",
             "handler": "Minn\\Rest\\MenusController::updateMenu",
             "summary": "Renames or re-describes a menu.",
@@ -3725,7 +3725,7 @@
         },
         {
             "method": "PATCH",
-            "pattern": "/wp/v2/menus/{id:\\d+}",
+            "pattern": "/wp/v2/menus/{id:[\\d]+}",
             "name": "Minn\\Rest\\MenusController::updateMenu",
             "handler": "Minn\\Rest\\MenusController::updateMenu",
             "summary": "Renames or re-describes a menu.",
@@ -3754,7 +3754,7 @@
         },
         {
             "method": "DELETE",
-            "pattern": "/wp/v2/menus/{id:\\d+}",
+            "pattern": "/wp/v2/menus/{id:[\\d]+}",
             "name": "Minn\\Rest\\MenusController::deleteMenu",
             "handler": "Minn\\Rest\\MenusController::deleteMenu",
             "summary": "Deletes a menu and its items.",
@@ -3806,7 +3806,7 @@
         },
         {
             "method": "GET",
-            "pattern": "/wp/v2/menu-items/{id:\\d+}",
+            "pattern": "/wp/v2/menu-items/{id:[\\d]+}",
             "name": "Minn\\Rest\\MenusController::singleItem",
             "handler": "Minn\\Rest\\MenusController::singleItem",
             "summary": "One menu item.",
@@ -3858,7 +3858,7 @@
         },
         {
             "method": "POST",
-            "pattern": "/wp/v2/menu-items/{id:\\d+}",
+            "pattern": "/wp/v2/menu-items/{id:[\\d]+}",
             "name": "Minn\\Rest\\MenusController::updateItem",
             "handler": "Minn\\Rest\\MenusController::updateItem",
             "summary": "Updates a menu item.",
@@ -3887,7 +3887,7 @@
         },
         {
             "method": "PUT",
-            "pattern": "/wp/v2/menu-items/{id:\\d+}",
+            "pattern": "/wp/v2/menu-items/{id:[\\d]+}",
             "name": "Minn\\Rest\\MenusController::updateItem",
             "handler": "Minn\\Rest\\MenusController::updateItem",
             "summary": "Updates a menu item.",
@@ -3916,7 +3916,7 @@
         },
         {
             "method": "PATCH",
-            "pattern": "/wp/v2/menu-items/{id:\\d+}",
+            "pattern": "/wp/v2/menu-items/{id:[\\d]+}",
             "name": "Minn\\Rest\\MenusController::updateItem",
             "handler": "Minn\\Rest\\MenusController::updateItem",
             "summary": "Updates a menu item.",
@@ -3945,7 +3945,7 @@
         },
         {
             "method": "DELETE",
-            "pattern": "/wp/v2/menu-items/{id:\\d+}",
+            "pattern": "/wp/v2/menu-items/{id:[\\d]+}",
             "name": "Minn\\Rest\\MenusController::deleteItem",
             "handler": "Minn\\Rest\\MenusController::deleteItem",
             "summary": "Deletes a menu item.",
@@ -4011,7 +4011,7 @@
         },
         {
             "method": "GET",
-            "pattern": "/wp/v2/navigation/{id:\\d+}",
+            "pattern": "/wp/v2/navigation/{id:[\\d]+}",
             "name": "Minn\\Rest\\NavigationController::single",
             "handler": "Minn\\Rest\\NavigationController::single",
             "summary": "One navigation post.",
@@ -4042,7 +4042,7 @@
         },
         {
             "method": "POST",
-            "pattern": "/wp/v2/navigation/{id:\\d+}",
+            "pattern": "/wp/v2/navigation/{id:[\\d]+}",
             "name": "Minn\\Rest\\NavigationController::update",
             "handler": "Minn\\Rest\\NavigationController::update",
             "summary": "Updates a navigation post.",
@@ -4071,7 +4071,7 @@
         },
         {
             "method": "PUT",
-            "pattern": "/wp/v2/navigation/{id:\\d+}",
+            "pattern": "/wp/v2/navigation/{id:[\\d]+}",
             "name": "Minn\\Rest\\NavigationController::update",
             "handler": "Minn\\Rest\\NavigationController::update",
             "summary": "Updates a navigation post.",
@@ -4100,7 +4100,7 @@
         },
         {
             "method": "PATCH",
-            "pattern": "/wp/v2/navigation/{id:\\d+}",
+            "pattern": "/wp/v2/navigation/{id:[\\d]+}",
             "name": "Minn\\Rest\\NavigationController::update",
             "handler": "Minn\\Rest\\NavigationController::update",
             "summary": "Updates a navigation post.",
@@ -4129,7 +4129,7 @@
         },
         {
             "method": "DELETE",
-            "pattern": "/wp/v2/navigation/{id:\\d+}",
+            "pattern": "/wp/v2/navigation/{id:[\\d]+}",
             "name": "Minn\\Rest\\NavigationController::delete",
             "handler": "Minn\\Rest\\NavigationController::delete",
             "summary": "Trashes or deletes a navigation post.",
@@ -4659,7 +4659,7 @@
         },
         {
             "method": "GET",
-            "pattern": "/wp/v2/{base:posts|pages}/{id:\\d+}",
+            "pattern": "/wp/v2/{base:posts|pages}/{id:[\\d]+}",
             "name": "Minn\\Rest\\PostsController::single",
             "handler": "Minn\\Rest\\PostsController::single",
             "summary": "One post or page.",
@@ -4751,7 +4751,7 @@
         },
         {
             "method": "POST",
-            "pattern": "/wp/v2/{base:posts|pages}/{id:\\d+}",
+            "pattern": "/wp/v2/{base:posts|pages}/{id:[\\d]+}",
             "name": "Minn\\Rest\\PostsWriteController::update",
             "handler": "Minn\\Rest\\PostsWriteController::update",
             "summary": "Updates a post or page.",
@@ -4780,7 +4780,7 @@
         },
         {
             "method": "PUT",
-            "pattern": "/wp/v2/{base:posts|pages}/{id:\\d+}",
+            "pattern": "/wp/v2/{base:posts|pages}/{id:[\\d]+}",
             "name": "Minn\\Rest\\PostsWriteController::update",
             "handler": "Minn\\Rest\\PostsWriteController::update",
             "summary": "Updates a post or page.",
@@ -4809,7 +4809,7 @@
         },
         {
             "method": "PATCH",
-            "pattern": "/wp/v2/{base:posts|pages}/{id:\\d+}",
+            "pattern": "/wp/v2/{base:posts|pages}/{id:[\\d]+}",
             "name": "Minn\\Rest\\PostsWriteController::update",
             "handler": "Minn\\Rest\\PostsWriteController::update",
             "summary": "Updates a post or page.",
@@ -4838,7 +4838,7 @@
         },
         {
             "method": "DELETE",
-            "pattern": "/wp/v2/{base:posts|pages}/{id:\\d+}",
+            "pattern": "/wp/v2/{base:posts|pages}/{id:[\\d]+}",
             "name": "Minn\\Rest\\PostsWriteController::delete",
             "handler": "Minn\\Rest\\PostsWriteController::delete",
             "summary": "Trashes or deletes a post or page.",
@@ -4867,15 +4867,15 @@
         },
         {
             "method": "GET",
-            "pattern": "/wp/v2/{base:posts|pages|blocks}/{id:\\d+}/revisions",
+            "pattern": "/wp/v2/{base:posts|pages|blocks}/{parent:[\\d]+}/revisions",
             "name": "Minn\\Rest\\RevisionsController::revisions",
             "handler": "Minn\\Rest\\RevisionsController::revisions",
             "summary": "Real revisions, not autosaves.",
             "policy": {
                 "access": "Own",
-                "describe": "cap edit_post on {id}; post parent {id} must exist",
+                "describe": "cap edit_post on {parent}; post parent {parent} must exist",
                 "cap": "edit_post",
-                "param": "id",
+                "param": "parent",
                 "subject": "PostParent",
                 "missing": {
                     "code": "rest_post_invalid_parent",
@@ -4896,15 +4896,15 @@
         },
         {
             "method": "GET",
-            "pattern": "/wp/v2/{base:posts|pages|blocks}/{id:\\d+}/revisions/{revisionId:\\d+}",
+            "pattern": "/wp/v2/{base:posts|pages|blocks}/{parent:[\\d]+}/revisions/{id:[\\d]+}",
             "name": "Minn\\Rest\\RevisionsController::revision",
             "handler": "Minn\\Rest\\RevisionsController::revision",
             "summary": "One revision of a post, page, or block.",
             "policy": {
                 "access": "Own",
-                "describe": "cap edit_post on {id}; post parent {id} must exist",
+                "describe": "cap edit_post on {parent}; post parent {parent} must exist",
                 "cap": "edit_post",
-                "param": "id",
+                "param": "parent",
                 "subject": "PostParent",
                 "missing": {
                     "code": "rest_post_invalid_parent",
@@ -4925,7 +4925,7 @@
         },
         {
             "method": "GET",
-            "pattern": "/wp/v2/{base:posts|pages|blocks}/{id:\\d+}/autosaves",
+            "pattern": "/wp/v2/{base:posts|pages|blocks}/{id:[\\d]+}/autosaves",
             "name": "Minn\\Rest\\RevisionsController::autosaves",
             "handler": "Minn\\Rest\\RevisionsController::autosaves",
             "summary": "The autosaves of a post.",
@@ -4954,7 +4954,7 @@
         },
         {
             "method": "POST",
-            "pattern": "/wp/v2/{base:posts|pages|blocks}/{id:\\d+}/autosaves",
+            "pattern": "/wp/v2/{base:posts|pages|blocks}/{id:[\\d]+}/autosaves",
             "name": "Minn\\Rest\\RevisionsController::createAutosave",
             "handler": "Minn\\Rest\\RevisionsController::createAutosave",
             "summary": "One autosave slot per author; the reply carries a preview link.",
@@ -5688,7 +5688,7 @@
         },
         {
             "method": "GET",
-            "pattern": "/wp/v2/taxonomies/{slug:[\\w-]+}",
+            "pattern": "/wp/v2/taxonomies/{taxonomy:[\\w-]+}",
             "name": "Minn\\Rest\\TaxonomiesController::single",
             "handler": "Minn\\Rest\\TaxonomiesController::single",
             "summary": "One taxonomy.",
@@ -5760,7 +5760,7 @@
         },
         {
             "method": "GET",
-            "pattern": "/wp/v2/templates/{id*}",
+            "pattern": "/wp/v2/templates/{id:([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+}",
             "name": "Minn\\Rest\\TemplatesController::template",
             "handler": "Minn\\Rest\\TemplatesController::template",
             "summary": "One template.",
@@ -5783,7 +5783,7 @@
         },
         {
             "method": "GET",
-            "pattern": "/wp/v2/template-parts/{id*}",
+            "pattern": "/wp/v2/template-parts/{id:([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+}",
             "name": "Minn\\Rest\\TemplatesController::part",
             "handler": "Minn\\Rest\\TemplatesController::part",
             "summary": "One template part.",
@@ -5806,7 +5806,7 @@
         },
         {
             "method": "POST",
-            "pattern": "/wp/v2/templates/{id*}",
+            "pattern": "/wp/v2/templates/{id:([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+}",
             "name": "Minn\\Rest\\TemplatesController::saveTemplate",
             "handler": "Minn\\Rest\\TemplatesController::saveTemplate",
             "summary": "Saves a template.",
@@ -5832,7 +5832,7 @@
         },
         {
             "method": "PUT",
-            "pattern": "/wp/v2/templates/{id*}",
+            "pattern": "/wp/v2/templates/{id:([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+}",
             "name": "Minn\\Rest\\TemplatesController::saveTemplate",
             "handler": "Minn\\Rest\\TemplatesController::saveTemplate",
             "summary": "Saves a template.",
@@ -5858,7 +5858,7 @@
         },
         {
             "method": "PATCH",
-            "pattern": "/wp/v2/templates/{id*}",
+            "pattern": "/wp/v2/templates/{id:([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+}",
             "name": "Minn\\Rest\\TemplatesController::saveTemplate",
             "handler": "Minn\\Rest\\TemplatesController::saveTemplate",
             "summary": "Saves a template.",
@@ -5884,7 +5884,7 @@
         },
         {
             "method": "POST",
-            "pattern": "/wp/v2/template-parts/{id*}",
+            "pattern": "/wp/v2/template-parts/{id:([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+}",
             "name": "Minn\\Rest\\TemplatesController::savePart",
             "handler": "Minn\\Rest\\TemplatesController::savePart",
             "summary": "Saves a template part.",
@@ -5910,7 +5910,7 @@
         },
         {
             "method": "PUT",
-            "pattern": "/wp/v2/template-parts/{id*}",
+            "pattern": "/wp/v2/template-parts/{id:([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+}",
             "name": "Minn\\Rest\\TemplatesController::savePart",
             "handler": "Minn\\Rest\\TemplatesController::savePart",
             "summary": "Saves a template part.",
@@ -5936,7 +5936,7 @@
         },
         {
             "method": "PATCH",
-            "pattern": "/wp/v2/template-parts/{id*}",
+            "pattern": "/wp/v2/template-parts/{id:([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+}",
             "name": "Minn\\Rest\\TemplatesController::savePart",
             "handler": "Minn\\Rest\\TemplatesController::savePart",
             "summary": "Saves a template part.",
@@ -5962,7 +5962,7 @@
         },
         {
             "method": "DELETE",
-            "pattern": "/wp/v2/templates/{id*}",
+            "pattern": "/wp/v2/templates/{id:([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+}",
             "name": "Minn\\Rest\\TemplatesController::deleteTemplate",
             "handler": "Minn\\Rest\\TemplatesController::deleteTemplate",
             "summary": "Deletes a customised template.",
@@ -5988,7 +5988,7 @@
         },
         {
             "method": "DELETE",
-            "pattern": "/wp/v2/template-parts/{id*}",
+            "pattern": "/wp/v2/template-parts/{id:([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+}",
             "name": "Minn\\Rest\\TemplatesController::deletePart",
             "handler": "Minn\\Rest\\TemplatesController::deletePart",
             "summary": "Deletes a customised template part.",
@@ -6118,7 +6118,7 @@
         },
         {
             "method": "GET",
-            "pattern": "/wp/v2/{base:categories|tags|wp_pattern_category}/{id:\\d+}",
+            "pattern": "/wp/v2/{base:categories|tags|wp_pattern_category}/{id:[\\d]+}",
             "name": "Minn\\Rest\\TermsController::single",
             "handler": "Minn\\Rest\\TermsController::single",
             "summary": "One category or tag.",
@@ -6209,7 +6209,7 @@
         },
         {
             "method": "POST",
-            "pattern": "/wp/v2/{base:categories|tags|wp_pattern_category}/{id:\\d+}",
+            "pattern": "/wp/v2/{base:categories|tags|wp_pattern_category}/{id:[\\d]+}",
             "name": "Minn\\Rest\\TermsController::update",
             "handler": "Minn\\Rest\\TermsController::update",
             "summary": "Updates a category or tag.",
@@ -6238,7 +6238,7 @@
         },
         {
             "method": "PUT",
-            "pattern": "/wp/v2/{base:categories|tags|wp_pattern_category}/{id:\\d+}",
+            "pattern": "/wp/v2/{base:categories|tags|wp_pattern_category}/{id:[\\d]+}",
             "name": "Minn\\Rest\\TermsController::update",
             "handler": "Minn\\Rest\\TermsController::update",
             "summary": "Updates a category or tag.",
@@ -6267,7 +6267,7 @@
         },
         {
             "method": "PATCH",
-            "pattern": "/wp/v2/{base:categories|tags|wp_pattern_category}/{id:\\d+}",
+            "pattern": "/wp/v2/{base:categories|tags|wp_pattern_category}/{id:[\\d]+}",
             "name": "Minn\\Rest\\TermsController::update",
             "handler": "Minn\\Rest\\TermsController::update",
             "summary": "Updates a category or tag.",
@@ -6296,7 +6296,7 @@
         },
         {
             "method": "DELETE",
-            "pattern": "/wp/v2/{base:categories|tags|wp_pattern_category}/{id:\\d+}",
+            "pattern": "/wp/v2/{base:categories|tags|wp_pattern_category}/{id:[\\d]+}",
             "name": "Minn\\Rest\\TermsController::delete",
             "handler": "Minn\\Rest\\TermsController::delete",
             "summary": "The default category is capability-denied before the force check.",
@@ -6351,7 +6351,7 @@
         },
         {
             "method": "GET",
-            "pattern": "/wp/v2/types/{slug:[\\w-]+}",
+            "pattern": "/wp/v2/types/{type:[\\w-]+}",
             "name": "Minn\\Rest\\TypesController::single",
             "handler": "Minn\\Rest\\TypesController::single",
             "summary": "One post type.",
@@ -6406,10 +6406,18 @@
             "pattern": "/wp/v2/users/me",
             "name": "Minn\\Rest\\UsersController::updateMe",
             "handler": "Minn\\Rest\\UsersController::updateMe",
-            "summary": "Updates the signed-in user; signed out there is no such user (404).",
+            "summary": "Updates the signed-in user; signed out there is no such user (404), and the Allow header leaves the writes out.",
             "policy": {
-                "access": "Public",
-                "describe": "public"
+                "access": "SignedIn",
+                "describe": "signed in",
+                "signIn": {
+                    "code": "rest_user_invalid_id",
+                    "message": "Invalid user ID."
+                },
+                "refuse": {
+                    "code": "rest_forbidden",
+                    "message": "Sorry, you are not allowed to do that."
+                }
             },
             "args": [],
             "body": {
@@ -6492,10 +6500,18 @@
             "pattern": "/wp/v2/users/me",
             "name": "Minn\\Rest\\UsersController::updateMe",
             "handler": "Minn\\Rest\\UsersController::updateMe",
-            "summary": "Updates the signed-in user; signed out there is no such user (404).",
+            "summary": "Updates the signed-in user; signed out there is no such user (404), and the Allow header leaves the writes out.",
             "policy": {
-                "access": "Public",
-                "describe": "public"
+                "access": "SignedIn",
+                "describe": "signed in",
+                "signIn": {
+                    "code": "rest_user_invalid_id",
+                    "message": "Invalid user ID."
+                },
+                "refuse": {
+                    "code": "rest_forbidden",
+                    "message": "Sorry, you are not allowed to do that."
+                }
             },
             "args": [],
             "body": {
@@ -6578,10 +6594,18 @@
             "pattern": "/wp/v2/users/me",
             "name": "Minn\\Rest\\UsersController::updateMe",
             "handler": "Minn\\Rest\\UsersController::updateMe",
-            "summary": "Updates the signed-in user; signed out there is no such user (404).",
+            "summary": "Updates the signed-in user; signed out there is no such user (404), and the Allow header leaves the writes out.",
             "policy": {
-                "access": "Public",
-                "describe": "public"
+                "access": "SignedIn",
+                "describe": "signed in",
+                "signIn": {
+                    "code": "rest_user_invalid_id",
+                    "message": "Invalid user ID."
+                },
+                "refuse": {
+                    "code": "rest_forbidden",
+                    "message": "Sorry, you are not allowed to do that."
+                }
             },
             "args": [],
             "body": {
@@ -6759,7 +6783,7 @@
         },
         {
             "method": "GET",
-            "pattern": "/wp/v2/users/{id:\\d+}",
+            "pattern": "/wp/v2/users/{id:[\\d]+}",
             "name": "Minn\\Rest\\UsersController::single",
             "handler": "Minn\\Rest\\UsersController::single",
             "summary": "One user.",
@@ -6875,7 +6899,7 @@
         },
         {
             "method": "POST",
-            "pattern": "/wp/v2/users/{id:\\d+}",
+            "pattern": "/wp/v2/users/{id:[\\d]+}",
             "name": "Minn\\Rest\\UsersController::update",
             "handler": "Minn\\Rest\\UsersController::update",
             "summary": "Updates a user.",
@@ -6976,7 +7000,7 @@
         },
         {
             "method": "PUT",
-            "pattern": "/wp/v2/users/{id:\\d+}",
+            "pattern": "/wp/v2/users/{id:[\\d]+}",
             "name": "Minn\\Rest\\UsersController::update",
             "handler": "Minn\\Rest\\UsersController::update",
             "summary": "Updates a user.",
@@ -7077,7 +7101,7 @@
         },
         {
             "method": "PATCH",
-            "pattern": "/wp/v2/users/{id:\\d+}",
+            "pattern": "/wp/v2/users/{id:[\\d]+}",
             "name": "Minn\\Rest\\UsersController::update",
             "handler": "Minn\\Rest\\UsersController::update",
             "summary": "Updates a user.",
@@ -7178,7 +7202,7 @@
         },
         {
             "method": "DELETE",
-            "pattern": "/wp/v2/users/{id:\\d+}",
+            "pattern": "/wp/v2/users/{id:[\\d]+}",
             "name": "Minn\\Rest\\UsersController::delete",
             "handler": "Minn\\Rest\\UsersController::delete",
             "summary": "reassign is REQUIRED (checked before the user lookup), and so is force.",

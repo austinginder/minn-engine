@@ -141,7 +141,7 @@ foreach ( array(
 	$expected = json_decode( (string) file_get_contents( "$ROOT/contracts/fixtures/rest/$fixture.json" ), true );
 	[ $st, $body ] = gs_fetch( $ENGINE, $route, $mint );
 	$expected = gs_norm( gs_without_count( str_contains( $route, "/$id" ) ? array_replace( (array) $expected, array( 'id' => $id ) ) : $expected ) );
-	$expected = str_contains( $route, "/$id" ) ? json_decode( str_replace( '/global-styles/9555', "/global-styles/$id", (string) json_encode( $expected ) ), true ) : $expected;
+	$expected = str_contains( $route, "/$id" ) ? json_decode( str_replace( '/global-styles/9555', "/global-styles/$id", (string) json_encode( $expected, JSON_UNESCAPED_SLASHES ) ), true ) : $expected;
 	$d        = minn_test_diff( $expected, gs_norm( gs_without_count( $body ) ) );
 	check( 200 === $st && null === $d, "fixture $fixture", "status $st " . (string) $d );
 }

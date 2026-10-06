@@ -69,7 +69,7 @@ final readonly class CommentsController
     }
 
     /** One comment, if the caller may read it. */
-    #[Route(Method::Get, '/wp/v2/comments/{id:\d+}', policy: new Policy(Access::Public, subject: Subject::Comment, param: 'id'), args: [Args::CONTEXT])]
+    #[Route(Method::Get, '/wp/v2/comments/{id:[\d]+}', policy: new Policy(Access::Public, subject: Subject::Comment, param: 'id'), args: [Args::CONTEXT])]
     public function single(Request $request, string $id): Response
     {
         $comment = $this->plainComment((int) $id);
@@ -152,9 +152,9 @@ final readonly class CommentsController
     }
 
     /** Status flips and content or author edits, for moderators. */
-    #[Route(Method::Post, '/wp/v2/comments/{id:\d+}', policy: new Policy(Access::Cap, 'moderate_comments', param: 'id', subject: Subject::Comment, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this comment.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this comment.'))]
-    #[Route(Method::Put, '/wp/v2/comments/{id:\d+}', policy: new Policy(Access::Cap, 'moderate_comments', param: 'id', subject: Subject::Comment, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this comment.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this comment.'))]
-    #[Route(Method::Patch, '/wp/v2/comments/{id:\d+}', policy: new Policy(Access::Cap, 'moderate_comments', param: 'id', subject: Subject::Comment, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this comment.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this comment.'))]
+    #[Route(Method::Post, '/wp/v2/comments/{id:[\d]+}', policy: new Policy(Access::Cap, 'moderate_comments', param: 'id', subject: Subject::Comment, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this comment.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this comment.'))]
+    #[Route(Method::Put, '/wp/v2/comments/{id:[\d]+}', policy: new Policy(Access::Cap, 'moderate_comments', param: 'id', subject: Subject::Comment, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this comment.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this comment.'))]
+    #[Route(Method::Patch, '/wp/v2/comments/{id:[\d]+}', policy: new Policy(Access::Cap, 'moderate_comments', param: 'id', subject: Subject::Comment, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this comment.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this comment.'))]
     public function update(Request $request, string $id): Response
     {
         $commentId = (int) $id;
@@ -189,7 +189,7 @@ final readonly class CommentsController
     }
 
     /** Trash remembers where the comment came from; force removes it outright. */
-    #[Route(Method::Delete, '/wp/v2/comments/{id:\d+}', policy: new Policy(Access::Cap, 'moderate_comments', param: 'id', subject: Subject::Comment, signIn: 'rest_cannot_delete', signInMessage: 'Sorry, you are not allowed to delete this comment.', refuse: 'rest_cannot_delete', message: 'Sorry, you are not allowed to delete this comment.'))]
+    #[Route(Method::Delete, '/wp/v2/comments/{id:[\d]+}', policy: new Policy(Access::Cap, 'moderate_comments', param: 'id', subject: Subject::Comment, signIn: 'rest_cannot_delete', signInMessage: 'Sorry, you are not allowed to delete this comment.', refuse: 'rest_cannot_delete', message: 'Sorry, you are not allowed to delete this comment.'))]
     public function delete(Request $request, string $id): Response
     {
         $commentId = (int) $id;

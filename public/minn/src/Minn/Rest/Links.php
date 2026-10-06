@@ -8,6 +8,23 @@ namespace Minn\Rest;
 final class Links
 {
     /**
+     * One link as a response serves it: its attributes, then its href; a
+     * self link's target hints after the href, where the reference adds them.
+     *
+     * @param array<string, mixed> $attributes
+     * @return array<string, mixed>
+     */
+    public static function item(string $rel, string $href, array $attributes): array
+    {
+        $hints = $rel === 'self' && array_key_exists('targetHints', $attributes) ? $attributes['targetHints'] : null;
+        unset($attributes['href']);
+        if ($hints !== null) {
+            unset($attributes['targetHints']);
+        }
+        return $attributes + ['href' => $href] + ($hints === null ? [] : ['targetHints' => $hints]);
+    }
+
+    /**
      * Links with their curies applied, as the reference compacts them.
      *
      * @param array<string, mixed> $links rel => items

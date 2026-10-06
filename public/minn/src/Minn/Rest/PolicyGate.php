@@ -44,7 +44,7 @@ final readonly class PolicyGate
         }
         match ($policy->access) {
             Access::Public => null,
-            Access::SignedIn => $this->caller->require($policy->signIn, $policy->signInMessage),
+            Access::SignedIn => $this->caller->require($policy->signIn, $policy->signInMessage, $policy->signInStatus),
             Access::Cap, Access::Floor => $this->capabilities($policy),
             Access::Own => $this->own($policy, $captures),
             Access::Type => $this->type($captures),

@@ -37,7 +37,7 @@ final readonly class NavigationController
     }
 
     /** One navigation post. */
-    #[Route(Method::Get, '/wp/v2/navigation/{id:\d+}', policy: new Policy(Access::Public, subject: Subject::Navigation, param: 'id'))]
+    #[Route(Method::Get, '/wp/v2/navigation/{id:[\d]+}', policy: new Policy(Access::Public, subject: Subject::Navigation, param: 'id'))]
     public function single(Request $request, string $id): Response
     {
         return $this->reads->serveSingle($request, self::TYPE, $id);
@@ -51,16 +51,16 @@ final readonly class NavigationController
     }
 
     /** Updates a navigation post. */
-    #[Route(Method::Post, '/wp/v2/navigation/{id:\d+}', policy: new Policy(Access::Own, 'edit_post', param: 'id', subject: Subject::Navigation, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this post.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this post.'))]
-    #[Route(Method::Put, '/wp/v2/navigation/{id:\d+}', policy: new Policy(Access::Own, 'edit_post', param: 'id', subject: Subject::Navigation, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this post.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this post.'))]
-    #[Route(Method::Patch, '/wp/v2/navigation/{id:\d+}', policy: new Policy(Access::Own, 'edit_post', param: 'id', subject: Subject::Navigation, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this post.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this post.'))]
+    #[Route(Method::Post, '/wp/v2/navigation/{id:[\d]+}', policy: new Policy(Access::Own, 'edit_post', param: 'id', subject: Subject::Navigation, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this post.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this post.'))]
+    #[Route(Method::Put, '/wp/v2/navigation/{id:[\d]+}', policy: new Policy(Access::Own, 'edit_post', param: 'id', subject: Subject::Navigation, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this post.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this post.'))]
+    #[Route(Method::Patch, '/wp/v2/navigation/{id:[\d]+}', policy: new Policy(Access::Own, 'edit_post', param: 'id', subject: Subject::Navigation, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this post.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this post.'))]
     public function update(Request $request, string $id): Response
     {
         return $this->writes->serveUpdate($request, self::TYPE, $id);
     }
 
     /** Trashes or deletes a navigation post. */
-    #[Route(Method::Delete, '/wp/v2/navigation/{id:\d+}', policy: new Policy(Access::Own, 'delete_post', param: 'id', subject: Subject::Navigation, signIn: 'rest_cannot_delete', signInMessage: 'Sorry, you are not allowed to delete this post.', refuse: 'rest_cannot_delete', message: 'Sorry, you are not allowed to delete this post.'))]
+    #[Route(Method::Delete, '/wp/v2/navigation/{id:[\d]+}', policy: new Policy(Access::Own, 'delete_post', param: 'id', subject: Subject::Navigation, signIn: 'rest_cannot_delete', signInMessage: 'Sorry, you are not allowed to delete this post.', refuse: 'rest_cannot_delete', message: 'Sorry, you are not allowed to delete this post.'))]
     public function delete(Request $request, string $id): Response
     {
         return $this->writes->serveDelete($request, self::TYPE, $id);

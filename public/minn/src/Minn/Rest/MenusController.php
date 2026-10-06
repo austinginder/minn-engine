@@ -60,7 +60,7 @@ final readonly class MenusController
     }
 
     /** One menu. */
-    #[Route(Method::Get, '/wp/v2/menus/{id:\d+}', policy: new Policy(Access::Cap, 'edit_posts', param: 'id', subject: Subject::Menu, signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menus.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menus.'))]
+    #[Route(Method::Get, '/wp/v2/menus/{id:[\d]+}', policy: new Policy(Access::Cap, 'edit_posts', param: 'id', subject: Subject::Menu, signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menus.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menus.'))]
     public function singleMenu(Request $request, string $id): Response
     {
         $row = $this->menus->find((int) $id);
@@ -87,9 +87,9 @@ final readonly class MenusController
     }
 
     /** Renames or re-describes a menu. */
-    #[Route(Method::Post, '/wp/v2/menus/{id:\d+}', policy: new Policy(Access::Cap, 'edit_theme_options', param: 'id', subject: Subject::Menu, signIn: 'rest_cannot_update', signInMessage: 'Sorry, you are not allowed to edit this term.', refuse: 'rest_cannot_update', message: 'Sorry, you are not allowed to edit this term.'))]
-    #[Route(Method::Put, '/wp/v2/menus/{id:\d+}', policy: new Policy(Access::Cap, 'edit_theme_options', param: 'id', subject: Subject::Menu, signIn: 'rest_cannot_update', signInMessage: 'Sorry, you are not allowed to edit this term.', refuse: 'rest_cannot_update', message: 'Sorry, you are not allowed to edit this term.'))]
-    #[Route(Method::Patch, '/wp/v2/menus/{id:\d+}', policy: new Policy(Access::Cap, 'edit_theme_options', param: 'id', subject: Subject::Menu, signIn: 'rest_cannot_update', signInMessage: 'Sorry, you are not allowed to edit this term.', refuse: 'rest_cannot_update', message: 'Sorry, you are not allowed to edit this term.'))]
+    #[Route(Method::Post, '/wp/v2/menus/{id:[\d]+}', policy: new Policy(Access::Cap, 'edit_theme_options', param: 'id', subject: Subject::Menu, signIn: 'rest_cannot_update', signInMessage: 'Sorry, you are not allowed to edit this term.', refuse: 'rest_cannot_update', message: 'Sorry, you are not allowed to edit this term.'))]
+    #[Route(Method::Put, '/wp/v2/menus/{id:[\d]+}', policy: new Policy(Access::Cap, 'edit_theme_options', param: 'id', subject: Subject::Menu, signIn: 'rest_cannot_update', signInMessage: 'Sorry, you are not allowed to edit this term.', refuse: 'rest_cannot_update', message: 'Sorry, you are not allowed to edit this term.'))]
+    #[Route(Method::Patch, '/wp/v2/menus/{id:[\d]+}', policy: new Policy(Access::Cap, 'edit_theme_options', param: 'id', subject: Subject::Menu, signIn: 'rest_cannot_update', signInMessage: 'Sorry, you are not allowed to edit this term.', refuse: 'rest_cannot_update', message: 'Sorry, you are not allowed to edit this term.'))]
     public function updateMenu(Request $request, string $id): Response
     {
         $row = $this->menus->find((int) $id);
@@ -110,7 +110,7 @@ final readonly class MenusController
     }
 
     /** Deletes a menu and its items. */
-    #[Route(Method::Delete, '/wp/v2/menus/{id:\d+}', policy: new Policy(Access::Cap, 'edit_theme_options', param: 'id', subject: Subject::Menu, signIn: 'rest_cannot_delete', signInMessage: 'Sorry, you are not allowed to delete this term.', refuse: 'rest_cannot_delete', message: 'Sorry, you are not allowed to delete this term.'))]
+    #[Route(Method::Delete, '/wp/v2/menus/{id:[\d]+}', policy: new Policy(Access::Cap, 'edit_theme_options', param: 'id', subject: Subject::Menu, signIn: 'rest_cannot_delete', signInMessage: 'Sorry, you are not allowed to delete this term.', refuse: 'rest_cannot_delete', message: 'Sorry, you are not allowed to delete this term.'))]
     public function deleteMenu(Request $request, string $id): Response
     {
         $row = $this->menus->find((int) $id);
@@ -147,7 +147,7 @@ final readonly class MenusController
     }
 
     /** One menu item. */
-    #[Route(Method::Get, '/wp/v2/menu-items/{id:\d+}', policy: new Policy(Access::Cap, 'edit_posts', param: 'id', subject: Subject::MenuItem, signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menu items.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menu items.'))]
+    #[Route(Method::Get, '/wp/v2/menu-items/{id:[\d]+}', policy: new Policy(Access::Cap, 'edit_posts', param: 'id', subject: Subject::MenuItem, signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menu items.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menu items.'))]
     public function singleItem(Request $request, string $id): Response
     {
         $item = $this->menus->findItem((int) $id);
@@ -190,9 +190,9 @@ final readonly class MenusController
     }
 
     /** Updates a menu item. */
-    #[Route(Method::Post, '/wp/v2/menu-items/{id:\d+}', policy: new Policy(Access::Cap, 'edit_theme_options', param: 'id', subject: Subject::MenuItem, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this post.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this post.'))]
-    #[Route(Method::Put, '/wp/v2/menu-items/{id:\d+}', policy: new Policy(Access::Cap, 'edit_theme_options', param: 'id', subject: Subject::MenuItem, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this post.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this post.'))]
-    #[Route(Method::Patch, '/wp/v2/menu-items/{id:\d+}', policy: new Policy(Access::Cap, 'edit_theme_options', param: 'id', subject: Subject::MenuItem, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this post.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this post.'))]
+    #[Route(Method::Post, '/wp/v2/menu-items/{id:[\d]+}', policy: new Policy(Access::Cap, 'edit_theme_options', param: 'id', subject: Subject::MenuItem, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this post.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this post.'))]
+    #[Route(Method::Put, '/wp/v2/menu-items/{id:[\d]+}', policy: new Policy(Access::Cap, 'edit_theme_options', param: 'id', subject: Subject::MenuItem, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this post.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this post.'))]
+    #[Route(Method::Patch, '/wp/v2/menu-items/{id:[\d]+}', policy: new Policy(Access::Cap, 'edit_theme_options', param: 'id', subject: Subject::MenuItem, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this post.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this post.'))]
     public function updateItem(Request $request, string $id): Response
     {
         $item = $this->menus->findItem((int) $id);
@@ -242,7 +242,7 @@ final readonly class MenusController
     }
 
     /** Deletes a menu item. */
-    #[Route(Method::Delete, '/wp/v2/menu-items/{id:\d+}', policy: new Policy(Access::Cap, 'edit_theme_options', param: 'id', subject: Subject::MenuItem, signIn: 'rest_cannot_delete', signInMessage: 'Sorry, you are not allowed to delete this post.', refuse: 'rest_cannot_delete', message: 'Sorry, you are not allowed to delete this post.'))]
+    #[Route(Method::Delete, '/wp/v2/menu-items/{id:[\d]+}', policy: new Policy(Access::Cap, 'edit_theme_options', param: 'id', subject: Subject::MenuItem, signIn: 'rest_cannot_delete', signInMessage: 'Sorry, you are not allowed to delete this post.', refuse: 'rest_cannot_delete', message: 'Sorry, you are not allowed to delete this post.'))]
     public function deleteItem(Request $request, string $id): Response
     {
         $item = $this->menus->findItem((int) $id);

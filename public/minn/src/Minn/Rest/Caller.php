@@ -10,6 +10,7 @@ use Minn\Auth\Authenticator;
 use Minn\Auth\Capabilities;
 use Minn\Http\Request;
 use Minn\RestError;
+use Minn\Runtime\Runtime;
 
 /**
  * Who is making this REST call. Resolved once from the cookie and nonce;
@@ -49,9 +50,17 @@ final class Caller
         return $this->session()?->id() ?? 0;
     }
 
-    /** Whether the caller holds a capability, on a post when given. */
+    /**
+     * Whether the caller holds a capability, on a post when given. With
+     * plugins loaded the answer is WordPress's: the same mapping, then
+     * map_meta_cap and user_has_cap, where role editors and lock plugins
+     * have their say.
+     */
     public function can(string $capability, ?int $postId = null): bool
     {
+        if (Runtime::booted()) {
+            return \user_can($this->id(), $capability, ...($postId === null ? [] : [$postId]));
+        }
         return $this->capabilities->can($this->id(), $capability, $postId);
     }
 

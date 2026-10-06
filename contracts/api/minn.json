@@ -1102,7 +1102,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/Appearance.php",
-            "lines": 79,
+            "lines": 82,
             "doc": "A person's Minn Admin appearance: the colour scheme and its custom\ntoken maps, stored where the app stores them (user meta\nminn_admin_appearance, a serialized array) so the choice survives an\neject. The two WordPress-era switches, \"Minn is the default admin\" and\n\"Minn admin bar on the site\", are always on here: there is no other\nadmin and no other bar, so the engine reports them true and ignores\nwrites to them.",
             "implements": [],
             "extends": null,
@@ -1181,7 +1181,7 @@
                     "signature": "read(int $userId): array",
                     "doc": "A user's saved appearance, normalised.",
                     "shapes": [
-                        "@return array{scheme: string, custom: array, defaultAdmin: bool, frontBar: bool}"
+                        "@return array{scheme: string, custom: array, defaultAdmin: bool, frontBar: bool, font: string}"
                     ],
                     "params": [
                         {
@@ -1220,7 +1220,7 @@
                         }
                     ],
                     "line": 58,
-                    "end": 67
+                    "end": 68
                 },
                 {
                     "routes": [],
@@ -1239,8 +1239,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 70,
-                    "end": 86
+                    "line": 71,
+                    "end": 89
                 },
                 {
                     "routes": [],
@@ -1259,8 +1259,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 89,
-                    "end": 96
+                    "line": 92,
+                    "end": 99
                 }
             ]
         },
@@ -1804,7 +1804,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/Dashboard.php",
-            "lines": 290,
+            "lines": 273,
             "doc": "The overview payload: stat cards, the activity chart, and the recent\nactivity feed, plus the per-bar activity drill-down.",
             "implements": [],
             "extends": null,
@@ -1812,6 +1812,7 @@
                 "Minn\\Admin\\ActivityChart",
                 "Minn\\Admin\\ActivityFeed",
                 "Minn\\Admin\\Format",
+                "Minn\\Admin\\UploadsSize",
                 "Minn\\Auth\\Capabilities",
                 "Minn\\Content\\Site",
                 "Minn\\Content\\Users",
@@ -2011,8 +2012,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 171,
-                    "end": 189
+                    "line": 172,
+                    "end": 190
                 },
                 {
                     "routes": [],
@@ -2031,8 +2032,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 192,
-                    "end": 212
+                    "line": 193,
+                    "end": 213
                 },
                 {
                     "routes": [],
@@ -2065,8 +2066,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 259,
-                    "end": 262
+                    "line": 260,
+                    "end": 263
                 },
                 {
                     "routes": [],
@@ -2165,7 +2166,7 @@
                     "name": "mediaCard",
                     "static": false,
                     "visibility": "private",
-                    "signature": "mediaCard(array $media): array",
+                    "signature": "mediaCard(array $media, int $userId): array",
                     "doc": "",
                     "shapes": [
                         "@param array<string, int> $media"
@@ -2177,10 +2178,17 @@
                             "shape": "array<string, int>",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "userId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
                         }
                     ],
                     "line": 112,
-                    "end": 115
+                    "end": 116
                 },
                 {
                     "routes": [],
@@ -2241,8 +2249,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 129,
-                    "end": 161
+                    "line": 130,
+                    "end": 162
                 },
                 {
                     "routes": [],
@@ -2280,8 +2288,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 223,
-                    "end": 256
+                    "line": 224,
+                    "end": 257
                 },
                 {
                     "routes": [],
@@ -2302,8 +2310,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 265,
-                    "end": 273
+                    "line": 266,
+                    "end": 274
                 },
                 {
                     "routes": [],
@@ -2316,20 +2324,8 @@
                         "@return array{approved: int, moderated: int}"
                     ],
                     "params": [],
-                    "line": 276,
-                    "end": 287
-                },
-                {
-                    "routes": [],
-                    "name": "uploadsSize",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "uploadsSize(): int",
-                    "doc": "The uploads footprint: the plugin's cached transient when fresh, else a walk.",
-                    "shapes": [],
-                    "params": [],
-                    "line": 290,
-                    "end": 305
+                    "line": 277,
+                    "end": 288
                 }
             ]
         },
@@ -2525,7 +2521,8 @@
             "usedBy": [
                 "Minn\\Admin\\ActivityFeed",
                 "Minn\\Admin\\Dashboard",
-                "Minn\\Admin\\Notifications"
+                "Minn\\Admin\\Notifications",
+                "Minn\\Admin\\UploadsSize"
             ],
             "constructor": null,
             "cases": [],
@@ -6645,6 +6642,197 @@
             ]
         },
         {
+            "name": "Minn\\Admin\\UploadsSize",
+            "short": "UploadsSize",
+            "namespace": "Minn\\Admin",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Admin/UploadsSize.php",
+            "lines": 93,
+            "doc": "How much the uploads folder holds, as Minn Admin 0.43 works it out and\nshares it through the minn_admin_uploads_size transient: the cached\nfigure in either shape it has had ({bytes, partial}, or a bare count from\nbefore the budget), else a walk only an administrator may start, one at a\ntime behind a two-minute lock, stopped after four seconds and kept as\npartial for an hour instead of twelve.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Admin\\Format",
+                "Minn\\Auth\\Capabilities",
+                "Minn\\Content\\Site",
+                "Minn\\Support\\Serialized"
+            ],
+            "usedBy": [
+                "Minn\\Admin\\Dashboard"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Content\\Site $site, Minn\\Auth\\Capabilities $capabilities, string $dir)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "site",
+                        "type": "Minn\\Content\\Site",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "capabilities",
+                        "type": "Minn\\Auth\\Capabilities",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "dir",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 26,
+                "end": 28
+            },
+            "cases": [],
+            "constants": [
+                {
+                    "name": "CACHE",
+                    "value": "'_transient_minn_admin_uploads_size'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "EXPIRES",
+                    "value": "'_transient_timeout_minn_admin_uploads_size'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "LOCK",
+                    "value": "'minn_admin_uploads_size_lock'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "BUDGET",
+                    "value": "4.0",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "site",
+                    "type": "Minn\\Content\\Site",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "capabilities",
+                    "type": "Minn\\Auth\\Capabilities",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "dir",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "label",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "label(int $userId): string",
+                    "doc": "The Media card's \"N used\" line, \"over N used\" for a walk cut short, or \"\" when the size is not known.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "userId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 31,
+                    "end": 38
+                },
+                {
+                    "routes": [],
+                    "name": "measure",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "measure(int $userId): ?array",
+                    "doc": "The uploads size, cached or walked now.",
+                    "shapes": [
+                        "@return array{bytes: int, partial: bool}|null null when nothing is known and this caller may not find out"
+                    ],
+                    "params": [
+                        {
+                            "name": "userId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 45,
+                    "end": 59
+                },
+                {
+                    "routes": [],
+                    "name": "cached",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "cached(): ?array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array{bytes: int, partial: bool}|null"
+                    ],
+                    "params": [],
+                    "line": 62,
+                    "end": 74
+                },
+                {
+                    "routes": [],
+                    "name": "lock",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "lock(): bool",
+                    "doc": "Whether this request may walk: no other has started one in the last two minutes.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 77,
+                    "end": 85
+                },
+                {
+                    "routes": [],
+                    "name": "walk",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "walk(): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array{bytes: int, partial: bool}"
+                    ],
+                    "params": [],
+                    "line": 88,
+                    "end": 110
+                }
+            ]
+        },
+        {
             "name": "Minn\\Admin\\V1Controller",
             "short": "V1Controller",
             "namespace": "Minn\\Admin",
@@ -7924,6 +8112,7 @@
                 "Minn\\Admin\\HiddenIntegrations",
                 "Minn\\Admin\\LanguageController",
                 "Minn\\Admin\\Notifications",
+                "Minn\\Admin\\UploadsSize",
                 "Minn\\Cli\\Runtime",
                 "Minn\\Content\\Reader",
                 "Minn\\Context",
@@ -29201,6 +29390,7 @@
                 "Minn\\Admin\\SiteController",
                 "Minn\\Admin\\ThemesController",
                 "Minn\\Admin\\Translations",
+                "Minn\\Admin\\UploadsSize",
                 "Minn\\Blocks\\Dynamic\\Dates",
                 "Minn\\Blocks\\Dynamic\\LatestComments",
                 "Minn\\Blocks\\Dynamic\\LatestPosts",
@@ -51903,6 +52093,7 @@
                 "Minn\\Http\\CookieText",
                 "Minn\\Http\\Destination",
                 "Minn\\Http\\Download",
+                "Minn\\Http\\Envelope",
                 "Minn\\Http\\Exchange",
                 "Minn\\Http\\Failure",
                 "Minn\\Http\\Fake",
@@ -51910,6 +52101,7 @@
                 "Minn\\Http\\IriParts",
                 "Minn\\Http\\Kernel",
                 "Minn\\Http\\Location",
+                "Minn\\Http\\Matched",
                 "Minn\\Http\\Method",
                 "Minn\\Http\\Outbound",
                 "Minn\\Http\\Policy",
@@ -53634,6 +53826,84 @@
             ]
         },
         {
+            "name": "Minn\\Http\\Envelope",
+            "short": "Envelope",
+            "namespace": "Minn\\Http",
+            "kind": "interface",
+            "file": "public/minn/src/Minn/Http/Envelope.php",
+            "lines": 9,
+            "doc": "What runs around a matched route once the router knows the route takes\nthe request: the place a host lets other code refuse, answer or edit it\n(the runtime's REST server filters). The router hands over the argument\ncheck's refusal and the policy's, unthrown, because that code may clear\nthe one and must never run the handler past the other. Without an\nenvelope the router throws them itself.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http",
+                "Minn\\Http\\Matched",
+                "Minn\\Http\\Request",
+                "Minn\\Http\\Response",
+                "Minn\\RestError"
+            ],
+            "usedBy": [
+                "Minn\\Http\\Router",
+                "Minn\\Rest\\RuntimeEnvelope"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "around",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "around(Minn\\Http\\Matched $matched, Minn\\Http\\Request $request, ?Minn\\RestError $invalid, ?Minn\\RestError $refusal, Closure $invoke): Minn\\Http\\Response",
+                    "doc": "The answer to a matched request, refusals included.",
+                    "shapes": [
+                        "@param Closure(): Response $invoke the route's handler; it may throw RestError"
+                    ],
+                    "params": [
+                        {
+                            "name": "matched",
+                            "type": "Minn\\Http\\Matched",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "invalid",
+                            "type": "?Minn\\RestError",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "refusal",
+                            "type": "?Minn\\RestError",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "invoke",
+                            "type": "Closure",
+                            "shape": "Closure(): Response",
+                            "default": null,
+                            "doc": "the route's handler; it may throw RestError"
+                        }
+                    ],
+                    "line": 25,
+                    "end": 25
+                }
+            ]
+        },
+        {
             "name": "Minn\\Http\\Exchange",
             "short": "Exchange",
             "namespace": "Minn\\Http",
@@ -55048,6 +55318,124 @@
             ]
         },
         {
+            "name": "Minn\\Http\\Matched",
+            "short": "Matched",
+            "namespace": "Minn\\Http",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Http/Matched.php",
+            "lines": 15,
+            "doc": "A route the router matched to a request and whose policy it judged: the\nroute, the object and method that answer it, the pattern's captures, and\nevery method the same handler answers on that pattern (the reference\nlists POST, PUT and PATCH together for one edit handler).",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http",
+                "Minn\\Http\\Route"
+            ],
+            "usedBy": [
+                "Minn\\Http\\Envelope",
+                "Minn\\Http\\Router",
+                "Minn\\Rest\\RuntimeEnvelope"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Http\\Route $route, object $handler, string $method, array $captures, array $methods)",
+                "doc": "",
+                "shapes": [
+                    "@param array<string, string> $captures",
+                    "@param list<string> $methods"
+                ],
+                "params": [
+                    {
+                        "name": "route",
+                        "type": "Minn\\Http\\Route",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "handler",
+                        "type": "object",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "method",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "captures",
+                        "type": "array",
+                        "shape": "array<string, string>",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "methods",
+                        "type": "array",
+                        "shape": "list<string>",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 19,
+                "end": 26
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "route",
+                    "type": "Minn\\Http\\Route",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "handler",
+                    "type": "object",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "method",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "captures",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "methods",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                }
+            ],
+            "methods": []
+        },
+        {
             "name": "Minn\\Http\\Method",
             "short": "Method",
             "namespace": "Minn\\Http",
@@ -55104,6 +55492,7 @@
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\PostsWriteController",
                 "Minn\\Rest\\RevisionsController",
+                "Minn\\Rest\\RuntimeEnvelope",
                 "Minn\\Rest\\SearchController",
                 "Minn\\Rest\\SettingsController",
                 "Minn\\Rest\\TaxonomiesController",
@@ -55529,7 +55918,7 @@
             "namespace": "Minn\\Http",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Http/Policy.php",
-            "lines": 103,
+            "lines": 105,
             "doc": "What a route requires of its caller, as data on the route: the router\nenforces it before the handler runs, so a grep over the attributes is\nthe authorization surface. The two refusals are the reference's: a\ncaller who is not signed in gets the sign-in code (401), a signed-in\ncaller who lacks the capability gets the refusal code (403); how a bad\nnonce is answered belongs to whoever judges the policy. A policy that\nnames a subject has the record looked up first, and answers the\nrecord's 404 before either refusal, which is the reference's order.\n\nWritten inline in the attribute with `new`, which is what an attribute\nargument allows: `policy: new Policy(Access::Cap, 'upload_files',\nrefuse: 'rest_cannot_create', message: '...')`.",
             "implements": [],
             "extends": null,
@@ -55590,7 +55979,7 @@
                 "Minn\\Runtime\\AjaxController"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Http\\Access $access = Minn\\Http\\Access::Public, ?string $cap = NULL, array $caps = array ( ), ?string $param = NULL, string $signIn = 'rest_not_logged_in', string $signInMessage = 'You are not currently logged in.', string $refuse = 'rest_forbidden', string $message = 'Sorry, you are not allowed to do that.', ?Minn\\Http\\Policy $edit = NULL, ?Minn\\Http\\Subject $subject = NULL, ?string $missing = NULL, ?string $missingMessage = NULL)",
+                "signature": "__construct(Minn\\Http\\Access $access = Minn\\Http\\Access::Public, ?string $cap = NULL, array $caps = array ( ), ?string $param = NULL, string $signIn = 'rest_not_logged_in', string $signInMessage = 'You are not currently logged in.', string $refuse = 'rest_forbidden', string $message = 'Sorry, you are not allowed to do that.', ?Minn\\Http\\Policy $edit = NULL, ?Minn\\Http\\Subject $subject = NULL, ?string $missing = NULL, ?string $missingMessage = NULL, int $signInStatus = 401)",
                 "doc": "",
                 "shapes": [
                     "@param list<string> $caps further capabilities every one of which the caller must hold"
@@ -55679,11 +56068,18 @@
                         "shape": "string|null",
                         "default": "NULL",
                         "doc": "its message; the subject's own when null"
+                    },
+                    {
+                        "name": "signInStatus",
+                        "type": "int",
+                        "shape": "",
+                        "default": "401",
+                        "doc": "the status a signed-out caller is refused with (the reference answers some routes' signed-out writes 404, not 401)"
                     }
                 ],
                 "visibility": "public",
-                "line": 31,
-                "end": 45
+                "line": 32,
+                "end": 47
             },
             "cases": [],
             "constants": [],
@@ -55795,6 +56191,15 @@
                     "doc": "",
                     "visibility": "public",
                     "promoted": true
+                },
+                {
+                    "name": "signInStatus",
+                    "type": "int",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
                 }
             ],
             "methods": [
@@ -55807,8 +56212,8 @@
                     "doc": "Whether the route is open to anyone with nothing to look up, so the gate need not run at all.",
                     "shapes": [],
                     "params": [],
-                    "line": 48,
-                    "end": 51
+                    "line": 50,
+                    "end": 53
                 },
                 {
                     "routes": [],
@@ -55819,8 +56224,8 @@
                     "doc": "The 404 code a missing subject earns.",
                     "shapes": [],
                     "params": [],
-                    "line": 54,
-                    "end": 57
+                    "line": 56,
+                    "end": 59
                 },
                 {
                     "routes": [],
@@ -55831,8 +56236,8 @@
                     "doc": "The 404 message a missing subject earns.",
                     "shapes": [],
                     "params": [],
-                    "line": 60,
-                    "end": 63
+                    "line": 62,
+                    "end": 65
                 },
                 {
                     "routes": [],
@@ -55845,8 +56250,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 71,
-                    "end": 78
+                    "line": 73,
+                    "end": 80
                 },
                 {
                     "routes": [],
@@ -55859,8 +56264,8 @@
                         "@return array<string, mixed>"
                     ],
                     "params": [],
-                    "line": 81,
-                    "end": 105
+                    "line": 83,
+                    "end": 107
                 },
                 {
                     "routes": [],
@@ -55871,8 +56276,8 @@
                     "doc": "The policy in one line, for the route index and the docs.",
                     "shapes": [],
                     "params": [],
-                    "line": 108,
-                    "end": 122
+                    "line": 110,
+                    "end": 124
                 }
             ]
         },
@@ -56264,6 +56669,7 @@
                 "Minn\\Front\\ProbeController",
                 "Minn\\Front\\Resolver",
                 "Minn\\Front\\SitemapController",
+                "Minn\\Http\\Envelope",
                 "Minn\\Http\\Kernel",
                 "Minn\\Http\\Router",
                 "Minn\\Login\\LoginController",
@@ -56291,6 +56697,7 @@
                 "Minn\\Rest\\PostsWriteController",
                 "Minn\\Rest\\Reply",
                 "Minn\\Rest\\RevisionsController",
+                "Minn\\Rest\\RuntimeEnvelope",
                 "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Rest\\SearchController",
                 "Minn\\Rest\\Services",
@@ -56851,6 +57258,7 @@
                 "Minn\\Front\\Maintenance",
                 "Minn\\Front\\ProbeController",
                 "Minn\\Front\\SitemapController",
+                "Minn\\Http\\Envelope",
                 "Minn\\Http\\Failure",
                 "Minn\\Http\\Kernel",
                 "Minn\\Http\\Router",
@@ -56872,6 +57280,7 @@
                 "Minn\\Rest\\PostsWriteController",
                 "Minn\\Rest\\Reply",
                 "Minn\\Rest\\RevisionsController",
+                "Minn\\Rest\\RuntimeEnvelope",
                 "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Rest\\SearchController",
                 "Minn\\Rest\\SettingsController",
@@ -57243,6 +57652,7 @@
                 "Minn\\Front\\FrontController",
                 "Minn\\Front\\ProbeController",
                 "Minn\\Front\\SitemapController",
+                "Minn\\Http\\Matched",
                 "Minn\\Http\\RouteRow",
                 "Minn\\Http\\Router",
                 "Minn\\Login\\LoginController",
@@ -57489,7 +57899,8 @@
             ],
             "usedBy": [
                 "Minn\\Http\\Router",
-                "Minn\\Rest\\Catalogue"
+                "Minn\\Rest\\Catalogue",
+                "Minn\\Rest\\RuntimeEnvelope"
             ],
             "constructor": {
                 "signature": "__construct(string $method, string $pattern, string $name, string $handler, string $summary, ?Minn\\Http\\Policy $policy, array $args, array $body, bool $index)",
@@ -57722,12 +58133,14 @@
             "namespace": "Minn\\Http",
             "kind": "final class",
             "file": "public/minn/src/Minn/Http/Router.php",
-            "lines": 132,
+            "lines": 206,
             "doc": "Matches a request to a #[Route] on one of the registered handler\nobjects, has the check refuse a bad argument, has the gate judge the\nroute's policy, and invokes the method with the request plus the named\npattern captures. That order is the reference's: an invalid parameter is\nanswered before the caller is looked at. The gate is the one\nthing a router cannot be built without: a policy nobody judges is a\nroute nobody may call.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Http",
+                "Minn\\Http\\Envelope",
+                "Minn\\Http\\Matched",
                 "Minn\\Http\\Method",
                 "Minn\\Http\\Policy",
                 "Minn\\Http\\Request",
@@ -57746,7 +58159,7 @@
                 "Minn\\Rest\\IndexController"
             ],
             "constructor": {
-                "signature": "__construct(Closure $gate, ?Closure $check = NULL)",
+                "signature": "__construct(Closure $gate, ?Closure $check = NULL, ?Minn\\Http\\Envelope $envelope = NULL)",
                 "doc": "",
                 "shapes": [
                     "@param Closure(Policy $policy, Request $request, array<string, string> $captures): void $gate throws when the policy refuses the caller",
@@ -57766,11 +58179,18 @@
                         "shape": "",
                         "default": "NULL",
                         "doc": ""
+                    },
+                    {
+                        "name": "envelope",
+                        "type": "?Minn\\Http\\Envelope",
+                        "shape": "Envelope|null",
+                        "default": "NULL",
+                        "doc": "what runs around a matched route instead of the router throwing its refusals itself"
                     }
                 ],
                 "visibility": "public",
-                "line": 30,
-                "end": 32
+                "line": 31,
+                "end": 33
             },
             "cases": [],
             "constants": [],
@@ -57801,6 +58221,15 @@
                     "doc": "",
                     "visibility": "private",
                     "promoted": true
+                },
+                {
+                    "name": "envelope",
+                    "type": "?Minn\\Http\\Envelope",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
                 }
             ],
             "methods": [
@@ -57821,8 +58250,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 35,
-                    "end": 50
+                    "line": 36,
+                    "end": 51
                 },
                 {
                     "routes": [],
@@ -57835,8 +58264,8 @@
                         "@return array<string, list<string>>"
                     ],
                     "params": [],
-                    "line": 53,
-                    "end": 62
+                    "line": 54,
+                    "end": 63
                 },
                 {
                     "routes": [],
@@ -57849,8 +58278,8 @@
                         "@return list<RouteRow>"
                     ],
                     "params": [],
-                    "line": 70,
-                    "end": 77
+                    "line": 71,
+                    "end": 78
                 },
                 {
                     "routes": [],
@@ -57871,8 +58300,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 88,
-                    "end": 105
+                    "line": 89,
+                    "end": 106
                 },
                 {
                     "routes": [],
@@ -57891,8 +58320,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 119,
-                    "end": 151
+                    "line": 120,
+                    "end": 143
                 },
                 {
                     "routes": [],
@@ -57927,8 +58356,161 @@
                             "doc": ""
                         }
                     ],
-                    "line": 108,
-                    "end": 116
+                    "line": 109,
+                    "end": 117
+                },
+                {
+                    "routes": [],
+                    "name": "arguments",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "arguments(ReflectionMethod $method, array $captures): array",
+                    "doc": "The captures a handler takes, by parameter name; a capture spelled as\nthe reference spells it (user_id) binds to its camelCase parameter.",
+                    "shapes": [
+                        "@param array<string, string> $captures",
+                        "@return array<string, string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "method",
+                            "type": "ReflectionMethod",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "captures",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 152,
+                    "end": 163
+                },
+                {
+                    "routes": [],
+                    "name": "answer",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "answer(Minn\\Http\\Route $route, Minn\\Http\\Request $request, array $captures, Closure $invoke): Minn\\Http\\Response",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, string> $captures",
+                        "@param Closure(): Response $invoke"
+                    ],
+                    "params": [
+                        {
+                            "name": "route",
+                            "type": "Minn\\Http\\Route",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "captures",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "invoke",
+                            "type": "Closure",
+                            "shape": "Closure(): Response",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 169,
+                    "end": 178
+                },
+                {
+                    "routes": [],
+                    "name": "enveloped",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "enveloped(Minn\\Http\\Matched $matched, Minn\\Http\\Request $request, Closure $invoke): Minn\\Http\\Response",
+                    "doc": "The refusals judged up front and handed over unthrown. The policy is\njudged even past a bad argument, because the envelope may clear that;\na policy that declines the route throws before anything hears of it.",
+                    "shapes": [
+                        "@param Closure(): Response $invoke"
+                    ],
+                    "params": [
+                        {
+                            "name": "matched",
+                            "type": "Minn\\Http\\Matched",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "invoke",
+                            "type": "Closure",
+                            "shape": "Closure(): Response",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 187,
+                    "end": 206
+                },
+                {
+                    "routes": [],
+                    "name": "methodsOf",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "methodsOf(object $handler, string $name, string $pattern, Minn\\Http\\Method $asked): array",
+                    "doc": "The methods one handler answers on one pattern alongside the request's,\ngrouped as the reference registers them: reading alone, deleting\nalone, and creating or editing together (POST, PUT, PATCH).",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "handler",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "pattern",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "asked",
+                            "type": "Minn\\Http\\Method",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 215,
+                    "end": 225
                 }
             ]
         },
@@ -72261,6 +72843,7 @@
                 "Minn\\Cli\\PluginCommand",
                 "Minn\\Cli\\ThemeCommand",
                 "Minn\\Engine",
+                "Minn\\Http\\Envelope",
                 "Minn\\Http\\Kernel",
                 "Minn\\Http\\Router",
                 "Minn\\Media\\Uploads",
@@ -72284,6 +72867,7 @@
                 "Minn\\Rest\\PostsWriteController",
                 "Minn\\Rest\\Reply",
                 "Minn\\Rest\\RevisionsController",
+                "Minn\\Rest\\RuntimeEnvelope",
                 "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Rest\\SearchController",
                 "Minn\\Rest\\SettingsController",
@@ -72876,7 +73460,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Api.php",
-            "lines": 182,
+            "lines": 184,
             "doc": "The REST API: wires the controllers for one request and dispatches a\nroute. Errors thrown anywhere underneath become the reference's error\npayload under the reference's headers.",
             "implements": [],
             "extends": null,
@@ -72927,6 +73511,7 @@
                 "Minn\\Rest\\PostsWriteController",
                 "Minn\\Rest\\Reply",
                 "Minn\\Rest\\RevisionsController",
+                "Minn\\Rest\\RuntimeEnvelope",
                 "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Rest\\SearchController",
                 "Minn\\Rest\\Services",
@@ -73064,7 +73649,7 @@
                         }
                     ],
                     "line": 57,
-                    "end": 63
+                    "end": 64
                 },
                 {
                     "routes": [],
@@ -73075,8 +73660,8 @@
                     "doc": "Who is making this request.",
                     "shapes": [],
                     "params": [],
-                    "line": 116,
-                    "end": 119
+                    "line": 117,
+                    "end": 120
                 },
                 {
                     "routes": [],
@@ -73087,8 +73672,8 @@
                     "doc": "The wp/v2 post shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 122,
-                    "end": 125
+                    "line": 123,
+                    "end": 126
                 },
                 {
                     "routes": [],
@@ -73099,8 +73684,8 @@
                     "doc": "The wp/v2 term shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 128,
-                    "end": 131
+                    "line": 129,
+                    "end": 132
                 },
                 {
                     "routes": [],
@@ -73111,8 +73696,8 @@
                     "doc": "The wp/v2 user shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 134,
-                    "end": 137
+                    "line": 135,
+                    "end": 138
                 },
                 {
                     "routes": [],
@@ -73123,8 +73708,8 @@
                     "doc": "The post types the surface knows.",
                     "shapes": [],
                     "params": [],
-                    "line": 140,
-                    "end": 143
+                    "line": 141,
+                    "end": 144
                 },
                 {
                     "routes": [],
@@ -73150,8 +73735,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 150,
-                    "end": 157
+                    "line": 151,
+                    "end": 158
                 },
                 {
                     "routes": [],
@@ -73170,8 +73755,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 160,
-                    "end": 185
+                    "line": 161,
+                    "end": 187
                 },
                 {
                     "routes": [],
@@ -73190,8 +73775,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 193,
-                    "end": 200
+                    "line": 195,
+                    "end": 202
                 },
                 {
                     "routes": [],
@@ -73219,8 +73804,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 71,
-                    "end": 113
+                    "line": 72,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -73239,8 +73824,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 202,
-                    "end": 206
+                    "line": 204,
+                    "end": 208
                 },
                 {
                     "routes": [],
@@ -73266,8 +73851,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 212,
-                    "end": 216
+                    "line": 214,
+                    "end": 218
                 }
             ]
         },
@@ -73431,12 +74016,12 @@
             "methods": [
                 {
                     "routes": [
-                        "GET /wp/v2/users/{id:\\d+|me}/application-passwords (cap edit_user on {id}; user {id} must exist)"
+                        "GET /wp/v2/users/{user_id:(?:[\\d]+|me)}/application-passwords (cap edit_user on {user_id}; user {user_id} must exist)"
                     ],
                     "name": "list",
                     "static": false,
                     "visibility": "public",
-                    "signature": "list(Minn\\Http\\Request $request, string $id): Minn\\Http\\Response",
+                    "signature": "list(Minn\\Http\\Request $request, string $userId): Minn\\Http\\Response",
                     "doc": "The user's application passwords.",
                     "shapes": [],
                     "params": [
@@ -73448,7 +74033,7 @@
                             "doc": ""
                         },
                         {
-                            "name": "id",
+                            "name": "userId",
                             "type": "string",
                             "shape": "",
                             "default": null,
@@ -73460,12 +74045,12 @@
                 },
                 {
                     "routes": [
-                        "POST /wp/v2/users/{id:\\d+|me}/application-passwords (cap edit_user on {id}; user {id} must exist)"
+                        "POST /wp/v2/users/{user_id:(?:[\\d]+|me)}/application-passwords (cap edit_user on {user_id}; user {user_id} must exist)"
                     ],
                     "name": "create",
                     "static": false,
                     "visibility": "public",
-                    "signature": "create(Minn\\Http\\Request $request, string $id): Minn\\Http\\Response",
+                    "signature": "create(Minn\\Http\\Request $request, string $userId): Minn\\Http\\Response",
                     "doc": "Mints one; the plain password is in this answer only.",
                     "shapes": [],
                     "params": [
@@ -73477,7 +74062,7 @@
                             "doc": ""
                         },
                         {
-                            "name": "id",
+                            "name": "userId",
                             "type": "string",
                             "shape": "",
                             "default": null,
@@ -73489,12 +74074,12 @@
                 },
                 {
                     "routes": [
-                        "DELETE /wp/v2/users/{id:\\d+|me}/application-passwords (cap edit_user on {id}; user {id} must exist)"
+                        "DELETE /wp/v2/users/{user_id:(?:[\\d]+|me)}/application-passwords (cap edit_user on {user_id}; user {user_id} must exist)"
                     ],
                     "name": "deleteAll",
                     "static": false,
                     "visibility": "public",
-                    "signature": "deleteAll(Minn\\Http\\Request $request, string $id): Minn\\Http\\Response",
+                    "signature": "deleteAll(Minn\\Http\\Request $request, string $userId): Minn\\Http\\Response",
                     "doc": "Removes every one.",
                     "shapes": [],
                     "params": [
@@ -73506,7 +74091,7 @@
                             "doc": ""
                         },
                         {
-                            "name": "id",
+                            "name": "userId",
                             "type": "string",
                             "shape": "",
                             "default": null,
@@ -73518,12 +74103,12 @@
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/users/{id:\\d+|me}/application-passwords/introspect (cap edit_user on {id}; user {id} must exist)"
+                        "GET /wp/v2/users/{user_id:(?:[\\d]+|me)}/application-passwords/introspect (cap edit_user on {user_id}; user {user_id} must exist)"
                     ],
                     "name": "introspect",
                     "static": false,
                     "visibility": "public",
-                    "signature": "introspect(Minn\\Http\\Request $request, string $id): Minn\\Http\\Response",
+                    "signature": "introspect(Minn\\Http\\Request $request, string $userId): Minn\\Http\\Response",
                     "doc": "The password the current Basic auth session used.",
                     "shapes": [],
                     "params": [
@@ -73535,7 +74120,7 @@
                             "doc": ""
                         },
                         {
-                            "name": "id",
+                            "name": "userId",
                             "type": "string",
                             "shape": "",
                             "default": null,
@@ -73547,12 +74132,12 @@
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/users/{id:\\d+|me}/application-passwords/{uuid:[0-9a-fA-F-]+} (cap edit_user on {id}; user {id} must exist)"
+                        "GET /wp/v2/users/{user_id:(?:[\\d]+|me)}/application-passwords/{uuid:[\\w\\-]+} (cap edit_user on {user_id}; user {user_id} must exist)"
                     ],
                     "name": "single",
                     "static": false,
                     "visibility": "public",
-                    "signature": "single(Minn\\Http\\Request $request, string $id, string $uuid): Minn\\Http\\Response",
+                    "signature": "single(Minn\\Http\\Request $request, string $userId, string $uuid): Minn\\Http\\Response",
                     "doc": "One password by uuid.",
                     "shapes": [],
                     "params": [
@@ -73564,7 +74149,7 @@
                             "doc": ""
                         },
                         {
-                            "name": "id",
+                            "name": "userId",
                             "type": "string",
                             "shape": "",
                             "default": null,
@@ -73583,14 +74168,14 @@
                 },
                 {
                     "routes": [
-                        "POST /wp/v2/users/{id:\\d+|me}/application-passwords/{uuid:[0-9a-fA-F-]+} (cap edit_user on {id}; user {id} must exist)",
-                        "PUT /wp/v2/users/{id:\\d+|me}/application-passwords/{uuid:[0-9a-fA-F-]+} (cap edit_user on {id}; user {id} must exist)",
-                        "PATCH /wp/v2/users/{id:\\d+|me}/application-passwords/{uuid:[0-9a-fA-F-]+} (cap edit_user on {id}; user {id} must exist)"
+                        "POST /wp/v2/users/{user_id:(?:[\\d]+|me)}/application-passwords/{uuid:[\\w\\-]+} (cap edit_user on {user_id}; user {user_id} must exist)",
+                        "PUT /wp/v2/users/{user_id:(?:[\\d]+|me)}/application-passwords/{uuid:[\\w\\-]+} (cap edit_user on {user_id}; user {user_id} must exist)",
+                        "PATCH /wp/v2/users/{user_id:(?:[\\d]+|me)}/application-passwords/{uuid:[\\w\\-]+} (cap edit_user on {user_id}; user {user_id} must exist)"
                     ],
                     "name": "update",
                     "static": false,
                     "visibility": "public",
-                    "signature": "update(Minn\\Http\\Request $request, string $id, string $uuid): Minn\\Http\\Response",
+                    "signature": "update(Minn\\Http\\Request $request, string $userId, string $uuid): Minn\\Http\\Response",
                     "doc": "Renames one.",
                     "shapes": [],
                     "params": [
@@ -73602,7 +74187,7 @@
                             "doc": ""
                         },
                         {
-                            "name": "id",
+                            "name": "userId",
                             "type": "string",
                             "shape": "",
                             "default": null,
@@ -73621,12 +74206,12 @@
                 },
                 {
                     "routes": [
-                        "DELETE /wp/v2/users/{id:\\d+|me}/application-passwords/{uuid:[0-9a-fA-F-]+} (cap edit_user on {id}; user {id} must exist)"
+                        "DELETE /wp/v2/users/{user_id:(?:[\\d]+|me)}/application-passwords/{uuid:[\\w\\-]+} (cap edit_user on {user_id}; user {user_id} must exist)"
                     ],
                     "name": "delete",
                     "static": false,
                     "visibility": "public",
-                    "signature": "delete(Minn\\Http\\Request $request, string $id, string $uuid): Minn\\Http\\Response",
+                    "signature": "delete(Minn\\Http\\Request $request, string $userId, string $uuid): Minn\\Http\\Response",
                     "doc": "Removes one.",
                     "shapes": [],
                     "params": [
@@ -73638,7 +74223,7 @@
                             "doc": ""
                         },
                         {
-                            "name": "id",
+                            "name": "userId",
                             "type": "string",
                             "shape": "",
                             "default": null,
@@ -74164,7 +74749,7 @@
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/blocks/{id:\\d+} (public; block {id} must exist)"
+                        "GET /wp/v2/blocks/{id:[\\d]+} (public; block {id} must exist)"
                     ],
                     "name": "single",
                     "static": false,
@@ -74215,9 +74800,9 @@
                 },
                 {
                     "routes": [
-                        "POST /wp/v2/blocks/{id:\\d+} (cap edit_post on {id}; block {id} must exist)",
-                        "PUT /wp/v2/blocks/{id:\\d+} (cap edit_post on {id}; block {id} must exist)",
-                        "PATCH /wp/v2/blocks/{id:\\d+} (cap edit_post on {id}; block {id} must exist)"
+                        "POST /wp/v2/blocks/{id:[\\d]+} (cap edit_post on {id}; block {id} must exist)",
+                        "PUT /wp/v2/blocks/{id:[\\d]+} (cap edit_post on {id}; block {id} must exist)",
+                        "PATCH /wp/v2/blocks/{id:[\\d]+} (cap edit_post on {id}; block {id} must exist)"
                     ],
                     "name": "update",
                     "static": false,
@@ -74246,7 +74831,7 @@
                 },
                 {
                     "routes": [
-                        "DELETE /wp/v2/blocks/{id:\\d+} (cap delete_post on {id}; block {id} must exist)"
+                        "DELETE /wp/v2/blocks/{id:[\\d]+} (cap delete_post on {id}; block {id} must exist)"
                     ],
                     "name": "delete",
                     "static": false,
@@ -74281,7 +74866,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/Caller.php",
-            "lines": 95,
+            "lines": 103,
             "doc": "Who is making this REST call. Resolved once from the cookie and nonce;\nan anonymous or failed caller has id 0 and every capability check fails.",
             "implements": [],
             "extends": null,
@@ -74291,7 +74876,8 @@
                 "Minn\\Auth\\Authenticator",
                 "Minn\\Auth\\Capabilities",
                 "Minn\\Http\\Request",
-                "Minn\\RestError"
+                "Minn\\RestError",
+                "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
                 "Minn\\Admin\\BundleController",
@@ -74366,8 +74952,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 22,
-                "end": 27
+                "line": 23,
+                "end": 28
             },
             "cases": [],
             "constants": [],
@@ -74427,8 +75013,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 34,
-                    "end": 37
+                    "line": 35,
+                    "end": 38
                 },
                 {
                     "routes": [],
@@ -74439,8 +75025,8 @@
                     "doc": "The session, or null for an anonymous or refused caller.",
                     "shapes": [],
                     "params": [],
-                    "line": 40,
-                    "end": 44
+                    "line": 41,
+                    "end": 45
                 },
                 {
                     "routes": [],
@@ -74451,8 +75037,8 @@
                     "doc": "The caller's user id, 0 when anonymous.",
                     "shapes": [],
                     "params": [],
-                    "line": 47,
-                    "end": 50
+                    "line": 48,
+                    "end": 51
                 },
                 {
                     "routes": [],
@@ -74460,7 +75046,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "can(string $capability, ?int $postId = NULL): bool",
-                    "doc": "Whether the caller holds a capability, on a post when given.",
+                    "doc": "Whether the caller holds a capability, on a post when given. With\nplugins loaded the answer is WordPress's: the same mapping, then\nmap_meta_cap and user_has_cap, where role editors and lock plugins\nhave their say.",
                     "shapes": [],
                     "params": [
                         {
@@ -74478,8 +75064,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 53,
-                    "end": 56
+                    "line": 59,
+                    "end": 65
                 },
                 {
                     "routes": [],
@@ -74490,8 +75076,8 @@
                     "doc": "The capability engine.",
                     "shapes": [],
                     "params": [],
-                    "line": 59,
-                    "end": 62
+                    "line": 68,
+                    "end": 71
                 },
                 {
                     "routes": [],
@@ -74524,8 +75110,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 78
+                    "line": 77,
+                    "end": 87
                 },
                 {
                     "routes": [],
@@ -74544,8 +75130,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 85,
-                    "end": 90
+                    "line": 94,
+                    "end": 99
                 },
                 {
                     "routes": [],
@@ -74564,8 +75150,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 93,
-                    "end": 100
+                    "line": 102,
+                    "end": 109
                 },
                 {
                     "routes": [],
@@ -74591,8 +75177,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 103,
-                    "end": 106
+                    "line": 112,
+                    "end": 115
                 },
                 {
                     "routes": [],
@@ -74603,8 +75189,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 108,
-                    "end": 111
+                    "line": 117,
+                    "end": 120
                 }
             ]
         },
@@ -75023,7 +75609,7 @@
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/comments/{id:\\d+} (public; comment {id} must exist)"
+                        "GET /wp/v2/comments/{id:[\\d]+} (public; comment {id} must exist)"
                     ],
                     "name": "single",
                     "static": false,
@@ -75074,9 +75660,9 @@
                 },
                 {
                     "routes": [
-                        "POST /wp/v2/comments/{id:\\d+} (cap moderate_comments; comment {id} must exist)",
-                        "PUT /wp/v2/comments/{id:\\d+} (cap moderate_comments; comment {id} must exist)",
-                        "PATCH /wp/v2/comments/{id:\\d+} (cap moderate_comments; comment {id} must exist)"
+                        "POST /wp/v2/comments/{id:[\\d]+} (cap moderate_comments; comment {id} must exist)",
+                        "PUT /wp/v2/comments/{id:[\\d]+} (cap moderate_comments; comment {id} must exist)",
+                        "PATCH /wp/v2/comments/{id:[\\d]+} (cap moderate_comments; comment {id} must exist)"
                     ],
                     "name": "update",
                     "static": false,
@@ -75105,7 +75691,7 @@
                 },
                 {
                     "routes": [
-                        "DELETE /wp/v2/comments/{id:\\d+} (cap moderate_comments; comment {id} must exist)"
+                        "DELETE /wp/v2/comments/{id:[\\d]+} (cap moderate_comments; comment {id} must exist)"
                     ],
                     "name": "delete",
                     "static": false,
@@ -75459,7 +76045,7 @@
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/{base:[a-z0-9_-]+}/{id:\\d+} (declared type {base})"
+                        "GET /wp/v2/{base:[a-z0-9_-]+}/{id:[\\d]+} (declared type {base})"
                     ],
                     "name": "single",
                     "static": false,
@@ -75524,9 +76110,9 @@
                 },
                 {
                     "routes": [
-                        "POST /wp/v2/{base:[a-z0-9_-]+}/{id:\\d+} (declared type {base})",
-                        "PUT /wp/v2/{base:[a-z0-9_-]+}/{id:\\d+} (declared type {base})",
-                        "PATCH /wp/v2/{base:[a-z0-9_-]+}/{id:\\d+} (declared type {base})"
+                        "POST /wp/v2/{base:[a-z0-9_-]+}/{id:[\\d]+} (declared type {base})",
+                        "PUT /wp/v2/{base:[a-z0-9_-]+}/{id:[\\d]+} (declared type {base})",
+                        "PATCH /wp/v2/{base:[a-z0-9_-]+}/{id:[\\d]+} (declared type {base})"
                     ],
                     "name": "update",
                     "static": false,
@@ -75562,7 +76148,7 @@
                 },
                 {
                     "routes": [
-                        "DELETE /wp/v2/{base:[a-z0-9_-]+}/{id:\\d+} (declared type {base})"
+                        "DELETE /wp/v2/{base:[a-z0-9_-]+}/{id:[\\d]+} (declared type {base})"
                     ],
                     "name": "delete",
                     "static": false,
@@ -75946,7 +76532,8 @@
             ],
             "usedBy": [
                 "Minn\\Rest\\Api",
-                "Minn\\Rest\\IndexController"
+                "Minn\\Rest\\IndexController",
+                "Minn\\Rest\\RuntimeEnvelope"
             ],
             "constructor": null,
             "cases": [],
@@ -76354,7 +76941,7 @@
             "methods": [
                 {
                     "routes": [
-                        "GET /wp/v2/global-styles/{id:\\d+} (public; global styles {id} must exist)"
+                        "GET /wp/v2/global-styles/{id:[\\/\\d+]+} (public; global styles {id} must exist)"
                     ],
                     "name": "single",
                     "static": false,
@@ -76383,9 +76970,9 @@
                 },
                 {
                     "routes": [
-                        "POST /wp/v2/global-styles/{id:\\d+} (cap edit_theme_options; global styles {id} must exist)",
-                        "PUT /wp/v2/global-styles/{id:\\d+} (cap edit_theme_options; global styles {id} must exist)",
-                        "PATCH /wp/v2/global-styles/{id:\\d+} (cap edit_theme_options; global styles {id} must exist)"
+                        "POST /wp/v2/global-styles/{id:[\\/\\d+]+} (cap edit_theme_options; global styles {id} must exist)",
+                        "PUT /wp/v2/global-styles/{id:[\\/\\d+]+} (cap edit_theme_options; global styles {id} must exist)",
+                        "PATCH /wp/v2/global-styles/{id:[\\/\\d+]+} (cap edit_theme_options; global styles {id} must exist)"
                     ],
                     "name": "update",
                     "static": false,
@@ -76414,7 +77001,36 @@
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/global-styles/themes/{stylesheet:[^/]+} (cap edit_posts)"
+                        "GET /wp/v2/global-styles/themes/{stylesheet:[\\/\\s%\\w\\.\\(\\)\\[\\]\\@_\\-]+}/variations (cap edit_posts)"
+                    ],
+                    "name": "variations",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "variations(Minn\\Http\\Request $request, string $stylesheet): Minn\\Http\\Response",
+                    "doc": "The style variations the active theme ships; listed ahead of the theme's own route, whose pattern would take this path too.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "stylesheet",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 71,
+                    "end": 75
+                },
+                {
+                    "routes": [
+                        "GET /wp/v2/global-styles/themes/{stylesheet:[^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?} (cap edit_posts)"
                     ],
                     "name": "theme",
                     "static": false,
@@ -76438,41 +77054,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 71,
-                    "end": 75
-                },
-                {
-                    "routes": [
-                        "GET /wp/v2/global-styles/themes/{stylesheet:[^/]+}/variations (cap edit_posts)"
-                    ],
-                    "name": "variations",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "variations(Minn\\Http\\Request $request, string $stylesheet): Minn\\Http\\Response",
-                    "doc": "The style variations the active theme ships.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "stylesheet",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
                     "line": 79,
                     "end": 83
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/global-styles/{parent:\\d+}/revisions (cap edit_theme_options; global styles parent {parent} must exist)"
+                        "GET /wp/v2/global-styles/{parent:[\\d]+}/revisions (cap edit_theme_options; global styles parent {parent} must exist)"
                     ],
                     "name": "revisions",
                     "static": false,
@@ -76501,7 +77088,7 @@
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/global-styles/{parent:\\d+}/revisions/{id:\\d+} (cap edit_theme_options; global styles parent {parent} must exist)"
+                        "GET /wp/v2/global-styles/{parent:[\\d]+}/revisions/{id:[\\d]+} (cap edit_theme_options; global styles parent {parent} must exist)"
                     ],
                     "name": "revision",
                     "static": false,
@@ -77054,7 +77641,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/Links.php",
-            "lines": 35,
+            "lines": 52,
             "doc": "Response link relations compacted through CURIEs: a rel that matches a CURIE's template becomes `name:suffix`, and the used CURIEs ride along.",
             "implements": [],
             "extends": null,
@@ -77065,6 +77652,43 @@
             "constants": [],
             "properties": [],
             "methods": [
+                {
+                    "routes": [],
+                    "name": "item",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "item(string $rel, string $href, array $attributes): array",
+                    "doc": "One link as a response serves it: its attributes, then its href; a\nself link's target hints after the href, where the reference adds them.",
+                    "shapes": [
+                        "@param array<string, mixed> $attributes",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "rel",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "href",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "attributes",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 17,
+                    "end": 25
+                },
                 {
                     "routes": [],
                     "name": "compact",
@@ -77093,8 +77717,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 17,
-                    "end": 41
+                    "line": 34,
+                    "end": 58
                 }
             ]
         },
@@ -77761,7 +78385,7 @@
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/media/{id:\\d+} (public; attachment {id} must exist; edit context: cap edit_post on {id})"
+                        "GET /wp/v2/media/{id:[\\d]+} (public; attachment {id} must exist; edit context: cap edit_post on {id})"
                     ],
                     "name": "single",
                     "static": false,
@@ -77812,9 +78436,9 @@
                 },
                 {
                     "routes": [
-                        "POST /wp/v2/media/{id:\\d+} (cap edit_post on {id}; attachment {id} must exist)",
-                        "PUT /wp/v2/media/{id:\\d+} (cap edit_post on {id}; attachment {id} must exist)",
-                        "PATCH /wp/v2/media/{id:\\d+} (cap edit_post on {id}; attachment {id} must exist)"
+                        "POST /wp/v2/media/{id:[\\d]+} (cap edit_post on {id}; attachment {id} must exist)",
+                        "PUT /wp/v2/media/{id:[\\d]+} (cap edit_post on {id}; attachment {id} must exist)",
+                        "PATCH /wp/v2/media/{id:[\\d]+} (cap edit_post on {id}; attachment {id} must exist)"
                     ],
                     "name": "update",
                     "static": false,
@@ -77843,7 +78467,7 @@
                 },
                 {
                     "routes": [
-                        "DELETE /wp/v2/media/{id:\\d+} (cap delete_post on {id}; attachment {id} must exist)"
+                        "DELETE /wp/v2/media/{id:[\\d]+} (cap delete_post on {id}; attachment {id} must exist)"
                     ],
                     "name": "delete",
                     "static": false,
@@ -78530,7 +79154,7 @@
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/menus/{id:\\d+} (cap edit_posts; menu {id} must exist)"
+                        "GET /wp/v2/menus/{id:[\\d]+} (cap edit_posts; menu {id} must exist)"
                     ],
                     "name": "singleMenu",
                     "static": false,
@@ -78581,9 +79205,9 @@
                 },
                 {
                     "routes": [
-                        "POST /wp/v2/menus/{id:\\d+} (cap edit_theme_options; menu {id} must exist)",
-                        "PUT /wp/v2/menus/{id:\\d+} (cap edit_theme_options; menu {id} must exist)",
-                        "PATCH /wp/v2/menus/{id:\\d+} (cap edit_theme_options; menu {id} must exist)"
+                        "POST /wp/v2/menus/{id:[\\d]+} (cap edit_theme_options; menu {id} must exist)",
+                        "PUT /wp/v2/menus/{id:[\\d]+} (cap edit_theme_options; menu {id} must exist)",
+                        "PATCH /wp/v2/menus/{id:[\\d]+} (cap edit_theme_options; menu {id} must exist)"
                     ],
                     "name": "updateMenu",
                     "static": false,
@@ -78612,7 +79236,7 @@
                 },
                 {
                     "routes": [
-                        "DELETE /wp/v2/menus/{id:\\d+} (cap edit_theme_options; menu {id} must exist)"
+                        "DELETE /wp/v2/menus/{id:[\\d]+} (cap edit_theme_options; menu {id} must exist)"
                     ],
                     "name": "deleteMenu",
                     "static": false,
@@ -78663,7 +79287,7 @@
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/menu-items/{id:\\d+} (cap edit_posts; menu item {id} must exist)"
+                        "GET /wp/v2/menu-items/{id:[\\d]+} (cap edit_posts; menu item {id} must exist)"
                     ],
                     "name": "singleItem",
                     "static": false,
@@ -78714,9 +79338,9 @@
                 },
                 {
                     "routes": [
-                        "POST /wp/v2/menu-items/{id:\\d+} (cap edit_theme_options; menu item {id} must exist)",
-                        "PUT /wp/v2/menu-items/{id:\\d+} (cap edit_theme_options; menu item {id} must exist)",
-                        "PATCH /wp/v2/menu-items/{id:\\d+} (cap edit_theme_options; menu item {id} must exist)"
+                        "POST /wp/v2/menu-items/{id:[\\d]+} (cap edit_theme_options; menu item {id} must exist)",
+                        "PUT /wp/v2/menu-items/{id:[\\d]+} (cap edit_theme_options; menu item {id} must exist)",
+                        "PATCH /wp/v2/menu-items/{id:[\\d]+} (cap edit_theme_options; menu item {id} must exist)"
                     ],
                     "name": "updateItem",
                     "static": false,
@@ -78745,7 +79369,7 @@
                 },
                 {
                     "routes": [
-                        "DELETE /wp/v2/menu-items/{id:\\d+} (cap edit_theme_options; menu item {id} must exist)"
+                        "DELETE /wp/v2/menu-items/{id:[\\d]+} (cap edit_theme_options; menu item {id} must exist)"
                     ],
                     "name": "deleteItem",
                     "static": false,
@@ -78988,7 +79612,7 @@
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/navigation/{id:\\d+} (public; navigation {id} must exist)"
+                        "GET /wp/v2/navigation/{id:[\\d]+} (public; navigation {id} must exist)"
                     ],
                     "name": "single",
                     "static": false,
@@ -79039,9 +79663,9 @@
                 },
                 {
                     "routes": [
-                        "POST /wp/v2/navigation/{id:\\d+} (cap edit_post on {id}; navigation {id} must exist)",
-                        "PUT /wp/v2/navigation/{id:\\d+} (cap edit_post on {id}; navigation {id} must exist)",
-                        "PATCH /wp/v2/navigation/{id:\\d+} (cap edit_post on {id}; navigation {id} must exist)"
+                        "POST /wp/v2/navigation/{id:[\\d]+} (cap edit_post on {id}; navigation {id} must exist)",
+                        "PUT /wp/v2/navigation/{id:[\\d]+} (cap edit_post on {id}; navigation {id} must exist)",
+                        "PATCH /wp/v2/navigation/{id:[\\d]+} (cap edit_post on {id}; navigation {id} must exist)"
                     ],
                     "name": "update",
                     "static": false,
@@ -79070,7 +79694,7 @@
                 },
                 {
                     "routes": [
-                        "DELETE /wp/v2/navigation/{id:\\d+} (cap delete_post on {id}; navigation {id} must exist)"
+                        "DELETE /wp/v2/navigation/{id:[\\d]+} (cap delete_post on {id}; navigation {id} must exist)"
                     ],
                     "name": "delete",
                     "static": false,
@@ -80788,7 +81412,7 @@
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/{base:posts|pages}/{id:\\d+} (public; post {id} must exist; edit context: cap edit_post on {id})"
+                        "GET /wp/v2/{base:posts|pages}/{id:[\\d]+} (public; post {id} must exist; edit context: cap edit_post on {id})"
                     ],
                     "name": "single",
                     "static": false,
@@ -81183,9 +81807,9 @@
                 },
                 {
                     "routes": [
-                        "POST /wp/v2/{base:posts|pages}/{id:\\d+} (cap edit_post on {id}; post {id} must exist)",
-                        "PUT /wp/v2/{base:posts|pages}/{id:\\d+} (cap edit_post on {id}; post {id} must exist)",
-                        "PATCH /wp/v2/{base:posts|pages}/{id:\\d+} (cap edit_post on {id}; post {id} must exist)"
+                        "POST /wp/v2/{base:posts|pages}/{id:[\\d]+} (cap edit_post on {id}; post {id} must exist)",
+                        "PUT /wp/v2/{base:posts|pages}/{id:[\\d]+} (cap edit_post on {id}; post {id} must exist)",
+                        "PATCH /wp/v2/{base:posts|pages}/{id:[\\d]+} (cap edit_post on {id}; post {id} must exist)"
                     ],
                     "name": "update",
                     "static": false,
@@ -81255,7 +81879,7 @@
                 },
                 {
                     "routes": [
-                        "DELETE /wp/v2/{base:posts|pages}/{id:\\d+} (cap delete_post on {id}; post {id} must exist)"
+                        "DELETE /wp/v2/{base:posts|pages}/{id:[\\d]+} (cap delete_post on {id}; post {id} must exist)"
                     ],
                     "name": "delete",
                     "static": false,
@@ -82161,12 +82785,12 @@
             "methods": [
                 {
                     "routes": [
-                        "GET /wp/v2/{base:posts|pages|blocks}/{id:\\d+}/revisions (cap edit_post on {id}; post parent {id} must exist)"
+                        "GET /wp/v2/{base:posts|pages|blocks}/{parent:[\\d]+}/revisions (cap edit_post on {parent}; post parent {parent} must exist)"
                     ],
                     "name": "revisions",
                     "static": false,
                     "visibility": "public",
-                    "signature": "revisions(Minn\\Http\\Request $request, string $base, string $id): Minn\\Http\\Response",
+                    "signature": "revisions(Minn\\Http\\Request $request, string $base, string $parent): Minn\\Http\\Response",
                     "doc": "Real revisions, not autosaves.",
                     "shapes": [],
                     "params": [
@@ -82185,7 +82809,7 @@
                             "doc": ""
                         },
                         {
-                            "name": "id",
+                            "name": "parent",
                             "type": "string",
                             "shape": "",
                             "default": null,
@@ -82197,12 +82821,12 @@
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/{base:posts|pages|blocks}/{id:\\d+}/revisions/{revisionId:\\d+} (cap edit_post on {id}; post parent {id} must exist)"
+                        "GET /wp/v2/{base:posts|pages|blocks}/{parent:[\\d]+}/revisions/{id:[\\d]+} (cap edit_post on {parent}; post parent {parent} must exist)"
                     ],
                     "name": "revision",
                     "static": false,
                     "visibility": "public",
-                    "signature": "revision(Minn\\Http\\Request $request, string $base, string $id, string $revisionId): Minn\\Http\\Response",
+                    "signature": "revision(Minn\\Http\\Request $request, string $base, string $parent, string $id): Minn\\Http\\Response",
                     "doc": "One revision of a post, page, or block.",
                     "shapes": [],
                     "params": [
@@ -82221,14 +82845,14 @@
                             "doc": ""
                         },
                         {
-                            "name": "id",
+                            "name": "parent",
                             "type": "string",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         },
                         {
-                            "name": "revisionId",
+                            "name": "id",
                             "type": "string",
                             "shape": "",
                             "default": null,
@@ -82240,7 +82864,7 @@
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/{base:posts|pages|blocks}/{id:\\d+}/autosaves (cap edit_post on {id}; post parent {id} must exist)"
+                        "GET /wp/v2/{base:posts|pages|blocks}/{id:[\\d]+}/autosaves (cap edit_post on {id}; post parent {id} must exist)"
                     ],
                     "name": "autosaves",
                     "static": false,
@@ -82276,7 +82900,7 @@
                 },
                 {
                     "routes": [
-                        "POST /wp/v2/{base:posts|pages|blocks}/{id:\\d+}/autosaves (cap edit_post on {id}; post {id} must exist)"
+                        "POST /wp/v2/{base:posts|pages|blocks}/{id:[\\d]+}/autosaves (cap edit_post on {id}; post {id} must exist)"
                     ],
                     "name": "createAutosave",
                     "static": false,
@@ -82735,12 +83359,283 @@
             ]
         },
         {
+            "name": "Minn\\Rest\\RuntimeEnvelope",
+            "short": "RuntimeEnvelope",
+            "namespace": "Minn\\Rest",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Rest/RuntimeEnvelope.php",
+            "lines": 123,
+            "doc": "The REST server's filters around one of Minn's own routes, as the\nreference runs them around every route (contracts/runtime.md, \"The REST\nserver's envelope\"): rest_request_before_callbacks is handed the argument\ncheck's error or null and may refuse; the route's permission is the\nnext refusal; rest_dispatch_request may answer in place of the route;\nrest_request_after_callbacks sees whatever came of it and may change it.\nA value other than an error from the first filter does not answer: the\nroute still runs. With nothing hooked on any of the three, the route\nanswers as it would without plugins, unconverted; and before the runtime\nboots (the API is built first) there are no plugins to ask.",
+            "implements": [
+                "Minn\\Http\\Envelope"
+            ],
+            "extends": null,
+            "uses": [
+                "Minn\\Http\\Envelope",
+                "Minn\\Http\\Matched",
+                "Minn\\Http\\Method",
+                "Minn\\Http\\Request",
+                "Minn\\Http\\Response",
+                "Minn\\Http\\RouteRow",
+                "Minn\\RestError",
+                "Minn\\Rest\\EngineRoutes",
+                "Minn\\Rest\\RuntimeRoutes",
+                "Minn\\Rest\\Types",
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\Api"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Rest\\Types $types)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "types",
+                        "type": "Minn\\Rest\\Types",
+                        "shape": "Types",
+                        "default": null,
+                        "doc": "the declared types, for naming a {base} route as the reference does"
+                    }
+                ],
+                "visibility": "public",
+                "line": 35,
+                "end": 37
+            },
+            "cases": [],
+            "constants": [
+                {
+                    "name": "FILTERS",
+                    "value": "array (   0 => 'rest_request_before_callbacks',   1 => 'rest_dispatch_request',   2 => 'rest_request_after_callbacks', )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "types",
+                    "type": "Minn\\Rest\\Types",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "around",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "around(Minn\\Http\\Matched $matched, Minn\\Http\\Request $request, ?Minn\\RestError $invalid, ?Minn\\RestError $refusal, Closure $invoke): Minn\\Http\\Response",
+                    "doc": "The route's answer with the server's filters around it, or as the route gives it when no plugin can hear.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "matched",
+                            "type": "Minn\\Http\\Matched",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "invalid",
+                            "type": "?Minn\\RestError",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "refusal",
+                            "type": "?Minn\\RestError",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "invoke",
+                            "type": "Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 40,
+                    "end": 72
+                },
+                {
+                    "routes": [],
+                    "name": "plain",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "plain(?Minn\\RestError $invalid, ?Minn\\RestError $refusal, Closure $invoke): Minn\\Http\\Response",
+                    "doc": "The route answering as it does without plugins: the refusals thrown in the router's own order.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "invalid",
+                            "type": "?Minn\\RestError",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "refusal",
+                            "type": "?Minn\\RestError",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "invoke",
+                            "type": "Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 75,
+                    "end": 84
+                },
+                {
+                    "routes": [],
+                    "name": "run",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "run(Closure $invoke): WP_REST_Response|WP_Error",
+                    "doc": "The route's answer as the server's filters hand it on: a response object, or the error it refused with.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "invoke",
+                            "type": "Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 87,
+                    "end": 94
+                },
+                {
+                    "routes": [],
+                    "name": "routeName",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "routeName(Minn\\Http\\Matched $matched, Minn\\Http\\Request $request): string",
+                    "doc": "The route as the reference names it in its table: the form of the pattern this request matched.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "matched",
+                            "type": "Minn\\Http\\Matched",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 97,
+                    "end": 106
+                },
+                {
+                    "routes": [],
+                    "name": "handler",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "handler(Minn\\Http\\Matched $matched, ?Minn\\RestError $refusal): array",
+                    "doc": "The handler as plugins read it from the filters: its methods, its\narguments as the index publishes them, and callables for the route\nand its permission.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "matched",
+                            "type": "Minn\\Http\\Matched",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "refusal",
+                            "type": "?Minn\\RestError",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 115,
+                    "end": 127
+                },
+                {
+                    "routes": [],
+                    "name": "defaults",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "defaults(array $args): array",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, mixed> $args @return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "@return array<string, mixed>"
+                        }
+                    ],
+                    "line": 130,
+                    "end": 139
+                },
+                {
+                    "routes": [],
+                    "name": "typed",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "typed(array $captures): array",
+                    "doc": "The captures as the reference holds them once its arguments passed:\na number is an integer.",
+                    "shapes": [
+                        "@param array<string, string> $captures",
+                        "@return array<string, int|string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "captures",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 148,
+                    "end": 151
+                }
+            ]
+        },
+        {
             "name": "Minn\\Rest\\RuntimeRoutes",
             "short": "RuntimeRoutes",
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/RuntimeRoutes.php",
-            "lines": 103,
+            "lines": 282,
             "doc": "Routes plugin code registered with register_rest_route(), answered\nthrough the runtime's server after the engine's own routes have had\ntheir turn; the runtime's say before the engine answers at all (an\nauthentication refusal, a pre-dispatch answer, a removed endpoint);\nand the runtime's namespaces folded into the index.",
             "implements": [],
             "extends": null,
@@ -82752,6 +83647,7 @@
             ],
             "usedBy": [
                 "Minn\\Rest\\Api",
+                "Minn\\Rest\\RuntimeEnvelope",
                 "Minn\\Runtime\\CommentEvents",
                 "Minn\\Runtime\\PostEvents",
                 "Minn\\Runtime\\TermEvents",
@@ -82760,7 +83656,35 @@
             "constructor": null,
             "cases": [],
             "constants": [],
-            "properties": [],
+            "properties": [
+                {
+                    "name": "requests",
+                    "type": "?WeakMap",
+                    "readonly": false,
+                    "static": true,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "matches",
+                    "type": "?WeakMap",
+                    "readonly": false,
+                    "static": true,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "origins",
+                    "type": "?WeakMap",
+                    "readonly": false,
+                    "static": true,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                }
+            ],
             "methods": [
                 {
                     "routes": [],
@@ -82779,8 +83703,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 26,
-                    "end": 42
+                    "line": 27,
+                    "end": 43
                 },
                 {
                     "routes": [],
@@ -82799,8 +83723,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 45,
-                    "end": 54
+                    "line": 46,
+                    "end": 56
                 },
                 {
                     "routes": [],
@@ -82819,8 +83743,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 57,
-                    "end": 84
+                    "line": 59,
+                    "end": 86
                 },
                 {
                     "routes": [],
@@ -82828,7 +83752,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "wpRequest(Minn\\Http\\Request $request): WP_REST_Request",
-                    "doc": "The request as the runtime's server reads it, and as a REST action hands it to plugins.",
+                    "doc": "The request as the runtime's server reads it, and as a REST filter or action hands it to plugins: the same object each time.",
                     "shapes": [],
                     "params": [
                         {
@@ -82839,14 +83763,137 @@
                             "doc": ""
                         }
                     ],
-                    "line": 87,
-                    "end": 100
+                    "line": 98,
+                    "end": 102
+                },
+                {
+                    "routes": [],
+                    "name": "matched",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "matched(Minn\\Http\\Request $request, string $route, array $handler): void",
+                    "doc": "Keeps the route and handler a request matched, for the response plugins see at serving.",
+                    "shapes": [
+                        "@param array<string, mixed> $handler"
+                    ],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "route",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "handler",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 109,
+                    "end": 113
+                },
+                {
+                    "routes": [],
+                    "name": "toWpError",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "toWpError(Minn\\RestError $error): WP_Error",
+                    "doc": "An engine refusal as plugins handle one.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "error",
+                            "type": "Minn\\RestError",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 116,
+                    "end": 122
+                },
+                {
+                    "routes": [],
+                    "name": "toWp",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "toWp(Minn\\Http\\Response $response): WP_REST_Response",
+                    "doc": "An engine answer as plugins handle one: its data decoded (an empty\nobject stays one), its links on the response rather than in the data,\nits status and headers.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "response",
+                            "type": "Minn\\Http\\Response",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 129,
+                    "end": 145
+                },
+                {
+                    "routes": [],
+                    "name": "fromWp",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "fromWp(mixed $result): Minn\\Http\\Response",
+                    "doc": "Whatever the filters left, as the engine sends it; what they handed back untouched is the engine's own answer, byte for byte.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "result",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 148,
+                    "end": 158
+                },
+                {
+                    "routes": [],
+                    "name": "serve",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "serve(Minn\\Http\\Request $request, Minn\\Http\\Response $response): Minn\\Http\\Response",
+                    "doc": "The server's last word on any REST answer, engine or plugin route,\nas the reference serves one: rest_post_dispatch may change it,\nrest_pre_serve_request may serve it itself (what it prints is the\nbody), and rest_pre_echo_response may rewrite the data echoed. With\nnothing hooked, the answer goes out as it is.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "response",
+                            "type": "Minn\\Http\\Response",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 167,
+                    "end": 206
                 },
                 {
                     "routes": [],
                     "name": "ensure",
                     "static": true,
-                    "visibility": "private",
+                    "visibility": "public",
                     "signature": "ensure(mixed $result): WP_REST_Response",
                     "doc": "A callback's return as a response object, an error converted.",
                     "shapes": [],
@@ -82859,8 +83906,127 @@
                             "doc": ""
                         }
                     ],
-                    "line": 103,
-                    "end": 107
+                    "line": 283,
+                    "end": 287
+                },
+                {
+                    "routes": [],
+                    "name": "look",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "look(WP_REST_Response $response): array",
+                    "doc": "What a response looks like to the code that may change it. @return array<int, mixed>",
+                    "shapes": [
+                        "@return array<int, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "response",
+                            "type": "WP_REST_Response",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 209,
+                    "end": 212
+                },
+                {
+                    "routes": [],
+                    "name": "remember",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "remember(object $made, Minn\\Http\\Response|Minn\\RestError $origin, array $look): void",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "made",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "origin",
+                            "type": "Minn\\Http\\Response|Minn\\RestError",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "look",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 214,
+                    "end": 218
+                },
+                {
+                    "routes": [],
+                    "name": "decode",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "decode(string $json): mixed",
+                    "doc": "JSON as arrays, as plugins read REST data, with an empty object kept an object so it is sent back as one.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "json",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 221,
+                    "end": 231
+                },
+                {
+                    "routes": [],
+                    "name": "expand",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "expand(array $links): array",
+                    "doc": "Compacted link relations (\"wp:term\") back to the relations a response\nholds (\"https://api.w.org/term\"); the CURIE list itself is rebuilt\nwhen the response is compacted again.",
+                    "shapes": [
+                        "@param array<string, mixed> $links",
+                        "@return array<string, list<array<string, mixed>>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "links",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 241,
+                    "end": 265
+                },
+                {
+                    "routes": [],
+                    "name": "newWpRequest",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "newWpRequest(Minn\\Http\\Request $request): WP_REST_Request",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 267,
+                    "end": 280
                 },
                 {
                     "routes": [],
@@ -82879,8 +84045,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 110,
-                    "end": 118
+                    "line": 290,
+                    "end": 298
                 }
             ]
         },
@@ -85433,7 +86599,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/TaxonomiesController.php",
-            "lines": 47,
+            "lines": 48,
             "doc": "wp/v2 taxonomies: the registry, whole or per type, in view or edit context.",
             "implements": [],
             "extends": null,
@@ -85525,12 +86691,12 @@
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/taxonomies/{slug:[\\w-]+} (public)"
+                        "GET /wp/v2/taxonomies/{taxonomy:[\\w-]+} (public)"
                     ],
                     "name": "single",
                     "static": false,
                     "visibility": "public",
-                    "signature": "single(Minn\\Http\\Request $request, string $slug): Minn\\Http\\Response",
+                    "signature": "single(Minn\\Http\\Request $request, string $taxonomy): Minn\\Http\\Response",
                     "doc": "One taxonomy.",
                     "shapes": [],
                     "params": [
@@ -85542,7 +86708,7 @@
                             "doc": ""
                         },
                         {
-                            "name": "slug",
+                            "name": "taxonomy",
                             "type": "string",
                             "shape": "",
                             "default": null,
@@ -85550,7 +86716,7 @@
                         }
                     ],
                     "line": 41,
-                    "end": 52
+                    "end": 53
                 },
                 {
                     "routes": [],
@@ -85569,8 +86735,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 55,
-                    "end": 62
+                    "line": 56,
+                    "end": 63
                 }
             ]
         },
@@ -85918,7 +87084,7 @@
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/templates/{id*} (cap edit_posts)"
+                        "GET /wp/v2/templates/{id:([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+} (cap edit_posts)"
                     ],
                     "name": "template",
                     "static": false,
@@ -85947,7 +87113,7 @@
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/template-parts/{id*} (cap edit_posts)"
+                        "GET /wp/v2/template-parts/{id:([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+} (cap edit_posts)"
                     ],
                     "name": "part",
                     "static": false,
@@ -85976,9 +87142,9 @@
                 },
                 {
                     "routes": [
-                        "POST /wp/v2/templates/{id*} (cap edit_posts + edit_theme_options)",
-                        "PUT /wp/v2/templates/{id*} (cap edit_posts + edit_theme_options)",
-                        "PATCH /wp/v2/templates/{id*} (cap edit_posts + edit_theme_options)"
+                        "POST /wp/v2/templates/{id:([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+} (cap edit_posts + edit_theme_options)",
+                        "PUT /wp/v2/templates/{id:([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+} (cap edit_posts + edit_theme_options)",
+                        "PATCH /wp/v2/templates/{id:([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+} (cap edit_posts + edit_theme_options)"
                     ],
                     "name": "saveTemplate",
                     "static": false,
@@ -86007,9 +87173,9 @@
                 },
                 {
                     "routes": [
-                        "POST /wp/v2/template-parts/{id*} (cap edit_posts + edit_theme_options)",
-                        "PUT /wp/v2/template-parts/{id*} (cap edit_posts + edit_theme_options)",
-                        "PATCH /wp/v2/template-parts/{id*} (cap edit_posts + edit_theme_options)"
+                        "POST /wp/v2/template-parts/{id:([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+} (cap edit_posts + edit_theme_options)",
+                        "PUT /wp/v2/template-parts/{id:([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+} (cap edit_posts + edit_theme_options)",
+                        "PATCH /wp/v2/template-parts/{id:([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+} (cap edit_posts + edit_theme_options)"
                     ],
                     "name": "savePart",
                     "static": false,
@@ -86038,7 +87204,7 @@
                 },
                 {
                     "routes": [
-                        "DELETE /wp/v2/templates/{id*} (cap edit_posts + edit_theme_options)"
+                        "DELETE /wp/v2/templates/{id:([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+} (cap edit_posts + edit_theme_options)"
                     ],
                     "name": "deleteTemplate",
                     "static": false,
@@ -86067,7 +87233,7 @@
                 },
                 {
                     "routes": [
-                        "DELETE /wp/v2/template-parts/{id*} (cap edit_posts + edit_theme_options)"
+                        "DELETE /wp/v2/template-parts/{id:([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+} (cap edit_posts + edit_theme_options)"
                     ],
                     "name": "deletePart",
                     "static": false,
@@ -86682,7 +87848,7 @@
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/{base:categories|tags|wp_pattern_category}/{id:\\d+} (public; term {id} must exist; edit context: cap manage_categories)"
+                        "GET /wp/v2/{base:categories|tags|wp_pattern_category}/{id:[\\d]+} (public; term {id} must exist; edit context: cap manage_categories)"
                     ],
                     "name": "single",
                     "static": false,
@@ -86748,9 +87914,9 @@
                 },
                 {
                     "routes": [
-                        "POST /wp/v2/{base:categories|tags|wp_pattern_category}/{id:\\d+} (cap manage_categories; term {id} must exist)",
-                        "PUT /wp/v2/{base:categories|tags|wp_pattern_category}/{id:\\d+} (cap manage_categories; term {id} must exist)",
-                        "PATCH /wp/v2/{base:categories|tags|wp_pattern_category}/{id:\\d+} (cap manage_categories; term {id} must exist)"
+                        "POST /wp/v2/{base:categories|tags|wp_pattern_category}/{id:[\\d]+} (cap manage_categories; term {id} must exist)",
+                        "PUT /wp/v2/{base:categories|tags|wp_pattern_category}/{id:[\\d]+} (cap manage_categories; term {id} must exist)",
+                        "PATCH /wp/v2/{base:categories|tags|wp_pattern_category}/{id:[\\d]+} (cap manage_categories; term {id} must exist)"
                     ],
                     "name": "update",
                     "static": false,
@@ -86786,7 +87952,7 @@
                 },
                 {
                     "routes": [
-                        "DELETE /wp/v2/{base:categories|tags|wp_pattern_category}/{id:\\d+} (cap manage_categories; term {id} must exist)"
+                        "DELETE /wp/v2/{base:categories|tags|wp_pattern_category}/{id:[\\d]+} (cap manage_categories; term {id} must exist)"
                     ],
                     "name": "delete",
                     "static": false,
@@ -86844,6 +88010,7 @@
                 "Minn\\Rest\\Embed",
                 "Minn\\Rest\\IndexController",
                 "Minn\\Rest\\PolicyGate",
+                "Minn\\Rest\\RuntimeEnvelope",
                 "Minn\\Rest\\SearchController",
                 "Minn\\Rest\\Services",
                 "Minn\\Rest\\TypesController"
@@ -87097,12 +88264,12 @@
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/types/{slug:[\\w-]+} (public)"
+                        "GET /wp/v2/types/{type:[\\w-]+} (public)"
                     ],
                     "name": "single",
                     "static": false,
                     "visibility": "public",
-                    "signature": "single(Minn\\Http\\Request $request, string $slug): Minn\\Http\\Response",
+                    "signature": "single(Minn\\Http\\Request $request, string $type): Minn\\Http\\Response",
                     "doc": "One post type.",
                     "shapes": [],
                     "params": [
@@ -87114,7 +88281,7 @@
                             "doc": ""
                         },
                         {
-                            "name": "slug",
+                            "name": "type",
                             "type": "string",
                             "shape": "",
                             "default": null,
@@ -87505,15 +88672,15 @@
                 },
                 {
                     "routes": [
-                        "POST /wp/v2/users/me (public)",
-                        "PUT /wp/v2/users/me (public)",
-                        "PATCH /wp/v2/users/me (public)"
+                        "POST /wp/v2/users/me (signed in)",
+                        "PUT /wp/v2/users/me (signed in)",
+                        "PATCH /wp/v2/users/me (signed in)"
                     ],
                     "name": "updateMe",
                     "static": false,
                     "visibility": "public",
                     "signature": "updateMe(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "Updates the signed-in user; signed out there is no such user (404).",
+                    "doc": "Updates the signed-in user; signed out there is no such user (404), and the Allow header leaves the writes out.",
                     "shapes": [],
                     "params": [
                         {
@@ -87551,7 +88718,7 @@
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/users/{id:\\d+} (public; user {id} must exist)"
+                        "GET /wp/v2/users/{id:[\\d]+} (public; user {id} must exist)"
                     ],
                     "name": "single",
                     "static": false,
@@ -87602,9 +88769,9 @@
                 },
                 {
                     "routes": [
-                        "POST /wp/v2/users/{id:\\d+} (cap edit_user on {id}; user {id} must exist)",
-                        "PUT /wp/v2/users/{id:\\d+} (cap edit_user on {id}; user {id} must exist)",
-                        "PATCH /wp/v2/users/{id:\\d+} (cap edit_user on {id}; user {id} must exist)"
+                        "POST /wp/v2/users/{id:[\\d]+} (cap edit_user on {id}; user {id} must exist)",
+                        "PUT /wp/v2/users/{id:[\\d]+} (cap edit_user on {id}; user {id} must exist)",
+                        "PATCH /wp/v2/users/{id:[\\d]+} (cap edit_user on {id}; user {id} must exist)"
                     ],
                     "name": "update",
                     "static": false,
@@ -87633,7 +88800,7 @@
                 },
                 {
                     "routes": [
-                        "DELETE /wp/v2/users/{id:\\d+} (cap delete_users; user {id} must exist)"
+                        "DELETE /wp/v2/users/{id:[\\d]+} (cap delete_users; user {id} must exist)"
                     ],
                     "name": "delete",
                     "static": false,
@@ -98530,6 +99697,8 @@
                 "Minn\\Media\\Images",
                 "Minn\\Rest\\AbilitiesController",
                 "Minn\\Rest\\Api",
+                "Minn\\Rest\\Caller",
+                "Minn\\Rest\\RuntimeEnvelope",
                 "Minn\\Rest\\Services",
                 "Minn\\Rest\\SettingsController",
                 "Minn\\Runtime\\Abilities",
@@ -106274,6 +107443,7 @@
                 "Minn\\Admin\\Notifications",
                 "Minn\\Admin\\OverviewController",
                 "Minn\\Admin\\SiteController",
+                "Minn\\Admin\\UploadsSize",
                 "Minn\\Auth\\ApplicationPasswords",
                 "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
                 "Minn\\Cli\\OptionCommand",

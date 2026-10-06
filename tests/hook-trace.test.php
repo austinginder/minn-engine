@@ -24,6 +24,7 @@ declare(strict_types=1);
 require __DIR__ . '/lib.php';
 
 const DIVERGENT = [
+    'comment-form' => 'wp-comments-post.php is the engine\'s own: it fires none of the submission\'s actions (pre_comment_on_post, the flood and disallowed-list checks, wp_insert_comment, comment_post, set_comment_cookies)',
 ];
 
 /**
@@ -82,7 +83,17 @@ foreach ($stacks as [, $content]) {
     }
     @mkdir("{$content}/minn-trace", 0755, true);
 }
-register_shutdown_function(static function () use ($stacks, $WP, $description): void {
+// The form's comments, matched exactly by their author's address (a wp-cli filter it ignores would match every comment).
+// Swept before each form post too: the stacks share a database, and one stack's comment is the other's flood.
+$sweepReaders = static function () use ($WP): void {
+    $comments = json_decode((string) shell_exec("{$WP} comment list --status=all --fields=comment_ID,comment_author_email --format=json 2>/dev/null"), true);
+    foreach (is_array($comments) ? $comments : [] as $comment) {
+        if (($comment['comment_author_email'] ?? '') === 'reader@minn-engine.localhost') {
+            shell_exec("{$WP} comment delete " . (int) $comment['comment_ID'] . ' --force >/dev/null 2>&1');
+        }
+    }
+};
+register_shutdown_function(static function () use ($stacks, $WP, $description, $sweepReaders): void {
     foreach ($stacks as [, $content]) {
         @unlink("{$content}/mu-plugins/minn-test-trace.php");
         array_map('unlink', glob("{$content}/minn-trace/*") ?: []);
@@ -90,6 +101,7 @@ register_shutdown_function(static function () use ($stacks, $WP, $description): 
     }
     shell_exec("{$WP} option update blogdescription " . escapeshellarg($description) . ' >/dev/null 2>&1');
     shell_exec("{$WP} user delete \$({$WP} user list --field=ID --login__in=tracer 2>/dev/null) --reassign=1 --yes >/dev/null 2>&1");
+    $sweepReaders();
 });
 
 $mint = json_decode((string) shell_exec("{$WP} eval-file " . escapeshellarg(dirname(__DIR__) . '/tests/tools/mint-session.php') . ' 1 2>/dev/null'), true);
@@ -99,20 +111,27 @@ if (!is_array($mint) || empty($mint['cookie'])) {
 }
 $cookie = 'Cookie: wordpress_logged_in_' . md5($ENGINE) . '=' . rawurlencode($mint['cookie']) . '; wordpress_logged_in_' . md5($REF) . '=' . rawurlencode($mint['cookie']);
 
-/** One traced REST call; returns [status, decoded body, the actions it fired]. */
+/**
+ * One traced call; returns [status, decoded body, the actions it fired].
+ * A REST route goes through ?rest_route= as an administrator; a path
+ * ending in .php is a form post, sent signed out.
+ */
 $call = static function (string $base, string $content, string $run, string $method, string $route, $body = null, array $headers = []) use ($cookie, $mint, $filters): array {
     touch("{$content}/minn-trace/{$run}.open");
+    $form = str_ends_with($route, '.php');
     $query = '';
     if (str_contains($route, '?')) {
         [$route, $query] = explode('?', $route, 2);
         $query = '&' . $query;
     }
-    $sent = [$cookie, 'X-WP-Nonce: ' . $mint['nonce'], 'X-Minn-Trace: ' . $run, ...($filters ? ['X-Minn-Trace-Filters: 1'] : []), ...$headers];
-    if (is_array($body)) {
+    $sent = [...($form ? [] : [$cookie, 'X-WP-Nonce: ' . $mint['nonce']]), 'X-Minn-Trace: ' . $run, ...($filters ? ['X-Minn-Trace-Filters: 1'] : []), ...$headers];
+    if (is_array($body) && $form) {
+        $body = http_build_query($body);
+    } elseif (is_array($body)) {
         $sent[] = 'Content-Type: application/json';
         $body = json_encode($body);
     }
-    $ch = curl_init($base . '/?rest_route=' . rawurlencode($route) . $query);
+    $ch = curl_init($form ? $base . $route : $base . '/?rest_route=' . rawurlencode($route) . $query);
     curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_CUSTOMREQUEST => $method, CURLOPT_HTTPHEADER => $sent, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0, CURLOPT_TIMEOUT => 60]);
     if ($body !== null) {
         curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
@@ -125,13 +144,13 @@ $call = static function (string $base, string $content, string $run, string $met
     return [$status, json_decode((string) $raw, true), $lines, is_array($applied) ? $applied : []];
 };
 
-/** The part of a trace that describes the write: from the REST server's start, bookkeeping dropped, repeats kept. */
-$window = static function (array $lines): array {
+/** The part of a trace that describes the write: from the REST server's start (a form post: once WordPress has loaded), bookkeeping dropped, repeats kept. */
+$window = static function (array $lines, string $start = 'rest_api_init'): array {
     $out = [];
     $started = false;
     foreach ($lines as $line) {
         [$hook, $args] = json_decode($line, true);
-        if ($hook === 'rest_api_init') {
+        if ($hook === $start) {
             $started = true;
             continue;
         }
@@ -159,7 +178,7 @@ foreach ($stacks as $stack => [$base, $content]) {
     $ids = [];
     $run = static function (string $name, string $method, string $route, $body = null, array $headers = []) use ($stack, $base, $content, $call, $window, &$steps): array {
         [$status, $data, $lines, $applied] = $call($base, $content, "{$stack}-{$name}", $method, $route, $body, $headers);
-        $steps[$name][$stack] = ['status' => $status, 'trace' => $window($lines), 'filters' => $applied];
+        $steps[$name][$stack] = ['status' => $status, 'trace' => $window($lines, str_ends_with($route, '.php') ? 'wp_loaded' : 'rest_api_init'), 'filters' => $applied];
         return is_array($data) ? $data : [];
     };
     $ids['post'] = (int) ($run('post-create-draft', 'POST', '/wp/v2/posts', ['title' => 'Trace post', 'content' => 'Body', 'status' => 'draft'])['id'] ?? 0);
@@ -182,6 +201,9 @@ foreach ($stacks as $stack => [$base, $content]) {
     $run('comment-unapprove', 'POST', "/wp/v2/comments/{$ids['comment']}", ['status' => 'hold']);
     $run('comment-delete', 'DELETE', "/wp/v2/comments/{$ids['comment']}?force=true");
     $run('settings', 'POST', '/wp/v2/settings', ['description' => "Traced on the {$stack}"]);
+    // The comment form, signed out: where spam plugins (CleanTalk, Akismet) and notifications do their work.
+    $sweepReaders();
+    $run('comment-form', 'POST', '/wp-comments-post.php', ['comment_post_ID' => 1, 'author' => 'Trace Reader', 'email' => 'reader@minn-engine.localhost', 'url' => '', 'comment' => "A traced comment from the {$stack} form", 'comment_parent' => 0]);
 }
 
 if ($filters) {

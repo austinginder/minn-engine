@@ -108,7 +108,7 @@ final readonly class MediaController
     }
 
     /** One attachment. */
-    #[Route(Method::Get, '/wp/v2/media/{id:\d+}', policy: new Policy(Access::Public, subject: Subject::Attachment, param: 'id', edit: new Policy(Access::Own, 'edit_post', param: 'id', signIn: 'rest_forbidden_context', signInMessage: 'Sorry, you are not allowed to edit this post.', refuse: 'rest_forbidden_context', message: 'Sorry, you are not allowed to edit this post.')), args: [Args::CONTEXT])]
+    #[Route(Method::Get, '/wp/v2/media/{id:[\d]+}', policy: new Policy(Access::Public, subject: Subject::Attachment, param: 'id', edit: new Policy(Access::Own, 'edit_post', param: 'id', signIn: 'rest_forbidden_context', signInMessage: 'Sorry, you are not allowed to edit this post.', refuse: 'rest_forbidden_context', message: 'Sorry, you are not allowed to edit this post.')), args: [Args::CONTEXT])]
     public function single(Request $request, string $id): Response
     {
         $attachment = $this->attachment((int) $id);
@@ -171,9 +171,9 @@ final readonly class MediaController
     }
 
     /** The editable fields the app uses. */
-    #[Route(Method::Post, '/wp/v2/media/{id:\d+}', policy: new Policy(Access::Own, 'edit_post', param: 'id', subject: Subject::Attachment, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this post.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this post.'))]
-    #[Route(Method::Put, '/wp/v2/media/{id:\d+}', policy: new Policy(Access::Own, 'edit_post', param: 'id', subject: Subject::Attachment, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this post.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this post.'))]
-    #[Route(Method::Patch, '/wp/v2/media/{id:\d+}', policy: new Policy(Access::Own, 'edit_post', param: 'id', subject: Subject::Attachment, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this post.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this post.'))]
+    #[Route(Method::Post, '/wp/v2/media/{id:[\d]+}', policy: new Policy(Access::Own, 'edit_post', param: 'id', subject: Subject::Attachment, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this post.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this post.'))]
+    #[Route(Method::Put, '/wp/v2/media/{id:[\d]+}', policy: new Policy(Access::Own, 'edit_post', param: 'id', subject: Subject::Attachment, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this post.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this post.'))]
+    #[Route(Method::Patch, '/wp/v2/media/{id:[\d]+}', policy: new Policy(Access::Own, 'edit_post', param: 'id', subject: Subject::Attachment, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this post.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this post.'))]
     public function update(Request $request, string $id): Response
     {
         $attachmentId = (int) $id;
@@ -219,7 +219,7 @@ final readonly class MediaController
     }
 
     /** Attachments cannot be trashed; force removes the row, its meta, and its files. */
-    #[Route(Method::Delete, '/wp/v2/media/{id:\d+}', policy: new Policy(Access::Own, 'delete_post', param: 'id', subject: Subject::Attachment, signIn: 'rest_cannot_delete', signInMessage: 'Sorry, you are not allowed to delete this post.', refuse: 'rest_cannot_delete', message: 'Sorry, you are not allowed to delete this post.'))]
+    #[Route(Method::Delete, '/wp/v2/media/{id:[\d]+}', policy: new Policy(Access::Own, 'delete_post', param: 'id', subject: Subject::Attachment, signIn: 'rest_cannot_delete', signInMessage: 'Sorry, you are not allowed to delete this post.', refuse: 'rest_cannot_delete', message: 'Sorry, you are not allowed to delete this post.'))]
     public function delete(Request $request, string $id): Response
     {
         $attachmentId = (int) $id;

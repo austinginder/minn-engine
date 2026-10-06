@@ -57,7 +57,8 @@ final readonly class Api
     public static function forRequest(Db $db, Request $request): self
     {
         $s = Services::forRequest($db, $request);
-        $router = new Router((new PolicyGate($s->caller(), $s->subjects(), $s->types()))->closure(), (new ArgCheck($s->schema()))->closure());
+        // Once plugins are loaded (the runtime boots after this is built), the REST server's filters run around Minn's own routes as they run around every route on the reference.
+        $router = new Router((new PolicyGate($s->caller(), $s->subjects(), $s->types()))->closure(), (new ArgCheck($s->schema()))->closure(), new RuntimeEnvelope($s->types()));
         $router->register(...self::controllers($s, $router));
         return new self($request, $router, $s, new Embed($router, $s->types(), $s->taxonomies()));
     }
@@ -178,7 +179,8 @@ final readonly class Api
             if ($response !== null && Runtime::booted() && ($request->path === '/' || preg_match('#^/[a-z0-9-]+/v\d+$#', $request->path) === 1)) {
                 $response = RuntimeRoutes::mergeIndex($response);
             }
-            return $response ?? Reply::error(RestError::noRoute());
+            $response ??= Reply::error(RestError::noRoute());
+            return Runtime::booted() ? RuntimeRoutes::serve($request, $response) : $response;
         } catch (RestError $error) {
             return Reply::error($error);
         }

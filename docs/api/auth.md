@@ -239,7 +239,7 @@ The capability engine: a user's roles from {prefix}capabilities usermeta,
 the primitives those roles grant, and the meta-capability mapping for
 edit_post, delete_post, and read_post.
 
-Used by: `Minn\Admin\ActivityFeed`, `Minn\Admin\AdminTypes`, `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Admin\Dashboard`, `Minn\Admin\HiddenIntegrations`, `Minn\Admin\LanguageController`, `Minn\Admin\Notifications`, `Minn\Cli\Runtime`, `Minn\Content\Reader`, `Minn\Context`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Front\CommentPostController`, `Minn\Rest\Caller`, `Minn\Rest\Services`, `Minn\Runtime\Runtime`
+Used by: `Minn\Admin\ActivityFeed`, `Minn\Admin\AdminTypes`, `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Admin\Dashboard`, `Minn\Admin\HiddenIntegrations`, `Minn\Admin\LanguageController`, `Minn\Admin\Notifications`, `Minn\Admin\UploadsSize`, `Minn\Cli\Runtime`, `Minn\Content\Reader`, `Minn\Context`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Front\CommentPostController`, `Minn\Rest\Caller`, `Minn\Rest\Services`, `Minn\Runtime\Runtime`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Users $users, Minn\Auth\Roles $roles)

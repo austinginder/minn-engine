@@ -3283,3 +3283,66 @@ when the engine renders block content itself.
 - `make_clickable` links get `rel="nofollow ugc"` while comment_text runs,
   `nofollow` elsewhere.
 
+
+## The REST server's envelope (2026-10-06)
+
+The reference runs every route, core or plugin, inside the same filters;
+Minn answered its own routes (everything under `/wp/v2` it serves) beside
+them, so a plugin could refuse a plugin route but not a core one. A
+security plugin blocking user listing, a REST cache answering from its
+store, a role editor taking `edit_posts` away, a lock plugin refusing a
+deletion through `map_meta_cap`: each did nothing on Minn. Suite
+`rest-envelope` sends both stacks the same requests with the fixture plugin
+`tests/fixtures/runtime/minn-test-rest-envelope` hooked per request (header
+`X-Minn-Envelope`) and compares status, the plugin's headers and the body,
+including what each filter was handed.
+
+The order, as captured: `rest_request_before_callbacks` is handed the
+argument check's error or null, with the handler (`methods`, `accept_json`,
+`accept_raw`, `show_in_index`, `args`, `callback`, `permission_callback`)
+and the request; an error it returns is the answer, and anything else is
+not (the route still runs; null even clears an argument error). The
+permission comes next: its refusal is the answer and nothing else runs, so
+`rest_dispatch_request` never answers a caller the route refuses. Then
+`rest_dispatch_request` (handed null, the request, the route as the index
+names it, the handler) may answer in place of the route; then
+`rest_request_after_callbacks` sees whatever came of it, error or response,
+and may change it. A core write leaves `context=edit` on the request.
+Serving: `rest_post_dispatch` may change the response (status, headers);
+`rest_pre_serve_request` may serve it itself, what it prints being the
+body; `rest_pre_echo_response` may rewrite the data echoed. A response's
+links live on the response object, not in its data: a plugin replacing the
+data keeps them, and a `self` link's `targetHints` follow its `href`.
+
+How it is built: `Http\Router` judges the argument check and the policy
+first and hands both refusals, unthrown, to an `Http\Envelope`
+(`Rest\RuntimeEnvelope`); a policy that declines the route (a `{base}`
+naming no declared type) throws before any plugin hears of the request.
+The API is built before the runtime boots, so the envelope decides per
+request; unbooted, or with none of the three filters hooked, the route
+answers exactly as before, unconverted. `Rest\RuntimeRoutes::serve()`
+runs the serving filters over every REST answer, engine or plugin route.
+Converting: the JSON is decoded with an empty object kept an object, the
+`_links` expanded back into response links, and a response or error a
+filter hands back untouched is the engine's own answer byte for byte. One
+`WP_REST_Request` serves a request throughout, filters and the
+`rest_insert_*` actions alike. With plugins loaded, `Rest\Caller::can()`
+asks `user_can()`: the engine's mapping, then `map_meta_cap` and
+`user_has_cap`.
+
+Route names: the engine's patterns now spell the reference's, so the index
+keys and the route plugins are handed agree (`(?P<id>[\d]+)`, a revision's
+post as `parent`, `user_id` for application passwords, `type` and
+`taxonomy`, the templates' and global styles' own expressions). A
+snake_case capture binds to its camelCase parameter. 190 of the 190 core
+routes Minn serves are named as the reference names them.
+
+Still apart (shrink-only `DIVERGENT` in the suite): the handler's `args`
+for an edit route is empty, because Minn's index publishes one endpoint per
+route with its query arguments where the reference publishes one per method
+group with the schema's; and a `context` no schema names (reachable only
+when a plugin clears the argument error) leaves no fields on the reference.
+About sixty core routes Minn does not serve at all (`/wp/v2/statuses`,
+`block-types`, `themes`, `sidebars`, `widgets`, `oembed/1.0`,
+`font-families`, `wp-site-health/v1`, `block-patterns`, `view-config` and
+others) answer `rest_no_route`; that is the next REST gap.

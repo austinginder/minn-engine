@@ -2,12 +2,12 @@
     "generated": "2026-10-06",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 559,
+        "minn": 560,
         "composes": 833,
-        "leaf": 633,
+        "leaf": 632,
         "noop": 1788,
         "functions": 3743,
-        "minnMethods": 579,
+        "minnMethods": 580,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -9066,9 +9066,11 @@
         },
         "WP_REST_Server::get_response_links": {
             "file": "classes/WP_REST_Server.php",
-            "lines": 14,
-            "kind": "leaf",
-            "minn": [],
+            "lines": 12,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Rest\\Links::item"
+            ],
             "composes": []
         },
         "WP_REST_Server::get_route_options": {

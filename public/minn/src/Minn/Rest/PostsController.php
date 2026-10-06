@@ -169,7 +169,7 @@ final readonly class PostsController
     }
 
     /** One post or page. */
-    #[Route(Method::Get, '/wp/v2/{base:posts|pages}/{id:\d+}', policy: new Policy(Access::Public, subject: Subject::Post, param: 'id', edit: new Policy(Access::Own, 'edit_post', param: 'id', signIn: 'rest_forbidden_context', signInMessage: 'Sorry, you are not allowed to edit this post.', refuse: 'rest_forbidden_context', message: 'Sorry, you are not allowed to edit this post.')), args: [Args::CONTEXT])]
+    #[Route(Method::Get, '/wp/v2/{base:posts|pages}/{id:[\d]+}', policy: new Policy(Access::Public, subject: Subject::Post, param: 'id', edit: new Policy(Access::Own, 'edit_post', param: 'id', signIn: 'rest_forbidden_context', signInMessage: 'Sorry, you are not allowed to edit this post.', refuse: 'rest_forbidden_context', message: 'Sorry, you are not allowed to edit this post.')), args: [Args::CONTEXT])]
     public function single(Request $request, string $base, string $id): Response
     {
         return $this->serveSingle($request, $base === 'pages' ? 'page' : 'post', $id);

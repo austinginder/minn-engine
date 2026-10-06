@@ -170,9 +170,9 @@ final readonly class PostsWriteController
     }
 
     /** Updates a post or page. */
-    #[Route(Method::Post, '/wp/v2/{base:posts|pages}/{id:\d+}', policy: new Policy(Access::Own, 'edit_post', param: 'id', subject: Subject::Post, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this post.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this post.'))]
-    #[Route(Method::Put, '/wp/v2/{base:posts|pages}/{id:\d+}', policy: new Policy(Access::Own, 'edit_post', param: 'id', subject: Subject::Post, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this post.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this post.'))]
-    #[Route(Method::Patch, '/wp/v2/{base:posts|pages}/{id:\d+}', policy: new Policy(Access::Own, 'edit_post', param: 'id', subject: Subject::Post, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this post.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this post.'))]
+    #[Route(Method::Post, '/wp/v2/{base:posts|pages}/{id:[\d]+}', policy: new Policy(Access::Own, 'edit_post', param: 'id', subject: Subject::Post, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this post.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this post.'))]
+    #[Route(Method::Put, '/wp/v2/{base:posts|pages}/{id:[\d]+}', policy: new Policy(Access::Own, 'edit_post', param: 'id', subject: Subject::Post, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this post.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this post.'))]
+    #[Route(Method::Patch, '/wp/v2/{base:posts|pages}/{id:[\d]+}', policy: new Policy(Access::Own, 'edit_post', param: 'id', subject: Subject::Post, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this post.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this post.'))]
     public function update(Request $request, string $base, string $id): Response
     {
         return $this->serveUpdate($request, $base === 'pages' ? 'page' : 'post', $id);
@@ -223,7 +223,7 @@ final readonly class PostsWriteController
     }
 
     /** Trashes or deletes a post or page. */
-    #[Route(Method::Delete, '/wp/v2/{base:posts|pages}/{id:\d+}', policy: new Policy(Access::Own, 'delete_post', param: 'id', subject: Subject::Post, signIn: 'rest_cannot_delete', signInMessage: 'Sorry, you are not allowed to delete this post.', refuse: 'rest_cannot_delete', message: 'Sorry, you are not allowed to delete this post.'))]
+    #[Route(Method::Delete, '/wp/v2/{base:posts|pages}/{id:[\d]+}', policy: new Policy(Access::Own, 'delete_post', param: 'id', subject: Subject::Post, signIn: 'rest_cannot_delete', signInMessage: 'Sorry, you are not allowed to delete this post.', refuse: 'rest_cannot_delete', message: 'Sorry, you are not allowed to delete this post.'))]
     public function delete(Request $request, string $base, string $id): Response
     {
         return $this->serveDelete($request, $base === 'pages' ? 'page' : 'post', $id);

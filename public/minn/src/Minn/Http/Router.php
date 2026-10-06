@@ -26,8 +26,9 @@ final class Router
     /**
      * @param Closure(Policy $policy, Request $request, array<string, string> $captures): void $gate throws when the policy refuses the caller
      * @param Closure(Route $route, Request $request): void|null $check throws when a declared argument is missing or invalid; judged before the gate
+     * @param Envelope|null $envelope what runs around a matched route instead of the router throwing its refusals itself
      */
-    public function __construct(private readonly Closure $gate, private readonly ?Closure $check = null)
+    public function __construct(private readonly Closure $gate, private readonly ?Closure $check = null, private readonly ?Envelope $envelope = null)
     {
     }
 
@@ -126,27 +127,100 @@ final class Router
                 continue;
             }
             $captures = array_filter($captures, is_string(...), ARRAY_FILTER_USE_KEY);
-            if ($this->check !== null) {
-                ($this->check)($route, $request);
-            }
+            $arguments = self::arguments($method, $captures);
+            $invoke = static fn (): Response => $method->invoke($handler, $request, ...$arguments);
             try {
-                if ($route->policy !== null && !$route->policy->isPublic()) {
-                    ($this->gate)($route->policy, $request, $captures);
-                }
+                $response = $this->envelope === null
+                    ? $this->answer($route, $request, $captures, $invoke)
+                    : $this->enveloped(new Matched($route, $handler, $method->getName(), $captures, $this->methodsOf($handler, $method->getName(), $route->pattern, $request->method)), $request, $invoke);
             } catch (RouteMiss) {
-                // The policy declined the route (a {base} naming no declared type): the next one gets its turn.
-                continue;
-            }
-            $wanted = array_map(static fn ($p) => $p->getName(), $method->getParameters());
-            $arguments = array_intersect_key($captures, array_flip($wanted));
-            try {
-                $response = $method->invoke($handler, $request, ...$arguments);
-            } catch (RouteMiss) {
-                // The handler declined: the next matching route gets its turn.
+                // The policy or the handler declined the route (a {base} naming no declared type): the next one gets its turn.
                 continue;
             }
             return $request->method === Method::Head ? $response->withoutBody() : $response;
         }
         return null;
+    }
+
+    /**
+     * The captures a handler takes, by parameter name; a capture spelled as
+     * the reference spells it (user_id) binds to its camelCase parameter.
+     *
+     * @param array<string, string> $captures
+     * @return array<string, string>
+     */
+    private static function arguments(ReflectionMethod $method, array $captures): array
+    {
+        $wanted = array_map(static fn ($p) => $p->getName(), $method->getParameters());
+        $arguments = [];
+        foreach ($captures as $name => $value) {
+            $camel = lcfirst(str_replace('_', '', ucwords($name, '_')));
+            if (in_array($camel, $wanted, true)) {
+                $arguments[$camel] = $value;
+            }
+        }
+        return $arguments;
+    }
+
+    /**
+     * @param array<string, string> $captures
+     * @param Closure(): Response $invoke
+     */
+    private function answer(Route $route, Request $request, array $captures, Closure $invoke): Response
+    {
+        if ($this->check !== null) {
+            ($this->check)($route, $request);
+        }
+        if ($route->policy !== null && !$route->policy->isPublic()) {
+            ($this->gate)($route->policy, $request, $captures);
+        }
+        return $invoke();
+    }
+
+    /**
+     * The refusals judged up front and handed over unthrown. The policy is
+     * judged even past a bad argument, because the envelope may clear that;
+     * a policy that declines the route throws before anything hears of it.
+     *
+     * @param Closure(): Response $invoke
+     */
+    private function enveloped(Matched $matched, Request $request, Closure $invoke): Response
+    {
+        $invalid = null;
+        try {
+            if ($this->check !== null) {
+                ($this->check)($matched->route, $request);
+            }
+        } catch (RestError $error) {
+            $invalid = $error;
+        }
+        $refusal = null;
+        try {
+            if ($matched->route->policy !== null && !$matched->route->policy->isPublic()) {
+                ($this->gate)($matched->route->policy, $request, $matched->captures);
+            }
+        } catch (RestError $error) {
+            $refusal = $error;
+        }
+        return $this->envelope->around($matched, $request, $invalid, $refusal, $invoke);
+    }
+
+    /**
+     * The methods one handler answers on one pattern alongside the request's,
+     * grouped as the reference registers them: reading alone, deleting
+     * alone, and creating or editing together (POST, PUT, PATCH).
+     *
+     * @return list<string>
+     */
+    private function methodsOf(object $handler, string $name, string $pattern, Method $asked): array
+    {
+        $group = static fn (Method $m): string => match ($m) { Method::Get, Method::Head, Method::Any => 'read', Method::Delete => 'delete', default => 'write' };
+        $methods = [];
+        foreach ($this->routes as ['route' => $route, 'handler' => $other, 'method' => $method]) {
+            if ($other === $handler && $method->getName() === $name && $route->pattern === $pattern && $route->method !== Method::Head && $group($route->method) === $group($asked)) {
+                $methods[] = $route->method === Method::Any ? 'GET' : $route->method->value;
+            }
+        }
+        return array_values(array_unique($methods));
     }
 }
