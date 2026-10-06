@@ -108,7 +108,14 @@ function update_option($option, $value, $autoload = null)
 
 function update_site_option($option, $value)
 {
-    return update_option($option, $value);
+    // A single site keeps its site options as options, and tells plugins as the network layer does.
+    $old = get_option($option);
+    if (!update_option($option, $value)) {
+        return false;
+    }
+    do_action("update_site_option_{$option}", $option, $value, $old, 1);
+    do_action('update_site_option', $option, $value, $old, 1);
+    return true;
 }
 
 function delete_option($option)

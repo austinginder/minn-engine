@@ -6,6 +6,7 @@ namespace Minn\Runtime;
 
 use Minn\Content\PostRecord;
 use Minn\Content\PostWriter;
+use Minn\Media\Writer;
 use Minn\Http\Request;
 use Minn\Rest\RuntimeRoutes;
 
@@ -65,6 +66,56 @@ final readonly class PostEvents
         foreach (PostWriter::requestedTerms($body) as $taxonomy => $termIds) {
             \wp_set_object_terms($id, $termIds, $taxonomy);
         }
+    }
+
+    /** The file a new attachment holds: through add_post_meta with plugins loaded, written directly without. */
+    public function attachedFile(Writer $library, int $id, string $relative): void
+    {
+        $this->live() ? \add_post_meta($id, '_wp_attached_file', $relative) : $library->setAttachedFile($id, $relative);
+    }
+
+    /** add_attachment, once a new attachment's row and file are in. */
+    public function attachmentAdded(int $id): void
+    {
+        if ($this->live()) {
+            \clean_post_cache($id);
+            \do_action('add_attachment', $id);
+        }
+    }
+
+    /** edit_attachment and attachment_updated, after an attachment's row changed. */
+    public function attachmentEdited(int $id, PostRecord $before): void
+    {
+        if (!$this->live()) {
+            return;
+        }
+        $was = self::wpPost($before);
+        \clean_post_cache($was);
+        \do_action('edit_attachment', $id);
+        \do_action('attachment_updated', $id, \get_post($id), $was);
+    }
+
+    /**
+     * A new attachment's metadata: with plugins loaded it passes through
+     * wp_generate_attachment_metadata (where an image optimiser works) and
+     * is stored by wp_update_attachment_metadata; without, as built.
+     *
+     * @param array<string, mixed> $metadata
+     */
+    public function attachmentMetadata(Writer $library, int $id, array $metadata): void
+    {
+        if (!$this->live()) {
+            $library->setMetadata($id, $metadata);
+            return;
+        }
+        $metadata = \apply_filters('wp_generate_attachment_metadata', $metadata, $id, 'create');
+        \wp_update_attachment_metadata($id, $metadata);
+    }
+
+    /** An attachment's alt text: through update_post_meta with plugins loaded, written directly without. */
+    public function altText(Writer $library, int $id, string $alt): void
+    {
+        $this->live() ? \update_post_meta($id, '_wp_attachment_image_alt', $alt) : $library->setAlt($id, $alt);
     }
 
     /** rest_insert_{type}, before the request's own terms and fields are applied; a post with no $before is a new one. */

@@ -21,15 +21,6 @@ declare(strict_types=1);
 require __DIR__ . '/lib.php';
 
 const DIVERGENT = [
-    'media-upload' => 'the media controller writes attachments without the runtime',
-    'media-edit' => 'the media controller writes attachments without the runtime',
-    'media-delete' => 'the media controller deletes attachments without the runtime',
-    'term-create' => 'the terms controller writes terms without the runtime',
-    'term-edit' => 'the terms controller writes terms without the runtime',
-    'term-delete' => 'the terms controller deletes terms without the runtime',
-    'user-create' => 'the users controller writes users without the runtime',
-    'user-edit' => 'the users controller writes users without the runtime',
-    'user-delete' => 'the users controller deletes users without the runtime',
 ];
 
 /**
@@ -93,7 +84,7 @@ register_shutdown_function(static function () use ($stacks, $WP, $description): 
         @rmdir("{$content}/minn-trace");
     }
     shell_exec("{$WP} option update blogdescription " . escapeshellarg($description) . ' >/dev/null 2>&1');
-    shell_exec("{$WP} user delete \$({$WP} user list --field=ID --login__in=tracer-reference,tracer-engine 2>/dev/null) --reassign=1 --yes >/dev/null 2>&1");
+    shell_exec("{$WP} user delete \$({$WP} user list --field=ID --login__in=tracer 2>/dev/null) --reassign=1 --yes >/dev/null 2>&1");
 });
 
 $mint = json_decode((string) shell_exec("{$WP} eval-file " . escapeshellarg(dirname(__DIR__) . '/tests/tools/mint-session.php') . ' 1 2>/dev/null'), true);
@@ -178,7 +169,7 @@ foreach ($stacks as $stack => [$base, $content]) {
     $ids['term'] = (int) ($run('term-create', 'POST', '/wp/v2/categories', ['name' => "Trace category {$stack}"])['id'] ?? 0);
     $run('term-edit', 'POST', "/wp/v2/categories/{$ids['term']}", ['description' => 'Traced']);
     $run('term-delete', 'DELETE', "/wp/v2/categories/{$ids['term']}?force=true");
-    $ids['user'] = (int) ($run('user-create', 'POST', '/wp/v2/users', ['username' => "tracer-{$stack}", 'email' => "tracer-{$stack}@minn-engine.localhost", 'password' => 'Trace-pass-1!', 'roles' => ['author']])['id'] ?? 0);
+    $ids['user'] = (int) ($run('user-create', 'POST', '/wp/v2/users', ['username' => 'tracer', 'email' => 'tracer@minn-engine.localhost', 'password' => 'Trace-pass-1!', 'roles' => ['author']])['id'] ?? 0);
     $run('user-edit', 'POST', "/wp/v2/users/{$ids['user']}", ['first_name' => 'Trace']);
     $run('user-delete', 'DELETE', "/wp/v2/users/{$ids['user']}?force=true&reassign=1");
     $ids['comment'] = (int) ($run('comment-create', 'POST', '/wp/v2/comments', ['post' => 1, 'content' => "Traced comment from the {$stack}"])['id'] ?? 0);

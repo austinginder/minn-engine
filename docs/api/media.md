@@ -9,10 +9,11 @@ uploads, image sizes and attachment metadata
 | [`Images`](#images) | final readonly class | 105 | GD sub-size generation for the sizes the site has. |
 | [`Kind`](#kind) | final class | 75 | Whether an attachment is an image, audio, video, or a given extension, judged by its MIME type first and its file extension second. |
 | [`Metadata`](#metadata) | final class | 111 | The _wp_attachment_metadata blob: parsed by scanning for the shapes it |
+| [`PreparedUpload`](#preparedupload) | final readonly class | 13 | An upload made ready for its attachment: the file stored, its sizes cut, |
 | [`Sizing`](#sizing) | final class | 207 | The image size arithmetic the media functions share: the crop or scale a |
 | [`Upload`](#upload) | final readonly class | 76 | One file arriving for the library, on either transport: a multipart |
 | [`Uploads`](#uploads) | final readonly class | 172 | The uploads directory: paths, URLs, the allowed types, and landing a file. |
-| [`Writer`](#writer) | final readonly class | 90 | The writes the media library makes. An Upload becomes an attachment: the |
+| [`Writer`](#writer) | final readonly class | 121 | The writes the media library makes. An Upload becomes an attachment: the |
 
 ## Canvas
 
@@ -181,6 +182,27 @@ The metadata as the reference's serialized blob, without unserialize ever being 
 ### static `blankImageMeta(): array`
 
 The image_meta block a fresh upload carries.
+
+
+## PreparedUpload
+
+`final readonly class Minn\Media\PreparedUpload` · `public/minn/src/Minn/Media/PreparedUpload.php`
+
+An upload made ready for its attachment: the file stored, its sizes cut,
+the row it will be. The row is written apart, so what plugins hear
+before it (pre_post_insert) comes between.
+
+Used by: `Minn\Media\Writer`
+
+```php
+__construct(array $columns, string $relative, ?array $metadata)
+```
+- `@param array<string, mixed> $columns the attachment's row`
+- `@param array<string, mixed>|null $metadata the image metadata, null for a file that is not an image`
+
+- readonly `array $columns`
+- readonly `string $relative`
+- readonly `?array $metadata`
 
 
 ## Sizing
@@ -366,7 +388,7 @@ inserted with the stored name as its title and slug, and an image gets
 its sub-sizes and the serialized metadata blob. Edits stamp the row
 modified; removal takes the files with the row.
 
-Used by: `Minn\Rest\MediaController`, `Minn\Rest\Services`
+Used by: `Minn\Rest\MediaController`, `Minn\Rest\Services`, `Minn\Runtime\PostEvents`
 
 ```php
 __construct(Minn\Content\PostWriter $posts, Minn\Content\Posts $reads, Minn\Content\Site $site, Minn\Media\Uploads $uploads, Minn\Media\Images $images)
@@ -377,9 +399,34 @@ __construct(Minn\Content\PostWriter $posts, Minn\Content\Posts $reads, Minn\Cont
 
 The new attachment's id. The mime is the caller's to check first.
 
+### `prepare(Minn\Media\Upload $upload, int $authorId): Minn\Media\PreparedUpload`
+
+Stores the file and cuts its sizes, before the row exists: a decode
+that fails leaves files to sweep, never a headless attachment.
+
+### `insert(Minn\Media\PreparedUpload $prepared): int`
+
+Writes a prepared attachment's row; returns its id.
+
+### `setAttachedFile(int $id, string $relative): void`
+
+Records the file an attachment holds, relative to the uploads folder.
+
+### `setMetadata(int $id, array $metadata): void`
+
+Stores an attachment's metadata in the reference's serialized shape. @param array<string, mixed> $metadata
+
+- `@param array<string, mixed> $metadata`
+
 ### `edit(int $id, array $columns): void`
 
 Sets the given columns on an attachment and stamps it modified; nothing happens for none.
+
+### `stamp(int $id, array $columns): void`
+
+Sets the given columns, none included, and stamps the attachment modified, as the reference's update always does. @param array<string, mixed> $columns
+
+- `@param array<string, mixed> $columns`
 
 ### `setAlt(int $id, string $alt): void`
 
@@ -389,5 +436,5 @@ Sets an attachment's alt text.
 
 Removes an attachment: its files, every generated size, its meta, and its row.
 
-Internals: `imageMetadata()` (private, line 102)
+Internals: `imageMetadata()` (private, line 133)
 

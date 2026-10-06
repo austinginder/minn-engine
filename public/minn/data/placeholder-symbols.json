@@ -20,7 +20,6 @@
         "block_template_part",
         "cancel_comment_reply_link",
         "clean_attachment_cache",
-        "clean_user_cache",
         "create_initial_taxonomies",
         "delete_plugins",
         "edit_comment",

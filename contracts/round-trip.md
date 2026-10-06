@@ -220,8 +220,7 @@ Found by the round trip and not done yet:
   Their bodies differ: the newsletter renders the post through
   `apply_filters('the_content')`, which on Minn has none of the
   reference's defaults behind it, so the mail carries raw block markup.
-  Media, terms and users over REST are next; Smush and WooCommerce's
-  `last_update` wait on them.
+  Media, terms and users tell plugins too now.
 - WordPress's own update checks on `admin_init` (`_maybe_update_*`) do
   not run on Minn (the engine has its own updater, and the reference
   skips them on `admin-ajax.php` anyway).

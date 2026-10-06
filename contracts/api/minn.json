@@ -30880,7 +30880,7 @@
             "namespace": "Minn\\Content",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Content/Users.php",
-            "lines": 236,
+            "lines": 267,
             "doc": "",
             "implements": [],
             "extends": null,
@@ -31117,6 +31117,83 @@
                 },
                 {
                     "routes": [],
+                    "name": "insertAccount",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "insertAccount(array $fields): int",
+                    "doc": "A new account's row alone: the caller adds its meta and role, and keeps the count. @param array<string, mixed> $fields",
+                    "shapes": [
+                        "@param array<string, mixed> $fields"
+                    ],
+                    "params": [
+                        {
+                            "name": "fields",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 128,
+                    "end": 142
+                },
+                {
+                    "routes": [],
+                    "name": "profileMeta",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "profileMeta(array $fields): array",
+                    "doc": "The twelve profile meta rows the reference gives a new account, in its\norder (the role's two follow).",
+                    "shapes": [
+                        "@param array<string, mixed> $fields",
+                        "@return array<string, string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "fields",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 151,
+                    "end": 167
+                },
+                {
+                    "routes": [],
+                    "name": "recount",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "recount(): void",
+                    "doc": "Recounts the accounts into user_count, quietly.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 170,
+                    "end": 173
+                },
+                {
+                    "routes": [],
+                    "name": "deleteRow",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "deleteRow(int $id): void",
+                    "doc": "Removes the account's row alone: the caller removes its meta and keeps the count.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 176,
+                    "end": 179
+                },
+                {
+                    "routes": [],
                     "name": "insert",
                     "static": false,
                     "visibility": "public",
@@ -31134,8 +31211,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 155,
-                    "end": 160
+                    "line": 186,
+                    "end": 191
                 },
                 {
                     "routes": [],
@@ -31163,8 +31240,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 167,
-                    "end": 172
+                    "line": 198,
+                    "end": 203
                 },
                 {
                     "routes": [],
@@ -31183,8 +31260,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 175,
-                    "end": 180
+                    "line": 206,
+                    "end": 211
                 },
                 {
                     "routes": [],
@@ -31205,8 +31282,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 183,
-                    "end": 186
+                    "line": 214,
+                    "end": 217
                 },
                 {
                     "routes": [],
@@ -31225,8 +31302,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 189,
-                    "end": 192
+                    "line": 220,
+                    "end": 223
                 },
                 {
                     "routes": [],
@@ -31252,8 +31329,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 195,
-                    "end": 198
+                    "line": 226,
+                    "end": 229
                 },
                 {
                     "routes": [],
@@ -31264,8 +31341,8 @@
                     "doc": "How many users the site has.",
                     "shapes": [],
                     "params": [],
-                    "line": 201,
-                    "end": 204
+                    "line": 232,
+                    "end": 235
                 },
                 {
                     "routes": [],
@@ -31293,8 +31370,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 211,
-                    "end": 218
+                    "line": 242,
+                    "end": 249
                 },
                 {
                     "routes": [],
@@ -31320,8 +31397,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 221,
-                    "end": 224
+                    "line": 252,
+                    "end": 255
                 },
                 {
                     "routes": [],
@@ -31347,8 +31424,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 227,
-                    "end": 234
+                    "line": 258,
+                    "end": 265
                 },
                 {
                     "routes": [],
@@ -31381,8 +31458,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 241,
-                    "end": 246
+                    "line": 272,
+                    "end": 277
                 },
                 {
                     "routes": [],
@@ -31438,7 +31515,7 @@
                         }
                     ],
                     "line": 112,
-                    "end": 148
+                    "end": 125
                 }
             ]
         },
@@ -55621,7 +55698,9 @@
                 "Minn\\Runtime\\AjaxController",
                 "Minn\\Runtime\\CommentEvents",
                 "Minn\\Runtime\\PostEvents",
-                "Minn\\Runtime\\Runtime"
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\TermEvents",
+                "Minn\\Runtime\\UserEvents"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Http\\Method $method, string $path, array $query, array $headers, array $cookies, string $body, bool $secure, string $host, array $form = array ( ), array $files = array ( ), string $remoteAddress = '', array $server = array ( ))",
@@ -66570,6 +66649,87 @@
             ]
         },
         {
+            "name": "Minn\\Media\\PreparedUpload",
+            "short": "PreparedUpload",
+            "namespace": "Minn\\Media",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Media/PreparedUpload.php",
+            "lines": 13,
+            "doc": "An upload made ready for its attachment: the file stored, its sizes cut,\nthe row it will be. The row is written apart, so what plugins hear\nbefore it (pre_post_insert) comes between.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Media\\Writer"
+            ],
+            "constructor": {
+                "signature": "__construct(array $columns, string $relative, ?array $metadata)",
+                "doc": "",
+                "shapes": [
+                    "@param array<string, mixed> $columns the attachment's row",
+                    "@param array<string, mixed>|null $metadata the image metadata, null for a file that is not an image"
+                ],
+                "params": [
+                    {
+                        "name": "columns",
+                        "type": "array",
+                        "shape": "array<string, mixed>",
+                        "default": null,
+                        "doc": "the attachment's row"
+                    },
+                    {
+                        "name": "relative",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "metadata",
+                        "type": "?array",
+                        "shape": "array<string, mixed>|null",
+                        "default": null,
+                        "doc": "the image metadata, null for a file that is not an image"
+                    }
+                ],
+                "visibility": "public",
+                "line": 18,
+                "end": 23
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "columns",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "relative",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "metadata",
+                    "type": "?array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                }
+            ],
+            "methods": []
+        },
+        {
             "name": "Minn\\Media\\Sizing",
             "short": "Sizing",
             "namespace": "Minn\\Media",
@@ -67429,7 +67589,7 @@
             "namespace": "Minn\\Media",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Media/Writer.php",
-            "lines": 90,
+            "lines": 121,
             "doc": "The writes the media library makes. An Upload becomes an attachment: the\nfile lands in the dated uploads directory under a unique name, the row is\ninserted with the stored name as its title and slug, and an image gets\nits sub-sizes and the serialized metadata blob. Edits stamp the row\nmodified; removal takes the files with the row.",
             "implements": [],
             "extends": null,
@@ -67441,12 +67601,14 @@
                 "Minn\\Content\\Slug",
                 "Minn\\Media\\Images",
                 "Minn\\Media\\Metadata",
+                "Minn\\Media\\PreparedUpload",
                 "Minn\\Media\\Upload",
                 "Minn\\Media\\Uploads"
             ],
             "usedBy": [
                 "Minn\\Rest\\MediaController",
-                "Minn\\Rest\\Services"
+                "Minn\\Rest\\Services",
+                "Minn\\Runtime\\PostEvents"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Content\\PostWriter $posts, Minn\\Content\\Posts $reads, Minn\\Content\\Site $site, Minn\\Media\\Uploads $uploads, Minn\\Media\\Images $images)",
@@ -67568,7 +67730,110 @@
                         }
                     ],
                     "line": 32,
-                    "end": 72
+                    "end": 41
+                },
+                {
+                    "routes": [],
+                    "name": "prepare",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "prepare(Minn\\Media\\Upload $upload, int $authorId): Minn\\Media\\PreparedUpload",
+                    "doc": "Stores the file and cuts its sizes, before the row exists: a decode\nthat fails leaves files to sweep, never a headless attachment.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "upload",
+                            "type": "Minn\\Media\\Upload",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "authorId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 47,
+                    "end": 80
+                },
+                {
+                    "routes": [],
+                    "name": "insert",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "insert(Minn\\Media\\PreparedUpload $prepared): int",
+                    "doc": "Writes a prepared attachment's row; returns its id.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "prepared",
+                            "type": "Minn\\Media\\PreparedUpload",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 83,
+                    "end": 86
+                },
+                {
+                    "routes": [],
+                    "name": "setAttachedFile",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "setAttachedFile(int $id, string $relative): void",
+                    "doc": "Records the file an attachment holds, relative to the uploads folder.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "relative",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 89,
+                    "end": 92
+                },
+                {
+                    "routes": [],
+                    "name": "setMetadata",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "setMetadata(int $id, array $metadata): void",
+                    "doc": "Stores an attachment's metadata in the reference's serialized shape. @param array<string, mixed> $metadata",
+                    "shapes": [
+                        "@param array<string, mixed> $metadata"
+                    ],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "metadata",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 95,
+                    "end": 98
                 },
                 {
                     "routes": [],
@@ -67594,8 +67859,37 @@
                             "doc": ""
                         }
                     ],
-                    "line": 75,
-                    "end": 83
+                    "line": 101,
+                    "end": 106
+                },
+                {
+                    "routes": [],
+                    "name": "stamp",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "stamp(int $id, array $columns): void",
+                    "doc": "Sets the given columns, none included, and stamps the attachment modified, as the reference's update always does. @param array<string, mixed> $columns",
+                    "shapes": [
+                        "@param array<string, mixed> $columns"
+                    ],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "columns",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 109,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -67621,8 +67915,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 86,
-                    "end": 89
+                    "line": 117,
+                    "end": 120
                 },
                 {
                     "routes": [],
@@ -67641,8 +67935,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 92,
-                    "end": 99
+                    "line": 123,
+                    "end": 130
                 },
                 {
                     "routes": [],
@@ -67670,8 +67964,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 102,
-                    "end": 108
+                    "line": 133,
+                    "end": 139
                 }
             ]
         },
@@ -76635,7 +76929,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/MediaController.php",
-            "lines": 191,
+            "lines": 220,
             "doc": "wp/v2/media: list, single, upload on both transports (multipart field\n\"file\", or a raw body with Content-Disposition), field edits, and force\ndelete with the files.",
             "implements": [],
             "extends": null,
@@ -76661,6 +76955,7 @@
                 "Minn\\Rest\\MediaObject",
                 "Minn\\Rest\\PostsWriteController",
                 "Minn\\Rest\\Reply",
+                "Minn\\Runtime\\PostEvents",
                 "Minn\\Support\\Kses"
             ],
             "usedBy": [
@@ -76708,8 +77003,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 30,
-                "end": 37
+                "line": 31,
+                "end": 38
             },
             "cases": [],
             "constants": [],
@@ -76780,8 +77075,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 41,
-                    "end": 65
+                    "line": 42,
+                    "end": 66
                 },
                 {
                     "routes": [
@@ -76809,8 +77104,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 111,
-                    "end": 120
+                    "line": 112,
+                    "end": 121
                 },
                 {
                     "routes": [
@@ -76831,8 +77126,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 124,
-                    "end": 158
+                    "line": 125,
+                    "end": 171
                 },
                 {
                     "routes": [
@@ -76862,8 +77157,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 164,
-                    "end": 191
+                    "line": 177,
+                    "end": 219
                 },
                 {
                     "routes": [
@@ -76891,8 +77186,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 195,
-                    "end": 208
+                    "line": 223,
+                    "end": 238
                 },
                 {
                     "routes": [],
@@ -76913,8 +77208,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 74,
-                    "end": 96
+                    "line": 75,
+                    "end": 97
                 },
                 {
                     "routes": [],
@@ -76940,8 +77235,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 98,
-                    "end": 107
+                    "line": 99,
+                    "end": 108
                 },
                 {
                     "routes": [],
@@ -76960,8 +77255,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 210,
-                    "end": 217
+                    "line": 240,
+                    "end": 247
                 }
             ]
         },
@@ -81777,7 +82072,9 @@
             "usedBy": [
                 "Minn\\Rest\\Api",
                 "Minn\\Runtime\\CommentEvents",
-                "Minn\\Runtime\\PostEvents"
+                "Minn\\Runtime\\PostEvents",
+                "Minn\\Runtime\\TermEvents",
+                "Minn\\Runtime\\UserEvents"
             ],
             "constructor": null,
             "cases": [],
@@ -85542,7 +85839,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/TermsController.php",
-            "lines": 199,
+            "lines": 197,
             "doc": "wp/v2 categories, tags, and pattern categories: list, single, and the create/update/delete the taxonomy admin drives.",
             "implements": [],
             "extends": null,
@@ -85565,6 +85862,7 @@
                 "Minn\\Rest\\Fields",
                 "Minn\\Rest\\Reply",
                 "Minn\\Rest\\TermObject",
+                "Minn\\Runtime\\TermEvents",
                 "Minn\\Support\\Kses"
             ],
             "usedBy": [
@@ -85612,8 +85910,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 27,
-                "end": 34
+                "line": 28,
+                "end": 35
             },
             "cases": [],
             "constants": [
@@ -85698,8 +85996,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 38,
-                    "end": 98
+                    "line": 39,
+                    "end": 99
                 },
                 {
                     "routes": [
@@ -85734,8 +86032,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 102,
-                    "end": 119
+                    "line": 103,
+                    "end": 120
                 },
                 {
                     "routes": [
@@ -85764,8 +86062,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 124,
-                    "end": 160
+                    "line": 125,
+                    "end": 158
                 },
                 {
                     "routes": [
@@ -85802,8 +86100,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 166,
-                    "end": 195
+                    "line": 164,
+                    "end": 194
                 },
                 {
                     "routes": [
@@ -85838,8 +86136,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 199,
-                    "end": 220
+                    "line": 198,
+                    "end": 219
                 }
             ]
         },
@@ -86336,7 +86634,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/UsersController.php",
-            "lines": 297,
+            "lines": 307,
             "doc": "wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives.",
             "implements": [],
             "extends": null,
@@ -86362,6 +86660,7 @@
                 "Minn\\Rest\\Reply",
                 "Minn\\Rest\\RestUrl",
                 "Minn\\Rest\\UserObject",
+                "Minn\\Runtime\\UserEvents",
                 "Minn\\Support\\Kses"
             ],
             "usedBy": [
@@ -86423,8 +86722,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 35,
-                "end": 44
+                "line": 36,
+                "end": 45
             },
             "cases": [],
             "constants": [
@@ -86520,8 +86819,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 56
+                    "line": 49,
+                    "end": 57
                 },
                 {
                     "routes": [
@@ -86544,8 +86843,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 62,
-                    "end": 65
+                    "line": 63,
+                    "end": 66
                 },
                 {
                     "routes": [
@@ -86566,8 +86865,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 69,
-                    "end": 125
+                    "line": 70,
+                    "end": 126
                 },
                 {
                     "routes": [
@@ -86595,8 +86894,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 129,
-                    "end": 149
+                    "line": 130,
+                    "end": 150
                 },
                 {
                     "routes": [
@@ -86617,8 +86916,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 175,
-                    "end": 218
+                    "line": 176,
+                    "end": 219
                 },
                 {
                     "routes": [
@@ -86648,8 +86947,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 224,
-                    "end": 279
+                    "line": 225,
+                    "end": 288
                 },
                 {
                     "routes": [
@@ -86677,8 +86976,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 283,
-                    "end": 320
+                    "line": 292,
+                    "end": 331
                 },
                 {
                     "routes": [],
@@ -86697,8 +86996,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 151,
-                    "end": 157
+                    "line": 152,
+                    "end": 158
                 },
                 {
                     "routes": [],
@@ -86717,8 +87016,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 160,
-                    "end": 166
+                    "line": 161,
+                    "end": 167
                 },
                 {
                     "routes": [],
@@ -86737,8 +87036,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 168,
-                    "end": 171
+                    "line": 169,
+                    "end": 172
                 }
             ]
         },
@@ -94697,7 +94996,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/PostEvents.php",
-            "lines": 96,
+            "lines": 146,
             "doc": "What the reference's REST controllers tell plugins about a post they\nwrite, for the engine's own controllers: the same actions in the same\norder with the same arguments, fired through the facade's lifecycle\nfunctions so the facade's own writes say the same (contracts/runtime.md\n\"Writes tell plugins\"). Without a booted runtime every method does\nnothing, so a write with no plugins loaded is exactly what it was.",
             "implements": [],
             "extends": null,
@@ -94705,10 +95004,12 @@
                 "Minn\\Content\\PostRecord",
                 "Minn\\Content\\PostWriter",
                 "Minn\\Http\\Request",
+                "Minn\\Media\\Writer",
                 "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
+                "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\PostsWriteController"
             ],
             "constructor": null,
@@ -94725,8 +95026,8 @@
                     "doc": "Whether plugins are loaded to be told anything.",
                     "shapes": [],
                     "params": [],
-                    "line": 23,
-                    "end": 26
+                    "line": 24,
+                    "end": 27
                 },
                 {
                     "routes": [],
@@ -94754,8 +95055,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 29,
-                    "end": 34
+                    "line": 30,
+                    "end": 35
                 },
                 {
                     "routes": [],
@@ -94781,8 +95082,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 37,
-                    "end": 42
+                    "line": 38,
+                    "end": 43
                 },
                 {
                     "routes": [],
@@ -94808,8 +95109,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 49,
-                    "end": 56
+                    "line": 50,
+                    "end": 57
                 },
                 {
                     "routes": [],
@@ -94844,8 +95145,159 @@
                             "doc": ""
                         }
                     ],
-                    "line": 59,
-                    "end": 68
+                    "line": 60,
+                    "end": 69
+                },
+                {
+                    "routes": [],
+                    "name": "attachedFile",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "attachedFile(Minn\\Media\\Writer $library, int $id, string $relative): void",
+                    "doc": "The file a new attachment holds: through add_post_meta with plugins loaded, written directly without.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "library",
+                            "type": "Minn\\Media\\Writer",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "relative",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 72,
+                    "end": 75
+                },
+                {
+                    "routes": [],
+                    "name": "attachmentAdded",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "attachmentAdded(int $id): void",
+                    "doc": "add_attachment, once a new attachment's row and file are in.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 78,
+                    "end": 84
+                },
+                {
+                    "routes": [],
+                    "name": "attachmentEdited",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "attachmentEdited(int $id, Minn\\Content\\PostRecord $before): void",
+                    "doc": "edit_attachment and attachment_updated, after an attachment's row changed.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "before",
+                            "type": "Minn\\Content\\PostRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 87,
+                    "end": 96
+                },
+                {
+                    "routes": [],
+                    "name": "attachmentMetadata",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "attachmentMetadata(Minn\\Media\\Writer $library, int $id, array $metadata): void",
+                    "doc": "A new attachment's metadata: with plugins loaded it passes through\nwp_generate_attachment_metadata (where an image optimiser works) and\nis stored by wp_update_attachment_metadata; without, as built.",
+                    "shapes": [
+                        "@param array<string, mixed> $metadata"
+                    ],
+                    "params": [
+                        {
+                            "name": "library",
+                            "type": "Minn\\Media\\Writer",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "metadata",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 105,
+                    "end": 113
+                },
+                {
+                    "routes": [],
+                    "name": "altText",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "altText(Minn\\Media\\Writer $library, int $id, string $alt): void",
+                    "doc": "An attachment's alt text: through update_post_meta with plugins loaded, written directly without.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "library",
+                            "type": "Minn\\Media\\Writer",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "alt",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 116,
+                    "end": 119
                 },
                 {
                     "routes": [],
@@ -94878,8 +95330,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 71,
-                    "end": 74
+                    "line": 122,
+                    "end": 125
                 },
                 {
                     "routes": [],
@@ -94912,8 +95364,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 77,
-                    "end": 80
+                    "line": 128,
+                    "end": 131
                 },
                 {
                     "routes": [],
@@ -94939,8 +95391,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 83,
-                    "end": 88
+                    "line": 134,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -94975,8 +95427,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 91,
-                    "end": 96
+                    "line": 142,
+                    "end": 147
                 },
                 {
                     "routes": [],
@@ -95016,8 +95468,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 99,
-                    "end": 108
+                    "line": 150,
+                    "end": 159
                 },
                 {
                     "routes": [],
@@ -95036,8 +95488,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 111,
-                    "end": 114
+                    "line": 162,
+                    "end": 165
                 }
             ]
         },
@@ -97370,7 +97822,9 @@
                 "Minn\\Runtime\\PostEvents",
                 "Minn\\Runtime\\PostQuery",
                 "Minn\\Runtime\\ScriptModules",
+                "Minn\\Runtime\\TermEvents",
                 "Minn\\Runtime\\TermWriter",
+                "Minn\\Runtime\\UserEvents",
                 "Minn\\Theme\\ArchiveTitle",
                 "Minn\\Theme\\ClassicContent",
                 "Minn\\Theme\\ClassicRenderer",
@@ -100479,6 +100933,223 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\TermEvents",
+            "short": "TermEvents",
+            "namespace": "Minn\\Runtime",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Runtime/TermEvents.php",
+            "lines": 62,
+            "doc": "What the reference's REST terms controller tells plugins, for the\nengine's own: with plugins loaded a term is written through the\nruntime's wp_insert_term, wp_update_term and wp_delete_term (create_term,\nthe cache cleaning that rebuilds a taxonomy's children map, created_term,\nsaved_term and their families), and the REST actions follow. Without a\nbooted runtime each write is the engine's own, given as a closure.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http\\Request",
+                "Minn\\Rest\\RuntimeRoutes",
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\TermsController"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "live",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "live(): bool",
+                    "doc": "Whether plugins are loaded to be told anything.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 22,
+                    "end": 25
+                },
+                {
+                    "routes": [],
+                    "name": "create",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "create(string $name, string $taxonomy, array $args, Closure $quietly): int",
+                    "doc": "Creates a term and returns its id.",
+                    "shapes": [
+                        "@param array{slug: string, description: string, parent: int} $args",
+                        "@param Closure(): int $quietly the engine's own write"
+                    ],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array{slug: string, description: string, parent: int}",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "quietly",
+                            "type": "Closure",
+                            "shape": "Closure(): int",
+                            "default": null,
+                            "doc": "the engine's own write"
+                        }
+                    ],
+                    "line": 33,
+                    "end": 40
+                },
+                {
+                    "routes": [],
+                    "name": "update",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "update(int $termId, string $taxonomy, array $args, Closure $quietly): void",
+                    "doc": "Updates a term's name, slug, description or parent.",
+                    "shapes": [
+                        "@param array<string, mixed> $args the fields the request changes",
+                        "@param Closure(): void $quietly the engine's own write"
+                    ],
+                    "params": [
+                        {
+                            "name": "termId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the fields the request changes"
+                        },
+                        {
+                            "name": "quietly",
+                            "type": "Closure",
+                            "shape": "Closure(): void",
+                            "default": null,
+                            "doc": "the engine's own write"
+                        }
+                    ],
+                    "line": 48,
+                    "end": 51
+                },
+                {
+                    "routes": [],
+                    "name": "delete",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "delete(int $termId, string $taxonomy, array $data, Minn\\Http\\Request $request, Closure $quietly): void",
+                    "doc": "Deletes a term, then tells plugins over REST with the term as it was and the response.",
+                    "shapes": [
+                        "@param array<string, mixed> $data the response",
+                        "@param Closure(): void $quietly the engine's own delete"
+                    ],
+                    "params": [
+                        {
+                            "name": "termId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "data",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the response"
+                        },
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "quietly",
+                            "type": "Closure",
+                            "shape": "Closure(): void",
+                            "default": null,
+                            "doc": "the engine's own delete"
+                        }
+                    ],
+                    "line": 59,
+                    "end": 68
+                },
+                {
+                    "routes": [],
+                    "name": "restSaved",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "restSaved(int $termId, string $taxonomy, Minn\\Http\\Request $request, string $verb): void",
+                    "doc": "rest_insert_{taxonomy}, then rest_after_insert_{taxonomy}, with the term as it stands and the request.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "termId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "verb",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 71,
+                    "end": 79
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\TermQuery",
             "short": "TermQuery",
             "namespace": "Minn\\Runtime",
@@ -101625,12 +102296,195 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\UserEvents",
+            "short": "UserEvents",
+            "namespace": "Minn\\Runtime",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Runtime/UserEvents.php",
+            "lines": 72,
+            "doc": "What the reference's REST users controller tells plugins, for the\nengine's own: with plugins loaded an account is written through the\nruntime's wp_insert_user, wp_update_user and wp_delete_user\n(wp_set_password, each profile meta, the role, clean_user_cache,\nuser_register and the count, profile_update, delete_user and\ndeleted_user), and the REST actions follow. Without a booted runtime each\nwrite is the engine's own, given as a closure.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http\\Request",
+                "Minn\\Rest\\RuntimeRoutes",
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\UsersController"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "live",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "live(): bool",
+                    "doc": "Whether plugins are loaded to be told anything.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 23,
+                    "end": 26
+                },
+                {
+                    "routes": [],
+                    "name": "create",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "create(array $userdata, string $role, Minn\\Http\\Request $request, Closure $quietly): int",
+                    "doc": "Creates an account the way the REST controller does: wp_insert_user\nwith no role, rest_insert_user, then the role added, then\nrest_after_insert_user. Returns the new id.",
+                    "shapes": [
+                        "@param array<string, mixed> $userdata wp_insert_user's fields",
+                        "@param Closure(): int $quietly the engine's own write"
+                    ],
+                    "params": [
+                        {
+                            "name": "userdata",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "wp_insert_user's fields"
+                        },
+                        {
+                            "name": "role",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "quietly",
+                            "type": "Closure",
+                            "shape": "Closure(): int",
+                            "default": null,
+                            "doc": "the engine's own write"
+                        }
+                    ],
+                    "line": 36,
+                    "end": 50
+                },
+                {
+                    "routes": [],
+                    "name": "update",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "update(int $id, array $userdata, ?string $role, Minn\\Http\\Request $request, Closure $quietly): void",
+                    "doc": "Updates an account: wp_update_user with the changed fields, the role\nwhen one is given, then the two REST actions.",
+                    "shapes": [
+                        "@param array<string, mixed> $userdata the fields the request changes",
+                        "@param Closure(): void $quietly the engine's own write"
+                    ],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "userdata",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the fields the request changes"
+                        },
+                        {
+                            "name": "role",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "quietly",
+                            "type": "Closure",
+                            "shape": "Closure(): void",
+                            "default": null,
+                            "doc": "the engine's own write"
+                        }
+                    ],
+                    "line": 59,
+                    "end": 72
+                },
+                {
+                    "routes": [],
+                    "name": "delete",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "delete(int $id, ?int $reassign, array $data, Minn\\Http\\Request $request, Closure $quietly): void",
+                    "doc": "Deletes an account, its posts going to $reassign (or with it when\nnone), then rest_delete_user with the account as it was.",
+                    "shapes": [
+                        "@param array<string, mixed> $data the response",
+                        "@param Closure(): void $quietly the engine's own delete"
+                    ],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "reassign",
+                            "type": "?int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "data",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the response"
+                        },
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "quietly",
+                            "type": "Closure",
+                            "shape": "Closure(): void",
+                            "default": null,
+                            "doc": "the engine's own delete"
+                        }
+                    ],
+                    "line": 81,
+                    "end": 90
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\UserInsert",
             "short": "UserInsert",
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/UserInsert.php",
-            "lines": 111,
+            "lines": 112,
             "doc": "The decisions behind wp_insert_user: what a new account needs, which email\nand login collide, the resolved profile fields, and which columns an\nupdate changes. The sanitisers and lookups arrive as closures so the\nreference's filters apply. Behaviour pinned by contracts/fixtures/api/functions.json.",
             "implements": [],
             "extends": null,
@@ -101792,7 +102646,7 @@
                         }
                     ],
                     "line": 38,
-                    "end": 75
+                    "end": 76
                 },
                 {
                     "routes": [],
@@ -101827,8 +102681,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 78,
-                    "end": 94
+                    "line": 79,
+                    "end": 95
                 },
                 {
                     "routes": [],
@@ -101881,8 +102735,8 @@
                             "doc": "the password hasher"
                         }
                     ],
-                    "line": 105,
-                    "end": 124
+                    "line": 106,
+                    "end": 125
                 }
             ]
         },

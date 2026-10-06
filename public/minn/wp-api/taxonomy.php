@@ -504,6 +504,7 @@ function wp_insert_term($term, $taxonomy, $args = [])
     [$termId, $ttId] = [$made['term_id'], $made['term_taxonomy_id']];
     do_action('create_term', $termId, $ttId, $taxonomy, $args);
     do_action("create_{$taxonomy}", $termId, $ttId, $args);
+    clean_term_cache($termId, $taxonomy);
     do_action('created_term', $termId, $ttId, $taxonomy, $args);
     do_action("created_{$taxonomy}", $termId, $ttId, $args);
     do_action('saved_term', $termId, $ttId, $taxonomy, false, $args);
@@ -528,8 +529,11 @@ function wp_update_term($term_id, $taxonomy, $args = [])
     do_action('edit_terms', $term->term_id, $taxonomy, $args);
     _minn_term_writer()->apply($term->term_id, (string) $taxonomy, $change);
     do_action('edited_terms', $term->term_id, $taxonomy, $args);
+    do_action('edit_term_taxonomy', $term->term_taxonomy_id, $taxonomy, $args);
+    do_action('edited_term_taxonomy', $term->term_taxonomy_id, $taxonomy, $args);
     do_action('edit_term', $term->term_id, $term->term_taxonomy_id, $taxonomy, $args);
     do_action("edit_{$taxonomy}", $term->term_id, $term->term_taxonomy_id, $args);
+    clean_term_cache($term->term_id, $taxonomy);
     do_action('edited_term', $term->term_id, $term->term_taxonomy_id, $taxonomy, $args);
     do_action("edited_{$taxonomy}", $term->term_id, $term->term_taxonomy_id, $args);
     do_action('saved_term', $term->term_id, $term->term_taxonomy_id, $taxonomy, true, $args);
@@ -553,8 +557,12 @@ function wp_delete_term($term, $taxonomy, $args = [])
     $args = wp_parse_args($args, ['default' => null, 'force_default' => false]);
     $row = _minn_term_row($object->term_id, (string) $taxonomy) ?? $object->to_array();
     do_action('pre_delete_term', $object->term_id, $taxonomy);
+    if (is_taxonomy_hierarchical($taxonomy)) {
+        _minn_term_children_move($object, (string) $taxonomy);
+    }
     $objects = array_map('strval', _minn_term_writer()->delete($row, (string) $taxonomy, is_taxonomy_hierarchical($taxonomy), $taxonomy === 'category' ? $default : (int) ($args['default'] ?? 0)));
     do_action('deleted_term_taxonomy', $object->term_taxonomy_id);
+    clean_term_cache($object->term_id, $taxonomy);
     do_action('delete_term', $object->term_id, $object->term_taxonomy_id, $taxonomy, $object, $objects);
     do_action("delete_{$taxonomy}", $object->term_id, $object->term_taxonomy_id, $object, $objects);
     return true;
@@ -593,11 +601,21 @@ function get_post_taxonomies($post = 0)
 
 function clean_term_cache($ids, $taxonomy = '', $clean_taxonomy = true)
 {
-    foreach ((array) $ids as $id) {
+    $ids = (array) $ids;
+    foreach ($ids as $id) {
         wp_cache_delete((int) $id, 'terms');
         wp_cache_delete((int) $id, 'term_meta');
     }
-    do_action('clean_term_cache', (array) $ids, $taxonomy, $clean_taxonomy);
+    if ($taxonomy === '') {
+        foreach (array_unique(array_filter(array_map(static fn ($id) => get_term((int) $id)->taxonomy ?? null, $ids))) as $owner) {
+            clean_term_cache($ids, $owner, $clean_taxonomy);
+        }
+        return;
+    }
+    if ($clean_taxonomy) {
+        clean_taxonomy_cache($taxonomy);
+    }
+    do_action('clean_term_cache', $ids, $taxonomy, $clean_taxonomy);
 }
 
 function clean_object_term_cache($object_ids, $object_type)
@@ -1170,7 +1188,27 @@ function wp_delete_nav_menu($menu)
 
 function _get_term_hierarchy($taxonomy)
 {
-    return _minn_term_query()->hierarchy((string) $taxonomy);
+    if (!is_taxonomy_hierarchical($taxonomy)) {
+        return [];
+    }
+    $children = get_option("{$taxonomy}_children");
+    if (is_array($children)) {
+        return $children;
+    }
+    // Built from the terms and kept, as the reference keeps it.
+    $children = _minn_term_query()->hierarchy((string) $taxonomy);
+    update_option("{$taxonomy}_children", $children);
+    return $children;
+}
+
+/** Lets go of what a taxonomy keeps about all its terms: the children map is dropped and built again. */
+function clean_taxonomy_cache($taxonomy)
+{
+    wp_cache_delete('all_ids', $taxonomy);
+    wp_cache_delete('get', $taxonomy);
+    delete_option("{$taxonomy}_children");
+    _get_term_hierarchy($taxonomy);
+    do_action('clean_taxonomy_cache', $taxonomy);
 }
 
 function term_is_ancestor_of($term1, $term2, $taxonomy)
@@ -1286,4 +1324,15 @@ function _wp_auto_add_pages_to_menu($new_status, $old_status, $post)
             _minn_menus()->appendPage((int) $menu_id, (int) $post->ID, get_current_user_id());
         }
     }
+}
+
+/** @internal What the reference tells plugins as a deleted term's children move up to its parent (the move itself is the term writer's). */
+function _minn_term_children_move(WP_Term $term, string $taxonomy): void
+{
+    $children = get_terms(['taxonomy' => $taxonomy, 'parent' => $term->term_id, 'hide_empty' => false, 'fields' => 'all']);
+    $children = is_array($children) ? $children : [];
+    $tt_ids = array_map(static fn ($child) => (int) $child->term_taxonomy_id, $children);
+    do_action('edit_term_taxonomies', $tt_ids);
+    clean_term_cache(array_map(static fn ($child) => (int) $child->term_id, $children), $taxonomy);
+    do_action('edited_term_taxonomies', $tt_ids);
 }

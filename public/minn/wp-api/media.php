@@ -780,15 +780,17 @@ function wp_delete_attachment($post_id, $force_delete = false)
     $backup_sizes = get_post_meta($post->ID, '_wp_attachment_backup_sizes', true);
     $file = get_attached_file($post->ID);
     do_action('delete_attachment', $post->ID, $post);
-    $taxonomies = _minn_post_writer()->taxonomiesOf($post->ID);
-    _minn_post_writer()->destroy($post->ID);
-    foreach ($taxonomies as $taxonomy) {
-        _minn_post_writer()->recount($taxonomy);
+    // As the reference removes it: its terms, its comments, its meta row by row, then the row between delete_post and deleted_post.
+    wp_delete_object_term_relationships($post->ID, get_object_taxonomies($post->post_type));
+    foreach (_minn_comments()->idsOf($post->ID) as $comment_id) {
+        wp_delete_comment($comment_id, true);
     }
-    wp_delete_attachment_files($post->ID, $meta, $backup_sizes, $file);
-    wp_cache_delete($post->ID, 'posts');
-    wp_cache_delete($post->ID, 'post_meta');
+    _minn_post_delete_meta($post->ID);
+    do_action('delete_post', $post->ID, $post);
+    _minn_post_writer()->destroy($post->ID);
     do_action('deleted_post', $post->ID, $post);
+    clean_post_cache($post);
+    wp_delete_attachment_files($post->ID, $meta, $backup_sizes, $file);
     return $post;
 }
 

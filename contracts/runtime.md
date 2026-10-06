@@ -3049,9 +3049,9 @@ reference's actions, in its order, with its arguments. Suite `hook-trace`
 records every action each REST write fires on both stacks (fixture
 mu-plugin `tests/fixtures/mu-plugins/minn-test-trace.php`, recording only
 for a request naming a run the suite opened) and compares the sequences
-from `rest_api_init` to `shutdown`, query bookkeeping aside. Posts, pages,
-comments and settings agree action for action; media, terms and users are
-listed in its shrink-only `DIVERGENT` list. A quick tracer for any core
+from `rest_api_init` to `shutdown`, query bookkeeping aside. All twenty
+writes (posts, pages, media, terms, users, comments, settings) agree
+action for action; its shrink-only `DIVERGENT` list is empty. A quick tracer for any core
 function on the reference: a `wp eval-file` that hangs a recorder on `all`
 and keeps actions only (an action is counted before `all` runs, a filter
 is not).
@@ -3127,6 +3127,46 @@ does that the facade now does too:
   `wp_trash_comment`, then `rest_insert_comment` and
   `rest_after_insert_comment`; delete ends with `rest_delete_comment`.
 - **Settings** go through `update_option` with the typed value.
+- **Media**: an upload is `pre_post_insert`, the row, `_wp_attached_file`
+  through `add_post_meta`, `clean_post_cache`, `add_attachment`, the REST
+  pair, `wp_after_insert_post`, and last the metadata through the
+  `wp_generate_attachment_metadata` filter (where an optimiser such as
+  Smush works) and `wp_update_attachment_metadata`. The engine still cuts
+  the sizes before the row exists (`Media\Writer::prepare`); the stored
+  blob is byte for byte what PHP's serializer writes. An edit is
+  `pre_post_update`, the row (always stamped modified, as the reference's
+  update is), `edit_attachment`, `attachment_updated`, `rest_insert_attachment`,
+  the alt text through `update_post_meta`, `rest_after_insert_attachment`,
+  `wp_after_insert_post`. `wp_delete_attachment` is `delete_attachment`,
+  the terms, the comments, the meta row by row, then the row between
+  `delete_post` and `deleted_post`, `clean_post_cache`, and the files.
+- **Terms**: `wp_insert_term` cleans the term cache between
+  `create_{taxonomy}` and `created_term`; `clean_term_cache` with its
+  taxonomy flag runs `clean_taxonomy_cache`, which drops and rebuilds
+  `{taxonomy}_children` (a hierarchical taxonomy only) and fires
+  `clean_taxonomy_cache`. `wp_update_term` fires `edit_term_taxonomy` /
+  `edited_term_taxonomy` and cleans before `edited_term`. `wp_delete_term`
+  of a hierarchical term tells plugins its children move
+  (`edit_term_taxonomies`, a clean, `edited_term_taxonomies`, even with no
+  children), then `delete_term_taxonomy`, `deleted_term_taxonomy`, a clean,
+  `delete_term`, `delete_{taxonomy}`. The REST controller keeps its own
+  refusals and writes through these (`Runtime\TermEvents`).
+- **Users**: `wp_insert_user` writes the row, fires `wp_set_password`,
+  adds each profile meta through `add_user_meta`, sets the role
+  (`add_user_role`, `set_user_role`), `clean_user_cache`, `user_register`,
+  whose default `wp_maybe_update_user_counts` keeps `user_count` through
+  `update_site_option` (which on a single site fires
+  `update_site_option_{name}` and `update_site_option` after the option's
+  own). Over REST the account is inserted with `role => false`
+  (`set_user_role(id, false, [])`, empty capabilities), then
+  `rest_insert_user`, then the role added (`add_user_role`), then
+  `rest_after_insert_user`. `WP_User::set_role` fires `remove_user_role`
+  and `add_user_role` around `set_user_role`. An update fires
+  `wp_set_password` for a new password, `clean_user_cache` before and after
+  the meta, `profile_update`, then `wp_update_user`. `wp_delete_user`
+  removes each meta row by id (`delete_user_meta(ids, id, key, value)`),
+  the row, `clean_user_cache`, `deleted_user` (and the count). Not yet:
+  the password-change and email-change notices WordPress mails the user.
 
 **The reference's default callbacks**, registered in its order (each was a
 data difference: the facade registered none): `_transition_post_status`
@@ -3154,7 +3194,7 @@ Kept different on purpose: pingbacks, trackbacks and enclosure checks are
 Mute (`contracts/lexicon.md`), so a published save queues no `_pingme`,
 `_encloseme` or `do_pings`; the suite drops those from both sides.
 
-Still open: media, terms and users over REST; the engine's own cron
+Still open: the engine's own cron
 publishes due posts by row without these actions; `apply_filters(
 'the_content')` called by a plugin has none of the reference's defaults
 behind it, so a newsletter renders raw block markup (round trip on

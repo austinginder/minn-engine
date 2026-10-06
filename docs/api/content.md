@@ -36,7 +36,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`Terms`](#terms) | final readonly class | 178 |  |
 | [`Texturize`](#texturize) | final class | 51 | The texturize subset the reference applies to rendered text: straight |
 | [`UserRecord`](#userrecord) | final readonly class | 96 | One row of the users table, read by name. Columns keep their WordPress |
-| [`Users`](#users) | final readonly class | 236 |  |
+| [`Users`](#users) | final readonly class | 267 |  |
 
 ## Autop
 
@@ -1843,6 +1843,28 @@ locale?: string,
 The display name an account gets when none is given, as the reference
 picks it: first and last name, whichever of the two there is, or the
 login. The nickname plays no part.
+
+### `insertAccount(array $fields): int`
+
+A new account's row alone: the caller adds its meta and role, and keeps the count. @param array<string, mixed> $fields
+
+- `@param array<string, mixed> $fields`
+
+### static `profileMeta(array $fields): array`
+
+The twelve profile meta rows the reference gives a new account, in its
+order (the role's two follow).
+
+- `@param array<string, mixed> $fields`
+- `@return array<string, string>`
+
+### `recount(): void`
+
+Recounts the accounts into user_count, quietly.
+
+### `deleteRow(int $id): void`
+
+Removes the account's row alone: the caller removes its meta and keeps the count.
 
 ### `insert(array $columns): int`
 

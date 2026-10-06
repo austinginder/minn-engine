@@ -172,3 +172,6 @@ add_action('delete_post', 'block_core_calendar_update_has_published_post_on_dele
 add_action('delete_attachment', '_delete_attachment_theme_mod');
 add_action('transition_comment_status', '_clear_modified_cache_on_transition_comment_status', 10, 2);
 add_action('profile_update', 'default_password_nag_edit_user', 10, 2);
+add_action('user_register', 'wp_maybe_update_user_counts', 10, 0);
+add_action('deleted_user', 'wp_maybe_update_user_counts', 10, 0);
+add_action('set_user_role', 'wp_cache_set_users_last_changed');

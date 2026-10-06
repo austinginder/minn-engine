@@ -40,7 +40,7 @@ the WordPress runtime plugins load against
 | [`Placeholders`](#placeholders) | final class | 49 | The printf placeholders plugin code hands wpdb::prepare, filled the way |
 | [`PluginUpdates`](#pluginupdates) | final class | 65 | The update offers the site's own plugins publish. A plugin that hosts |
 | [`Plugins`](#plugins) | final class | 213 | Loads the site's plugins into the runtime the way the reference does: |
-| [`PostEvents`](#postevents) | final readonly class | 96 | What the reference's REST controllers tell plugins about a post they |
+| [`PostEvents`](#postevents) | final readonly class | 146 | What the reference's REST controllers tell plugins about a post they |
 | [`PostInsert`](#postinsert) | final readonly class | 160 | The decisions behind wp_insert_post: which columns a postarr fills, when |
 | [`PostLookup`](#postlookup) | final readonly class | 85 | The post reads plugin code asks for by shape: a page by title, revisions, counts. |
 | [`PostQuery`](#postquery) | final class | 383 | The query WP_Query runs: its variables become one SELECT over the posts |
@@ -59,10 +59,12 @@ the WordPress runtime plugins load against
 | [`Symbols`](#symbols) | final class | 275 | A static read of what a plugin's PHP calls: global functions and classes |
 | [`TagEditor`](#tageditor) | final class | 149 | Edits one start tag's attributes in place the way the reference's tag |
 | [`TaxonomyClause`](#taxonomyclause) | final class | 178 | The taxonomy side of a post query: every query var the reference reads |
+| [`TermEvents`](#termevents) | final readonly class | 62 | What the reference's REST terms controller tells plugins, for the |
 | [`TermQuery`](#termquery) | final readonly class | 393 | Term reads in the shapes plugin code asks for: get_terms() arguments to |
 | [`TermWriter`](#termwriter) | final readonly class | 192 | The decisions behind wp_insert_term, wp_update_term, wp_delete_term, and |
 | [`TreeWalk`](#treewalk) | final class | 74 | The Walker contract's traversal: elements keyed by the walker's |
-| [`UserInsert`](#userinsert) | final readonly class | 111 | The decisions behind wp_insert_user: what a new account needs, which email |
+| [`UserEvents`](#userevents) | final readonly class | 72 | What the reference's REST users controller tells plugins, for the |
+| [`UserInsert`](#userinsert) | final readonly class | 112 | The decisions behind wp_insert_user: what a new account needs, which email |
 | [`UserQuery`](#userquery) | final readonly class | 49 | The user listing behind WP_User_Query: role filtering through the |
 
 ## Abilities
@@ -1665,7 +1667,7 @@ functions so the facade's own writes say the same (contracts/runtime.md
 "Writes tell plugins"). Without a booted runtime every method does
 nothing, so a write with no plugins loaded is exactly what it was.
 
-Used by: `Minn\Rest\PostsWriteController`
+Used by: `Minn\Rest\MediaController`, `Minn\Rest\PostsWriteController`
 
 ### `live(): bool`
 
@@ -1693,6 +1695,30 @@ The terms a REST body names, set through wp_set_object_terms with plugins loaded
 
 - `@param array<string, mixed> $body`
 
+### `attachedFile(Minn\Media\Writer $library, int $id, string $relative): void`
+
+The file a new attachment holds: through add_post_meta with plugins loaded, written directly without.
+
+### `attachmentAdded(int $id): void`
+
+add_attachment, once a new attachment's row and file are in.
+
+### `attachmentEdited(int $id, Minn\Content\PostRecord $before): void`
+
+edit_attachment and attachment_updated, after an attachment's row changed.
+
+### `attachmentMetadata(Minn\Media\Writer $library, int $id, array $metadata): void`
+
+A new attachment's metadata: with plugins loaded it passes through
+wp_generate_attachment_metadata (where an image optimiser works) and
+is stored by wp_update_attachment_metadata; without, as built.
+
+- `@param array<string, mixed> $metadata`
+
+### `altText(Minn\Media\Writer $library, int $id, string $alt): void`
+
+An attachment's alt text: through update_post_meta with plugins loaded, written directly without.
+
 ### `restInserted(int $id, Minn\Http\Request $request, ?Minn\Content\PostRecord $before): void`
 
 rest_insert_{type}, before the request's own terms and fields are applied; a post with no $before is a new one.
@@ -1711,7 +1737,7 @@ rest_delete_{type}, after a trash or a delete, with the post as it was answered 
 
 - `@param array<string, mixed> $data`
 
-Internals: `rest()` (private, line 99), `wpPost()` (private, line 111)
+Internals: `rest()` (private, line 150), `wpPost()` (private, line 162)
 
 
 ## PostInsert
@@ -2120,7 +2146,7 @@ The WordPress runtime the engine offers plugin code: the procedural
 facade under minn/wp-api/ plus the services it delegates to. One per
 request; the facade reaches it through these statics.
 
-Used by: `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\RenderState`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\Reader`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\PluginRules`, `Minn\Front\Resolver`, `Minn\Login\LoginHooks`, `Minn\Mail\Mailer`, `Minn\Media\Images`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Runtime\Abilities`, `Minn\Runtime\AjaxController`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\Constants`, `Minn\Runtime\Interactivity`, `Minn\Runtime\NavMenu`, `Minn\Runtime\PackageDownload`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostQuery`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\TermWriter`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
+Used by: `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\RenderState`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\Reader`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\PluginRules`, `Minn\Front\Resolver`, `Minn\Login\LoginHooks`, `Minn\Mail\Mailer`, `Minn\Media\Images`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Runtime\Abilities`, `Minn\Runtime\AjaxController`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\Constants`, `Minn\Runtime\Interactivity`, `Minn\Runtime\NavMenu`, `Minn\Runtime\PackageDownload`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostQuery`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermWriter`, `Minn\Runtime\UserEvents`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
 
 ```php
 __construct(Minn\Context $context, bool $isAdmin = false)
@@ -2731,6 +2757,49 @@ or null when the query has none.
 Internals: `taxonomyClauses()` (private, line 50), `taxonomySql()` (private, line 119), `termTaxonomyIds()` (private, line 159)
 
 
+## TermEvents
+
+`final readonly class Minn\Runtime\TermEvents` · `public/minn/src/Minn/Runtime/TermEvents.php`
+
+What the reference's REST terms controller tells plugins, for the
+engine's own: with plugins loaded a term is written through the
+runtime's wp_insert_term, wp_update_term and wp_delete_term (create_term,
+the cache cleaning that rebuilds a taxonomy's children map, created_term,
+saved_term and their families), and the REST actions follow. Without a
+booted runtime each write is the engine's own, given as a closure.
+
+Used by: `Minn\Rest\TermsController`
+
+### `live(): bool`
+
+Whether plugins are loaded to be told anything.
+
+### `create(string $name, string $taxonomy, array $args, Closure $quietly): int`
+
+Creates a term and returns its id.
+
+- `@param array{slug: string, description: string, parent: int} $args`
+- `@param Closure(): int $quietly the engine's own write`
+
+### `update(int $termId, string $taxonomy, array $args, Closure $quietly): void`
+
+Updates a term's name, slug, description or parent.
+
+- `@param array<string, mixed> $args the fields the request changes`
+- `@param Closure(): void $quietly the engine's own write`
+
+### `delete(int $termId, string $taxonomy, array $data, Minn\Http\Request $request, Closure $quietly): void`
+
+Deletes a term, then tells plugins over REST with the term as it was and the response.
+
+- `@param array<string, mixed> $data the response`
+- `@param Closure(): void $quietly the engine's own delete`
+
+### `restSaved(int $termId, string $taxonomy, Minn\Http\Request $request, string $verb): void`
+
+rest_insert_{taxonomy}, then rest_after_insert_{taxonomy}, with the term as it stands and the request.
+
+
 ## TermQuery
 
 `final readonly class Minn\Runtime\TermQuery` · `public/minn/src/Minn/Runtime/TermQuery.php`
@@ -2930,6 +2999,50 @@ Walks a tree with a Walker the way the reference does.
 Walks one element and its children.
 
 - `@param array<int|string, mixed> $children`
+
+
+## UserEvents
+
+`final readonly class Minn\Runtime\UserEvents` · `public/minn/src/Minn/Runtime/UserEvents.php`
+
+What the reference's REST users controller tells plugins, for the
+engine's own: with plugins loaded an account is written through the
+runtime's wp_insert_user, wp_update_user and wp_delete_user
+(wp_set_password, each profile meta, the role, clean_user_cache,
+user_register and the count, profile_update, delete_user and
+deleted_user), and the REST actions follow. Without a booted runtime each
+write is the engine's own, given as a closure.
+
+Used by: `Minn\Rest\UsersController`
+
+### `live(): bool`
+
+Whether plugins are loaded to be told anything.
+
+### `create(array $userdata, string $role, Minn\Http\Request $request, Closure $quietly): int`
+
+Creates an account the way the REST controller does: wp_insert_user
+with no role, rest_insert_user, then the role added, then
+rest_after_insert_user. Returns the new id.
+
+- `@param array<string, mixed> $userdata wp_insert_user's fields`
+- `@param Closure(): int $quietly the engine's own write`
+
+### `update(int $id, array $userdata, ?string $role, Minn\Http\Request $request, Closure $quietly): void`
+
+Updates an account: wp_update_user with the changed fields, the role
+when one is given, then the two REST actions.
+
+- `@param array<string, mixed> $userdata the fields the request changes`
+- `@param Closure(): void $quietly the engine's own write`
+
+### `delete(int $id, ?int $reassign, array $data, Minn\Http\Request $request, Closure $quietly): void`
+
+Deletes an account, its posts going to $reassign (or with it when
+none), then rest_delete_user with the account as it was.
+
+- `@param array<string, mixed> $data the response`
+- `@param Closure(): void $quietly the engine's own delete`
 
 
 ## UserInsert

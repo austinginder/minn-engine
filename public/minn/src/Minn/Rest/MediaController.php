@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Runtime\PostEvents;
 use Minn\Http\Policy;
 use Minn\Http\Args;
 use Minn\Http\Subject;
@@ -152,7 +153,19 @@ final readonly class MediaController
                 $upload = $upload->renamedFor($sniffed);
             }
         }
-        $id = $this->library->attach($upload, $userId);
+        $events = new PostEvents();
+        $prepared = $this->library->prepare($upload, $userId);
+        $events->beforeSave($prepared->columns, null);
+        $id = $this->library->insert($prepared);
+        $events->attachedFile($this->library, $id, $prepared->relative);
+        $events->attachmentAdded($id);
+        $events->restInserted($id, $request, null);
+        $events->restAfterInsert($id, $request, null);
+        $events->afterInsert($id, null);
+        // The reference cuts the sizes after the insert and stores the metadata last; the engine cut them first.
+        if ($prepared->metadata !== null) {
+            $events->attachmentMetadata($this->library, $id, $prepared->metadata);
+        }
         return Reply::item($this->object->build($this->posts->find($id), Context::Edit), Fields::fromQuery($request->query), 201)
             ->withHeader('Location', $this->object->url()->to('/wp/v2/media/' . $id));
     }
@@ -164,7 +177,7 @@ final readonly class MediaController
     public function update(Request $request, string $id): Response
     {
         $attachmentId = (int) $id;
-        $this->attachment($attachmentId);
+        $before = $this->attachment($attachmentId);
         if (!$this->caller->can('edit_post', $attachmentId)) {
             throw $this->caller->refuse('rest_cannot_edit', 'Sorry, you are not allowed to edit this post.');
         }
@@ -183,10 +196,25 @@ final readonly class MediaController
             }
             $columns['post_parent'] = $parent;
         }
-        if (isset($body['alt_text'])) {
-            $this->library->setAlt($attachmentId, (string) $body['alt_text']);
+        $events = new PostEvents();
+        if (!$events->live()) {
+            if (isset($body['alt_text'])) {
+                $this->library->setAlt($attachmentId, (string) $body['alt_text']);
+            }
+            $this->library->edit($attachmentId, $columns);
+            return Reply::answer($request, $this->object->build($this->posts->find($attachmentId), Context::Edit));
         }
-        $this->library->edit($attachmentId, $columns);
+        // With plugins loaded, the reference's update: the row (always stamped), the
+        // attachment actions, then the alt text between the two REST actions.
+        $events->beforeSave($columns, $before);
+        $this->library->stamp($attachmentId, $columns);
+        $events->attachmentEdited($attachmentId, $before);
+        $events->restInserted($attachmentId, $request, $before);
+        if (isset($body['alt_text'])) {
+            $events->altText($this->library, $attachmentId, (string) $body['alt_text']);
+        }
+        $events->restAfterInsert($attachmentId, $request, $before);
+        $events->afterInsert($attachmentId, $before);
         return Reply::answer($request, $this->object->build($this->posts->find($attachmentId), Context::Edit));
     }
 
@@ -202,9 +230,11 @@ final readonly class MediaController
         if (!$request->flag('force')) {
             throw new RestError('rest_trash_not_supported', "The post does not support trashing. Set 'force=true' to delete.", 501);
         }
-        $previous = $this->object->build($attachment, Context::Edit);
-        $this->library->remove($attachment);
-        return Reply::answer($request, ['deleted' => true, 'previous' => $previous]);
+        $data = ['deleted' => true, 'previous' => $this->object->build($attachment, Context::Edit)];
+        $events = new PostEvents();
+        $events->live() ? \wp_delete_attachment($attachmentId, true) : $this->library->remove($attachment);
+        $events->restDeleted($attachment, $data, $request);
+        return Reply::answer($request, $data);
     }
 
     private function attachment(int $id): PostRecord

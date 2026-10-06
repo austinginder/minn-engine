@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Runtime\UserEvents;
 use Minn\Http\Policy;
 use Minn\Http\Args;
 use Minn\Http\Subject;
@@ -197,19 +198,19 @@ final readonly class UsersController
         if (!self::validEmail($email)) {
             throw new RestError('rest_user_invalid_email', 'Invalid email address.', 400);
         }
-        $newId = $this->users->createAccount([
-            'login' => $login,
-            'email' => $email,
-            'password' => (string) $body['password'],
-            'role' => $role,
-            'display_name' => (string) ($body['name'] ?? ''),
-            'url' => (string) ($body['url'] ?? ''),
+        $password = (string) $body['password'];
+        $name = (string) ($body['name'] ?? '');
+        $url = (string) ($body['url'] ?? '');
+        $profile = [
             'nickname' => (string) ($body['nickname'] ?? $login),
             'first_name' => (string) ($body['first_name'] ?? ''),
             'last_name' => (string) ($body['last_name'] ?? ''),
             'description' => (string) ($body['description'] ?? ''),
             'locale' => (string) ($body['locale'] ?? ''),
-        ]);
+        ];
+        $account = ['login' => $login, 'email' => $email, 'password' => $password, 'role' => $role, 'display_name' => $name, 'url' => $url] + $profile;
+        $userdata = ['user_login' => $login, 'user_email' => $email, 'user_pass' => $password, 'display_name' => $name, 'user_url' => $url] + $profile;
+        $newId = (new UserEvents())->create($userdata, $role, $request, fn (): int => $this->users->createAccount($account));
         // The reference's REST create sends no mail and leaves no reset key:
         // the caller chose the password.
         $created = $this->users->find($newId);
@@ -257,24 +258,32 @@ final readonly class UsersController
         if (isset($body['slug'])) {
             $columns['user_nicename'] = $this->users->uniqueNicename((string) $body['slug'], $userId);
         }
-        if (isset($body['password']) && (string) $body['password'] !== '') {
-            $columns['user_pass'] = Password::hash((string) $body['password']);
+        $password = isset($body['password']) && (string) $body['password'] !== '' ? (string) $body['password'] : null;
+        if ($password !== null) {
+            $columns['user_pass'] = Password::hash($password);
         }
-        $this->users->update($userId, $columns);
+        $meta = [];
         foreach (['first_name', 'last_name', 'description', 'nickname', 'locale'] as $key) {
             if (isset($body[$key])) {
-                $value = $key === 'description' ? Kses::comment((string) $body[$key]) : Kses::text((string) $body[$key]);
-                $this->users->setMeta($userId, $key, $value);
+                $meta[$key] = $key === 'description' ? Kses::comment((string) $body[$key]) : Kses::text((string) $body[$key]);
             }
         }
         if (isset($body['meta']['show_admin_bar_front'])) {
-            $this->users->setMeta($userId, 'show_admin_bar_front', $body['meta']['show_admin_bar_front'] === 'false' ? 'false' : 'true');
+            $meta['show_admin_bar_front'] = $body['meta']['show_admin_bar_front'] === 'false' ? 'false' : 'true';
         }
-        if ($role !== null) {
-            $prefix = $this->db->prefix();
-            $this->users->setMeta($userId, "{$prefix}capabilities", Roles::serializeSingle($role));
-            $this->users->setMeta($userId, "{$prefix}user_level", (string) Roles::level($role));
-        }
+        // With plugins loaded the runtime takes the plain password, which wins over the hash, and hashes it itself.
+        $userdata = ($password === null ? [] : ['user_pass' => $password]) + $columns + $meta;
+        (new UserEvents())->update($userId, $userdata, $role, $request, function () use ($userId, $columns, $meta, $role): void {
+            $this->users->update($userId, $columns);
+            foreach ($meta as $key => $value) {
+                $this->users->setMeta($userId, $key, $value);
+            }
+            if ($role !== null) {
+                $prefix = $this->db->prefix();
+                $this->users->setMeta($userId, "{$prefix}capabilities", Roles::serializeSingle($role));
+                $this->users->setMeta($userId, "{$prefix}user_level", (string) Roles::level($role));
+            }
+        });
         return Reply::item($this->object->edit($this->users->find($userId)), Fields::fromQuery($request->query));
     }
 
@@ -304,18 +313,20 @@ final readonly class UsersController
                 throw new RestError('rest_user_invalid_reassign', 'Invalid user ID for reassignment.', 400);
             }
         }
-        $previous = $this->object->edit($user);
-        $posts = $this->db->table('posts');
-        if ($target > 0) {
-            $this->db->execute("UPDATE {$posts} SET post_author = ? WHERE post_author = ?", [$target, $userId]);
-        } else {
-            // No reassignment: the user's posts are deleted, as the reference does.
-            foreach ($this->db->rows("SELECT ID FROM {$posts} WHERE post_author = ?", [$userId]) as $row) {
-                $this->db->execute("DELETE FROM {$this->db->table('postmeta')} WHERE post_id = ?", [(int) $row['ID']]);
-                $this->db->execute("DELETE FROM {$posts} WHERE ID = ?", [(int) $row['ID']]);
+        $data = ['deleted' => true, 'previous' => $this->object->edit($user)];
+        (new UserEvents())->delete($userId, $target > 0 ? $target : null, $data, $request, function () use ($userId, $target): void {
+            $posts = $this->db->table('posts');
+            if ($target > 0) {
+                $this->db->execute("UPDATE {$posts} SET post_author = ? WHERE post_author = ?", [$target, $userId]);
+            } else {
+                // No reassignment: the user's posts are deleted, as the reference does.
+                foreach ($this->db->rows("SELECT ID FROM {$posts} WHERE post_author = ?", [$userId]) as $row) {
+                    $this->db->execute("DELETE FROM {$this->db->table('postmeta')} WHERE post_id = ?", [(int) $row['ID']]);
+                    $this->db->execute("DELETE FROM {$posts} WHERE ID = ?", [(int) $row['ID']]);
+                }
             }
-        }
-        $this->users->delete($userId);
-        return Reply::item(['deleted' => true, 'previous' => $previous], Fields::fromQuery($request->query));
+            $this->users->delete($userId);
+        });
+        return Reply::item($data, Fields::fromQuery($request->query));
     }
 }

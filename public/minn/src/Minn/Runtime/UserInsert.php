@@ -61,8 +61,9 @@ final readonly class UserInsert
         if ($owner > 0 && (!$update || $owner !== (int) $userdata['ID'])) {
             return new Refusal('existing_user_email', 'Sorry, that email address is already used!');
         }
-        $role = isset($userdata['role']) ? (string) $userdata['role'] : null;
-        if ($role !== null && !($this->roleExists)($role)) {
+        // false (or an empty role) is no role at all, which the caller adds later.
+        $role = isset($userdata['role']) && $userdata['role'] !== false ? (string) $userdata['role'] : null;
+        if ($role !== null && $role !== '' && !($this->roleExists)($role)) {
             return new Refusal('invalid_role', 'Invalid role.');
         }
         return [

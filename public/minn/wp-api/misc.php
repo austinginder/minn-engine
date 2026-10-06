@@ -237,17 +237,34 @@ function wp_insert_user($userdata)
     if ($resolved instanceof Refusal) {
         return new WP_Error($resolved->code, $resolved->message, $resolved->data);
     }
-    $users = new Users(Runtime::current()->db);
     if (!$update) {
-        $id = $users->createAccount(UserInsert::account($userdata, $resolved, (string) get_option('default_role')));
-        if (!empty($userdata['user_registered'])) {
-            $users->update($id, ['user_registered' => (string) $userdata['user_registered']]);
-        }
-        wp_cache_delete($id, 'user_meta');
-        do_action('user_register', $id, $userdata);
-        return $id;
+        return _minn_insert_account(UserInsert::account($userdata, $resolved, (string) get_option('default_role')), $userdata);
     }
     return _minn_update_user_profile($existing, $userdata, $resolved);
+}
+
+/**
+ * @internal A new account as the reference writes it: the row, wp_set_password,
+ * each profile meta through add_user_meta, the role, clean_user_cache, then
+ * user_register (where the count is kept). A role given as false (the REST
+ * controller's way) leaves the account without one for the caller to add.
+ */
+function _minn_insert_account(array $account, array $userdata): int
+{
+    $users = new Users(Runtime::current()->db);
+    $id = $users->insertAccount($account);
+    if (!empty($userdata['user_registered'])) {
+        $users->update($id, ['user_registered' => (string) $userdata['user_registered']]);
+    }
+    do_action('wp_set_password', (string) $account['password'], $id, new WP_User($id));
+    foreach (Users::profileMeta($account) as $key => $value) {
+        add_user_meta($id, $key, $value);
+    }
+    $user = new WP_User($id);
+    $user->set_role(array_key_exists('role', $userdata) && $userdata['role'] === false ? false : $account['role']);
+    clean_user_cache($user);
+    do_action('user_register', $id, $userdata);
+    return $id;
 }
 
 /** @internal the update half of wp_insert_user: changed columns, the profile meta, the role */
@@ -258,15 +275,19 @@ function _minn_update_user_profile(WP_User $existing, array $userdata, array $re
     if ($columns !== []) {
         (new Users(Runtime::current()->db))->update($id, $columns);
     }
+    if (isset($columns['user_pass'])) {
+        do_action('wp_set_password', (string) $userdata['user_pass'], $id, $existing);
+    }
+    clean_user_cache($id);
     foreach (UserInsert::META_KEYS as $key) {
         if (array_key_exists($key, $userdata)) {
             update_user_meta($id, $key, $userdata[$key]);
         }
     }
     if ($resolved['role'] !== null) {
-        $existing->set_role($resolved['role']);
+        (new WP_User($id))->set_role($resolved['role']);
     }
-    wp_cache_delete($id, 'user_meta');
+    clean_user_cache($id);
     do_action('profile_update', $id, $existing, $userdata);
     return $id;
 }
@@ -283,7 +304,11 @@ function wp_update_user($userdata)
     if ($id <= 0 || !get_userdata($id)) {
         return new WP_Error('invalid_user_id', 'Invalid user ID.');
     }
-    return wp_insert_user($userdata);
+    $result = wp_insert_user($userdata);
+    if (!is_wp_error($result)) {
+        do_action('wp_update_user', $id, $userdata, $userdata);
+    }
+    return $result;
 }
 
 function wp_create_user($username, $password, $email = '')
@@ -306,12 +331,41 @@ function wp_delete_user($id, $reassign = null)
     } else {
         _minn_post_writer()->reassignAuthor($id, (int) $reassign);
     }
-    $users = new Users(Runtime::current()->db);
-    $users->delete($id);
-    $users->deleteAllMeta($id);
-    wp_cache_delete($id, 'user_meta');
+    // Each meta key removed with its own actions, then the row; the count follows deleted_user.
+    foreach (_minn_meta()->rowsOf('user', $id) as $row) {
+        delete_metadata_by_mid('user', $row['meta_id']);
+    }
+    (new Users(Runtime::current()->db))->deleteRow($id);
+    clean_user_cache($user);
     do_action('deleted_user', $id, $reassign, $user);
     return true;
+}
+
+/** Lets go of a user's cached rows and meta, telling plugins. */
+function clean_user_cache($user)
+{
+    $user = is_numeric($user) ? new WP_User((int) $user) : $user;
+    if (!$user instanceof WP_User || !$user->exists()) {
+        return;
+    }
+    wp_cache_delete($user->ID, 'users');
+    wp_cache_delete($user->user_login, 'userlogins');
+    wp_cache_delete($user->user_nicename, 'userslugs');
+    wp_cache_delete($user->user_email, 'useremail');
+    wp_cache_delete($user->ID, 'user_meta');
+    do_action('clean_user_cache', $user->ID, $user);
+}
+
+/** The default on user_register and deleted_user: the site's user count is kept current. */
+function wp_maybe_update_user_counts($network_id = null)
+{
+    return wp_update_user_counts($network_id);
+}
+
+/** Stores the number of accounts as the user_count site option. */
+function wp_update_user_counts($network_id = null)
+{
+    return update_site_option('user_count', (new Users(Runtime::current()->db))->count());
 }
 
 function get_preview_post_link($post = null, $query_args = [], $preview_link = '')
@@ -706,4 +760,10 @@ function got_mod_rewrite()
 function saveDomDocument($doc, $filename)
 {
     file_put_contents($filename, str_replace("\n", "\r\n", (string) $doc->saveXML()));
+}
+
+/** The default on set_user_role: cached user queries are asked again. */
+function wp_cache_set_users_last_changed()
+{
+    wp_cache_set_last_changed('users');
 }

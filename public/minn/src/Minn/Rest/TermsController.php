@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Runtime\TermEvents;
 use Minn\Http\Policy;
 use Minn\Http\Args;
 use Minn\Http\Subject;
@@ -148,13 +149,10 @@ final readonly class TermsController
             );
         }
         $slug = $this->terms->uniqueSlug((string) ($body['slug'] ?? '') !== '' ? (string) $body['slug'] : $name, $taxonomy);
-        $termId = $this->terms->create(
-            $name,
-            $slug,
-            $taxonomy,
-            Kses::comment((string) ($body['description'] ?? '')),
-            $config['has_parent'] ? (int) ($body['parent'] ?? 0) : 0,
-        );
+        $args = ['slug' => $slug, 'description' => Kses::comment((string) ($body['description'] ?? '')), 'parent' => $config['has_parent'] ? (int) ($body['parent'] ?? 0) : 0];
+        $events = new TermEvents();
+        $termId = $events->create($name, $taxonomy, $args, fn (): int => $this->terms->create($name, $slug, $taxonomy, $args['description'], $args['parent']));
+        $events->restSaved($termId, $taxonomy, $request, 'create');
         return Reply::item($this->object->view($this->terms->row($termId, $taxonomy), $base), Fields::fromQuery($request->query), 201)
             ->withHeader('Location', $this->object->url()->to("/wp/v2/{$base}/{$termId}"));
     }
@@ -176,21 +174,22 @@ final readonly class TermsController
             throw $this->caller->refuse('rest_cannot_update', 'Sorry, you are not allowed to edit this term.');
         }
         $body = $request->json();
-        if (isset($body['name']) || isset($body['slug'])) {
-            $this->terms->rename(
-                $termId,
-                isset($body['name']) ? Kses::text((string) $body['name']) : (string) $term['name'],
-                isset($body['slug']) ? $this->terms->uniqueSlug((string) $body['slug'], $taxonomy, $termId) : (string) $term['slug'],
-            );
-        }
-        if (isset($body['description']) || ($config['has_parent'] && isset($body['parent']))) {
-            $this->terms->describe(
-                $termId,
-                $taxonomy,
-                isset($body['description']) ? Kses::comment((string) $body['description']) : (string) $term['description'],
-                $config['has_parent'] && isset($body['parent']) ? (int) $body['parent'] : (int) $term['parent'],
-            );
-        }
+        $args = array_filter([
+            'name' => isset($body['name']) ? Kses::text((string) $body['name']) : null,
+            'slug' => isset($body['slug']) ? $this->terms->uniqueSlug((string) $body['slug'], $taxonomy, $termId) : null,
+            'description' => isset($body['description']) ? Kses::comment((string) $body['description']) : null,
+            'parent' => $config['has_parent'] && isset($body['parent']) ? (int) $body['parent'] : null,
+        ], static fn ($v) => $v !== null);
+        $events = new TermEvents();
+        $events->update($termId, $taxonomy, $args, function () use ($termId, $taxonomy, $term, $args): void {
+            if (isset($args['name']) || isset($args['slug'])) {
+                $this->terms->rename($termId, (string) ($args['name'] ?? $term['name']), (string) ($args['slug'] ?? $term['slug']));
+            }
+            if (isset($args['description']) || isset($args['parent'])) {
+                $this->terms->describe($termId, $taxonomy, (string) ($args['description'] ?? $term['description']), (int) ($args['parent'] ?? $term['parent']));
+            }
+        });
+        $events->restSaved($termId, $taxonomy, $request, 'update');
         return Reply::item($this->object->view($this->terms->row($termId, $taxonomy), $base), Fields::fromQuery($request->query));
     }
 
@@ -214,8 +213,8 @@ final readonly class TermsController
         if (!$request->flag('force')) {
             throw new RestError('rest_trash_not_supported', "Terms do not support trashing. Set 'force=true' to delete.", 501);
         }
-        $previous = $this->object->view($term, $base);
-        $this->terms->delete(TermRecord::fromRow($term->row() + ['taxonomy' => $taxonomy]), $config['has_parent']);
-        return Reply::item(['deleted' => true, 'previous' => $previous], Fields::fromQuery($request->query));
+        $data = ['deleted' => true, 'previous' => $this->object->view($term, $base)];
+        (new TermEvents())->delete($termId, $taxonomy, $data, $request, fn () => $this->terms->delete(TermRecord::fromRow($term->row() + ['taxonomy' => $taxonomy]), $config['has_parent']));
+        return Reply::item($data, Fields::fromQuery($request->query));
     }
 }

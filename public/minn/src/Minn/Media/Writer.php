@@ -31,16 +31,28 @@ final readonly class Writer
     /** The new attachment's id. The mime is the caller's to check first. */
     public function attach(Upload $upload, int $authorId): int
     {
+        $prepared = $this->prepare($upload, $authorId);
+        $id = $this->insert($prepared);
+        $this->setAttachedFile($id, $prepared->relative);
+        if ($prepared->metadata !== null) {
+            $this->setMetadata($id, $prepared->metadata);
+        }
+        return $id;
+    }
+
+    /**
+     * Stores the file and cuts its sizes, before the row exists: a decode
+     * that fails leaves files to sweep, never a headless attachment.
+     */
+    public function prepare(Upload $upload, int $authorId): PreparedUpload
+    {
         $filename = Uploads::sanitizeName($upload->filename);
         $mime = (string) $upload->mime();
         $relative = $this->uploads->store($filename, $upload->movedFrom, $upload->raw);
-        $title = preg_replace('/\.[^.]+$/', '', basename($relative));
+        $title = (string) preg_replace('/\.[^.]+$/', '', basename($relative));
         $now = $this->site->localNow();
         $nowGmt = gmdate('Y-m-d H:i:s');
-        // The sizes are made before the row exists: a decode that fails leaves files to sweep, never a headless attachment.
-        $metadata = $upload->isImage() ? Metadata::serialize($this->imageMetadata($relative, $mime)) : null;
-
-        $id = $this->posts->insert([
+        $columns = [
             'post_author' => $authorId,
             'post_date' => $now,
             'post_date_gmt' => $nowGmt,
@@ -63,20 +75,39 @@ final readonly class Writer
             'post_type' => 'attachment',
             'post_mime_type' => $mime,
             'comment_count' => 0,
-        ]);
+        ];
+        return new PreparedUpload($columns, $relative, $upload->isImage() ? $this->imageMetadata($relative, $mime) : null);
+    }
+
+    /** Writes a prepared attachment's row; returns its id. */
+    public function insert(PreparedUpload $prepared): int
+    {
+        return $this->posts->insert($prepared->columns);
+    }
+
+    /** Records the file an attachment holds, relative to the uploads folder. */
+    public function setAttachedFile(int $id, string $relative): void
+    {
         $this->posts->setMeta($id, '_wp_attached_file', $relative);
-        if ($metadata !== null) {
-            $this->posts->setMeta($id, '_wp_attachment_metadata', $metadata);
-        }
-        return $id;
+    }
+
+    /** Stores an attachment's metadata in the reference's serialized shape. @param array<string, mixed> $metadata */
+    public function setMetadata(int $id, array $metadata): void
+    {
+        $this->posts->setMeta($id, '_wp_attachment_metadata', Metadata::serialize($metadata));
     }
 
     /** Sets the given columns on an attachment and stamps it modified; nothing happens for none. */
     public function edit(int $id, array $columns): void
     {
-        if ($columns === []) {
-            return;
+        if ($columns !== []) {
+            $this->stamp($id, $columns);
         }
+    }
+
+    /** Sets the given columns, none included, and stamps the attachment modified, as the reference's update always does. @param array<string, mixed> $columns */
+    public function stamp(int $id, array $columns): void
+    {
         $columns['post_modified'] = $this->site->localNow();
         $columns['post_modified_gmt'] = gmdate('Y-m-d H:i:s');
         $this->posts->update($id, $columns);

@@ -25,7 +25,7 @@ the wp/v2 surface: shapes and controllers
 | [`IndexController`](#indexcontroller) | final readonly class | 96 | The API index at /wp-json/: the site facts monitors read (name, url, |
 | [`Links`](#links) | final class | 35 | Response link relations compacted through CURIEs: a rel that matches a CURIE's template becomes `name:suffix`, and the used CURIEs ride along. |
 | [`ListQuery`](#listquery) | final readonly class | 170 | The collection parameters a wp/v2 list accepts, read once from the |
-| [`MediaController`](#mediacontroller) | final readonly class | 191 | wp/v2/media: list, single, upload on both transports (multipart field |
+| [`MediaController`](#mediacontroller) | final readonly class | 220 | wp/v2/media: list, single, upload on both transports (multipart field |
 | [`MediaObject`](#mediaobject) | final readonly class | 158 | The wp/v2 media object, view and edit context. |
 | [`MenuItemObject`](#menuitemobject) | final readonly class | 74 | The wp/v2/menu-items resource. |
 | [`MenuObject`](#menuobject) | final readonly class | 37 | The wp/v2/menus resource: a nav_menu term plus locations and auto_add. |
@@ -57,11 +57,11 @@ the wp/v2 surface: shapes and controllers
 | [`TemplateObject`](#templateobject) | final readonly class | 98 | The wp/v2/templates and wp/v2/template-parts resource. |
 | [`TemplatesController`](#templatescontroller) | final readonly class | 205 | wp/v2/templates and wp/v2/template-parts: the block theme's templates as |
 | [`TermObject`](#termobject) | final readonly class | 76 | The wp/v2 category and tag objects. |
-| [`TermsController`](#termscontroller) | final readonly class | 199 | wp/v2 categories, tags, and pattern categories: list, single, and the create/update/delete the taxonomy admin drives. |
+| [`TermsController`](#termscontroller) | final readonly class | 197 | wp/v2 categories, tags, and pattern categories: list, single, and the create/update/delete the taxonomy admin drives. |
 | [`Types`](#types) | final class | 97 | The engine's registry of built-in post types, seeded from the observed |
 | [`TypesController`](#typescontroller) | final readonly class | 24 | wp/v2 types. |
 | [`UserObject`](#userobject) | final readonly class | 97 | The wp/v2 user objects: the public view shape and the edit-context shape. |
-| [`UsersController`](#userscontroller) | final readonly class | 297 | wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives. |
+| [`UsersController`](#userscontroller) | final readonly class | 307 | wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives. |
 
 ## AbilitiesController
 
@@ -1005,7 +1005,7 @@ Route: `DELETE /wp/v2/media/{id:\d+} (cap delete_post on {id}; attachment {id} m
 
 Attachments cannot be trashed; force removes the row, its meta, and its files.
 
-Internals: `libraryClauses()` (private, line 74), `restDate()` (private, line 98), `attachment()` (private, line 210)
+Internals: `libraryClauses()` (private, line 75), `restDate()` (private, line 99), `attachment()` (private, line 240)
 
 
 ## MediaObject
@@ -1688,7 +1688,7 @@ their turn; the runtime's say before the engine answers at all (an
 authentication refusal, a pre-dispatch answer, a removed endpoint);
 and the runtime's namespaces folded into the index.
 
-Used by: `Minn\Rest\Api`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\PostEvents`
+Used by: `Minn\Rest\Api`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\TermEvents`, `Minn\Runtime\UserEvents`
 
 ### static `gate(Minn\Http\Request $request): ?Minn\Http\Response`
 
@@ -2589,5 +2589,5 @@ Route: `DELETE /wp/v2/users/{id:\d+} (cap delete_users; user {id} must exist)`
 
 reassign is REQUIRED (checked before the user lookup), and so is force.
 
-Internals: `hasPublishedContent()` (private, line 151), `validRole()` (private, line 160), `validEmail()` (private, line 168)
+Internals: `hasPublishedContent()` (private, line 152), `validRole()` (private, line 161), `validEmail()` (private, line 169)
 

@@ -111,8 +111,24 @@ final readonly class Users
      */
     private function writeAccount(array $fields): int
     {
+        $id = $this->insertAccount($fields);
+        $prefix = $this->db->prefix();
+        $role = $fields['role'];
+        $meta = self::profileMeta($fields) + [
+            "{$prefix}capabilities" => Roles::serializeSingle($role),
+            "{$prefix}user_level" => (string) Roles::level($role),
+        ];
+        foreach ($meta as $key => $value) {
+            $this->setMeta($id, $key, $value);
+        }
+        return $id;
+    }
+
+    /** A new account's row alone: the caller adds its meta and role, and keeps the count. @param array<string, mixed> $fields */
+    public function insertAccount(array $fields): int
+    {
         $login = $fields['login'];
-        $id = $this->insert([
+        return $this->insert([
             'user_login' => $login,
             'user_pass' => Password::hash($fields['password']),
             'user_nicename' => $fields['nicename'] ?? $this->uniqueNicename($login),
@@ -123,10 +139,19 @@ final readonly class Users
             'user_status' => 0,
             'display_name' => $fields['display_name'] !== '' ? $fields['display_name'] : self::defaultDisplayName(Kses::text($fields['first_name'] ?? ''), Kses::text($fields['last_name'] ?? ''), $login),
         ]);
-        $prefix = $this->db->prefix();
-        $role = $fields['role'];
-        $meta = [
-            'nickname' => Kses::text($fields['nickname'] ?? $login),
+    }
+
+    /**
+     * The twelve profile meta rows the reference gives a new account, in its
+     * order (the role's two follow).
+     *
+     * @param array<string, mixed> $fields
+     * @return array<string, string>
+     */
+    public static function profileMeta(array $fields): array
+    {
+        return [
+            'nickname' => Kses::text($fields['nickname'] ?? $fields['login']),
             'first_name' => Kses::text($fields['first_name'] ?? ''),
             'last_name' => Kses::text($fields['last_name'] ?? ''),
             'description' => Kses::comment($fields['description'] ?? ''),
@@ -138,13 +163,19 @@ final readonly class Users
             'use_ssl' => '0',
             'show_admin_bar_front' => 'true',
             'locale' => (string) ($fields['locale'] ?? ''),
-            "{$prefix}capabilities" => Roles::serializeSingle($role),
-            "{$prefix}user_level" => (string) Roles::level($role),
         ];
-        foreach ($meta as $key => $value) {
-            $this->setMeta($id, $key, $value);
-        }
-        return $id;
+    }
+
+    /** Recounts the accounts into user_count, quietly. */
+    public function recount(): void
+    {
+        $this->refreshCount();
+    }
+
+    /** Removes the account's row alone: the caller removes its meta and keeps the count. */
+    public function deleteRow(int $id): void
+    {
+        $this->db->execute("DELETE FROM {$this->db->table('users')} WHERE ID = ?", [$id]);
     }
 
     /**

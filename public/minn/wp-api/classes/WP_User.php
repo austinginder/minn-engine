@@ -193,19 +193,27 @@ class WP_User
 
     public function set_role($role)
     {
-        if (count($this->roles) === 1 && $this->roles[0] === $role) {
+        if (count($this->roles) === 1 && current($this->roles) === $role) {
             return;
         }
         $old = $this->roles;
-        foreach ($this->roles as $existing) {
+        foreach ($old as $existing) {
             unset($this->caps[$existing]);
         }
-        if ($role !== '' && $role !== null) {
+        if (!empty($role)) {
             $this->caps[$role] = true;
         }
         update_user_meta($this->ID, $this->cap_key, $this->caps);
         $this->get_role_caps();
         $this->update_user_level_from_caps();
+        foreach ($old as $existing) {
+            if ($existing !== $role) {
+                do_action('remove_user_role', $this->ID, $existing);
+            }
+        }
+        if (!empty($role) && !in_array($role, $old, true)) {
+            do_action('add_user_role', $this->ID, $role);
+        }
         do_action('set_user_role', $this->ID, $role, $old);
     }
 

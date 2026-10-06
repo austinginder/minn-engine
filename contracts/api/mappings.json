@@ -2,12 +2,12 @@
     "generated": "2026-10-06",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 557,
-        "composes": 812,
+        "minn": 559,
+        "composes": 816,
         "leaf": 630,
-        "noop": 1785,
-        "functions": 3714,
-        "minnMethods": 571,
+        "noop": 1786,
+        "functions": 3721,
+        "minnMethods": 568,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -12149,10 +12149,11 @@
         },
         "WP_User::set_role": {
             "file": "classes/WP_User.php",
-            "lines": 14,
+            "lines": 22,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "current",
                 "do_action",
                 "update_user_meta"
             ]
@@ -13885,13 +13886,16 @@
         },
         "_get_term_hierarchy": {
             "file": "taxonomy.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 11,
+            "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\TermQuery::hierarchy"
             ],
             "composes": [
-                "_minn_term_query"
+                "_minn_term_query",
+                "get_option",
+                "is_taxonomy_hierarchical",
+                "update_option"
             ]
         },
         "_get_widget_id_base": {
@@ -14509,6 +14513,24 @@
                 "Minn\\Runtime\\Runtime::get"
             ],
             "composes": []
+        },
+        "_minn_insert_account": {
+            "file": "misc.php",
+            "lines": 14,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Content\\Users::__construct",
+                "Minn\\Content\\Users::insertAccount",
+                "Minn\\Content\\Users::profileMeta",
+                "Minn\\Content\\Users::update",
+                "Minn\\Runtime\\Runtime::current",
+                "Minn\\Runtime\\Runtime::db"
+            ],
+            "composes": [
+                "add_user_meta",
+                "clean_user_cache",
+                "do_action"
+            ]
         },
         "_minn_join_list": {
             "file": "taxonomy.php",
@@ -15157,6 +15179,17 @@
             ],
             "composes": []
         },
+        "_minn_term_children_move": {
+            "file": "taxonomy.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "clean_term_cache",
+                "do_action",
+                "get_terms"
+            ]
+        },
         "_minn_term_fields": {
             "file": "taxonomy.php",
             "lines": 1,
@@ -15274,7 +15307,7 @@
         },
         "_minn_update_user_profile": {
             "file": "misc.php",
-            "lines": 16,
+            "lines": 20,
             "kind": "minn",
             "minn": [
                 "Minn\\Content\\Users::__construct",
@@ -15284,9 +15317,9 @@
                 "Minn\\Support\\Kses::url"
             ],
             "composes": [
+                "clean_user_cache",
                 "do_action",
                 "update_user_meta",
-                "wp_cache_delete",
                 "wp_hash_password"
             ]
         },
@@ -16817,9 +16850,33 @@
                 "wp_cache_delete"
             ]
         },
-        "clean_term_cache": {
+        "clean_taxonomy_cache": {
             "file": "taxonomy.php",
             "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_get_term_hierarchy",
+                "delete_option",
+                "do_action",
+                "wp_cache_delete"
+            ]
+        },
+        "clean_term_cache": {
+            "file": "taxonomy.php",
+            "lines": 15,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "clean_taxonomy_cache",
+                "do_action",
+                "get_term",
+                "wp_cache_delete"
+            ]
+        },
+        "clean_user_cache": {
+            "file": "misc.php",
+            "lines": 10,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -26786,10 +26843,12 @@
         },
         "update_site_option": {
             "file": "option.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 8,
+            "kind": "composes",
             "minn": [],
             "composes": [
+                "do_action",
+                "get_option",
                 "update_option"
             ]
         },
@@ -27568,6 +27627,15 @@
                 "wp_cache_set"
             ]
         },
+        "wp_cache_set_users_last_changed": {
+            "file": "misc.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "wp_cache_set_last_changed"
+            ]
+        },
         "wp_cache_supports": {
             "file": "option.php",
             "lines": 1,
@@ -28042,22 +28110,26 @@
         },
         "wp_delete_attachment": {
             "file": "media.php",
-            "lines": 25,
+            "lines": 27,
             "kind": "minn",
             "minn": [
-                "Minn\\Content\\PostWriter::destroy",
-                "Minn\\Content\\PostWriter::recount",
-                "Minn\\Content\\PostWriter::taxonomiesOf"
+                "Minn\\Content\\Comments::idsOf",
+                "Minn\\Content\\PostWriter::destroy"
             ],
             "composes": [
+                "_minn_comments",
+                "_minn_post_delete_meta",
                 "_minn_post_writer",
                 "apply_filters",
+                "clean_post_cache",
                 "do_action",
                 "get_attached_file",
+                "get_object_taxonomies",
                 "get_post",
                 "get_post_meta",
-                "wp_cache_delete",
                 "wp_delete_attachment_files",
+                "wp_delete_comment",
+                "wp_delete_object_term_relationships",
                 "wp_get_attachment_metadata",
                 "wp_trash_post"
             ]
@@ -28185,14 +28257,16 @@
         },
         "wp_delete_term": {
             "file": "taxonomy.php",
-            "lines": 19,
+            "lines": 23,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\TermWriter::delete"
             ],
             "composes": [
+                "_minn_term_children_move",
                 "_minn_term_row",
                 "_minn_term_writer",
+                "clean_term_cache",
                 "do_action",
                 "get_option",
                 "get_term",
@@ -28203,22 +28277,23 @@
         },
         "wp_delete_user": {
             "file": "misc.php",
-            "lines": 19,
+            "lines": 21,
             "kind": "minn",
             "minn": [
                 "Minn\\Content\\PostWriter::reassignAuthor",
                 "Minn\\Content\\Users::__construct",
-                "Minn\\Content\\Users::delete",
-                "Minn\\Content\\Users::deleteAllMeta",
+                "Minn\\Runtime\\Meta::rowsOf",
                 "Minn\\Runtime\\PostLookup::__construct",
                 "Minn\\Runtime\\Runtime::current",
                 "Minn\\Runtime\\Runtime::db"
             ],
             "composes": [
+                "_minn_meta",
                 "_minn_post_writer",
+                "clean_user_cache",
+                "delete_metadata_by_mid",
                 "do_action",
                 "get_userdata",
-                "wp_cache_delete",
                 "wp_delete_post"
             ]
         },
@@ -29777,7 +29852,7 @@
         },
         "wp_insert_term": {
             "file": "taxonomy.php",
-            "lines": 23,
+            "lines": 24,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\TermWriter::insert"
@@ -29786,6 +29861,7 @@
                 "_minn_refused",
                 "_minn_term_writer",
                 "apply_filters",
+                "clean_term_cache",
                 "do_action",
                 "is_taxonomy_hierarchical",
                 "is_wp_error",
@@ -29796,22 +29872,18 @@
         },
         "wp_insert_user": {
             "file": "misc.php",
-            "lines": 34,
+            "lines": 27,
             "kind": "minn",
             "minn": [
-                "Minn\\Content\\Users::__construct",
-                "Minn\\Content\\Users::createAccount",
-                "Minn\\Content\\Users::update",
                 "Minn\\Runtime\\Runtime::capabilities->roles",
                 "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::db",
                 "Minn\\Runtime\\UserInsert::__construct",
                 "Minn\\Runtime\\UserInsert::account",
                 "Minn\\Runtime\\UserInsert::resolve"
             ],
             "composes": [
+                "_minn_insert_account",
                 "_minn_update_user_profile",
-                "do_action",
                 "email_exists",
                 "get_option",
                 "get_userdata",
@@ -29819,7 +29891,6 @@
                 "sanitize_title",
                 "sanitize_user",
                 "username_exists",
-                "wp_cache_delete",
                 "wp_unslash"
             ]
         },
@@ -30536,6 +30607,15 @@
                 "_minn_inline_style_sources",
                 "apply_filters",
                 "wp_add_inline_style"
+            ]
+        },
+        "wp_maybe_update_user_counts": {
+            "file": "misc.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "wp_update_user_counts"
             ]
         },
         "wp_meta": {
@@ -32603,7 +32683,7 @@
         },
         "wp_update_term": {
             "file": "taxonomy.php",
-            "lines": 22,
+            "lines": 25,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\TermWriter::apply",
@@ -32612,6 +32692,7 @@
             "composes": [
                 "_minn_refused",
                 "_minn_term_writer",
+                "clean_term_cache",
                 "do_action",
                 "get_term",
                 "taxonomy_exists",
@@ -32642,12 +32723,27 @@
         },
         "wp_update_user": {
             "file": "misc.php",
-            "lines": 11,
+            "lines": 15,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "do_action",
                 "get_userdata",
+                "is_wp_error",
                 "wp_insert_user"
+            ]
+        },
+        "wp_update_user_counts": {
+            "file": "misc.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Content\\Users::__construct",
+                "Minn\\Runtime\\Runtime::current",
+                "Minn\\Runtime\\Runtime::db"
+            ],
+            "composes": [
+                "update_site_option"
             ]
         },
         "wp_upgrade": {

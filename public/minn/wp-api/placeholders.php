@@ -121,12 +121,6 @@ function clean_attachment_cache($id, $clean_terms = false)
     return null;
 }
 
-function clean_user_cache($user)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('clean_user_cache');
-    return null;
-}
-
 function create_initial_taxonomies()
 {
     \Minn\Runtime\PlaceholderTrace::hit('create_initial_taxonomies');
